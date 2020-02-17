@@ -3,7 +3,7 @@ package com.mobile.flyingeffects.http;
 public class Url {
 
 
-    private  static final String production = "http://45.137.10.51:8999/"; //正式环境
+    private  static final String production = "http://kadian.nineton.cn/"; //正式环境
 
 
 

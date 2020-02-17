@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import com.githang.statusbar.StatusBarCompat;
 import com.mobile.flyingeffects.R;
-import com.mobile.flyingeffects.ui.view.fragment.frag0;
+import com.mobile.flyingeffects.ui.view.fragment.FragForTemplate;
 import com.mobile.flyingeffects.ui.view.fragment.frag1;
 import com.mobile.flyingeffects.ui.view.fragment.frag_user_center;
 
@@ -218,7 +218,7 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-    private frag0 menu0F = null;
+    private FragForTemplate menu0F = null;
     private frag1 menu1F = null;
     private frag_user_center menu2F = null;
 
@@ -229,7 +229,7 @@ public class HomeMainActivity extends FragmentActivity {
             switch (which) {
                 case 0: {
                     if (menu0F == null) {
-                        menu0F = new frag0();
+                        menu0F = new FragForTemplate();
                     }
                     if (!menu0F.isAdded() && !menu0F.isVisible() && !menu0F.isRemoving()) {
                         fragmentTransaction.replace(R.id.rL_show, menu0F, menu0F.getClass().getName()).commitAllowingStateLoss();

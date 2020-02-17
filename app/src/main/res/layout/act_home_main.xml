@@ -50,7 +50,7 @@
                     android:id="@+id/tv_main_0"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="长片"
+                    android:text="模板"
                     android:textColor="@color/colorRedBg"
                     android:textSize="@dimen/text_micro_size" />
             </LinearLayout>
@@ -75,7 +75,7 @@
                     android:id="@+id/tv_main_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="短片"
+                    android:text="搜索"
                     android:textColor="@color/home_navigation_dark_gray"
                     android:textSize="@dimen/text_micro_size" />
             </LinearLayout>
@@ -101,7 +101,7 @@
                     android:id="@+id/tv_main_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="发现"
+                    android:text="我的"
                     android:textColor="@color/home_navigation_dark_gray"
                     android:textSize="@dimen/text_micro_size" />
             </LinearLayout>

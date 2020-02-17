@@ -1,7 +1,9 @@
 package com.mobile.flyingeffects.http;
 
 import com.mobile.flyingeffects.enity.HttpResult;
+import com.mobile.flyingeffects.enity.TemplateType;
 
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.http.FieldMap;
@@ -37,6 +39,10 @@ public interface ApiService {
     Observable<HttpResult<Object>> toConfig(@FieldMap Map<String, String> params);
 
 
+    //模板类型
+    @FormUrlEncoded
+    @POST("/api/v1.draft/mbtype")
+    Observable<HttpResult<List<TemplateType>>> getTemplateType(@FieldMap Map<String, String> params);
 
 
 

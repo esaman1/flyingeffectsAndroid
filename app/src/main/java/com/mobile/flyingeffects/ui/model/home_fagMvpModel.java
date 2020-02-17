@@ -3,12 +3,20 @@ package com.mobile.flyingeffects.ui.model;
 import android.content.Context;
 
 import com.mobile.flyingeffects.base.ActivityLifeCycleEvent;
+import com.mobile.flyingeffects.constans.BaseConstans;
 import com.mobile.flyingeffects.enity.TemplateType;
+import com.mobile.flyingeffects.http.Api;
+import com.mobile.flyingeffects.http.HttpUtil;
+import com.mobile.flyingeffects.http.ProgressSubscriber;
 import com.mobile.flyingeffects.ui.interfaces.model.home_fagMvpCallback;
+import com.mobile.flyingeffects.utils.ToastUtil;
 import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
+import rx.Observable;
 import rx.subjects.PublishSubject;
 
 
@@ -43,30 +51,30 @@ public class home_fagMvpModel {
 
 
     private void requestMainData(boolean isShowDialog) {
-        ArrayList<TemplateType>data=new ArrayList<>();
-        for (int i=0;i<3;i++){
-            TemplateType type=new TemplateType();
-            type.setName("测试1");
-            data.add(type);
-        }
-        callback.setFragmentList(data);
+//        ArrayList<TemplateType>data=new ArrayList<>();
+//        for (int i=0;i<3;i++){
+//            TemplateType type=new TemplateType();
+//            type.setName("测试1");
+//            data.add(type);
+//        }
+//        callback.setFragmentList(data);
 
 
-//        HashMap<String, String> params = new HashMap<>();
-//        Observable ob = Api.getDefault().getTemplateType(BaseConstans.getRequestHead(params));
-//        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<TemplateType>>(context) {
-//            @Override
-//            protected void _onError(String message) {
-//                ToastUtil.showToast(message);
-//            }
-//
-//            @Override
-//            protected void _onNext(List<TemplateType> data) {
-//
-//                callback.setFragmentList(data);
-//
-//            }
-//        }, "mainData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, true, true, isShowDialog);
+        HashMap<String, String> params = new HashMap<>();
+        Observable ob = Api.getDefault().getTemplateType(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<TemplateType>>(context) {
+            @Override
+            protected void _onError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(List<TemplateType> data) {
+
+                callback.setFragmentList(data);
+
+            }
+        }, "mainData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, true, true, isShowDialog);
     }
 
 

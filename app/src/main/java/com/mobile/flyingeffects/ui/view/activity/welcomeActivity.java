@@ -9,11 +9,20 @@ import android.support.annotation.NonNull;
 
 import com.mobile.flyingeffects.R;
 import com.mobile.flyingeffects.base.BaseActivity;
+import com.mobile.flyingeffects.http.Api;
+import com.mobile.flyingeffects.http.HttpUtil;
 import com.mobile.flyingeffects.utils.PermissionUtil;
 import com.mobile.flyingeffects.utils.ToastUtil;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import rx.Observable;
 
 public class welcomeActivity extends BaseActivity {
 
@@ -116,6 +125,8 @@ public class welcomeActivity extends BaseActivity {
                 showSplashAd();
             }
     }
+
+
 
 
 
