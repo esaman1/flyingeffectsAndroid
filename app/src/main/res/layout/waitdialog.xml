@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/loading"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+
+    <!--<ImageView-->
+    <!--android:id="@+id/waitdialog_img"-->
+    <!--android:layout_width="60dp"-->
+    <!--android:layout_height="60dp"-->
+    <!--android:layout_alignParentTop="true"-->
+    <!--android:layout_centerHorizontal="true"-->
+    <!--android:background="@drawable/animationlist_watingdilog"-->
+    <!--android:contentDescription="@null" />-->
+
+
+    <LinearLayout
+
+        android:layout_width="@dimen/dp_81"
+        android:background="@drawable/strok_all_write_full_corner"
+        android:layout_height="@dimen/dp_81"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <!--<ProgressBar-->
+        <!--android:id="@+id/progressbar"-->
+        <!--style="@style/mProgress_circle"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="18dp"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:progressDrawable="@drawable/progressbar_preview" />-->
+
+        <com.wang.avi.AVLoadingIndicatorView
+            android:id="@+id/avi"
+            style="@style/AVLoadingIndicatorView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:indicatorColor="#FEE131"
+            app:indicatorName="LineScaleIndicator" />
+
+
+        <TextView
+            android:id="@+id/tv_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="加载中..."
+            android:textColor="@color/dark_gray"
+            android:textSize="@dimen/text_micro_size" />
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

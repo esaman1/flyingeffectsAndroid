@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="colorPrimary">#009cFF</color>
+    <color name="homeBaseColor">#F0F5FD</color>
+    <color name="videoDetailBaseColor">#F7F7F7</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorSoftPrimary">#8593DE</color>
+    <color name="green">#7DCC86</color>
+    <color name="line_color">#F5F5F8</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="dark_gray">#AAAAAA</color>
+    <color name="home_navigation_dark_gray">#BBBBBB</color>
+    <color name="theme_toast">#112339</color>
+    <color name="soft_gray">#E1E1E1</color>
+    <color name="soft_gray_solid">#F2F2F2</color>
+    <color name="transparent">#00000000</color>
+    <color name="black">#000000</color>
+    <color name="soft_text">#999999</color>
+    <color name="video_detail_black">#828A9A</color>
+    <color name="home_item_select">#009cFF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="baseBackground">#FBFBFB</color>
+    <color name="cityBaseColor">#F0F4FD</color>
+
+
+    <!--水波纹或5.0以下选择器颜色-->
+    <color name="tabBackground">#777D7D7D</color>
+    <color name="colorWhite">#ffffffff</color>
+    <color name="colorPageBg">#f2f4f5</color>
+    <!--tab标签栏文字的颜色-->
+    <color name="colorTabText">#585858</color>
+
+    <color name="orange_color">#ff5e52</color>
+    <color name="home_orange">#F3996A</color>
+
+    <!--底部导航-->
+    <color name="tab_gb">#F3F5F4</color>
+    <color name="tab_normal_color">#515051</color>
+    <color name="tab_selected_color">#D33D3C</color>
+
+    <color name="soft_color">#D6D6D6</color>
+
+    <!--仿微信聊天的顏色-->
+    <color name="colorRedBg">#fa5148</color>
+
+    <!--透明黑色-->
+    <color name="colorTransplantBlack">#80000000</color>
+
+
+    <color name="stroke_soft_gray">#F5F5F5</color>
+
+
+    <!--kadian base-->
+    <color name="base_orange">#FF9400</color>
+    <color name="base_green">#3DD3AD</color>
+    <color name="base_blue">#4CB8C4</color>
+    <color name="base_gray">#C2D6D7</color>
+    <color name="base_button_black">#0d333b</color>
+    <color name="base_button_gray">#91acaf</color>
+    <color name="base_button_blue">#47c7f0</color>
+    <color name="base_black">#333333</color>
+
+    <!--login-->
+    <color name="login_tourist">#FF904400</color>
+    <color name="login_no_account">#91acaf</color>
+
+    <color name="bg_f2f5f9">#f2f5f9</color>
+    <color name="blue_0b84d3">#0b84d3</color>
+
+
+    <!--SmartRefreshLayout-->
+    <color name="stroke_e2e6eb">#e2e6eb</color>
+    <color name="text_7d8496">#7d8496</color>
+
+    <!--support -->
+    <color name="support_bg">#f1f1f1</color>
+    <color name="support_name_color">#0d333b</color>
+    <color name="support_time_color">#91ACAF</color>
+
+
+
+    <!--me-->
+
+
+
+
+
+
+    <!--F4F4F4 -->
+    <color name="me_view_line">#F4F4F4</color>
+
+
+
+
+
+</resources>

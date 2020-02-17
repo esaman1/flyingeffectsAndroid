@@ -1,0 +1,191 @@
+
+apply plugin: 'com.android.application'
+
+android {
+
+    signingConfigs {
+        realse {
+            storeFile file('../cloudpacket.jks')
+            storePassword '123456'
+            keyPassword '123456'
+            keyAlias = 'cloudpacket'
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+        debug {
+            storeFile file('../cloudpacket.jks')
+            storePassword '123456'
+            keyPassword '123456'
+            keyAlias = 'cloudpacket'
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+    }
+
+
+
+    aaptOptions.cruncherEnabled = false //解决分包后打relase 出现了问题
+    aaptOptions.useNewCruncher = false
+    compileSdkVersion 28
+
+
+    defaultConfig {
+        applicationId application_id
+        multiDexEnabled true  //分包支持
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode Integer.parseInt(default_versionCode)
+        versionName default_versionName
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [UMENG_CHANNEL_VALUE: "umeng"]//添加一个默认渠道号  2018-6-19
+        flavorDimensions "versionCode" //版本名后面添加一句话，意思就是flavor dimension 它的维度就是该版本号，这样维度就是都是统一的了
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a", "x86", "x86_64"
+        }
+    }
+
+
+    buildTypes {
+        debug {
+            //是否混淆
+            minifyEnabled false
+            zipAlignEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+
+//            buildConfigField "String", "API_HOST", CSURL
+        }
+//        release {
+////            shrinkResources true  // 移除无用的resource文件  和minifyEnabled相互依赖，需要一起用
+////            minifyEnabled true //混淆处理
+//            zipAlignEnabled true
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            buildConfigField "String", "API_HOST", PRODUCTIONURL
+//        }
+
+
+        release {
+            signingConfig signingConfigs.realse
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+//        android.applicationVariants.all { variant ->
+//            variant.outputs.all { output ->
+//                outputFileName = defaultAppName
+//                //output.outputFile=new File(,outputFileName);
+//            }
+//        }
+
+
+    }
+
+
+//    sourceSets.main {
+//        jniLibs.srcDir 'src/main/jniLibs'
+//    }
+
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
+    buildToolsVersion = '28.0.3'
+
+
+//    configurations.all {  //设置所有模块都有28版本
+//        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+//            def requested = details.requested
+//            if (requested.group == 'com.android.support') {
+//                if (!requested.name.startsWith("multidex")) {
+//                    details.useVersion '28.0.0'
+//                }
+//            }
+//        }
+//    }
+
+
+
+
+}
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation 'junit:junit:4.12'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
+    //add
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    //以下为rxjava+rxandroid+retrofit+hawk
+    implementation 'io.reactivex:rxjava:1.1.0'
+    implementation 'io.reactivex:rxandroid:1.1.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
+    implementation 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
+    implementation 'com.squareup.retrofit2:adapter-rxjava:2.0.0-beta4'
+    implementation 'com.orhanobut:hawk:2.0.0-Alpha'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    // eventbus
+    implementation 'de.greenrobot:eventbus:3.0.0-beta1'
+    //顶部导航栏
+    implementation 'com.astuetz:pagerslidingtabstrip:1.0.1'
+//    //上拉加载框架
+//    implementation project(':PullToRefresh')
+    //黄油手
+    implementation 'com.jakewharton:butterknife:8.5.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+
+    //RecyclerView
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
+    //滑动删除 能够完美兼容BaseRecyclerViewAdapterHelper
+    implementation 'com.github.anzaizai:EasySwipeMenuLayout:1.1.4'
+    //    //加载框动画
+    //    implementation 'com.wang.avi:library:1.0.1'
+    //顶部黑色兼容
+    implementation 'com.githang:status-bar-compat:0.7'
+    //分包支持 配合   multiDexEnabled true    支持5.0以下的
+    implementation 'com.android.support:multidex:1.0.3'
+//    implementation files('libs/photeview.jar')
+//    implementation files('libs/umeng-common-2.0.2.jar')
+//    implementation files('libs/umeng-share-core-6.9.4.jar')
+//    implementation files('libs/umeng-share-QQ-simplify-6.9.4.jar')
+//    implementation files('libs/umeng-share-wechat-simplify-6.9.4.jar')
+//    implementation files('libs/umeng-shareboard-widget-6.9.4.jar')
+//    implementation files('libs/umeng-sharetool-6.9.4.jar')
+    //    implementation 'com.rocedar.android.base:glide:1.0.00'
+    implementation 'com.squareup.okhttp3:okhttp:3.6.0'
+    implementation 'com.squareup.okio:okio:1.7.0'
+    implementation 'com.github.bumptech.glide:glide:4.7.1'
+    //水平进度条
+    implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
+
+    //加载控件
+    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-14'
+    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-14'
+
+//
+//    //这2个是ve 视频制作的关联包
+////    implementation project(path: ':matisse')
+//    implementation project(path: ':sxve')
+
+//
+    //FlycoTabLayout
+    implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
+
+    //好看的加载框
+    implementation 'com.wang.avi:library:2.1.3'
+    //框架要求的
+    implementation 'com.google.code.gson:gson:2.8.5'
+    //视频播放器
+    implementation 'com.shuyu:GSYVideoPlayer:6.0.3'
+
+
+
+}
+
+

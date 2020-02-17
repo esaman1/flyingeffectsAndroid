@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:gravity="center_horizontal"
+
+    android:layout_height="wrap_content">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:paddingStart="13dp"
+        android:paddingEnd="13dp"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/tv_title"
+            android:textSize="14sp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:textStyle="bold"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:textColor="#333333"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:text="决胜法庭"
+            android:layout_height="wrap_content"/>
+
+
+
+        <ImageView
+            android:src="@mipmap/select"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+
+
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#D8D8D8"/>
+
+</LinearLayout>

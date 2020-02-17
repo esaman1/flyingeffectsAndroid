@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="App_Attrs">
+        <!-- 默认背景图 -->
+        <attr name="baseBackground" format="color|reference" />
+    </declare-styleable>
+
+
+    <declare-styleable name="AutoNewLineLayout">
+        <attr name="horizontalSpace" format="dimension|reference" />
+
+        <attr name="vertivalSpace" format="dimension|reference" />
+    </declare-styleable>
+
+
+
+
+    <declare-styleable name="MaskImage">
+        <!-- Identifier for the image that represents the Imageview's content. -->
+        <attr name="image" format="reference" />
+        <!-- crop Imageview's content same as mask -->
+        <attr name="mask" format="reference" />
+
+    </declare-styleable>
+
+
+    <declare-styleable name="RoundImageView">
+        <attr name="isNotNeedDarkBg" format="boolean" />
+        <attr name="type" format="enum">
+            <enum name="circle" value="1" />
+            <enum name="round" value="2" />
+        </attr>
+        <attr name="radius" format="dimension" />
+
+    </declare-styleable>
+
+
+    <declare-styleable name="Banner">
+        <attr name="delay_time" format="integer" />
+        <attr name="scroll_time" format="integer" />
+        <attr name="is_auto_play" format="boolean" />
+        <attr name="title_background" format="color|reference" />
+        <attr name="title_textcolor" format="color" />
+        <attr name="title_textsize" format="dimension" />
+        <attr name="title_height" format="dimension" />
+        <attr name="indicator_width" format="dimension" />
+        <attr name="indicator_height" format="dimension" />
+        <attr name="indicator_margin" format="dimension" />
+        <attr name="indicator_drawable_selected" format="reference" />
+        <attr name="indicator_drawable_unselected" format="reference" />
+        <attr name="banner_default_image" format="reference" />
+        <!-- 设置左右2边缩进距离 -->
+        <attr name="pageMargin" format="dimension" />
+    </declare-styleable>
+
+
+
+</resources>

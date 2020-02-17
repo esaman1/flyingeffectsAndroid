@@ -1,0 +1,213 @@
+<resources>
+
+
+    <!--<style name="CheckBoxStyle" parent="@android:style/Widget.CompoundButton.CheckBox">-->
+        <!--<item name="android:button">@null</item>-->
+        <!--<item name="android:background">@drawable/checkbox_delete_message_center</item>-->
+    <!--</style>-->
+
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/dark_gray</item>
+        <!--<item name="android:background">@color/baseBackground</item>-->
+        <item name="colorPrimaryDark">@color/dark_gray</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+
+        <!--&lt;!&ndash;瑰珀&ndash;&gt;-->
+        <!--<item name="RCDarkColor">#007cff</item>-->
+        <!--<item name="RCLightColor">#F7F7F7</item>-->
+        <!--<item name="RCButtonRadius">10dp</item>-->
+        <!--<item name="RCHeadBG">@color/white</item>-->
+
+
+    </style>
+
+    <!-- radio自定义 -->
+    <style name="TransparentTheme" parent="android:style/Theme.Dialog">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowCloseOnTouchOutside">false</item>
+
+    </style>
+
+
+
+
+    <!--黑色透明主题-->
+    <style name="radiobutton" >
+        <!--<item name="android:drawableLeft">@drawable/radio</item>-->
+        <item name="android:drawablePadding">7dp</item>
+        <item name="android:button">@null</item>
+    </style>
+
+    <!--黑色透明主题-->
+    <style name="AllTransparentTheme" parent="android:style/Theme.Translucent">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowCloseOnTouchOutside">false</item>
+
+    </style>
+
+    <style name="DarkTransParent" parent="android:style/Theme.Translucent">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/colorTransplantBlack</item>
+        <item name="android:windowCloseOnTouchOutside">false</item>
+    </style>
+
+
+    <style name="Theme_Transparent" parent="android:Theme.DeviceDefault.Light.Dialog">
+    <item name="android:windowIsTranslucent">true</item>
+    <item name="android:windowBackground">@android:color/transparent</item>
+    <item name="android:windowContentOverlay">@null</item>
+    <item name="android:windowNoTitle">true</item>
+
+    </style>
+
+
+
+
+
+    <style name="NoAnimation">
+        <item name="android:activityOpenEnterAnimation">@null</item>
+        <item name="android:activityOpenExitAnimation">@null</item>
+        <item name="android:activityCloseEnterAnimation">@null</item>
+        <item name="android:activityCloseExitAnimation">@null</item>
+        <item name="android:taskOpenEnterAnimation">@null</item>
+        <item name="android:taskOpenExitAnimation">@null</item>
+        <item name="android:taskCloseEnterAnimation">@null</item>
+        <item name="android:taskCloseExitAnimation">@null</item>
+        <item name="android:taskToFrontEnterAnimation">@null</item>
+        <item name="android:taskToFrontExitAnimation">@null</item>
+        <item name="android:taskToBackEnterAnimation">@null</item>
+        <item name="android:taskToBackExitAnimation">@null</item>
+    </style>
+
+
+    <!--加载框样式-->
+    <style name="loading_dialog" parent="android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+
+    <!--<style name="messageCenterdialog" parent="@android:style/Theme.Dialog">-->
+        <!--<item name="android:windowFrame">@null</item>&lt;!&ndash;边框&ndash;&gt;-->
+        <!--<item name="android:windowIsFloating">true</item>&lt;!&ndash;是否浮现在activity之上&ndash;&gt;-->
+        <!--<item name="android:windowIsTranslucent">false</item>&lt;!&ndash;半透明&ndash;&gt;-->
+        <!--<item name="android:windowNoTitle">true</item>&lt;!&ndash;无标题&ndash;&gt;-->
+        <!--<item name="android:windowBackground">@color/transparent</item>&lt;!&ndash;背景透明&ndash;&gt;-->
+        <!--<item name="android:backgroundDimEnabled">false</item>&lt;!&ndash;模糊&ndash;&gt;-->
+    <!--</style>-->
+
+
+    <!--加载框样式-->
+    <style name="mProgress_circle">
+        <item name="android:indeterminateDrawable">@drawable/progressbar_preview</item>
+        <item name="android:minWidth">30dp</item>
+        <item name="android:minHeight">30dp</item>
+        <item name="android:maxWidth">60dp</item>
+        <item name="android:maxHeight">60dp</item>
+    </style>
+
+
+    <!--&lt;!&ndash; loading 样式 &ndash;&gt;-->
+    <!--<style name="loadstyle" parent="@android:style/Theme.Dialog">-->
+        <!--<item name="android:windowFrame">@null</item>-->
+        <!--<item name="android:windowIsFloating">true</item>-->
+        <!--<item name="android:windowIsTranslucent">false</item>-->
+        <!--<item name="android:windowNoTitle">true</item>-->
+        <!--<item name="android:windowBackground">@drawable/iosstyle_halftransparent_bg</item>-->
+        <!--<item name="android:backgroundDimEnabled">true</item>-->
+
+
+    <!--</style>-->
+
+
+    <style name="Theme.Yasin" parent="@android:style/Theme.Holo.Light.DarkActionBar">
+        <item name="android:actionBarItemBackground">@color/colorPrimaryDark</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Yasin</item>
+        <item name="android:windowBackground">@color/colorPrimaryDark</item>
+        <!-- Light.DarkActionBar specific -->
+    </style>
+
+
+    <style name="ActionBar.Solid.Yasin" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="android:backgroundStacked">@color/colorPrimaryDark</item>
+        <item name="android:backgroundSplit">@color/colorPrimaryDark</item>
+        <item name="android:progressBarStyle">@color/colorPrimaryDark</item>
+    </style>
+
+
+    <!-- 设置弹出窗口的属性，frame叠加，isfloat是否浮动，tarnslucent是否半透明，dim是背景是否变暗 -->
+    <style name="Theme_audioDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+
+    <style name="TranslucentTheme" parent="AppTheme">
+        <!--在Android 4.4之前的版本上运行，直接跟随系统主题-->
+    </style>
+
+
+
+
+    <style name="ToolbarTheme" parent="AppTheme">
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textSize">@dimen/sp_19</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+
+    <style name="add_dialog" parent="@android:style/Theme.Dialog">   //剪切视频
+        <item name="android:windowFrame">@null</item><!-- 边框 -->
+        <item name="android:windowIsFloating">true</item><!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsTranslucent">false</item><!-- 半透明 -->
+        <item name="android:windowNoTitle">true</item><!-- 无标题 -->
+        <item name="android:windowBackground">@color/transparent</item><!-- 自己想要的背景 -->
+        <item name="android:backgroundDimEnabled">false</item><!-- 模糊 -->
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+
+
+    <style name="gaussianDialog" parent="@android:style/Theme.Dialog">   //剪切视频
+        <item name="android:windowFrame">@null</item><!-- 边框 -->
+        <item name="android:windowIsFloating">true</item><!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsTranslucent">false</item><!-- 半透明 -->
+        <item name="android:windowNoTitle">true</item><!-- 无标题 -->
+        <item name="android:windowBackground">@color/colorTransplantBlack</item><!-- 自己想要的背景 -->
+        <item name="android:backgroundDimEnabled">false</item><!-- 模糊 -->
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+
+
+    <!--<style name="preview_dialog" parent="@android:style/Theme.Dialog">   //剪切视频-->
+        <!--<item name="android:windowFrame">@null</item>&lt;!&ndash; 边框 &ndash;&gt;-->
+        <!--<item name="android:windowIsFloating">true</item>&lt;!&ndash; 是否浮现在activity之上 &ndash;&gt;-->
+        <!--<item name="android:windowIsTranslucent">false</item>&lt;!&ndash; 半透明 &ndash;&gt;-->
+        <!--<item name="android:windowNoTitle">true</item>&lt;!&ndash; 无标题 &ndash;&gt;-->
+        <!--&lt;!&ndash;<item name="android:windowBackground">#90000000</item>&lt;!&ndash; 自己想要的背景 &ndash;&gt;&ndash;&gt;-->
+        <!--<item name="android:backgroundDimEnabled">false</item>&lt;!&ndash; 模糊 &ndash;&gt;-->
+        <!--<item name="windowNoTitle">true</item>-->
+        <!--<item name="android:windowFullscreen">true</item>-->
+    <!--</style>-->
+
+
+
+</resources>

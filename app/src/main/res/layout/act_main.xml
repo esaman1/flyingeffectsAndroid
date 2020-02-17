@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_na"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+   >
+
+
+
+            <!--固定栏-->
+            <LinearLayout
+                android:id="@+id/mall_title_fl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:layout_marginBottom="@dimen/dp_17"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/dp_13">
+
+
+                <ImageView
+                    android:id="@+id/main_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/app_name"
+                   />
+
+
+                <!--<android.support.design.widget.TabLayout-->
+                <!--android:id="@+id/tl_tabs"-->
+                <!--android:paddingStart="@dimen/dp_30"-->
+                <!--app:tabMinWidth="@dimen/dp_10"-->
+                <!--app:tabMaxWidth="@dimen/dp_100"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="40dp" />-->
+
+
+                <!--<com.flyco.tablayout.SlidingTabLayout-->
+                    <!--android:id="@+id/tl_tabs"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="@dimen/dp_40"-->
+                    <!--android:layout_marginStart="@dimen/dp_30"-->
+                    <!--app:tl_indicator_color="#FEE131"-->
+                    <!--app:tl_indicator_width="@dimen/dp_12"-->
+                    <!--app:tl_tab_width="@dimen/dp_45"-->
+                    <!--app:tl_textBold="BOTH"-->
+                    <!--app:tl_textSelectColor="@color/base_black"-->
+                    <!--app:tl_textUnselectColor="#BBBBBB"-->
+                    <!--app:tl_textsize="@dimen/sp_16" />-->
+
+                <com.flyco.tablayout.SlidingTabLayout
+                    android:id="@+id/tl_tabs"
+                    android:layout_width="wrap_content"
+                    app:tl_indicator_color="#FEE131"
+                    app:tl_textBold="BOTH"
+                    app:tl_textsize="@dimen/sp_16"
+                    android:layout_height="@dimen/dp_40"
+                    app:tl_divider_padding="@dimen/dp_5"
+                    android:layout_marginStart="@dimen/dp_23"
+                    app:tl_indicator_corner_radius="@dimen/dp_5"
+                    app:tl_indicator_height="@dimen/dp_6"
+                    app:tl_indicator_width="@dimen/dp_12"
+                    app:tl_tab_padding="@dimen/dp_7"
+                    app:tl_textUnselectColor="#BBBBBB"
+                    app:tl_textSelectColor="@color/base_black"
+                    />
+
+
+
+
+            </LinearLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+           />
+
+
+
+</LinearLayout>
