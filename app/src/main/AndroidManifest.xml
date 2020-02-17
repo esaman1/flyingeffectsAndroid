@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.mobile.CloudMovie">
+    package="com.mobile.flyingeffects">
 
 
 
@@ -44,7 +44,7 @@
 
 
     <application
-        android:name=".base.BaseApplication"
+        android:name="com.mobile.flyingeffects.base.BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/logo"
         android:label="@string/app_name"
@@ -64,7 +64,7 @@
 
 
         <activity
-            android:name=".ui.view.activity.welcomeActivity"
+            android:name="com.mobile.flyingeffects.ui.view.activity.welcomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" >
         <intent-filter>
@@ -78,7 +78,7 @@
 
 
         <activity
-            android:name=".ui.view.activity.HomeMainActivity"
+            android:name="com.mobile.flyingeffects.ui.view.activity.HomeMainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
@@ -87,12 +87,12 @@
 
 
         <activity
-            android:name=".ui.view.activity.updateApkActivity"
+            android:name="com.mobile.flyingeffects.ui.view.activity.updateApkActivity"
             android:theme="@style/TransparentTheme" />
 
 
         <activity
-            android:name=".ui.view.activity.searchActivity"
+            android:name="com.mobile.flyingeffects.ui.view.activity.searchActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
@@ -105,19 +105,19 @@
 
 
         <activity
-            android:name=".ui.view.activity.loginActivity"
+            android:name="com.mobile.flyingeffects.ui.view.activity.loginActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
 
         <activity
-            android:name=".ui.view.activity.regiestActivity"
+            android:name="com.mobile.flyingeffects.ui.view.activity.regiestActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
 
         <activity
-            android:name=".ui.view.activity.forgetActivity"
+            android:name="com.mobile.flyingeffects.ui.view.activity.forgetActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 

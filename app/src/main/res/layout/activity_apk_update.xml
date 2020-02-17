@@ -24,7 +24,7 @@
             android:contentDescription="@string/app_name"
             android:padding="20dp"
             android:scaleType="centerCrop"
-            android:src="@mipmap/update_bj" />
+            android:src="@mipmap/ic_launcher" />
 
 
         <TextView
@@ -94,7 +94,7 @@
         android:layout_height="28dp"
         android:layout_marginTop="40dp"
         android:contentDescription="@string/app_name"
-        android:src="@mipmap/close_other_app" />
+        android:src="@mipmap/ic_launcher" />
 
 
 </LinearLayout>

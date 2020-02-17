@@ -80,7 +80,7 @@
                 android:layout_height="14dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="20dp"
-                android:background="@mipmap/login_email"
+                android:background="@mipmap/ic_launcher"
                 android:contentDescription="@string/app_name"
                 android:visibility="visible" />
 
@@ -137,7 +137,7 @@
                 android:id="@+id/iv_verification"
                 android:layout_width="18dp"
                 android:layout_height="19dp"
-                android:src="@mipmap/login_mail"
+                android:src="@mipmap/ic_launcher"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="20dp"
                 android:contentDescription="@string/app_name"
@@ -184,7 +184,7 @@
                 android:layout_height="19dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="20dp"
-                android:background="@mipmap/login_password"
+                android:background="@mipmap/ic_launcher"
                 android:contentDescription="@string/app_name"
                 android:visibility="visible" />
 
@@ -228,7 +228,7 @@
                 android:layout_height="19dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="20dp"
-                android:background="@mipmap/login_password"
+                android:background="@mipmap/ic_launcher"
                 android:contentDescription="@string/app_name"
                 android:visibility="visible" />
 
@@ -272,7 +272,7 @@
                 android:layout_height="19dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="20dp"
-                android:background="@mipmap/invitation"
+                android:background="@mipmap/ic_launcher"
                 android:contentDescription="@string/app_name"
                 android:visibility="visible" />
 

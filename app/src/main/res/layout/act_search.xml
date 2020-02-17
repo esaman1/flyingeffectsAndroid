@@ -33,7 +33,7 @@
                 android:layout_marginStart="10dp"
                 android:background="#00000000"
                 android:contentDescription="@string/app_name"
-                android:src="@mipmap/home_head_search" />
+                android:src="@mipmap/ic_launcher" />
             <EditText
                 android:id="@+id/ed_text"
                 android:layout_width="match_parent"
