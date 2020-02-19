@@ -2,6 +2,7 @@ package com.mobile.flyingeffects.http;
 
 import com.mobile.flyingeffects.enity.HttpResult;
 import com.mobile.flyingeffects.enity.TemplateType;
+import com.mobile.flyingeffects.enity.new_fag_template_item;
 
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,10 @@ public interface ApiService {
     @POST("/api/v1.draft/mbtype")
     Observable<HttpResult<List<TemplateType>>> getTemplateType(@FieldMap Map<String, String> params);
 
+
+    @FormUrlEncoded
+    @POST("/api/v2.draft/template")
+    Observable<HttpResult<List<new_fag_template_item>>> getTemplate(@FieldMap Map<String, String> params);
 
 
 

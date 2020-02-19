@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.mobile.flyingeffects.R;
+import com.mobile.flyingeffects.base.ActivityLifeCycleEvent;
 import com.mobile.flyingeffects.constans.BaseConstans;
 import com.mobile.flyingeffects.enity.new_fag_template_item;
 import com.mobile.flyingeffects.http.Api;
@@ -26,15 +27,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import rx.Observable;
+import rx.subjects.PublishSubject;
 
 
 public class home_fag_itemMvpModel {
     private homeItemMvpCallback callback;
     private Context context;
     private int bannerCount = 3; //banner的个数
-    private ImageView[] img_dian;
-    private Timer timer;
-    private boolean isExecuteViewPager = true; //是否可以执行viewpager
+    public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private SmartRefreshLayout smartRefreshLayout;
     private boolean isRefresh = true;
     private ArrayList<new_fag_template_item> listData = new ArrayList<>();
@@ -47,16 +47,6 @@ public class home_fag_itemMvpModel {
         this.callback = callback;
     }
 
-    /**
-     * user :TongJu  ;描述：设置选中
-     * 时间：2018/5/7
-     **/
-    public void ChoosePoint(int ChoosePosition) {
-        for (int i = 0; i < bannerCount; i++) {
-            img_dian[i].setImageResource(R.mipmap.point_write_lucency);
-        }
-        img_dian[ChoosePosition].setImageResource(R.mipmap.point_write_lucency);
-    }
 
 
     public void requestData(String templateId, int num) {
@@ -128,7 +118,6 @@ public class home_fag_itemMvpModel {
                     smartRefreshLayout.setEnableLoadMore(false);
                 }
 
-                insertionAdvertising(data);
                 listData.addAll(data);
                 callback.showData(listData);
             }

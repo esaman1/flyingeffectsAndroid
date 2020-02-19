@@ -9,18 +9,14 @@ import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.mobile.flyingeffects.R;
-import com.mobile.flyingeffects.adapter.home_img_adapter;
 import com.mobile.flyingeffects.adapter.main_recycler_adapter;
 import com.mobile.flyingeffects.base.BaseFragment;
-import com.mobile.flyingeffects.constans.BaseConstans;
 import com.mobile.flyingeffects.enity.new_fag_template_item;
 import com.mobile.flyingeffects.ui.interfaces.view.HomeItemMvpView;
 import com.mobile.flyingeffects.ui.presenter.home_fag_itemMvpPresenter;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 
 import java.util.ArrayList;
@@ -41,6 +37,8 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, main
     private int actTag;
     private static boolean canClickedItem = true;
     private int nowChooseItem;
+    @BindView(R.id.smart_refresh_layout)
+    SmartRefreshLayout smartRefreshLayout;
 
 
     @Override
@@ -59,7 +57,7 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, main
         }
         initRecycler();
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
-        Presenter.requestData(templateId, num);
+        Presenter.requestData(templateId, 0);
     }
 
 
@@ -133,14 +131,8 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, main
     }
 
     @Override
-    public void isShowData() {
-        if (getActivity() != null) {
-//            if (isShowData) {
-//                lin_show_nodata.setVisibility(View.VISIBLE);
-//            } else {
-//                lin_show_nodata.setVisibility(View.GONE);
-//            }
-        }
+    public void isShowData(boolean isShow) {
+
     }
 
 

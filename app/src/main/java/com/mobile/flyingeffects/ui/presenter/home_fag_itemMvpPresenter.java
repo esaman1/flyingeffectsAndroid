@@ -25,10 +25,6 @@ public class home_fag_itemMvpPresenter extends BasePresenter implements homeItem
 
 
 
-    public void CoosePoint(int ChoosePosition) {
-        homeItemModel.ChoosePoint(ChoosePosition);
-    }
-
     public void requestData(String templateId, int num) {
         homeItemModel.requestData(templateId, num);
     }
@@ -55,7 +51,6 @@ public class home_fag_itemMvpPresenter extends BasePresenter implements homeItem
 
     @Override
     public void showNoData(boolean isShowData) {
-        mvp_view.showNoData(isShowData);
     }
 
 }
