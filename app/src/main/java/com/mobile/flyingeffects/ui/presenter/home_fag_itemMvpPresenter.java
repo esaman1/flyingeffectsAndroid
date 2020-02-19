@@ -5,9 +5,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.mobile.flyingeffects.base.mvpBase.BasePresenter;
+import com.mobile.flyingeffects.enity.new_fag_template_item;
 import com.mobile.flyingeffects.ui.interfaces.model.homeItemMvpCallback;
 import com.mobile.flyingeffects.ui.interfaces.view.HomeItemMvpView;
 import com.mobile.flyingeffects.ui.model.home_fag_itemMvpModel;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 
@@ -20,34 +22,21 @@ public class home_fag_itemMvpPresenter extends BasePresenter implements homeItem
         homeItemModel = new home_fag_itemMvpModel(context, this);
     }
 
-    public void initPoint(LinearLayout initPoint, int count) {
 
-        homeItemModel.initPoint(initPoint,count);
-    }
-
-    public void startCarousel(int interval, int allPageCount) {
-        homeItemModel.startCarousel(interval, allPageCount);
-    }
-
-
-    public void setonPageScrollStateChanged(int state){
-        homeItemModel.setonPageScrollStateChanged(state);
-    }
 
 
     public void CoosePoint(int ChoosePosition) {
         homeItemModel.ChoosePoint(ChoosePosition);
     }
 
-    public void requestData(){
-        homeItemModel.requestData();
+    public void requestData(String templateId, int num) {
+        homeItemModel.requestData(templateId, num);
+    }
+    public void initSmartRefreshLayout(SmartRefreshLayout smartRefreshLayout) {
+        homeItemModel.initSmartRefreshLayout(smartRefreshLayout);
     }
 
 
-    @Override
-    public void setViewPageShowItem(int pageNumber) {
-        mvp_view.setViewPageShowItem(pageNumber);
-    }
 
     @Override
     public void isOnRefresh() {
@@ -60,7 +49,13 @@ public class home_fag_itemMvpPresenter extends BasePresenter implements homeItem
     }
 
     @Override
-    public void setViewPagerAdapter(ArrayList<ImageView> list) {
-        mvp_view.setViewPagerAdapter(list);
+    public void showData(ArrayList<new_fag_template_item> list) {
+
     }
+
+    @Override
+    public void showNoData(boolean isShowData) {
+        mvp_view.showNoData(isShowData);
+    }
+
 }

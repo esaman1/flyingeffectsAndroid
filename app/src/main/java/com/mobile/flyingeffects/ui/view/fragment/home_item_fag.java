@@ -1,10 +1,13 @@
 package com.mobile.flyingeffects.ui.view.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -12,30 +15,32 @@ import android.widget.LinearLayout;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.mobile.flyingeffects.R;
 import com.mobile.flyingeffects.adapter.home_img_adapter;
+import com.mobile.flyingeffects.adapter.main_recycler_adapter;
 import com.mobile.flyingeffects.base.BaseFragment;
+import com.mobile.flyingeffects.constans.BaseConstans;
+import com.mobile.flyingeffects.enity.new_fag_template_item;
 import com.mobile.flyingeffects.ui.interfaces.view.HomeItemMvpView;
 import com.mobile.flyingeffects.ui.presenter.home_fag_itemMvpPresenter;
-import com.mobile.flyingeffects.view.DecoratorViewPager;
-import com.mobile.flyingeffects.view.ViewPagerScroller;
+
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 
 
-public class home_item_fag extends BaseFragment implements HomeItemMvpView, View.OnClickListener {
+public class home_item_fag extends BaseFragment implements HomeItemMvpView, main_recycler_adapter.showOnitemClick ,View.OnClickListener {
 
-    private BaseQuickAdapter hotvideo_recyclerlist_adapter;
-    private DecoratorViewPager viewPager;
     private home_fag_itemMvpPresenter Presenter;
-    private View RecyclerViewHeader;
-    private LinearLayout ll_add_point;
-//    private LinearLayoutManager linearLayoutManager;
     @BindView(R.id.RecyclerView)
      RecyclerView  recyclerView;
-
-  private   int actTag;
-
+    private main_recycler_adapter adapter;
+    private List<new_fag_template_item> allData = new ArrayList<>();
+    private String templateId = "";
+    private StaggeredGridLayoutManager layoutManager;
+    private int actTag;
+    private static boolean canClickedItem = true;
+    private int nowChooseItem;
 
 
     @Override
@@ -49,14 +54,37 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, View
         Presenter = new home_fag_itemMvpPresenter(getActivity(), this);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-//            templateId = bundle.getString("id");
+            templateId = bundle.getString("id");
             actTag = bundle.getInt("num");
         }
+        initRecycler();
+        Presenter.initSmartRefreshLayout(smartRefreshLayout);
+        Presenter.requestData(templateId, num);
     }
 
 
     private void initRecycler() {
+        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), this, 0);
+        layoutManager =
+                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(adapter);
+        adapter.setOnItemClickListener((adapter, view, position) -> {
+            if (canClickedItem) {
+                nowChooseItem = position;
+                if (allData.get(position).getDiversion() != null && !allData.get(position).getDiversion().trim().equals("")) {
+                    Uri uri = Uri.parse(allData.get(position).getDiversion());
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                } else {
+//                    Presenter.showBottomSheetDialog(allData.get(position));
+                }
+            }
+        });
     }
+
+
 
 
 
@@ -64,10 +92,6 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, View
     @Override
     protected void initAction() {
     }
-
-
-
-
 
 
 
@@ -109,47 +133,24 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, View
     }
 
     @Override
-    public void setViewPagerAdapter(ArrayList<ImageView> list) {
+    public void isShowData() {
         if (getActivity() != null) {
-            if(actTag==0){
-                home_img_adapter adapter = new home_img_adapter(list, this);
-                viewPager.setAdapter(adapter);
-                ViewPagerScroller scroller = new ViewPagerScroller(getActivity());
-                scroller.setScrollDuration(1000);
-                scroller.initViewPagerScroll(viewPager);  //这个是设置切换过渡时间为2毫秒
-                Presenter.initPoint(ll_add_point, list.size());
-                Presenter.startCarousel(4000, list.size()); //有数据后就启动播放功能
-                Presenter.CoosePoint(0);
-            }
+//            if (isShowData) {
+//                lin_show_nodata.setVisibility(View.VISIBLE);
+//            } else {
+//                lin_show_nodata.setVisibility(View.GONE);
+//            }
         }
-    }
-
-    private int pageNumber;
-    @Override
-    public void setViewPageShowItem(int pageNumber) {
-        this.pageNumber = pageNumber;
-        handler.sendEmptyMessage(100);
-    }
-
-
-    @SuppressLint("HandlerLeak")
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            viewPager.setCurrentItem(pageNumber);
-            super.handleMessage(msg);
-        }
-    };
-
-
-    @Override
-    public void onclickBinnerIndex(int position) {
-
     }
 
 
     @Override
     public void onClick(View view) {
+
+    }
+
+    @Override
+    public void clickItem(int position) {
 
     }
 }

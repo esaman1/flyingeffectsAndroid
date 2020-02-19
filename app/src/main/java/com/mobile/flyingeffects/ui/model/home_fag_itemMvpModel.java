@@ -8,13 +8,24 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.mobile.flyingeffects.R;
+import com.mobile.flyingeffects.constans.BaseConstans;
+import com.mobile.flyingeffects.enity.new_fag_template_item;
+import com.mobile.flyingeffects.http.Api;
+import com.mobile.flyingeffects.http.HttpUtil;
+import com.mobile.flyingeffects.http.ProgressSubscriber;
 import com.mobile.flyingeffects.ui.interfaces.model.homeItemMvpCallback;
 import com.mobile.flyingeffects.utils.LogUtil;
+import com.mobile.flyingeffects.utils.ToastUtil;
+import com.orhanobut.hawk.Hawk;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import rx.Observable;
 
 
 public class home_fag_itemMvpModel {
@@ -24,7 +35,12 @@ public class home_fag_itemMvpModel {
     private ImageView[] img_dian;
     private Timer timer;
     private boolean isExecuteViewPager = true; //是否可以执行viewpager
-
+    private SmartRefreshLayout smartRefreshLayout;
+    private boolean isRefresh = true;
+    private ArrayList<new_fag_template_item> listData = new ArrayList<>();
+    private int selectPage = 1;
+    private String templateId;
+    private int perPageCount; //每一页显示广告的数量
 
     public home_fag_itemMvpModel(Context context, homeItemMvpCallback callback) {
         this.context = context;
@@ -43,100 +59,90 @@ public class home_fag_itemMvpModel {
     }
 
 
-    public void requestData() {
-
-        ArrayList<String> list = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-
-            list.add("");
-        }
-        setViewpager(list);
-    }
-
-
-    private void setViewpager(List<String> data) {
-        ArrayList<ImageView> list = new ArrayList<>();
-        for (int i = 0; i < data.size(); i++) {
-            ImageView iv = new ImageView(context);
-            iv.setImageBitmap(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher));
-//            iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//            Glide.with(context).load(data.get(i).getSlide_pic().getOrigin()).apply(new RequestOptions().placeholder(R.mipmap.loading_bj)).into(iv);
-            iv.setScaleType(ImageView.ScaleType.FIT_XY);
-            list.add(iv);
-        }
-        callback.setViewPagerAdapter(list);
-    }
-
-
-    public void initPoint(LinearLayout ll_addpoint, int count) {
-        bannerCount = count;
-        //清空之前的点
-        ll_addpoint.removeAllViews();
-        //获得新数据后清空之前的image
-        img_dian = new ImageView[count];
-        for (int i = 0; i < count; i++) {
-            img_dian[i] = (ImageView) LayoutInflater.from(context).inflate(R.layout.imageview, ll_addpoint, false);
-            ll_addpoint.addView(img_dian[i]);
-        }
-    }
-
-
-    /**
-     * user :TongJu  ;描述：开启轮播
-     * 时间：2018/5/11
-     **/
-    private TimerTask task;
-    private int ShowPageCount;
-    private int interval;
-    private int allPageCount;
-
-    public void startCarousel(int interval, final int allPageCount) {
-        LogUtil.d("startCarousel", "startCarousel");
-        this.interval = interval;
-        this.allPageCount = allPageCount;
-        if (isExecuteViewPager) {
-            //启动新的timer之前都要确认是否关闭之前的
-            closetimer();
-            timer = new Timer();
-            task = new TimerTask() {
-                public void run() {
-                    ShowPageCount++;
-                    if (ShowPageCount == allPageCount) {
-                        ShowPageCount = 0;
-                    }
-                    LogUtil.d("startCarousel", "=" + ShowPageCount);
-                    callback.setViewPageShowItem(ShowPageCount);
-                }
-            };
-            timer.schedule(task, 2000, interval);
-        }
-    }
-
-    public void setonPageScrollStateChanged(int state) {
-        if (state == ViewPager.SCROLL_STATE_IDLE) {
-            isExecuteViewPager = true;
-            if (timer == null && task == null) {
-                startCarousel(interval, allPageCount);
+    public void requestData(String templateId, int num) {
+        this.templateId = templateId;
+        if (num == 0) {
+            List<new_fag_template_item> data = Hawk.get("FagData"); //得到banner缓存数据
+            if (data != null && data.size() > 0) {
+                listData.addAll(data);
+                callback.showData(listData);
             }
-        } else if (state == ViewPager.SCROLL_STATE_DRAGGING) {
-            //手动滑动的时候
-            closetimer();
-            isExecuteViewPager = false;
+            requestFagData(false, true); //首页杂数据
+        } else {
+            requestFagData(false, true); //首页杂数据
         }
     }
 
 
-    private void closetimer() {
-        if (timer != null) {
-            timer.purge();
-            timer.cancel();
-            timer = null;
-        }
-        if (task != null) {
-            task.cancel();
-            task = null;
-        }
+
+    public void initSmartRefreshLayout(SmartRefreshLayout smartRefreshLayout) {
+        this.smartRefreshLayout = smartRefreshLayout;
+        smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
+            callback.isOnRefresh();
+            isRefresh = true;
+            refreshLayout.setEnableLoadMore(true);
+            selectPage = 1;
+            requestFagData(false, true);
+        });
+        smartRefreshLayout.setOnLoadMoreListener(refresh -> {
+            callback.isOnLoadMore();
+            isRefresh = false;
+            selectPage++;
+            requestFagData(false, false);
+        });
     }
+
+    private void requestFagData(boolean isCanRefresh, boolean isSave) {
+        HashMap<String, String> params = new HashMap<>();
+        LogUtil.d("templateId", "templateId=" + templateId);
+        params.put("classification", templateId);
+        params.put("page", selectPage + "");
+        params.put("pageSize", perPageCount + "");
+        Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
+            @Override
+            protected void _onError(String message) {
+                finishData();
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(List<new_fag_template_item> data) {
+                finishData();
+                if (isRefresh) {
+                    listData.clear();
+                }
+
+                if (isRefresh && data.size() == 0) {
+                    callback.showNoData(true);
+                } else {
+                    callback.showNoData(false);
+                }
+
+                if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
+                    ToastUtil.showToast(context.getResources().getString(R.string.no_more_data));
+                }
+
+
+                if (data.size() < perPageCount) {
+                    smartRefreshLayout.setEnableLoadMore(false);
+                }
+
+                insertionAdvertising(data);
+                listData.addAll(data);
+                callback.showData(listData);
+            }
+        }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, isSave, true, isCanRefresh);
+    }
+
+
+    private void finishData() {
+        smartRefreshLayout.finishRefresh();
+        smartRefreshLayout.finishLoadMore();
+    }
+
+
+
 
 }
 

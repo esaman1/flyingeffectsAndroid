@@ -1,14 +1,15 @@
 package com.mobile.flyingeffects.ui.interfaces.model;
 
 
-import android.widget.ImageView;
+
+import com.mobile.flyingeffects.enity.new_fag_template_item;
 
 import java.util.ArrayList;
 
 public interface homeItemMvpCallback {
 
-    void setViewPageShowItem(int pageNumber);
     void isOnRefresh();
     void isOnLoadMore();
-    void  setViewPagerAdapter(ArrayList<ImageView> list);
+    void showData(  ArrayList<new_fag_template_item>list);
+    void showNoData(boolean isShowData);
 }

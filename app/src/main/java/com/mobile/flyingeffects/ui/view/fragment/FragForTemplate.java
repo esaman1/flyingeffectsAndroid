@@ -65,7 +65,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
             String[] titles = new String[data.size()];
             for (int i = 0; i < data.size(); i++) {
                 Bundle bundle = new Bundle();
-//                bundle.putSerializable("id", data.get(i).getId());
+                bundle.putSerializable("id", data.get(i).getId());
                 bundle.putSerializable("num", i);
                 titles[i] = data.get(i).getName();
                 home_item_fag fragment = new home_item_fag();
@@ -96,6 +96,11 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
             tabLayout.setViewPager(viewpager, titles);
         }
     }
+
+
+
+
+
 
 //    @OnClick({R.id.tv_filtrate,R.id.column_more})
 //    public void onClick(View view) {

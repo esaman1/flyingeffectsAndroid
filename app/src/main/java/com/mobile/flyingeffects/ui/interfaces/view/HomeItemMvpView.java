@@ -8,8 +8,6 @@ public interface HomeItemMvpView {
 
   void isOnRefresh();
   void isOnLoadMore();
-  void  setViewPagerAdapter(ArrayList<ImageView> list);
-  void onclickBinnerIndex(int position);
-  void setViewPageShowItem(int pageNumber);
+  void isShowData(boolean isShow);
 
 }
