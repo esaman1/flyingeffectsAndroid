@@ -1,15 +1,19 @@
 package com.mobile.flyingeffects.ui.view.fragment;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.flyco.tablayout.SlidingTabLayout;
 import com.mobile.flyingeffects.R;
 import com.mobile.flyingeffects.adapter.home_vp_frg_adapter;
 import com.mobile.flyingeffects.base.BaseFragment;
+import com.mobile.flyingeffects.ui.view.activity.AboutActivity;
 
 import java.util.ArrayList;
 
@@ -33,9 +37,11 @@ public class frag_user_center extends BaseFragment {
     ViewPager viewpager;
 
 
-
     @BindView(R.id.tl_tabs)
     SlidingTabLayout tabLayout;
+
+    @BindView(R.id.iv_about)
+    ImageView iv_about;
 
 
     @Override
@@ -46,7 +52,10 @@ public class frag_user_center extends BaseFragment {
 
     @Override
     protected void initView() {
-
+        iv_about.setOnClickListener(view -> {
+            Intent intent=new Intent(getActivity(), AboutActivity.class);
+            startActivity(intent);
+        });
     }
 
     @Override

@@ -13,6 +13,7 @@ import com.mobile.flyingeffects.base.BaseFragment;
 import com.mobile.flyingeffects.enity.new_fag_template_item;
 import com.mobile.flyingeffects.ui.interfaces.view.HomeItemMvpView;
 import com.mobile.flyingeffects.ui.presenter.home_fag_itemMvpPresenter;
+import com.mobile.flyingeffects.ui.view.activity.PreviewActivity;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -65,16 +66,9 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, main
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-            if (canClickedItem) {
-                nowChooseItem = position;
-                if (allData.get(position).getDiversion() != null && !allData.get(position).getDiversion().trim().equals("")) {
-                    Uri uri = Uri.parse(allData.get(position).getDiversion());
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    startActivity(intent);
-                } else {
-//                    Presenter.showBottomSheetDialog(allData.get(position));
-                }
-            }
+
+            Intent intent =new Intent(getActivity(), PreviewActivity.class);
+            startActivity(intent);
         });
     }
 
