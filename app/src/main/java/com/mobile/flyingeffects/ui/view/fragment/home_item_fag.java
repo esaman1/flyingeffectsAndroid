@@ -1,11 +1,8 @@
 package com.mobile.flyingeffects.ui.view.fragment;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
@@ -17,7 +14,6 @@ import com.mobile.flyingeffects.enity.new_fag_template_item;
 import com.mobile.flyingeffects.ui.interfaces.view.HomeItemMvpView;
 import com.mobile.flyingeffects.ui.presenter.home_fag_itemMvpPresenter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,9 +127,15 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, main
     }
 
     @Override
-    public void isShowData(boolean isShow) {
-
+    public void isShowData(ArrayList<new_fag_template_item> listData) {
+        if (getActivity() != null) {
+            allData.clear();
+            allData.addAll(listData);
+            adapter.notifyDataSetChanged();
+        }
     }
+
+
 
 
     @Override

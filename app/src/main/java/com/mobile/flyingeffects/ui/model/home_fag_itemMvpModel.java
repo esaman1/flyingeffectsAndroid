@@ -50,17 +50,27 @@ public class home_fag_itemMvpModel {
 
 
     public void requestData(String templateId, int num) {
-        this.templateId = templateId;
-        if (num == 0) {
-            List<new_fag_template_item> data = Hawk.get("FagData"); //得到banner缓存数据
-            if (data != null && data.size() > 0) {
-                listData.addAll(data);
-                callback.showData(listData);
-            }
-            requestFagData(false, true); //首页杂数据
-        } else {
-            requestFagData(false, true); //首页杂数据
+//        this.templateId = templateId;
+//        if (num == 0) {
+//            List<new_fag_template_item> data = Hawk.get("FagData"); //得到banner缓存数据
+//            if (data != null && data.size() > 0) {
+//                listData.addAll(data);
+//                callback.showData(listData);
+//            }
+//            requestFagData(false, true); //首页杂数据
+//        } else {
+//            requestFagData(false, true); //首页杂数据
+//        }
+
+
+
+        for (int i=0;i<10;i++){
+            new_fag_template_item item=new new_fag_template_item();
+            item.setTitle("只是个测试");
+            listData.add(item);
         }
+        callback.showData(listData);
+
     }
 
 

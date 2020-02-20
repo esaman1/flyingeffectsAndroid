@@ -46,7 +46,7 @@ public class home_fag_itemMvpPresenter extends BasePresenter implements homeItem
 
     @Override
     public void showData(ArrayList<new_fag_template_item> list) {
-
+        mvp_view.isShowData(list);
     }
 
     @Override
