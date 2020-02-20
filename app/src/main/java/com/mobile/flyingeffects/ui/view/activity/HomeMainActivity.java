@@ -20,7 +20,7 @@ import android.widget.Toast;
 import com.githang.statusbar.StatusBarCompat;
 import com.mobile.flyingeffects.R;
 import com.mobile.flyingeffects.ui.view.fragment.FragForTemplate;
-import com.mobile.flyingeffects.ui.view.fragment.frag1;
+import com.mobile.flyingeffects.ui.view.fragment.frag_search;
 import com.mobile.flyingeffects.ui.view.fragment.frag_user_center;
 
 import java.util.ArrayList;
@@ -219,7 +219,7 @@ public class HomeMainActivity extends FragmentActivity {
 
 
     private FragForTemplate menu0F = null;
-    private frag1 menu1F = null;
+    private frag_search menu1F = null;
     private frag_user_center menu2F = null;
 
     private void openMenu(int which) {
@@ -238,7 +238,7 @@ public class HomeMainActivity extends FragmentActivity {
                 }
                 case 1: {
                     if (menu1F == null) {
-                        menu1F = new frag1();
+                        menu1F = new frag_search();
 
                     }
                     fragmentTransaction.replace(R.id.rL_show, menu1F, menu1F.getClass().getName()).commitAllowingStateLoss();
