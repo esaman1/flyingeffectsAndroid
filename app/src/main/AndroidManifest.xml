@@ -64,7 +64,7 @@
 
 
         <activity
-            android:name="com.mobile.flyingeffects.ui.view.activity.welcomeActivity"
+            android:name="com.mobile.flyingeffects.ui.view.activity.WelcomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" >
         <intent-filter>
@@ -87,12 +87,12 @@
 
 
         <activity
-            android:name="com.mobile.flyingeffects.ui.view.activity.updateApkActivity"
+            android:name="com.mobile.flyingeffects.ui.view.activity.UpdateApkActivity"
             android:theme="@style/TransparentTheme" />
 
 
         <activity
-            android:name="com.mobile.flyingeffects.ui.view.activity.searchActivity"
+            android:name="com.mobile.flyingeffects.ui.view.activity.SearchActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
@@ -105,19 +105,19 @@
 
 
         <activity
-            android:name="com.mobile.flyingeffects.ui.view.activity.loginActivity"
+            android:name="com.mobile.flyingeffects.ui.view.activity.LoginActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
 
         <activity
-            android:name="com.mobile.flyingeffects.ui.view.activity.regiestActivity"
+            android:name="com.mobile.flyingeffects.ui.view.activity.RegiestActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
 
         <activity
-            android:name="com.mobile.flyingeffects.ui.view.activity.forgetActivity"
+            android:name="com.mobile.flyingeffects.ui.view.activity.ForgetActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 

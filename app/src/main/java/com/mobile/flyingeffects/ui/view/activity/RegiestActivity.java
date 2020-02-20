@@ -18,7 +18,7 @@ import java.util.TimerTask;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class regiestActivity extends BaseActivity {
+public class RegiestActivity extends BaseActivity {
 
     @BindView(R.id.tv_email_register)
     TextView tv_email_register;
@@ -114,7 +114,7 @@ public class regiestActivity extends BaseActivity {
 //        params.put("mobile", username.getText().toString());
 //        params.put("type", "1");
 //        Observable ob = Api.getDefault().getsendMsg(params);
-//        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(loginActivity.this) {
+//        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(LoginActivity.this) {
 //            @Override
 //            protected void _onError(String message) {
 //                ToastUtil.showToast(message);

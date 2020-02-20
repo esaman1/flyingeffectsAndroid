@@ -121,7 +121,7 @@ public class HomeMainActivity extends FragmentActivity {
      * 时间：2018/5/29
      **/
     private void intoCheckUpdateAct(String url, String is_must_update, String content) {
-        Intent intent = new Intent(this, updateApkActivity.class);
+        Intent intent = new Intent(this, UpdateApkActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("url", url);
         intent.putExtra("content", content);
@@ -372,7 +372,7 @@ public class HomeMainActivity extends FragmentActivity {
 //     * 时间：2018/5/29
 //     **/
 //    private void intoCheckUpdateAct(String url, String is_must_update, String content) {
-//        Intent intent = new Intent(this, updateApkActivity.class);
+//        Intent intent = new Intent(this, UpdateApkActivity.class);
 //        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 //        intent.putExtra("url", url);
 //        intent.putExtra("content", content);

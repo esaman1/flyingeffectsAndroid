@@ -26,7 +26,7 @@ import rx.Observable;
  * on 2017/8/9.
  */
 
-public class loginActivity extends BaseActivity implements View.OnClickListener {
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
 //
 //    @BindView(R.id.tv_top_title)
 //    TextView tv_top_title;
@@ -95,7 +95,7 @@ public class loginActivity extends BaseActivity implements View.OnClickListener 
                 break;
 
             case R.id.register:
-                Intent intent=new Intent(this,regiestActivity.class);
+                Intent intent=new Intent(this, RegiestActivity.class);
                 startActivity(intent);
                 break;
 
@@ -105,7 +105,7 @@ public class loginActivity extends BaseActivity implements View.OnClickListener 
 
 
             case R.id.forget:
-                Intent intentForget=new Intent(this,forgetActivity.class);
+                Intent intentForget=new Intent(this, ForgetActivity.class);
                 startActivity(intentForget);
                 break;
             case R.id.login:
@@ -147,7 +147,7 @@ public class loginActivity extends BaseActivity implements View.OnClickListener 
 //    **/
 //    private void closeAct() {
 //        EventBus.getDefault().post(new mineUpdateUserInfo(actTag));
-//        loginActivity.this.finish();
+//        LoginActivity.this.finish();
 //    }
 
 
@@ -159,7 +159,7 @@ public class loginActivity extends BaseActivity implements View.OnClickListener 
         params.put("password", password);
         // 启动时间
         Observable ob = Api.getDefault().toLogin(params);
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(loginActivity.this) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(LoginActivity.this) {
             @Override
             protected void _onError(String message) {
                 ToastUtil.showToast(message);

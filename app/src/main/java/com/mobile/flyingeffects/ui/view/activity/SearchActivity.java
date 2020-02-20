@@ -25,7 +25,7 @@ import java.util.List;
 
 import butterknife.BindView;
 
-public class searchActivity extends BaseActivity {
+public class SearchActivity extends BaseActivity {
 
     @BindView(R.id.ed_text)
     EditText ed_text;

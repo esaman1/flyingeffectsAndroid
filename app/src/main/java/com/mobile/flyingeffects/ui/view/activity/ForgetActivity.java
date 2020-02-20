@@ -3,7 +3,7 @@ package com.mobile.flyingeffects.ui.view.activity;
 import com.mobile.flyingeffects.R;
 import com.mobile.flyingeffects.base.BaseActivity;
 
-public class forgetActivity extends BaseActivity {
+public class ForgetActivity extends BaseActivity {
 
 
     @Override

@@ -53,7 +53,7 @@ import butterknife.BindView;
  * author HRXA)
  * date 2015年3月16日
  */
-public class updateApkActivity extends BaseActivity implements OnClickListener {
+public class UpdateApkActivity extends BaseActivity implements OnClickListener {
 
     @BindView(R.id.right_now_update)
     TextView right_now_update;
@@ -244,12 +244,12 @@ public class updateApkActivity extends BaseActivity implements OnClickListener {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
             startActivity(intent);
-            updateApkActivity.this.finish();
+            UpdateApkActivity.this.finish();
         } else {
             Intent i = new Intent(Intent.ACTION_VIEW);
             i.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
             this.startActivity(i);
-            updateApkActivity.this.finish();
+            UpdateApkActivity.this.finish();
         }
 
 
@@ -371,7 +371,7 @@ public class updateApkActivity extends BaseActivity implements OnClickListener {
         }
         dialog.setCanceledOnTouchOutside(true);
         dialog.show();
-        dialog.setOnCancelListener(dialogInterface -> updateApkActivity.this.finish());
+        dialog.setOnCancelListener(dialogInterface -> UpdateApkActivity.this.finish());
     }
 
 

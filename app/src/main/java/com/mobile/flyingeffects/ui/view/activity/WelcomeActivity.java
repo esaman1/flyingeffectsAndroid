@@ -9,22 +9,13 @@ import android.support.annotation.NonNull;
 
 import com.mobile.flyingeffects.R;
 import com.mobile.flyingeffects.base.BaseActivity;
-import com.mobile.flyingeffects.http.Api;
-import com.mobile.flyingeffects.http.HttpUtil;
 import com.mobile.flyingeffects.utils.PermissionUtil;
 import com.mobile.flyingeffects.utils.ToastUtil;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import rx.Observable;
-
-public class welcomeActivity extends BaseActivity {
+public class WelcomeActivity extends BaseActivity {
 
     private final int BUILD_VERSION = 23;
     private boolean hasPermission = false;
@@ -100,7 +91,7 @@ public class welcomeActivity extends BaseActivity {
             // 如果用户没有授权，那么应该说明意图，引导用户去设置里面授权。
             ToastUtil.showToast("您已拒绝权限，需要开启权限才能使用");
             new Handler().postDelayed(() -> {
-                PermissionUtil.gotoPermission(welcomeActivity.this);
+                PermissionUtil.gotoPermission(WelcomeActivity.this);
                 finish();
             },3000);
 
