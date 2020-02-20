@@ -16,6 +16,7 @@
     <RelativeLayout
         android:id="@+id/rela_bottom"
         android:layout_width="match_parent"
+        android:background="#101010"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:orientation="vertical">
@@ -41,17 +42,17 @@
 
                 <ImageView
                     android:id="@+id/iV_menu_0"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
+                    android:layout_width="20dp"
+                    android:layout_height="23dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@mipmap/moban" />
 
                 <TextView
                     android:id="@+id/tv_main_0"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="模板"
-                    android:textColor="@color/colorRedBg"
+                    android:textColor="@color/home_base_blue_color"
                     android:textSize="@dimen/text_micro_size" />
             </LinearLayout>
 
@@ -66,10 +67,10 @@
 
                 <ImageView
                     android:id="@+id/iV_menu_1"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
+                    android:layout_width="20dp"
+                    android:layout_height="23dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@mipmap/chazhao_unselect" />
 
                 <TextView
                     android:id="@+id/tv_main_1"
@@ -92,10 +93,10 @@
 
                 <ImageView
                     android:id="@+id/iV_menu_2"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
+                    android:layout_width="20dp"
+                    android:layout_height="23dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@mipmap/wode_unselect" />
 
                 <TextView
                     android:id="@+id/tv_main_2"

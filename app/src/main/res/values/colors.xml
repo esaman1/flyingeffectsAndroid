@@ -80,10 +80,9 @@
 
 
 
-    <!--me-->
-
-
-
+    <!--home-->
+    <color name="home_base_balk_color">#181818</color>
+    <color name="home_base_blue_color">#5496FF</color>
 
 
 

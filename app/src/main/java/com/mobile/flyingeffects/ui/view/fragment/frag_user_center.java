@@ -1,16 +1,19 @@
 package com.mobile.flyingeffects.ui.view.fragment;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Intent;
-import android.view.ContextThemeWrapper;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.widget.TextView;
 
+import com.flyco.tablayout.SlidingTabLayout;
 import com.mobile.flyingeffects.R;
+import com.mobile.flyingeffects.adapter.home_vp_frg_adapter;
 import com.mobile.flyingeffects.base.BaseFragment;
-import com.mobile.flyingeffects.ui.view.activity.loginActivity;
+
+import java.util.ArrayList;
+
+import butterknife.BindView;
 
 
 /**
@@ -23,6 +26,17 @@ public class frag_user_center extends BaseFragment {
 
     TextView tv_play_video;
     Dialog mDialog;
+
+  private  String[] titles = {"我的收藏", "最近编辑",};
+
+    @BindView(R.id.viewpager)
+    ViewPager viewpager;
+
+
+
+    @BindView(R.id.tl_tabs)
+    SlidingTabLayout tabLayout;
+
 
     @Override
     protected int getContentLayout() {
@@ -37,12 +51,11 @@ public class frag_user_center extends BaseFragment {
 
     @Override
     protected void initAction() {
-
+        initTabData();
     }
 
     @Override
     protected void initData() {
-        showDialog();
     }
 
     @Override
@@ -57,37 +70,39 @@ public class frag_user_center extends BaseFragment {
     }
 
 
-    public void showDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(
-                //去除黑边
-                new ContextThemeWrapper(getActivity(), R.style.Theme_Transparent));
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.view_user_center, null);
-        TextView tv_login = view.findViewById(R.id.tv_login);
-        tv_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), loginActivity.class);
-                startActivity(intent);
-            }
-        });
-        TextView tv_tours = view.findViewById(R.id.tv_tours);
-        tv_tours.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mDialog.dismiss();
-            }
-        });
 
-        builder.setView(view);
-        builder.setCancelable(true);
-        mDialog = builder.show();
-        mDialog.setCanceledOnTouchOutside(false);
-        mDialog.show();
+
+
+    private void initTabData() {
+        FragmentManager manager = getChildFragmentManager();
+        ArrayList<Fragment> list = new ArrayList<>();
+        frag_user_collect fag_0 = new frag_user_collect();
+        frag_user_collect fag_1 = new frag_user_collect();
+        list.add(fag_0);
+        list.add(fag_1);
+        home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
+        viewpager.setAdapter(adapter);
+        viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+//                if (i <= data.size() - 1) {
+//                        statisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
+//                        EventBus.getDefault().post(new viewPagerSelected(i));  //消息通知
+//                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
+        tabLayout.setViewPager(viewpager, titles);
     }
-
-
-
-
 
 
 

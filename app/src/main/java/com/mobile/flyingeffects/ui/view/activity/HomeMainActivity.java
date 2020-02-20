@@ -41,8 +41,8 @@ public class HomeMainActivity extends FragmentActivity {
     private int[] img_Id = {R.id.iV_menu_0, R.id.iV_menu_1, R.id.iV_menu_2};
     public HomeMainActivity ThisMain;
     private int[] tv_main_button = {R.id.tv_main_0, R.id.tv_main_1, R.id.tv_main_2};
-    private int[] selectIconArr = {R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher};
-    private int[] unSelectIconArr = {R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher};
+    private int[] selectIconArr = {R.mipmap.moban, R.mipmap.chazhao, R.mipmap.wode};
+    private int[] unSelectIconArr = {R.mipmap.moban_unslect, R.mipmap.chazhao_unselect, R.mipmap.wode_unselect};
     private FragmentManager fragmentManager;
 
     @Override
@@ -52,7 +52,7 @@ public class HomeMainActivity extends FragmentActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.act_home_main);
-        StatusBarCompat.setStatusBarColor(this, Color.parseColor("#FFFFFF"));
+        StatusBarCompat.setStatusBarColor(this, Color.parseColor("#181818"));
         ThisMain = this;
         final ActionBar actionBar = getActionBar();
         if (actionBar != null) {
@@ -192,7 +192,7 @@ public class HomeMainActivity extends FragmentActivity {
             tv_main[i].setTextColor(getResources().getColor(R.color.home_navigation_dark_gray));
         }
         iV_menu[LastWhichMenu].setImageResource(selectIconArr[LastWhichMenu]);
-        tv_main[LastWhichMenu].setTextColor(getResources().getColor(R.color.colorRedBg));
+        tv_main[LastWhichMenu].setTextColor(getResources().getColor(R.color.home_base_blue_color));
     }
 
     /**
