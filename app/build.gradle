@@ -175,7 +175,7 @@ dependencies {
     //视频播放器
     implementation 'com.shuyu:GSYVideoPlayer:6.0.3'
     implementation project(':album')
-
+    implementation project(':sxve')
 
 
 }

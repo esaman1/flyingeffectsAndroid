@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.shixing.sxve">
+
+    <application>
+        <activity android:name=".ui.TemplateEditActivity" />
+        <activity
+            android:name=".ui.VideoClipActivity"
+            android:theme="@style/SXVE" />
+        <activity android:name=".ui.VideoPlayActivity" />
+    </application>
+
+</manifest>

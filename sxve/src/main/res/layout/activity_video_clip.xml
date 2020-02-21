@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.VideoClipActivity">
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guide_line"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="44dp" />
+
+    <TextView
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:drawableStart="@drawable/return_icon"
+        android:drawableLeft="@drawable/return_icon"
+        android:gravity="center"
+        android:onClick="back"
+        android:text="返回"
+        android:textColor="@color/sxve_white" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:drawableEnd="@drawable/next_icon"
+        android:drawableRight="@drawable/next_icon"
+        android:gravity="center"
+        android:onClick="next"
+        android:text="下一步"
+        android:textColor="@color/sxve_white"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/time_line"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginBottom="14dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/sxve_bg_timeline" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list_thumb"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:clipToPadding="false"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="6dp">
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/sxve_timeline_cover" />
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:background="@drawable/sxve_timeline_cover" />
+        </FrameLayout>
+    </FrameLayout>
+
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="14dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/time_line"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <RadioButton
+            android:id="@+id/cb_fit_width"
+            style="@style/sxve_video_clip_checkbox"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:checked="true"
+            android:drawableStart="@drawable/sxve_btn_fit_width"
+            android:drawableLeft="@drawable/sxve_btn_fit_width"
+            android:text="适应宽度" />
+
+        <RadioButton
+            android:id="@+id/cb_fit_height"
+            style="@style/sxve_video_clip_checkbox"
+            android:drawableStart="@drawable/sxve_btn_fit_height"
+            android:drawableLeft="@drawable/sxve_btn_fit_height"
+            android:text="适应高度" />
+    </RadioGroup>
+
+    <CheckBox
+        android:id="@+id/cb_mute"
+        style="@style/sxve_video_clip_checkbox"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:drawableStart="@drawable/sxve_btn_mute"
+        android:drawableLeft="@drawable/sxve_btn_mute"
+        android:text="静音"
+        app:layout_constraintEnd_toStartOf="@id/radio_group"
+        app:layout_constraintTop_toTopOf="@id/radio_group" />
+
+    <TextView
+        android:id="@+id/duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginLeft="15dp"
+        android:textColor="@color/sxve_primary"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@id/radio_group"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/radio_group" />
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="14dp"
+        app:layout_constraintBottom_toTopOf="@id/radio_group"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guide_line">
+
+        <VideoView
+            android:id="@+id/sx_video_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+    </FrameLayout>
+</android.support.constraint.ConstraintLayout>

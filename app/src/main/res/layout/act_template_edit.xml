@@ -8,9 +8,18 @@
     <include layout="@layout/view_top" />
 
 
+    <FrameLayout
+        android:layout_marginTop="50dp"
+        android:id="@+id/edit_view_container"
+        android:layout_width="match_parent"
+        android:layout_above="@+id/recyclerView"
+        android:layout_height="match_parent" />
 
 
-
-
+    <android.support.v7.widget.RecyclerView
+        android:layout_alignParentBottom="true"
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="120dp" />
 
 </RelativeLayout>

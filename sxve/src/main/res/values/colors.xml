@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="sxve_window_background">#1A1A1A</color>
+    <color name="sxve_primary">#FFE131</color>
+    <color name="sxve_white">#FFFFFF</color>
+    <color name="sxve_black">#000000</color>
+</resources>
