@@ -7,7 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
+//import android.util.Log;
 import android.view.View;
 
 import com.shixing.sxve.R;
@@ -40,7 +40,7 @@ public class RoundColorView extends View {
 
     public void setColor(int color) {
         mPaint.setColor(color);
-        Log.d(TAG, "setColor: ");
+//        Log.d(TAG, "setColor: ");
         invalidate();
     }
 
@@ -53,7 +53,7 @@ public class RoundColorView extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         //mRadius = Math.min(getWidth(), getHeight()) / 2f;
-        Log.d(TAG, "onMeasure: " + mRadius);
+//        Log.d(TAG, "onMeasure: " + mRadius);
     }
 
     @Override

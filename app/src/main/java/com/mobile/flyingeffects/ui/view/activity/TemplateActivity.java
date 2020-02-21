@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
 import rx.android.schedulers.AndroidSchedulers;
@@ -59,10 +58,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private LinearLayoutManager layoutManager;
     private ArrayList<TemplateThumbItem> listItem = new ArrayList<>();
     private ArrayList<TemplateView> mTemplateViews;
-    private int maxChooseNum=10;
+    private int maxChooseNum=22;
     private int nowChooseIndex = 0;
+
     @BindView(R.id.edit_view_container)
-    private FrameLayout mContainer;
+     FrameLayout mContainer;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
@@ -76,16 +76,18 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     protected void initView() {
         presenter = new TemplatePresenter(this, this);
         Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
+        Bundle bundle = intent.getBundleExtra("Message");
         if (bundle != null) {
             imgPath = bundle.getStringArrayList("paths");
         }
         ((TextView) findViewById(R.id.tv_top_title)).setText("拖动素材位置");
-        mFolder = getExternalFilesDir("dynamic/" + "test");
+        mFolder = getExternalFilesDir("dynamic/" + "gzc20251bg");
         File dir = getExternalFilesDir("");
-        SxveConstans.default_bg_path = new File(dir, "default_bj.png").getPath();
+        SxveConstans.default_bg_path = new File(dir, "default_bg.png").getPath();
         mTemplateViews = new ArrayList<>();
-
+        for (int i = 0; i < maxChooseNum; i++) {
+            listItem.add(new TemplateThumbItem("", 1, false));
+        }
     }
 
     @Override

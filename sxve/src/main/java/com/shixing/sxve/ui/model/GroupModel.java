@@ -2,37 +2,46 @@ package com.shixing.sxve.ui.model;
 
 import android.graphics.Canvas;
 import android.graphics.PointF;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.SparseArray;
 import android.view.View;
 
 import com.shixing.sxve.ui.util.Size;
 
+//GroupModel.add
 public class GroupModel {
     private SparseArray<AssetModel> mAssets = new SparseArray<>();
-    private View mThumbTarget;
+    private View mThumbTarget;  //底部的view
     private View mTemplateTarget;
     private AssetModel mActiveLayer;
-    private Size mSize;
+    private int lastSelectedItem;
 
     public void add(AssetModel assetModel) {
         mAssets.put(assetModel.ui.index, assetModel);
     }
 
     public void draw(Canvas canvas) {
-        for (int i = 0; i < mAssets.size(); i++) {
-            mAssets.get(i).ui.draw(canvas, mActiveLayer == null ? -1 : mActiveLayer.ui.index);
+        if (canvas != null) {
+            for (int i = 0; i < mAssets.size(); i++) {
+                mAssets.get(i).ui.draw(canvas, mActiveLayer == null ? -1 : mActiveLayer.ui.index);
+            }
         }
     }
+
+
+    public void isShow(boolean isShow) {
+        if (mAssets != null && mAssets.size() > 0) {
+            AssetModel mActiveLayer = mAssets.get(0);
+            if (mActiveLayer != null) {
+                mActiveLayer.ui.isShow(isShow);
+            }
+        }
+    }
+
 
     public Size getSize() {
-        if (mSize != null) {
-            return mSize;
-        }
         return mAssets.size() > 0 ? mAssets.get(0).size : null;
-    }
-
-    public void setSize(Size size) {
-        mSize = size;
     }
 
     public int getGroupIndex() {
@@ -40,12 +49,15 @@ public class GroupModel {
     }
 
     public void notifyRedraw() {
-        if (mTemplateTarget != null) {
-            mTemplateTarget.invalidate();
-        }
-        if (mThumbTarget != null) {
-            mThumbTarget.invalidate();
-        }
+
+                if (mTemplateTarget != null) {
+                    mTemplateTarget.invalidate();
+                }
+                if (mThumbTarget != null) {
+                    mThumbTarget.invalidate();
+                }
+
+
     }
 
     public void setThumbTarget(View thumbTarget) {
@@ -57,8 +69,19 @@ public class GroupModel {
     }
 
     public void scroll(float distanceX, float distanceY) {
+
         if (mActiveLayer != null) {
-            mActiveLayer.ui.scroll(distanceX, distanceY);
+            if (mActiveLayer.type == 2) { //如果是滑动的文字层，那么转交给图片成
+                for (int i = 0; i < mAssets.size(); i++) {
+                    if (mAssets.get(i) != null && mAssets.get(i).type == 1) {
+                        mActiveLayer = mAssets.get(i);
+                        mActiveLayer.ui.scroll(distanceX, distanceY);
+                        break;
+                    }
+                }
+            } else {
+                mActiveLayer.ui.scroll(distanceX, distanceY);
+            }
         }
 
         notifyRedraw();
@@ -66,17 +89,35 @@ public class GroupModel {
 
     public void scale(float sx, float sy, float px, float py) {
         if (mActiveLayer != null) {
-            mActiveLayer.ui.scale(sx, sy, px, py);
+            if (mActiveLayer.type == 2) { //如果是滑动的文字层，那么转交给图片成
+                for (int i = 0; i < mAssets.size(); i++) {
+                    if (mAssets.get(i) != null && mAssets.get(i).type == 1) {
+                        mActiveLayer = mAssets.get(i);
+                        mActiveLayer.ui.scale(sx, sy, px, py);
+                        break;
+                    }
+                }
+            } else {
+                mActiveLayer.ui.scale(sx, sy, px, py);
+            }
         }
-
         notifyRedraw();
     }
 
     public void rotate(float degrees, float px, float py) {
         if (mActiveLayer != null) {
-            mActiveLayer.ui.rotate(degrees, px, py);
+            if (mActiveLayer.type == 2) { //如果是滑动的文字层，那么转交给图片成
+                for (int i = 0; i < mAssets.size(); i++) {
+                    if (mAssets.get(i) != null && mAssets.get(i).type == 1) {
+                        mActiveLayer = mAssets.get(i);
+                        mActiveLayer.ui.rotate(degrees, px, py);
+                        break;
+                    }
+                }
+            } else {
+                mActiveLayer.ui.rotate(degrees, px, py);
+            }
         }
-
         notifyRedraw();
     }
 
@@ -88,10 +129,10 @@ public class GroupModel {
     }
 
     public void down(PointF pointF) {
-        mActiveLayer = getAssetAtLocation(pointF);
-        // if (mActiveLayer != null) {
-            // notifyRedraw();
-        // }
+        mActiveLayer = getAssetAtLocation(pointF);  //获得当前点击的那个MediaUiModel
+        if (mActiveLayer != null) {
+            notifyRedraw();
+        }
     }
 
     public void allFingerUp() {

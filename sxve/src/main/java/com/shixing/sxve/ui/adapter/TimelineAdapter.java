@@ -2,6 +2,7 @@ package com.shixing.sxve.ui.adapter;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -41,13 +42,16 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.Timeli
         //    itemView.setImageBitmap(null);
         //}
 
-        RequestOptions options = RequestOptions.frameOf(mTimePositions[position]);
+        RequestOptions options = RequestOptions.frameOf(mTimePositions[position]); //截取视频指定的屏幕 ，微妙
         RequestOptions cacheOptions = RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE);
         Glide.with(holder.itemView.getContext())
                 .load(mUri)
                 .apply(options)
                 .apply(cacheOptions)
                 .into(((ImageView) holder.itemView));
+
+//        Bitmap bitmap = mediaMetadataRetriever.getFrameAtTime(mTimePositions[position] * 1000, MediaMetadataRetriever.OPTION_CLOSEST);
+
     }
 
     @Override
@@ -61,7 +65,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.Timeli
         notifyDataSetChanged();
     }
 
-    public void setBitmapSize(int width, int height) {
+    public void setBitmapSize(int width, int height) { //计算得到图片的大小
         mWidth = width;
         mHeight = height;
     }

@@ -1,10 +1,12 @@
 package com.shixing.sxve.ui.model;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.util.Size;
@@ -23,8 +25,10 @@ public abstract class AssetUi {
     public final int index;
     protected final AssetDelegate mDelegate;
     public final Size size;
-    protected final Bitmap f;
-    protected final Bitmap b;
+    protected final Bitmap drawBitmapBj;
+    protected  Bitmap BjForFilter;
+    private Context context;
+
 
     public AssetUi(String folder, JSONObject ui, AssetDelegate delegate, Size size) throws JSONException {
         group = ui.getInt("group");
@@ -35,17 +39,9 @@ public abstract class AssetUi {
         String file = ui.optString("f");
         if (!TextUtils.isEmpty(file)) {
             file = folder + "/ui/" + file;
-            f = BitmapFactory.decodeFile(file);
+            drawBitmapBj = BitmapFactory.decodeFile(file);
         } else {
-            f = null;
-        }
-
-        String background = ui.optString("b");
-        if (!TextUtils.isEmpty(background)) {
-            background = folder + "/ui/" + background;
-            b = BitmapFactory.decodeFile(background);
-        } else {
-            b = null;
+            drawBitmapBj = null;
         }
     }
 
@@ -65,10 +61,16 @@ public abstract class AssetUi {
         return floats;
     }
 
-    public abstract void draw(Canvas canvas, int activeLayer);
-
     public void scroll(float distanceX, float distanceY) {
     }
+
+    public abstract void draw(Canvas canvas, int activeLayer);
+
+//    public abstract void drawThumbnail(Canvas canvas, int activeLayer);
+
+
+    public abstract void isShow(boolean show);
+
 
     public void scale(float sx, float sy, float px, float py) {
     }
@@ -76,15 +78,27 @@ public abstract class AssetUi {
     public void rotate(float degrees, float px, float py) {
     }
 
-    public abstract void isShow(boolean show);
-
     public abstract boolean isPointInside(PointF point);
 
     public abstract void singleTap(GroupModel groupModel);
 
     public abstract String getSnapPath(String folder);
 
-    public Bitmap saveBitmapToPath(Bitmap bitmap, String path) {
+    public abstract String getSnapPathForKeep(String folder);
+
+    public abstract String getOriginPath(String folder);
+
+    public abstract boolean hasPlaceholder();
+
+
+    public abstract boolean hasChooseFilter(int filterPosition);
+
+
+    public abstract boolean hasChooseBg(String path);
+
+
+
+    public Bitmap saveBitmapToPath(Bitmap bitmap, String path, saveBitmapState state) {
         if (!path.endsWith(".png") && !path.endsWith(".PNG")) {
             throw new IllegalArgumentException();
         }
@@ -97,13 +111,18 @@ public abstract class AssetUi {
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            boolean isSsuccees = bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             out.flush();
             out.close();
+            state.succeed(isSsuccees);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            Log.e("Exception",e.getMessage());
+            state.succeed(false);
         } catch (IOException e) {
             e.printStackTrace();
+            Log.e("Exception",e.getMessage());
+            state.succeed(false);
         } finally {
             if (out != null) {
                 try {
@@ -116,4 +135,18 @@ public abstract class AssetUi {
 
         return bitmap;
     }
+
+
+    interface saveBitmapState {
+        void succeed(boolean isSucceed);
+    }
+
+
+
+
+
+
+
+
+
 }

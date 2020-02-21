@@ -172,6 +172,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 Bundle bundle = new Bundle();
                 bundle.putStringArrayList("paths", (ArrayList<String>) paths);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("Message",bundle);
                 startActivity(intent);
             }
         }

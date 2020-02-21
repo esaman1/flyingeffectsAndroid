@@ -52,11 +52,25 @@
 
                     <ImageView
                         android:id="@+id/iv_select"
+
                         android:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:src="@drawable/item_select_bg"
                         />
 
+                    <ImageView
+                        android:id="@+id/iv_has_text"
+                        android:contentDescription="@string/app_name"
+                        android:layout_alignParentBottom="true"
+                        android:visibility="gone"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:src="@drawable/tv_has_text"
+                        />
 
 
 
@@ -75,6 +89,17 @@
 
             </LinearLayout>
 
+
+
+
+
+            <View
+                android:layout_width="3dp"
+                android:layout_height="18dp"
+                android:layout_marginStart="7dp"
+                android:layout_marginEnd="7dp"
+                android:layout_marginTop="34dp"
+                android:background="#383838" />
 
         </LinearLayout>
 

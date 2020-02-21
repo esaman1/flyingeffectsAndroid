@@ -4,4 +4,5 @@
     <color name="sxve_primary">#FFE131</color>
     <color name="sxve_white">#FFFFFF</color>
     <color name="sxve_black">#000000</color>
+    <color name="preview_bg">#D8D8D8</color>
 </resources>

@@ -35,6 +35,13 @@ public class SXVideoView extends VideoView {
         init();
     }
 
+    public void onStop() {
+        mMediaPlayer.pause();
+//        mMediaPlayer.release();
+
+
+    }
+
     public SXVideoView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
