@@ -54,7 +54,7 @@
             android:layout_marginStart="16dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="评价我们"
+            android:text="隐私政策"
             android:textColor="#D5D5D5"
             android:textSize="@dimen/sp_16"
             />
@@ -86,7 +86,7 @@
             android:layout_marginStart="16dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="评价我们"
+            android:text="用户协议"
             android:textColor="#D5D5D5"
             android:textSize="@dimen/sp_16"
             />
@@ -118,7 +118,7 @@
             android:layout_marginStart="16dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="评价我们"
+            android:text="清除缓存"
             android:textColor="#D5D5D5"
             android:textSize="@dimen/sp_16"
             />
@@ -150,7 +150,7 @@
             android:layout_marginStart="16dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="评价我们"
+            android:text="注销账号"
             android:textColor="#D5D5D5"
             android:textSize="@dimen/sp_16"
             />

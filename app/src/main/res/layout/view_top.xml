@@ -4,7 +4,7 @@
     android:layout_height="50dp"
     android:id="@+id/rela_top"
     android:layout_alignParentTop="true"
-    android:background="@color/white"
+    android:background="@color/home_base_balk_color"
     android:gravity="center_vertical">
 
 
@@ -17,14 +17,14 @@
 
     <ImageView
         android:id="@+id/iv_top_back"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
         android:contentDescription="@string/app_name"
-        android:padding="5dp"
-        android:src="@mipmap/iv_top_back"
+        android:padding="10dp"
+        android:src="@mipmap/back"
         android:visibility="visible" />
 
 
@@ -77,7 +77,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/line_height"
         android:layout_alignParentBottom="true"
-        android:background="@color/soft_gray" />
+        android:background="#232323" />
 
 
 

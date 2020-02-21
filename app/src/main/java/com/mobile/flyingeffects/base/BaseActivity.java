@@ -96,12 +96,9 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        super.requestWindowFeature(Window.FEATURE_NO_TITLE);
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, //去掉状态栏
-//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         lifecycleSubject.onNext(ActivityLifeCycleEvent.CREATE);
         setContentView(getLayoutId());
-        StatusBarCompat.setStatusBarColor(this, Color.parseColor("#00000000"), true);
+        StatusBarCompat.setStatusBarColor(this, Color.parseColor("#181818"), true);
         mContext = getApplicationContext();
         mActionBar = getActionBar();
         if (mActionBar != null) {
