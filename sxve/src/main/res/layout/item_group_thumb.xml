@@ -12,12 +12,12 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginEnd="10dp"
         android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:orientation="horizontal">
 
 
@@ -31,46 +31,51 @@
 
                 <RelativeLayout
                     android:id="@+id/rela_parent"
-                    android:layout_width="59dp"
+                    android:layout_width="60dp"
                     android:background="#D8D8D8"
-                    android:layout_height="86dp">
+                    android:layout_height="60dp">
 
 
-                    <com.shixing.sxve.ui.view.GroupThumbView
-                        android:id="@+id/GroupThumbView"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
 
-
-                    <com.mobile.kadian.view.AutoScaleWidthImageView
+                    <ImageView
                         android:id="@+id/iv_show_un_select"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_width="60dp"
+                        android:scaleType="centerCrop"
+                        android:layout_height="60dp"
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="0dp" />
 
 
-                    <ImageView
-                        android:id="@+id/iv_select"
 
-                        android:visibility="gone"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/item_select_bg"
-                        />
 
-                    <ImageView
-                        android:id="@+id/iv_has_text"
-                        android:contentDescription="@string/app_name"
-                        android:layout_alignParentBottom="true"
-                        android:visibility="gone"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="8dp"
+                    <LinearLayout
+                        android:id="@+id/ll_select"
                         android:layout_width="match_parent"
-                        android:layout_height="25dp"
-                        android:src="@drawable/tv_has_text"
-                        />
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:background="@drawable/item_select_bg"
+                        android:gravity="center"
+                        android:layout_height="match_parent">
+
+
+                        <ImageView
+                            android:id="@+id/iv_select_alert"
+                            android:contentDescription="@string/app_name"
+                            android:layout_width="17dp"
+                            android:src="@drawable/edit"
+                            android:layout_height="17dp"
+                            />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:text="调整"
+                            android:textSize="12sp"
+                            android:textColor="#FFFFFF"
+                            android:layout_height="wrap_content"/>
+
+
+                    </LinearLayout>
+
 
 
 
@@ -90,16 +95,6 @@
             </LinearLayout>
 
 
-
-
-
-            <View
-                android:layout_width="3dp"
-                android:layout_height="18dp"
-                android:layout_marginStart="7dp"
-                android:layout_marginEnd="7dp"
-                android:layout_marginTop="34dp"
-                android:background="#383838" />
 
         </LinearLayout>
 

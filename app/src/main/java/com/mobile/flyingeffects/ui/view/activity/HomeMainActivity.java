@@ -22,7 +22,9 @@ import com.mobile.flyingeffects.R;
 import com.mobile.flyingeffects.ui.view.fragment.FragForTemplate;
 import com.mobile.flyingeffects.ui.view.fragment.frag_search;
 import com.mobile.flyingeffects.ui.view.fragment.frag_user_center;
+import com.mobile.flyingeffects.utils.AssetsUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,14 +63,17 @@ public class HomeMainActivity extends FragmentActivity {
 
         fragmentManager = getSupportFragmentManager();
         initView();
-
-
-
-
-
-
-
+        copyFile("default_bj.png");
 //        checkUpdate(false);
+    }
+
+
+    public void copyFile(String name) {
+        File dir = getExternalFilesDir("");
+        File file = new File(dir, name);
+        if (!file.exists()) {
+            AssetsUtils.copyFileFromAssets(this, name, file.getPath());
+        }
     }
 
 

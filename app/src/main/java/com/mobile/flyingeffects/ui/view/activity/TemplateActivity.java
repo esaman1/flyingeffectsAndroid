@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -14,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.mobile.flyingeffects.R;
 import com.mobile.flyingeffects.adapter.TemplateThumbAdapter;
 import com.mobile.flyingeffects.base.BaseActivity;
@@ -60,7 +58,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private ArrayList<TemplateView> mTemplateViews;
     private int maxChooseNum=22;
     private int nowChooseIndex = 0;
-
     @BindView(R.id.edit_view_container)
      FrameLayout mContainer;
     @BindView(R.id.recyclerView)
@@ -74,6 +71,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     protected void initView() {
+        findViewById(R.id.tv_top_submit).setVisibility(View.VISIBLE);
+        ((TextView) findViewById(R.id.tv_top_submit)).setText("下一步");
         presenter = new TemplatePresenter(this, this);
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("Message");
@@ -83,16 +82,18 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         ((TextView) findViewById(R.id.tv_top_title)).setText("拖动素材位置");
         mFolder = getExternalFilesDir("dynamic/" + "gzc20251bg");
         File dir = getExternalFilesDir("");
-        SxveConstans.default_bg_path = new File(dir, "default_bg.png").getPath();
         mTemplateViews = new ArrayList<>();
         for (int i = 0; i < maxChooseNum; i++) {
             listItem.add(new TemplateThumbItem("", 1, false));
         }
+        SxveConstans.default_bg_path = new File(dir, "default_bj.png").getPath();
     }
 
     @Override
     protected void initAction() {
+        initTemplateThumb();
         asyncTask = new LoadTemplateTask(TemplateActivity.this).execute(mFolder.getPath());
+
     }
 
     @Override
@@ -131,8 +132,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         protected void onPostExecute(TemplateModel templateModel) {
             if (templateModel != null) {
                 activityReference.get().mTemplateModel = templateModel;
-                initTemplateThumb();
-
+                initTemplateViews(mTemplateModel);  //初始化templateView 等数据
             }
         }
     }
@@ -144,7 +144,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     private void initTemplateViews(TemplateModel templateModel) {
-        templateThumbAdapter.setTemplateModel(templateModel);
+//        templateThumbAdapter.setTemplateModel(templateModel);
         for (int i = 1; i <= templateModel.groupSize; i++) {
             if ( i == templateModel.groupSize) {
                 continue;
@@ -162,7 +162,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             mTemplateViews.add(templateView);
             mContainer.addView(templateView, params);
         }
-
         isFirstReplace(imgPath);
     }
 
@@ -214,13 +213,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             if (mTemplateViews != null && mTemplateViews.size() > 0) {
                 TemplateView nowChooseTemplateView = mTemplateViews.get(index);
                 nowChooseTemplateView.setVisibility(View.VISIBLE);
-//                    nowChooseTemplateView.isViewVisible(true);
+                    nowChooseTemplateView.isViewVisible(true);
                     nowChooseTemplateView.invalidate();
                 rx.Observable.from(mTemplateViews).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(templateView -> {
                     LogUtil.d("OOM", "selectGroup");
                     if (templateView != nowChooseTemplateView && templateView.getVisibility() != View.GONE) {
                         templateView.setVisibility(View.GONE);
-//                        templateView.isViewVisible(false);
+                        templateView.isViewVisible(false);
                     }
                 });
             }
@@ -236,16 +235,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         templateThumbAdapter = new TemplateThumbAdapter(R.layout.item_group_thumb, listItem, TemplateActivity.this);
         //条目点击事件
         templateThumbAdapter.setOnItemClickListener((adapter, view, position) -> {
+            selectGroup(position);
         });
-        ItemDragAndSwipeCallback itemDragAndSwipeCallback = new ItemDragAndSwipeCallback(templateThumbAdapter);
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemDragAndSwipeCallback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
         recyclerView.setAdapter(templateThumbAdapter);
-        if (recyclerView.getItemAnimator() != null) {
-            recyclerView.getItemAnimator().setChangeDuration(0);
-            recyclerView.getItemAnimator().setMoveDuration(0);
-        }
-        initTemplateViews(mTemplateModel);  //初始化templateView 等数据
     }
 
 

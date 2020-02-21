@@ -1,14 +1,11 @@
-package com.mobile.flyingeffects.view;
+package com.shixing.sxve.ui.view;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-/**
- * 宽度自适应ImageView，宽度始终充满显示区域，高度成比例缩放
- */
-public class AutoScaleWidthImageView extends ImageView {
+public class AutoScaleWidthImageView extends android.support.v7.widget.AppCompatImageView {
 
     public AutoScaleWidthImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -20,10 +17,13 @@ public class AutoScaleWidthImageView extends ImageView {
             int width = drawable.getMinimumWidth();
             int height = drawable.getMinimumHeight();
             float scale = (float)height/width;
+
             int widthMeasure = MeasureSpec.getSize(widthMeasureSpec);
             int heightMeasure = (int)(widthMeasure*scale);
+
             heightMeasureSpec =  MeasureSpec.makeMeasureSpec(heightMeasure, MeasureSpec.EXACTLY);
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
+
 }
