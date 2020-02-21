@@ -3,6 +3,7 @@ package com.mobile.flyingeffects.ui.view.activity;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewCompat;
 import android.transition.Transition;
@@ -19,6 +20,7 @@ import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils;
 import com.yanzhenjie.album.AlbumFile;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,6 +80,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 iv_zan.setImageResource(R.mipmap.zan_selected);
                 break;
             case R.id.tv_make:
+                videoPlayer.onVideoPause();
                 AlbumManager.chooseAlbum(this,7,SELECTALBUM,this,"");
                 break;
 
@@ -163,13 +166,14 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-        if(SELECTALBUM==0){
-            Intent intent=new Intent(this,TemplateActivity.class);
-            intent.putCharSequenceArrayListExtra("albumList",(ArrayList) paths);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+        if(!isCancel){
+            if(SELECTALBUM==0){
+                Intent intent=new Intent(this,TemplateActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList("paths", (ArrayList<String>) paths);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }
-
-
     }
 }
