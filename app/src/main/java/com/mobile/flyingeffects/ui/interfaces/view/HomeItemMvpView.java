@@ -1,7 +1,5 @@
 package com.mobile.flyingeffects.ui.interfaces.view;
 
-import android.widget.ImageView;
-
 import com.mobile.flyingeffects.enity.new_fag_template_item;
 
 import java.util.ArrayList;

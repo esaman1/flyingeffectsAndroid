@@ -6,9 +6,14 @@ import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 
 import com.mobile.flyingeffects.R;
+import com.mobile.flyingeffects.manager.MediaLoader;
 import com.orhanobut.hawk.Hawk;
 import com.scwang.smartrefresh.header.MaterialHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.yanzhenjie.album.Album;
+import com.yanzhenjie.album.AlbumConfig;
+
+import java.util.Locale;
 
 import rx.subjects.PublishSubject;
 
@@ -29,6 +34,7 @@ public class BaseApplication extends MultiDexApplication {
         MultiDex.install(this); //分包支持
         Hawk.init(this).build();
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
+        initAlbum();
     }
 
 
@@ -83,7 +89,13 @@ public class BaseApplication extends MultiDexApplication {
         return myzxApp;
     }
 
-
+    private void initAlbum() {
+        Album.initialize(AlbumConfig.newBuilder(this)
+                .setAlbumLoader(new MediaLoader())
+                .setLocale(Locale.getDefault())
+                .build()
+        );
+    }
 
 
 

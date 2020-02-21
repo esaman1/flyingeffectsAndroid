@@ -1,6 +1,7 @@
 package com.mobile.flyingeffects.ui.view.activity;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v4.view.ViewCompat;
@@ -10,10 +11,16 @@ import android.widget.ImageView;
 
 import com.mobile.flyingeffects.R;
 import com.mobile.flyingeffects.base.BaseActivity;
+import com.mobile.flyingeffects.manager.AlbumManager;
+import com.mobile.flyingeffects.ui.interfaces.AlbumChooseCallback;
 import com.mobile.flyingeffects.ui.interfaces.OnTransitionListener;
 import com.mobile.flyingeffects.view.EmptyControlVideo;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils;
+import com.yanzhenjie.album.AlbumFile;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -21,13 +28,14 @@ import butterknife.OnClick;
 
 /***
  * 预览视频界面
+ * 开始制作
  */
-public class PreviewActivity extends BaseActivity {
+public class PreviewActivity extends BaseActivity implements AlbumChooseCallback {
 
 
     public final static String IMG_TRANSITION = "IMG_TRANSITION";
     public final static String TRANSITION = "TRANSITION";
-
+    public final static int SELECTALBUM=0;
 
     OrientationUtils orientationUtils;
 
@@ -67,11 +75,10 @@ public class PreviewActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_zan:
-                iv_zan.setBackgroundResource(R.mipmap.zan_selected);
+                iv_zan.setImageResource(R.mipmap.zan_selected);
                 break;
             case R.id.tv_make:
-
-
+                AlbumManager.chooseAlbum(this,7,SELECTALBUM,this,"");
                 break;
 
             default:
@@ -154,4 +161,15 @@ public class PreviewActivity extends BaseActivity {
     }
 
 
+    @Override
+    public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
+        if(SELECTALBUM==0){
+            Intent intent=new Intent(this,TemplateActivity.class);
+            intent.putCharSequenceArrayListExtra("albumList",(ArrayList) paths);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+
+
+    }
 }
