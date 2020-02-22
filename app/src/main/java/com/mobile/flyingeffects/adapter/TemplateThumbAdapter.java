@@ -8,10 +8,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.chad.library.adapter.base.BaseItemDraggableAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.mobile.flyingeffects.R;
 import com.mobile.flyingeffects.enity.TemplateThumbItem;
+import com.mobile.flyingeffects.manager.GlideRoundTransform;
 import com.mobile.flyingeffects.utils.LogUtil;
 import java.util.List;
 
@@ -33,7 +35,10 @@ public class TemplateThumbAdapter extends BaseItemDraggableAdapter<TemplateThumb
         int position = helper.getLayoutPosition();
         ImageView iv_show_un_select = helper.getView(R.id.iv_show_un_select);
         if (item.getPathUrl() != null && !item.getPathUrl().equals("")) {
-            Glide.with(context).load(item.getPathUrl()).into(iv_show_un_select);
+            Glide.with(context)
+                    .load(item.getPathUrl())
+                    .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 5)))
+                    .into((ImageView) helper.getView(R.id.iv_show_un_select));
         } else {
             iv_show_un_select.setImageResource(R.mipmap.ic_launcher);
         }

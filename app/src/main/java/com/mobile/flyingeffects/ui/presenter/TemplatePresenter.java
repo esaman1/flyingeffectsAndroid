@@ -8,6 +8,8 @@ import com.mobile.flyingeffects.ui.interfaces.model.TemplateMvpCallback;
 import com.mobile.flyingeffects.ui.interfaces.view.TemplateMvpView;
 import com.mobile.flyingeffects.ui.interfaces.view.TemplateMvpView;
 import com.mobile.flyingeffects.ui.model.TemplateMvpModel;
+import com.shixing.sxve.ui.AssetDelegate;
+import com.shixing.sxve.ui.model.TemplateModel;
 
 import java.util.List;
 
@@ -23,4 +25,13 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
 
 
 
+    public void loadTemplate(String filePath, AssetDelegate delegate){
+        home_model.loadTemplate(filePath,delegate);
+    }
+
+
+    @Override
+    public void completeTemplate(TemplateModel templateModel) {
+        home_mvpView.completeTemplate(templateModel);
+    }
 }

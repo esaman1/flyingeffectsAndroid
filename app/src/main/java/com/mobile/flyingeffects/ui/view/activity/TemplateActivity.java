@@ -2,7 +2,6 @@ package com.mobile.flyingeffects.ui.view.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,11 +28,7 @@ import com.shixing.sxve.ui.model.TemplateModel;
 import com.shixing.sxve.ui.model.TextUiModel;
 import com.shixing.sxve.ui.view.TemplateView;
 
-import org.json.JSONException;
-
 import java.io.File;
-import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,19 +44,18 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private TemplatePresenter presenter;
     private List<String> imgPath = new ArrayList<>();
-    private AsyncTask asyncTask;
     private TemplateModel mTemplateModel;
     private File mFolder;
     private TemplateThumbAdapter templateThumbAdapter;
-    private LinearLayoutManager layoutManager;
     private ArrayList<TemplateThumbItem> listItem = new ArrayList<>();
     private ArrayList<TemplateView> mTemplateViews;
-    private int maxChooseNum=22;
+    private int maxChooseNum = 22;
     private int nowChooseIndex = 0;
     @BindView(R.id.edit_view_container)
-     FrameLayout mContainer;
+    FrameLayout mContainer;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+    private int lastPosition;
 
 
     @Override
@@ -92,8 +86,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @Override
     protected void initAction() {
         initTemplateThumb();
-        asyncTask = new LoadTemplateTask(TemplateActivity.this).execute(mFolder.getPath());
-
+        presenter.loadTemplate(mFolder.getPath(), this);
     }
 
     @Override
@@ -106,35 +99,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     }
 
-
-     class LoadTemplateTask extends AsyncTask<String, Void, TemplateModel> {
-        private WeakReference<TemplateActivity> activityReference;
-
-        // only retain a weak reference to the activity
-        LoadTemplateTask(TemplateActivity context) {
-            activityReference = new WeakReference<>(context);
-        }
-
-
-        @Override
-        protected TemplateModel doInBackground(String... strings) {
-            TemplateModel templateModel = null;
-            try {
-                templateModel = new TemplateModel(strings[0], activityReference.get(), activityReference.get()); //通过路径地址
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            }
-            return templateModel;
-        }
-
-
-        @Override
-        protected void onPostExecute(TemplateModel templateModel) {
-            if (templateModel != null) {
-                activityReference.get().mTemplateModel = templateModel;
-                initTemplateViews(mTemplateModel);  //初始化templateView 等数据
-            }
-        }
+    @Override
+    public void completeTemplate(TemplateModel templateModel) {
+        mTemplateModel = templateModel;
+        initTemplateViews(mTemplateModel);  //初始化templateView 等数据
     }
 
 
@@ -144,9 +112,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     private void initTemplateViews(TemplateModel templateModel) {
-//        templateThumbAdapter.setTemplateModel(templateModel);
         for (int i = 1; i <= templateModel.groupSize; i++) {
-            if ( i == templateModel.groupSize) {
+            if (i == templateModel.groupSize) {
                 continue;
             }
             TemplateView templateView = new TemplateView(TemplateActivity.this);
@@ -167,8 +134,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     private void isFirstReplace(List<String> paths) {
-        if ( mTemplateViews != null && mTemplateViews.size() > 0) {
-            LogUtil.d(TAG, "isFirstReplace");
+        if (mTemplateViews != null && mTemplateViews.size() > 0) {
             List<String> list_all = new ArrayList<>();
             for (int i = 0; i < maxChooseNum; i++) {  //填满数据，为了缩略图
                 if (paths.size() > i && !TextUtils.isEmpty(paths.get(i))) {
@@ -188,18 +154,18 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 listItem.set(i, templateThumbItem);
             }
             templateThumbAdapter.notifyDataSetChanged();
-                WatingDilog.openPragressDialog(this);
-                new Thread(() -> {
-                    mTemplateModel.setReplaceAllFiles(list_all, TemplateActivity.this, complete -> TemplateActivity.this.runOnUiThread(() -> {
-                        WatingDilog.closePragressDialog();
-                        selectGroup(0);
-                        nowChooseIndex = 0;
-                        templateThumbAdapter.notifyDataSetChanged();
-                        if (mTemplateViews != null && mTemplateViews.size() > 0) {
-                            mTemplateViews.get(nowChooseIndex).invalidate(); //提示重新绘制预览图
-                        }
-                    }), "FIRST_MEDIA");  //批量替换图片
-                }).start();
+            WatingDilog.openPragressDialog(this);
+            new Thread(() -> {
+                mTemplateModel.setReplaceAllFiles(list_all, TemplateActivity.this, complete -> TemplateActivity.this.runOnUiThread(() -> {
+                    WatingDilog.closePragressDialog();
+                    selectGroup(0);
+                    nowChooseIndex = 0;
+                    templateThumbAdapter.notifyDataSetChanged();
+                    if (mTemplateViews != null && mTemplateViews.size() > 0) {
+                        mTemplateViews.get(nowChooseIndex).invalidate(); //提示重新绘制预览图
+                    }
+                }), "FIRST_MEDIA");  //批量替换图片
+            }).start();
         }
     }
 
@@ -210,34 +176,50 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     public void selectGroup(final int index) {
-            if (mTemplateViews != null && mTemplateViews.size() > 0) {
-                TemplateView nowChooseTemplateView = mTemplateViews.get(index);
-                nowChooseTemplateView.setVisibility(View.VISIBLE);
-                    nowChooseTemplateView.isViewVisible(true);
-                    nowChooseTemplateView.invalidate();
-                rx.Observable.from(mTemplateViews).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(templateView -> {
-                    LogUtil.d("OOM", "selectGroup");
-                    if (templateView != nowChooseTemplateView && templateView.getVisibility() != View.GONE) {
-                        templateView.setVisibility(View.GONE);
-                        templateView.isViewVisible(false);
-                    }
-                });
-            }
+        if (mTemplateViews != null && mTemplateViews.size() > 0) {
+            TemplateView nowChooseTemplateView = mTemplateViews.get(index);
+            nowChooseTemplateView.setVisibility(View.VISIBLE);
+            nowChooseTemplateView.isViewVisible(true);
+            nowChooseTemplateView.invalidate();
+            rx.Observable.from(mTemplateViews).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(templateView -> {
+                LogUtil.d("OOM", "selectGroup");
+                if (templateView != nowChooseTemplateView && templateView.getVisibility() != View.GONE) {
+                    templateView.setVisibility(View.GONE);
+                    templateView.isViewVisible(false);
+                }
+            });
+        }
     }
 
 
     public void initTemplateThumb() {
-        //创建布局管理
-        layoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(layoutManager);
-        //创建适配器
         templateThumbAdapter = new TemplateThumbAdapter(R.layout.item_group_thumb, listItem, TemplateActivity.this);
-        //条目点击事件
         templateThumbAdapter.setOnItemClickListener((adapter, view, position) -> {
+            modificationThumbData(lastPosition,position);
             selectGroup(position);
+            lastPosition=position;
         });
         recyclerView.setAdapter(templateThumbAdapter);
+    }
+
+
+    private void modificationThumbData(int lastPosition, int position) {
+        if(lastPosition!=position){
+            TemplateThumbItem item1 = listItem.get(position);
+            item1.setIsCheck(0);
+            listItem.set(position, item1);
+            TemplateThumbItem item2 = listItem.get(lastPosition);
+            item2.setIsCheck(1);
+            listItem.set(lastPosition, item2);
+            templateThumbAdapter.notifyItemChanged(position); //更新上一个
+            templateThumbAdapter.notifyItemChanged(lastPosition);
+        }else{
+
+
+        }
     }
 
 

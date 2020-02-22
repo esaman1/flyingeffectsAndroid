@@ -12,7 +12,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginEnd="10dp"
+       android:padding="10dp"
         android:layout_height="wrap_content">
 
         <LinearLayout
@@ -31,9 +31,8 @@
 
                 <RelativeLayout
                     android:id="@+id/rela_parent"
-                    android:layout_width="60dp"
-                    android:background="#D8D8D8"
-                    android:layout_height="60dp">
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
 
 
@@ -43,19 +42,19 @@
                         android:scaleType="centerCrop"
                         android:layout_height="60dp"
                         android:layout_centerVertical="true"
-                        android:layout_marginEnd="0dp" />
+                      />
 
 
 
 
                     <LinearLayout
                         android:id="@+id/ll_select"
-                        android:layout_width="match_parent"
+                        android:layout_width="60dp"
                         android:orientation="vertical"
                         android:visibility="gone"
                         android:background="@drawable/item_select_bg"
                         android:gravity="center"
-                        android:layout_height="match_parent">
+                        android:layout_height="60dp">
 
 
                         <ImageView
