@@ -217,8 +217,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             templateThumbAdapter.notifyItemChanged(position); //更新上一个
             templateThumbAdapter.notifyItemChanged(lastPosition);
         }else{
-
-
+            Intent intent =new Intent(this,VideoClippingActivity.class);
+            intent.putExtra("path",listItem.get(position).getPathUrl());
+            startActivity(intent);
         }
     }
 

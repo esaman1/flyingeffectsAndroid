@@ -130,6 +130,12 @@
             android:screenOrientation="portrait" />
 
 
+        <activity
+            android:name="com.mobile.flyingeffects.ui.view.activity.VideoClippingActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+
+
 
     </application>
 
