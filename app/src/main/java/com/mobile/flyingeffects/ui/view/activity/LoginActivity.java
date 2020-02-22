@@ -1,10 +1,8 @@
 package com.mobile.flyingeffects.ui.view.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.mobile.flyingeffects.R;
 import com.mobile.flyingeffects.base.ActivityLifeCycleEvent;
@@ -27,13 +25,6 @@ import rx.Observable;
  */
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
-//
-//    @BindView(R.id.tv_top_title)
-//    TextView tv_top_title;
-
-//
-//    @BindView(R.id.rela_login)
-//    RelativeLayout rela_login;
 
 
     @BindView(R.id.password)
@@ -41,16 +32,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 //
     @BindView(R.id.username)
     EditText username;
-//
-//    @BindView(R.id.iv_top_back)
-//    ImageView iv_top_back;
-//
-//    @BindView(R.id.tv_xy)
-//    TextView tv_xy;
 
-    private String actTag;
-
-    private boolean isCanSendMsg = true;
 
     @Override
     protected int getLayoutId() {
@@ -72,17 +54,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     protected void initView() {
         findViewById(R.id.login).setOnClickListener(this);
         findViewById(R.id.iv_top_back).setOnClickListener(this);
-
-        TextView forget = findViewById(R.id.forget);
-        forget.setOnClickListener(this);
-
-        TextView register = findViewById(R.id.register);
-        register.setOnClickListener(this);
-//        rela_login.setOnClickListener(this);
-//        iv_top_back.setOnClickListener(this);
-//        tv_xy.setOnClickListener(this);
-//        tv_top_title.setText("登录");
-        actTag=getIntent().getStringExtra("actTag");
     }
 
 
@@ -90,24 +61,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.rela_login:
-                requestLogin();
-                break;
-
-            case R.id.register:
-                Intent intent=new Intent(this, RegiestActivity.class);
-                startActivity(intent);
-                break;
 
             case R.id.tv_xy:
-//                intoWebView();
                 break;
 
 
-            case R.id.forget:
-                Intent intentForget=new Intent(this, ForgetActivity.class);
-                startActivity(intentForget);
-                break;
             case R.id.login:
                 requestLogin();
                 break;
@@ -141,14 +99,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
 
 
-//    /**
-//    * user :TongJu  ;描述：发送通知
-//    * 时间：2018/5/25
-//    **/
-//    private void closeAct() {
-//        EventBus.getDefault().post(new mineUpdateUserInfo(actTag));
-//        LoginActivity.this.finish();
-//    }
 
 
 
