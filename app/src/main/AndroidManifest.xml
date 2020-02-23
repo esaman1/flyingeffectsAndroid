@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.mobile.flyingeffects">
+    package="com.flyingeffects.com">
 
 
 
@@ -44,7 +44,7 @@
 
 
     <application
-        android:name="com.mobile.flyingeffects.base.BaseApplication"
+        android:name="com.flyingeffects.com.base.BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -62,7 +62,7 @@
 
 
         <activity
-            android:name="com.mobile.flyingeffects.ui.view.activity.WelcomeActivity"
+            android:name="com.flyingeffects.com.ui.view.activity.WelcomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" >
         <intent-filter>
@@ -76,19 +76,19 @@
 
 
         <activity
-            android:name="com.mobile.flyingeffects.ui.view.activity.HomeMainActivity"
+            android:name="com.flyingeffects.com.ui.view.activity.HomeMainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
 
 
         <activity
-            android:name="com.mobile.flyingeffects.ui.view.activity.UpdateApkActivity"
+            android:name="com.flyingeffects.com.ui.view.activity.UpdateApkActivity"
             android:theme="@style/TransparentTheme" />
 
 
         <activity
-            android:name="com.mobile.flyingeffects.ui.view.activity.SearchActivity"
+            android:name="com.flyingeffects.com.ui.view.activity.SearchActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
@@ -96,42 +96,42 @@
 
 
         <activity
-            android:name="com.mobile.flyingeffects.ui.view.activity.LoginActivity"
+            android:name="com.flyingeffects.com.ui.view.activity.LoginActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
 
         <activity
-            android:name="com.mobile.flyingeffects.ui.view.activity.RegiestActivity"
+            android:name="com.flyingeffects.com.ui.view.activity.RegiestActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
 
         <activity
-            android:name="com.mobile.flyingeffects.ui.view.activity.ForgetActivity"
+            android:name="com.flyingeffects.com.ui.view.activity.ForgetActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.mobile.flyingeffects.ui.view.activity.PreviewActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
-
-
-        <activity
-            android:name="com.mobile.flyingeffects.ui.view.activity.AboutActivity"
+            android:name="com.flyingeffects.com.ui.view.activity.PreviewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
 
         <activity
-            android:name="com.mobile.flyingeffects.ui.view.activity.TemplateActivity"
+            android:name="com.flyingeffects.com.ui.view.activity.AboutActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
 
         <activity
-            android:name="com.mobile.flyingeffects.ui.view.activity.VideoClippingActivity"
+            android:name="com.flyingeffects.com.ui.view.activity.TemplateActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+
+
+        <activity
+            android:name="com.flyingeffects.com.ui.view.activity.VideoClippingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 

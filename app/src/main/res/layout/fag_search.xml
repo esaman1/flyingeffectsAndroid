@@ -51,7 +51,7 @@
             android:text="友友推荐" />
 
 
-        <com.mobile.flyingeffects.view.AutoNewLineLayout
+        <com.flyingeffects.com.view.AutoNewLineLayout
             android:id="@+id/AutoNewLineLayout"
             app:horizontalSpace="10dp"
             app:vertivalSpace="10dp"

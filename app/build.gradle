@@ -30,7 +30,7 @@ android {
 
 
     defaultConfig {
-        applicationId application_id
+        applicationId "com.flyingeffects.com"
         multiDexEnabled true  //分包支持
         minSdkVersion 21
         targetSdkVersion 28
@@ -169,7 +169,9 @@ dependencies {
     implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
 
     //好看的加载框
-    implementation 'com.wang.avi:library:2.1.3'
+//    implementation 'com.wang.avi:library:2.1.3'
+
+
     //框架要求的
     implementation 'com.google.code.gson:gson:2.8.5'
     //视频播放器
