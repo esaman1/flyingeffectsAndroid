@@ -40,7 +40,7 @@ public class VideoClippingActivity extends BaseActivity implements VideoClipping
 
     @Override
     protected void initAction() {
-        Presenter.initBottomLayout(bottomLinear, animInfoData, filterStateList);
+       // Presenter.initBottomLayout(bottomLinear, animInfoData, filterStateList);
 
     }
 

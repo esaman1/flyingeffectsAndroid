@@ -24,6 +24,11 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
 
 
 
+    public void renderVideo(String mTemplateFolder,String mAudio1Path){
+        home_model.renderVideo(mTemplateFolder,mAudio1Path);
+    }
+
+
 
     public void loadTemplate(String filePath, AssetDelegate delegate){
         home_model.loadTemplate(filePath,delegate);

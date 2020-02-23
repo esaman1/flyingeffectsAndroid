@@ -81,7 +81,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 break;
             case R.id.tv_make:
                 videoPlayer.onVideoPause();
-                AlbumManager.chooseAlbum(this,7,SELECTALBUM,this,"");
+                AlbumManager.chooseImageAlbum(this,7,SELECTALBUM,this,"");
                 break;
 
             default:

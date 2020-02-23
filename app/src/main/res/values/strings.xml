@@ -8,5 +8,9 @@
 
     <string name="weixin">微信登录</string>
     <string name="qq">QQ登录</string>
+    <string name="notification">提示</string>
+    <string name="have_saved_to_sdcard">已为你保存至本地</string>
+    <string name="folder">文件夹</string>
+    <string name="got_it">我知道啦</string>
 
 </resources>

@@ -10,6 +10,7 @@ import com.mobile.flyingeffects.manager.MediaLoader;
 import com.orhanobut.hawk.Hawk;
 import com.scwang.smartrefresh.header.MaterialHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.shixing.sxvideoengine.License;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.AlbumConfig;
 
@@ -35,6 +36,20 @@ public class BaseApplication extends MultiDexApplication {
         Hawk.init(this).build();
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
         initAlbum();
+        initLicense();
+    }
+
+
+    /**
+     * description ：註冊VE
+     * date: ：2019/5/8 16:51
+     * author: 张同举 @邮箱 jutongzhang@sina.com
+     */
+    public void initLicense() {
+        String license = "UJ03ctDfZ1ZTWzTF2uC2dmWnOeyD0dk/UhyEu+npLrWeDxFhV7aZ96cFq/vMa2mB6O48q0I/8qI4epo2acEbZyiXD1Im4oUNERrPhVtu2nPtxeIz1yRO1BKPQGh5Jult1SlspS6g9pD/6zyP3KsdfoW5wUkc19dzSZrq9kmuYULB2j/o7g6Rh71HYMIYoq4avDT8DDeO1P+GmeUz793hELjUMUBbZwUiYC+xDMNM2LOnWK1DEAzAWWwyh3/mJdcwCyc4MY2LttOa0ksn6iWPtFxrBxw97cIFLdhLkEoMibeCPCLtmfjofB3VnEvo9AWC/eV1dqiUr19dfxhboYIV4sJQTFLQ+HyzWRrbP4F3FLVqeSGVfkGxScRCEL43wNTBUN4f8LDFqi/yyhoRj4Nc/aJdqdte38RjJPLX1tt6J78=";
+        License l = License.init(license);
+        l.isValid();
+
     }
 
 
@@ -96,7 +111,6 @@ public class BaseApplication extends MultiDexApplication {
                 .build()
         );
     }
-
 
 
 }

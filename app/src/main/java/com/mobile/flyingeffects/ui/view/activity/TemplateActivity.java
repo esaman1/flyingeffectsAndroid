@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -49,13 +50,15 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private TemplateThumbAdapter templateThumbAdapter;
     private ArrayList<TemplateThumbItem> listItem = new ArrayList<>();
     private ArrayList<TemplateView> mTemplateViews;
-    private int maxChooseNum = 22;
+    private int maxChooseNum = 2;
     private int nowChooseIndex = 0;
     @BindView(R.id.edit_view_container)
     FrameLayout mContainer;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     private int lastPosition;
+    private String mAudio1Path;
+    private static final String MUSIC_PATH = "/bj.mp3";
 
 
     @Override
@@ -66,7 +69,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @Override
     protected void initView() {
         findViewById(R.id.tv_top_submit).setVisibility(View.VISIBLE);
-        ((TextView) findViewById(R.id.tv_top_submit)).setText("下一步");
+        ((TextView) findViewById(R.id.tv_top_submit)).setText("保存");
         presenter = new TemplatePresenter(this, this);
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("Message");
@@ -74,7 +77,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             imgPath = bundle.getStringArrayList("paths");
         }
         ((TextView) findViewById(R.id.tv_top_title)).setText("拖动素材位置");
-        mFolder = getExternalFilesDir("dynamic/" + "gzc20251bg");
+        mFolder = getExternalFilesDir("dynamic/" + "zs2002202bg");
+        mAudio1Path = mFolder.getPath() + MUSIC_PATH;
         File dir = getExternalFilesDir("");
         mTemplateViews = new ArrayList<>();
         for (int i = 0; i < maxChooseNum; i++) {
@@ -226,4 +230,17 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
+    @OnClick({R.id.tv_top_submit})
+    public void onClick(View v) {
+        switch(v.getId()){
+            case R.id.tv_top_submit:
+            presenter.renderVideo(mFolder.getPath(),mAudio1Path);
+            break;
+
+            default:
+                break;
+
+        }
+        super.onClick(v);
+    }
 }
