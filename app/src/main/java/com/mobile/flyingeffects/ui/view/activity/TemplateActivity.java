@@ -90,6 +90,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
     @Override
+    public void completeTemplate(TemplateModel templateModel) {
+        mTemplateModel = templateModel;
+        initTemplateViews(mTemplateModel);  //初始化templateView 等数据
+    }
+
+
+    @Override
     public void pickMedia(MediaUiModel model) {
 
     }
@@ -99,11 +106,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     }
 
-    @Override
-    public void completeTemplate(TemplateModel templateModel) {
-        mTemplateModel = templateModel;
-        initTemplateViews(mTemplateModel);  //初始化templateView 等数据
-    }
 
 
     /**

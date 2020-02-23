@@ -140,6 +140,7 @@
         android:layout_height="@dimen/dp_0_5"/>
 
     <LinearLayout
+        android:id="@+id/ll_exit_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"

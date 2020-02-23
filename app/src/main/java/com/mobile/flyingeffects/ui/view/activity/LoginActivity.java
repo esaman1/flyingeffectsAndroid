@@ -52,30 +52,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     protected void initView() {
-        findViewById(R.id.login).setOnClickListener(this);
-        findViewById(R.id.iv_top_back).setOnClickListener(this);
     }
 
-
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-
-            case R.id.tv_xy:
-                break;
-
-
-            case R.id.login:
-                requestLogin();
-                break;
-
-
-            default:
-                super.onClick(v);
-                break;
-        }
-    }
 
 
 
