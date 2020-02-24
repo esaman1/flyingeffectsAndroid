@@ -46,7 +46,6 @@ public class TemplateMvpModel {
 
     public void loadTemplate(String filePath, AssetDelegate delegate){
             Observable.just(filePath).map(s -> {
-
                 try {
                     mTemplateModel = new TemplateModel(filePath, delegate, context);
                 } catch (Exception e) {

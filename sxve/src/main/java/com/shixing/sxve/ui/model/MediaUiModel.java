@@ -743,6 +743,7 @@ public class MediaUiModel extends AssetUi {
             } else {
                 countMatrixForVideo(mBitmap);
                 isGenerateMatrix = true;
+
             }
             if (!nowViewIsVisible) {
                 recycleBitmap();
