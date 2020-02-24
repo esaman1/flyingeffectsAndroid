@@ -185,13 +185,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         if (mTemplateViews != null && mTemplateViews.size() > 0) {
             TemplateView nowChooseTemplateView = mTemplateViews.get(index);
             nowChooseTemplateView.setVisibility(View.VISIBLE);
-            nowChooseTemplateView.isViewVisible(true);
+//            nowChooseTemplateView.isViewVisible(true);
             nowChooseTemplateView.invalidate();
             rx.Observable.from(mTemplateViews).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(templateView -> {
                 LogUtil.d("OOM", "selectGroup");
                 if (templateView != nowChooseTemplateView && templateView.getVisibility() != View.GONE) {
                     templateView.setVisibility(View.GONE);
-                    templateView.isViewVisible(false);
+//                    templateView.isViewVisible(false);
                 }
             });
         }

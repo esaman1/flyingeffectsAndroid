@@ -11,14 +11,7 @@
     tools:ignore="ResourceName">
 
 
-    <!--<ImageView-->
-    <!--android:id="@+id/waitdialog_img"-->
-    <!--android:layout_width="60dp"-->
-    <!--android:layout_height="60dp"-->
-    <!--android:layout_alignParentTop="true"-->
-    <!--android:layout_centerHorizontal="true"-->
-    <!--android:background="@drawable/animationlist_watingdilog"-->
-    <!--android:contentDescription="@null" />-->
+
 
 
     <LinearLayout

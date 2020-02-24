@@ -112,7 +112,7 @@ public class TemplateMvpModel {
         LogUtil.d("OOM", "onFinish,success?=" + isSucceed + "MSG=" + isSucceed);
         WaitingDialog.closePragressDialog();
         if (isSucceed) {
-            mTemplateModel.restoreTemplate(true, "");
+          //  mTemplateModel.restoreTemplate(true, "");
             showDialog("");
         }
     }

@@ -24,16 +24,6 @@
 
 
     <!--加载框样式-->
-    <style name="mProgress_circle" tools:ignore="ResourceName">
-        <item name="android:indeterminateDrawable">@drawable/progressbar_preview</item>
-        <item name="android:minWidth">30dp</item>
-        <item name="android:minHeight">30dp</item>
-        <item name="android:maxWidth">60dp</item>
-        <item name="android:maxHeight">60dp</item>
-    </style>
-
-
-    <!--加载框样式-->
     <style name="loading_dialog" parent="android:style/Theme.Dialog" tools:ignore="ResourceName">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowNoTitle">true</item>

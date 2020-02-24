@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import android.widget.CompoundButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.shixing.sxve.R;
 import com.shixing.sxve.ui.adapter.TimelineAdapter;
@@ -29,12 +31,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.UUID;
 
-
-/**
- * description ：视频剪切界面
- * date: ：2019/5/13 9:41
- * author: 张同举 @邮箱 jutongzhang@sina.com
- */
 public class VideoClipActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener, CompoundButton.OnCheckedChangeListener, SXVideoView.OnGetSizeListener {
     private static final String TAG = "VideoClipActivity";
     private static final String KEY_TEMPLATE_WIDTH = "KEY_TEMPLATE_WIDTH";
@@ -47,7 +43,7 @@ public class VideoClipActivity extends AppCompatActivity implements RadioGroup.O
     private int mTemplateHeight;
     private float mTemplateDuration;
     private CheckBox mCbMute;
-    private SXVideoView mVideoView;
+    private VideoView mVideoView;
     private String mVideoPath;
     private TimelineAdapter mTimelineAdapter;
     private RecyclerView mThumbList;
@@ -76,16 +72,26 @@ public class VideoClipActivity extends AppCompatActivity implements RadioGroup.O
         setContentView(R.layout.activity_video_clip);
 
         parseIntent();
-        //Environment.getExternalStorageDirectory() + "/abc.mp4";
 
         TextView duration = findViewById(R.id.duration);
         duration.setText(String.format(Locale.US, "%.1fs", mTemplateDuration));
 
-        VideoClipLayout videoClipLayout = findViewById(R.id.sx_video_view);
-        videoClipLayout.setTemplateWidthAndHeight(mTemplateWidth, mTemplateHeight);
-        mVideoView = videoClipLayout.getVideoView();
+        mVideoView = findViewById(R.id.sx_video_view);
         mVideoView.setVideoPath(mVideoPath);
-        mVideoView.onGetViewSize(this);
+        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                onGetVideoInfo(mp.getVideoWidth(), mp.getVideoHeight(), mp.getDuration());
+                mp.setLooping(true);
+                mVideoView.start();
+            }
+        });
+
+//        VideoView videoClipLayout = findViewById(R.id.sx_video_view);
+//        videoClipLayout.setTemplateWidthAndHeight(mTemplateWidth, mTemplateHeight);
+//        mVideoView = videoClipLayout.getVideoView();
+//        mVideoView.setVideoPath(mVideoPath);
+//        mVideoView.onGetViewSize(this);
 
         mCbMute = findViewById(R.id.cb_mute);
         mCbMute.setOnCheckedChangeListener(this);
@@ -128,20 +134,24 @@ public class VideoClipActivity extends AppCompatActivity implements RadioGroup.O
     }
 
     public void back(View view) {
-        Toast.makeText(this, "back", Toast.LENGTH_SHORT).show();
+        finish();
     }
 
-
-    /**
-     * description ：下一步
-     * date: ：2019/5/13 9:43
-     * author: 张同举 @邮箱 jutongzhang@sina.com
-     */
     public void next(View view) {
+//        clipVideo();
+        Intent data = new Intent();
+        data.putExtra("path", mVideoPath);
+        data.putExtra("mute", mCbMute.isChecked());
+        data.putExtra("start_time", mStartTime / 1000f);
+        setResult(RESULT_OK, data);
+        finish();
+    }
+
+    private void clipVideo() {
         mDialog.show(getSupportFragmentManager(), mDialog.getClass().getSimpleName());
         Matrix matrix = mVideoView.getMatrix();
         final String outputPath = getOutputPath();
-        SXCompositor formatter = new SXCompositor(mVideoPath, outputPath, matrix, mVideoView.isMute());  //对视频进行截取 ztj
+        SXCompositor formatter = new SXCompositor(mVideoPath, outputPath, matrix, !mCbMute.isChecked());
         formatter.setWidth(mTemplateWidth);
         formatter.setHeight(mTemplateHeight);
         formatter.setStartTime(mStartTime / 1000f);
@@ -179,12 +189,12 @@ public class VideoClipActivity extends AppCompatActivity implements RadioGroup.O
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
-        mVideoView.setFitMod(checkedId == R.id.cb_fit_width ? SXVideoView.FIT_WIDTH : SXVideoView.FIT_HEIGHT);
+//        mVideoView.setFitMod(checkedId == R.id.cb_fit_width ? SXVideoView.FIT_WIDTH : SXVideoView.FIT_HEIGHT);
     }
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        mVideoView.setMute(isChecked);
+//        mVideoView.setMute(isChecked);
     }
 
     @Override

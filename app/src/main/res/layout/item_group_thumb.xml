@@ -52,7 +52,6 @@
                         android:layout_width="60dp"
                         android:orientation="vertical"
                         android:visibility="gone"
-                        android:background="@drawable/item_select_bg"
                         android:gravity="center"
                         android:layout_height="60dp">
 
@@ -61,7 +60,6 @@
                             android:id="@+id/iv_select_alert"
                             android:contentDescription="@string/app_name"
                             android:layout_width="17dp"
-                            android:src="@drawable/edit"
                             android:layout_height="17dp"
                             />
 

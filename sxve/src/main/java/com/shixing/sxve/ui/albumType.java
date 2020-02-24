@@ -1,4 +1,4 @@
-package com.shixing.sxve.ui.model;
+package com.shixing.sxve.ui;
 
 public class albumType {
     public static boolean isVideo(String mimeType) {

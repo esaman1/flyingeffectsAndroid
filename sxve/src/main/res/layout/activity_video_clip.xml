@@ -33,7 +33,7 @@
         android:drawableRight="@drawable/next_icon"
         android:gravity="center"
         android:onClick="next"
-        android:text="@string/sxve_next"
+        android:text="下一步"
         android:textColor="@color/sxve_white"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -146,11 +146,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guide_line">
 
-        <com.shixing.sxve.ui.view.VideoClipLayout
+        <VideoView
             android:id="@+id/sx_video_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:background="@color/sxve_black" />
+            android:layout_gravity="center" />
     </FrameLayout>
 </android.support.constraint.ConstraintLayout>
