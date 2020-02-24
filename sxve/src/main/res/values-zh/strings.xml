@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sxve_close">关闭</string>
+    <string name="sxve_batch_import">批量导入</string>
+    <string name="sxve_done">完成</string>
+    <string name="sxve_return">返回</string>
+</resources>
