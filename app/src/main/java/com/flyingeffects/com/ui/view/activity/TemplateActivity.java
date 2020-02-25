@@ -10,6 +10,8 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.flyingeffects.com.R;
@@ -19,6 +21,7 @@ import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.view.EmptyControlVideo;
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.SxveConstans;
 import com.shixing.sxve.ui.model.GroupModel;
@@ -44,6 +47,13 @@ import rx.schedulers.Schedulers;
  */
 public class TemplateActivity extends BaseActivity implements TemplateMvpView, AssetDelegate {
 
+    @BindView(R.id.edit_view_container)
+    FrameLayout mContainer;
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
+    @BindView(R.id.seekBar)
+    SeekBar seekBar;
+
     private TemplatePresenter presenter;
     private List<String> imgPath = new ArrayList<>();
     private TemplateModel mTemplateModel;
@@ -53,14 +63,16 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private ArrayList<TemplateView> mTemplateViews;
     private int maxChooseNum = 6;
     private int nowChooseIndex = 0;
-    @BindView(R.id.edit_view_container)
-    FrameLayout mContainer;
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
     private int lastPosition;
     private String mAudio1Path;
     private static final String MUSIC_PATH = "/bj.mp3";
     private TextAssetEditLayout mTextEditLayout;
+
+
+
+
+    @BindView(R.id.video_player)
+    EmptyControlVideo videoPlayer;
 
 
     @Override
@@ -88,7 +100,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             listItem.add(new TemplateThumbItem("", 1, false));
         }
         SxveConstans.default_bg_path = new File(dir, "default_bj.png").getPath();
+        seekBar.setOnSeekBarChangeListener(seekBarListener);
     }
+
+
+
 
     @Override
     protected void initAction() {
@@ -102,6 +118,26 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         initTemplateViews(mTemplateModel);  //初始化templateView 等数据
     }
 
+    @Override
+    public void toPreview(String path) {
+        videoPlayer.setUp(path, true, "");
+        videoPlayer.startPlayLogic();
+//        videoPlayer.set
+        showPreview(true);
+    }
+
+
+
+    private void showPreview(boolean isPreview){
+        if(isPreview){
+            mContainer.setVisibility(View.INVISIBLE);
+            videoPlayer.setVisibility(View.VISIBLE);
+        }else{
+            videoPlayer.setVisibility(View.INVISIBLE);
+            mContainer.setVisibility(View.VISIBLE);
+        }
+    }
+
 
     @Override
     public void pickMedia(MediaUiModel model) {
@@ -113,7 +149,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         mTextEditLayout.setVisibility(View.VISIBLE);
         mTextEditLayout.setupWidth(model);
     }
-
 
 
     /**
@@ -205,16 +240,16 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         recyclerView.setLayoutManager(layoutManager);
         templateThumbAdapter = new TemplateThumbAdapter(R.layout.item_group_thumb, listItem, TemplateActivity.this);
         templateThumbAdapter.setOnItemClickListener((adapter, view, position) -> {
-            modificationThumbData(lastPosition,position);
+            modificationThumbData(lastPosition, position);
             selectGroup(position);
-            lastPosition=position;
+            lastPosition = position;
         });
         recyclerView.setAdapter(templateThumbAdapter);
     }
 
 
     private void modificationThumbData(int lastPosition, int position) {
-        if(lastPosition!=position){
+        if (lastPosition != position) {
             TemplateThumbItem item1 = listItem.get(position);
             item1.setIsCheck(0);
             listItem.set(position, item1);
@@ -223,21 +258,25 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             listItem.set(lastPosition, item2);
             templateThumbAdapter.notifyItemChanged(position); //更新上一个
             templateThumbAdapter.notifyItemChanged(lastPosition);
-        }else{
-            Intent intent =new Intent(this,VideoClippingActivity.class);
-            intent.putExtra("path",listItem.get(position).getPathUrl());
+        } else {
+            Intent intent = new Intent(this, VideoClippingActivity.class);
+            intent.putExtra("path", listItem.get(position).getPathUrl());
             startActivity(intent);
         }
     }
 
 
-    @OnClick({R.id.tv_top_submit})
+    @OnClick({R.id.tv_top_submit, R.id.iv_play})
     public void onClick(View v) {
 
-        switch(v.getId()){
+        switch (v.getId()) {
             case R.id.tv_top_submit:
-            presenter.renderVideo(mFolder.getPath(),mAudio1Path);
-            break;
+                presenter.renderVideo(mFolder.getPath(), mAudio1Path,false);
+                break;
+
+            case R.id.iv_play:
+                presenter.renderVideo(mFolder.getPath(), mAudio1Path,true);
+                break;
 
             default:
                 break;
@@ -254,5 +293,30 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             super.onBackPressed();
         }
     }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        videoPlayer.release();
+    }
+
+
+    SeekBar.OnSeekBarChangeListener seekBarListener =new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int nowProgress, boolean fromUser) {
+
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
 
 }

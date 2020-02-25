@@ -5,4 +5,6 @@ import com.shixing.sxve.ui.model.TemplateModel;
 public interface TemplateMvpView {
 
     void completeTemplate(TemplateModel templateModel);
+
+    void toPreview(String path);
 }

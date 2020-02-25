@@ -9,6 +9,7 @@ import android.support.v4.view.ViewCompat;
 import android.transition.Transition;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
@@ -55,6 +56,9 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @BindView(R.id.iv_zan)
     ImageView iv_zan;
+
+
+
 
     PreviewMvpPresenter Presenter;
 
@@ -178,7 +182,9 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         if (!isCancel) {
             if (SELECTALBUM == 0) {
 
-                Presenter.CompressImg(paths);
+
+                intoTemplateActivity(paths);
+            //    Presenter.CompressImg(paths);
             }
         }
     }

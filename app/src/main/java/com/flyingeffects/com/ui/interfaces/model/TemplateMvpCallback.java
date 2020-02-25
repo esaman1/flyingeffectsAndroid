@@ -7,5 +7,7 @@ public interface TemplateMvpCallback {
 
     void completeTemplate(TemplateModel templateModel);
 
+    void toPreview(String path);
+
 
 }

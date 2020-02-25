@@ -19,9 +19,8 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     }
 
 
-
-    public void renderVideo(String mTemplateFolder,String mAudio1Path){
-        home_model.renderVideo(mTemplateFolder,mAudio1Path);
+    public void renderVideo(String mTemplateFolder,String mAudio1Path,boolean isPreview){
+        home_model.renderVideo(mTemplateFolder,mAudio1Path,isPreview);
     }
 
 
@@ -34,5 +33,10 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     @Override
     public void completeTemplate(TemplateModel templateModel) {
         home_mvpView.completeTemplate(templateModel);
+    }
+
+    @Override
+    public void toPreview(String path) {
+        home_mvpView.toPreview(path);
     }
 }
