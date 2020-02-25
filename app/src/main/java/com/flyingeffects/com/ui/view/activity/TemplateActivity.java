@@ -18,6 +18,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateThumbAdapter;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.enity.TemplateThumbItem;
+import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
 import com.flyingeffects.com.utils.LogUtil;
@@ -31,6 +32,7 @@ import com.shixing.sxve.ui.model.TextUiModel;
 import com.shixing.sxve.ui.view.TemplateView;
 import com.shixing.sxve.ui.view.TextAssetEditLayout;
 import com.shixing.sxve.ui.view.WaitingDialog;
+import com.shuyu.gsyvideoplayer.listener.GSYVideoProgressListener;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -122,10 +124,30 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public void toPreview(String path) {
         videoPlayer.setUp(path, true, "");
         videoPlayer.startPlayLogic();
-//        videoPlayer.set
+        videoPlayer.setGSYVideoProgressListener((progress, secProgress, currentPosition, duration) -> seekBar.setProgress(progress));
+        videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> {
+            showPreview(false);
+        }));
         showPreview(true);
     }
 
+
+
+
+
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        videoPlayer.onVideoPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        videoPlayer.onVideoResume();
+    }
 
 
     private void showPreview(boolean isPreview){
@@ -305,7 +327,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     SeekBar.OnSeekBarChangeListener seekBarListener =new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int nowProgress, boolean fromUser) {
-
         }
 
         @Override
