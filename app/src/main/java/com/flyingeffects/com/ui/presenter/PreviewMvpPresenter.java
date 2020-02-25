@@ -24,4 +24,13 @@ public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCall
         PreviewModel.CompressImg(paths);
     }
 
+
+    public void onDestroy(){
+        PreviewModel.onDestroy();
+    }
+
+    @Override
+    public void getCompressImgList(List<String> imgList) {
+        PreviewView.getCompressImgList(imgList);
+    }
 }

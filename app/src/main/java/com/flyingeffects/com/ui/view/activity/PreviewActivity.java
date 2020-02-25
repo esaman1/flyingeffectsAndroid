@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.view.ViewCompat;
 import android.transition.Transition;
@@ -13,20 +12,18 @@ import android.widget.ImageView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.manager.AlbumManager;
+import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.OnTransitionListener;
 import com.flyingeffects.com.ui.interfaces.view.PreviewMvpView;
 import com.flyingeffects.com.ui.presenter.PreviewMvpPresenter;
-import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
-import com.othershe.dutil.DUtil;
-import com.othershe.dutil.callback.SimpleUploadCallback;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils;
 import com.yanzhenjie.album.AlbumFile;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,12 +35,12 @@ import butterknife.OnClick;
  * 预览视频界面
  * 开始制作
  */
-public class PreviewActivity extends BaseActivity implements AlbumChooseCallback , PreviewMvpView {
+public class PreviewActivity extends BaseActivity implements AlbumChooseCallback, PreviewMvpView {
 
 
     public final static String IMG_TRANSITION = "IMG_TRANSITION";
-    public final static String TRANSITION = "TRANSITION";
-    public final static int SELECTALBUM=0;
+    //    public final static String TRANSITION = "TRANSITION";
+    public final static int SELECTALBUM = 0;
 
     OrientationUtils orientationUtils;
 
@@ -69,11 +66,15 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     protected void initView() {
-        Presenter=new PreviewMvpPresenter(this,this);
+        Presenter = new PreviewMvpPresenter(this, this);
         String url = "https://res.exexm.com/cw_145225549855002";
         videoPlayer.setUp(url, true, "");
         //过渡动画
         initTransition();
+        //清理内部缓存
+        DataCleanManager.cleanExternalCache();
+        //清理外部缓存
+        DataCleanManager.cleanInternalCache(BaseApplication.getInstance());
     }
 
 
@@ -83,7 +84,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     }
 
 
-    @OnClick({R.id.iv_zan,R.id.tv_make})
+    @OnClick({R.id.iv_zan, R.id.tv_make})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_zan:
@@ -91,7 +92,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 break;
             case R.id.tv_make:
                 videoPlayer.onVideoPause();
-                AlbumManager.chooseImageAlbum(this,7,SELECTALBUM,this,"");
+                AlbumManager.chooseImageAlbum(this, 7, SELECTALBUM, this, "");
                 break;
 
             default:
@@ -100,7 +101,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
 
     }
-
 
 
     @Override
@@ -114,16 +114,15 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     }
 
 
-
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public void onDestroy() {
         super.onDestroy();
-         videoPlayer.release();
+        Presenter.onDestroy();
+        videoPlayer.release();
         if (orientationUtils != null)
             orientationUtils.releaseListener();
     }
-
 
 
     @Override
@@ -160,7 +159,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     private boolean addTransitionListener() {
         transition = getWindow().getSharedElementEnterTransition();
         if (transition != null) {
-            transition.addListener(new OnTransitionListener(){
+            transition.addListener(new OnTransitionListener() {
                 @Override
                 public void onTransitionEnd(Transition transition) {
                     super.onTransitionEnd(transition);
@@ -176,41 +175,27 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-        if(!isCancel){
-            if(SELECTALBUM==0){
-            Presenter.CompressImg(paths);
-                uploadImage(paths.get(0));
-//                Intent intent=new Intent(this,TemplateActivity.class);
-//                Bundle bundle = new Bundle();
-//                bundle.putStringArrayList("paths", (ArrayList<String>) paths);
-//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                intent.putExtra("Message",bundle);
-//                startActivity(intent);
+        if (!isCancel) {
+            if (SELECTALBUM == 0) {
+
+                Presenter.CompressImg(paths);
             }
         }
     }
 
 
-
-
-    private void uploadImage(String path){
-        DUtil.initFormUpload()
-                .url("http://flying.nineton.cn/api/picture/pictureHuman")
-                .addFile("file", "BeautyImage.jpg", new File(path))
-                .fileUploadBuild()
-                .upload(new SimpleUploadCallback() {
-                    @Override
-                    public void onStart() {
-                        LogUtil.d("uploadImage","onStart");
-                        super.onStart();
-                    }
-
-                    @Override
-                    public void onFinish(String response) {
-                        LogUtil.d("uploadImage",response);
-                        super.onFinish(response);
-                    }
-                });
+    private void intoTemplateActivity(List<String> paths) {
+        Intent intent = new Intent(this, TemplateActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList("paths", (ArrayList<String>) paths);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("Message", bundle);
+        startActivity(intent);
     }
 
+
+    @Override
+    public void getCompressImgList(List<String> imgList) {
+        intoTemplateActivity(imgList);
+    }
 }
