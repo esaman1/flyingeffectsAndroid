@@ -181,10 +181,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel) {
             if (SELECTALBUM == 0) {
-
-
-                intoTemplateActivity(paths);
-            //    Presenter.CompressImg(paths);
+//                intoTemplateActivity(paths);
+                Presenter.CompressImg(paths);
             }
         }
     }
