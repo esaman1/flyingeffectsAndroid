@@ -6,6 +6,7 @@ public class Url {
     private  static final String production = "http://kadian.nineton.cn/"; //正式环境
 
 
+    private static final String flyProduction="http://flying.nineton.cn";
 
 
     /**

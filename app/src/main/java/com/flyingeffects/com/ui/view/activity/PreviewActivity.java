@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.view.ViewCompat;
 import android.transition.Transition;
@@ -15,11 +16,17 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.OnTransitionListener;
+import com.flyingeffects.com.ui.interfaces.view.PreviewMvpView;
+import com.flyingeffects.com.ui.presenter.PreviewMvpPresenter;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
+import com.othershe.dutil.DUtil;
+import com.othershe.dutil.callback.SimpleUploadCallback;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils;
 import com.yanzhenjie.album.AlbumFile;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +38,7 @@ import butterknife.OnClick;
  * 预览视频界面
  * 开始制作
  */
-public class PreviewActivity extends BaseActivity implements AlbumChooseCallback {
+public class PreviewActivity extends BaseActivity implements AlbumChooseCallback , PreviewMvpView {
 
 
     public final static String IMG_TRANSITION = "IMG_TRANSITION";
@@ -52,6 +59,9 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @BindView(R.id.iv_zan)
     ImageView iv_zan;
 
+    PreviewMvpPresenter Presenter;
+
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_preview;
@@ -59,6 +69,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     protected void initView() {
+        Presenter=new PreviewMvpPresenter(this,this);
         String url = "https://res.exexm.com/cw_145225549855002";
         videoPlayer.setUp(url, true, "");
         //过渡动画
@@ -167,13 +178,39 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
         if(!isCancel){
             if(SELECTALBUM==0){
-                Intent intent=new Intent(this,TemplateActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putStringArrayList("paths", (ArrayList<String>) paths);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("Message",bundle);
-                startActivity(intent);
+            Presenter.CompressImg(paths);
+                uploadImage(paths.get(0));
+//                Intent intent=new Intent(this,TemplateActivity.class);
+//                Bundle bundle = new Bundle();
+//                bundle.putStringArrayList("paths", (ArrayList<String>) paths);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                intent.putExtra("Message",bundle);
+//                startActivity(intent);
             }
         }
     }
+
+
+
+
+    private void uploadImage(String path){
+        DUtil.initFormUpload()
+                .url("http://flying.nineton.cn/api/picture/pictureHuman")
+                .addFile("file", "BeautyImage.jpg", new File(path))
+                .fileUploadBuild()
+                .upload(new SimpleUploadCallback() {
+                    @Override
+                    public void onStart() {
+                        LogUtil.d("uploadImage","onStart");
+                        super.onStart();
+                    }
+
+                    @Override
+                    public void onFinish(String response) {
+                        LogUtil.d("uploadImage",response);
+                        super.onFinish(response);
+                    }
+                });
+    }
+
 }
