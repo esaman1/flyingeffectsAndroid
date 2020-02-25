@@ -26,4 +26,11 @@
         android:layout_width="match_parent"
         android:layout_height="120dp" />
 
+
+    <com.shixing.sxve.ui.view.TextAssetEditLayout
+        android:id="@+id/text_edit_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
 </RelativeLayout>

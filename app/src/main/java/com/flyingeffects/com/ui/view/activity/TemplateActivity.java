@@ -26,6 +26,7 @@ import com.shixing.sxve.ui.model.MediaUiModel;
 import com.shixing.sxve.ui.model.TemplateModel;
 import com.shixing.sxve.ui.model.TextUiModel;
 import com.shixing.sxve.ui.view.TemplateView;
+import com.shixing.sxve.ui.view.TextAssetEditLayout;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.io.File;
@@ -50,7 +51,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private TemplateThumbAdapter templateThumbAdapter;
     private ArrayList<TemplateThumbItem> listItem = new ArrayList<>();
     private ArrayList<TemplateView> mTemplateViews;
-    private int maxChooseNum = 2;
+    private int maxChooseNum = 6;
     private int nowChooseIndex = 0;
     @BindView(R.id.edit_view_container)
     FrameLayout mContainer;
@@ -59,6 +60,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private int lastPosition;
     private String mAudio1Path;
     private static final String MUSIC_PATH = "/bj.mp3";
+    private TextAssetEditLayout mTextEditLayout;
 
 
     @Override
@@ -77,7 +79,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             imgPath = bundle.getStringArrayList("paths");
         }
         ((TextView) findViewById(R.id.tv_top_title)).setText("拖动素材位置");
-        mFolder = getExternalFilesDir("dynamic/" + "zs2002202bg");
+        mTextEditLayout = findViewById(R.id.text_edit_layout);
+        mFolder = getExternalFilesDir("dynamic/" + "test");//zs2002202bg  ///aaa  ///test
         mAudio1Path = mFolder.getPath() + MUSIC_PATH;
         File dir = getExternalFilesDir("");
         mTemplateViews = new ArrayList<>();
@@ -107,7 +110,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     public void editText(TextUiModel model) {
-
+        mTextEditLayout.setVisibility(View.VISIBLE);
+        mTextEditLayout.setupWidth(model);
     }
 
 
@@ -119,9 +123,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     private void initTemplateViews(TemplateModel templateModel) {
         for (int i = 1; i <= templateModel.groupSize; i++) {
-            if (i == templateModel.groupSize) {
-                continue;
-            }
             TemplateView templateView = new TemplateView(TemplateActivity.this);
             templateView.setBackgroundColor(Color.BLACK);
             templateView.setVisibility(i == 1 ? View.VISIBLE : View.GONE);
@@ -244,4 +245,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         }
         super.onClick(v);
     }
+
+    @Override
+    public void onBackPressed() {
+        if (mTextEditLayout.getVisibility() == View.VISIBLE) {
+            mTextEditLayout.hide();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
 }
