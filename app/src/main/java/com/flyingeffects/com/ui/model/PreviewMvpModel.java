@@ -13,6 +13,7 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.ui.interfaces.model.PreviewMvpCallback;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.updateFileUtils;
 import com.othershe.dutil.DUtil;
 import com.othershe.dutil.callback.SimpleUploadCallback;
 import com.shixing.sxve.ui.view.WaitingDialog;
@@ -28,6 +29,14 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -88,12 +97,13 @@ public class PreviewMvpModel {
                     public void onSuccess(File file) {
                         nowCompressSuccessNum++;
                         LogUtil.d("OOM", "onSuccess=" + file.getPath());
+                        //全部图片压缩完成
                         if (nowCompressSuccessNum == nowChoosePathNum) {
                             allCompressPaths = FileManager.getFilesAllName(file.getParent());
-//                            updateImagePath(list);
-                            nowUploadPosition = 0;
-                            uploadCompressPath(allCompressPaths.get(nowUploadPosition));
-
+                            upLoad(allCompressPaths);
+//                            updateImagePath(allCompressPaths);
+//                            nowUploadPosition = 0;
+                            // uploadCompressPath(allCompressPaths.get(nowUploadPosition));
                         }
                     }
 
@@ -134,7 +144,7 @@ public class PreviewMvpModel {
             @Override
             public void isFail(String e) {
             }
-        }, path);
+        }, path, path);
     }
 
 
@@ -161,8 +171,8 @@ public class PreviewMvpModel {
                 try {
                     String newFilePath = getFilesPath(context);
                     FileUtil.copyFile(file, newFilePath);
-                   boolean isDeleteSuccess= file.delete();
-                   LogUtil.d("oom","isDelectedSuccess="+isDeleteSuccess);
+                    boolean isDeleteSuccess = file.delete();
+                    LogUtil.d("oom", "isDelectedSuccess=" + isDeleteSuccess);
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -180,11 +190,11 @@ public class PreviewMvpModel {
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
                 || !Environment.isExternalStorageRemovable()) {
             //外部存储可用
-          File  mattingPath = context.getExternalFilesDir("dynamic/" + "matting");
-          if(mattingPath!=null&&!mattingPath.exists()){
-              mattingPath.exists();
-          }
-          return  mattingPath.getPath();
+            File mattingPath = context.getExternalFilesDir("dynamic/" + "matting");
+            if (mattingPath != null && !mattingPath.exists()) {
+                mattingPath.exists();
+            }
+            return mattingPath.getPath();
         } else {
             //外部存储不可用
             filePath = context.getFilesDir().getPath();
@@ -202,21 +212,22 @@ public class PreviewMvpModel {
             @Override
             public void isSuccess(String path) {
                 tailorList.add(path);
-                if (tailorList.size() == paths.size()) {
-                    callback.getCompressImgList(tailorList);
-                }
+//                if (tailorList.size() == paths.size()) {
+//                    callback.getCompressImgList(tailorList);
+//                }
             }
 
             @Override
             public void isFail(String e) {
             }
-        }, paths.get(nowChoosePosition));
+        }, paths.get(0), paths.get(1));
     }
 
-    private void uploadImage(sectionalDrawing callback, String path) {
+    private void uploadImage(sectionalDrawing callback, String path, String path2) {
         DUtil.initFormUpload()
-                .url("http://flying.nineton.cn/api/picture/pictureHuman")
-                .addFile("file", "BeautyImage.jpg", new File(path))
+                .url("http://flying.nineton.cn/api/picture/picturesHumanList")
+                .addFile("file", path, new File(path))
+                .addFile("file", path2, new File(path2))
                 .fileUploadBuild()
                 .upload(new SimpleUploadCallback() {
                     @Override
@@ -252,6 +263,77 @@ public class PreviewMvpModel {
         void isSuccess(String path);
 
         void isFail(String e);
+    }
+
+    //参数类型
+    private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
+    //创建OkHttpClient实例
+    private final OkHttpClient client = new OkHttpClient();
+    private void upLoad(List<String> list) {
+        List<File>listFile=new ArrayList<>();
+        for (String str:list
+             ) {
+            File file=new File(str);
+            listFile.add(file);
+        }
+
+
+        updateFileUtils.uploadFile(listFile,"http://flying.nineton.cn/api/picture/pictureHuman", new updateFileUtils.HttpCallbackListener() {
+            @Override
+            public void onFinish(int code, String str) {
+                LogUtil.d("OOM","code="+code+"String="+str);
+            }
+        });
+
+
+
+
+
+
+
+//        if (list != null) {
+//            OkHttpClient okHttpClient = new OkHttpClient();
+//            for (int i = 0; i < list.size(); i++) {
+//                File file = new File(list.get(i));
+//                MultipartBody.Builder builder = new MultipartBody.Builder()
+//                        .setType(MultipartBody.FORM)
+//                        .addFormDataPart("file", file.getName(), RequestBody.create(MediaType.parse("image/jpeg"), file));
+//               RequestBody requestBody = builder.build();
+//                Request request = new Request.Builder()
+//                        .url("http://flying.nineton.cn/api/picture/pictureHuman")
+//                        .post(requestBody)
+//                        .build();
+//                Call call = okHttpClient.newCall(request);
+//                call.enqueue(new Callback() {
+//                    @Override
+//                    public void onFailure(Call call, IOException e) {
+//                        LogUtil.d("OOM","onFailure="+e.getMessage());
+////                        Log.e("TAG", "onFailure: " + e);
+////                        runOnUiThread(new Runnable() {
+////                            @Override
+////                            public void run() {
+////                                Toast.makeText(MainActivity.this, "失败", Toast.LENGTH_SHORT).show();
+////                            }
+////                        });
+//                    }
+//
+//
+//                    @Override
+//                    public void onResponse(Call call, Response response) throws IOException {
+//                        Log.e("TAG", "成功" + response);
+//                        LogUtil.d("OOM","onResponse="+response);
+////                        runOnUiThread(new Runnable() {
+////                            @Override
+////                            public void run() {
+////                                Toast.makeText(MainActivity.this, "成功", Toast.LENGTH_SHORT).show();
+////                            }
+////                        });
+//                    }
+//                });
+//            }
+//        }
+
+
     }
 
 
