@@ -2,9 +2,6 @@ package com.flyingeffects.com.ui.model;
 
 import android.content.Context;
 import android.os.Environment;
-import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
@@ -25,20 +22,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -101,9 +88,6 @@ public class PreviewMvpModel {
                         if (nowCompressSuccessNum == nowChoosePathNum) {
                             allCompressPaths = FileManager.getFilesAllName(file.getParent());
                             upLoad(allCompressPaths);
-//                            updateImagePath(allCompressPaths);
-//                            nowUploadPosition = 0;
-                            // uploadCompressPath(allCompressPaths.get(nowUploadPosition));
                         }
                     }
 
@@ -116,36 +100,8 @@ public class PreviewMvpModel {
 
 
     private List<String> allCompressPaths = new ArrayList<>();
-    private int nowUploadPosition;
-
-    private void uploadCompressPath(String path) {
-        uploadImage(new sectionalDrawing() {
-            @Override
-            public void isSuccess(String path) {
-                tailorList.add(path);
-                if (tailorList.size() == allCompressPaths.size()) {
-                    //得到了全部的地址，需要下载后保存在本都，在得到本地地址
-                    downImage(tailorList.get(0));
-//                    callback.getCompressImgList(tailorList);
 
 
-                } else {
-                    nowUploadPosition++;
-                    Observable.just(allCompressPaths.get(nowUploadPosition)).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
-                        @Override
-                        public void call(String path) {
-
-                            uploadCompressPath(path);
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void isFail(String e) {
-            }
-        }, path, path);
-    }
 
 
     private void downImage(String path) {
@@ -167,7 +123,6 @@ public class PreviewMvpModel {
                 .observeOn(Schedulers.newThread()).subscribe(new Action1<File>() {
             @Override
             public void call(File file) {
-
                 try {
                     String newFilePath = getFilesPath(context);
                     FileUtil.copyFile(file, newFilePath);
@@ -177,8 +132,6 @@ public class PreviewMvpModel {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-
             }
         });
 
@@ -225,7 +178,7 @@ public class PreviewMvpModel {
 
     private void uploadImage(sectionalDrawing callback, String path, String path2) {
         DUtil.initFormUpload()
-                .url("http://flying.nineton.cn/api/picture/picturesHumanList")
+                .url("http://flying.nineton.cn/api/picture/picturesHumanList?filenum=3")
                 .addFile("file", path, new File(path))
                 .addFile("file", path2, new File(path2))
                 .fileUploadBuild()
@@ -265,10 +218,6 @@ public class PreviewMvpModel {
         void isFail(String e);
     }
 
-    //参数类型
-    private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
-    //创建OkHttpClient实例
-    private final OkHttpClient client = new OkHttpClient();
     private void upLoad(List<String> list) {
         List<File>listFile=new ArrayList<>();
         for (String str:list
@@ -277,61 +226,16 @@ public class PreviewMvpModel {
             listFile.add(file);
         }
 
-
-        updateFileUtils.uploadFile(listFile,"http://flying.nineton.cn/api/picture/pictureHuman", new updateFileUtils.HttpCallbackListener() {
+        int pathNum=list.size();
+        LogUtil.d("OOM","pathNum="+pathNum);
+        updateFileUtils.uploadFile(listFile,"http://flying.nineton.cn/api/picture/picturesHumanList?filenum="+pathNum, new updateFileUtils.HttpCallbackListener() {
             @Override
             public void onFinish(int code, String str) {
+                WaitingDialog.closePragressDialog();
                 LogUtil.d("OOM","code="+code+"String="+str);
             }
         });
 
-
-
-
-
-
-
-//        if (list != null) {
-//            OkHttpClient okHttpClient = new OkHttpClient();
-//            for (int i = 0; i < list.size(); i++) {
-//                File file = new File(list.get(i));
-//                MultipartBody.Builder builder = new MultipartBody.Builder()
-//                        .setType(MultipartBody.FORM)
-//                        .addFormDataPart("file", file.getName(), RequestBody.create(MediaType.parse("image/jpeg"), file));
-//               RequestBody requestBody = builder.build();
-//                Request request = new Request.Builder()
-//                        .url("http://flying.nineton.cn/api/picture/pictureHuman")
-//                        .post(requestBody)
-//                        .build();
-//                Call call = okHttpClient.newCall(request);
-//                call.enqueue(new Callback() {
-//                    @Override
-//                    public void onFailure(Call call, IOException e) {
-//                        LogUtil.d("OOM","onFailure="+e.getMessage());
-////                        Log.e("TAG", "onFailure: " + e);
-////                        runOnUiThread(new Runnable() {
-////                            @Override
-////                            public void run() {
-////                                Toast.makeText(MainActivity.this, "失败", Toast.LENGTH_SHORT).show();
-////                            }
-////                        });
-//                    }
-//
-//
-//                    @Override
-//                    public void onResponse(Call call, Response response) throws IOException {
-//                        Log.e("TAG", "成功" + response);
-//                        LogUtil.d("OOM","onResponse="+response);
-////                        runOnUiThread(new Runnable() {
-////                            @Override
-////                            public void run() {
-////                                Toast.makeText(MainActivity.this, "成功", Toast.LENGTH_SHORT).show();
-////                            }
-////                        });
-//                    }
-//                });
-//            }
-//        }
 
 
     }

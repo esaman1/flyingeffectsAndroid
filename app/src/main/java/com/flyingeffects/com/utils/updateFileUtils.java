@@ -10,7 +10,9 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class updateFileUtils {
@@ -25,8 +27,8 @@ public class updateFileUtils {
                 try {
                     URL httpUrl = new URL(url);
                     HttpURLConnection conn = (HttpURLConnection) httpUrl.openConnection();
-                    conn.setReadTimeout(5000);
-                    conn.setConnectTimeout(5000);
+                    conn.setReadTimeout(25000);
+                    conn.setConnectTimeout(25000);
                     conn.setDoInput(true); //允许输入流
                     conn.setDoOutput(true); //允许输出流
                     conn.setUseCaches(false); //不允许使用缓存
@@ -38,14 +40,17 @@ public class updateFileUtils {
                     //     if(files.size()!= 0) {
                     /** * 当文件不为空，把文件包装并且上传 */
                     OutputStream outputSteam = conn.getOutputStream();
+
                     DataOutputStream dos = new DataOutputStream(outputSteam);
                     for (int i = 0; i < files.size(); i++) {
                         StringBuffer sb = new StringBuffer();
                         sb.append(PREFIX);
+                        int num=i+1;
                         sb.append(BOUNDARY);
                         sb.append(LINE_END);
-                        sb.append("Content-Disposition: form-data; name=\"file\"; filename=\"" + files.get(i).getName() + "\"" + LINE_END);
+                        sb.append("Content-Disposition: form-data; name=\"file"+ num + "\"; filename=\"" + files.get(i).getName() + "\"" + LINE_END);
                         //sb.append("Content-Type: application/octet-stream; charset="+ "UTF-8" +LINE_END);
+                        LogUtil.d("OOM",sb.toString());
                         sb.append(LINE_END);
                         dos.write(sb.toString().getBytes());
                         InputStream is = new FileInputStream(files.get(i));
