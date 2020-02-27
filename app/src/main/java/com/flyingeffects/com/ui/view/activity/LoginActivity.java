@@ -3,6 +3,7 @@ package com.flyingeffects.com.ui.view.activity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -10,6 +11,8 @@ import android.widget.Toast;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -43,6 +46,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @BindView(R.id.tv_login)
     TextView tv_login;
 
+
     /**
      * 0 ，发送验证码，1 登录
      */
@@ -62,6 +66,20 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     protected void initAction() {
+        password.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
+                String text = password.getText().toString().trim();
+                if (!text.equals("")) {
+                    nowProgressType = 0;
+                    tv_login.setText("登录");
+                } else {
+                    nowProgressType = 1;
+                    tv_login.setText("获取短信验证码");
+                }
+                return true;
+            }
+            return false;
+        });
 
 
     }
@@ -93,7 +111,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         switch (view.getId()) {
             case R.id.tv_login:
                 if (nowProgressType == 0) {
-                    requestSms();
+                    toRequestSms();
+                } else {
+
                 }
 
                 break;
@@ -103,25 +123,21 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
-    private void requestSms() {
+    private void toRequestSms() {
         if (TextUtils.isEmpty(username.getText().toString())) {
             Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show();
             return;
         }
 
-
         requestSms(username.getText().toString());
     }
-
-
-
 
 
     private void requestSms(String username) {
         HashMap<String, String> params = new HashMap<>();
         params.put("phone", username);
         // 启动时间
-        Observable ob = Api.getDefault().toSms(params);
+        Observable ob = Api.getDefault().toSms(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(LoginActivity.this) {
             @Override
             protected void _onError(String message) {
@@ -132,11 +148,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             protected void _onNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("login", "str=" + str);
-                JSONObject jsonObject= null;
+                JSONObject jsonObject = null;
                 try {
                     jsonObject = new JSONObject(str);
-                    int code=jsonObject.getInt("jsonObject");
-                    if(code==1){
+                    int code = jsonObject.getInt("jsonObject");
+                    if (code == 1) {
                         ToastUtil.showToast("发送成功");
                     }
                 } catch (JSONException e) {
@@ -144,13 +160,21 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 }
 
 
-
-
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
 
-
+    private void toRequestLogin() {
+        if (TextUtils.isEmpty(username.getText().toString())) {
+            Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (TextUtils.isEmpty(password.getText().toString())) {
+            Toast.makeText(this, "请输入验证码", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        requestLogin(username.getText().toString(), password.getText().toString());
+    }
 
 
     private void requestLogin(String username, String password) {
@@ -158,17 +182,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         params.put("username", username);
         params.put("password", password);
         // 启动时间
-        Observable ob = Api.getDefault().toLogin(params);
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(LoginActivity.this) {
+        Observable ob = Api.getDefault().toLogin(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(LoginActivity.this) {
             @Override
             protected void _onError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(Object data) {
-                String str = StringUtil.beanToJSONString(data);
-                LogUtil.d("login", "str=" + str);
+            protected void _onNext(UserInfo data) {
+                BaseConstans.SetUserToken(data.getToken());
+
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }

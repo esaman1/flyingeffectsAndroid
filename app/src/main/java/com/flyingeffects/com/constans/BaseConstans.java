@@ -22,12 +22,11 @@ public class BaseConstans {
     private static String uuid = "";
 
 
-
     public static HashMap getRequestHead(HashMap<String, String> map) {
         String nowTimestamp = getTimestamp() + "";
         map.put("app_id", "10000");
         map.put("platform", "android");
-        map.put("channel", getChannel() ); //getChannel()  test
+        map.put("channel", getChannel()); //getChannel()  test
         map.put("version", getVersionCode());
         map.put("timestamp", nowTimestamp);//getTimestamp()+""
         map.put("imei", getUuid());
@@ -41,7 +40,7 @@ public class BaseConstans {
     private static String getSine(String nowTimestamp, HashMap<String, String> map) {
         map.put("app_id", "10000");
         map.put("platform", "android");
-        map.put("channel", getChannel() );
+        map.put("channel", getChannel());
         map.put("version", getVersionCode());
         map.put("uuid", GetUserUuid());
         map.put("token", GetUserToken());
@@ -56,11 +55,17 @@ public class BaseConstans {
         return spUtil.getString("token", "");
     }
 
+
+    public static void SetUserToken(String token) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putString("token", token);
+    }
+
+
     public static String GetUserUuid() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getString("uuid", "");
     }
-
 
 
     public static String getVersionCode() {
@@ -100,14 +105,6 @@ public class BaseConstans {
             return channel;
         }
     }
-
-
-
-
-
-
-
-
 
 
 }

@@ -2,6 +2,7 @@ package com.flyingeffects.com.http;
 
 import com.flyingeffects.com.enity.HttpResult;
 import com.flyingeffects.com.enity.TemplateType;
+import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.new_fag_template_item;
 
 import java.util.List;
@@ -21,12 +22,12 @@ public interface ApiService {
 
     //登录
     @FormUrlEncoded
-    @POST("/api/v1/login")
-    Observable<HttpResult<Object>> toLogin(@FieldMap Map<String, String> params);
+    @POST("/api/user/mobilelogin")
+    Observable<HttpResult<UserInfo>> toLogin(@FieldMap Map<String, String> params);
 
 
     @FormUrlEncoded
-    @POST("/api/ems/send")
+    @POST("/api/sms/smsCode")
     Observable<HttpResult<Object>> toSms(@FieldMap Map<String, String> params);
 
 

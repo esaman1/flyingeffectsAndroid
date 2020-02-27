@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,10 +14,12 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.ui.view.activity.AboutActivity;
+import com.flyingeffects.com.ui.view.activity.LoginActivity;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 
 /**
@@ -25,7 +28,6 @@ import butterknife.BindView;
  **/
 
 public class frag_user_center extends BaseFragment {
-
 
     TextView tv_play_video;
     Dialog mDialog;
@@ -41,6 +43,9 @@ public class frag_user_center extends BaseFragment {
 
     @BindView(R.id.iv_about)
     ImageView iv_about;
+
+    @BindView(R.id.iv_head)
+    ImageView iv_head;
 
 
     @Override
@@ -113,8 +118,21 @@ public class frag_user_center extends BaseFragment {
     }
 
 
+        @OnClick({R.id.iv_head})
+        public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.iv_head:
+
+                Intent intent =new Intent(getActivity(), LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
 
 
+
+                break;
+        }
+
+            }
 
 
 }
