@@ -9,7 +9,6 @@ import android.support.v4.view.ViewCompat;
 import android.transition.Transition;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
