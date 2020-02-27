@@ -15,6 +15,7 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.ui.view.activity.AboutActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
+import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.util.ArrayList;
 
@@ -69,6 +70,7 @@ public class frag_user_center extends BaseFragment {
 
     @Override
     protected void initData() {
+
     }
 
     @Override

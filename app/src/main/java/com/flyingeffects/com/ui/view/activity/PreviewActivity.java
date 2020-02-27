@@ -21,6 +21,7 @@ import com.flyingeffects.com.ui.interfaces.OnTransitionListener;
 import com.flyingeffects.com.ui.interfaces.view.PreviewMvpView;
 import com.flyingeffects.com.ui.presenter.PreviewMvpPresenter;
 import com.flyingeffects.com.view.EmptyControlVideo;
+import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils;
 import com.yanzhenjie.album.AlbumFile;
@@ -181,6 +182,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel) {
             if (SELECTALBUM == 0) {
+                WaitingDialog.openPragressDialog(this);
                 Presenter.CompressImg(paths);
             }
         }
