@@ -14,7 +14,7 @@ public class Url {
     * 时间：2018/6/15
     **/
 
-    public static String BASE_URL = production;
+    public static String BASE_URL = flyProduction;
 
 
 

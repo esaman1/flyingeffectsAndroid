@@ -19,17 +19,29 @@ public class TemplateType implements Serializable {
         this.name = name;
     }
 
-    public String getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(String enabled) {
-        this.enabled = enabled;
-    }
 
     private String id = "";
     private String name = "";
-    private String enabled = "";
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getWeigh() {
+        return weigh;
+    }
+
+    public void setWeigh(String weigh) {
+        this.weigh = weigh;
+    }
+
+    private String status = "";
+    private String weigh = "";
+
 
 
 }

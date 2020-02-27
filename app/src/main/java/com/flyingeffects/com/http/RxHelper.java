@@ -68,10 +68,10 @@ public class RxHelper {
                     public Observable<T> call(HttpResult<T> result) {
                         String  data= StringUtil.beanToJSONString(result);
                         LogUtil.d("Observable",data);
-                        if (result.getStatus()==1) {
-                           return createData(result.getResult());//返回data
+                        if (result.getCode()==1) {
+                           return createData(result.getData());//返回data
                         } else {
-                            return Observable.error(new ApiException(result.getStatus(),result.getMsg()));//返回错误信息
+                            return Observable.error(new ApiException(result.getCode(),result.getMsg()));//返回错误信息
                         }
 
                     }
@@ -101,10 +101,10 @@ public class RxHelper {
                                                @Override
                                                public Observable<T> call(HttpResult<T> result) {
 
-                                                   if (result.getStatus()==1) {
-                                                       return createData(result.getResult());//返回data
+                                                   if (result.getCode()==1) {
+                                                       return createData(result.getData());//返回data
                                                    } else {
-                                                       return Observable.error(new ApiException(result.getStatus(),result.getMsg(),actTag));//返回错误信息
+                                                       return Observable.error(new ApiException(result.getCode(),result.getMsg(),actTag));//返回错误信息
                                                    }
 
                                                }

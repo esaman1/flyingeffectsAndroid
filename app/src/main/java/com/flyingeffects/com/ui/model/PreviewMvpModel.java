@@ -6,9 +6,12 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.ui.interfaces.model.PreviewMvpCallback;
+import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.othershe.dutil.DUtil;
 import com.othershe.dutil.callback.SimpleUploadCallback;
@@ -18,8 +21,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,6 +32,7 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import top.zibin.luban.Luban;
 import top.zibin.luban.OnCompressListener;
@@ -83,8 +89,11 @@ public class PreviewMvpModel {
                         nowCompressSuccessNum++;
                         LogUtil.d("OOM", "onSuccess=" + file.getPath());
                         if (nowCompressSuccessNum == nowChoosePathNum) {
-                            List<String> list = FileManager.getFilesAllName(file.getParent());
-                            updateImagePath(list);
+                            allCompressPaths = FileManager.getFilesAllName(file.getParent());
+//                            updateImagePath(list);
+                            nowUploadPosition = 0;
+                            uploadCompressPath(allCompressPaths.get(nowUploadPosition));
+
                         }
                     }
 
@@ -95,54 +104,116 @@ public class PreviewMvpModel {
                 }).launch();    //启动压缩
     }
 
-    private List<String> tailorList = new ArrayList<>();
-    private void updateImagePath(List<String> paths) {
-        tailorList.clear();
+
+    private List<String> allCompressPaths = new ArrayList<>();
+    private int nowUploadPosition;
+
+    private void uploadCompressPath(String path) {
+        uploadImage(new sectionalDrawing() {
+            @Override
+            public void isSuccess(String path) {
+                tailorList.add(path);
+                if (tailorList.size() == allCompressPaths.size()) {
+                    //得到了全部的地址，需要下载后保存在本都，在得到本地地址
+                    downImage(tailorList.get(0));
+//                    callback.getCompressImgList(tailorList);
 
 
+                } else {
+                    nowUploadPosition++;
+                    Observable.just(allCompressPaths.get(nowUploadPosition)).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+                        @Override
+                        public void call(String path) {
+
+                            uploadCompressPath(path);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void isFail(String e) {
+            }
+        }, path);
+    }
 
 
+    private void downImage(String path) {
+        Observable.just(path).map(new Func1<String, File>() {
+            @Override
+            public File call(String s) {
+                File file = null;
+                try {
+                    file = Glide.with(context)
+                            .load(path)
+                            .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                            .get();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return file;
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.newThread()).subscribe(new Action1<File>() {
+            @Override
+            public void call(File file) {
+
+                try {
+                    String newFilePath = getFilesPath(context);
+                    FileUtil.copyFile(file, newFilePath);
+                   boolean isDeleteSuccess= file.delete();
+                   LogUtil.d("oom","isDelectedSuccess="+isDeleteSuccess);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
 
-
-
-//        ExecutorService executorService = Executors.newFixedThreadPool(1); //1个线程池
-//        for (String path : paths
-//        ) {
-//            Runnable syncRunnable = new Runnable() {
-//                @Override
-//                public void run() {
-//                    Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
-//                        @Override
-//                        public void call(String s) {
-//                            uploadImage(new sectionalDrawing() {
-//                                @Override
-//                                public void isSuccess(String path) {
-//                                    tailorList.add(path);
-//                                    if (tailorList.size() == paths.size()) {
-//                                        WaitingDialog.closePragressDialog();
-//                                        callback.getCompressImgList(tailorList);
-//                                    }
-//                                }
-//
-//                                @Override
-//                                public void isFail(String e) {
-//                                    LogUtil.d("OOM","isFail="+e);
-//                                    Toast.makeText(context, e, Toast.LENGTH_SHORT).show();
-//                                }
-//                            }, s);
-//                        }
-//                    });
-//                }
-//            };
-//            executorService.execute(syncRunnable);
-//        }
-
-
+            }
+        });
 
     }
 
-    private void uploadImage(sectionalDrawing calback, String path) {
+
+    public String getFilesPath(Context context) {
+        String filePath;
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+                || !Environment.isExternalStorageRemovable()) {
+            //外部存储可用
+          File  mattingPath = context.getExternalFilesDir("dynamic/" + "matting");
+          if(mattingPath!=null&&!mattingPath.exists()){
+              mattingPath.exists();
+          }
+          return  mattingPath.getPath();
+        } else {
+            //外部存储不可用
+            filePath = context.getFilesDir().getPath();
+        }
+        return filePath;
+    }
+
+
+    private List<String> tailorList = new ArrayList<>();
+    private int nowChoosePosition = 0;
+
+    private void updateImagePath(List<String> paths) {
+        tailorList.clear();
+        uploadImage(new sectionalDrawing() {
+            @Override
+            public void isSuccess(String path) {
+                tailorList.add(path);
+                if (tailorList.size() == paths.size()) {
+                    callback.getCompressImgList(tailorList);
+                }
+            }
+
+            @Override
+            public void isFail(String e) {
+            }
+        }, paths.get(nowChoosePosition));
+    }
+
+    private void uploadImage(sectionalDrawing callback, String path) {
         DUtil.initFormUpload()
                 .url("http://flying.nineton.cn/api/picture/pictureHuman")
                 .addFile("file", "BeautyImage.jpg", new File(path))
@@ -162,10 +233,10 @@ public class PreviewMvpModel {
                             int code = ob.getInt("code");
                             if (code == 1) {
                                 JSONObject data = ob.getJSONObject("data");
-                                calback.isSuccess(data.getString("target_url"));
+                                callback.isSuccess(data.getString("target_url"));
                             } else {
                                 String message = ob.getString("msg");
-                                calback.isFail(message);
+                                callback.isFail(message);
                             }
 
                         } catch (JSONException e) {
@@ -174,7 +245,6 @@ public class PreviewMvpModel {
                         super.onFinish(response);
                     }
                 });
-
     }
 
     interface sectionalDrawing {

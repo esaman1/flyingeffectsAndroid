@@ -24,6 +24,12 @@ public interface ApiService {
     @POST("/api/v1/login")
     Observable<HttpResult<Object>> toLogin(@FieldMap Map<String, String> params);
 
+
+    @FormUrlEncoded
+    @POST("/api/ems/send")
+    Observable<HttpResult<Object>> toSms(@FieldMap Map<String, String> params);
+
+
     //上传素材
     @FormUrlEncoded
     @POST("/api/v1.draft/dputin")
@@ -42,12 +48,12 @@ public interface ApiService {
 
     //模板类型
     @FormUrlEncoded
-    @POST("/api/v1.draft/mbtype")
+    @POST("/api/template/temcategoryList")
     Observable<HttpResult<List<TemplateType>>> getTemplateType(@FieldMap Map<String, String> params);
 
 
     @FormUrlEncoded
-    @POST("/api/v2.draft/template")
+    @POST("/api/template/temcategoryList")
     Observable<HttpResult<List<new_fag_template_item>>> getTemplate(@FieldMap Map<String, String> params);
 
 

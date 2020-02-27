@@ -10,15 +10,16 @@ import java.io.Serializable;
 
 
 public class HttpResult<T> implements Serializable {
-    public int getStatus() {
-        return status;
+
+    public int getCode() {
+        return code;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setCode(int code) {
+        this.code = code;
     }
 
-    private int status;
+    private int code;
 
     public String getMsg() {
         return msg;
@@ -30,15 +31,16 @@ public class HttpResult<T> implements Serializable {
 
     private String msg;
 
-    public T getResult() {
-        return result;
+
+    public T getData() {
+        return data;
     }
 
-    public void setResult(T result) {
-        this.result = result;
+    public void setData(T data) {
+        this.data = data;
     }
 
-    private T result;
+    private T data;
 
 
 
