@@ -11,7 +11,9 @@ import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.ui.interfaces.model.homeItemMvpCallback;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.orhanobut.hawk.Hawk;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -25,14 +27,13 @@ import rx.subjects.PublishSubject;
 public class home_fag_itemMvpModel {
     private homeItemMvpCallback callback;
     private Context context;
-    private int bannerCount = 3; //banner的个数
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private SmartRefreshLayout smartRefreshLayout;
     private boolean isRefresh = true;
     private ArrayList<new_fag_template_item> listData = new ArrayList<>();
     private int selectPage = 1;
     private String templateId;
-    private int perPageCount; //每一页显示广告的数量
+    private int perPageCount=10;
 
     public home_fag_itemMvpModel(Context context, homeItemMvpCallback callback) {
         this.context = context;
@@ -42,27 +43,17 @@ public class home_fag_itemMvpModel {
 
 
     public void requestData(String templateId, int num) {
-//        this.templateId = templateId;
+        this.templateId = templateId;
 //        if (num == 0) {
 //            List<new_fag_template_item> data = Hawk.get("FagData"); //得到banner缓存数据
 //            if (data != null && data.size() > 0) {
 //                listData.addAll(data);
 //                callback.showData(listData);
 //            }
-//            requestFagData(false, true); //首页杂数据
+            requestFagData(false, true); //首页杂数据
 //        } else {
 //            requestFagData(false, true); //首页杂数据
 //        }
-
-
-
-        for (int i=0;i<10;i++){
-            new_fag_template_item item=new new_fag_template_item();
-            item.setTitle("只是个测试");
-            listData.add(item);
-        }
-        callback.showData(listData);
-
     }
 
 
@@ -87,7 +78,7 @@ public class home_fag_itemMvpModel {
     private void requestFagData(boolean isCanRefresh, boolean isSave) {
         HashMap<String, String> params = new HashMap<>();
         LogUtil.d("templateId", "templateId=" + templateId);
-        params.put("classification", templateId);
+        params.put("category_id", templateId);
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
         Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
@@ -100,6 +91,8 @@ public class home_fag_itemMvpModel {
 
             @Override
             protected void _onNext(List<new_fag_template_item> data) {
+//                String str= StringUtil.beanToJSONString(data);
+//                LogUtil.d("OOM","_onNext="+str);
                 finishData();
                 if (isRefresh) {
                     listData.clear();
@@ -114,12 +107,9 @@ public class home_fag_itemMvpModel {
                 if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
                     ToastUtil.showToast(context.getResources().getString(R.string.no_more_data));
                 }
-
-
                 if (data.size() < perPageCount) {
                     smartRefreshLayout.setEnableLoadMore(false);
                 }
-
                 listData.addAll(data);
                 callback.showData(listData);
             }

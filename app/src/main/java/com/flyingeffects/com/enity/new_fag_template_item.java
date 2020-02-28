@@ -4,8 +4,7 @@ import java.io.Serializable;
 
 public class new_fag_template_item implements Serializable {
     
- private String id="";
-         private String title="";
+     private String id;
 
     public String getId() {
         return id;
@@ -23,71 +22,28 @@ public class new_fag_template_item implements Serializable {
         this.title = title;
     }
 
-    public String getThumb() {
-        return thumb;
+    public String getImage() {
+        return image;
     }
 
-    public void setThumb(String thumb) {
-        this.thumb = thumb;
+    public void setImage(String image) {
+        this.image = image;
     }
 
-    public String getLink() {
-        return link;
+    public String getVidoefile() {
+        return vidoefile;
     }
 
-    public void setLink(String link) {
-        this.link = link;
+    public void setVidoefile(String vidoefile) {
+        this.vidoefile = vidoefile;
     }
 
-    public String getEnabled() {
-        return enabled;
+    public String getTemcategory_id() {
+        return temcategory_id;
     }
 
-    public void setEnabled(String enabled) {
-        this.enabled = enabled;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-
-    public String getRequired_material() {
-        return required_material;
-    }
-
-    public void setRequired_material(String required_material) {
-        this.required_material = required_material;
-    }
-
-    private String required_material;
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public String getMaterial() {
-        return material;
-    }
-
-    public void setMaterial(String material) {
-        this.material = material;
-    }
-
-    public String getClassification() {
-        return classification;
-    }
-
-    public void setClassification(String classification) {
-        this.classification = classification;
+    public void setTemcategory_id(String temcategory_id) {
+        this.temcategory_id = temcategory_id;
     }
 
     public String getType() {
@@ -98,22 +54,6 @@ public class new_fag_template_item implements Serializable {
         this.type = type;
     }
 
-    public String getVip_ios() {
-        return vip_ios;
-    }
-
-    public void setVip_ios(String vip_ios) {
-        this.vip_ios = vip_ios;
-    }
-
-    public String getVip_android() {
-        return vip_android;
-    }
-
-    public void setVip_android(String vip_android) {
-        this.vip_android = vip_android;
-    }
-
     public String getSort() {
         return sort;
     }
@@ -122,173 +62,140 @@ public class new_fag_template_item implements Serializable {
         this.sort = sort;
     }
 
-    public String getStatus_and() {
-        return status_and;
+    public String getTest() {
+        return test;
     }
 
-    public void setStatus_and(String status_and) {
-        this.status_and = status_and;
+    public void setTest(String test) {
+        this.test = test;
     }
 
-    public String getStatus_ios() {
-        return status_ios;
+    public String getPreview() {
+        return preview;
     }
 
-    public void setStatus_ios(String status_ios) {
-        this.status_ios = status_ios;
+    public void setPreview(String preview) {
+        this.preview = preview;
     }
 
-    public String getTimelen() {
-        return timelen;
+    public String getReading() {
+        return reading;
     }
 
-    public void setTimelen(String timelen) {
-        this.timelen = timelen;
+    public void setReading(String reading) {
+        this.reading = reading;
     }
 
-    private String thumb="";
-         private String link="";
-         private String enabled="";
-         private String author="";
-         private String icon="";
-         private String material="";
-         private String classification="";
-         private String type="";
-         private String vip_ios="";
-         private String vip_android="";
-         private String sort="";
-         private String status_and="";
-         private String status_ios="";
-         private String timelen="";
-
-    public int getIs_nav() {
-        return is_nav;
+    public String getReading2() {
+        return reading2;
     }
 
-    public void setIs_nav(int is_nav) {
-        this.is_nav = is_nav;
-    }
-
-    //0 表示外部，1表示内部
-         private int is_nav=0;
-
-    public int getIs_advices() {
-        return is_advices;
-    }
-
-    public void setIs_advices(int is_advices) {
-        this.is_advices = is_advices;
-    }
-
-    private int is_advices;  //1  表示有激励视频，0表示没得
-
-    public boolean isAdvertisinga() {
-        return isAdvertisinga;
-    }
-
-    public void setAdvertisinga(boolean advertisinga) {
-        isAdvertisinga = advertisinga;
-    }
-
-    private boolean isAdvertisinga=false; //是否是广告
-
-    public String getDiversion() {
-        return diversion;
-    }
-
-    public void setDiversion(String diversion) {
-        this.diversion = diversion;
-    }
-
-    private String diversion=""; //爱字幕广告
-
-    public int getSet_erect() {
-        return set_erect;
-    }
-
-    public void setSet_erect(int set_erect) {
-        this.set_erect = set_erect;
-    }
-
-    private int set_erect;//是否允许横竖屏 1可以
-
-
-    public int getIs_erect() {
-        return is_erect;
-    }
-
-    public void setIs_erect(int is_erect) {
-        this.is_erect = is_erect;
-    }
-
-    private int is_erect; //是否是横竖屏
-
-    public String getPicture_num() {
-        return picture_num;
-    }
-
-    public void setPicture_num(String picture_num) {
-        this.picture_num = picture_num;
+    public void setReading2(String reading2) {
+        this.reading2 = reading2;
     }
 
 
-    private String picture_num="";
 
-    public String getVideo_num() {
-        return video_num;
+    public String getMbsearch() {
+        return mbsearch;
     }
 
-    public void setVideo_num(String video_num) {
-        this.video_num = video_num;
+    public void setMbsearch(String mbsearch) {
+        this.mbsearch = mbsearch;
     }
 
-    private String  video_num="";
-
-
-
-    public String getCompressName() {
-        return compressName;
+    public String getIos_diversion() {
+        return ios_diversion;
     }
 
-
-    public int getSlow_motion() {
-        return slow_motion;
+    public void setIos_diversion(String ios_diversion) {
+        this.ios_diversion = ios_diversion;
     }
 
-    public void setSlow_motion(int slow_motion) {
-        this.slow_motion = slow_motion;
+    public String getIs_picout() {
+        return is_picout;
     }
 
-    /**
-     * 1 是慢动作
-     */
-    private int slow_motion;
-
-    public void setCompressName(String compressName) {
-        this.compressName = compressName;
+    public void setIs_picout(String is_picout) {
+        this.is_picout = is_picout;
     }
 
-    private String compressName="";
-
-    public String getCompress() {
-        return compress;
+    public String getAuth() {
+        return auth;
     }
 
-    public void setCompress(String compress) {
-        this.compress = compress;
+    public void setAuth(String auth) {
+        this.auth = auth;
     }
 
-    private String compress="";
-
-    public String getMaterial_info() {
-        return material_info;
+    public String getAuth_image() {
+        return auth_image;
     }
 
-    public void setMaterial_info(String material_info) {
-        this.material_info = material_info;
+    public void setAuth_image(String auth_image) {
+        this.auth_image = auth_image;
     }
 
-    private String material_info="";
+    public String getRemark() {
+        return remark;
+    }
 
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public String getCollection() {
+        return collection;
+    }
+
+    public void setCollection(String collection) {
+        this.collection = collection;
+    }
+
+    public String getTemplatefile() {
+        return templatefile;
+    }
+
+    public void setTemplatefile(String templatefile) {
+        this.templatefile = templatefile;
+    }
+
+    public String getZipid() {
+        return zipid;
+    }
+
+    public void setZipid(String zipid) {
+        this.zipid = zipid;
+    }
+
+    private String title;
+         private String image;
+         private String vidoefile;
+         private String temcategory_id;
+         private String type;
+         private String sort;
+         private String test;
+         private String preview;
+         private String reading;
+         private String reading2;
+
+    public long getCreate_time() {
+        return create_time;
+    }
+
+    public void setCreate_time(long create_time) {
+        this.create_time = create_time;
+    }
+
+    private long create_time;
+         private String mbsearch;
+         private String ios_diversion;
+         private String is_picout;
+         private String auth;
+         private String auth_image;
+         private String remark;
+         private String collection;
+         private String templatefile;
+         private String zipid;
 
 }

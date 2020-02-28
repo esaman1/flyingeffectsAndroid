@@ -54,7 +54,7 @@ public interface ApiService {
 
 
     @FormUrlEncoded
-    @POST("/api/template/temcategoryList")
+    @POST("/api/template/templateList")
     Observable<HttpResult<List<new_fag_template_item>>> getTemplate(@FieldMap Map<String, String> params);
 
 

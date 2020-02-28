@@ -1,25 +1,34 @@
 package com.flyingeffects.com.ui.model;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Environment;
+import android.text.TextUtils;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.enity.DownImg;
 import com.flyingeffects.com.enity.DownImgDataList;
+import com.flyingeffects.com.manager.AlbumManager;
+import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.ZipFileHelperManager;
 import com.flyingeffects.com.ui.interfaces.model.PreviewMvpCallback;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.NetworkUtils;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.updateFileUtils;
 import com.google.gson.Gson;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -94,8 +103,9 @@ public class PreviewMvpModel {
     private List<String> allCompressPaths = new ArrayList<>();
 
 
-    private List<String >test111=new ArrayList<>();
+    private List<String> test111 = new ArrayList<>();
     private int downSuccessNum;
+
     private void downImage(String path) {
 
         Observable.just(path).map(new Func1<String, File>() {
@@ -118,9 +128,9 @@ public class PreviewMvpModel {
             public void call(File file) {
                 downSuccessNum++;
                 test111.add(file.getPath());
-                if(test111.size()==listForMatting.size()){
-                        callback.getCompressImgList(test111);
-                }else{
+                if (test111.size() == listForMatting.size()) {
+                    callback.getCompressImgList(test111);
+                } else {
                     downImage(listForMatting.get(downSuccessNum));
                 }
             }
@@ -129,34 +139,134 @@ public class PreviewMvpModel {
     }
 
 
+    private ArrayList<String> listForMatting = new ArrayList<>();
 
-    private ArrayList<String>listForMatting=new ArrayList<>();
     private void upLoad(List<String> list) {
         listForMatting.clear();
-        List<File>listFile=new ArrayList<>();
-        for (String str:list
-             ) {
-            File file=new File(str);
+        List<File> listFile = new ArrayList<>();
+        for (String str : list
+        ) {
+            File file = new File(str);
             listFile.add(file);
         }
 
-        int pathNum=list.size();
-        LogUtil.d("OOM","pathNum="+pathNum);
-        updateFileUtils.uploadFile(listFile,"http://flying.nineton.cn/api/picture/picturesHumanList?filenum="+pathNum, new updateFileUtils.HttpCallbackListener() {
+        int pathNum = list.size();
+        LogUtil.d("OOM", "pathNum=" + pathNum);
+        updateFileUtils.uploadFile(listFile, "http://flying.nineton.cn/api/picture/picturesHumanList?filenum=" + pathNum, new updateFileUtils.HttpCallbackListener() {
             @Override
             public void onFinish(int code, String str) {
                 WaitingDialog.closePragressDialog();
-                Gson gson=new Gson();
-                DownImg downIng=   gson.fromJson(str, DownImg.class);
-                ArrayList<DownImgDataList> data=downIng.getData();
-                for (DownImgDataList item:data
-                     ) {
+                Gson gson = new Gson();
+                DownImg downIng = gson.fromJson(str, DownImg.class);
+                ArrayList<DownImgDataList> data = downIng.getData();
+                for (DownImgDataList item : data
+                ) {
                     listForMatting.add(item.getTarget_url());
                 }
                 test111.clear();
-                downSuccessNum=0;
+                downSuccessNum = 0;
                 downImage(listForMatting.get(0));
             }
         });
     }
+
+
+    public void downZip(String url, long createTime) {
+        if (NetworkUtils.isNetworkAvailable(context)) {
+            readyDown(createTime, url);
+        } else {
+            ToastUtil.showToast("网络连接失败！");
+        }
+    }
+
+
+    private File mFolder;
+    private int mProgress;
+    private boolean isDownZipUrl = false;
+
+    private void readyDown(long createTime, String downZipUrl) {
+        LogUtil.d("onVideoAdError", "getPermission");
+        mFolder = context.getExternalFilesDir("dynamic/" + createTime);
+        if (mFolder != null) {
+            String folderPath = mFolder.getParent();
+            if (!isDownZipUrl) {
+                if (mFolder == null || mFolder.list().length == 0) {
+                    LogUtil.d("searchActivity", "开始下载");
+                    downZip(downZipUrl, folderPath);
+                    mProgress = 0;
+                    showMakeProgress();
+                } else {
+                    intoTemplateActivity(mFolder.getParent());
+                }
+            } else {
+                ToastUtil.showToast("下载中，请稍后再试");
+            }
+        } else {
+            ToastUtil.showToast("没找到sd卡");
+        }
+    }
+
+
+    private void downZip(String loadUrl, String path) {
+        mProgress = 0;
+        if (!TextUtils.isEmpty(loadUrl)) {
+            new Thread() {
+                @Override
+                public void run() {
+                    isDownZipUrl = true;
+                    try {
+                        DownloadZipManager.getInstance().getFileFromServer(loadUrl, path, (progress, isSucceed, zipPath) -> {
+                            if (!isSucceed) {
+                                LogUtil.d("onVideoAdError", "progress=" + progress);
+                                mProgress = progress;
+                                showMakeProgress();
+                            } else {
+                                WaitingDialog.closePragressDialog();
+                                LogUtil.d("onVideoAdError", "下载完成");
+                                isDownZipUrl = false;
+                                //可以制作了，先解压
+                                File file = new File(zipPath);
+                                try {
+                                    ZipFileHelperManager.upZipFile(file, path, path1 -> {
+                                        if (file.exists()) { //删除压缩包
+                                            file.delete();
+                                        }
+//                                        videoPause();
+                                        mProgress = 100;
+                                        showMakeProgress();
+                                        intoTemplateActivity(path1);
+                                    });
+                                } catch (IOException e) {
+                                    LogUtil.d("onVideoAdError", "Exception=" + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
+                    } catch (Exception e) {
+                        LogUtil.d("onVideoAdError", "Exception=" + e.getMessage());
+                    }
+                    super.run();
+                }
+            }.start();
+        } else {
+            ToastUtil.showToast("没有zip地址");
+        }
+    }
+
+
+
+
+    private void intoTemplateActivity(String filePath){
+        callback.getTemplateFileSuccess(filePath);
+
+    }
+
+
+
+    private void showMakeProgress(){
+        callback.showDownProgress(mProgress);
+    }
+
+
 }

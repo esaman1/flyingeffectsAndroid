@@ -31,8 +31,6 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, main
     private String templateId = "";
     private StaggeredGridLayoutManager layoutManager;
     private int actTag;
-    private static boolean canClickedItem = true;
-    private int nowChooseItem;
     @BindView(R.id.smart_refresh_layout)
     SmartRefreshLayout smartRefreshLayout;
 
@@ -65,8 +63,8 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, main
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-
             Intent intent =new Intent(getActivity(), PreviewActivity.class);
+            intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
             startActivity(intent);
         });
     }
@@ -92,7 +90,6 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, main
     @Override
     public void onResume() {
         super.onResume();
-
     }
 
 

@@ -25,6 +25,11 @@ public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCall
     }
 
 
+    public void downZip(String url,long createTime){
+        PreviewModel.downZip(url,createTime);
+    }
+
+
     public void onDestroy(){
         PreviewModel.onDestroy();
     }
@@ -32,5 +37,15 @@ public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCall
     @Override
     public void getCompressImgList(List<String> imgList) {
         PreviewView.getCompressImgList(imgList);
+    }
+
+    @Override
+    public void showDownProgress(int progress) {
+        PreviewView.showDownProgress(progress);
+    }
+
+    @Override
+    public void getTemplateFileSuccess(String filePath) {
+        PreviewView.showDownProgress(filePath);
     }
 }

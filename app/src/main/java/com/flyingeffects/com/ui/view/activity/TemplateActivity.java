@@ -55,7 +55,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     RecyclerView recyclerView;
     @BindView(R.id.seekBar)
     SeekBar seekBar;
-
     private TemplatePresenter presenter;
     private List<String> imgPath = new ArrayList<>();
     private TemplateModel mTemplateModel;
@@ -69,12 +68,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private String mAudio1Path;
     private static final String MUSIC_PATH = "/bj.mp3";
     private TextAssetEditLayout mTextEditLayout;
-
-
-
-
     @BindView(R.id.video_player)
     EmptyControlVideo videoPlayer;
+
+    private String templateFilePath;
 
 
     @Override
@@ -90,11 +87,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("Message");
         if (bundle != null) {
+            templateFilePath=bundle.getString("templateFilePath");
             imgPath = bundle.getStringArrayList("paths");
         }
         ((TextView) findViewById(R.id.tv_top_title)).setText("拖动素材位置");
         mTextEditLayout = findViewById(R.id.text_edit_layout);
-        mFolder = getExternalFilesDir("dynamic/" + "test");//zs2002202bg  ///aaa  ///test
+//        mFolder = getExternalFilesDir("dynamic/" + "test");//zs2002202bg  ///aaa  ///test
+        mFolder=new File(templateFilePath);
         mAudio1Path = mFolder.getPath() + MUSIC_PATH;
         File dir = getExternalFilesDir("");
         mTemplateViews = new ArrayList<>();
@@ -130,10 +129,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         }));
         showPreview(true);
     }
-
-
-
-
 
 
 
