@@ -1,10 +1,7 @@
 package com.flyingeffects.com.ui.view.activity;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.transition.Transition;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -51,8 +48,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @BindView(R.id.video_player)
     EmptyControlVideo videoPlayer;
 
-@BindView(R.id.tv_make)
-TextView tv_make;
+    @BindView(R.id.tv_make)
+    TextView tv_make;
 
     @BindView(R.id.iv_zan)
     ImageView iv_zan;
@@ -132,7 +129,7 @@ TextView tv_make;
                 break;
             case R.id.tv_make:
                 videoPlayer.onVideoPause();
-                Presenter.downZip(templateItem.getTemplatefile(),templateItem.getCreate_time());
+                Presenter.downZip(templateItem.getTemplatefile(), templateItem.getCreate_time());
 
                 break;
             case R.id.iv_play:
@@ -187,7 +184,7 @@ TextView tv_make;
     }
 
 
-    private void intoTemplateActivity(List<String> paths,String templateFilePath) {
+    private void intoTemplateActivity(List<String> paths, String templateFilePath) {
         Intent intent = new Intent(this, TemplateActivity.class);
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("paths", (ArrayList<String>) paths);
@@ -200,9 +197,8 @@ TextView tv_make;
 
     @Override
     public void getCompressImgList(List<String> imgList) {
-        intoTemplateActivity(imgList,TemplateFilePath);
+        intoTemplateActivity(imgList, TemplateFilePath);
     }
-
 
 
     @Override
@@ -210,7 +206,7 @@ TextView tv_make;
         Observable.just(progress).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer integer) {
-                tv_make.setText("下载"+progress+"%");
+                tv_make.setText("下载" + progress + "%");
             }
         });
     }
@@ -218,10 +214,9 @@ TextView tv_make;
     @Override
     public void getTemplateFileSuccess(String TemplateFilePath) {
         //file 文件下载成功
-        this.TemplateFilePath=TemplateFilePath;
+        this.TemplateFilePath = TemplateFilePath;
         AlbumManager.chooseImageAlbum(this, 7, SELECTALBUM, this, "");
     }
-
 
 
     private void VideoPlaybackCompleted(boolean isComplate) {

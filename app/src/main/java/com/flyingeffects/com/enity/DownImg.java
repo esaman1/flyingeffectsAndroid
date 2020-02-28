@@ -43,6 +43,6 @@ public class DownImg implements Serializable {
     private String msg;
       private String time;
       private ArrayList<DownImgDataList>data;
-       
+
 
 }

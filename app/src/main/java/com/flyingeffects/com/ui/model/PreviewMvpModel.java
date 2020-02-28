@@ -8,9 +8,11 @@ import android.text.TextUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.enity.DownImg;
 import com.flyingeffects.com.enity.DownImgDataList;
 import com.flyingeffects.com.manager.AlbumManager;
+import com.flyingeffects.com.manager.DownImageManager;
 import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
@@ -102,41 +104,47 @@ public class PreviewMvpModel {
 
     private List<String> allCompressPaths = new ArrayList<>();
 
+//
+//    private List<String> test111 = new ArrayList<>();
+//    private int downSuccessNum;
 
-    private List<String> test111 = new ArrayList<>();
-    private int downSuccessNum;
+//    private void downImage(String path) {
+//
+//        Observable.just(path).map(new Func1<String, File>() {
+//            @Override
+//            public File call(String s) {
+//                File file = null;
+//                try {
+//                    file = Glide.with(context)
+//                            .load(s)
+//                            .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+//                            .get();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                return file;
+//            }
+//        }).subscribeOn(Schedulers.io())
+//                .observeOn(Schedulers.newThread()).subscribe(new Action1<File>() {
+//            @Override
+//            public void call(File file) {
+//                downSuccessNum++;
+//                test111.add(file.getPath());
+//                if (test111.size() == listForMatting.size()) {
+//                    callback.getCompressImgList(test111);
+//                } else {
+//                    downImage(listForMatting.get(downSuccessNum));
+//                }
+//            }
+//        });
+//
+//    }
 
-    private void downImage(String path) {
 
-        Observable.just(path).map(new Func1<String, File>() {
-            @Override
-            public File call(String s) {
-                File file = null;
-                try {
-                    file = Glide.with(context)
-                            .load(s)
-                            .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                            .get();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return file;
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.newThread()).subscribe(new Action1<File>() {
-            @Override
-            public void call(File file) {
-                downSuccessNum++;
-                test111.add(file.getPath());
-                if (test111.size() == listForMatting.size()) {
-                    callback.getCompressImgList(test111);
-                } else {
-                    downImage(listForMatting.get(downSuccessNum));
-                }
-            }
-        });
 
-    }
+
+
+
 
 
     private ArrayList<String> listForMatting = new ArrayList<>();
@@ -155,6 +163,7 @@ public class PreviewMvpModel {
         updateFileUtils.uploadFile(listFile, "http://flying.nineton.cn/api/picture/picturesHumanList?filenum=" + pathNum, new updateFileUtils.HttpCallbackListener() {
             @Override
             public void onFinish(int code, String str) {
+                LogUtil.d("OOM","uploadFileCallBack="+str);
                 WaitingDialog.closePragressDialog();
                 Gson gson = new Gson();
                 DownImg downIng = gson.fromJson(str, DownImg.class);
@@ -163,9 +172,18 @@ public class PreviewMvpModel {
                 ) {
                     listForMatting.add(item.getTarget_url());
                 }
-                test111.clear();
-                downSuccessNum = 0;
-                downImage(listForMatting.get(0));
+                //马卡龙，这里是图片链接，下载下来的方式
+                if(data.get(0).getType()==0){
+                    DownImageManager  downImageManager=new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> callback.getCompressImgList(path));
+                    downImageManager.downImage(listForMatting.get(0));
+                }else{
+                    //百度，face++ 是直接下载的图片编码
+                    DownImageManager  downImageManager=new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> callback.getCompressImgList(path));
+                    downImageManager.downImageForByte(listForMatting.get(0));
+                }
+
+
+
             }
         });
     }
@@ -258,6 +276,9 @@ public class PreviewMvpModel {
 
 
     private void intoTemplateActivity(String filePath){
+//        File file=new File(filePath);
+//        File[] files=file.listFiles();
+//        File needTemplateFile=files[0];
         callback.getTemplateFileSuccess(filePath);
 
     }

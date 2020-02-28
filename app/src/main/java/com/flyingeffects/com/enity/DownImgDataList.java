@@ -38,4 +38,31 @@ public class DownImgDataList {
     private String target_url;
     private String request_id;
     private int code;
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    /**
+     * 1  versa、2 face++、3 baidu
+     */
+    private int type;
+
+
+    public String getScoremap() {
+        return scoremap;
+    }
+
+    public void setScoremap(String scoremap) {
+        this.scoremap = scoremap;
+    }
+
+    /**
+     * 百度返回来的图片编码
+     */
+    private String scoremap;
 }

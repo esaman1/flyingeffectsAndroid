@@ -32,13 +32,14 @@ public class ZipFileHelperManager {
      */
     public static ArrayList<File> upZipFile(File zipFile, String folderPath, zipDoneListener listner) throws IOException {
 
-
+        String name;
         ArrayList<File> fileList = new ArrayList<File>();
         File desDir = new File(folderPath);
         if (!desDir.exists()) {
             desDir.mkdirs();
         }
         ZipFile zf = new ZipFile(zipFile);
+        name=zf.entries().nextElement().getName();
         for (Enumeration<?> entries = zf.entries(); entries.hasMoreElements(); ) {
             ZipEntry entry = (ZipEntry) entries.nextElement();
             if (entry.isDirectory()) {
@@ -67,7 +68,7 @@ public class ZipFileHelperManager {
             fileList.add(desFile);
 
         }
-        listner.isFinish(desDir.getPath());
+        listner.isFinish(desDir.getPath()+"/"+name);
         return fileList;
     }
 //

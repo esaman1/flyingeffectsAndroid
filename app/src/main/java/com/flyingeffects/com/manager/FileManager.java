@@ -1,6 +1,11 @@
 package com.flyingeffects.com.manager;
 
+import android.graphics.Bitmap;
+
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,5 +43,42 @@ public class FileManager {
         }
         return isImageFile;
     }
+
+
+
+
+    public static Bitmap saveBitmapToPath(Bitmap bitmap, String path) {
+        if (!path.endsWith(".png") && !path.endsWith(".PNG")) {
+            throw new IllegalArgumentException();
+        }
+
+        File file = new File(path);
+        if (file.exists()) {
+            file.delete();
+        }
+
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return bitmap;
+    }
+
 
 }
