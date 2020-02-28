@@ -213,8 +213,6 @@ TextView tv_make;
                 tv_make.setText("下载"+progress+"%");
             }
         });
-
-
     }
 
     @Override
