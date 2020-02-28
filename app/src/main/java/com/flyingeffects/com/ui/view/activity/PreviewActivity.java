@@ -33,6 +33,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 
 /***
@@ -48,6 +51,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @BindView(R.id.video_player)
     EmptyControlVideo videoPlayer;
 
+@BindView(R.id.tv_make)
+TextView tv_make;
 
     @BindView(R.id.iv_zan)
     ImageView iv_zan;
@@ -202,13 +207,23 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void showDownProgress(int progress) {
+        Observable.just(progress).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer integer) {
+                tv_make.setText("下载"+progress+"%");
+            }
+        });
+
 
     }
 
     @Override
-    public void showDownProgress(String TemplateFilePath) {
+    public void getTemplateFileSuccess(String TemplateFilePath) {
+        //file 文件下载成功
+        this.TemplateFilePath=TemplateFilePath;
         AlbumManager.chooseImageAlbum(this, 7, SELECTALBUM, this, "");
     }
+
 
 
     private void VideoPlaybackCompleted(boolean isComplate) {

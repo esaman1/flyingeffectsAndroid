@@ -7,5 +7,5 @@ public interface PreviewMvpView {
 
     void showDownProgress(int progress);
 
-    void showDownProgress(String TemplateFilePath);
+    void getTemplateFileSuccess(String TemplateFilePath);
 }

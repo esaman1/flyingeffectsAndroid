@@ -46,6 +46,6 @@ public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCall
 
     @Override
     public void getTemplateFileSuccess(String filePath) {
-        PreviewView.showDownProgress(filePath);
+        PreviewView.getTemplateFileSuccess(filePath);
     }
 }
