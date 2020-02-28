@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingStart="@dimen/dp_2_5"
-    android:paddingEnd="@dimen/dp_2_5">
+    android:paddingStart="@dimen/dp_4"
+    android:paddingEnd="@dimen/dp_4">
 
 
     <RelativeLayout
@@ -30,7 +30,9 @@
         android:id="@+id/tv_name"
         android:textColor="@color/white"
         android:layout_width="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="11dp"
+        android:layout_marginBottom="11dp"
+        android:textSize="15sp"
         android:text="@string/app_name"
         android:layout_height="wrap_content"/>
 

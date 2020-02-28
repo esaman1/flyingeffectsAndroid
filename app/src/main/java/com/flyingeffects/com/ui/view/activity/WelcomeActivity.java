@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.view.WindowManager;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
@@ -28,6 +29,8 @@ public class WelcomeActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, //去掉状态栏
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getPermission();
     }
 

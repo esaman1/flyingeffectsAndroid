@@ -98,7 +98,8 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
         super.onCreate(savedInstanceState);
         lifecycleSubject.onNext(ActivityLifeCycleEvent.CREATE);
         setContentView(getLayoutId());
-        StatusBarCompat.setStatusBarColor(this, Color.parseColor("#181818"), true);
+        StatusBarCompat.setStatusBarColor(this, Color.parseColor("#181818"));
+//        StatusBarCompat.setStatusBarColor(this, Color.parseColor("#181818"), true);
         mContext = getApplicationContext();
         mActionBar = getActionBar();
         if (mActionBar != null) {

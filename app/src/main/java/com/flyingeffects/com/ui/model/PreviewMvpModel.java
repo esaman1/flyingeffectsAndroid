@@ -173,7 +173,7 @@ public class PreviewMvpModel {
                     listForMatting.add(item.getTarget_url());
                 }
                 //马卡龙，这里是图片链接，下载下来的方式
-                if(data.get(0).getType()==0){
+                if(data.get(0).getType()==1){
                     DownImageManager  downImageManager=new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> callback.getCompressImgList(path));
                     downImageManager.downImage(listForMatting.get(0));
                 }else{

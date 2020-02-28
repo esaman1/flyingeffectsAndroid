@@ -130,7 +130,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             case R.id.tv_make:
                 videoPlayer.onVideoPause();
                 Presenter.downZip(templateItem.getTemplatefile(), templateItem.getCreate_time());
-
                 break;
             case R.id.iv_play:
                 VideoPlaybackCompleted(false);
