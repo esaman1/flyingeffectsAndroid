@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.flyingeffects.com.manager.DataCleanManager;
 import com.githang.statusbar.StatusBarCompat;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
@@ -280,9 +281,15 @@ public class HomeMainActivity extends FragmentActivity {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
             Toast.makeText(ThisMain, getResources().getString(R.string.app_name), Toast.LENGTH_SHORT).show();
             exitTime = System.currentTimeMillis();
+            clearCache();
         } else {
             finish();
         }
+    }
+
+    private void clearCache() {
+        DataCleanManager.cleanExternalFile();
+        DataCleanManager.cleanExternalCache();
     }
 
     @Override
