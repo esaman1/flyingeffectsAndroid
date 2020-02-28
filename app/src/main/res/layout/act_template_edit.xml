@@ -2,11 +2,67 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/home_base_balk_color">
 
 
-    <include layout="@layout/view_top" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <ImageView
+            android:id="@+id/iv_top_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:contentDescription="@string/app_name"
+            android:padding="10dp"
+            android:src="@mipmap/back"
+            android:visibility="visible" />
 
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="智能抠图"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+
+            <com.suke.widget.SwitchButton
+                android:layout_marginStart="9dp"
+                android:id="@+id/switch_button"
+                android:layout_width="36dp"
+                app:sb_uncheckcircle_width="0dp"
+                app:sb_uncheckcircle_radius="@dimen/dp_0"
+                android:layout_height="25dp"/>
+
+
+        </LinearLayout>
+
+
+
+        <TextView
+            android:id="@+id/tv_top_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="15dp"
+            android:text="@string/app_name"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_16sp_size"
+          />
+
+
+
+    </RelativeLayout>
 
     <FrameLayout
         android:id="@+id/edit_view_container"

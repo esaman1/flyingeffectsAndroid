@@ -185,6 +185,9 @@ dependencies {
     implementation project(':sxve')
     implementation project(':album')
 
+    //仿ios 开关  https://github.com/zcweng/SwitchButton
+    implementation 'com.github.zcweng:switch-button:0.0.3@aar'
+
 
 }
 

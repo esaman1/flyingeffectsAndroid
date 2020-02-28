@@ -3,12 +3,14 @@ package com.flyingeffects.com.ui.model;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.commonlyModel.DoubleClick;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
+import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
 import com.flyingeffects.com.utils.LogUtil;
 import com.shixing.sxve.ui.AssetDelegate;
@@ -20,6 +22,8 @@ import com.shixing.sxvideoengine.SXTemplate;
 import com.shixing.sxvideoengine.SXTemplateRender;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import rx.Observable;
@@ -141,6 +145,43 @@ public class TemplateMvpModel {
             mDialog.show();
         }
     }
+
+
+    /**
+     * todo 需要优化
+     * @param list
+     * @param maxChooseNum
+     */
+    public void ChangeMaterial(List<String> list,int maxChooseNum){
+        ArrayList<TemplateThumbItem> listItem=new ArrayList<>();
+        for (int i = 0; i < maxChooseNum; i++) {
+            listItem.add(new TemplateThumbItem("", 1, false));
+        }
+        List<String> list_all = new ArrayList<>();
+        for (int i = 0; i < maxChooseNum; i++) {  //填满数据，为了缩略图
+            if (list.size() > i && !TextUtils.isEmpty(list.get(i))) {
+                list_all.add(list.get(i)); //前面的时path ，后面的为默认的path
+            } else {
+                list_all.add(SxveConstans.default_bg_path);
+            }
+        }
+        for (int i = 0; i < list_all.size(); i++) {  //合成底部缩略图
+            TemplateThumbItem templateThumbItem = new TemplateThumbItem();
+            templateThumbItem.setPathUrl(list_all.get(i));
+            if (i == 0) {
+                templateThumbItem.setIsCheck(0);
+            } else {
+                templateThumbItem.setIsCheck(1);
+            }
+            listItem.set(i, templateThumbItem);
+        }
+
+        callback.ChangeMaterialCallback(listItem,list_all);
+
+
+    }
+
+
 
 }
 

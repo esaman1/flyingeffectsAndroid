@@ -150,6 +150,7 @@ public class PreviewMvpModel {
     private ArrayList<String> listForMatting = new ArrayList<>();
 
     private void upLoad(List<String> list) {
+        WaitingDialog.openPragressDialog(context);
         listForMatting.clear();
         List<File> listFile = new ArrayList<>();
         for (String str : list

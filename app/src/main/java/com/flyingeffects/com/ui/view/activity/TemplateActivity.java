@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -33,6 +34,7 @@ import com.shixing.sxve.ui.view.TemplateView;
 import com.shixing.sxve.ui.view.TextAssetEditLayout;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shuyu.gsyvideoplayer.listener.GSYVideoProgressListener;
+import com.suke.widget.SwitchButton;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,6 +51,8 @@ import rx.schedulers.Schedulers;
  */
 public class TemplateActivity extends BaseActivity implements TemplateMvpView, AssetDelegate {
 
+    @BindView(R.id.switch_button)
+    SwitchButton switch_button;
     @BindView(R.id.edit_view_container)
     FrameLayout mContainer;
     @BindView(R.id.recyclerView)
@@ -70,8 +74,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private TextAssetEditLayout mTextEditLayout;
     @BindView(R.id.video_player)
     EmptyControlVideo videoPlayer;
-
+    /**
+     * 原图地址
+     */
+    private List<String> originalPath;
     private String templateFilePath;
+
 
 
     @Override
@@ -89,8 +97,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         if (bundle != null) {
             templateFilePath=bundle.getString("templateFilePath");
             imgPath = bundle.getStringArrayList("paths");
+            originalPath= bundle.getStringArrayList("originalPath");
         }
-        ((TextView) findViewById(R.id.tv_top_title)).setText("拖动素材位置");
         mTextEditLayout = findViewById(R.id.text_edit_layout);
 //        mFolder = getExternalFilesDir("dynamic/" + "test");//zs2002202bg  ///aaa  ///test
         mFolder=new File(templateFilePath);
@@ -102,6 +110,21 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         }
         SxveConstans.default_bg_path = new File(dir, "default_bj.png").getPath();
         seekBar.setOnSeekBarChangeListener(seekBarListener);
+        switch_button.setOnCheckedChangeListener(new SwitchButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(SwitchButton view, boolean isChecked) {
+                if(isChecked){
+                    //修改图为裁剪后的素材
+                    presenter.ChangeMaterial(originalPath,maxChooseNum);
+
+                }else{
+                    //修改为裁剪前的素材
+                    presenter.ChangeMaterial(imgPath,maxChooseNum);
+                }
+
+
+            }
+        });
     }
 
 
@@ -130,6 +153,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         showPreview(true);
     }
 
+    @Override
+    public void ChangeMaterialCallback(ArrayList<TemplateThumbItem> callbackListItem, List<String> list_all) {
+        listItem.clear();
+        listItem.addAll(callbackListItem);
+        templateThumbAdapter.notifyDataSetChanged();
+        mTemplateModel.setReplaceAllMaterial(list_all);
+    }
 
 
     @Override

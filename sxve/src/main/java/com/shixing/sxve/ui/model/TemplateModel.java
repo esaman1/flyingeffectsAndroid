@@ -186,6 +186,33 @@ public class TemplateModel {
         }
     }
 
+
+
+    public void setReplaceAllMaterial(List<String>list){
+        if (mReplaceableAssets != null && mReplaceableAssets.size() > 0) {
+            for (int i = 0; i < mReplaceableAssets.size(); i++) {
+                if (mReplaceableAssets.get(i) != null) {
+                    if (mReplaceableAssets.get(i).ui instanceof MediaUiModel) {
+                        MediaUiModel2 media= (MediaUiModel2) mReplaceableAssets.get(i).ui;
+                        media.setImageAsset(list.get(i));
+                        textUIModelList.add(null); //todo 考虑到文字在中间的情况，补位，解决数组越界
+                    } else if (mReplaceableAssets.get(i).ui instanceof TextUiModel) {
+                        textUIModelList.add(mReplaceableAssets.get(i));
+                    }
+                }
+
+            }
+        }
+
+
+
+    }
+
+
+
+
+
+
     private String getPathType(String path) {
         String mimeType;
         String suffix = path.substring(path.lastIndexOf(".") + 1).toLowerCase();

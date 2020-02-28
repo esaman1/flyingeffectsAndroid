@@ -31,7 +31,7 @@ public class TemplateThumbAdapter extends BaseItemDraggableAdapter<TemplateThumb
 
     @Override
     protected void convert(BaseViewHolder helper, TemplateThumbItem item) {
-        LinearLayout ll_select=helper.getView(R.id.ll_select);
+//        LinearLayout ll_select=helper.getView(R.id.ll_select);
         int position = helper.getLayoutPosition();
         ImageView iv_show_un_select = helper.getView(R.id.iv_show_un_select);
         if (item.getPathUrl() != null && !item.getPathUrl().equals("")) {
@@ -44,11 +44,11 @@ public class TemplateThumbAdapter extends BaseItemDraggableAdapter<TemplateThumb
         }
         helper.setText(R.id.tv_num, position + 1 + "");
         LogUtil.d("getIsCheck", "getIsCheck=" + item.getIsCheck());
-        if (item.getIsCheck() == 0) {  //选中状态
-            ll_select.setVisibility(View.VISIBLE);
-        }else{
-            ll_select.setVisibility(View.GONE);
-        }
+//        if (item.getIsCheck() == 0) {  //选中状态
+//            ll_select.setVisibility(View.VISIBLE);
+//        }else{
+//            ll_select.setVisibility(View.GONE);
+//        }
 
     }
 }

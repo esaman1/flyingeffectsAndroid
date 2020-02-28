@@ -21,7 +21,6 @@ import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.PreviewMvpView;
 import com.flyingeffects.com.ui.presenter.PreviewMvpPresenter;
 import com.flyingeffects.com.view.EmptyControlVideo;
-import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.yanzhenjie.album.AlbumFile;
 
@@ -40,10 +39,6 @@ import rx.functions.Action1;
  * 开始制作
  */
 public class PreviewActivity extends BaseActivity implements AlbumChooseCallback, PreviewMvpView {
-
-
-    public final static int SELECTALBUM = 0;
-
 
     @BindView(R.id.video_player)
     EmptyControlVideo videoPlayer;
@@ -66,9 +61,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @BindView(R.id.tv_describe)
     TextView tv_describe;
 
-
-    new_fag_template_item templateItem;
-
     @BindView(R.id.relative_show_cover)
     RelativeLayout relative_show_cover;
 
@@ -80,10 +72,17 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     PreviewMvpPresenter Presenter;
 
+    new_fag_template_item templateItem;
+
+
+    private List<String>originalImagePath=new ArrayList<>();
+
     /**
      * 模板下载地址
      */
     private String TemplateFilePath;
+
+    public final static int SELECTALBUM = 0;
 
 
     @Override
@@ -129,6 +128,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 break;
             case R.id.tv_make:
                 videoPlayer.onVideoPause();
+                VideoPlaybackCompleted(true);
                 Presenter.downZip(templateItem.getTemplatefile(), templateItem.getCreate_time());
                 break;
             case R.id.iv_play:
@@ -176,7 +176,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel) {
             if (SELECTALBUM == 0) {
-                WaitingDialog.openPragressDialog(this);
                 Presenter.CompressImg(paths);
             }
         }
@@ -187,6 +186,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         Intent intent = new Intent(this, TemplateActivity.class);
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("paths", (ArrayList<String>) paths);
+        bundle.putStringArrayList("originalPath", (ArrayList<String>) originalImagePath);
         bundle.putString("templateFilePath", templateFilePath);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("Message", bundle);
@@ -218,8 +218,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     }
 
 
-    private void VideoPlaybackCompleted(boolean isComplate) {
-        if (isComplate) {
+    private void VideoPlaybackCompleted(boolean isComplete) {
+        if (isComplete) {
             relative_show_cover.setVisibility(View.VISIBLE);
             videoPlayer.setVisibility(View.INVISIBLE);
         } else {
