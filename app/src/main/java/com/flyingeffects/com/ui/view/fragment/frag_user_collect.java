@@ -3,6 +3,8 @@ package com.flyingeffects.com.ui.view.fragment;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.View;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyingeffects.com.R;
@@ -31,7 +33,6 @@ import rx.Observable;
  */
 
 public class frag_user_collect extends BaseFragment {
-    private int selectPage = 1;
     private boolean isRefresh = true;
 
     private BaseQuickAdapter adapter;
@@ -44,6 +45,9 @@ public class frag_user_collect extends BaseFragment {
     @BindView(R.id.RecyclerView)
     RecyclerView recyclerView;
 
+    @BindView(R.id.tv_hint)
+    TextView tv_hint;
+
     private StaggeredGridLayoutManager layoutManager;
 
     @Override
@@ -54,17 +58,20 @@ public class frag_user_collect extends BaseFragment {
 
     @Override
     protected void initView() {
-        initSmartRefreshLayout();
+
     }
+
 
     @Override
     protected void initAction() {
         initRecycler();
-        requestCollectionList();
+
+
     }
 
 
     private void requestCollectionList() {
+        tv_hint.setVisibility(View.GONE);
          ArrayList<new_fag_template_item> listData = new ArrayList<>();
         HashMap<String, String> params = new HashMap<>();
         params.put("token", BaseConstans.GetUserToken());
@@ -72,7 +79,6 @@ public class frag_user_collect extends BaseFragment {
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override
             protected void _onError(String message) {
-//                ToastUtil.showToast(message);
             }
 
             @Override
@@ -81,13 +87,10 @@ public class frag_user_collect extends BaseFragment {
                 if (isRefresh) {
                     listData.clear();
                 }
-
-//                if (isRefresh && data.size() == 0) {
-//                    callback.showNoData(true);
-//                } else {
-//                    callback.showNoData(false);
-//                }
-
+                if (data.size() == 0) {
+                    tv_hint.setVisibility(View.VISIBLE);
+                    tv_hint.setText("暂无收藏模板");
+                }
                 if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
                     ToastUtil.showToast(getResources().getString(R.string.no_more_data));
                 }
@@ -125,6 +128,14 @@ public class frag_user_collect extends BaseFragment {
 
     @Override
     public void onResume() {
+        if(BaseConstans.hasLogin()){
+            requestCollectionList();
+        }else{
+            tv_hint.setVisibility(View.VISIBLE);
+            tv_hint.setText("请先登录");
+            allData.clear();
+            adapter.notifyDataSetChanged();
+        }
         super.onResume();
     }
 
@@ -134,19 +145,6 @@ public class frag_user_collect extends BaseFragment {
         super.onPause();
     }
 
-    public void initSmartRefreshLayout() {
-        smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
-            isRefresh = true;
-            refreshLayout.setEnableLoadMore(true);
-            selectPage = 1;
-        });
-
-
-        smartRefreshLayout.setOnLoadMoreListener(refresh -> {
-            isRefresh = false;
-            selectPage++;
-        });
-    }
 
 
     private void initRecycler() {

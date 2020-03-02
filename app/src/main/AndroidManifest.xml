@@ -90,11 +90,6 @@
             android:theme="@style/TransparentTheme" />
 
 
-        <activity
-            android:name="com.flyingeffects.com.ui.view.activity.SearchActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
-
 
 
 
@@ -128,6 +123,11 @@
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.webViewActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.flyingeffects.com.ui.view.activity.SignoutActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 

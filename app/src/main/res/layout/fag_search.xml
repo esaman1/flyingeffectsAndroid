@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:imeOptions="actionSearch"
-            android:hint="友友推荐"
+            android:hint="请输入模板关键字"
             android:background="@null"
             android:paddingStart="40dp"
             android:textColor="@color/white"

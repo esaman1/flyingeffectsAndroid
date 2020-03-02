@@ -23,7 +23,7 @@ public class BaseConstans {
     private static String versionCode = "";
     private static String uuid = "";
     public static final String PRIVACYPOLICY = "http://copy-book.oss-cn-hangzhou.aliyuncs.com/link/FeiShan/FS-PrivacyPolicy.html";
-    private static String service_wxi;
+    public static String service_wxi;
     public static final String PROTOCOL = "http://copy-book.oss-cn-hangzhou.aliyuncs.com/link/FeiShan/FS-Agreement.html";
 
     public static HashMap getRequestHead(HashMap<String, String> map) {
@@ -122,7 +122,7 @@ public class BaseConstans {
         if (!TextUtils.isEmpty(service_wxi)) {
             return service_wxi;
         } else {
-            return "kadian666";
+            return "wordcq520";
         }
     }
 

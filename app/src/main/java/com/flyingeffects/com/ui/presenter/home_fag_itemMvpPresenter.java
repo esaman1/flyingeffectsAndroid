@@ -49,6 +49,7 @@ public class home_fag_itemMvpPresenter extends BasePresenter implements homeItem
 
     @Override
     public void showNoData(boolean isShowData) {
+        mvp_view.showNoData(isShowData);
     }
 
 }

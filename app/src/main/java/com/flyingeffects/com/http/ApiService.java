@@ -1,5 +1,6 @@
 package com.flyingeffects.com.http;
 
+import com.flyingeffects.com.enity.Config;
 import com.flyingeffects.com.enity.HttpResult;
 import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.enity.UserInfo;
@@ -26,9 +27,17 @@ public interface ApiService {
     Observable<HttpResult<UserInfo>> toLogin(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
+    @POST("/api/template/configList")
+    Observable<HttpResult<List<Config>>> configList(@FieldMap Map<String, String> params);
+
+
+    @FormUrlEncoded
     @POST("/api/template/collectionList")
     Observable<HttpResult<List<new_fag_template_item>>> collectionList(@FieldMap Map<String, String> params);
 
+    @FormUrlEncoded
+    @POST("/api/user/cancelUser")
+    Observable<HttpResult<Object>> toDelete(@FieldMap Map<String, String> params);
 
 
 

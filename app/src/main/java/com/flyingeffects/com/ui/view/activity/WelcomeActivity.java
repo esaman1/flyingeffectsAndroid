@@ -9,13 +9,25 @@ import android.support.annotation.NonNull;
 import android.view.WindowManager;
 
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.Config;
+import com.flyingeffects.com.enity.UserInfo;
+import com.flyingeffects.com.http.Api;
+import com.flyingeffects.com.http.HttpUtil;
+import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.SPHelper;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.PermissionUtil;
+import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import rx.Observable;
 
 public class WelcomeActivity extends BaseActivity {
 
@@ -37,7 +49,7 @@ public class WelcomeActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
-//        requestConfig()
+        requestConfig();
     }
 
 
@@ -120,6 +132,28 @@ public class WelcomeActivity extends BaseActivity {
                 showSplashAd();
             }
     }
+
+
+
+
+    private void requestConfig() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("config_name", "wechat_name");
+        // 启动时间
+        Observable ob = Api.getDefault().configList(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Config>(WelcomeActivity.this) {
+            @Override
+            protected void _onError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(Config data) {
+                BaseConstans.service_wxi=data.getValue();
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+    }
+
 
 
 

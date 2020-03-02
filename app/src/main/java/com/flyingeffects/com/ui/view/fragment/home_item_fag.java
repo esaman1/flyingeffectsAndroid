@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.main_recycler_adapter;
@@ -33,6 +34,8 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, main
     private int actTag;
     @BindView(R.id.smart_refresh_layout)
     SmartRefreshLayout smartRefreshLayout;
+    @BindView(R.id.lin_show_nodata)
+    LinearLayout lin_show_nodata;
 
 
     @Override
@@ -125,7 +128,15 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, main
         }
     }
 
+    @Override
+    public void showNoData(boolean isShowNoData) {
+        if(isShowNoData){
+            lin_show_nodata.setVisibility(View.VISIBLE);
+        }else{
+            lin_show_nodata.setVisibility(View.GONE);
+        }
 
+    }
 
 
     @Override

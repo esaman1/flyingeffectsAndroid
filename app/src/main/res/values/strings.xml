@@ -5,8 +5,8 @@
     <string name="better_to_choose_all">请选择素材</string>
     <string name="confirm">确定</string>
     <string name="install_app_store_notification">请先安装相关应用市场</string>
-    <string name="contacts_saved_to_clipboard" translatable="false">已为你复制微信号：</string>
-    <string name="promote_message">教你成为技术流</string>
+    <string name="contacts_saved_to_clipboard" translatable="false">友友你好，已为你复制微信号</string>
+    <string name="promote_message">添加还可领素材教程</string>
     <string name="weixin">微信登录</string>
     <string name="qq">QQ登录</string>
     <string name="notification">提示</string>
@@ -15,5 +15,16 @@
     <string name="got_it">我知道啦</string>
     <string name="cancel">取消</string>
     <string name="check_login_notification" translatable="false">检查到您手机没有安装微信，请安装后使用该功能</string>
+    <!--注销账户-->
+    <string name="string_cancel_user">注销账号须知</string>
+    <string name="string_cancel_user_after">注销账号后</string>
+    <string name="string_delete_user_after_one">1. 无法再登录当前账号</string>
+    <string name="string_delete_user_after_two">2. 注销行为无法撤销，无法恢复数据</string>
+    <string name="string_delete_user_after_shree">3. 所有信息将在72小时内依法合规删除</string>
+    <string name="string_delete_user_iknow">我已了解以上后果</string>
+    <string name="string_to_delete">申请注销账号</string>
+    <string name="string_to_delete_alert">请您先勾选后果</string>
 
+
+    <string name="have_not_login">未登录</string>
 </resources>

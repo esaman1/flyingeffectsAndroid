@@ -33,11 +33,7 @@ public class AboutActivity extends BaseActivity {
     @Override
     protected void initView() {
         ((TextView) findViewById(R.id.tv_top_title)).setText("关于");
-        if(BaseConstans.hasLogin()){
-            findViewById(R.id.tv_top_submit).setVisibility(View.VISIBLE);
-            ((TextView) findViewById(R.id.tv_top_submit)).setText("退出登录");
-            ((TextView) findViewById(R.id.tv_top_submit)).setTextColor(Color.parseColor("#FE2C55"));
-        }
+
     }
 
     @Override
@@ -45,13 +41,30 @@ public class AboutActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.tv_top_submit, R.id.ll_close_account, R.id.ll_contact_us, R.id.ll_relation_us, R.id.ll_privacy_policy, R.id.ll_protocol, R.id.ll_clear_cache})
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(BaseConstans.hasLogin()){
+            findViewById(R.id.tv_top_submit).setVisibility(View.VISIBLE);
+            ((TextView) findViewById(R.id.tv_top_submit)).setText("退出登录");
+            ((TextView) findViewById(R.id.tv_top_submit)).setTextColor(Color.parseColor("#FE2C55"));
+        }
+    }
+
+    @OnClick({R.id.tv_top_submit,R.id.iv_top_back, R.id.ll_close_account, R.id.ll_contact_us, R.id.ll_relation_us, R.id.ll_privacy_policy, R.id.ll_protocol, R.id.ll_clear_cache})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_close_account:
-
+                if(!BaseConstans.hasLogin()){
+                    ToastUtil.showToast(getString(R.string.have_not_login));
+                }else{
+                    goActivity(SignoutActivity.class);
+                }
                 break;
-
+            case R.id.iv_top_back:
+                this.finish();
+                break;
             case R.id.ll_contact_us:
                 reception();
                 break;

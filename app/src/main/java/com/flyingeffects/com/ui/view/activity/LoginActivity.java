@@ -1,11 +1,13 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,9 +42,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
 
     @BindView(R.id.password)
-    EditText password;
+    EditText editTextPassword;
     @BindView(R.id.username)
-    EditText username;
+    EditText editTextUsername;
 
 
     @BindView(R.id.tv_login)
@@ -53,7 +55,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      * 0 ，发送验证码，1 登录
      */
     private int nowProgressType;
-
 
     @Override
     protected int getLayoutId() {
@@ -68,17 +69,37 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     protected void initAction() {
-        password.addTextChangedListener(new TextWatcher() {
+        editTextPassword.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String text = password.getText().toString().trim();
-                if (!text.equals("")) {
-                    nowProgressType = 1;
-                    tv_login.setText("登录");
+              String  strPassword= editTextPassword.getText().toString().trim();
+                if (!strPassword.equals("")) {
+                    nextStep(true);
                 } else {
-                    nowProgressType = 0;
-                    tv_login.setText("获取短信验证码");
+                    nextStep(false);
                 }
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                nextStep(true);
+            }
+        });
+
+        editTextUsername.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(TextUtils.isEmpty(editTextPassword.getText().toString())){
+                    nextStep(false);
+                }else{
+                    nextStep(true);
+                }
+
             }
 
             @Override
@@ -96,6 +117,18 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
+
+    private void nextStep(boolean isLogin){
+        if(isLogin){
+            tv_login.setText("登录");
+            nowProgressType = 1;
+        }else{
+            tv_login.setText("获得验证码");
+            nowProgressType = 0;
+        }
+    }
+
+
     @Override
     protected void initView() {
     }
@@ -103,16 +136,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     private void requestLogin() {
 
-        if (username.getText().toString().equals("")) {
+        if (editTextUsername.getText().toString().equals("")) {
             ToastUtil.showToast("请输入手机号");
             return;
         }
 
-        if (password.getText().toString().equals("")) {
+        if (editTextPassword.getText().toString().equals("")) {
             ToastUtil.showToast("请输入密码");
             return;
         }
-        requestLogin(username.getText().toString(), password.getText().toString());
+        requestLogin(editTextUsername.getText().toString(), editTextPassword.getText().toString());
 
     }
 
@@ -135,18 +168,18 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
 
     private void toRequestSms() {
-        if (TextUtils.isEmpty(username.getText().toString())) {
+        if (TextUtils.isEmpty(editTextUsername.getText().toString())) {
             Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        requestSms(username.getText().toString());
+        requestSms(editTextUsername.getText().toString());
     }
 
 
-    private void requestSms(String username) {
+    private void requestSms(String streditTextUsername) {
         HashMap<String, String> params = new HashMap<>();
-        params.put("phone", username);
+        params.put("phone", streditTextUsername);
         // 启动时间
         Observable ob = Api.getDefault().toSms(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(LoginActivity.this) {
@@ -166,6 +199,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     if (code == 1) {
                         ToastUtil.showToast("发送成功");
                     }
+                    nextStep(true);
+                    changeFocus();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -176,9 +211,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
-    private void requestLogin(String username, String password) {
+
+    private void changeFocus(){
+        editTextPassword.requestFocus();
+        editTextPassword.setFocusable(true);
+        editTextPassword.setFocusableInTouchMode(true);
+        InputMethodManager imm = (InputMethodManager) editTextPassword.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
+
+    private void requestLogin(String editTextUsername, String password) {
         HashMap<String, String> params = new HashMap<>();
-        params.put("phone", username);
+        params.put("phone", editTextUsername);
         params.put("code", password);
         // 启动时间
         Observable ob = Api.getDefault().toLogin(BaseConstans.getRequestHead(params));
