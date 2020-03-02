@@ -13,6 +13,7 @@ import com.flyco.tablayout.SlidingTabLayout;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseFragment;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.ui.view.activity.AboutActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.shixing.sxve.ui.view.WaitingDialog;
@@ -48,6 +49,9 @@ public class frag_user_center extends BaseFragment {
     @BindView(R.id.iv_head)
     ImageView iv_head;
 
+    @BindView(R.id.tv_id)
+    TextView tv_id;
+
 
     @Override
     protected int getContentLayout() {
@@ -66,6 +70,8 @@ public class frag_user_center extends BaseFragment {
     @Override
     protected void initAction() {
         initTabData();
+
+
     }
 
     @Override
@@ -75,6 +81,15 @@ public class frag_user_center extends BaseFragment {
 
     @Override
     public void onResume() {
+        if (getActivity() != null) {
+            //未登陆
+            if (BaseConstans.hasLogin()) {
+                tv_id.setText("我的id号："+BaseConstans.GetUserToken());
+            }else{
+                tv_id.setText("未登录");
+            }
+        }
+
         super.onResume();
     }
 
@@ -124,13 +139,11 @@ public class frag_user_center extends BaseFragment {
         public void onClick(View view) {
         switch (view.getId()){
             case R.id.iv_head:
-
-                Intent intent =new Intent(getActivity(), LoginActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-
-
-
+                if(!BaseConstans.hasLogin()){
+                    Intent intent =new Intent(getActivity(), LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                }
                 break;
         }
 

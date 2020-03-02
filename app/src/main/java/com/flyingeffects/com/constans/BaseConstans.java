@@ -62,7 +62,13 @@ public class BaseConstans {
     }
 
 
-    public static String GetUserUuid() {
+    public static boolean hasLogin() {
+        return GetUserToken() != null && !GetUserToken().equals("");
+    }
+
+
+
+    static String GetUserUuid() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getString("uuid", "");
     }

@@ -29,6 +29,10 @@ public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCall
         PreviewModel.downZip(url,createTime);
     }
 
+    public void collectTemplate(String templateId){
+        PreviewModel.collectTemplate(templateId);
+    }
+
 
     public void onDestroy(){
         PreviewModel.onDestroy();

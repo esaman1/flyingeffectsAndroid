@@ -1,7 +1,9 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -66,19 +68,28 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     protected void initAction() {
-        password.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
+        password.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 String text = password.getText().toString().trim();
                 if (!text.equals("")) {
-                    nowProgressType = 0;
+                    nowProgressType = 1;
                     tv_login.setText("登录");
                 } else {
-                    nowProgressType = 1;
+                    nowProgressType = 0;
                     tv_login.setText("获取短信验证码");
                 }
-                return true;
             }
-            return false;
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
         });
 
 
@@ -113,7 +124,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 if (nowProgressType == 0) {
                     toRequestSms();
                 } else {
-
+                    requestLogin();
                 }
 
                 break;
@@ -164,23 +175,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
 
-    private void toRequestLogin() {
-        if (TextUtils.isEmpty(username.getText().toString())) {
-            Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (TextUtils.isEmpty(password.getText().toString())) {
-            Toast.makeText(this, "请输入验证码", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        requestLogin(username.getText().toString(), password.getText().toString());
-    }
-
 
     private void requestLogin(String username, String password) {
         HashMap<String, String> params = new HashMap<>();
-        params.put("username", username);
-        params.put("password", password);
+        params.put("phone", username);
+        params.put("code", password);
         // 启动时间
         Observable ob = Api.getDefault().toLogin(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(LoginActivity.this) {
@@ -191,11 +190,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
             @Override
             protected void _onNext(UserInfo data) {
+                String str = StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM", "requestLogin=" + str);
                 BaseConstans.SetUserToken(data.getToken());
-
+                LoginActivity.this.finish();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
+
+
+
 
 
 }

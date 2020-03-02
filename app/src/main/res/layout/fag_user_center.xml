@@ -36,14 +36,15 @@
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:scaleType="fitXY"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/head" />
 
 
             <TextView
+                android:id="@+id/tv_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="我的id号"
+                android:text="未登录"
                 android:textColor="@color/white"
                 android:textSize="15sp" />
 
@@ -59,15 +60,15 @@
             android:layout_marginTop="7dp"
             android:layout_marginBottom="7dp"
             app:tl_divider_padding="@dimen/dp_5"
-            app:tl_indicator_color="#FEE131"
+            app:tl_indicator_color="#5496FF"
             app:tl_indicator_corner_radius="@dimen/dp_5"
             app:tl_indicator_height="@dimen/dp_6"
             app:tl_indicator_width="@dimen/dp_12"
             app:tl_tab_padding="@dimen/dp_7"
             app:tl_textAllCaps="true"
             app:tl_textBold="BOTH"
-            app:tl_textSelectColor="@color/base_black"
-            app:tl_textUnselectColor="#BBBBBB"
+            app:tl_textSelectColor="@color/white"
+            app:tl_textUnselectColor="#A3A3A5"
             app:tl_textsize="@dimen/sp_16" />
 
 

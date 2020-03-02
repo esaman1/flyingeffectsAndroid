@@ -124,6 +124,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_zan:
+
+                Presenter.collectTemplate(templateItem.getId());
+
+
                 iv_zan.setImageResource(R.mipmap.zan_selected);
                 break;
             case R.id.tv_make:

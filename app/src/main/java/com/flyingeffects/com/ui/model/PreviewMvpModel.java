@@ -9,16 +9,23 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.DownImg;
 import com.flyingeffects.com.enity.DownImgDataList;
+import com.flyingeffects.com.enity.UserInfo;
+import com.flyingeffects.com.http.Api;
+import com.flyingeffects.com.http.HttpUtil;
+import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.DownImageManager;
 import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
 import com.flyingeffects.com.ui.interfaces.model.PreviewMvpCallback;
+import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
+import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.updateFileUtils;
 import com.google.gson.Gson;
@@ -27,6 +34,7 @@ import com.shixing.sxve.ui.view.WaitingDialog;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import rx.Observable;
@@ -183,11 +191,37 @@ public class PreviewMvpModel {
                     downImageManager.downImageForByte(listForMatting.get(0));
                 }
 
-
-
             }
         });
     }
+
+
+
+
+    public void collectTemplate(String templateId){
+            HashMap<String, String> params = new HashMap<>();
+            params.put("template_id", templateId);
+            params.put("token", BaseConstans.GetUserToken());
+            // 启动时间
+            Observable ob = Api.getDefault().newCollection(BaseConstans.getRequestHead(params));
+            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
+                @Override
+                protected void _onError(String message) {
+                    ToastUtil.showToast(message);
+                }
+
+                @Override
+                protected void _onNext(Object data) {
+                    String str = StringUtil.beanToJSONString(data);
+                    LogUtil.d("OOM", "collectTemplate=" + str);
+
+                }
+            }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+
+    }
+
+
+
 
 
     public void downZip(String url, long createTime) {

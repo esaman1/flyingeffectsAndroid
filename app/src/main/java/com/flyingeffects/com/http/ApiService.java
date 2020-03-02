@@ -25,6 +25,18 @@ public interface ApiService {
     @POST("/api/user/mobilelogin")
     Observable<HttpResult<UserInfo>> toLogin(@FieldMap Map<String, String> params);
 
+    @FormUrlEncoded
+    @POST("/api/template/collectionList")
+    Observable<HttpResult<Object>> collectionList(@FieldMap Map<String, String> params);
+
+
+
+
+    @FormUrlEncoded
+    @POST("/api/template/newCollection")
+    Observable<HttpResult<Object>> newCollection(@FieldMap Map<String, String> params);
+
+
 
     @FormUrlEncoded
     @POST("/api/sms/smsCode")
