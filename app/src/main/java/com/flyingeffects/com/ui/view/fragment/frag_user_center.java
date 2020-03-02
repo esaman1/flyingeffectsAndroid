@@ -1,6 +1,5 @@
 package com.flyingeffects.com.ui.view.fragment;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,7 +15,6 @@ import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.ui.view.activity.AboutActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
-import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.util.ArrayList;
 
@@ -31,8 +29,6 @@ import butterknife.OnClick;
 
 public class frag_user_center extends BaseFragment {
 
-    TextView tv_play_video;
-    Dialog mDialog;
 
   private  String[] titles = {"我的收藏"};
 
@@ -70,8 +66,6 @@ public class frag_user_center extends BaseFragment {
     @Override
     protected void initAction() {
         initTabData();
-
-
     }
 
     @Override
@@ -107,9 +101,7 @@ public class frag_user_center extends BaseFragment {
         FragmentManager manager = getChildFragmentManager();
         ArrayList<Fragment> list = new ArrayList<>();
         frag_user_collect fag_0 = new frag_user_collect();
-//        frag_user_collect fag_1 = new frag_user_collect();
         list.add(fag_0);
-//        list.add(fag_1);
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
         viewpager.setAdapter(adapter);
         viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -120,10 +112,6 @@ public class frag_user_center extends BaseFragment {
 
             @Override
             public void onPageSelected(int i) {
-//                if (i <= data.size() - 1) {
-//                        statisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
-//                        EventBus.getDefault().post(new viewPagerSelected(i));  //消息通知
-//                }
             }
 
             @Override
