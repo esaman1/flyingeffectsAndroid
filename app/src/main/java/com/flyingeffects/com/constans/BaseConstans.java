@@ -1,5 +1,7 @@
 package com.flyingeffects.com.constans;
 
+import android.text.TextUtils;
+
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.http.abc;
 import com.flyingeffects.com.manager.SPHelper;
@@ -20,7 +22,9 @@ public class BaseConstans {
     private static String channel = "";
     private static String versionCode = "";
     private static String uuid = "";
-
+    public static final String PRIVACYPOLICY = "http://copy-book.oss-cn-hangzhou.aliyuncs.com/link/FeiShan/FS-PrivacyPolicy.html";
+    private static String service_wxi;
+    public static final String PROTOCOL = "http://copy-book.oss-cn-hangzhou.aliyuncs.com/link/FeiShan/FS-Agreement.html";
 
     public static HashMap getRequestHead(HashMap<String, String> map) {
         String nowTimestamp = getTimestamp() + "";
@@ -109,6 +113,16 @@ public class BaseConstans {
         } else {
             channel = ChannelUtil.getChannel(BaseApplication.getInstance());
             return channel;
+        }
+    }
+
+
+
+    public static String getService_wxi() {
+        if (!TextUtils.isEmpty(service_wxi)) {
+            return service_wxi;
+        } else {
+            return "kadian666";
         }
     }
 
