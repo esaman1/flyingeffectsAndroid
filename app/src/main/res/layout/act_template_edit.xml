@@ -23,6 +23,7 @@
 
 
         <LinearLayout
+            android:id="@+id/ll_Matting"
             android:layout_width="match_parent"
             android:orientation="horizontal"
             android:gravity="center"

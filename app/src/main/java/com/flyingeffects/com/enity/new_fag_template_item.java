@@ -112,13 +112,7 @@ public class new_fag_template_item implements Serializable {
         this.ios_diversion = ios_diversion;
     }
 
-    public String getIs_picout() {
-        return is_picout;
-    }
 
-    public void setIs_picout(String is_picout) {
-        this.is_picout = is_picout;
-    }
 
     public String getAuth() {
         return auth;
@@ -190,7 +184,30 @@ public class new_fag_template_item implements Serializable {
     private long create_time;
          private String mbsearch;
          private String ios_diversion;
-         private String is_picout;
+
+    public int getIs_picout() {
+        return is_picout;
+    }
+
+    public void setIs_picout(int is_picout) {
+        this.is_picout = is_picout;
+    }
+
+
+    /**
+     * 是否需要抠图，0不需要，1 需要
+     */
+    private int is_picout;
+
+    public int getDefaultnum() {
+        return defaultnum;
+    }
+
+    public void setDefaultnum(int defaultnum) {
+        this.defaultnum = defaultnum;
+    }
+
+    private int defaultnum;
          private String auth;
          private String auth_image;
          private String remark;

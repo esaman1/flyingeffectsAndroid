@@ -10,6 +10,7 @@ import android.view.WindowManager;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.manager.SPHelper;
 import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 
@@ -45,7 +46,7 @@ public class WelcomeActivity extends BaseActivity {
         new Thread(() -> {
             try {
                 Thread.sleep(2000);
-                goActivity(HomeMainActivity.class);
+                    goActivity(HomeMainActivity.class);
                 this.finish();
             } catch (InterruptedException e) {
                 e.printStackTrace();

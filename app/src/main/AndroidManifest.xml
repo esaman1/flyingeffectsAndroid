@@ -127,6 +127,9 @@
             android:screenOrientation="portrait" />
 
 
+
+
+
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.TemplateActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

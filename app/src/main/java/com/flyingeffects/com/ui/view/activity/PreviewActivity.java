@@ -81,6 +81,15 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
      * 模板下载地址
      */
     private String TemplateFilePath;
+    /**
+     * 素材数量
+     */
+    private int defaultnum;
+
+    /**
+     * 是否需要抠图
+     */
+    private int is_picout;
 
     public final static int SELECTALBUM = 0;
 
@@ -93,6 +102,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     protected void initView() {
         templateItem = (new_fag_template_item) getIntent().getSerializableExtra("person");
+        defaultnum=templateItem.getDefaultnum();
+        is_picout=templateItem.getIs_picout();
         Presenter = new PreviewMvpPresenter(this, this);
         Glide.with(this).load(templateItem.getImage()).into(iv_show_cover);
         videoPlayer.setUp(templateItem.getVidoefile(), true, "");
@@ -177,8 +188,15 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel) {
             if (SELECTALBUM == 0) {
-                originalImagePath=paths;
-                Presenter.CompressImg(paths);
+                //如果不需要抠图
+                if(is_picout==0){
+                    intoTemplateActivity(paths,TemplateFilePath);
+                    originalImagePath=null;
+                }else{//需要抠图
+                    originalImagePath=paths;
+                    Presenter.CompressImg(paths);
+                }
+
             }
         }
     }
@@ -188,6 +206,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         Intent intent = new Intent(this, TemplateActivity.class);
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("paths", (ArrayList<String>) paths);
+        bundle.putInt("isPicNum",defaultnum);
         bundle.putStringArrayList("originalPath", (ArrayList<String>) originalImagePath);
         bundle.putString("templateFilePath", templateFilePath);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -216,7 +235,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void getTemplateFileSuccess(String TemplateFilePath) {
         //file 文件下载成功
         this.TemplateFilePath = TemplateFilePath;
-        AlbumManager.chooseImageAlbum(this, 7, SELECTALBUM, this, "");
+        AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");
     }
 
 

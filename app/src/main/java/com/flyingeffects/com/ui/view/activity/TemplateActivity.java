@@ -63,7 +63,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private TemplateThumbAdapter templateThumbAdapter;
     private ArrayList<TemplateThumbItem> listItem = new ArrayList<>();
     private ArrayList<TemplateView> mTemplateViews;
-    private int maxChooseNum = 6;
     private int nowChooseIndex = 0;
     private int lastPosition;
     private String mAudio1Path;
@@ -72,10 +71,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @BindView(R.id.video_player)
     EmptyControlVideo videoPlayer;
     /**
-     * 原图地址
+     * 原图地址,如果不需要抠图，原图地址为null
      */
     private List<String> originalPath;
     private String templateFilePath;
+    /**
+     * 需要素材数量
+     */
+    private int defaultNum;
 
 
 
@@ -92,9 +95,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("Message");
         if (bundle != null) {
+            defaultNum=bundle.getInt("defaultNum");
             templateFilePath=bundle.getString("templateFilePath");
             imgPath = bundle.getStringArrayList("paths");
             originalPath= bundle.getStringArrayList("originalPath");
+        }
+        if(originalPath==null){
+            //不需要抠图
+            findViewById(R.id.ll_Matting).setVisibility(View.GONE);
         }
         mTextEditLayout = findViewById(R.id.text_edit_layout);
 //        mFolder = getExternalFilesDir("dynamic/" + "test");//zs2002202bg  ///aaa  ///test
@@ -102,7 +110,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         mAudio1Path = mFolder.getPath() + MUSIC_PATH;
         File dir = getExternalFilesDir("");
         mTemplateViews = new ArrayList<>();
-        for (int i = 0; i < maxChooseNum; i++) {
+        for (int i = 0; i < defaultNum; i++) {
             listItem.add(new TemplateThumbItem("", 1, false));
         }
         SxveConstans.default_bg_path = new File(dir, "default_bj.png").getPath();
@@ -112,10 +120,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             public void onCheckedChanged(SwitchButton view, boolean isChecked) {
                 if(isChecked){
                     //修改图为裁剪后的素材
-                    presenter.ChangeMaterial(originalPath,maxChooseNum);
+                    presenter.ChangeMaterial(originalPath,defaultNum);
                 }else{
                     //修改为裁剪前的素材
-                    presenter.ChangeMaterial(imgPath,maxChooseNum);
+                    presenter.ChangeMaterial(imgPath,defaultNum);
                 }
             }
         });
@@ -220,7 +228,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private void isFirstReplace(List<String> paths) {
         if (mTemplateViews != null && mTemplateViews.size() > 0) {
             List<String> list_all = new ArrayList<>();
-            for (int i = 0; i < maxChooseNum; i++) {  //填满数据，为了缩略图
+            for (int i = 0; i < defaultNum; i++) {  //填满数据，为了缩略图
                 if (paths.size() > i && !TextUtils.isEmpty(paths.get(i))) {
                     list_all.add(paths.get(i)); //前面的时path ，后面的为默认的path
                 } else {
