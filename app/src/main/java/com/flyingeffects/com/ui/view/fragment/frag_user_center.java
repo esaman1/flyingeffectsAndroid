@@ -34,7 +34,7 @@ public class frag_user_center extends BaseFragment {
     TextView tv_play_video;
     Dialog mDialog;
 
-  private  String[] titles = {"我的收藏", "最近编辑",};
+  private  String[] titles = {"我的收藏"};
 
     @BindView(R.id.viewpager)
     ViewPager viewpager;
@@ -107,9 +107,9 @@ public class frag_user_center extends BaseFragment {
         FragmentManager manager = getChildFragmentManager();
         ArrayList<Fragment> list = new ArrayList<>();
         frag_user_collect fag_0 = new frag_user_collect();
-        frag_user_collect fag_1 = new frag_user_collect();
+//        frag_user_collect fag_1 = new frag_user_collect();
         list.add(fag_0);
-        list.add(fag_1);
+//        list.add(fag_1);
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
         viewpager.setAdapter(adapter);
         viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

@@ -27,7 +27,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("/api/template/collectionList")
-    Observable<HttpResult<Object>> collectionList(@FieldMap Map<String, String> params);
+    Observable<HttpResult<List<new_fag_template_item>>> collectionList(@FieldMap Map<String, String> params);
 
 
 

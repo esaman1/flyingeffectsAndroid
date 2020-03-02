@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.view.fragment;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
@@ -9,14 +10,11 @@ import com.flyingeffects.com.adapter.main_recycler_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.ui.view.activity.LoginActivity;
-import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.StringUtil;
+import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -38,14 +36,15 @@ public class frag_user_collect extends BaseFragment {
 
     private BaseQuickAdapter adapter;
 
+    private List<new_fag_template_item> allData = new ArrayList<>();
     @BindView(R.id.smart_refresh_layout)
     SmartRefreshLayout smartRefreshLayout;
-
+    private int perPageCount=10;
 
     @BindView(R.id.RecyclerView)
     RecyclerView recyclerView;
 
-
+    private StaggeredGridLayoutManager layoutManager;
 
     @Override
     protected int getContentLayout() {
@@ -66,23 +65,57 @@ public class frag_user_collect extends BaseFragment {
 
 
     private void requestCollectionList() {
+         ArrayList<new_fag_template_item> listData = new ArrayList<>();
         HashMap<String, String> params = new HashMap<>();
         params.put("token", BaseConstans.GetUserToken());
         Observable ob = Api.getDefault().collectionList(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(getActivity()) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override
             protected void _onError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(Object data) {
-                String str=StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM",str);
+            protected void _onNext(List<new_fag_template_item> data) {
+                finishData();
+                if (isRefresh) {
+                    listData.clear();
+                }
+
+//                if (isRefresh && data.size() == 0) {
+//                    callback.showNoData(true);
+//                } else {
+//                    callback.showNoData(false);
+//                }
+
+                if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
+                    ToastUtil.showToast(getResources().getString(R.string.no_more_data));
+                }
+                if (data.size() < perPageCount) {
+                    smartRefreshLayout.setEnableLoadMore(false);
+                }
+                listData.addAll(data);
+                showData(listData);
 
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
+
+
+
+    private void showData( ArrayList<new_fag_template_item> listData){
+        if (getActivity() != null) {
+            allData.clear();
+            allData.addAll(listData);
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    private void finishData() {
+        smartRefreshLayout.finishRefresh();
+        smartRefreshLayout.finishLoadMore();
+    }
+
 
 
     @Override
@@ -117,18 +150,17 @@ public class frag_user_collect extends BaseFragment {
 
 
     private void initRecycler() {
-        List<new_fag_template_item> list=new ArrayList<>();
-        for (int i=0;i<10;i++){
-            new_fag_template_item item=new new_fag_template_item();
-            item.setTitle("123");
-            list.add(item);
-        }
-        adapter = new main_recycler_adapter(R.layout.list_main_item, list, getActivity(), null, 0);
-        StaggeredGridLayoutManager      layoutManager =
+        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), null, 0);
+        layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
+        adapter.setOnItemClickListener((adapter, view, position) -> {
+            Intent intent =new Intent(getActivity(), PreviewActivity.class);
+            intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
+            startActivity(intent);
+        });
     }
 
 
