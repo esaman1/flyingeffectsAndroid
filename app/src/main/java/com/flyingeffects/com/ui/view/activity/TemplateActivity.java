@@ -113,13 +113,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 if(isChecked){
                     //修改图为裁剪后的素材
                     presenter.ChangeMaterial(originalPath,maxChooseNum);
-
                 }else{
                     //修改为裁剪前的素材
                     presenter.ChangeMaterial(imgPath,maxChooseNum);
                 }
-
-
             }
         });
     }
@@ -156,6 +153,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         listItem.addAll(callbackListItem);
         templateThumbAdapter.notifyDataSetChanged();
         mTemplateModel.setReplaceAllMaterial(list_all);
+        mTemplateViews.get(nowChooseIndex).invalidate();
     }
 
 
