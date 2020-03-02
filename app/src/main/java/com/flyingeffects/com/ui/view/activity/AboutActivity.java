@@ -29,13 +29,16 @@ public class AboutActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.ll_exit_login})
+    @OnClick({R.id.ll_close_account})
     public void onClick(View view) {
          switch (view.getId()){
-            case R.id.ll_exit_login:
-                Intent intent=new Intent(this,LoginActivity.class);
-                startActivity(intent);
+            case R.id.ll_close_account:
                 break;
+
+
+
+
+
         }
 
     }

@@ -33,6 +33,13 @@ public interface ApiService {
 
 
     @FormUrlEncoded
+    @POST("/api/template/keywordList")
+    Observable<HttpResult<List<Object>>> keywordList(@FieldMap Map<String, String> params);
+
+
+
+
+    @FormUrlEncoded
     @POST("/api/template/newCollection")
     Observable<HttpResult<Object>> newCollection(@FieldMap Map<String, String> params);
 

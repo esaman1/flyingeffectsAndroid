@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v7.widget.RecyclerView;
@@ -12,19 +13,37 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.main_recycler_adapter;
+import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
+import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.SearchKeyWord;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.http.Api;
+import com.flyingeffects.com.http.HttpUtil;
+import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.ColorCorrectionManager;
+import com.flyingeffects.com.ui.view.activity.PreviewActivity;
+import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.AutoNewLineLayout;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
+import rx.Observable;
 
 
 /**
@@ -41,18 +60,18 @@ public class frag_search extends BaseFragment {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView ;
 
-
     @BindView(R.id.ed_search)
     EditText ed_text;
 
+    @BindView(R.id.ll_showResult)
+    LinearLayout ll_showResult;
+
+    @BindView(R.id.iv_delete)
+    ImageView iv_delete;
+
     private List<new_fag_template_item> allData = new ArrayList<>();
-
-    @BindView(R.id.smart_refresh_layout)
-    SmartRefreshLayout smartRefreshLayout;
-
-    private StaggeredGridLayoutManager layoutManager;
     private main_recycler_adapter adapter;
-
+    private ArrayList<SearchKeyWord>listSearchKey=new ArrayList<>();
 
     @Override
     protected int getContentLayout() {
@@ -62,12 +81,14 @@ public class frag_search extends BaseFragment {
 
     @Override
     protected void initView() {
+
         //键盘的搜索按钮
         ed_text.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
                 String text = ed_text.getText().toString().trim();
                 if (!text.equals("")) {
-                    smartRefreshLayout.setVisibility(View.VISIBLE);
+                    requestFagData(text);
+                    ll_showResult.setVisibility(View.VISIBLE);
                 }
                 return true;
             }
@@ -88,26 +109,30 @@ public class frag_search extends BaseFragment {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() == 0) {
-                    smartRefreshLayout.setVisibility(View.GONE);
+                    ll_showResult.setVisibility(View.GONE);
                 } else {
-                    smartRefreshLayout.setVisibility(View.VISIBLE);
+                    ll_showResult.setVisibility(View.VISIBLE);
                 }
                 ed_text.setSelection(s.length());
             }
         });
+        iv_delete.setOnClickListener(view -> {
+            ed_text.setText("");
+            ll_showResult.setVisibility(View.GONE);
+        });
         showSoftInputFromWindow(ed_text);
+        requestKeywordList();
     }
 
 
     @Override
     protected void initAction() {
-        test();
+
     }
 
     @Override
     protected void initData() {
         initRecycler();
-        initSmartRefreshLayout();
     }
 
 
@@ -123,45 +148,37 @@ public class frag_search extends BaseFragment {
     }
 
 
-    private void test() {
-        for (int i = 0; i < 20; i++) {
+    private void setKeyWordList(ArrayList<SearchKeyWord>listSearchKey) {
+        for (int i = 0; i < listSearchKey.size(); i++) {
+            String nowChooseColor= ColorCorrectionManager.getInstance().getChooseColor(i);
             TextView tv = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.textview_recommend, null);
-            tv.setText("飞天特效" + i * 110);
-            tv.setTextColor(Color.parseColor("#FF0000"));
+            tv.setText(listSearchKey.get(i).getName());
+            tv.setTextColor(Color.parseColor(nowChooseColor));
+            int finalI = i;
+            tv.setOnClickListener(view -> {
+                String name=listSearchKey.get(finalI).getName();
+                requestFagData(name);
+
+            });
             GradientDrawable view_ground = (GradientDrawable) tv.getBackground(); //获取控件的背
-            view_ground.setStroke(2, Color.parseColor("#FF0000"));
+            view_ground.setStroke(2, Color.parseColor(nowChooseColor));
             autoNewLineLayout.addView(tv);
         }
-
-
-    }
-
-
-    private void initSmartRefreshLayout() {
-        smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
-        });
-        smartRefreshLayout.setOnLoadMoreListener(refresh -> {
-        });
     }
 
 
 
     private void initRecycler() {
-
-        for (int i=0;i<10;i++){
-            new_fag_template_item item=new new_fag_template_item();
-            item.setTitle("123");
-            allData.add(item);
-        }
-
         adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), null, 0);
-        layoutManager =
+        StaggeredGridLayoutManager layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-
+            Intent intent =new Intent(getActivity(), PreviewActivity.class);
+            intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
+            startActivity(intent);
         });
     }
 
@@ -173,6 +190,71 @@ public class frag_search extends BaseFragment {
                 (InputMethodManager) editText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputManager.showSoftInput(editText, 0);
     }
+
+
+    /**
+     * 请求友友推荐
+     */
+    private void requestKeywordList() {
+        HashMap<String, String> params = new HashMap<>();
+        // 启动时间
+        Observable ob = Api.getDefault().keywordList(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(getActivity()) {
+            @Override
+            protected void _onError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(Object data) {
+                String str=StringUtil.beanToJSONString(data);
+                try {
+                    JSONArray array=new JSONArray(str);
+                    for (int i=0;i<array.length();i++){
+                        JSONObject ob=array.getJSONObject(i);
+                        SearchKeyWord key=new SearchKeyWord();
+                        key.setColor(ob.getString("color"));
+                        key.setName(ob.getString("name"));
+                        key.setID(ob.getString("ID"));
+                        key.setWeigh(ob.getString("weigh"));
+                        key.setCreate_time(ob.getString("create_time"));
+                        listSearchKey.add(key);
+                    }
+                    setKeyWordList(listSearchKey);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                LogUtil.d("OOM",str);
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+    }
+
+
+
+
+    private void requestFagData(String name) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("search", name);
+        Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
+            @Override
+            protected void _onError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(List<new_fag_template_item> data) {
+                LogUtil.d("OOM",StringUtil.beanToJSONString(data));
+                allData.clear();
+                allData.addAll(data);
+                adapter.notifyDataSetChanged();
+            }
+        }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+    }
+
+
+
+
 
 }
 

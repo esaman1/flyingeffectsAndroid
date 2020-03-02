@@ -9,9 +9,7 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.FrameLayout;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -33,7 +31,6 @@ import com.shixing.sxve.ui.model.TextUiModel;
 import com.shixing.sxve.ui.view.TemplateView;
 import com.shixing.sxve.ui.view.TextAssetEditLayout;
 import com.shixing.sxve.ui.view.WaitingDialog;
-import com.shuyu.gsyvideoplayer.listener.GSYVideoProgressListener;
 import com.suke.widget.SwitchButton;
 
 import java.io.File;
