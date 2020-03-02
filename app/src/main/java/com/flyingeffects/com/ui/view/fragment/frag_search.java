@@ -28,6 +28,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.ColorCorrectionManager;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
@@ -81,12 +82,13 @@ public class frag_search extends BaseFragment {
 
     @Override
     protected void initView() {
-
+        ed_text.setOnClickListener(view -> statisticsEventAffair.getInstance().setFlag(getActivity(),"4_click"));
         //键盘的搜索按钮
         ed_text.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
                 String text = ed_text.getText().toString().trim();
                 if (!text.equals("")) {
+                    statisticsEventAffair.getInstance().setFlag(getActivity(),"4_search");
                     requestFagData(text);
                     ll_showResult.setVisibility(View.VISIBLE);
                 }
@@ -156,6 +158,7 @@ public class frag_search extends BaseFragment {
             tv.setTextColor(Color.parseColor(nowChooseColor));
             int finalI = i;
             tv.setOnClickListener(view -> {
+                statisticsEventAffair.getInstance().setFlag(getActivity(),"4_recommend",listSearchKey.get(finalI).getName());
                 String name=listSearchKey.get(finalI).getName();
                 requestFagData(name);
 
@@ -247,6 +250,9 @@ public class frag_search extends BaseFragment {
                 LogUtil.d("OOM",StringUtil.beanToJSONString(data));
                 allData.clear();
                 allData.addAll(data);
+                if(data.size()==0){
+                    statisticsEventAffair.getInstance().setFlag(getActivity(),"4_search_none");
+                }
                 adapter.notifyDataSetChanged();
             }
         }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);

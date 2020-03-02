@@ -207,6 +207,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("paths", (ArrayList<String>) paths);
         bundle.putInt("isPicNum",defaultnum);
+        bundle.putString("templateName",templateItem.getTitle());
         bundle.putStringArrayList("originalPath", (ArrayList<String>) originalImagePath);
         bundle.putString("templateFilePath", templateFilePath);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

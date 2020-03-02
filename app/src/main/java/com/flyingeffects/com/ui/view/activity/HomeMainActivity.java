@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.flyingeffects.com.manager.DataCleanManager;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.githang.statusbar.StatusBarCompat;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
@@ -174,6 +175,7 @@ public class HomeMainActivity extends FragmentActivity {
                 whichMenuSelect(1);
                 break;
             case R.id.ll_menu_2:
+                statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this,"3_mine");
                 whichMenuSelect(2);
                 break;
 

@@ -17,6 +17,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateThumbAdapter;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.enity.TemplateThumbItem;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
@@ -79,6 +80,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      * 需要素材数量
      */
     private int defaultNum;
+    private String templateName;
 
 
 
@@ -99,6 +101,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             templateFilePath=bundle.getString("templateFilePath");
             imgPath = bundle.getStringArrayList("paths");
             originalPath= bundle.getStringArrayList("originalPath");
+            templateName=bundle.getString("templateName");
         }
         if(originalPath==null){
             //不需要抠图
@@ -122,6 +125,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     //修改图为裁剪后的素材
                     presenter.ChangeMaterial(originalPath,defaultNum);
                 }else{
+                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this,"1_mb_bj_Cutoutoff");
                     //修改为裁剪前的素材
                     presenter.ChangeMaterial(imgPath,defaultNum);
                 }
@@ -321,6 +325,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         switch (v.getId()) {
             case R.id.tv_top_submit:
+                statisticsEventAffair.getInstance().setFlag(TemplateActivity.this,"1_mb_bj_save",templateName);
                 presenter.renderVideo(mFolder.getPath(), mAudio1Path,false);
                 break;
 

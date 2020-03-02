@@ -188,6 +188,10 @@ dependencies {
     //仿ios 开关  https://github.com/zcweng/SwitchButton
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
 
+    //友盟统计
+    implementation  'com.umeng.umsdk:analytics:8.0.0'
+    implementation  'com.umeng.umsdk:common:2.0.0'
+
 
 }
 

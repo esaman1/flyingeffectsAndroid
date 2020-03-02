@@ -6,12 +6,16 @@ import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.MediaLoader;
+import com.flyingeffects.com.utils.ChannelUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.orhanobut.hawk.Hawk;
 import com.scwang.smartrefresh.header.MaterialHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxvideoengine.License;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.commonsdk.UMConfigure;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.AlbumConfig;
 
@@ -37,8 +41,19 @@ public class BaseApplication extends MultiDexApplication {
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
         initAlbum();
         initLicense();
+        initYouMeng();
     }
 
+
+
+    private void initYouMeng() {
+        UMConfigure.init(this, BaseConstans.UMENGAPPID, ChannelUtil.getChannel(this), UMConfigure.DEVICE_TYPE_PHONE, "");
+//        PlatformConfig.setWeixin("wx48a4ba91f880abcc", "68932433247e0f33ec8c93c89e9bd374");
+//        PlatformConfig.setQQZone("1109289339", "hdOiuQsp2iudqu3v");
+        MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_MANUAL);  //页面采集模式
+        UMConfigure.setProcessEvent(true); // 支持在子进程中统计自定义事件
+        UMConfigure.setLogEnabled(true);
+    }
 
     /**
      * description ：註冊VE

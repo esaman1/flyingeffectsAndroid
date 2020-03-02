@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.ToastUtil;
 
 import butterknife.OnClick;
@@ -66,9 +67,12 @@ public class AboutActivity extends BaseActivity {
                 this.finish();
                 break;
             case R.id.ll_contact_us:
+                statisticsEventAffair.getInstance().setFlag(this,"3_Evaluation");
                 reception();
                 break;
             case R.id.ll_relation_us:
+                statisticsEventAffair.getInstance().setFlag(this,"3_contact");
+
                 contactUs();
                 break;
             //隐私政策

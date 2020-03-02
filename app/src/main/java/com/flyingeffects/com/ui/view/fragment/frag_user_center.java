@@ -13,8 +13,10 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.activity.AboutActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
+import com.flyingeffects.com.ui.view.activity.TemplateActivity;
 
 import java.util.ArrayList;
 
@@ -58,6 +60,7 @@ public class frag_user_center extends BaseFragment {
     @Override
     protected void initView() {
         iv_about.setOnClickListener(view -> {
+            statisticsEventAffair.getInstance().setFlag(getActivity(),"3_help");
             Intent intent=new Intent(getActivity(), AboutActivity.class);
             startActivity(intent);
         });
