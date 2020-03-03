@@ -215,4 +215,15 @@ public class new_fag_template_item implements Serializable {
          private String templatefile;
          private String zipid;
 
+    public int getIs_collection() {
+        return is_collection;
+    }
+
+    public void setIs_collection(int is_collection) {
+        this.is_collection = is_collection;
+    }
+
+    //收藏状态 0表示未收藏 1表示收藏
+    private int is_collection;
+
 }

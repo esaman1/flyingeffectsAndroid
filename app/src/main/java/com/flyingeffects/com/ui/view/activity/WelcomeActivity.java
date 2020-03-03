@@ -142,14 +142,14 @@ public class WelcomeActivity extends BaseActivity {
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Config>(WelcomeActivity.this) {
             @Override
             protected void _onError(String message) {
-                ToastUtil.showToast(message);
+//                ToastUtil.showToast(message);
             }
 
             @Override
             protected void _onNext(Config data) {
                 BaseConstans.service_wxi=data.getValue();
             }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
 

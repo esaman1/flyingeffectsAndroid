@@ -13,6 +13,7 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.DownImg;
 import com.flyingeffects.com.enity.DownImgDataList;
 import com.flyingeffects.com.enity.UserInfo;
+import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -110,48 +111,31 @@ public class PreviewMvpModel {
     }
 
 
+
+    public void requestTemplateDetail(String templateId){
+
+            HashMap<String, String> params = new HashMap<>();
+            params.put("template_id", templateId);
+            // 启动时间
+            Observable ob = Api.getDefault().templateLInfo(BaseConstans.getRequestHead(params));
+            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<new_fag_template_item>(context) {
+                @Override
+                protected void _onError(String message) {
+                    ToastUtil.showToast(message);
+                }
+
+                @Override
+                protected void _onNext(new_fag_template_item data) {
+
+                    callback.getTemplateLInfo(data);
+
+                }
+            }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+
+    }
+
+
     private List<String> allCompressPaths = new ArrayList<>();
-
-//
-//    private List<String> test111 = new ArrayList<>();
-//    private int downSuccessNum;
-
-//    private void downImage(String path) {
-//
-//        Observable.just(path).map(new Func1<String, File>() {
-//            @Override
-//            public File call(String s) {
-//                File file = null;
-//                try {
-//                    file = Glide.with(context)
-//                            .load(s)
-//                            .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-//                            .get();
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                return file;
-//            }
-//        }).subscribeOn(Schedulers.io())
-//                .observeOn(Schedulers.newThread()).subscribe(new Action1<File>() {
-//            @Override
-//            public void call(File file) {
-//                downSuccessNum++;
-//                test111.add(file.getPath());
-//                if (test111.size() == listForMatting.size()) {
-//                    callback.getCompressImgList(test111);
-//                } else {
-//                    downImage(listForMatting.get(downSuccessNum));
-//                }
-//            }
-//        });
-//
-//    }
-
-
-
-
-
 
 
 
@@ -215,6 +199,7 @@ public class PreviewMvpModel {
                 protected void _onNext(Object data) {
                     String str = StringUtil.beanToJSONString(data);
                     LogUtil.d("OOM", "collectTemplate=" + str);
+                    callback.collectionResult();
 
                 }
             }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
@@ -250,7 +235,7 @@ public class PreviewMvpModel {
                     mProgress = 0;
                     showMakeProgress();
                 } else {
-                    intoTemplateActivity(mFolder.getParent());
+                    intoTemplateActivity(mFolder.getPath());
                 }
             } else {
                 ToastUtil.showToast("下载中，请稍后再试");

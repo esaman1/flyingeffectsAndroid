@@ -55,6 +55,11 @@ public interface ApiService {
 
 
     @FormUrlEncoded
+    @POST("/api/template/templateLInfo")
+    Observable<HttpResult<new_fag_template_item>> templateLInfo(@FieldMap Map<String, String> params);
+
+
+    @FormUrlEncoded
     @POST("/api/sms/smsCode")
     Observable<HttpResult<Object>> toSms(@FieldMap Map<String, String> params);
 

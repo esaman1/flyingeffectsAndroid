@@ -14,6 +14,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.DataCleanManager;
@@ -22,6 +23,7 @@ import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.PreviewMvpView;
 import com.flyingeffects.com.ui.presenter.PreviewMvpPresenter;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.yanzhenjie.album.AlbumFile;
@@ -100,6 +102,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
      */
     private String fromTo;
 
+    private int nowCollectType;
+
 
     @Override
     protected int getLayoutId() {
@@ -112,6 +116,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         fromTo=getIntent().getStringExtra("fromTo");
         defaultnum=templateItem.getDefaultnum();
         is_picout=templateItem.getIs_picout();
+        nowCollectType=templateItem.getIs_collection();
+        if(nowCollectType==1){
+            iv_zan.setImageResource(R.mipmap.zan_selected);
+        }
         Presenter = new PreviewMvpPresenter(this, this);
         Glide.with(this).load(templateItem.getImage()).into(iv_show_cover);
         videoPlayer.setUp(templateItem.getVidoefile(), true, "");
@@ -126,6 +134,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         tv_writer_name.setText(templateItem.getAuth());
         tv_title.setText(templateItem.getTitle());
         tv_describe.setText(templateItem.getMbsearch());
+        Presenter.requestTemplateDetail(templateItem.getId());
     }
 
 
@@ -140,8 +149,11 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_zan:
-                Presenter.collectTemplate(templateItem.getId());
-                iv_zan.setImageResource(R.mipmap.zan_selected);
+               if( BaseConstans.hasLogin()){
+                   Presenter.collectTemplate(templateItem.getId());
+               }else{
+                   ToastUtil.showToast(getString(R.string.have_not_login));
+               }
                 break;
             case R.id.tv_make:
                 if(!TextUtils.isEmpty(fromTo)&&fromTo.equals("search")){
@@ -247,6 +259,36 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         //file 文件下载成功
         this.TemplateFilePath = TemplateFilePath;
         AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");
+    }
+
+    @Override
+    public void collectionResult() {
+        if(nowCollectType==0){
+            nowCollectType=1;
+        }else{
+            nowCollectType=0;
+        }
+        showCollectState(nowCollectType==0);
+    }
+
+
+    private void showCollectState(boolean unSelected){
+        if(unSelected){
+            iv_zan.setImageResource(R.mipmap.zan);
+            nowCollectType=0;
+        }else{
+            iv_zan.setImageResource(R.mipmap.zan_selected);
+            nowCollectType=1;
+        }
+    }
+
+
+    /**
+     * 只用来更新保存状态
+     */
+    @Override
+    public void getTemplateLInfo(new_fag_template_item item) {
+        showCollectState(item.getIs_collection()==0);
     }
 
 

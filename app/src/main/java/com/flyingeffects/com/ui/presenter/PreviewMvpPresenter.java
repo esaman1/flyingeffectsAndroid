@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.enity.TemplateType;
+import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.ui.interfaces.model.PreviewMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.PreviewMvpView;
 import com.flyingeffects.com.ui.model.PreviewMvpModel;
@@ -24,6 +25,9 @@ public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCall
         PreviewModel.CompressImg(paths);
     }
 
+    public void requestTemplateDetail(String templateId){
+        PreviewModel.requestTemplateDetail(templateId);
+    }
 
     public void downZip(String url,String zipPid){
         PreviewModel.prepareDownZip(url,zipPid);
@@ -51,5 +55,16 @@ public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCall
     @Override
     public void getTemplateFileSuccess(String filePath) {
         PreviewView.getTemplateFileSuccess(filePath);
+    }
+
+    @Override
+    public void collectionResult() {
+        PreviewView.collectionResult();
+    }
+
+    @Override
+    public void getTemplateLInfo(new_fag_template_item item) {
+        PreviewView.getTemplateLInfo(item);
+
     }
 }

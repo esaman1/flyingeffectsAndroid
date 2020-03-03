@@ -1,5 +1,11 @@
 package com.flyingeffects.com.http;
 
+import android.content.Context;
+import android.content.Intent;
+
+import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.ui.view.activity.LoginActivity;
+
 /**
  * Created by zhangtongju
  * on 2016/10/10 11:52.
@@ -50,7 +56,7 @@ public class ApiException extends RuntimeException{
             case 201:
                 message = error;
                 break;
-            case 2003:
+            case 0:
                 intoLoginAct(actTag);
                 message ="重新登录";  //token is invalid  和另一台设备登录
                 break;
