@@ -81,6 +81,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     private int defaultNum;
     private String templateName;
+    private String fromTo;
 
 
 
@@ -97,6 +98,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("Message");
         if (bundle != null) {
+            fromTo=bundle.getString("fromTo");
             defaultNum=bundle.getInt("defaultNum");
             templateFilePath=bundle.getString("templateFilePath");
             imgPath = bundle.getStringArrayList("paths");
@@ -325,6 +327,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         switch (v.getId()) {
             case R.id.tv_top_submit:
+
+                if(TextUtils.isEmpty(fromTo)&&fromTo.equals("search")){
+                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this,"4_search_save",templateName);
+                }
                 statisticsEventAffair.getInstance().setFlag(TemplateActivity.this,"1_mb_bj_save",templateName);
                 presenter.renderVideo(mFolder.getPath(), mAudio1Path,false);
                 break;

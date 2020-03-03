@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -16,6 +17,7 @@ import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.DataCleanManager;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.PreviewMvpView;
@@ -93,6 +95,11 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     public final static int SELECTALBUM = 0;
 
+    /**
+     * 来着来个页面
+     */
+    private String fromTo;
+
 
     @Override
     protected int getLayoutId() {
@@ -102,6 +109,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     protected void initView() {
         templateItem = (new_fag_template_item) getIntent().getSerializableExtra("person");
+        fromTo=getIntent().getStringExtra("fromTo");
         defaultnum=templateItem.getDefaultnum();
         is_picout=templateItem.getIs_picout();
         Presenter = new PreviewMvpPresenter(this, this);
@@ -139,6 +147,9 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 iv_zan.setImageResource(R.mipmap.zan_selected);
                 break;
             case R.id.tv_make:
+                if(TextUtils.isEmpty(fromTo)&&fromTo.equals("search")){
+                    statisticsEventAffair.getInstance().setFlag(PreviewActivity.this,"4_search_make",templateItem.getTitle());
+                }
                 videoPlayer.onVideoPause();
                 VideoPlaybackCompleted(true);
                 Presenter.downZip(templateItem.getTemplatefile(), templateItem.getCreate_time());
@@ -207,6 +218,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("paths", (ArrayList<String>) paths);
         bundle.putInt("isPicNum",defaultnum);
+        bundle.putString("fromTo",fromTo);
         bundle.putString("templateName",templateItem.getTitle());
         bundle.putStringArrayList("originalPath", (ArrayList<String>) originalImagePath);
         bundle.putString("templateFilePath", templateFilePath);

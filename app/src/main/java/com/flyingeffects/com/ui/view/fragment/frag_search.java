@@ -179,7 +179,10 @@ public class frag_search extends BaseFragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
+            statisticsEventAffair.getInstance().setFlag(getActivity(),"4_search_click",allData.get(position).getTitle());
             Intent intent =new Intent(getActivity(), PreviewActivity.class);
+
+            intent.putExtra("fromTo","search");
             intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
             startActivity(intent);
         });
