@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.githang.statusbar.StatusBarCompat;
@@ -153,17 +154,21 @@ public class HomeMainActivity extends FragmentActivity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        clearAllData();
     }
 
-//    /**
-//     * user :TongJu  ;描述：有盟要求的
-//     * 时间：2018/7/6
-//     **/
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
-//    }
+
+    private void clearAllData(){
+        //清理内部缓存
+        DataCleanManager.cleanExternalCache();
+        //清理外部缓存
+        DataCleanManager.cleanInternalCache(BaseApplication.getInstance());
+        //清理内部sdk
+        DataCleanManager.cleanFiles(BaseApplication.getInstance());
+        //清理外部sdk
+        DataCleanManager.cleanExternalCache();
+    };
+
 
 
     private OnClickListener listener = v -> {

@@ -14,7 +14,9 @@ import android.widget.TextView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.ToastUtil;
 
@@ -46,20 +48,20 @@ public class AboutActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(BaseConstans.hasLogin()){
+        if (BaseConstans.hasLogin()) {
             findViewById(R.id.tv_top_submit).setVisibility(View.VISIBLE);
             ((TextView) findViewById(R.id.tv_top_submit)).setText("退出登录");
             ((TextView) findViewById(R.id.tv_top_submit)).setTextColor(Color.parseColor("#FE2C55"));
         }
     }
 
-    @OnClick({R.id.tv_top_submit,R.id.iv_top_back, R.id.ll_close_account, R.id.ll_contact_us, R.id.ll_relation_us, R.id.ll_privacy_policy, R.id.ll_protocol, R.id.ll_clear_cache})
+    @OnClick({R.id.tv_top_submit, R.id.iv_top_back, R.id.ll_close_account, R.id.ll_contact_us, R.id.ll_relation_us, R.id.ll_privacy_policy, R.id.ll_protocol, R.id.ll_clear_cache})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_close_account:
-                if(!BaseConstans.hasLogin()){
+                if (!BaseConstans.hasLogin()) {
                     ToastUtil.showToast(getString(R.string.have_not_login));
-                }else{
+                } else {
                     goActivity(SignoutActivity.class);
                 }
                 break;
@@ -67,11 +69,11 @@ public class AboutActivity extends BaseActivity {
                 this.finish();
                 break;
             case R.id.ll_contact_us:
-                statisticsEventAffair.getInstance().setFlag(this,"3_Evaluation");
+                statisticsEventAffair.getInstance().setFlag(this, "3_Evaluation");
                 reception();
                 break;
             case R.id.ll_relation_us:
-                statisticsEventAffair.getInstance().setFlag(this,"3_contact");
+                statisticsEventAffair.getInstance().setFlag(this, "3_contact");
 
                 contactUs();
                 break;
@@ -90,7 +92,15 @@ public class AboutActivity extends BaseActivity {
 
                 break;
             case R.id.ll_clear_cache:
-
+                //清理内部缓存
+                DataCleanManager.cleanExternalCache();
+                //清理外部缓存
+                DataCleanManager.cleanInternalCache(BaseApplication.getInstance());
+                //清理内部sdk
+                DataCleanManager.cleanFiles(BaseApplication.getInstance());
+                //清理外部sdk
+                DataCleanManager.cleanExternalCache();
+                ToastUtil.showToast("清理成功");
                 break;
             case R.id.tv_top_submit:
                 //退出

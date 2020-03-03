@@ -25,8 +25,8 @@ public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCall
     }
 
 
-    public void downZip(String url,long createTime){
-        PreviewModel.downZip(url,createTime);
+    public void downZip(String url,String zipPid){
+        PreviewModel.prepareDownZip(url,zipPid);
     }
 
     public void collectTemplate(String templateId){

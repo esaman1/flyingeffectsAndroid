@@ -181,6 +181,7 @@ public class PreviewMvpModel {
                 ) {
                     listForMatting.add(item.getTarget_url());
                 }
+
                 //马卡龙，这里是图片链接，下载下来的方式
                 if(data.get(0).getType()==1){
                     DownImageManager  downImageManager=new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> callback.getCompressImgList(path));
@@ -224,9 +225,9 @@ public class PreviewMvpModel {
 
 
 
-    public void downZip(String url, long createTime) {
+    public void prepareDownZip(String url, String zipPid) {
         if (NetworkUtils.isNetworkAvailable(context)) {
-            readyDown(createTime, url);
+            readyDown(zipPid, url);
         } else {
             ToastUtil.showToast("网络连接失败！");
         }
@@ -237,9 +238,9 @@ public class PreviewMvpModel {
     private int mProgress;
     private boolean isDownZipUrl = false;
 
-    private void readyDown(long createTime, String downZipUrl) {
+    private void readyDown(String zipPid, String downZipUrl) {
         LogUtil.d("onVideoAdError", "getPermission");
-        mFolder = context.getExternalFilesDir("dynamic/" + createTime);
+        mFolder = context.getExternalFilesDir("dynamic/" + zipPid);
         if (mFolder != null) {
             String folderPath = mFolder.getParent();
             if (!isDownZipUrl) {

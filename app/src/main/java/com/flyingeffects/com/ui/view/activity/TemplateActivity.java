@@ -92,6 +92,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     protected void initView() {
+
         findViewById(R.id.tv_top_submit).setVisibility(View.VISIBLE);
         ((TextView) findViewById(R.id.tv_top_submit)).setText("保存");
         presenter = new TemplatePresenter(this, this);
@@ -99,7 +100,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         Bundle bundle = intent.getBundleExtra("Message");
         if (bundle != null) {
             fromTo=bundle.getString("fromTo");
-            defaultNum=bundle.getInt("defaultNum");
+            defaultNum=bundle.getInt("isPicNum");
             templateFilePath=bundle.getString("templateFilePath");
             imgPath = bundle.getStringArrayList("paths");
             originalPath= bundle.getStringArrayList("originalPath");
@@ -275,17 +276,24 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     public void selectGroup(final int index) {
         if (mTemplateViews != null && mTemplateViews.size() > 0) {
-            TemplateView nowChooseTemplateView = mTemplateViews.get(index);
-            nowChooseTemplateView.setVisibility(View.VISIBLE);
+
+            try{
+                TemplateView nowChooseTemplateView = mTemplateViews.get(index);
+                nowChooseTemplateView.setVisibility(View.VISIBLE);
 //            nowChooseTemplateView.isViewVisible(true);
-            nowChooseTemplateView.invalidate();
-            rx.Observable.from(mTemplateViews).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(templateView -> {
-                LogUtil.d("OOM", "selectGroup");
-                if (templateView != nowChooseTemplateView && templateView.getVisibility() != View.GONE) {
-                    templateView.setVisibility(View.GONE);
+                nowChooseTemplateView.invalidate();
+                rx.Observable.from(mTemplateViews).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(templateView -> {
+                    LogUtil.d("OOM", "selectGroup");
+                    if (templateView != nowChooseTemplateView && templateView.getVisibility() != View.GONE) {
+                        templateView.setVisibility(View.GONE);
 //                    templateView.isViewVisible(false);
-                }
-            });
+                    }
+                });
+            }catch (Exception e){
+                LogUtil.d("Exception",e.getMessage());
+            }
+
+
         }
     }
 

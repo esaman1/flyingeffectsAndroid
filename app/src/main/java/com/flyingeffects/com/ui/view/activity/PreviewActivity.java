@@ -126,16 +126,13 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         tv_writer_name.setText(templateItem.getAuth());
         tv_title.setText(templateItem.getTitle());
         tv_describe.setText(templateItem.getMbsearch());
-        //清理内部缓存
-        DataCleanManager.cleanExternalCache();
-        //清理外部缓存
-        DataCleanManager.cleanInternalCache(BaseApplication.getInstance());
     }
 
 
     @Override
     protected void initAction() {
-
+        DataCleanManager.cleanExternalCache();
+        DataCleanManager.cleanInternalCache(BaseApplication.getInstance());
     }
 
 
@@ -147,12 +144,12 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 iv_zan.setImageResource(R.mipmap.zan_selected);
                 break;
             case R.id.tv_make:
-                if(TextUtils.isEmpty(fromTo)&&fromTo.equals("search")){
+                if(!TextUtils.isEmpty(fromTo)&&fromTo.equals("search")){
                     statisticsEventAffair.getInstance().setFlag(PreviewActivity.this,"4_search_make",templateItem.getTitle());
                 }
                 videoPlayer.onVideoPause();
                 VideoPlaybackCompleted(true);
-                Presenter.downZip(templateItem.getTemplatefile(), templateItem.getCreate_time());
+                Presenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
                 break;
             case R.id.iv_play:
                 VideoPlaybackCompleted(false);
@@ -225,6 +222,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("Message", bundle);
         startActivity(intent);
+        this.finish();
     }
 
 
