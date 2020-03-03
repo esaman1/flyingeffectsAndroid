@@ -22,6 +22,7 @@ import com.yanzhenjie.album.AlbumConfig;
 import java.util.Locale;
 
 import cn.jpush.android.api.JPushInterface;
+import cn.nt.lib.analytics.NTAnalytics;
 import rx.subjects.PublishSubject;
 
 /**
@@ -39,12 +40,24 @@ public class BaseApplication extends MultiDexApplication {
         myzxApp = this;
         MultiDex.install(this); //分包支持
         Hawk.init(this).build();
-        registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
+        //registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
         initAlbum();
         initLicense();
         initYouMeng();
         initJPush();
+        initZt();
     }
+
+
+    /**
+     * 中台
+     */
+    private void initZt(){
+        NTAnalytics.setDebug(true);
+        NTAnalytics.init(this,"87","vQlTNPzHOzBYHzkg", ChannelUtil.getChannel(this));
+
+    }
+
 
     public void initJPush(){
         JPushInterface.setDebugMode(true); 	// 设置开启日志,发布时请关闭日志

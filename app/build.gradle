@@ -206,6 +206,8 @@ dependencies {
     implementation 'cn.jiguang.sdk:jpush:3.5.8'
     implementation 'cn.jiguang.sdk:jcore:2.2.8'
     implementation 'org.jetbrains:annotations:15.0'
+    //中台
+    implementation files('libs/NTAnalytics1.0.5.jar')
 
 
 }
