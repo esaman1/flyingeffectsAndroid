@@ -21,6 +21,7 @@ import com.yanzhenjie.album.AlbumConfig;
 
 import java.util.Locale;
 
+import cn.jpush.android.api.JPushInterface;
 import rx.subjects.PublishSubject;
 
 /**
@@ -42,8 +43,13 @@ public class BaseApplication extends MultiDexApplication {
         initAlbum();
         initLicense();
         initYouMeng();
+        initJPush();
     }
 
+    public void initJPush(){
+        JPushInterface.setDebugMode(true); 	// 设置开启日志,发布时请关闭日志
+        JPushInterface.init(this);
+    }
 
 
     private void initYouMeng() {

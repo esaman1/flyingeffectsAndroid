@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide;
 import com.githang.statusbar.StatusBarCompat;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.ui.interfaces.PermissionListener;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,11 +150,13 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
     @Override
     protected void onPause() {
         lifecycleSubject.onNext(ActivityLifeCycleEvent.PAUSE);
+        MobclickAgent.onPause(this);
         super.onPause();
     }
 
     @Override
     protected void onResume() {
+        MobclickAgent.onResume(this);
         super.onResume();
     }
 
