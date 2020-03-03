@@ -13,4 +13,6 @@ public interface TemplateMvpView {
     void toPreview(String path);
 
     void ChangeMaterialCallback(ArrayList<TemplateThumbItem> listItem, List<String> list_all);
+
+    void returnReplaceableFilePath(String[]paths);
 }

@@ -32,11 +32,15 @@ import com.shixing.sxve.ui.model.TextUiModel;
 import com.shixing.sxve.ui.view.TemplateView;
 import com.shixing.sxve.ui.view.TextAssetEditLayout;
 import com.shixing.sxve.ui.view.WaitingDialog;
+import com.shixing.sxvideoengine.SXPlayerSurfaceView;
+import com.shixing.sxvideoengine.SXTemplate;
+import com.shixing.sxvideoengine.SXTemplatePlayer;
 import com.suke.widget.SwitchButton;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -57,6 +61,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     RecyclerView recyclerView;
     @BindView(R.id.seekBar)
     SeekBar seekBar;
+   private  SXTemplatePlayer mPlayer;
+    @BindView(R.id.player_surface_view)
+    SXPlayerSurfaceView mPlayerView;
+   ;
     private TemplatePresenter presenter;
     private List<String> imgPath = new ArrayList<>();
     private TemplateModel mTemplateModel;
@@ -83,6 +91,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private String templateName;
     private String fromTo;
 
+    @BindView(R.id.Real_time_preview)
+    FrameLayout real_time_preview;
+    /**
+     * 是否是即时播放
+     */
+    private boolean isRealtime=true;
 
 
     @Override
@@ -99,20 +113,20 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("Message");
         if (bundle != null) {
-            fromTo=bundle.getString("fromTo");
-            defaultNum=bundle.getInt("isPicNum");
-            templateFilePath=bundle.getString("templateFilePath");
+            fromTo = bundle.getString("fromTo");
+            defaultNum = bundle.getInt("isPicNum");
+            templateFilePath = bundle.getString("templateFilePath");
             imgPath = bundle.getStringArrayList("paths");
-            originalPath= bundle.getStringArrayList("originalPath");
-            templateName=bundle.getString("templateName");
+            originalPath = bundle.getStringArrayList("originalPath");
+            templateName = bundle.getString("templateName");
         }
-        if(originalPath==null){
+        if (originalPath == null) {
             //不需要抠图
             findViewById(R.id.ll_Matting).setVisibility(View.GONE);
         }
         mTextEditLayout = findViewById(R.id.text_edit_layout);
 //        mFolder = getExternalFilesDir("dynamic/" + "test");//zs2002202bg  ///aaa  ///test
-        mFolder=new File(templateFilePath);
+        mFolder = new File(templateFilePath);
         mAudio1Path = mFolder.getPath() + MUSIC_PATH;
         File dir = getExternalFilesDir("");
         mTemplateViews = new ArrayList<>();
@@ -124,25 +138,24 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         switch_button.setOnCheckedChangeListener(new SwitchButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(SwitchButton view, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     //修改图为裁剪后的素材
-                    presenter.ChangeMaterial(originalPath,defaultNum);
-                }else{
-                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this,"1_mb_bj_Cutoutoff");
+                    presenter.ChangeMaterial(originalPath, defaultNum);
+                } else {
+                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutoff");
                     //修改为裁剪前的素材
-                    presenter.ChangeMaterial(imgPath,defaultNum);
+                    presenter.ChangeMaterial(imgPath, defaultNum);
                 }
             }
         });
     }
 
 
-
-
     @Override
     protected void initAction() {
         initTemplateThumb();
         presenter.loadTemplate(mFolder.getPath(), this);
+        mPlayerView.setPlayCallback(mListener);
     }
 
     @Override
@@ -171,6 +184,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         mTemplateViews.get(nowChooseIndex).invalidate();
     }
 
+    @Override
+    public void returnReplaceableFilePath(String[] paths) {
+        switchTemplate(mFolder.getPath(),paths);
+        showPreview(true);
+    }
+
+
+
 
     @Override
     protected void onPause() {
@@ -185,12 +206,19 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
-    private void showPreview(boolean isPreview){
-        if(isPreview){
+    private void showPreview(boolean isPreview) {
+        if (isPreview) {
+
             mContainer.setVisibility(View.INVISIBLE);
-            videoPlayer.setVisibility(View.VISIBLE);
-        }else{
-            videoPlayer.setVisibility(View.INVISIBLE);
+            if(isRealtime){
+                real_time_preview.setVisibility(View.VISIBLE);
+            }else{
+                videoPlayer.setVisibility(View.VISIBLE);
+            }
+
+        } else {
+            videoPlayer.setVisibility(View.GONE);
+            real_time_preview.setVisibility(View.GONE);
             mContainer.setVisibility(View.VISIBLE);
         }
     }
@@ -277,7 +305,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public void selectGroup(final int index) {
         if (mTemplateViews != null && mTemplateViews.size() > 0) {
 
-            try{
+            try {
                 TemplateView nowChooseTemplateView = mTemplateViews.get(index);
                 nowChooseTemplateView.setVisibility(View.VISIBLE);
 //            nowChooseTemplateView.isViewVisible(true);
@@ -289,8 +317,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 //                    templateView.isViewVisible(false);
                     }
                 });
-            }catch (Exception e){
-                LogUtil.d("Exception",e.getMessage());
+            } catch (Exception e) {
+                LogUtil.d("Exception", e.getMessage());
             }
 
 
@@ -336,15 +364,17 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         switch (v.getId()) {
             case R.id.tv_top_submit:
 
-                if(!TextUtils.isEmpty(fromTo)&&fromTo.equals("search")){
-                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this,"4_search_save",templateName);
+                if (!TextUtils.isEmpty(fromTo) && fromTo.equals("search")) {
+                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "4_search_save", templateName);
                 }
-                statisticsEventAffair.getInstance().setFlag(TemplateActivity.this,"1_mb_bj_save",templateName);
-                presenter.renderVideo(mFolder.getPath(), mAudio1Path,false);
+                statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_save", templateName);
+                presenter.renderVideo(mFolder.getPath(), mAudio1Path, false);
                 break;
 
             case R.id.iv_play:
-                presenter.renderVideo(mFolder.getPath(), mAudio1Path,true);
+                // presenter.renderVideo(mFolder.getPath(), mAudio1Path,true);
+                presenter.getReplaceableFilePath();
+
                 break;
 
             default:
@@ -371,9 +401,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
-    SeekBar.OnSeekBarChangeListener seekBarListener =new SeekBar.OnSeekBarChangeListener() {
+    SeekBar.OnSeekBarChangeListener seekBarListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int nowProgress, boolean fromUser) {
+            if (fromUser) {
+                mPlayer.seek(nowProgress);
+            }
         }
 
         @Override
@@ -386,5 +419,54 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         }
     };
+
+
+
+
+    private int mDuration;
+    private void switchTemplate(String folder,String[]mSources) {
+        final SXTemplate template = new SXTemplate(folder, SXTemplate.TemplateUsage.kForPreview);
+        template.setReplaceableFilePaths(mSources);
+        template.enableSourcePrepare();
+        new Thread() {
+            @Override
+            public void run() {
+                template.commit();
+                runOnUiThread(() -> {
+                    mDuration = template.realDuration();
+                    seekBar.setMax(mDuration);
+                    mPlayer = mPlayerView.setTemplate(template);
+                    seekBar.setProgress(0);
+                    mPlayer.replaceAudio(mAudio1Path);
+                    mPlayer.start();
+
+                });
+            }
+        }.start();
+    }
+
+
+    private SXTemplatePlayer.PlayStateListener mListener = new SXTemplatePlayer.PlayStateListener() {
+        @Override
+        public void onProgressChanged(final int frame) {
+            mPlayerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    seekBar.setProgress(frame);
+                }
+            });
+        }
+
+        @Override
+        public void onFinish() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                 showPreview(false);
+                }
+            });
+        }
+    };
+
 
 }

@@ -3,6 +3,8 @@ package com.flyingeffects.com.ui.model;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 
@@ -44,6 +46,11 @@ public class TemplateMvpModel {
         this.context = context;
         this.callback = callback;
         keepUunCatchPath = context.getExternalFilesDir("runCatch/");
+    }
+
+
+     public void getReplaceableFilePath(){
+        callback.returnReplaceableFilePath(mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath())));
     }
 
 
@@ -111,6 +118,11 @@ public class TemplateMvpModel {
     }
 
 
+    public String[]  getRealTimePreview(){
+       return  mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
+    }
+
+
     private void renderFinish(boolean isSucceed, boolean isPreview,String outputPath) {
         LogUtil.d("OOM", "onFinish,success?=" + isSucceed + "MSG=" + isSucceed);
         WaitingDialog.closePragressDialog();
@@ -120,10 +132,21 @@ public class TemplateMvpModel {
 
         } else {
             if (isSucceed) {
-                //  mTemplateModel.restoreTemplate(true, "");
+                albumBroadcast(outputPath);
                 showDialog(outputPath);
             }
         }
+    }
+
+    /**
+     * description ：通知相册更新
+     * date: ：2019/8/16 14:24
+     * author: 张同举 @邮箱 jutongzhang@sina.com
+     */
+    private void albumBroadcast(String outputFile) {
+        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        intent.setData(Uri.fromFile(new File(outputFile)));
+        context.sendBroadcast(intent);
     }
 
 

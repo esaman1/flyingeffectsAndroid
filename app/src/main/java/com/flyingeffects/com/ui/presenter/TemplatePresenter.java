@@ -23,6 +23,11 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     }
 
 
+    public void getReplaceableFilePath(){
+        home_model.getReplaceableFilePath();
+    }
+
+
     public void renderVideo(String mTemplateFolder,String mAudio1Path,boolean isPreview){
         home_model.renderVideo(mTemplateFolder,mAudio1Path,isPreview);
     }
@@ -53,5 +58,10 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     @Override
     public void ChangeMaterialCallback(ArrayList<TemplateThumbItem> listItem, List<String> list_all) {
         home_mvpView.ChangeMaterialCallback(listItem,list_all);
+    }
+
+    @Override
+    public void returnReplaceableFilePath(String[] paths) {
+        home_mvpView.returnReplaceableFilePath(paths);
     }
 }

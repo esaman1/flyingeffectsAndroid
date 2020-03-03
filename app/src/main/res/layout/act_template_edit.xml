@@ -76,6 +76,26 @@
         android:layout_marginBottom="40dp" />
 
 
+    <FrameLayout
+        android:id="@+id/Real_time_preview"
+        android:visibility="gone"
+        android:layout_marginStart="70dp"
+        android:layout_above="@+id/ll_progress"
+        android:layout_marginTop="90dp"
+        android:layout_marginEnd="70dp"
+        android:layout_marginBottom="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black">
+
+        <com.shixing.sxvideoengine.SXPlayerSurfaceView
+            android:id="@+id/player_surface_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+
+    </FrameLayout>
+
 
 
 
