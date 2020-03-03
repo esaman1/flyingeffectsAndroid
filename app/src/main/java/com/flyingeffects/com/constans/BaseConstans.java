@@ -97,6 +97,16 @@ public class BaseConstans {
         }
     }
 
+    public static boolean isFirstClickUseApp() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getBoolean("isFirstUseApp", true);
+    }
+
+    public static void setFirstClickUseApp() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putBoolean("isFirstUseApp", false);
+    }
+
 
     /**
      * description ：获得时间戳

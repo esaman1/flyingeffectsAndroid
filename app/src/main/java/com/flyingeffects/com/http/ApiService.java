@@ -28,7 +28,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("/api/template/configList")
-    Observable<HttpResult<List<Config>>> configList(@FieldMap Map<String, String> params);
+    Observable<HttpResult<Config>> configList(@FieldMap Map<String, String> params);
 
 
     @FormUrlEncoded

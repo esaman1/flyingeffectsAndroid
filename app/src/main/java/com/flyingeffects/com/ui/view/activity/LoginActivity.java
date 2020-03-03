@@ -1,12 +1,18 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -24,6 +30,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -49,6 +56,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @BindView(R.id.tv_login)
     TextView tv_login;
+
+    @BindView(R.id.tv_xy)
+    TextView tv_xy;
 
 
     /**
@@ -131,6 +141,43 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     protected void initView() {
+        String tips = "登录表示你同意《服务条款》和《隐私政策》" ;
+        SpannableStringBuilder spannableBuilder = new SpannableStringBuilder(tips);
+        ClickableSpan clickableSpanOne = new ClickableSpan() {
+            @Override
+            public void onClick(@NotNull View view) {
+                Intent intent = new Intent(LoginActivity.this, webViewActivity.class);
+                intent.putExtra("webUrl", BaseConstans.PROTOCOL);
+                startActivity(intent);
+            }
+
+            @Override
+            public void updateDrawState(TextPaint paint) {
+                paint.setColor(Color.parseColor("#0092FE"));
+                // 设置下划线 true显示、false不显示
+                paint.setUnderlineText(false);
+            }
+        };
+
+        ClickableSpan clickableSpanTwo = new ClickableSpan() {
+            @Override
+            public void onClick(@NotNull View view) {
+                Intent intent = new Intent(LoginActivity.this, webViewActivity.class);
+                intent.putExtra("webUrl", BaseConstans.PRIVACYPOLICY);
+                startActivity(intent);
+            }
+
+            @Override
+            public void updateDrawState(TextPaint paint) {
+                paint.setColor(Color.parseColor("#0092FE"));
+                // 设置下划线 true显示、false不显示
+                paint.setUnderlineText(false);
+            }
+        };
+        spannableBuilder.setSpan(clickableSpanOne, 8, 12, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableBuilder.setSpan(clickableSpanTwo, 15, 19, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        tv_xy.setMovementMethod(LinkMovementMethod.getInstance());
+        tv_xy.setText(spannableBuilder);
     }
 
 

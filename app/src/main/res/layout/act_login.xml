@@ -138,12 +138,13 @@
 
 
         <TextView
+            android:id="@+id/tv_xy"
             android:layout_width="wrap_content"
             android:layout_marginTop="30dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/ll_login"
             android:layout_gravity="center_horizontal"
-            android:text="登录表示你同意"
+            android:text="登录表示你同意服务条款和隐私政策"
             android:textColor="#999999"
             android:textSize="14sp" />
     </LinearLayout>
