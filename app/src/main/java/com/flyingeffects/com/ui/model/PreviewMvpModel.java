@@ -47,7 +47,7 @@ public class PreviewMvpModel {
      * 原图片地址
      */
     private List<String> localImagePaths;
-    FileManager fileManager;
+    private  FileManager fileManager;
 
     public PreviewMvpModel(Context context, PreviewMvpCallback callback) {
         this.context = context;
@@ -56,7 +56,6 @@ public class PreviewMvpModel {
         mCatchFolder = fileManager.getCachePath(context);
         mTailtoFolder= fileManager.getFileCachePath(context,"tailor");
     }
-
 
 
 

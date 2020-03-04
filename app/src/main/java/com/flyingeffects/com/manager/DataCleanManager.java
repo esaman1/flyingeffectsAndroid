@@ -71,7 +71,7 @@ public class DataCleanManager {
 
 
     /**
-     * * 清除外部cache下的内容(/mnt/sdcard/android/data/com.xxx.xxx/cache)
+     * * 清除外部File下的内容(/mnt/sdcard/android/data/com.xxx.xxx/cache)
      */
     public static void cleanExternalFile() {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
@@ -80,6 +80,9 @@ public class DataCleanManager {
 
         }
     }
+
+
+
 
 
     /**
@@ -116,7 +119,7 @@ public class DataCleanManager {
      *
      * @param directory
      */
-    private static void deleteFilesByDirectory(File directory) {
+    public static void deleteFilesByDirectory(File directory) {
         if (directory != null && directory.exists() && directory.isDirectory()) {
 //            for (File item : directory.listFiles()) {
 //                item.delete();

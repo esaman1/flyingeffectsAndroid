@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -159,16 +160,22 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-    private void clearAllData(){
-        //清理内部缓存
+    private void clearAllData() {
+        //清除外部cache下的内容
         DataCleanManager.cleanExternalCache();
-        //清理外部缓存
+        //清理内部cache
         DataCleanManager.cleanInternalCache(BaseApplication.getInstance());
         //清理内部sdk
         DataCleanManager.cleanFiles(BaseApplication.getInstance());
+
         //清理外部sdk
-        DataCleanManager.cleanExternalCache();
-    };
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("dynamic"));
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("runCatch"));
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("def"));
+        }
+
+    }
 
 
 

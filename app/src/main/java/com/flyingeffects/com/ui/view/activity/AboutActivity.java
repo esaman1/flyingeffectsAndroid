@@ -92,14 +92,13 @@ public class AboutActivity extends BaseActivity {
 
                 break;
             case R.id.ll_clear_cache:
-                //清理内部缓存
+                //清除外部cache下的内容
                 DataCleanManager.cleanExternalCache();
-                //清理外部缓存
+                //清理内部cache
                 DataCleanManager.cleanInternalCache(BaseApplication.getInstance());
                 //清理内部sdk
                 DataCleanManager.cleanFiles(BaseApplication.getInstance());
-                //清理外部sdk
-                DataCleanManager.cleanExternalCache();
+                DataCleanManager.cleanExternalFile();
                 ToastUtil.showToast("清理成功");
                 break;
             case R.id.tv_top_submit:
