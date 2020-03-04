@@ -45,6 +45,7 @@ public class MediaUiModel2 extends MediaUiModel {
     private final int mClipHeight;
     private final Path mPath;
     private final double mR;
+//    private Paint paintTest;
 
     public MediaUiModel2(String folder, JSONObject ui, Bitmap bitmap, AssetDelegate delegate, Size size) throws JSONException {
         super(folder, ui, delegate, size);
@@ -83,8 +84,13 @@ public class MediaUiModel2 extends MediaUiModel {
 
         //在界面上的显示区域
         mPath = new Path();
-        mPath.addRect(0, 0, mClipWidth, mClipHeight, Path.Direction.CCW);
+        mPath.addRect(0, 0, mClipWidth, mClipHeight, Path.Direction.CCW);//ccw 逆时针
         mPath.transform(mMatrix);
+
+
+        //测试
+//        paintTest=new Paint();
+//        paintTest.setColor(Color.parseColor("#FF00000"));
     }
 
     @Override
@@ -102,6 +108,7 @@ public class MediaUiModel2 extends MediaUiModel {
             if (activeLayer != index) {
                 canvas.save();
                 canvas.clipPath(mPath);
+//                canvas.drawPath(mPath,paintTest);
                 canvas.drawBitmap(mBitmap, mMatrix, mPaint);
                 canvas.restore();
             } else {

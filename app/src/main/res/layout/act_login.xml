@@ -29,7 +29,7 @@
             android:layout_marginBottom="35dp"
             android:text="登录/注册"
             android:textColor="@color/white"
-            android:textSize="20sp" />
+            android:textSize="26sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -47,10 +47,6 @@
                 android:orientation="horizontal">
 
 
-
-
-
-
                 <EditText
                     android:id="@+id/username"
                     android:layout_width="fill_parent"
@@ -58,7 +54,6 @@
                     android:layout_marginRight="15dp"
                     android:background="@null"
                     android:gravity="center_vertical"
-                    android:hint="请輸入手机号"
                     android:inputType="phone"
                     android:maxLength="20"
                     android:paddingStart="10dip"
@@ -67,7 +62,7 @@
                     android:paddingRight="10dip"
                     android:textColor="@color/white"
                     android:textColorHint="@color/dark_gray"
-                    android:textSize="@dimen/text_small_size" />
+                    android:textSize="24sp" />
             </LinearLayout>
 
 
@@ -96,7 +91,6 @@
                     android:layout_weight="1"
                     android:background="@null"
                     android:gravity="center_vertical"
-                    android:hint="请输入验证码"
                     android:imeOptions="actionGo"
                     android:maxLength="16"
                     android:paddingStart="10dip"
@@ -105,7 +99,7 @@
                     android:paddingRight="10dip"
                     android:textColor="@color/white"
                     android:textColorHint="@color/dark_gray"
-                    android:textSize="@dimen/text_small_size" />
+                    android:textSize="24sp" />
 
 
             </LinearLayout>
@@ -130,11 +124,11 @@
             android:layout_marginStart="67dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="67dp"
-            android:background="@drawable/red_button"
+            android:background="@drawable/login_button"
             android:gravity="center"
             android:text="获取短信验证码"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_small_size" />
+            android:textSize="16sp" />
 
 
         <TextView
@@ -146,7 +140,7 @@
             android:layout_gravity="center_horizontal"
             android:text="登录表示你同意服务条款和隐私政策"
             android:textColor="#999999"
-            android:textSize="14sp" />
+            android:textSize="12sp" />
     </LinearLayout>
 
 
@@ -155,6 +149,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
+            android:visibility="gone"
             android:layout_marginBottom="32dp"
             android:layout_alignParentBottom="true"
             android:layout_height="wrap_content">

@@ -8,6 +8,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
@@ -59,6 +62,11 @@ public class frag_user_center extends BaseFragment {
 
     @Override
     protected void initView() {
+        Glide.with(this)
+                .load(R.mipmap.head)
+                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                .into(iv_head);
+
         iv_about.setOnClickListener(view -> {
             statisticsEventAffair.getInstance().setFlag(getActivity(),"3_help");
             Intent intent=new Intent(getActivity(), AboutActivity.class);

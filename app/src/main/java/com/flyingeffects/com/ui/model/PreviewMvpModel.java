@@ -91,7 +91,7 @@ public class PreviewMvpModel {
             nowCompressSuccessNum = 0;
             Luban.with(context)
                     .load(paths)                                   // 传人要压缩的图片列表
-                    .ignoreBy(100)                                  // 忽略不压缩图片的大小
+//                    .ignoreBy(100)                                  // 忽略不压缩图片的大小
                     .setTargetDir(mCatchFolder)                        // 设置压缩后文件存储位置
                     .setCompressListener(new OnCompressListener() { //设置回调
                         @Override
@@ -104,8 +104,16 @@ public class PreviewMvpModel {
                             LogUtil.d("OOM", "onSuccess=" + file.getPath());
                             //全部图片压缩完成
                             if (nowCompressSuccessNum == nowChoosePathNum) {
-                                allCompressPaths = FileManager.getFilesAllName(file.getParent());
-                                upLoad(allCompressPaths);
+                                //todo 这里会出现一个bug ,设置了mCatchFolder ，但是裁剪后不会进入到里面去
+                                if(nowChoosePathNum==1){
+                                    allCompressPaths.clear();
+                                    allCompressPaths.add(file.getPath());
+                                    upLoad(allCompressPaths);
+                                }else{
+                                    allCompressPaths = FileManager.getFilesAllName(file.getParent());
+                                    upLoad(allCompressPaths);
+                                }
+
                             }
                         }
 

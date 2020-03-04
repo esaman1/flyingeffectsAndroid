@@ -78,6 +78,7 @@ public class MediaUiModel1 extends MediaUiModel {
     public void draw(Canvas canvas, int activeLayer) {
         mPaint = mInitPaint;
 
+        //后图
         if (b != null) {
             canvas.drawBitmap(b, 0, 0, null);
         }
@@ -85,6 +86,7 @@ public class MediaUiModel1 extends MediaUiModel {
         if (activeLayer >= 0 && activeLayer < index) {
             mPaint = mTransparentPaint;
         }
+        //绘制的素材
 
         if (mBitmap != null) {
             if (activeLayer != index) {
@@ -97,6 +99,7 @@ public class MediaUiModel1 extends MediaUiModel {
             }
         }
 
+        //前景图
         if (f != null) {
             if (activeLayer > 0) {
                 mPaint = mTransparentPaint;

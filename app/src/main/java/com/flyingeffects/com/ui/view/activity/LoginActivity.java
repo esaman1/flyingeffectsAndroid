@@ -1,16 +1,22 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.SpannedString;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
+import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ClickableSpan;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -35,6 +41,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -53,6 +61,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @BindView(R.id.username)
     EditText editTextUsername;
 
+    private boolean isCanSendMsg = true;
+
+    private boolean hasInputPassword = false;
 
     @BindView(R.id.tv_login)
     TextView tv_login;
@@ -82,10 +93,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         editTextPassword.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-              String  strPassword= editTextPassword.getText().toString().trim();
+                String strPassword = editTextPassword.getText().toString().trim();
                 if (!strPassword.equals("")) {
+                    hasInputPassword = true;
                     nextStep(true);
                 } else {
+                    hasInputPassword = false;
                     nextStep(false);
                 }
             }
@@ -104,9 +117,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         editTextUsername.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if(TextUtils.isEmpty(editTextPassword.getText().toString())){
+                if (TextUtils.isEmpty(editTextPassword.getText().toString())) {
                     nextStep(false);
-                }else{
+                } else {
                     nextStep(true);
                 }
 
@@ -127,12 +140,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
-
-    private void nextStep(boolean isLogin){
-        if(isLogin){
+    private void nextStep(boolean isLogin) {
+        if (isLogin) {
             tv_login.setText("登录");
             nowProgressType = 1;
-        }else{
+        } else {
             tv_login.setText("获得验证码");
             nowProgressType = 0;
         }
@@ -141,7 +153,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     protected void initView() {
-        String tips = "登录表示你同意《服务条款》和《隐私政策》" ;
+        String tips = "登录表示你同意《服务条款》和《隐私政策》";
         SpannableStringBuilder spannableBuilder = new SpannableStringBuilder(tips);
         ClickableSpan clickableSpanOne = new ClickableSpan() {
             @Override
@@ -178,6 +190,18 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         spannableBuilder.setSpan(clickableSpanTwo, 15, 19, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         tv_xy.setMovementMethod(LinkMovementMethod.getInstance());
         tv_xy.setText(spannableBuilder);
+
+
+        SpannableString ss = new SpannableString("请输入手机号");//定义hint的值
+        AbsoluteSizeSpan ass = new AbsoluteSizeSpan(16, true);//设置字体大小 true表示单位是sp
+        ss.setSpan(ass, 0, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        editTextUsername.setHint(new SpannedString(ss));
+        SpannableString ss2 = new SpannableString("请输入验证码");//定义hint的值
+        ss2.setSpan(ass, 0, ss2.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        editTextPassword.setHint(new SpannedString(ss2));
+
+
+
     }
 
 
@@ -202,13 +226,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         switch (view.getId()) {
             case R.id.tv_login:
                 if (nowProgressType == 0) {
-                    toRequestSms();
+                    if (isCanSendMsg) {
+                        toRequestSms();
+                    }
                 } else {
+                    tv_login.setEnabled(true);
+                    tv_login.setBackground(getResources().getDrawable(R.drawable.login_button));
                     requestLogin();
                 }
-
                 break;
-
         }
 
     }
@@ -219,8 +245,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show();
             return;
         }
-
         requestSms(editTextUsername.getText().toString());
+        startTimer();
     }
 
 
@@ -257,8 +283,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
-
-    private void changeFocus(){
+    private void changeFocus() {
         editTextPassword.requestFocus();
         editTextPassword.setFocusable(true);
         editTextPassword.setFocusableInTouchMode(true);
@@ -291,7 +316,76 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
+    private Timer timer;
+    private TimerTask task;
+    private int total_Time = 60;
+    @SuppressLint("HandlerLeak")
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 1:
+                    total_Time = total_Time - 1;
+                    if (!hasInputPassword) {
+                        tv_login.setText((String.format(getResources().getString(R.string.remainTime), total_Time)));
+                    }
+                    if (total_Time == 0) {
+                        total_Time = 60;
+                        endTimer();
+                    }
+                    break;
+            }
+        }
+    };
 
+    /***
+     * 倒计时60s
+     */
+    private void startTimer() {
+        isCanSendMsg = false;
+        if (!hasInputPassword) {
+            tv_login.setBackground(getResources().getDrawable(R.drawable.login_button_forbidden));
+        }
+
+        if (timer != null) {
+            timer.purge();
+            timer.cancel();
+            timer = null;
+        }
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+        timer = new Timer();
+        task = new TimerTask() {
+            public void run() {
+                Message msg = new Message();
+                msg.what = 1;
+                handler.sendMessage(msg);
+            }
+        };
+        timer.schedule(task, 0, 1000);
+    }
+
+    /**
+     * 关闭timer 和task
+     */
+    private void endTimer() {
+        if (timer != null) {
+            timer.purge();
+            timer.cancel();
+            timer = null;
+        }
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+        tv_login.setText("获取短信验证码");
+        isCanSendMsg = true;
+        tv_login.setEnabled(true);
+        tv_login.setBackground(getResources().getDrawable(R.drawable.login_button));
+    }
 
 
 }
