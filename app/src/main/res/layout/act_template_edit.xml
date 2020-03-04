@@ -131,7 +131,6 @@
             android:contentDescription="@string/app_name"
             android:id="@+id/iv_play"
             android:layout_width="26dp"
-            android:padding="5dp"
             android:layout_height="29dp"
             android:layout_marginStart="13dp"
             android:src="@mipmap/iv_play" />
@@ -141,6 +140,7 @@
             android:id="@+id/tv_start_time"
             android:layout_width="wrap_content"
             android:text="00:00"
+            android:layout_marginStart="13dp"
             android:textSize="14sp"
             android:textColor="@color/white"
             android:layout_height="wrap_content"/>

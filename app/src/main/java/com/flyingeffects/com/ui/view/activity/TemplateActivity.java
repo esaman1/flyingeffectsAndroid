@@ -10,6 +10,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -39,10 +40,8 @@ import com.shixing.sxvideoengine.SXTemplatePlayer;
 import com.suke.widget.SwitchButton;
 
 import java.io.File;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -63,10 +62,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     RecyclerView recyclerView;
     @BindView(R.id.seekBar)
     SeekBar seekBar;
-   private  SXTemplatePlayer mPlayer;
+    @BindView(R.id.iv_play)
+    ImageView ivPlayButton;
+    private SXTemplatePlayer mPlayer;
     @BindView(R.id.player_surface_view)
     SXPlayerSurfaceView mPlayerView;
-   ;
     private TemplatePresenter presenter;
     private List<String> imgPath = new ArrayList<>();
     private TemplateModel mTemplateModel;
@@ -75,7 +75,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private ArrayList<TemplateThumbItem> listItem = new ArrayList<>();
     private ArrayList<TemplateView> mTemplateViews;
     private int nowChooseIndex = 0;
-    private int lastPosition;
     private String mAudio1Path;
     private static final String MUSIC_PATH = "/bj.mp3";
     private TextAssetEditLayout mTextEditLayout;
@@ -103,12 +102,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     TextView tv_start_time;
 
 
-
-
     /**
      * 是否是即时播放
      */
-    private boolean isRealtime=true;
+    private boolean isRealtime = true;
+
+    private boolean isPlaying = false;
 
 
     @Override
@@ -173,9 +172,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @Override
     public void completeTemplate(TemplateModel templateModel) {
         mTemplateModel = templateModel;
-        int duration=mTemplateModel.getDuration();
-        float allDuration=duration/(float)mTemplateModel.fps;
-        tv_end_time.setText( timeUtils.secondToTime((long) (allDuration)));
+        int duration = mTemplateModel.getDuration();
+        float allDuration = duration / mTemplateModel.fps;
+        tv_end_time.setText(timeUtils.secondToTime((long) (allDuration)));
         initTemplateViews(mTemplateModel);  //初始化templateView 等数据
     }
 
@@ -201,11 +200,23 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     public void returnReplaceableFilePath(String[] paths) {
-        switchTemplate(mFolder.getPath(),paths);
+        if (isPlaying) {
+            mPlayer.pause();
+            ivPlayButton.setImageResource(R.mipmap.iv_play);
+            isPlaying=false;
+        } else {
+            isPlaying=true;
+            ivPlayButton.setImageResource(R.mipmap.pause);
+            if (real_time_preview.getVisibility() == View.VISIBLE) {
+                mPlayer.start();
+
+            } else {
+                switchTemplate(mFolder.getPath(), paths);
+            }
+        }
+
         showPreview(true);
     }
-
-
 
 
     @Override
@@ -223,14 +234,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private void showPreview(boolean isPreview) {
         if (isPreview) {
-
             mContainer.setVisibility(View.INVISIBLE);
-            if(isRealtime){
+            if (isRealtime) {
                 real_time_preview.setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 videoPlayer.setVisibility(View.VISIBLE);
             }
-
         } else {
             videoPlayer.setVisibility(View.GONE);
             real_time_preview.setVisibility(View.GONE);
@@ -346,31 +355,15 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(layoutManager);
         templateThumbAdapter = new TemplateThumbAdapter(R.layout.item_group_thumb, listItem, TemplateActivity.this);
-//        templateThumbAdapter.setOnItemClickListener((adapter, view, position) -> {
-//            modificationThumbData(lastPosition, position);
-//            selectGroup(position);
-//            lastPosition = position;
-//        });
+        templateThumbAdapter.setOnItemClickListener((adapter, view, position) -> {
+            isPlaying = false;
+            showPreview(false);
+            ivPlayButton.setImageResource(R.mipmap.iv_play);
+            mPlayer.pause();
+        });
         recyclerView.setAdapter(templateThumbAdapter);
     }
 
-
-//    private void modificationThumbData(int lastPosition, int position) {
-//        if (lastPosition != position) {
-//            TemplateThumbItem item1 = listItem.get(position);
-//            item1.setIsCheck(0);
-//            listItem.set(position, item1);
-//            TemplateThumbItem item2 = listItem.get(lastPosition);
-//            item2.setIsCheck(1);
-//            listItem.set(lastPosition, item2);
-//            templateThumbAdapter.notifyItemChanged(position); //更新上一个
-//            templateThumbAdapter.notifyItemChanged(lastPosition);
-//        } else {
-//            Intent intent = new Intent(this, VideoClippingActivity.class);
-//            intent.putExtra("path", listItem.get(position).getPathUrl());
-//            startActivity(intent);
-//        }
-//    }
 
 
     @OnClick({R.id.tv_top_submit, R.id.iv_play})
@@ -436,10 +429,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     };
 
 
-
-
     private int mDuration;
-    private void switchTemplate(String folder,String[]mSources) {
+
+    private void switchTemplate(String folder, String[] mSources) {
         final SXTemplate template = new SXTemplate(folder, SXTemplate.TemplateUsage.kForPreview);
         template.setReplaceableFilePaths(mSources);
         template.enableSourcePrepare();
@@ -454,6 +446,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     seekBar.setProgress(0);
                     mPlayer.replaceAudio(mAudio1Path);
                     mPlayer.start();
+                    isPlaying = true;
 
                 });
             }
@@ -466,25 +459,21 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         public void onProgressChanged(final int frame) {
             mPlayerView.post(() -> {
                 seekBar.setProgress(frame);
-                float nowDuration=frame/mTemplateModel.fps;
-                tv_start_time.setText( timeUtils.secondToTime((long) (nowDuration)));
+                float nowDuration = frame / mTemplateModel.fps;
+                tv_start_time.setText(timeUtils.secondToTime((long) (nowDuration)));
             });
         }
 
         @Override
         public void onFinish() {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    tv_start_time.setText( "00:00");
-                 showPreview(false);
-                }
+            runOnUiThread(() -> {
+                isPlaying = false;
+                tv_start_time.setText("00:00");
+                showPreview(false);
+                ivPlayButton.setImageResource(R.mipmap.iv_play);
             });
         }
     };
-
-
-
 
 
 }
