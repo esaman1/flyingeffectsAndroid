@@ -147,9 +147,8 @@ public class PreviewMvpModel {
     private ArrayList<String> listForMatting = new ArrayList<>();
 
     private void upLoad(List<String> list) {
-        WaitingDialog.openPragressDialog(context);
-//        WaitingDialog.setDialogText("正在抠图中\n" +
-//                "上传人物最佳~");
+        String alert="正在抠图中"+"\n"+"上传人物最佳";
+        WaitingDialog.openPragressDialog(context,alert);
         listForMatting.clear();
         List<File> listFile = new ArrayList<>();
         for (String str : list
@@ -167,28 +166,35 @@ public class PreviewMvpModel {
                 WaitingDialog.closePragressDialog();
                 Gson gson = new Gson();
                 DownImg downIng = gson.fromJson(str, DownImg.class);
-                ArrayList<DownImgDataList> data = downIng.getData();
-                for (DownImgDataList item : data
-                ) {
-                    listForMatting.add(item.getTarget_url());
-                }
+                if(downIng.getCode()==1){
+                //成功
+                    ArrayList<DownImgDataList> data = downIng.getData();
+                    for (DownImgDataList item : data
+                    ) {
+                        listForMatting.add(item.getTarget_url());
+                    }
 
-                //马卡龙，这里是图片链接，下载下来的方式
-                if (data.get(0).getType() == 1) {
-                    DownImageManager downImageManager = new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> {
-                        callback.getCompressImgList(path);
-                        keepTailorImageToCache(path);
-                    });
-                    downImageManager.downImage(listForMatting.get(0));
-                } else {
-                    //百度，face++ 是直接下载的图片编码
-                    DownImageManager downImageManager = new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> {
-                        callback.getCompressImgList(path);
-                        keepTailorImageToCache(path);
-                    });
-                    downImageManager.downImageForByte(listForMatting.get(0));
-                }
+                    //马卡龙，这里是图片链接，下载下来的方式
+                    if (data.get(0).getType() == 1) {
+                        DownImageManager downImageManager = new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> {
+                            callback.getCompressImgList(path);
+                            keepTailorImageToCache(path);
+                        });
+                        downImageManager.downImage(listForMatting.get(0));
+                    } else {
+                        //百度，face++ 是直接下载的图片编码
+                        DownImageManager downImageManager = new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> {
+                            callback.getCompressImgList(path);
+                            keepTailorImageToCache(path);
+                        });
+                        downImageManager.downImageForByte(listForMatting.get(0));
+                    }
 
+                }else{
+                    //失败
+                    WaitingDialog.closePragressDialog();
+                    callback.getCompressImgList(localImagePaths);
+                }
             }
         });
     }

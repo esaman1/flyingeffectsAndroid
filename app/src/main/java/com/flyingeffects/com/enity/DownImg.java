@@ -6,15 +6,15 @@ import java.util.ArrayList;
 public class DownImg implements Serializable {
 
 
-  private String code;
-
-    public String getCode() {
+    public int getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(int code) {
         this.code = code;
     }
+
+    private int code;
 
     public String getMsg() {
         return msg;
