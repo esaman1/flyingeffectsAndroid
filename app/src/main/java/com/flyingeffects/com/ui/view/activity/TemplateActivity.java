@@ -22,6 +22,7 @@ import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.SxveConstans;
@@ -38,6 +39,7 @@ import com.shixing.sxvideoengine.SXTemplatePlayer;
 import com.suke.widget.SwitchButton;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -93,6 +95,16 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @BindView(R.id.Real_time_preview)
     FrameLayout real_time_preview;
+
+    @BindView(R.id.tv_end_time)
+    TextView tv_end_time;
+
+    @BindView(R.id.tv_start_time)
+    TextView tv_start_time;
+
+
+
+
     /**
      * 是否是即时播放
      */
@@ -138,7 +150,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         switch_button.setOnCheckedChangeListener(new SwitchButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(SwitchButton view, boolean isChecked) {
-                if (isChecked) {
+                if (!isChecked) {
                     //修改图为裁剪后的素材
                     presenter.ChangeMaterial(originalPath, defaultNum);
                 } else {
@@ -161,6 +173,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @Override
     public void completeTemplate(TemplateModel templateModel) {
         mTemplateModel = templateModel;
+        int duration=mTemplateModel.getDuration();
+        float allDuration=duration/(float)mTemplateModel.fps;
+        tv_end_time.setText( timeUtils.secondToTime((long) (allDuration)));
         initTemplateViews(mTemplateModel);  //初始化templateView 等数据
     }
 
@@ -331,31 +346,31 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(layoutManager);
         templateThumbAdapter = new TemplateThumbAdapter(R.layout.item_group_thumb, listItem, TemplateActivity.this);
-        templateThumbAdapter.setOnItemClickListener((adapter, view, position) -> {
-            modificationThumbData(lastPosition, position);
-            selectGroup(position);
-            lastPosition = position;
-        });
+//        templateThumbAdapter.setOnItemClickListener((adapter, view, position) -> {
+//            modificationThumbData(lastPosition, position);
+//            selectGroup(position);
+//            lastPosition = position;
+//        });
         recyclerView.setAdapter(templateThumbAdapter);
     }
 
 
-    private void modificationThumbData(int lastPosition, int position) {
-        if (lastPosition != position) {
-            TemplateThumbItem item1 = listItem.get(position);
-            item1.setIsCheck(0);
-            listItem.set(position, item1);
-            TemplateThumbItem item2 = listItem.get(lastPosition);
-            item2.setIsCheck(1);
-            listItem.set(lastPosition, item2);
-            templateThumbAdapter.notifyItemChanged(position); //更新上一个
-            templateThumbAdapter.notifyItemChanged(lastPosition);
-        } else {
-            Intent intent = new Intent(this, VideoClippingActivity.class);
-            intent.putExtra("path", listItem.get(position).getPathUrl());
-            startActivity(intent);
-        }
-    }
+//    private void modificationThumbData(int lastPosition, int position) {
+//        if (lastPosition != position) {
+//            TemplateThumbItem item1 = listItem.get(position);
+//            item1.setIsCheck(0);
+//            listItem.set(position, item1);
+//            TemplateThumbItem item2 = listItem.get(lastPosition);
+//            item2.setIsCheck(1);
+//            listItem.set(lastPosition, item2);
+//            templateThumbAdapter.notifyItemChanged(position); //更新上一个
+//            templateThumbAdapter.notifyItemChanged(lastPosition);
+//        } else {
+//            Intent intent = new Intent(this, VideoClippingActivity.class);
+//            intent.putExtra("path", listItem.get(position).getPathUrl());
+//            startActivity(intent);
+//        }
+//    }
 
 
     @OnClick({R.id.tv_top_submit, R.id.iv_play})
@@ -449,11 +464,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private SXTemplatePlayer.PlayStateListener mListener = new SXTemplatePlayer.PlayStateListener() {
         @Override
         public void onProgressChanged(final int frame) {
-            mPlayerView.post(new Runnable() {
-                @Override
-                public void run() {
-                    seekBar.setProgress(frame);
-                }
+            mPlayerView.post(() -> {
+                seekBar.setProgress(frame);
+                float nowDuration=frame/mTemplateModel.fps;
+                tv_start_time.setText( timeUtils.secondToTime((long) (nowDuration)));
             });
         }
 
@@ -462,11 +476,15 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    tv_start_time.setText( "00:00");
                  showPreview(false);
                 }
             });
         }
     };
+
+
+
 
 
 }

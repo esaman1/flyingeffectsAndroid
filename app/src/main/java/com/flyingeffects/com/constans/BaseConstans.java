@@ -66,6 +66,19 @@ public class BaseConstans {
     }
 
 
+    public static String GetUserId() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getString("userId", "");
+    }
+
+
+    public static void SetUserId(String id) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putString("userId", id);
+    }
+
+
+
     public static boolean hasLogin() {
         return GetUserToken() != null && !GetUserToken().equals("");
     }

@@ -2,6 +2,7 @@ package com.shixing.sxve.ui.model;
 
 import android.content.Context;
 import android.support.annotation.WorkerThread;
+import android.util.Log;
 import android.util.SparseArray;
 import android.webkit.MimeTypeMap;
 
@@ -22,7 +23,7 @@ import java.util.List;
 public class TemplateModel {
     private static final String TAG = "TemplateModel";
     private static final String CONFIG_FILE_NAME = "config.json";
-
+    private  int mDuration;
     // 所有可替换的asset，用于编辑完，渲染开始前获取替换的素材路径
     private List<AssetModel> mAssets = new ArrayList<>();
 
@@ -73,6 +74,15 @@ public class TemplateModel {
             }
         }
 
+        try{
+            JSONArray assetsComps= config.getJSONArray("comps");
+            JSONObject comoOb= (JSONObject) assetsComps.get(0);
+            mDuration=comoOb.getInt("duration");
+        }catch (Exception e){
+            Log.d("Exception",e.getMessage());
+        }
+
+
         for (int i = 1; i <= groups.size(); i++) { //group index从1开始
             GroupModel groupModel = groups.get(i);
             SparseArray<AssetModel> groupAssets = groupModel.getAssets();
@@ -114,6 +124,11 @@ public class TemplateModel {
             AssetModel assetModel = mReplaceableAssets.get(i);
             ((MediaUiModel) assetModel.ui).setImageAsset(paths.get(i));
         }
+    }
+
+
+    public int getDuration() {
+    return mDuration;
     }
 
 

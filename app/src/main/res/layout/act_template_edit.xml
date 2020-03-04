@@ -40,6 +40,7 @@
                 android:layout_marginStart="9dp"
                 android:id="@+id/switch_button"
                 android:layout_width="36dp"
+                app:sb_checked="true"
                 app:sb_uncheckcircle_width="0dp"
                 app:sb_uncheckcircle_radius="@dimen/dp_0"
                 android:layout_height="25dp"/>
@@ -131,14 +132,48 @@
             android:src="@mipmap/iv_play" />
 
 
-        <SeekBar
-            android:id="@+id/seekBar"
+        <TextView
+            android:id="@+id/tv_start_time"
+            android:layout_width="wrap_content"
+            android:text="00:00"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"/>
+
+
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxHeight="2dp"
-            android:max="100"
-            android:progress="30"
-            android:thumb="@drawable/seek_bar_thumb"/>
+            android:layout_marginStart="13dp"
+            android:layout_height="wrap_content">
+
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxHeight="2dp"
+                android:max="100"
+                android:layout_marginEnd="50dp"
+                android:progress="0"
+                android:progressDrawable="@drawable/bg_adjust_seek_bar"
+                android:thumb="@drawable/seek_bar_thumb"/>
+
+
+
+            <TextView
+                android:id="@+id/tv_end_time"
+                android:layout_width="wrap_content"
+                android:text="00:00"
+                android:layout_alignParentRight="true"
+                android:textSize="14sp"
+                android:layout_marginEnd="20dp"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+
+
+
+
 
     </LinearLayout>
 

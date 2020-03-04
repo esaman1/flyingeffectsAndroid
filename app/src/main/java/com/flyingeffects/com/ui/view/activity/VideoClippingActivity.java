@@ -33,6 +33,7 @@ public class VideoClippingActivity extends BaseActivity implements VideoClipping
 
     @Override
     protected void initView() {
+        findViewById(R.id.iv_top_back).setOnClickListener(this);
         Presenter=new VideoClippingMvpPresenter(this,this);
         String path = getIntent().getStringExtra("path");
         Glide.with(this).load(path).into(iv_view_container);

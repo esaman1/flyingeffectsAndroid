@@ -10,6 +10,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -82,6 +83,7 @@ public class frag_search extends BaseFragment {
 
     @Override
     protected void initView() {
+
         ed_text.setOnClickListener(view -> statisticsEventAffair.getInstance().setFlag(getActivity(),"4_click"));
         //键盘的搜索按钮
         ed_text.setOnEditorActionListener((v, actionId, event) -> {

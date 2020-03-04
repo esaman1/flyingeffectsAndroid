@@ -81,7 +81,7 @@ public class frag_user_center extends BaseFragment {
         if (getActivity() != null) {
             //未登陆
             if (BaseConstans.hasLogin()) {
-                tv_id.setText("我的id号："+BaseConstans.GetUserToken());
+                tv_id.setText("我的id号："+BaseConstans.GetUserId());
             }else{
                 tv_id.setText("未登录");
             }

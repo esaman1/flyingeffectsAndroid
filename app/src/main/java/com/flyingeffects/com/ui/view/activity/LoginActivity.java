@@ -237,22 +237,21 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
             @Override
             protected void _onNext(Object data) {
-                String str = StringUtil.beanToJSONString(data);
-                LogUtil.d("login", "str=" + str);
-                JSONObject jsonObject = null;
-                try {
-                    jsonObject = new JSONObject(str);
-                    int code = jsonObject.getInt("jsonObject");
-                    if (code == 1) {
-                        ToastUtil.showToast("发送成功");
-                    }
-                    nextStep(true);
-                    changeFocus();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
+                ToastUtil.showToast("发送成功");
+//                String str = StringUtil.beanToJSONString(data);
+//                LogUtil.d("login", "str=" + str);
+//                JSONObject jsonObject = null;
+//                try {
+//                    jsonObject = new JSONObject(str);
+//                    int code = jsonObject.getInt("jsonObject");
+//                    if (code == 1) {
+//                        ToastUtil.showToast("发送成功");
+//                    }
+//                    nextStep(true);
+//                    changeFocus();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
@@ -285,6 +284,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "requestLogin=" + str);
                 BaseConstans.SetUserToken(data.getToken());
+                BaseConstans.SetUserId(data.getId());
                 LoginActivity.this.finish();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
