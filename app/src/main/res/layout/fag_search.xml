@@ -43,6 +43,7 @@
 
 
         <ImageView
+            android:visibility="gone"
             android:id="@+id/iv_delete"
             android:contentDescription="@string/app_name"
             android:padding="5dp"

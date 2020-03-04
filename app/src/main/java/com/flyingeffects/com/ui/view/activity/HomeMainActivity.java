@@ -65,8 +65,8 @@ public class HomeMainActivity extends FragmentActivity {
         if (actionBar != null) {
             actionBar.hide();
         }
-
         fragmentManager = getSupportFragmentManager();
+        clearAllData();
         initView();
         copyFile("default_bj.png");
 //        checkUpdate(false);
@@ -156,7 +156,7 @@ public class HomeMainActivity extends FragmentActivity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        clearAllData();
+
     }
 
 
