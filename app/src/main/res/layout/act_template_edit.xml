@@ -39,11 +39,16 @@
             <com.suke.widget.SwitchButton
                 android:layout_marginStart="9dp"
                 android:id="@+id/switch_button"
-                android:layout_width="36dp"
+                app:sb_checkline_color="@color/base_black"
+                app:sb_border_width="@dimen/dp_2"
+                android:layout_width="40dp"
+                app:sb_checked_color="@color/base_black"
+                app:sb_button_color="@color/home_base_blue_color"
                 app:sb_checked="true"
                 app:sb_uncheckcircle_width="0dp"
                 app:sb_uncheckcircle_radius="@dimen/dp_0"
-                android:layout_height="25dp"/>
+                app:sb_show_indicator="false"
+                android:layout_height="24dp"/>
 
 
         </LinearLayout>

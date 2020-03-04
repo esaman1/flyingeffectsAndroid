@@ -143,6 +143,8 @@ public class PreviewMvpModel {
 
     private void upLoad(List<String> list) {
         WaitingDialog.openPragressDialog(context);
+//        WaitingDialog.setDialogText("正在抠图中\n" +
+//                "上传人物最佳~");
         listForMatting.clear();
         List<File> listFile = new ArrayList<>();
         for (String str : list
