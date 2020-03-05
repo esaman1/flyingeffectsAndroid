@@ -24,6 +24,7 @@ public class TemplateView extends View {
     private RotationGestureDetector mRotationDetector;
     private GroupModel mGroup;
     private float mOverallScale;
+    private callbackGestureToView callbackStateToView;
 
     public TemplateView(Context context) {
         super(context);
@@ -39,6 +40,12 @@ public class TemplateView extends View {
         super(context, attrs, defStyle);
         init();
     }
+
+
+    public void SetonGestureCallback(callbackGestureToView callbackStateToView){
+        this.callbackStateToView=callbackStateToView;
+    }
+
 
     private void init() {
         setupGestureListeners();
@@ -130,6 +137,9 @@ public class TemplateView extends View {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             mGroup.scroll(distanceX / mOverallScale, distanceY / mOverallScale);
+            if(callbackStateToView!=null){
+                callbackStateToView.onScroll();
+            }
             return true;
         }
     }
@@ -149,6 +159,14 @@ public class TemplateView extends View {
             mGroup.rotate(detector.getAngle(), mMidPntX, mMidPntY);
             return true;
         }
+    }
+
+
+    /**
+     * 方便统计
+     */
+    public  interface callbackGestureToView{
+        void onScroll();
     }
 
 }

@@ -139,7 +139,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             findViewById(R.id.ll_Matting).setVisibility(View.GONE);
         }
         mTextEditLayout = findViewById(R.id.text_edit_layout);
-//        mFolder = getExternalFilesDir("dynamic/" + "test");//zs2002202bg  ///aaa  ///test
         mFolder = new File(templateFilePath);
         mAudio1Path = mFolder.getPath() + MUSIC_PATH;
         File dir = getExternalFilesDir("");
@@ -272,6 +271,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private void initTemplateViews(TemplateModel templateModel) {
         for (int i = 1; i <= templateModel.groupSize; i++) {
             TemplateView templateView = new TemplateView(TemplateActivity.this);
+            templateView.SetonGestureCallback(() -> statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_drag"));
             templateView.setBackgroundColor(Color.BLACK);
             templateView.setVisibility(i == 1 ? View.VISIBLE : View.GONE);
             GroupModel groupModel = templateModel.groups.get(i);
@@ -344,8 +344,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             } catch (Exception e) {
                 LogUtil.d("Exception", e.getMessage());
             }
-
-
         }
     }
 
