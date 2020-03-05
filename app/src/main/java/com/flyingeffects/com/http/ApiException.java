@@ -58,7 +58,7 @@ public class ApiException extends RuntimeException{
                 break;
             case 0:
                 intoLoginAct(actTag);
-                message ="重新登录";  //token is invalid  和另一台设备登录
+                message =error;  //用戶被刪除
                 break;
 
             default:

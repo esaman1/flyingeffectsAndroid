@@ -37,8 +37,6 @@ import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Timer;
@@ -97,6 +95,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 if (!strPassword.equals("")) {
                     hasInputPassword = true;
                     nextStep(true);
+                    tv_login.setEnabled(true);
+                    endTimer();
+                    hasInputPassword=true;
                 } else {
                     hasInputPassword = false;
                     nextStep(false);
@@ -110,7 +111,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
             @Override
             public void afterTextChanged(Editable editable) {
+                hasInputPassword = true;
                 nextStep(true);
+                tv_login.setEnabled(true);
+                endTimer();
+                hasInputPassword=true;
             }
         });
 
@@ -143,6 +148,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private void nextStep(boolean isLogin) {
         if (isLogin) {
             tv_login.setText("登录");
+            tv_login.setBackground(getResources().getDrawable(R.drawable.login_button));
             nowProgressType = 1;
         } else {
             tv_login.setText("获得验证码");
@@ -264,20 +270,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             @Override
             protected void _onNext(Object data) {
                 ToastUtil.showToast("发送成功");
-//                String str = StringUtil.beanToJSONString(data);
-//                LogUtil.d("login", "str=" + str);
-//                JSONObject jsonObject = null;
-//                try {
-//                    jsonObject = new JSONObject(str);
-//                    int code = jsonObject.getInt("jsonObject");
-//                    if (code == 1) {
-//                        ToastUtil.showToast("发送成功");
-//                    }
-//                    nextStep(true);
-//                    changeFocus();
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
+                String str = StringUtil.beanToJSONString(data);
+                LogUtil.d("login", "str=" + str);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
@@ -381,7 +375,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             task.cancel();
             task = null;
         }
-        tv_login.setText("获取短信验证码");
+        if(nowProgressType==0){
+            tv_login.setText("获取短信验证码");
+        }
+
         isCanSendMsg = true;
         tv_login.setEnabled(true);
         tv_login.setBackground(getResources().getDrawable(R.drawable.login_button));
