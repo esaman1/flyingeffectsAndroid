@@ -296,16 +296,11 @@ public class HomeMainActivity extends FragmentActivity {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
             Toast.makeText(ThisMain, getResources().getString(R.string.app_name), Toast.LENGTH_SHORT).show();
             exitTime = System.currentTimeMillis();
-            clearCache();
         } else {
             finish();
         }
     }
 
-    private void clearCache() {
-        DataCleanManager.cleanExternalFile();
-        DataCleanManager.cleanExternalCache();
-    }
 
     @Override
     public void onBackPressed() {

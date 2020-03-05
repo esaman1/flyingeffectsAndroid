@@ -263,9 +263,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
-    private void requestSms(String streditTextUsername) {
+    private void requestSms(String strEditTextUsername) {
         HashMap<String, String> params = new HashMap<>();
-        params.put("phone", streditTextUsername);
+        params.put("phone", strEditTextUsername);
         // 启动时间
         Observable ob = Api.getDefault().toSms(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(LoginActivity.this) {

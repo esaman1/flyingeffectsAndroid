@@ -207,20 +207,22 @@ public class PreviewMvpModel {
         });
     }
 
+
+    /**
+     * 缓存图片到本地
+     * @param paths  下载后的地址列表
+     */
     private void keepTailorImageToCache(List<String> paths) {
-        String localCacheName=localImagePaths.get(0);
-        if(paths.size()==1){
-            File file=new File(paths.get(0));
-            FileManager manager=new FileManager();
-            localCacheName= manager.getFileNameWithSuffix(localCacheName);
-            if(mTailtoFolder!=null){
-                File   mTailto=new File(mTailtoFolder,localCacheName);
-                manager.mCopyFile(file,mTailto);
-            }
-
-
-        }
-
+      for(int i=0;i<paths.size();i++){
+          String localCacheName=localImagePaths.get(i);
+          File file=new File(paths.get(i));
+          FileManager manager=new FileManager();
+          localCacheName= manager.getFileNameWithSuffix(localCacheName);
+          if(mTailtoFolder!=null){
+              File   mTailto=new File(mTailtoFolder,localCacheName);
+              manager.mCopyFile(file,mTailto);
+          }
+      }
     }
 
 
