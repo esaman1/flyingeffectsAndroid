@@ -10,6 +10,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.enity.TemplateType;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.home_fagMvpView;
 import com.flyingeffects.com.ui.presenter.home_fagMvpPresenter;
 
@@ -83,8 +84,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                 @Override
                 public void onPageSelected(int i) {
                     if (i <= data.size() - 1) {
-//                        statisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
-//                        EventBus.getDefault().post(new viewPagerSelected(i));  //消息通知
+                        statisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
                     }
                 }
 
