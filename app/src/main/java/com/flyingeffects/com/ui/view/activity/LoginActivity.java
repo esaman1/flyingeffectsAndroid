@@ -251,6 +251,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        if (!StringUtil.isPhone(editTextUsername.getText().toString())) {
+            Toast.makeText(this, "请输入正确手机号", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
         requestSms(editTextUsername.getText().toString());
 
         startTimer();

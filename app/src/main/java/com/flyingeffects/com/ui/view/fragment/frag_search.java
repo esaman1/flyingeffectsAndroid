@@ -10,7 +10,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -165,7 +164,7 @@ public class frag_search extends BaseFragment {
                 statisticsEventAffair.getInstance().setFlag(getActivity(),"4_recommend",listSearchKey.get(finalI).getName());
                 String name=listSearchKey.get(finalI).getName();
                 requestFagData(name);
-
+                ll_showResult.setVisibility(View.VISIBLE);
             });
             GradientDrawable view_ground = (GradientDrawable) tv.getBackground(); //获取控件的背
             view_ground.setStroke(2, Color.parseColor(nowChooseColor));
@@ -258,6 +257,7 @@ public class frag_search extends BaseFragment {
                 allData.clear();
                 allData.addAll(data);
                 if(data.size()==0){
+                    ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
                     statisticsEventAffair.getInstance().setFlag(getActivity(),"4_search_none");
                 }
                 adapter.notifyDataSetChanged();

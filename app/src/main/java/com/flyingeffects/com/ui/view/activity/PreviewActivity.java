@@ -261,7 +261,12 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         Observable.just(progress).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer integer) {
-                tv_make.setText("下载" + progress + "%");
+                if(progress==100){
+                    tv_make.setText("马上制作");
+                }else{
+                    tv_make.setText("下载" + progress + "%");
+                }
+
             }
         });
     }
@@ -269,6 +274,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     public void getTemplateFileSuccess(String TemplateFilePath) {
         //file 文件下载成功
+
         this.TemplateFilePath = TemplateFilePath;
         AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");
     }

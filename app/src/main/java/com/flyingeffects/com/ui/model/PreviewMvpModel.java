@@ -299,6 +299,7 @@ public class PreviewMvpModel {
                                 showMakeProgress();
                             } else {
                                 WaitingDialog.closePragressDialog();
+                                showMakeProgress();
                                 LogUtil.d("onVideoAdError", "下载完成");
                                 isDownZipUrl = false;
                                 //可以制作了，先解压

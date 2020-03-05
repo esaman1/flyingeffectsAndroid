@@ -9,6 +9,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.MediaLoader;
 import com.flyingeffects.com.utils.ChannelUtil;
+import com.flyingeffects.com.utils.CrashHandler;
 import com.flyingeffects.com.utils.LogUtil;
 import com.orhanobut.hawk.Hawk;
 import com.scwang.smartrefresh.header.MaterialHeader;
@@ -46,6 +47,14 @@ public class BaseApplication extends MultiDexApplication {
         initYouMeng();
         initJPush();
         initZt();
+        keepCrash();
+    }
+
+    /***
+     * 保存错误日志
+     */
+    public void keepCrash() {
+        CrashHandler.getInstance().init(this);
     }
 
 

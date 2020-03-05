@@ -117,7 +117,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     protected void initView() {
-
+        findViewById(R.id.iv_top_back).setOnClickListener(this);
         findViewById(R.id.tv_top_submit).setVisibility(View.VISIBLE);
         ((TextView) findViewById(R.id.tv_top_submit)).setText("保存");
         presenter = new TemplatePresenter(this, this);

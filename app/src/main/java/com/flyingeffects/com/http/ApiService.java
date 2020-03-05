@@ -64,6 +64,14 @@ public interface ApiService {
     Observable<HttpResult<Object>> toSms(@FieldMap Map<String, String> params);
 
 
+
+    @FormUrlEncoded
+    @POST("/api/user/getUserInfo")
+    Observable<HttpResult<UserInfo>> getUserInfo(@FieldMap Map<String, String> params);
+
+
+
+
     //上传素材
     @FormUrlEncoded
     @POST("/api/v1.draft/dputin")

@@ -14,17 +14,27 @@ import com.bumptech.glide.request.RequestOptions;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
+import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.UserInfo;
+import com.flyingeffects.com.http.Api;
+import com.flyingeffects.com.http.HttpUtil;
+import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.activity.AboutActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateActivity;
+import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
+import com.flyingeffects.com.utils.ToastUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Observable;
 
 
 /**
@@ -35,7 +45,7 @@ import butterknife.OnClick;
 public class frag_user_center extends BaseFragment {
 
 
-  private  String[] titles = {"我的收藏"};
+    private String[] titles = {"我的收藏"};
 
     @BindView(R.id.viewpager)
     ViewPager viewpager;
@@ -65,8 +75,8 @@ public class frag_user_center extends BaseFragment {
 
 
         iv_about.setOnClickListener(view -> {
-            statisticsEventAffair.getInstance().setFlag(getActivity(),"3_help");
-            Intent intent=new Intent(getActivity(), AboutActivity.class);
+            statisticsEventAffair.getInstance().setFlag(getActivity(), "3_help");
+            Intent intent = new Intent(getActivity(), AboutActivity.class);
             startActivity(intent);
         });
     }
@@ -90,8 +100,9 @@ public class frag_user_center extends BaseFragment {
         if (getActivity() != null) {
             //未登陆
             if (BaseConstans.hasLogin()) {
-                tv_id.setText("我的id号："+BaseConstans.GetUserId());
-            }else{
+                tv_id.setText("我的id号：" + BaseConstans.GetUserId());
+                requestUserInfo();
+            } else {
                 tv_id.setText("未登录");
             }
         }
@@ -103,9 +114,6 @@ public class frag_user_center extends BaseFragment {
     public void onPause() {
         super.onPause();
     }
-
-
-
 
 
     private void initTabData() {
@@ -134,19 +142,41 @@ public class frag_user_center extends BaseFragment {
     }
 
 
-        @OnClick({R.id.iv_head})
-        public void onClick(View view) {
-        switch (view.getId()){
+    @OnClick({R.id.iv_head})
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.iv_head:
-                if(!BaseConstans.hasLogin()){
-                    Intent intent =new Intent(getActivity(), LoginActivity.class);
+                if (!BaseConstans.hasLogin()) {
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(intent);
                 }
                 break;
         }
 
+    }
+
+
+
+    private void requestUserInfo() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("token", BaseConstans.GetUserToken());
+        // 启动时间
+        Observable ob = Api.getDefault().getUserInfo(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(getActivity()) {
+            @Override
+            protected void _onError(String message) {
+                tv_id.setText("未登录");
+                BaseConstans.SetUserToken("");
             }
+
+            @Override
+            protected void _onNext(UserInfo data) {
+                tv_id.setText("我的id号：" + data.getId());
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
 
 
 }

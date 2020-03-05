@@ -35,12 +35,12 @@
             android:id="@+id/tv_show_alert"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
+                android:textStyle="bold"
             android:layout_marginTop="10dp"
             android:gravity="center"
             android:text="加载中..."
             android:textColor="#4D4C4C"
-            android:textSize="12sp" />
+            android:textSize="10sp" />
 
 
     </LinearLayout>
