@@ -61,15 +61,15 @@ public class BaseApplication extends MultiDexApplication {
     /**
      * 中台
      */
-    private void initZt(){
+    private void initZt() {
         NTAnalytics.setDebug(true);
-        NTAnalytics.init(this,"87","vQlTNPzHOzBYHzkg", ChannelUtil.getChannel(this));
+        NTAnalytics.init(this, "87", "vQlTNPzHOzBYHzkg", ChannelUtil.getChannel(this));
 
     }
 
 
-    public void initJPush(){
-        JPushInterface.setDebugMode(true); 	// 设置开启日志,发布时请关闭日志
+    public void initJPush() {
+        JPushInterface.setDebugMode(true);    // 设置开启日志,发布时请关闭日志
         JPushInterface.init(this);
     }
 
@@ -89,10 +89,11 @@ public class BaseApplication extends MultiDexApplication {
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     public void initLicense() {
-        String licenseID="UJ03ctDfZ1ZTWzTF2uC2dmWnOeyD0dk/UhyEu+npLrXEgeMlo2PBMaoHwffFV7bS6O48q0I/8qI4epo2acEbZyiXD1Im4oUNERrPhVtu2nPtxeIz1yRO1BKPQGh5Jult1SlspS6g9pD/6zyP3KsdfoW5wUkc19dzSZrq9kmuYULB2j/o7g6Rh71HYMIYoq4avDT8DDeO1P+GmeUz793hELjUMUBbZwUiYC+xDMNM2LOnWK1DEAzAWWwyh3/mJdcwCyc4MY2LttOa0ksn6iWPtFxrBxw97cIFLdhLkEoMibeCPCLtmfjofB3VnEvo9AWC85vbpSQbzw5mqD8mALQbJJe8/vZWgBFSPqv3PwDZL3OI2APv5CBxgKTmWE5lDRHpUN4f8LDFqi/yyhoRj4Nc/aJdqdte38RjJPLX1tt6J78=";
+//        String licenseID="UJ03ctDfZ1ZTWzTF2uC2dmWnOeyD0dk/UhyEu+npLrXEgeMlo2PBMaoHwffFV7bS6O48q0I/8qI4epo2acEbZyiXD1Im4oUNERrPhVtu2nPtxeIz1yRO1BKPQGh5Jult1SlspS6g9pD/6zyP3KsdfoW5wUkc19dzSZrq9kmuYULB2j/o7g6Rh71HYMIYoq4avDT8DDeO1P+GmeUz793hELjUMUBbZwUiYC+xDMNM2LOnWK1DEAzAWWwyh3/mJdcwCyc4MY2LttOa0ksn6iWPtFxrBxw97cIFLdhLkEoMibeCPCLtmfjofB3VnEvo9AWC85vbpSQbzw5mqD8mALQbJJe8/vZWgBFSPqv3PwDZL3OI2APv5CBxgKTmWE5lDRHpUN4f8LDFqi/yyhoRj4Nc/aJdqdte38RjJPLX1tt6J78=";
+        String licenseID = "nnogIjD3C8du/T2PWYvFbMkJxM2Vw8FpkCs9RqiwjjrEgeMlo2PBMaoHwffFV7bS6O48q0I/8qI4epo2acEbZyiXD1Im4oUNERrPhVtu2nNSnXyjUGr9dLmrYazM4YmNE/A9T6ir5gt3XEs7IjfWfsFAdP+uvPvoKEzu8/pZLRQacEoaYzl1w04Wkn0t0aXWu3l92WacTnKG2JFyCSzPwUgZiqh2Z8xbQdpRYL22HYqMAkhHeNO5Vix3sYRWtKfm59U3wgWtXoU+1gmAICjM1WDRlgyg80Os1BRSzkp9TG7sb7QJUzFdLvo2cpfhnFyBfRBvoykvllQZaPmbC73J+FB8X4zyN1ZESuYOdfoKvYZ3i0S68Rk0izoqbarUpUnkTUUNViGopPKKUXSaufSd+ZxWOxnqjIdyx4a2OhE4vbY=";
         License l = License.init(licenseID);
-        boolean  isValid=l.isValid();
-        LogUtil.d("OOM","isValid="+isValid);
+        boolean isValid = l.isValid();
+        LogUtil.d("OOM", "isValid=" + isValid);
     }
 
 

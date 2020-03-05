@@ -186,8 +186,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             default:
                 break;
         }
-
-
     }
 
 
@@ -259,7 +257,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void getCompressImgList(List<String> imgList) {
-
         intoTemplateActivity(imgList, TemplateFilePath);
     }
 

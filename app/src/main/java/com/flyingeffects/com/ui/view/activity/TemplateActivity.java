@@ -388,7 +388,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         switch (v.getId()) {
             case R.id.tv_top_submit:
-
                 if (!TextUtils.isEmpty(fromTo) && fromTo.equals("search")) {
                     statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "4_search_save", templateName);
                 }
@@ -397,7 +396,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 break;
 
             case R.id.iv_play:
-                // presenter.renderVideo(mFolder.getPath(), mAudio1Path,true);
                 presenter.getReplaceableFilePath();
 
                 break;
@@ -488,6 +486,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 tv_start_time.setText("00:00");
                 showPreview(false);
                 ivPlayButton.setImageResource(R.mipmap.iv_play);
+                seekBar.setProgress(0);
             });
         }
     };

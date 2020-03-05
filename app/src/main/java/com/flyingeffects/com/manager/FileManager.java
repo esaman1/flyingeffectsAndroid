@@ -18,10 +18,6 @@ import java.util.List;
 public class FileManager {
 
 
-
-
-
-
     public String getCachePath(Context context) {
         String cachePath;
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
@@ -43,6 +39,8 @@ public class FileManager {
             if(context.getExternalFilesDir(fileName)!=null){
                 cachePath = context.getExternalFilesDir(fileName).getPath();
             }
+        }else{
+            cachePath = context.getFilesDir().getPath() ;
         }
         return cachePath;
     }

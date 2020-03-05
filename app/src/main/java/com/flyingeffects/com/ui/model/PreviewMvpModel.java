@@ -77,10 +77,8 @@ public class PreviewMvpModel {
             }
         }
 
-
         //正常压缩下载逻辑
         toCompressImg(paths);
-
     }
 
 
