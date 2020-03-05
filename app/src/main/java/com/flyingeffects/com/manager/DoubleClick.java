@@ -42,7 +42,7 @@ public class DoubleClick {
     public boolean isFastZDYDoubleClick(int duration) {
         long time = System.currentTimeMillis();
         long timeD = time - lastZDYClickTime;
-        if (0 < timeD && timeD < 500) {
+        if (0 < timeD && timeD < duration) {
             return true;
         }
         lastZDYClickTime = time;

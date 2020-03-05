@@ -155,7 +155,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 }
                 break;
             case R.id.tv_make:
-                if(!DoubleClick.getInstance().isFastZDYDoubleClick(2000)){
+                if(!DoubleClick.getInstance().isFastZDYDoubleClick(3000)){
                     if (BaseConstans.hasLogin()) {
                         if (!TextUtils.isEmpty(fromTo) && fromTo.equals("search")) {
                             statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "4_search_make", templateItem.getTitle());
