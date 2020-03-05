@@ -1,7 +1,6 @@
 package com.shixing.sxve.ui.model;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -15,6 +14,7 @@ import android.util.Log;
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.util.AffineTransform;
 import com.shixing.sxve.ui.util.Size;
+import com.shixing.sxve.ui.view.VEBitmapFactory;
 import com.shixing.sxvideoengine.SXCompositor;
 import com.shixing.sxvideoengine.SXRenderListener;
 
@@ -22,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.UUID;
 
 public class MediaUiModel2 extends MediaUiModel {
@@ -210,11 +211,9 @@ public class MediaUiModel2 extends MediaUiModel {
 
     public void setImageAsset(String path) {
         mIsVideo = false;
-        mBitmap = BitmapFactory.decodeFile(path);
+        mBitmap = getSmallBmpFromFile(path, size.getWidth(), size.getHeight());
         mInitPaint.setAlpha(255);
-
         initPosition();
-
         if (mGroupModel != null) {
             mGroupModel.notifyRedraw();
         }
@@ -252,4 +251,19 @@ public class MediaUiModel2 extends MediaUiModel {
         mMatrix.set(mInitMatrix);
         mMatrix.preConcat(matrix);
     }
+
+    private Bitmap getSmallBmpFromFile(String filePath, int targetW, int targetH) {
+        try {
+            File file = new File(filePath);
+            if (file.exists()) {
+                FileInputStream fis = new FileInputStream(filePath);
+                return VEBitmapFactory.decodeFileDescriptor(fis.getFD(), targetW, targetH);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
 }

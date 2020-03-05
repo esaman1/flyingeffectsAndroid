@@ -260,7 +260,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         requestSms(editTextUsername.getText().toString());
 
-        startTimer();
+
     }
 
 
@@ -277,6 +277,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
             @Override
             protected void _onNext(Object data) {
+                startTimer();
                 ToastUtil.showToast("发送成功");
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("login", "str=" + str);
