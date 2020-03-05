@@ -97,7 +97,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     nextStep(true);
                     tv_login.setEnabled(true);
                     endTimer();
-                    hasInputPassword=true;
                 } else {
                     hasInputPassword = false;
                     nextStep(false);
@@ -115,7 +114,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 nextStep(true);
                 tv_login.setEnabled(true);
                 endTimer();
-                hasInputPassword=true;
             }
         });
 
@@ -137,6 +135,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
             @Override
             public void afterTextChanged(Editable editable) {
+                tv_login.setEnabled(true);
+
 
             }
         });
@@ -151,6 +151,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             tv_login.setBackground(getResources().getDrawable(R.drawable.login_button));
             nowProgressType = 1;
         } else {
+
             tv_login.setText("获得验证码");
             nowProgressType = 0;
         }
@@ -207,7 +208,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         editTextPassword.setHint(new SpannedString(ss2));
 
 
-
     }
 
 
@@ -252,6 +252,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             return;
         }
         requestSms(editTextUsername.getText().toString());
+
         startTimer();
     }
 
@@ -321,9 +322,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             switch (msg.what) {
                 case 1:
                     total_Time = total_Time - 1;
-                    if (!hasInputPassword) {
-                        tv_login.setText((String.format(getResources().getString(R.string.remainTime), total_Time)));
-                    }
+                    tv_login.setText((String.format(getResources().getString(R.string.remainTime), total_Time)));
                     if (total_Time == 0) {
                         total_Time = 60;
                         endTimer();
@@ -338,10 +337,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      */
     private void startTimer() {
         isCanSendMsg = false;
-        if (!hasInputPassword) {
-            tv_login.setBackground(getResources().getDrawable(R.drawable.login_button_forbidden));
-        }
-
+        tv_login.setEnabled(false);
+        tv_login.setBackground(getResources().getDrawable(R.drawable.login_button_forbidden));
         if (timer != null) {
             timer.purge();
             timer.cancel();
@@ -375,7 +372,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             task.cancel();
             task = null;
         }
-        if(nowProgressType==0){
+        if (nowProgressType == 0) {
             tv_login.setText("获取短信验证码");
         }
 
