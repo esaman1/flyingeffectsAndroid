@@ -359,7 +359,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             isPlaying = false;
             showPreview(false);
             ivPlayButton.setImageResource(R.mipmap.iv_play);
-            mPlayer.pause();
+            if(mPlayer!=null){
+                mPlayer.pause();
+            }
         });
         recyclerView.setAdapter(templateThumbAdapter);
     }

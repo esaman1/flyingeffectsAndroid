@@ -170,7 +170,7 @@ public class PreviewMvpModel {
         updateFileUtils.uploadFile(listFile, "http://flying.nineton.cn/api/picture/picturesHumanList?filenum=" + pathNum, new updateFileUtils.HttpCallbackListener() {
             @Override
             public void onFinish(int code, String str) {
-                LogUtil.d("OOM", "uploadFileCallBack=" + str);
+             //   LogUtil.d("OOM", "uploadFileCallBack=" + str);
                 WaitingDialog.closePragressDialog();
                 Gson gson = new Gson();
                 DownImg downIng = gson.fromJson(str, DownImg.class);

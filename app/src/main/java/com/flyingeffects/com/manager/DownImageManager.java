@@ -95,9 +95,8 @@ public class DownImageManager {
                 hasDownList.add(file.getPath());
                 if (hasDownList.size() == listForMatting.size()) {
                   callback.isSuccess(hasDownList);
-
                 } else {
-                    downImage(listForMatting.get(downSuccessNum));
+                    downImageForByte(listForMatting.get(downSuccessNum));
                 }
             }
         });

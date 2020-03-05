@@ -48,7 +48,7 @@ public class updateFileUtils {
                         sb.append(LINE_END);
                         sb.append("Content-Disposition: form-data; name=\"file"+ num + "\"; filename=\"" + files.get(i).getName() + "\"" + LINE_END);
                         //sb.append("Content-Type: application/octet-stream; charset="+ "UTF-8" +LINE_END);
-                        LogUtil.d("OOM",sb.toString());
+//                        LogUtil.d("OOM",sb.toString());
                         sb.append(LINE_END);
                         dos.write(sb.toString().getBytes());
                         InputStream is = new FileInputStream(files.get(i));
