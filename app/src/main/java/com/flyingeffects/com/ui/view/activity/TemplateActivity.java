@@ -109,6 +109,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private boolean isPlaying = false;
 
+    private int nowChoosePosition;
+    private int lastChoosePosition;
+
 
     @Override
     protected int getLayoutId() {
@@ -328,17 +331,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     public void selectGroup(final int index) {
         if (mTemplateViews != null && mTemplateViews.size() > 0) {
-
             try {
                 TemplateView nowChooseTemplateView = mTemplateViews.get(index);
                 nowChooseTemplateView.setVisibility(View.VISIBLE);
-//            nowChooseTemplateView.isViewVisible(true);
                 nowChooseTemplateView.invalidate();
                 rx.Observable.from(mTemplateViews).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(templateView -> {
-                    LogUtil.d("OOM", "selectGroup");
                     if (templateView != nowChooseTemplateView && templateView.getVisibility() != View.GONE) {
                         templateView.setVisibility(View.GONE);
-//                    templateView.isViewVisible(false);
                     }
                 });
             } catch (Exception e) {
@@ -356,14 +355,31 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         recyclerView.setLayoutManager(layoutManager);
         templateThumbAdapter = new TemplateThumbAdapter(R.layout.item_group_thumb, listItem, TemplateActivity.this);
         templateThumbAdapter.setOnItemClickListener((adapter, view, position) -> {
+            nowChoosePosition=position;
             isPlaying = false;
             showPreview(false);
             ivPlayButton.setImageResource(R.mipmap.iv_play);
             if(mPlayer!=null){
                 mPlayer.pause();
             }
+            if(nowChoosePosition!=lastChoosePosition){
+                selectGroup(position);
+                modificationThumbData(lastChoosePosition,position);
+            }
+            lastChoosePosition=nowChoosePosition;
         });
         recyclerView.setAdapter(templateThumbAdapter);
+    }
+
+
+    private void modificationThumbData(int lastPosition, int position) {
+        TemplateThumbItem item1 = listItem.get(position);
+        item1.setIsCheck(0);
+        listItem.set(position, item1);
+        TemplateThumbItem item2 = listItem.get(lastPosition);
+        item2.setIsCheck(1);
+        listItem.set(lastPosition, item2);
+        templateThumbAdapter.notifyDataSetChanged();
     }
 
 

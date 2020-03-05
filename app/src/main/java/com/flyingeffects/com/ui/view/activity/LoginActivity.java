@@ -33,6 +33,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.NetworkUtils;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 
@@ -53,19 +54,13 @@ import rx.Observable;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
-
     @BindView(R.id.password)
     EditText editTextPassword;
     @BindView(R.id.username)
     EditText editTextUsername;
-
     private boolean isCanSendMsg = true;
-
-    private boolean hasInputPassword = false;
-
     @BindView(R.id.tv_login)
     TextView tv_login;
-
     @BindView(R.id.tv_xy)
     TextView tv_xy;
 
@@ -93,12 +88,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 String strPassword = editTextPassword.getText().toString().trim();
                 if (!strPassword.equals("")) {
-                    hasInputPassword = true;
                     nextStep(true);
                     tv_login.setEnabled(true);
                     endTimer();
                 } else {
-                    hasInputPassword = false;
                     nextStep(false);
                 }
             }
@@ -110,7 +103,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
             @Override
             public void afterTextChanged(Editable editable) {
-                hasInputPassword = true;
                 nextStep(true);
                 tv_login.setEnabled(true);
                 endTimer();
@@ -125,7 +117,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 } else {
                     nextStep(true);
                 }
-
             }
 
             @Override
@@ -136,8 +127,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             @Override
             public void afterTextChanged(Editable editable) {
                 tv_login.setEnabled(true);
-
-
             }
         });
 
@@ -151,7 +140,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             tv_login.setBackground(getResources().getDrawable(R.drawable.login_button));
             nowProgressType = 1;
         } else {
-
             tv_login.setText("获得验证码");
             nowProgressType = 0;
         }
@@ -165,9 +153,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         ClickableSpan clickableSpanOne = new ClickableSpan() {
             @Override
             public void onClick(@NotNull View view) {
-                Intent intent = new Intent(LoginActivity.this, webViewActivity.class);
-                intent.putExtra("webUrl", BaseConstans.PROTOCOL);
-                startActivity(intent);
+                if (NetworkUtils.isNetworkAvailable(LoginActivity.this)) {
+                    Intent intent = new Intent(LoginActivity.this, webViewActivity.class);
+                    intent.putExtra("webUrl", BaseConstans.PROTOCOL);
+                    startActivity(intent);
+                } else {
+                    ToastUtil.showToast("网络连接失败！");
+                }
             }
 
             @Override
@@ -181,9 +173,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         ClickableSpan clickableSpanTwo = new ClickableSpan() {
             @Override
             public void onClick(@NotNull View view) {
-                Intent intent = new Intent(LoginActivity.this, webViewActivity.class);
-                intent.putExtra("webUrl", BaseConstans.PRIVACYPOLICY);
-                startActivity(intent);
+                if (NetworkUtils.isNetworkAvailable(LoginActivity.this)) {
+                    Intent intent = new Intent(LoginActivity.this, webViewActivity.class);
+                    intent.putExtra("webUrl", BaseConstans.PRIVACYPOLICY);
+                    startActivity(intent);
+                } else {
+                    ToastUtil.showToast("网络连接失败！");
+                }
             }
 
             @Override
@@ -241,6 +237,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     requestLogin();
                 }
                 break;
+
+                default:
+                    break;
         }
 
     }

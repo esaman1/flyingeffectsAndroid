@@ -142,7 +142,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     }
 
 
-    @OnClick({R.id.iv_zan, R.id.tv_make,R.id.iv_video_play})
+    @OnClick({R.id.iv_zan, R.id.tv_make,R.id.iv_video_play,R.id.iv_top_back})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_zan:
@@ -166,6 +166,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                     startActivity(intent);
                 }
 
+                break;
+
+            case R.id.iv_top_back:
+                PreviewActivity.this.finish();
                 break;
 
             case R.id.iv_video_play:
