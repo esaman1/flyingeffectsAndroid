@@ -147,6 +147,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         switch (view.getId()) {
             case R.id.iv_zan:
                 if (BaseConstans.hasLogin()) {
+                    statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "1_mb_keep", templateItem.getTitle());
                     Presenter.collectTemplate(templateItem.getId());
                 } else {
                     ToastUtil.showToast(getString(R.string.have_not_login));
@@ -157,6 +158,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                     if (!TextUtils.isEmpty(fromTo) && fromTo.equals("search")) {
                         statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "4_search_make", templateItem.getTitle());
                     }
+                    statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "mb_make", templateItem.getTitle());
                     videoPlayer.onVideoPause();
                     VideoPlaybackCompleted(true);
                     Presenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
@@ -284,9 +286,12 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void collectionResult() {
-        if (nowCollectType == 0) {
+        if (nowCollectType == 0)
+        {
+            statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "1_mb_keep_cancel", templateItem.getTitle());
             nowCollectType = 1;
         } else {
+            statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "1_mb_keep", templateItem.getTitle());
             nowCollectType = 0;
         }
         showCollectState(nowCollectType == 0);

@@ -11,15 +11,19 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.main_recycler_adapter;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.HomeItemMvpView;
 import com.flyingeffects.com.ui.presenter.home_fag_itemMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
+import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+
+import static cn.nt.lib.analytics.NTAnalytics.startStatistics;
 
 
 public class home_item_fag extends BaseFragment implements HomeItemMvpView, main_recycler_adapter.showOnitemClick ,View.OnClickListener {
@@ -66,6 +70,7 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, main
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
+            statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
             Intent intent =new Intent(getActivity(), PreviewActivity.class);
             intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
             startActivity(intent);
@@ -119,13 +124,61 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, main
 
     }
 
+    private boolean isFirstData = true;
     @Override
     public void isShowData(ArrayList<new_fag_template_item> listData) {
         if (getActivity() != null) {
             allData.clear();
             allData.addAll(listData);
             adapter.notifyDataSetChanged();
+            if (isFirstData) {
+                BackgroundExecutor.execute(() -> {
+                    startStatistics();
+                    isFirstData = false;
+                });
+            }
         }
+    }
+
+    private void startStatistics() {
+        int[] mFirstVisibleItems = null;
+        int[] mLastVisibleItems = null;
+        mFirstVisibleItems = layoutManager.findFirstVisibleItemPositions(mFirstVisibleItems);
+        mLastVisibleItems = layoutManager.findLastVisibleItemPositions(mLastVisibleItems);
+        statisticsCount(mFirstVisibleItems, mLastVisibleItems);
+    }
+    private ArrayList<Integer> lastData = new ArrayList<>();
+    private ArrayList<Integer> nowData = new ArrayList<>();
+
+    private void statisticsCount(int[] data, int[] data2) {
+        int end;
+        int start = data[0];
+        if (data2.length > 0) {
+            end = data2[1];
+        } else {
+            end = data2[0];
+        }
+        if (start != -1 && end != -1) {
+            nowData.clear();
+            for (int i = start; i <= end; i++) {
+                nowData.add(i);
+                if (!hasIncludeNum(i)) {
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_screen", allData.get(i).getTitle());
+                }
+            }
+            lastData.clear();
+            lastData.addAll(nowData);
+        }
+    }
+
+
+    private boolean hasIncludeNum(int num) {
+        for (int i = 0; i < lastData.size(); i++) {
+            if (lastData.get(i) == num) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

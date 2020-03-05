@@ -153,6 +153,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             @Override
             public void onCheckedChanged(SwitchButton view, boolean isChecked) {
                 if (!isChecked) {
+                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutopen");
                     //修改图为裁剪后的素材
                     presenter.ChangeMaterial(originalPath, defaultNum);
                 } else {
