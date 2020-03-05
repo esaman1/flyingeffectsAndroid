@@ -62,10 +62,7 @@ public class frag_user_center extends BaseFragment {
 
     @Override
     protected void initView() {
-        Glide.with(this)
-                .load(R.mipmap.head)
-                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                .into(iv_head);
+
 
         iv_about.setOnClickListener(view -> {
             statisticsEventAffair.getInstance().setFlag(getActivity(),"3_help");
@@ -86,6 +83,10 @@ public class frag_user_center extends BaseFragment {
 
     @Override
     public void onResume() {
+        Glide.with(this)
+                .load(R.mipmap.head)
+                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                .into(iv_head);
         if (getActivity() != null) {
             //未登陆
             if (BaseConstans.hasLogin()) {
@@ -94,7 +95,6 @@ public class frag_user_center extends BaseFragment {
                 tv_id.setText("未登录");
             }
         }
-
         super.onResume();
     }
 

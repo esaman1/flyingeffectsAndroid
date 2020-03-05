@@ -4,34 +4,40 @@
     android:layout_height="match_parent">
 
 
-    <com.flyingeffects.com.view.EmptyControlVideo
-        android:id="@+id/video_player"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
 
     <RelativeLayout
-        android:id="@+id/relative_show_cover"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="invisible">
+        android:layout_height="match_parent">
+        <com.flyingeffects.com.view.EmptyControlVideo
+            android:id="@+id/video_player"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <ImageView
             android:id="@+id/iv_show_cover"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="gone"
             android:background="#1D1D1D"
             android:contentDescription="@string/app_name" />
 
-
         <ImageView
-            android:id="@+id/iv_play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:id="@+id/iv_video_play"
+            android:layout_width="50dp"
+            android:visibility="gone"
+            android:layout_centerInParent="true"
+            android:src="@mipmap/video_play"
+            android:layout_height="50dp"/>
+
+
+
+
 
 
     </RelativeLayout>
+
+
+
 
 
     <ImageView

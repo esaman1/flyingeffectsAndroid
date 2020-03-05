@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -56,6 +55,9 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @BindView(R.id.iv_writer)
     ImageView iv_writer;
 
+    @BindView(R.id.iv_video_play)
+    ImageView iv_video_play;
+
     @BindView(R.id.tv_writer_name)
     TextView tv_writer_name;
 
@@ -65,21 +67,16 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @BindView(R.id.tv_describe)
     TextView tv_describe;
 
-    @BindView(R.id.relative_show_cover)
-    RelativeLayout relative_show_cover;
-
     @BindView(R.id.iv_show_cover)
     ImageView iv_show_cover;
 
-    @BindView(R.id.iv_play)
-    ImageView iv_play;
 
     PreviewMvpPresenter Presenter;
 
     new_fag_template_item templateItem;
 
 
-    private List<String>originalImagePath=new ArrayList<>();
+    private List<String> originalImagePath = new ArrayList<>();
 
     /**
      * 模板下载地址
@@ -113,11 +110,11 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     protected void initView() {
         templateItem = (new_fag_template_item) getIntent().getSerializableExtra("person");
-        fromTo=getIntent().getStringExtra("fromTo");
-        defaultnum=templateItem.getDefaultnum();
-        is_picout=templateItem.getIs_picout();
-        nowCollectType=templateItem.getIs_collection();
-        if(nowCollectType==1){
+        fromTo = getIntent().getStringExtra("fromTo");
+        defaultnum = templateItem.getDefaultnum();
+        is_picout = templateItem.getIs_picout();
+        nowCollectType = templateItem.getIs_collection();
+        if (nowCollectType == 1) {
             iv_zan.setImageResource(R.mipmap.zan_selected);
         }
         Presenter = new PreviewMvpPresenter(this, this);
@@ -145,26 +142,36 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     }
 
 
-    @OnClick({R.id.iv_zan, R.id.tv_make, R.id.iv_play})
+    @OnClick({R.id.iv_zan, R.id.tv_make,R.id.iv_video_play})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_zan:
-               if( BaseConstans.hasLogin()){
-                   Presenter.collectTemplate(templateItem.getId());
-               }else{
-                   ToastUtil.showToast(getString(R.string.have_not_login));
-               }
+                if (BaseConstans.hasLogin()) {
+                    Presenter.collectTemplate(templateItem.getId());
+                } else {
+                    ToastUtil.showToast(getString(R.string.have_not_login));
+                }
                 break;
             case R.id.tv_make:
-                if(!TextUtils.isEmpty(fromTo)&&fromTo.equals("search")){
-                    statisticsEventAffair.getInstance().setFlag(PreviewActivity.this,"4_search_make",templateItem.getTitle());
+                if (BaseConstans.hasLogin()) {
+                    if (!TextUtils.isEmpty(fromTo) && fromTo.equals("search")) {
+                        statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "4_search_make", templateItem.getTitle());
+                    }
+                    videoPlayer.onVideoPause();
+                    VideoPlaybackCompleted(true);
+                    Presenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
+                } else {
+                    Intent intent = new Intent(PreviewActivity.this, LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
                 }
-                videoPlayer.onVideoPause();
-                VideoPlaybackCompleted(true);
-                Presenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
+
                 break;
-            case R.id.iv_play:
-                VideoPlaybackCompleted(false);
+
+            case R.id.iv_video_play:
+                videoPlayer.setVisibility(View.VISIBLE);
+                iv_video_play.setVisibility(View.GONE);
+                iv_show_cover.setVisibility(View.GONE);
                 videoPlayer.startPlayLogic();
                 break;
 
@@ -176,8 +183,12 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     }
 
 
+
+
     @Override
     protected void onPause() {
+        videoPlayer.onVideoPause();
+        iv_video_play.setVisibility(View.VISIBLE);
         super.onPause();
     }
 
@@ -209,11 +220,11 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         if (!isCancel) {
             if (SELECTALBUM == 0) {
                 //如果不需要抠图
-                if(is_picout==0){
-                    intoTemplateActivity(paths,TemplateFilePath);
-                    originalImagePath=null;
-                }else{//需要抠图
-                    originalImagePath=paths;
+                if (is_picout == 0) {
+                    intoTemplateActivity(paths, TemplateFilePath);
+                    originalImagePath = null;
+                } else {//需要抠图
+                    originalImagePath = paths;
                     Presenter.CompressImg(paths);
                 }
 
@@ -226,9 +237,9 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         Intent intent = new Intent(this, TemplateActivity.class);
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("paths", (ArrayList<String>) paths);
-        bundle.putInt("isPicNum",defaultnum);
-        bundle.putString("fromTo",fromTo);
-        bundle.putString("templateName",templateItem.getTitle());
+        bundle.putInt("isPicNum", defaultnum);
+        bundle.putString("fromTo", fromTo);
+        bundle.putString("templateName", templateItem.getTitle());
         bundle.putStringArrayList("originalPath", (ArrayList<String>) originalImagePath);
         bundle.putString("templateFilePath", templateFilePath);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -264,22 +275,22 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void collectionResult() {
-        if(nowCollectType==0){
-            nowCollectType=1;
-        }else{
-            nowCollectType=0;
+        if (nowCollectType == 0) {
+            nowCollectType = 1;
+        } else {
+            nowCollectType = 0;
         }
-        showCollectState(nowCollectType==0);
+        showCollectState(nowCollectType == 0);
     }
 
 
-    private void showCollectState(boolean unSelected){
-        if(unSelected){
+    private void showCollectState(boolean unSelected) {
+        if (unSelected) {
             iv_zan.setImageResource(R.mipmap.zan);
-            nowCollectType=0;
-        }else{
+            nowCollectType = 0;
+        } else {
             iv_zan.setImageResource(R.mipmap.zan_selected);
-            nowCollectType=1;
+            nowCollectType = 1;
         }
     }
 
@@ -289,17 +300,19 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
      */
     @Override
     public void getTemplateLInfo(new_fag_template_item item) {
-        showCollectState(item.getIs_collection()==0);
+        showCollectState(item.getIs_collection() == 0);
     }
 
 
     private void VideoPlaybackCompleted(boolean isComplete) {
         if (isComplete) {
-            relative_show_cover.setVisibility(View.VISIBLE);
+            iv_video_play.setVisibility(View.VISIBLE);
+            iv_show_cover.setVisibility(View.VISIBLE);
             videoPlayer.setVisibility(View.INVISIBLE);
         } else {
-            relative_show_cover.setVisibility(View.INVISIBLE);
+            iv_show_cover.setVisibility(View.INVISIBLE);
             videoPlayer.setVisibility(View.VISIBLE);
+            iv_video_play.setVisibility(View.GONE);
         }
     }
 
