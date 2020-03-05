@@ -30,4 +30,25 @@ public class DoubleClick {
 
 
 
+
+
+
+    private long lastZDYClickTime;
+
+    /***
+     *user: 张sir ,@time: 2017/8/14
+     *description:判断事件出发时间间隔是否超过预定值,防重复点击
+     */
+    public boolean isFastZDYDoubleClick(int duration) {
+        long time = System.currentTimeMillis();
+        long timeD = time - lastZDYClickTime;
+        if (0 < timeD && timeD < 500) {
+            return true;
+        }
+        lastZDYClickTime = time;
+        return false;
+    }
+
+
+
 }

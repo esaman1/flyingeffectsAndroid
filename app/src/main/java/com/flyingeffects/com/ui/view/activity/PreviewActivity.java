@@ -17,6 +17,7 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.DataCleanManager;
+import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
@@ -154,20 +155,21 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 }
                 break;
             case R.id.tv_make:
-                if (BaseConstans.hasLogin()) {
-                    if (!TextUtils.isEmpty(fromTo) && fromTo.equals("search")) {
-                        statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "4_search_make", templateItem.getTitle());
+                if(!DoubleClick.getInstance().isFastZDYDoubleClick(2000)){
+                    if (BaseConstans.hasLogin()) {
+                        if (!TextUtils.isEmpty(fromTo) && fromTo.equals("search")) {
+                            statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "4_search_make", templateItem.getTitle());
+                        }
+                        statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "mb_make", templateItem.getTitle());
+                        videoPlayer.onVideoPause();
+                        VideoPlaybackCompleted(true);
+                        Presenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
+                    } else {
+                        Intent intent = new Intent(PreviewActivity.this, LoginActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(intent);
                     }
-                    statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "mb_make", templateItem.getTitle());
-                    videoPlayer.onVideoPause();
-                    VideoPlaybackCompleted(true);
-                    Presenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
-                } else {
-                    Intent intent = new Intent(PreviewActivity.this, LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(intent);
                 }
-
                 break;
 
             case R.id.iv_top_back:
