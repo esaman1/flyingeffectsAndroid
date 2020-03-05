@@ -88,9 +88,10 @@ public class MediaUiModel2 extends MediaUiModel {
         mPath.transform(mMatrix);
 
 
-        //测试
-//        paintTest=new Paint();
-//        paintTest.setColor(Color.parseColor("#FF00000"));
+        //绘制边框
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStrokeWidth(10);
+        mPaint.setColor(Color.parseColor("#FF0000"));
     }
 
     @Override
@@ -106,12 +107,14 @@ public class MediaUiModel2 extends MediaUiModel {
 
         if (mBitmap != null) {
             if (activeLayer != index) {
+                //静态的时候
                 canvas.save();
                 canvas.clipPath(mPath);
-//                canvas.drawPath(mPath,paintTest);
                 canvas.drawBitmap(mBitmap, mMatrix, mPaint);
                 canvas.restore();
             } else {
+                //滑动的时候
+                canvas.drawPath(mPath,mPaint);
                 canvas.drawBitmap(mBitmap, mMatrix, mPaint);
             }
         }
