@@ -115,7 +115,7 @@ public class frag_search extends BaseFragment {
                     ll_showResult.setVisibility(View.GONE);
                     iv_delete.setVisibility(View.GONE);
                 } else {
-                    ll_showResult.setVisibility(View.VISIBLE);
+
                     iv_delete.setVisibility(View.VISIBLE);
                 }
                 ed_text.setSelection(s.length());

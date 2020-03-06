@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.model;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
@@ -243,7 +244,7 @@ public class PreviewMvpModel {
                 callback.collectionResult();
 
             }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
 
     }
 
@@ -255,6 +256,7 @@ public class PreviewMvpModel {
             ToastUtil.showToast("网络连接失败！");
         }
     }
+
 
 
     private File mFolder;
@@ -334,8 +336,7 @@ public class PreviewMvpModel {
 
 
     private void intoTemplateActivity(String filePath) {
-        callback.getTemplateFileSuccess(filePath);
-
+            callback.getTemplateFileSuccess(filePath);
     }
 
 

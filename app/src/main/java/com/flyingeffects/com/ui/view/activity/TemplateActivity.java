@@ -3,12 +3,16 @@ package com.flyingeffects.com.ui.view.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -221,6 +225,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
+
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -243,18 +249,41 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private void showPreview(boolean isPreview) {
         if (isPreview) {
-            mContainer.setVisibility(View.INVISIBLE);
-            if (isRealtime) {
-                real_time_preview.setVisibility(View.VISIBLE);
-            } else {
-                videoPlayer.setVisibility(View.VISIBLE);
-            }
+                if (isRealtime) {
+                    real_time_preview.setVisibility(View.VISIBLE);
+                } else {
+                    videoPlayer.setVisibility(View.VISIBLE);
+                }
+            mContainer.setVisibility(View.GONE);
+            mContainerAddAnim();
         } else {
-
             videoPlayer.setVisibility(View.GONE);
-            real_time_preview.setVisibility(View.GONE);
+            real_time_preview.setVisibility(View.INVISIBLE);
             mContainer.setVisibility(View.VISIBLE);
         }
+    }
+
+
+    private void mContainerAddAnim(){
+        AlphaAnimation hideAnim = new AlphaAnimation(1,0);
+        hideAnim.setDuration(1000);
+        mContainer.startAnimation(hideAnim);
+        hideAnim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mContainer.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+    });
     }
 
 
@@ -427,6 +456,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @Override
     public void onDestroy() {
         super.onDestroy();
+        presenter.onDestroy();
         videoPlayer.release();
     }
 

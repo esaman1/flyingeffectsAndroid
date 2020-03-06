@@ -29,7 +29,7 @@ public class WaitingDialog {
         if (loadingDialog != null) {
             WaitingDialog.closePragressDialog();
         }
-        loadingDialog = createLoadingDialog(context,"");
+        loadingDialog = createLoadingDialog(context,"",true);
         if (loadingDialog != null) {
             loadingDialog.show();
         }
@@ -40,13 +40,13 @@ public class WaitingDialog {
         if (loadingDialog != null) {
             WaitingDialog.closePragressDialog();
         }
-        loadingDialog = createLoadingDialog(context,alert);
+        loadingDialog = createLoadingDialog(context,alert,false);
         if (loadingDialog != null) {
             loadingDialog.show();
         }
     }
 
-    private static Dialog createLoadingDialog(Context context,String alert) {
+    private static Dialog createLoadingDialog(Context context,String alert,boolean cancelable) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View v = inflater.inflate(R.layout.waitdialog, null, false);// 得到加载view
         if(!TextUtils.isEmpty(alert)){
@@ -58,6 +58,7 @@ public class WaitingDialog {
         loadingDialog.setContentView(layout, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT));// 设置布局
         loadingDialog.setCanceledOnTouchOutside(false);
+        loadingDialog.setCancelable(cancelable);
         return loadingDialog;
     }
 

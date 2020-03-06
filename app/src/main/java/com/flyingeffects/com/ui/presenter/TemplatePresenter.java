@@ -23,6 +23,11 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     }
 
 
+    public void onDestroy(){
+        home_model.onDestroy();
+    }
+
+
     public void getReplaceableFilePath(){
         home_model.getReplaceableFilePath();
     }

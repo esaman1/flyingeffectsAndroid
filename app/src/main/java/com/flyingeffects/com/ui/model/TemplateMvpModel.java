@@ -41,16 +41,21 @@ public class TemplateMvpModel {
     private Context context;
     private TemplateModel mTemplateModel = null;
     private File keepUunCatchPath;
-
+    private boolean isOnDestroy;
     public TemplateMvpModel(Context context, TemplateMvpCallback callback) {
         this.context = context;
         this.callback = callback;
         keepUunCatchPath = context.getExternalFilesDir("runCatch/");
+        isOnDestroy=false;
     }
 
 
      public void getReplaceableFilePath(){
         callback.returnReplaceableFilePath(mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath())));
+    }
+
+    public void onDestroy(){
+        isOnDestroy=true;
     }
 
 
@@ -129,9 +134,8 @@ public class TemplateMvpModel {
 
         if (isPreview) {
             callback.toPreview(outputPath);
-
         } else {
-            if (isSucceed) {
+            if (isSucceed&&!isOnDestroy) {
                 albumBroadcast(outputPath);
                 showDialog(outputPath);
             }

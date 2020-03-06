@@ -43,6 +43,7 @@ import rx.functions.Action1;
  * 开始制作
  */
 public class PreviewActivity extends BaseActivity implements AlbumChooseCallback, PreviewMvpView {
+    private boolean ondestroy;
 
     @BindView(R.id.video_player)
     EmptyControlVideo videoPlayer;
@@ -110,6 +111,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     protected void initView() {
+        ondestroy=false;
         templateItem = (new_fag_template_item) getIntent().getSerializableExtra("person");
         fromTo = getIntent().getStringExtra("fromTo");
         defaultnum = templateItem.getDefaultnum();
@@ -206,9 +208,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
+        ondestroy=true;
         Presenter.onDestroy();
         videoPlayer.release();
+        super.onDestroy();
     }
 
 
@@ -223,7 +226,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-        if (!isCancel) {
+        if (!isCancel&&!ondestroy) {
             if (SELECTALBUM == 0) {
                 //如果不需要抠图
                 if (is_picout == 0) {
@@ -278,9 +281,12 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void getTemplateFileSuccess(String TemplateFilePath) {
-        //file 文件下载成功
-        this.TemplateFilePath = TemplateFilePath;
-        AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");
+        if(!ondestroy){
+            //file 文件下载成功
+            this.TemplateFilePath = TemplateFilePath;
+            AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");
+        }
+
     }
 
     @Override
