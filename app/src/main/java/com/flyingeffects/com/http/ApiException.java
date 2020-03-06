@@ -56,8 +56,8 @@ public class ApiException extends RuntimeException{
             case 201:
                 message = error;
                 break;
-            case 0:
-                intoLoginAct(actTag);
+            case -1:
+                intoLoginAct();
                 message =error;  //用戶被刪除
                 break;
 
@@ -70,7 +70,10 @@ public class ApiException extends RuntimeException{
 
 
 
-    private static void intoLoginAct(String actTag){
+    private static void intoLoginAct(){
+        Intent toLogin=new Intent(BaseApplication.getInstance(),LoginActivity.class);
+        toLogin.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        BaseApplication.getInstance().startActivity(toLogin);
 
     }
 

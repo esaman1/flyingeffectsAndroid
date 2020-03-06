@@ -83,6 +83,7 @@ public class TemplateModel {
         }
 
 
+        //一个GroupModel 里面可能包含多个同组不同index
         for (int i = 1; i <= groups.size(); i++) { //group index从1开始
             GroupModel groupModel = groups.get(i);
             SparseArray<AssetModel> groupAssets = groupModel.getAssets();

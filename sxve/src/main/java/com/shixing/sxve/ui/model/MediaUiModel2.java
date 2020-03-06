@@ -91,7 +91,7 @@ public class MediaUiModel2 extends MediaUiModel {
 
         //绘制边框
         mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeWidth(10);
+        mPaint.setStrokeWidth(6);
         mPaint.setColor(Color.parseColor("#FF0000"));
     }
 
@@ -102,18 +102,21 @@ public class MediaUiModel2 extends MediaUiModel {
             canvas.drawBitmap(b, 0, 0, null);
         }
 
-        if (activeLayer >= 0 && activeLayer < index) {
-            mPaint = mTransparentPaint;
-        }
+//        隐藏的这段代码是控制同组里面不同位置，滑动前面一个，后面一个就透明
+//        if (activeLayer >= 0 && activeLayer < index) {
+//            mPaint = mTransparentPaint;
+//        }
 
         if (mBitmap != null) {
             if (activeLayer != index) {
+                Log.d("OOM","activeLayer != index");
                 //静态的时候
                 canvas.save();
                 canvas.clipPath(mPath);
                 canvas.drawBitmap(mBitmap, mMatrix, mPaint);
                 canvas.restore();
             } else {
+                Log.d("OOM","activeLayer == index");
                 //滑动的时候
                 canvas.drawPath(mPath,mPaint);
                 canvas.drawBitmap(mBitmap, mMatrix, mPaint);

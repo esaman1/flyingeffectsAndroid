@@ -134,7 +134,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             originalPath = bundle.getStringArrayList("originalPath");
             templateName = bundle.getString("templateName");
         }
-        if (originalPath == null) {
+        if (originalPath == null||originalPath.size()==0) {
             //不需要抠图
             findViewById(R.id.ll_Matting).setVisibility(View.GONE);
         }
@@ -212,7 +212,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             ivPlayButton.setImageResource(R.mipmap.pause);
             if (real_time_preview.getVisibility() == View.VISIBLE) {
                 mPlayer.start();
-
             } else {
                 switchTemplate(mFolder.getPath(), paths);
             }
@@ -226,11 +225,18 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     protected void onPause() {
         super.onPause();
         videoPlayer.onVideoPause();
+        showPreview(false);
+        isPlaying=false;
+        ivPlayButton.setImageResource(R.mipmap.iv_play);
+        if(mPlayer!=null){
+            mPlayer.pause();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
         videoPlayer.onVideoResume();
     }
 
@@ -244,6 +250,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 videoPlayer.setVisibility(View.VISIBLE);
             }
         } else {
+
             videoPlayer.setVisibility(View.GONE);
             real_time_preview.setVisibility(View.GONE);
             mContainer.setVisibility(View.VISIBLE);
@@ -427,7 +434,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     SeekBar.OnSeekBarChangeListener seekBarListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int nowProgress, boolean fromUser) {
-            if (fromUser) {
+            if (fromUser&&mPlayer!=null) {
                 mPlayer.seek(nowProgress);
             }
         }

@@ -93,6 +93,8 @@ public class updateFileUtils {
                         String s = new String(enBytes);
                         listener.onFinish(res,s);
 
+                    }else{
+                        listener.onFinish(res,"");
                     }
 
                 } catch (MalformedURLException e) {
