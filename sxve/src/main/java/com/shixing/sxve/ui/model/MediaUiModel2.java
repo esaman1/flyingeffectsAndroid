@@ -242,17 +242,18 @@ public class MediaUiModel2 extends MediaUiModel {
     }
 
     private void initPosition() {
-        float rw = mClipWidth;
-        float rh = mClipHeight;
-        int bw = mBitmap.getWidth();
-        int bh = mBitmap.getHeight();
-
-        float scale = Math.max(rw / bw, rh / bh);
-        Matrix matrix = new Matrix();
-        matrix.postTranslate((rw - bw * scale) / 2, (rh - bh * scale) / 2);
-        matrix.preScale(scale, scale);
-        mMatrix.set(mInitMatrix);
-        mMatrix.preConcat(matrix);
+        if(mBitmap!=null){
+            float rw = mClipWidth;
+            float rh = mClipHeight;
+            int bw = mBitmap.getWidth();
+            int bh = mBitmap.getHeight();
+            float scale = Math.max(rw / bw, rh / bh);
+            Matrix matrix = new Matrix();
+            matrix.postTranslate((rw - bw * scale) / 2, (rh - bh * scale) / 2);
+            matrix.preScale(scale, scale);
+            mMatrix.set(mInitMatrix);
+            mMatrix.preConcat(matrix);
+        }
     }
 
     private Bitmap getSmallBmpFromFile(String filePath, int targetW, int targetH) {

@@ -294,7 +294,10 @@ public class HomeMainActivity extends FragmentActivity {
 
     private void exitPressAgain() {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
-            Toast.makeText(ThisMain, "在按一次退成程序", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ThisMain, "再点一次退出程序" +
+                    "" +
+                    "" +
+                    "", Toast.LENGTH_SHORT).show();
             exitTime = System.currentTimeMillis();
         } else {
             finish();
