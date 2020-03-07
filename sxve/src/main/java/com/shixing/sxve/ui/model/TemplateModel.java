@@ -246,4 +246,8 @@ public class TemplateModel {
     }
 
 
+    public List<AssetModel> getAssets() {
+        return mAssets;
+    }
+
 }

@@ -20,8 +20,11 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateThumbAdapter;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.enity.TemplateThumbItem;
+import com.flyingeffects.com.manager.AlbumManager;
+import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
@@ -32,6 +35,7 @@ import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.SxveConstans;
 import com.shixing.sxve.ui.model.GroupModel;
 import com.shixing.sxve.ui.model.MediaUiModel;
+import com.shixing.sxve.ui.model.MediaUiModel2;
 import com.shixing.sxve.ui.model.TemplateModel;
 import com.shixing.sxve.ui.model.TextUiModel;
 import com.shixing.sxve.ui.view.TemplateView;
@@ -41,21 +45,25 @@ import com.shixing.sxvideoengine.SXPlayerSurfaceView;
 import com.shixing.sxvideoengine.SXTemplate;
 import com.shixing.sxvideoengine.SXTemplatePlayer;
 import com.suke.widget.SwitchButton;
+import com.yanzhenjie.album.AlbumFile;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 
 /**
  * 模板页面
  */
-public class TemplateActivity extends BaseActivity implements TemplateMvpView, AssetDelegate {
+public class TemplateActivity extends BaseActivity implements TemplateMvpView, AssetDelegate, AlbumChooseCallback {
 
     @BindView(R.id.switch_button)
     SwitchButton switch_button;
@@ -104,6 +112,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @BindView(R.id.tv_start_time)
     TextView tv_start_time;
 
+    private static final int REQUEST_SINGLE_MEDIA = 11;
+
 
     /**
      * 是否是即时播放
@@ -137,7 +147,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             originalPath = bundle.getStringArrayList("originalPath");
             templateName = bundle.getString("templateName");
         }
-        if (originalPath == null||originalPath.size()==0) {
+        if (originalPath == null || originalPath.size() == 0) {
             //不需要抠图
             findViewById(R.id.ll_Matting).setVisibility(View.GONE);
         }
@@ -207,16 +217,16 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @Override
     public void returnReplaceableFilePath(String[] paths) {
         if (isPlaying) {
-            if(mPlayer!=null){
+            if (mPlayer != null) {
                 mPlayer.pause();
                 ivPlayButton.setImageResource(R.mipmap.iv_play);
-                isPlaying=false;
+                isPlaying = false;
             }
         } else {
-            isPlaying=true;
+            isPlaying = true;
             ivPlayButton.setImageResource(R.mipmap.pause);
             if (real_time_preview.getVisibility() == View.VISIBLE) {
-                if(mPlayer!=null){
+                if (mPlayer != null) {
                     mPlayer.start();
                 }
             } else {
@@ -228,16 +238,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
-
-
     @Override
     protected void onPause() {
         super.onPause();
         videoPlayer.onVideoPause();
         showPreview(false);
-        isPlaying=false;
+        isPlaying = false;
         ivPlayButton.setImageResource(R.mipmap.iv_play);
-        if(mPlayer!=null){
+        if (mPlayer != null) {
             mPlayer.pause();
         }
     }
@@ -252,11 +260,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private void showPreview(boolean isPreview) {
         if (isPreview) {
-                if (isRealtime) {
-                    real_time_preview.setVisibility(View.VISIBLE);
-                } else {
-                    videoPlayer.setVisibility(View.VISIBLE);
-                }
+            if (isRealtime) {
+                real_time_preview.setVisibility(View.VISIBLE);
+            } else {
+                videoPlayer.setVisibility(View.VISIBLE);
+            }
             mContainer.setVisibility(View.GONE);
             mContainerAddAnim();
         } else {
@@ -267,8 +275,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
-    private void mContainerAddAnim(){
-        AlphaAnimation hideAnim = new AlphaAnimation(1,0);
+    private void mContainerAddAnim() {
+        AlphaAnimation hideAnim = new AlphaAnimation(1, 0);
         hideAnim.setDuration(1000);
         mContainer.startAnimation(hideAnim);
         hideAnim.setAnimationListener(new Animation.AnimationListener() {
@@ -286,13 +294,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             public void onAnimationRepeat(Animation animation) {
 
             }
-    });
+        });
     }
 
 
     @Override
     public void pickMedia(MediaUiModel model) {
 
+        AlbumManager.chooseWhichAlbum(TemplateActivity.this, 1, REQUEST_SINGLE_MEDIA, this, 1, "");
     }
 
     @Override
@@ -393,18 +402,18 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         recyclerView.setLayoutManager(layoutManager);
         templateThumbAdapter = new TemplateThumbAdapter(R.layout.item_group_thumb, listItem, TemplateActivity.this);
         templateThumbAdapter.setOnItemClickListener((adapter, view, position) -> {
-            nowChoosePosition=position;
+            nowChoosePosition = position;
             isPlaying = false;
             showPreview(false);
             ivPlayButton.setImageResource(R.mipmap.iv_play);
-            if(mPlayer!=null){
+            if (mPlayer != null) {
                 mPlayer.pause();
             }
-            if(nowChoosePosition!=lastChoosePosition){
+            if (nowChoosePosition != lastChoosePosition) {
                 selectGroup(position);
-                modificationThumbData(lastChoosePosition,position);
+                modificationThumbData(lastChoosePosition, position);
             }
-            lastChoosePosition=nowChoosePosition;
+            lastChoosePosition = nowChoosePosition;
         });
         recyclerView.setAdapter(templateThumbAdapter);
     }
@@ -420,9 +429,15 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         templateThumbAdapter.notifyDataSetChanged();
     }
 
+    private void ModificationSingleThumbItem(String path) {
+        TemplateThumbItem item1 = listItem.get(nowChooseIndex);
+        item1.setPathUrl(path);
+        listItem.set(nowChooseIndex, item1);
+        templateThumbAdapter.notifyDataSetChanged();
+    }
 
 
-    @OnClick({R.id.tv_top_submit, R.id.iv_play})
+    @OnClick({R.id.tv_top_submit, R.id.iv_play, R.id.edit_view_container})
     public void onClick(View v) {
 
         switch (v.getId()) {
@@ -435,9 +450,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 break;
 
             case R.id.iv_play:
-                if(!DoubleClick.getInstance().isFastDoubleClick()){
+                if (!DoubleClick.getInstance().isFastDoubleClick()) {
                     presenter.getReplaceableFilePath();
                 }
+                break;
+
+            case R.id.edit_view_container:
                 break;
 
             default:
@@ -468,7 +486,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     SeekBar.OnSeekBarChangeListener seekBarListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int nowProgress, boolean fromUser) {
-            if (fromUser&&mPlayer!=null) {
+            if (fromUser && mPlayer != null) {
                 mPlayer.seek(nowProgress);
             }
         }
@@ -533,4 +551,35 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     };
 
 
+    @Override
+    public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
+        if (!isCancel && tag == REQUEST_SINGLE_MEDIA) {
+            if (originalPath == null || originalPath.size() == 0) {
+                //不需要抠图
+                imgPath.remove(nowChooseIndex);
+                imgPath.set(nowChooseIndex, paths.get(0));
+                MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.groups.get(0).getAssets().get(0).ui;
+                mediaUi2.setImageAsset(paths.get(0));
+                mTemplateViews.get(nowChooseIndex).invalidate();
+            } else {
+                CompressionCuttingManage manage = new CompressionCuttingManage(TemplateActivity.this, new CompressionCuttingManage.imgListCallback() {
+                    @Override
+                    public void imgList(List<String> tailorPaths) {
+                        originalPath.set(nowChooseIndex, paths.get(0));
+                        imgPath.set(nowChooseIndex, tailorPaths.get(0));
+                        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+                            @Override
+                            public void call(Integer integer) {
+                                MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(integer).ui;
+                                mediaUi2.setImageAsset(tailorPaths.get(0));
+                                mTemplateViews.get(nowChooseIndex).invalidate();
+                                ModificationSingleThumbItem(tailorPaths.get(0));
+                            }
+                        });
+                    }
+                });
+                manage.CompressImgAndCache(paths);
+            }
+        }
+    }
 }
