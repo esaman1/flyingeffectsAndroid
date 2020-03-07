@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -9,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.TextView;
 
@@ -103,8 +105,9 @@ public class AboutActivity extends BaseActivity {
                 break;
             case R.id.tv_top_submit:
                 //退出
-                BaseConstans.SetUserToken("");
-                findViewById(R.id.tv_top_submit).setVisibility(View.GONE);
+                showDialog();
+
+
                 break;
 
             default:
@@ -113,6 +116,26 @@ public class AboutActivity extends BaseActivity {
 
         }
 
+    }
+
+    private void showDialog() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(
+                //去除黑边
+                new ContextThemeWrapper(AboutActivity.this,R.style.Theme_Transparent));
+        builder.setTitle(getString(R.string.notification));
+        builder.setMessage(
+                 "确定退出账号登录吗？");
+        builder.setNegativeButton("取消", (dialog, which) -> {
+            dialog.dismiss();
+        });
+        builder.setPositiveButton("确定", (dialog, which) -> {
+            BaseConstans.SetUserToken("");
+            findViewById(R.id.tv_top_submit).setVisibility(View.GONE);
+        });
+        builder.setCancelable(true);
+        Dialog mDialog = builder.show();
+        mDialog.setCanceledOnTouchOutside(false);
+        mDialog.show();
     }
 
 
