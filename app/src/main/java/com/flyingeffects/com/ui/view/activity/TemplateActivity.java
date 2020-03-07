@@ -3,7 +3,6 @@ package com.flyingeffects.com.ui.view.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -22,6 +20,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateThumbAdapter;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.enity.TemplateThumbItem;
+import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
@@ -208,14 +207,18 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @Override
     public void returnReplaceableFilePath(String[] paths) {
         if (isPlaying) {
-            mPlayer.pause();
-            ivPlayButton.setImageResource(R.mipmap.iv_play);
-            isPlaying=false;
+            if(mPlayer!=null){
+                mPlayer.pause();
+                ivPlayButton.setImageResource(R.mipmap.iv_play);
+                isPlaying=false;
+            }
         } else {
             isPlaying=true;
             ivPlayButton.setImageResource(R.mipmap.pause);
             if (real_time_preview.getVisibility() == View.VISIBLE) {
-                mPlayer.start();
+                if(mPlayer!=null){
+                    mPlayer.start();
+                }
             } else {
                 switchTemplate(mFolder.getPath(), paths);
             }
@@ -432,8 +435,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 break;
 
             case R.id.iv_play:
-                presenter.getReplaceableFilePath();
-
+                if(!DoubleClick.getInstance().isFastDoubleClick()){
+                    presenter.getReplaceableFilePath();
+                }
                 break;
 
             default:

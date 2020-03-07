@@ -31,7 +31,7 @@
             app:srlDrawableProgressSize="20dp"
             app:srlDrawableSize="20dp"
             app:srlFinishDuration="500"
-            app:srlPrimaryColor="@color/white"
+            app:srlPrimaryColor="@color/black"
             app:srlTextSizeTitle="16sp" />
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 

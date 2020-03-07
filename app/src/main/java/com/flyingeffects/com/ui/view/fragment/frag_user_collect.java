@@ -48,6 +48,8 @@ public class frag_user_collect extends BaseFragment {
     @BindView(R.id.tv_hint)
     TextView tv_hint;
 
+    private int selectPage = 1;
+
     private StaggeredGridLayoutManager layoutManager;
 
     @Override
@@ -58,23 +60,23 @@ public class frag_user_collect extends BaseFragment {
 
     @Override
     protected void initView() {
-
+        initSmartRefreshLayout();
     }
 
 
     @Override
     protected void initAction() {
         initRecycler();
-
-
     }
 
 
-    private void requestCollectionList() {
+    private void requestCollectionList(boolean isShowDialog) {
         tv_hint.setVisibility(View.GONE);
          ArrayList<new_fag_template_item> listData = new ArrayList<>();
         HashMap<String, String> params = new HashMap<>();
         params.put("token", BaseConstans.GetUserToken());
+        params.put("page", selectPage + "");
+        params.put("pageSize", perPageCount + "");
         Observable ob = Api.getDefault().collectionList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override
@@ -101,7 +103,7 @@ public class frag_user_collect extends BaseFragment {
                 showData(listData);
 
             }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
     }
 
 
@@ -120,6 +122,21 @@ public class frag_user_collect extends BaseFragment {
     }
 
 
+    public void initSmartRefreshLayout() {
+        smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
+            isRefresh = true;
+            refreshLayout.setEnableLoadMore(true);
+            selectPage = 1;
+            requestCollectionList(false);
+        });
+        smartRefreshLayout.setOnLoadMoreListener(refresh -> {
+            isRefresh = false;
+            selectPage++;
+            requestCollectionList(false);
+        });
+    }
+
+
 
     @Override
     protected void initData() {
@@ -129,7 +146,8 @@ public class frag_user_collect extends BaseFragment {
     @Override
     public void onResume() {
         if(BaseConstans.hasLogin()){
-            requestCollectionList();
+            isRefresh=true;
+            requestCollectionList(false);
         }else{
             tv_hint.setVisibility(View.VISIBLE);
             tv_hint.setText("请先登录");

@@ -11,6 +11,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.main_recycler_adapter;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.HomeItemMvpView;
 import com.flyingeffects.com.ui.presenter.home_fag_itemMvpPresenter;
@@ -70,10 +71,12 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, main
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-            statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
-            Intent intent =new Intent(getActivity(), PreviewActivity.class);
-            intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
-            startActivity(intent);
+            if(!DoubleClick.getInstance().isFastDoubleClick()){
+                statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
+                Intent intent =new Intent(getActivity(), PreviewActivity.class);
+                intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
+                startActivity(intent);
+            }
         });
     }
 
