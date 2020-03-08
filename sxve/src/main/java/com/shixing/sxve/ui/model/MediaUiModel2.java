@@ -212,6 +212,11 @@ public class MediaUiModel2 extends MediaUiModel {
         return mDuration;
     }
 
+    @Override
+    public int getNowIndex() {
+        return index;
+    }
+
     public void setImageAsset(String path) {
         mIsVideo = false;
         mBitmap = getSmallBmpFromFile(path, size.getWidth(), size.getHeight());

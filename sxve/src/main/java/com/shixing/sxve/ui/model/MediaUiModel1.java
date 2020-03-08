@@ -196,6 +196,11 @@ public class MediaUiModel1 extends MediaUiModel {
         return mDuration;
     }
 
+    @Override
+    public int getNowIndex() {
+        return 0;
+    }
+
     public void setImageAsset(String path) {
         mIsVideo = false;
         mBitmap = BitmapFactory.decodeFile(path);

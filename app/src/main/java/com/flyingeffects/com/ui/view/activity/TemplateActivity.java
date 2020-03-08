@@ -114,6 +114,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private static final int REQUEST_SINGLE_MEDIA = 11;
 
+    /**
+     * 点击事件选择的位置
+     */
+    private  int pickIndex;
+
 
     /**
      * 是否是即时播放
@@ -300,7 +305,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     public void pickMedia(MediaUiModel model) {
-
+         pickIndex=model.getNowIndex();
         AlbumManager.chooseWhichAlbum(TemplateActivity.this, 1, REQUEST_SINGLE_MEDIA, this, 1, "");
     }
 
@@ -558,25 +563,19 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 //不需要抠图
                 imgPath.remove(nowChooseIndex);
                 imgPath.set(nowChooseIndex, paths.get(0));
-                MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.groups.get(0).getAssets().get(0).ui;
+                MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(pickIndex).ui;
                 mediaUi2.setImageAsset(paths.get(0));
                 mTemplateViews.get(nowChooseIndex).invalidate();
             } else {
-                CompressionCuttingManage manage = new CompressionCuttingManage(TemplateActivity.this, new CompressionCuttingManage.imgListCallback() {
-                    @Override
-                    public void imgList(List<String> tailorPaths) {
-                        originalPath.set(nowChooseIndex, paths.get(0));
-                        imgPath.set(nowChooseIndex, tailorPaths.get(0));
-                        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
-                            @Override
-                            public void call(Integer integer) {
-                                MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(integer).ui;
-                                mediaUi2.setImageAsset(tailorPaths.get(0));
-                                mTemplateViews.get(nowChooseIndex).invalidate();
-                                ModificationSingleThumbItem(tailorPaths.get(0));
-                            }
-                        });
-                    }
+                CompressionCuttingManage manage = new CompressionCuttingManage(TemplateActivity.this, tailorPaths -> {
+                    originalPath.set(nowChooseIndex, paths.get(0));
+                    imgPath.set(nowChooseIndex, tailorPaths.get(0));
+                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+                        MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(pickIndex).ui;
+                        mediaUi2.setImageAsset(tailorPaths.get(0));
+                        mTemplateViews.get(nowChooseIndex).invalidate();
+                        ModificationSingleThumbItem(tailorPaths.get(0));
+                    });
                 });
                 manage.CompressImgAndCache(paths);
             }
