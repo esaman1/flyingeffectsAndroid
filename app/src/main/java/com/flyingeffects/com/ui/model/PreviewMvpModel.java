@@ -66,15 +66,19 @@ public class PreviewMvpModel {
     private int nowCompressSuccessNum;
 
     public void CompressImgAndCache(List<String> paths) {
-        //todo 暂时只针对一张图片的时候
-        if(paths!=null&&paths.size()==1){
-            String localCacheName=paths.get(0);
+        List<String>hasReadyList=new ArrayList<>();
+        for(int i=0;i<paths.size();i++){
+            String localCacheName=paths.get(i);
             localCacheName= fileManager.getFileNameWithSuffix(localCacheName);
             File file=new File(mTailtoFolder+"/"+localCacheName);
             if(file.exists()){
-                List<String>list=new ArrayList<>();list.add(file.getPath());
-                callback.getCompressImgList(list);
-                return;
+                hasReadyList.add(file.getPath());
+                if(i==paths.size()-1){
+                    callback.getCompressImgList(hasReadyList);
+                    return;
+                }
+            }else{
+                break;
             }
         }
 
