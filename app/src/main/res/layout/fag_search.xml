@@ -10,7 +10,7 @@
     <RelativeLayout
         android:id="@+id/relative_top"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         android:layout_marginStart="15dp"
         android:background="@drawable/strok_search"
         android:layout_marginTop="30dp"
@@ -70,7 +70,8 @@
             android:layout_width="wrap_content"
             android:layout_marginTop="17dp"
             android:textSize="16sp"
-            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_height="22dp"
             android:textColor="#D5D5D5"
             android:text="友友推荐" />
 
@@ -93,7 +94,7 @@
             android:id="@+id/ll_showResult"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_marginTop="230dp"
+            android:layout_marginTop="225dp"
             android:background="@color/home_base_balk_color"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"

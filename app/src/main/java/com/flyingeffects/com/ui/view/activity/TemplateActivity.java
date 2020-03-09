@@ -21,6 +21,7 @@ import com.flyingeffects.com.adapter.TemplateThumbAdapter;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.manager.AlbumManager;
+import com.flyingeffects.com.manager.AnimForViewShowAndHide;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
@@ -50,13 +51,11 @@ import com.yanzhenjie.album.AlbumFile;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 
@@ -129,6 +128,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private int nowChoosePosition;
     private int lastChoosePosition;
+    private    AlphaAnimation hideAnim;
 
 
     @Override
@@ -270,8 +270,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             } else {
                 videoPlayer.setVisibility(View.VISIBLE);
             }
-            mContainer.setVisibility(View.GONE);
-            mContainerAddAnim();
+            AnimForViewShowAndHide.getInstance().hide(mContainer);
+//            mContainerAddAnim();
             modificationThumbForRedactData(true);
         } else {
             videoPlayer.setVisibility(View.GONE);
@@ -282,33 +282,35 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
-    private void mContainerAddAnim() {
-        AlphaAnimation hideAnim = new AlphaAnimation(1, 0);
-        hideAnim.setDuration(1000);
-        mContainer.startAnimation(hideAnim);
-        hideAnim.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                mContainer.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-    }
+//    private void mContainerAddAnim() {
+//        hideAnim  = new AlphaAnimation(1, 0);
+//        hideAnim.setDuration(1000);
+//        mContainer.startAnimation(hideAnim);
+//        hideAnim.setAnimationListener(new Animation.AnimationListener() {
+//            @Override
+//            public void onAnimationStart(Animation animation) {
+//
+//            }
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation) {
+//                mContainer.setVisibility(View.GONE);
+//            }
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation) {
+//
+//            }
+//        });
+//    }
 
 
     @Override
     public void pickMedia(MediaUiModel model) {
-         pickIndex=model.getNowIndex();
-        AlbumManager.chooseWhichAlbum(TemplateActivity.this, 1, REQUEST_SINGLE_MEDIA, this, 1, "");
+        if(!DoubleClick.getInstance().isFastZDYDoubleClick(1000)){
+            pickIndex=model.getNowIndex();
+            AlbumManager.chooseWhichAlbum(TemplateActivity.this, 1, REQUEST_SINGLE_MEDIA, this, 1, "");
+        }
     }
 
     @Override
@@ -409,18 +411,20 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         recyclerView.setLayoutManager(layoutManager);
         templateThumbAdapter = new TemplateThumbAdapter(R.layout.item_group_thumb, listItem, TemplateActivity.this);
         templateThumbAdapter.setOnItemClickListener((adapter, view, position) -> {
-            nowChoosePosition = position;
-            isPlaying = false;
-            showPreview(false);
-            ivPlayButton.setImageResource(R.mipmap.iv_play);
             if (mPlayer != null) {
                 mPlayer.pause();
+                ivPlayButton.setImageResource(R.mipmap.iv_play);
+                isPlaying = false;
             }
+
+            nowChoosePosition = position;
             if (nowChoosePosition != lastChoosePosition) {
                 selectGroup(position);
                 modificationThumbData(lastChoosePosition, position);
             }
             lastChoosePosition = nowChoosePosition;
+            showPreview(false);
+            AnimForViewShowAndHide.getInstance().show(mContainer);
         });
         recyclerView.setAdapter(templateThumbAdapter);
     }
@@ -447,9 +451,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     private void ModificationSingleThumbItem(String path) {
-        TemplateThumbItem item1 = listItem.get(nowChooseIndex);
+        TemplateThumbItem item1 = listItem.get(lastChoosePosition);
         item1.setPathUrl(path);
-        listItem.set(nowChooseIndex, item1);
+        listItem.set(lastChoosePosition, item1);
         templateThumbAdapter.notifyDataSetChanged();
     }
 
@@ -573,19 +577,19 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         if (!isCancel && tag == REQUEST_SINGLE_MEDIA) {
             if (originalPath == null || originalPath.size() == 0) {
                 //不需要抠图
-                imgPath.remove(nowChooseIndex);
-                imgPath.set(nowChooseIndex, paths.get(0));
-                MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(pickIndex).ui;
+                imgPath.set(lastChoosePosition, paths.get(0));
+                MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
                 mediaUi2.setImageAsset(paths.get(0));
-                mTemplateViews.get(nowChooseIndex).invalidate();
+                mTemplateViews.get(lastChoosePosition).invalidate();
+                ModificationSingleThumbItem(paths.get(0));
             } else {
                 CompressionCuttingManage manage = new CompressionCuttingManage(TemplateActivity.this, tailorPaths -> {
-                    originalPath.set(nowChooseIndex, paths.get(0));
-                    imgPath.set(nowChooseIndex, tailorPaths.get(0));
+                    originalPath.set(lastChoosePosition, paths.get(0));
+                    imgPath.set(lastChoosePosition, tailorPaths.get(0));
                     Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                        MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(pickIndex).ui;
+                        MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
                         mediaUi2.setImageAsset(tailorPaths.get(0));
-                        mTemplateViews.get(nowChooseIndex).invalidate();
+                        mTemplateViews.get(lastChoosePosition).invalidate();
                         ModificationSingleThumbItem(tailorPaths.get(0));
                     });
                 });

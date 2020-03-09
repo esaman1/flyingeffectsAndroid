@@ -28,6 +28,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.ColorCorrectionManager;
+import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.LogUtil;
@@ -162,10 +163,12 @@ public class frag_search extends BaseFragment {
             tv.setTextColor(Color.parseColor(nowChooseColor));
             int finalI = i;
             tv.setOnClickListener(view -> {
-                statisticsEventAffair.getInstance().setFlag(getActivity(),"4_recommend",listSearchKey.get(finalI).getName());
-                String name=listSearchKey.get(finalI).getName();
-                requestFagData(name);
-                ll_showResult.setVisibility(View.VISIBLE);
+                if(!DoubleClick.getInstance().isFastDoubleClick()){
+                    statisticsEventAffair.getInstance().setFlag(getActivity(),"4_recommend",listSearchKey.get(finalI).getName());
+                    String name=listSearchKey.get(finalI).getName();
+                    requestFagData(name);
+                    ll_showResult.setVisibility(View.VISIBLE);
+                }
             });
             GradientDrawable view_ground = (GradientDrawable) tv.getBackground(); //获取控件的背
             view_ground.setStroke(2, Color.parseColor(nowChooseColor));
@@ -183,12 +186,13 @@ public class frag_search extends BaseFragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-            statisticsEventAffair.getInstance().setFlag(getActivity(),"4_search_click",allData.get(position).getTitle());
-            Intent intent =new Intent(getActivity(), PreviewActivity.class);
-
-            intent.putExtra("fromTo","search");
-            intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
-            startActivity(intent);
+            if(!DoubleClick.getInstance().isFastDoubleClick()){
+                statisticsEventAffair.getInstance().setFlag(getActivity(),"4_search_click",allData.get(position).getTitle());
+                Intent intent =new Intent(getActivity(), PreviewActivity.class);
+                intent.putExtra("fromTo","search");
+                intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
+                startActivity(intent);
+            }
         });
     }
 

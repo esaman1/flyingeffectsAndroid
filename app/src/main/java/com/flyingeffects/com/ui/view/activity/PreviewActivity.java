@@ -157,7 +157,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 break;
             case R.id.tv_make:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(3000)) {
-                    if (BaseConstans.hasLogin()) {
                         if (!TextUtils.isEmpty(fromTo) && fromTo.equals("search")) {
                             statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "4_search_make", templateItem.getTitle());
                         }
@@ -165,11 +164,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                         videoPlayer.onVideoPause();
                         VideoPlaybackCompleted(true);
                         Presenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
-                    } else {
-                        Intent intent = new Intent(PreviewActivity.this, LoginActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        startActivity(intent);
-                    }
                 }
                 break;
 

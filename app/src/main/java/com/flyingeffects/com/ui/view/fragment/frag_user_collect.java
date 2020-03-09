@@ -16,6 +16,7 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -40,7 +41,7 @@ public class frag_user_collect extends BaseFragment {
     private List<new_fag_template_item> allData = new ArrayList<>();
     @BindView(R.id.smart_refresh_layout)
     SmartRefreshLayout smartRefreshLayout;
-    private int perPageCount=10;
+    private int perPageCount = 10;
 
     @BindView(R.id.RecyclerView)
     RecyclerView recyclerView;
@@ -109,8 +110,7 @@ public class frag_user_collect extends BaseFragment {
     }
 
 
-
-    private void showData( ArrayList<new_fag_template_item> listData){
+    private void showData(ArrayList<new_fag_template_item> listData) {
         if (getActivity() != null) {
             allData.clear();
             allData.addAll(listData);
@@ -139,7 +139,6 @@ public class frag_user_collect extends BaseFragment {
     }
 
 
-
     @Override
     protected void initData() {
 
@@ -147,10 +146,10 @@ public class frag_user_collect extends BaseFragment {
 
     @Override
     public void onResume() {
-        if(BaseConstans.hasLogin()){
-            isRefresh=true;
+        if (BaseConstans.hasLogin()) {
+            isRefresh = true;
             requestCollectionList(false);
-        }else{
+        } else {
             tv_hint.setVisibility(View.VISIBLE);
             tv_hint.setText("暂无收藏模板");
             allData.clear();
@@ -166,7 +165,6 @@ public class frag_user_collect extends BaseFragment {
     }
 
 
-
     private void initRecycler() {
         adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), null, 0);
         layoutManager =
@@ -175,9 +173,11 @@ public class frag_user_collect extends BaseFragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-            Intent intent =new Intent(getActivity(), PreviewActivity.class);
-            intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
-            startActivity(intent);
+            if (!DoubleClick.getInstance().isFastDoubleClick()) {
+                Intent intent = new Intent(getActivity(), PreviewActivity.class);
+                intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
+                startActivity(intent);
+            }
         });
     }
 

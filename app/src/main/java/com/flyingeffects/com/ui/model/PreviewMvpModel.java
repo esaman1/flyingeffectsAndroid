@@ -238,7 +238,7 @@ public class PreviewMvpModel {
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
             @Override
             protected void _onError(String message) {
-                ToastUtil.showToast(message);
+//                ToastUtil.showToast(message);
             }
 
             @Override
