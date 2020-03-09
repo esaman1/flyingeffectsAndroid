@@ -159,7 +159,9 @@
                 android:layout_height="wrap_content"
                 android:maxHeight="2dp"
                 android:max="100"
-                android:layout_marginEnd="50dp"
+                android:layout_marginEnd="10dp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/tv_end_time"
                 android:progress="0"
                 android:progressDrawable="@drawable/bg_adjust_seek_bar"
                 android:thumb="@drawable/seek_bar_thumb"/>

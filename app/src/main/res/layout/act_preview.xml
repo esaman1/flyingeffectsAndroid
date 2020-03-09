@@ -37,10 +37,11 @@
 
     <!--点击事件拦截-->
     <ImageView
-        android:contentDescription="@string/app_name"
-        android:layout_width="match_parent"
         android:id="@+id/iv_click"
-        android:layout_height="match_parent"/>
+        android:layout_width="match_parent"
+
+        android:layout_height="match_parent"
+        android:contentDescription="@string/app_name" />
 
 
     <ImageView
@@ -97,10 +98,6 @@
         </LinearLayout>
 
 
-
-
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -115,20 +112,32 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <TextView
+                <com.flyingeffects.com.view.MarqueTextView
                     android:id="@+id/tv_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="花泽类"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
                     android:textColor="@color/white"
                     android:textSize="15sp" />
 
 
-                <TextView
+                <com.flyingeffects.com.view.MarqueTextView
                     android:id="@+id/tv_describe"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
                     android:text="花泽类"
                     android:textColor="@color/white"
                     android:textSize="15sp" />
@@ -136,7 +145,7 @@
             </LinearLayout>
 
 
-            <TextView
+            <com.flyingeffects.com.view.MarqueTextView
                 android:id="@+id/tv_make"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
@@ -146,6 +155,12 @@
                 android:gravity="center"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
                 android:text="马上制作"
                 android:textColor="@color/white"
                 android:textSize="17sp"
@@ -155,7 +170,6 @@
 
 
     </LinearLayout>
-
 
 
 </RelativeLayout>

@@ -198,7 +198,7 @@ public class PreviewMvpModel {
                 WaitingDialog.closePragressDialog();
                 Gson gson = new Gson();
                 DownImg downIng = gson.fromJson(str, DownImg.class);
-                if(downIng.getCode()==1){
+                if(downIng!=null&&downIng.getCode()==1){
                 //成功
                     ArrayList<DownImgDataList> data = downIng.getData();
                     for (DownImgDataList item : data

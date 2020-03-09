@@ -14,10 +14,9 @@
 
     <LinearLayout
 
-        android:layout_width="81dp"
+        android:layout_width="90dp"
         android:background="@drawable/strok_all_write_full_corner"
-        android:layout_height="81dp"
-
+        android:layout_height="90dp"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -25,8 +24,8 @@
         <com.github.ybq.android.spinkit.SpinKitView
             android:id="@+id/spin_kit"
             style="@style/SpinKitView.ChasingDots"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_gravity="center"
             app:SpinKit_Color="#1D1D1D" />
 

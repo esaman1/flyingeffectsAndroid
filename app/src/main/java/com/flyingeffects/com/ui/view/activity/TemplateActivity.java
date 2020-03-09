@@ -24,6 +24,7 @@ import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.AnimForViewShowAndHide;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
@@ -159,7 +160,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         mTextEditLayout = findViewById(R.id.text_edit_layout);
         mFolder = new File(templateFilePath);
         mAudio1Path = mFolder.getPath() + MUSIC_PATH;
-        File dir = getExternalFilesDir("");
+
+        FileManager manager=new FileManager();
+        String dir = manager.getFileCachePath(this,"");
         mTemplateViews = new ArrayList<>();
         for (int i = 0; i < defaultNum; i++) {
             listItem.add(new TemplateThumbItem("", 1, false));
@@ -282,27 +285,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
-//    private void mContainerAddAnim() {
-//        hideAnim  = new AlphaAnimation(1, 0);
-//        hideAnim.setDuration(1000);
-//        mContainer.startAnimation(hideAnim);
-//        hideAnim.setAnimationListener(new Animation.AnimationListener() {
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//                mContainer.setVisibility(View.GONE);
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {
-//
-//            }
-//        });
-//    }
 
 
     @Override
@@ -577,7 +559,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         if (!isCancel && tag == REQUEST_SINGLE_MEDIA) {
             if (originalPath == null || originalPath.size() == 0) {
                 //不需要抠图
-                imgPath.set(lastChoosePosition, paths.get(0));
+                if(imgPath.size()>lastChoosePosition){
+                    imgPath.set(lastChoosePosition, paths.get(0));
+                }else{
+                    imgPath.add( paths.get(0));
+                }
                 MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
                 mediaUi2.setImageAsset(paths.get(0));
                 mTemplateViews.get(lastChoosePosition).invalidate();

@@ -19,7 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.DataCleanManager;
+import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.githang.statusbar.StatusBarCompat;
 import com.flyingeffects.com.R;
@@ -69,12 +71,12 @@ public class HomeMainActivity extends FragmentActivity {
         clearAllData();
         initView();
         copyFile("default_bj.png");
-//        checkUpdate(false);
     }
 
 
     public void copyFile(String name) {
-        File dir = getExternalFilesDir("");
+        FileManager manager=new FileManager();
+        String dir = manager.getFileCachePath(this,"");
         File file = new File(dir, name);
         if (!file.exists()) {
             AssetsUtils.copyFileFromAssets(this, name, file.getPath());

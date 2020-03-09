@@ -54,6 +54,8 @@ public class AboutActivity extends BaseActivity {
             findViewById(R.id.tv_top_submit).setVisibility(View.VISIBLE);
             ((TextView) findViewById(R.id.tv_top_submit)).setText("退出登录");
             ((TextView) findViewById(R.id.tv_top_submit)).setTextColor(Color.parseColor("#FE2C55"));
+        }else{
+            findViewById(R.id.tv_top_submit).setVisibility(View.GONE);
         }
     }
 

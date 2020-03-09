@@ -25,6 +25,7 @@ import com.flyingeffects.com.ui.interfaces.view.PreviewMvpView;
 import com.flyingeffects.com.ui.presenter.PreviewMvpPresenter;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
+import com.flyingeffects.com.view.MarqueTextView;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.yanzhenjie.album.AlbumFile;
 
@@ -64,10 +65,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     TextView tv_writer_name;
 
     @BindView(R.id.tv_title)
-    TextView tv_title;
+    MarqueTextView tv_title;
 
     @BindView(R.id.tv_describe)
-    TextView tv_describe;
+    MarqueTextView tv_describe;
 
     @BindView(R.id.iv_show_cover)
     ImageView iv_show_cover;
