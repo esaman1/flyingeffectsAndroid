@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 
 /**
@@ -71,6 +72,9 @@ public class ApiException extends RuntimeException{
 
 
     private static void intoLoginAct(){
+
+
+        BaseConstans.SetUserToken("");
         Intent toLogin=new Intent(BaseApplication.getInstance(),LoginActivity.class);
         toLogin.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         BaseApplication.getInstance().startActivity(toLogin);

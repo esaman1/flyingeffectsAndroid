@@ -157,13 +157,13 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 break;
             case R.id.tv_make:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(3000)) {
-                        if (!TextUtils.isEmpty(fromTo) && fromTo.equals("search")) {
-                            statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "4_search_make", templateItem.getTitle());
-                        }
-                        statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "mb_make", templateItem.getTitle());
-                        videoPlayer.onVideoPause();
-                        VideoPlaybackCompleted(true);
-                        Presenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
+                    if(BaseConstans.hasLogin()){
+                        //登录可能被挤下去，所以这里加个用户信息刷新请求
+                        Presenter.requestUserInfo();
+                    }else{
+                        Intent intent =new Intent(PreviewActivity.this,LoginActivity.class);
+                        startActivity(intent);
+                    }
                 }
                 break;
 
@@ -327,6 +327,17 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void getTemplateLInfo(new_fag_template_item item) {
         Glide.with(PreviewActivity.this).load(item.getImage()).into(iv_show_cover);
         showCollectState(item.getIs_collection() == 0);
+    }
+
+    @Override
+    public void hasLogin(boolean hasLogin) {
+        if (!TextUtils.isEmpty(fromTo) && fromTo.equals("search")) {
+            statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "4_search_make", templateItem.getTitle());
+        }
+        statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "mb_make", templateItem.getTitle());
+        videoPlayer.onVideoPause();
+        VideoPlaybackCompleted(true);
+        Presenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
     }
 
 

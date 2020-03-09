@@ -21,6 +21,11 @@ public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCall
     }
 
 
+    public void requestUserInfo(){
+        PreviewModel.requestUserInfo();
+    }
+
+
     public void CompressImg(List<String> paths){
         PreviewModel.CompressImgAndCache(paths);
     }
@@ -66,5 +71,10 @@ public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCall
     public void getTemplateLInfo(new_fag_template_item item) {
         PreviewView.getTemplateLInfo(item);
 
+    }
+
+    @Override
+    public void hasLogin(boolean hasLogin) {
+        PreviewView.hasLogin(hasLogin);
     }
 }

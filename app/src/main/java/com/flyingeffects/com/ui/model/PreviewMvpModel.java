@@ -8,6 +8,7 @@ import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.DownImg;
 import com.flyingeffects.com.enity.DownImgDataList;
+import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -149,6 +150,26 @@ public class PreviewMvpModel {
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
 
+    }
+
+
+    public void requestUserInfo() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("token", BaseConstans.GetUserToken());
+        // 启动时间
+        Observable ob = Api.getDefault().getUserInfo(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(context) {
+            @Override
+            protected void _onError(String message) {
+                BaseConstans.SetUserToken("");
+                callback.hasLogin(false);
+            }
+
+            @Override
+            protected void _onNext(UserInfo data) {
+              callback.hasLogin(true);
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
 

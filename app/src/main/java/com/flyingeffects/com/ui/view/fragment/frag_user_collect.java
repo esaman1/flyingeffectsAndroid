@@ -75,7 +75,6 @@ public class frag_user_collect extends BaseFragment {
 
     private void requestCollectionList(boolean isShowDialog) {
         tv_hint.setVisibility(View.GONE);
-
         HashMap<String, String> params = new HashMap<>();
         params.put("token", BaseConstans.GetUserToken());
         params.put("page", selectPage + "");
@@ -148,6 +147,8 @@ public class frag_user_collect extends BaseFragment {
     public void onResume() {
         if (BaseConstans.hasLogin()) {
             isRefresh = true;
+            selectPage=1;
+            smartRefreshLayout.setEnableLoadMore(true);
             requestCollectionList(false);
         } else {
             tv_hint.setVisibility(View.VISIBLE);

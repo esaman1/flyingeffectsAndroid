@@ -14,4 +14,6 @@ public interface PreviewMvpView {
     void collectionResult();
 
     void getTemplateLInfo(new_fag_template_item item);
+
+    void hasLogin(boolean hasLogin);
 }

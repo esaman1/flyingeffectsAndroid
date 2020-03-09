@@ -16,4 +16,6 @@ public interface PreviewMvpCallback {
 
    void getTemplateLInfo(new_fag_template_item item);
 
+   void hasLogin(boolean hasLogin);
+
 }
