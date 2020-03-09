@@ -49,31 +49,27 @@
 
 
 
-<!--                    <LinearLayout-->
-<!--                        android:id="@+id/ll_select"-->
-<!--                        android:layout_width="60dp"-->
-<!--                        android:orientation="vertical"-->
-<!--                        android:visibility="gone"-->
-<!--                        android:gravity="center"-->
-<!--                        android:layout_height="60dp">-->
+                    <LinearLayout
+                        android:id="@+id/ll_select"
+                        android:layout_width="60dp"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:gravity="center"
+                        android:layout_height="60dp">
 
 
-<!--                        <ImageView-->
-<!--                            android:id="@+id/iv_select_alert"-->
-<!--                            android:contentDescription="@string/app_name"-->
-<!--                            android:layout_width="17dp"-->
-<!--                            android:layout_height="17dp"-->
-<!--                            />-->
-
-<!--                        <TextView-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:text="调整"-->
-<!--                            android:textSize="12sp"-->
-<!--                            android:textColor="#FFFFFF"-->
-<!--                            android:layout_height="wrap_content"/>-->
+                        <ImageView
+                            android:id="@+id/iv_select_alert"
+                            android:src="@mipmap/redact"
+                            android:contentDescription="@string/app_name"
+                            android:layout_width="17dp"
+                            android:layout_height="17dp"
+                            />
 
 
-<!--                    </LinearLayout>-->
+
+
+                    </LinearLayout>
 
 
 

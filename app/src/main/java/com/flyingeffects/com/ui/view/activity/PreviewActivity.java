@@ -133,8 +133,9 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 .into(iv_writer);
         tv_writer_name.setText(templateItem.getAuth());
         tv_title.setText(templateItem.getTitle());
-        tv_describe.setText(templateItem.getMbsearch());
+        tv_describe.setText("友友们    "+"上传"+templateItem.getDefaultnum()+"张照片即可制作");
         Presenter.requestTemplateDetail(templateItem.getId());
+
     }
 
 
@@ -145,7 +146,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     }
 
 
-    @OnClick({R.id.iv_zan, R.id.tv_make,R.id.iv_video_play,R.id.iv_top_back})
+    @OnClick({R.id.iv_zan, R.id.tv_make,R.id.iv_video_play,R.id.iv_top_back,R.id.relative_parents})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_zan:
@@ -183,6 +184,11 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 iv_video_play.setVisibility(View.GONE);
                 iv_show_cover.setVisibility(View.GONE);
                 videoPlayer.startPlayLogic();
+                break;
+
+            case R.id.relative_parents:
+                videoPlayer.onVideoPause();
+                iv_video_play.setVisibility(View.VISIBLE);
                 break;
 
             default:
@@ -295,9 +301,11 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         {
             statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "1_mb_keep_cancel", templateItem.getTitle());
             nowCollectType = 1;
+            ToastUtil.showToast(getString(R.string.template_collect_success));
         } else {
             statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "1_mb_keep", templateItem.getTitle());
             nowCollectType = 0;
+            ToastUtil.showToast(getString(R.string.template_cancel_success));
         }
         showCollectState(nowCollectType == 0);
     }

@@ -54,6 +54,16 @@ public class TemplateThumbItem implements Serializable {
 
     private boolean isAuto=false;
 
+    public boolean isRedate() {
+        return isRedate;
+    }
+
+    public void setRedate(boolean redate) {
+        isRedate = redate;
+    }
+
+    private boolean isRedate;
+
     private  int isCheck;  //0选中
 
     public int getIsChooseAnim() {

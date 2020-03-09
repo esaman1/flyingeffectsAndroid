@@ -3,7 +3,9 @@ package com.flyingeffects.com.adapter;
 import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
@@ -31,6 +33,12 @@ public class TemplateThumbAdapter extends BaseItemDraggableAdapter<TemplateThumb
     @Override
     protected void convert(BaseViewHolder helper, TemplateThumbItem item) {
         RelativeLayout rela_parent=helper.getView(R.id.rela_parent);
+        LinearLayout ll_select=helper.getView(R.id.ll_select);
+        if(item.isRedate()){
+            ll_select.setVisibility(View.VISIBLE);
+        }else {
+            ll_select.setVisibility(View.GONE);
+        }
         int position = helper.getLayoutPosition();
         ImageView iv_show_un_select = helper.getView(R.id.iv_show_un_select);
         if (item.getPathUrl() != null && !item.getPathUrl().equals("")) {

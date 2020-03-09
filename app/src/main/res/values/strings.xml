@@ -28,4 +28,9 @@
     <string name="remainTime">%1$ds 后重试</string>
     <string name="have_not_login">未登录</string>
     <string name="exitLogin">再按一次退出程序</string>
+
+    <string name="template_collect_success">模板收藏成功</string>
+    <string name="template_cancel_success">模板已取消收藏</string>
+
+
 </resources>

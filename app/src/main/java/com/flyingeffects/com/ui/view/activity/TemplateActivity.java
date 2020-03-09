@@ -272,10 +272,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
             mContainer.setVisibility(View.GONE);
             mContainerAddAnim();
+            modificationThumbForRedactData(true);
         } else {
             videoPlayer.setVisibility(View.GONE);
             real_time_preview.setVisibility(View.INVISIBLE);
             mContainer.setVisibility(View.VISIBLE);
+            modificationThumbForRedactData(false);
         }
     }
 
@@ -433,6 +435,16 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         listItem.set(lastPosition, item2);
         templateThumbAdapter.notifyDataSetChanged();
     }
+
+    private void modificationThumbForRedactData(boolean isRedate) {
+        for (TemplateThumbItem item:listItem
+             ) {
+            item.setRedate(isRedate);
+        }
+        templateThumbAdapter.notifyDataSetChanged();
+    }
+
+
 
     private void ModificationSingleThumbItem(String path) {
         TemplateThumbItem item1 = listItem.get(nowChooseIndex);

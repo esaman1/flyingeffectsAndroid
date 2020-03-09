@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:id="@+id/relative_parents"
     android:layout_height="match_parent">
 
 
-
     <RelativeLayout
+
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <com.flyingeffects.com.view.EmptyControlVideo
             android:id="@+id/video_player"
             android:layout_width="match_parent"
@@ -17,27 +19,20 @@
             android:id="@+id/iv_show_cover"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
             android:background="#1D1D1D"
-            android:contentDescription="@string/app_name" />
+            android:contentDescription="@string/app_name"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/iv_video_play"
             android:layout_width="60dp"
-            android:visibility="gone"
+            android:layout_height="60dp"
             android:layout_centerInParent="true"
             android:src="@mipmap/video_play"
-            android:layout_height="60dp"/>
-
-
-
-
+            android:visibility="gone" />
 
 
     </RelativeLayout>
-
-
-
 
 
     <ImageView
@@ -48,7 +43,7 @@
         android:layout_marginTop="18dp"
         android:contentDescription="@string/app_name"
         android:padding="10dp"
-        android:src="@mipmap/iv_top_back" />
+        android:src="@mipmap/back" />
 
 
     <LinearLayout

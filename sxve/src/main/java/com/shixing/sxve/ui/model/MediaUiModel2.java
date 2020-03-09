@@ -3,6 +3,7 @@ package com.shixing.sxve.ui.model;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -89,9 +90,12 @@ public class MediaUiModel2 extends MediaUiModel {
         mPath.transform(mMatrix);
 
 
+        DashPathEffect pathEffect = new DashPathEffect(new float[] { 20,20 }, 0);
         //绘制边框
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(6);
+        //绘制虚线
+        mPaint.setPathEffect(pathEffect);
         mPaint.setColor(Color.parseColor("#FF0000"));
     }
 

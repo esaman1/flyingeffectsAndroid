@@ -34,6 +34,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.AutoNewLineLayout;
+import com.flyingeffects.com.view.WarpLinearLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,7 +57,7 @@ public class frag_search extends BaseFragment {
 
 
     @BindView(R.id.AutoNewLineLayout)
-    AutoNewLineLayout autoNewLineLayout;
+    WarpLinearLayout autoNewLineLayout;
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView ;

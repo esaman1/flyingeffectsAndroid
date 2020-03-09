@@ -75,10 +75,12 @@
             android:text="友友推荐" />
 
 
-        <com.flyingeffects.com.view.AutoNewLineLayout
+        <com.flyingeffects.com.view.WarpLinearLayout
             android:id="@+id/AutoNewLineLayout"
-            app:horizontalSpace="10dp"
-            app:vertivalSpace="10dp"
+            app:grivate="left"
+            app:isFull="false"
+            app:horizontal_Space="10dp"
+            app:vertical_Space="10dp"
             android:layout_marginTop="14dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
@@ -91,7 +93,8 @@
             android:id="@+id/ll_showResult"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_marginTop="250dp"
+            android:layout_marginTop="230dp"
+            android:background="@color/home_base_balk_color"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:visibility="gone"
