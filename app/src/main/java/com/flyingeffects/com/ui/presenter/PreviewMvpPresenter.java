@@ -33,8 +33,8 @@ public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCall
         PreviewModel.prepareDownZip(url,zipPid);
     }
 
-    public void collectTemplate(String templateId){
-        PreviewModel.collectTemplate(templateId);
+    public void collectTemplate(String templateId,String title){
+        PreviewModel.collectTemplate(templateId, title);
     }
 
 

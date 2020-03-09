@@ -111,7 +111,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     protected void initView() {
-        ondestroy=false;
+        ondestroy = false;
         templateItem = (new_fag_template_item) getIntent().getSerializableExtra("person");
         fromTo = getIntent().getStringExtra("fromTo");
         defaultnum = templateItem.getDefaultnum();
@@ -133,7 +133,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 .into(iv_writer);
         tv_writer_name.setText(templateItem.getAuth());
         tv_title.setText(templateItem.getTitle());
-        tv_describe.setText("友友们    "+"上传"+templateItem.getDefaultnum()+"张照片即可制作");
+        tv_describe.setText("友友们    " + "上传" + templateItem.getDefaultnum() + "张照片即可制作");
         Presenter.requestTemplateDetail(templateItem.getId());
 
     }
@@ -146,19 +146,15 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     }
 
 
-    @OnClick({R.id.iv_zan, R.id.tv_make,R.id.iv_video_play,R.id.iv_top_back,R.id.relative_parents})
+    @OnClick({R.id.iv_zan, R.id.tv_make, R.id.iv_video_play, R.id.iv_top_back, R.id.relative_parents})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_zan:
-                if (BaseConstans.hasLogin()) {
-                    statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "1_mb_keep", templateItem.getTitle());
-                    Presenter.collectTemplate(templateItem.getId());
-                } else {
-                    ToastUtil.showToast(getString(R.string.have_not_login));
-                }
+
+                Presenter.collectTemplate(templateItem.getId(),templateItem.getTitle());
                 break;
             case R.id.tv_make:
-                if(!DoubleClick.getInstance().isFastZDYDoubleClick(3000)){
+                if (!DoubleClick.getInstance().isFastZDYDoubleClick(3000)) {
                     if (BaseConstans.hasLogin()) {
                         if (!TextUtils.isEmpty(fromTo) && fromTo.equals("search")) {
                             statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "4_search_make", templateItem.getTitle());
@@ -197,8 +193,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     }
 
 
-
-
     @Override
     protected void onPause() {
         videoPlayer.onVideoPause();
@@ -214,7 +208,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void onDestroy() {
-        ondestroy=true;
+        ondestroy = true;
         Presenter.onDestroy();
         videoPlayer.release();
         super.onDestroy();
@@ -232,7 +226,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-        if (!isCancel&&!ondestroy) {
+        if (!isCancel && !ondestroy) {
             if (SELECTALBUM == 0) {
                 //如果不需要抠图
                 if (is_picout == 0) {
@@ -260,7 +254,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("Message", bundle);
         startActivity(intent);
-        this.finish();
     }
 
 
@@ -275,9 +268,9 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         Observable.just(progress).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer integer) {
-                if(progress==100){
+                if (progress == 100) {
                     tv_make.setText("马上制作");
-                }else{
+                } else {
                     tv_make.setText("下载" + progress + "%");
                 }
 
@@ -287,7 +280,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void getTemplateFileSuccess(String TemplateFilePath) {
-        if(!ondestroy){
+        if (!ondestroy) {
             //file 文件下载成功
             this.TemplateFilePath = TemplateFilePath;
             AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");
@@ -297,8 +290,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void collectionResult() {
-        if (nowCollectType == 0)
-        {
+        if (nowCollectType == 0) {
             statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "1_mb_keep_cancel", templateItem.getTitle());
             nowCollectType = 1;
             ToastUtil.showToast(getString(R.string.template_collect_success));

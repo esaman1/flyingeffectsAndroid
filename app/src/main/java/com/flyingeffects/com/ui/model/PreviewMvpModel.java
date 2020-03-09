@@ -2,7 +2,6 @@ package com.flyingeffects.com.ui.model;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
@@ -17,6 +16,7 @@ import com.flyingeffects.com.manager.DownImageManager;
 import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.PreviewMvpCallback;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
@@ -229,7 +229,7 @@ public class PreviewMvpModel {
     }
 
 
-    public void collectTemplate(String templateId) {
+    public void collectTemplate(String templateId,String title) {
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", templateId);
         params.put("token", BaseConstans.GetUserToken());
@@ -243,6 +243,7 @@ public class PreviewMvpModel {
 
             @Override
             protected void _onNext(Object data) {
+                statisticsEventAffair.getInstance().setFlag(context, "1_mb_keep",title );
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "collectTemplate=" + str);
                 callback.collectionResult();
