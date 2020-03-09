@@ -59,7 +59,7 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, main
         }
         initRecycler();
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
-        Presenter.requestData(templateId, 0);
+        Presenter.requestData(templateId, actTag);
     }
 
 

@@ -34,7 +34,6 @@ import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.view.AutoNewLineLayout;
 import com.flyingeffects.com.view.WarpLinearLayout;
 
 import org.json.JSONArray;
