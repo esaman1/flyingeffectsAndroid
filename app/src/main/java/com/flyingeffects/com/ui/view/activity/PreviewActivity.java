@@ -96,6 +96,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     public final static int SELECTALBUM = 0;
 
+    private boolean isPlayComplate=false;
+
     /**
      * 来着来个页面
      */
@@ -126,6 +128,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         videoPlayer.startPlayLogic();
         videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> {
             VideoPlaybackCompleted(true);
+            isPlayComplate=true;
         }));
         Glide.with(this)
                 .load(templateItem.getAuth_image())
@@ -183,10 +186,15 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
             case R.id.iv_click:
                 if(iv_video_play.getVisibility()==View.VISIBLE){
+                    if(isPlayComplate){
+                        videoPlayer.startPlayLogic();
+                    }else{
+                        videoPlayer.onVideoResume(false);
+                    }
                     VideoPlaybackCompleted(false);
-                    videoPlayer.onVideoResume();
+
                 }else{
-                    videoPlayer.onVideoPause();
+                        videoPlayer.onVideoPause();
                     VideoPlaybackCompleted(true);
                 }
                 break;

@@ -152,7 +152,7 @@ public class frag_user_collect extends BaseFragment {
             requestCollectionList(false);
         }else{
             tv_hint.setVisibility(View.VISIBLE);
-            tv_hint.setText("请先登录");
+            tv_hint.setText("暂无收藏模板");
             allData.clear();
             adapter.notifyDataSetChanged();
         }
