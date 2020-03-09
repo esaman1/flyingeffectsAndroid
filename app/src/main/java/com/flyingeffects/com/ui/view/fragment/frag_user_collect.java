@@ -48,6 +48,8 @@ public class frag_user_collect extends BaseFragment {
     @BindView(R.id.tv_hint)
     TextView tv_hint;
 
+    ArrayList<new_fag_template_item> listData = new ArrayList<>();
+
     private int selectPage = 1;
 
     private StaggeredGridLayoutManager layoutManager;
@@ -72,7 +74,7 @@ public class frag_user_collect extends BaseFragment {
 
     private void requestCollectionList(boolean isShowDialog) {
         tv_hint.setVisibility(View.GONE);
-         ArrayList<new_fag_template_item> listData = new ArrayList<>();
+
         HashMap<String, String> params = new HashMap<>();
         params.put("token", BaseConstans.GetUserToken());
         params.put("page", selectPage + "");

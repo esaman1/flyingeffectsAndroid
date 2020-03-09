@@ -1,25 +1,20 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.SpannedString;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
-import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ClickableSpan;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -112,6 +107,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         editTextUsername.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                endTimer();
                 if (TextUtils.isEmpty(editTextPassword.getText().toString())) {
                     nextStep(false);
                 } else {
@@ -195,13 +191,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         tv_xy.setText(spannableBuilder);
 
 
-        SpannableString ss = new SpannableString("请输入手机号");//定义hint的值
-        AbsoluteSizeSpan ass = new AbsoluteSizeSpan(16, true);//设置字体大小 true表示单位是sp
-        ss.setSpan(ass, 0, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        editTextUsername.setHint(new SpannedString(ss));
-        SpannableString ss2 = new SpannableString("请输入验证码");//定义hint的值
-        ss2.setSpan(ass, 0, ss2.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        editTextPassword.setHint(new SpannedString(ss2));
+//        SpannableString ss = new SpannableString("请输入手机号");//定义hint的值
+//        AbsoluteSizeSpan ass = new AbsoluteSizeSpan(16, true);//设置字体大小 true表示单位是sp
+//        ss.setSpan(ass, 0, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        editTextUsername.setHint(new SpannedString(ss));
+//        SpannableString ss2 = new SpannableString("请输入验证码");//定义hint的值
+//        ss2.setSpan(ass, 0, ss2.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        editTextPassword.setHint(new SpannedString(ss2));
 
 
     }
@@ -215,7 +211,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }
 
         if (editTextPassword.getText().toString().equals("")) {
-            ToastUtil.showToast("请输入密码");
+            ToastUtil.showToast("请输入验证码");
             return;
         }
         requestLogin(editTextUsername.getText().toString(), editTextPassword.getText().toString());
@@ -259,9 +255,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             return;
         }
 
-
         requestSms(editTextUsername.getText().toString());
-
 
     }
 
@@ -282,6 +276,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 startTimer();
                 ToastUtil.showToast("发送成功");
                 String str = StringUtil.beanToJSONString(data);
+                changeFocus();
                 LogUtil.d("login", "str=" + str);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
@@ -292,8 +287,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         editTextPassword.requestFocus();
         editTextPassword.setFocusable(true);
         editTextPassword.setFocusableInTouchMode(true);
-        InputMethodManager imm = (InputMethodManager) editTextPassword.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_NOT_ALWAYS);
+//        InputMethodManager imm = (InputMethodManager) editTextPassword.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+//        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
 

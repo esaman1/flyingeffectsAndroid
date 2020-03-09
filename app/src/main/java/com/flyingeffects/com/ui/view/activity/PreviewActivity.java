@@ -146,11 +146,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     }
 
 
-    @OnClick({R.id.iv_zan, R.id.tv_make, R.id.iv_video_play, R.id.iv_top_back, R.id.relative_parents})
+    @OnClick({R.id.iv_zan, R.id.tv_make, R.id.iv_video_play, R.id.iv_top_back, R.id.iv_click})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_zan:
-
                 Presenter.collectTemplate(templateItem.getId(),templateItem.getTitle());
                 break;
             case R.id.tv_make:
@@ -182,9 +181,14 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 videoPlayer.startPlayLogic();
                 break;
 
-            case R.id.relative_parents:
-                videoPlayer.onVideoPause();
-                iv_video_play.setVisibility(View.VISIBLE);
+            case R.id.iv_click:
+                if(iv_video_play.getVisibility()==View.VISIBLE){
+                    VideoPlaybackCompleted(false);
+                    videoPlayer.onVideoResume();
+                }else{
+                    videoPlayer.onVideoPause();
+                    VideoPlaybackCompleted(true);
+                }
                 break;
 
             default:
@@ -319,6 +323,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
      */
     @Override
     public void getTemplateLInfo(new_fag_template_item item) {
+        Glide.with(PreviewActivity.this).load(item.getImage()).into(iv_show_cover);
         showCollectState(item.getIs_collection() == 0);
     }
 
