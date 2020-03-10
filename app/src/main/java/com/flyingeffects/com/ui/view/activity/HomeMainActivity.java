@@ -50,8 +50,8 @@ public class HomeMainActivity extends FragmentActivity {
     private int[] img_Id = {R.id.iV_menu_0, R.id.iV_menu_1, R.id.iV_menu_2, R.id.iV_menu_3};
     public HomeMainActivity ThisMain;
     private int[] tv_main_button = {R.id.tv_main_0, R.id.tv_main_1, R.id.tv_main_2,R.id.tv_main_3};
-    private int[] selectIconArr = {R.mipmap.moban, R.mipmap.chazhao, R.mipmap.wode, R.mipmap.wode};
-    private int[] unSelectIconArr = {R.mipmap.moban_unslect, R.mipmap.chazhao_unselect, R.mipmap.wode_unselect, R.mipmap.wode_unselect};
+    private int[] selectIconArr = {R.mipmap.home_bj,R.mipmap.moban, R.mipmap.chazhao, R.mipmap.wode};
+    private int[] unSelectIconArr = { R.mipmap.home_bj_unselect,R.mipmap.moban_unslect, R.mipmap.chazhao_unselect, R.mipmap.wode_unselect};
     private FragmentManager fragmentManager;
 
     @Override
