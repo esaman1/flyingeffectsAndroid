@@ -80,7 +80,7 @@ public class BaseApplication extends MultiDexApplication {
 //        PlatformConfig.setQQZone("1109289339", "hdOiuQsp2iudqu3v");
         MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_MANUAL);  //页面采集模式
         UMConfigure.setProcessEvent(true); // 支持在子进程中统计自定义事件
-        UMConfigure.setLogEnabled(true);
+        UMConfigure.setLogEnabled(false);
     }
 
     /**
