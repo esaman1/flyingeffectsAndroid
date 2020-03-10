@@ -181,6 +181,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     //修改为裁剪前的素材
                     presenter.ChangeMaterial(imgPath, defaultNum);
                 }
+                if (mPlayer != null) {
+                    mPlayer.pause();
+                    ivPlayButton.setImageResource(R.mipmap.iv_play);
+                    isPlaying = false;
+                }
+                showPreview(false);
+                AnimForViewShowAndHide.getInstance().show(mContainer);
             }
         });
     }

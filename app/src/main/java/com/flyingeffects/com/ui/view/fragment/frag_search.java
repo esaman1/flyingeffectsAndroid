@@ -10,11 +10,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.flyingeffects.com.R;
@@ -34,6 +36,7 @@ import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.WarpLinearLayout;
 
 import org.json.JSONArray;
@@ -60,7 +63,7 @@ public class frag_search extends BaseFragment {
     WarpLinearLayout autoNewLineLayout;
 
     @BindView(R.id.recyclerView)
-    RecyclerView recyclerView ;
+    RecyclerView recyclerView;
 
     @BindView(R.id.ed_search)
     EditText ed_text;
@@ -71,9 +74,13 @@ public class frag_search extends BaseFragment {
     @BindView(R.id.iv_delete)
     ImageView iv_delete;
 
+    @BindView(R.id.tv_youyou)
+    TextView tv_youyou;
+
     private List<new_fag_template_item> allData = new ArrayList<>();
     private main_recycler_adapter adapter;
-    private ArrayList<SearchKeyWord>listSearchKey=new ArrayList<>();
+    private ArrayList<SearchKeyWord> listSearchKey = new ArrayList<>();
+    private ArrayList<TextView> ListForTv = new ArrayList<>();
 
     @Override
     protected int getContentLayout() {
@@ -84,15 +91,16 @@ public class frag_search extends BaseFragment {
     @Override
     protected void initView() {
 
-        ed_text.setOnClickListener(view -> statisticsEventAffair.getInstance().setFlag(getActivity(),"4_click"));
+        ed_text.setOnClickListener(view -> statisticsEventAffair.getInstance().setFlag(getActivity(), "4_click"));
         //键盘的搜索按钮
         ed_text.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
                 String text = ed_text.getText().toString().trim();
                 if (!text.equals("")) {
-                    statisticsEventAffair.getInstance().setFlag(getActivity(),"4_search");
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search");
                     requestFagData(text);
                     ll_showResult.setVisibility(View.VISIBLE);
+                    setResultMargin();
                 }
                 return true;
             }
@@ -145,6 +153,8 @@ public class frag_search extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+
+
     }
 
 
@@ -154,27 +164,41 @@ public class frag_search extends BaseFragment {
     }
 
 
-    private void setKeyWordList(ArrayList<SearchKeyWord>listSearchKey) {
+    private void setKeyWordList(ArrayList<SearchKeyWord> listSearchKey) {
+
         for (int i = 0; i < listSearchKey.size(); i++) {
-            String nowChooseColor= ColorCorrectionManager.getInstance().getChooseColor(i);
+            String nowChooseColor = ColorCorrectionManager.getInstance().getChooseColor(i);
             TextView tv = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.textview_recommend, null);
             tv.setText(listSearchKey.get(i).getName());
+
             tv.setTextColor(Color.parseColor(nowChooseColor));
             int finalI = i;
             tv.setOnClickListener(view -> {
-                if(!DoubleClick.getInstance().isFastDoubleClick()){
-                    statisticsEventAffair.getInstance().setFlag(getActivity(),"4_recommend",listSearchKey.get(finalI).getName());
-                    String name=listSearchKey.get(finalI).getName();
+                if (!DoubleClick.getInstance().isFastDoubleClick()) {
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "4_recommend", listSearchKey.get(finalI).getName());
+                    String name = listSearchKey.get(finalI).getName();
                     requestFagData(name);
                     ll_showResult.setVisibility(View.VISIBLE);
+                    setResultMargin();
                 }
             });
             GradientDrawable view_ground = (GradientDrawable) tv.getBackground(); //获取控件的背
             view_ground.setStroke(2, Color.parseColor(nowChooseColor));
             autoNewLineLayout.addView(tv);
+            ListForTv.add(tv);
         }
+
     }
 
+
+    private void setResultMargin() {
+        int tv_height = tv_youyou.getHeight() + ListForTv.get(0).getHeight() * 2;
+        int marginTop = tv_height + screenUtil.dip2px(getActivity(), 116);
+        int dp20 = screenUtil.dip2px(getActivity(), 20);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        layoutParams.setMargins(dp20, marginTop, dp20, 0);//4个参数按顺序分别是左上右下
+        ll_showResult.setLayoutParams(layoutParams);
+    }
 
 
     private void initRecycler() {
@@ -185,11 +209,11 @@ public class frag_search extends BaseFragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-            if(!DoubleClick.getInstance().isFastDoubleClick()){
-                statisticsEventAffair.getInstance().setFlag(getActivity(),"4_search_click",allData.get(position).getTitle());
-                Intent intent =new Intent(getActivity(), PreviewActivity.class);
-                intent.putExtra("fromTo","search");
-                intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
+            if (!DoubleClick.getInstance().isFastDoubleClick()) {
+                statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_click", allData.get(position).getTitle());
+                Intent intent = new Intent(getActivity(), PreviewActivity.class);
+                intent.putExtra("fromTo", "search");
+                intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
                 startActivity(intent);
             }
         });
@@ -220,12 +244,12 @@ public class frag_search extends BaseFragment {
 
             @Override
             protected void _onNext(Object data) {
-                String str=StringUtil.beanToJSONString(data);
+                String str = StringUtil.beanToJSONString(data);
                 try {
-                    JSONArray array=new JSONArray(str);
-                    for (int i=0;i<array.length();i++){
-                        JSONObject ob=array.getJSONObject(i);
-                        SearchKeyWord key=new SearchKeyWord();
+                    JSONArray array = new JSONArray(str);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject ob = array.getJSONObject(i);
+                        SearchKeyWord key = new SearchKeyWord();
                         key.setColor(ob.getString("color"));
                         key.setName(ob.getString("name"));
                         key.setID(ob.getString("ID"));
@@ -237,12 +261,10 @@ public class frag_search extends BaseFragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                LogUtil.d("OOM",str);
+                LogUtil.d("OOM", str);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
-
-
 
 
     private void requestFagData(String name) {
@@ -257,20 +279,17 @@ public class frag_search extends BaseFragment {
 
             @Override
             protected void _onNext(List<new_fag_template_item> data) {
-                LogUtil.d("OOM",StringUtil.beanToJSONString(data));
+                LogUtil.d("OOM", StringUtil.beanToJSONString(data));
                 allData.clear();
                 allData.addAll(data);
-                if(data.size()==0){
+                if (data.size() == 0) {
                     ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
-                    statisticsEventAffair.getInstance().setFlag(getActivity(),"4_search_none");
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none");
                 }
                 adapter.notifyDataSetChanged();
             }
         }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
-
-
-
 
 
 }

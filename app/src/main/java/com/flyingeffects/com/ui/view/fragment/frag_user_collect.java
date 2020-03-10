@@ -83,6 +83,7 @@ public class frag_user_collect extends BaseFragment {
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override
             protected void _onError(String message) {
+                finishData();
             }
 
             @Override

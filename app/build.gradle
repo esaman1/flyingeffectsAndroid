@@ -5,18 +5,18 @@ android {
 
     signingConfigs {
         realse {
-            storeFile file('../cloudpacket.jks')
-            storePassword '123456'
-            keyPassword '123456'
-            keyAlias = 'cloudpacket'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storeFile file('D:/key/mine.keystore')
+            storePassword 'android'
             v1SigningEnabled true
             v2SigningEnabled true
         }
         debug {
-            storeFile file('../cloudpacket.jks')
-            storePassword '123456'
-            keyPassword '123456'
-            keyAlias = 'cloudpacket'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storeFile file('D:/key/mine.keystore')
+            storePassword 'android'
             v1SigningEnabled true
             v2SigningEnabled true
         }
