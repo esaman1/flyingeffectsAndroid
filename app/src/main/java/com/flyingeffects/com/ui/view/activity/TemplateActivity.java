@@ -285,7 +285,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }else{
                 mContainer.setVisibility(View.GONE);
             }
-//            mContainerAddAnim();
             modificationThumbForRedactData(true);
         } else {
             videoPlayer.setVisibility(View.GONE);

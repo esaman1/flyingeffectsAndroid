@@ -168,7 +168,10 @@ public class MediaUiModel2 extends MediaUiModel {
             Canvas canvas = new Canvas(bitmap);
             Matrix matrix = new Matrix(mMatrix);
             matrix.postConcat(mInverseMatrix);
-            canvas.drawBitmap(mBitmap, matrix, mInitPaint);
+            if(mBitmap!=null){
+                //解决bug 异常情况下bitmap 为null
+                canvas.drawBitmap(mBitmap, matrix, mInitPaint);
+            }
             String path = folder + File.separator + UUID.randomUUID() + ".png";
             saveBitmapToPath(bitmap, path);
             return path;
