@@ -165,11 +165,11 @@ public class frag_search extends BaseFragment {
 
     private void setKeyWordList(ArrayList<SearchKeyWord> listSearchKey) {
         ListForTv.clear();
+        autoNewLineLayout.removeAllViews();
         for (int i = 0; i < listSearchKey.size(); i++) {
             String nowChooseColor = ColorCorrectionManager.getInstance().getChooseColor(i);
             TextView tv = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.textview_recommend, null);
             tv.setText(listSearchKey.get(i).getName());
-
             tv.setTextColor(Color.parseColor(nowChooseColor));
             int finalI = i;
             tv.setOnClickListener(view -> {
@@ -232,6 +232,7 @@ public class frag_search extends BaseFragment {
      * 请求友友推荐
      */
     private void requestKeywordList() {
+        listSearchKey.clear();
         HashMap<String, String> params = new HashMap<>();
         // 启动时间
         Observable ob = Api.getDefault().keywordList(BaseConstans.getRequestHead(params));
@@ -262,7 +263,7 @@ public class frag_search extends BaseFragment {
                 }
                 LogUtil.d("OOM", str);
             }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
 
