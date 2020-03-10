@@ -193,7 +193,6 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="33dp" />
 
-
     <com.shixing.sxve.ui.view.TextAssetEditLayout
         android:id="@+id/text_edit_layout"
         android:layout_width="match_parent"

@@ -128,7 +128,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         videoPlayer.setUp(templateItem.getVidoefile(), true, "");
         videoPlayer.startPlayLogic();
         videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> {
-            VideoPlaybackCompleted(true);
+            VideoPlaybackCompleted(true,true);
             isPlayComplate=true;
         }));
         Glide.with(this)
@@ -184,14 +184,14 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 if(iv_video_play.getVisibility()==View.VISIBLE){
                     if(isPlayComplate){
                         videoPlayer.startPlayLogic();
+                        isPlayComplate=false;
                     }else{
                         videoPlayer.onVideoResume(false);
                     }
-                    VideoPlaybackCompleted(false);
-
+                  VideoPlaybackCompleted(false,false);
                 }else{
-                        videoPlayer.onVideoPause();
-                    VideoPlaybackCompleted(true);
+                    videoPlayer.onVideoPause();
+               VideoPlaybackCompleted(true,false);
                 }
                 break;
 
@@ -338,16 +338,20 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         }
         statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "mb_make", templateItem.getTitle());
         videoPlayer.onVideoPause();
-        VideoPlaybackCompleted(true);
+        VideoPlaybackCompleted(true,true);
         Presenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
     }
 
 
-    private void VideoPlaybackCompleted(boolean isComplete) {
+    private void VideoPlaybackCompleted(boolean isComplete,Boolean isShowCover) {
         if (isComplete) {
             iv_video_play.setVisibility(View.VISIBLE);
-            iv_show_cover.setVisibility(View.VISIBLE);
-            videoPlayer.setVisibility(View.INVISIBLE);
+            if(isShowCover){
+                iv_show_cover.setVisibility(View.VISIBLE);
+                videoPlayer.setVisibility(View.INVISIBLE);
+            }else{
+                videoPlayer.setVisibility(View.VISIBLE);
+            }
         } else {
             iv_show_cover.setVisibility(View.INVISIBLE);
             videoPlayer.setVisibility(View.VISIBLE);

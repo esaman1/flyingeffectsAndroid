@@ -186,7 +186,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     ivPlayButton.setImageResource(R.mipmap.iv_play);
                     isPlaying = false;
                 }
-                showPreview(false);
+                showPreview(false,true);
                 AnimForViewShowAndHide.getInstance().show(mContainer);
             }
         });
@@ -215,9 +215,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         videoPlayer.startPlayLogic();
         videoPlayer.setGSYVideoProgressListener((progress, secProgress, currentPosition, duration) -> seekBar.setProgress(progress));
         videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> {
-            showPreview(false);
+            showPreview(false,true);
         }));
-        showPreview(true);
+        showPreview(true,true);
     }
 
     @Override
@@ -249,7 +249,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         }
 
-        showPreview(true);
+        showPreview(true,false);
     }
 
 
@@ -257,7 +257,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     protected void onPause() {
         super.onPause();
         videoPlayer.onVideoPause();
-        showPreview(false);
+        showPreview(false,true);
         isPlaying = false;
         ivPlayButton.setImageResource(R.mipmap.iv_play);
         if (mPlayer != null) {
@@ -273,14 +273,18 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
-    private void showPreview(boolean isPreview) {
+    private void showPreview(boolean isPreview,boolean hasAnim) {
         if (isPreview) {
             if (isRealtime) {
                 real_time_preview.setVisibility(View.VISIBLE);
             } else {
                 videoPlayer.setVisibility(View.VISIBLE);
             }
-            AnimForViewShowAndHide.getInstance().hide(mContainer);
+            if(hasAnim){
+                AnimForViewShowAndHide.getInstance().hide(mContainer);
+            }else{
+                mContainer.setVisibility(View.GONE);
+            }
 //            mContainerAddAnim();
             modificationThumbForRedactData(true);
         } else {
@@ -399,21 +403,22 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(layoutManager);
         templateThumbAdapter = new TemplateThumbAdapter(R.layout.item_group_thumb, listItem, TemplateActivity.this);
-        templateThumbAdapter.setOnItemClickListener((adapter, view, position) -> {
-            if (mPlayer != null) {
-                mPlayer.pause();
-                ivPlayButton.setImageResource(R.mipmap.iv_play);
-                isPlaying = false;
+        templateThumbAdapter.setOnItemChildClickListener((adapter, view, position) -> {
+            if(view.getId()==R.id.iv_show_un_select){
+                if (mPlayer != null) {
+                    mPlayer.pause();
+                    ivPlayButton.setImageResource(R.mipmap.iv_play);
+                    isPlaying = false;
+                }
+                nowChoosePosition = position;
+                if (nowChoosePosition != lastChoosePosition) {
+                    selectGroup(position);
+                    modificationThumbData(lastChoosePosition, position);
+                }
+                lastChoosePosition = nowChoosePosition;
+                showPreview(false,true);
+                AnimForViewShowAndHide.getInstance().show(mContainer);
             }
-
-            nowChoosePosition = position;
-            if (nowChoosePosition != lastChoosePosition) {
-                selectGroup(position);
-                modificationThumbData(lastChoosePosition, position);
-            }
-            lastChoosePosition = nowChoosePosition;
-            showPreview(false);
-            AnimForViewShowAndHide.getInstance().show(mContainer);
         });
         recyclerView.setAdapter(templateThumbAdapter);
     }
@@ -553,7 +558,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             runOnUiThread(() -> {
                 isPlaying = false;
                 tv_start_time.setText("00:00");
-                showPreview(false);
+                showPreview(false,true);
                 ivPlayButton.setImageResource(R.mipmap.iv_play);
                 seekBar.setProgress(0);
             });

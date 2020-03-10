@@ -32,6 +32,7 @@ public class TemplateThumbAdapter extends BaseItemDraggableAdapter<TemplateThumb
 
     @Override
     protected void convert(BaseViewHolder helper, TemplateThumbItem item) {
+        helper.addOnClickListener(R.id.iv_show_un_select);
         RelativeLayout rela_parent=helper.getView(R.id.rela_parent);
         LinearLayout ll_select=helper.getView(R.id.ll_select);
         if(item.isRedate()){
@@ -55,6 +56,7 @@ public class TemplateThumbAdapter extends BaseItemDraggableAdapter<TemplateThumb
             rela_parent.setBackground(context.getDrawable(R.drawable.template_adapter_item_unselete_bj));
         }
         helper.setText(R.id.tv_num, position + 1 + "");
+
         LogUtil.d("getIsCheck", "getIsCheck=" + item.getIsCheck());
 
     }

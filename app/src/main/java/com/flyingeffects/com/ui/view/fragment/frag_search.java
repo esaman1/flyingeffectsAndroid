@@ -191,12 +191,18 @@ public class frag_search extends BaseFragment {
 
 
     private void setResultMargin() {
-        int tv_height = tv_youyou.getHeight() + ListForTv.get(0).getHeight() * 2;
-        int marginTop = tv_height + screenUtil.dip2px(getActivity(), 116);
-        int dp20 = screenUtil.dip2px(getActivity(), 20);
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        layoutParams.setMargins(dp20, marginTop, dp20, 0);//4个参数按顺序分别是左上右下
-        ll_showResult.setLayoutParams(layoutParams);
+        try {
+            int tv_height = tv_youyou.getHeight() + ListForTv.get(0).getHeight() * 2;
+            int marginTop = tv_height + screenUtil.dip2px(getActivity(), 116);
+            int dp20 = screenUtil.dip2px(getActivity(), 20);
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            layoutParams.setMargins(dp20, marginTop, dp20, 0);//4个参数按顺序分别是左上右下
+            ll_showResult.setLayoutParams(layoutParams);
+        } catch (Exception e) {
+            ll_showResult.setVisibility(View.GONE);
+            e.printStackTrace();
+        }
+
     }
 
 
