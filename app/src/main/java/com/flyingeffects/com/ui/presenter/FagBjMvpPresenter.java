@@ -16,6 +16,9 @@ public class FagBjMvpPresenter extends BasePresenter implements FagBjMvpCallback
         FagBjmodel = new FagBjMvpModel(context, this);
     }
 
+    public void requestData(){
+        FagBjmodel.requestData();
+    }
 
 
 }

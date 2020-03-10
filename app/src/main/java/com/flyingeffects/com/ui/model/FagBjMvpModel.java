@@ -11,22 +11,70 @@ import android.view.View;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
+import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.TemplateType;
+import com.flyingeffects.com.http.Api;
+import com.flyingeffects.com.http.HttpUtil;
+import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.ui.interfaces.model.FagBjpCallback;
+import com.flyingeffects.com.utils.ToastUtil;
+import com.orhanobut.hawk.Hawk;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import rx.Observable;
 import rx.subjects.PublishSubject;
 
 
 public class FagBjMvpModel {
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
-    private FagBjpCallback callback;
+    private FagBjMvpCallback callback;
     private Context context;
     private BottomSheetDialog bottomSheetDialog;
 
 
-    public FagBjMvpModel(Context context, FagBjpCallback callback) {
+    public FagBjMvpModel(Context context, FagBjMvpCallback callback) {
         this.context = context;
         this.callback = callback;
     }
+
+    //得到banner缓存数据
+    private  void requestData() {
+        ArrayList<TemplateType> cacheTemplateData= Hawk.get("mainData", new ArrayList<>());
+        if (cacheTemplateData != null) {
+            callback.setFragmentList(cacheTemplateData);
+            requestMainData(false); //首页杂数据
+        } else {
+            requestMainData(true); //首页杂数据
+        }
+    }
+
+
+
+
+    private void requestMainData(boolean isShowDialog) {
+        HashMap<String, String> params = new HashMap<>();
+        Observable ob = Api.getDefault().getTemplateType(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<TemplateType>>(context) {
+            @Override
+            protected void _onError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(List<TemplateType> data) {
+
+                callback.setFragmentList(data);
+
+            }
+        }, "mainData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, true, true, isShowDialog);
+    }
+
+
+}
+
 
 
 

@@ -42,6 +42,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
 
     @Override
     protected void initAction() {
+        presenter.requestData();
 
     }
 
