@@ -195,7 +195,7 @@ public class HomeMainActivity extends FragmentActivity {
                 break;
             case R.id.ll_menu_3:
                 statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this,"3_mine");
-                whichMenuSelect(2);
+                whichMenuSelect(3);
                 break;
 
             default:
