@@ -23,6 +23,7 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.ui.view.fragment.frag_Bj;
 import com.githang.statusbar.StatusBarCompat;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
@@ -42,15 +43,15 @@ import de.greenrobot.event.EventBus;
  * @author zhang
  */
 public class HomeMainActivity extends FragmentActivity {
-    private ImageView[] iV_menu = new ImageView[3];
-    private TextView[] tv_main = new TextView[3];
-    private LinearLayout[] lin_menu = new LinearLayout[3];
-    private int[] lin_Id = {R.id.ll_menu_0, R.id.ll_menu_1, R.id.ll_menu_2};
-    private int[] img_Id = {R.id.iV_menu_0, R.id.iV_menu_1, R.id.iV_menu_2};
+    private ImageView[] iV_menu = new ImageView[4];
+    private TextView[] tv_main = new TextView[4];
+    private LinearLayout[] lin_menu = new LinearLayout[4];
+    private int[] lin_Id = {R.id.ll_menu_0, R.id.ll_menu_1, R.id.ll_menu_2,R.id.ll_menu_3};
+    private int[] img_Id = {R.id.iV_menu_0, R.id.iV_menu_1, R.id.iV_menu_2, R.id.iV_menu_3};
     public HomeMainActivity ThisMain;
-    private int[] tv_main_button = {R.id.tv_main_0, R.id.tv_main_1, R.id.tv_main_2};
-    private int[] selectIconArr = {R.mipmap.moban, R.mipmap.chazhao, R.mipmap.wode};
-    private int[] unSelectIconArr = {R.mipmap.moban_unslect, R.mipmap.chazhao_unselect, R.mipmap.wode_unselect};
+    private int[] tv_main_button = {R.id.tv_main_0, R.id.tv_main_1, R.id.tv_main_2,R.id.tv_main_3};
+    private int[] selectIconArr = {R.mipmap.moban, R.mipmap.chazhao, R.mipmap.wode, R.mipmap.wode};
+    private int[] unSelectIconArr = {R.mipmap.moban_unslect, R.mipmap.chazhao_unselect, R.mipmap.wode_unselect, R.mipmap.wode_unselect};
     private FragmentManager fragmentManager;
 
     @Override
@@ -190,6 +191,9 @@ public class HomeMainActivity extends FragmentActivity {
                 whichMenuSelect(1);
                 break;
             case R.id.ll_menu_2:
+                whichMenuSelect(2);
+                break;
+            case R.id.ll_menu_3:
                 statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this,"3_mine");
                 whichMenuSelect(2);
                 break;
@@ -240,39 +244,51 @@ public class HomeMainActivity extends FragmentActivity {
         super.onPause();
     }
 
+    private frag_Bj menu0F = null;
+    private FragForTemplate menu1F = null;
+    private frag_search menu2F = null;
+    private frag_user_center menu3F = null;
 
-    private FragForTemplate menu0F = null;
-    private frag_search menu1F = null;
-    private frag_user_center menu2F = null;
 
     private void openMenu(int which) {
         setStatusBar();
         if (fragmentManager != null) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             switch (which) {
+
                 case 0: {
                     if (menu0F == null) {
-                        menu0F = new FragForTemplate();
+                        menu0F = new frag_Bj();
                     }
                     if (!menu0F.isAdded() && !menu0F.isVisible() && !menu0F.isRemoving()) {
                         fragmentTransaction.replace(R.id.rL_show, menu0F, menu0F.getClass().getName()).commitAllowingStateLoss();
                     }
                     break;
                 }
+
                 case 1: {
                     if (menu1F == null) {
-                        menu1F = new frag_search();
-
+                        menu1F = new FragForTemplate();
                     }
-                    fragmentTransaction.replace(R.id.rL_show, menu1F, menu1F.getClass().getName()).commitAllowingStateLoss();
+                    if (!menu1F.isAdded() && !menu1F.isVisible() && !menu1F.isRemoving()) {
+                        fragmentTransaction.replace(R.id.rL_show, menu1F, menu1F.getClass().getName()).commitAllowingStateLoss();
+                    }
                     break;
                 }
                 case 2: {
                     if (menu2F == null) {
-                        menu2F = new frag_user_center();
+                        menu2F = new frag_search();
 
                     }
                     fragmentTransaction.replace(R.id.rL_show, menu2F, menu2F.getClass().getName()).commitAllowingStateLoss();
+                    break;
+                }
+                case 3: {
+                    if (menu3F == null) {
+                        menu3F = new frag_user_center();
+
+                    }
+                    fragmentTransaction.replace(R.id.rL_show, menu3F, menu3F.getClass().getName()).commitAllowingStateLoss();
                     break;
                 }
                 default:
