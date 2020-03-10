@@ -1,8 +1,11 @@
 package com.flyingeffects.com.http;
 
 
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.enity.HttpResult;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
+import com.flyingeffects.com.utils.CheckNetwork;
+import com.flyingeffects.com.utils.ToastUtil;
 
 import rx.Observable;
 import rx.functions.Action0;
@@ -143,6 +146,12 @@ public class HttpUtil {
      * @param forceRefresh     是否强制刷新
      */
     public void toSubscribe(Observable ob, final ProgressSubscriber subscriber, String cacheKey, final ActivityLifeCycleEvent event, final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject, boolean isSave, boolean forceRefresh, final boolean isShowDialog) {
+
+      if(!CheckNetwork.isNetworkConnected(BaseApplication.getInstance())){
+          ToastUtil.showToast("网络连接失败");
+          return;
+      }
+
         //数据预处理
         Observable.Transformer<HttpResult<Object>, Object> result = RxHelper.handleResult(event, lifecycleSubject);
         Observable observable = ob.compose(result)

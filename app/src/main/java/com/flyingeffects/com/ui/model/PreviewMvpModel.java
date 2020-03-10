@@ -49,16 +49,15 @@ public class PreviewMvpModel {
      * 原图片地址
      */
     private List<String> localImagePaths;
-    private  FileManager fileManager;
+    private FileManager fileManager;
 
     public PreviewMvpModel(Context context, PreviewMvpCallback callback) {
         this.context = context;
         this.callback = callback;
-        fileManager=new FileManager();
+        fileManager = new FileManager();
         mCatchFolder = fileManager.getCachePath(context);
-        mTailtoFolder= fileManager.getFileCachePath(context,"tailor");
+        mTailtoFolder = fileManager.getFileCachePath(context, "tailor");
     }
-
 
 
     public void onDestroy() {
@@ -67,18 +66,18 @@ public class PreviewMvpModel {
     private int nowCompressSuccessNum;
 
     public void CompressImgAndCache(List<String> paths) {
-        List<String>hasReadyList=new ArrayList<>();
-        for(int i=0;i<paths.size();i++){
-            String localCacheName=paths.get(i);
-            localCacheName= fileManager.getFileNameWithSuffix(localCacheName);
-            File file=new File(mTailtoFolder+"/"+localCacheName);
-            if(file.exists()){
+        List<String> hasReadyList = new ArrayList<>();
+        for (int i = 0; i < paths.size(); i++) {
+            String localCacheName = paths.get(i);
+            localCacheName = fileManager.getFileNameWithSuffix(localCacheName);
+            File file = new File(mTailtoFolder + "/" + localCacheName);
+            if (file.exists()) {
                 hasReadyList.add(file.getPath());
-                if(i==paths.size()-1){
+                if (i == paths.size() - 1) {
                     callback.getCompressImgList(hasReadyList);
                     return;
                 }
-            }else{
+            } else {
                 break;
             }
         }
@@ -88,9 +87,9 @@ public class PreviewMvpModel {
     }
 
 
-    private void toCompressImg(List<String> paths){
-        if(paths!=null){
-            localImagePaths=paths;
+    private void toCompressImg(List<String> paths) {
+        if (paths != null) {
+            localImagePaths = paths;
             int nowChoosePathNum = paths.size();
             nowCompressSuccessNum = 0;
             Luban.with(context)
@@ -109,11 +108,11 @@ public class PreviewMvpModel {
                             //全部图片压缩完成
                             if (nowCompressSuccessNum == nowChoosePathNum) {
                                 //todo 这里会出现一个bug ,设置了mCatchFolder ，但是裁剪后不会进入到里面去
-                                if(nowChoosePathNum==1){
+                                if (nowChoosePathNum == 1) {
                                     allCompressPaths.clear();
                                     allCompressPaths.add(file.getPath());
                                     upLoad(allCompressPaths);
-                                }else{
+                                } else {
                                     allCompressPaths = FileManager.getFilesAllName(file.getParent());
                                     upLoad(allCompressPaths);
                                 }
@@ -167,7 +166,7 @@ public class PreviewMvpModel {
 
             @Override
             protected void _onNext(UserInfo data) {
-              callback.hasLogin(true);
+                callback.hasLogin(true);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
@@ -179,8 +178,8 @@ public class PreviewMvpModel {
     private ArrayList<String> listForMatting = new ArrayList<>();
 
     private void upLoad(List<String> list) {
-        String alert="正在抠图中"+"\n"+"上传人物最佳";
-        WaitingDialog.openPragressDialog(context,alert);
+        String alert = "正在抠图中" + "\n" + "上传人物最佳";
+        WaitingDialog.openPragressDialog(context, alert);
         listForMatting.clear();
         List<File> listFile = new ArrayList<>();
         for (String str : list
@@ -194,38 +193,35 @@ public class PreviewMvpModel {
         updateFileUtils.uploadFile(listFile, "http://flying.nineton.cn/api/picture/picturesHumanList?filenum=" + pathNum, new updateFileUtils.HttpCallbackListener() {
             @Override
             public void onFinish(int code, String str) {
-             //   LogUtil.d("OOM", "uploadFileCallBack=" + str);
                 WaitingDialog.closePragressDialog();
-                Gson gson = new Gson();
-                DownImg downIng = gson.fromJson(str, DownImg.class);
-                if(downIng!=null&&downIng.getCode()==1){
-                //成功
-                    ArrayList<DownImgDataList> data = downIng.getData();
-                    for (DownImgDataList item : data
-                    ) {
-                        listForMatting.add(item.getTarget_url());
-                    }
-
-                    //马卡龙，这里是图片链接，下载下来的方式
-                    if (data.get(0).getType() == 1) {
-                        DownImageManager downImageManager = new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> {
-                            callback.getCompressImgList(path);
-                            keepTailorImageToCache(path);
-                        });
-                        downImageManager.downImage(listForMatting.get(0));
-                    } else {
-                        //百度，face++ 是直接下载的图片编码
-                        DownImageManager downImageManager = new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> {
-                            callback.getCompressImgList(path);
-                            keepTailorImageToCache(path);
-                        });
-                        downImageManager.downImageForByte(listForMatting.get(0));
-                    }
-
-                }else{
-                    //失败
-                    WaitingDialog.closePragressDialog();
+                if (code == 404) {
                     callback.getCompressImgList(localImagePaths);
+                } else {
+                    Gson gson = new Gson();
+                    DownImg downIng = gson.fromJson(str, DownImg.class);
+                    if (downIng != null && downIng.getCode() == 1) {
+                        //成功
+                        ArrayList<DownImgDataList> data = downIng.getData();
+                        for (DownImgDataList item : data
+                        ) {
+                            listForMatting.add(item.getTarget_url());
+                        }
+                        //马卡龙，这里是图片链接，下载下来的方式
+                        if (data.get(0).getType() == 1) {
+                            DownImageManager downImageManager = new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> {
+                                callback.getCompressImgList(path);
+                                keepTailorImageToCache(path);
+                            });
+                            downImageManager.downImage(listForMatting.get(0));
+                        } else {
+                            //百度，face++ 是直接下载的图片编码
+                            DownImageManager downImageManager = new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> {
+                                callback.getCompressImgList(path);
+                                keepTailorImageToCache(path);
+                            });
+                            downImageManager.downImageForByte(listForMatting.get(0));
+                        }
+                    }
                 }
             }
         });
@@ -234,23 +230,24 @@ public class PreviewMvpModel {
 
     /**
      * 缓存图片到本地
-     * @param paths  下载后的地址列表
+     *
+     * @param paths 下载后的地址列表
      */
     private void keepTailorImageToCache(List<String> paths) {
-      for(int i=0;i<paths.size();i++){
-          String localCacheName=localImagePaths.get(i);
-          File file=new File(paths.get(i));
-          FileManager manager=new FileManager();
-          localCacheName= manager.getFileNameWithSuffix(localCacheName);
-          if(mTailtoFolder!=null){
-              File   mTailto=new File(mTailtoFolder,localCacheName);
-              manager.mCopyFile(file,mTailto);
-          }
-      }
+        for (int i = 0; i < paths.size(); i++) {
+            String localCacheName = localImagePaths.get(i);
+            File file = new File(paths.get(i));
+            FileManager manager = new FileManager();
+            localCacheName = manager.getFileNameWithSuffix(localCacheName);
+            if (mTailtoFolder != null) {
+                File mTailto = new File(mTailtoFolder, localCacheName);
+                manager.mCopyFile(file, mTailto);
+            }
+        }
     }
 
 
-    public void collectTemplate(String templateId,String title) {
+    public void collectTemplate(String templateId, String title) {
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", templateId);
         params.put("token", BaseConstans.GetUserToken());
@@ -264,7 +261,7 @@ public class PreviewMvpModel {
 
             @Override
             protected void _onNext(Object data) {
-                statisticsEventAffair.getInstance().setFlag(context, "1_mb_keep",title );
+                statisticsEventAffair.getInstance().setFlag(context, "1_mb_keep", title);
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "collectTemplate=" + str);
                 callback.collectionResult();
@@ -282,7 +279,6 @@ public class PreviewMvpModel {
             ToastUtil.showToast("网络连接失败！");
         }
     }
-
 
 
     private File mFolder;
@@ -362,7 +358,7 @@ public class PreviewMvpModel {
 
 
     private void intoTemplateActivity(String filePath) {
-            callback.getTemplateFileSuccess(filePath);
+        callback.getTemplateFileSuccess(filePath);
     }
 
 

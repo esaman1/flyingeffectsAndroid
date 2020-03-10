@@ -94,12 +94,14 @@ public class updateFileUtils {
                         listener.onFinish(res,s);
 
                     }else{
-                        listener.onFinish(res,"");
+                        listener.onFinish(404,"");
                     }
 
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
+                    listener.onFinish(404,"");
                 } catch (IOException e) {
+                    listener.onFinish(404,"");
                     e.printStackTrace();
                 }
                 return;

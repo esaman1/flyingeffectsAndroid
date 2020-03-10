@@ -135,7 +135,6 @@ public class frag_search extends BaseFragment {
             ll_showResult.setVisibility(View.GONE);
         });
         showSoftInputFromWindow(ed_text);
-        requestKeywordList();
     }
 
 
@@ -153,7 +152,7 @@ public class frag_search extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-
+        requestKeywordList();
 
     }
 
@@ -165,7 +164,7 @@ public class frag_search extends BaseFragment {
 
 
     private void setKeyWordList(ArrayList<SearchKeyWord> listSearchKey) {
-
+        ListForTv.clear();
         for (int i = 0; i < listSearchKey.size(); i++) {
             String nowChooseColor = ColorCorrectionManager.getInstance().getChooseColor(i);
             TextView tv = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.textview_recommend, null);

@@ -13,8 +13,6 @@
         android:orientation="vertical">
 
 
-
-
         <include layout="@layout/view_top"/>
 
 
@@ -88,7 +86,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:paddingTop="@dimen/dp_82">
+                    android:paddingTop="@dimen/dp_40">
 
                     <CheckBox
                         android:id="@+id/check_box"
