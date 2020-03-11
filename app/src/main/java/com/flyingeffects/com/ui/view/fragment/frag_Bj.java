@@ -1,11 +1,14 @@
 package com.flyingeffects.com.ui.view.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.flyingeffects.com.R;
@@ -38,8 +41,8 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
 
     private FagBjMvpPresenter presenter;
 
-    private ArrayList<TextView> list_tv = new ArrayList<>();
-
+    private ArrayList<TextView> listTv = new ArrayList<>();
+    private ArrayList<View> listView = new ArrayList<>();
 
     @Override
     protected int getContentLayout() {
@@ -80,19 +83,26 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
 
     @Override
     public void setFragmentList(List<TemplateType> data) {
+        ll_add_child.removeAllViews();
+        listView.clear();
+        listTv.clear();
         FragmentManager manager = getFragmentManager();
         String[] titles = new String[data.size()];
         ArrayList<Fragment> list = new ArrayList<>();
         for (int i = 0; i < data.size(); i++) {
-            TextView tv = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.textview_bj_head, null);
+            View view = LayoutInflater.from(getActivity()).inflate(R.layout.view_bj_head, null);
+            TextView tv = view.findViewById(R.id.tv_name_bj_head);
+            View view_line = view.findViewById(R.id.view_line_head);
             tv.setText(data.get(i).getName());
             tv.setId(i);
             tv.setOnClickListener(v -> showWitchBtn(v.getId()));
-            list_tv.add(tv);
-            ll_add_child.addView(tv);
+            listTv.add(tv);
+            listView.add(view_line);
+            ll_add_child.addView(view);
             titles[i] = data.get(i).getName();
             Bundle bundle = new Bundle();
             bundle.putSerializable("id", data.get(i).getId());
+            bundle.putSerializable("from", 1);
             bundle.putSerializable("num", i);
             titles[i] = data.get(i).getName();
             home_item_fag fragment = new home_item_fag();
@@ -120,24 +130,34 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
             }
         });
 
-        if ( data.size() > 0) {
+        if (data.size() > 0) {
             showWitchBtn(0);
         }
     }
 
 
     private void showWitchBtn(int showWitch) {
-        for (int i = 0; i < list_tv.size(); i++) {
-            TextView tv = list_tv.get(i);
+        for (int i = 0; i < listTv.size(); i++) {
+            TextView tv = listTv.get(i);
+            View view = listView.get(i);
             if (i == showWitch) {
-                tv.setTextSize(20);
+                tv.setTextSize(21);
+                int width = tv.getWidth();
+                view.setVisibility(View.VISIBLE);
+                setViewWidth(view,width);
             } else {
-                tv.setTextSize(14);
+                tv.setTextSize(17);
+                view.setVisibility(View.GONE);
             }
         }
-
-        TextView tv_select = list_tv.get(showWitch);
         viewPager.setCurrentItem(showWitch);
+    }
+
+
+    private void setViewWidth(View mView,int width) {
+        RelativeLayout.LayoutParams Params =(RelativeLayout.LayoutParams) mView.getLayoutParams();
+        Params.width = width;
+        mView.setLayoutParams(Params);
     }
 
 }

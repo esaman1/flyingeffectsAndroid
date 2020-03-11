@@ -27,7 +27,7 @@ import butterknife.BindView;
 import static cn.nt.lib.analytics.NTAnalytics.startStatistics;
 
 
-public class home_item_fag extends BaseFragment implements HomeItemMvpView, main_recycler_adapter.showOnitemClick ,View.OnClickListener {
+public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View.OnClickListener {
 
     private home_fag_itemMvpPresenter Presenter;
     @BindView(R.id.RecyclerView)
@@ -41,6 +41,10 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, main
     SmartRefreshLayout smartRefreshLayout;
     @BindView(R.id.lin_show_nodata)
     LinearLayout lin_show_nodata;
+    /**
+     * 0 表示来做模板，1表示来自背景
+     */
+    private int fromType;
 
 
     @Override
@@ -56,6 +60,7 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, main
         if (bundle != null) {
             templateId = bundle.getString("id");
             actTag = bundle.getInt("num");
+            fromType=bundle.getInt("from");
         }
         initRecycler();
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
@@ -64,7 +69,7 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, main
 
 
     private void initRecycler() {
-        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), this, 0);
+        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(),fromType);
         layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -200,10 +205,6 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView, main
 
     }
 
-    @Override
-    public void clickItem(int position) {
-
-    }
 }
 
 

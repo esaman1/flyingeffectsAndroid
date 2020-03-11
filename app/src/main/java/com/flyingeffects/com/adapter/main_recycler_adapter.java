@@ -2,7 +2,9 @@ package com.flyingeffects.com.adapter;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -24,28 +26,33 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
 
     private Context context;
     public final static String TAG = "main_recycler_adapter";
+    private  int fromType;
 
-    public main_recycler_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, showOnitemClick callback, int adType) {
+    public main_recycler_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context,int fromType) {
         super(layoutResId, allData);
         this.context = context;
+        this.fromType=fromType;
     }
 
 
     @Override
     protected void convert(final BaseViewHolder helper, final new_fag_template_item item) {
         int offset = helper.getLayoutPosition();
-        helper.setText(R.id.tv_name,item.getTitle());
         Glide.with(context)
                 .load(item.getImage())
                 .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 5)))
 //                .apply(RequestOptions.placeholderOf(getDrawble(offset)))
                 .into((ImageView) helper.getView(R.id.iv_cover));
-    }
-
-    public interface showOnitemClick {
-
-        void clickItem(int position);
-
+        ImageView iv_show_author=helper.getView(R.id.iv_show_author);
+        TextView tv_name=helper.getView(R.id.tv_name);
+        tv_name.setText(item.getTitle());
+        if(fromType==1){
+            iv_show_author.setVisibility(View.VISIBLE);
+            tv_name.setVisibility(View.GONE);
+        }else {
+            iv_show_author.setVisibility(View.GONE);
+            tv_name.setVisibility(View.VISIBLE);
+        }
     }
 
 

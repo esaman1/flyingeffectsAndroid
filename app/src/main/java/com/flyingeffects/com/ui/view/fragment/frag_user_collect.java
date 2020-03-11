@@ -168,7 +168,7 @@ public class frag_user_collect extends BaseFragment {
 
 
     private void initRecycler() {
-        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), null, 0);
+        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), 0);
         layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);

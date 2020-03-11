@@ -58,13 +58,19 @@
 
             </RelativeLayout>
 
-            <LinearLayout
-                android:id="@+id/ll_add_child"
+            <HorizontalScrollView
                 android:layout_width="match_parent"
-
-                android:layout_height="50dp"
+                android:layout_gravity="center"
                 android:background="@color/base_black"
-                android:orientation="horizontal" />
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:id="@+id/ll_add_child"
+                    android:layout_width="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_height="80dp"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
+
         </android.support.design.widget.AppBarLayout>
 
 
