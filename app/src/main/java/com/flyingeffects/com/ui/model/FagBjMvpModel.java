@@ -1,22 +1,15 @@
 package com.flyingeffects.com.ui.model;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
-import android.support.design.widget.CoordinatorLayout;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
 
-import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.ui.interfaces.model.FagBjpCallback;
+import com.flyingeffects.com.ui.interfaces.model.FagBjMvpCallback;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.orhanobut.hawk.Hawk;
 
@@ -41,7 +34,7 @@ public class FagBjMvpModel {
     }
 
     //得到banner缓存数据
-    private  void requestData() {
+    public  void requestData() {
         ArrayList<TemplateType> cacheTemplateData= Hawk.get("mainData", new ArrayList<>());
         if (cacheTemplateData != null) {
             callback.setFragmentList(cacheTemplateData);
@@ -71,13 +64,6 @@ public class FagBjMvpModel {
             }
         }, "mainData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, true, true, isShowDialog);
     }
-
-
-}
-
-
-
-
 
 
 
