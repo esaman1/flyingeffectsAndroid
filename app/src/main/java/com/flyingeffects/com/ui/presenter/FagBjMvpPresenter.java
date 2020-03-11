@@ -26,6 +26,6 @@ public class FagBjMvpPresenter extends BasePresenter implements FagBjMvpCallback
 
     @Override
     public void setFragmentList(List<TemplateType> data) {
-
+        FagBjmvpView.setFragmentList(data);
     }
 }

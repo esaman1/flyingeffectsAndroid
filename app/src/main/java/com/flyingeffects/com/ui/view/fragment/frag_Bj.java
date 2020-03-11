@@ -5,8 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -32,13 +30,15 @@ import butterknife.BindView;
 public class frag_Bj extends BaseFragment implements FagBjMvpView {
 
     @BindView(R.id.viewpager)
-    ViewPager viewpager;
+    ViewPager viewPager;
 
 
     @BindView(R.id.ll_add_child)
     LinearLayout ll_add_child;
 
     private FagBjMvpPresenter presenter;
+
+    private ArrayList<TextView> list_tv = new ArrayList<>();
 
 
     @Override
@@ -50,12 +50,13 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     @Override
     protected void initView() {
         presenter = new FagBjMvpPresenter(getActivity(), this);
+        presenter.requestData();
     }
 
 
     @Override
     protected void initAction() {
-        presenter.requestData();
+
 
     }
 
@@ -79,54 +80,65 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
 
     @Override
     public void setFragmentList(List<TemplateType> data) {
-
+        FragmentManager manager = getFragmentManager();
+        String[] titles = new String[data.size()];
+        ArrayList<Fragment> list = new ArrayList<>();
         for (int i = 0; i < data.size(); i++) {
-            View view = LayoutInflater.from(context).inflate(R.layout.item_home_hot_video_section, null);
-            TextView tv = view.findViewById(R.id.tv_text);
-            tv.setText(videoModel.getTags().get(i));
-            if (view.getParent() != null) {
-                ViewGroup vp = (ViewGroup) view.getParent();
-                vp.removeAllViews();
-            }
-            ll_add_Section.addView(view);
+            TextView tv = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.textview_bj_head, null);
+            tv.setText(data.get(i).getName());
+            tv.setId(i);
+            tv.setOnClickListener(v -> showWitchBtn(v.getId()));
+            list_tv.add(tv);
+            ll_add_child.addView(tv);
+            titles[i] = data.get(i).getName();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("id", data.get(i).getId());
+            bundle.putSerializable("num", i);
+            titles[i] = data.get(i).getName();
+            home_item_fag fragment = new home_item_fag();
+            fragment.setArguments(bundle);
+            list.add(fragment);
         }
+        home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
 
-        if (data != null && data.size() > 0) {
-            ArrayList<Fragment> list = new ArrayList<>();
-            FragmentManager manager = getFragmentManager();
-            String[] titles = new String[data.size()];
-            for (int i = 0; i < data.size(); i++) {
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("id", data.get(i).getId());
-                bundle.putSerializable("num", i);
-                titles[i] = data.get(i).getName();
-                home_item_fag fragment = new home_item_fag();
-                fragment.setArguments(bundle);
-                list.add(fragment);
             }
-            home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
-            viewpager.setAdapter(adapter);
-            viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int i, float v, int i1) {
 
+            @Override
+            public void onPageSelected(int i) {
+                if (i <= data.size() - 1) {
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
                 }
+            }
 
-                @Override
-                public void onPageSelected(int i) {
-                    if (i <= data.size() - 1) {
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
-                    }
-                }
+            @Override
+            public void onPageScrollStateChanged(int i) {
 
-                @Override
-                public void onPageScrollStateChanged(int i) {
+            }
+        });
 
-                }
-            });
+        if ( data.size() > 0) {
+            showWitchBtn(0);
         }
     }
 
+
+    private void showWitchBtn(int showWitch) {
+        for (int i = 0; i < list_tv.size(); i++) {
+            TextView tv = list_tv.get(i);
+            if (i == showWitch) {
+                tv.setTextSize(20);
+            } else {
+                tv.setTextSize(14);
+            }
+        }
+
+        TextView tv_select = list_tv.get(showWitch);
+        viewPager.setCurrentItem(showWitch);
+    }
 
 }
 
