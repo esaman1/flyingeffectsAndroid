@@ -81,9 +81,9 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View
                 statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
                 Intent intent =new Intent(getActivity(), PreviewActivity.class);
                 if(fromType==0){
-                    intent.putExtra("fromType", FromToTemplate.ISFROMTEMPLATE);
+                    intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
                 }else{
-                    intent.putExtra("fromType", FromToTemplate.ISFROMBJ);
+                    intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
                 }
                 intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
                 startActivity(intent);

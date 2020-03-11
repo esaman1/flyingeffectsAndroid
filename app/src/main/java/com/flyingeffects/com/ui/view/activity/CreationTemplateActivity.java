@@ -68,7 +68,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     protected void initAction() {
-        presenter.initBottomLayout();
+        presenter.initBottomLayout(viewPager);
 
     }
 

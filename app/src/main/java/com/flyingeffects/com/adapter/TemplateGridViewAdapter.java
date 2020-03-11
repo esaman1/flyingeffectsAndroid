@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.flyingeffects.com.R;
@@ -49,14 +50,12 @@ public class TemplateGridViewAdapter extends BaseAdapter {
         if (view == null) {
             holder = new ViewHold();
             view = LayoutInflater.from(context).inflate(R.layout.item_template_gridview, parent, false);
-            holder.tv_name=view.findViewById(R.id.tv_name);
+            holder.ivTest=view.findViewById(R.id.tv_name);
             view.setTag(holder);
         } else {
             holder = (ViewHold) view.getTag();
         }
         String data = SearchList.get(position);
-
-        holder.tv_name.setText(data);
         return view;
     }
 
@@ -64,6 +63,6 @@ public class TemplateGridViewAdapter extends BaseAdapter {
 
 
     class ViewHold {
-        TextView tv_name;
+        ImageView ivTest;
     }
 }

@@ -91,7 +91,8 @@
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.CreationTemplateActivity"
-            android:theme="@style/TransparentTheme" />
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
 
 
 

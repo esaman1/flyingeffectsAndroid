@@ -6,6 +6,10 @@
 
     <GridView
         android:id="@+id/gridView"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="10dp"
+        android:numColumns="6"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

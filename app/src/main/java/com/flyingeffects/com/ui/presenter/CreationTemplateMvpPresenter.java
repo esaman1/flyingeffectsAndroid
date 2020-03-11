@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.presenter;
 
 import android.content.Context;
+import android.support.v4.view.ViewPager;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
@@ -17,8 +18,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
-    public void initBottomLayout(){
-        creationTemplatemodel.initBottomLayout();
+    public void initBottomLayout(ViewPager viewPager){
+        creationTemplatemodel.initBottomLayout(viewPager);
     }
 
 

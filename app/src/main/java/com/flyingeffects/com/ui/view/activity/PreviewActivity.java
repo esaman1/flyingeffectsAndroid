@@ -269,16 +269,14 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
 
 
-    private void intoCreationTemplateActivity(){
-
-
-    }
 
 
     @Override
     public void getCompressImgList(List<String> imgList) {
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-            intoTemplateActivity(imgList, TemplateFilePath);
+            Intent intent=new Intent(PreviewActivity.this,CreationTemplateActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
         }else{
             intoTemplateActivity(imgList, TemplateFilePath);
         }
