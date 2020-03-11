@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/home_base_balk_color">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <ImageView
+            android:id="@+id/iv_top_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:contentDescription="@string/app_name"
+            android:padding="10dp"
+            android:src="@mipmap/back"
+            android:visibility="visible" />
+
+
+        <LinearLayout
+            android:id="@+id/ll_Matting"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="智能抠图"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+
+
+            <com.suke.widget.SwitchButton
+                android:layout_marginStart="9dp"
+                android:id="@+id/switch_button"
+                app:sb_checkline_color="@color/base_black"
+                app:sb_border_width="@dimen/dp_2"
+                android:layout_width="40dp"
+                app:sb_checked_color="@color/base_black"
+                app:sb_button_color="@color/home_base_blue_color"
+                app:sb_checked="true"
+                app:sb_uncheckcircle_width="0dp"
+                app:sb_uncheckcircle_radius="@dimen/dp_0"
+                app:sb_show_indicator="false"
+                android:layout_height="24dp"/>
+
+
+        </LinearLayout>
+
+
+
+        <TextView
+            android:id="@+id/tv_top_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="15dp"
+            android:text="@string/app_name"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_16sp_size"
+          />
+
+
+
+    </RelativeLayout>
+
+
+
+    <FrameLayout
+        android:id="@+id/edit_view_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/ll_progress"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="90dp"
+        android:layout_marginEnd="70dp"
+        android:layout_marginBottom="40dp" />
+
+
+    <com.flyingeffects.com.view.EmptyControlVideo
+        android:id="@+id/video_player"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_above="@+id/ll_progress"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="90dp"
+        android:layout_marginEnd="70dp"
+        android:layout_marginBottom="40dp"
+        android:layout_height="match_parent"
+        />
+
+
+    <LinearLayout
+        android:id="@+id/ll_progress"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_above="@+id/viewPager"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+
+        <ImageView
+            android:contentDescription="@string/app_name"
+            android:id="@+id/iv_play"
+            android:layout_width="26dp"
+            android:layout_height="29dp"
+            android:layout_marginStart="13dp"
+            android:src="@mipmap/iv_play" />
+
+
+        <TextView
+            android:id="@+id/tv_start_time"
+            android:layout_width="wrap_content"
+            android:text="00:00"
+            android:layout_marginStart="13dp"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"/>
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_marginStart="13dp"
+            android:layout_height="wrap_content">
+
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxHeight="2dp"
+                android:max="100"
+                android:layout_marginEnd="10dp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/tv_end_time"
+                android:progress="0"
+                android:progressDrawable="@drawable/bg_adjust_seek_bar"
+                android:thumb="@drawable/seek_bar_thumb"/>
+
+
+
+            <TextView
+                android:id="@+id/tv_end_time"
+                android:layout_width="wrap_content"
+                android:text="00:00"
+                android:layout_alignParentRight="true"
+                android:textSize="14sp"
+                android:layout_marginEnd="20dp"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+
+
+
+
+
+    </LinearLayout>
+
+
+
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_above="@+id/tl_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"/>
+
+
+
+    <com.flyco.tablayout.SlidingTabLayout
+        android:id="@+id/tl_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginBottom="7dp"
+        app:tl_indicator_color="#5694FA"
+        app:tl_indicator_corner_radius="@dimen/dp_5"
+        app:tl_indicator_height="@dimen/dp_4"
+        app:tl_indicator_margin_left="6dp"
+        app:tl_indicator_margin_right="6dp"
+        android:layout_alignParentBottom="true"
+        app:tl_tab_padding="10dp"
+        app:tl_textAllCaps="true"
+        app:tl_textBold="BOTH"
+        app:tl_textSelectColor="#FFFFFF"
+        app:tl_textUnselectColor="#BBBBBB"
+        app:tl_textsize="@dimen/sp_16" />
+
+
+</RelativeLayout>

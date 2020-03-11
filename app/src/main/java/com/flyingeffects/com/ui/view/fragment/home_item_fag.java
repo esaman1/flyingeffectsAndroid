@@ -32,7 +32,7 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View
 
     private home_fag_itemMvpPresenter Presenter;
     @BindView(R.id.RecyclerView)
-     RecyclerView  recyclerView;
+    RecyclerView  recyclerView;
     private main_recycler_adapter adapter;
     private List<new_fag_template_item> allData = new ArrayList<>();
     private String templateId = "";

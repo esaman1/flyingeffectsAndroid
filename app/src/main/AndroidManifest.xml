@@ -89,7 +89,9 @@
             android:name="com.flyingeffects.com.ui.view.activity.UpdateApkActivity"
             android:theme="@style/TransparentTheme" />
 
-
+        <activity
+            android:name="com.flyingeffects.com.ui.view.activity.CreationTemplateActivity"
+            android:theme="@style/TransparentTheme" />
 
 
 
