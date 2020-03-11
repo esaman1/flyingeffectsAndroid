@@ -22,6 +22,7 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.PreviewMvpView;
+import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.presenter.PreviewMvpPresenter;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
@@ -96,6 +97,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     private int is_picout;
 
     public final static int SELECTALBUM = 0;
+    public final static int SELECTALBUMFROMBJ= 1;
 
     private boolean isPlayComplate=false;
 
@@ -105,6 +107,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     private String fromTo;
 
     private int nowCollectType;
+
+    /**
+     * 0 表示来做模板，1表示来自背景
+     */
 
 
     @Override
@@ -235,7 +241,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel && !ondestroy) {
-            if (SELECTALBUM == 0) {
                 //如果不需要抠图
                 if (is_picout == 0) {
                     intoTemplateActivity(paths, TemplateFilePath);
@@ -244,9 +249,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                     originalImagePath = paths;
                     Presenter.CompressImg(paths);
                 }
-
             }
-        }
     }
 
 
@@ -265,9 +268,21 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     }
 
 
+
+    private void intoCreationTemplateActivity(){
+
+
+    }
+
+
     @Override
     public void getCompressImgList(List<String> imgList) {
-        intoTemplateActivity(imgList, TemplateFilePath);
+        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+            intoTemplateActivity(imgList, TemplateFilePath);
+        }else{
+            intoTemplateActivity(imgList, TemplateFilePath);
+        }
+
     }
 
 
@@ -333,13 +348,21 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void hasLogin(boolean hasLogin) {
-        if (!TextUtils.isEmpty(fromTo) && fromTo.equals("search")) {
-            statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "4_search_make", templateItem.getTitle());
+
+        if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)){
+            //来做背景页面
+            AlbumManager.chooseImageAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
+        }else{
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMSEARCH)) {
+                statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "4_search_make", templateItem.getTitle());
+            }
+            statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "mb_make", templateItem.getTitle());
+            videoPlayer.onVideoPause();
+            VideoPlaybackCompleted(true,true);
+            Presenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
         }
-        statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "mb_make", templateItem.getTitle());
-        videoPlayer.onVideoPause();
-        VideoPlaybackCompleted(true,true);
-        Presenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
+
+
     }
 
 

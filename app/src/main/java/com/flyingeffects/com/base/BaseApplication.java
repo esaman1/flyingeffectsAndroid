@@ -11,6 +11,7 @@ import com.flyingeffects.com.manager.MediaLoader;
 import com.flyingeffects.com.utils.ChannelUtil;
 import com.flyingeffects.com.utils.CrashHandler;
 import com.flyingeffects.com.utils.LogUtil;
+import com.lansosdk.videoeditor.LanSoEditor;
 import com.orhanobut.hawk.Hawk;
 import com.scwang.smartrefresh.header.MaterialHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -48,7 +49,14 @@ public class BaseApplication extends MultiDexApplication {
         initJPush();
         initZt();
         keepCrash();
+        initLansong();
+
     }
+
+    private void initLansong() {
+        LanSoEditor.initSDK(getApplicationContext(), "jiu_LanSongSDK_android5.key");
+    }
+
 
     /***
      * 保存错误日志

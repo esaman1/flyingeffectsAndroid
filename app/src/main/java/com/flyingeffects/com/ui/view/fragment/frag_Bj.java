@@ -131,11 +131,8 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
         });
 
         if (data.size() > 0) {
-          new Handler().postDelayed(() -> showWitchBtn(0),500);
+            new Handler().postDelayed(() -> showWitchBtn(0), 500);
         }
-
-
-
     }
 
 
@@ -147,7 +144,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                 tv.setTextSize(21);
                 int width = tv.getWidth();
                 view.setVisibility(View.VISIBLE);
-                setViewWidth(view,width);
+                setViewWidth(view, width);
             } else {
                 tv.setTextSize(17);
                 view.setVisibility(View.INVISIBLE);
@@ -157,8 +154,8 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     }
 
 
-    private void setViewWidth(View mView,int width) {
-        LinearLayout.LayoutParams Params =(LinearLayout.LayoutParams) mView.getLayoutParams();
+    private void setViewWidth(View mView, int width) {
+        LinearLayout.LayoutParams Params = (LinearLayout.LayoutParams) mView.getLayoutParams();
         Params.width = width;
         mView.setLayoutParams(Params);
     }

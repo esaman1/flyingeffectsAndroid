@@ -14,6 +14,7 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.HomeItemMvpView;
+import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.presenter.home_fag_itemMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
@@ -55,7 +56,6 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View
 
     @Override
     protected void initView() {
-
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             templateId = bundle.getString("id");
@@ -80,6 +80,11 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View
             if(!DoubleClick.getInstance().isFastDoubleClick()){
                 statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
                 Intent intent =new Intent(getActivity(), PreviewActivity.class);
+                if(fromType==0){
+                    intent.putExtra("fromType", FromToTemplate.ISFROMTEMPLATE);
+                }else{
+                    intent.putExtra("fromType", FromToTemplate.ISFROMBJ);
+                }
                 intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
                 startActivity(intent);
             }

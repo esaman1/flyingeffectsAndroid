@@ -28,6 +28,7 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
+import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.timeUtils;
@@ -455,7 +456,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         switch (v.getId()) {
             case R.id.tv_top_submit:
-                if (!TextUtils.isEmpty(fromTo) && fromTo.equals("search")) {
+                if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMSEARCH)) {
                     statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "4_search_save", templateName);
                 }
                 statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_save", templateName);

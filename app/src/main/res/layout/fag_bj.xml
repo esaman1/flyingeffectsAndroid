@@ -4,6 +4,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/home_base_balk_color"
     android:orientation="vertical"
     android:layout_height="match_parent">
 
@@ -61,7 +62,7 @@
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_gravity="center"
-                android:background="@color/base_black"
+                android:background="@color/home_base_balk_color"
                 android:layout_height="wrap_content">
                 <LinearLayout
                     android:id="@+id/ll_add_child"

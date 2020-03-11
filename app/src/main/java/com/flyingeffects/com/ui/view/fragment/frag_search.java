@@ -32,6 +32,7 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.ColorCorrectionManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
@@ -217,7 +218,7 @@ public class frag_search extends BaseFragment {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
                 statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_click", allData.get(position).getTitle());
                 Intent intent = new Intent(getActivity(), PreviewActivity.class);
-                intent.putExtra("fromTo", "search");
+                intent.putExtra("fromTo", FromToTemplate.ISFROMSEARCH);
                 intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
                 startActivity(intent);
             }
