@@ -8,14 +8,18 @@ import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.model.CreationTemplateMvpModel;
 
 public class CreationTemplateMvpPresenter extends BasePresenter implements CreationTemplateMvpCallback {
-    private CreationTemplateMvpView CreationTemplatemvpView;
-    private CreationTemplateMvpModel CreationTemplatemodel;
+    private CreationTemplateMvpView creationTemplatemvpView;
+    private CreationTemplateMvpModel creationTemplatemodel;
 
     public CreationTemplateMvpPresenter(Context context, CreationTemplateMvpView mvp_view) {
-        this.CreationTemplatemvpView = mvp_view;
-        CreationTemplatemodel = new CreationTemplateMvpModel(context, this);
+        this.creationTemplatemvpView = mvp_view;
+        creationTemplatemodel = new CreationTemplateMvpModel(context, this);
     }
 
+
+    public void initBottomLayout(){
+        creationTemplatemodel.initBottomLayout();
+    }
 
 
 }
