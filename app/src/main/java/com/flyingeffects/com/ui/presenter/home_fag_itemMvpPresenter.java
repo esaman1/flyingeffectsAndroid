@@ -15,9 +15,9 @@ public class home_fag_itemMvpPresenter extends BasePresenter implements homeItem
     private HomeItemMvpView mvp_view;
     private home_fag_itemMvpModel homeItemModel;
 
-    public home_fag_itemMvpPresenter(Context context, HomeItemMvpView mvp_view) {
+    public home_fag_itemMvpPresenter(Context context, HomeItemMvpView mvp_view,int fromType) {
         this.mvp_view = mvp_view;
-        homeItemModel = new home_fag_itemMvpModel(context, this);
+        homeItemModel = new home_fag_itemMvpModel(context, this,fromType);
     }
 
 

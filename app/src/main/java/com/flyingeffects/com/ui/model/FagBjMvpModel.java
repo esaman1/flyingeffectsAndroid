@@ -35,7 +35,7 @@ public class FagBjMvpModel {
 
     //得到banner缓存数据
     public  void requestData() {
-        ArrayList<TemplateType> cacheTemplateData= Hawk.get("mainData", new ArrayList<>());
+        ArrayList<TemplateType> cacheTemplateData= Hawk.get("bjHeadData", new ArrayList<>());
         if (cacheTemplateData != null) {
             callback.setFragmentList(cacheTemplateData);
             requestMainData(false); //首页杂数据
@@ -49,7 +49,7 @@ public class FagBjMvpModel {
 
     private void requestMainData(boolean isShowDialog) {
         HashMap<String, String> params = new HashMap<>();
-        Observable ob = Api.getDefault().getTemplateType(BaseConstans.getRequestHead(params));
+        Observable ob = Api.getDefault().getbackCategoryType(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<TemplateType>>(context) {
             @Override
             protected void _onError(String message) {

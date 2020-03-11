@@ -34,10 +34,15 @@ public class home_fag_itemMvpModel {
     private int selectPage = 1;
     private String templateId;
     private int perPageCount=10;
+    /**
+     * 1是模板 2是背景
+     */
+    private int template_type;
 
-    public home_fag_itemMvpModel(Context context, homeItemMvpCallback callback) {
+    public home_fag_itemMvpModel(Context context, homeItemMvpCallback callback,int fromType) {
         this.context = context;
         this.callback = callback;
+        template_type=template_type==0?1:2;
     }
 
 
@@ -75,10 +80,18 @@ public class home_fag_itemMvpModel {
         });
     }
 
+
+    /**
+     * description ：
+     * creation date: 2020/3/11
+     * param : template_type  1是模板 2是背景
+     * user : zhangtongju
+     */
     private void requestFagData(boolean isCanRefresh, boolean isSave) {
         HashMap<String, String> params = new HashMap<>();
         LogUtil.d("templateId", "templateId=" + templateId);
         params.put("category_id", templateId);
+        params.put("template_type", template_type+"");
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
         Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));

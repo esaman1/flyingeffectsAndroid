@@ -55,13 +55,14 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View
 
     @Override
     protected void initView() {
-        Presenter = new home_fag_itemMvpPresenter(getActivity(), this);
+
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             templateId = bundle.getString("id");
             actTag = bundle.getInt("num");
             fromType=bundle.getInt("from");
         }
+        Presenter = new home_fag_itemMvpPresenter(getActivity(), this,fromType);
         initRecycler();
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
         Presenter.requestData(templateId, actTag);

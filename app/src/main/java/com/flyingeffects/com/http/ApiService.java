@@ -94,6 +94,12 @@ public interface ApiService {
     Observable<HttpResult<List<TemplateType>>> getTemplateType(@FieldMap Map<String, String> params);
 
 
+    //背景类型
+    @FormUrlEncoded
+    @POST("/api/template/backCategoryList")
+    Observable<HttpResult<List<TemplateType>>> getbackCategoryType(@FieldMap Map<String, String> params);
+
+
     @FormUrlEncoded
     @POST("/api/template/templateList")
     Observable<HttpResult<List<new_fag_template_item>>> getTemplate(@FieldMap Map<String, String> params);

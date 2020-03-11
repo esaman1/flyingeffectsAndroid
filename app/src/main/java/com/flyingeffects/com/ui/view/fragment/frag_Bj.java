@@ -1,14 +1,13 @@
 package com.flyingeffects.com.ui.view.fragment;
 
-import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.flyingeffects.com.R;
@@ -120,6 +119,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
             @Override
             public void onPageSelected(int i) {
                 if (i <= data.size() - 1) {
+                    showWitchBtn(i);
                     statisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
                 }
             }
@@ -131,8 +131,11 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
         });
 
         if (data.size() > 0) {
-            showWitchBtn(0);
+          new Handler().postDelayed(() -> showWitchBtn(0),500);
         }
+
+
+
     }
 
 
@@ -147,7 +150,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                 setViewWidth(view,width);
             } else {
                 tv.setTextSize(17);
-                view.setVisibility(View.GONE);
+                view.setVisibility(View.INVISIBLE);
             }
         }
         viewPager.setCurrentItem(showWitch);
@@ -155,7 +158,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
 
 
     private void setViewWidth(View mView,int width) {
-        RelativeLayout.LayoutParams Params =(RelativeLayout.LayoutParams) mView.getLayoutParams();
+        LinearLayout.LayoutParams Params =(LinearLayout.LayoutParams) mView.getLayoutParams();
         Params.width = width;
         mView.setLayoutParams(Params);
     }
