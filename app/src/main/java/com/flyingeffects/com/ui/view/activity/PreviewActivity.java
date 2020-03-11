@@ -276,6 +276,14 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
             Intent intent=new Intent(PreviewActivity.this,CreationTemplateActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList("paths", (ArrayList<String>) imgList);
+            bundle.putString("coverPath", templateItem.getImage());
+            bundle.putString("fromTo", fromTo);
+            bundle.putString("templateName", templateItem.getTitle());
+            bundle.putStringArrayList("originalPath", (ArrayList<String>) originalImagePath);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("Message", bundle);
             startActivity(intent);
         }else{
             intoTemplateActivity(imgList, TemplateFilePath);
