@@ -21,14 +21,12 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.VideoCropMVPView;
 import com.flyingeffects.com.ui.presenter.VideoCropMVPPresenter;
-import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.RoundImageView;
 import com.flyingeffects.com.view.VideoFrameRecycler;
 import com.lansosdk.videoeditor.DrawPadView2;
 import com.lansosdk.videoeditor.MediaInfo;
-import com.shixing.sxve.ui.model.MediaUiModel2;
 import com.yanzhenjie.album.AlbumFile;
 
 import java.text.SimpleDateFormat;
@@ -47,7 +45,6 @@ import rx.android.schedulers.AndroidSchedulers;
 public class VideoCropActivity extends BaseActivity implements VideoCropMVPView {
     public static final int VIDEO_FOR_CROP = 0x100;
     private VideoCropMVPPresenter Presenter;
-
     @BindView(R.id.crop_preivew_icon)
     ImageView playIcon;
     @BindView(R.id.videocrop_drawpadView)
@@ -84,7 +81,6 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
     @Override
     protected void initView() {
         Presenter = new VideoCropMVPPresenter(this, this);
-
         //点击进入视频剪切界面
         String videoPath = getIntent().getStringExtra("videoPath");
         userSetDuration = getIntent().getLongExtra("duration", 0);

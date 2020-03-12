@@ -16,6 +16,7 @@ import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.box.ViewLayerRelativeLayout;
+import com.lansosdk.videoeditor.DrawPadView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @BindView(R.id.iv_cover)
     ImageView iv_cover;
 
+
+    @BindView(R.id.drawPadView)
+    DrawPadView drawPadView;
+
     private List<String> imgPath = new ArrayList<>();
     private CreationTemplateMvpPresenter presenter;
     private String coverImagePath = "http://cdn.flying.nineton.cn/admin/20200311/5e689f344ef21Comp%201%20(0-00-00-00).jpg";
@@ -65,13 +70,17 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     protected void initView() {
         ((TextView) findViewById(R.id.tv_top_submit)).setText("保存");
-        presenter = new CreationTemplateMvpPresenter(this, this);
+
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("Message");
         if (bundle != null) {
             imgPath = bundle.getStringArrayList("paths");
             videoPath=bundle.getString("video_path");
+
         }
+
+        presenter = new CreationTemplateMvpPresenter(this, this,videoPath);
+
     }
 
 
@@ -107,7 +116,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
             case R.id.iv_play:
-                Bitmap bmp = viewLayerRelativeLayout.toggleSnatShot();
+//                Bitmap bmp = viewLayerRelativeLayout.toggleSnatShot();
+
+                presenter.toPrivateVideo(drawPadView);
+
 
                 break;
 
