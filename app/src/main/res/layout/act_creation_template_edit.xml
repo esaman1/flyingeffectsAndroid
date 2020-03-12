@@ -104,25 +104,29 @@
         android:layout_marginBottom="40dp"
         android:background="@android:color/transparent">
 
-        <com.flyingeffects.com.view.lansongCommendView.ImageTouchView
-            android:id="@+id/switcher"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center"
-            android:scaleType="matrix" />
+<!--        <com.flyingeffects.com.view.lansongCommendView.ImageTouchView-->
+<!--            android:id="@+id/switcher"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_centerInParent="true"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:scaleType="matrix" />-->
 
-        <com.flyingeffects.com.view.lansongCommendView.StickerView
+        <com.flyingeffects.com.view.StickerView
             android:id="@+id/id_vview_drawimage_stickview"
             android:layout_width="match_parent"
+            app:sv_left_top_drawable="@drawable/sticker_delete"
+            app:sv_left_bottom_drawable="@mipmap/sticker_change"
+            app:sv_right_top_drawable="@mipmap/sticker_copy"
+            app:sv_right_bottom_drawable="@mipmap/sticker_redact"
             android:layout_height="match_parent"
             android:layout_centerInParent="true" />
 
-        <com.flyingeffects.com.view.lansongCommendView.TextStickerView
-            android:id="@+id/id_vview_drawimage_textstickview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true" />
+<!--        <com.flyingeffects.com.view.lansongCommendView.TextStickerView-->
+<!--            android:id="@+id/id_vview_drawimage_textstickview"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_centerInParent="true" />-->
     </com.lansosdk.box.ViewLayerRelativeLayout>
 
     <LinearLayout

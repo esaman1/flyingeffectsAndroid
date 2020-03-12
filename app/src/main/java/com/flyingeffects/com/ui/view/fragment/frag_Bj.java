@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.view.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -14,14 +15,19 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.enity.TemplateType;
+import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.FagBjMvpView;
 import com.flyingeffects.com.ui.presenter.FagBjMvpPresenter;
+import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
+import com.yanzhenjie.album.AlbumFile;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 
 /**
@@ -39,6 +45,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     LinearLayout ll_add_child;
 
     private FagBjMvpPresenter presenter;
+    public final static int SELECTALBUM = 1;
 
     private ArrayList<TextView> listTv = new ArrayList<>();
     private ArrayList<View> listView = new ArrayList<>();
@@ -159,6 +166,33 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
         Params.width = width;
         mView.setLayoutParams(Params);
     }
+
+
+    @OnClick({R.id.iv_add})
+    public void onClick(View view) {
+
+
+        switch (view.getId()){
+            case R.id.iv_add:
+
+                AlbumManager.chooseVideo(getActivity(), 1, SELECTALBUM, new AlbumChooseCallback() {
+                    @Override
+                    public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
+                        Intent intent = new Intent(getActivity(), VideoCropActivity.class);
+                        intent.putExtra("videoPath",paths.get(0));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
+                }, "");
+                break;
+
+                default:
+                    break;
+        }
+
+
+    }
+
 
 }
 

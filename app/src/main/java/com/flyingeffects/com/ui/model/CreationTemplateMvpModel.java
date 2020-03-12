@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.flyingeffects.com.R;
@@ -38,6 +39,12 @@ public class CreationTemplateMvpModel {
     public void initBottomLayout(ViewPager viewPager){
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager,false);
         GridView gridView=templateThumbView.findViewById(R.id.gridView);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                callback.ItemClickForStickView();
+            }
+        });
         List<String>test=new ArrayList<>();
         for(int i=0;i<14;i++){
             test.add("啥");

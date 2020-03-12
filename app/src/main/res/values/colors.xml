@@ -8,6 +8,7 @@
     <color name="colorSoftPrimary">#8593DE</color>
     <color name="green">#7DCC86</color>
     <color name="line_color">#F5F5F8</color>
+    <color name="seekbar_background">#FEE131</color>
     <color name="colorAccent">#FF4081</color>
     <color name="dark_gray">#AAAAAA</color>
     <color name="home_navigation_dark_gray">#BBBBBB</color>
@@ -22,6 +23,8 @@
     <color name="white">#FFFFFF</color>
     <color name="baseBackground">#FBFBFB</color>
     <color name="cityBaseColor">#F0F4FD</color>
+    <color name="shadow_color">#FF000000</color>
+
 
 
     <!--水波纹或5.0以下选择器颜色-->

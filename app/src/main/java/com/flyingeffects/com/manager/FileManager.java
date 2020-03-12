@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 
 import com.flyingeffects.com.utils.LogUtil;
+import com.lansosdk.videoeditor.LanSongFileUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,7 +49,17 @@ public class FileManager {
 
 
 
+    private static final String[] unsupportedSuffix = new String[]{"wmv", "3gp", "mov", "move", "flac", "mpg"};
 
+    public static boolean isLansongVESuppport(String path) {
+        String suffix = LanSongFileUtil.getFileSuffix(path.toLowerCase());
+        for (String s : unsupportedSuffix) {
+            if (s.equalsIgnoreCase(suffix)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 
 

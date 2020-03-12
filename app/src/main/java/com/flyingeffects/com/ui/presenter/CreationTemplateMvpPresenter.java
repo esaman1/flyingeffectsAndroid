@@ -23,4 +23,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
+    @Override
+    public void ItemClickForStickView() {
+        creationTemplatemvpView.ItemClickForStickView();
+    }
 }

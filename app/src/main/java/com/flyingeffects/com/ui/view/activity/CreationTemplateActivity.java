@@ -14,8 +14,8 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
+import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.lansongCommendView.ImageTouchView;
-import com.flyingeffects.com.view.lansongCommendView.StickerView;
 import com.flyingeffects.com.view.lansongCommendView.TextStickerView;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 
@@ -45,14 +45,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @BindView(R.id.id_vview_realtime_gllayout)
     ViewLayerRelativeLayout viewLayerRelativeLayout;
 
-    @BindView(R.id.switcher)
-    ImageTouchView imgeTouchView;
+//    @BindView(R.id.switcher)
+//    ImageTouchView imgeTouchView;
 
     @BindView(R.id.id_vview_drawimage_stickview)
     StickerView stickView;
 
-    @BindView(R.id.id_vview_drawimage_textstickview)
-    TextStickerView textStickView;
 
     @BindView(R.id.iv_cover)
     ImageView iv_cover;
@@ -65,6 +63,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private List<String> originalPath;
     private String coverImagePath = "http://cdn.flying.nineton.cn/admin/20200311/5e689f344ef21Comp%201%20(0-00-00-00).jpg";
     private String testVideoPath = "../DCIM/Camera/1583914803162synthetic.mp4";
+    private String gifTest="/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/Comp-1.gif";
 
 
     @Override
@@ -106,7 +105,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         Observable.just(imgPath.get(0)).map(BitmapFactory::decodeFile).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
             @Override
             public void call(Bitmap bitmap) {
-                stickView.addBitImage(bitmap);
+                stickView.setImageRes(imgPath.get(0),true);
             }
         });
     }
@@ -121,6 +120,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
             case R.id.iv_play:
+                Bitmap bmp = viewLayerRelativeLayout.toggleSnatShot();
+
 
                 break;
 
@@ -136,5 +137,16 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public void ItemClickForStickView() {
+        StickerView stickView=new StickerView(this);
+        stickView.setLeftBottomBitmap(getDrawable(R.mipmap.sticker_change));
+        stickView.setRightTopBitmap(getDrawable(R.mipmap.sticker_copy));
+        stickView.setLeftTopBitmap(getDrawable(R.drawable.sticker_delete));
+        stickView.setRightBottomBitmap(getDrawable(R.mipmap.sticker_redact));
+        stickView.setImageRes(gifTest,true);
+        viewLayerRelativeLayout.addView(stickView);
     }
 }

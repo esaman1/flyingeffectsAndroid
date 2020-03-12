@@ -70,4 +70,31 @@
 
 
 
+    <declare-styleable name="StickerView">
+        <attr name="sv_left_top_drawable" format="reference" />
+        <attr name="sv_left_bottom_drawable" format="reference" />
+        <attr name="sv_right_top_drawable" format="reference" />
+        <attr name="sv_right_bottom_drawable" format="reference" />
+        <attr name="sv_frame_color" format="color"/>
+        <attr name="sv_frame_width" format="dimension"/>
+        <!--控制按钮位置-->
+        <attr name="sv_contron_location" format="integer">
+            <enum name="left_top" value="6" />
+            <enum name="left_bottom" value="7" />
+            <enum name="right_top" value="8" />
+            <enum name="right_bottom" value="9" />
+        </attr>
+        <!--是否显示辅助线-->
+        <attr name="sv_guide_line_show" format="boolean" />
+        <!--辅助线颜色-->
+        <attr name="sv_guide_line_color" format="color" />
+        <!--辅助线宽度-->
+        <attr name="sv_guide_line_width" format="dimension" />
+        <!--是否允许辅助水平-->
+        <attr name="sv_auto_degree" format="boolean" />
+        <!--是否允许辅助居中-->
+        <attr name="sv_auto_center" format="boolean" />
+    </declare-styleable>
+
+
 </resources>
