@@ -133,8 +133,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-
-
-
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 }
