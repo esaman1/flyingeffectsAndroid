@@ -15,8 +15,6 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.view.StickerView;
-import com.flyingeffects.com.view.lansongCommendView.ImageTouchView;
-import com.flyingeffects.com.view.lansongCommendView.TextStickerView;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 
 import java.util.ArrayList;
@@ -45,24 +43,17 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @BindView(R.id.id_vview_realtime_gllayout)
     ViewLayerRelativeLayout viewLayerRelativeLayout;
 
-//    @BindView(R.id.switcher)
-//    ImageTouchView imgeTouchView;
 
     @BindView(R.id.id_vview_drawimage_stickview)
     StickerView stickView;
-
 
     @BindView(R.id.iv_cover)
     ImageView iv_cover;
 
     private List<String> imgPath = new ArrayList<>();
     private CreationTemplateMvpPresenter presenter;
-    /**
-     * 原图地址,如果不需要抠图，原图地址为null
-     */
-    private List<String> originalPath;
     private String coverImagePath = "http://cdn.flying.nineton.cn/admin/20200311/5e689f344ef21Comp%201%20(0-00-00-00).jpg";
-    private String testVideoPath = "../DCIM/Camera/1583914803162synthetic.mp4";
+    private String videoPath ;
     private String gifTest="/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/Comp-1.gif";
 
 
@@ -79,11 +70,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         Bundle bundle = intent.getBundleExtra("Message");
         if (bundle != null) {
             imgPath = bundle.getStringArrayList("paths");
-            originalPath = bundle.getStringArrayList("originalPath");
-        }
-        if (originalPath == null || originalPath.size() == 0) {
-            //不需要抠图
-            findViewById(R.id.ll_Matting).setVisibility(View.GONE);
+            videoPath=bundle.getString("video_path");
         }
     }
 
@@ -121,7 +108,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
             case R.id.iv_play:
                 Bitmap bmp = viewLayerRelativeLayout.toggleSnatShot();
-
 
                 break;
 

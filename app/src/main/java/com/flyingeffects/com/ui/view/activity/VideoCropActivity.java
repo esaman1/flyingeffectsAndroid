@@ -3,6 +3,7 @@ package com.flyingeffects.com.ui.view.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.manager.AlbumManager;
+import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
@@ -26,12 +28,18 @@ import com.flyingeffects.com.view.RoundImageView;
 import com.flyingeffects.com.view.VideoFrameRecycler;
 import com.lansosdk.videoeditor.DrawPadView2;
 import com.lansosdk.videoeditor.MediaInfo;
+import com.shixing.sxve.ui.model.MediaUiModel2;
+import com.yanzhenjie.album.AlbumFile;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TimeZone;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * @author Liya
@@ -58,8 +66,8 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
     RoundImageView progressCursor;
     @BindView(R.id.iv_back)
     ImageView backButton;
-    @BindView(R.id.iv_confirm_video_crop)
-    ImageView confirmButton;
+    //    @BindView(R.id.iv_confirm_video_crop)
+//    ImageView confirmButton;
     @BindView(R.id.crop_show_start)
     TextView startMs;
     @BindView(R.id.crop_show_end)
@@ -79,10 +87,10 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
     protected void initView() {
         Presenter = new VideoCropMVPPresenter(this, this);
 
-            //点击进入视频剪切界面
-            String videoPath = getIntent().getStringExtra("videoPath");
-            userSetDuration=getIntent().getLongExtra("duration",0);
-            initVideoDrawPad(videoPath,false);
+        //点击进入视频剪切界面
+        String videoPath = getIntent().getStringExtra("videoPath");
+        userSetDuration = getIntent().getLongExtra("duration", 0);
+        initVideoDrawPad(videoPath, false);
     }
 
     @Override
@@ -91,13 +99,13 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
     }
 
     @Override
-    @OnClick({R.id.iv_back, R.id.iv_confirm_video_crop})
+    @OnClick({R.id.iv_back, R.id.tv_choose_pic})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_back:
                 onBackPressed();
                 break;
-            case R.id.iv_confirm_video_crop: //继续
+            case R.id.tv_choose_pic: //继续
                 statisticsEventAffair.getInstance().setFlag(this, "2_Titles_cutdone", "手动卡点_片头裁剪完成");
                 saveVideo();
                 break;
@@ -139,7 +147,7 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
         hasResult = true;
         if (paths.size() > 0) {
             String path = paths.get(0);
-            initVideoDrawPad(path,isCancel);
+            initVideoDrawPad(path, isCancel);
         } else {
             finish();
         }
@@ -147,7 +155,7 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
     };
 
 
-    private void initVideoDrawPad(String path,boolean isCancel ){
+    private void initVideoDrawPad(String path, boolean isCancel) {
         if (!isCancel && !path.trim().isEmpty()) {
             MediaInfo info = new MediaInfo(path);
             if (info.prepare()) {
@@ -183,7 +191,6 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
             Presenter.initDrawpad(drawPadView, path);
         }
     }
-
 
 
     @Override
@@ -229,11 +236,30 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
     }
 
     @Override
-    public void finishCrop(String path) {
-        Intent intent = new Intent();
-        intent.putExtra("video_path", path);
-        setResult(Activity.RESULT_OK, intent);
-        finish();
+    public void finishCrop(String videoPath) {
+
+        AlbumManager.chooseWhichAlbum(VideoCropActivity.this, 1, 0, new AlbumChooseCallback() {
+            @Override
+            public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
+                CompressionCuttingManage manage = new CompressionCuttingManage(VideoCropActivity.this, tailorPaths -> {
+                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+                        Intent intent = new Intent(VideoCropActivity.this, CreationTemplateActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putStringArrayList("paths", (ArrayList<String>) paths);
+                        bundle.putString("video_path",videoPath);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra("Message", bundle);
+                        startActivity(intent);
+                        setResult(Activity.RESULT_OK, intent);
+                        finish();
+
+                    });
+                });
+                manage.CompressImgAndCache(paths);
+            }
+        }, 1, "");
+
+
     }
 
     @Override
