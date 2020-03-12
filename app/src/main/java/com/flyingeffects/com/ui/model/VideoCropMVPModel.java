@@ -616,6 +616,7 @@ public class VideoCropMVPModel {
         }
 
         dialog=new WatingDialog_progress(mContext);
+        dialog.openProgressDialog();
         MediaInfo videoInfo=new MediaInfo(videoPath);
         MediaInfo.checkFile(videoPath);
         if (!videoInfo.prepare()){

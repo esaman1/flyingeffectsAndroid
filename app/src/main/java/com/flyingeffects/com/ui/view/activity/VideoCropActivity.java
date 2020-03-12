@@ -66,8 +66,6 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
     RoundImageView progressCursor;
     @BindView(R.id.iv_back)
     ImageView backButton;
-    //    @BindView(R.id.iv_confirm_video_crop)
-//    ImageView confirmButton;
     @BindView(R.id.crop_show_start)
     TextView startMs;
     @BindView(R.id.crop_show_end)
@@ -246,7 +244,7 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
                         Intent intent = new Intent(VideoCropActivity.this, CreationTemplateActivity.class);
                         Bundle bundle = new Bundle();
                         bundle.putStringArrayList("paths", (ArrayList<String>) paths);
-                        bundle.putString("video_path",videoPath);
+                        bundle.putString("video_path", videoPath);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.putExtra("Message", bundle);
                         startActivity(intent);
@@ -289,9 +287,10 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
     }
 
     private void saveVideo() {
+
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
-            ToastUtil.showToast("请稍候");
+            Presenter.saveVideo();
         }
-        Presenter.saveVideo();
+
     }
 }
