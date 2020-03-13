@@ -111,7 +111,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
             bundle.putSerializable("from", 1);
             bundle.putSerializable("num", i);
             titles[i] = data.get(i).getName();
-            home_item_fag fragment = new home_item_fag();
+            bg_item_fag fragment = new bg_item_fag();
             fragment.setArguments(bundle);
             list.add(fragment);
         }
