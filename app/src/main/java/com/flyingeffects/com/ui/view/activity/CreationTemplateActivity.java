@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
+import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.box.ViewLayerRelativeLayout;
@@ -58,8 +60,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private List<String> imgPath = new ArrayList<>();
     private CreationTemplateMvpPresenter presenter;
     private String coverImagePath = "http://cdn.flying.nineton.cn/admin/20200311/5e689f344ef21Comp%201%20(0-00-00-00).jpg";
-    private String videoPath ;
-    private String gifTest="/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/Comp-1.gif";
+    private String videoPath;
 
 
     @Override
@@ -70,19 +71,21 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     protected void initView() {
         ((TextView) findViewById(R.id.tv_top_submit)).setText("保存");
-
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("Message");
         if (bundle != null) {
             imgPath = bundle.getStringArrayList("paths");
-            videoPath=bundle.getString("video_path");
-
+            videoPath = bundle.getString("video_path");
         }
-
-        presenter = new CreationTemplateMvpPresenter(this, this,videoPath);
-
+        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout);
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initViewLayerRelative();
+    }
 
     @Override
     protected void initAction() {
@@ -101,7 +104,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         Observable.just(imgPath.get(0)).map(BitmapFactory::decodeFile).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
             @Override
             public void call(Bitmap bitmap) {
-                stickView.setImageRes(imgPath.get(0),true);
+                stickView.setImageRes(imgPath.get(0), true);
             }
         });
     }
@@ -109,26 +112,44 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @OnClick({R.id.tv_top_submit, R.id.iv_play})
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.tv_top_submit:
-
                 break;
 
 
             case R.id.iv_play:
+                showPreiviewView(true);
 //                Bitmap bmp = viewLayerRelativeLayout.toggleSnatShot();
-
                 presenter.toPrivateVideo(drawPadView);
 
 
                 break;
 
-                default:
-                    break;
+            default:
+                break;
 
 
         }
 
+    }
+
+
+    /**
+     * description ：设置预览界面大小
+     * date: ：2019/11/18 20:24
+     * author: 张同举 @邮箱 jutongzhang@sina.com
+     */
+    private void initViewLayerRelative() {
+        ViewGroup.LayoutParams RelativeLayoutParams = viewLayerRelativeLayout.getLayoutParams();
+        float oriRatio;
+        oriRatio = 9f / 16f;
+        //保证获得mContainer大小不为0
+        viewLayerRelativeLayout.post(() -> {
+            int oriHeight = viewLayerRelativeLayout.getHeight();
+            RelativeLayoutParams.width = Math.round(1f * oriHeight * oriRatio);
+            RelativeLayoutParams.height = oriHeight;
+            viewLayerRelativeLayout.setLayoutParams(RelativeLayoutParams);
+        });
     }
 
 
@@ -138,13 +159,33 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
     @Override
-    public void ItemClickForStickView() {
-        StickerView stickView=new StickerView(this);
-        stickView.setLeftBottomBitmap(getDrawable(R.mipmap.sticker_change));
-        stickView.setRightTopBitmap(getDrawable(R.mipmap.sticker_copy));
-        stickView.setLeftTopBitmap(getDrawable(R.drawable.sticker_delete));
-        stickView.setRightBottomBitmap(getDrawable(R.mipmap.sticker_redact));
-        stickView.setImageRes(gifTest,true);
-        viewLayerRelativeLayout.addView(stickView);
+    public void ItemClickForStickView(AnimStickerModel stickViewModel) {
+        viewLayerRelativeLayout.addView(stickViewModel.getStickerView());
     }
+
+    @Override
+    public void hasPlayingComplete() {
+        showPreiviewView(false);
+    }
+
+
+    /**
+     * description ：预览和编辑页面切换 isShowPreViewVideo是否显示预览界面
+     * creation date: 2020/3/13
+     * user : zhangtongju
+     */
+    private void showPreiviewView(boolean isShowPreViewVideo) {
+        if (isShowPreViewVideo) {
+            viewLayerRelativeLayout.setVisibility(View.GONE);
+            drawPadView.setVisibility(View.VISIBLE);
+            iv_cover.setVisibility(View.GONE);
+        } else {
+            viewLayerRelativeLayout.setVisibility(View.VISIBLE);
+            drawPadView.setVisibility(View.GONE);
+            iv_cover.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+
 }
