@@ -44,10 +44,10 @@ public class AnimStickerModel {
      * user : zhangtongju
      */
     public StickerForParents getParameterData(){
-        int stickerViewWidth = stickerView.getWidth();
-        int viewLayerWidth=viewLayerRelativeLayout.getWidth();
+        int stickerViewWidth = stickerView.getMeasuredWidth();
+        int viewLayerWidth=viewLayerRelativeLayout.getWidth()/2; //默认宽度是一半，但是这里可能要区分高度
         float realScale=viewLayerWidth/(float)stickerViewWidth;
-        float Scale=stickerView.getScale();
+        float Scale= Math.abs( stickerView.getScale()-1);
         Scale=realScale+Scale;
         float roation = stickerView.getRotateAngle();
         StickerForParents stickerForParents=new StickerForParents();

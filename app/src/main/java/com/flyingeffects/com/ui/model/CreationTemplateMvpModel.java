@@ -19,6 +19,7 @@ import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.box.DrawPad;
+import com.lansosdk.box.DrawPadUpdateMode;
 import com.lansosdk.box.MVLayer;
 import com.lansosdk.box.VideoLayer;
 import com.lansosdk.box.ViewLayerRelativeLayout;
@@ -27,6 +28,7 @@ import com.lansosdk.box.onDrawPadSizeChangedListener;
 import com.lansosdk.videoeditor.AudioEditor;
 import com.lansosdk.videoeditor.DrawPadView;
 import com.lansosdk.videoeditor.LanSongFileUtil;
+import com.lansosdk.videoeditor.MediaInfo;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,6 +53,8 @@ public class CreationTemplateMvpModel {
     private MediaPlayer mplayer;
     private DrawPadView mDrawPadView;
     private ViewLayerRelativeLayout viewLayerRelativeLayout;
+    private static final int DRAWPAD_WIDTH = 720;
+    private static final int DRAWPAD_HEIGHT = 1280;
     private String gifTest = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/Comp-1.gif";
     /**
      * 保存文件夹地址
@@ -62,6 +66,7 @@ public class CreationTemplateMvpModel {
     private VideoLayer mLayerMain;
     private ArrayList<MVLayer> mvLayerArrayList = new ArrayList<>();
     private String path = "";
+    private MediaInfo mInfo;
     private ArrayList<AnimStickerModel> listForStickerView = new ArrayList<>();
 
 
@@ -129,6 +134,7 @@ public class CreationTemplateMvpModel {
     public void toPrivateVideo(DrawPadView drawPadView) {
         this.mDrawPadView = drawPadView;
         StickerForParents stickerForParents= listForStickerView.get(0).getParameterData();
+        mInfo = new MediaInfo(mVideoPath);
         startPlayVideo(stickerForParents);
     }
 
@@ -160,31 +166,11 @@ public class CreationTemplateMvpModel {
      * Step1: 开始运行 drawPad 容器
      */
     private void initDrawPad(StickerForParents stickerForParents) {
-        // 设置使能 实时录制, 即把正在DrawPad中呈现的画面实时的保存下来,实现所见即所得的模式
-        mDrawPadView.setRealEncodeEnable(1280, 720, 20, null);
-        mDrawPadView.setOnDrawPadProgressListener(new onDrawPadProgressListener() {
-
-            @Override
-            public void onProgress(DrawPad v, long currentTimeUs) {
-                // TODO Auto-generated method stub
-                // Log.i(TAG,"MV当前时间戳是"+currentTimeUs);
-            }
-        });
-
+        mDrawPadView.setUpdateMode(DrawPadUpdateMode.AUTO_FLUSH, 30);
         // 设置当前DrawPad的宽度和高度,并把宽度自动缩放到父view的宽度,然后等比例调整高度.
-        mDrawPadView.setDrawPadSize(1280, 720, new onDrawPadSizeChangedListener() {
-            @Override
-            public void onSizeChanged(int viewWidth, int viewHeight) {
-                // 开始DrawPad的渲染线程.
-                startDrawPad(stickerForParents);
-            }
-        });
-        mDrawPadView.setOnViewAvailable(new DrawPadView.onViewAvailable() {
-
-            @Override
-            public void viewAvailable(DrawPadView v) {
-                startPlayVideo(stickerForParents);
-            }
+        mDrawPadView.setDrawPadSize(DRAWPAD_WIDTH, DRAWPAD_HEIGHT, (viewWidth, viewHeight) -> {
+            // 开始DrawPad的渲染线程.
+            startDrawPad(stickerForParents);
         });
     }
 
@@ -200,9 +186,7 @@ public class CreationTemplateMvpModel {
             if (mLayerMain != null) {
                 mplayer.setSurface(new Surface(mLayerMain.getVideoTexture()));
             }
-
             mplayer.start();
-
             addMVLayer(stickerForParents);
         }
     }

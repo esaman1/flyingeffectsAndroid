@@ -588,6 +588,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         }
     }
 
+
+
+
+
     /**
      * 更新
      */
@@ -1008,4 +1012,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private int getMaxDisplayHeight() {
         return Math.max(getMeasuredWidth(), getMeasuredHeight());
     }
+
+
 }

@@ -61,7 +61,7 @@ public class VideoCropMVPModel {
     private Context mContext;
     private VideoCropMVPCallback callback;
     private DrawPadView2 drawPadView;
-    private static int FRAME_RATE=25;
+    private static int FRAME_RATE=30;
     private static final int DRAWPAD_WIDTH = 720;
     private static final int DRAWPAD_HEIGHT = 1280;
     private int padRealWidth;
