@@ -2,21 +2,28 @@ package com.flyingeffects.com.ui.model;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Vibrator;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateGridViewAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
+import com.flyingeffects.com.adapter.VideoTimelineAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.enity.StickerForParents;
@@ -26,6 +33,7 @@ import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.StickerView;
+import com.flyingeffects.com.view.VideoFrameRecycler;
 import com.lansosdk.box.AudioLayer;
 import com.lansosdk.box.DrawPad;
 import com.lansosdk.box.DrawPadUpdateMode;
@@ -138,7 +146,71 @@ public class CreationTemplateMvpModel {
     }
 
 
+    VideoTimelineAdapter frameAdapter;
+    //裁剪起点与总时长的百分比，比如从20.5%的进度开始裁剪
+    private float cropStartPoint=0;
+    private boolean canScroll=false;
+    public void initVideoProgressView(VideoFrameRecycler mTimeLineView) {
+        RecyclerView.LayoutManager layoutManager =
+                new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false) {
+                    @Override
+                    public boolean canScrollHorizontally() {
+                        return canScroll;
+                    }
+                };
+        mTimeLineView.setLayoutManager(layoutManager);
+        frameAdapter=new VideoTimelineAdapter(context, Uri.fromFile(new File(mVideoPath)),() -> {
+            if (canScroll){
+                mTimeLineView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                        if (newState==RecyclerView.SCROLL_STATE_IDLE){
+                            cropStartPoint=1f*recyclerView.computeHorizontalScrollOffset()/recyclerView.computeHorizontalScrollRange();
+                            LogUtil.d("scrollRange",String.valueOf(recyclerView.computeHorizontalScrollRange()));
+                            LogUtil.d("scrollOffset",String.valueOf(recyclerView.computeHorizontalScrollOffset()));
+                            LogUtil.d("cropStart",String.valueOf(cropStartPoint));
+//                            calculateCrop();
+//                            seekTo(Math.round(getDuration()*getCropStartRatio()));
+                        }
+                    }
+                });
+//                seekbarTime=60*1000;
+//                seekbarPercent=1f*mTimeLineView.getWidth()/(frameAdapter.getItemWidth()*frameAdapter.getItemCount());
+//                float timeRatio=1f*60*1000/getDuration();
+//                float adjustRatio=timeRatio/seekbarPercent;
+//                seekbarPercent*=adjustRatio;
+//                mRangeSeekBarView.setMinDistance(Math.round(getDuration()*adjustRatio));
+            }else {
+//                seekbarTime=getDuration();
+//                seekbarPercent=1f;
+//                mRangeSeekBarView.setMinDistance(Math.round(getDuration()));
+            }
+//            calculateCrop();
+//            //初始化进度指针的位置
+//
+//            //总长度除以(拖动条从左到右代表的时长)总时间（毫秒）=px/ms
+//            float totalDistance=mRangeSeekBarView.getThumbs().get(1).getPos()-mRangeSeekBarView.getThumbs().get(0).getPos();
+//            float pixelsPerMs=totalDistance/seekbarTime;
+//            curOffset=pixelsPerMs*updateCursorIntervalMs;
+//            ViewGroup.LayoutParams cursorLp=cursor.getLayoutParams();
+//            cursorLp.height=mRangeSeekBarView.getMeasuredHeight();
+//            cursor.setLayoutParams(cursorLp);
+//            currentCursorStart=mRangeSeekBarView.getThumbs().get(1).getWidthBitmap();
+//            cursor.setTranslationX(currentCursorStart);
+//            cursor.setTranslationY(DimensionUtils.dp2px(1));
+//
+//            //初始化震动
 
+
+
+
+//            vibrator = (Vibrator) mContext.getSystemService(Service.VIBRATOR_SERVICE);
+//            //初始化完成
+//            fullyInitiated=true;
+            mTimeLineView.setAdapter(frameAdapter);
+        });
+
+    }
 
 
 

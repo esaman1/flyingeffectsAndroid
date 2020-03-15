@@ -1,10 +1,16 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.app.Service;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Vibrator;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -12,14 +18,18 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.adapter.VideoTimelineAdapter;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
+import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.StickerView;
+import com.flyingeffects.com.view.VideoFrameRecycler;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.lansosdk.videoeditor.DrawPadView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +67,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @BindView(R.id.drawPadView)
     DrawPadView drawPadView;
 
+
+    @BindView(R.id.timeLineView)
+    VideoFrameRecycler mTimeLineView;
+
+
     private List<String> imgPath = new ArrayList<>();
     private CreationTemplateMvpPresenter presenter;
     private String coverImagePath = "http://cdn.flying.nineton.cn/admin/20200311/5e689f344ef21Comp%201%20(0-00-00-00).jpg";
@@ -90,6 +105,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     protected void initAction() {
         presenter.initBottomLayout(viewPager);
+        presenter.initVideoProgressView(mTimeLineView);
         Glide.with(this).load(coverImagePath).into(iv_cover);
         FirstAddImage();
     }
@@ -187,8 +203,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             drawPadView.setVisibility(View.GONE);
             iv_cover.setVisibility(View.VISIBLE);
         }
-
     }
+
+
+
+
+
+
 
 
 }
