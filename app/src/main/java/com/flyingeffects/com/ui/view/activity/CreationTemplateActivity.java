@@ -68,8 +68,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     DrawPadView drawPadView;
 
 
-    @BindView(R.id.timeLineView)
-    VideoFrameRecycler mTimeLineView;
+    @BindView(R.id.list_thumb)
+    RecyclerView list_thumb;
 
 
     private List<String> imgPath = new ArrayList<>();
@@ -105,7 +105,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     protected void initAction() {
         presenter.initBottomLayout(viewPager);
-        presenter.initVideoProgressView(mTimeLineView);
+      //  presenter.initVideoProgressView(list_thumb);
         Glide.with(this).load(coverImagePath).into(iv_cover);
         FirstAddImage();
     }

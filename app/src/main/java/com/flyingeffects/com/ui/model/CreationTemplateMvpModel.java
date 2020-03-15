@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Vibrator;
@@ -47,10 +48,14 @@ import com.lansosdk.videoeditor.AudioPadExecute;
 import com.lansosdk.videoeditor.DrawPadView;
 import com.lansosdk.videoeditor.LanSongFileUtil;
 import com.lansosdk.videoeditor.MediaInfo;
+import com.shixing.sxve.ui.adapter.TimelineAdapter;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import rx.subjects.PublishSubject;
@@ -88,7 +93,8 @@ public class CreationTemplateMvpModel {
 //    private MediaInfo mInfo;
     private ArrayList<AnimStickerModel> listForStickerView = new ArrayList<>();
     private boolean isDestroy=false;
-
+    private  RecyclerView list_thumb;
+    private  MediaInfo    mInfo;
 
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout) {
         this.context = context;
@@ -97,6 +103,7 @@ public class CreationTemplateMvpModel {
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
         editTmpPath = LanSongFileUtil.newMp4PathInBox();
         mLayerMain = null;
+        mInfo = new MediaInfo(mVideoPath);
     }
 
     public void initBottomLayout(ViewPager viewPager) {
@@ -145,71 +152,56 @@ public class CreationTemplateMvpModel {
         isDestroy=true;
     }
 
-
-    VideoTimelineAdapter frameAdapter;
-    //裁剪起点与总时长的百分比，比如从20.5%的进度开始裁剪
-    private float cropStartPoint=0;
-    private boolean canScroll=false;
-    public void initVideoProgressView(VideoFrameRecycler mTimeLineView) {
-        RecyclerView.LayoutManager layoutManager =
-                new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false) {
-                    @Override
-                    public boolean canScrollHorizontally() {
-                        return canScroll;
-                    }
-                };
-        mTimeLineView.setLayoutManager(layoutManager);
-        frameAdapter=new VideoTimelineAdapter(context, Uri.fromFile(new File(mVideoPath)),() -> {
-            if (canScroll){
-                mTimeLineView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                        if (newState==RecyclerView.SCROLL_STATE_IDLE){
-                            cropStartPoint=1f*recyclerView.computeHorizontalScrollOffset()/recyclerView.computeHorizontalScrollRange();
-                            LogUtil.d("scrollRange",String.valueOf(recyclerView.computeHorizontalScrollRange()));
-                            LogUtil.d("scrollOffset",String.valueOf(recyclerView.computeHorizontalScrollOffset()));
-                            LogUtil.d("cropStart",String.valueOf(cropStartPoint));
-//                            calculateCrop();
-//                            seekTo(Math.round(getDuration()*getCropStartRatio()));
-                        }
-                    }
-                });
-//                seekbarTime=60*1000;
-//                seekbarPercent=1f*mTimeLineView.getWidth()/(frameAdapter.getItemWidth()*frameAdapter.getItemCount());
-//                float timeRatio=1f*60*1000/getDuration();
-//                float adjustRatio=timeRatio/seekbarPercent;
-//                seekbarPercent*=adjustRatio;
-//                mRangeSeekBarView.setMinDistance(Math.round(getDuration()*adjustRatio));
-            }else {
-//                seekbarTime=getDuration();
-//                seekbarPercent=1f;
-//                mRangeSeekBarView.setMinDistance(Math.round(getDuration()));
+    private TimelineAdapter   mTimelineAdapter;
+    public void initVideoProgressView(RecyclerView list_thumb) {
+        this.list_thumb=list_thumb;
+//        mScrollX = 0;
+        list_thumb.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+        mTimelineAdapter    = new TimelineAdapter();
+        list_thumb.setAdapter(mTimelineAdapter);
+        list_thumb.setHasFixedSize(true);
+        list_thumb.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NotNull RecyclerView recyclerView, int newState) {
+//                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+//                    float percent = (float) mScrollX / mTotalWidth;
+//                    mStartDuration = (int) (mVideoDuration * percent);
+//                    mEndDuration = mStartDuration + mTemplateDuration;
+//                    seekTo(mStartDuration);
+//                    startTimer();
+//                }
             }
-//            calculateCrop();
-//            //初始化进度指针的位置
-//
-//            //总长度除以(拖动条从左到右代表的时长)总时间（毫秒）=px/ms
-//            float totalDistance=mRangeSeekBarView.getThumbs().get(1).getPos()-mRangeSeekBarView.getThumbs().get(0).getPos();
-//            float pixelsPerMs=totalDistance/seekbarTime;
-//            curOffset=pixelsPerMs*updateCursorIntervalMs;
-//            ViewGroup.LayoutParams cursorLp=cursor.getLayoutParams();
-//            cursorLp.height=mRangeSeekBarView.getMeasuredHeight();
-//            cursor.setLayoutParams(cursorLp);
-//            currentCursorStart=mRangeSeekBarView.getThumbs().get(1).getWidthBitmap();
-//            cursor.setTranslationX(currentCursorStart);
-//            cursor.setTranslationY(DimensionUtils.dp2px(1));
-//
-//            //初始化震动
 
-
-
-
-//            vibrator = (Vibrator) mContext.getSystemService(Service.VIBRATOR_SERVICE);
-//            //初始化完成
-//            fullyInitiated=true;
-            mTimeLineView.setAdapter(frameAdapter);
+            @Override
+            public void onScrolled(@NotNull RecyclerView recyclerView, int dx, int dy) {
+//                mScrollX += dx;
+            }
         });
 
+    //    initSingleThumbSize( mInfo.getDurationUs(), path);
+    }
+
+    private int mTotalWidth;
+    private void initSingleThumbSize(int width, int height, float duration, float mTemplateDuration, String mVideoPath) {
+        // 需要截取的listWidth宽度
+        int listWidth = list_thumb.getWidth() - list_thumb.getPaddingLeft() - list_thumb.getPaddingRight();
+        int listHeight = list_thumb.getHeight();
+        float scale = (float) listHeight / height;
+        int thumbWidth = (int) (scale * width);
+        mTimelineAdapter.setBitmapSize(thumbWidth, listHeight);
+        //其中listWidth表示当前截取的大小
+        int thumbCount = (int) (listWidth * (duration / mTemplateDuration / 1000) / thumbWidth);
+        thumbCount = thumbCount > 0 ? thumbCount : 0;
+        //每帧所占的时间
+        final int interval = (int) (duration / thumbCount * 1000);
+        int[] mTimeUs = new int[thumbCount];
+        for (int i = 0; i < thumbCount; i++) {
+            mTimeUs[i] = i * interval;
+        }
+        HashMap<Integer, Bitmap> mData = new HashMap<>();
+        mTimelineAdapter.setVideoUri(Uri.fromFile(new File(mVideoPath)));
+        mTimelineAdapter.setData(mTimeUs, mData);
+        mTotalWidth = thumbWidth * thumbCount;
     }
 
 
@@ -223,7 +215,6 @@ public class CreationTemplateMvpModel {
     public void toPrivateVideo(DrawPadView drawPadView) {
         this.mDrawPadView = drawPadView;
         StickerForParents stickerForParents= listForStickerView.get(0).getParameterData();
-
         startPlayVideo(stickerForParents);
     }
 
@@ -244,7 +235,7 @@ public class CreationTemplateMvpModel {
                 e.printStackTrace();
             }
         });
-        MediaInfo    mInfo = new MediaInfo(mVideoPath);
+
         backgroundDraw.toSaveVideo(mInfo.getDurationUs(),stickerForParents);
 
     }

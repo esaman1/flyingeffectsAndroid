@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.presenter;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.RecyclerView;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
@@ -27,7 +28,7 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.initBottomLayout(viewPager);
     }
 
-    public void initVideoProgressView(VideoFrameRecycler mTimeLineView){
+    public void initVideoProgressView(RecyclerView mTimeLineView){
         creationTemplatemodel.initVideoProgressView(mTimeLineView);
     }
 

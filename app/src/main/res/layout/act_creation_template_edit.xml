@@ -174,12 +174,15 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="13dp">
 
-            <com.flyingeffects.com.view.VideoFrameRecycler
-                android:id="@+id/timeLineView"
-                android:background="#ff00ff"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list_thumb"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_centerInParent="true" />
+                android:layout_height="match_parent"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:clipToPadding="false"
+                android:paddingStart="@dimen/dp_63"
+                android:paddingEnd="@dimen/dp_63" />
 
             <TextView
                 android:id="@+id/tv_end_time"
