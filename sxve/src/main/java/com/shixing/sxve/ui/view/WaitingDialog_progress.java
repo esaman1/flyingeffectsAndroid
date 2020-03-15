@@ -16,12 +16,12 @@ import com.shixing.sxve.R;
  * data :2017-8-9
  * Description:等待框
  */
-public class WatingDialog_progress {
+public class WaitingDialog_progress {
 
     private Dialog loadingDialog;
     Context context;
 
-    public WatingDialog_progress(Context context) {
+    public WaitingDialog_progress(Context context) {
         this.context = context;
     }
 

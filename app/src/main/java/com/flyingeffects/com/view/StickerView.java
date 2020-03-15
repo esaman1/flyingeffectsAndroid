@@ -3,6 +3,8 @@ package com.flyingeffects.com.view;
 import android.app.Service;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -12,7 +14,9 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.VibrationEffect;
@@ -39,10 +43,13 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.ui.interfaces.TickerAnimated;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.lansongCommendView.RectUtil;
 
+import java.io.File;
 import java.util.List;
 //com.flyingeffects.com.view.StickerView
 
@@ -130,6 +137,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private Vibrator vibrator;
     //是否显示
     private boolean frameShow = false;
+
+    private Bitmap originalBitmap;
 
 
     /**
@@ -985,7 +994,19 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     getTarger().setAutoRun(autoRun);
                     contentWidth = (int) (getMinDisplayWidth() / 2f);
-                    contentHeight = (int) (getMinDisplayWidth() / 2f);
+                    originalBitmap = BitmapFactory.decodeFile(path);
+                    int bitmapW=originalBitmap.getWidth();
+                    int bitmapH=originalBitmap.getHeight();
+                    boolean direction = BitmapManager.getInstance().getOrientation(path);
+                    if(!direction){
+                        contentHeight= widthBigger?contentWidth*(bitmapH/(float)bitmapW):contentWidth*(bitmapW/(float)bitmapH);
+                    }else{
+                        //正常模式
+                        contentHeight= widthBigger?contentWidth*(bitmapW/(float)bitmapH):contentWidth*(bitmapH/(float)bitmapW);
+                    }
+                    LogUtil.d("OOM","contentHeight="+contentHeight);
+                    LogUtil.d("OOM","contentWidth="+contentWidth);
+                   // contentHeight = (int) (getMinDisplayWidth() / 2f);
                     RequestManager manager = Glide.with(getContext());
                     RequestBuilder builder = null;
                     if (path.endsWith(".gif")) {
@@ -997,6 +1018,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     builder.load(path)
                             .apply(options)
                             .into(getTarger());
+                    recyclerBitmap();
                 }
             });
         } else {
@@ -1005,7 +1027,28 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         }
     }
 
+
+    public static Uri getImageStreamFromExternal(String imageName) {
+
+        File file=new File(imageName);
+        Uri uri = null;
+            uri = Uri.fromFile(file);
+
+        return uri;
+    }
+
+    private void recyclerBitmap(){
+        if(originalBitmap!=null&&!originalBitmap.isRecycled()){
+            originalBitmap.recycle();
+            originalBitmap=null;
+            LogUtil.d("OOM","recycle="+true);
+        }
+    }
+
+
+    private boolean widthBigger;
     private int getMinDisplayWidth() {
+        widthBigger=getMeasuredWidth()>getMeasuredHeight();
         return Math.min(getMeasuredWidth(), getMeasuredHeight());
     }
 

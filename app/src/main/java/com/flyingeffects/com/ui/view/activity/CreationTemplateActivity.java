@@ -114,6 +114,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
+                presenter.toSaveVideo();
+
                 break;
 
 
@@ -155,6 +157,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void onDestroy() {
+        presenter.onDestroy();
         super.onDestroy();
     }
 

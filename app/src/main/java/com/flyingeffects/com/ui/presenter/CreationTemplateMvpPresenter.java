@@ -26,6 +26,10 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.initBottomLayout(viewPager);
     }
 
+    public void onDestroy(){
+        creationTemplatemodel.onDestroy();
+    }
+
 
     @Override
     public void ItemClickForStickView(AnimStickerModel stickView) {
@@ -40,5 +44,9 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
 
     public void toPrivateVideo(DrawPadView drawPadView){
         creationTemplatemodel.toPrivateVideo(drawPadView);
+    }
+
+    public void toSaveVideo(){
+        creationTemplatemodel.toSaveVideo();
     }
 }
