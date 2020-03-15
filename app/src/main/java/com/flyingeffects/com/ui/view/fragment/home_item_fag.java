@@ -18,14 +18,13 @@ import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.presenter.home_fag_itemMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
+import com.flyingeffects.com.utils.LogUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-
-import static cn.nt.lib.analytics.NTAnalytics.startStatistics;
 
 
 public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View.OnClickListener {
@@ -48,6 +47,7 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View
     private int fromType;
 
 
+
     @Override
     protected int getContentLayout() {
         return R.layout.fag_0_item;
@@ -62,6 +62,7 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View
             actTag = bundle.getInt("num");
             fromType=bundle.getInt("from");
         }
+        LogUtil.d("OOM","2222fromType="+fromType);
         Presenter = new home_fag_itemMvpPresenter(getActivity(), this,fromType);
         initRecycler();
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
