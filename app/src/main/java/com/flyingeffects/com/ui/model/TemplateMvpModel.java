@@ -19,7 +19,7 @@ import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.SxveConstans;
 import com.shixing.sxve.ui.model.TemplateModel;
 import com.shixing.sxve.ui.view.WaitingDialog;
-import com.shixing.sxve.ui.view.WatingDialog_progress;
+import com.shixing.sxve.ui.view.WaitingDialog_progress;
 import com.shixing.sxvideoengine.SXRenderListener;
 import com.shixing.sxvideoengine.SXTemplate;
 import com.shixing.sxvideoengine.SXTemplateRender;
@@ -75,8 +75,8 @@ public class TemplateMvpModel {
     private String outputPathForVideoSaveToPhoto;
 
     public void renderVideo(String mTemplateFolder, String mAudio1Path, Boolean isPreview) {
-        WatingDialog_progress watingDialog_progress=new WatingDialog_progress(context);
-        watingDialog_progress.openProgressDialog();
+        WaitingDialog_progress waitingDialog_progress =new WaitingDialog_progress(context);
+        waitingDialog_progress.openProgressDialog();
         Observable.create((Observable.OnSubscribe<Boolean>) subscriber -> {
             String[] paths = mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
             LogUtil.d("OOM", "得到全部地址");
@@ -99,13 +99,13 @@ public class TemplateMvpModel {
 
                 @Override
                 public void onUpdate(int progress) {
-                    watingDialog_progress.setProgress(progress+"%");
+                    waitingDialog_progress.setProgress(progress+"%");
                     LogUtil.d("OOM", "progress=" + progress);
                 }
 
                 @Override
                 public void onFinish(boolean success, String msg) {
-                    watingDialog_progress.closePragressDialog();
+                    waitingDialog_progress.closePragressDialog();
                     LogUtil.d("OOM", "onFinish+" + msg);
                     subscriber.onNext(success);
                     subscriber.onCompleted();

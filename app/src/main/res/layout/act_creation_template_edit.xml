@@ -144,7 +144,7 @@
     <LinearLayout
         android:id="@+id/ll_progress"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="50dp"
         android:layout_above="@+id/viewPager"
         android:gravity="center_vertical"
         android:orientation="horizontal">
@@ -174,19 +174,15 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="13dp">
 
-            <SeekBar
-                android:id="@+id/seekBar"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list_thumb"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="10dp"
-                android:layout_toLeftOf="@+id/tv_end_time"
-                android:max="100"
-                android:maxHeight="2dp"
-                android:progress="0"
-                android:progressDrawable="@drawable/bg_adjust_seek_bar"
-                android:thumb="@drawable/seek_bar_thumb" />
-
+                android:layout_height="match_parent"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:clipToPadding="false"
+                android:paddingStart="@dimen/dp_63"
+                android:paddingEnd="@dimen/dp_63" />
 
             <TextView
                 android:id="@+id/tv_end_time"

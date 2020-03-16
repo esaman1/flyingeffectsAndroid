@@ -31,7 +31,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
     @BindView(R.id.tl_tabs)
     SlidingTabLayout tabLayout;
 
-    @BindView(R.id.viewpager)
+    @BindView(R.id.viewpager_bj)
     ViewPager viewpager;
 
 

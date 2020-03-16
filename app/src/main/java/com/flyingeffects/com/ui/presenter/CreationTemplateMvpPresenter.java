@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.presenter;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.RecyclerView;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
@@ -9,6 +10,7 @@ import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.model.CreationTemplateMvpModel;
 import com.flyingeffects.com.view.StickerView;
+import com.flyingeffects.com.view.VideoFrameRecycler;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.lansosdk.videoeditor.DrawPadView;
 
@@ -26,6 +28,14 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.initBottomLayout(viewPager);
     }
 
+    public void initVideoProgressView(RecyclerView mTimeLineView){
+        creationTemplatemodel.initVideoProgressView(mTimeLineView);
+    }
+
+    public void onDestroy(){
+        creationTemplatemodel.onDestroy();
+    }
+
 
     @Override
     public void ItemClickForStickView(AnimStickerModel stickView) {
@@ -40,5 +50,9 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
 
     public void toPrivateVideo(DrawPadView drawPadView){
         creationTemplatemodel.toPrivateVideo(drawPadView);
+    }
+
+    public void toSaveVideo(){
+        creationTemplatemodel.toSaveVideo();
     }
 }

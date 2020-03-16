@@ -42,9 +42,7 @@ import com.lansosdk.box.onDrawPadCompletedListener;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.lansosdk.videoeditor.DrawPadView2;
 import com.lansosdk.videoeditor.MediaInfo;
-import com.shixing.sxve.ui.view.WatingDialog_progress;
-
-import org.w3c.dom.ls.LSException;
+import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
 import java.io.IOException;
@@ -608,14 +606,14 @@ public class VideoCropMVPModel {
     private static final long minCropDurationMs=2*1000;
     private boolean isSaving=false;
     private boolean is4kVideo=false;
-    WatingDialog_progress dialog;
+    WaitingDialog_progress dialog;
     public void saveVideo() {
         if (!fullyInitiated||isSaving){
             ToastUtil.showToast("还在加载请稍等");
             return;
         }
 
-        dialog=new WatingDialog_progress(mContext);
+        dialog=new WaitingDialog_progress(mContext);
         dialog.openProgressDialog();
         MediaInfo videoInfo=new MediaInfo(videoPath);
         MediaInfo.checkFile(videoPath);
