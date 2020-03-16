@@ -18,14 +18,18 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     private CreationTemplateMvpView creationTemplatemvpView;
     private CreationTemplateMvpModel creationTemplatemodel;
 
-    public CreationTemplateMvpPresenter(Context context, CreationTemplateMvpView mvp_view,String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, StickerView stickView) {
+    public CreationTemplateMvpPresenter(Context context, CreationTemplateMvpView mvp_view,String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout) {
         this.creationTemplatemvpView = mvp_view;
-        creationTemplatemodel = new CreationTemplateMvpModel(context, this,mVideoPath,viewLayerRelativeLayout,stickView);
+        creationTemplatemodel = new CreationTemplateMvpModel(context, this,mVideoPath,viewLayerRelativeLayout);
     }
 
 
     public void initBottomLayout(ViewPager viewPager){
         creationTemplatemodel.initBottomLayout(viewPager);
+    }
+
+    public void initStickerView(String path){
+        creationTemplatemodel.initStickerView(path);
     }
 
     public void initVideoProgressView(RecyclerView mTimeLineView){

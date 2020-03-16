@@ -122,12 +122,12 @@
                 android:background="@android:color/transparent">
 
 
-                <com.flyingeffects.com.view.lansongCommendView.StickerView
-                    android:id="@+id/id_vview_drawimage_stickview"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:layout_centerInParent="true" />
+<!--                <com.flyingeffects.com.view.lansongCommendView.StickerView-->
+<!--                    android:id="@+id/id_vview_drawimage_stickview"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:gravity="center"-->
+<!--                    android:layout_centerInParent="true" />-->
 
 
             </com.lansosdk.box.ViewLayerRelativeLayout>

@@ -1,8 +1,6 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
@@ -17,7 +15,6 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
-import com.flyingeffects.com.view.lansongCommendView.StickerView;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.lansosdk.videoeditor.DrawPadView;
 
@@ -26,10 +23,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 /**
  * description ：用户创作页面,里面主要用了langSong 的工具类，对视频进行贴纸的功能
@@ -48,8 +41,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     ViewLayerRelativeLayout viewLayerRelativeLayout;
 
 
-    @BindView(R.id.id_vview_drawimage_stickview)
-    StickerView stickView;
 
     @BindView(R.id.iv_cover)
     ImageView iv_cover;
@@ -84,7 +75,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             imgPath = bundle.getStringArrayList("paths");
             videoPath = bundle.getString("video_path");
         }
-        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout,stickView);
+        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout);
     }
 
 
@@ -96,27 +87,20 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     protected void initAction() {
+        presenter.initStickerView(imgPath.get(0));
         presenter.initBottomLayout(viewPager);
       //  presenter.initVideoProgressView(list_thumb);
         Glide.with(this).load(coverImagePath).into(iv_cover);
-        FirstAddImage();
+
+
     }
 
 
-    /**
-     * description ：增加第一个用户抠图的stickView
-     * creation date: 2020/3/11
-     * user : zhangtongju
-     */
-    private void FirstAddImage() {
-        Observable.just(imgPath.get(0)).map(BitmapFactory::decodeFile).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
-            @Override
-            public void call(Bitmap bitmap) {
-                stickView.addBitImage(bitmap);
-//                stickView.setImageRes(imgPath.get(0), true);
-            }
-        });
-    }
+
+
+
+
+
 
 
     @OnClick({R.id.tv_top_submit, R.id.iv_play})
@@ -130,10 +114,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
             case R.id.iv_play:
                 showPreiviewView(true);
-//                Bitmap bmp = viewLayerRelativeLayout.toggleSnatShot();
                 presenter.toPrivateVideo(drawPadView);
-
-
                 break;
 
             default:

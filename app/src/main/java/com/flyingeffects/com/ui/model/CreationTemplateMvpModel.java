@@ -2,14 +2,12 @@ package com.flyingeffects.com.ui.model;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Vibrator;
-import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,51 +15,44 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateGridViewAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
-import com.flyingeffects.com.adapter.VideoTimelineAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.enity.StickerForParents;
-import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CopyFileFromAssets;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.view.VideoFrameRecycler;
+import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.flyingeffects.com.view.lansongCommendView.StickerView;
-import com.lansosdk.box.AudioLayer;
-import com.lansosdk.box.DrawPad;
 import com.lansosdk.box.DrawPadUpdateMode;
 import com.lansosdk.box.MVLayer;
 import com.lansosdk.box.VideoLayer;
 import com.lansosdk.box.ViewLayerRelativeLayout;
-import com.lansosdk.box.onDrawPadProgressListener;
-import com.lansosdk.box.onDrawPadSizeChangedListener;
 import com.lansosdk.videoeditor.AudioEditor;
-import com.lansosdk.videoeditor.AudioPadExecute;
 import com.lansosdk.videoeditor.DrawPadView;
 import com.lansosdk.videoeditor.LanSongFileUtil;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.adapter.TimelineAdapter;
 import com.shixing.sxve.ui.util.BitmapCompress;
-import com.shixing.sxve.ui.view.VEBitmapFactory;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 
@@ -101,16 +92,43 @@ public class CreationTemplateMvpModel {
     private  MediaInfo    mInfo;
     private StickerView stickView;
 
-    public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, StickerView stickView) {
+    public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout) {
         this.context = context;
         this.callback = callback;
-        this.stickView=stickView;
         this.mVideoPath = mVideoPath;
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
         editTmpPath = LanSongFileUtil.newMp4PathInBox();
         mLayerMain = null;
         mInfo = new MediaInfo(mVideoPath);
     }
+
+
+
+    public void initStickerView(String imagePath){
+        stickView= new StickerView(context, new StickerItemOnitemclick() {
+            @Override
+            public void stickerOnclick(int type) {
+
+            }
+        });
+        firstAddImage(imagePath);
+        viewLayerRelativeLayout.addView(stickView);
+    }
+    /**
+     * description ：增加第一个用户抠图的stickView
+     * creation date: 2020/3/11
+     * user : zhangtongju
+     */
+    private void firstAddImage(String path) {
+        Observable.just(path).map(BitmapFactory::decodeFile).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
+            @Override
+            public void call(Bitmap bitmap) {
+                stickView.addBitImage(bitmap);
+            }
+        });
+    }
+
+
 
     public void initBottomLayout(ViewPager viewPager) {
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager, false);
@@ -146,6 +164,9 @@ public class CreationTemplateMvpModel {
         });
 
     }
+
+
+
 
 
 
