@@ -28,6 +28,7 @@ import com.flyingeffects.com.adapter.VideoTimelineAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.enity.StickerForParents;
+import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CopyFileFromAssets;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
@@ -49,10 +50,13 @@ import com.lansosdk.videoeditor.DrawPadView;
 import com.lansosdk.videoeditor.LanSongFileUtil;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.adapter.TimelineAdapter;
+import com.shixing.sxve.ui.util.BitmapCompress;
+import com.shixing.sxve.ui.view.VEBitmapFactory;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -95,10 +99,12 @@ public class CreationTemplateMvpModel {
     private boolean isDestroy=false;
     private  RecyclerView list_thumb;
     private  MediaInfo    mInfo;
+    private StickerView stickView;
 
-    public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout) {
+    public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, StickerView stickView) {
         this.context = context;
         this.callback = callback;
+        this.stickView=stickView;
         this.mVideoPath = mVideoPath;
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
         editTmpPath = LanSongFileUtil.newMp4PathInBox();
@@ -110,11 +116,9 @@ public class CreationTemplateMvpModel {
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager, false);
         GridView gridView = templateThumbView.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view, i, l) -> {
-//            StickerView stickView = new StickerView(context);
-//            stickView.addBitImage(gifTest);
-//            AnimStickerModel animStickerModel = new AnimStickerModel(context,viewLayerRelativeLayout,stickView);
-//            listForStickerView.add(animStickerModel);
-//            callback.ItemClickForStickView(animStickerModel);
+            BitmapCompress bitmapManager=new BitmapCompress();
+            Bitmap bp=bitmapManager.getSmallBmpFromFile(gifTest,720,1280);
+            stickView.addBitImage(bp);
         });
         List<String> test = new ArrayList<>();
         for (int i = 0; i < 14; i++) {
@@ -142,6 +146,8 @@ public class CreationTemplateMvpModel {
         });
 
     }
+
+
 
 
     public void onDestroy(){

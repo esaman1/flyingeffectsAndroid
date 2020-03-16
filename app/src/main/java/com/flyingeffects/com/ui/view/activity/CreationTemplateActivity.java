@@ -84,7 +84,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             imgPath = bundle.getStringArrayList("paths");
             videoPath = bundle.getString("video_path");
         }
-        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout);
+        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout,stickView);
     }
 
 

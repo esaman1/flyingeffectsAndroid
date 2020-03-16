@@ -9,8 +9,8 @@ import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.model.CreationTemplateMvpModel;
-import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.VideoFrameRecycler;
+import com.flyingeffects.com.view.lansongCommendView.StickerView;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.lansosdk.videoeditor.DrawPadView;
 
@@ -18,9 +18,9 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     private CreationTemplateMvpView creationTemplatemvpView;
     private CreationTemplateMvpModel creationTemplatemodel;
 
-    public CreationTemplateMvpPresenter(Context context, CreationTemplateMvpView mvp_view,String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout) {
+    public CreationTemplateMvpPresenter(Context context, CreationTemplateMvpView mvp_view,String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, StickerView stickView) {
         this.creationTemplatemvpView = mvp_view;
-        creationTemplatemodel = new CreationTemplateMvpModel(context, this,mVideoPath,viewLayerRelativeLayout);
+        creationTemplatemodel = new CreationTemplateMvpModel(context, this,mVideoPath,viewLayerRelativeLayout,stickView);
     }
 
 

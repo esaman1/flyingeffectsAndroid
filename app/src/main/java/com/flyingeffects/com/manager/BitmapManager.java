@@ -2,11 +2,14 @@ package com.flyingeffects.com.manager;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.media.ExifInterface;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
+
+import com.shixing.sxve.ui.view.VEBitmapFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -70,5 +73,8 @@ public class BitmapManager {
             }
             return true;
         }
+
+
+
 
 }
