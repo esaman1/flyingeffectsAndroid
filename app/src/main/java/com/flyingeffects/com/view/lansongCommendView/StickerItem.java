@@ -27,7 +27,8 @@ public class StickerItem {
     private static Bitmap rotateBit;
     private static Bitmap deleteAdd;
     private static Bitmap rotateReplace;
-
+    private float tranX;
+    private float tranY;
 
     public Bitmap bitmap;
     public Rect srcRect;// 原始图片坐标
@@ -45,6 +46,7 @@ public class StickerItem {
     RectF helpBox;
     boolean isDrawHelpTool = false;
     private Rect helpToolsRect;
+    private float scaleSize;
     private float roatetAngle = 0;
     private Paint dstPaint = new Paint();
     private Paint paint = new Paint();
@@ -121,13 +123,13 @@ public class StickerItem {
                 - BUTTON_WIDTH, helpBox.right + BUTTON_WIDTH, helpBox.bottom
                 + BUTTON_WIDTH);
 
-        addRect= new RectF(helpBox.right - BUTTON_WIDTH, helpBox.top
+        addRect = new RectF(helpBox.right - BUTTON_WIDTH, helpBox.top
                 - BUTTON_WIDTH, helpBox.right + BUTTON_WIDTH, helpBox.top
                 + BUTTON_WIDTH);
 
 
-        changeRect= new RectF(helpBox.left - BUTTON_WIDTH, helpBox.bottom
-                - BUTTON_WIDTH,  helpBox.left + BUTTON_WIDTH, helpBox.bottom
+        changeRect = new RectF(helpBox.left - BUTTON_WIDTH, helpBox.bottom
+                - BUTTON_WIDTH, helpBox.left + BUTTON_WIDTH, helpBox.bottom
                 + BUTTON_WIDTH);
 
 
@@ -153,7 +155,8 @@ public class StickerItem {
      */
     public void updatePos(final float dx, final float dy) {
         this.matrix.postTranslate(dx, dy);// 记录到矩阵中
-
+        tranX=dx;
+        tranY=dy;
         dstRect.offset(dx, dy);
 
         // 工具按钮随之移动
@@ -168,7 +171,6 @@ public class StickerItem {
 
         this.detectAddRect.offset(dx, dy);
         this.detectChangeRect.offset(dx, dy);
-
 
 
     }
@@ -205,18 +207,18 @@ public class StickerItem {
         // System.out.println("srcLen--->" + srcLen + "   curLen---->" +
         // curLen);
 
-        float scale = curLen / srcLen;// 计算缩放比
+        scaleSize = curLen / srcLen;// 计算缩放比
 
-        float newWidth = dstRect.width() * scale;
+        float newWidth = dstRect.width() * scaleSize;
         if (newWidth / initWidth < MIN_SCALE) {// 最小缩放值检测
             return;
         }
 
-        this.matrix.postScale(scale, scale, this.dstRect.centerX(),
+        this.matrix.postScale(scaleSize, scaleSize, this.dstRect.centerX(),
                 this.dstRect.centerY());// 存入scale矩阵
         // this.matrix.postRotate(5, this.dstRect.centerX(),
         // this.dstRect.centerY());
-        RectUtil.scaleRect(this.dstRect, scale);// 缩放目标矩形
+        RectUtil.scaleRect(this.dstRect, scaleSize);// 缩放目标矩形
 
         // 重新计算工具箱坐标
         helpBox.set(dstRect);
@@ -231,7 +233,6 @@ public class StickerItem {
                 - BUTTON_WIDTH);
         changeRect.offsetTo(helpBox.left - BUTTON_WIDTH, helpBox.bottom
                 - BUTTON_WIDTH);
-
 
 
         detectRotateRect.offsetTo(helpBox.right - BUTTON_WIDTH, helpBox.bottom
@@ -274,8 +275,6 @@ public class StickerItem {
                 this.dstRect.centerY(), roatetAngle);
 
 
-
-
         // System.out.println("angle----->" + angle + "   " + flag);
 
         // System.out
@@ -298,8 +297,6 @@ public class StickerItem {
             canvas.drawBitmap(rotateReplace, helpToolsRect, changeRect, null);
 
 
-
-
             canvas.restore();
             // canvas.drawRect(deleteRect, dstPaint);
             // canvas.drawRect(rotateRect, dstPaint);
@@ -309,4 +306,41 @@ public class StickerItem {
 
         // detectRotateRect
     }
+
+
+
+    /**
+     * description ：获得旋转
+     * creation date: 2020/3/16
+     * user : zhangtongju
+     */
+    public float getRoatetAngle() {
+        return roatetAngle;
+    }
+
+    /**
+     * description ：获得缩放
+     * creation date: 2020/3/16
+     * user : zhangtongju
+     */
+    public float getScaleSize() {
+        return scaleSize;
+    }
+
+
+    /**
+     * description ：获得平移
+     * creation date: 2020/3/16
+     * user : zhangtongju
+     */
+    public Translation getTranslation() {
+        Translation translation=new Translation();
+        translation.setX(tranX);
+        translation.setY(tranY);
+        return translation;
+    }
+
+
+
+
 }// end class
