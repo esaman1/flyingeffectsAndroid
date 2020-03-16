@@ -43,6 +43,7 @@ public class StickerView extends View {
     public StickerView(Context context) {
         super(context);
         init(context);
+
     }
 
     public StickerView(Context context,StickerItemOnitemclick callback) {

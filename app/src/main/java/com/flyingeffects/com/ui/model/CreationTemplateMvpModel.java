@@ -28,6 +28,7 @@ import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.view.lansongCommendView.StickerItem;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.flyingeffects.com.view.lansongCommendView.StickerView;
 import com.lansosdk.box.DrawPadUpdateMode;
@@ -47,6 +48,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import rx.Observable;
@@ -85,11 +87,11 @@ public class CreationTemplateMvpModel {
     private VideoLayer mLayerMain;
     private ArrayList<MVLayer> mvLayerArrayList = new ArrayList<>();
     private String path = "";
-//    private MediaInfo mInfo;
+    //    private MediaInfo mInfo;
     private ArrayList<AnimStickerModel> listForStickerView = new ArrayList<>();
-    private boolean isDestroy=false;
-    private  RecyclerView list_thumb;
-    private  MediaInfo    mInfo;
+    private boolean isDestroy = false;
+    private RecyclerView list_thumb;
+    private MediaInfo mInfo;
     private StickerView stickView;
 
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout) {
@@ -103,9 +105,8 @@ public class CreationTemplateMvpModel {
     }
 
 
-
-    public void initStickerView(String imagePath){
-        stickView= new StickerView(context, new StickerItemOnitemclick() {
+    public void initStickerView(String imagePath) {
+        stickView = new StickerView(context, new StickerItemOnitemclick() {
             @Override
             public void stickerOnclick(int type) {
 
@@ -114,6 +115,7 @@ public class CreationTemplateMvpModel {
         firstAddImage(imagePath);
         viewLayerRelativeLayout.addView(stickView);
     }
+
     /**
      * description ：增加第一个用户抠图的stickView
      * creation date: 2020/3/11
@@ -129,14 +131,15 @@ public class CreationTemplateMvpModel {
     }
 
 
-
     public void initBottomLayout(ViewPager viewPager) {
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager, false);
         GridView gridView = templateThumbView.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view, i, l) -> {
-            BitmapCompress bitmapManager=new BitmapCompress();
-            Bitmap bp=bitmapManager.getSmallBmpFromFile(gifTest,720,1280);
+            BitmapCompress bitmapManager = new BitmapCompress();
+            Bitmap bp = bitmapManager.getSmallBmpFromFile(gifTest, 720, 1280);
             stickView.addBitImage(bp);
+
+
         });
         List<String> test = new ArrayList<>();
         for (int i = 0; i < 14; i++) {
@@ -166,21 +169,17 @@ public class CreationTemplateMvpModel {
     }
 
 
-
-
-
-
-
-    public void onDestroy(){
-        isDestroy=true;
+    public void onDestroy() {
+        isDestroy = true;
     }
 
-    private TimelineAdapter   mTimelineAdapter;
+    private TimelineAdapter mTimelineAdapter;
+
     public void initVideoProgressView(RecyclerView list_thumb) {
-        this.list_thumb=list_thumb;
+        this.list_thumb = list_thumb;
 //        mScrollX = 0;
         list_thumb.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-        mTimelineAdapter    = new TimelineAdapter();
+        mTimelineAdapter = new TimelineAdapter();
         list_thumb.setAdapter(mTimelineAdapter);
         list_thumb.setHasFixedSize(true);
         list_thumb.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -201,10 +200,11 @@ public class CreationTemplateMvpModel {
             }
         });
 
-    //    initSingleThumbSize( mInfo.getDurationUs(), path);
+        //    initSingleThumbSize( mInfo.getDurationUs(), path);
     }
 
     private int mTotalWidth;
+
     private void initSingleThumbSize(int width, int height, float duration, float mTemplateDuration, String mVideoPath) {
         // 需要截取的listWidth宽度
         int listWidth = list_thumb.getWidth() - list_thumb.getPaddingLeft() - list_thumb.getPaddingRight();
@@ -228,8 +228,6 @@ public class CreationTemplateMvpModel {
     }
 
 
-
-
     /**
      * description ：预览视频采用蓝松sdk提供的在预览功能
      * creation date: 2020/3/12
@@ -237,8 +235,8 @@ public class CreationTemplateMvpModel {
      */
     public void toPrivateVideo(DrawPadView drawPadView) {
         this.mDrawPadView = drawPadView;
-        StickerForParents stickerForParents= listForStickerView.get(0).getParameterData();
-        startPlayVideo(stickerForParents);
+//        StickerForParents stickerForParents= listForStickerView.get(0).getParameterData();
+        startPlayVideo(stickView);
     }
 
     /**
@@ -246,9 +244,9 @@ public class CreationTemplateMvpModel {
      * creation date: 2020/3/12
      * user : zhangtongju
      */
-    public void toSaveVideo(){
-        StickerForParents stickerForParents= listForStickerView.get(0).getParameterData();
-        backgroundDraw backgroundDraw=new backgroundDraw(context, mVideoPath, path -> {
+    public void toSaveVideo() {
+        StickerForParents stickerForParents = listForStickerView.get(0).getParameterData();
+        backgroundDraw backgroundDraw = new backgroundDraw(context, mVideoPath, path -> {
             String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
             try {
                 FileUtil.copyFile(new File(path), albumPath);
@@ -259,7 +257,7 @@ public class CreationTemplateMvpModel {
             }
         });
 
-        backgroundDraw.toSaveVideo(mInfo.getDurationUs(),stickerForParents);
+        backgroundDraw.toSaveVideo(mInfo.getDurationUs(), stickerForParents);
 
     }
 
@@ -274,8 +272,6 @@ public class CreationTemplateMvpModel {
         intent.setData(Uri.fromFile(new File(outputFile)));
         context.sendBroadcast(intent);
     }
-
-
 
 
     private void showKeepSuccessDialog(String path) {
@@ -300,7 +296,7 @@ public class CreationTemplateMvpModel {
      * 您可以用你们自己的播放器作为画面输入源,也可以用原生的MediaPlayer,只需要视频播放器可以设置surface即可.
      * 一下举例是采用MediaPlayer作为视频输入源.
      */
-    private void startPlayVideo( StickerForParents stickerForParents) {
+    private void startPlayVideo(StickerView stickView) {
         if (mVideoPath != null) {
             mplayer = new MediaPlayer();
             try {
@@ -309,7 +305,7 @@ public class CreationTemplateMvpModel {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            mplayer.setOnPreparedListener(mp -> initDrawPad( stickerForParents));
+            mplayer.setOnPreparedListener(mp -> initDrawPad(stickView));
             mplayer.setOnCompletionListener(mp -> stopDrawPad());
             mplayer.prepareAsync();
         } else {
@@ -321,12 +317,12 @@ public class CreationTemplateMvpModel {
     /**
      * Step1: 开始运行 drawPad 容器
      */
-    private void initDrawPad(StickerForParents stickerForParents) {
+    private void initDrawPad(StickerView stickView) {
         mDrawPadView.setUpdateMode(DrawPadUpdateMode.AUTO_FLUSH, 30);
         // 设置当前DrawPad的宽度和高度,并把宽度自动缩放到父view的宽度,然后等比例调整高度.
         mDrawPadView.setDrawPadSize(DRAWPAD_WIDTH, DRAWPAD_HEIGHT, (viewWidth, viewHeight) -> {
             // 开始DrawPad的渲染线程.
-            startDrawPad(stickerForParents);
+            startDrawPad(stickView);
         });
     }
 
@@ -334,7 +330,7 @@ public class CreationTemplateMvpModel {
     /**
      * Step2: 开始运行 Drawpad线程.
      */
-    private void startDrawPad(StickerForParents stickerForParents) {
+    private void startDrawPad(StickerView stickView) {
         if (mDrawPadView.startDrawPad()) {
             // 增加一个主视频的 VideoLayer
             mLayerMain = mDrawPadView.addMainVideoLayer(
@@ -343,7 +339,12 @@ public class CreationTemplateMvpModel {
                 mplayer.setSurface(new Surface(mLayerMain.getVideoTexture()));
             }
             mplayer.start();
-            addMVLayer(stickerForParents);
+            LinkedHashMap<Integer, StickerItem> linkedHashMap = stickView.getBank();
+            for (int i = 0; i < linkedHashMap.size(); i++) {
+                //多个图层的情况
+                StickerItem stickerItem=linkedHashMap.get(i);
+                addMVLayer(stickerItem);
+            }
         }
     }
 
@@ -351,12 +352,12 @@ public class CreationTemplateMvpModel {
     /**
      * 增加一个MV图层.
      */
-    private void addMVLayer(StickerForParents stickerForParents) {
+    private void addMVLayer(StickerItem stickerItem) {
         String colorMVPath = CopyFileFromAssets.copyAssets(context, "laohu.mp4");
         String maskMVPath = CopyFileFromAssets.copyAssets(context, "mask.mp4");
         MVLayer mvLayer = mDrawPadView.addMVLayer(colorMVPath, maskMVPath); // <-----增加MVLayer
-        mvLayer.setRotate(stickerForParents.getRoation());
-        mvLayer.setScale(stickerForParents.getScale());
+        mvLayer.setRotate(stickerItem.getRoatetAngle());
+        mvLayer.setScale(stickerItem.getScaleSize());
         mvLayerArrayList.add(mvLayer);
     }
 

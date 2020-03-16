@@ -108,7 +108,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         switch (view.getId()) {
             case R.id.tv_top_submit:
                 presenter.toSaveVideo();
-
                 break;
 
 
