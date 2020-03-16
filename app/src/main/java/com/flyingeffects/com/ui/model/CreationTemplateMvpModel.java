@@ -33,8 +33,8 @@ import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.VideoFrameRecycler;
+import com.flyingeffects.com.view.lansongCommendView.StickerView;
 import com.lansosdk.box.AudioLayer;
 import com.lansosdk.box.DrawPad;
 import com.lansosdk.box.DrawPadUpdateMode;
@@ -110,15 +110,11 @@ public class CreationTemplateMvpModel {
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager, false);
         GridView gridView = templateThumbView.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view, i, l) -> {
-            StickerView stickView = new StickerView(context);
-            stickView.setLeftBottomBitmap(context.getDrawable(R.mipmap.sticker_change));
-            stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
-            stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
-            stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
-            stickView.setImageRes(gifTest, false);
-            AnimStickerModel animStickerModel = new AnimStickerModel(context,viewLayerRelativeLayout,stickView);
-            listForStickerView.add(animStickerModel);
-            callback.ItemClickForStickView(animStickerModel);
+//            StickerView stickView = new StickerView(context);
+//            stickView.addBitImage(gifTest);
+//            AnimStickerModel animStickerModel = new AnimStickerModel(context,viewLayerRelativeLayout,stickView);
+//            listForStickerView.add(animStickerModel);
+//            callback.ItemClickForStickView(animStickerModel);
         });
         List<String> test = new ArrayList<>();
         for (int i = 0; i < 14; i++) {

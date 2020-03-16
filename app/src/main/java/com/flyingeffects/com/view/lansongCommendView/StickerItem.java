@@ -25,14 +25,23 @@ public class StickerItem {
     private static final int BUTTON_WIDTH = 30;
     private static Bitmap deleteBit;
     private static Bitmap rotateBit;
+    private static Bitmap deleteAdd;
+    private static Bitmap rotateReplace;
+
+
     public Bitmap bitmap;
     public Rect srcRect;// 原始图片坐标
     public RectF dstRect;// 绘制目标坐标
     public RectF deleteRect;// 删除按钮位置
     public RectF rotateRect;// 旋转按钮位置
+    public RectF addRect;// 添加按钮位置
+    public RectF changeRect;// 变换按钮位置
     public Matrix matrix;// 变化矩阵
-    public RectF detectRotateRect;
-    public RectF detectDeleteRect;
+    public RectF detectRotateRect;//旋转按钮的范围
+    public RectF detectDeleteRect;//删除按钮的范围
+    public RectF detectAddRect;//添加按钮的范围
+    public RectF detectChangeRect;//替换按钮的范围
+
     RectF helpBox;
     boolean isDrawHelpTool = false;
     private Rect helpToolsRect;
@@ -61,12 +70,25 @@ public class StickerItem {
         // 导入工具按钮位图
         if (deleteBit == null) {
             deleteBit = BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.sticker_delete);
+                    R.mipmap.sticker_close);
         }// end if
         if (rotateBit == null) {
             rotateBit = BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.sticker_rotate);
+                    R.mipmap.sticker_redact);
         }// end if
+
+
+        if (deleteAdd == null) {
+            deleteAdd = BitmapFactory.decodeResource(context.getResources(),
+                    R.mipmap.sticker_copy);
+        }// end if
+
+
+        if (rotateReplace == null) {
+            rotateReplace = BitmapFactory.decodeResource(context.getResources(),
+                    R.mipmap.sticker_change);
+        }// end if
+
     }
 
     public void init(Bitmap addBit, View parentView) {
@@ -99,8 +121,21 @@ public class StickerItem {
                 - BUTTON_WIDTH, helpBox.right + BUTTON_WIDTH, helpBox.bottom
                 + BUTTON_WIDTH);
 
+        addRect= new RectF(helpBox.right - BUTTON_WIDTH, helpBox.top
+                - BUTTON_WIDTH, helpBox.right + BUTTON_WIDTH, helpBox.top
+                + BUTTON_WIDTH);
+
+
+        changeRect= new RectF(helpBox.left - BUTTON_WIDTH, helpBox.bottom
+                - BUTTON_WIDTH,  helpBox.left + BUTTON_WIDTH, helpBox.bottom
+                + BUTTON_WIDTH);
+
+
         detectRotateRect = new RectF(rotateRect);
         detectDeleteRect = new RectF(deleteRect);
+
+        detectAddRect = new RectF(addRect);
+        detectChangeRect = new RectF(changeRect);
     }
 
     private void updateHelpBoxRect() {
@@ -125,9 +160,17 @@ public class StickerItem {
         helpBox.offset(dx, dy);
         deleteRect.offset(dx, dy);
         rotateRect.offset(dx, dy);
+        addRect.offset(dx, dy);
+        changeRect.offset(dx, dy);
 
         this.detectRotateRect.offset(dx, dy);
         this.detectDeleteRect.offset(dx, dy);
+
+        this.detectAddRect.offset(dx, dy);
+        this.detectChangeRect.offset(dx, dy);
+
+
+
     }
 
     /**
@@ -183,10 +226,25 @@ public class StickerItem {
         deleteRect.offsetTo(helpBox.left - BUTTON_WIDTH, helpBox.top
                 - BUTTON_WIDTH);
 
+
+        addRect.offsetTo(helpBox.right - BUTTON_WIDTH, helpBox.top
+                - BUTTON_WIDTH);
+        changeRect.offsetTo(helpBox.left - BUTTON_WIDTH, helpBox.bottom
+                - BUTTON_WIDTH);
+
+
+
         detectRotateRect.offsetTo(helpBox.right - BUTTON_WIDTH, helpBox.bottom
                 - BUTTON_WIDTH);
         detectDeleteRect.offsetTo(helpBox.left - BUTTON_WIDTH, helpBox.top
                 - BUTTON_WIDTH);
+
+
+        detectAddRect.offsetTo(helpBox.right - BUTTON_WIDTH, helpBox.top
+                - BUTTON_WIDTH);
+        detectChangeRect.offsetTo(helpBox.left - BUTTON_WIDTH, helpBox.bottom
+                - BUTTON_WIDTH);
+
 
         double cos = (xa * xb + ya * yb) / (srcLen * curLen);
         if (cos > 1 || cos < -1)
@@ -209,6 +267,15 @@ public class StickerItem {
                 this.dstRect.centerY(), roatetAngle);
         RectUtil.rotateRect(this.detectDeleteRect, this.dstRect.centerX(),
                 this.dstRect.centerY(), roatetAngle);
+
+        RectUtil.rotateRect(this.detectAddRect, this.dstRect.centerX(),
+                this.dstRect.centerY(), roatetAngle);
+        RectUtil.rotateRect(this.detectChangeRect, this.dstRect.centerX(),
+                this.dstRect.centerY(), roatetAngle);
+
+
+
+
         // System.out.println("angle----->" + angle + "   " + flag);
 
         // System.out
@@ -227,6 +294,12 @@ public class StickerItem {
             // 绘制工具按钮
             canvas.drawBitmap(deleteBit, helpToolsRect, deleteRect, null);
             canvas.drawBitmap(rotateBit, helpToolsRect, rotateRect, null);
+            canvas.drawBitmap(deleteAdd, helpToolsRect, addRect, null);
+            canvas.drawBitmap(rotateReplace, helpToolsRect, changeRect, null);
+
+
+
+
             canvas.restore();
             // canvas.drawRect(deleteRect, dstPaint);
             // canvas.drawRect(rotateRect, dstPaint);

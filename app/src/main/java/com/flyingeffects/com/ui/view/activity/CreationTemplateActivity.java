@@ -1,15 +1,10 @@
 package com.flyingeffects.com.ui.view.activity;
 
-import android.app.Service;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Vibrator;
-import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,18 +13,14 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.adapter.VideoTimelineAdapter;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
-import com.flyingeffects.com.view.RangeSeekBarView;
-import com.flyingeffects.com.view.StickerView;
-import com.flyingeffects.com.view.VideoFrameRecycler;
+import com.flyingeffects.com.view.lansongCommendView.StickerView;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.lansosdk.videoeditor.DrawPadView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +57,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @BindView(R.id.drawPadView)
     DrawPadView drawPadView;
+
 
 
     @BindView(R.id.list_thumb)
@@ -120,7 +112,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         Observable.just(imgPath.get(0)).map(BitmapFactory::decodeFile).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
             @Override
             public void call(Bitmap bitmap) {
-                stickView.setImageRes(imgPath.get(0), true);
+                stickView.addBitImage(bitmap);
+//                stickView.setImageRes(imgPath.get(0), true);
             }
         });
     }

@@ -9,6 +9,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.flyingeffects.com.utils.ToastUtil;
+
 import java.util.LinkedHashMap;
 
 /**
@@ -22,6 +24,8 @@ public class StickerView extends View {
     private static int STATUS_MOVE = 1;// 移动状态
     private static int STATUS_DELETE = 2;// 删除状态
     private static int STATUS_ROTATE = 3;// 图片旋转状态
+    private static int STATUS_COPY = 4;// 图片复制
+    private static int STATUS_REPLACE = 5;// 图片替换
 
     private int imageCount;// 已加入照片的数量
     private Context mContext;
@@ -32,10 +36,18 @@ public class StickerView extends View {
     private Paint rectPaint = new Paint();
     private Paint boxPaint = new Paint();
 
+    private StickerItemOnitemclick callback;
+
     private LinkedHashMap<Integer, StickerItem> bank = new LinkedHashMap<Integer, StickerItem>();// 存贮每层贴图数据
 
     public StickerView(Context context) {
         super(context);
+        init(context);
+    }
+
+    public StickerView(Context context,StickerItemOnitemclick callback) {
+        super(context);
+        this.callback=callback;
         init(context);
     }
 
@@ -49,10 +61,14 @@ public class StickerView extends View {
         init(context);
     }
 
+
+
+
+
+
     private void init(Context context) {
         this.mContext = context;
         currentStatus = STATUS_IDLE;
-
         rectPaint.setColor(Color.RED);
         rectPaint.setAlpha(100);
 
@@ -115,7 +131,43 @@ public class StickerView extends View {
                         currentStatus = STATUS_ROTATE;
                         oldx = x;
                         oldy = y;
-                    } else if (item.dstRect.contains(x, y)) {// 移动模式
+                    }else if (item.detectAddRect.contains(x, y)) {// 复制按钮
+                        ret = true;
+                        if (currentItem != null) {
+                            currentItem.isDrawHelpTool = false;
+                        }
+                        currentItem = item;
+                        currentItem.isDrawHelpTool = true;
+                        currentStatus = STATUS_COPY;
+                        oldx = x;
+                        oldy = y;
+                        if(callback!=null){
+                            callback.stickerOnclick(0);
+                        }
+                        ToastUtil.showToast("add");
+
+                    }else if (item.detectChangeRect.contains(x, y)) {// 点击了替换按钮
+                        ret = true;
+                        if (currentItem != null) {
+                            currentItem.isDrawHelpTool = false;
+                        }
+                        currentItem = item;
+                        currentItem.isDrawHelpTool = true;
+                        currentStatus = STATUS_REPLACE;
+                        oldx = x;
+                        oldy = y;
+                        ToastUtil.showToast("替换");
+                        if(callback!=null){
+                            callback.stickerOnclick(1);
+                        }
+                    }
+
+
+
+
+
+
+                    else if (item.dstRect.contains(x, y)) {// 移动模式
                         // 被选中一张贴图
                         ret = true;
                         if (currentItem != null) {
@@ -196,4 +248,8 @@ public class StickerView extends View {
         bank.clear();
         this.invalidate();
     }
+
+
+
+
 }// end class
