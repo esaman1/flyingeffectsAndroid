@@ -40,7 +40,6 @@ import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.lansosdk.videoeditor.AudioEditor;
 import com.lansosdk.videoeditor.DrawPadView;
 import com.lansosdk.videoeditor.LanSongFileUtil;
-import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.adapter.TimelineAdapter;
 import com.shixing.sxve.ui.util.BitmapCompress;
 
@@ -49,7 +48,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
