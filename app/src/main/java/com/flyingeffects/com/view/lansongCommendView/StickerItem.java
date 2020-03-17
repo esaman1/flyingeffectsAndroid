@@ -53,6 +53,8 @@ public class StickerItem {
     private Paint helpBoxPaint = new Paint();
     private float initWidth;// 加入屏幕时原始宽度
     private Paint greenPaint = new Paint();
+    //原始缩放值
+    private float originalScale;
 
     public StickerItem(Context context) {
 
@@ -95,6 +97,14 @@ public class StickerItem {
 
     public void init(Bitmap addBit, View parentView) {
         this.bitmap = addBit;
+
+        if(addBit.getWidth()<parentView.getWidth()){
+            originalScale=addBit.getWidth()/(float)parentView.getWidth();
+        }else{
+            originalScale=1-(addBit.getWidth()/(float)addBit.getHeight());
+        }
+
+
         this.srcRect = new Rect(0, 0, addBit.getWidth(), addBit.getHeight());
         int bitWidth = Math.min(addBit.getWidth(), parentView.getWidth() >> 1);
         int bitHeight = (int) bitWidth * addBit.getHeight() / addBit.getWidth();

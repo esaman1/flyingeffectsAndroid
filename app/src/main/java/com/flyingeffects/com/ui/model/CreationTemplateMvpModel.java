@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -65,7 +66,7 @@ import rx.subjects.PublishSubject;
  * user : zhangtongju
  */
 public class CreationTemplateMvpModel {
-    private final String TAG = "CreationTemplateMvpModel";
+    private final String TAG = "OOM";
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private CreationTemplateMvpCallback callback;
     private Context context;
@@ -138,8 +139,6 @@ public class CreationTemplateMvpModel {
             BitmapCompress bitmapManager = new BitmapCompress();
             Bitmap bp = bitmapManager.getSmallBmpFromFile(gifTest, 720, 1280);
             stickView.addBitImage(bp);
-
-
         });
         List<String> test = new ArrayList<>();
         for (int i = 0; i < 14; i++) {
@@ -245,7 +244,6 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     public void toSaveVideo() {
-        StickerForParents stickerForParents = listForStickerView.get(0).getParameterData();
         backgroundDraw backgroundDraw = new backgroundDraw(context, mVideoPath, path -> {
             String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
             try {
@@ -257,7 +255,7 @@ public class CreationTemplateMvpModel {
             }
         });
 
-        backgroundDraw.toSaveVideo(mInfo.getDurationUs(), stickerForParents);
+        backgroundDraw.toSaveVideo(stickView);
 
     }
 
@@ -340,7 +338,7 @@ public class CreationTemplateMvpModel {
             }
             mplayer.start();
             LinkedHashMap<Integer, StickerItem> linkedHashMap = stickView.getBank();
-            for (int i = 0; i < linkedHashMap.size(); i++) {
+            for (int i = 1; i <=linkedHashMap.size(); i++) {
                 //多个图层的情况
                 StickerItem stickerItem=linkedHashMap.get(i);
                 addMVLayer(stickerItem);
@@ -353,11 +351,18 @@ public class CreationTemplateMvpModel {
      * 增加一个MV图层.
      */
     private void addMVLayer(StickerItem stickerItem) {
-        String colorMVPath = CopyFileFromAssets.copyAssets(context, "laohu.mp4");
-        String maskMVPath = CopyFileFromAssets.copyAssets(context, "mask.mp4");
+        String colorMVPath = CopyFileFromAssets.copyAssets(context, "mei.mp4");
+        String maskMVPath = CopyFileFromAssets.copyAssets(context, "mei_b.mp4");
         MVLayer mvLayer = mDrawPadView.addMVLayer(colorMVPath, maskMVPath); // <-----增加MVLayer
-        mvLayer.setRotate(stickerItem.getRoatetAngle());
-        mvLayer.setScale(stickerItem.getScaleSize());
+
+        int rotate= (int) stickerItem.getRoatetAngle();
+        if(rotate<0){
+            rotate=360+rotate;
+        }
+        LogUtil.d("OOM","scale="+stickerItem.getScaleSize());
+        LogUtil.d("OOM","rotate="+rotate);
+        mvLayer.setRotate(rotate);
+        mvLayer.setScale(stickerItem.getScaleSize()/2);
         mvLayerArrayList.add(mvLayer);
     }
 

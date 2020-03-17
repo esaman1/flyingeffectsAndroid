@@ -91,8 +91,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         presenter.initBottomLayout(viewPager);
       //  presenter.initVideoProgressView(list_thumb);
         Glide.with(this).load(coverImagePath).into(iv_cover);
-
-
     }
 
 

@@ -13,7 +13,9 @@ import android.view.TextureView.SurfaceTextureListener;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.lansosdk.LanSongAe.LSOAeDrawable;
 import com.lansosdk.LanSongFilter.LanSongFilter;
+import com.lansosdk.box.AEJsonLayer;
 import com.lansosdk.box.AudioLine;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
@@ -21,11 +23,14 @@ import com.lansosdk.box.DataLayer;
 import com.lansosdk.box.DrawPadUpdateMode;
 import com.lansosdk.box.DrawPadViewRender;
 import com.lansosdk.box.GifLayer;
+import com.lansosdk.box.LSOAECompositionLayer;
+import com.lansosdk.box.LSOAeCompositionAsset;
 import com.lansosdk.box.LSOLog;
 import com.lansosdk.box.LSOMVAsset;
 import com.lansosdk.box.LSOVideoAsset;
 import com.lansosdk.box.Layer;
 import com.lansosdk.box.MVLayer;
+import com.lansosdk.box.SubLayer;
 import com.lansosdk.box.TextureLayer;
 import com.lansosdk.box.TwoVideoLayer;
 import com.lansosdk.box.VideoLayer;
@@ -75,7 +80,7 @@ public class DrawPadView extends FrameLayout {
     private boolean frameListenerInDrawPad = false;
     private onDrawPadCompletedListener drawpadCompletedListener = null;
     private onDrawPadErrorListener drawPadErrorListener = null;
-    private boolean isEditModeVideo = false;
+    private boolean editModeVideo = false;
     /**
      * 是否也录制mic的声音.
      */
@@ -250,22 +255,21 @@ public class DrawPadView extends FrameLayout {
     }
     boolean isDrawPadSizeChanged=false;
     /**
-     * 设置当前DrawPad的宽度和高度,并把宽度自动缩放到父view的宽度,然后等比例调整高度.
-     * <p>
-     * 注意: 这里的宽度和高度,会根据手机屏幕的宽度来做调整,默认是宽度对齐到手机的左右两边, 然后调整高度,
-     * 把调整后的高度作为DrawPad渲染线程的真正宽度和高度. 注意: 此方法需要在
-     * 前调用. 比如设置的宽度和高度是480,480,
-     * 而父view的宽度是等于手机分辨率是1080x1920,则DrawPad默认对齐到手机宽度1080,然后把高度也按照比例缩放到1080.
+     * 这里的宽度和高度,会根据手机屏幕的宽度来做调整, 然后自适应等比例调整后, 把真正布局后的宽高返回给你.
      *
-     * @param width  DrawPad宽度
-     * @param height DrawPad高度
-     * @param cb     设置好后的回调, 注意:如果预设值的宽度和高度经过调整后
-     *               已经和父view的宽度和高度一致,则不会触发此回调(当然如果已经是希望的宽高,您也不需要调用此方法).
+     * 默认是宽度对齐到手机的左右两边, 然后调整高度,
+     * 把调整后的高度作为DrawPad渲染线程的真正宽度和高度.
+     *
+     * 比如设置的宽度和高度是480,480,而父view的宽度是等于手机分辨率是1080x1920,则DrawPad默认对齐到手机宽度1080,然后把高度也按照比例缩放到1080.
+     *
+     * @param width  设置的容器的等比例宽度, 我们会根据你的宽高和布局的最大宽高, 做等比例缩放, 缩放后,把缩放后的宽高通过 listener 返回给你;
+     * @param height 设置容器的等比例高度
+     * @param listener    自适应等比例后, 把实际布局的宽高返回.
      */
-    public void setDrawPadSize(int width, int height,onDrawPadSizeChangedListener cb) {
+    public void setDrawPadSize(int width, int height,onDrawPadSizeChangedListener listener) {
 
         isDrawPadSizeChanged=true;
-        if (width != 0 && height != 0 && cb != null) {
+        if (width != 0 && height != 0 && listener != null) {
             float setAcpect = (float) width / (float) height;
 
             float setViewacpect = (float) drawPadWidth / (float) drawPadHeight;
@@ -275,17 +279,17 @@ public class DrawPadView extends FrameLayout {
                     + " view width:" + drawPadWidth + "x" + drawPadHeight);
 
             if (setAcpect == setViewacpect) { // 如果比例已经相等,不需要再调整,则直接显示.
-                if (cb != null) {
-                    cb.onSizeChanged(width, height);
+                if (listener != null) {
+                    listener.onSizeChanged(width, height);
                 }
             } else if (Math.abs(setAcpect - setViewacpect) * 1000 < 16.0f) {
-                if (cb != null) {
-                    cb.onSizeChanged(width, height);
+                if (listener != null) {
+                    listener.onSizeChanged(width, height);
                 }
             } else if (mTextureRenderView != null) {
                 mTextureRenderView.setVideoSize(width, height);
                 mTextureRenderView.setVideoSampleAspectRatio(1, 1);
-                mSizeChangedCB = cb;
+                mSizeChangedCB = listener;
             }
             requestLayout();
         }
@@ -308,6 +312,12 @@ public class DrawPadView extends FrameLayout {
         }
         drawpadRunTimeListener = li;
     }
+
+//    public void setLoopAtTime(long timeUs){
+//        if (renderer != null) {
+//            renderer.setDrawPadRunTimeListener(li);
+//        }
+//    }
 
     /**
      * 把运行的时间复位到某一个值, 这样的话, drawpad继续显示, 就会以这个值为参考, 增加相对运行的时间. drawpad已经运行了10秒钟,
@@ -354,7 +364,7 @@ public class DrawPadView extends FrameLayout {
      */
     public void setOnDrawPadSnapShotListener(onDrawPadSnapShotListener listener) {
         if (renderer != null) {
-            renderer.setDrawpadSnapShotListener(listener);
+            renderer.setDrawPadSnapShotListener(listener);
         }
         drawpadSnapShotListener = listener;
     }
@@ -459,15 +469,14 @@ public class DrawPadView extends FrameLayout {
     }
 
     /**
-     * 设置录制好的视频,
-     *
+     * 如果在边预览,边录制,则在录制的时候, 是否设置生成的视频为编辑模式的视频;
      * @param is
      */
     public void setEditModeVideo(boolean is) {
         if (renderer != null) {
             renderer.setEditModeVideo(is);
         } else {
-            isEditModeVideo = is;
+            editModeVideo = is;
         }
     }
 
@@ -545,16 +554,14 @@ public class DrawPadView extends FrameLayout {
                     renderer.setEncoderEnable(encWidth, encHeight, encBitRate,
                             encFrameRate, encodeOutput);
                 }
-                if (isEditModeVideo) {
-                    renderer.setEditModeVideo(isEditModeVideo);
-                }
+                renderer.setEditModeVideo(editModeVideo);
                 renderer.setUpdateMode(mUpdateMode, mAutoFlushFps);
 
 
                 renderer.setDrawPadBackGroundColor(padBGRed,padBGGreen,padBGBlur,padBGAlpha);
 
                 // 设置DrawPad处理的进度监听, 回传的currentTimeUs单位是微秒.
-                renderer.setDrawpadSnapShotListener(drawpadSnapShotListener);
+                renderer.setDrawPadSnapShotListener(drawpadSnapShotListener);
                 renderer.setDrawpadOutFrameListener(previewFrameWidth,
                         previewFrameHeight, previewFrameType,
                         drawPadPreviewFrameListener);
@@ -566,10 +573,11 @@ public class DrawPadView extends FrameLayout {
                 renderer.setDrawPadErrorListener(drawPadErrorListener);
                 renderer.setDrawPadRunTimeListener(drawpadRunTimeListener);
 
+                renderer.setLoopingWhenReachTime(reachTimeLoopTimeUs);
                 if (isRecordMic) {
-                    renderer.setRecordMic(isRecordMic);
+                    renderer.setRecordMic(true);
                 } else if (isRecordExtPcm) {
-                    renderer.setRecordExtraPcm(isRecordExtPcm, pcmChannels,pcmSampleRate, pcmBitRate);
+                    renderer.setRecordExtraPcm(true, pcmChannels,pcmSampleRate, pcmBitRate);
                 }
 
                 if (pauseRecord || isPauseRecord) {
@@ -993,6 +1001,42 @@ public class DrawPadView extends FrameLayout {
             return null;
         }
     }
+
+
+    /**
+     * 把一个 Ae 模板打包作为一层,增加到预览容器中.
+
+     举例在 AECompositionLayerDemoActivity
+
+     * @param asset 一个 AE 模板的各种资源.
+     * @param startTimeUs  从容器的什么时间点增加
+     * @param endTimeUs 增加到容器的什么时间点, (即把多长的AE 模板增加到容器)
+     * @return 返回一个 AE合成图层, 根据这个图层可以设置常见的图层特性.
+     */
+    public LSOAECompositionLayer addAECompositionLayer(LSOAeCompositionAsset asset, long startTimeUs, long endTimeUs){
+        if(renderer!=null){
+            return renderer.addAECompositionLayer(asset,startTimeUs,endTimeUs);
+        }else{
+            LSOLog.e( "addVideoLayer error render is not avalid");
+            return null;
+        }
+    }
+
+    long reachTimeLoopTimeUs=-1;
+
+    /**
+     * 设置当刷新时间走到哪里的时候, 恢复到 0,循环播放.
+     * 只在addAECompositionLayer 演示的时候, 临时使用.
+     * @param timeUs 时间,单位 us, ;
+     */
+    public void setLoopingWhenReachTime(long timeUs){
+        if(renderer!=null){
+            renderer.setLoopingWhenReachTime(timeUs);
+        }else{
+            reachTimeLoopTimeUs=timeUs;
+        }
+    }
+
     /**
      * 因之前有客户自定义一个Camera图层, 我们的Drawpad可以接受外部客户自定义图层.这里填入.
      */
@@ -1128,6 +1172,16 @@ public class DrawPadView extends FrameLayout {
         }
     }
 
+    /**
+     * 增加子图层.
+     * 默认不需要调用,我们会在视频图层绘制后, 直接绘制子图层;
+     * 如果你要在视频层上面增加其他层, 然后再增加子图层, 则用这个.
+     * @param layer
+     * @return
+     */
+    public boolean addSubLayer(SubLayer layer){
+        return renderer!=null && renderer.addSubLayer(layer);
+    }
 
     /**
      * 增加一个mv图层, mv图层分为两个视频文件, 一个是彩色的视频, 一个黑白视频

@@ -5,13 +5,17 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 
+import com.lansosdk.LanSongAe.LSOAeDrawable;
+import com.lansosdk.box.AEJsonLayer;
 import com.lansosdk.box.AudioLayer;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
 import com.lansosdk.box.DataLayer;
 import com.lansosdk.box.DrawPadAllRunnable2;
-import com.lansosdk.box.DrawPadBGRunnable;
+import com.lansosdk.box.DrawPadPixelRunnable;
 import com.lansosdk.box.GifLayer;
+import com.lansosdk.box.LSOAECompositionLayer;
+import com.lansosdk.box.LSOAeCompositionAsset;
 import com.lansosdk.box.LSOBitmapAsset;
 import com.lansosdk.box.LSOGifAsset;
 import com.lansosdk.box.LSOLog;
@@ -23,6 +27,7 @@ import com.lansosdk.box.OnLanSongSDKCompletedListener;
 import com.lansosdk.box.OnLanSongSDKErrorListener;
 import com.lansosdk.box.OnLanSongSDKProgressListener;
 import com.lansosdk.box.OnLanSongSDKThreadProgressListener;
+import com.lansosdk.box.SubLayer;
 import com.lansosdk.box.VideoFrameLayer;
 import com.lansosdk.box.YUVLayer;
 
@@ -33,7 +38,7 @@ public class DrawPadAllExecute2 {
 
     private boolean success;
     private DrawPadAllRunnable2 runnable;
-    private DrawPadBGRunnable pixelRunnable;
+    private DrawPadPixelRunnable pixelRunnable;
     private String padDstPath;
     private int padWidth;
     private int padHeight;
@@ -68,14 +73,27 @@ public class DrawPadAllExecute2 {
             h *=2;
         }
 
+        if(padWidth * padHeight<=192*160){ //麒麟处理器的裁剪区域是176x144
+            LSOLog.e("setCropRect error. qi lin SoC is192*160");
+            if(padHeight>padWidth){
+                w=160;
+                h=1920;
+            }else{
+                w=192;
+                h=160;
+            }
+        }
+
+
         //小于等于8.0 支持nv21, 麒麟处理器.
         if(!forceUseOLD && Build.VERSION.SDK_INT<=Build.VERSION_CODES.O && LanSoEditor.isQiLinSoc() && VideoEditor.isSupportNV21ColorFormat() ){
-            pixelRunnable =new DrawPadBGRunnable(ctx,w,h,durationUS);
+            pixelRunnable =new DrawPadPixelRunnable(ctx,w,h,durationUS);
             LSOLog.d("DrawPadAllExecute2 run  new pixel_mode Runnable...");
         }else{
             runnable=new DrawPadAllRunnable2(ctx,w,h,durationUS);
             LSOLog.d("DrawPadAllExecute2 run  COMMON  Runnable(DrawPadAllRunnable2)...");
         }
+
         this.padWidth= w;
         this.padHeight=h;
     }
@@ -130,7 +148,7 @@ public class DrawPadAllExecute2 {
      * @param color
      */
     public void setBackgroundColor(int color) {
-        int red = Color.red(color);  //<---拷贝这里的代码;3行
+        int red = Color.red(color);
         int green = Color.green(color);
         int blue = Color.blue(color);
 
@@ -138,9 +156,9 @@ public class DrawPadAllExecute2 {
         padBGGreen=(float)green/255f;
         padBGBlur=(float)blue/255f;
         if(runnable!=null){
-            runnable.setDrawPadBackGroundColor(padBGRed,padBGGreen,padBGBlur,1.0f);
+            runnable.setCompositionBackGroundColor(padBGRed,padBGGreen,padBGBlur,1.0f);
         }else  if(pixelRunnable !=null){
-            pixelRunnable.setDrawPadBackGroundColor(padBGRed,padBGGreen,padBGBlur,1.0f);
+            pixelRunnable.setCompositionBackGroundColor(padBGRed,padBGGreen,padBGBlur,1.0f);
         }
     }
 
@@ -158,9 +176,9 @@ public class DrawPadAllExecute2 {
         padBGBlur=b;
         padBGAlpha=a;
         if(runnable!=null){
-            runnable.setDrawPadBackGroundColor(r,g,b,a);
+            runnable.setCompositionBackGroundColor(r,g,b,a);
         }else  if(pixelRunnable !=null){
-            pixelRunnable.setDrawPadBackGroundColor(r,g,b,a);
+            pixelRunnable.setCompositionBackGroundColor(r,g,b,a);
         }
     }
     /**
@@ -296,7 +314,6 @@ public class DrawPadAllExecute2 {
             return null;
         }
     }
-
     /**
      * 增加视频图层
      * option 中可以设置旋转, 裁剪时长, 裁剪画面, 缩放等. 顺序是,先裁剪时长-->旋转(90/180/270)--->裁剪画面-->缩放;
@@ -503,6 +520,129 @@ public class DrawPadAllExecute2 {
         }
     }
 
+
+    /**
+     * 增加子图层. 子图层是通过父类图层createSubLayer得到的.
+     * 默认不需要调用,我们会在视频图层绘制后, 直接绘制子图层;
+     * 如果你要在视频层上面增加其他层, 然后再增加子图层, 则用这个.
+     *
+     * 一般用在溶图的场合;
+     * 举例如下
+     *  try {
+     *             LSOVideoOption videoOption=new LSOVideoOption(SDCARD.d1());
+     *
+     *
+     *             VideoFrameLayer videoLayer=allExecute.addVideoLayer(videoOption);
+     *
+     *             Bitmap bmp= BitmapFactory.decodeResource(getResources(),R.drawable.tt3);
+     *             allExecute.addBitmapLayer(bmp);
+     *
+     *
+     *             //创建一个子图层
+     *             SubLayer layer=videoLayer.createSubLayer();
+     *             layer.setScale(0.5f);
+     *             LanSongBlurFilter maskFilter=new LanSongBlurFilter();
+     *             layer.switchFilterTo(maskFilter);
+     *             //增加到容器里, 因为先增加了图片,这个在图片的上层;
+     *             allExecute.addSubLayer(layer);
+     *
+     *
+     *         } catch (Exception e) {
+     *             e.printStackTrace();
+     *         }
+     * @param layer 子图层 通过父类图层createSubLayer得到的
+     * @return
+     */
+    public boolean addSubLayer(SubLayer layer){
+        if (runnable != null && setup()) {
+            return runnable.addSubLayer(layer);
+        }else if (pixelRunnable != null && setup()) {
+            return pixelRunnable.addSubLayer(layer);
+        }else {
+            return false;
+        }
+    }
+    /**
+     * 增加AE合成的资源;
+     * 你可以把各种Ae素材通过LSOAeCompositionAsset 创建一个合成, 把这个合成, 作为一个图层输入到容器中.
+     * 注意:当前暂时不支持Ae合成资源中的声音, 如果有声音,则声音则通过addAudioLayer另外增加;
+     *
+     * 举例代码如下:
+     * 把一个Ae模板作为一个资源,增加到容器中, 增加后, 返回一个"Ae合成图层"
+       String jsonPath= copyShanChu(getApplicationContext(),"cs.json");
+                  String bgVideo=copyShanChu(getApplicationContext(),"cs_Bg.mp4");
+                  String colorPath=copyShanChu(getApplicationContext(),"cs_mvColor.mp4");
+                  String maskPath=copyShanChu(getApplicationContext(),"cs_mvMask.mp4");
+
+
+                  LSOAeDrawable drawable= LSOLoadAeJsons.loadSync(jsonPath);
+                  drawable.updateBitmap("image_0",copyShanChu2Bmp(getApplicationContext(),"img_0.png"));
+
+                  LSOAeCompositionAsset compositionAsset=new LSOAeCompositionAsset();
+                  compositionAsset.addFirstLayer(bgVideo);
+                  compositionAsset.addSecondLayer(drawable);
+                  compositionAsset.addThirdLayer(colorPath,maskPath);
+                  compositionAsset.startAeRender();
+
+     * @param asset Ae合成资源;
+     * @return
+     */
+    public LSOAECompositionLayer addAECompositionLayer(LSOAeCompositionAsset asset){
+        return addAECompositionLayer(asset,0,Long.MAX_VALUE);
+    }
+
+
+
+    /**
+     * 增加Ae合成的图层;
+     * 你可以把各种Ae素材通过LSOAeCompositionAsset 创建一个合成, 把这个合成, 作为一个图层输入到容器中.
+     * 注意:当前暂时不支持Ae合成资源中的声音, 如果有声音,则声音则通过addAudioLayer另外增加;
+     * @param asset
+     * @param startTimeUs 从容器什么时间点开始增加
+     * @param endTimeUs 增加到容器的什么时间点;
+     * @return
+     */
+    public LSOAECompositionLayer addAECompositionLayer(LSOAeCompositionAsset asset,long startTimeUs, long endTimeUs){
+        if(asset!=null && asset.prepare() && setup()){
+            asset.startAeRender();
+            if (runnable != null) {
+                return runnable.addAECompositionLayer(asset,startTimeUs,endTimeUs);
+            }else if (pixelRunnable != null) {
+                asset.startAeRender();
+                return pixelRunnable.addAECompositionLayer(asset, startTimeUs, endTimeUs);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 增加Ae图层, 把Ae的json作为一个图层增加到容器中;
+     * @param dr
+     * @return
+     */
+    public AEJsonLayer addAeJsonLayer(LSOAeDrawable dr){
+        return addAeJsonLayer(dr,0,Long.MAX_VALUE);
+    }
+
+    /**
+     * 增加Ae图层, 把Ae的json作为一个图层增加到容器中;
+     * @param dr 解析并替换各种素材后的drawable对象
+     * @param startTimeUs 这个图层在容器中的开始时间
+     * @param endTimeUs  图层在容器中的结束时间;
+     * @return
+     */
+    public AEJsonLayer addAeJsonLayer(LSOAeDrawable dr, long startTimeUs, long endTimeUs){
+        if(dr!=null && setup()){
+            if (runnable != null) {
+                return runnable.addAeJsonLayer(dr,startTimeUs,endTimeUs);
+            }else if (pixelRunnable != null) {
+                return pixelRunnable.addAeJsonLayer(dr, startTimeUs, endTimeUs);
+            }
+        }
+        return null;
+    }
+
+
     /**
      * 增加声音图层;
      * @param srcPath 声音的完整路径
@@ -597,7 +737,7 @@ public class DrawPadAllExecute2 {
     }
 
     /**
-     * 把音频的 指定时间段, 增加到audiopad音频容器里.
+     * 把音频的 指定时间段, 增加到audio pad音频容器里.
      * 如果有循环或其他操作, 可以在获取的AudioLayer对象中设置.
      *
      * @param srcPath      音频文件路径, 可以是有音频的视频路径;
@@ -858,9 +998,6 @@ public class DrawPadAllExecute2 {
      option.setLooping(true);
      option.setCropRect(308,308,411,411);
      VideoFrameLayer layer1 = allExecute.addVideoLayer(option);
-
-
-
 
 
 
