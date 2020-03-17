@@ -13,6 +13,7 @@ import android.graphics.RectF;
 import android.view.View;
 
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.utils.LogUtil;
 
 
 /**
@@ -52,6 +53,9 @@ public class StickerItem {
     private Paint paint = new Paint();
     private Paint helpBoxPaint = new Paint();
     private float initWidth;// 加入屏幕时原始宽度
+    //整个图层移动的位置
+    private float tranLayerX;
+    private float tranLayerY;
     private Paint greenPaint = new Paint();
     //原始缩放值
     private float originalScale;
@@ -97,14 +101,11 @@ public class StickerItem {
 
     public void init(Bitmap addBit, View parentView) {
         this.bitmap = addBit;
-
-        if(addBit.getWidth()<parentView.getWidth()){
-            originalScale=addBit.getWidth()/(float)parentView.getWidth();
-        }else{
-            originalScale=1-(addBit.getWidth()/(float)addBit.getHeight());
+        LogUtil.d("OOM","parentView="+parentView.getWidth());
+        originalScale=addBit.getWidth()/(float)parentView.getWidth();
+        if(originalScale>1){
+            originalScale=1-originalScale;
         }
-
-
         this.srcRect = new Rect(0, 0, addBit.getWidth(), addBit.getHeight());
         int bitWidth = Math.min(addBit.getWidth(), parentView.getWidth() >> 1);
         int bitHeight = (int) bitWidth * addBit.getHeight() / addBit.getWidth();
@@ -165,6 +166,9 @@ public class StickerItem {
      */
     public void updatePos(final float dx, final float dy) {
         this.matrix.postTranslate(dx, dy);// 记录到矩阵中
+
+        LogUtil.d("OOM","dx="+dx);
+
         tranX=dx;
         tranY=dy;
         dstRect.offset(dx, dy);
@@ -345,9 +349,16 @@ public class StickerItem {
      */
     public Translation getTranslation() {
         Translation translation=new Translation();
-        translation.setX(tranX);
-        translation.setY(tranY);
+        translation.setX(tranLayerX);
+        translation.setY(tranLayerY);
         return translation;
+    }
+
+
+
+    public void setTranslation(float x,float y){
+        this.tranLayerX=x;
+        this.tranLayerY=y;
     }
 
 

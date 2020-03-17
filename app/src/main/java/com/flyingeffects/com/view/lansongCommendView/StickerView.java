@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 
 import java.util.LinkedHashMap;
@@ -111,6 +112,8 @@ public class StickerView extends View {
 
         int action = event.getAction();
         float x = event.getX();
+        LogUtil.d("oom","onTouchEventx="+x);
+        LogUtil.d("oom","onTouchEventY="+Y);
         float y = event.getY();
         switch (action & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
@@ -200,6 +203,8 @@ public class StickerView extends View {
                 if (currentStatus == STATUS_MOVE) {// 移动贴图
                     float dx = x - oldx;
                     float dy = y - oldy;
+
+                    currentItem.setTranslation(x, y);
                     if (currentItem != null) {
                         currentItem.updatePos(dx, dy);
                         invalidate();

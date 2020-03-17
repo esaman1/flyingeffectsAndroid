@@ -51,6 +51,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemvpView.hasPlayingComplete();
     }
 
+    @Override
+    public void setgsyVideoProgress(int progress) {
+        creationTemplatemvpView.setgsyVideoProgress(progress);
+    }
+
 
     public void toPrivateVideo(DrawPadView drawPadView){
         creationTemplatemodel.toPrivateVideo(drawPadView);

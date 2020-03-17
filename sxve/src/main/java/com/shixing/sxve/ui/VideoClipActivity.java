@@ -48,7 +48,6 @@ public class VideoClipActivity extends AppCompatActivity implements RadioGroup.O
     private TimelineAdapter mTimelineAdapter;
     private RecyclerView mThumbList;
     //private MediaMetadataRetriever mRetriever;
-    private HashMap<Integer, Bitmap> mData;
     private int[] mTimeUs;
     private SXProgressDialog mDialog;
 
@@ -215,10 +214,9 @@ public class VideoClipActivity extends AppCompatActivity implements RadioGroup.O
         for (int i = 0; i < thumbCount; i++) {
             mTimeUs[i] = i * interval;
         }
-        mData = new HashMap<>();
 
         mTimelineAdapter.setVideoUri(Uri.fromFile(new File(mVideoPath)));
-        mTimelineAdapter.setData(mTimeUs, mData);
+        mTimelineAdapter.setData(mTimeUs);
 
         mTotalWidth = thumbWidth * thumbCount;
     }

@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -23,7 +22,8 @@ import com.flyingeffects.com.adapter.TemplateGridViewAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
-import com.flyingeffects.com.enity.StickerForParents;
+import com.flyingeffects.com.commonlyModel.getVideoInfo;
+import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.CopyFileFromAssets;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
@@ -33,6 +33,7 @@ import com.flyingeffects.com.view.lansongCommendView.StickerItem;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.flyingeffects.com.view.lansongCommendView.StickerView;
 import com.lansosdk.box.DrawPadUpdateMode;
+import com.lansosdk.box.Layer;
 import com.lansosdk.box.MVLayer;
 import com.lansosdk.box.VideoLayer;
 import com.lansosdk.box.ViewLayerRelativeLayout;
@@ -81,19 +82,16 @@ public class CreationTemplateMvpModel {
     /**
      * 保存文件夹地址
      */
-    private String editTmpPath = null;
+    private String editTmpPath ;
     /**
      * 主视频图层
      */
     private VideoLayer mLayerMain;
     private ArrayList<MVLayer> mvLayerArrayList = new ArrayList<>();
-    private String path = "";
-    //    private MediaInfo mInfo;
-    private ArrayList<AnimStickerModel> listForStickerView = new ArrayList<>();
     private boolean isDestroy = false;
     private RecyclerView list_thumb;
-    private MediaInfo mInfo;
     private StickerView stickView;
+    private VideoInfo videoInfo;
 
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout) {
         this.context = context;
@@ -102,7 +100,8 @@ public class CreationTemplateMvpModel {
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
         editTmpPath = LanSongFileUtil.newMp4PathInBox();
         mLayerMain = null;
-        mInfo = new MediaInfo(mVideoPath);
+        videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
+//        mInfo = new MediaInfo(mVideoPath);
     }
 
 
@@ -173,10 +172,10 @@ public class CreationTemplateMvpModel {
     }
 
     private TimelineAdapter mTimelineAdapter;
+    private int mScrollX;
 
     public void initVideoProgressView(RecyclerView list_thumb) {
         this.list_thumb = list_thumb;
-//        mScrollX = 0;
         list_thumb.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         mTimelineAdapter = new TimelineAdapter();
         list_thumb.setAdapter(mTimelineAdapter);
@@ -184,22 +183,21 @@ public class CreationTemplateMvpModel {
         list_thumb.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NotNull RecyclerView recyclerView, int newState) {
-//                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-//                    float percent = (float) mScrollX / mTotalWidth;
-//                    mStartDuration = (int) (mVideoDuration * percent);
-//                    mEndDuration = mStartDuration + mTemplateDuration;
-//                    seekTo(mStartDuration);
-//                    startTimer();
-//                }
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    float percent = (float) mScrollX / mTotalWidth;
+                    LogUtil.d("oom","percent="+percent);
+                    int progress = (int) (videoInfo.getDuration() * percent);
+                    callback.setgsyVideoProgress(progress);
+                }
             }
 
             @Override
             public void onScrolled(@NotNull RecyclerView recyclerView, int dx, int dy) {
-//                mScrollX += dx;
+                LogUtil.d("oom","dx="+dx);
+                mScrollX += dx;
             }
         });
-
-        //    initSingleThumbSize( mInfo.getDurationUs(), path);
+        initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), videoInfo.getDuration(), 2000, mVideoPath);
     }
 
     private int mTotalWidth;
@@ -212,17 +210,16 @@ public class CreationTemplateMvpModel {
         int thumbWidth = (int) (scale * width);
         mTimelineAdapter.setBitmapSize(thumbWidth, listHeight);
         //其中listWidth表示当前截取的大小
-        int thumbCount = (int) (listWidth * (duration / mTemplateDuration / 1000) / thumbWidth);
+        int thumbCount = (int) (listWidth * (duration / mTemplateDuration) / thumbWidth);
         thumbCount = thumbCount > 0 ? thumbCount : 0;
         //每帧所占的时间
-        final int interval = (int) (duration / thumbCount * 1000);
+        final int interval = (int) (duration / thumbCount );
         int[] mTimeUs = new int[thumbCount];
         for (int i = 0; i < thumbCount; i++) {
             mTimeUs[i] = i * interval;
         }
-        HashMap<Integer, Bitmap> mData = new HashMap<>();
         mTimelineAdapter.setVideoUri(Uri.fromFile(new File(mVideoPath)));
-        mTimelineAdapter.setData(mTimeUs, mData);
+        mTimelineAdapter.setData(mTimeUs);
         mTotalWidth = thumbWidth * thumbCount;
     }
 
@@ -254,9 +251,7 @@ public class CreationTemplateMvpModel {
                 e.printStackTrace();
             }
         });
-
         backgroundDraw.toSaveVideo(stickView);
-
     }
 
 
@@ -299,7 +294,6 @@ public class CreationTemplateMvpModel {
             mplayer = new MediaPlayer();
             try {
                 mplayer.setDataSource(mVideoPath);
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -338,9 +332,9 @@ public class CreationTemplateMvpModel {
             }
             mplayer.start();
             LinkedHashMap<Integer, StickerItem> linkedHashMap = stickView.getBank();
-            for (int i = 1; i <=linkedHashMap.size(); i++) {
+            for (int i = 1; i <= linkedHashMap.size(); i++) {
                 //多个图层的情况
-                StickerItem stickerItem=linkedHashMap.get(i);
+                StickerItem stickerItem = linkedHashMap.get(i);
                 addMVLayer(stickerItem);
             }
         }
@@ -354,15 +348,18 @@ public class CreationTemplateMvpModel {
         String colorMVPath = CopyFileFromAssets.copyAssets(context, "mei.mp4");
         String maskMVPath = CopyFileFromAssets.copyAssets(context, "mei_b.mp4");
         MVLayer mvLayer = mDrawPadView.addMVLayer(colorMVPath, maskMVPath); // <-----增加MVLayer
-
-        int rotate= (int) stickerItem.getRoatetAngle();
-        if(rotate<0){
-            rotate=360+rotate;
+        int rotate = (int) stickerItem.getRoatetAngle();
+        if (rotate < 0) {
+            rotate = 360 + rotate;
         }
-        LogUtil.d("OOM","scale="+stickerItem.getScaleSize());
-        LogUtil.d("OOM","rotate="+rotate);
+        LogUtil.d("OOM", "scale=" + stickerItem.getScaleSize());
+        LogUtil.d("OOM", "rotate=" + rotate);
         mvLayer.setRotate(rotate);
-        mvLayer.setScale(stickerItem.getScaleSize()/2);
+        mvLayer.setScale(stickerItem.getScaleSize() / 2);
+        LogUtil.d("OOM", "setPositionX=" + stickerItem.getTranslation().getX());
+        mvLayer.setPosition(stickerItem.getTranslation().getX(), mvLayer.getPositionY());
+        LogUtil.d("OOM", "setPositionY=" + stickerItem.getTranslation().getY());
+        mvLayer.setPosition(mvLayer.getPositionX(), stickerItem.getTranslation().getY());
         mvLayerArrayList.add(mvLayer);
     }
 
@@ -372,20 +369,30 @@ public class CreationTemplateMvpModel {
      */
     private void stopDrawPad() {
         if (mDrawPadView != null && mDrawPadView.isRunning()) {
+            releaseLayer();
+            mDrawPadView.removeAllLayer();
             mDrawPadView.stopDrawPad();
-//            toastStop();
             if (LanSongFileUtil.fileExist(editTmpPath)) {
                 String dstPath = AudioEditor.mergeAudioNoCheck(mVideoPath, editTmpPath, true);
-//                findViewById(R.id.id_mvlayer_saveplay).setVisibility(View.VISIBLE);
                 LogUtil.d(TAG, "dstPath=" + dstPath);
             } else {
                 LogUtil.e(TAG, " player completion, but file:" + editTmpPath
                         + " is not exist!!!");
             }
-
             callback.hasPlayingComplete();
         }
     }
 
 
+    private void releaseLayer() {
+        if (mvLayerArrayList != null && mvLayerArrayList.size() > 0) {
+            for (Layer layer : mvLayerArrayList
+            ) {
+                if (layer != null) {
+                    mDrawPadView.removeLayer(layer);
+                    layer = null;
+                }
+            }
+        }
+    }
 }

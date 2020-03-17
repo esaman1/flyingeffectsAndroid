@@ -6,15 +6,16 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
+import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.view.EmptyControlVideo;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.lansosdk.videoeditor.DrawPadView;
 
@@ -42,17 +43,16 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
 
-    @BindView(R.id.iv_cover)
-    ImageView iv_cover;
-
 
     @BindView(R.id.drawPadView)
     DrawPadView drawPadView;
 
 
-
     @BindView(R.id.list_thumb)
     RecyclerView list_thumb;
+
+    @BindView(R.id.video_player)
+    EmptyControlVideo videoPlayer;
 
 
     private List<String> imgPath = new ArrayList<>();
@@ -76,6 +76,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             videoPath = bundle.getString("video_path");
         }
         presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout);
+        videoPlayer.setUp(videoPath, true, "");
+        videoPlayer.startPlayLogic();
+        videoPlayer.onVideoPause();
+        videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> {
+        }));
     }
 
 
@@ -89,16 +94,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     protected void initAction() {
         presenter.initStickerView(imgPath.get(0));
         presenter.initBottomLayout(viewPager);
-      //  presenter.initVideoProgressView(list_thumb);
-        Glide.with(this).load(coverImagePath).into(iv_cover);
     }
-
-
-
-
-
-
-
 
 
     @OnClick({R.id.tv_top_submit, R.id.iv_play})
@@ -139,6 +135,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             RelativeLayoutParams.height = oriHeight;
             viewLayerRelativeLayout.setLayoutParams(RelativeLayoutParams);
         });
+
+        list_thumb.post(() -> presenter.initVideoProgressView(list_thumb));
     }
 
 
@@ -158,6 +156,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         showPreiviewView(false);
     }
 
+    @Override
+    public void setgsyVideoProgress(int progress) {
+        LogUtil.d("OOM","videoProgress="+progress);
+        videoPlayer.seekTo(progress);
+    }
+
 
     /**
      * description ：预览和编辑页面切换 isShowPreViewVideo是否显示预览界面
@@ -168,19 +172,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if (isShowPreViewVideo) {
             viewLayerRelativeLayout.setVisibility(View.GONE);
             drawPadView.setVisibility(View.VISIBLE);
-            iv_cover.setVisibility(View.GONE);
+            videoPlayer.setVisibility(View.GONE);
         } else {
             viewLayerRelativeLayout.setVisibility(View.VISIBLE);
             drawPadView.setVisibility(View.GONE);
-            iv_cover.setVisibility(View.VISIBLE);
+            videoPlayer.setVisibility(View.VISIBLE);
         }
     }
-
-
-
-
-
-
 
 
 }

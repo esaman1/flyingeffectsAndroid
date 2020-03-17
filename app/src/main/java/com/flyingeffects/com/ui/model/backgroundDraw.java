@@ -12,6 +12,7 @@ import com.flyingeffects.com.view.lansongCommendView.StickerItem;
 import com.flyingeffects.com.view.lansongCommendView.StickerView;
 import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.box.MVCacheLayer;
+import com.lansosdk.box.MVLayer;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
@@ -41,7 +42,6 @@ public class backgroundDraw {
         waitingProgress = new WaitingDialog_progress(context);
         duration = getRingDuring(videoPath);
         LogUtil.d("OOM", "backgroundDrawdurationF=" + duration);
-
     }
 
 
@@ -77,11 +77,10 @@ public class backgroundDraw {
         LSOVideoOption option = null;
         try {
             option = new LSOVideoOption(videoPath);
-            execute.addVideoLayer(option, 0, Long.MAX_VALUE, false, false);
+            execute.addVideoLayer(option, 0, Long.MAX_VALUE, true, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -93,8 +92,15 @@ public class backgroundDraw {
         String maskMVPath = CopyFileFromAssets.copyAssets(context, "mei_b.mp4");
         MVCacheLayer mvLayer=  execute.addMVLayer(colorMVPath, maskMVPath); // <-----增加MVLayer
         if(stickerItem!=null){
-            mvLayer.setRotate(stickerItem.getRoatetAngle());
-            mvLayer.setScale(stickerItem.getScaleSize());
+            int rotate= (int) stickerItem.getRoatetAngle();
+            if(rotate<0){
+                rotate=360+rotate;
+            }
+            mvLayer.setRotate(rotate);
+            mvLayer.setScale(stickerItem.getScaleSize()/2);
+            mvLayer.setPosition( stickerItem.getTranslation().getX(), mvLayer.getPositionY());
+            LogUtil.d("OOM","setPositionY="+stickerItem.getTranslation().getY());
+            mvLayer.setPosition( mvLayer.getPositionX(), stickerItem.getTranslation().getY());
         }
     }
 

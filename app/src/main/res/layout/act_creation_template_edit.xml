@@ -77,17 +77,17 @@
         android:layout_height="@dimen/dp_1"
         android:layout_marginTop="89dp" />
 
-    <ImageView
-        android:id="@+id/iv_cover"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/ll_progress"
-        android:layout_marginStart="70dp"
-        android:layout_marginTop="90dp"
-        android:layout_marginEnd="70dp"
-        android:layout_marginBottom="40dp"
-        android:contentDescription="@string/app_name"
-        android:scaleType="centerCrop" />
+<!--    <ImageView-->
+<!--        android:id="@+id/iv_cover"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_above="@+id/ll_progress"-->
+<!--        android:layout_marginStart="70dp"-->
+<!--        android:layout_marginTop="90dp"-->
+<!--        android:layout_marginEnd="70dp"-->
+<!--        android:layout_marginBottom="40dp"-->
+<!--        android:contentDescription="@string/app_name"-->
+<!--        android:scaleType="centerCrop" />-->
 
 
     <com.lansosdk.videoeditor.DrawPadView
@@ -101,38 +101,41 @@
         android:layout_marginBottom="40dp" />
 
 
+
+
+
+    <com.flyingeffects.com.view.EmptyControlVideo
+        android:id="@+id/video_player"
+        android:layout_width="match_parent"
+        android:layout_marginStart="70dp"
+        android:layout_above="@+id/ll_progress"
+        android:layout_marginTop="90dp"
+        android:layout_marginEnd="70dp"
+        android:layout_marginBottom="40dp"
+        android:layout_height="match_parent" />
+
+
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_above="@+id/ll_progress"
         android:layout_marginStart="70dp"
-        android:layout_marginEnd="70dp"
         android:layout_marginTop="90dp"
+        android:layout_marginEnd="70dp"
         android:layout_marginBottom="40dp"
         android:gravity="center"
-        android:layout_height="match_parent"
         android:orientation="vertical">
 
 
-
-            <com.lansosdk.box.ViewLayerRelativeLayout
-                android:id="@+id/id_vview_realtime_gllayout"
-                android:layout_width="match_parent"
-                android:gravity="center"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent">
-
-
-<!--                <com.flyingeffects.com.view.lansongCommendView.StickerView-->
-<!--                    android:id="@+id/id_vview_drawimage_stickview"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:gravity="center"-->
-<!--                    android:layout_centerInParent="true" />-->
+        <com.lansosdk.box.ViewLayerRelativeLayout
+            android:id="@+id/id_vview_realtime_gllayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:gravity="center">
 
 
-            </com.lansosdk.box.ViewLayerRelativeLayout>
-
-
+        </com.lansosdk.box.ViewLayerRelativeLayout>
 
 
     </LinearLayout>
@@ -179,7 +182,7 @@
                 android:layout_marginBottom="2dp"
                 android:clipToPadding="false"
                 android:paddingStart="@dimen/dp_63"
-                android:paddingEnd="@dimen/dp_63" />
+              />
 
             <TextView
                 android:id="@+id/tv_end_time"
@@ -187,6 +190,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_marginEnd="20dp"
+                android:layout_centerVertical="true"
                 android:text="00:00"
                 android:textColor="@color/white"
                 android:textSize="14sp" />

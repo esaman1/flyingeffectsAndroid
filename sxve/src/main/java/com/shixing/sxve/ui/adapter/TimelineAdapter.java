@@ -19,7 +19,6 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.Timeli
     private int mWidth;
     private int mHeight;
     private int[] mTimePositions;
-    private HashMap<Integer, Bitmap> mData;
     private Uri mUri;
 
     @NonNull
@@ -55,9 +54,8 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.Timeli
         return mTimePositions == null ? 0 : mTimePositions.length;
     }
 
-    public void setData(int[] timePositions, HashMap<Integer, Bitmap> data) {
+    public void setData(int[] timePositions) {
         mTimePositions = timePositions;
-        this.mData = data;
         notifyDataSetChanged();
     }
 

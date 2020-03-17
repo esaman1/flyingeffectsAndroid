@@ -8,4 +8,6 @@ public interface CreationTemplateMvpView {
     void ItemClickForStickView(AnimStickerModel stickView);
 
     void hasPlayingComplete();
+
+    void setgsyVideoProgress(int progress);
 }
