@@ -11,6 +11,7 @@ import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.View;
+import android.widget.VideoView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.utils.LogUtil;
@@ -28,6 +29,7 @@ public class StickerItem {
     private static Bitmap rotateBit;
     private static Bitmap deleteAdd;
     private static Bitmap rotateReplace;
+    private VideoView videoView;
     private float tranX;
     private float tranY;
 
@@ -150,6 +152,16 @@ public class StickerItem {
         detectAddRect = new RectF(addRect);
         detectChangeRect = new RectF(changeRect);
     }
+
+
+
+
+
+
+
+
+
+
 
     private void updateHelpBoxRect() {
         this.helpBox.left -= HELP_BOX_PAD;
@@ -309,7 +321,6 @@ public class StickerItem {
             canvas.drawBitmap(rotateBit, helpToolsRect, rotateRect, null);
             canvas.drawBitmap(deleteAdd, helpToolsRect, addRect, null);
             canvas.drawBitmap(rotateReplace, helpToolsRect, changeRect, null);
-
 
             canvas.restore();
             // canvas.drawRect(deleteRect, dstPaint);

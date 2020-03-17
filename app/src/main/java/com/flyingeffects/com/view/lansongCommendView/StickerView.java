@@ -146,7 +146,7 @@ public class StickerView extends View {
                         oldx = x;
                         oldy = y;
                         if(callback!=null){
-                            callback.stickerOnclick(0);
+                            callback.stickerOnclick(0,currentItem);
                         }
                         ToastUtil.showToast("add");
 
@@ -162,7 +162,8 @@ public class StickerView extends View {
                         oldy = y;
                         ToastUtil.showToast("替换");
                         if(callback!=null){
-                            callback.stickerOnclick(1);
+                            callback.stickerOnclick(1,currentItem
+                            );
                         }
                     }
 

@@ -107,8 +107,21 @@ public class CreationTemplateMvpModel {
 
     public void initStickerView(String imagePath) {
         stickView = new StickerView(context, new StickerItemOnitemclick() {
+
             @Override
-            public void stickerOnclick(int type) {
+            public void stickerOnclick(int type, StickerItem item) {
+                if(type==0){
+                    //复制
+                    BitmapCompress bitmapManager = new BitmapCompress();
+                    Bitmap bp = bitmapManager.getSmallBmpFromFile(gifTest, 720, 1280);
+                    stickView.addBitImage(bp);
+
+
+                }else{
+                    //替换
+//                    item.init();
+                }
+
 
             }
         });
