@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,22 +22,13 @@ import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.enity.AllStickerData;
 import com.flyingeffects.com.enity.VideoInfo;
-import com.flyingeffects.com.manager.CopyFileFromAssets;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.StickerView;
-import com.flyingeffects.com.view.lansongCommendView.StickerItem;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
-import com.lansosdk.box.DrawPadUpdateMode;
-import com.lansosdk.box.Layer;
-import com.lansosdk.box.MVLayer;
-import com.lansosdk.box.VideoLayer;
 import com.lansosdk.box.ViewLayerRelativeLayout;
-import com.lansosdk.videoeditor.AudioEditor;
-import com.lansosdk.videoeditor.DrawPadView;
-import com.lansosdk.videoeditor.LanSongFileUtil;
 import com.shixing.sxve.ui.adapter.TimelineAdapter;
 
 import org.jetbrains.annotations.NotNull;
@@ -64,26 +54,12 @@ public class CreationTemplateMvpModel {
     private Context context;
     private List<View> listForInitBottom = new ArrayList<>();
     private String mVideoPath;
-    private MediaPlayer mplayer;
-    private DrawPadView mDrawPadView;
     private ViewLayerRelativeLayout viewLayerRelativeLayout;
-    private static final int DRAWPAD_WIDTH = 720;
-    private static final int DRAWPAD_HEIGHT = 1280;
     private ArrayList<AnimStickerModel> listForStickerView = new ArrayList<>();
 
     private String gifTest = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/Comp-1(1).gif";
-    /**
-     * 保存文件夹地址
-     */
-    private String editTmpPath;
-    /**
-     * 主视频图层
-     */
-    private VideoLayer mLayerMain;
-    private ArrayList<MVLayer> mvLayerArrayList = new ArrayList<>();
     private boolean isDestroy = false;
     private RecyclerView list_thumb;
-    private StickerView stickView;
     private VideoInfo videoInfo;
 
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout) {
@@ -91,30 +67,12 @@ public class CreationTemplateMvpModel {
         this.callback = callback;
         this.mVideoPath = mVideoPath;
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
-        editTmpPath = LanSongFileUtil.newMp4PathInBox();
-        mLayerMain = null;
         videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
-//        mInfo = new MediaInfo(mVideoPath);
     }
 
 
     public void initStickerView(String imagePath) {
-//        stickView = new StickerView(context, new StickerItemOnitemclick() {
-//
-//            @Override
-//            public void stickerOnclick(int type, StickerItem item) {
-//                if(type==0){
-//                    //复制
-//                    BitmapCompress bitmapManager = new BitmapCompress();
-//                    Bitmap bp = bitmapManager.getSmallBmpFromFile(gifTest, 720, 1280);
-//                    stickView.addBitImage(bp);
-//                }
-//
-//
-//            }
-//        });
         firstAddImage(imagePath);
-//        viewLayerRelativeLayout.addView(stickView);
 
 
     }
@@ -146,12 +104,6 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     private void firstAddImage(String path) {
-//        Observable.just(path).map(BitmapFactory::decodeFile).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
-//            @Override
-//            public void call(Bitmap bitmap) {
-////                stickView.addBitImage(bitmap);
-//            }
-//        });
 
         StickerView stickView = new StickerView(context);
         stickView.setLeftBottomBitmap(context.getDrawable(R.mipmap.sticker_change));
@@ -176,10 +128,6 @@ public class CreationTemplateMvpModel {
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager, false);
         GridView gridView = templateThumbView.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view, i, l) -> {
-//            BitmapCompress bitmapManager = new BitmapCompress();
-//            Bitmap bp = bitmapManager.getSmallBmpFromFile(gifTest, 720, 1280);
-//            stickView.addBitImage(bp);
-//            StickerView
             StickerView stickView = new StickerView(context);
             stickView.setOnitemClickListener(new StickerItemOnitemclick() {
                 @Override
@@ -305,17 +253,6 @@ public class CreationTemplateMvpModel {
 
 
     /**
-     * description ：预览视频采用蓝松sdk提供的在预览功能
-     * creation date: 2020/3/12
-     * user : zhangtongju
-     */
-    public void toPrivateVideo(DrawPadView drawPadView) {
-        this.mDrawPadView = drawPadView;
-//        StickerForParents stickerForParents= listForStickerView.get(0).getParameterData();
-        startPlayVideo(stickView);
-    }
-
-    /**
      * description ：保存视频采用蓝松sdk提供的在保存功能
      * creation date: 2020/3/12
      * user : zhangtongju
@@ -366,9 +303,7 @@ public class CreationTemplateMvpModel {
             builder.setTitle(R.string.notification);
             builder.setMessage(context.getString(R.string.have_saved_to_sdcard) +
                     "【" + path + context.getString(R.string.folder) + "】");
-            builder.setNegativeButton(context.getString(R.string.got_it), (dialog, which) -> {
-                dialog.dismiss();
-            });
+            builder.setNegativeButton(context.getString(R.string.got_it), (dialog, which) -> dialog.dismiss());
             builder.setCancelable(true);
             Dialog dialog = builder.show();
             dialog.setCanceledOnTouchOutside(false);
@@ -376,115 +311,4 @@ public class CreationTemplateMvpModel {
         }
     }
 
-    /**
-     * VideoLayer是外部提供画面来源,
-     * 您可以用你们自己的播放器作为画面输入源,也可以用原生的MediaPlayer,只需要视频播放器可以设置surface即可.
-     * 一下举例是采用MediaPlayer作为视频输入源.
-     */
-    private void startPlayVideo(StickerView stickView) {
-        if (mVideoPath != null) {
-            mplayer = new MediaPlayer();
-            try {
-                mplayer.setDataSource(mVideoPath);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            mplayer.setOnPreparedListener(mp -> initDrawPad(stickView));
-            mplayer.setOnCompletionListener(mp -> stopDrawPad());
-            mplayer.prepareAsync();
-        } else {
-            LogUtil.d(TAG, "Null Data Source\n");
-        }
-    }
-
-
-    /**
-     * Step1: 开始运行 drawPad 容器
-     */
-    private void initDrawPad(StickerView stickView) {
-        mDrawPadView.setUpdateMode(DrawPadUpdateMode.AUTO_FLUSH, 30);
-        // 设置当前DrawPad的宽度和高度,并把宽度自动缩放到父view的宽度,然后等比例调整高度.
-        mDrawPadView.setDrawPadSize(DRAWPAD_WIDTH, DRAWPAD_HEIGHT, (viewWidth, viewHeight) -> {
-            // 开始DrawPad的渲染线程.
-            startDrawPad(stickView);
-        });
-    }
-
-
-    /**
-     * Step2: 开始运行 Drawpad线程.
-     */
-    private void startDrawPad(StickerView stickView) {
-//        if (mDrawPadView.startDrawPad()) {
-//            // 增加一个主视频的 VideoLayer
-//            mLayerMain = mDrawPadView.addMainVideoLayer(
-//                    mplayer.getVideoWidth(), mplayer.getVideoHeight(), null);
-//            if (mLayerMain != null) {
-//                mplayer.setSurface(new Surface(mLayerMain.getVideoTexture()));
-//            }
-//            mplayer.start();
-//            LinkedHashMap<Integer, StickerItem> linkedHashMap = stickView.getBank();
-//            for (int i = 1; i <= linkedHashMap.size(); i++) {
-//                //多个图层的情况
-//                StickerItem stickerItem = linkedHashMap.get(i);
-//                addMVLayer(stickerItem);
-//            }
-//        }
-    }
-
-
-    /**
-     * 增加一个MV图层.
-     */
-    private void addMVLayer(StickerItem stickerItem) {
-        String colorMVPath = CopyFileFromAssets.copyAssets(context, "mei.mp4");
-        String maskMVPath = CopyFileFromAssets.copyAssets(context, "mei_b.mp4");
-        MVLayer mvLayer = mDrawPadView.addMVLayer(colorMVPath, maskMVPath); // <-----增加MVLayer
-        int rotate = (int) stickerItem.getRoatetAngle();
-        if (rotate < 0) {
-            rotate = 360 + rotate;
-        }
-        LogUtil.d("OOM", "scale=" + stickerItem.getScaleSize());
-        LogUtil.d("OOM", "rotate=" + rotate);
-        mvLayer.setRotate(rotate);
-        mvLayer.setScale(stickerItem.getScaleSize() / 2);
-        LogUtil.d("OOM", "setPositionX=" + stickerItem.getTranslation().getX());
-        mvLayer.setPosition(stickerItem.getTranslation().getX(), mvLayer.getPositionY());
-        LogUtil.d("OOM", "setPositionY=" + stickerItem.getTranslation().getY());
-        mvLayer.setPosition(mvLayer.getPositionX(), stickerItem.getTranslation().getY());
-        mvLayerArrayList.add(mvLayer);
-    }
-
-
-    /**
-     * Step3: 停止容器,停止后,为新的视频文件增加上音频部分.
-     */
-    private void stopDrawPad() {
-        if (mDrawPadView != null && mDrawPadView.isRunning()) {
-            releaseLayer();
-            mDrawPadView.removeAllLayer();
-            mDrawPadView.stopDrawPad();
-            if (LanSongFileUtil.fileExist(editTmpPath)) {
-                String dstPath = AudioEditor.mergeAudioNoCheck(mVideoPath, editTmpPath, true);
-                LogUtil.d(TAG, "dstPath=" + dstPath);
-            } else {
-                LogUtil.e(TAG, " player completion, but file:" + editTmpPath
-                        + " is not exist!!!");
-            }
-            callback.hasPlayingComplete();
-        }
-    }
-
-
-    private void releaseLayer() {
-        if (mvLayerArrayList != null && mvLayerArrayList.size() > 0) {
-            for (Layer layer : mvLayerArrayList
-            ) {
-                if (layer != null) {
-                    mDrawPadView.removeLayer(layer);
-                    layer = null;
-                }
-            }
-        }
-    }
 }

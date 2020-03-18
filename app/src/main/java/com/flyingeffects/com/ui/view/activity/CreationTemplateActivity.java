@@ -17,7 +17,6 @@ import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.lansosdk.box.ViewLayerRelativeLayout;
-import com.lansosdk.videoeditor.DrawPadView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +40,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @BindView(R.id.id_vview_realtime_gllayout)
     ViewLayerRelativeLayout viewLayerRelativeLayout;
 
-    @BindView(R.id.drawPadView)
-    DrawPadView drawPadView;
-
 
     @BindView(R.id.list_thumb)
     RecyclerView list_thumb;
@@ -54,7 +50,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private List<String> imgPath = new ArrayList<>();
     private CreationTemplateMvpPresenter presenter;
-    private String coverImagePath = "http://cdn.flying.nineton.cn/admin/20200311/5e689f344ef21Comp%201%20(0-00-00-00).jpg";
     private String videoPath;
 
 
@@ -107,8 +102,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
             case R.id.iv_play:
-                showPreiviewView(false);
-//                presenter.toPrivateVideo(drawPadView);
                 videoPlayer.startPlayLogic();
                 presenter.showGifAnim(true);
                 break;
@@ -156,7 +149,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void hasPlayingComplete() {
-        showPreiviewView(false);
     }
 
     @Override
@@ -166,20 +158,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-    /**
-     * description ：预览和编辑页面切换 isShowPreViewVideo是否显示预览界面
-     * creation date: 2020/3/13
-     * user : zhangtongju
-     */
-    private void showPreiviewView(boolean isShowPreViewVideo) {
-        if (isShowPreViewVideo) {
-//            drawPadView.setVisibility(View.VISIBLE);
-//            videoPlayer.setVisibility(View.VISIBLE);
-        } else {
-//            drawPadView.setVisibility(View.GONE);
-//            videoPlayer.setVisibility(View.VISIBLE);
-        }
-    }
 
 
 }
