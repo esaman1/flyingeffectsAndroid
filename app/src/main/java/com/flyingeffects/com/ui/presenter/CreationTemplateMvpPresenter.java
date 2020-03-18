@@ -24,6 +24,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
+    public void showGifAnim(boolean isShow){
+        creationTemplatemodel.showGifAnim(isShow);
+    }
+
+
     public void initBottomLayout(ViewPager viewPager){
         creationTemplatemodel.initBottomLayout(viewPager);
     }

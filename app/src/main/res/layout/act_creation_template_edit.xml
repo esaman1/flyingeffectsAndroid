@@ -164,6 +164,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="13dp"
+            android:visibility="gone"
             android:text="00:00"
             android:textColor="@color/white"
             android:textSize="14sp" />
@@ -182,6 +183,7 @@
                 android:layout_marginBottom="2dp"
                 android:clipToPadding="false"
                 android:paddingStart="@dimen/dp_63"
+                android:paddingEnd="@dimen/dp_63"
               />
 
             <TextView

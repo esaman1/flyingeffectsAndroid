@@ -16,7 +16,6 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.VibrationEffect;
@@ -48,6 +47,7 @@ import com.flyingeffects.com.ui.interfaces.TickerAnimated;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.lansongCommendView.RectUtil;
+import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 
 import java.io.File;
 import java.util.List;
@@ -140,6 +140,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     private Bitmap originalBitmap;
 
+    private int tag;
+
 
     /**
      * 边框自动消息时长
@@ -159,6 +161,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public StickerListener getTickerListener() {
         return tickerListener;
     }
+
+    private  StickerItemOnitemclick callback;
+
 
     public void setTickerListener(StickerListener tickerListener) {
         this.tickerListener = tickerListener;
@@ -337,6 +342,16 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public StickerView(Context context) {
         this(context, null);
     }
+
+
+
+    public void setOnitemClickListener(StickerItemOnitemclick callback){
+        this.callback=callback;
+    }
+
+
+
+
 
     public StickerView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -638,9 +653,21 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         float y = event.getY();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
+                if(callback!=null){
+                    callback.stickerMove();
+                }
                 mCurrentMode = adjustMode(x, y);
                 if (mCurrentMode == IDLE_MODE) {
                     return false;
+                }else if(mCurrentMode==LEFT_TOP_MODE){
+                    callback.stickerOnclick(LEFT_TOP_MODE);
+                    return true;
+                }else if(mCurrentMode==RIGHT_TOP_MODE){
+                    callback.stickerOnclick(RIGHT_TOP_MODE);
+                    return true;
+                }else if(mCurrentMode==LEFT_BOTTOM_MODE){
+                    callback.stickerOnclick(LEFT_BOTTOM_MODE);
+                    return true;
                 }
                 lastX = x;
                 lastY = y;
@@ -658,6 +685,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 if (mCurrentMode == IDLE_MODE) {
                     return false;
                 }
+
+
+
                 if (mCurrentMode == MOVE_MODE) {
                     // 移动贴图
                     mCurrentMode = MOVE_MODE;
@@ -682,6 +712,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     lastX = x;
                     lastY = y;
                 }
+
+
+
+
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
@@ -931,6 +965,18 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public float getScale() {
         return mScale;
     }
+    public float getTranslationX() {
+        return layoutX;
+    }
+
+
+    public float getTranslationY() {
+        return layoutX;
+    }
+
+
+
+
 
     public float getRotateAngle() {
         return mRotateAngle;

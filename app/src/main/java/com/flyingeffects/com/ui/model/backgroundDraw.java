@@ -5,20 +5,15 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.util.Log;
 
-import com.flyingeffects.com.enity.StickerForParents;
-import com.flyingeffects.com.manager.CopyFileFromAssets;
+import com.flyingeffects.com.enity.AllStickerData;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.view.lansongCommendView.StickerItem;
-import com.flyingeffects.com.view.lansongCommendView.StickerView;
+import com.lansosdk.box.GifLayer;
 import com.lansosdk.box.LSOVideoOption;
-import com.lansosdk.box.MVCacheLayer;
-import com.lansosdk.box.MVLayer;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 
 /**
  * 蓝松后台绘制方法
@@ -33,7 +28,8 @@ public class backgroundDraw {
     private WaitingDialog_progress waitingProgress;
     private String videoPath;
     private saveCallback callback;
-    int duration;
+    private  int duration;
+    private String gifTest = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/Comp-1(1).gif";
 
     public backgroundDraw(Context context, String videoPath, saveCallback callback) {
         this.context = context;
@@ -45,7 +41,7 @@ public class backgroundDraw {
     }
 
 
-    public void toSaveVideo(StickerView stickView) {
+    public void toSaveVideo(ArrayList<AllStickerData>list) {
         waitingProgress.openProgressDialog();
         execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, (long) (duration * 1000));
         execute.setFrameRate(FRAME_RATE);
@@ -62,12 +58,12 @@ public class backgroundDraw {
             execute.release();
             Log.d("OOM", "exportPath=" + exportPath);
         });
+
         setLayer();
-        LinkedHashMap<Integer, StickerItem> linkedHashMap = stickView.getBank();
-        for (int i = 1; i <= linkedHashMap.size(); i++) {
-            //多个图层的情况
-            StickerItem stickerItem = linkedHashMap.get(i);
-            addMVLayer(stickerItem);
+
+        for (AllStickerData item:list
+             ) {
+            addGifLayer(item);
         }
         execute.start();
     }
@@ -86,21 +82,21 @@ public class backgroundDraw {
     /**
      * 增加一个MV图层.
      */
-    private void addMVLayer(StickerItem stickerItem) {
+    private void addGifLayer(AllStickerData stickerItem) {
         LogUtil.d("OOM","addMVLayer");
-        String colorMVPath = CopyFileFromAssets.copyAssets(context, "mei.mp4");
-        String maskMVPath = CopyFileFromAssets.copyAssets(context, "mei_b.mp4");
-        MVCacheLayer mvLayer=  execute.addMVLayer(colorMVPath, maskMVPath); // <-----增加MVLayer
+        GifLayer mvLayer=  execute.addGifLayer(gifTest);
         if(stickerItem!=null){
-            int rotate= (int) stickerItem.getRoatetAngle();
+            int rotate= (int) stickerItem.getRotation();
             if(rotate<0){
                 rotate=360+rotate;
             }
+            LogUtil.d("OOM","rotate");
             mvLayer.setRotate(rotate);
-            mvLayer.setScale(stickerItem.getScaleSize()/2);
-            mvLayer.setPosition( stickerItem.getTranslation().getX(), mvLayer.getPositionY());
-            LogUtil.d("OOM","setPositionY="+stickerItem.getTranslation().getY());
-            mvLayer.setPosition( mvLayer.getPositionX(), stickerItem.getTranslation().getY());
+            mvLayer.setScale(stickerItem.getScale()/2);
+            LogUtil.d("OOM",stickerItem.getScale()/2+"");
+            mvLayer.setPosition( stickerItem.getTranslationX(), mvLayer.getPositionY());
+            LogUtil.d("OOM","setPositionY="+stickerItem.getTranslationy());
+            mvLayer.setPosition( mvLayer.getPositionX(), stickerItem.getTranslationy());
         }
     }
 

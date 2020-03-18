@@ -41,9 +41,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @BindView(R.id.id_vview_realtime_gllayout)
     ViewLayerRelativeLayout viewLayerRelativeLayout;
 
-
-
-
     @BindView(R.id.drawPadView)
     DrawPadView drawPadView;
 
@@ -80,6 +77,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         videoPlayer.startPlayLogic();
         videoPlayer.onVideoPause();
         videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> {
+            presenter.showGifAnim(false);
+            videoPlayer.startPlayLogic();
+            videoPlayer.onVideoPause();
+            videoPlayer.seekTo(10);
         }));
     }
 
@@ -106,8 +107,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
             case R.id.iv_play:
-                showPreiviewView(true);
-                presenter.toPrivateVideo(drawPadView);
+                showPreiviewView(false);
+//                presenter.toPrivateVideo(drawPadView);
+                videoPlayer.startPlayLogic();
+                presenter.showGifAnim(true);
                 break;
 
             default:
@@ -170,13 +173,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     private void showPreiviewView(boolean isShowPreViewVideo) {
         if (isShowPreViewVideo) {
-            viewLayerRelativeLayout.setVisibility(View.GONE);
-            drawPadView.setVisibility(View.VISIBLE);
-            videoPlayer.setVisibility(View.GONE);
+//            drawPadView.setVisibility(View.VISIBLE);
+//            videoPlayer.setVisibility(View.VISIBLE);
         } else {
-            viewLayerRelativeLayout.setVisibility(View.VISIBLE);
-            drawPadView.setVisibility(View.GONE);
-            videoPlayer.setVisibility(View.VISIBLE);
+//            drawPadView.setVisibility(View.GONE);
+//            videoPlayer.setVisibility(View.VISIBLE);
         }
     }
 
