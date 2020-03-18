@@ -90,6 +90,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     public int layoutX = 0;
     public int layoutY = 0;
+
+    private float moveX;
+    private float moveY;
     private PointF center = new PointF(0, 0);
     public float mRotateAngle = 0;
     public float mScale = 1;
@@ -682,11 +685,12 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 handler.removeMessages(DISMISS_FRAME);
                 break;
             case MotionEvent.ACTION_MOVE:
+              moveX=x;
+              moveY=y;
+              LogUtil.d("OOM","moveY="+moveY);
                 if (mCurrentMode == IDLE_MODE) {
                     return false;
                 }
-
-
 
                 if (mCurrentMode == MOVE_MODE) {
                     // 移动贴图
@@ -808,6 +812,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         angle = flag * angle;
 
         mRotateAngle = adjustDegree(mRotateAngle, angle);//+= angle;
+
+        LogUtil.d("updateRotateAndScale","mScale="+mScale);
+        LogUtil.d("updateRotateAndScale","mRotateAngle="+mRotateAngle);
+
     }
 
     boolean degreeTurned = false;
@@ -965,13 +973,15 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public float getScale() {
         return mScale;
     }
+
+
     public float getTranslationX() {
-        return layoutX;
+        return moveX;
     }
 
 
     public float getTranslationY() {
-        return layoutX;
+        return moveY;
     }
 
 

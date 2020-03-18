@@ -56,7 +56,6 @@ public class CreationTemplateMvpModel {
     private String mVideoPath;
     private ViewLayerRelativeLayout viewLayerRelativeLayout;
     private ArrayList<AnimStickerModel> listForStickerView = new ArrayList<>();
-
     private String gifTest = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/Comp-1(1).gif";
     private boolean isDestroy = false;
     private RecyclerView list_thumb;
@@ -73,13 +72,10 @@ public class CreationTemplateMvpModel {
 
     public void initStickerView(String imagePath) {
         firstAddImage(imagePath);
-
-
     }
 
 
     public void showGifAnim(boolean isShow) {
-
         if (listForStickerView != null && listForStickerView.size() > 0) {
             for (AnimStickerModel stickerModel : listForStickerView
             ) {
@@ -90,10 +86,8 @@ public class CreationTemplateMvpModel {
                     } else {
                         stickerView.pause();
                     }
-
                 }
             }
-
         }
     }
 
@@ -104,13 +98,12 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     private void firstAddImage(String path) {
-
         StickerView stickView = new StickerView(context);
         stickView.setLeftBottomBitmap(context.getDrawable(R.mipmap.sticker_change));
         stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
         stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
         stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
-        stickView.setImageRes(path, false);
+        stickView.setImageRes(gifTest, false);
         AnimStickerModel animStickerModel = new AnimStickerModel(context, viewLayerRelativeLayout, stickView);
         listForStickerView.add(animStickerModel);
         callback.ItemClickForStickView(animStickerModel);
@@ -274,10 +267,10 @@ public class CreationTemplateMvpModel {
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             AllStickerData stickerData = new AllStickerData();
-            stickerData.setRotation(stickerView.getRotation());
+            stickerData.setRotation(stickerView.getRotateAngle());
             stickerData.setScale(stickerView.getScale());
             stickerData.setTranslationX(stickerView.getTranslationX());
-            stickerData.setTranslationX(stickerView.getTranslationY());
+            stickerData.setTranslationy(stickerView.getTranslationY());
             list.add(stickerData);
         }
         backgroundDraw.toSaveVideo(list);

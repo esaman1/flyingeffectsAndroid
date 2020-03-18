@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -71,11 +72,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         videoPlayer.setUp(videoPath, true, "");
         videoPlayer.startPlayLogic();
         videoPlayer.onVideoPause();
+        new Handler().postDelayed(() -> videoPlayer.seekTo(1000),1000);
         videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> {
             presenter.showGifAnim(false);
             videoPlayer.startPlayLogic();
-            videoPlayer.onVideoPause();
-            videoPlayer.seekTo(10);
         }));
     }
 
@@ -153,11 +153,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void setgsyVideoProgress(int progress) {
-        LogUtil.d("OOM","videoProgress="+progress);
+        LogUtil.d("OOM", "videoProgress=" + progress);
         videoPlayer.seekTo(progress);
     }
-
-
 
 
 }

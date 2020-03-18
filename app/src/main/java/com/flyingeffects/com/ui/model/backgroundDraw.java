@@ -28,7 +28,7 @@ public class backgroundDraw {
     private WaitingDialog_progress waitingProgress;
     private String videoPath;
     private saveCallback callback;
-    private  int duration;
+    private int duration;
     private String gifTest = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/Comp-1(1).gif";
 
     public backgroundDraw(Context context, String videoPath, saveCallback callback) {
@@ -41,7 +41,7 @@ public class backgroundDraw {
     }
 
 
-    public void toSaveVideo(ArrayList<AllStickerData>list) {
+    public void toSaveVideo(ArrayList<AllStickerData> list) {
         waitingProgress.openProgressDialog();
         execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, (long) (duration * 1000));
         execute.setFrameRate(FRAME_RATE);
@@ -58,11 +58,9 @@ public class backgroundDraw {
             execute.release();
             Log.d("OOM", "exportPath=" + exportPath);
         });
-
         setLayer();
-
-        for (AllStickerData item:list
-             ) {
+        for (AllStickerData item : list
+        ) {
             addGifLayer(item);
         }
         execute.start();
@@ -83,20 +81,21 @@ public class backgroundDraw {
      * 增加一个MV图层.
      */
     private void addGifLayer(AllStickerData stickerItem) {
-        LogUtil.d("OOM","addMVLayer");
-        GifLayer mvLayer=  execute.addGifLayer(gifTest);
-        if(stickerItem!=null){
-            int rotate= (int) stickerItem.getRotation();
-            if(rotate<0){
-                rotate=360+rotate;
+        LogUtil.d("OOM", "addMVLayer");
+        GifLayer mvLayer = execute.addGifLayer(gifTest);
+        mvLayer.setScaledToPadSize();
+        if (stickerItem != null) {
+            int rotate = (int) stickerItem.getRotation();
+            if (rotate < 0) {
+                rotate = 360 + rotate;
             }
-            LogUtil.d("OOM","rotate");
+            LogUtil.d("OOM", "rotate="+rotate);
             mvLayer.setRotate(rotate);
-            mvLayer.setScale(stickerItem.getScale()/2);
-            LogUtil.d("OOM",stickerItem.getScale()/2+"");
-            mvLayer.setPosition( stickerItem.getTranslationX(), mvLayer.getPositionY());
-            LogUtil.d("OOM","setPositionY="+stickerItem.getTranslationy());
-            mvLayer.setPosition( mvLayer.getPositionX(), stickerItem.getTranslationy());
+            mvLayer.setScale(stickerItem.getScale() / 2);
+            LogUtil.d("OOM", "Scale="+stickerItem.getScale() / 2 + "");
+            mvLayer.setPosition(stickerItem.getTranslationX(), mvLayer.getPositionY());
+            LogUtil.d("OOM", "setPositionY=" + stickerItem.getTranslationy()+"x="+stickerItem.getTranslationX());
+            mvLayer.setPosition(mvLayer.getPositionX(), stickerItem.getTranslationy());
         }
     }
 

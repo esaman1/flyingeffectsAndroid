@@ -62,9 +62,6 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
-    public void toPrivateVideo(DrawPadView drawPadView){
-        creationTemplatemodel.toPrivateVideo(drawPadView);
-    }
 
     public void toSaveVideo(){
         creationTemplatemodel.toSaveVideo();
