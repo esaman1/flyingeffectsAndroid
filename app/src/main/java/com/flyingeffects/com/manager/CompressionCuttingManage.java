@@ -34,7 +34,7 @@ public class CompressionCuttingManage {
     private Context context;
     private int nowCompressSuccessNum;
     private ArrayList<String> listForMatting = new ArrayList<>();
-    private   imgListCallback callback;
+    private imgListCallback callback;
 
 
     public CompressionCuttingManage(Context context,imgListCallback callback) {

@@ -32,9 +32,12 @@ import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.AlbumManager;
+import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
+import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -130,6 +133,16 @@ public class CreationTemplateMvpModel {
                     viewLayerRelativeLayout.removeView(stickView);
                 } else if (type == StickerView.RIGHT_TOP_MODE) {//copy
                     viewLayerRelativeLayout.addView(stickView);
+                }else if(type==StickerView.LEFT_BOTTOM_MODE) {
+                    //切換素材
+                    AlbumManager.chooseImageAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
+                        CompressionCuttingManage manage = new CompressionCuttingManage(context, tailorPaths -> {
+                            Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> stickView.setImageRes(s,false));
+                        });
+                        manage.CompressImgAndCache(paths);
+                        stickView.postInvalidate();
+
+                    }, "");
                 }
             }
 
@@ -222,7 +235,7 @@ public class CreationTemplateMvpModel {
                     String copyName = mGifFolder + File.separator + System.currentTimeMillis() +aa;
                     try {
                         FileUtil.copyFile(path, copyName);
-                        addSticker(copyName);
+                        addSticker(copyName,false);
                         WaitingDialog.closePragressDialog();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -252,12 +265,12 @@ public class CreationTemplateMvpModel {
             }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
                 @Override
                 public void call(Bitmap bitmap) {
-                    String[] strs= finalPath.split(",");
-                    String copyName = mGifFolder + File.separator + System.currentTimeMillis() +strs[1];
+                    String aa= finalPath.substring(finalPath.length() - 4);
+                    String copyName = mGifFolder + File.separator + System.currentTimeMillis() +aa;
                     saveBitmapToPath(bitmap, copyName, new FileManager.saveBitmapState() {
                         @Override
                         public void succeed(boolean isSucceed) {
-                            addSticker(copyName);
+                            addSticker(copyName,true);
                         }
                     });
 
@@ -271,7 +284,7 @@ public class CreationTemplateMvpModel {
     }
 
 
-    private void addSticker(String path) {
+    private void addSticker(String path,boolean hasReplace) {
         StickerView stickView = new StickerView(context);
         stickView.setOnitemClickListener(new StickerItemOnitemclick() {
             @Override
@@ -285,12 +298,26 @@ public class CreationTemplateMvpModel {
                         String copyName = null;
                         if (gifPath.endsWith(".gif")) {
                             copyName = mGifFolder + File.separator + System.currentTimeMillis() + "synthetic.gif";
+                            FileUtil.copyFile(new File(gifPath), copyName);
+                            addSticker(copyName,false);
+                        }else{
+                            String aa= path.substring(path.length() - 4);
+                            copyName = mGifFolder + File.separator + System.currentTimeMillis() +aa;
+                            addSticker(copyName,true);
                         }
-                        FileUtil.copyFile(new File(gifPath), copyName);
-                        addSticker(copyName);
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                }else if(type==StickerView.LEFT_BOTTOM_MODE) {
+                    //切換素材
+                    AlbumManager.chooseImageAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
+                        CompressionCuttingManage manage = new CompressionCuttingManage(context, tailorPaths -> {
+                            Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> stickView.setImageRes(s,false));
+                        });
+                        manage.CompressImgAndCache(paths);
+                        stickView.postInvalidate();
+                    }, "");
                 }
             }
 
@@ -308,6 +335,9 @@ public class CreationTemplateMvpModel {
         stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
         stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
         stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
+        if(hasReplace){
+            stickView.setLeftBottomBitmap(context.getDrawable(R.mipmap.sticker_change));
+        }
         stickView.setImageRes(path, false);
         AnimStickerModel animStickerModel = new AnimStickerModel(context, viewLayerRelativeLayout, stickView);
         listForStickerView.add(animStickerModel);
@@ -345,8 +375,6 @@ public class CreationTemplateMvpModel {
                 LogUtil.d("oom", "percent=" + percent);
                 int progress = (int) (videoInfo.getDuration() * percent);
                 callback.setgsyVideoProgress(progress);
-
-
             }
         });
         initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), videoInfo.getDuration(), 2000, mVideoPath);
@@ -467,7 +495,7 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     public void addNewSticker(String path){
-        Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> addSticker(path1));
+        Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> addSticker(path1,true));
     }
 
 }
