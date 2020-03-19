@@ -145,6 +145,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     private int tag;
 
+    private float originalScale;
+
 
     /**
      * 边框自动消息时长
@@ -348,6 +350,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
 
 
+
+
+
+
     public void setOnitemClickListener(StickerItemOnitemclick callback){
         this.callback=callback;
     }
@@ -361,9 +367,12 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
     public StickerView(Context context, AttributeSet attrs, int defStyleAttr) {
+
         super(context, attrs, defStyleAttr);
         handler = new GestureHandler();
+        targer=null;
         initView(context, attrs);
+
     }
 
     public static boolean isEmpty(List list) {
@@ -792,7 +801,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         // 计算缩放比
         float scale = curLen / srcLen;
 
+
         mScale *= scale;
+
         float newWidth = mHelpBoxRect.width() * mScale;
 
         if (newWidth < 70) {

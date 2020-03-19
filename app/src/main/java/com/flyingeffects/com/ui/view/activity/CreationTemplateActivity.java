@@ -70,13 +70,18 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
         presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout);
         videoPlayer.setUp(videoPath, true, "");
-        videoPlayer.startPlayLogic();
-        videoPlayer.onVideoPause();
-        new Handler().postDelayed(() -> videoPlayer.seekTo(1000),1000);
+        videoPlayerInit();
         videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> {
             presenter.showGifAnim(false);
-            videoPlayer.startPlayLogic();
+            videoPlayerInit();
         }));
+    }
+
+
+    private void videoPlayerInit() {
+        videoPlayer.startPlayLogic();
+        videoPlayer.onVideoPause();
+        new Handler().postDelayed(() -> videoPlayer.seekTo(1000), 1000);
     }
 
 

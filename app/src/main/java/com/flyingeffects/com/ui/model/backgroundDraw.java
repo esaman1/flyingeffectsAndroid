@@ -91,7 +91,7 @@ public class backgroundDraw {
             }
             LogUtil.d("OOM", "rotate="+rotate);
             mvLayer.setRotate(rotate);
-            mvLayer.setScale(stickerItem.getScale() / 2);
+            mvLayer.setScale(stickerItem.getScale() );
             LogUtil.d("OOM", "Scale="+stickerItem.getScale() / 2 + "");
             mvLayer.setPosition(stickerItem.getTranslationX(), mvLayer.getPositionY());
             LogUtil.d("OOM", "setPositionY=" + stickerItem.getTranslationy()+"x="+stickerItem.getTranslationX());

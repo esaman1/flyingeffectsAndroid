@@ -99,6 +99,27 @@ public class CreationTemplateMvpModel {
      */
     private void firstAddImage(String path) {
         StickerView stickView = new StickerView(context);
+        stickView.setOnitemClickListener(new StickerItemOnitemclick() {
+            @Override
+            public void stickerOnclick(int type) {
+                if (type == StickerView.LEFT_TOP_MODE) {//刪除
+                    viewLayerRelativeLayout.removeView(stickView);
+                } else if (type == StickerView.RIGHT_TOP_MODE) {//copy
+                    viewLayerRelativeLayout.addView(stickView);
+                }
+            }
+
+            @Override
+            public void stickerMove() {
+                if (stickView.getParent() != null) {
+                    ViewGroup vp = (ViewGroup) stickView.getParent();
+                    if (vp != null) {
+                        vp.removeView(stickView);
+                    }
+                }
+                viewLayerRelativeLayout.addView(stickView);
+            }
+        });
         stickView.setLeftBottomBitmap(context.getDrawable(R.mipmap.sticker_change));
         stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
         stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
@@ -143,8 +164,6 @@ public class CreationTemplateMvpModel {
                     viewLayerRelativeLayout.addView(stickView);
                 }
             });
-
-
 //            stickView.setLeftBottomBitmap(context.getDrawable(R.mipmap.sticker_change));
             stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
             stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
