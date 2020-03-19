@@ -59,7 +59,8 @@ public class TemplateGridViewAdapter extends BaseAdapter {
         }
         Glide.with(context)
                 .load(list.get(position).getImage())
-                .apply(RequestOptions.placeholderOf(R.drawable.placeholder))
+                .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 5)))
+                .apply(RequestOptions.placeholderOf(R.mipmap.ic_launcher))
                 .into(holder.image);
 
         Glide.with(context).load(list.get(position).getImage()).into(holder.image);

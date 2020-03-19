@@ -184,6 +184,7 @@
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="170dp"
+        android:background="#000000"
         android:layout_above="@+id/tv_tiezhi" />
 
 

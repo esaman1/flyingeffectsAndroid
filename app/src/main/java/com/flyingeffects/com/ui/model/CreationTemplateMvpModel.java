@@ -78,7 +78,6 @@ public class CreationTemplateMvpModel {
     private ViewLayerRelativeLayout viewLayerRelativeLayout;
     private ArrayList<AnimStickerModel> listForStickerView = new ArrayList<>();
     private String gifdownSticker = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/Comp-1(1).gif";
-
     private boolean isDestroy = false;
     private RecyclerView list_thumb;
     private VideoInfo videoInfo;
@@ -169,7 +168,6 @@ public class CreationTemplateMvpModel {
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager, false);
         GridView gridView = templateThumbView.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view, i, l) -> {
-
 
             downSticker(listForSticker.get(i).getImage());
 //            addSticker(listForSticker.get(i).getImage());
