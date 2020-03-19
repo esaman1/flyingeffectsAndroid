@@ -23,6 +23,7 @@ import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.enity.AllStickerData;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -38,6 +39,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.observers.Observers;
 import rx.subjects.PublishSubject;
 
 
@@ -57,9 +63,12 @@ public class CreationTemplateMvpModel {
     private ViewLayerRelativeLayout viewLayerRelativeLayout;
     private ArrayList<AnimStickerModel> listForStickerView = new ArrayList<>();
     private String gifTest = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/Comp-1(1).gif";
+    private String gifTest2 = "/storage/emulated/0/SayWord/Cache/bg/40bb01fc7c7f597ca9c2513b4052dff1.gif";
+
     private boolean isDestroy = false;
     private RecyclerView list_thumb;
     private VideoInfo videoInfo;
+    private String mGifFolder;
 
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout) {
         this.context = context;
@@ -67,6 +76,8 @@ public class CreationTemplateMvpModel {
         this.mVideoPath = mVideoPath;
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
         videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
+        FileManager fileManager = new FileManager();
+        mGifFolder = fileManager.getFileCachePath(context, "gifFolder");
     }
 
 
@@ -142,43 +153,7 @@ public class CreationTemplateMvpModel {
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager, false);
         GridView gridView = templateThumbView.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view, i, l) -> {
-            StickerView stickView = new StickerView(context);
-            stickView.setOnitemClickListener(new StickerItemOnitemclick() {
-                @Override
-                public void stickerOnclick(int type) {
-                    if (type == StickerView.LEFT_TOP_MODE) {//刪除
-                        viewLayerRelativeLayout.removeView(stickView);
-                    } else if (type == StickerView.RIGHT_TOP_MODE) {//copy
-                        viewLayerRelativeLayout.addView(stickView);
-                    }
-                }
-
-                @Override
-                public void stickerMove() {
-                    if (stickView.getParent() != null) {
-                        ViewGroup vp = (ViewGroup) stickView.getParent();
-                        if (vp != null) {
-                            vp.removeView(stickView);
-                        }
-                    }
-                    viewLayerRelativeLayout.addView(stickView);
-                }
-            });
-//            stickView.setLeftBottomBitmap(context.getDrawable(R.mipmap.sticker_change));
-            stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
-            stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
-            stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
-            stickView.setImageRes(gifTest, false);
-            AnimStickerModel animStickerModel = new AnimStickerModel(context, viewLayerRelativeLayout, stickView);
-            listForStickerView.add(animStickerModel);
-            if (stickView.getParent() != null) {
-                ViewGroup vp = (ViewGroup) stickView.getParent();
-                if (vp != null) {
-                    vp.removeAllViews();
-                }
-            }
-            viewLayerRelativeLayout.addView(stickView);
-
+            addGif(gifTest);
         });
         List<String> test = new ArrayList<>();
         for (int i = 0; i < 14; i++) {
@@ -207,6 +182,55 @@ public class CreationTemplateMvpModel {
 
     }
 
+
+    private void addGif(String path) {
+        StickerView stickView = new StickerView(context);
+        stickView.setOnitemClickListener(new StickerItemOnitemclick() {
+            @Override
+            public void stickerOnclick(int type) {
+                if (type == StickerView.LEFT_TOP_MODE) {//刪除
+                    viewLayerRelativeLayout.removeView(stickView);
+                } else if (type == StickerView.RIGHT_TOP_MODE) {
+                    //copy
+                    String gifPath = stickView.getResPath();
+                    try {
+                        String copyName = null;
+                        if (gifPath.endsWith(".gif")) {
+                            copyName =mGifFolder+ File.separator + System.currentTimeMillis() + "synthetic.gif";
+                        }
+                        FileUtil.copyFile(new File(gifPath), copyName);
+                        addGif(copyName);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void stickerMove() {
+                if (stickView.getParent() != null) {
+                    ViewGroup vp = (ViewGroup) stickView.getParent();
+                    if (vp != null) {
+                        vp.removeView(stickView);
+                    }
+                }
+                viewLayerRelativeLayout.addView(stickView);
+            }
+        });
+        stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
+        stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
+        stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
+        stickView.setImageRes(path, false);
+        AnimStickerModel animStickerModel = new AnimStickerModel(context, viewLayerRelativeLayout, stickView);
+        listForStickerView.add(animStickerModel);
+        if (stickView.getParent() != null) {
+            ViewGroup vp = (ViewGroup) stickView.getParent();
+            if (vp != null) {
+                vp.removeAllViews();
+            }
+        }
+        viewLayerRelativeLayout.addView(stickView);
+    }
 
     public void onDestroy() {
         isDestroy = true;

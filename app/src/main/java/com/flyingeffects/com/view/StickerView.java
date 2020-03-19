@@ -982,7 +982,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
     public float getScale() {
-        return mScale;
+        return mScale/2;
     }
 
 
