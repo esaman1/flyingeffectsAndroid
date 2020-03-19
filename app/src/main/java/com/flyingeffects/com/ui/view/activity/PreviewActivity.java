@@ -97,9 +97,9 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     private int is_picout;
 
     public final static int SELECTALBUM = 0;
-    public final static int SELECTALBUMFROMBJ= 1;
+    public final static int SELECTALBUMFROMBJ = 1;
 
-    private boolean isPlayComplate=false;
+    private boolean isPlayComplate = false;
 
     /**
      * 来着来个页面
@@ -134,8 +134,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         videoPlayer.setUp(templateItem.getVidoefile(), true, "");
         videoPlayer.startPlayLogic();
         videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> {
-            VideoPlaybackCompleted(true,true);
-            isPlayComplate=true;
+            VideoPlaybackCompleted(true, true);
+            isPlayComplate = true;
         }));
         Glide.with(this)
                 .load(templateItem.getAuth_image())
@@ -145,7 +145,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         tv_title.setText(templateItem.getTitle());
         tv_describe.setText("友友们    " + "上传" + templateItem.getDefaultnum() + "张照片即可制作");
         Presenter.requestTemplateDetail(templateItem.getId());
-
     }
 
 
@@ -161,15 +160,15 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         switch (view.getId()) {
             case R.id.iv_zan:
 
-                Presenter.collectTemplate(templateItem.getId(),templateItem.getTitle());
+                Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle());
                 break;
             case R.id.tv_make:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(3000)) {
-                    if(BaseConstans.hasLogin()){
+                    if (BaseConstans.hasLogin()) {
                         //登录可能被挤下去，所以这里加个用户信息刷新请求
                         Presenter.requestUserInfo();
-                    }else{
-                        Intent intent =new Intent(PreviewActivity.this,LoginActivity.class);
+                    } else {
+                        Intent intent = new Intent(PreviewActivity.this, LoginActivity.class);
                         startActivity(intent);
                     }
                 }
@@ -187,17 +186,17 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 break;
 
             case R.id.iv_click:
-                if(iv_video_play.getVisibility()==View.VISIBLE){
-                    if(isPlayComplate){
+                if (iv_video_play.getVisibility() == View.VISIBLE) {
+                    if (isPlayComplate) {
                         videoPlayer.startPlayLogic();
-                        isPlayComplate=false;
-                    }else{
+                        isPlayComplate = false;
+                    } else {
                         videoPlayer.onVideoResume(false);
                     }
-                  VideoPlaybackCompleted(false,false);
-                }else{
+                    VideoPlaybackCompleted(false, false);
+                } else {
                     videoPlayer.onVideoPause();
-               VideoPlaybackCompleted(true,false);
+                    VideoPlaybackCompleted(true, false);
                 }
                 break;
 
@@ -241,15 +240,15 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel && !ondestroy) {
-                //如果不需要抠图
-                if (is_picout == 0) {
-                    intoTemplateActivity(paths, TemplateFilePath);
-                    originalImagePath = null;
-                } else {//需要抠图
-                    originalImagePath = paths;
-                    Presenter.CompressImg(paths);
-                }
+            //如果不需要抠图
+            if (is_picout == 0) {
+                intoTemplateActivity(paths, TemplateFilePath);
+                originalImagePath = null;
+            } else {//需要抠图
+                originalImagePath = paths;
+                Presenter.CompressImg(paths);
             }
+        }
     }
 
 
@@ -268,13 +267,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     }
 
 
-
-
-
     @Override
     public void getCompressImgList(List<String> imgList) {
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-            Intent intent=new Intent(PreviewActivity.this,CreationTemplateActivity.class);
+            Intent intent = new Intent(PreviewActivity.this, CreationTemplateActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             Bundle bundle = new Bundle();
             bundle.putStringArrayList("paths", (ArrayList<String>) imgList);
@@ -285,7 +281,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("Message", bundle);
             startActivity(intent);
-        }else{
+        } else {
             intoTemplateActivity(imgList, TemplateFilePath);
         }
 
@@ -355,30 +351,28 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     public void hasLogin(boolean hasLogin) {
 
-        if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)){
+        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
             //来做背景页面
             AlbumManager.chooseImageAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
-        }else{
+        } else {
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMSEARCH)) {
                 statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "4_search_make", templateItem.getTitle());
             }
             statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "mb_make", templateItem.getTitle());
             videoPlayer.onVideoPause();
-            VideoPlaybackCompleted(true,true);
+            VideoPlaybackCompleted(true, true);
             Presenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
         }
-
-
     }
 
 
-    private void VideoPlaybackCompleted(boolean isComplete,Boolean isShowCover) {
+    private void VideoPlaybackCompleted(boolean isComplete, Boolean isShowCover) {
         if (isComplete) {
             iv_video_play.setVisibility(View.VISIBLE);
-            if(isShowCover){
+            if (isShowCover) {
                 iv_show_cover.setVisibility(View.VISIBLE);
                 videoPlayer.setVisibility(View.INVISIBLE);
-            }else{
+            } else {
                 videoPlayer.setVisibility(View.VISIBLE);
             }
         } else {

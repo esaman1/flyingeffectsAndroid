@@ -454,8 +454,20 @@ public class CreationTemplateMvpModel {
                 gridAdapter.notifyDataSetChanged();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+    }
 
 
+
+
+
+    /**
+     * description ：增加一个新的
+     * creation date: 2020/3/19
+     * param :
+     * user : zhangtongju
+     */
+    public void addNewSticker(String path){
+        Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> addSticker(path1));
     }
 
 }

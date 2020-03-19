@@ -210,6 +210,7 @@
 
 
                 <ImageView
+                    android:id="@+id/iv_add_sticker"
                     android:contentDescription="@string/app_name"
                     android:layout_width="40dp"
                     android:src="@mipmap/bj_add"
