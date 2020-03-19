@@ -148,7 +148,7 @@ public class CreationTemplateMvpModel {
         stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
         stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
         stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
-        stickView.setImageRes(gifdownSticker, false);
+        stickView.setImageRes(path, false);
         AnimStickerModel animStickerModel = new AnimStickerModel(context, viewLayerRelativeLayout, stickView);
         listForStickerView.add(animStickerModel);
         callback.ItemClickForStickView(animStickerModel);
