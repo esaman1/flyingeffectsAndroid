@@ -155,6 +155,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     private float originalScale;
 
+    private int originalBitmapWidth;
+
+    private int originalBitmapHeight;
+
 
     /**
      * 边框自动消息时长
@@ -995,12 +999,18 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
 
     public float getTranslationX() {
-        return moveX;
+
+//        float  www=moveX+(originalBitmapWidth/(float)2);
+//        return   www/getWidth()*720+originalBitmapWidth;
+//
+
+
+       return moveX;
     }
 
 
     public float getTranslationY() {
-        return moveY;
+        return moveY+(originalBitmapHeight/(float)2);
     }
 
 
@@ -1034,6 +1044,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             if (autoRun) {
                 start();
             }
+            moveX=getWidth() /2;
+            moveX= moveX+(originalBitmapWidth/(float)4);
+            moveY=getHeight()/2;
             setScale(1f);
             setDegree(0f);
             setCenter(getWidth() / 2f, getHeight() / 2f);
@@ -1069,32 +1082,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     getTarger().setAutoRun(autoRun);
                     contentWidth = (int) (getMinDisplayWidth() / 2f);
-//                    Observable.just(path).map(new Func1<String, Bitmap>() {
-//                        @Override
-//                        public Bitmap call(String s) {
-//
-//                            FutureTarget<Bitmap> futureTarget =
-//                                    Glide.with(BaseApplication.getInstance())
-//                                            .asBitmap()
-//                                            .load(path)
-//                                            .submit(720, 1280);
-//                            try {
-//                                originalBitmap = futureTarget.get();
-//
-//                            } catch (Exception e) {
-//                                LogUtil.d("oom",e.getMessage());
-//                            }
-//                            Glide.with(BaseApplication.getInstance()).clear(futureTarget);
-//                            return originalBitmap;
-//                        }
-//                    }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
-//                    })
-//
-//
-
-
-
-
+                    originalBitmapWidth= (int) contentWidth;
                     originalBitmap = BitmapFactory.decodeFile(path);
                     int bitmapW=originalBitmap.getWidth();
                     int bitmapH=originalBitmap.getHeight();
@@ -1105,6 +1093,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                         //正常模式
                         contentHeight= widthBigger?contentWidth*(bitmapW/(float)bitmapH):contentWidth*(bitmapH/(float)bitmapW);
                     }
+                    originalBitmapHeight= (int) contentHeight;
                     LogUtil.d("OOM","contentHeight="+contentHeight);
                     LogUtil.d("OOM","contentWidth="+contentWidth);
                    // contentHeight = (int) (getMinDisplayWidth() / 2f);
