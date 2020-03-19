@@ -37,7 +37,7 @@ public class LanSoEditor {
         if(Environment.getExternalStorageDirectory()!=null){
             LanSoEditor.setTempFileDir(Environment.getExternalStorageDirectory().getPath() + "/lansongBox/");
         }
-
+        setLanSongSDK1();
         LSOLog.init(context);
         printSDKVersion();
     }

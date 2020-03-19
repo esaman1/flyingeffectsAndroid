@@ -377,7 +377,7 @@ public class CreationTemplateMvpModel {
                 callback.setgsyVideoProgress(progress);
             }
         });
-        initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), videoInfo.getDuration(), 2000, mVideoPath);
+        initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), videoInfo.getDuration(), 5000, mVideoPath);
     }
 
     private int mTotalWidth;
@@ -396,7 +396,7 @@ public class CreationTemplateMvpModel {
         final int interval = (int) (duration / thumbCount);
         int[] mTimeUs = new int[thumbCount];
         for (int i = 0; i < thumbCount; i++) {
-            mTimeUs[i] = i * interval;
+            mTimeUs[i] = i * interval*1000;
         }
         mTimelineAdapter.setVideoUri(Uri.fromFile(new File(mVideoPath)));
         mTimelineAdapter.setData(mTimeUs);
