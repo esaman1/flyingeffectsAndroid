@@ -75,6 +75,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             presenter.showGifAnim(false);
             videoPlayerInit();
         }));
+        presenter.requestStickersList();
     }
 
 

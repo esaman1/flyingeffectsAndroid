@@ -20,13 +20,19 @@ import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.AllStickerData;
+import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.http.Api;
+import com.flyingeffects.com.http.HttpUtil;
+import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.lansosdk.box.ViewLayerRelativeLayout;
@@ -37,13 +43,10 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import rx.Observable;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.observers.Observers;
 import rx.subjects.PublishSubject;
 
 
@@ -148,6 +151,8 @@ public class CreationTemplateMvpModel {
         viewLayerRelativeLayout.addView(stickView);
     }
 
+    private TemplateGridViewAdapter gridAdapter;
+    private List<StickerList> listForSticker = new ArrayList<>();
 
     public void initBottomLayout(ViewPager viewPager) {
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager, false);
@@ -155,11 +160,7 @@ public class CreationTemplateMvpModel {
         gridView.setOnItemClickListener((adapterView, view, i, l) -> {
             addGif(gifTest);
         });
-        List<String> test = new ArrayList<>();
-        for (int i = 0; i < 14; i++) {
-            test.add("啥");
-        }
-        TemplateGridViewAdapter gridAdapter = new TemplateGridViewAdapter(test, context);
+        gridAdapter = new TemplateGridViewAdapter(listForSticker, context);
         gridView.setAdapter(gridAdapter);
         listForInitBottom.add(templateThumbView);
         TemplateViewPager adapter = new TemplateViewPager(listForInitBottom);
@@ -196,7 +197,7 @@ public class CreationTemplateMvpModel {
                     try {
                         String copyName = null;
                         if (gifPath.endsWith(".gif")) {
-                            copyName =mGifFolder+ File.separator + System.currentTimeMillis() + "synthetic.gif";
+                            copyName = mGifFolder + File.separator + System.currentTimeMillis() + "synthetic.gif";
                         }
                         FileUtil.copyFile(new File(gifPath), copyName);
                         addGif(copyName);
@@ -346,5 +347,27 @@ public class CreationTemplateMvpModel {
             dialog.show();
         }
     }
+
+
+    public void requestStickersList() {
+        HashMap<String, String> params = new HashMap<>();
+        // 启动时间
+        Observable ob = Api.getDefault().getStickerslist(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<StickerList>>(context) {
+            @Override
+            protected void _onError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(List<StickerList> list) {
+                listForSticker.addAll(list);
+                gridAdapter.notifyDataSetChanged();
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+
+
+    }
+
 
 }

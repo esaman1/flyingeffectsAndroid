@@ -62,7 +62,6 @@ public class fragBjItem extends BaseFragment   {
 
     @Override
     protected void initView() {
-
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             templateId = bundle.getString("id");

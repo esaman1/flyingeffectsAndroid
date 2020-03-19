@@ -41,6 +41,12 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.initVideoProgressView(mTimeLineView);
     }
 
+
+
+    public void requestStickersList(){
+        creationTemplatemodel.requestStickersList();
+    }
+
     public void onDestroy(){
         creationTemplatemodel.onDestroy();
     }

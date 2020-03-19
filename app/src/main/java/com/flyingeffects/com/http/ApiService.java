@@ -2,6 +2,7 @@ package com.flyingeffects.com.http;
 
 import com.flyingeffects.com.enity.Config;
 import com.flyingeffects.com.enity.HttpResult;
+import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.new_fag_template_item;
@@ -98,6 +99,12 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/template/backCategoryList")
     Observable<HttpResult<List<TemplateType>>> getbackCategoryType(@FieldMap Map<String, String> params);
+
+
+    //贴纸列表
+    @FormUrlEncoded
+    @POST("/api/template/stickerslist")
+    Observable<HttpResult<List<StickerList>>> getStickerslist(@FieldMap Map<String, String> params);
 
 
     @FormUrlEncoded

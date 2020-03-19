@@ -6,10 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.hotSearch;
+import com.flyingeffects.com.enity.StickerList;
 
 import java.util.List;
 
@@ -20,23 +20,23 @@ import java.util.List;
 public class TemplateGridViewAdapter extends BaseAdapter {
 
 
-    private List<String> SearchList;
+    private List<StickerList> list;
     private Context context;
 
 
-    public TemplateGridViewAdapter(List<String> SearchList, Context context) {
-        this.SearchList = SearchList;
+    public TemplateGridViewAdapter(List<StickerList> list, Context context) {
+        this.list = list;
         this.context = context;
     }
 
     @Override
     public int getCount() {
-        return SearchList.size();
+        return list.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return SearchList.get(i);
+        return list.get(i);
     }
 
     @Override
@@ -50,19 +50,17 @@ public class TemplateGridViewAdapter extends BaseAdapter {
         if (view == null) {
             holder = new ViewHold();
             view = LayoutInflater.from(context).inflate(R.layout.item_template_gridview, parent, false);
-            holder.ivTest=view.findViewById(R.id.tv_name);
+            holder.image = view.findViewById(R.id.iv_icon);
             view.setTag(holder);
         } else {
             holder = (ViewHold) view.getTag();
         }
-        String data = SearchList.get(position);
+        Glide.with(context).load(list.get(position).getImage()).into(holder.image);
         return view;
     }
 
 
-
-
     class ViewHold {
-        ImageView ivTest;
+        ImageView image;
     }
 }
