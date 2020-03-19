@@ -89,13 +89,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     protected void onResume() {
         super.onResume();
-        initViewLayerRelative();
+
     }
 
     @Override
     protected void initAction() {
         presenter.initStickerView(imgPath.get(0));
         presenter.initBottomLayout(viewPager);
+        initViewLayerRelative();
     }
 
 
@@ -137,7 +138,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             RelativeLayoutParams.height = oriHeight;
             viewLayerRelativeLayout.setLayoutParams(RelativeLayoutParams);
         });
-
         list_thumb.post(() -> presenter.initVideoProgressView(list_thumb));
     }
 

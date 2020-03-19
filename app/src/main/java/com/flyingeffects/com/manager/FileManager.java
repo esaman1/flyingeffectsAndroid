@@ -101,8 +101,8 @@ public class FileManager {
         return isImageFile;
     }
 
-
-    public static Bitmap saveBitmapToPath(Bitmap bitmap, String path) {
+    saveBitmapState  callback;
+    public static Bitmap saveBitmapToPath(Bitmap bitmap, String path,saveBitmapState  callback) {
         if (!path.endsWith(".png") && !path.endsWith(".PNG")) {
             throw new IllegalArgumentException();
         }
@@ -118,11 +118,15 @@ public class FileManager {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             out.flush();
             out.close();
-        } catch (FileNotFoundException e) {
+            if(callback!=null){
+                callback.succeed(true);
+            }
+
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
+            callback.succeed(false);
+
+        }  finally {
             if (out != null) {
                 try {
                     out.close();
@@ -135,6 +139,10 @@ public class FileManager {
         return bitmap;
     }
 
+
+public     interface saveBitmapState {
+        void succeed(boolean isSucceed);
+    }
 
     /**
      * 复制图片

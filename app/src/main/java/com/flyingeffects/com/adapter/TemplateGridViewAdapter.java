@@ -8,8 +8,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.StickerList;
+import com.flyingeffects.com.manager.GlideRoundTransform;
 
 import java.util.List;
 
@@ -55,6 +57,11 @@ public class TemplateGridViewAdapter extends BaseAdapter {
         } else {
             holder = (ViewHold) view.getTag();
         }
+        Glide.with(context)
+                .load(list.get(position).getImage())
+                .apply(RequestOptions.placeholderOf(R.drawable.placeholder))
+                .into(holder.image);
+
         Glide.with(context).load(list.get(position).getImage()).into(holder.image);
         return view;
     }

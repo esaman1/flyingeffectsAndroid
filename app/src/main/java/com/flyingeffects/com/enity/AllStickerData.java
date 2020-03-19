@@ -47,4 +47,14 @@ public class AllStickerData implements Serializable {
 
     private float translationy;
 
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    private String path;
+
 }

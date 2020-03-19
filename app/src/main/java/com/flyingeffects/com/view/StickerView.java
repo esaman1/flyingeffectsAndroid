@@ -37,6 +37,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -51,6 +52,13 @@ import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 //com.flyingeffects.com.view.StickerView
 
 
@@ -1061,6 +1069,32 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     getTarger().setAutoRun(autoRun);
                     contentWidth = (int) (getMinDisplayWidth() / 2f);
+//                    Observable.just(path).map(new Func1<String, Bitmap>() {
+//                        @Override
+//                        public Bitmap call(String s) {
+//
+//                            FutureTarget<Bitmap> futureTarget =
+//                                    Glide.with(BaseApplication.getInstance())
+//                                            .asBitmap()
+//                                            .load(path)
+//                                            .submit(720, 1280);
+//                            try {
+//                                originalBitmap = futureTarget.get();
+//
+//                            } catch (Exception e) {
+//                                LogUtil.d("oom",e.getMessage());
+//                            }
+//                            Glide.with(BaseApplication.getInstance()).clear(futureTarget);
+//                            return originalBitmap;
+//                        }
+//                    }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
+//                    })
+//
+//
+
+
+
+
                     originalBitmap = BitmapFactory.decodeFile(path);
                     int bitmapW=originalBitmap.getWidth();
                     int bitmapH=originalBitmap.getHeight();

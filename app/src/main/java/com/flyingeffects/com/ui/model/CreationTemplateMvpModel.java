@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,10 +15,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.FutureTarget;
+import com.bumptech.glide.request.target.Target;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateGridViewAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -37,6 +42,7 @@ import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.shixing.sxve.ui.adapter.TimelineAdapter;
+import com.shixing.sxve.ui.view.WaitingDialog;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +53,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
+
+import static com.flyingeffects.com.manager.FileManager.saveBitmapToPath;
 
 
 /**
@@ -65,8 +77,7 @@ public class CreationTemplateMvpModel {
     private String mVideoPath;
     private ViewLayerRelativeLayout viewLayerRelativeLayout;
     private ArrayList<AnimStickerModel> listForStickerView = new ArrayList<>();
-    private String gifTest = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/Comp-1(1).gif";
-    private String gifTest2 = "/storage/emulated/0/SayWord/Cache/bg/40bb01fc7c7f597ca9c2513b4052dff1.gif";
+    private String gifdownSticker = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/Comp-1(1).gif";
 
     private boolean isDestroy = false;
     private RecyclerView list_thumb;
@@ -138,7 +149,7 @@ public class CreationTemplateMvpModel {
         stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
         stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
         stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
-        stickView.setImageRes(gifTest, false);
+        stickView.setImageRes(gifdownSticker, false);
         AnimStickerModel animStickerModel = new AnimStickerModel(context, viewLayerRelativeLayout, stickView);
         listForStickerView.add(animStickerModel);
         callback.ItemClickForStickView(animStickerModel);
@@ -158,7 +169,10 @@ public class CreationTemplateMvpModel {
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager, false);
         GridView gridView = templateThumbView.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view, i, l) -> {
-            addGif(gifTest);
+
+
+            downSticker(listForSticker.get(i).getImage());
+//            addSticker(listForSticker.get(i).getImage());
         });
         gridAdapter = new TemplateGridViewAdapter(listForSticker, context);
         gridView.setAdapter(gridAdapter);
@@ -184,7 +198,82 @@ public class CreationTemplateMvpModel {
     }
 
 
-    private void addGif(String path) {
+
+    private void downSticker(String path){
+        WaitingDialog.openPragressDialog(context);
+        if (path.endsWith(".gif")) {
+            String finalPath = path;
+            Observable.just(path).map(new Func1<String, File>() {
+                @Override
+                public File call(String s) {
+                    File file = null;
+                    try {
+                        file =  Glide.with(context)
+                            .load(finalPath)
+                            .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                            .get();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return  file;
+                }
+            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<File>() {
+                @Override
+                public void call(File path) {
+                   String aa= finalPath.substring(finalPath.length() - 4);
+                    String copyName = mGifFolder + File.separator + System.currentTimeMillis() +aa;
+                    try {
+                        FileUtil.copyFile(path, copyName);
+                        addSticker(copyName);
+                        WaitingDialog.closePragressDialog();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+        }else{
+            String finalPath = path;
+            Observable.just(path).map(new Func1<String, Bitmap>() {
+                @Override
+                public Bitmap call(String s) {
+                    Bitmap originalBitmap = null;
+                    FutureTarget<Bitmap> futureTarget =
+                            Glide.with(BaseApplication.getInstance())
+                                    .asBitmap()
+                                    .load(finalPath)
+                                    .submit(720, 1280);
+                    try {
+                        originalBitmap = futureTarget.get();
+                    } catch (Exception e) {
+                        LogUtil.d("oom",e.getMessage());
+                    }
+                    Glide.with(BaseApplication.getInstance()).clear(futureTarget);
+                    return originalBitmap;
+                }
+            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
+                @Override
+                public void call(Bitmap bitmap) {
+                    String[] strs= finalPath.split(",");
+                    String copyName = mGifFolder + File.separator + System.currentTimeMillis() +strs[1];
+                    saveBitmapToPath(bitmap, copyName, new FileManager.saveBitmapState() {
+                        @Override
+                        public void succeed(boolean isSucceed) {
+                            addSticker(copyName);
+                        }
+                    });
+
+                }
+            });
+        }
+
+
+
+
+    }
+
+
+    private void addSticker(String path) {
         StickerView stickView = new StickerView(context);
         stickView.setOnitemClickListener(new StickerItemOnitemclick() {
             @Override
@@ -200,7 +289,7 @@ public class CreationTemplateMvpModel {
                             copyName = mGifFolder + File.separator + System.currentTimeMillis() + "synthetic.gif";
                         }
                         FileUtil.copyFile(new File(gifPath), copyName);
-                        addGif(copyName);
+                        addSticker(copyName);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -315,6 +404,7 @@ public class CreationTemplateMvpModel {
             stickerData.setScale(stickerView.getScale());
             stickerData.setTranslationX(stickerView.getTranslationX());
             stickerData.setTranslationy(stickerView.getTranslationY());
+            stickerData.setPath(stickerView.getResPath());
             list.add(stickerData);
         }
         backgroundDraw.toSaveVideo(list);
@@ -349,6 +439,7 @@ public class CreationTemplateMvpModel {
     }
 
 
+
     public void requestStickersList() {
         HashMap<String, String> params = new HashMap<>();
         // 启动时间
@@ -368,6 +459,5 @@ public class CreationTemplateMvpModel {
 
 
     }
-
 
 }

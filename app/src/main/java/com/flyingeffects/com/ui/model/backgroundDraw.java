@@ -2,11 +2,14 @@ package com.flyingeffects.com.ui.model;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.util.Log;
 
 import com.flyingeffects.com.enity.AllStickerData;
 import com.flyingeffects.com.utils.LogUtil;
+import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.GifLayer;
 import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
@@ -61,7 +64,13 @@ public class backgroundDraw {
         setLayer();
         for (AllStickerData item : list
         ) {
-            addGifLayer(item);
+
+            if (item.getPath().endsWith(".gif")) {
+                addGifLayer(item);
+            } else {
+                addBitmapLayer(item);
+            }
+
         }
         execute.start();
     }
@@ -82,7 +91,7 @@ public class backgroundDraw {
      */
     private void addGifLayer(AllStickerData stickerItem) {
         LogUtil.d("OOM", "addMVLayer");
-        GifLayer mvLayer = execute.addGifLayer(gifTest);
+        GifLayer mvLayer = execute.addGifLayer(stickerItem.getPath());
         mvLayer.setScaledToPadSize();
         if (stickerItem != null) {
             int rotate = (int) stickerItem.getRotation();
@@ -96,6 +105,30 @@ public class backgroundDraw {
             mvLayer.setPosition(stickerItem.getTranslationX(), mvLayer.getPositionY());
             LogUtil.d("OOM", "setPositionY=" + stickerItem.getTranslationy()+"x="+stickerItem.getTranslationX());
             mvLayer.setPosition(mvLayer.getPositionX(), stickerItem.getTranslationy());
+        }
+    }
+
+
+    /**
+     * 增加一个图片图层.
+     */
+    private void addBitmapLayer(AllStickerData stickerItem) {
+        LogUtil.d("OOM", "addMVLayer");
+        Bitmap bp= BitmapFactory.decodeFile(stickerItem.getPath());
+        BitmapLayer bpLayer = execute.addBitmapLayer(bp);
+        bpLayer.setScaledToPadSize();
+        if (stickerItem != null) {
+            int rotate = (int) stickerItem.getRotation();
+            if (rotate < 0) {
+                rotate = 360 + rotate;
+            }
+            LogUtil.d("OOM", "rotate="+rotate);
+            bpLayer.setRotate(rotate);
+            bpLayer.setScale(stickerItem.getScale() );
+            LogUtil.d("OOM", "Scale="+stickerItem.getScale() / 2 + "");
+            bpLayer.setPosition(stickerItem.getTranslationX(), bpLayer.getPositionY());
+            LogUtil.d("OOM", "setPositionY=" + stickerItem.getTranslationy()+"x="+stickerItem.getTranslationX());
+            bpLayer.setPosition(bpLayer.getPositionX(), stickerItem.getTranslationy());
         }
     }
 

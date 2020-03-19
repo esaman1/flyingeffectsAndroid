@@ -83,7 +83,7 @@ public class DownImageManager {
                 File file = null;
                 Bitmap bp = convertStringToIcon(s);
                 String path = keepUunCatchPath + File.separator + UUID.randomUUID() + ".png";
-                FileManager.saveBitmapToPath(bp, path);
+                FileManager.saveBitmapToPath(bp, path,null);
                 file = new File(path);
                 return file;
             }
