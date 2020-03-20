@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.flyingeffects.com.R;
@@ -52,6 +53,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @BindView(R.id.video_player)
     EmptyControlVideo videoPlayer;
 
+
+    @BindView(R.id.iv_play)
+    ImageView ivPlay;
+
     public final static int SELECTALBUM = 0;
 
 
@@ -87,6 +92,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             isPlaying=false;
             presenter.showGifAnim(false);
             videoPlayerInit();
+            nowStateIsPlaying(false);
         }));
         presenter.requestStickersList();
     }
@@ -112,19 +118,19 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-    @OnClick({R.id.tv_top_submit, R.id.iv_play, R.id.iv_add_sticker})
+    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
                 presenter.toSaveVideo();
                 break;
 
-
-            case R.id.iv_play:
+            case R.id.ll_play:
                 isPlaying=true;
                 startTimer();
                 videoPlayer.startPlayLogic();
                 presenter.showGifAnim(true);
+                nowStateIsPlaying(true);
                 break;
 
             case R.id.iv_add_sticker:
@@ -141,8 +147,19 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 break;
 
         }
-
     }
+
+
+    private void nowStateIsPlaying(boolean isPlaying){
+        if(isPlaying){
+            ivPlay.setImageResource(R.mipmap.iv_playing);
+        }else{
+            ivPlay.setImageResource(R.mipmap.iv_play_creation);
+            list_thumb.smoothScrollBy(0,0);
+        }
+    }
+
+
 
 
     /**
@@ -219,14 +236,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     int currentPosition = videoPlayer.getCurrentPositionWhenPlaying();
                     float dd = currentPosition * 100 / allVideoDuration;
                     LogUtil.d("OOM","dd="+dd);
-                    float nowIvScroll =dd/(float)100*listWidth;
+                    float nowIvScroll =dd/(float)100*listWidth/10/2;
                     LogUtil.d("OOM","nowIvScroll="+nowIvScroll);
                     LogUtil.d("OOM","listWidth="+listWidth);
-                    int choosePosition= (int) (dd/100*thumbCount);
-                    LogUtil.d("OOM","choosePosition="+choosePosition);
-//                    list_thumb.smoothScrollToPosition(choosePosition);
-//                    list_thumb.smoothScrollToPosition(listWidth/2);
-                    list_thumb.smoothScrollBy((int) (nowIvScroll/100),0);
+                    list_thumb.smoothScrollBy((int) (nowIvScroll),0);
                 });
             }
         };
