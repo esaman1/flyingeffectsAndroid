@@ -8,6 +8,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.flyingeffects.com.R;
@@ -20,6 +22,7 @@ import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.yanzhenjie.album.AlbumFile;
@@ -98,7 +101,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     protected void onResume() {
         super.onResume();
-
     }
 
     @Override
@@ -135,7 +137,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             default:
                 break;
 
-
         }
 
     }
@@ -159,6 +160,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         });
         list_thumb.post(() -> presenter.initVideoProgressView(list_thumb));
     }
+
+
+
+
 
 
     @Override

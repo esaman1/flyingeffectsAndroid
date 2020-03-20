@@ -1,6 +1,5 @@
 package com.shixing.sxve.ui.adapter;
 
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -9,18 +8,18 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-
-import java.util.HashMap;
 
 public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.TimelineHolder> {
     private int mWidth;
     private int mHeight;
     private int[] mTimePositions;
     private Uri mUri;
+    private int marginRight;
 
     @NonNull
     @Override
@@ -41,6 +40,9 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.Timeli
         //    itemView.setImageBitmap(null);
         //}
 
+
+
+
         RequestOptions options = RequestOptions.frameOf(mTimePositions[position]);
         Log.d("options","mTimePositions[position]="+mTimePositions[position]);
         RequestOptions cacheOptions = RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE);
@@ -49,6 +51,19 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.Timeli
                 .apply(options)
                 .apply(cacheOptions)
                 .into(((ImageView) holder.itemView));
+
+        if(position==mTimePositions.length-1){
+            test(holder.itemView);
+        }
+
+
+    }
+
+    private void test(View iv){
+        Log.d("OOM","test");
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(0,0,marginRight,0);//4个参数按顺序分别是左上右下
+        iv.setLayoutParams(layoutParams);
     }
 
     @Override
@@ -74,5 +89,10 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.Timeli
         public TimelineHolder(View itemView) {
             super(itemView);
         }
+    }
+
+
+    public void marginRight(int marginRight){
+        this.marginRight=marginRight;
     }
 }

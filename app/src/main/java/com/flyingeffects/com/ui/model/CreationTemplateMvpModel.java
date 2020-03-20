@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.model;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -41,6 +42,7 @@ import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.lansosdk.box.ViewLayerRelativeLayout;
@@ -358,9 +360,14 @@ public class CreationTemplateMvpModel {
     private int mScrollX;
 
     public void initVideoProgressView(RecyclerView list_thumb) {
+        //动态设置距离左边的位置
+        int screenWidth= screenUtil.getScreenWidth((Activity) context);
+        int dp40=screenUtil.dip2px(context,40);
+        list_thumb.setPadding(screenWidth/2-dp40,0, 0, 0);
         this.list_thumb = list_thumb;
         list_thumb.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         mTimelineAdapter = new TimelineAdapter();
+        mTimelineAdapter.marginRight(screenWidth/2);
         list_thumb.setAdapter(mTimelineAdapter);
         list_thumb.setHasFixedSize(true);
         list_thumb.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -377,7 +384,9 @@ public class CreationTemplateMvpModel {
                 callback.setgsyVideoProgress(progress);
             }
         });
-        initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), videoInfo.getDuration(), 5000, mVideoPath);
+        initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), videoInfo.getDuration(), videoInfo.getDuration()/2, mVideoPath);
+
+
     }
 
     private int mTotalWidth;

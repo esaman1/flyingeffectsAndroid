@@ -123,7 +123,6 @@
 
     <LinearLayout
         android:id="@+id/ll_progress"
-        android:paddingTop="10dp"
         android:layout_width="match_parent"
         android:background="@color/home_base_balk_color"
         android:orientation="vertical"
@@ -132,33 +131,12 @@
 
 
 
+
+
+
         <RelativeLayout
             android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:textColor="@color/white"
-                android:layout_width="wrap_content"
-                android:text="00:00"
-                android:layout_height="wrap_content"/>
-
-            <TextView
-                android:layout_alignParentRight="true"
-                android:textColor="@color/white"
-                android:layout_width="wrap_content"
-                android:text="00:00"
-                android:layout_height="wrap_content"/>
-
-        </RelativeLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:paddingBottom="20dp"
-            android:layout_height="70dp"
+            android:layout_height="60dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -166,26 +144,19 @@
                 android:id="@+id/iv_play"
                 android:layout_width="16dp"
                 android:layout_height="19dp"
+                android:layout_centerVertical="true"
                 android:layout_marginStart="13dp"
                 android:contentDescription="@string/app_name"
                 android:src="@mipmap/iv_play_creation" />
 
 
-            <TextView
-                android:id="@+id/tv_start_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="13dp"
-                android:visibility="gone"
-                android:text="00:00"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
-
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:gravity="center"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/iv_play"
                 android:layout_marginStart="13dp">
 
                 <android.support.v7.widget.RecyclerView
@@ -194,35 +165,29 @@
                     android:layout_height="match_parent"
                     android:layout_centerVertical="true"
                     android:clipToPadding="false"
-                    android:paddingEnd="@dimen/dp_63"
                     />
-
-                <!--            <TextView-->
-                <!--                android:id="@+id/tv_end_time"-->
-                <!--                android:layout_width="wrap_content"-->
-                <!--                android:layout_height="wrap_content"-->
-                <!--                android:layout_alignParentRight="true"-->
-                <!--                android:layout_marginEnd="20dp"-->
-                <!--                android:layout_centerVertical="true"-->
-                <!--                android:text="00:00"-->
-                <!--                android:textColor="@color/white"-->
-                <!--                android:textSize="14sp" />-->
 
 
                 <ImageView
                     android:id="@+id/iv_add_sticker"
                     android:contentDescription="@string/app_name"
-                    android:layout_width="40dp"
+                    android:layout_width="34dp"
                     android:src="@mipmap/bj_add"
                     android:layout_centerVertical="true"
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="16dp"
-                    android:layout_height="40dp"/>
+                    android:layout_height="34dp"/>
 
             </RelativeLayout>
 
 
-        </LinearLayout>
+            <View
+                android:layout_width="1dp"
+                android:background="#FFFFFF"
+                android:layout_centerInParent="true"
+                android:layout_height="match_parent"/>
+
+        </RelativeLayout>
 
     </LinearLayout>
 
