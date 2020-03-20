@@ -184,9 +184,7 @@ public class CreationTemplateMvpModel {
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager, false);
         GridView gridView = templateThumbView.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view, i, l) -> {
-
             downSticker(listForSticker.get(i).getImage());
-//            addSticker(listForSticker.get(i).getImage());
         });
         gridAdapter = new TemplateGridViewAdapter(listForSticker, context);
         gridView.setAdapter(gridAdapter);

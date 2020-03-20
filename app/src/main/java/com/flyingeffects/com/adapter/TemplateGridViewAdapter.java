@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -53,22 +54,34 @@ public class TemplateGridViewAdapter extends BaseAdapter {
             holder = new ViewHold();
             view = LayoutInflater.from(context).inflate(R.layout.item_template_gridview, parent, false);
             holder.image = view.findViewById(R.id.iv_icon);
+            holder.tv_name=view.findViewById(R.id.tv_name);
             view.setTag(holder);
         } else {
             holder = (ViewHold) view.getTag();
         }
-        Glide.with(context)
-                .load(list.get(position).getImage())
-                .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 5)))
-                .apply(RequestOptions.placeholderOf(R.mipmap.ic_launcher))
-                .into(holder.image);
 
-        Glide.with(context).load(list.get(position).getImage()).into(holder.image);
+        if(position==0){
+            holder.image.setImageResource( R.mipmap.sticker_clear);
+            holder.tv_name.setText("默认");
+
+        }else{
+            Glide.with(context)
+                    .load(list.get(position-1).getThumbnailimage())
+                    .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 3)))
+//                .apply(RequestOptions.placeholderOf(R.mipmap.ic_launcher))
+                    .into(holder.image);
+            holder.tv_name.setText(list.get(position-1).getTitle());
+        }
+
+
+
+
         return view;
     }
 
 
     class ViewHold {
         ImageView image;
+        TextView tv_name;
     }
 }
