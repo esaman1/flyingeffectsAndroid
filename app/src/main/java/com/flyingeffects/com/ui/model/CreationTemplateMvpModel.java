@@ -122,6 +122,13 @@ public class CreationTemplateMvpModel {
     }
 
 
+
+    public void scrollToPosition(int position){
+
+        linearLayoutManager.scrollToPositionWithOffset(position,0);
+
+    }
+
     /**
      * description ：增加第一个用户抠图的stickView
      * creation date: 2020/3/11
@@ -357,14 +364,15 @@ public class CreationTemplateMvpModel {
 
     private TimelineAdapter mTimelineAdapter;
     private int mScrollX;
-
+    private LinearLayoutManager linearLayoutManager;
     public void initVideoProgressView(RecyclerView list_thumb) {
         //动态设置距离左边的位置
         int screenWidth= screenUtil.getScreenWidth((Activity) context);
         int dp40=screenUtil.dip2px(context,40);
         list_thumb.setPadding(screenWidth/2-dp40,0, 0, 0);
         this.list_thumb = list_thumb;
-        list_thumb.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+        linearLayoutManager=new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        list_thumb.setLayoutManager(linearLayoutManager);
         mTimelineAdapter = new TimelineAdapter();
         mTimelineAdapter.marginRight(screenWidth/2);
         list_thumb.setAdapter(mTimelineAdapter);

@@ -179,6 +179,8 @@
                     />
 
 
+
+
                 <ImageView
                     android:id="@+id/iv_add_sticker"
                     android:contentDescription="@string/app_name"

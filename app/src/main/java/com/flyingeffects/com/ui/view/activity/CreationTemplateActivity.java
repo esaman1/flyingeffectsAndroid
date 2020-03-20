@@ -88,6 +88,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         videoPlayer.setUp(videoPath, true, "");
         videoPlayerInit();
         videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> {
+            list_thumb.scrollToPosition(0);
             endTimer();
             isPlaying=false;
             presenter.showGifAnim(false);
@@ -219,6 +220,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private void startTimer() {
         listWidth=list_thumb.getWidth();
+        //总共需要显示的20帧
+        float allShowTime=  allVideoDuration/(float)1000*10;
+        float perScrollByX=listWidth/allShowTime;
+
         if (timer != null) {
             timer.purge();
             timer.cancel();
@@ -233,17 +238,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             @Override
             public void run() {
                 Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                    int currentPosition = videoPlayer.getCurrentPositionWhenPlaying();
-                    float dd = currentPosition * 100 / allVideoDuration;
-                    LogUtil.d("OOM","dd="+dd);
-                    float nowIvScroll =dd/(float)100*listWidth/10/2;
-                    LogUtil.d("OOM","nowIvScroll="+nowIvScroll);
-                    LogUtil.d("OOM","listWidth="+listWidth);
-                    list_thumb.smoothScrollBy((int) (nowIvScroll),0);
+                    LogUtil.d("OOM","perScrollByX="+perScrollByX);
+                    LogUtil.d("OOM","perScrollByX--int"+(int) Math.ceil(perScrollByX));
+                    list_thumb.smoothScrollBy((int) Math.ceil(perScrollByX),0);
+
                 });
             }
         };
-        timer.schedule(task, 0, 16);
+        timer.schedule(task, 0, 100);
     }
 
 

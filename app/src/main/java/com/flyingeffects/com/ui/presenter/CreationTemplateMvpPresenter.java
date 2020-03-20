@@ -24,6 +24,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
+    public void scrollToPosition(int position){
+        creationTemplatemodel.scrollToPosition(position);
+    }
+
+
     public void addNewSticker(String path){
         creationTemplatemodel.addNewSticker(path);
     }
