@@ -1,6 +1,5 @@
 package com.flyingeffects.com.ui.view.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,27 +7,22 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
-import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.lansosdk.box.ViewLayerRelativeLayout;
-import com.yanzhenjie.album.AlbumFile;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -61,10 +55,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     public final static int SELECTALBUM = 0;
 
 
-    private String imgPath ;
+    private String imgPath;
     private CreationTemplateMvpPresenter presenter;
     private String videoPath;
-
+    /**
+     * 当前预览状态，是否在播放中
+     */
+    private boolean isPlaying=false;
+    private int allVideoDuration;
+    private int thumbCount;
 
     @Override
     protected int getLayoutId() {
@@ -84,6 +83,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         videoPlayer.setUp(videoPath, true, "");
         videoPlayerInit();
         videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> {
+            endTimer();
+            isPlaying=false;
             presenter.showGifAnim(false);
             videoPlayerInit();
         }));
@@ -120,6 +121,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
             case R.id.iv_play:
+                isPlaying=true;
+                startTimer();
                 videoPlayer.startPlayLogic();
                 presenter.showGifAnim(true);
                 break;
@@ -162,13 +165,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-
-
-
-
     @Override
     public void onDestroy() {
         presenter.onDestroy();
+        destroyTimer();
         super.onDestroy();
     }
 
@@ -184,8 +184,82 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void setgsyVideoProgress(int progress) {
         LogUtil.d("OOM", "videoProgress=" + progress);
-        videoPlayer.seekTo(progress);
+        if(!isPlaying){
+            videoPlayer.seekTo(progress);
+        }
     }
+
+    @Override
+    public void getVideoDuration(int allVideoDuration,int  thumbCount) {
+        this.allVideoDuration=allVideoDuration;
+        this.thumbCount=thumbCount;
+    }
+
+
+    private Timer timer;
+    private TimerTask task;
+    private int listWidth;
+
+    private void startTimer() {
+        listWidth=list_thumb.getWidth();
+        if (timer != null) {
+            timer.purge();
+            timer.cancel();
+            timer = null;
+        }
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+        timer = new Timer();
+        task = new TimerTask() {
+            @Override
+            public void run() {
+                Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+                    int currentPosition = videoPlayer.getCurrentPositionWhenPlaying();
+                    float dd = currentPosition * 100 / allVideoDuration;
+                    LogUtil.d("OOM","dd="+dd);
+                    float nowIvScroll =dd/(float)100*listWidth;
+                    LogUtil.d("OOM","nowIvScroll="+nowIvScroll);
+                    LogUtil.d("OOM","listWidth="+listWidth);
+                    int choosePosition= (int) (dd/100*thumbCount);
+                    LogUtil.d("OOM","choosePosition="+choosePosition);
+//                    list_thumb.smoothScrollToPosition(choosePosition);
+//                    list_thumb.smoothScrollToPosition(listWidth/2);
+                    list_thumb.smoothScrollBy((int) (nowIvScroll/100),0);
+                });
+            }
+        };
+        timer.schedule(task, 0, 16);
+    }
+
+
+    /**
+     * 关闭timer 和task
+     */
+    private void endTimer() {
+        destroyTimer();
+    }
+
+
+    /**
+     * user :TongJu  ; email:jutongzhang@sina.com
+     * time：2018/10/15
+     * describe:严防内存泄露
+     **/
+    private void destroyTimer() {
+        if (timer != null) {
+            timer.purge();
+            timer.cancel();
+            timer = null;
+        }
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+    }
+
+
 
 
 }

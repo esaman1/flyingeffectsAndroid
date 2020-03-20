@@ -96,6 +96,7 @@ public class CreationTemplateMvpModel {
         videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
         FileManager fileManager = new FileManager();
         mGifFolder = fileManager.getFileCachePath(context, "gifFolder");
+
     }
 
 
@@ -410,6 +411,7 @@ public class CreationTemplateMvpModel {
         mTimelineAdapter.setVideoUri(Uri.fromFile(new File(mVideoPath)));
         mTimelineAdapter.setData(mTimeUs);
         mTotalWidth = thumbWidth * thumbCount;
+        callback.getVideoDuration(videoInfo.getDuration(),thumbCount);
     }
 
 

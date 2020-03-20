@@ -72,6 +72,10 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemvpView.setgsyVideoProgress(progress);
     }
 
+    @Override
+    public void getVideoDuration(int duration,int thumbCount) {
+        creationTemplatemvpView.getVideoDuration(duration,thumbCount);
+    }
 
 
     public void toSaveVideo(){
