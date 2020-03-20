@@ -12,6 +12,7 @@ import com.flyingeffects.com.adapter.main_recycler_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -23,6 +24,7 @@ import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.orhanobut.hawk.Hawk;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -75,6 +77,8 @@ public class fragBjItem extends BaseFragment   {
 
     @Override
     protected void initAction() {
+
+
         requestFagData(true,true);
     }
 
@@ -125,6 +129,20 @@ public class fragBjItem extends BaseFragment   {
     }
 
 
+
+    //得到banner缓存数据
+    public  void requestData() {
+        List<new_fag_template_item> data= Hawk.get("fagBjItem", new ArrayList<>());
+        if (data != null) {
+            listData.clear();
+            listData.addAll(data);
+            isShowData(listData);
+            requestFagData(false,true); //首页杂数据
+        } else {
+            requestFagData(true,true); //首页杂数据
+        }
+    }
+
     /**
      * description ：
      * creation date: 2020/3/11
@@ -170,7 +188,7 @@ public class fragBjItem extends BaseFragment   {
                 listData.addAll(data);
                 isShowData(listData);
             }
-        }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, isSave, true, isCanRefresh);
+        }, "fagBjItem", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, isSave, true, isCanRefresh);
     }
 
 

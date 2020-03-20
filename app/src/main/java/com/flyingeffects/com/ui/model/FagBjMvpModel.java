@@ -42,6 +42,7 @@ public class FagBjMvpModel {
         } else {
             requestMainData(true); //首页杂数据
         }
+        requestMainData(true); //首页杂数据
     }
 
 
@@ -62,7 +63,7 @@ public class FagBjMvpModel {
                 callback.setFragmentList(data);
 
             }
-        }, "mainData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, true, true, isShowDialog);
+        }, "bjHeadData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, true, true, isShowDialog);
     }
 
 

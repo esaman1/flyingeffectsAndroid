@@ -6,13 +6,13 @@
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:layout_width="match_parent"
-        android:id="@+id/smart_refresh_layout"
+        android:id="@+id/smart_refresh_layout_collect"
         android:layout_height="match_parent"
         android:focusableInTouchMode="true"
         android:splitMotionEvents="false">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/RecyclerView"
+            android:id="@+id/recyclerView_collect"
             android:paddingLeft="@dimen/dp_7"
             android:paddingEnd="@dimen/dp_7"
             android:layout_width="match_parent"
@@ -42,7 +42,7 @@
         android:textColor="@color/dark_gray"
         android:layout_centerInParent="true"
         android:layout_width="wrap_content"
-        android:id="@+id/tv_hint"
+        android:id="@+id/tv_hint_collect"
         android:layout_height="wrap_content"/>
 
 

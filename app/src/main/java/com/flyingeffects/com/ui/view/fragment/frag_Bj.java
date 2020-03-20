@@ -86,7 +86,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
         super.onPause();
     }
 
-
+   private  ArrayList<Fragment> list = new ArrayList<>();
     @Override
     public void setFragmentList(List<TemplateType> data) {
         ll_add_child.removeAllViews();
@@ -96,9 +96,9 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
         data.add(templateType);
         listView.clear();
         listTv.clear();
+        list.clear();
         FragmentManager manager = getFragmentManager();
         String[] titles = new String[data.size()];
-        ArrayList<Fragment> list = new ArrayList<>();
         for (int i = 0; i < data.size(); i++) {
             View view = LayoutInflater.from(getActivity()).inflate(R.layout.view_bj_head, null);
             TextView tv = view.findViewById(R.id.tv_name_bj_head);
@@ -130,8 +130,6 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                 fragment.setArguments(bundle);
                 list.add(fragment);
             }
-
-
         }
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
         viewPager.setAdapter(adapter);
@@ -196,10 +194,12 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                 AlbumManager.chooseVideo(getActivity(), 1, SELECTALBUM, new AlbumChooseCallback() {
                     @Override
                     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-                        Intent intent = new Intent(getActivity(), VideoCropActivity.class);
-                        intent.putExtra("videoPath",paths.get(0));
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
+                        if(!isCancel){
+                            Intent intent = new Intent(getActivity(), VideoCropActivity.class);
+                            intent.putExtra("videoPath",paths.get(0));
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                        }
                     }
                 }, "");
                 break;

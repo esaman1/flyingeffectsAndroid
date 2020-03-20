@@ -39,14 +39,14 @@ public class frag_user_collect extends BaseFragment {
     private BaseQuickAdapter adapter;
 
     private List<new_fag_template_item> allData = new ArrayList<>();
-    @BindView(R.id.smart_refresh_layout)
+    @BindView(R.id.smart_refresh_layout_collect)
     SmartRefreshLayout smartRefreshLayout;
     private int perPageCount = 10;
 
-    @BindView(R.id.RecyclerView)
+    @BindView(R.id.recyclerView_collect)
     RecyclerView recyclerView;
 
-    @BindView(R.id.tv_hint)
+    @BindView(R.id.tv_hint_collect)
     TextView tv_hint;
 
     ArrayList<new_fag_template_item> listData = new ArrayList<>();
