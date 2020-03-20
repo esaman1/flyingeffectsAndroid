@@ -90,6 +90,10 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     @Override
     public void setFragmentList(List<TemplateType> data) {
         ll_add_child.removeAllViews();
+        TemplateType templateType =new TemplateType();
+        templateType.setId("collect");
+        templateType.setName("收藏");
+        data.add(templateType);
         listView.clear();
         listTv.clear();
         FragmentManager manager = getFragmentManager();
@@ -106,14 +110,28 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
             listView.add(view_line);
             ll_add_child.addView(view);
             titles[i] = data.get(i).getName();
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("id", data.get(i).getId());
-            bundle.putSerializable("from", 1);
-            bundle.putSerializable("num", i);
-            titles[i] = data.get(i).getName();
-            fragBjItem fragment = new fragBjItem();
-            fragment.setArguments(bundle);
-            list.add(fragment);
+            if(i==data.size()-1){
+                //手动添加收藏模板
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("id", data.get(i).getId());
+                bundle.putSerializable("from", 1);
+                bundle.putSerializable("num", i);
+                titles[i] = data.get(i).getName();
+                frag_user_collect fag_0 = new frag_user_collect();
+                fag_0.setArguments(bundle);
+                list.add(fag_0);
+            }else{
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("id", data.get(i).getId());
+                bundle.putSerializable("from", 1);
+                bundle.putSerializable("num", i);
+                titles[i] = data.get(i).getName();
+                fragBjItem fragment = new fragBjItem();
+                fragment.setArguments(bundle);
+                list.add(fragment);
+            }
+
+
         }
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
         viewPager.setAdapter(adapter);
