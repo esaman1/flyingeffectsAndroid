@@ -240,6 +240,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
                     LogUtil.d("OOM","perScrollByX="+perScrollByX);
                     LogUtil.d("OOM","perScrollByX--int"+(int) Math.ceil(perScrollByX));
+                    //todo  perScrollByX 有误差 ，精度在小数点后面
+                    //Math.ceil 四舍五入
                     list_thumb.smoothScrollBy((int) Math.ceil(perScrollByX),0);
 
                 });
