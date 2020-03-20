@@ -16,4 +16,6 @@ public interface PreviewMvpView {
     void getTemplateLInfo(new_fag_template_item item);
 
     void hasLogin(boolean hasLogin);
+
+    void downVideoSuccess(String path,String imagePath);
 }

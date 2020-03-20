@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -18,6 +19,7 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
@@ -270,17 +272,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     public void getCompressImgList(List<String> imgList) {
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-            Intent intent = new Intent(PreviewActivity.this, CreationTemplateActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            Bundle bundle = new Bundle();
-            bundle.putStringArrayList("paths", (ArrayList<String>) imgList);
-            bundle.putString("coverPath", templateItem.getImage());
-            bundle.putString("fromTo", fromTo);
-            bundle.putString("templateName", templateItem.getTitle());
-            bundle.putStringArrayList("originalPath", (ArrayList<String>) originalImagePath);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra("Message", bundle);
-            startActivity(intent);
+            Presenter.DownVideo(templateItem.getVidoefile(),imgList.get(0));
         } else {
             intoTemplateActivity(imgList, TemplateFilePath);
         }
@@ -350,7 +342,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void hasLogin(boolean hasLogin) {
-
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
             //来做背景页面
             AlbumManager.chooseImageAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
@@ -363,6 +354,27 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             VideoPlaybackCompleted(true, true);
             Presenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
         }
+    }
+
+
+
+    /**
+     * description ：下载视频成功后跳转到创作页面
+     * creation date: 2020/3/20
+     * user : zhangtongju
+     */
+    @Override
+    public void downVideoSuccess(String videoPath,String imagePath) {
+        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+            Intent intent = new Intent(PreviewActivity.this, CreationTemplateActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("paths", imagePath);
+            bundle.putString("video_path", videoPath);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("Message", bundle);
+            startActivity(intent);
+            setResult(Activity.RESULT_OK, intent);
+        });
     }
 
 

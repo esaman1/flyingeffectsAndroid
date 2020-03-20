@@ -239,7 +239,7 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
                     Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
                         Intent intent = new Intent(VideoCropActivity.this, CreationTemplateActivity.class);
                         Bundle bundle = new Bundle();
-                        bundle.putStringArrayList("paths", (ArrayList<String>) paths);
+                        bundle.putString("paths", paths.get(0));
                         bundle.putString("video_path", videoPath);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.putExtra("Message", bundle);

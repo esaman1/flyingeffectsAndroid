@@ -18,4 +18,6 @@ public interface PreviewMvpCallback {
 
    void hasLogin(boolean hasLogin);
 
+   void downVideoSuccess(String path,String imagePath);
+
 }

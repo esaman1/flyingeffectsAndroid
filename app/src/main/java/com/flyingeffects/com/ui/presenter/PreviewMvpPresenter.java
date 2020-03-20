@@ -20,6 +20,10 @@ public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCall
         PreviewModel = new PreviewMvpModel(context, this);
     }
 
+    public void DownVideo(String path,String imagePath){
+        PreviewModel.DownVideo(path,imagePath);
+    }
+
 
     public void requestUserInfo(){
         PreviewModel.requestUserInfo();
@@ -76,5 +80,10 @@ public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCall
     @Override
     public void hasLogin(boolean hasLogin) {
         PreviewView.hasLogin(hasLogin);
+    }
+
+    @Override
+    public void downVideoSuccess(String path,String imagePath) {
+        PreviewView.downVideoSuccess(path,imagePath);
     }
 }

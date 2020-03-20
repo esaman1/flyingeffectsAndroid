@@ -14,6 +14,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DownImageManager;
+import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
@@ -34,6 +35,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import rx.Observable;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import top.zibin.luban.Luban;
 import top.zibin.luban.OnCompressListener;
@@ -45,6 +48,7 @@ public class PreviewMvpModel {
     private Context context;
     private String mCatchFolder;
     private String mTailtoFolder;
+    private String mVideoFolder;
     /**
      * 原图片地址
      */
@@ -57,6 +61,7 @@ public class PreviewMvpModel {
         fileManager = new FileManager();
         mCatchFolder = fileManager.getCachePath(context);
         mTailtoFolder = fileManager.getFileCachePath(context, "tailor");
+        mVideoFolder=fileManager.getFileCachePath(context, "downVideo");
     }
 
 
@@ -86,6 +91,24 @@ public class PreviewMvpModel {
         toCompressImg(paths);
     }
 
+
+
+    public void DownVideo(String path,String imagePath){
+        String videoName= mVideoFolder + File.separator + System.currentTimeMillis() + "synthetic.mp4";
+        Observable.just(path).subscribeOn(Schedulers.io()).subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                DownloadVideoManage manage=new DownloadVideoManage(new DownloadVideoManage.downloadSuccess() {
+                    @Override
+                    public void isSuccess(boolean isSuccess) {
+                        callback.downVideoSuccess(videoName,imagePath);
+                    }
+                });
+                manage.DownloadVideo(path,videoName);
+            }
+        });
+
+    }
 
     private void toCompressImg(List<String> paths) {
         if (paths != null) {

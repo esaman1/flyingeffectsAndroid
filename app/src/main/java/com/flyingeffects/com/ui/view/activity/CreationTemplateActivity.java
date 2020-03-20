@@ -58,7 +58,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     public final static int SELECTALBUM = 0;
 
 
-    private List<String> imgPath = new ArrayList<>();
+    private String imgPath ;
     private CreationTemplateMvpPresenter presenter;
     private String videoPath;
 
@@ -74,7 +74,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("Message");
         if (bundle != null) {
-            imgPath = bundle.getStringArrayList("paths");
+            imgPath = bundle.getString("paths");
             videoPath = bundle.getString("video_path");
         }
         presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout);
@@ -103,7 +103,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     protected void initAction() {
-        presenter.initStickerView(imgPath.get(0));
+        presenter.initStickerView(imgPath);
         presenter.initBottomLayout(viewPager);
         initViewLayerRelative();
     }
