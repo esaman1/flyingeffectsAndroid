@@ -25,11 +25,13 @@ public class TemplateGridViewAdapter extends BaseAdapter {
 
     private List<StickerList> list;
     private Context context;
-
+//    private String mGifFolder;
 
     public TemplateGridViewAdapter(List<StickerList> list, Context context) {
         this.list = list;
         this.context = context;
+//        FileManager fileManager = new FileManager();
+//        mGifFolder = fileManager.getFileCachePath(context, "gifFolder");
     }
 
     @Override
@@ -54,27 +56,30 @@ public class TemplateGridViewAdapter extends BaseAdapter {
             holder = new ViewHold();
             view = LayoutInflater.from(context).inflate(R.layout.item_template_gridview, parent, false);
             holder.image = view.findViewById(R.id.iv_icon);
-            holder.tv_name=view.findViewById(R.id.tv_name);
+            holder.tv_name = view.findViewById(R.id.tv_name);
+            holder.iv_download = view.findViewById(R.id.iv_download);
             view.setTag(holder);
         } else {
             holder = (ViewHold) view.getTag();
         }
 
-        if(position==0){
-            holder.image.setImageResource( R.mipmap.sticker_clear);
+        StickerList stickerList = list.get(position);
+        if (stickerList.isClearSticker()) {
+            holder.iv_download.setVisibility(View.GONE);
+            holder.image.setImageResource(R.mipmap.sticker_clear);
             holder.tv_name.setText("默认");
-
-        }else{
+        } else {
             Glide.with(context)
-                    .load(list.get(position-1).getThumbnailimage())
+                    .load(list.get(position).getThumbnailimage())
                     .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 3)))
-//                .apply(RequestOptions.placeholderOf(R.mipmap.ic_launcher))
                     .into(holder.image);
-            holder.tv_name.setText(list.get(position-1).getTitle());
+            holder.tv_name.setText(list.get(position).getTitle());
+            if (stickerList.getIsDownload() == 1) {
+                holder.iv_download.setVisibility(View.GONE);
+            } else {
+                holder.iv_download.setVisibility(View.VISIBLE);
+            }
         }
-
-
-
 
         return view;
     }
@@ -83,5 +88,8 @@ public class TemplateGridViewAdapter extends BaseAdapter {
     class ViewHold {
         ImageView image;
         TextView tv_name;
+        ImageView iv_download;
     }
+
+
 }

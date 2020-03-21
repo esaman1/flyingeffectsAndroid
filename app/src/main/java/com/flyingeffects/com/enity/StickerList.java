@@ -78,5 +78,31 @@ public class StickerList implements Serializable {
     private String create_time;
     private String is_circle;
 
+    public int getIsDownload() {
+        return isDownload;
+    }
+
+    public void setIsDownload(int isDownload) {
+        this.isDownload = isDownload;
+    }
+
+    /**
+     * 是否已经下载，0 未下载，1 已下载
+     */
+    private int isDownload;
+
+    public boolean isClearSticker() {
+        return isClearSticker;
+    }
+
+    public void setClearSticker(boolean clearSticker) {
+        isClearSticker = clearSticker;
+    }
+
+    /**
+     * 是否是清理帖子按钮，默认为true
+     */
+    private boolean isClearSticker=false;
+
 
 }

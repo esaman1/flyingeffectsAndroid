@@ -127,14 +127,31 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 break;
 
             case R.id.ll_play:
-                isPlaying=true;
-                startTimer();
-                videoPlayer.startPlayLogic();
-                presenter.showGifAnim(true);
-                nowStateIsPlaying(true);
+                if(isPlaying){
+                    videoPlayer.onVideoPause();
+                    isPlaying=false;
+                    endTimer();
+                    presenter.showGifAnim(false);
+                    nowStateIsPlaying(false);
+                }else{
+                    list_thumb.scrollToPosition(0);
+                    isPlaying=true;
+                    startTimer();
+                    videoPlayer.startPlayLogic();
+                    presenter.showGifAnim(true);
+                    nowStateIsPlaying(true);
+                }
+
                 break;
 
             case R.id.iv_add_sticker:
+                if(isPlaying){
+                    videoPlayer.onVideoPause();
+                    isPlaying=false;
+                    endTimer();
+                    presenter.showGifAnim(false);
+                    nowStateIsPlaying(false);
+                }
                 //添加新的贴纸，这里的贴纸就是用户选择的贴纸
                 AlbumManager.chooseImageAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel, albumFileList) -> {
                     CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this, tailorPaths -> {

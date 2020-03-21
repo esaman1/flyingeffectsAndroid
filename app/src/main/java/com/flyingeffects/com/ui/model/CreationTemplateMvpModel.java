@@ -96,7 +96,6 @@ public class CreationTemplateMvpModel {
         videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
         FileManager fileManager = new FileManager();
         mGifFolder = fileManager.getFileCachePath(context, "gifFolder");
-
     }
 
 
@@ -122,10 +121,9 @@ public class CreationTemplateMvpModel {
     }
 
 
+    public void scrollToPosition(int position) {
 
-    public void scrollToPosition(int position){
-
-        linearLayoutManager.scrollToPositionWithOffset(position,0);
+        linearLayoutManager.scrollToPositionWithOffset(position, 0);
 
     }
 
@@ -143,11 +141,11 @@ public class CreationTemplateMvpModel {
                     viewLayerRelativeLayout.removeView(stickView);
                 } else if (type == StickerView.RIGHT_TOP_MODE) {//copy
                     viewLayerRelativeLayout.addView(stickView);
-                }else if(type==StickerView.LEFT_BOTTOM_MODE) {
+                } else if (type == StickerView.LEFT_BOTTOM_MODE) {
                     //切換素材
                     AlbumManager.chooseImageAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
                         CompressionCuttingManage manage = new CompressionCuttingManage(context, tailorPaths -> {
-                            Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> stickView.setImageRes(s,false));
+                            Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> stickView.setImageRes(s, false));
                         });
                         manage.CompressImgAndCache(paths);
                         stickView.postInvalidate();
@@ -191,7 +189,13 @@ public class CreationTemplateMvpModel {
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager, false);
         GridView gridView = templateThumbView.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view, i, l) -> {
-            downSticker(listForSticker.get(i).getImage());
+            if (i == 0) {
+                //删除选择的帖子
+
+            } else {
+                downSticker(listForSticker.get(i ).getImage(), listForSticker.get(i ).getId(),i);
+            }
+
         });
         gridAdapter = new TemplateGridViewAdapter(listForSticker, context);
         gridView.setAdapter(gridAdapter);
@@ -217,41 +221,47 @@ public class CreationTemplateMvpModel {
     }
 
 
-
-    private void downSticker(String path){
+    private void downSticker(String path, String imageId,int position) {
         WaitingDialog.openPragressDialog(context);
         if (path.endsWith(".gif")) {
             String finalPath = path;
+            String format = finalPath.substring(finalPath.length() - 4);
+            String copyName = mGifFolder + File.separator + imageId + format;
+            File file = new File(copyName);
+            if (file.exists()) {
+                addSticker(copyName, false);
+                WaitingDialog.closePragressDialog();
+                return;
+            }
             Observable.just(path).map(new Func1<String, File>() {
                 @Override
                 public File call(String s) {
                     File file = null;
                     try {
-                        file =  Glide.with(context)
-                            .load(finalPath)
-                            .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                            .get();
+                        file = Glide.with(context)
+                                .load(finalPath)
+                                .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                                .get();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    return  file;
+                    return file;
                 }
             }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<File>() {
                 @Override
                 public void call(File path) {
-                   String aa= finalPath.substring(finalPath.length() - 4);
-                    String copyName = mGifFolder + File.separator + System.currentTimeMillis() +aa;
                     try {
                         FileUtil.copyFile(path, copyName);
-                        addSticker(copyName,false);
+                        addSticker(copyName, false);
                         WaitingDialog.closePragressDialog();
+                        modificationSingleItem(position);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
             });
 
-        }else{
+        } else {
             String finalPath = path;
             Observable.just(path).map(new Func1<String, Bitmap>() {
                 @Override
@@ -265,7 +275,7 @@ public class CreationTemplateMvpModel {
                     try {
                         originalBitmap = futureTarget.get();
                     } catch (Exception e) {
-                        LogUtil.d("oom",e.getMessage());
+                        LogUtil.d("oom", e.getMessage());
                     }
                     Glide.with(BaseApplication.getInstance()).clear(futureTarget);
                     return originalBitmap;
@@ -273,12 +283,13 @@ public class CreationTemplateMvpModel {
             }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
                 @Override
                 public void call(Bitmap bitmap) {
-                    String aa= finalPath.substring(finalPath.length() - 4);
-                    String copyName = mGifFolder + File.separator + System.currentTimeMillis() +aa;
+                    String aa = finalPath.substring(finalPath.length() - 4);
+                    String copyName = mGifFolder + File.separator + System.currentTimeMillis() + aa;
                     saveBitmapToPath(bitmap, copyName, new FileManager.saveBitmapState() {
                         @Override
                         public void succeed(boolean isSucceed) {
-                            addSticker(copyName,true);
+                            modificationSingleItem(position);
+                            addSticker(copyName, true);
                         }
                     });
 
@@ -287,12 +298,10 @@ public class CreationTemplateMvpModel {
         }
 
 
-
-
     }
 
 
-    private void addSticker(String path,boolean hasReplace) {
+    private void addSticker(String path, boolean hasReplace) {
         StickerView stickView = new StickerView(context);
         stickView.setOnitemClickListener(new StickerItemOnitemclick() {
             @Override
@@ -307,21 +316,21 @@ public class CreationTemplateMvpModel {
                         if (gifPath.endsWith(".gif")) {
                             copyName = mGifFolder + File.separator + System.currentTimeMillis() + "synthetic.gif";
                             FileUtil.copyFile(new File(gifPath), copyName);
-                            addSticker(copyName,false);
-                        }else{
-                            String aa= path.substring(path.length() - 4);
-                            copyName = mGifFolder + File.separator + System.currentTimeMillis() +aa;
-                            addSticker(copyName,true);
+                            addSticker(copyName, false);
+                        } else {
+                            String aa = path.substring(path.length() - 4);
+                            copyName = mGifFolder + File.separator + System.currentTimeMillis() + aa;
+                            addSticker(copyName, true);
                         }
 
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                }else if(type==StickerView.LEFT_BOTTOM_MODE) {
+                } else if (type == StickerView.LEFT_BOTTOM_MODE) {
                     //切換素材
                     AlbumManager.chooseImageAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
                         CompressionCuttingManage manage = new CompressionCuttingManage(context, tailorPaths -> {
-                            Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> stickView.setImageRes(s,false));
+                            Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> stickView.setImageRes(s, false));
                         });
                         manage.CompressImgAndCache(paths);
                         stickView.postInvalidate();
@@ -343,7 +352,7 @@ public class CreationTemplateMvpModel {
         stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
         stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
         stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
-        if(hasReplace){
+        if (hasReplace) {
             stickView.setLeftBottomBitmap(context.getDrawable(R.mipmap.sticker_change));
         }
         stickView.setImageRes(path, false);
@@ -365,16 +374,17 @@ public class CreationTemplateMvpModel {
     private TimelineAdapter mTimelineAdapter;
     private int mScrollX;
     private LinearLayoutManager linearLayoutManager;
+
     public void initVideoProgressView(RecyclerView list_thumb) {
         //动态设置距离左边的位置
-        int screenWidth= screenUtil.getScreenWidth((Activity) context);
-        int dp40=screenUtil.dip2px(context,40);
-        list_thumb.setPadding(screenWidth/2-dp40,0, 0, 0);
+        int screenWidth = screenUtil.getScreenWidth((Activity) context);
+        int dp40 = screenUtil.dip2px(context, 40);
+        list_thumb.setPadding(screenWidth / 2 - dp40, 0, 0, 0);
         this.list_thumb = list_thumb;
-        linearLayoutManager=new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        linearLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         list_thumb.setLayoutManager(linearLayoutManager);
         mTimelineAdapter = new TimelineAdapter();
-        mTimelineAdapter.marginRight(screenWidth/2);
+        mTimelineAdapter.marginRight(screenWidth / 2);
         list_thumb.setAdapter(mTimelineAdapter);
         list_thumb.setHasFixedSize(true);
         list_thumb.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -391,7 +401,7 @@ public class CreationTemplateMvpModel {
                 callback.setgsyVideoProgress(progress);
             }
         });
-        initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), videoInfo.getDuration(), videoInfo.getDuration()/2, mVideoPath);
+        initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), videoInfo.getDuration(), videoInfo.getDuration() / 2, mVideoPath);
 
 
     }
@@ -412,12 +422,12 @@ public class CreationTemplateMvpModel {
         final int interval = (int) (duration / thumbCount);
         int[] mTimeUs = new int[thumbCount];
         for (int i = 0; i < thumbCount; i++) {
-            mTimeUs[i] = i * interval*1000;
+            mTimeUs[i] = i * interval * 1000;
         }
         mTimelineAdapter.setVideoUri(Uri.fromFile(new File(mVideoPath)));
         mTimelineAdapter.setData(mTimeUs);
         mTotalWidth = thumbWidth * thumbCount;
-        callback.getVideoDuration(videoInfo.getDuration(),thumbCount);
+        callback.getVideoDuration(videoInfo.getDuration(), thumbCount);
     }
 
 
@@ -482,27 +492,48 @@ public class CreationTemplateMvpModel {
     }
 
 
-
     public void requestStickersList() {
         HashMap<String, String> params = new HashMap<>();
         // 启动时间
         Observable ob = Api.getDefault().getStickerslist(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<StickerList>>(context) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ArrayList<StickerList>>(context) {
             @Override
             protected void _onError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(List<StickerList> list) {
+            protected void _onNext(ArrayList<StickerList> list) {
+                StickerList item1 =new  StickerList();
+                item1.setClearSticker(true);
+                listForSticker.add(item1);
                 listForSticker.addAll(list);
-                gridAdapter.notifyDataSetChanged();
+                modificationAllData(list);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
 
 
+    private void modificationAllData(ArrayList<StickerList> list) {
+        for (int i = 0; i < list.size(); i++) {
+            String fileName = mGifFolder + File.separator + list.get(i).getId() + ".gif";
+            File file = new File(fileName);
+            if (file.exists()) {
+                StickerList item1 = list.get(i);
+                item1.setIsDownload(1);
+                list.set(i, item1);//修改对应的元素
+            }
+        }
+        gridAdapter.notifyDataSetChanged();
+    }
 
+
+    private void modificationSingleItem(int position) {
+                StickerList item1 = listForSticker.get(position);
+                item1.setIsDownload(1);
+        listForSticker.set(position, item1);//修改对应的元素
+        gridAdapter.notifyDataSetChanged();
+    }
 
 
     /**
@@ -511,8 +542,8 @@ public class CreationTemplateMvpModel {
      * param :
      * user : zhangtongju
      */
-    public void addNewSticker(String path){
-        Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> addSticker(path1,true));
+    public void addNewSticker(String path) {
+        Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> addSticker(path1, true));
     }
 
 }
