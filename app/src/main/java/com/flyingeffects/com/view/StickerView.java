@@ -186,6 +186,12 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      */
     private String  originalPath;
 
+
+    /**
+     * 裁剪后地址
+     */
+    private String clipPath;
+
     private boolean isFromAlbum=false;
 
 
@@ -1084,6 +1090,14 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     public String getOriginalPath( ){
         return  originalPath;
+    }
+
+    public void setClipPath(String clipPath){
+        this.clipPath=clipPath;
+    }
+
+    public String getClipPath( ){
+        return  clipPath;
     }
 
     public String getResPath() {

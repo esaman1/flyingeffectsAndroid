@@ -38,7 +38,6 @@ import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
-import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -82,7 +81,6 @@ public class CreationTemplateMvpModel {
     private String mVideoPath;
     private ViewLayerRelativeLayout viewLayerRelativeLayout;
     private ArrayList<AnimStickerModel> listForStickerView = new ArrayList<>();
-    private String gifdownSticker = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/Comp-1(1).gif";
     private boolean isDestroy = false;
     private RecyclerView list_thumb;
     private VideoInfo videoInfo;
@@ -178,6 +176,7 @@ public class CreationTemplateMvpModel {
         stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
         stickView.setComeFrom(true);
         stickView.setOriginalPath(originalPath);
+        stickView.setClipPath(path);
         stickView.setImageRes(path, false);
         AnimStickerModel animStickerModel = new AnimStickerModel(context, viewLayerRelativeLayout, stickView);
         listForStickerView.add(animStickerModel);
@@ -259,13 +258,10 @@ public class CreationTemplateMvpModel {
                 StickerView stickerView = stickerModel.getStickerView();
                 if (stickerView != null&&stickerView.getComeFrom()) {
                     if(isMatting){
-                       stickerView.setImageRes(stickerView.getResPath(),false);
+                       stickerView.setImageRes(stickerView.getClipPath(),false);
                     }else{
                         stickerView.setImageRes(stickerView.getOriginalPath(),false);
                     }
-
-
-
                 }
             }
         }
@@ -409,6 +405,7 @@ public class CreationTemplateMvpModel {
         stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
         stickView.setComeFrom(isFromAubum);
         if(isFromAubum){
+                    stickView.setClipPath(path);
             stickView.setOriginalPath(originalPath);
         }
         if (hasReplace) {
