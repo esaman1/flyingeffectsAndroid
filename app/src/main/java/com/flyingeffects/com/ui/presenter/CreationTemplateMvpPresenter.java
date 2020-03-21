@@ -23,14 +23,18 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel = new CreationTemplateMvpModel(context, this,mVideoPath,viewLayerRelativeLayout);
     }
 
+    public void CheckedChanged(boolean isChecked){
+        creationTemplatemodel.CheckedChanged(isChecked);
+    }
+
 
     public void scrollToPosition(int position){
         creationTemplatemodel.scrollToPosition(position);
     }
 
 
-    public void addNewSticker(String path){
-        creationTemplatemodel.addNewSticker(path);
+    public void addNewSticker(String path,String originalPath){
+        creationTemplatemodel.addNewSticker(path,originalPath);
     }
 
 
@@ -43,8 +47,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.initBottomLayout(viewPager);
     }
 
-    public void initStickerView(String path){
-        creationTemplatemodel.initStickerView(path);
+    public void initStickerView(String path,String originalPath){
+        creationTemplatemodel.initStickerView(path,originalPath);
     }
 
     public void initVideoProgressView(RecyclerView mTimeLineView){

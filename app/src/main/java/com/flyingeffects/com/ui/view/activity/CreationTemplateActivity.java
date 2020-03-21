@@ -22,6 +22,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.lansosdk.box.ViewLayerRelativeLayout;
+import com.suke.widget.SwitchButton;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -58,9 +59,16 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @BindView(R.id.iv_play)
     ImageView ivPlay;
 
+    @BindView(R.id.switch_button)
+    SwitchButton switchButton;
+
+
     public final static int SELECTALBUM = 0;
 
-
+    /**
+     * 源视频地址
+     */
+    private String originalPath;
     private String imgPath;
     private CreationTemplateMvpPresenter presenter;
     private String videoPath;
@@ -84,6 +92,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if (bundle != null) {
             imgPath = bundle.getString("paths");
             videoPath = bundle.getString("video_path");
+            originalPath=bundle.getString("originalPath");
         }
         presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout);
         videoPlayer.setUp(videoPath, true, "");
@@ -114,9 +123,16 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     protected void initAction() {
-        presenter.initStickerView(imgPath);
+        presenter.initStickerView(imgPath,originalPath);
         presenter.initBottomLayout(viewPager);
         initViewLayerRelative();
+        switchButton.setOnCheckedChangeListener(new SwitchButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(SwitchButton view, boolean isChecked) {
+                presenter.CheckedChanged(isChecked);
+
+            }
+        });
     }
 
 
@@ -156,7 +172,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 //添加新的贴纸，这里的贴纸就是用户选择的贴纸
                 AlbumManager.chooseImageAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel, albumFileList) -> {
                     CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this, tailorPaths -> {
-                        presenter.addNewSticker(tailorPaths.get(0));
+                        presenter.addNewSticker(tailorPaths.get(0),paths.get(0));
                     });
                     manage.CompressImgAndCache(paths);
                 }, "");

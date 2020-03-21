@@ -369,6 +369,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             Intent intent = new Intent(PreviewActivity.this, CreationTemplateActivity.class);
             Bundle bundle = new Bundle();
             bundle.putString("paths", imagePath);
+            bundle.putString("originalPath",originalImagePath.get(0));
             bundle.putString("video_path", videoPath);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("Message", bundle);

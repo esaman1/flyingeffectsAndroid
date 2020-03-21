@@ -181,7 +181,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     private  StickerItemOnitemclick callback;
 
-
+    /**
+     * 视频原图地址
+     */
+    private String  originalPath;
 
     private boolean isFromAlbum=false;
 
@@ -1075,7 +1078,13 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
          this. isFromAlbum=isFromAlbum;
     }
 
+    public void setOriginalPath(String originalPath){
+        this.originalPath=originalPath;
+    }
 
+    public String getOriginalPath( ){
+        return  originalPath;
+    }
 
     public String getResPath() {
         return resPath;
