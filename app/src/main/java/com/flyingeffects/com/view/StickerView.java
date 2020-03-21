@@ -182,6 +182,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private  StickerItemOnitemclick callback;
 
 
+
+    private boolean isFromAlbum=false;
+
+
     public void setTickerListener(StickerListener tickerListener) {
         this.tickerListener = tickerListener;
     }
@@ -1061,6 +1065,16 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public float getContentWidth() {
         return contentWidth;
     }
+
+    public boolean getComeFrom(){
+        return  isFromAlbum;
+    }
+
+    public void setComeFrom(boolean isFromAlbum){
+         this. isFromAlbum=isFromAlbum;
+    }
+
+
 
     public String getResPath() {
         return resPath;
