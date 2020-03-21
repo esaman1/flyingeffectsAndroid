@@ -649,6 +649,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      */
     public void update() {
         invalidate();
+
     }
 
     @Override

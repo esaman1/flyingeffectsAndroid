@@ -145,10 +145,13 @@ public class CreationTemplateMvpModel {
                     //切換素材
                     AlbumManager.chooseImageAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
                         CompressionCuttingManage manage = new CompressionCuttingManage(context, tailorPaths -> {
-                            Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> stickView.setImageRes(s, false));
+                            Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s ->{ stickView.setImageRes(s, false);
+                                stickView.update();
+                            });
+
                         });
                         manage.CompressImgAndCache(paths);
-                        stickView.postInvalidate();
+
 
                     }, "");
                 }
@@ -350,9 +353,13 @@ public class CreationTemplateMvpModel {
                     AlbumManager.chooseImageAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
                         CompressionCuttingManage manage = new CompressionCuttingManage(context, tailorPaths -> {
                             Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> stickView.setImageRes(s, false));
+                            stickView.update();
+
+
+
                         });
                         manage.CompressImgAndCache(paths);
-                        stickView.postInvalidate();
+
                     }, "");
                 }
             }

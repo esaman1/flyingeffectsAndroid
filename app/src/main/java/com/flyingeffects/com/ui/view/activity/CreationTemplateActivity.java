@@ -19,6 +19,7 @@ import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 
@@ -236,7 +237,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private int listWidth;
 
     private void startTimer() {
-        listWidth=list_thumb.getWidth();
+        listWidth=list_thumb.getWidth()+ screenUtil.dip2px(this,43);
         //总共需要显示的20帧
         float allShowTime=  allVideoDuration/(float)1000*10;
         float perScrollByX=listWidth/allShowTime;
