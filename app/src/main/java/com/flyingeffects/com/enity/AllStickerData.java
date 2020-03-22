@@ -16,8 +16,9 @@ public class AllStickerData implements Serializable {
         this.rotation = rotation;
     }
 
+    //因为默认gif是宽的一半
     public float getScale() {
-        return scale;
+        return scale/2;
     }
 
     public void setScale(float scale) {

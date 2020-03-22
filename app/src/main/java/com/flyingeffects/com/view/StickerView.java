@@ -134,7 +134,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     //是否允许辅助水平
     private boolean enableAutoAdjustDegree = true;
     //是否允许辅助居中
-    private boolean enableAutoAdjustCenter = true;
+    private boolean enableAutoAdjustCenter = false;
     private float lastX = 0;
     private float lastY = 0;
     //辅助线颜色
@@ -720,9 +720,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 handler.removeMessages(DISMISS_FRAME);
                 break;
             case MotionEvent.ACTION_MOVE:
-              moveX=x;
-              moveY=y;
-              LogUtil.d("OOM","moveY="+moveY);
+
+
                 if (mCurrentMode == IDLE_MODE) {
                     return false;
                 }
@@ -741,6 +740,25 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
                     lastX = x;
                     lastY = y;
+                    moveX=mHelpBoxRect.right;
+                    moveY=mHelpBoxRect.bottom;
+//                    LogUtil.d("OOM","x=PPP="+lastX/(float)getMeasuredWidth());
+                    LogUtil.d("OOM","moveX"+moveX);
+                    LogUtil.d("OOM","width"+getMeasuredWidth());
+
+                    float xx=mHelpBoxRect.width();
+                    float xx2=xx/2;
+                    float aaaa=moveX-xx2;
+                    float bbb=aaaa/getMeasuredWidth();
+                    LogUtil.d("OOM","P="+bbb);
+
+
+                    float xx1=mHelpBoxRect.height();
+                    float xx21=xx1/2;
+                    float aaaa1=moveY-xx21;
+                    float bbb1=aaaa1/getMeasuredHeight();
+                    LogUtil.d("OOM","P="+bbb1);
+
                 } else if (mCurrentMode == rotateLocation) {
                     // 旋转 缩放文字操作
                     mCurrentMode = rotateLocation;
@@ -852,6 +870,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
         LogUtil.d("updateRotateAndScale","mScale="+mScale);
         LogUtil.d("updateRotateAndScale","mRotateAngle="+mRotateAngle);
+
+        moveX=mHelpBoxRect.right;
+        moveY=mHelpBoxRect.bottom;
 
     }
 
@@ -1008,23 +1029,26 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
     public float getScale() {
-        return mScale/2;
+        return mScale;
     }
 
 
     public float getTranslationX() {
+        //获得整个绘制区域的宽
+        float HelpBoxRectWidth=mHelpBoxRect.width();
+        //应为蓝松是0.5表示居中，所以这里搞了个2
+        float centerLine=HelpBoxRectWidth/2;
+        float centerPosition=moveX-centerLine;
+        return  centerPosition/getMeasuredWidth();
 
-//        float  www=moveX+(originalBitmapWidth/(float)2);
-//        return   www/getWidth()*720+originalBitmapWidth;
-//
-
-
-       return moveX;
     }
 
 
     public float getTranslationY() {
-        return moveY+(originalBitmapHeight/(float)2);
+        float HelpBoxRectWidth=mHelpBoxRect.height();
+        float centerLine=HelpBoxRectWidth/2;
+        float centerPosition=moveY-centerLine;
+        return centerPosition/getMeasuredHeight();
     }
 
 
@@ -1058,9 +1082,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             if (autoRun) {
                 start();
             }
-            moveX=getWidth() /2;
-            moveX= moveX+(originalBitmapWidth/(float)4);
-            moveY=getHeight()/2;
+            moveX=(getMeasuredWidth()+ originalBitmapWidth)/2;
+            moveY=(getMeasuredHeight()+originalBitmapHeight)/2;
             setScale(1f);
             setDegree(0f);
             setCenter(getWidth() / 2f, getHeight() / 2f);
@@ -1119,7 +1142,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 public void onGlobalLayout() {
                     getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     getTarger().setAutoRun(autoRun);
-                    contentWidth = (int) (getMinDisplayWidth() / 2f);
+                    contentWidth =getMeasuredWidth() / 2f;
                     originalBitmapWidth= (int) contentWidth;
                     originalBitmap = BitmapFactory.decodeFile(path);
                     int bitmapW=originalBitmap.getWidth();

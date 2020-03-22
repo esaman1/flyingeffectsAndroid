@@ -92,20 +92,35 @@ public class backgroundDraw {
     private void addGifLayer(AllStickerData stickerItem) {
         LogUtil.d("OOM", "addMVLayer");
         GifLayer mvLayer = execute.addGifLayer(stickerItem.getPath());
-        mvLayer.setScaledToPadSize();
-        if (stickerItem != null) {
-            int rotate = (int) stickerItem.getRotation();
-            if (rotate < 0) {
-                rotate = 360 + rotate;
-            }
-            LogUtil.d("OOM", "rotate="+rotate);
-            mvLayer.setRotate(rotate);
-            mvLayer.setScale(stickerItem.getScale() );
-            LogUtil.d("OOM", "Scale="+stickerItem.getScale() / 2 + "");
-            mvLayer.setPosition(stickerItem.getTranslationX(), mvLayer.getPositionY());
-            LogUtil.d("OOM", "setPositionY=" + stickerItem.getTranslationy()+"x="+stickerItem.getTranslationX());
-            mvLayer.setPosition(mvLayer.getPositionX(), stickerItem.getTranslationy());
+        //默认gif 的缩放位置是gif 宽度最大
+        float layerScale = DRAWPADWIDTH / mvLayer.getLayerWidth();
+        LogUtil.d("OOM", "图层的缩放为" +layerScale+ "");
+        float stickerScale = stickerItem.getScale();
+        LogUtil.d("OOM", "gif+图层的缩放为" +layerScale * stickerScale+ "");
+        mvLayer.setScale(layerScale * stickerScale);
+        LogUtil.d("OOM", "mvLayerW=" + mvLayer.getLayerWidth() + "");
+        LogUtil.d("OOM", "mvLayerpadW=" + mvLayer.getPadWidth() + "");
+        int rotate = (int) stickerItem.getRotation();
+        if (rotate < 0) {
+            rotate = 360 + rotate;
         }
+        LogUtil.d("OOM", "rotate=" + rotate);
+        mvLayer.setRotate(rotate);
+        LogUtil.d("OOM", "Scale=" + stickerItem.getScale() + "");
+        //蓝松这边规定，0.5就是刚刚居中的位置
+        float percentX = stickerItem.getTranslationX();
+        float posX = (mvLayer.getPadWidth() + mvLayer.getLayerWidth()) * percentX - mvLayer.getLayerWidth() / 2.0f;
+        mvLayer.setPosition((int) posX, mvLayer.getPositionY());
+
+
+        float percentY = stickerItem.getTranslationy();
+        LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
+        float posY = (mvLayer.getPadHeight() + mvLayer.getLayerHeight()) * percentY - mvLayer.getLayerHeight() / 2.0f;
+        mvLayer.setPosition(mvLayer.getPositionX(), posY);
+
+
+        LogUtil.d("OOM", "X" + posX + "y=" + posY);
+//            mvLayer.setPosition(mvLayer.getPositionX(), stickerItem.getTranslationy());
     }
 
 
@@ -114,7 +129,7 @@ public class backgroundDraw {
      */
     private void addBitmapLayer(AllStickerData stickerItem) {
         LogUtil.d("OOM", "addMVLayer");
-        Bitmap bp= BitmapFactory.decodeFile(stickerItem.getPath());
+        Bitmap bp = BitmapFactory.decodeFile(stickerItem.getPath());
         BitmapLayer bpLayer = execute.addBitmapLayer(bp);
         bpLayer.setScaledToPadSize();
         if (stickerItem != null) {
@@ -122,12 +137,12 @@ public class backgroundDraw {
             if (rotate < 0) {
                 rotate = 360 + rotate;
             }
-            LogUtil.d("OOM", "rotate="+rotate);
+            LogUtil.d("OOM", "rotate=" + rotate);
             bpLayer.setRotate(rotate);
-            bpLayer.setScale(stickerItem.getScale() );
-            LogUtil.d("OOM", "Scale="+stickerItem.getScale() / 2 + "");
+            bpLayer.setScale(stickerItem.getScale());
+            LogUtil.d("OOM", "Scale=" + stickerItem.getScale() / 2 + "");
             bpLayer.setPosition(stickerItem.getTranslationX(), bpLayer.getPositionY());
-            LogUtil.d("OOM", "setPositionY=" + stickerItem.getTranslationy()+"x="+stickerItem.getTranslationX());
+            LogUtil.d("OOM", "setPositionY=" + stickerItem.getTranslationy() + "x=" + stickerItem.getTranslationX());
             bpLayer.setPosition(bpLayer.getPositionX(), stickerItem.getTranslationy());
         }
     }
