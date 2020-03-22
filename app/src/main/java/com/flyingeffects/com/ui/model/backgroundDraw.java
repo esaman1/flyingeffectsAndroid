@@ -32,7 +32,6 @@ public class backgroundDraw {
     private String videoPath;
     private saveCallback callback;
     private int duration;
-    private String gifTest = "/storage/emulated/0/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv/Comp-1(1).gif";
 
     public backgroundDraw(Context context, String videoPath, saveCallback callback) {
         this.context = context;
@@ -77,7 +76,7 @@ public class backgroundDraw {
 
 
     private void setLayer() {
-        LSOVideoOption option = null;
+        LSOVideoOption option  ;
         try {
             option = new LSOVideoOption(videoPath);
             execute.addVideoLayer(option, 0, Long.MAX_VALUE, true, false);
@@ -120,7 +119,6 @@ public class backgroundDraw {
 
 
         LogUtil.d("OOM", "X" + posX + "y=" + posY);
-//            mvLayer.setPosition(mvLayer.getPositionX(), stickerItem.getTranslationy());
     }
 
 
@@ -131,20 +129,32 @@ public class backgroundDraw {
         LogUtil.d("OOM", "addMVLayer");
         Bitmap bp = BitmapFactory.decodeFile(stickerItem.getPath());
         BitmapLayer bpLayer = execute.addBitmapLayer(bp);
-        bpLayer.setScaledToPadSize();
-        if (stickerItem != null) {
-            int rotate = (int) stickerItem.getRotation();
-            if (rotate < 0) {
-                rotate = 360 + rotate;
-            }
-            LogUtil.d("OOM", "rotate=" + rotate);
-            bpLayer.setRotate(rotate);
-            bpLayer.setScale(stickerItem.getScale());
-            LogUtil.d("OOM", "Scale=" + stickerItem.getScale() / 2 + "");
-            bpLayer.setPosition(stickerItem.getTranslationX(), bpLayer.getPositionY());
-            LogUtil.d("OOM", "setPositionY=" + stickerItem.getTranslationy() + "x=" + stickerItem.getTranslationX());
-            bpLayer.setPosition(bpLayer.getPositionX(), stickerItem.getTranslationy());
+        //默认gif 的缩放位置是gif 宽度最大
+        float layerScale = DRAWPADWIDTH / bpLayer.getLayerWidth();
+        LogUtil.d("OOM", "图层的缩放为" +layerScale+ "");
+        float stickerScale = stickerItem.getScale();
+        LogUtil.d("OOM", "gif+图层的缩放为" +layerScale * stickerScale+ "");
+        bpLayer.setScale(layerScale * stickerScale);
+        LogUtil.d("OOM", "mvLayerW=" + bpLayer.getLayerWidth() + "");
+        LogUtil.d("OOM", "mvLayerpadW=" + bpLayer.getPadWidth() + "");
+        int rotate = (int) stickerItem.getRotation();
+        if (rotate < 0) {
+            rotate = 360 + rotate;
         }
+        LogUtil.d("OOM", "rotate=" + rotate);
+        bpLayer.setRotate(rotate);
+        LogUtil.d("OOM", "Scale=" + stickerItem.getScale() + "");
+        //蓝松这边规定，0.5就是刚刚居中的位置
+        float percentX = stickerItem.getTranslationX();
+        float posX = (bpLayer.getPadWidth() + bpLayer.getLayerWidth()) * percentX - bpLayer.getLayerWidth() / 2.0f;
+        bpLayer.setPosition((int) posX, bpLayer.getPositionY());
+
+
+        float percentY = stickerItem.getTranslationy();
+        LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
+        float posY = (bpLayer.getPadHeight() + bpLayer.getLayerHeight()) * percentY - bpLayer.getLayerHeight() / 2.0f;
+        bpLayer.setPosition(bpLayer.getPositionX(), posY);
+
     }
 
 
