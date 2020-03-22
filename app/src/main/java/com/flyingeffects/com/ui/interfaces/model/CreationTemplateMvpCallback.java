@@ -12,4 +12,5 @@ public interface CreationTemplateMvpCallback {
     void setgsyVideoProgress(int progress);
 
     void getVideoDuration(int duration,int thumbCount );
+
 }

@@ -235,7 +235,9 @@ public class CreationTemplateMvpModel {
             for (AnimStickerModel stickerModel : listForStickerView
             ) {
                 StickerView stickerView = stickerModel.getStickerView();
+
                 if (stickerView != null && !stickerView.getComeFrom()) {
+                    stickerView.stop();
                     viewLayerRelativeLayout.removeView(stickerView);
                 }
             }

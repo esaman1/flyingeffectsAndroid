@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TimeUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -20,6 +21,7 @@ import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
+import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.suke.widget.SwitchButton;
@@ -62,6 +64,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @BindView(R.id.switch_button)
     SwitchButton switchButton;
 
+    @BindView(R.id.tv_total)
+    TextView tv_total;
+
 
     public final static int SELECTALBUM = 0;
 
@@ -75,7 +80,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     /**
      * 当前预览状态，是否在播放中
      */
-    private boolean isPlaying=false;
+    private boolean isPlaying = false;
     private int allVideoDuration;
     private int thumbCount;
 
@@ -83,7 +88,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     protected int getLayoutId() {
         return R.layout.act_creation_template_edit;
     }
-
 
 
     @Override
@@ -94,7 +98,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if (bundle != null) {
             imgPath = bundle.getString("paths");
             videoPath = bundle.getString("video_path");
-            originalPath=bundle.getString("originalPath");
+            originalPath = bundle.getString("originalPath");
         }
         presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout);
         videoPlayer.setUp(videoPath, true, "");
@@ -102,7 +106,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> {
             list_thumb.scrollToPosition(0);
             endTimer();
-            isPlaying=false;
+            isPlaying = false;
             presenter.showGifAnim(false);
             videoPlayerInit();
             nowStateIsPlaying(false);
@@ -125,7 +129,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     protected void initAction() {
-        presenter.initStickerView(imgPath,originalPath);
+        presenter.initStickerView(imgPath, originalPath);
         presenter.initBottomLayout(viewPager);
         initViewLayerRelative();
         switchButton.setOnCheckedChangeListener(new SwitchButton.OnCheckedChangeListener() {
@@ -142,19 +146,18 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
+                if (isPlaying) {
+                    videoToPause();
+                }
                 presenter.toSaveVideo();
                 break;
 
             case R.id.ll_play:
-                if(isPlaying){
-                    videoPlayer.onVideoPause();
-                    isPlaying=false;
-                    endTimer();
-                    presenter.showGifAnim(false);
-                    nowStateIsPlaying(false);
-                }else{
+                if (isPlaying) {
+                    videoToPause();
+                } else {
                     list_thumb.scrollToPosition(0);
-                    isPlaying=true;
+                    isPlaying = true;
                     startTimer();
                     videoPlayer.startPlayLogic();
                     presenter.showGifAnim(true);
@@ -164,9 +167,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 break;
 
             case R.id.iv_add_sticker:
-                if(isPlaying){
+                if (isPlaying) {
                     videoPlayer.onVideoPause();
-                    isPlaying=false;
+                    isPlaying = false;
                     endTimer();
                     presenter.showGifAnim(false);
                     nowStateIsPlaying(false);
@@ -174,7 +177,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 //添加新的贴纸，这里的贴纸就是用户选择的贴纸
                 AlbumManager.chooseImageAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel, albumFileList) -> {
                     CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this, tailorPaths -> {
-                        presenter.addNewSticker(tailorPaths.get(0),paths.get(0));
+                        presenter.addNewSticker(tailorPaths.get(0), paths.get(0));
                     });
                     manage.CompressImgAndCache(paths);
                 }, "");
@@ -186,17 +189,23 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
     }
 
-
-    private void nowStateIsPlaying(boolean isPlaying){
-        if(isPlaying){
-            ivPlay.setImageResource(R.mipmap.iv_playing);
-        }else{
-            ivPlay.setImageResource(R.mipmap.iv_play_creation);
-            list_thumb.smoothScrollBy(0,0);
-        }
+    private void videoToPause() {
+        videoPlayer.onVideoPause();
+        isPlaying = false;
+        endTimer();
+        presenter.showGifAnim(false);
+        nowStateIsPlaying(false);
     }
 
 
+    private void nowStateIsPlaying(boolean isPlaying) {
+        if (isPlaying) {
+            ivPlay.setImageResource(R.mipmap.iv_playing);
+        } else {
+            ivPlay.setImageResource(R.mipmap.iv_play_creation);
+            list_thumb.smoothScrollBy(0, 0);
+        }
+    }
 
 
     /**
@@ -240,15 +249,17 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void setgsyVideoProgress(int progress) {
         LogUtil.d("OOM", "videoProgress=" + progress);
-        if(!isPlaying){
+        if (!isPlaying) {
             videoPlayer.seekTo(progress);
         }
     }
 
     @Override
-    public void getVideoDuration(int allVideoDuration,int  thumbCount) {
-        this.allVideoDuration=allVideoDuration;
-        this.thumbCount=thumbCount;
+    public void getVideoDuration(int allVideoDuration, int thumbCount) {
+        this.allVideoDuration = allVideoDuration;
+        this.thumbCount = thumbCount;
+        LogUtil.d("OOM", "allVideoDuration=" + allVideoDuration);
+        tv_total.setText(timeUtils.timeParse(allVideoDuration) + "s");
     }
 
 
@@ -257,10 +268,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private int listWidth;
 
     private void startTimer() {
-        listWidth=list_thumb.getWidth()+ screenUtil.dip2px(this,43);
+        listWidth = list_thumb.getWidth() + screenUtil.dip2px(this, 43);
         //总共需要显示的20帧
-        float allShowTime=  allVideoDuration/(float)1000*10;
-        float perScrollByX=listWidth/allShowTime;
+        float allShowTime = allVideoDuration / (float) 1000 * 10;
+        float perScrollByX = listWidth / allShowTime;
 
         if (timer != null) {
             timer.purge();
@@ -280,7 +291,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 //                    LogUtil.d("OOM","perScrollByX--int"+(int) Math.ceil(perScrollByX));
                     //todo  perScrollByX 有误差 ，精度在小数点后面
                     //Math.ceil 四舍五入
-                    list_thumb.smoothScrollBy((int) Math.ceil(perScrollByX),0);
+                    list_thumb.smoothScrollBy((int) Math.ceil(perScrollByX), 0);
 
                 });
             }
@@ -313,8 +324,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             task = null;
         }
     }
-
-
 
 
 }
