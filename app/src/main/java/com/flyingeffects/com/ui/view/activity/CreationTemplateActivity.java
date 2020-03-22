@@ -84,6 +84,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         return R.layout.act_creation_template_edit;
     }
 
+
+
     @Override
     protected void initView() {
         ((TextView) findViewById(R.id.tv_top_submit)).setText("保存");
@@ -221,6 +223,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     public void onDestroy() {
         presenter.onDestroy();
         destroyTimer();
+        videoPlayer.onVideoPause();
+        videoPlayer.release();
         super.onDestroy();
     }
 

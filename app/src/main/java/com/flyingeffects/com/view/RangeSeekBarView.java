@@ -74,7 +74,7 @@ public class RangeSeekBarView extends View {
         mLine.setAntiAlias(true);
         mLine.setColor(lineColor);
 
-        int backgroundColor= ContextCompat.getColor(getContext(),R.color.seekbar_background);
+        int backgroundColor= ContextCompat.getColor(getContext(),R.color.white);
         mBackground.setAntiAlias(true);
         mBackground.setColor(backgroundColor);
     }

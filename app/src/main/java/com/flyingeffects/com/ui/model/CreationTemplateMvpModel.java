@@ -389,6 +389,8 @@ public class CreationTemplateMvpModel {
             public void stickerOnclick(int type) {
                 if (type == StickerView.LEFT_TOP_MODE) {//刪除
                     viewLayerRelativeLayout.removeView(stickView);
+
+
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     //copy
                     copyGif(stickView.getResPath(),path);
