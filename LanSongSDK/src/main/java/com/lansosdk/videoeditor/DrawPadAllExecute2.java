@@ -320,7 +320,7 @@ public class DrawPadAllExecute2 {
      * 如果你要任意角度的旋转, 则用图层的旋转属性;
      *
      * @param option 在增加前,设置裁剪时长, 裁剪画面, 缩放, 循环等;
-     * @param startTimeUs 从容器的什么时间开始增加
+     *      * @param startTimeUs 从容器的什么时间开始增加
      * @param endTimeUs 在容器的什么时间消失, 如果到文件尾,请输入Long.MAX_VALUE
      * @param holdFirst 当指定时间段后,是否刚开始就一直显示第一帧
      * @param holdLast  当指定时间段过后, 是否一直显示最后一帧;

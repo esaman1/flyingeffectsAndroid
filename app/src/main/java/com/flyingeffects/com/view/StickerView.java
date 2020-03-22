@@ -740,7 +740,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
                     float xx = mHelpBoxRect.width();
                     float xx2 = xx / 2;
+                    LogUtil.d("OOM", "xx2 ==" + xx2 );
                     float aaaa = moveX - xx2;
+                    LogUtil.d("OOM", "aaaa ==" + aaaa );
                     float bbb = aaaa / getMeasuredWidth();
                     LogUtil.d("OOM", "P=" + bbb);
 

@@ -13,6 +13,7 @@ import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.GifLayer;
 import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
+import com.lansosdk.videoeditor.VideoOneDo2;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.IOException;
@@ -42,7 +43,6 @@ public class backgroundDraw {
         LogUtil.d("OOM", "backgroundDrawdurationF=" + duration);
     }
 
-
     public void toSaveVideo(ArrayList<AllStickerData> list) {
         waitingProgress.openProgressDialog();
         execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, (long) (duration * 1000));
@@ -60,26 +60,27 @@ public class backgroundDraw {
             execute.release();
             Log.d("OOM", "exportPath=" + exportPath);
         });
-        setLayer();
+        setMainLayer();
         for (AllStickerData item : list
         ) {
-
             if (item.getPath().endsWith(".gif")) {
                 addGifLayer(item);
             } else {
                 addBitmapLayer(item);
             }
-
         }
         execute.start();
     }
 
 
-    private void setLayer() {
+
+
+
+    private void setMainLayer() {
         LSOVideoOption option  ;
         try {
             option = new LSOVideoOption(videoPath);
-            execute.addVideoLayer(option, 0, Long.MAX_VALUE, true, false);
+            execute.addVideoLayer(option, 0, Long.MAX_VALUE, true, true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -108,17 +109,15 @@ public class backgroundDraw {
         LogUtil.d("OOM", "Scale=" + stickerItem.getScale() + "");
         //蓝松这边规定，0.5就是刚刚居中的位置
         float percentX = stickerItem.getTranslationX();
-        float posX = (mvLayer.getPadWidth() + mvLayer.getLayerWidth()) * percentX - mvLayer.getLayerWidth() / 2.0f;
-        mvLayer.setPosition((int) posX, mvLayer.getPositionY());
-
+//        float posX = (mvLayer.getPadWidth() + mvLayer.getLayerWidth()) * percentX - mvLayer.getLayerWidth() / 2.0f;
+        mvLayer.setPosition(mvLayer.getPadWidth()*percentX , mvLayer.getPositionY());
 
         float percentY = stickerItem.getTranslationy();
         LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
-        float posY = (mvLayer.getPadHeight() + mvLayer.getLayerHeight()) * percentY - mvLayer.getLayerHeight() / 2.0f;
-        mvLayer.setPosition(mvLayer.getPositionX(), posY);
+//        float posY = (mvLayer.getPadHeight() + mvLayer.getLayerHeight()) * percentY - mvLayer.getLayerHeight() / 2.0f;
+//        mvLayer.setPosition(mvLayer.getPositionX(), posY);
+        mvLayer.setPosition(mvLayer.getPositionX(), mvLayer.getPadHeight()*percentY);
 
-
-        LogUtil.d("OOM", "X" + posX + "y=" + posY);
     }
 
 
@@ -129,7 +128,7 @@ public class backgroundDraw {
         LogUtil.d("OOM", "addMVLayer");
         Bitmap bp = BitmapFactory.decodeFile(stickerItem.getPath());
         BitmapLayer bpLayer = execute.addBitmapLayer(bp);
-        //默认gif 的缩放位置是gif 宽度最大
+
         float layerScale = DRAWPADWIDTH / bpLayer.getLayerWidth();
         LogUtil.d("OOM", "图层的缩放为" +layerScale+ "");
         float stickerScale = stickerItem.getScale();
@@ -146,14 +145,14 @@ public class backgroundDraw {
         LogUtil.d("OOM", "Scale=" + stickerItem.getScale() + "");
         //蓝松这边规定，0.5就是刚刚居中的位置
         float percentX = stickerItem.getTranslationX();
-        float posX = (bpLayer.getPadWidth() + bpLayer.getLayerWidth()) * percentX - bpLayer.getLayerWidth() / 2.0f;
-        bpLayer.setPosition((int) posX, bpLayer.getPositionY());
+//        float posX = (bpLayer.getPadWidth() + bpLayer.getLayerWidth()) * percentX - bpLayer.getLayerWidth() / 2.0f;
+        bpLayer.setPosition(bpLayer.getPadWidth()*percentX , bpLayer.getPositionY());
 
 
         float percentY = stickerItem.getTranslationy();
         LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
-        float posY = (bpLayer.getPadHeight() + bpLayer.getLayerHeight()) * percentY - bpLayer.getLayerHeight() / 2.0f;
-        bpLayer.setPosition(bpLayer.getPositionX(), posY);
+     //   float posY = (bpLayer.getPadHeight() + bpLayer.getLayerHeight()) * percentY - bpLayer.getLayerHeight() / 2.0f;
+        bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight()*percentY);
 
     }
 
