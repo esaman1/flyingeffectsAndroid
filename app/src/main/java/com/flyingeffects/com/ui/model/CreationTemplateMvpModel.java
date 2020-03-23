@@ -380,10 +380,12 @@ public class CreationTemplateMvpModel {
         }
         if (isCopy) {
             StickerView.isFromCopy fromCopy = new StickerView.isFromCopy();
-            fromCopy.setScale(copyStickerView.getScale());
-            fromCopy.setDegree(copyStickerView.getRotateAngle());
-            fromCopy.setTranX(copyStickerView.getCenterX());
-            fromCopy.setTranY(copyStickerView.getCenterY());
+            if(copyStickerView!=null){
+                fromCopy.setScale(copyStickerView.getScale());
+                fromCopy.setDegree(copyStickerView.getRotateAngle());
+                fromCopy.setTranX(copyStickerView.getCenterX());
+                fromCopy.setTranY(copyStickerView.getCenterY());
+            }
             stickView.setImageRes(path, false, fromCopy);
             stickView.showFrame();
         } else {
