@@ -59,6 +59,9 @@ public class videoAddCover {
             videoOneDo.setOnVideoOneDoCompletedListener(new OnLanSongSDKCompletedListener() {
                 @Override
                 public void onLanSongSDKCompleted(String dstVideo) {
+                    if(bitmap!=null&&!bitmap.isRecycled()){
+                        bitmap.recycle();
+                    }
                     videoOneDo.cancel();
                     videoOneDo.release();
                     videoOneDo=null;
