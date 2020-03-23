@@ -402,8 +402,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         guideLineColor = mTypedArray.getColor(R.styleable.StickerView_sv_guide_line_color, Color.WHITE);
         guideLineWidth = mTypedArray.getDimension(R.styleable.StickerView_sv_guide_line_width, 5f);
         enableAutoAdjustDegree = mTypedArray.getBoolean(R.styleable.StickerView_sv_auto_degree, true);
-        enableAutoAdjustCenter = mTypedArray.getBoolean(R.styleable.StickerView_sv_auto_center, true);
-        frameColor = mTypedArray.getColor(R.styleable.StickerView_sv_frame_color, getResources().getColor(R.color.colorAccent));
+        enableAutoAdjustCenter = mTypedArray.getBoolean(R.styleable.StickerView_sv_auto_center, false);
+        frameColor = mTypedArray.getColor(R.styleable.StickerView_sv_frame_color, getResources().getColor(R.color.white));
         frameWidth = mTypedArray.getDimension(R.styleable.StickerView_sv_frame_width, 1);
         mTypedArray.recycle();
 
@@ -912,6 +912,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             }
         }
         if (degreeTurned) {
+            mHelpPaint.setColor(Color.RED);
             if (Math.abs(tempDegree) <= 10f) {
                 return current;
             } else {
@@ -919,7 +920,12 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 degreeTurned = false;
                 return current + tempDegree;
             }
+
+        }else {
+            mHelpPaint.setColor(Color.WHITE);
         }
+
+
         return current + newDegree;
     }
 

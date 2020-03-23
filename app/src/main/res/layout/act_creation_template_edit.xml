@@ -161,13 +161,14 @@
                 android:orientation="vertical"
                 android:id="@+id/ll_play"
                 android:layout_centerVertical="true"
-                android:layout_height="19dp">
+                android:layout_height="30dp">
 
                 <ImageView
                     android:id="@+id/iv_play"
-                    android:layout_width="16dp"
-                    android:layout_height="19dp"
-                    android:layout_marginStart="13dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:layout_marginStart="5dp"
                     android:contentDescription="@string/app_name"
                     android:src="@mipmap/iv_play_creation" />
 

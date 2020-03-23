@@ -142,7 +142,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker})
+    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker,R.id.iv_top_back})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
@@ -164,6 +164,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     nowStateIsPlaying(true);
                 }
 
+                break;
+
+            case R.id.iv_top_back:
+                this.finish();
                 break;
 
             case R.id.iv_add_sticker:
@@ -200,7 +204,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private void nowStateIsPlaying(boolean isPlaying) {
         if (isPlaying) {
-            ivPlay.setImageResource(R.mipmap.iv_playing);
+            ivPlay.setImageResource(R.mipmap.pause);
         } else {
             ivPlay.setImageResource(R.mipmap.iv_play_creation);
             list_thumb.smoothScrollBy(0, 0);

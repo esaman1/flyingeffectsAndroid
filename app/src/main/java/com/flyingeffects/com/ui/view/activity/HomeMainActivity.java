@@ -151,7 +151,7 @@ public class HomeMainActivity extends FragmentActivity {
             lin_menu[i] = findViewById(lin_Id[i]);
             lin_menu[i].setOnClickListener(listener);
         }
-        whichMenuSelect(0);
+        whichMenuSelect(1);
     }
 
 
