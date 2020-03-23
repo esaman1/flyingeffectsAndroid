@@ -113,9 +113,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
             if(i==data.size()-1){
                 //手动添加收藏模板
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("id", data.get(i).getId());
-                bundle.putSerializable("from", 1);
-                bundle.putSerializable("num", i);
+                bundle.putSerializable("template_type", 2);
                 titles[i] = data.get(i).getName();
                 frag_user_collect fag_0 = new frag_user_collect();
                 fag_0.setArguments(bundle);

@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
@@ -46,6 +47,11 @@ public class frag_user_collect extends BaseFragment {
     @BindView(R.id.recyclerView_collect)
     RecyclerView recyclerView;
 
+    /**
+     * 1 是模板，2是背景
+     */
+    private String template_type;
+
     @BindView(R.id.tv_hint_collect)
     TextView tv_hint;
 
@@ -64,6 +70,14 @@ public class frag_user_collect extends BaseFragment {
     @Override
     protected void initView() {
         initSmartRefreshLayout();
+
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            template_type = bundle.getString("template_type");
+        }
+
+
+
     }
 
 
@@ -78,6 +92,8 @@ public class frag_user_collect extends BaseFragment {
         HashMap<String, String> params = new HashMap<>();
         params.put("token", BaseConstans.GetUserToken());
         params.put("page", selectPage + "");
+        params.put("Template_type", selectPage + "");
+
         params.put("pageSize", perPageCount + "");
         Observable ob = Api.getDefault().collectionList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {

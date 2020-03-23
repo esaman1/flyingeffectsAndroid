@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -120,6 +121,9 @@ public class frag_user_center extends BaseFragment {
         FragmentManager manager = getChildFragmentManager();
         ArrayList<Fragment> list = new ArrayList<>();
         frag_user_collect fag_0 = new frag_user_collect();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("template_type", 1);
+        fag_0.setArguments(bundle);
         list.add(fag_0);
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
         viewpager.setAdapter(adapter);
