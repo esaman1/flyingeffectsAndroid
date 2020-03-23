@@ -1097,7 +1097,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         return isFromAlbum;
     }
 
-    public void setComeFrom(boolean isFromAlbum) {
+    public void setComeFromAlbum(boolean isFromAlbum) {
         this.isFromAlbum = isFromAlbum;
     }
 

@@ -461,8 +461,9 @@ public class FileUtil {
             byte[] buffer = new byte[1024];
             int bytesRead;
 
-            while ((bytesRead = from.read(buffer)) != -1)
+            while ((bytesRead = from.read(buffer)) != -1) {
                 to.write(buffer, 0, bytesRead); // write
+            }
         } finally {
             if (from != null)
                 try {
@@ -477,6 +478,41 @@ public class FileUtil {
                     Log.e(TAG, "", e);
                 }
         }
+    }
+
+
+    public static void copyFile(File fromFile, String toFile,copySucceed callback) throws IOException {
+
+        FileInputStream from = null;
+        FileOutputStream to = null;
+        try {
+            from = new FileInputStream(fromFile);
+            to = new FileOutputStream(toFile);
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+
+            while ((bytesRead = from.read(buffer)) != -1) {
+                to.write(buffer, 0, bytesRead); // write
+            }
+            callback.isSucceed();
+        } finally {
+            if (from != null)
+                try {
+                    from.close();
+                } catch (IOException e) {
+                    Log.e(TAG, "", e);
+                }
+            if (to != null)
+                try {
+                    to.close();
+                } catch (IOException e) {
+                    Log.e(TAG, "", e);
+                }
+        }
+    }
+
+    public interface  copySucceed{
+        void isSucceed();
     }
 
     /**

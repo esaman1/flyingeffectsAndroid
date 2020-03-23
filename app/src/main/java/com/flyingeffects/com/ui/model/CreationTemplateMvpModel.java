@@ -86,6 +86,7 @@ public class CreationTemplateMvpModel {
     private RecyclerView list_thumb;
     private VideoInfo videoInfo;
     private String mGifFolder;
+    private String mImageCopyFolder;
 
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout) {
         this.context = context;
@@ -95,6 +96,7 @@ public class CreationTemplateMvpModel {
         videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
         FileManager fileManager = new FileManager();
         mGifFolder = fileManager.getFileCachePath(context, "gifFolder");
+        mImageCopyFolder = fileManager.getFileCachePath(context, "imageCopy");
     }
 
 
@@ -103,7 +105,8 @@ public class CreationTemplateMvpModel {
     }
 
     public void initStickerView(String imagePath, String originalPath) {
-        firstAddImage(imagePath, originalPath);
+//        firstAddImage(imagePath, originalPath);
+        addSticker(imagePath,true,true,originalPath);
     }
 
 
@@ -130,73 +133,74 @@ public class CreationTemplateMvpModel {
 
     }
 
-    /**
-     * description ：增加第一个用户抠图的stickView
-     * creation date: 2020/3/11
-     * user : zhangtongju
-     */
-    private void firstAddImage(String path, String originalPath) {
-        StickerView stickView = new StickerView(context);
-        stickView.setOnitemClickListener(new StickerItemOnitemclick() {
-            @Override
-            public void stickerOnclick(int type) {
-                if (type == StickerView.LEFT_TOP_MODE) {//刪除
-                    viewLayerRelativeLayout.removeView(stickView);
-                } else if (type == StickerView.RIGHT_TOP_MODE) {//copy
-                    viewLayerRelativeLayout.addView(stickView);
-                } else if (type == StickerView.LEFT_BOTTOM_MODE) {
-                    //切換素材
-                    AlbumManager.chooseImageAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
-                        CompressionCuttingManage manage = new CompressionCuttingManage(context, tailorPaths -> {
-                            Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
-                                stickView.changeImage(s, false);
-//                                new Handler().postDelayed(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        stickView.update();
-//                                    }
-//                                },500);
-
-                            });
-
-                        });
-                        manage.CompressImgAndCache(paths);
-
-
-                    }, "");
-                }
-            }
-
-            @Override
-            public void stickerMove() {
-                if (stickView.getParent() != null) {
-                    ViewGroup vp = (ViewGroup) stickView.getParent();
-                    if (vp != null) {
-                        vp.removeView(stickView);
-                    }
-                }
-                viewLayerRelativeLayout.addView(stickView);
-            }
-        });
-        stickView.setLeftBottomBitmap(context.getDrawable(R.mipmap.sticker_change));
-        stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
-        stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
-        stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
-        stickView.setComeFrom(true);
-        stickView.setOriginalPath(originalPath);
-        stickView.setClipPath(path);
-        stickView.setImageRes(path, false);
-        AnimStickerModel animStickerModel = new AnimStickerModel(context, viewLayerRelativeLayout, stickView);
-        listForStickerView.add(animStickerModel);
-        callback.ItemClickForStickView(animStickerModel);
-        if (stickView.getParent() != null) {
-            ViewGroup vp = (ViewGroup) stickView.getParent();
-            if (vp != null) {
-                vp.removeAllViews();
-            }
-        }
-        viewLayerRelativeLayout.addView(stickView);
-    }
+//    /**
+//     * description ：增加第一个用户抠图的stickView
+//     * creation date: 2020/3/11
+//     * user : zhangtongju
+//     */
+//    private void firstAddImage(String path, String originalPath) {
+//        StickerView stickView = new StickerView(context);
+//        stickView.setOnitemClickListener(new StickerItemOnitemclick() {
+//            @Override
+//            public void stickerOnclick(int type) {
+//                if (type == StickerView.LEFT_TOP_MODE) {//刪除
+//                    viewLayerRelativeLayout.removeView(stickView);
+//                } else if (type == StickerView.RIGHT_TOP_MODE) {//copy
+//                    String format = path.substring(path.length() - 4);
+//                    String copyName = mGifFolder + File.separator + System.currentTimeMillis() + format;
+//                    try {
+//                        FileUtil.copyFile(new File(path), copyName);
+//                        addSticker(copyName, true,true,originalPath);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+////                    viewLayerRelativeLayout.addView(stickView);
+//                } else if (type == StickerView.LEFT_BOTTOM_MODE) {
+//                    //切換素材
+//                    AlbumManager.chooseImageAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
+//                        CompressionCuttingManage manage = new CompressionCuttingManage(context, tailorPaths -> {
+//                            Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
+//                                stickView.changeImage(s, false);
+////                                new Handler().postDelayed(new Runnable() {
+////                                    @Override
+////                                    public void run() {
+////                                        stickView.update();
+////                                    }
+////                                },500);
+//
+//                            });
+//
+//                        });
+//                        manage.CompressImgAndCache(paths);
+//
+//
+//                    }, "");
+//                }
+//            }
+//
+//            @Override
+//            public void stickerMove() {
+//                if (stickView.getParent() != null) {
+//                    ViewGroup vp = (ViewGroup) stickView.getParent();
+//                    if (vp != null) {
+//                        vp.removeView(stickView);
+//                    }
+//                }
+//                viewLayerRelativeLayout.addView(stickView);
+//            }
+//        });
+//        stickView.setLeftBottomBitmap(context.getDrawable(R.mipmap.sticker_change));
+//        stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
+//        stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
+//        stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
+//        stickView.setComeFromAlbum(true);
+//        stickView.setOriginalPath(originalPath);
+//        stickView.setClipPath(path);
+//        stickView.setImageRes(path, false);
+//        AnimStickerModel animStickerModel = new AnimStickerModel(context, viewLayerRelativeLayout, stickView);
+//        listForStickerView.add(animStickerModel);
+//        callback.ItemClickForStickView(animStickerModel);
+//    }
 
     private TemplateGridViewAdapter gridAdapter;
     private List<StickerList> listForSticker = new ArrayList<>();
@@ -276,9 +280,10 @@ public class CreationTemplateMvpModel {
 
     /**
      * 下载帖子功能
-     * @param path 下载地址
+     *
+     * @param path     下载地址
      * @param imageId  gif 保存的图片id
-     * @param position  当前点击的那个item ，主要用来更新数据
+     * @param position 当前点击的那个item ，主要用来更新数据
      */
     private void downSticker(String path, String imageId, int position) {
         WaitingDialog.openPragressDialog(context);
@@ -289,12 +294,12 @@ public class CreationTemplateMvpModel {
             File file = new File(fileName);
             if (file.exists()) {
                 //如果已经下载了，就用已经下载的，但是如果已经展示了，就不能复用，需要类似于复制功能，只针对gif
-                if(nowStickerHasChoosse(imageId,path)){
+                if (nowStickerHasChoosse(imageId, path)) {
                     String copyName = mGifFolder + File.separator + System.currentTimeMillis() + format;
-                    copyGif(fileName,copyName);
+                    copyGif(fileName, copyName,false);
                     WaitingDialog.closePragressDialog();
                     return;
-                }else{
+                } else {
                     addSticker(fileName, false, false, null);
                     WaitingDialog.closePragressDialog();
                     return;
@@ -377,18 +382,16 @@ public class CreationTemplateMvpModel {
             String format = imagePath.substring(imagePath.length() - 4);
             if (imagePath.endsWith(".gif")) {
                 String copyName = mGifFolder + File.separator + id + format;
-                if(path.equals(copyName)){
-                    return  true;
+                if (path.equals(copyName)) {
+                    return true;
                 }
 
             }
         }
 
-        return  false;
+        return false;
 
     }
-
-
 
 
     private void addSticker(String path, boolean hasReplace, boolean isFromAubum, String originalPath) {
@@ -402,7 +405,7 @@ public class CreationTemplateMvpModel {
 
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     //copy
-                    copyGif(stickView.getResPath(),path);
+                    copyGif(stickView.getResPath(), path,isFromAubum);
 
                 } else if (type == StickerView.LEFT_BOTTOM_MODE) {
                     //切換素材
@@ -432,7 +435,7 @@ public class CreationTemplateMvpModel {
         stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
         stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
         stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
-        stickView.setComeFrom(isFromAubum);
+        stickView.setComeFromAlbum(isFromAubum);
         if (isFromAubum) {
             stickView.setClipPath(path);
             stickView.setOriginalPath(originalPath);
@@ -453,17 +456,29 @@ public class CreationTemplateMvpModel {
     }
 
 
-    private void copyGif(String originalPath,String path){
+    private void copyGif(String originalPath, String path,boolean isFromAubum) {
         try {
             String copyName = null;
             if (originalPath.endsWith(".gif")) {
                 copyName = mGifFolder + File.separator + System.currentTimeMillis() + "synthetic.gif";
-                FileUtil.copyFile(new File(originalPath), copyName);
-                addSticker(copyName, false, false, null);
+                String finalCopyName = copyName;
+                FileUtil.copyFile(new File(originalPath), copyName, new FileUtil.copySucceed() {
+                    @Override
+                    public void isSucceed() {
+                        addSticker(finalCopyName, false, isFromAubum, originalPath);
+                    }
+                });
+
             } else {
                 String aa = path.substring(path.length() - 4);
-                copyName = mGifFolder + File.separator + System.currentTimeMillis() + aa;
-                addSticker(copyName, true, false, null);
+                copyName = mImageCopyFolder + File.separator + System.currentTimeMillis() +aa;
+                String finalCopyName1 = copyName;
+                FileUtil.copyFile(new File(originalPath), copyName, new FileUtil.copySucceed() {
+                    @Override
+                    public void isSucceed() {
+                        addSticker(finalCopyName1, true, isFromAubum, null);
+                    }
+                });
             }
 
         } catch (IOException e) {
