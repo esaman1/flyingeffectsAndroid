@@ -257,6 +257,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
 
     private void intoTemplateActivity(List<String> paths, String templateFilePath) {
+        WaitingDialog.closePragressDialog();
         Intent intent = new Intent(this, TemplateActivity.class);
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("paths", (ArrayList<String>) paths);
@@ -273,13 +274,13 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void getCompressImgList(List<String> imgList) {
+
+
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-            WaitingDialog.openPragressDialog(this);
-            Presenter.DownVideo(templateItem.getVidoefile(),imgList.get(0),templateItem.getId());
+            Presenter.DownVideo(templateItem.getVidoefile(), imgList.get(0), templateItem.getId());
         } else {
             intoTemplateActivity(imgList, TemplateFilePath);
         }
-
     }
 
 
@@ -361,32 +362,25 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     }
 
 
-
     /**
      * description ：下载视频成功后跳转到创作页面
      * creation date: 2020/3/20
      * user : zhangtongju
      */
     @Override
-    public void downVideoSuccess(String videoPath,String imagePath) {
-//        VideoTranscodeManage.getInstance().tranCodeForVideo(PreviewActivity.this, videoPath, templateItem.getId(), new VideoTranscodeManage.videoTransCodeState() {
-//            @Override
-//            public void isSuccess(boolean isSuccess, String path) {
-//
-//                if(isSuccess){
-                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                        Intent intent = new Intent(PreviewActivity.this, CreationTemplateActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putString("paths", imagePath);
-                        bundle.putString("originalPath",originalImagePath.get(0));
-                        bundle.putString("video_path", videoPath);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.putExtra("Message", bundle);
-                        startActivity(intent);
-                        setResult(Activity.RESULT_OK, intent);
-                    });
-//            }
-//        });
+    public void downVideoSuccess(String videoPath, String imagePath) {
+        WaitingDialog.closePragressDialog();
+        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+            Intent intent = new Intent(PreviewActivity.this, CreationTemplateActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("paths", imagePath);
+            bundle.putString("originalPath", originalImagePath.get(0));
+            bundle.putString("video_path", videoPath);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("Message", bundle);
+            startActivity(intent);
+            setResult(Activity.RESULT_OK, intent);
+        });
     }
 
 

@@ -20,6 +20,7 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.PreviewMvpCallback;
+import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
 import com.flyingeffects.com.utils.StringUtil;
@@ -35,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -80,6 +82,7 @@ public class PreviewMvpModel {
                 hasReadyList.add(file.getPath());
                 if (i == paths.size() - 1) {
                     callback.getCompressImgList(hasReadyList);
+
                     return;
                 }
             } else {
@@ -100,7 +103,12 @@ public class PreviewMvpModel {
             callback.downVideoSuccess(videoName,imagePath);
             return;
         }
-
+        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer integer) {
+                WaitingDialog.openPragressDialog(context,"正在下载中");
+            }
+        });
 
         Observable.just(path).subscribeOn(Schedulers.io()).subscribe(new Action1<String>() {
             @Override
@@ -223,7 +231,7 @@ public class PreviewMvpModel {
         updateFileUtils.uploadFile(listFile, "http://flying.nineton.cn/api/picture/picturesHumanList?filenum=" + pathNum, new updateFileUtils.HttpCallbackListener() {
             @Override
             public void onFinish(int code, String str) {
-                WaitingDialog.closePragressDialog();
+//                WaitingDialog.closePragressDialog();
                 if (code == 404) {
                     callback.getCompressImgList(localImagePaths);
                 } else {
