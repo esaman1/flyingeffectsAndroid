@@ -329,7 +329,8 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     private void addSticker(String path, boolean hasReplace, boolean isFromAubum, String originalPath,boolean isCopy,StickerView copyStickerView) {
-        StickerView stickView = new StickerView(context);
+        closeAllAnim();
+       StickerView stickView = new StickerView(context);
         stickView.setOnitemClickListener(new StickerItemOnitemclick() {
             @Override
             public void stickerOnclick(int type) {
@@ -355,6 +356,7 @@ public class CreationTemplateMvpModel {
 
             @Override
             public void stickerMove() {
+                closeAllAnim();
                 if (stickView.getParent() != null) {
                     ViewGroup vp = (ViewGroup) stickView.getParent();
                     if (vp != null) {
@@ -362,6 +364,7 @@ public class CreationTemplateMvpModel {
                     }
                 }
                 viewLayerRelativeLayout.addView(stickView);
+                stickView.start();
             }
         });
         stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
@@ -384,10 +387,8 @@ public class CreationTemplateMvpModel {
             stickView.setImageRes(path, false,fromCopy);
             stickView.showFrame();
         }else{
-            stickView.setImageRes(path, false,null);
+            stickView.setImageRes(path, true,null);
         }
-
-
         AnimStickerModel animStickerModel = new AnimStickerModel(context, viewLayerRelativeLayout, stickView);
         listForStickerView.add(animStickerModel);
         if (stickView.getParent() != null) {
@@ -398,6 +399,17 @@ public class CreationTemplateMvpModel {
         }
         viewLayerRelativeLayout.addView(stickView);
 
+    }
+
+
+
+
+    private void closeAllAnim(){
+        ArrayList<AllStickerData> list = new ArrayList<>();
+        for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
+            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
+            stickerView.pause();
+        }
     }
 
 

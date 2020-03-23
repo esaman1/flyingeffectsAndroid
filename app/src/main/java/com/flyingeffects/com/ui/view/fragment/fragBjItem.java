@@ -12,7 +12,6 @@ import com.flyingeffects.com.adapter.main_recycler_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -49,7 +48,6 @@ public class fragBjItem extends BaseFragment   {
     private boolean isRefresh = true;
     private ArrayList<new_fag_template_item> listData = new ArrayList<>();
     private int selectPage = 1;
-    private int actTag;
 
     /**
      * 0 表示来做模板，1表示来自背景
@@ -67,7 +65,6 @@ public class fragBjItem extends BaseFragment   {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             templateId = bundle.getString("id");
-            actTag = bundle.getInt("num");
             fromType=bundle.getInt("from");
         }
         initRecycler();
@@ -77,8 +74,6 @@ public class fragBjItem extends BaseFragment   {
 
     @Override
     protected void initAction() {
-
-
         requestFagData(true,true);
     }
 
@@ -166,13 +161,10 @@ public class fragBjItem extends BaseFragment   {
 
             @Override
             protected void _onNext(List<new_fag_template_item> data) {
-//                String str= StringUtil.beanToJSONString(data);
-//                LogUtil.d("OOM","_onNext="+str);
                 finishData();
                 if (isRefresh) {
                     listData.clear();
                 }
-
                 if (isRefresh && data.size() == 0) {
                   showNoData(true);
                 } else {

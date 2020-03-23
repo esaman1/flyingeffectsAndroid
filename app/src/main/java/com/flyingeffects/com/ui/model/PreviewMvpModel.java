@@ -93,8 +93,15 @@ public class PreviewMvpModel {
 
 
 
-    public void DownVideo(String path,String imagePath){
-        String videoName= mVideoFolder + File.separator + System.currentTimeMillis() + "synthetic.mp4";
+    public void DownVideo(String path,String imagePath,String id){
+        String videoName= mVideoFolder + File.separator + id + "synthetic.mp4";
+        File File=new File(videoName);
+        if(File.exists()){
+            callback.downVideoSuccess(videoName,imagePath);
+            return;
+        }
+
+
         Observable.just(path).subscribeOn(Schedulers.io()).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {

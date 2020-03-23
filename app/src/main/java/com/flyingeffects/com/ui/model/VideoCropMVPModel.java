@@ -680,7 +680,7 @@ public class VideoCropMVPModel {
                     LSOVideoOption option=new LSOVideoOption(videoPath);
                     long durationUs=getDuration()*1000;
                     option.setCutDurationUs(Math.round(cropStartRatio*durationUs),Math.round(cropEndRatio*durationUs));
-                    VideoFrameLayer bgLayer=execute.addVideoLayer(option);
+                    VideoFrameLayer bgLayer=execute.addVideoLayer(option,0, Long.MAX_VALUE, true, true);
                     if (bgLayer != null) {
                         bgLayer.setScaledValue(videoRatio*execute.getPadHeight(), execute.getPadHeight());
                         bgLayer.setPosition(execute.getPadWidth() * 0.5f, execute.getPadHeight() * 0.5f);

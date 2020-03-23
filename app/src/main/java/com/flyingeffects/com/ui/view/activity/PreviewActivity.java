@@ -20,6 +20,7 @@ import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.DownloadVideoManage;
+import com.flyingeffects.com.manager.VideoTranscodeManage;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
@@ -29,6 +30,7 @@ import com.flyingeffects.com.ui.presenter.PreviewMvpPresenter;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MarqueTextView;
+import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.yanzhenjie.album.AlbumFile;
 
@@ -272,7 +274,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     public void getCompressImgList(List<String> imgList) {
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-            Presenter.DownVideo(templateItem.getVidoefile(),imgList.get(0));
+            WaitingDialog.openPragressDialog(this);
+            Presenter.DownVideo(templateItem.getVidoefile(),imgList.get(0),templateItem.getId());
         } else {
             intoTemplateActivity(imgList, TemplateFilePath);
         }
@@ -352,6 +355,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "mb_make", templateItem.getTitle());
             videoPlayer.onVideoPause();
             VideoPlaybackCompleted(true, true);
+            WaitingDialog.openPragressDialog(this);
             Presenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
         }
     }
@@ -365,17 +369,24 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
      */
     @Override
     public void downVideoSuccess(String videoPath,String imagePath) {
-        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-            Intent intent = new Intent(PreviewActivity.this, CreationTemplateActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putString("paths", imagePath);
-            bundle.putString("originalPath",originalImagePath.get(0));
-            bundle.putString("video_path", videoPath);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra("Message", bundle);
-            startActivity(intent);
-            setResult(Activity.RESULT_OK, intent);
-        });
+//        VideoTranscodeManage.getInstance().tranCodeForVideo(PreviewActivity.this, videoPath, templateItem.getId(), new VideoTranscodeManage.videoTransCodeState() {
+//            @Override
+//            public void isSuccess(boolean isSuccess, String path) {
+//
+//                if(isSuccess){
+                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+                        Intent intent = new Intent(PreviewActivity.this, CreationTemplateActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("paths", imagePath);
+                        bundle.putString("originalPath",originalImagePath.get(0));
+                        bundle.putString("video_path", videoPath);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra("Message", bundle);
+                        startActivity(intent);
+                        setResult(Activity.RESULT_OK, intent);
+                    });
+//            }
+//        });
     }
 
 

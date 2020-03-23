@@ -20,8 +20,8 @@ public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCall
         PreviewModel = new PreviewMvpModel(context, this);
     }
 
-    public void DownVideo(String path,String imagePath){
-        PreviewModel.DownVideo(path,imagePath);
+    public void DownVideo(String path,String imagePath,String id){
+        PreviewModel.DownVideo(path,imagePath,id);
     }
 
 

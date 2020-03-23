@@ -12,6 +12,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.GifLayer;
 import com.lansosdk.box.LSOVideoOption;
+import com.lansosdk.box.VideoFrameLayer;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.lansosdk.videoeditor.VideoOneDo2;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
@@ -80,7 +81,8 @@ public class backgroundDraw {
         LSOVideoOption option  ;
         try {
             option = new LSOVideoOption(videoPath);
-            execute.addVideoLayer(option, 0, Long.MAX_VALUE, true, true);
+            VideoFrameLayer bgLayer=execute.addVideoLayer(option,0, Long.MAX_VALUE, true, true);
+            bgLayer.setScaledToPadSize();
         } catch (Exception e) {
             e.printStackTrace();
         }
