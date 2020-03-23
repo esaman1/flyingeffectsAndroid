@@ -90,6 +90,9 @@ public class PreviewMvpModel {
             }
         }
 
+
+
+
         //正常压缩下载逻辑
         toCompressImg(paths);
     }
@@ -103,12 +106,6 @@ public class PreviewMvpModel {
             callback.downVideoSuccess(videoName,imagePath);
             return;
         }
-        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
-            @Override
-            public void call(Integer integer) {
-                WaitingDialog.openPragressDialog(context,"正在下载中");
-            }
-        });
 
         Observable.just(path).subscribeOn(Schedulers.io()).subscribe(new Action1<String>() {
             @Override

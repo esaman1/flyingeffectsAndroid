@@ -250,6 +250,7 @@ public class CreationTemplateMvpModel {
             }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> {
                 try {
                     FileUtil.copyFile(path1, fileName);
+//                    String sss="/storage/emulated/0/1/20200323133240.gif";
                     addSticker(fileName, false, false, null,false,null);
                     WaitingDialog.closePragressDialog();
                     modificationSingleItem(position);

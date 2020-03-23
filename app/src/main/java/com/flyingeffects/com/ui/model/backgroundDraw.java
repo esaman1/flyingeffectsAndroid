@@ -81,6 +81,7 @@ public class backgroundDraw {
         LSOVideoOption option  ;
         try {
             option = new LSOVideoOption(videoPath);
+            option.setLooping(true);
             VideoFrameLayer bgLayer=execute.addVideoLayer(option,0, Long.MAX_VALUE, true, true);
             bgLayer.setScaledToPadSize();
         } catch (Exception e) {

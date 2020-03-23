@@ -277,7 +277,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
 
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-            Presenter.DownVideo(templateItem.getVidoefile(), imgList.get(0), templateItem.getId());
+          Presenter.DownVideo(templateItem.getVidoefile(), imgList.get(0), templateItem.getId());
         } else {
             intoTemplateActivity(imgList, TemplateFilePath);
         }
@@ -346,6 +346,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void hasLogin(boolean hasLogin) {
+
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
             //来做背景页面
             AlbumManager.chooseImageAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
