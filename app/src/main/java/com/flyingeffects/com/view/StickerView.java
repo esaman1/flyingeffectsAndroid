@@ -1248,4 +1248,23 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
+
+    public RectF getHelpBoxRect(){
+        return mHelpBoxRect;
+    }
+
+
+    /**
+     * description ：把另一个sticker 的数据设置过来
+     * creation date: 2020/3/23
+     * user : zhangtongju
+     */
+    public void setAnotherStickerData(float  mRotateAngle,float mScale,RectF mHelpBoxRect){
+        this.mRotateAngle=mRotateAngle;
+        this.mScale=mScale;
+        this.mHelpBoxRect=mHelpBoxRect;
+    }
+
+
+
 }
