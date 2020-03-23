@@ -37,7 +37,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
-import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -52,13 +51,6 @@ import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 
 import java.io.File;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 //com.flyingeffects.com.view.StickerView
 
 
@@ -1082,10 +1074,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             moveY = (getMeasuredHeight() + originalBitmapHeight) / 2;
 
             if(fromCopy!=null){
-
                 setScale(fromCopy.getScale());
                 setDegree(fromCopy.getDegree());
-                setCenter(getWidth() / 2f, getHeight() / 2f);
+                setCenter(fromCopy.tranX, fromCopy.tranY);
             }else{
                 setScale(1f);
                 setDegree(0f);
@@ -1229,8 +1220,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
         float tranY;
 
-
-
     }
 
 
@@ -1315,11 +1304,26 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
 
     public float getCenterX(){
-        return mHelpBoxRect.right;
+        LogUtil.d("getCenterX","getCenterX="+mHelpBoxRect.right);
+        float xx=(mHelpBoxRect.right-mHelpBoxRect.left)/2;
+        return mHelpBoxRect.right-xx+30;
+
     }
 
     public float getCenterY(){
-        return mHelpBoxRect.bottom;
+        float yy=(mHelpBoxRect.bottom-mHelpBoxRect.top)/2;
+        return mHelpBoxRect.bottom-yy+30;
+    }
+
+
+
+    public void showFrame(){
+        handler.sendEmptyMessage(SHOW_FRAME);
+        handler.sendEmptyMessageDelayed(DISMISS_FRAME,AUTO_FADE_FRAME_TIMEOUT);
+    }
+
+    public void dismissFrame(){
+        handler.sendEmptyMessage(DISMISS_FRAME);
     }
 
 

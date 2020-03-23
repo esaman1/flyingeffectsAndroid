@@ -337,6 +337,7 @@ public class CreationTemplateMvpModel {
                     viewLayerRelativeLayout.removeView(stickView);
 
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
+                    stickView.dismissFrame();
                     //copy
                     copyGif(stickView.getResPath(), path,isFromAubum,stickView);
 
@@ -381,6 +382,7 @@ public class CreationTemplateMvpModel {
             fromCopy.setTranX(copyStickerView.getCenterX());
             fromCopy.setTranY(copyStickerView.getCenterY());
             stickView.setImageRes(path, false,fromCopy);
+            stickView.showFrame();
         }else{
             stickView.setImageRes(path, false,null);
         }
