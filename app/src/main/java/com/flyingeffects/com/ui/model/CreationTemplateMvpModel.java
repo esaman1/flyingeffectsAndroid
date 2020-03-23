@@ -198,9 +198,9 @@ public class CreationTemplateMvpModel {
                 StickerView stickerView = stickerModel.getStickerView();
                 if (stickerView != null && stickerView.getComeFrom()) {
                     if (isMatting) {
-                        stickerView.setImageRes(stickerView.getClipPath(), false);
+                        stickerView.setImageRes(stickerView.getClipPath(), false,null);
                     } else {
-                        stickerView.setImageRes(stickerView.getOriginalPath(), false);
+                        stickerView.setImageRes(stickerView.getOriginalPath(), false,null);
                     }
                 }
             }
@@ -344,7 +344,7 @@ public class CreationTemplateMvpModel {
                     //切換素材
                     AlbumManager.chooseImageAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
                         CompressionCuttingManage manage = new CompressionCuttingManage(context, tailorPaths -> {
-                            Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> stickView.setImageRes(s, false));
+                            Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> stickView.setImageRes(s, false,null));
                         });
                         manage.CompressImgAndCache(paths);
 
@@ -374,14 +374,18 @@ public class CreationTemplateMvpModel {
         if (hasReplace) {
             stickView.setLeftBottomBitmap(context.getDrawable(R.mipmap.sticker_change));
         }
-        stickView.setImageRes(path, false);
-
-
         if(isCopy){
-            //复制过来的，需要把数据赋值给新的stickView
-            stickView.setAnotherStickerData(copyStickerView.getRotateAngle(),copyStickerView.getScale(),copyStickerView.getHelpBoxRect());
-            stickView.invalidate();
+            StickerView.isFromCopy fromCopy=new StickerView.isFromCopy();
+            fromCopy.setScale(copyStickerView.getScale());
+            fromCopy.setDegree(copyStickerView.getRotateAngle());
+            fromCopy.setTranX(copyStickerView.getCenterX());
+            fromCopy.setTranY(copyStickerView.getCenterY());
+            stickView.setImageRes(path, false,fromCopy);
+        }else{
+            stickView.setImageRes(path, false,null);
         }
+
+
         AnimStickerModel animStickerModel = new AnimStickerModel(context, viewLayerRelativeLayout, stickView);
         listForStickerView.add(animStickerModel);
         if (stickView.getParent() != null) {

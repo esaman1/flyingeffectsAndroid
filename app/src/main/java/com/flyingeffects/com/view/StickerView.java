@@ -186,6 +186,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      */
     private String originalPath;
 
+    private isFromCopy fromCopy;
+
 
     /**
      * 裁剪后地址
@@ -1078,9 +1080,19 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             }
             moveX = (getMeasuredWidth() + originalBitmapWidth) / 2;
             moveY = (getMeasuredHeight() + originalBitmapHeight) / 2;
-            setScale(1f);
-            setDegree(0f);
-            setCenter(getWidth() / 2f, getHeight() / 2f);
+
+            if(fromCopy!=null){
+
+                setScale(fromCopy.getScale());
+                setDegree(fromCopy.getDegree());
+                setCenter(getWidth() / 2f, getHeight() / 2f);
+            }else{
+                setScale(1f);
+                setDegree(0f);
+                setCenter(getWidth() / 2f, getHeight() / 2f);
+            }
+
+
             invalidate();
         }
     }
@@ -1127,7 +1139,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     D currentDrawable = null;
     final RequestOptions options = new RequestOptions().centerCrop();
 
-    public void setImageRes(final String path, final boolean autoRun) {
+    public void setImageRes(final String path, final boolean autoRun,isFromCopy fromCopy ) {
+        this.fromCopy=fromCopy;
         if (!TextUtils.isEmpty(path)) {
             stop();
             this.resPath = path;
@@ -1171,6 +1184,58 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             Toast.makeText(getContext(), "文件不存在", Toast.LENGTH_LONG).show();
         }
     }
+
+
+
+    public static class isFromCopy{
+
+        public float getScale() {
+            return scale;
+        }
+
+        public void setScale(float scale) {
+            this.scale = scale;
+        }
+
+        float scale;
+
+        public float getDegree() {
+            return degree;
+        }
+
+        public void setDegree(float degree) {
+            this.degree = degree;
+        }
+
+        float degree;
+
+        float tranX;
+
+        public float getTranX() {
+            return tranX;
+        }
+
+        public void setTranX(float tranX) {
+            this.tranX = tranX;
+        }
+
+        public float getTranY() {
+            return tranY;
+        }
+
+        public void setTranY(float tranY) {
+            this.tranY = tranY;
+        }
+
+        float tranY;
+
+
+
+    }
+
+
+
+
 
 
     /**
@@ -1249,21 +1314,18 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
 
 
-    public RectF getHelpBoxRect(){
-        return mHelpBoxRect;
+    public float getCenterX(){
+        return mHelpBoxRect.right;
+    }
+
+    public float getCenterY(){
+        return mHelpBoxRect.bottom;
     }
 
 
-    /**
-     * description ：把另一个sticker 的数据设置过来
-     * creation date: 2020/3/23
-     * user : zhangtongju
-     */
-    public void setAnotherStickerData(float  mRotateAngle,float mScale,RectF mHelpBoxRect){
-        this.mRotateAngle=mRotateAngle;
-        this.mScale=mScale;
-        this.mHelpBoxRect=mHelpBoxRect;
-    }
+
+
+
 
 
 
