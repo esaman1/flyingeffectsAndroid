@@ -3,9 +3,11 @@ package com.flyingeffects.com.manager;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.view.View;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
+import com.flyingeffects.com.utils.LogUtil;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.AlbumFile;
 import com.yanzhenjie.album.Filter;
@@ -67,18 +69,29 @@ public class AlbumManager {
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     public static void chooseImageAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback,String material_info) {
-        Filter<String> filter=new Filter<String>() {
-            @Override
-            public boolean filter(String attributes) {
-                return attributes.equalsIgnoreCase("gif");
-            }
-        };
+
         Album.image(context) // Image selection.
                 .multipleChoice()
                 .camera(false)
                 .material_info(material_info)
                 .columnCount(3)
-                .filterMimeType(filter)
+                .filterSize(new Filter<Long>() {
+                    @Override
+                    public boolean filter(Long attributes) {
+                        LogUtil.d("OOM","attributesLLL="+attributes);
+
+                        return attributes<20000;
+
+                    }
+                })
+                .filterMimeType(new Filter<String>() {
+                    @Override
+                    public boolean filter(String attributes) {
+                        LogUtil.d("OOM","attributes="+attributes);
+                        return attributes.equals("image/gif")||attributes.equals("image/svg+xml")||attributes.equals("image/x-icon");
+                    }
+                })
+                .afterFilterVisibility(false)
                 .selectCount(selectNum)
                 .widget(
                         Widget.newLightBuilder(context)

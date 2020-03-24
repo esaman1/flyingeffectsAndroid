@@ -163,7 +163,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_zan:
-
                 Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle());
                 break;
             case R.id.tv_make:
@@ -274,8 +273,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void getCompressImgList(List<String> imgList) {
-
-
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
           Presenter.DownVideo(templateItem.getVidoefile(), imgList.get(0), templateItem.getId());
         } else {
@@ -294,7 +291,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 } else {
                     tv_make.setText("下载" + progress + "%");
                 }
-
             }
         });
     }
@@ -306,7 +302,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             this.TemplateFilePath = TemplateFilePath;
             AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");
         }
-
     }
 
     @Override
