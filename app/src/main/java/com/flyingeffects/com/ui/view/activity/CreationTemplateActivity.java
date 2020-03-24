@@ -282,8 +282,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private void startTimer() {
         int screenWidth=screenUtil.getScreenWidth(this);
-        //真实长度+左边黑条+结尾黑条
-         listWidth=(screenWidth-screenUtil.dip2px(this,43))*2+listWidth;
+        //真实长度
+         listWidth=(screenWidth-screenUtil.dip2px(this,43))*2;
         if (timer != null) {
             timer.purge();
             timer.cancel();
