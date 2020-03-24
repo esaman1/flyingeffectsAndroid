@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -11,8 +12,11 @@ import android.widget.TextView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
@@ -87,6 +91,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private boolean isPlaying = false;
     private int allVideoDuration;
     private int thumbCount;
+    /**
+     * 只有背景模板才有，自定义的话这个值为""
+     */
+    private String title;
 
     @Override
     protected int getLayoutId() {
@@ -103,6 +111,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             imgPath = bundle.getString("paths");
             videoPath = bundle.getString("video_path");
             originalPath = bundle.getString("originalPath");
+            title=bundle.getString("bjTemplateTitle");
         }
         presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout);
         videoPlayer.setUp(videoPath, true, "");
@@ -139,6 +148,20 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         switchButton.setOnCheckedChangeListener(new SwitchButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(SwitchButton view, boolean isChecked) {
+                if(isChecked){
+                    if(UiStep.isFromDownBj){
+                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"5_mb_bj_Cutoutopen");
+                    }else{
+                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"6_customize_bj_Cutoutopen");
+                    }
+                }else{
+                    if(UiStep.isFromDownBj){
+                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"5_mb_bj_Cutoutoff");
+                    }else{
+                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"6_customize_bj_Cutoutoff");
+                    }
+
+                }
                 presenter.CheckedChanged(isChecked);
             }
         });
@@ -152,6 +175,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 if (isPlaying) {
                     videoToPause();
                 }
+                if(!TextUtils.isEmpty(title)){
+                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this,"5_mb_bj_save",title);
+                }else{
+                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this,"6_customize_bj_save");
+                }
+
                 presenter.toSaveVideo();
                 break;
 
@@ -181,6 +210,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     presenter.showGifAnim(false);
                     nowStateIsPlaying(false);
                 }
+                if(UiStep.isFromDownBj){
+                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "5_mb_bj_material");
+                }else{
+                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_material");
+                }
+
                 //添加新的贴纸，这里的贴纸就是用户选择的贴纸
                 AlbumManager.chooseImageAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel, albumFileList) -> {
                     CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this, tailorPaths -> {
@@ -311,7 +346,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 });
             }
         };
-        timer.schedule(task, 0, 16);
+        timer.schedule(task, 0, 5);
     }
 
 

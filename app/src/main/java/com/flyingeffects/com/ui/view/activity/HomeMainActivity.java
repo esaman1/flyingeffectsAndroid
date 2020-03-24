@@ -186,6 +186,7 @@ public class HomeMainActivity extends FragmentActivity {
         switch (v.getId()) {
             case R.id.ll_menu_0:
                 whichMenuSelect(0);
+                statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this,"5_bj");
                 break;
             case R.id.ll_menu_1:
                 whichMenuSelect(1);

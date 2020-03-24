@@ -29,6 +29,7 @@ import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.AllStickerData;
 import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.enity.VideoInfo;
@@ -39,7 +40,9 @@ import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
+import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -147,7 +150,22 @@ public class CreationTemplateMvpModel {
             if (i == 0) {
                 //删除选择的帖子
                 deleteAllSticker();
+
+                if(UiStep.isFromDownBj){
+                    statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Stickeroff");
+                }else{
+                    statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_Stickeroff");
+                }
+
+
             } else {
+                if(UiStep.isFromDownBj){
+                    statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Sticker", listForSticker.get(i).getTitle());
+                }else{
+                    statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_Sticker", listForSticker.get(i).getTitle());
+                }
+
+
                 downSticker(listForSticker.get(i).getImage(), listForSticker.get(i).getId(), i);
             }
 
@@ -349,6 +367,16 @@ public class CreationTemplateMvpModel {
                     copyGif(stickView.getResPath(), path, isFromAubum, stickView);
 
                 } else if (type == StickerView.LEFT_BOTTOM_MODE) {
+
+                    if(UiStep.isFromDownBj){
+                        statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_replace");
+                    }else{
+                        statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_replace");
+                    }
+
+
+
+
                     //切換素材
                     AlbumManager.chooseImageAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
                         CompressionCuttingManage manage = new CompressionCuttingManage(context, tailorPaths -> {
@@ -433,6 +461,12 @@ public class CreationTemplateMvpModel {
         try {
             String copyName = null;
             if (originalPath.endsWith(".gif")) {
+                if(UiStep.isFromDownBj){
+                    statisticsEventAffair.getInstance().setFlag(context, "5_mb_sticker_plus");
+                }else{
+                    statisticsEventAffair.getInstance().setFlag(context, "6_mb_sticker_plus");
+                }
+
                 copyName = mGifFolder + File.separator + System.currentTimeMillis() + "synthetic.gif";
                 String finalCopyName = copyName;
                 FileUtil.copyFile(new File(originalPath), copyName, new FileUtil.copySucceed() {
@@ -443,6 +477,14 @@ public class CreationTemplateMvpModel {
                 });
 
             } else {
+
+                if(UiStep.isFromDownBj){
+                    statisticsEventAffair.getInstance().setFlag(context, "5_mb_bj_plus one");
+                }else{
+                    statisticsEventAffair.getInstance().setFlag(context, "6_customize_bj_plus one");
+                }
+
+
                 String aa = path.substring(path.length() - 4);
                 copyName = mImageCopyFolder + File.separator + System.currentTimeMillis() + aa;
                 String finalCopyName1 = copyName;

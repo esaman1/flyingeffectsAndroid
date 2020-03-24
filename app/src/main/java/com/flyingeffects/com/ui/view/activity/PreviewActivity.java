@@ -15,6 +15,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.DataCleanManager;
@@ -113,7 +114,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     private int nowCollectType;
 
 
-
     @Override
     protected int getLayoutId() {
         return R.layout.act_preview;
@@ -161,15 +161,19 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         switch (view.getId()) {
             case R.id.iv_zan:
                 if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                    Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(),2+"");
-                }else{
-                    Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(),1+"");
+                    Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), 2 + "");
+                } else {
+                    Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), 1 + "");
                 }
-
 
                 break;
             case R.id.tv_make:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(3000)) {
+                    if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                        statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "5_bj_Make", templateItem.getTitle());
+                        UiStep.isFromDownBj=true;
+                    }
+
                     if (BaseConstans.hasLogin()) {
                         //登录可能被挤下去，所以这里加个用户信息刷新请求
                         Presenter.requestUserInfo();
@@ -277,7 +281,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     public void getCompressImgList(List<String> imgList) {
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-          Presenter.DownVideo(templateItem.getVidoefile(), imgList.get(0), templateItem.getId());
+            Presenter.DownVideo(templateItem.getVidoefile(), imgList.get(0), templateItem.getId());
         } else {
             intoTemplateActivity(imgList, TemplateFilePath);
         }
@@ -310,11 +314,23 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     public void collectionResult() {
         if (nowCollectType == 0) {
-            statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "1_mb_keep_cancel", templateItem.getTitle());
+
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "5_bj_keep", templateItem.getTitle());
+            } else {
+                statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "1_mb_keep_cancel", templateItem.getTitle());
+            }
+
+
             nowCollectType = 1;
             ToastUtil.showToast(getString(R.string.template_collect_success));
         } else {
-            statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "1_mb_keep", templateItem.getTitle());
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "5_bj_keep_cancel", templateItem.getTitle());
+            } else {
+                statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "1_mb_keep", templateItem.getTitle());
+            }
+
             nowCollectType = 0;
             ToastUtil.showToast(getString(R.string.template_cancel_success));
         }
@@ -373,6 +389,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             Intent intent = new Intent(PreviewActivity.this, CreationTemplateActivity.class);
             Bundle bundle = new Bundle();
             bundle.putString("paths", imagePath);
+            bundle.putSerializable("bjTemplateTitle", templateItem.getTitle());
             bundle.putString("originalPath", originalImagePath.get(0));
             bundle.putString("video_path", videoPath);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -304,7 +304,6 @@ public class PreviewMvpModel {
 
             @Override
             protected void _onNext(Object data) {
-                statisticsEventAffair.getInstance().setFlag(context, "1_mb_keep", title);
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "collectTemplate=" + str);
                 callback.collectionResult();

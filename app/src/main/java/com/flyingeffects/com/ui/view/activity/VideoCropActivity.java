@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -85,6 +86,9 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
         String videoPath = getIntent().getStringExtra("videoPath");
         userSetDuration = getIntent().getLongExtra("duration", 0);
         initVideoDrawPad(videoPath, false);
+        UiStep.nowUiTag="";
+        UiStep.isFromDownBj=false;
+        statisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Crop");
     }
 
     @Override
@@ -101,6 +105,7 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
                 break;
             case R.id.tv_choose_pic: //继续
                 statisticsEventAffair.getInstance().setFlag(this, "2_Titles_cutdone", "手动卡点_片头裁剪完成");
+                statisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Cutout");
                 saveVideo();
                 break;
             default:

@@ -42,8 +42,11 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.manager.BitmapManager;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.TickerAnimated;
+import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.lansongCommendView.RectUtil;
@@ -693,6 +696,12 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 } else if (mCurrentMode == LEFT_BOTTOM_MODE) {
                     callback.stickerOnclick(LEFT_BOTTOM_MODE);
                     return true;
+                } else if (mCurrentMode == RIGHT_BOTTOM_MODE) {
+                    if (UiStep.isFromDownBj) {
+                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), " 5_mb_bj_Spin");
+                    } else {
+                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), " 6_customize_bj_Spin");
+                    }
                 }
                 lastX = x;
                 lastY = y;
@@ -708,6 +717,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 break;
             case MotionEvent.ACTION_MOVE:
 
+                if (UiStep.isFromDownBj) {
+                    statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_drag");
+                } else {
+                    statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_drag");
+                }
 
                 if (mCurrentMode == IDLE_MODE) {
                     return false;
@@ -921,7 +935,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 return current + tempDegree;
             }
 
-        }else {
+        } else {
             mHelpPaint.setColor(Color.WHITE);
         }
 
@@ -1079,11 +1093,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             moveX = (getMeasuredWidth() + originalBitmapWidth) / 2;
             moveY = (getMeasuredHeight() + originalBitmapHeight) / 2;
 
-            if(fromCopy!=null){
+            if (fromCopy != null) {
                 setScale(fromCopy.getScale());
                 setDegree(fromCopy.getDegree());
                 setCenter(fromCopy.tranX, fromCopy.tranY);
-            }else{
+            } else {
                 setScale(1f);
                 setDegree(0f);
                 setCenter(getWidth() / 2f, getHeight() / 2f);
@@ -1136,8 +1150,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     D currentDrawable = null;
     final RequestOptions options = new RequestOptions().centerCrop();
 
-    public void setImageRes(final String path, final boolean autoRun,isFromCopy fromCopy ) {
-        this.fromCopy=fromCopy;
+    public void setImageRes(final String path, final boolean autoRun, isFromCopy fromCopy) {
+        this.fromCopy = fromCopy;
         if (!TextUtils.isEmpty(path)) {
             stop();
             this.resPath = path;
@@ -1183,8 +1197,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-
-    public static class isFromCopy{
+    public static class isFromCopy {
 
         public float getScale() {
             return scale;
@@ -1229,12 +1242,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-
-
-
-
     /**
      * 區別第一次設置素材，
+     *
      * @param path
      * @param autoRun
      */
@@ -1308,35 +1318,27 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-
-    public float getCenterX(){
-        LogUtil.d("getCenterX","getCenterX="+mHelpBoxRect.right);
-        float xx=(mHelpBoxRect.right-mHelpBoxRect.left)/2;
-        return mHelpBoxRect.right-xx+30;
+    public float getCenterX() {
+        LogUtil.d("getCenterX", "getCenterX=" + mHelpBoxRect.right);
+        float xx = (mHelpBoxRect.right - mHelpBoxRect.left) / 2;
+        return mHelpBoxRect.right - xx + 30;
 
     }
 
-    public float getCenterY(){
-        float yy=(mHelpBoxRect.bottom-mHelpBoxRect.top)/2;
-        return mHelpBoxRect.bottom-yy+30;
+    public float getCenterY() {
+        float yy = (mHelpBoxRect.bottom - mHelpBoxRect.top) / 2;
+        return mHelpBoxRect.bottom - yy + 30;
     }
 
 
-
-    public void showFrame(){
+    public void showFrame() {
         handler.sendEmptyMessage(SHOW_FRAME);
-        handler.sendEmptyMessageDelayed(DISMISS_FRAME,AUTO_FADE_FRAME_TIMEOUT);
+        handler.sendEmptyMessageDelayed(DISMISS_FRAME, AUTO_FADE_FRAME_TIMEOUT);
     }
 
-    public void dismissFrame(){
+    public void dismissFrame() {
         handler.sendEmptyMessage(DISMISS_FRAME);
     }
-
-
-
-
-
-
 
 
 }

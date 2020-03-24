@@ -20,6 +20,7 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.FagBjMvpView;
 import com.flyingeffects.com.ui.presenter.FagBjMvpPresenter;
+import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.yanzhenjie.album.AlbumFile;
 
@@ -182,13 +183,14 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     }
 
 
-    @OnClick({R.id.iv_add})
+    @OnClick({R.id.iv_add,R.id.iv_cover})
     public void onClick(View view) {
 
 
         switch (view.getId()){
             case R.id.iv_add:
-
+            case R.id.iv_cover:
+                statisticsEventAffair.getInstance().setFlag(getActivity(), "6_customize_bj");
                 AlbumManager.chooseVideo(getActivity(), 1, SELECTALBUM, new AlbumChooseCallback() {
                     @Override
                     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
