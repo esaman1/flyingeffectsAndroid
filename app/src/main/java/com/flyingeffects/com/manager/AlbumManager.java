@@ -8,9 +8,11 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.AlbumFile;
+import com.yanzhenjie.album.Filter;
 import com.yanzhenjie.album.api.widget.Widget;
 
 import java.util.ArrayList;
+import java.util.IllegalFormatCodePointException;
 import java.util.List;
 
 public class AlbumManager {
@@ -65,11 +67,18 @@ public class AlbumManager {
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     public static void chooseImageAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback,String material_info) {
+        Filter<String> filter=new Filter<String>() {
+            @Override
+            public boolean filter(String attributes) {
+                return attributes.equalsIgnoreCase("gif");
+            }
+        };
         Album.image(context) // Image selection.
                 .multipleChoice()
                 .camera(false)
                 .material_info(material_info)
                 .columnCount(3)
+                .filterMimeType(filter)
                 .selectCount(selectNum)
                 .widget(
                         Widget.newLightBuilder(context)

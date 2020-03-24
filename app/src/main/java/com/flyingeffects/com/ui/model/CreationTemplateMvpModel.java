@@ -378,14 +378,13 @@ public class CreationTemplateMvpModel {
         if (hasReplace) {
             stickView.setLeftBottomBitmap(context.getDrawable(R.mipmap.sticker_change));
         }
-        if (isCopy) {
+        if (isCopy && copyStickerView != null) {
+            //来做复制或者来自联系点击下面的item
             StickerView.isFromCopy fromCopy = new StickerView.isFromCopy();
-            if(copyStickerView!=null){
-                fromCopy.setScale(copyStickerView.getScale());
-                fromCopy.setDegree(copyStickerView.getRotateAngle());
-                fromCopy.setTranX(copyStickerView.getCenterX());
-                fromCopy.setTranY(copyStickerView.getCenterY());
-            }
+            fromCopy.setScale(copyStickerView.getScale());
+            fromCopy.setDegree(copyStickerView.getRotateAngle());
+            fromCopy.setTranX(copyStickerView.getCenterX());
+            fromCopy.setTranY(copyStickerView.getCenterY());
             stickView.setImageRes(path, false, fromCopy);
             stickView.showFrame();
         } else {

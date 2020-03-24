@@ -13,7 +13,15 @@
         <com.flyingeffects.com.view.EmptyControlVideo
             android:id="@+id/video_player"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent" >
+
+            <ImageView
+                android:id="@+id/iv_click"
+                android:layout_width="match_parent"
+
+                android:layout_height="match_parent"
+                android:contentDescription="@string/app_name" />
+        </com.flyingeffects.com.view.EmptyControlVideo>
 
         <ImageView
             android:id="@+id/iv_show_cover"
@@ -36,12 +44,6 @@
 
 
     <!--点击事件拦截-->
-    <ImageView
-        android:id="@+id/iv_click"
-        android:layout_width="match_parent"
-
-        android:layout_height="match_parent"
-        android:contentDescription="@string/app_name" />
 
 
     <ImageView

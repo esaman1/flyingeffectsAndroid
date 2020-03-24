@@ -6,7 +6,7 @@ public class filterSupportMedia {
 
     static filterSupportMedia supportMedia;
 
-    String []strList={".wmv",".WMV",".mov",".MOV",".mpg",".MPG",".3gp",".3GP","lansongBox",".avi",".AVI"};
+    String []strList={".wmv",".WMV",".mov",".MOV",".mpg",".MPG",".3gp",".3GP","lansongBox",".avi",".AVI",".gif"};
 
     public static filterSupportMedia getInstance(){
         if(supportMedia==null){
@@ -25,7 +25,7 @@ public class filterSupportMedia {
         public boolean needFilerMedia(String str){
             for (String s:strList
                  ) {
-                if(str.contains(s)){
+                if(str.equalsIgnoreCase(s)){
                     return  true;
                 }
             }
