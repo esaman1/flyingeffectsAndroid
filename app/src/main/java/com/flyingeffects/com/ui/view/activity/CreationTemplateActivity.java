@@ -135,7 +135,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             @Override
             public void onCheckedChanged(SwitchButton view, boolean isChecked) {
                 presenter.CheckedChanged(isChecked);
-
             }
         });
     }
@@ -230,6 +229,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         list_thumb.post(() -> presenter.initVideoProgressView(list_thumb));
     }
 
+
+    @Override
+    protected void onPause() {
+        videoToPause();
+        super.onPause();
+    }
 
     @Override
     public void onDestroy() {
