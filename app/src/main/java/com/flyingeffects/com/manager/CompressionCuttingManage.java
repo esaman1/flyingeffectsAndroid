@@ -129,24 +129,24 @@ public class CompressionCuttingManage {
                 ArrayList<DownImgDataList> data = downIng.getData();
                 for (DownImgDataList item : data
                 ) {
-                    listForMatting.add(item.getTarget_url());
+                    listForMatting.add(item.getHuawei_url());
                 }
 
                 //马卡龙，这里是图片链接，下载下来的方式
-                if (data.get(0).getType() == 1) {
+//                if (data.get(0).getType() == 1) {
                     DownImageManager downImageManager = new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> {
                         callback.imgList(path);
                         keepTailorImageToCache(path);
                     });
                     downImageManager.downImage(listForMatting.get(0));
-                } else {
-                    //百度，face++ 是直接下载的图片编码
-                    DownImageManager downImageManager = new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> {
-                        callback.imgList(path);
-                        keepTailorImageToCache(path);
-                    });
-                    downImageManager.downImageForByte(listForMatting.get(0));
-                }
+//                } else {
+//                    //百度，face++ 是直接下载的图片编码
+//                    DownImageManager downImageManager = new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> {
+//                        callback.imgList(path);
+//                        keepTailorImageToCache(path);
+//                    });
+//                    downImageManager.downImageForByte(listForMatting.get(0));
+//                }
 
             }else{
                 //失败

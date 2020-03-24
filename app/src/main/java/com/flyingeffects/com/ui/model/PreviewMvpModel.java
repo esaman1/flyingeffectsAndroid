@@ -82,7 +82,6 @@ public class PreviewMvpModel {
                 hasReadyList.add(file.getPath());
                 if (i == paths.size() - 1) {
                     callback.getCompressImgList(hasReadyList);
-
                     return;
                 }
             } else {
@@ -229,6 +228,7 @@ public class PreviewMvpModel {
             @Override
             public void onFinish(int code, String str) {
 //                WaitingDialog.closePragressDialog();
+                LogUtil.d("OOM","uploadFile="+str);
                 if (code == 404) {
                     callback.getCompressImgList(localImagePaths);
                 } else {
@@ -239,23 +239,23 @@ public class PreviewMvpModel {
                         ArrayList<DownImgDataList> data = downIng.getData();
                         for (DownImgDataList item : data
                         ) {
-                            listForMatting.add(item.getTarget_url());
+                            listForMatting.add(item.getHuawei_url());
                         }
                         //马卡龙，这里是图片链接，下载下来的方式
-                        if (data.get(0).getType() == 1) {
+//                        if (data.get(0).getType() == 1) {
                             DownImageManager downImageManager = new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> {
                                 callback.getCompressImgList(path);
                                 keepTailorImageToCache(path);
                             });
                             downImageManager.downImage(listForMatting.get(0));
-                        } else {
-                            //百度，face++ 是直接下载的图片编码
-                            DownImageManager downImageManager = new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> {
-                                callback.getCompressImgList(path);
-                                keepTailorImageToCache(path);
-                            });
-                            downImageManager.downImageForByte(listForMatting.get(0));
-                        }
+//                        } else {
+//                            //百度，face++ 是直接下载的图片编码
+//                            DownImageManager downImageManager = new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> {
+//                                callback.getCompressImgList(path);
+//                                keepTailorImageToCache(path);
+//                            });
+//                            downImageManager.downImageForByte(listForMatting.get(0));
+//                        }
                     }
                 }
             }

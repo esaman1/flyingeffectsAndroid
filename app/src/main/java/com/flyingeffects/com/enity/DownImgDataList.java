@@ -37,6 +37,16 @@ public class DownImgDataList {
     private String mask_url;
     private String target_url;
     private String request_id;
+
+    public String getHuawei_url() {
+        return huawei_url;
+    }
+
+    public void setHuawei_url(String huawei_url) {
+        this.huawei_url = huawei_url;
+    }
+
+    private String huawei_url;
     private int code;
 
     public int getType() {
