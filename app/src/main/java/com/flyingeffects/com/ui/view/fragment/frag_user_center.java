@@ -122,7 +122,7 @@ public class frag_user_center extends BaseFragment {
         ArrayList<Fragment> list = new ArrayList<>();
         frag_user_collect fag_0 = new frag_user_collect();
         Bundle bundle = new Bundle();
-        bundle.putSerializable("template_type", 1);
+        bundle.putSerializable("template_type", "1");
         fag_0.setArguments(bundle);
         list.add(fag_0);
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);

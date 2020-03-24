@@ -18,6 +18,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -92,8 +93,7 @@ public class frag_user_collect extends BaseFragment {
         HashMap<String, String> params = new HashMap<>();
         params.put("token", BaseConstans.GetUserToken());
         params.put("page", selectPage + "");
-        params.put("Template_type", selectPage + "");
-
+        params.put("template_type", template_type + "");
         params.put("pageSize", perPageCount + "");
         Observable ob = Api.getDefault().collectionList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
@@ -193,6 +193,12 @@ public class frag_user_collect extends BaseFragment {
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
                 Intent intent = new Intent(getActivity(), PreviewActivity.class);
+                intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
+                if(template_type!=null&&template_type.equals("1")){
+                    intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
+                }else{
+                    intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+                }
                 intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
                 startActivity(intent);
             }

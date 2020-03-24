@@ -112,9 +112,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     private int nowCollectType;
 
-    /**
-     * 0 表示来做模板，1表示来自背景
-     */
 
 
     @Override
@@ -163,7 +160,13 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_zan:
-                Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle());
+                if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                    Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(),2+"");
+                }else{
+                    Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(),1+"");
+                }
+
+
                 break;
             case R.id.tv_make:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(3000)) {

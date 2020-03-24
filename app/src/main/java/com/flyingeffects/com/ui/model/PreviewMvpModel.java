@@ -282,10 +282,18 @@ public class PreviewMvpModel {
     }
 
 
-    public void collectTemplate(String templateId, String title) {
+
+    /**
+     * description ：
+     * creation date: 2020/3/24
+     * param : template_type 1 muban  2背景
+     * user : zhangtongju
+     */
+    public void collectTemplate(String templateId, String title,String template_type) {
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", templateId);
         params.put("token", BaseConstans.GetUserToken());
+        params.put("template_type", template_type);
         // 启动时间
         Observable ob = Api.getDefault().newCollection(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
