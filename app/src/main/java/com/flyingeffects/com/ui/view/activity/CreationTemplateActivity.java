@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -22,6 +21,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.EmptyControlVideo;
+import com.flyingeffects.com.view.HorizontalListView;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.suke.widget.SwitchButton;
 
@@ -50,8 +50,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     ViewLayerRelativeLayout viewLayerRelativeLayout;
 
 
-    @BindView(R.id.list_thumb)
-    RecyclerView list_thumb;
+//    @BindView(R.id.list_thumb)
+//    RecyclerView list_thumb;
+
+
+
+    @BindView(R.id.iv_list)
+    HorizontalListView hListView;
 
     @BindView(R.id.video_player)
     EmptyControlVideo videoPlayer;
@@ -103,7 +108,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         videoPlayer.setUp(videoPath, true, "");
         videoPlayerInit();
         videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> {
-            list_thumb.scrollToPosition(0);
+//            list_thumb.scrollToPosition(0);
             endTimer();
             isPlaying = false;
             presenter.showGifAnim(false);
@@ -154,7 +159,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 if (isPlaying) {
                     videoToPause();
                 } else {
-                    list_thumb.scrollToPosition(0);
+//                    list_thumb.scrollToPosition(0);
                     isPlaying = true;
                     startTimer();
                     videoPlayer.startPlayLogic();
@@ -205,7 +210,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             ivPlay.setImageResource(R.mipmap.pause);
         } else {
             ivPlay.setImageResource(R.mipmap.iv_play_creation);
-            list_thumb.smoothScrollBy(0, 0);
+//            list_thumb.smoothScrollBy(0, 0);
         }
     }
 
@@ -226,7 +231,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             RelativeLayoutParams.height = oriHeight;
             viewLayerRelativeLayout.setLayoutParams(RelativeLayoutParams);
         });
-        list_thumb.post(() -> presenter.initVideoProgressView(list_thumb));
+        hListView.post(() -> presenter.initVideoProgressView(hListView));
     }
 
 
@@ -276,11 +281,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private int listWidth;
 
     private void startTimer() {
-        listWidth = list_thumb.getWidth() + screenUtil.dip2px(this, 43);
-        //总共需要显示的20帧
-        float allShowTime = allVideoDuration / (float) 1000 * 10;
-        float perScrollByX = listWidth / allShowTime;
-
+        int screenWidth=screenUtil.getScreenWidth(this);
+        //真实长度+左边黑条+结尾黑条
+         listWidth=(screenWidth-screenUtil.dip2px(this,43))*2+listWidth;
         if (timer != null) {
             timer.purge();
             timer.cancel();
@@ -295,16 +298,20 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             @Override
             public void run() {
                 Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-//                    LogUtil.d("OOM","perScrollByX="+perScrollByX);
-//                    LogUtil.d("OOM","perScrollByX--int"+(int) Math.ceil(perScrollByX));
-                    //todo  perScrollByX 有误差 ，精度在小数点后面
-                    //Math.ceil 四舍五入
-                    list_thumb.smoothScrollBy((int) Math.ceil(perScrollByX), 0);
+                    int nowDuration=videoPlayer.getCurrentPositionWhenPlaying();
+                    LogUtil.d("OOM","allVideoDuration="+allVideoDuration);
+                    LogUtil.d("OOM","nowDuration="+nowDuration);
+                    float percent = nowDuration / (float)allVideoDuration;
+                    LogUtil.d("OOM","比例="+percent);
+                    int widthX= (int) (percent*listWidth);
+                    LogUtil.d("OOM","width="+widthX);
+                    hListView.scrollTo(widthX);
+
 
                 });
             }
         };
-        timer.schedule(task, 0, 100);
+        timer.schedule(task, 0, 16);
     }
 
 

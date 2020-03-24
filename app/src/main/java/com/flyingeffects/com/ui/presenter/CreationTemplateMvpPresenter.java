@@ -9,10 +9,8 @@ import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.model.CreationTemplateMvpModel;
-import com.flyingeffects.com.view.VideoFrameRecycler;
-import com.flyingeffects.com.view.lansongCommendView.StickerView;
+import com.flyingeffects.com.view.HorizontalListView;
 import com.lansosdk.box.ViewLayerRelativeLayout;
-import com.lansosdk.videoeditor.DrawPadView;
 
 public class CreationTemplateMvpPresenter extends BasePresenter implements CreationTemplateMvpCallback {
     private CreationTemplateMvpView creationTemplatemvpView;
@@ -55,7 +53,9 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.initVideoProgressView(mTimeLineView);
     }
 
-
+    public void initVideoProgressView(HorizontalListView mTimeLineView){
+        creationTemplatemodel.initVideoProgressView(mTimeLineView);
+    }
 
     public void requestStickersList(){
         creationTemplatemodel.requestStickersList();

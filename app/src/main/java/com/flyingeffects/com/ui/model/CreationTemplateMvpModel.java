@@ -13,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
@@ -23,6 +24,7 @@ import com.bumptech.glide.request.target.Target;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateGridViewAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
+import com.flyingeffects.com.adapter.listViewForVideoThumbAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
@@ -43,6 +45,7 @@ import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
+import com.flyingeffects.com.view.HorizontalListView;
 import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.lansosdk.box.ViewLayerRelativeLayout;
@@ -87,6 +90,7 @@ public class CreationTemplateMvpModel {
     private String mGifFolder;
     private String mImageCopyFolder;
     private boolean isCheckedMatting=true;
+    private HorizontalListView hListView;
 
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout) {
         this.context = context;
@@ -466,6 +470,63 @@ public class CreationTemplateMvpModel {
     private int mScrollX;
     private LinearLayoutManager linearLayoutManager;
 
+    public void initVideoProgressView(HorizontalListView hListView) {
+        this.hListView=hListView;
+        //动态设置距离左边的位置
+        initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), videoInfo.getDuration(), videoInfo.getDuration() / 2, mVideoPath);
+
+    }
+
+
+
+
+
+
+    private int mTotalWidth;
+
+    private void initSingleThumbSize(int width, int height, float duration, float mTemplateDuration, String mVideoPath) {
+        // 需要截取的listWidth宽度
+        int listWidth = hListView.getWidth() - hListView.getPaddingLeft() - hListView.getPaddingRight();
+        int listHeight = hListView.getHeight();
+        float scale = (float) listHeight / height;
+        int thumbWidth = (int) (scale * width);
+        //其中listWidth表示当前截取的大小
+        int thumbCount = (int) (listWidth * (duration / mTemplateDuration) / thumbWidth);
+        thumbCount = thumbCount > 0 ? thumbCount : 0;
+        //每帧所占的时间
+        final int interval = (int) (duration / thumbCount);
+        int[] mTimeUs = new int[thumbCount];
+        for (int i = 0; i < thumbCount; i++) {
+            mTimeUs[i] = i * interval * 1000;
+        }
+        mTotalWidth = thumbWidth * thumbCount;
+        callback.getVideoDuration(videoInfo.getDuration(), thumbCount);
+        int dp40 = screenUtil.dip2px(context, 40);
+        int screenWidth = screenUtil.getScreenWidth((Activity) context);
+        listViewForVideoThumbAdapter adapter=new listViewForVideoThumbAdapter(context,mTimeUs,Uri.fromFile(new File(mVideoPath)),thumbWidth, listHeight,screenWidth/2,screenWidth/2-dp40);
+        hListView.setAdapter(adapter);
+        hListView.setOnScrollListener(new HorizontalListView.onScrollListener() {
+            @Override
+            public void isScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+
+                LogUtil.d("oom","distanceX="+distanceX);
+                LogUtil.d("oom","distanceY="+distanceY);
+                LogUtil.d("oom","x="+e1.getX());
+                LogUtil.d("oom","x2="+e2.getX());
+            }
+        });
+
+
+    }
+
+
+
+
+
+
+
+
+
     public void initVideoProgressView(RecyclerView list_thumb) {
         //动态设置距离左边的位置
         int screenWidth = screenUtil.getScreenWidth((Activity) context);
@@ -494,30 +555,6 @@ public class CreationTemplateMvpModel {
         });
         initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), videoInfo.getDuration(), videoInfo.getDuration() / 2, mVideoPath);
 
-    }
-
-    private int mTotalWidth;
-
-    private void initSingleThumbSize(int width, int height, float duration, float mTemplateDuration, String mVideoPath) {
-        // 需要截取的listWidth宽度
-        int listWidth = list_thumb.getWidth() - list_thumb.getPaddingLeft() - list_thumb.getPaddingRight();
-        int listHeight = list_thumb.getHeight();
-        float scale = (float) listHeight / height;
-        int thumbWidth = (int) (scale * width);
-        mTimelineAdapter.setBitmapSize(thumbWidth, listHeight);
-        //其中listWidth表示当前截取的大小
-        int thumbCount = (int) (listWidth * (duration / mTemplateDuration) / thumbWidth);
-        thumbCount = thumbCount > 0 ? thumbCount : 0;
-        //每帧所占的时间
-        final int interval = (int) (duration / thumbCount);
-        int[] mTimeUs = new int[thumbCount];
-        for (int i = 0; i < thumbCount; i++) {
-            mTimeUs[i] = i * interval * 1000;
-        }
-        mTimelineAdapter.setVideoUri(Uri.fromFile(new File(mVideoPath)));
-        mTimelineAdapter.setData(mTimeUs);
-        mTotalWidth = thumbWidth * thumbCount;
-        callback.getVideoDuration(videoInfo.getDuration(), thumbCount);
     }
 
 
