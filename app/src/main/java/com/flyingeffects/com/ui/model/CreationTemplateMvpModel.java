@@ -13,7 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
@@ -89,7 +88,7 @@ public class CreationTemplateMvpModel {
     private VideoInfo videoInfo;
     private String mGifFolder;
     private String mImageCopyFolder;
-    private boolean isCheckedMatting=true;
+    private boolean isCheckedMatting = true;
     private HorizontalListView hListView;
 
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout) {
@@ -104,9 +103,8 @@ public class CreationTemplateMvpModel {
     }
 
 
-
     public void CheckedChanged(boolean isChecked) {
-        this.isCheckedMatting=isChecked;
+        this.isCheckedMatting = isChecked;
         MattingChange(isChecked);
     }
 
@@ -400,14 +398,14 @@ public class CreationTemplateMvpModel {
         }
         AnimStickerModel animStickerModel = new AnimStickerModel(context, viewLayerRelativeLayout, stickView);
         //如果关闭了原图的，并且是用户添加的，那么就关闭扣的图，不过每次都是默认抠图的
-        if (isFromAubum&&!isCheckedMatting) {
+        if (isFromAubum && !isCheckedMatting) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    LogUtil.d("OOM","延迟了0.5秒");
+                    LogUtil.d("OOM", "延迟了0.5秒");
                     stickView.changeImage(originalPath, false);
                 }
-            },500);
+            }, 500);
         }
 
         listForStickerView.add(animStickerModel);
@@ -471,18 +469,15 @@ public class CreationTemplateMvpModel {
     private LinearLayoutManager linearLayoutManager;
 
     public void initVideoProgressView(HorizontalListView hListView) {
-        this.hListView=hListView;
+        this.hListView = hListView;
         //动态设置距离左边的位置
         initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), videoInfo.getDuration(), videoInfo.getDuration() / 2, mVideoPath);
 
     }
 
 
-
-
-
-
     private int mTotalWidth;
+    float allDistance;
 
     private void initSingleThumbSize(int width, int height, float duration, float mTemplateDuration, String mVideoPath) {
         // 需要截取的listWidth宽度
@@ -503,28 +498,20 @@ public class CreationTemplateMvpModel {
         callback.getVideoDuration(videoInfo.getDuration(), thumbCount);
         int dp40 = screenUtil.dip2px(context, 40);
         int screenWidth = screenUtil.getScreenWidth((Activity) context);
-        listViewForVideoThumbAdapter adapter=new listViewForVideoThumbAdapter(context,mTimeUs,Uri.fromFile(new File(mVideoPath)),thumbWidth, listHeight,screenWidth/2,screenWidth/2-dp40);
+        listViewForVideoThumbAdapter adapter = new listViewForVideoThumbAdapter(context, mTimeUs, Uri.fromFile(new File(mVideoPath)), thumbWidth, listHeight, screenWidth / 2, screenWidth / 2 - dp40);
         hListView.setAdapter(adapter);
-        hListView.setOnScrollListener(new HorizontalListView.onScrollListener() {
-            @Override
-            public void isScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-
-                LogUtil.d("oom","distanceX="+distanceX);
-                LogUtil.d("oom","distanceY="+distanceY);
-                LogUtil.d("oom","x="+e1.getX());
-                LogUtil.d("oom","x2="+e2.getX());
-            }
+        int realWidth = (screenWidth - screenUtil.dip2px(context, 43)) * 2;
+        LogUtil.d("OOM", "realWidth=" + realWidth);
+        hListView.setOnScrollListener(mNextX -> {
+            float preF = mNextX / realWidth;
+            int frame = (int) (videoInfo.getDuration() * preF);
+            LogUtil.d("OOM", "preF=" + preF);
+            LogUtil.d("OOM", "frame=" + frame);
+            callback.setgsyVideoProgress(frame);
         });
 
 
     }
-
-
-
-
-
-
-
 
 
     public void initVideoProgressView(RecyclerView list_thumb) {

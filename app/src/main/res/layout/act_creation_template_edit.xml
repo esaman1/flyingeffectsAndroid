@@ -174,6 +174,7 @@
 
                 <com.flyingeffects.com.view.HorizontalListView
                     android:id="@+id/iv_list"
+                    android:background="@color/home_base_balk_color"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 

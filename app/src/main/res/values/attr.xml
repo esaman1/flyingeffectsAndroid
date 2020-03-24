@@ -13,8 +13,6 @@
     </declare-styleable>
 
 
-
-
     <declare-styleable name="MaskImage">
         <!-- Identifier for the image that represents the Imageview's content. -->
         <attr name="image" format="reference" />
@@ -23,6 +21,17 @@
 
     </declare-styleable>
 
+    <declare-styleable name="HorizontalListView">
+
+        <attr name="dividerWidth" format="dimension" />
+
+        <attr name="android:divider" />
+
+        <attr name="android:requiresFadingEdge" />
+
+        <attr name="android:fadingEdgeLength" />
+
+    </declare-styleable>
 
     <declare-styleable name="RoundImageView">
         <attr name="isNotNeedDarkBg" format="boolean" />
@@ -54,20 +63,17 @@
     </declare-styleable>
 
 
+    <declare-styleable name="WarpLinearLayout">
+        <attr name="grivate" format="enum"><!--对齐方式 !-->
+            <enum name="right" value="0"></enum>
+            <enum name="left" value="1"></enum>
+            <enum name="center" value="2"></enum>
+        </attr>
+        <attr name="horizontal_Space" format="dimension"></attr>
+        <attr name="vertical_Space" format="dimension"></attr>
 
-        <declare-styleable name="WarpLinearLayout">
-            <attr name="grivate" format="enum"><!--对齐方式 !-->
-                <enum name="right" value="0"></enum>
-                <enum name="left" value="1"></enum>
-                <enum name="center" value="2"></enum>
-            </attr>
-            <attr name="horizontal_Space" format="dimension"></attr>
-            <attr name="vertical_Space" format="dimension"></attr>
-
-            <attr name="isFull" format="boolean"></attr>
-        </declare-styleable>
-
-
+        <attr name="isFull" format="boolean"></attr>
+    </declare-styleable>
 
 
     <declare-styleable name="StickerView">
@@ -75,8 +81,8 @@
         <attr name="sv_left_bottom_drawable" format="reference" />
         <attr name="sv_right_top_drawable" format="reference" />
         <attr name="sv_right_bottom_drawable" format="reference" />
-        <attr name="sv_frame_color" format="color"/>
-        <attr name="sv_frame_width" format="dimension"/>
+        <attr name="sv_frame_color" format="color" />
+        <attr name="sv_frame_width" format="dimension" />
         <!--控制按钮位置-->
         <attr name="sv_contron_location" format="integer">
             <enum name="left_top" value="6" />

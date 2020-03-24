@@ -12,6 +12,8 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.Scroller;
 
+import com.flyingeffects.com.utils.LogUtil;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -52,17 +54,17 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     }
 
     @Override
-    public void setOnItemSelectedListener(AdapterView.OnItemSelectedListener listener) {
+    public void setOnItemSelectedListener(OnItemSelectedListener listener) {
         mOnItemSelected = listener;
     }
 
     @Override
-    public void setOnItemClickListener(AdapterView.OnItemClickListener listener) {
+    public void setOnItemClickListener(OnItemClickListener listener) {
         mOnItemClicked = listener;
     }
 
     @Override
-    public void setOnItemLongClickListener(AdapterView.OnItemLongClickListener listener) {
+    public void setOnItemLongClickListener(OnItemLongClickListener listener) {
         mOnItemLongClicked = listener;
     }
 
@@ -250,6 +252,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     }
 
     public synchronized void scrollTo(int x) {
+
         mScroller.startScroll(mNextX, 0, x - mNextX, 0);
         requestLayout();
     }
@@ -266,6 +269,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         synchronized (HorizontalListView.this) {
             mScroller.fling(mNextX, 0, (int) -velocityX, 0, 0, mMaxX, 0, 0);
         }
+
         requestLayout();
 
         return true;
@@ -276,6 +280,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         return true;
     }
 
+    float distanceX;
     private OnGestureListener mOnGesture = new GestureDetector.SimpleOnGestureListener() {
 
         @Override
@@ -286,8 +291,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
                                float velocityY) {
-            return HorizontalListView.this.onFling(e1, e2, velocityX, velocityY);
 
+
+
+            return HorizontalListView.this.onFling(e1, e2, velocityX, velocityY);
 
 
         }
@@ -300,9 +307,12 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
                 mNextX += (int) distanceX;
             }
 
-            if(callback!=null){
-                callback.isScroll(e1,e2,distanceX,distanceY);
+
+            if (callback != null) {
+                callback.isScroll(mNextX);
             }
+            LogUtil.d("onFling","mNextX="+mNextX);
+
 
             requestLayout();
 
@@ -356,20 +366,18 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     };
 
 
+    public interface onScrollListener {
 
-
-
-    public interface  onScrollListener{
-
-        void isScroll(MotionEvent e1, MotionEvent e2,
-                     float distanceX, float distanceY);
+        void isScroll(
+                float mNextX);
 
     }
 
 
     onScrollListener callback;
-    public void setOnScrollListener(onScrollListener callback){
-        this.callback=callback;
+
+    public void setOnScrollListener(onScrollListener callback) {
+        this.callback = callback;
     }
 
 
