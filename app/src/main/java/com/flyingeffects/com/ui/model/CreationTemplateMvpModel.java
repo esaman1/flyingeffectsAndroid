@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -85,6 +86,7 @@ public class CreationTemplateMvpModel {
     private VideoInfo videoInfo;
     private String mGifFolder;
     private String mImageCopyFolder;
+    private boolean isCheckedMatting=true;
 
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout) {
         this.context = context;
@@ -98,7 +100,9 @@ public class CreationTemplateMvpModel {
     }
 
 
+
     public void CheckedChanged(boolean isChecked) {
+        this.isCheckedMatting=isChecked;
         MattingChange(isChecked);
     }
 
@@ -197,9 +201,9 @@ public class CreationTemplateMvpModel {
                 StickerView stickerView = stickerModel.getStickerView();
                 if (stickerView != null && stickerView.getComeFrom()) {
                     if (isMatting) {
-                        stickerView.setImageRes(stickerView.getClipPath(), false, null);
+                        stickerView.changeImage(stickerView.getClipPath(), false);
                     } else {
-                        stickerView.setImageRes(stickerView.getOriginalPath(), false, null);
+                        stickerView.changeImage(stickerView.getOriginalPath(), false);
                     }
                 }
             }
@@ -391,6 +395,17 @@ public class CreationTemplateMvpModel {
             stickView.setImageRes(path, true, null);
         }
         AnimStickerModel animStickerModel = new AnimStickerModel(context, viewLayerRelativeLayout, stickView);
+        //如果关闭了原图的，并且是用户添加的，那么就关闭扣的图，不过每次都是默认抠图的
+        if (isFromAubum&&!isCheckedMatting) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    LogUtil.d("OOM","延迟了0.5秒");
+                    stickView.changeImage(originalPath, false);
+                }
+            },500);
+        }
+
         listForStickerView.add(animStickerModel);
         if (stickView.getParent() != null) {
             ViewGroup vp = (ViewGroup) stickView.getParent();
