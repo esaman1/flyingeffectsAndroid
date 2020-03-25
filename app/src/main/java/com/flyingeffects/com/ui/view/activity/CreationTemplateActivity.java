@@ -166,7 +166,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     }else{
                         statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"6_customize_bj_Cutoutoff");
                     }
-
                 }
                 presenter.CheckedChanged(isChecked);
             }

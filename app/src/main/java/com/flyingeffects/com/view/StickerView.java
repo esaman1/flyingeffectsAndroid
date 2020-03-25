@@ -1090,20 +1090,20 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             if (autoRun) {
                 start();
             }
-            moveX = (getMeasuredWidth() + originalBitmapWidth) / 2;
-            moveY = (getMeasuredHeight() + originalBitmapHeight) / 2;
+            if(!isMatting){
+                moveX = (getMeasuredWidth() + originalBitmapWidth) / 2;
+                moveY = (getMeasuredHeight() + originalBitmapHeight) / 2;
 
-            if (fromCopy != null) {
-                setScale(fromCopy.getScale());
-                setDegree(fromCopy.getDegree());
-                setCenter(fromCopy.tranX, fromCopy.tranY);
-            } else {
-                setScale(1f);
-                setDegree(0f);
-                setCenter(getWidth() / 2f, getHeight() / 2f);
+                if (fromCopy != null) {
+                    setScale(fromCopy.getScale());
+                    setDegree(fromCopy.getDegree());
+                    setCenter(fromCopy.tranX, fromCopy.tranY);
+                } else {
+                    setScale(1f);
+                    setDegree(0f);
+                    setCenter(getWidth() / 2f, getHeight() / 2f);
+                }
             }
-
-
             invalidate();
         }
     }
@@ -1286,8 +1286,25 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 //            Toast.makeText(getContext(), "文件不存在", Toast.LENGTH_LONG).show();
             LogUtil.d("OOM","文件不存在");
         }
-
     }
+
+    boolean isMatting=false;
+    public void mattingChange(String path){
+        isMatting=true;
+        RequestManager manager = Glide.with(getContext());
+        RequestBuilder builder = null;
+        if (path.endsWith(".gif")) {
+            builder = manager.asGif();
+        } else {
+            builder = manager.asDrawable();
+        }
+        builder.load(path)
+                .apply(options)
+                .into(getTarger());
+    }
+
+
+
 
     public static Uri getImageStreamFromExternal(String imageName) {
 

@@ -14,12 +14,14 @@ import android.widget.TextView;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseFragment;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.FagBjMvpView;
 import com.flyingeffects.com.ui.presenter.FagBjMvpPresenter;
+import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.yanzhenjie.album.AlbumFile;
@@ -190,18 +192,28 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
         switch (view.getId()){
             case R.id.iv_add:
             case R.id.iv_cover:
-                statisticsEventAffair.getInstance().setFlag(getActivity(), "6_customize_bj");
-                AlbumManager.chooseVideo(getActivity(), 1, SELECTALBUM, new AlbumChooseCallback() {
-                    @Override
-                    public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-                        if(!isCancel){
-                            Intent intent = new Intent(getActivity(), VideoCropActivity.class);
-                            intent.putExtra("videoPath",paths.get(0));
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
+
+                if(BaseConstans.hasLogin()){
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "6_customize_bj");
+                    AlbumManager.chooseVideo(getActivity(), 1, SELECTALBUM, new AlbumChooseCallback() {
+                        @Override
+                        public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
+                            if(!isCancel){
+                                Intent intent = new Intent(getActivity(), VideoCropActivity.class);
+                                intent.putExtra("videoPath",paths.get(0));
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                            }
                         }
-                    }
-                }, "");
+                    }, "");
+                }else{
+                    Intent intent=new Intent(getActivity(), LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+
+                }
+
+
                 break;
 
                 default:
