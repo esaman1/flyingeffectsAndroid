@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -273,49 +274,53 @@ public class CreationTemplateMvpModel {
                 return file1;
             }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> {
                 try {
-                    FileUtil.copyFile(path1, fileName);
+                    if(path1!=null){
+                        FileUtil.copyFile(path1, fileName);
 //                    String sss="/storage/emulated/0/1/20200323133240.gif";
-                    addSticker(fileName, false, false, null, false, null);
-                    WaitingDialog.closePragressDialog();
-                    modificationSingleItem(position);
+                        addSticker(fileName, false, false, null, false, null);
+                        WaitingDialog.closePragressDialog();
+                        modificationSingleItem(position);
+                    }else{
+                        ToastUtil.showToast("请重试");
+                    }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             });
 
         } else {
-            String finalPath = path;
-            Observable.just(path).map(new Func1<String, Bitmap>() {
-                @Override
-                public Bitmap call(String s) {
-                    Bitmap originalBitmap = null;
-                    FutureTarget<Bitmap> futureTarget =
-                            Glide.with(BaseApplication.getInstance())
-                                    .asBitmap()
-                                    .load(finalPath)
-                                    .submit(720, 1280);
-                    try {
-                        originalBitmap = futureTarget.get();
-                    } catch (Exception e) {
-                        LogUtil.d("oom", e.getMessage());
-                    }
-                    Glide.with(BaseApplication.getInstance()).clear(futureTarget);
-                    return originalBitmap;
-                }
-            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
-                @Override
-                public void call(Bitmap bitmap) {
-                    String aa = finalPath.substring(finalPath.length() - 4);
-                    String copyName = mGifFolder + File.separator + System.currentTimeMillis() + aa;
-                    saveBitmapToPath(bitmap, copyName, new FileManager.saveBitmapState() {
+            new Thread(() -> {
+
+                Bitmap originalBitmap = null;
+                FutureTarget<Bitmap> futureTarget =
+                        Glide.with(BaseApplication.getInstance())
+                                .asBitmap()
+                                .load(path)
+                                .submit(720, 1280);
+                try {
+                    originalBitmap = futureTarget.get();
+                    Bitmap finalOriginalBitmap = originalBitmap;
+                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
                         @Override
-                        public void succeed(boolean isSucceed) {
-                            modificationSingleItem(position);
-                            addSticker(copyName, true, false, null, false, null);
+                        public void call(Integer integer) {
+                            WaitingDialog.closePragressDialog();
+                            String aa = path.substring(path.length() - 4);
+                            String copyName = mGifFolder + File.separator + System.currentTimeMillis() + aa;
+                            saveBitmapToPath(finalOriginalBitmap, copyName, new FileManager.saveBitmapState() {
+                                @Override
+                                public void succeed(boolean isSucceed) {
+                                    modificationSingleItem(position);
+                                    addSticker(copyName, true, false, null, false, null);
+                                }
+                            });
                         }
                     });
+                } catch (Exception e) {
+                    LogUtil.d("oom", e.getMessage());
                 }
-            });
+                Glide.with(BaseApplication.getInstance()).clear(futureTarget);
+            }).start();
         }
     }
 

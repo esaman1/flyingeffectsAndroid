@@ -100,6 +100,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 只有背景模板才有，自定义的话这个值为""
      */
     private String title;
+    private long nowChooseSeek;
 
     @Override
     protected int getLayoutId() {
@@ -144,6 +145,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     protected void onResume() {
         super.onResume();
+        videoPlayer.seekTo(nowChooseSeek);
+        videoToPause();
     }
 
     @Override
@@ -191,6 +194,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
             case R.id.ll_play:
                 if (isPlaying) {
+                    nowChooseSeek=videoPlayer.getCurrentPositionWhenPlaying();
                     isPlayComplate=false;
                     videoToPause();
                     presenter.showGifAnim(false);
@@ -200,6 +204,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     nowStateIsPlaying(true);
                     if(isPlayComplate){
                         videoPlayer.startPlayLogic();
+
                     }else{
                         if(isInitVideoLayer){
                             videoPlayer.onVideoResume(false);
@@ -313,7 +318,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void setgsyVideoProgress(int progress) {
         LogUtil.d("OOM", "videoProgress=" + progress);
+
         if (!isPlaying) {
+            nowChooseSeek=progress;
             videoPlayer.seekTo(progress);
         }
     }
