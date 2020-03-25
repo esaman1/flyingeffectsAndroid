@@ -147,7 +147,7 @@ dependencies {
     implementation project(':LanSongSDK')
 
 //    implementation 'cn.pedant.sweetalert:library:1.3'
-
+//    implementation 'com.avast:android-styled-dialogs:2.3.3'
 }
 
 

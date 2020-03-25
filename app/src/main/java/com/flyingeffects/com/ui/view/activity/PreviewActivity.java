@@ -3,6 +3,7 @@ package com.flyingeffects.com.ui.view.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -143,7 +144,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         tv_writer_name.setText(templateItem.getAuth());
         tv_title.setText(templateItem.getTitle());
         tv_describe.setText("友友们    " + "上传" + templateItem.getDefaultnum() + "张照片即可制作");
-        Presenter.requestTemplateDetail(templateItem.getId());
+
 
 
     }
@@ -257,12 +258,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             } else {//需要抠图
                 originalImagePath = paths;
                 Presenter.CompressImg(paths);
-
-
-
-
-
-
             }
         }
     }
@@ -287,9 +282,18 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     public void getCompressImgList(List<String> imgList) {
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    WaitingDialog.openPragressDialog(PreviewActivity.this);
+                }
+            },200);
+
+
+
             Presenter.DownVideo(templateItem.getVidoefile(), imgList.get(0), templateItem.getId());
         } else {
-            WaitingDialog.closePragressDialog();
             intoTemplateActivity(imgList, TemplateFilePath);
         }
     }
@@ -367,7 +371,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void hasLogin(boolean hasLogin) {
-
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
             //来做背景页面
             AlbumManager.chooseImageAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
@@ -378,7 +381,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "mb_make", templateItem.getTitle());
             videoPlayer.onVideoPause();
             VideoPlaybackCompleted(true, true);
-            WaitingDialog.openPragressDialog(this);
             Presenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
         }
     }

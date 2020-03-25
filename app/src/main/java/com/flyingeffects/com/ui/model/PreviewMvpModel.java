@@ -18,9 +18,7 @@ import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
-import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.PreviewMvpCallback;
-import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
 import com.flyingeffects.com.utils.StringUtil;
@@ -28,7 +26,6 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.updateFileUtils;
 import com.google.gson.Gson;
 import com.shixing.sxve.ui.view.WaitingDialog;
-import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +34,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -228,7 +224,6 @@ public class PreviewMvpModel {
         updateFileUtils.uploadFile(listFile, "http://flying.nineton.cn/api/picture/picturesHumanList?filenum=" + pathNum, new updateFileUtils.HttpCallbackListener() {
             @Override
             public void onFinish(int code, String str) {
-//                WaitingDialog.closePragressDialog();
                 LogUtil.d("OOM","uploadFile="+str);
                 if (code == 404) {
                     callback.getCompressImgList(localImagePaths);
