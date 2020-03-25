@@ -16,10 +16,12 @@ import com.lansosdk.box.DrawPadPixelRunnable;
 import com.lansosdk.box.GifLayer;
 import com.lansosdk.box.LSOAECompositionLayer;
 import com.lansosdk.box.LSOAeCompositionAsset;
+import com.lansosdk.box.LSOPhotoAlbumLayer;
 import com.lansosdk.box.LSOBitmapAsset;
 import com.lansosdk.box.LSOGifAsset;
 import com.lansosdk.box.LSOLog;
 import com.lansosdk.box.LSOMVAsset;
+import com.lansosdk.box.LSOPhotoAlbumAsset;
 import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.box.Layer;
 import com.lansosdk.box.MVCacheLayer;
@@ -51,14 +53,19 @@ public class DrawPadAllExecute2 {
 
     /**
      *  构造方法
-     * 如果您仅仅对一个视频做处理, 则可以设置为这个视频的宽高和时长;
-     * 默认帧率是
+     *   如果您仅仅对一个视频做处理, 则可以设置为这个视频的宽高和时长;
+     *
      * @param ctx
      * @param padWidth 容器的宽度, 即最后生成视频的宽度 强烈建议最大值是720P
      * @param padHeight 容器的高度,即最后生成视频的高度 强烈建议最大值是720P
      * @param durationUS 容器的长度,  最后生成视频的长度;单位微秒;
+     * @throws Exception 创建时抛出异常;
      */
-    public DrawPadAllExecute2(Context ctx, int padWidth, int padHeight, long  durationUS) {
+    public DrawPadAllExecute2(Context ctx, int padWidth, int padHeight, long  durationUS) throws Exception {
+        if(!LanSoEditor.isLoadLanSongSDK.get()){
+            throw  new Exception("没有加载SDK, 或你的APP崩溃后,重新启动当前Activity,请查看完整的logcat:(No SDK is loaded, or the current activity is restarted after your app crashes, please see the full logcat)");
+        }
+
         LanSongFileUtil.deleteFile(padDstPath);
         padDstPath=LanSongFileUtil.createMp4FileInBox();
         int w,h;
@@ -320,7 +327,7 @@ public class DrawPadAllExecute2 {
      * 如果你要任意角度的旋转, 则用图层的旋转属性;
      *
      * @param option 在增加前,设置裁剪时长, 裁剪画面, 缩放, 循环等;
-     *      * @param startTimeUs 从容器的什么时间开始增加
+     * @param startTimeUs 从容器的什么时间开始增加
      * @param endTimeUs 在容器的什么时间消失, 如果到文件尾,请输入Long.MAX_VALUE
      * @param holdFirst 当指定时间段后,是否刚开始就一直显示第一帧
      * @param holdLast  当指定时间段过后, 是否一直显示最后一帧;
@@ -569,20 +576,20 @@ public class DrawPadAllExecute2 {
      *
      * 举例代码如下:
      * 把一个Ae模板作为一个资源,增加到容器中, 增加后, 返回一个"Ae合成图层"
-       String jsonPath= copyShanChu(getApplicationContext(),"cs.json");
-                  String bgVideo=copyShanChu(getApplicationContext(),"cs_Bg.mp4");
-                  String colorPath=copyShanChu(getApplicationContext(),"cs_mvColor.mp4");
-                  String maskPath=copyShanChu(getApplicationContext(),"cs_mvMask.mp4");
+     String jsonPath= copyShanChu(getApplicationContext(),"cs.json");
+     String bgVideo=copyShanChu(getApplicationContext(),"cs_Bg.mp4");
+     String colorPath=copyShanChu(getApplicationContext(),"cs_mvColor.mp4");
+     String maskPath=copyShanChu(getApplicationContext(),"cs_mvMask.mp4");
 
 
-                  LSOAeDrawable drawable= LSOLoadAeJsons.loadSync(jsonPath);
-                  drawable.updateBitmap("image_0",copyShanChu2Bmp(getApplicationContext(),"img_0.png"));
+     LSOAeDrawable drawable= LSOLoadAeJsons.loadSync(jsonPath);
+     drawable.updateBitmap("image_0",copyShanChu2Bmp(getApplicationContext(),"img_0.png"));
 
-                  LSOAeCompositionAsset compositionAsset=new LSOAeCompositionAsset();
-                  compositionAsset.addFirstLayer(bgVideo);
-                  compositionAsset.addSecondLayer(drawable);
-                  compositionAsset.addThirdLayer(colorPath,maskPath);
-                  compositionAsset.startAeRender();
+     LSOAeCompositionAsset compositionAsset=new LSOAeCompositionAsset();
+     compositionAsset.addFirstLayer(bgVideo);
+     compositionAsset.addSecondLayer(drawable);
+     compositionAsset.addThirdLayer(colorPath,maskPath);
+     compositionAsset.startAeRender();
 
      * @param asset Ae合成资源;
      * @return
@@ -610,6 +617,36 @@ public class DrawPadAllExecute2 {
             }else if (pixelRunnable != null) {
                 asset.startAeRender();
                 return pixelRunnable.addAECompositionLayer(asset, startTimeUs, endTimeUs);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 增加相册影集图层,
+
+     相册影集资源类的两个参数:
+     bitmaps: 多张图片列表.
+     jsonPath: 用AE导出的json动画;
+     LSOPhotoAlbumAsset(List<Bitmap> bitmaps, String jsonPath) throws Exception
+
+
+     用AE制作动画的规则:
+     1. 不能使用预合成,
+     2. 每个图层对应一张图片, 不能一张图片应用到多个图层;
+     3. json总时长不能超过20秒,每个图片时间建议是2--3秒,分辨率建议720x1280,帧率是20fps或15fps;
+     4. 图片数量,建议不超过20张.
+     4. 我们内部会根据你的图片多少,和json的时长来裁剪或拼接
+
+     * @param asset 影集图层资源.
+     * @return
+     */
+    public LSOPhotoAlbumLayer addPhotoAlbumLayer(LSOPhotoAlbumAsset asset) {
+        if(asset!=null && setup()) {
+            if (runnable != null) {
+                return runnable.addPhotoAlbumLayer(asset);
+            } else if (pixelRunnable != null) {
+                return pixelRunnable.addPhotoAlbumLayer(asset);
             }
         }
         return null;
@@ -952,11 +989,11 @@ public class DrawPadAllExecute2 {
      * [不建议使用]
      */
     public void setNotCheckDrawPadSize() {
-       if(runnable!=null){
-           runnable.setNotCheckDrawPadSize();
-       }else if(pixelRunnable !=null){
-           pixelRunnable.setNotCheckDrawPadSize();
-       }
+        if(runnable!=null){
+            runnable.setNotCheckDrawPadSize();
+        }else if(pixelRunnable !=null){
+            pixelRunnable.setNotCheckDrawPadSize();
+        }
     }
     //---------------------------------------------------------------------------
     private synchronized boolean setup(){

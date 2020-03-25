@@ -27,6 +27,8 @@ import com.lansosdk.box.LSOAECompositionLayer;
 import com.lansosdk.box.LSOAeCompositionAsset;
 import com.lansosdk.box.LSOLog;
 import com.lansosdk.box.LSOMVAsset;
+import com.lansosdk.box.LSOPhotoAlbumAsset;
+import com.lansosdk.box.LSOPhotoAlbumLayer;
 import com.lansosdk.box.LSOVideoAsset;
 import com.lansosdk.box.Layer;
 import com.lansosdk.box.MVLayer;
@@ -532,72 +534,78 @@ public class DrawPadView extends FrameLayout {
      */
     public boolean startDrawPad(boolean pauseRecord) {
         boolean ret = false;
+        if(!LanSoEditor.isLoadLanSongSDK.get()){
+            LSOLog.e("没有加载SDK, 或你的APP崩溃后,重新启动当前Activity,请查看完整的logcat:(No SDK is loaded, or the current activity is restarted after your app crashes, please see the full logcat)");
+            return false;
+        }
+
         if(renderer!=null){
             renderer.stopDrawPad();
             renderer=null;
         }
+
         if (mSurfaceTexture != null && drawPadWidth > 0 && drawPadHeight > 0) {
             renderer = new DrawPadViewRender(getContext(), drawPadWidth,drawPadHeight);
-                renderer.setUseMainVideoPts(isUseMainPts);
-                // 因为要预览,这里设置显示的Surface,当然如果您有特殊情况需求,也可以不用设置,但displayersurface和EncoderEnable要设置一个,DrawPadRender才可以工作.
-                renderer.setDisplaySurface(new Surface(mSurfaceTexture));
+            renderer.setUseMainVideoPts(isUseMainPts);
+            // 因为要预览,这里设置显示的Surface,当然如果您有特殊情况需求,也可以不用设置,但displayersurface和EncoderEnable要设置一个,DrawPadRender才可以工作.
+            renderer.setDisplaySurface(new Surface(mSurfaceTexture));
 
-                if (isCheckPadSize) {
-                    encWidth = LanSongUtil.make16Multi(encWidth); // 编码默认16字节对齐.
-                    encHeight = LanSongUtil.make16Multi(encHeight);
-                }
-                if (isCheckBitRate || encBitRate == 0) {
-                    encBitRate = LanSongUtil.checkSuggestBitRate(encHeight
-                            * encWidth, encBitRate);
-                }
-                if(encWidth>0 && encHeight>0 && encodeOutput!=null){
-                    renderer.setEncoderEnable(encWidth, encHeight, encBitRate,
-                            encFrameRate, encodeOutput);
-                }
-                renderer.setEditModeVideo(editModeVideo);
-                renderer.setUpdateMode(mUpdateMode, mAutoFlushFps);
+            if (isCheckPadSize) {
+                encWidth = LanSongUtil.make16Multi(encWidth); // 编码默认16字节对齐.
+                encHeight = LanSongUtil.make16Multi(encHeight);
+            }
+            if (isCheckBitRate || encBitRate == 0) {
+                encBitRate = LanSongUtil.checkSuggestBitRate(encHeight
+                        * encWidth, encBitRate);
+            }
+            if(encWidth>0 && encHeight>0 && encodeOutput!=null){
+                renderer.setEncoderEnable(encWidth, encHeight, encBitRate,
+                        encFrameRate, encodeOutput);
+            }
+            renderer.setEditModeVideo(editModeVideo);
+            renderer.setUpdateMode(mUpdateMode, mAutoFlushFps);
 
 
-                renderer.setDrawPadBackGroundColor(padBGRed,padBGGreen,padBGBlur,padBGAlpha);
+            renderer.setDrawPadBackGroundColor(padBGRed,padBGGreen,padBGBlur,padBGAlpha);
 
-                // 设置DrawPad处理的进度监听, 回传的currentTimeUs单位是微秒.
-                renderer.setDrawPadSnapShotListener(drawpadSnapShotListener);
-                renderer.setDrawpadOutFrameListener(previewFrameWidth,
-                        previewFrameHeight, previewFrameType,
-                        drawPadPreviewFrameListener);
-                renderer.setOutFrameInDrawPad(frameListenerInDrawPad);
+            // 设置DrawPad处理的进度监听, 回传的currentTimeUs单位是微秒.
+            renderer.setDrawPadSnapShotListener(drawpadSnapShotListener);
+            renderer.setDrawpadOutFrameListener(previewFrameWidth,
+                    previewFrameHeight, previewFrameType,
+                    drawPadPreviewFrameListener);
+            renderer.setOutFrameInDrawPad(frameListenerInDrawPad);
 
-                renderer.setDrawPadProgressListener(drawpadProgressListener);
-                renderer.setDrawPadCompletedListener(drawpadCompletedListener);
-                renderer.setDrawPadThreadProgressListener(drawPadThreadProgressListener);
-                renderer.setDrawPadErrorListener(drawPadErrorListener);
-                renderer.setDrawPadRunTimeListener(drawpadRunTimeListener);
+            renderer.setDrawPadProgressListener(drawpadProgressListener);
+            renderer.setDrawPadCompletedListener(drawpadCompletedListener);
+            renderer.setDrawPadThreadProgressListener(drawPadThreadProgressListener);
+            renderer.setDrawPadErrorListener(drawPadErrorListener);
+            renderer.setDrawPadRunTimeListener(drawpadRunTimeListener);
 
-                renderer.setLoopingWhenReachTime(reachTimeLoopTimeUs);
-                if (isRecordMic) {
-                    renderer.setRecordMic(true);
-                } else if (isRecordExtPcm) {
-                    renderer.setRecordExtraPcm(true, pcmChannels,pcmSampleRate, pcmBitRate);
-                }
+            renderer.setLoopingWhenReachTime(reachTimeLoopTimeUs);
+            if (isRecordMic) {
+                renderer.setRecordMic(true);
+            } else if (isRecordExtPcm) {
+                renderer.setRecordExtraPcm(true, pcmChannels,pcmSampleRate, pcmBitRate);
+            }
 
-                if (pauseRecord || isPauseRecord) {
-                    renderer.pauseRecordDrawPad();
-                }
-                if (isPauseRefreshDrawPad) {
-                    renderer.pauseRefreshDrawPad();
-                }
-                if (isPausePreviewDrawPad) {
-                    renderer.pausePreviewDrawPad();
-                }
-                renderer.adjustEncodeSpeed(encodeSpeed);
+            if (pauseRecord || isPauseRecord) {
+                renderer.pauseRecordDrawPad();
+            }
+            if (isPauseRefreshDrawPad) {
+                renderer.pauseRefreshDrawPad();
+            }
+            if (isPausePreviewDrawPad) {
+                renderer.pausePreviewDrawPad();
+            }
+            renderer.adjustEncodeSpeed(encodeSpeed);
 
-                ret = renderer.startDrawPad();
-                if (!ret) {
-                    LSOLog.e("开启 drawPad 失败, 或许是您之前的DrawPad没有Stop, 或者传递进去的surface对象已经被系统Destory!!,"
-                                    + "请检测您 的代码或参考本文件中的SurfaceCallback 这个类中的注释;\n");
-                }else {
-                    LSOLog.i("DrawPadView is running..."+ret);
-                }
+            ret = renderer.startDrawPad();
+            if (!ret) {
+                LSOLog.e("开启 drawPad 失败, 或许是您之前的DrawPad没有Stop, 或者传递进去的surface对象已经被系统Destory!!,"
+                        + "请检测您 的代码或参考本文件中的SurfaceCallback 这个类中的注释;\n");
+            }else {
+                LSOLog.i("DrawPadView is running..."+ret);
+            }
         } else {
             if (mSurfaceTexture == null) {
                 LSOLog.e(
@@ -1004,14 +1012,11 @@ public class DrawPadView extends FrameLayout {
 
 
     /**
-     * 把一个 Ae 模板打包作为一层,增加到预览容器中.
-
-     举例在 AECompositionLayerDemoActivity
-
-     * @param asset 一个 AE 模板的各种资源.
-     * @param startTimeUs  从容器的什么时间点增加
-     * @param endTimeUs 增加到容器的什么时间点, (即把多长的AE 模板增加到容器)
-     * @return 返回一个 AE合成图层, 根据这个图层可以设置常见的图层特性.
+     * 增加AE模板层;
+     * @param asset
+     * @param startTimeUs
+     * @param endTimeUs
+     * @return
      */
     public LSOAECompositionLayer addAECompositionLayer(LSOAeCompositionAsset asset, long startTimeUs, long endTimeUs){
         if(renderer!=null){
@@ -1021,6 +1026,50 @@ public class DrawPadView extends FrameLayout {
             return null;
         }
     }
+    /**
+     * 增加相册影集图层, 只需要用户选择多张图片+ 一个Ae的json文件, 我们内部会自动根据图片数量来裁剪json或拼接json;
+
+     相册影集资源类的两个参数:
+     bitmaps: 多张图片列表.
+     jsonPath: 用AE导出的json动画;
+     LSOPhotoAlbumAsset(List<Bitmap> bitmaps, String jsonPath) throws Exception
+
+
+
+     用AE制作动画的规则:
+     1. 不能使用预合成,
+     2. 每个图层对应一张图片, 不能一张图片应用到多个图层;
+     3. json总时长不能超过20秒,每个图片时间建议是2--3秒,分辨率建议720x1280,帧率是20fps或15fps;
+     4. 图片数量,建议不超过20张.
+     5. 我们内部会根据你的图片多少,和json的时长来裁剪或拼接
+     6. LSOPhotoAlbumAsset在使用完毕后,确认不再使用时, 一定要调用release释放资源,比如在让用户重新选择图片的前一行调用;
+     7.演示例子,见我们的PhotoAlbumLayerDemoActivity.java
+
+     * @param asset 影集图层资源.
+     * @return
+     */
+    public LSOPhotoAlbumLayer addPhotoAlbumLayer(LSOPhotoAlbumAsset asset){
+        return addPhotoAlbumLayer(asset,0,Long.MAX_VALUE);
+    }
+
+    /**
+     * 注释同上.
+     *
+     * @param asset
+     * @param startTimeUs
+     * @param endTimeUs
+     * @return
+     */
+    public LSOPhotoAlbumLayer addPhotoAlbumLayer(LSOPhotoAlbumAsset asset, long startTimeUs, long endTimeUs){
+        if(renderer!=null){
+            return renderer.addPhotoAlbumLayer(asset,startTimeUs,endTimeUs);
+        }else{
+            LSOLog.e( "addVideoLayer error render is not avalid");
+            return null;
+        }
+    }
+
+
 
     long reachTimeLoopTimeUs=-1;
 

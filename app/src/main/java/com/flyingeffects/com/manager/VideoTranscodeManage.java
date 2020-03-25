@@ -58,35 +58,42 @@ public class VideoTranscodeManage {
         }
         int duration =getRingDuring(path);
         LogUtil.d("OOM","duration="+duration*1000);
-        DrawPadAllExecute2 execute = new DrawPadAllExecute2(context, DRAWPAD_WIDTH, DRAWPAD_HEIGHT,duration*1000);
-        execute.setFrameRate(FRAME_RATE);
-        execute.setEncodeBitrate(5 * 1024 * 1024);
-        execute.setOnLanSongSDKErrorListener(message -> {
-            ToastUtil.showToast("转码错误编号为"+message);
-            callback.isSuccess(false, "");
-        });
-        execute.setOnLanSongSDKProgressListener((l, i) -> {
-            LogUtil.d("OOM","转码的进度为"+i+"%");
-        });
-        execute.setOnLanSongSDKCompletedListener(exportPath -> {
-            execute.release();
-            if (exportPath == null) {
-                ToastUtil.showToast(context.getString(R.string.render_error));
-                return;
-            }
-            File video = new File(exportPath);
-            if (video.exists()) {
-                try {
-                    FileUtil.copyFile(video, fileName);
-                    callback.isSuccess(true,fileName);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
+        DrawPadAllExecute2 execute = null;
+        try {
+            execute = new DrawPadAllExecute2(context, DRAWPAD_WIDTH, DRAWPAD_HEIGHT,duration*1000);
+            execute.setFrameRate(FRAME_RATE);
+            execute.setEncodeBitrate(5 * 1024 * 1024);
+            execute.setOnLanSongSDKErrorListener(message -> {
+                ToastUtil.showToast("转码错误编号为"+message);
+                callback.isSuccess(false, "");
+            });
+            execute.setOnLanSongSDKProgressListener((l, i) -> {
+                LogUtil.d("OOM","转码的进度为"+i+"%");
+            });
+            DrawPadAllExecute2 finalExecute = execute;
+            execute.setOnLanSongSDKCompletedListener(exportPath -> {
+                finalExecute.release();
+                if (exportPath == null) {
+                    ToastUtil.showToast(context.getString(R.string.render_error));
+                    return;
                 }
-            }
-        });
+                File video = new File(exportPath);
+                if (video.exists()) {
+                    try {
+                        FileUtil.copyFile(video, fileName);
+                        callback.isSuccess(true,fileName);
 
-        execute.start();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            execute.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void setMainLayer(String path) {

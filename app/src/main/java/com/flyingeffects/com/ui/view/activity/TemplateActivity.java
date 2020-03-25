@@ -403,20 +403,22 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         recyclerView.setLayoutManager(layoutManager);
         templateThumbAdapter = new TemplateThumbAdapter(R.layout.item_group_thumb, listItem, TemplateActivity.this);
         templateThumbAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            if(view.getId()==R.id.iv_show_un_select){
-                if (mPlayer != null) {
-                    mPlayer.pause();
-                    ivPlayButton.setImageResource(R.mipmap.iv_play);
-                    isPlaying = false;
+            if(!DoubleClick.getInstance().isFastZDYDoubleClick(1000)){
+                if(view.getId()==R.id.iv_show_un_select){
+                    if (mPlayer != null) {
+                        mPlayer.pause();
+                        ivPlayButton.setImageResource(R.mipmap.iv_play);
+                        isPlaying = false;
+                    }
+                    nowChoosePosition = position;
+                    if (nowChoosePosition != lastChoosePosition) {
+                        selectGroup(position);
+                        modificationThumbData(lastChoosePosition, position);
+                    }
+                    lastChoosePosition = nowChoosePosition;
+                    showPreview(false,true);
+                    AnimForViewShowAndHide.getInstance().show(mContainer);
                 }
-                nowChoosePosition = position;
-                if (nowChoosePosition != lastChoosePosition) {
-                    selectGroup(position);
-                    modificationThumbData(lastChoosePosition, position);
-                }
-                lastChoosePosition = nowChoosePosition;
-                showPreview(false,true);
-                AnimForViewShowAndHide.getInstance().show(mContainer);
             }
         });
         recyclerView.setAdapter(templateThumbAdapter);

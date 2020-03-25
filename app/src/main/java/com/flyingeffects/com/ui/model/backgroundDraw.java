@@ -46,31 +46,36 @@ public class backgroundDraw {
 
     public void toSaveVideo(ArrayList<AllStickerData> list) {
         waitingProgress.openProgressDialog();
-        execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, (long) (duration * 1000));
-        execute.setFrameRate(FRAME_RATE);
-        execute.setEncodeBitrate(5 * 1024 * 1024);
-        execute.setOnLanSongSDKErrorListener(message -> {
-        });
-        execute.setOnLanSongSDKProgressListener((l, i) -> {
-            waitingProgress.setProgress(i + "%");
-        });
-        execute.setOnLanSongSDKCompletedListener(exportPath -> {
-            waitingProgress.closePragressDialog();
-            callback.saveSuccessPath(exportPath);
-            //todo 需要移除全部的子图层
-            execute.release();
-            Log.d("OOM", "exportPath=" + exportPath);
-        });
-        setMainLayer();
-        for (AllStickerData item : list
-        ) {
-            if (item.getPath().endsWith(".gif")) {
-                addGifLayer(item);
-            } else {
-                addBitmapLayer(item);
+        try {
+            execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, (long) (duration * 1000));
+            execute.setFrameRate(FRAME_RATE);
+            execute.setEncodeBitrate(5 * 1024 * 1024);
+            execute.setOnLanSongSDKErrorListener(message -> {
+            });
+            execute.setOnLanSongSDKProgressListener((l, i) -> {
+                waitingProgress.setProgress(i + "%");
+            });
+            execute.setOnLanSongSDKCompletedListener(exportPath -> {
+                waitingProgress.closePragressDialog();
+                callback.saveSuccessPath(exportPath);
+                //todo 需要移除全部的子图层
+                execute.release();
+                Log.d("OOM", "exportPath=" + exportPath);
+            });
+            setMainLayer();
+            for (AllStickerData item : list
+            ) {
+                if (item.getPath().endsWith(".gif")) {
+                    addGifLayer(item);
+                } else {
+                    addBitmapLayer(item);
+                }
             }
+            execute.start();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        execute.start();
+
     }
 
 

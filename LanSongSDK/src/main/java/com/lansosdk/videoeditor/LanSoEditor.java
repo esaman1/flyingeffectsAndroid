@@ -4,17 +4,17 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Build;
 import android.os.Environment;
-import android.util.Log;
 
 import com.lansosdk.box.LSOLog;
 import com.lansosdk.box.LanSoEditorBox;
 import com.lansosdk.box.OnLanSongLogOutListener;
 
 import java.util.Calendar;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LanSoEditor {
 
-    private static boolean isLoaded = false;
+    protected static AtomicBoolean isLoadLanSongSDK = new AtomicBoolean(false);
 
     /**
      * 初始化SDK
@@ -37,7 +37,7 @@ public class LanSoEditor {
         if(Environment.getExternalStorageDirectory()!=null){
             LanSoEditor.setTempFileDir(Environment.getExternalStorageDirectory().getPath() + "/lansongBox/");
         }
-        setLanSongSDK1();
+
         LSOLog.init(context);
         printSDKVersion();
     }
@@ -203,7 +203,7 @@ public class LanSoEditor {
 
 
     private static synchronized void loadLibraries() throws  UnsatisfiedLinkError{
-        if (isLoaded)
+        if (isLoadLanSongSDK.get())
             return;
 
 
@@ -213,7 +213,7 @@ public class LanSoEditor {
         System.loadLibrary("LanSongSDKDecoder");
 
         LSOLog.d("loaded native libraries.isQiLinSoC:"+isQiLinSoc());
-        isLoaded = true;
+        isLoadLanSongSDK.set(true);
     }
 
     private static void initSo(Context context, String str) {

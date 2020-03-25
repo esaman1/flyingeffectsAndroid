@@ -629,37 +629,37 @@ public class CreationTemplateMvpModel {
     public void toSaveVideo() {
         backgroundDraw backgroundDraw = new backgroundDraw(context, mVideoPath, path -> {
             String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
-//            try {
-//                FileUtil.copyFile(new File(path), albumPath);
-//                albumBroadcast(albumPath);
-//                showKeepSuccessDialog(albumPath);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+            try {
+                FileUtil.copyFile(new File(path), albumPath);
+                albumBroadcast(albumPath);
+                showKeepSuccessDialog(albumPath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
 
-            WaitingDialog.openPragressDialog(context);
-            videoAddCover.getInstance().addCover(path, new videoAddCover.addCoverIsSuccess() {
-                @Override
-                public void progresss(int progress) {
-
-                }
-
-                @Override
-                public void isSuccess(boolean isSuccess, String path) {
-                    WaitingDialog.closePragressDialog();
-                    if (isSuccess) {
-                        try {
-                            FileUtil.copyFile(new File(path), albumPath);
-                            albumBroadcast(albumPath);
-                            showKeepSuccessDialog(albumPath);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                }
-            });
+//            WaitingDialog.openPragressDialog(context);
+//            videoAddCover.getInstance().addCover(path, new videoAddCover.addCoverIsSuccess() {
+//                @Override
+//                public void progresss(int progress) {
+//
+//                }
+//
+//                @Override
+//                public void isSuccess(boolean isSuccess, String path) {
+//                    WaitingDialog.closePragressDialog();
+//                    if (isSuccess) {
+//                        try {
+//                            FileUtil.copyFile(new File(path), albumPath);
+//                            albumBroadcast(albumPath);
+//                            showKeepSuccessDialog(albumPath);
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//
+//                }
+//            });
 
         });
 
