@@ -92,13 +92,13 @@ public class frag_search extends BaseFragment {
     @Override
     protected void initView() {
 
-        ed_text.setOnClickListener(view -> statisticsEventAffair.getInstance().setFlag(getActivity(), "4_click"));
+//        ed_text.setOnClickListener(view -> statisticsEventAffair.getInstance().setFlag(getActivity(), "4_click"));
         //键盘的搜索按钮
         ed_text.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
                 String text = ed_text.getText().toString().trim();
                 if (!text.equals("")) {
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search");
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search",text);
                     requestFagData(text);
                     ll_showResult.setVisibility(View.VISIBLE);
                     setResultMargin();
@@ -291,7 +291,7 @@ public class frag_search extends BaseFragment {
                 allData.addAll(data);
                 if (data.size() == 0) {
                     ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none");
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none",name);
                 }
                 adapter.notifyDataSetChanged();
             }
