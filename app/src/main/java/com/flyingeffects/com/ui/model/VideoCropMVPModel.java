@@ -151,8 +151,8 @@ public class VideoCropMVPModel {
                     videoRatio = 1f * videoInfo.getWidth() / videoInfo.getHeight();
                     vLayerW = drawPadView.getDrawPadWidth();
                     vLayerH = vLayerW / videoRatio;
-                    LanSongFilter filter = new LanSongBlurFilter();
-                    backgroundLayer = drawPadView.addVideoLayer(padRealWidth, padRealHeight, filter);
+//                    LanSongFilter filter = new LanSongBlurFilter();
+                    backgroundLayer = drawPadView.addVideoLayer(padRealWidth, padRealHeight, null);
                     backgroundLayer.setScaledValue(padRealHeight * videoRatio, padRealHeight);
                     backgroundLayer.setPosition(drawPadView.getDrawPadWidth() * 0.5f, drawPadView.getDrawPadHeight() * 0.5f);
                     if (backgroundLayer != null) {
