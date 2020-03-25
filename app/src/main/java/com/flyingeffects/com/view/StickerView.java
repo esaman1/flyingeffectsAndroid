@@ -1337,7 +1337,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
     public void dismissFrame() {
-        handler.sendEmptyMessage(DISMISS_FRAME);
+        if (frameShow) {
+            frameShow = false;
+            invalidate();
+        }
     }
 
 

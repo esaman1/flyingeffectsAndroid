@@ -28,6 +28,7 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.updateFileUtils;
 import com.google.gson.Gson;
 import com.shixing.sxve.ui.view.WaitingDialog;
+import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
 import java.io.IOException;
@@ -364,7 +365,7 @@ public class PreviewMvpModel {
                                 mProgress = progress;
                                 showMakeProgress();
                             } else {
-                                WaitingDialog.closePragressDialog();
+
                                 showMakeProgress();
                                 LogUtil.d("onVideoAdError", "下载完成");
                                 isDownZipUrl = false;

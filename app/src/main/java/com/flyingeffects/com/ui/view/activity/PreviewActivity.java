@@ -43,6 +43,7 @@ import butterknife.OnClick;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 
 /***
@@ -283,6 +284,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
             Presenter.DownVideo(templateItem.getVidoefile(), imgList.get(0), templateItem.getId());
         } else {
+            WaitingDialog.closePragressDialog();
             intoTemplateActivity(imgList, TemplateFilePath);
         }
     }

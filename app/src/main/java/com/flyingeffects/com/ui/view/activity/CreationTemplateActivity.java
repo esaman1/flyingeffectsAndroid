@@ -89,8 +89,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 当前预览状态，是否在播放中
      */
     private boolean isPlaying = false;
+    /**;
+     * 是否初始化过播放器
+     */
+    private boolean isInitVideoLayer=false;
     private int allVideoDuration;
     private int thumbCount;
+    private boolean isPlayComplate=false;
     /**
      * 只有背景模板才有，自定义的话这个值为""
      */
@@ -118,6 +123,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         videoPlayerInit();
         videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> {
 //            list_thumb.scrollToPosition(0);
+            isPlayComplate=true;
             endTimer();
             isPlaying = false;
             presenter.showGifAnim(false);
@@ -174,26 +180,38 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             case R.id.tv_top_submit:
                 if (isPlaying) {
                     videoToPause();
+                    endTimer();
                 }
                 if(!TextUtils.isEmpty(title)){
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this,"5_mb_bj_save",title);
                 }else{
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this,"6_customize_bj_save");
                 }
-
                 presenter.toSaveVideo();
                 break;
 
             case R.id.ll_play:
                 if (isPlaying) {
+                    isPlayComplate=false;
                     videoToPause();
+                    presenter.showGifAnim(false);
+                    isPlaying = false;
+                    nowStateIsPlaying(false);
                 } else {
-//                    list_thumb.scrollToPosition(0);
+                    nowStateIsPlaying(true);
+                    if(isPlayComplate){
+                        videoPlayer.startPlayLogic();
+                    }else{
+                        if(isInitVideoLayer){
+                            videoPlayer.onVideoResume(false);
+                        }else{
+                            isInitVideoLayer=true;
+                            videoPlayer.startPlayLogic();
+                        }
+                    }
                     isPlaying = true;
                     startTimer();
-                    videoPlayer.startPlayLogic();
                     presenter.showGifAnim(true);
-                    nowStateIsPlaying(true);
                 }
 
                 break;
@@ -245,7 +263,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             ivPlay.setImageResource(R.mipmap.pause);
         } else {
             ivPlay.setImageResource(R.mipmap.iv_play_creation);
-//            list_thumb.smoothScrollBy(0, 0);
         }
     }
 

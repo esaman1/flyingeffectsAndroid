@@ -150,14 +150,11 @@ public class CreationTemplateMvpModel {
             if (i == 0) {
                 //删除选择的帖子
                 deleteAllSticker();
-
                 if(UiStep.isFromDownBj){
                     statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Stickeroff");
                 }else{
                     statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_Stickeroff");
                 }
-
-
             } else {
                 if(UiStep.isFromDownBj){
                     statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Sticker", listForSticker.get(i).getTitle());
@@ -375,12 +372,16 @@ public class CreationTemplateMvpModel {
                     }
 
 
-
-
                     //切換素材
                     AlbumManager.chooseImageAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
                         CompressionCuttingManage manage = new CompressionCuttingManage(context, tailorPaths -> {
-                            Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> stickView.setImageRes(s, false, null));
+                            Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
+                                stickView.changeImage(s, false);
+                                stickView.setOriginalPath(paths.get(0));
+                                stickView.setClipPath(s);
+
+
+                              });
                         });
                         manage.CompressImgAndCache(paths);
 
@@ -466,7 +467,6 @@ public class CreationTemplateMvpModel {
                 }else{
                     statisticsEventAffair.getInstance().setFlag(context, "6_mb_sticker_plus");
                 }
-
                 copyName = mGifFolder + File.separator + System.currentTimeMillis() + "synthetic.gif";
                 String finalCopyName = copyName;
                 FileUtil.copyFile(new File(originalPath), copyName, new FileUtil.copySucceed() {
@@ -475,16 +475,12 @@ public class CreationTemplateMvpModel {
                         addSticker(finalCopyName, false, isFromAubum, originalPath, true, stickerView);
                     }
                 });
-
             } else {
-
                 if(UiStep.isFromDownBj){
                     statisticsEventAffair.getInstance().setFlag(context, "5_mb_bj_plus one");
                 }else{
                     statisticsEventAffair.getInstance().setFlag(context, "6_customize_bj_plus one");
                 }
-
-
                 String aa = path.substring(path.length() - 4);
                 copyName = mImageCopyFolder + File.separator + System.currentTimeMillis() + aa;
                 String finalCopyName1 = copyName;
@@ -538,7 +534,7 @@ public class CreationTemplateMvpModel {
         }
         mTotalWidth = thumbWidth * thumbCount;
         callback.getVideoDuration(videoInfo.getDuration(), thumbCount);
-        int dp40 = screenUtil.dip2px(context, 40);
+        int dp40 = screenUtil.dip2px(context, 43);
         int screenWidth = screenUtil.getScreenWidth((Activity) context);
         listViewForVideoThumbAdapter adapter = new listViewForVideoThumbAdapter(context, mTimeUs, Uri.fromFile(new File(mVideoPath)), thumbWidth, listHeight, screenWidth / 2, screenWidth / 2 - dp40);
         hListView.setAdapter(adapter);

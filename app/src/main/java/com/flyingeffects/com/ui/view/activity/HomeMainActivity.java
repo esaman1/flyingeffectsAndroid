@@ -176,6 +176,8 @@ public class HomeMainActivity extends FragmentActivity {
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("dynamic"));
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("runCatch"));
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("def"));
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("imageCopy"));
+
         }
 
     }
