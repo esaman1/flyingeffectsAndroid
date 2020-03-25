@@ -1244,7 +1244,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
 
     /**
-     * 區別第一次設置素材，
+     * 區別第一次設置素材，这里主要用于切换素材，切换素材后，需要重新计算
      *
      * @param path
      * @param autoRun
