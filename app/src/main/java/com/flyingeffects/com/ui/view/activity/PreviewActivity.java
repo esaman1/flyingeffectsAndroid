@@ -20,8 +20,6 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.DownloadVideoManage;
-import com.flyingeffects.com.manager.VideoTranscodeManage;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
@@ -43,7 +41,6 @@ import butterknife.OnClick;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 
 /***
@@ -147,6 +144,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         tv_title.setText(templateItem.getTitle());
         tv_describe.setText("友友们    " + "上传" + templateItem.getDefaultnum() + "张照片即可制作");
         Presenter.requestTemplateDetail(templateItem.getId());
+
+
     }
 
 
@@ -258,6 +257,12 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             } else {//需要抠图
                 originalImagePath = paths;
                 Presenter.CompressImg(paths);
+
+
+
+
+
+
             }
         }
     }

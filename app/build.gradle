@@ -146,6 +146,8 @@ dependencies {
     implementation project(':album')
     implementation project(':LanSongSDK')
 
+//    implementation 'cn.pedant.sweetalert:library:1.3'
+
 }
 
 

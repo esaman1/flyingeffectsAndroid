@@ -389,6 +389,8 @@ public class PreviewMvpModel {
                         });
 
                     } catch (Exception e) {
+                        isDownZipUrl = false;
+                        ToastUtil.showToast("下载异常，请重试");
                         LogUtil.d("onVideoAdError", "Exception=" + e.getMessage());
                     }
                     super.run();

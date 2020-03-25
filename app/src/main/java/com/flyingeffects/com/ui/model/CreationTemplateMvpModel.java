@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
+import android.widget.StackView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
@@ -225,6 +226,9 @@ public class CreationTemplateMvpModel {
                 }
             }
         }
+
+
+
     }
 
 
@@ -349,19 +353,25 @@ public class CreationTemplateMvpModel {
      * @param isCopy       是否来自复制功能
      *                     user : zhangtongju
      */
+
+    int stickerViewID;
     private void addSticker(String path, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView) {
         closeAllAnim();
         StickerView stickView = new StickerView(context);
+        stickerViewID++;
+        stickView.setId(stickerViewID);
         stickView.setOnitemClickListener(new StickerItemOnitemclick() {
             @Override
             public void stickerOnclick(int type) {
                 if (type == StickerView.LEFT_TOP_MODE) {//刪除
                     viewLayerRelativeLayout.removeView(stickView);
+                    int nowId=stickView.getId();
+                    delectedListForSticker(nowId);
 
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     stickView.dismissFrame();
                     //copy
-                    copyGif(stickView.getResPath(), path, isFromAubum, stickView);
+                    copyGif(stickView.getResPath(), path, stickView.getComeFrom(), stickView);
 
                 } else if (type == StickerView.LEFT_BOTTOM_MODE) {
 
@@ -449,6 +459,22 @@ public class CreationTemplateMvpModel {
     }
 
 
+
+    private void  delectedListForSticker(int id){
+
+        for(int i=0;i<listForStickerView.size();i++){
+
+            AnimStickerModel model=listForStickerView.get(i);
+            StickerView stackView=model.getStickerView();
+            if(stackView.getId()==id){
+                listForStickerView.remove(i);
+            }
+        }
+
+
+    }
+
+
     private void closeAllAnim() {
         ArrayList<AllStickerData> list = new ArrayList<>();
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
@@ -487,7 +513,7 @@ public class CreationTemplateMvpModel {
                 FileUtil.copyFile(new File(originalPath), copyName, new FileUtil.copySucceed() {
                     @Override
                     public void isSucceed() {
-                        addSticker(finalCopyName1, true, isFromAubum, null, true, stickerView);
+                        addSticker(finalCopyName1, true, isFromAubum, originalPath, true, stickerView);
                     }
                 });
             }

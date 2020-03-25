@@ -1242,6 +1242,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
+
     /**
      * 區別第一次設置素材，
      *
@@ -1282,11 +1283,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             recyclerBitmap();
         } else {
             //路径不存在
-            Toast.makeText(getContext(), "文件不存在", Toast.LENGTH_LONG).show();
+//            Toast.makeText(getContext(), "文件不存在", Toast.LENGTH_LONG).show();
+            LogUtil.d("OOM","文件不存在");
         }
 
     }
-
 
     public static Uri getImageStreamFromExternal(String imageName) {
 
