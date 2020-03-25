@@ -282,16 +282,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     public void getCompressImgList(List<String> imgList) {
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    WaitingDialog.openPragressDialog(PreviewActivity.this);
-                }
-            },200);
-
-
-
+            new Handler().postDelayed(() -> WaitingDialog.openPragressDialog(PreviewActivity.this),200);
             Presenter.DownVideo(templateItem.getVidoefile(), imgList.get(0), templateItem.getId());
         } else {
             intoTemplateActivity(imgList, TemplateFilePath);

@@ -89,7 +89,7 @@ public class VideoCropMVPModel {
         drawPadView.setDrawPadSize(DRAWPAD_WIDTH, DRAWPAD_HEIGHT, (i, i1) -> {
             padRealWidth = i;
             padRealHeight = i1;
-            changeVideoZoom(50);
+          //  changeVideoZoom(50);
         });
         drawPadView.setOnDrawPadRecordProgressListener((drawPad, currentTimeUs) -> {
             LogUtil.d("drawPadView", "currentTimeUs=" + currentTimeUs);
@@ -156,11 +156,11 @@ public class VideoCropMVPModel {
                     backgroundLayer.setScaledValue(padRealHeight * videoRatio, padRealHeight);
                     backgroundLayer.setPosition(drawPadView.getDrawPadWidth() * 0.5f, drawPadView.getDrawPadHeight() * 0.5f);
                     if (backgroundLayer != null) {
-                        mainLayer = backgroundLayer.addSubLayer();
-                        if (mainLayer != null) {
-                            mainLayer.setScaledValue(vLayerW, vLayerH);
-                            mainLayer.setPosition(drawPadView.getDrawPadWidth() * 0.5f, drawPadView.getDrawPadHeight() * 0.5f);
-                        }
+//                        mainLayer = backgroundLayer.addSubLayer();
+//                        if (mainLayer != null) {
+//                            mainLayer.setScaledValue(vLayerW, vLayerH);
+//                            mainLayer.setPosition(drawPadView.getDrawPadWidth() * 0.5f, drawPadView.getDrawPadHeight() * 0.5f);
+//                        }
                         player = new MediaPlayer();
                         player.setLooping(false);
                         try {

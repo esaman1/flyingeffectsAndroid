@@ -49,7 +49,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="@drawable/stroke_cut_video"
-                android:text="去抠图"
+                android:text="去选图"
                 android:textColor="@color/white" />
 
 
