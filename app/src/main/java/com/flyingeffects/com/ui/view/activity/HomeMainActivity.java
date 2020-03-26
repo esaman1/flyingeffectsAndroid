@@ -30,6 +30,8 @@ import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
 import com.flyingeffects.com.ui.view.fragment.frag_search;
 import com.flyingeffects.com.ui.view.fragment.frag_user_center;
 import com.flyingeffects.com.utils.AssetsUtils;
+import com.lansosdk.videoeditor.LanSongFileUtil;
+import com.lansosdk.videoeditor.LanSongUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -171,6 +173,7 @@ public class HomeMainActivity extends FragmentActivity {
         //清理内部sdk
         DataCleanManager.cleanFiles(BaseApplication.getInstance());
 
+        LanSongFileUtil.deleteDefaultDir();
         //清理外部sdk
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("dynamic"));
