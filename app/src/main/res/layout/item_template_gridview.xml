@@ -15,6 +15,7 @@
     <ImageView
         android:id="@+id/iv_download"
         android:layout_width="17dp"
+        android:visibility="gone"
         android:src="@mipmap/sticker_download"
         android:layout_height="17dp" />
 

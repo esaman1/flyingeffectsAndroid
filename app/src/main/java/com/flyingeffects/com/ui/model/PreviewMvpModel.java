@@ -209,8 +209,8 @@ public class PreviewMvpModel {
     private ArrayList<String> listForMatting = new ArrayList<>();
 
     private void upLoad(List<String> list) {
-        String alert = "正在抠图中" + "\n" + "上传人物最佳";
-        WaitingDialog.openPragressDialog(context, alert);
+//        String alert = "正在抠图中" + "\n" + "上传人物最佳";
+//        WaitingDialog.openPragressDialog(context, alert);
         listForMatting.clear();
         List<File> listFile = new ArrayList<>();
         for (String str : list

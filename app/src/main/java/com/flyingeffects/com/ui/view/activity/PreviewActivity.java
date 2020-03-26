@@ -112,7 +112,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     private int nowCollectType;
 
-    private boolean isIntoPause=false;
+    private boolean isIntoPause = false;
 
 
     @Override
@@ -148,7 +148,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         tv_describe.setText("友友们    " + "上传" + templateItem.getDefaultnum() + "张照片即可制作");
 
 
-
     }
 
 
@@ -174,7 +173,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(3000)) {
                     if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
                         statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "5_bj_Make", templateItem.getTitle());
-                        UiStep.isFromDownBj=true;
+                        UiStep.isFromDownBj = true;
                     }
 
                     if (BaseConstans.hasLogin()) {
@@ -222,7 +221,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     protected void onPause() {
         videoPlayer.onVideoPause();
-        isIntoPause=true;
+        isIntoPause = true;
         iv_video_play.setVisibility(View.VISIBLE);
         super.onPause();
     }
@@ -230,12 +229,11 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     protected void onResume() {
         super.onResume();
-        if(isIntoPause){
+        if (isIntoPause) {
             videoPlayerInit();
-            isIntoPause=false;
+            isIntoPause = false;
         }
     }
-
 
 
     private void videoPlayerInit() {
@@ -272,6 +270,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 originalImagePath = null;
             } else {//需要抠图
                 originalImagePath = paths;
+                new Handler().postDelayed(() -> {
+                    String alert = "正在抠图中" + "\n" + "上传人物最佳";
+                    WaitingDialog.openPragressDialog(PreviewActivity.this, alert);
+                }, 200);
                 Presenter.CompressImg(paths);
             }
         }
@@ -297,7 +299,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     public void getCompressImgList(List<String> imgList) {
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-            new Handler().postDelayed(() -> WaitingDialog.openPragressDialog(PreviewActivity.this),200);
+
             Presenter.DownVideo(templateItem.getVidoefile(), imgList.get(0), templateItem.getId());
         } else {
             intoTemplateActivity(imgList, TemplateFilePath);
@@ -430,8 +432,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             iv_video_play.setVisibility(View.GONE);
         }
     }
-
-
 
 
 }

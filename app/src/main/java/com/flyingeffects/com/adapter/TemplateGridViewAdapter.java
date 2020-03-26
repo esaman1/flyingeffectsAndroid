@@ -74,11 +74,11 @@ public class TemplateGridViewAdapter extends BaseAdapter {
                     .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 3)))
                     .into(holder.image);
             holder.tv_name.setText(list.get(position).getTitle());
-            if (stickerList.getIsDownload() == 1) {
-                holder.iv_download.setVisibility(View.GONE);
-            } else {
-                holder.iv_download.setVisibility(View.VISIBLE);
-            }
+//            if (stickerList.getIsDownload() == 1) {
+//                holder.iv_download.setVisibility(View.GONE);
+//            } else {
+//                holder.iv_download.setVisibility(View.GONE);
+//            }
         }
 
         return view;
