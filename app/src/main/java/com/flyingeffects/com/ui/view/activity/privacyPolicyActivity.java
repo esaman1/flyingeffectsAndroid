@@ -51,7 +51,7 @@ public class privacyPolicyActivity extends Activity {
         String tips = "1.我们会遵循隐私政策收集、使用信息，但不会仅因同意本隐私政策而采取强制捆绑的方式收集信息。\n" +
                 "2.在仅浏览时，为保障服务所必须，我们会搜集设备信息和日志信息用于图片浏览、推荐。\n" +
                 "3.地理位置、摄像头、相册、通讯录权限均不会默认开启，只有经过明示授权才会为实现功能或服务时使用，您有权拒绝或撤回授权。\n" +
-                "您可以查看完整版隐私政策。";
+                "您可以查看完整版隐私政策和用户协议。";
         SpannableStringBuilder spannableBuilder = new SpannableStringBuilder(tips);
         ClickableSpan clickableSpanOne = new ClickableSpan() {
             @Override
@@ -69,7 +69,23 @@ public class privacyPolicyActivity extends Activity {
             }
         };
 
+        ClickableSpan clickableSpanTwo = new ClickableSpan() {
+            @Override
+            public void onClick(@NotNull View view) {
+                Intent intent = new Intent(privacyPolicyActivity.this, webViewActivity.class);
+                intent.putExtra("webUrl", BaseConstans.PROTOCOL);
+                startActivity(intent);
+            }
 
+            @Override
+            public void updateDrawState(TextPaint paint) {
+                paint.setColor(Color.parseColor("#0092FE"));
+                // 设置下划线 true显示、false不显示
+                paint.setUnderlineText(false);
+            }
+        };
+
+        spannableBuilder.setSpan(clickableSpanTwo, 163, 167, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannableBuilder.setSpan(clickableSpanOne, 158, 162, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         tv_policy.setMovementMethod(LinkMovementMethod.getInstance());
         tv_policy.setText(spannableBuilder);
