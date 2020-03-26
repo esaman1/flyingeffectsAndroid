@@ -149,7 +149,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         super.onResume();
         if(isIntoPause){
             videoPlayerInit();
-            isIntoPause=false;
         }
     }
 
@@ -198,7 +197,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
             case R.id.ll_play:
                 if (isPlaying) {
-
+                    isIntoPause=false;
                     isPlayComplate=false;
                     videoToPause();
                     presenter.showGifAnim(false);
@@ -209,10 +208,18 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     if(isPlayComplate){
                         videoPlayer.startPlayLogic();
                         nowChooseSeek=1000;
+                        isIntoPause=false;
                     }else{
                         if(isInitVideoLayer){
-                            videoPlayer.onVideoResume(false);
+                            if(!isIntoPause){
+                                videoPlayer.onVideoResume(false);
+                            }else{
+                                videoPlayer.startPlayLogic();
+                                isIntoPause=false;
+                                isInitVideoLayer=true;
+                            }
                         }else{
+                            isIntoPause=false;
                             isInitVideoLayer=true;
                             videoPlayer.startPlayLogic();
                         }

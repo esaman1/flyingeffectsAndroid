@@ -89,6 +89,7 @@ public class BaseApplication extends MultiDexApplication {
         MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_MANUAL);  //页面采集模式
         UMConfigure.setProcessEvent(true); // 支持在子进程中统计自定义事件
         UMConfigure.setLogEnabled(false);
+        MobclickAgent.setCatchUncaughtExceptions(true);
     }
 
     /**
