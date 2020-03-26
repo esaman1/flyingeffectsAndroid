@@ -53,6 +53,7 @@ import com.flyingeffects.com.view.HorizontalListView;
 import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.lansosdk.box.ViewLayerRelativeLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxve.ui.adapter.TimelineAdapter;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
@@ -149,8 +150,25 @@ public class CreationTemplateMvpModel {
     private TemplateGridViewAdapter gridAdapter;
     private List<StickerList> listForSticker = new ArrayList<>();
 
+    private int selectPage = 1;
+    private int perPageCount=20;
+    private  SmartRefreshLayout smartRefreshLayout;
+    private boolean isRefresh = true;
     public void initBottomLayout(ViewPager viewPager) {
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager, false);
+        smartRefreshLayout =templateThumbView.findViewById(R.id.smart_refresh_layout);
+        smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
+            isRefresh = true;
+            refreshLayout.setEnableLoadMore(true);
+            selectPage = 1;
+            requestStickersList(true);
+        });
+        smartRefreshLayout.setOnLoadMoreListener(refresh -> {
+            isRefresh = false;
+            selectPage++;
+            requestStickersList(false);
+        });
+
         GridView gridView = templateThumbView.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view, i, l) -> {
             if (i == 0) {
@@ -195,6 +213,11 @@ public class CreationTemplateMvpModel {
     }
 
 
+    private void finishData() {
+        smartRefreshLayout.finishRefresh();
+        smartRefreshLayout.finishLoadMore();
+    }
+
     private void deleteAllSticker() {
         if (listForStickerView != null && listForStickerView.size() > 0) {
             for (AnimStickerModel stickerModel : listForStickerView
@@ -230,8 +253,6 @@ public class CreationTemplateMvpModel {
                 }
             }
         }
-
-
 
     }
 
@@ -279,15 +300,16 @@ public class CreationTemplateMvpModel {
                 try {
                     if(path1!=null){
                         FileUtil.copyFile(path1, fileName);
-//                    String sss="/storage/emulated/0/1/20200323133240.gif";
                         addSticker(fileName, false, false, null, false, null);
                         WaitingDialog.closePragressDialog();
                         modificationSingleItem(position);
                     }else{
+                        WaitingDialog.closePragressDialog();
                         ToastUtil.showToast("请重试");
                     }
 
                 } catch (IOException e) {
+                    WaitingDialog.closePragressDialog();
                     e.printStackTrace();
                 }
             });
@@ -724,8 +746,10 @@ public class CreationTemplateMvpModel {
     }
 
 
-    public void requestStickersList() {
+    public void requestStickersList(boolean isShowDialog) {
         HashMap<String, String> params = new HashMap<>();
+        params.put("page",selectPage+"");
+        params.put("pageSize",perPageCount+"");
         // 启动时间
         Observable ob = Api.getDefault().getStickerslist(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ArrayList<StickerList>>(context) {
@@ -736,13 +760,29 @@ public class CreationTemplateMvpModel {
 
             @Override
             protected void _onNext(ArrayList<StickerList> list) {
-                StickerList item1 = new StickerList();
-                item1.setClearSticker(true);
-                listForSticker.add(item1);
+
+
+                finishData();
+                if (isRefresh) {
+                    listForSticker.clear();
+                    StickerList item1 = new StickerList();
+                    item1.setClearSticker(true);
+                    listForSticker.add(item1);
+                }
+
+
+                if (!isRefresh && list.size() < perPageCount) {  //因为可能默认只请求8条数据
+                    ToastUtil.showToast(context.getResources().getString(R.string.no_more_data));
+                }
+                if (list.size() < perPageCount) {
+                    smartRefreshLayout.setEnableLoadMore(false);
+                }
+
+
                 listForSticker.addAll(list);
                 modificationAllData(list);
             }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
     }
 
 

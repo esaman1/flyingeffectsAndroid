@@ -58,7 +58,7 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
     public void requestStickersList(){
-        creationTemplatemodel.requestStickersList();
+        creationTemplatemodel.requestStickersList(true);
     }
 
     public void onDestroy(){

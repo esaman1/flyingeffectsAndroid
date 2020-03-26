@@ -1164,19 +1164,22 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     contentWidth = getMeasuredWidth() / 2f;
                     originalBitmapWidth = (int) contentWidth;
                     originalBitmap = BitmapFactory.decodeFile(path);
-                    int bitmapW = originalBitmap.getWidth();
-                    int bitmapH = originalBitmap.getHeight();
-                    boolean direction = BitmapManager.getInstance().getOrientation(path);
-                    if (!direction) {
-                        contentHeight = widthBigger ? contentWidth * (bitmapH / (float) bitmapW) : contentWidth * (bitmapW / (float) bitmapH);
-                    } else {
-                        //正常模式
-                        contentHeight = widthBigger ? contentWidth * (bitmapW / (float) bitmapH) : contentWidth * (bitmapH / (float) bitmapW);
+                    if(originalBitmap!=null){
+                        int bitmapW = originalBitmap.getWidth();
+                        int bitmapH = originalBitmap.getHeight();
+                        boolean direction = BitmapManager.getInstance().getOrientation(path);
+                        if (!direction) {
+                            contentHeight = widthBigger ? contentWidth * (bitmapH / (float) bitmapW) : contentWidth * (bitmapW / (float) bitmapH);
+                        } else {
+                            //正常模式
+                            contentHeight = widthBigger ? contentWidth * (bitmapW / (float) bitmapH) : contentWidth * (bitmapH / (float) bitmapW);
+                        }
+                        originalBitmapHeight = (int) contentHeight;
+                        LogUtil.d("OOM", "contentHeight=" + contentHeight);
+                        LogUtil.d("OOM", "contentWidth=" + contentWidth);
+                    }else{
+                        contentHeight=getMeasuredHeight()/2;
                     }
-                    originalBitmapHeight = (int) contentHeight;
-                    LogUtil.d("OOM", "contentHeight=" + contentHeight);
-                    LogUtil.d("OOM", "contentWidth=" + contentWidth);
-                    // contentHeight = (int) (getMinDisplayWidth() / 2f);
                     RequestManager manager = Glide.with(getContext());
                     RequestBuilder builder = null;
                     if (path.endsWith(".gif")) {
