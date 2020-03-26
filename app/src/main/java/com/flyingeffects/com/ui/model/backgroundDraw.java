@@ -51,6 +51,7 @@ public class backgroundDraw {
             execute.setFrameRate(FRAME_RATE);
             execute.setEncodeBitrate(5 * 1024 * 1024);
             execute.setOnLanSongSDKErrorListener(message -> {
+                LogUtil.d("OOM","错误信息为"+message);
             });
             execute.setOnLanSongSDKProgressListener((l, i) -> {
                 waitingProgress.setProgress(i + "%");
@@ -73,6 +74,7 @@ public class backgroundDraw {
             }
             execute.start();
         } catch (Exception e) {
+            LogUtil.d("OOM",e.getMessage());
             e.printStackTrace();
         }
 

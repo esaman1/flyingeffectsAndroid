@@ -13,9 +13,7 @@ import android.view.TextureView.SurfaceTextureListener;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.lansosdk.LanSongAe.LSOAeDrawable;
 import com.lansosdk.LanSongFilter.LanSongFilter;
-import com.lansosdk.box.AEJsonLayer;
 import com.lansosdk.box.AudioLine;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
@@ -71,10 +69,10 @@ public class DrawPadView extends FrameLayout {
     private int mAutoFlushFps = 0;
     private onViewAvailable mViewAvailable = null;
     private onDrawPadSizeChangedListener mSizeChangedCB = null;
-    private onDrawPadRunTimeListener drawpadRunTimeListener = null;
-    private onDrawPadProgressListener drawpadProgressListener = null;
+    private onDrawPadRunTimeListener drawPadRunTimeListener = null;
+    private onDrawPadProgressListener drawPadProgressListener = null;
     private onDrawPadThreadProgressListener drawPadThreadProgressListener = null;
-    private onDrawPadSnapShotListener drawpadSnapShotListener = null;
+    private onDrawPadSnapShotListener drawPadSnapShotListener = null;
     private onDrawPadOutFrameListener drawPadPreviewFrameListener = null;
     private int previewFrameWidth;
     private int previewFrameHeight;
@@ -151,10 +149,10 @@ public class DrawPadView extends FrameLayout {
      * 设置DrawPad的刷新模式,默认 {@link DrawPadUpdateMode#ALL_VIDEO_READY};
      *
      * @param mode
-     * @param autofps //自动刷新的参数,每秒钟刷新几次(即视频帧率).当自动刷新的时候有用, 不是自动,则不起作用.
+     * @param autoFps //自动刷新的参数,每秒钟刷新几次(即视频帧率).当自动刷新的时候有用, 不是自动,则不起作用.
      */
-    public void setUpdateMode(DrawPadUpdateMode mode, int autofps) {
-        mAutoFlushFps = autofps;
+    public void setUpdateMode(DrawPadUpdateMode mode, int autoFps) {
+        mAutoFlushFps = autoFps;
         mUpdateMode = mode;
     }
 
@@ -312,7 +310,7 @@ public class DrawPadView extends FrameLayout {
         if (renderer != null) {
             renderer.setDrawPadRunTimeListener(li);
         }
-        drawpadRunTimeListener = li;
+        drawPadRunTimeListener = li;
     }
 
 //    public void setLoopAtTime(long timeUs){
@@ -338,7 +336,7 @@ public class DrawPadView extends FrameLayout {
         if (renderer != null) {
             renderer.setDrawPadProgressListener(listener);
         }
-        drawpadProgressListener = listener;
+        drawPadProgressListener = listener;
     }
 
     /**
@@ -368,7 +366,7 @@ public class DrawPadView extends FrameLayout {
         if (renderer != null) {
             renderer.setDrawPadSnapShotListener(listener);
         }
-        drawpadSnapShotListener = listener;
+        drawPadSnapShotListener = listener;
     }
 
     /**
@@ -379,7 +377,7 @@ public class DrawPadView extends FrameLayout {
      * 此方法,仅在前台工作时有效. (注意:截取的仅仅是各种图层的内容, 不会截取DrawPad的黑色背景)
      */
     public void toggleSnatShot() {
-        if (drawpadSnapShotListener != null && renderer != null && renderer.isRunning()) {
+        if (drawPadSnapShotListener != null && renderer != null && renderer.isRunning()) {
             renderer.toggleSnapShot(drawPadWidth, drawPadHeight);
         } else {
             LSOLog.e(  "toggle snap shot failed!!!");
@@ -393,7 +391,7 @@ public class DrawPadView extends FrameLayout {
      * @param height
      */
     public void toggleSnatShot(int width, int height) {
-        if (drawpadSnapShotListener != null && renderer != null
+        if (drawPadSnapShotListener != null && renderer != null
                 && renderer.isRunning()) {
             renderer.toggleSnapShot(width, height);
         } else {
@@ -569,17 +567,17 @@ public class DrawPadView extends FrameLayout {
             renderer.setDrawPadBackGroundColor(padBGRed,padBGGreen,padBGBlur,padBGAlpha);
 
             // 设置DrawPad处理的进度监听, 回传的currentTimeUs单位是微秒.
-            renderer.setDrawPadSnapShotListener(drawpadSnapShotListener);
+            renderer.setDrawPadSnapShotListener(drawPadSnapShotListener);
             renderer.setDrawpadOutFrameListener(previewFrameWidth,
                     previewFrameHeight, previewFrameType,
                     drawPadPreviewFrameListener);
             renderer.setOutFrameInDrawPad(frameListenerInDrawPad);
 
-            renderer.setDrawPadProgressListener(drawpadProgressListener);
+            renderer.setDrawPadProgressListener(drawPadProgressListener);
             renderer.setDrawPadCompletedListener(drawpadCompletedListener);
             renderer.setDrawPadThreadProgressListener(drawPadThreadProgressListener);
             renderer.setDrawPadErrorListener(drawPadErrorListener);
-            renderer.setDrawPadRunTimeListener(drawpadRunTimeListener);
+            renderer.setDrawPadRunTimeListener(drawPadRunTimeListener);
 
             renderer.setLoopingWhenReachTime(reachTimeLoopTimeUs);
             if (isRecordMic) {
@@ -1011,6 +1009,28 @@ public class DrawPadView extends FrameLayout {
     }
 
 
+
+    /**
+     *
+     * @param videoAsset
+     * @param startTimeUs 从容器的什么时间点开始
+     * @param endTimeUs 从容器的什么时间点结束;
+     * @return
+     */
+    public VideoLayer2 addVideoLayer2(LSOVideoAsset videoAsset,long startTimeUs,long endTimeUs){
+        if(renderer!=null){
+            VideoLayer2 layer2= renderer.addVideoLayer2(videoAsset);
+            if(layer2!=null){
+                layer2.setDisplayTimeRange(startTimeUs,endTimeUs);
+            }
+            return layer2;
+        }else{
+            LSOLog.e( "addVideoLayer error render is not avalid");
+            return null;
+        }
+    }
+
+
     /**
      * 增加AE模板层;
      * @param asset
@@ -1202,13 +1222,9 @@ public class DrawPadView extends FrameLayout {
             return null;
         }
     }
-
     /**
      * 增加一个gif图层,
-     * <p>
-     * resId 来自apk中drawable文件夹下的各种资源文件, 我们会在GifLayer中拷贝这个资源到默认文件夹下面,
-     * 然后作为一个普通的gif文件来做处理,使用完后, 会在Giflayer 图层释放的时候, 删除.
-     *
+     * resId 来自apk中drawable文件夹下的各种资源文件
      * @param resId 来自apk中drawable文件夹下的各种资源文件.
      * @return
      */
@@ -1220,6 +1236,8 @@ public class DrawPadView extends FrameLayout {
             return null;
         }
     }
+
+
 
     /**
      * 增加子图层.

@@ -32,7 +32,7 @@
     <string name="template_collect_success">模板收藏成功</string>
     <string name="template_cancel_success">模板已取消收藏</string>
     <string name="tv_cut_video">裁剪视频</string>
-    <string name="toast_crop_toolong">时长超过1分钟，请重新选择</string>
+    <string name="toast_crop_toolong">时长超过5分钟，请重新选择</string>
     <string name="toast_crop_tooshort">裁剪时长小于两秒，请重新选择</string>
     <string name="render_error">渲染出错，请重试保存</string>
     <string name="export_failure">导出失败</string>

@@ -69,6 +69,7 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.internal.schedulers.NewThreadWorker;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -337,7 +338,7 @@ public class CreationTemplateMvpModel {
                                 @Override
                                 public void succeed(boolean isSucceed) {
                                     modificationSingleItem(position);
-                                    addSticker(copyName, true, false, null, false, null);
+                                    addSticker(copyName, false, false, null, false, null);
                                 }
                             });
                         }
@@ -417,11 +418,13 @@ public class CreationTemplateMvpModel {
                     AlbumManager.chooseImageAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
                         CompressionCuttingManage manage = new CompressionCuttingManage(context, tailorPaths -> {
                             Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
-                                stickView.changeImage(s, false);
                                 stickView.setOriginalPath(paths.get(0));
                                 stickView.setClipPath(s);
-
-
+                                if(!isCheckedMatting){
+                                    stickView.changeImage(paths.get(0),false);
+                                }else{
+                                    stickView.changeImage(s,false);
+                                }
                               });
                         });
                         manage.CompressImgAndCache(paths);

@@ -32,6 +32,7 @@ import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MarqueTextView;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
+import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 import com.yanzhenjie.album.AlbumFile;
 
 import java.util.ArrayList;
@@ -83,6 +84,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     new_fag_template_item templateItem;
 
+    private  boolean  fromToMineCollect;
+
 
     private List<String> originalImagePath = new ArrayList<>();
 
@@ -125,16 +128,20 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         ondestroy = false;
         templateItem = (new_fag_template_item) getIntent().getSerializableExtra("person");
         fromTo = getIntent().getStringExtra("fromTo");
+        fromToMineCollect=getIntent().getBooleanExtra("fromToMineCollect",false);
         defaultnum = templateItem.getDefaultnum();
         is_picout = templateItem.getIs_picout();
         nowCollectType = templateItem.getIs_collection();
-        if (nowCollectType == 1) {
+        if (nowCollectType == 1||fromToMineCollect) {
+            nowCollectType=1;
             iv_zan.setImageResource(R.mipmap.zan_selected);
         }
         Presenter = new PreviewMvpPresenter(this, this);
         Glide.with(this).load(templateItem.getImage()).into(iv_show_cover);
         videoPlayer.setUp(templateItem.getVidoefile(), true, "");
         videoPlayer.startPlayLogic();
+        GSYVideoType.setShowType(GSYVideoType.SCREEN_TYPE_FULL);
+//        videoPlayer.startWindowFullscreen(PreviewActivity.this,true,true);
         videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> {
             VideoPlaybackCompleted(true, true);
             isPlayComplate = true;
@@ -229,6 +236,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     protected void onResume() {
         super.onResume();
+
         if (isIntoPause) {
             videoPlayerInit();
             isIntoPause = false;
@@ -282,6 +290,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     private void intoTemplateActivity(List<String> paths, String templateFilePath) {
         WaitingDialog.closePragressDialog();
+
         Intent intent = new Intent(this, TemplateActivity.class);
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("paths", (ArrayList<String>) paths);
@@ -299,9 +308,9 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     public void getCompressImgList(List<String> imgList) {
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-
             Presenter.DownVideo(templateItem.getVidoefile(), imgList.get(0), templateItem.getId());
         } else {
+            WaitingDialog.closePragressDialog();
             intoTemplateActivity(imgList, TemplateFilePath);
         }
     }
@@ -332,28 +341,24 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void collectionResult() {
-        if (nowCollectType == 0) {
-
-            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "5_bj_keep", templateItem.getTitle());
+            if (nowCollectType == 0) {
+                if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                    statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "5_bj_keep", templateItem.getTitle());
+                } else {
+                    statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "1_mb_keep_cancel", templateItem.getTitle());
+                }
+                nowCollectType = 1;
+                ToastUtil.showToast(getString(R.string.template_collect_success));
             } else {
-                statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "1_mb_keep_cancel", templateItem.getTitle());
+                if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                    statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "5_bj_keep_cancel", templateItem.getTitle());
+                } else {
+                    statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "1_mb_keep", templateItem.getTitle());
+                }
+                nowCollectType = 0;
+                ToastUtil.showToast(getString(R.string.template_cancel_success));
             }
-
-
-            nowCollectType = 1;
-            ToastUtil.showToast(getString(R.string.template_collect_success));
-        } else {
-            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "5_bj_keep_cancel", templateItem.getTitle());
-            } else {
-                statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "1_mb_keep", templateItem.getTitle());
-            }
-
-            nowCollectType = 0;
-            ToastUtil.showToast(getString(R.string.template_cancel_success));
-        }
-        showCollectState(nowCollectType == 0);
+            showCollectState(nowCollectType == 0);
     }
 
 

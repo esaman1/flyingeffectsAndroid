@@ -71,7 +71,6 @@ public class frag_user_collect extends BaseFragment {
     @Override
     protected void initView() {
         initSmartRefreshLayout();
-
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             template_type = bundle.getString("template_type");
@@ -199,6 +198,7 @@ public class frag_user_collect extends BaseFragment {
                 }else{
                     intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
                 }
+                intent.putExtra("fromToMineCollect", true);
                 intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
                 startActivity(intent);
             }
