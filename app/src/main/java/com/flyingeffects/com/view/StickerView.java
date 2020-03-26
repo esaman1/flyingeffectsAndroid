@@ -1049,7 +1049,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         float HelpBoxRectWidth = mHelpBoxRect.width();
         //应为蓝松是0.5表示居中，所以这里搞了个2
         float centerLine = HelpBoxRectWidth / 2;
-        float centerPosition = moveX - centerLine;
+
+        float centerPosition = mHelpBoxRect.right - centerLine;
         return centerPosition / getMeasuredWidth();
 
     }
@@ -1058,7 +1059,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public float getTranslationY() {
         float HelpBoxRectWidth = mHelpBoxRect.height();
         float centerLine = HelpBoxRectWidth / 2;
-        float centerPosition = moveY - centerLine;
+        float centerPosition = mHelpBoxRect.bottom - centerLine;
         return centerPosition / getMeasuredHeight();
     }
 

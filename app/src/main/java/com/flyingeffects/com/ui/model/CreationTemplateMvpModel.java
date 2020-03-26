@@ -98,7 +98,7 @@ public class CreationTemplateMvpModel {
     /**
      * 是否抠图,true 抠图
      */
-    private  boolean isMatting;
+    private  boolean isMatting=true;
 
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout) {
         this.context = context;
@@ -167,8 +167,6 @@ public class CreationTemplateMvpModel {
                 }else{
                     statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_Sticker", listForSticker.get(i).getTitle());
                 }
-
-
                 downSticker(listForSticker.get(i).getImage(), listForSticker.get(i).getId(), i);
             }
 
@@ -440,6 +438,7 @@ public class CreationTemplateMvpModel {
             fromCopy.setDegree(copyStickerView.getRotateAngle());
             fromCopy.setTranX(copyStickerView.getCenterX());
             fromCopy.setTranY(copyStickerView.getCenterY());
+
             stickView.setImageRes(path, false, fromCopy);
             stickView.showFrame();
         } else {
