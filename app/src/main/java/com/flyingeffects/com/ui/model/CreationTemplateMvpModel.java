@@ -95,6 +95,10 @@ public class CreationTemplateMvpModel {
     private String mImageCopyFolder;
     private boolean isCheckedMatting = true;
     private HorizontalListView hListView;
+    /**
+     * 是否抠图,true 抠图
+     */
+    private  boolean isMatting;
 
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout) {
         this.context = context;
@@ -214,6 +218,7 @@ public class CreationTemplateMvpModel {
      * @Des 抠图和原图之间切换  isMatting 是否抠图
      */
     private void MattingChange(boolean isMatting) {
+        this.isMatting=isMatting;
         if (listForStickerView != null && listForStickerView.size() > 0) {
             for (AnimStickerModel stickerModel : listForStickerView
             ) {
@@ -527,7 +532,7 @@ public class CreationTemplateMvpModel {
                 String aa = path.substring(path.length() - 4);
                 copyName = mImageCopyFolder + File.separator + System.currentTimeMillis() + aa;
                 String finalCopyName1 = copyName;
-                FileUtil.copyFile(new File(getResPath), copyName, new FileUtil.copySucceed() {
+                FileUtil.copyFile(new File(path), copyName, new FileUtil.copySucceed() {
                     @Override
                     public void isSucceed() {
                         addSticker(finalCopyName1, true, isFromAubum, OriginalPath, true, stickerView);
@@ -668,7 +673,6 @@ public class CreationTemplateMvpModel {
 
         });
 
-
         ArrayList<AllStickerData> list = new ArrayList<>();
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
@@ -677,7 +681,16 @@ public class CreationTemplateMvpModel {
             stickerData.setScale(stickerView.getScale());
             stickerData.setTranslationX(stickerView.getTranslationX());
             stickerData.setTranslationy(stickerView.getTranslationY());
-            stickerData.setPath(stickerView.getResPath());
+            if(stickerView.getComeFrom()){
+                //来自相册，不是gif
+                if(isMatting){
+                    stickerData.setPath(stickerView.getClipPath());
+                }else{ //这里也会出现蓝松一样的，相同地址只有一个图层
+                    stickerData.setPath(stickerView.getOriginalPath());
+                }
+            }else{
+                stickerData.setPath(stickerView.getResPath());
+            }
             list.add(stickerData);
         }
         backgroundDraw.toSaveVideo(list);
