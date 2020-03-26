@@ -78,18 +78,17 @@
     <FrameLayout
         android:id="@+id/Real_time_preview"
         android:visibility="invisible"
-        android:layout_marginStart="70dp"
         android:layout_above="@+id/ll_progress"
-        android:layout_marginTop="90dp"
-        android:layout_marginEnd="70dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="5dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black">
+        android:background="@color/home_base_balk_color">
 
         <com.shixing.sxvideoengine.SXPlayerSurfaceView
             android:id="@+id/player_surface_view"
             android:layout_width="match_parent"
+
             android:layout_height="match_parent"
             android:layout_gravity="center" />
 
@@ -99,11 +98,10 @@
         android:id="@+id/edit_view_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
         android:layout_above="@+id/ll_progress"
-        android:layout_marginStart="70dp"
-        android:layout_marginTop="90dp"
-        android:layout_marginEnd="70dp"
-        android:layout_marginBottom="40dp" />
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="5dp" />
 
 
     <com.flyingeffects.com.view.EmptyControlVideo
