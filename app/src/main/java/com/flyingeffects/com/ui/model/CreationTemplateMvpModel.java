@@ -141,7 +141,6 @@ public class CreationTemplateMvpModel {
 
 
     public void scrollToPosition(int position) {
-
         linearLayoutManager.scrollToPositionWithOffset(position, 0);
 
     }
@@ -171,6 +170,7 @@ public class CreationTemplateMvpModel {
 
         GridView gridView = templateThumbView.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view, i, l) -> {
+            callback.needPauseVideo();
             if (i == 0) {
                 //删除选择的帖子
                 deleteAllSticker();

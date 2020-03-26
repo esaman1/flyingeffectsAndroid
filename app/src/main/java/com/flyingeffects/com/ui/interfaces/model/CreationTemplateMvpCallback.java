@@ -13,4 +13,6 @@ public interface CreationTemplateMvpCallback {
 
     void getVideoDuration(int duration,int thumbCount );
 
+    void needPauseVideo();
+
 }

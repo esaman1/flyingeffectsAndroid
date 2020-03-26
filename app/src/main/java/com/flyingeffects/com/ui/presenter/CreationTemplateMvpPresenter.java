@@ -86,6 +86,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemvpView.getVideoDuration(duration,thumbCount);
     }
 
+    @Override
+    public void needPauseVideo() {
+        creationTemplatemvpView.needPauseVideo();
+    }
+
 
     public void toSaveVideo(){
         creationTemplatemodel.toSaveVideo();

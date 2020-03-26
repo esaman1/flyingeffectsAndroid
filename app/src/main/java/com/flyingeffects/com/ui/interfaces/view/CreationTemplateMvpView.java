@@ -12,4 +12,6 @@ public interface CreationTemplateMvpView {
     void setgsyVideoProgress(int progress);
 
     void getVideoDuration(int duration,int thumbCount);
+
+    void needPauseVideo();
 }

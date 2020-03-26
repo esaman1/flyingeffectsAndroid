@@ -345,6 +345,18 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         tv_total.setText(timeUtils.timeParse(allVideoDuration) + "s");
     }
 
+    @Override
+    public void needPauseVideo() {
+        if (isPlaying) {
+            isIntoPause = false;
+            isPlayComplate = false;
+            videoToPause();
+            presenter.showGifAnim(false);
+            isPlaying = false;
+            nowStateIsPlaying(false);
+        }
+    }
+
 
     private Timer timer;
     private TimerTask task;
