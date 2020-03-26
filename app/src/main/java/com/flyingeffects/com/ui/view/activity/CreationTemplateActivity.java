@@ -27,6 +27,7 @@ import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.HorizontalListView;
 import com.lansosdk.box.ViewLayerRelativeLayout;
+import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 import com.suke.widget.SwitchButton;
 
 import java.util.Timer;
@@ -123,6 +124,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
         presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout);
         videoPlayer.setUp(videoPath, true, "");
+        GSYVideoType.setShowType(GSYVideoType.SCREEN_TYPE_DEFAULT);
         videoPlayerInit();
         videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> {
 //            list_thumb.scrollToPosition(0);

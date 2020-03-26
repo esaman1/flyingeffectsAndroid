@@ -38,8 +38,6 @@ import com.lansosdk.box.onDrawPadThreadProgressListener;
 
 import com.lansosdk.LanSongFilter.LanSongFilter;
 
-
-
 public class DrawPadView2 extends FrameLayout {
 
     static final int AR_ASPECT_FIT_PARENT = 0; // without clip
@@ -339,7 +337,7 @@ public class DrawPadView2 extends FrameLayout {
      */
     public void setOnDrawPadSnapShotListener(onDrawPadSnapShotListener listener) {
         if (renderer != null) {
-            renderer.setDrawPadSnapShotListener(listener);
+            renderer.setDrawpadSnapShotListener(listener);
         }
         drawpadSnapShotListener = listener;
     }
@@ -523,7 +521,7 @@ public class DrawPadView2 extends FrameLayout {
      * 开始录制
      */
     public void startRecord(){
-        if (renderer != null && !renderer.isRecording()) {
+        if (renderer != null && renderer.isRecording()==false) {
             renderer.segmentStart();
         }
     }
@@ -572,7 +570,7 @@ public class DrawPadView2 extends FrameLayout {
                 renderer.setUpdateMode(mUpdateMode, mAutoFlushFps);
 
                 // 设置DrawPad处理的进度监听, 回传的currentTimeUs单位是微秒.
-                renderer.setDrawPadSnapShotListener(drawpadSnapShotListener);
+                renderer.setDrawpadSnapShotListener(drawpadSnapShotListener);
                 renderer.setDrawpadOutFrameListener(previewFrameWidth,
                         previewFrameHeight, previewFrameType,
                         drawPadPreviewFrameListener);

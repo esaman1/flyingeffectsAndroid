@@ -34,13 +34,12 @@ import com.lansosdk.box.VideoConcatLayer;
 import com.lansosdk.box.onDrawPadSizeChangedListener;
 
 
+/**
+ * 多个图层拼接 预览类
+ * 在拼接的过程中, 可以增加动画, 即实现转场, 拼接默认在图层的最后一秒的下方叠加另一个图层; 两个图层有重叠的一秒时间;
+ * 2019年9--10.18
+ */
 public class DrawPadConcatView extends FrameLayout {
-
-    /**
-     * 渲染类;
-     */
-    private DrawPadConcatViewRender renderer;
-
 
     private TextureRenderView textureRenderView;
     private SurfaceTexture mSurfaceTexture = null;
@@ -192,7 +191,6 @@ public class DrawPadConcatView extends FrameLayout {
                     }
                 } else if (Math.abs(setAcpect - setViewacpect) * 1000 < 16.0f) {
                     if (cb != null) {
-                        isLayoutOk=true;
                         cb.onSizeChanged(width, height);
                     }
                 } else if (textureRenderView != null) {
@@ -275,13 +273,13 @@ public class DrawPadConcatView extends FrameLayout {
     public int getDrawPadHeight() {
         return drawPadHeight;
     }
-    //---------------------------------------------容器代码--------------------------------------------------------
-
+   //---------------------------------------------容器代码--------------------------------------------------------
+    private DrawPadConcatViewRender renderer;
 
     private void createRender(){
         if(renderer==null){
             renderer =new DrawPadConcatViewRender(getContext());
-            renderer.setCompositionBackGroundColor(padBGRed,padBGGreen,padBGBlur,padBGAlpha);
+            renderer.setDrawPadBackGroundColor(padBGRed,padBGGreen,padBGBlur,padBGAlpha);
             setupSuccess=false;
         }
     }
@@ -294,7 +292,7 @@ public class DrawPadConcatView extends FrameLayout {
     public void setPreviewLooping(boolean is){
         createRender();
         if(renderer !=null) {
-            renderer.setPreviewLooping(is);
+           renderer.setPreviewLooping(is);
         }
     }
     //---------------------------容器背景颜色;
@@ -315,7 +313,7 @@ public class DrawPadConcatView extends FrameLayout {
         padBGGreen=(float)green/255f;
         padBGBlur=(float)blue/255f;
         if(renderer!=null){
-            renderer.setCompositionBackGroundColor(padBGRed,padBGGreen,padBGBlur,1.0f);
+            renderer.setDrawPadBackGroundColor(padBGRed,padBGGreen,padBGBlur,1.0f);
         }
     }
     /**
@@ -332,7 +330,7 @@ public class DrawPadConcatView extends FrameLayout {
         padBGBlur=b;
         padBGAlpha=a;
         if(renderer!=null){
-            renderer.setCompositionBackGroundColor(r,g,b,a);
+            renderer.setDrawPadBackGroundColor(r,g,b,a);
         }
     }
 
@@ -724,7 +722,7 @@ public class DrawPadConcatView extends FrameLayout {
      */
     public void release(){
         if(renderer!=null){
-            renderer.release();
+           renderer.release();
             renderer=null;
         }
         setupSuccess=false;

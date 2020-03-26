@@ -17,7 +17,6 @@ import com.lansosdk.box.OnLanSongSDKErrorListener;
 import com.lansosdk.box.OnLanSongSDKProgressListener;
 import com.lansosdk.box.OnLanSongSDKThreadProgressListener;
 import com.lansosdk.box.OnLayerAlreadyListener;
-import com.lansosdk.box.SubLayer;
 import com.lansosdk.box.VideoOneDoRunnable;
 
 import java.io.IOException;
@@ -51,6 +50,8 @@ public class VideoOneDo2 {
         padWidth=mediaInfo.getWidth();
         padHeight=mediaInfo.getHeight();
     }
+
+
     /**
      * [可选]
      * VideoOnedo2是对单个视频做处理,它本身也是一个容器, 可以设置容器的宽高
@@ -67,9 +68,7 @@ public class VideoOneDo2 {
     }
 
     /**
-     * 设置背景颜色;
-     * 当视频画面和最终生成的视频不一致的时候, 这是会有容器的背景显示出来
-     * 是设置背景的颜色;
+     * 设置背景颜色; 只有在
      * @param color
      */
     public void setBackGroundColor(int color){
@@ -111,16 +110,11 @@ public class VideoOneDo2 {
      */
     public void  setCropRect(int startX, int startY, int cropW, int cropH) {
 
+
         if(cropH<32 || cropW<32){
             LSOLog.e("setCropRect error  min Size is 32x 32");
             return;
         }
-
-        if(cropH * cropW<=192*160){ //麒麟处理器的裁剪区域是176x144
-            LSOLog.e("setCropRect error. qi lin SoC is192*160");
-            return;
-        }
-
 
         if(mediaInfo!=null && startX>=0 && startY>=0 && startX<mediaInfo.getWidth() && startY<mediaInfo.getHeight())
         {
@@ -210,9 +204,8 @@ public class VideoOneDo2 {
      *
      * 您可以实时读取,也可以在执行到"完成监听"后一次性读取. 如果您最后一次性读取,建议不要缓冲太多图片,以免造成OOM
      *
-     *
      * 读取到最后一张图片,则返回null;
-     * 先得到的是开始的图片, 后得到的是后来的图片.提取图片的数量是通过 setExtractFrame设置的;
+     * 先得到的是开始的图片, 后得到的是后来的图片.
      * @return
      */
     public Bitmap getExtractFrame(){
@@ -337,8 +330,7 @@ public class VideoOneDo2 {
      * 异步获取当前视频的图层对象.
      *
      * OnLayerAlreadyListener监听的3个方法分别是: Layer图层对象, 容器的宽度, 容器的高度;
-     * 此方法的listener运行在内部的GPU线程中, 不可以在此监听中增加UI相关的代码;
-     * 请不要在此方法里做过多耗时的操作.
+     * 监听返回是运行在内部的GPU线程中, 不可以在此监听中增加UI相关的代码;
      */
     public void getVideoDataLayerAsync(OnLayerAlreadyListener listener){
         if(runnable!=null){
@@ -390,13 +382,6 @@ public class VideoOneDo2 {
             runnable.addFilterList(filterList);
         }
     }
-
-    /**
-     * 增加一张图片,
-     * 返回给你根据这张图片创建好的一个图层对象
-     * @param bmp 图片
-     * @return 返回一个图层对象;
-     */
     public BitmapLayer addBitmapLayer(Bitmap bmp) {
         if(runnable!=null){
             return runnable.addBitmapLayer(bmp);
@@ -404,12 +389,9 @@ public class VideoOneDo2 {
             return null;
         }
     }
+
     /**
-     * 增加一张图片,
-     * 返回给你根据这张图片创建好的一个图层对象
-     * @param bmp  图片
-     * @param position  图片放置的位置, 枚举类型
-     * @return 返回图片图层对象;
+     * 增加图片图层;
      */
     public BitmapLayer addBitmapLayer(Bitmap bmp , LSOLayerPosition position) {
         if(runnable!=null){
@@ -520,38 +502,6 @@ public class VideoOneDo2 {
             return null;
         }
     }
-
-    /**
-     * 增加子图层.
-     * 默认不需要调用,我们会在视频图层绘制后, 直接绘制子图层;
-     * 如果你要在视频层上面增加其他层, 然后再增加子图层, 则用这个.
-     *
-     * 在getVideoDataLayerAsync 回调中增加;
-     * 一般用在溶图的场合;
-     * 举例如下:
-     *    videoOneDo2.getVideoDataLayerAsync(new OnLayerAlreadyListener() {
-     *                 @Override
-     *                 public void onLayerAlready(VideoDataLayer layer, int padWidth, int padHeight) {
-     *
-     *                     //先增加一个图片图层
-     *                     Bitmap bmp1=BitmapFactory.decodeResource(getResources(),R.drawable.tt3);
-     *                     videoOneDo2.addBitmapLayer(bmp1);
-     *
-     *                    //再次增加子图层;
-     *                     SubLayer subLayer =layer.addSubLayer();
-     *                     subLayer.setScale(0.3f);
-     *                     videoOneDo2.addSubLayer(subLayer);
-     *                 }
-     *             });
-     *
-     * @param layer
-     * @return
-     */
-    public boolean addSubLayer(SubLayer layer){
-        return runnable!=null && runnable.addSubLayer(layer);
-    }
-
-
     /**
      * 进度监听
      * 此进度不经过handler+message机制, 直接在处理完当前帧的时候, 调用此监听;

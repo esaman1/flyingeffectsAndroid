@@ -96,6 +96,18 @@ public class LanSongFileUtil {
         }
     }
 
+    public static long getFileSizeByte(String filePath) {
+        if (filePath == null) {
+            return 0;
+        } else {
+            File file = new File(filePath);
+            if (!file.exists()) {
+                return 0;
+            } else {
+               return  file.length();
+            }
+        }
+    }
 
 
     /**
@@ -262,7 +274,7 @@ public class LanSongFileUtil {
         }
 
 //				File file=new File(name);
-//				if(!file.exists())
+//				if(file.exists()==false)
 //				{
 //					try {
 //						file.createNewFile();
