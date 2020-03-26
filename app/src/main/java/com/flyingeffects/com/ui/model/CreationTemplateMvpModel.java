@@ -119,7 +119,7 @@ public class CreationTemplateMvpModel {
     }
 
     public void initStickerView(String imagePath, String originalPath) {
-        addSticker(imagePath, true, true, originalPath, false, null);
+        new Handler().postDelayed(() -> addSticker(imagePath, true, true, originalPath, false, null),500);
     }
 
 
@@ -828,6 +828,7 @@ public class CreationTemplateMvpModel {
      */
     public void addNewSticker(String path, String originalPath) {
         Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> addSticker(path1, true, true, originalPath, false, null));
+
     }
 
 }

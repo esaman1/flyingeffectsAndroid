@@ -1180,6 +1180,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     }else{
                         contentHeight=getMeasuredHeight()/2;
                     }
+                    // contentHeight = (int) (getMinDisplayWidth() / 2f);
                     RequestManager manager = Glide.with(getContext());
                     RequestBuilder builder = null;
                     if (path.endsWith(".gif")) {
