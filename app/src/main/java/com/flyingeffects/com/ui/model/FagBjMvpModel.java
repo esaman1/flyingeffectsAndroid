@@ -35,13 +35,13 @@ public class FagBjMvpModel {
 
     //得到banner缓存数据
     public  void requestData() {
-//        ArrayList<TemplateType> cacheTemplateData= Hawk.get("bjHeadData", new ArrayList<>());
-//        if (cacheTemplateData != null) {
-//            callback.setFragmentList(cacheTemplateData);
-//            requestMainData(false); //首页杂数据
-//        } else {
-//            requestMainData(true); //首页杂数据
-//        }
+        ArrayList<TemplateType> cacheTemplateData= Hawk.get("bjHeadData", new ArrayList<>());
+        if (cacheTemplateData != null) {
+            callback.setFragmentList(cacheTemplateData);
+            requestMainData(false); //首页杂数据
+        } else {
+            requestMainData(true); //首页杂数据
+        }
         requestMainData(true); //首页杂数据
     }
 
