@@ -101,7 +101,7 @@ public class backgroundDraw {
         LogUtil.d("OOM", "addMVLayer");
         GifLayer mvLayer = execute.addGifLayer(stickerItem.getPath());
         //默认gif 的缩放位置是gif 宽度最大
-        float layerScale = DRAWPADWIDTH / mvLayer.getLayerWidth();
+        float layerScale = DRAWPADWIDTH / (float)mvLayer.getLayerWidth();
         LogUtil.d("OOM", "图层的缩放为" +layerScale+ "");
         float stickerScale = stickerItem.getScale();
         LogUtil.d("OOM", "gif+图层的缩放为" +layerScale * stickerScale+ "");
@@ -137,7 +137,7 @@ public class backgroundDraw {
         Bitmap bp = BitmapFactory.decodeFile(stickerItem.getPath());
         BitmapLayer bpLayer = execute.addBitmapLayer(bp);
 
-        float layerScale = DRAWPADWIDTH / bpLayer.getLayerWidth();
+        float layerScale = DRAWPADWIDTH /(float) bpLayer.getLayerWidth();
         LogUtil.d("OOM", "图层的缩放为" +layerScale+ "");
         float stickerScale = stickerItem.getScale();
         LogUtil.d("OOM", "gif+图层的缩放为" +layerScale * stickerScale+ "");

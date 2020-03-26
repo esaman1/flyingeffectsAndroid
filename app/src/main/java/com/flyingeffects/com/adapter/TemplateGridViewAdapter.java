@@ -58,6 +58,7 @@ public class TemplateGridViewAdapter extends BaseAdapter {
             holder.image = view.findViewById(R.id.iv_icon);
             holder.tv_name = view.findViewById(R.id.tv_name);
             holder.iv_download = view.findViewById(R.id.iv_download);
+                    holder.tv_checked=view.findViewById(R.id.tv_checked);
             view.setTag(holder);
         } else {
             holder = (ViewHold) view.getTag();
@@ -79,7 +80,17 @@ public class TemplateGridViewAdapter extends BaseAdapter {
 //            } else {
 //                holder.iv_download.setVisibility(View.GONE);
 //            }
+
+            if (stickerList.isChecked() ) {
+                holder.tv_checked.setVisibility(View.VISIBLE);
+            } else {
+                holder.tv_checked.setVisibility(View.GONE);
+            }
+
         }
+
+
+
 
         return view;
     }
@@ -89,6 +100,7 @@ public class TemplateGridViewAdapter extends BaseAdapter {
         ImageView image;
         TextView tv_name;
         ImageView iv_download;
+        TextView tv_checked;
     }
 
 

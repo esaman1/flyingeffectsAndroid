@@ -171,6 +171,7 @@ public class CreationTemplateMvpModel {
         GridView gridView = templateThumbView.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view, i, l) -> {
             callback.needPauseVideo();
+            modificationSingleItemIsChecked(i);
             if (i == 0) {
                 //删除选择的帖子
                 deleteAllSticker();
@@ -803,6 +804,18 @@ public class CreationTemplateMvpModel {
     private void modificationSingleItem(int position) {
         StickerList item1 = listForSticker.get(position);
         item1.setIsDownload(1);
+        listForSticker.set(position, item1);//修改对应的元素
+        gridAdapter.notifyDataSetChanged();
+    }
+
+
+    private void modificationSingleItemIsChecked(int position) {
+        for (StickerList item:listForSticker
+             ) {
+            item.setChecked(false);
+        }
+        StickerList item1 = listForSticker.get(position);
+        item1.setChecked(true);
         listForSticker.set(position, item1);//修改对应的元素
         gridAdapter.notifyDataSetChanged();
     }
