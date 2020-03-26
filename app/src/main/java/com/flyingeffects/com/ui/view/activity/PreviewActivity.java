@@ -112,6 +112,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     private int nowCollectType;
 
+    private boolean isIntoPause=false;
+
 
     @Override
     protected int getLayoutId() {
@@ -220,6 +222,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     protected void onPause() {
         videoPlayer.onVideoPause();
+        isIntoPause=true;
         iv_video_play.setVisibility(View.VISIBLE);
         super.onPause();
     }
@@ -227,6 +230,18 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     protected void onResume() {
         super.onResume();
+        if(isIntoPause){
+            videoPlayerInit();
+            isIntoPause=false;
+        }
+    }
+
+
+
+    private void videoPlayerInit() {
+        videoPlayer.startPlayLogic();
+        videoPlayer.onVideoPause();
+        new Handler().postDelayed(() -> videoPlayer.seekTo(1000), 1000);
     }
 
 
@@ -415,5 +430,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             iv_video_play.setVisibility(View.GONE);
         }
     }
+
+
+
 
 }

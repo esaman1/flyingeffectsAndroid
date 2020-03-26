@@ -42,6 +42,8 @@ import rx.android.schedulers.AndroidSchedulers;
  * creation date: 2020/3/11
  * user : zhangtongju
  */
+
+
 public class CreationTemplateActivity extends BaseActivity implements CreationTemplateMvpView {
 
     @BindView(R.id.viewPager)
@@ -57,7 +59,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 //    @BindView(R.id.list_thumb)
 //    RecyclerView list_thumb;
 
-
+    private boolean isIntoPause=false;
 
     @BindView(R.id.iv_list)
     HorizontalListView hListView;
@@ -100,7 +102,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 只有背景模板才有，自定义的话这个值为""
      */
     private String title;
-    private long nowChooseSeek;
+    private long nowChooseSeek=1000;
 
     @Override
     protected int getLayoutId() {
@@ -138,15 +140,17 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private void videoPlayerInit() {
         videoPlayer.startPlayLogic();
         videoPlayer.onVideoPause();
-        new Handler().postDelayed(() -> videoPlayer.seekTo(1000), 1000);
+        new Handler().postDelayed(() -> videoPlayer.seekTo(nowChooseSeek), 1000);
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        videoPlayer.seekTo(nowChooseSeek);
-        videoToPause();
+        if(isIntoPause){
+            videoPlayerInit();
+            isIntoPause=false;
+        }
     }
 
     @Override
@@ -194,7 +198,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
             case R.id.ll_play:
                 if (isPlaying) {
-                    nowChooseSeek=videoPlayer.getCurrentPositionWhenPlaying();
+
                     isPlayComplate=false;
                     videoToPause();
                     presenter.showGifAnim(false);
@@ -204,7 +208,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     nowStateIsPlaying(true);
                     if(isPlayComplate){
                         videoPlayer.startPlayLogic();
-
+                        nowChooseSeek=1000;
                     }else{
                         if(isInitVideoLayer){
                             videoPlayer.onVideoResume(false);
@@ -294,6 +298,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     protected void onPause() {
         videoToPause();
+        isIntoPause=true;
         super.onPause();
     }
 
