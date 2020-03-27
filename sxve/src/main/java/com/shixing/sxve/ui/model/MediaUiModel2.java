@@ -14,8 +14,8 @@ import android.util.Log;
 
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.util.AffineTransform;
+import com.shixing.sxve.ui.util.BitmapCompress;
 import com.shixing.sxve.ui.util.Size;
-import com.shixing.sxve.ui.view.VEBitmapFactory;
 import com.shixing.sxvideoengine.SXCompositor;
 import com.shixing.sxvideoengine.SXRenderListener;
 
@@ -272,8 +272,9 @@ public class MediaUiModel2 extends MediaUiModel {
         try {
             File file = new File(filePath);
             if (file.exists()) {
-                FileInputStream fis = new FileInputStream(filePath);
-                return VEBitmapFactory.decodeFileDescriptor(fis.getFD(), targetW, targetH);
+//                FileInputStream fis = new FileInputStream(filePath);
+//                return VEBitmapFactory.decodeFileDescriptor(fis.getFD(), targetW, targetH);
+                return  BitmapCompress.getZoomImage(file.getPath(), targetW, targetH);
             }
         } catch (Exception e) {
             e.printStackTrace();
