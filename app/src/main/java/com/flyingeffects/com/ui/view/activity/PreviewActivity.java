@@ -239,6 +239,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     protected void onResume() {
         super.onResume();
+        WaitingDialog.closePragressDialog();
         if (isIntoPause) {
             videoPlayerInit();
             isIntoPause = false;

@@ -542,6 +542,7 @@ public class AECompositionView extends FrameLayout {
             return  null;
         }
     }
+
     public BitmapLayer addLogoLayer(Bitmap bmp, LSOLayerPosition position){
         createRender();
         if(renderer !=null && bmp!=null){
@@ -607,7 +608,7 @@ public class AECompositionView extends FrameLayout {
      * @param loop 是否循环;
      * @return
      */
-    public AudioLayer addAudioLayer(LSOAudioAsset audioAsset,boolean loop) {
+    public AudioLayer addAudioLayer(LSOAudioAsset audioAsset, boolean loop) {
         if (renderer != null && !renderer.isRunning()) {
             AudioLayer layer= renderer.addAudioLayer(audioAsset);
             if(layer==null){
@@ -719,7 +720,7 @@ public class AECompositionView extends FrameLayout {
      * @param endAudioTimeUs   裁剪声音的结束时间;
      * @return
      */
-    public AudioLayer addAudioLayer(String srcPath, long startFromPadUs,long startAudioTimeUs, long endAudioTimeUs) {
+    public AudioLayer addAudioLayer(String srcPath, long startFromPadUs, long startAudioTimeUs, long endAudioTimeUs) {
         if (renderer != null && !renderer.isRunning()) {
             AudioLayer layer=renderer.addAudioLayer(srcPath, startFromPadUs,
                     startAudioTimeUs, endAudioTimeUs);
@@ -804,7 +805,6 @@ public class AECompositionView extends FrameLayout {
     }
 
     /**
-     * LSNEW 当前渲染的进度监听;
      * 我们的渲染是另外一个线程执行的,你可以用此监听得到当前渲染的进度;
      * 渲染进度和播放进度的区别是: 先渲染好一帧,然后才可以播放;类似网络播放器有两个进度条一样;
      *
@@ -888,7 +888,7 @@ public class AECompositionView extends FrameLayout {
     /**
      *  是否禁止在预览过程中,  禁止缓冲.
      * 如果模板很复杂, 渲染很耗时, 默认是返回缓冲监听;
-     * 默认是 不禁止.
+     * 默认是 禁止.
      * 如果禁止,当模板复杂,耗时严重时,会导致音视频不同步;
      * @param disable
      */
@@ -923,8 +923,8 @@ public class AECompositionView extends FrameLayout {
     }
     /**
      * 开始导出Ae模板.
-     * 导出后, 会以视频的形式返回给你
-     * 你可以不预览,add好各种图层后, 直接调用此方法.
+     * 导出后, 会把生成的视频完整路径返回给你
+     * @return 已经开始,返回true, 无法导出返回false
      */
     public boolean startExport(){
         if(renderer !=null) {
@@ -933,6 +933,7 @@ public class AECompositionView extends FrameLayout {
             return false;
         }
     }
+
     /**
      * 暂停预览画面.
      * 注意: 不能用在Activity的 onPause中,因为onPause会销毁 TextureView,从而整个OpenGL语境就没有了.

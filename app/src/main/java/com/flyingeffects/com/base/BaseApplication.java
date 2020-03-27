@@ -86,7 +86,7 @@ public class BaseApplication extends MultiDexApplication {
         MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_MANUAL);  //页面采集模式
         MobclickAgent.setCatchUncaughtExceptions(true);
         UMConfigure.setProcessEvent(true); // 支持在子进程中统计自定义事件
-        UMConfigure.setLogEnabled(true);
+        UMConfigure.setLogEnabled(false);
         UMConfigure.init(this, BaseConstans.UMENGAPPID, ChannelUtil.getChannel(this), UMConfigure.DEVICE_TYPE_PHONE, "");
 //        PlatformConfig.setWeixin("wx48a4ba91f880abcc", "68932433247e0f33ec8c93c89e9bd374");
 //        PlatformConfig.setQQZone("1109289339", "hdOiuQsp2iudqu3v");

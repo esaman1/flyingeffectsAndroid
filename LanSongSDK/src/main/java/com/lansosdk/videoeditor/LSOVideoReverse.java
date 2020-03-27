@@ -1,9 +1,7 @@
 package com.lansosdk.videoeditor;
 
-import com.lansosdk.box.LSOVideoAsset;
 import com.lansosdk.box.LSOVideoReverseRunnable;
 import com.lansosdk.box.OnLanSongSDKCompletedListener;
-import com.lansosdk.box.OnLanSongSDKExportProgressListener;
 import com.lansosdk.box.OnLanSongSDKProgressListener;
 
 
@@ -18,12 +16,16 @@ public class LSOVideoReverse {
 
     /**
      * 构造方法;
-     * @param asset
+     * @param path
      */
-    public LSOVideoReverse(LSOVideoAsset asset) throws  Exception{
-        runnable=new LSOVideoReverseRunnable(asset);
+    public LSOVideoReverse(String  path) throws  Exception{
+
         if(!LSOVideoReverseRunnable.isSupport()){
             throw  new Exception("LSOVideoReverseRunnable not support this video.");
+        }
+        runnable=new LSOVideoReverseRunnable(path);
+        if(!runnable.prepare()){
+            throw  new Exception("LSOVideoReverseRunnable not support this video." + path);
         }
     }
     /**
@@ -42,7 +44,6 @@ public class LSOVideoReverse {
             runnable.setOnLanSongSDKProgressListener(listener);
         }
     }
-
     /**
      * 完成
      * @param listener
