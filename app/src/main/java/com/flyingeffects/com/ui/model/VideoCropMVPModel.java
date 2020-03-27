@@ -665,127 +665,127 @@ public class VideoCropMVPModel {
         onPause();
         isSaving = true;
 
-//        long durationUs = getDuration() * 1000;
-//        videoCutDurationForVideoOneDo.getInstance().startCutDurtion(videoPath, Math.round(cropStartRatio * durationUs), Math.round(cropEndRatio * durationUs), new videoCutDurationForVideoOneDo.isSuccess() {
-//            @Override
-//            public void progresss(int progress) {
-//                if (dialog != null) {
-//                    dialog.setProgress(progress + "%");
-//                }
-//            }
-//
-//            @Override
-//            public void isSuccess(boolean isSuccess, String path) {
-//            isSaving=false;
-//            if (path == null) {
-//                ToastUtil.showToast(mContext.getString(R.string.render_error));
-//                return;
-//            }
-//            File video = new File(path);
-//            if (video.exists()){
-//                dialog.closePragressDialog();
-//                String tempPath = getTempVideoPath(mContext)+video.getName();
-//                try {
-//                    FileUtil.copyFile(video, tempPath);
-//                    callback.finishCrop(tempPath);
-//
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }else {
-//                dialog.closePragressDialog();
-//                ToastUtil.showToast(mContext.getString(R.string.export_failure));
-//            }
-//            }
-//        });
+        long durationUs = getDuration() * 1000;
+        videoCutDurationForVideoOneDo.getInstance().startCutDurtion(videoPath, Math.round(cropStartRatio * durationUs), Math.round(cropEndRatio * durationUs), new videoCutDurationForVideoOneDo.isSuccess() {
+            @Override
+            public void progresss(int progress) {
+                if (dialog != null) {
+                    dialog.setProgress(progress + "%");
+                }
+            }
 
-
-
-        try {
-            execute = new DrawPadAllExecute2(mContext,DRAWPAD_WIDTH,DRAWPAD_HEIGHT,(cropDurationMs*1000));
-            execute.setFrameRate(FRAME_RATE);
-            execute.setEncodeBitrate(5 * 1024 * 1024);
-            execute.setOnLanSongSDKErrorListener(message -> {
-                isSaving=false;
+            @Override
+            public void isSuccess(boolean isSuccess, String path) {
+            isSaving=false;
+            if (path == null) {
+                ToastUtil.showToast(mContext.getString(R.string.render_error));
+                return;
+            }
+            File video = new File(path);
+            if (video.exists()){
                 dialog.closePragressDialog();
-                LogUtil.e("execute", String.valueOf(message));
-            });
-            execute.setOnLanSongSDKProgressListener((l, i) -> {
-                if (dialog!=null){
-                    dialog.setProgress(i +"%");
-                    LogUtil.d("execute progress: ", String.valueOf(i));
-                }
-            });
-            execute.setOnLanSongSDKCompletedListener(exportPath -> {
-                isSaving=false;
-                execute.release();
-                if (exportPath == null) {
-                    ToastUtil.showToast(mContext.getString(R.string.render_error));
-                    return;
-                }
-                File video = new File(exportPath);
-                if (video.exists()){
-                    dialog.closePragressDialog();
-                    String tempPath = getTempVideoPath(mContext)+video.getName();
-                    try {
-                        FileUtil.copyFile(video, tempPath);
-                        callback.finishCrop(tempPath);
+                String tempPath = getTempVideoPath(mContext)+video.getName();
+                try {
+                    FileUtil.copyFile(video, tempPath);
+                    callback.finishCrop(tempPath);
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }else {
-                    dialog.closePragressDialog();
-                    ToastUtil.showToast(mContext.getString(R.string.export_failure));
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            });
-            Observable.create((Observable.OnSubscribe<Integer>) subscriber -> {
-                if (execute!=null){
-                    try {
-                        LSOVideoOption option=new LSOVideoOption(videoPath);
-                        long durationUs=getDuration()*1000;
-                        option.setCutDurationUs(Math.round(cropStartRatio*durationUs),Math.round(cropEndRatio*durationUs));
-                        VideoFrameLayer bgLayer=execute.addVideoLayer(option,0, Long.MAX_VALUE, true, true);
-                        if (bgLayer != null) {
-                            bgLayer.setScaledValue(videoRatio*execute.getPadHeight(), execute.getPadHeight());
-                            bgLayer.setPosition(execute.getPadWidth() * 0.5f, execute.getPadHeight() * 0.5f);
-                            LanSongFilter filter = new LanSongBlurFilter();
-                            bgLayer.switchFilterTo(filter);
-                        }else {
-                            subscriber.onError(new Throwable());
-                        }
-                        VideoFrameLayer mainLayer=execute.addVideoLayer(option);
-                        if (mainLayer!=null){
-                            mainLayer.setScaledValue(DRAWPAD_WIDTH*mScale,mScale*DRAWPAD_WIDTH/videoRatio);
-                            mainLayer.setPosition(execute.getPadWidth()*0.5f,execute.getPadHeight()*0.5f);
-                        }else {
-                            subscriber.onError(new Throwable());
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (execute.start()) {
-                    subscriber.onNext(0);
-                } else {
-                    subscriber.onError(new Throwable());
-                }
-                subscriber.onCompleted();
-            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(aInteger -> {
-                dialog.setProgress(aInteger+"");
-            }, throwable -> {
-                if (is4kVideo){
-                    statisticsEventAffair.getInstance().setFlag(mContext,"4kVideoFail","4k视频导出崩溃");
-                }
-                isSaving=false;
-                execute.release();
-                onResume();
+            }else {
+                dialog.closePragressDialog();
                 ToastUtil.showToast(mContext.getString(R.string.export_failure));
-                dialog.closePragressDialog();
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            }
+            }
+        });
+
+
+
+//        try {
+//            execute = new DrawPadAllExecute2(mContext,DRAWPAD_WIDTH,DRAWPAD_HEIGHT,(cropDurationMs*1000));
+//            execute.setFrameRate(FRAME_RATE);
+//            execute.setEncodeBitrate(5 * 1024 * 1024);
+//            execute.setOnLanSongSDKErrorListener(message -> {
+//                isSaving=false;
+//                dialog.closePragressDialog();
+//                LogUtil.e("execute", String.valueOf(message));
+//            });
+//            execute.setOnLanSongSDKProgressListener((l, i) -> {
+//                if (dialog!=null){
+//                    dialog.setProgress(i +"%");
+//                    LogUtil.d("execute progress: ", String.valueOf(i));
+//                }
+//            });
+//            execute.setOnLanSongSDKCompletedListener(exportPath -> {
+//                isSaving=false;
+//                execute.release();
+//                if (exportPath == null) {
+//                    ToastUtil.showToast(mContext.getString(R.string.render_error));
+//                    return;
+//                }
+//                File video = new File(exportPath);
+//                if (video.exists()){
+//                    dialog.closePragressDialog();
+//                    String tempPath = getTempVideoPath(mContext)+video.getName();
+//                    try {
+//                        FileUtil.copyFile(video, tempPath);
+//                        callback.finishCrop(tempPath);
+//
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }else {
+//                    dialog.closePragressDialog();
+//                    ToastUtil.showToast(mContext.getString(R.string.export_failure));
+//                }
+//            });
+//            Observable.create((Observable.OnSubscribe<Integer>) subscriber -> {
+//                if (execute!=null){
+//                    try {
+//                        LSOVideoOption option=new LSOVideoOption(videoPath);
+//                        long durationUs=getDuration()*1000;
+//                        option.setCutDurationUs(Math.round(cropStartRatio*durationUs),Math.round(cropEndRatio*durationUs));
+////                        VideoFrameLayer bgLayer=execute.addVideoLayer(option,0, Long.MAX_VALUE, true, true);
+////                        if (bgLayer != null) {
+////                            bgLayer.setScaledValue(videoRatio*execute.getPadHeight(), execute.getPadHeight());
+////                            bgLayer.setPosition(execute.getPadWidth() * 0.5f, execute.getPadHeight() * 0.5f);
+////                            LanSongFilter filter = new LanSongBlurFilter();
+////                            bgLayer.switchFilterTo(filter);
+////                        }else {
+////                            subscriber.onError(new Throwable());
+////                        }
+//                        VideoFrameLayer mainLayer=execute.addVideoLayer(option);
+//                        if (mainLayer!=null){
+//                            mainLayer.setScaledValue(DRAWPAD_WIDTH*mScale,mScale*DRAWPAD_WIDTH/videoRatio);
+//                            mainLayer.setPosition(execute.getPadWidth()*0.5f,execute.getPadHeight()*0.5f);
+//                        }else {
+//                            subscriber.onError(new Throwable());
+//                        }
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                if (execute.start()) {
+//                    subscriber.onNext(0);
+//                } else {
+//                    subscriber.onError(new Throwable());
+//                }
+//                subscriber.onCompleted();
+//            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(aInteger -> {
+//                dialog.setProgress(aInteger+"");
+//            }, throwable -> {
+//                if (is4kVideo){
+//                    statisticsEventAffair.getInstance().setFlag(mContext,"4kVideoFail","4k视频导出崩溃");
+//                }
+//                isSaving=false;
+//                execute.release();
+//                onResume();
+//                ToastUtil.showToast(mContext.getString(R.string.export_failure));
+//                dialog.closePragressDialog();
+//            });
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
     }
 

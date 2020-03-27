@@ -153,7 +153,9 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         tv_writer_name.setText(templateItem.getAuth());
         tv_title.setText(templateItem.getTitle());
         tv_describe.setText("友友们    " + "上传" + templateItem.getDefaultnum() + "张照片即可制作");
-
+        if(!fromToMineCollect){
+            Presenter.requestTemplateDetail(templateItem.getId());
+        }
 
     }
 
@@ -230,13 +232,13 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         videoPlayer.onVideoPause();
         isIntoPause = true;
         iv_video_play.setVisibility(View.VISIBLE);
+        WaitingDialog.closePragressDialog();
         super.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         if (isIntoPause) {
             videoPlayerInit();
             isIntoPause = false;

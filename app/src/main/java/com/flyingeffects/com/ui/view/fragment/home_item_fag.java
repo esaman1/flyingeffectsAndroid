@@ -19,6 +19,7 @@ import com.flyingeffects.com.ui.presenter.home_fag_itemMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.NetworkUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -66,7 +67,15 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View
         Presenter = new home_fag_itemMvpPresenter(getActivity(), this,fromType);
         initRecycler();
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
-        Presenter.requestData(templateId, actTag);
+
+        if(getActivity()!=null){
+            if(NetworkUtils.isNetworkAvailable(getActivity())){
+                Presenter.requestData(templateId, actTag);
+            }
+        }
+
+
+
     }
 
 

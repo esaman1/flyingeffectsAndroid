@@ -23,7 +23,7 @@ public class videoCutDurationForVideoOneDo {
 
 
     public void startCutDurtion(String path,long startUs,long total,isSuccess callback ){
-
+        LogUtil.d("OOM","startUs="+startUs+"total="+total);
         try {
             videoOneDo=new VideoOneDo2(BaseApplication.getInstance(),path);
             videoOneDo.setCutDuration(startUs,total);
