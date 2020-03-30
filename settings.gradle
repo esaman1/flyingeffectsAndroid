@@ -1,1 +1,1 @@
-include ':app', ':sxve', ':album', ':LanSongSDK', ':segjni'
+include ':app', ':sxve', ':album', ':LanSongSDK'
