@@ -22,6 +22,7 @@ import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
+import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.ui.model.VideoMattingModel;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.yanzhenjie.album.AlbumFile;
@@ -66,7 +67,7 @@ public class AboutActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.tv_top_submit,R.id.ll_test, R.id.iv_top_back, R.id.ll_close_account, R.id.ll_contact_us, R.id.ll_relation_us, R.id.ll_privacy_policy, R.id.ll_protocol, R.id.ll_clear_cache})
+    @OnClick({R.id.tv_top_submit,R.id.ll_koutu, R.id.ll_test, R.id.iv_top_back, R.id.ll_close_account, R.id.ll_contact_us, R.id.ll_relation_us, R.id.ll_privacy_policy, R.id.ll_protocol, R.id.ll_clear_cache})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_close_account:
@@ -115,7 +116,11 @@ public class AboutActivity extends BaseActivity {
             case R.id.tv_top_submit:
                 //退出
                 showDialog();
+                break;
 
+            case R.id.ll_koutu:
+//                VideoMattingModel video=new VideoMattingModel("",AboutActivity.this);
+//                video.test();
 
                 break;
 
@@ -123,7 +128,7 @@ public class AboutActivity extends BaseActivity {
                 AlbumManager.chooseVideo(this, 1, 1, new AlbumChooseCallback() {
                     @Override
                     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-                        VideoMattingModel video=new VideoMattingModel(paths.get(0));
+                        VideoMattingModel video=new VideoMattingModel(paths.get(0),AboutActivity.this);
                         video.newFunction();
                     }
                 }, "");

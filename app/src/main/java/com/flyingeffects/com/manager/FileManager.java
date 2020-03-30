@@ -14,6 +14,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class FileManager {
@@ -32,21 +34,19 @@ public class FileManager {
         return cachePath;
     }
 
-    public String getFileCachePath(Context context,String fileName){
+    public String getFileCachePath(Context context, String fileName) {
         String cachePath = null;
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
                 || !Environment.isExternalStorageRemovable()) {
             //外部存储可用
-            if(context.getExternalFilesDir(fileName)!=null){
+            if (context.getExternalFilesDir(fileName) != null) {
                 cachePath = context.getExternalFilesDir(fileName).getPath();
             }
-        }else{
-            cachePath = context.getFilesDir().getPath() ;
+        } else {
+            cachePath = context.getFilesDir().getPath();
         }
         return cachePath;
     }
-
-
 
 
     private static final String[] unsupportedSuffix = new String[]{"wmv", "3gp", "mov", "move", "flac", "mpg"};
@@ -62,11 +62,6 @@ public class FileManager {
     }
 
 
-
-
-
-
-
     public static List<String> getFilesAllName(String path) {
         //传入指定文件夹的路径
         File file = new File(path);
@@ -80,6 +75,59 @@ public class FileManager {
             }
         }
         return imagePaths;
+    }
+
+
+    public static List<File> listFileSortByModifyTime(String path) {
+        List<File> list = getFiles(path, new ArrayList<File>());
+        if (list != null && list.size() > 0) {
+            Collections.sort(list, new Comparator<File>() {
+                public int compare(File file, File newFile) {
+
+                    String file1 = file.getName();
+                    int dot = file1.lastIndexOf('.');
+                    String name1 = file1.substring(0, dot);
+                    int fileId = Integer.parseInt(name1);
+                    String file2 = newFile.getName();
+                    int dot2 = file2.lastIndexOf('.');
+                    String name2 = file2.substring(0, dot2);
+                    int fileId2 = Integer.parseInt(name2);
+                    LogUtil.d("OOM", "fileId=" + fileId);
+                    LogUtil.d("OOM", "file2=" + fileId2
+                    );
+                    if (fileId < fileId2) {
+                        return -1;
+                    } else if (fileId == fileId2) {
+                        return 0;
+                    } else {
+                        return 1;
+                    }
+                }
+            });
+        }
+        return list;
+    }
+
+    /**
+     * 获取目录下所有文件
+     *
+     * @param realpath
+     * @param files
+     * @return
+     */
+    public static List<File> getFiles(String realpath, List<File> files) {
+        File realFile = new File(realpath);
+        if (realFile.isDirectory()) {
+            File[] subfiles = realFile.listFiles();
+            for (File file : subfiles) {
+                if (file.isDirectory()) {
+                    getFiles(file.getAbsolutePath(), files);
+                } else {
+                    files.add(file);
+                }
+            }
+        }
+        return files;
     }
 
 
@@ -101,8 +149,9 @@ public class FileManager {
         return isImageFile;
     }
 
-    saveBitmapState  callback;
-    public static Bitmap saveBitmapToPath(Bitmap bitmap, String path,saveBitmapState  callback) {
+    saveBitmapState callback;
+
+    public static Bitmap saveBitmapToPath(Bitmap bitmap, String path, saveBitmapState callback) {
         if (!path.endsWith(".png") && !path.endsWith(".PNG")) {
             throw new IllegalArgumentException();
         }
@@ -118,7 +167,7 @@ public class FileManager {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             out.flush();
             out.close();
-            if(callback!=null){
+            if (callback != null) {
                 callback.succeed(true);
             }
 
@@ -126,7 +175,7 @@ public class FileManager {
             e.printStackTrace();
             callback.succeed(false);
 
-        }  finally {
+        } finally {
             if (out != null) {
                 try {
                     out.close();
@@ -140,14 +189,15 @@ public class FileManager {
     }
 
 
-public     interface saveBitmapState {
+    public interface saveBitmapState {
         void succeed(boolean isSucceed);
     }
 
     /**
      * 复制图片
+     *
      * @param fromFile 文件位置
-     * @param toFile 保存的位置
+     * @param toFile   保存的位置
      */
     public void mCopyFile(File fromFile, File toFile) {
         try {
@@ -179,8 +229,6 @@ public     interface saveBitmapState {
             return "";
         }
     }
-
-
 
 
 }
