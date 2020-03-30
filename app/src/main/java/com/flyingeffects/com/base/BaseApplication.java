@@ -63,7 +63,10 @@ public class BaseApplication extends MultiDexApplication {
      * 保存错误日志
      */
     public void keepCrash() {
-        CrashHandler.getInstance().init(this);
+        if(ChannelUtil.getChannel(BaseApplication.getInstance()).equals("test")){
+            CrashHandler.getInstance().init(this);
+        }
+
     }
 
 
@@ -88,6 +91,7 @@ public class BaseApplication extends MultiDexApplication {
         MobclickAgent.setCatchUncaughtExceptions(true);
         UMConfigure.setProcessEvent(true); // 支持在子进程中统计自定义事件
         UMConfigure.setLogEnabled(false);
+
         UMConfigure.init(this, BaseConstans.UMENGAPPID, ChannelUtil.getChannel(this), UMConfigure.DEVICE_TYPE_PHONE, "");
 //        PlatformConfig.setWeixin("wx48a4ba91f880abcc", "68932433247e0f33ec8c93c89e9bd374");
 //        PlatformConfig.setQQZone("1109289339", "hdOiuQsp2iudqu3v");

@@ -51,7 +51,7 @@ public class AboutActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
-
+        Integer.parseInt("wrq");
     }
 
 

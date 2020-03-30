@@ -75,6 +75,7 @@ public class HomeMainActivity extends FragmentActivity {
         clearAllData();
         initView();
         copyFile("default_bj.png");
+
     }
 
 

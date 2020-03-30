@@ -135,6 +135,7 @@ dependencies {
     //友盟统计
     implementation 'com.umeng.umsdk:analytics:8.0.0'
     implementation 'com.umeng.umsdk:common:2.0.0'
+    implementation 'com.umeng.umsdk:utdid:1.1.5.3'
     //极光
     implementation 'cn.jiguang.sdk:jpush:3.5.8'
     implementation 'cn.jiguang.sdk:jcore:2.2.8'
