@@ -288,6 +288,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 Presenter.CompressImg(paths);
             }
         }
+
     }
 
 

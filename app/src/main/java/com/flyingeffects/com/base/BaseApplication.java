@@ -41,6 +41,7 @@ public class BaseApplication extends MultiDexApplication {
         super.onCreate();
         myzxApp = this;
         MultiDex.install(this); //分包支持
+        initLansong();
         Hawk.init(this).build();
         //registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
         initAlbum();
@@ -49,7 +50,7 @@ public class BaseApplication extends MultiDexApplication {
         initJPush();
         initZt();
         keepCrash();
-        initLansong();
+
 
     }
 

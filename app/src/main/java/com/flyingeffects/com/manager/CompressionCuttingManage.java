@@ -120,7 +120,7 @@ public class CompressionCuttingManage {
         int pathNum = list.size();
         LogUtil.d("OOM", "pathNum=" + pathNum);
         updateFileUtils.uploadFile(listFile, "http://flying.nineton.cn/api/picture/picturesHumanList?filenum=" + pathNum, (code, str) -> {
-            //   LogUtil.d("OOM", "uploadFileCallBack=" + str);
+           LogUtil.d("OOM", "uploadFileCallBack=" + str);
             WaitingDialog.closePragressDialog();
             Gson gson = new Gson();
             DownImg downIng = gson.fromJson(str, DownImg.class);

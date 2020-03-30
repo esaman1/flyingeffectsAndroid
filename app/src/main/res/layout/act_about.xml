@@ -213,4 +213,31 @@
 
 
 
+    <LinearLayout
+        android:id="@+id/ll_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="注销账号"
+            android:textColor="#D5D5D5"
+            android:textSize="@dimen/sp_16"
+            />
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/dp_14"
+            android:contentDescription="@string/app_name"
+            android:src="@mipmap/right_more" />
+
+    </LinearLayout>
+
 </LinearLayout>
