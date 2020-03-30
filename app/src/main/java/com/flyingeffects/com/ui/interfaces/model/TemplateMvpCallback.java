@@ -17,5 +17,7 @@ public interface TemplateMvpCallback {
 
     void returnReplaceableFilePath(String[]paths);
 
+    void getCartoonPath(String path);
+
 
 }

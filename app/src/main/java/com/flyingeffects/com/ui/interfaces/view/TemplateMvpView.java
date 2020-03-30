@@ -15,4 +15,6 @@ public interface TemplateMvpView {
     void ChangeMaterialCallback(ArrayList<TemplateThumbItem> listItem, List<String> list_all);
 
     void returnReplaceableFilePath(String[]paths);
+
+    void getCartoonPath(String path);
 }

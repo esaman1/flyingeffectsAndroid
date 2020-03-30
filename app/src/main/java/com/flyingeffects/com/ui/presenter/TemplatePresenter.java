@@ -69,4 +69,9 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     public void returnReplaceableFilePath(String[] paths) {
         home_mvpView.returnReplaceableFilePath(paths);
     }
+
+    @Override
+    public void getCartoonPath(String path) {
+        home_mvpView.getCartoonPath(path);
+    }
 }

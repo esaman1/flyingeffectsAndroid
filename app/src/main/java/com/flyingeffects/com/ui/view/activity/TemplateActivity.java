@@ -112,6 +112,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @BindView(R.id.tv_start_time)
     TextView tv_start_time;
 
+    private String getCartoonPath;
+
     private static final int REQUEST_SINGLE_MEDIA = 11;
 
     /**
@@ -250,6 +252,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         }
 
         showPreview(true,false);
+    }
+
+    @Override
+    public void getCartoonPath(String getCartoonPath) {
+        this.getCartoonPath=getCartoonPath;
     }
 
 

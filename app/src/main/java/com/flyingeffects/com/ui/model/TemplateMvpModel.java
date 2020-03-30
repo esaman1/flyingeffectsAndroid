@@ -4,17 +4,29 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.FutureTarget;
+import com.bumptech.glide.request.target.Target;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.commonlyModel.DoubleClick;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.TemplateThumbItem;
+import com.flyingeffects.com.http.Api;
+import com.flyingeffects.com.http.HttpUtil;
+import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
+import com.flyingeffects.com.ui.view.activity.LoginActivity;
+import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.SxveConstans;
 import com.shixing.sxve.ui.model.TemplateModel;
@@ -25,7 +37,9 @@ import com.shixing.sxvideoengine.SXTemplate;
 import com.shixing.sxvideoengine.SXTemplateRender;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,6 +57,7 @@ public class TemplateMvpModel {
     private TemplateModel mTemplateModel = null;
     private File keepUunCatchPath;
     private boolean isOnDestroy;
+
     public TemplateMvpModel(Context context, TemplateMvpCallback callback) {
         this.context = context;
         this.callback = callback;
@@ -211,6 +226,58 @@ public class TemplateMvpModel {
 
 
     }
+
+
+    /**
+     * 请求漫画
+     */
+    private void requestCartoon(String strEditTextUsername) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("phone", strEditTextUsername);
+        // 启动时间
+        Observable ob = Api.getDefault().toSms(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
+            @Override
+            protected void _onError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(Object data) {
+
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+    }
+
+    private void downBjBitmap(String path){
+        Observable.just(path).map(s -> {
+            File file1 = null;
+            try {
+                file1 = Glide.with(context)
+                        .load(path)
+                        .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                        .get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return file1;
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> {
+            try {
+                if(path1!=null){
+                    //下载后的地址
+                    callback.getCartoonPath(path1.getPath());
+                }else{
+                    WaitingDialog.closePragressDialog();
+                    ToastUtil.showToast("请重试");
+                }
+
+            } catch (Exception e) {
+                WaitingDialog.closePragressDialog();
+                e.printStackTrace();
+            }
+        });
+    }
+
 
 
 
