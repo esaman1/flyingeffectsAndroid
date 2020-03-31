@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.media.ExifInterface;
 import android.media.MediaMetadataRetriever;
 import android.util.Log;
 
@@ -24,6 +25,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.UUID;
 
 public class MediaUiModel2 extends MediaUiModel {
@@ -230,7 +232,9 @@ public class MediaUiModel2 extends MediaUiModel {
 
     public void setImageAsset(String path) {
         mIsVideo = false;
-        mBitmap = getSmallBmpFromFile(path, size.getWidth(), size.getHeight());
+
+
+        mBitmap = getSmallBmpFromFile(path, size.getHeight(), size.getWidth());
         mInitPaint.setAlpha(255);
         initPosition();
         if (mGroupModel != null) {
@@ -302,6 +306,23 @@ public class MediaUiModel2 extends MediaUiModel {
         String path = folder + File.separator + UUID.randomUUID() + ".png";
         saveBitmapToPath(bitmap, path);
         return path;
+    }
+
+
+
+    /**
+     * 获得图片的选旋转角度
+     */
+    public boolean getOrientation(String path) {
+        ExifInterface exifInterface = null;
+        try {
+            exifInterface = new ExifInterface(path);
+            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            return orientation != 90 && orientation != 270;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 
 

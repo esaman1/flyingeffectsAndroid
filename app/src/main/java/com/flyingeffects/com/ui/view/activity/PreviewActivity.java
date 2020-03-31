@@ -282,10 +282,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             } else {//需要抠图
                 originalImagePath = paths;
                 new Handler().postDelayed(() -> {
-                    String alert = "正在抠图中" + "\n" + "上传人物最佳";
+                    String alert=templateItem.getIs_anime()==1?"正在变脸中" + "\n" + "上传正脸最佳～":"正在抠图中" + "\n" + "上传人物最佳";
                     WaitingDialog.openPragressDialog(PreviewActivity.this, alert);
                 }, 200);
-                Presenter.CompressImg(paths,templateItem.getId());
+                Presenter.CompressImg(paths,templateItem.getId(),templateItem.getIs_anime());
             }
         }
 

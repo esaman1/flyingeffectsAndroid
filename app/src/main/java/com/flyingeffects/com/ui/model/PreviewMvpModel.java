@@ -69,7 +69,7 @@ public class PreviewMvpModel {
 
     private int nowCompressSuccessNum;
 
-    public void CompressImgAndCache(List<String> paths,String templateId) {
+    public void CompressImgAndCache(List<String> paths,String templateId,int isAnime) {
         List<String> hasReadyList = new ArrayList<>();
         for (int i = 0; i < paths.size(); i++) {
             String localCacheName = paths.get(i);
@@ -90,7 +90,7 @@ public class PreviewMvpModel {
 
 
         //正常压缩下载逻辑
-        toCompressImg(paths,templateId);
+        toCompressImg(paths,templateId, isAnime);
     }
 
 
@@ -118,7 +118,7 @@ public class PreviewMvpModel {
 
     }
 
-    private void toCompressImg(List<String> paths,String templateId) {
+    private void toCompressImg(List<String> paths,String templateId,int isAnime) {
         if (paths != null) {
             localImagePaths = paths;
             int nowChoosePathNum = paths.size();
@@ -142,10 +142,10 @@ public class PreviewMvpModel {
                                 if (nowChoosePathNum == 1) {
                                     allCompressPaths.clear();
                                     allCompressPaths.add(file.getPath());
-                                    upLoad(allCompressPaths,templateId);
+                                    upLoad(allCompressPaths,templateId,isAnime);
                                 } else {
                                     allCompressPaths = FileManager.getFilesAllName(file.getParent());
-                                    upLoad(allCompressPaths,templateId);
+                                    upLoad(allCompressPaths,templateId,isAnime);
                                 }
 
                             }
@@ -208,7 +208,7 @@ public class PreviewMvpModel {
 
     private ArrayList<String> listForMatting = new ArrayList<>();
 
-    private void upLoad(List<String> list,String templateId) {
+    private void upLoad(List<String> list,String templateId,int isAnime) {
 //        String alert = "正在抠图中" + "\n" + "上传人物最佳";
 //        WaitingDialog.openPragressDialog(context, alert);
         listForMatting.clear();
@@ -241,7 +241,10 @@ public class PreviewMvpModel {
 //                        if (data.get(0).getType() == 1) {
                             DownImageManager downImageManager = new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> {
                                 callback.getCompressImgList(path);
-                                keepTailorImageToCache(path);
+                                if(isAnime!=1){
+                                    keepTailorImageToCache(path);
+                                }
+
                             });
                             downImageManager.downImage(listForMatting.get(0));
 //                        } else {
