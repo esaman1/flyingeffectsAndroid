@@ -107,7 +107,7 @@ public class frag_user_collect extends BaseFragment {
                 if (isRefresh) {
                     listData.clear();
                 }
-                if (data.size() == 0) {
+                if (data.size() == 0&&isRefresh) {
                     tv_hint.setVisibility(View.VISIBLE);
                     tv_hint.setText("暂无收藏模板");
                 }

@@ -16,6 +16,7 @@ import android.util.Log;
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.util.AffineTransform;
 import com.shixing.sxve.ui.util.BitmapCompress;
+import com.shixing.sxve.ui.util.PhotoBitmapUtils;
 import com.shixing.sxve.ui.util.Size;
 import com.shixing.sxvideoengine.SXCompositor;
 import com.shixing.sxvideoengine.SXRenderListener;
@@ -233,6 +234,7 @@ public class MediaUiModel2 extends MediaUiModel {
     public void setImageAsset(String path) {
         mIsVideo = false;
         mBitmap = getSmallBmpFromFile(path, size.getHeight(), size.getWidth());
+        countMatrix(mBitmap,path,false);
         mInitPaint.setAlpha(255);
         initPosition();
         if (mGroupModel != null) {
@@ -323,6 +325,46 @@ public class MediaUiModel2 extends MediaUiModel {
         return true;
     }
 
+
+
+    /**
+     * description ：计算matrix
+     * date: ：2019/9/4 15:53
+     * author: 张同举 @邮箱 jutongzhang@sina.com
+     */
+    private void countMatrix(Bitmap bp, String path, boolean isExchangeDirection) {
+
+        if (bp != null) {
+            Log.d("OOM", "重新计算matrix");
+            int widthSize = size.getWidth();
+            try {
+                if (isExchangeDirection) {
+                    mBitmap = PhotoBitmapUtils.amendRotatePhoto(path, bp);
+                } else {
+                    mBitmap = bp;
+                }
+                mMatrix.reset();
+                float scale = widthSize / (float) mBitmap.getWidth();
+                Log.d("mMatrix", "mBitmap=getWidth" + (float) mBitmap.getWidth());
+                Log.d("mMatrix", "scale=" + scale);
+                mMatrix.postScale(scale, scale);
+                double tranY = mBitmap.getHeight() * scale;
+                if (size.getHeight() - tranY > 0) {
+                    int needY = (int) (size.getHeight() - tranY) / 2;
+                    Log.d("mMatrix", "needY=" + needY);
+                    mMatrix.postTranslate(0, needY);
+                } else {
+                    int needY = (int) (tranY - size.getHeight()) / 2;
+                    Log.d("mMatrix", "needY=" + needY);
+                    mMatrix.postTranslate(0, -needY);
+                }
+
+            } catch (Exception e) {
+                mBitmap = bp;
+                e.printStackTrace();
+            }
+        }
+    }
 
 
 }
