@@ -232,8 +232,6 @@ public class MediaUiModel2 extends MediaUiModel {
 
     public void setImageAsset(String path) {
         mIsVideo = false;
-
-
         mBitmap = getSmallBmpFromFile(path, size.getHeight(), size.getWidth());
         mInitPaint.setAlpha(255);
         initPosition();
@@ -282,7 +280,7 @@ public class MediaUiModel2 extends MediaUiModel {
             if (file.exists()) {
 //                FileInputStream fis = new FileInputStream(filePath);
 //                return VEBitmapFactory.decodeFileDescriptor(fis.getFD(), targetW, targetH);
-                return  BitmapCompress.getZoomImage(file.getPath(), targetW, targetH);
+                return  BitmapCompress.zoomImg(file.getPath(), targetW, targetH);
             }
         } catch (Exception e) {
             e.printStackTrace();

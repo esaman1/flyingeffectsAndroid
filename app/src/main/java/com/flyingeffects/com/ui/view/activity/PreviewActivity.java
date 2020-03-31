@@ -19,6 +19,7 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
+import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
@@ -30,6 +31,7 @@ import com.flyingeffects.com.ui.presenter.PreviewMvpPresenter;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MarqueTextView;
+import com.shixing.sxve.ui.model.MediaUiModel2;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
@@ -84,7 +86,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     new_fag_template_item templateItem;
 
-    private  boolean  fromToMineCollect;
+    private boolean fromToMineCollect;
 
 
     private List<String> originalImagePath = new ArrayList<>();
@@ -128,12 +130,12 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         ondestroy = false;
         templateItem = (new_fag_template_item) getIntent().getSerializableExtra("person");
         fromTo = getIntent().getStringExtra("fromTo");
-        fromToMineCollect=getIntent().getBooleanExtra("fromToMineCollect",false);
+        fromToMineCollect = getIntent().getBooleanExtra("fromToMineCollect", false);
         defaultnum = templateItem.getDefaultnum();
         is_picout = templateItem.getIs_picout();
         nowCollectType = templateItem.getIs_collection();
-        if (nowCollectType == 1||fromToMineCollect) {
-            nowCollectType=1;
+        if (nowCollectType == 1 || fromToMineCollect) {
+            nowCollectType = 1;
             iv_zan.setImageResource(R.mipmap.zan_selected);
         }
         Presenter = new PreviewMvpPresenter(this, this);
@@ -153,7 +155,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         tv_writer_name.setText(templateItem.getAuth());
         tv_title.setText(templateItem.getTitle());
         tv_describe.setText("友友们    " + "上传" + templateItem.getDefaultnum() + "张照片即可制作");
-        if(!fromToMineCollect){
+        if (!fromToMineCollect) {
             Presenter.requestTemplateDetail(templateItem.getId());
         }
 
@@ -282,13 +284,30 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             } else {//需要抠图
                 originalImagePath = paths;
                 new Handler().postDelayed(() -> {
-                    String alert=templateItem.getIs_anime()==1?"正在变脸中" + "\n" + "上传正脸最佳～":"正在抠图中" + "\n" + "上传人物最佳";
+                    String alert = templateItem.getIs_anime() == 1 ? "正在变脸中" + "\n" + "上传正脸最佳～" : "正在抠图中" + "\n" + "上传人物最佳";
                     WaitingDialog.openPragressDialog(PreviewActivity.this, alert);
                 }, 200);
-                Presenter.CompressImg(paths,templateItem.getId(),templateItem.getIs_anime());
+
+//                Presenter.CompressImg(paths, templateItem.getId(), templateItem.getIs_anime());
+                compressImage(paths, templateItem.getId());
             }
         }
 
+    }
+
+
+    private void compressImage(List<String> paths,String templateId) {
+
+         boolean   hasCache= templateItem.getIs_anime() != 1;
+        CompressionCuttingManage manage = new CompressionCuttingManage(PreviewActivity.this, templateId, hasCache,tailorPaths -> {
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId());
+            } else {
+                WaitingDialog.closePragressDialog();
+                intoTemplateActivity(tailorPaths, TemplateFilePath);
+            }
+        });
+        manage.CompressImgAndCache(paths);
     }
 
 
@@ -299,8 +318,9 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         bundle.putStringArrayList("paths", (ArrayList<String>) paths);
         bundle.putInt("isPicNum", defaultnum);
         bundle.putString("fromTo", fromTo);
-        bundle.putInt("is_anime",templateItem.getIs_anime());
+        bundle.putInt("is_anime", templateItem.getIs_anime());
         bundle.putString("templateName", templateItem.getTitle());
+        bundle.putString("templateId", templateItem.getId());
         bundle.putStringArrayList("originalPath", (ArrayList<String>) originalImagePath);
         bundle.putString("templateFilePath", templateFilePath);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -345,24 +365,24 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void collectionResult() {
-            if (nowCollectType == 0) {
-                if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                    statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "5_bj_keep", templateItem.getTitle());
-                } else {
-                    statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "1_mb_keep_cancel", templateItem.getTitle());
-                }
-                nowCollectType = 1;
-                ToastUtil.showToast(getString(R.string.template_collect_success));
+        if (nowCollectType == 0) {
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "5_bj_keep", templateItem.getTitle());
             } else {
-                if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                    statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "5_bj_keep_cancel", templateItem.getTitle());
-                } else {
-                    statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "1_mb_keep", templateItem.getTitle());
-                }
-                nowCollectType = 0;
-                ToastUtil.showToast(getString(R.string.template_cancel_success));
+                statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "1_mb_keep_cancel", templateItem.getTitle());
             }
-            showCollectState(nowCollectType == 0);
+            nowCollectType = 1;
+            ToastUtil.showToast(getString(R.string.template_collect_success));
+        } else {
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "5_bj_keep_cancel", templateItem.getTitle());
+            } else {
+                statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "1_mb_keep", templateItem.getTitle());
+            }
+            nowCollectType = 0;
+            ToastUtil.showToast(getString(R.string.template_cancel_success));
+        }
+        showCollectState(nowCollectType == 0);
     }
 
 

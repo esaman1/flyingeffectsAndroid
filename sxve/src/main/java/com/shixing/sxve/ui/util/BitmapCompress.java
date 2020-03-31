@@ -47,10 +47,35 @@ public class BitmapCompress {
         // 计算宽高缩放率
         float scaleWidth = ((float) newWidth) / width;
         float scaleHeight = ((float) newHeight) / height;
-        // 缩放图片动作
-        matrix.postScale(scaleWidth, scaleHeight);
+        if(scaleWidth>scaleHeight){
+            matrix.postScale(scaleHeight, scaleHeight);
+        }else{
+            matrix.postScale(scaleWidth, scaleWidth);
+        }
         Bitmap bitmap = Bitmap.createBitmap(orgBitmap, 0, 0, (int) width, (int) height, matrix, true);
         return bitmap;
+    }
+
+
+    // 缩放图片
+    public static Bitmap zoomImg(String path, int newWidth, int newHeight) {
+        Bitmap bm=BitmapFactory.decodeFile(path);
+        // 获得图片的宽高
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        // 计算缩放比例
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+
+        // 取得想要缩放的matrix参数
+        Matrix matrix = new Matrix();
+        if(scaleWidth>scaleHeight){
+            matrix.postScale(scaleHeight, scaleHeight);
+        }else{
+            matrix.postScale(scaleWidth, scaleWidth);
+        }
+        // 得到新的图片
+        return  Bitmap.createBitmap(bm, 0, 0, width, height, matrix, true);
     }
 
 }

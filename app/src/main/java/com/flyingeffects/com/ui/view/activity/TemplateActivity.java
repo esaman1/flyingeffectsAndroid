@@ -113,6 +113,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @BindView(R.id.tv_start_time)
     TextView tv_start_time;
 
+    private String templateId;
+
     private String getCartoonPath;
 
     private static final int REQUEST_SINGLE_MEDIA = 11;
@@ -157,6 +159,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         if (bundle != null) {
             fromTo = bundle.getString("fromTo");
             defaultNum = bundle.getInt("isPicNum");
+            templateId = bundle.getString("templateId");
             templateFilePath = bundle.getString("templateFilePath");
             imgPath = bundle.getStringArrayList("paths");
             originalPath = bundle.getStringArrayList("originalPath");
@@ -621,14 +624,29 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 mTemplateViews.get(lastChoosePosition).invalidate();
                 ModificationSingleThumbItem(paths.get(0));
             } else {
-                CompressionCuttingManage manage = new CompressionCuttingManage(TemplateActivity.this, tailorPaths -> {
+                boolean hasCache = nowTemplateIsAnim != 1;
+                CompressionCuttingManage manage = new CompressionCuttingManage(TemplateActivity.this, templateId, hasCache, tailorPaths -> {
                     originalPath.set(lastChoosePosition, paths.get(0));
                     imgPath.set(lastChoosePosition, tailorPaths.get(0));
                     Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                        MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
-                        mediaUi2.setImageAsset(tailorPaths.get(0));
-                        mTemplateViews.get(lastChoosePosition).invalidate();
-                        ModificationSingleThumbItem(tailorPaths.get(0));
+
+                        if (nowTemplateIsAnim == 1) {
+                            //如果是漫画，逻辑会变
+                            MediaUiModel2 mediaUi1 = (MediaUiModel2) mTemplateModel.getAssets().get(0).ui;
+                            mediaUi1.setImageAsset(tailorPaths.get(0));
+
+                            MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(1).ui;
+                            mediaUi2.setImageAsset(paths.get(0));
+
+                            mTemplateViews.get(lastChoosePosition).invalidate();
+                            ModificationSingleThumbItem(paths.get(0));
+                        } else {
+                            MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
+                            mediaUi2.setImageAsset(tailorPaths.get(0));
+                            mTemplateViews.get(lastChoosePosition).invalidate();
+                            ModificationSingleThumbItem(tailorPaths.get(0));
+                        }
+
                     });
                 });
                 manage.CompressImgAndCache(paths);
