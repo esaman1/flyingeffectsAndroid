@@ -1,0 +1,65 @@
+
+{
+	"buildFiles" : 
+	[
+		"E:/faceProject/Segment-master-dev/segjni/src/main/cpp/CMakeLists.txt"
+	],
+	"cleanCommands" : 
+	[
+		"E:\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build E:\\faceProject\\Segment-master-dev\\segjni\\.cxx\\cmake\\release\\armeabi-v7a --target clean"
+	],
+	"cppFileExtensions" : [ "cpp" ],
+	"libraries" : 
+	{
+		"MegviiSegJni-Release-armeabi-v7a" : 
+		{
+			"abi" : "armeabi-v7a",
+			"artifactName" : "MegviiSegJni",
+			"buildCommand" : "E:\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build E:\\faceProject\\Segment-master-dev\\segjni\\.cxx\\cmake\\release\\armeabi-v7a --target MegviiSegJni",
+			"buildType" : "release",
+			"files" : 
+			[
+				
+				{
+					"flags" : "  --target=armv7-none-linux-androideabi16 --gcc-toolchain=E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot  -DMegviiSegJni_EXPORTS -I. -IE:\\faceProject\\Segment-master-dev\\segjni\\src\\main\\cpp -IE:\\faceProject\\Segment-master-dev\\segjni\\src\\main\\cpp\\include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -Oz -DNDEBUG  -fPIC    -c ",
+					"src" : "E:/faceProject/Segment-master-dev/segjni/src/main/cpp/megvii_seg_jni_new.cpp",
+					"workingDirectory" : "E:/faceProject/Segment-master-dev/segjni/.cxx/cmake/release/armeabi-v7a"
+				}
+			],
+			"output" : "E:/faceProject/Segment-master-dev/segjni/src/main/jniLibs/armeabi-v7a/libMegviiSegJni.so",
+			"toolchain" : "3830737081"
+		},
+		"face_new-Release-armeabi-v7a" : 
+		{
+			"abi" : "armeabi-v7a",
+			"artifactName" : "face_new",
+			"buildType" : "release",
+			"output" : "E:/faceProject/Segment-master-dev/segjni/src/main/cpp/../jniLibs/armeabi-v7a/libmegface-new.so",
+			"toolchain" : "3830737081"
+		},
+		"megviisegsdk-Release-armeabi-v7a" : 
+		{
+			"abi" : "armeabi-v7a",
+			"artifactName" : "megviisegsdk",
+			"buildType" : "release",
+			"output" : "E:/faceProject/Segment-master-dev/segjni/src/main/cpp/../jniLibs/armeabi-v7a/libmegsegment.so",
+			"toolchain" : "3830737081"
+		},
+		"stl-Release-armeabi-v7a" : 
+		{
+			"abi" : "armeabi-v7a",
+			"artifactName" : "stl",
+			"buildType" : "release",
+			"output" : "E:/faceProject/Segment-master-dev/segjni/src/main/cpp/../jniLibs/armeabi-v7a/libgnustl_shared.so",
+			"toolchain" : "3830737081"
+		}
+	},
+	"toolchains" : 
+	{
+		"3830737081" : 
+		{
+			"cCompilerExecutable" : "E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe",
+			"cppCompilerExecutable" : "E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe"
+		}
+	}
+}
