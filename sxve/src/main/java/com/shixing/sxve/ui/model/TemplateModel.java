@@ -116,8 +116,6 @@ public class TemplateModel {
     public String[] getReplaceableFilePaths(String folder) {
         String[] paths = new String[mAssets.size()];
         for (int i = 0; i < mAssets.size(); i++) {
-
-
             if (mAssets.get(0).ui.getIsAnim()) {
                 //如果第一个及时漫画，就走漫画的逻辑
                 if (i == 0) {
@@ -129,12 +127,9 @@ public class TemplateModel {
                 } else {
                     paths[0] = mAssets.get(i).ui.getSnapPath(folder);
                 }
-
             } else {
                 paths[i] = mAssets.get(i).ui.getSnapPath(folder);
             }
-
-
         }
         return paths;
     }

@@ -3,6 +3,7 @@ package com.flyingeffects.com.ui.view.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -62,6 +63,7 @@ import rx.schedulers.Schedulers;
 
 /**
  * 模板页面
+ * 漫画比较特殊，独立于全部逻辑之外，不过漫画只有1个图片的情况，
  */
 public class TemplateActivity extends BaseActivity implements TemplateMvpView, AssetDelegate, AlbumChooseCallback {
 
@@ -162,7 +164,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             templateName = bundle.getString("templateName");
             nowTemplateIsAnim = bundle.getInt("is_anime");
         }
-        if (originalPath == null || originalPath.size() == 0) {
+        if (originalPath == null || originalPath.size() == 0 || nowTemplateIsAnim == 1) {
             //不需要抠图
             findViewById(R.id.ll_Matting).setVisibility(View.GONE);
         }
@@ -205,7 +207,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @Override
     protected void initAction() {
         initTemplateThumb();
-        presenter.loadTemplate(mFolder.getPath(), this,nowTemplateIsAnim);
+        presenter.loadTemplate(mFolder.getPath(), this, nowTemplateIsAnim);
         mPlayerView.setPlayCallback(mListener);
     }
 
@@ -238,13 +240,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         mTemplateViews.get(nowChooseIndex).invalidate();
     }
 
-    @Override
-    public void returnReplaceableFilePath(String[] paths) {
+
+    private void onclickPlaying() {
         if (isPlaying) {
             if (mPlayer != null) {
                 mPlayer.pause();
                 ivPlayButton.setImageResource(R.mipmap.iv_play);
                 isPlaying = false;
+                showPreview(true, false);
             }
         } else {
             isPlaying = true;
@@ -253,12 +256,19 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 if (mPlayer != null) {
                     mPlayer.start();
                 }
+                showPreview(true, false);
             } else {
-                switchTemplate(mFolder.getPath(), paths);
+                WaitingDialog.openPragressDialog(TemplateActivity.this);
+                new Thread(() -> presenter.getReplaceableFilePath()).start();
+
             }
         }
 
-        showPreview(true, false);
+    }
+
+    @Override
+    public void returnReplaceableFilePath(String[] paths) {
+        switchTemplate(mFolder.getPath(), paths);
     }
 
     @Override
@@ -344,6 +354,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             mTemplateViews.add(templateView);
             mContainer.addView(templateView, params);
         }
+
+
         isFirstReplace(imgPath);
     }
 
@@ -355,30 +367,39 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             List<String> list_all = new ArrayList<>();
             for (int i = 0; i < defaultNum; i++) {  //填满数据，为了缩略图
                 if (paths.size() > i && !TextUtils.isEmpty(paths.get(i))) {
-                        list_all.add(paths.get(i)); //前面的时path ，后面的为默认的path
+                    list_all.add(paths.get(i)); //前面的时path ，后面的为默认的path
                 } else {
                     list_all.add(SxveConstans.default_bg_path);
                 }
             }
-            for (int i = 0; i < list_all.size(); i++) {  //合成底部缩略图
+
+            if (nowTemplateIsAnim == 1) {
+                //漫画 特殊
                 TemplateThumbItem templateThumbItem = new TemplateThumbItem();
-                templateThumbItem.setPathUrl(list_all.get(i));
-                if (i == 0) {
-                    templateThumbItem.setIsCheck(0);
-                } else {
-                    templateThumbItem.setIsCheck(1);
+                templateThumbItem.setPathUrl(originalPath.get(0));
+                templateThumbItem.setIsCheck(0);
+                listItem.set(0, templateThumbItem);
+            } else {
+                for (int i = 0; i < list_all.size(); i++) {  //合成底部缩略图
+                    TemplateThumbItem templateThumbItem = new TemplateThumbItem();
+                    templateThumbItem.setPathUrl(list_all.get(i));
+                    if (i == 0) {
+                        templateThumbItem.setIsCheck(0);
+                    } else {
+                        templateThumbItem.setIsCheck(1);
+                    }
+                    listItem.set(i, templateThumbItem);
                 }
-                listItem.set(i, templateThumbItem);
             }
             templateThumbAdapter.notifyDataSetChanged();
             WaitingDialog.openPragressDialog(this);
 
-            if(nowTemplateIsAnim==1){
+            if (nowTemplateIsAnim == 1) {
                 //漫画需要单独前面加一个原图的值，然后第二个值需要隐藏页面
                 list_all.add(originalPath.get(0));
             }
             new Thread(() -> {
-                mTemplateModel.setReplaceAllFiles(list_all ,complete -> TemplateActivity.this.runOnUiThread(() -> {
+                mTemplateModel.setReplaceAllFiles(list_all, complete -> TemplateActivity.this.runOnUiThread(() -> {
                     WaitingDialog.closePragressDialog();
                     selectGroup(0);
                     nowChooseIndex = 0;
@@ -484,7 +505,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
             case R.id.iv_play:
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                    presenter.getReplaceableFilePath();
+                    onclickPlaying();
                 }
                 break;
 
@@ -547,14 +568,16 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             public void run() {
                 template.commit();
                 runOnUiThread(() -> {
+                    new Handler().post(WaitingDialog::closePragressDialog);
+                    showPreview(true, false);
                     mDuration = template.realDuration();
                     seekBar.setMax(mDuration);
                     mPlayer = mPlayerView.setTemplate(template);
                     seekBar.setProgress(0);
                     mPlayer.replaceAudio(mAudio1Path);
+                    LogUtil.d("OOM", "start");
                     mPlayer.start();
                     isPlaying = true;
-
                 });
             }
         }.start();

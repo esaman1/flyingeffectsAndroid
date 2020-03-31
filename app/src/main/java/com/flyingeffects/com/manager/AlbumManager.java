@@ -78,16 +78,12 @@ public class AlbumManager {
                 .filterSize(new Filter<Long>() {
                     @Override
                     public boolean filter(Long attributes) {
-                        LogUtil.d("OOM","attributesLLL="+attributes);
-
                         return attributes<20000;
-
                     }
                 })
                 .filterMimeType(new Filter<String>() {
                     @Override
                     public boolean filter(String attributes) {
-                        LogUtil.d("OOM","attributes="+attributes);
                         return attributes.equals("image/gif")||attributes.equals("image/svg+xml")||attributes.equals("image/x-icon");
                     }
                 })
