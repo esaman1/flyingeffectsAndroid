@@ -25,6 +25,7 @@ public abstract class AssetUi {
     public final Size size;
     protected final Bitmap f;
     protected final Bitmap b;
+    public boolean IsAnim=false;
 
     public AssetUi(String folder, JSONObject ui, AssetDelegate delegate, Size size) throws JSONException {
         group = ui.getInt("group");
@@ -114,4 +115,15 @@ public abstract class AssetUi {
 
         return bitmap;
     }
+
+    public void  setIsAnim(boolean IsAnim){
+        this.IsAnim=IsAnim;
+    }
+
+    public boolean  getIsAnim(){
+        return  IsAnim;
+    }
+
+
+
 }

@@ -285,7 +285,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                     String alert = "正在抠图中" + "\n" + "上传人物最佳";
                     WaitingDialog.openPragressDialog(PreviewActivity.this, alert);
                 }, 200);
-                Presenter.CompressImg(paths);
+                Presenter.CompressImg(paths,templateItem.getId());
             }
         }
 
@@ -294,12 +294,12 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     private void intoTemplateActivity(List<String> paths, String templateFilePath) {
         WaitingDialog.closePragressDialog();
-
         Intent intent = new Intent(this, TemplateActivity.class);
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("paths", (ArrayList<String>) paths);
         bundle.putInt("isPicNum", defaultnum);
         bundle.putString("fromTo", fromTo);
+        bundle.putInt("is_anime",templateItem.getIs_anime());
         bundle.putString("templateName", templateItem.getTitle());
         bundle.putStringArrayList("originalPath", (ArrayList<String>) originalImagePath);
         bundle.putString("templateFilePath", templateFilePath);

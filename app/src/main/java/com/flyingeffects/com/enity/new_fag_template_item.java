@@ -226,4 +226,15 @@ public class new_fag_template_item implements Serializable {
     //收藏状态 0表示未收藏 1表示收藏
     private int is_collection;
 
+    public int getIs_anime() {
+        return is_anime;
+    }
+
+    public void setIs_anime(int is_anime) {
+        this.is_anime = is_anime;
+    }
+
+    //1 表示是漫画，0 表示是普通类
+    private int is_anime=0;
+
 }

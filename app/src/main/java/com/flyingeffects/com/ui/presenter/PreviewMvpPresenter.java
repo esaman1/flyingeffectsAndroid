@@ -30,8 +30,8 @@ public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCall
     }
 
 
-    public void CompressImg(List<String> paths){
-        PreviewModel.CompressImgAndCache(paths);
+    public void CompressImg(List<String> paths,String templateId){
+        PreviewModel.CompressImgAndCache(paths,templateId);
     }
 
     public void requestTemplateDetail(String templateId){

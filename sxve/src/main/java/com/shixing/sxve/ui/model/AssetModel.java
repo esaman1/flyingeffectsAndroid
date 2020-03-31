@@ -20,6 +20,8 @@ public class AssetModel {
     public final AssetUi ui;
     private final Bitmap mBitmap;
 
+
+
     public AssetModel(String folder, JSONObject asset, AssetDelegate delegate, float uiVersionMajor) throws JSONException {
         String name = folder + "/assets/" + asset.getString("name");
         mBitmap = BitmapFactory.decodeFile(name);
@@ -43,4 +45,14 @@ public class AssetModel {
             }
         }
     }
+
+
+    public void setIsAnim(boolean isAnim){
+        ui.setIsAnim(isAnim);
+
+    }
+
+
+
+
 }

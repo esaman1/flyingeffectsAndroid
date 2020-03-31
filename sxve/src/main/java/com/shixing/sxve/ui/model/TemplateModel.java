@@ -1,6 +1,7 @@
 package com.shixing.sxve.ui.model;
 
 import android.content.Context;
+import android.graphics.Matrix;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
 import android.util.SparseArray;
@@ -23,7 +24,7 @@ import java.util.List;
 public class TemplateModel {
     private static final String TAG = "TemplateModel";
     private static final String CONFIG_FILE_NAME = "config.json";
-    private  int mDuration;
+    private int mDuration;
     // 所有可替换的asset，用于编辑完，渲染开始前获取替换的素材路径
     private List<AssetModel> mAssets = new ArrayList<>();
 
@@ -35,7 +36,7 @@ public class TemplateModel {
     public int groupSize;
 
     @WorkerThread
-    public TemplateModel(String templateFolder, AssetDelegate delegate, Context context) throws IOException, JSONException {
+    public TemplateModel(String templateFolder, AssetDelegate delegate, Context context, int nowTemplateIsAnim) throws IOException, JSONException {
         File folder = new File(templateFolder);
         File configFile = new File(folder, CONFIG_FILE_NAME);
         if (!configFile.exists()) {
@@ -61,6 +62,10 @@ public class TemplateModel {
                 AssetModel assetModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor);
                 mAssets.add(assetModel);
 
+                if (nowTemplateIsAnim == 1 && i == 0) {
+                    //漫画的图不显示
+                    assetModel.setIsAnim(true);
+                }
                 int group = assetModel.ui.group;
                 if (groupSize < group) groupSize = group;
 
@@ -74,12 +79,12 @@ public class TemplateModel {
             }
         }
 
-        try{
-            JSONArray assetsComps= config.getJSONArray("comps");
-            JSONObject comoOb= (JSONObject) assetsComps.get(0);
-            mDuration=comoOb.getInt("duration");
-        }catch (Exception e){
-            Log.d("Exception",e.getMessage());
+        try {
+            JSONArray assetsComps = config.getJSONArray("comps");
+            JSONObject comoOb = (JSONObject) assetsComps.get(0);
+            mDuration = comoOb.getInt("duration");
+        } catch (Exception e) {
+            Log.d("Exception", e.getMessage());
         }
 
 
@@ -111,7 +116,25 @@ public class TemplateModel {
     public String[] getReplaceableFilePaths(String folder) {
         String[] paths = new String[mAssets.size()];
         for (int i = 0; i < mAssets.size(); i++) {
-            paths[i] = mAssets.get(i).ui.getSnapPath(folder);
+
+
+            if (mAssets.get(0).ui.getIsAnim()) {
+                //如果第一个及时漫画，就走漫画的逻辑
+                if (i == 0) {
+                    //漫画,这里顺序Ae有点问题
+                    MediaUiModel2 model2 = (MediaUiModel2) mAssets.get(i).ui;
+                    MediaUiModel2 model2Last = (MediaUiModel2) mAssets.get(i + 1).ui;
+                    Matrix matrix = model2Last.getMediaUiMatrix();
+                    paths[1] = model2.getpathForThisMatrix(matrix, folder);
+                } else {
+                    paths[0] = mAssets.get(i).ui.getSnapPath(folder);
+                }
+
+            } else {
+                paths[i] = mAssets.get(i).ui.getSnapPath(folder);
+            }
+
+
         }
         return paths;
     }
@@ -129,9 +152,8 @@ public class TemplateModel {
 
 
     public int getDuration() {
-    return mDuration;
+        return mDuration;
     }
-
 
 
     /**
@@ -148,7 +170,7 @@ public class TemplateModel {
     private boolean isReplaceMaterial = false;
     private List<AssetModel> textUIModelList;
 
-    public void setReplaceAllFiles(List<String> paths, Context context, isFirstReplaceComplete firstReplaceComplete, final String tag) {  //批量选择图片,视频的替换方法
+    public void setReplaceAllFiles(List<String> paths, isFirstReplaceComplete firstReplaceComplete) {  //批量选择图片,视频的替换方法
         allVideoNumber = 0;
         isReadyCutVideo = 0;
         isReplaceMaterial = false;
@@ -167,6 +189,8 @@ public class TemplateModel {
 
             }
         }
+
+
         for (int i = 0; i < paths.size(); i++) {
             if (paths.get(i) != null && !paths.get(i).equals("")) {
                 String mimeType;
@@ -181,9 +205,7 @@ public class TemplateModel {
                 }
                 if (!mediaUIModelList.isEmpty() && mediaUIModelList.size() > i && mediaUIModelList.get(i) != null) {
                     AssetModel assetModel = mediaUIModelList.get(i);
-                    if (i == 0) {
-                       // (assetModel.ui).isShow(true);
-                    }
+
                     if (albumType.isImage(mimeType)) {
                         ((MediaUiModel) assetModel.ui).setImageAsset(paths.get(i));//, context
                     } else if (albumType.isVideo(mimeType)) {
@@ -203,13 +225,12 @@ public class TemplateModel {
     }
 
 
-
-    public void setReplaceAllMaterial(List<String>list){
+    public void setReplaceAllMaterial(List<String> list) {
         if (mReplaceableAssets != null && mReplaceableAssets.size() > 0) {
             for (int i = 0; i < mReplaceableAssets.size(); i++) {
                 if (mReplaceableAssets.get(i) != null) {
                     if (mReplaceableAssets.get(i).ui instanceof MediaUiModel) {
-                        MediaUiModel2 media= (MediaUiModel2) mReplaceableAssets.get(i).ui;
+                        MediaUiModel2 media = (MediaUiModel2) mReplaceableAssets.get(i).ui;
                         media.setImageAsset(list.get(i));
                         textUIModelList.add(null); //todo 考虑到文字在中间的情况，补位，解决数组越界
                     } else if (mReplaceableAssets.get(i).ui instanceof TextUiModel) {
@@ -221,12 +242,7 @@ public class TemplateModel {
         }
 
 
-
     }
-
-
-
-
 
 
     private String getPathType(String path) {

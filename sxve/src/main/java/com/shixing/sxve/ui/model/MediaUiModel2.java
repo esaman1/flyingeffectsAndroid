@@ -102,37 +102,41 @@ public class MediaUiModel2 extends MediaUiModel {
     @Override
     public void draw(Canvas canvas, int activeLayer) {
         mPaint = mInitPaint;
-        if (b != null) {
-            canvas.drawBitmap(b, 0, 0, null);
-        }
+        if(!IsAnim) {
+            if (b != null) {
+                canvas.drawBitmap(b, 0, 0, null);
+            }
 
 //        隐藏的这段代码是控制同组里面不同位置，滑动前面一个，后面一个就透明
 //        if (activeLayer >= 0 && activeLayer < index) {
 //            mPaint = mTransparentPaint;
 //        }
 
-        if (mBitmap != null) {
-            if (activeLayer != index) {
-                Log.d("OOM","activeLayer != index");
-                //静态的时候
-                canvas.save();
-                canvas.clipPath(mPath);
-                canvas.drawBitmap(mBitmap, mMatrix, mPaint);
-                canvas.restore();
-            } else {
-                Log.d("OOM","activeLayer == index");
-                //滑动的时候
-                canvas.drawPath(mPath,mPaint);
-                canvas.drawBitmap(mBitmap, mMatrix, mPaint);
+            if (mBitmap != null) {
+                if (activeLayer != index) {
+                    Log.d("OOM", "activeLayer != index");
+                    //静态的时候
+                    canvas.save();
+                    canvas.clipPath(mPath);
+                    canvas.drawBitmap(mBitmap, mMatrix, mPaint);
+                    canvas.restore();
+                } else {
+                    Log.d("OOM", "activeLayer == index");
+                    //滑动的时候
+                    canvas.drawPath(mPath, mPaint);
+                    canvas.drawBitmap(mBitmap, mMatrix, mPaint);
+                }
             }
+
+            if (f != null) {
+                if (activeLayer > 0) {
+                    mPaint = mTransparentPaint;
+                }
+                canvas.drawBitmap(f, 0, 0, mPaint);
+            }
+
         }
 
-        if (f != null) {
-            if (activeLayer > 0) {
-                mPaint = mTransparentPaint;
-            }
-            canvas.drawBitmap(f, 0, 0, mPaint);
-        }
     }
 
     @Override
@@ -281,6 +285,25 @@ public class MediaUiModel2 extends MediaUiModel {
         }
         return null;
     }
+
+
+
+    public Matrix getMediaUiMatrix(){
+        return  mMatrix;
+    }
+
+    public String getpathForThisMatrix(Matrix matrix,String folder){
+        Bitmap bitmap = Bitmap.createBitmap(mClipWidth, mClipHeight, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        if(mBitmap!=null){
+            //解决bug 异常情况下bitmap 为null
+            canvas.drawBitmap(mBitmap, matrix, mInitPaint);
+        }
+        String path = folder + File.separator + UUID.randomUUID() + ".png";
+        saveBitmapToPath(bitmap, path);
+        return path;
+    }
+
 
 
 }

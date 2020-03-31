@@ -69,7 +69,7 @@ public class PreviewMvpModel {
 
     private int nowCompressSuccessNum;
 
-    public void CompressImgAndCache(List<String> paths) {
+    public void CompressImgAndCache(List<String> paths,String templateId) {
         List<String> hasReadyList = new ArrayList<>();
         for (int i = 0; i < paths.size(); i++) {
             String localCacheName = paths.get(i);
@@ -90,7 +90,7 @@ public class PreviewMvpModel {
 
 
         //正常压缩下载逻辑
-        toCompressImg(paths);
+        toCompressImg(paths,templateId);
     }
 
 
@@ -118,7 +118,7 @@ public class PreviewMvpModel {
 
     }
 
-    private void toCompressImg(List<String> paths) {
+    private void toCompressImg(List<String> paths,String templateId) {
         if (paths != null) {
             localImagePaths = paths;
             int nowChoosePathNum = paths.size();
@@ -142,10 +142,10 @@ public class PreviewMvpModel {
                                 if (nowChoosePathNum == 1) {
                                     allCompressPaths.clear();
                                     allCompressPaths.add(file.getPath());
-                                    upLoad(allCompressPaths);
+                                    upLoad(allCompressPaths,templateId);
                                 } else {
                                     allCompressPaths = FileManager.getFilesAllName(file.getParent());
-                                    upLoad(allCompressPaths);
+                                    upLoad(allCompressPaths,templateId);
                                 }
 
                             }
@@ -208,7 +208,7 @@ public class PreviewMvpModel {
 
     private ArrayList<String> listForMatting = new ArrayList<>();
 
-    private void upLoad(List<String> list) {
+    private void upLoad(List<String> list,String templateId) {
 //        String alert = "正在抠图中" + "\n" + "上传人物最佳";
 //        WaitingDialog.openPragressDialog(context, alert);
         listForMatting.clear();
@@ -221,7 +221,7 @@ public class PreviewMvpModel {
 
         int pathNum = list.size();
         LogUtil.d("OOM", "pathNum=" + pathNum);
-        updateFileUtils.uploadFile(listFile, "http://flying.nineton.cn/api/picture/picturesHumanList?filenum=" + pathNum, new updateFileUtils.HttpCallbackListener() {
+        updateFileUtils.uploadFile(listFile, "http://flying.nineton.cn/api/picture/picturesHumanList?filenum=" + pathNum+"&template_id="+templateId, new updateFileUtils.HttpCallbackListener() {
             @Override
             public void onFinish(int code, String str) {
                 LogUtil.d("OOM","uploadFile="+str);
