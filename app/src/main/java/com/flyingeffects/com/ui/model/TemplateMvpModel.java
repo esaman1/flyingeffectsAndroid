@@ -66,6 +66,8 @@ public class TemplateMvpModel {
     }
 
 
+
+
      public void getReplaceableFilePath(){
         callback.returnReplaceableFilePath(mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath())));
     }

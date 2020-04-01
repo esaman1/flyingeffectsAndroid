@@ -62,9 +62,14 @@ public class TemplateModel {
                 AssetModel assetModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor);
                 mAssets.add(assetModel);
 
-                if (nowTemplateIsAnim == 1 && i == 0) {
-                    //漫画的图不显示
-                    assetModel.setIsAnim(true);
+                if (nowTemplateIsAnim == 1 ) {
+                    JSONObject ob=asset.getJSONObject("ui");
+                    int index=ob.getInt("index");
+                    if(index==0){
+                        //漫画的图不显示
+                        assetModel.setIsAnim(true);
+                    }
+
                 }
                 int group = assetModel.ui.group;
                 if (groupSize < group) groupSize = group;
@@ -121,11 +126,10 @@ public class TemplateModel {
             if (mAssets.get(0).ui.getIsAnim()) {
                 //如果第一个及时漫画，就走漫画的逻辑
                 if (i == 0) {
-                    //漫画,这里顺序Ae有点问题
-                    MediaUiModel2 model2 = (MediaUiModel2) mAssets.get(i).ui;
-                    MediaUiModel2 model2Last = (MediaUiModel2) mAssets.get(i + 1).ui;
-                    Matrix matrix = model2Last.getMediaUiMatrix();
-                    paths[1] = model2.getpathForThisMatrix(matrix, folder);
+//                    //漫画,这里顺序Ae有点问题
+                    MediaUiModel2 model2 = (MediaUiModel2) mAssets.get(1).ui;
+                    MediaUiModel2 model2Last = (MediaUiModel2) mAssets.get(0).ui;
+                    paths[1] = model2.getpathForThisMatrix( folder,model2Last.getOriginalPath());
                 } else {
                     paths[0] = mAssets.get(i).ui.getSnapPath(folder);
                 }

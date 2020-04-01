@@ -55,6 +55,7 @@ public class MediaUiModel2 extends MediaUiModel {
 
     private boolean isVideoSlide = false;
     private String lastSavePath;
+    private String path;
 
     public MediaUiModel2(String folder, JSONObject ui, Bitmap bitmap, AssetDelegate delegate, Size size) throws JSONException {
         super(folder, ui, delegate, size);
@@ -179,7 +180,7 @@ public class MediaUiModel2 extends MediaUiModel {
     @Override
     public String getSnapPath(String folder) {
         if (!mIsVideo) {
-            if (isVideoSlide|| TextUtils.isEmpty(lastSavePath)) {
+            if (isVideoSlide || TextUtils.isEmpty(lastSavePath)) {
                 Bitmap bitmap = Bitmap.createBitmap(mClipWidth, mClipHeight, Bitmap.Config.ARGB_8888);
                 Canvas canvas = new Canvas(bitmap);
                 Matrix matrix = new Matrix(mMatrix);
@@ -190,7 +191,7 @@ public class MediaUiModel2 extends MediaUiModel {
                 }
                 String path = folder + File.separator + UUID.randomUUID() + ".png";
                 saveBitmapToPath(bitmap, path);
-                isVideoSlide=false;
+                isVideoSlide = false;
                 lastSavePath = path;
                 return path;
             } else {
@@ -248,7 +249,8 @@ public class MediaUiModel2 extends MediaUiModel {
     }
 
     public void setImageAsset(String path) {
-        isVideoSlide=true;
+        this.path=path;
+        isVideoSlide = true;
         mIsVideo = false;
         mBitmap = getSmallBmpFromFile(path, size.getHeight(), size.getWidth());
         countMatrix(mBitmap, path, false);
@@ -312,12 +314,16 @@ public class MediaUiModel2 extends MediaUiModel {
         return mMatrix;
     }
 
-    public String getpathForThisMatrix(Matrix matrix, String folder) {
+    public String getpathForThisMatrix(String folder, String cartoonPath) {
+
+        Bitmap cartoonBitmap = getSmallBmpFromFile(cartoonPath, size.getHeight(), size.getWidth());
         Bitmap bitmap = Bitmap.createBitmap(mClipWidth, mClipHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
-        if (mBitmap != null) {
+        Matrix matrix = new Matrix(mMatrix);
+        matrix.postConcat(mInverseMatrix);
+        if (cartoonBitmap != null) {
             //解决bug 异常情况下bitmap 为null
-            canvas.drawBitmap(mBitmap, matrix, mInitPaint);
+            canvas.drawBitmap(cartoonBitmap, matrix, mInitPaint);
         }
         String path = folder + File.separator + UUID.randomUUID() + ".png";
         saveBitmapToPath(bitmap, path);
@@ -378,6 +384,10 @@ public class MediaUiModel2 extends MediaUiModel {
                 e.printStackTrace();
             }
         }
+    }
+
+    public String getOriginalPath(){
+        return path;
     }
 
 
