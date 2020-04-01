@@ -18,7 +18,7 @@ import java.util.HashMap;
 
 public class BaseConstans {
     public static final String UMENGAPPID = "5e5c68a2570df3d6930002b4";
-    public static final boolean PRODUCTION = false;
+    public static final boolean PRODUCTION = true;
     private static String channel = "";
     private static String versionCode = "";
     private static String uuid = "";

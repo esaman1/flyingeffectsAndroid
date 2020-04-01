@@ -49,7 +49,7 @@ public class BaseApplication extends MultiDexApplication {
         initYouMeng();
         initJPush();
         initZt();
-        keepCrash();
+     //   keepCrash();
 
 
     }

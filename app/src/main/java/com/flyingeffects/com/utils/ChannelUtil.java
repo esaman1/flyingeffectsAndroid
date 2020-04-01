@@ -48,7 +48,7 @@ public class ChannelUtil {
         }
 
         if (channel == null || channel.length() <= 0) {
-            channel = "test";
+            channel = "360";
         }
         return channel;
 //        return  "360";
