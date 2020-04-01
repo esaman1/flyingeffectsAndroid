@@ -52,6 +52,9 @@ public class MediaUiModel2 extends MediaUiModel {
     private final double mR;
 //    private Paint paintTest;
 
+    private boolean isVideoSlide = false;
+    private String lastSavePath;
+
     public MediaUiModel2(String folder, JSONObject ui, Bitmap bitmap, AssetDelegate delegate, Size size) throws JSONException {
         super(folder, ui, delegate, size);
         mBitmap = bitmap;
@@ -93,7 +96,7 @@ public class MediaUiModel2 extends MediaUiModel {
         mPath.transform(mMatrix);
 
 
-        DashPathEffect pathEffect = new DashPathEffect(new float[] { 20,20 }, 0);
+        DashPathEffect pathEffect = new DashPathEffect(new float[]{20, 20}, 0);
         //绘制边框
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(6);
@@ -105,7 +108,7 @@ public class MediaUiModel2 extends MediaUiModel {
     @Override
     public void draw(Canvas canvas, int activeLayer) {
         mPaint = mInitPaint;
-        if(!IsAnim) {
+        if (!IsAnim) {
             if (b != null) {
                 canvas.drawBitmap(b, 0, 0, null);
             }
@@ -144,22 +147,25 @@ public class MediaUiModel2 extends MediaUiModel {
 
     @Override
     public void scroll(float distanceX, float distanceY) {
-            mMatrix.postTranslate(-distanceX, -distanceY);
+        isVideoSlide = true;
+        mMatrix.postTranslate(-distanceX, -distanceY);
     }
 
     @Override
     public void scale(float sx, float sy, float px, float py) {
-            mMatrix.postScale(sx, sy, px, py);
+        isVideoSlide = true;
+        mMatrix.postScale(sx, sy, px, py);
     }
 
     @Override
     public void rotate(float degrees, float px, float py) {
-            mMatrix.postRotate(degrees, px, py);
+        isVideoSlide = true;
+        mMatrix.postRotate(degrees, px, py);
     }
 
     @Override
     public boolean isPointInside(PointF point) {
-        return mRect.contains((int)point.x, (int)point.y);
+        return mRect.contains((int) point.x, (int) point.y);
     }
 
     @Override
@@ -171,17 +177,25 @@ public class MediaUiModel2 extends MediaUiModel {
     @Override
     public String getSnapPath(String folder) {
         if (!mIsVideo) {
-            Bitmap bitmap = Bitmap.createBitmap(mClipWidth, mClipHeight, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(bitmap);
-            Matrix matrix = new Matrix(mMatrix);
-            matrix.postConcat(mInverseMatrix);
-            if(mBitmap!=null){
-                //解决bug 异常情况下bitmap 为null
-                canvas.drawBitmap(mBitmap, matrix, mInitPaint);
+            if (isVideoSlide) {
+                Bitmap bitmap = Bitmap.createBitmap(mClipWidth, mClipHeight, Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(bitmap);
+                Matrix matrix = new Matrix(mMatrix);
+                matrix.postConcat(mInverseMatrix);
+                if (mBitmap != null) {
+                    //解决bug 异常情况下bitmap 为null
+                    canvas.drawBitmap(mBitmap, matrix, mInitPaint);
+                }
+                String path = folder + File.separator + UUID.randomUUID() + ".png";
+                saveBitmapToPath(bitmap, path);
+                isVideoSlide=false;
+                lastSavePath = path;
+                return path;
+            } else {
+                return lastSavePath;
             }
-            String path = folder + File.separator + UUID.randomUUID() + ".png";
-            saveBitmapToPath(bitmap, path);
-            return path;
+
+
         } else {
             final String path = folder + File.separator + UUID.randomUUID() + ".mp4";
             Matrix matrix = new Matrix(mMatrix);
@@ -234,7 +248,7 @@ public class MediaUiModel2 extends MediaUiModel {
     public void setImageAsset(String path) {
         mIsVideo = false;
         mBitmap = getSmallBmpFromFile(path, size.getHeight(), size.getWidth());
-        countMatrix(mBitmap,path,false);
+        countMatrix(mBitmap, path, false);
         mInitPaint.setAlpha(255);
         initPosition();
         if (mGroupModel != null) {
@@ -262,7 +276,7 @@ public class MediaUiModel2 extends MediaUiModel {
     }
 
     private void initPosition() {
-        if(mBitmap!=null){
+        if (mBitmap != null) {
             float rw = mClipWidth;
             float rh = mClipHeight;
             int bw = mBitmap.getWidth();
@@ -282,7 +296,7 @@ public class MediaUiModel2 extends MediaUiModel {
             if (file.exists()) {
 //                FileInputStream fis = new FileInputStream(filePath);
 //                return VEBitmapFactory.decodeFileDescriptor(fis.getFD(), targetW, targetH);
-                return  BitmapCompress.zoomImg(file.getPath(), targetW, targetH);
+                return BitmapCompress.zoomImg(file.getPath(), targetW, targetH);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -291,15 +305,14 @@ public class MediaUiModel2 extends MediaUiModel {
     }
 
 
-
-    public Matrix getMediaUiMatrix(){
-        return  mMatrix;
+    public Matrix getMediaUiMatrix() {
+        return mMatrix;
     }
 
-    public String getpathForThisMatrix(Matrix matrix,String folder){
+    public String getpathForThisMatrix(Matrix matrix, String folder) {
         Bitmap bitmap = Bitmap.createBitmap(mClipWidth, mClipHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
-        if(mBitmap!=null){
+        if (mBitmap != null) {
             //解决bug 异常情况下bitmap 为null
             canvas.drawBitmap(mBitmap, matrix, mInitPaint);
         }
@@ -307,7 +320,6 @@ public class MediaUiModel2 extends MediaUiModel {
         saveBitmapToPath(bitmap, path);
         return path;
     }
-
 
 
     /**
@@ -324,7 +336,6 @@ public class MediaUiModel2 extends MediaUiModel {
         }
         return true;
     }
-
 
 
     /**

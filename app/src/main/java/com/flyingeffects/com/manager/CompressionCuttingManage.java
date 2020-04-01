@@ -20,7 +20,6 @@ import top.zibin.luban.OnCompressListener;
 
 /**
  * 压缩抠图一并提出来
- *
  */
 public class CompressionCuttingManage {
     /**
@@ -35,8 +34,8 @@ public class CompressionCuttingManage {
     private int nowCompressSuccessNum;
     private ArrayList<String> listForMatting = new ArrayList<>();
     private imgListCallback callback;
-    private String  templateId;
-    private boolean hasCache=true;
+    private String templateId;
+    private boolean hasCache = true;
 
 
     /**
@@ -45,21 +44,21 @@ public class CompressionCuttingManage {
      * param :
      * user : zhangtongju
      */
-    public CompressionCuttingManage(Context context,String templateId,boolean hasCache,imgListCallback callback) {
+    public CompressionCuttingManage(Context context, String templateId, boolean hasCache, imgListCallback callback) {
         this.context = context;
-        this.callback=callback;
-        this.templateId= templateId;
+        this.callback = callback;
+        this.templateId = templateId;
         fileManager = new FileManager();
         mCatchFolder = fileManager.getCachePath(context);
         mTailtoFolder = fileManager.getFileCachePath(context, "tailor");
-        this.hasCache=hasCache;
+        this.hasCache = hasCache;
     }
 
 
-    public CompressionCuttingManage(Context context,String templateId,imgListCallback callback) {
+    public CompressionCuttingManage(Context context, String templateId, imgListCallback callback) {
         this.context = context;
-        this.callback=callback;
-        this.templateId= templateId;
+        this.callback = callback;
+        this.templateId = templateId;
         fileManager = new FileManager();
         mCatchFolder = fileManager.getCachePath(context);
         mTailtoFolder = fileManager.getFileCachePath(context, "tailor");
@@ -68,17 +67,21 @@ public class CompressionCuttingManage {
 
     public void CompressImgAndCache(List<String> paths) {
         //todo 暂时只针对一张图片的时候
-        if (paths != null && paths.size() == 1) {
-            String localCacheName = paths.get(0);
-            localCacheName = fileManager.getFileNameWithSuffix(localCacheName);
-            File file = new File(mTailtoFolder + "/" + localCacheName);
-            if (file.exists()) {
-                List<String> list = new ArrayList<>();
-                list.add(file.getPath());
-                callback.imgList(list);
-                return;
+
+        if (hasCache) {
+            if (paths != null && paths.size() == 1) {
+                String localCacheName = paths.get(0);
+                localCacheName = fileManager.getFileNameWithSuffix(localCacheName);
+                File file = new File(mTailtoFolder + "/" + localCacheName);
+                if (file.exists()) {
+                    List<String> list = new ArrayList<>();
+                    list.add(file.getPath());
+                    callback.imgList(list);
+                    return;
+                }
             }
         }
+
 
         //正常压缩下载逻辑
         toCompressImg(paths);
@@ -127,8 +130,8 @@ public class CompressionCuttingManage {
     }
 
     private void upLoad(List<String> list) {
-        String alert="正在抠图中"+"\n"+"上传人物最佳";
-        WaitingDialog.openPragressDialog(context,alert);
+        String alert = "正在抠图中" + "\n" + "上传人物最佳";
+        WaitingDialog.openPragressDialog(context, alert);
         listForMatting.clear();
         List<File> listFile = new ArrayList<>();
         for (String str : list
@@ -139,39 +142,26 @@ public class CompressionCuttingManage {
 
         int pathNum = list.size();
         LogUtil.d("OOM", "pathNum=" + pathNum);
-        updateFileUtils.uploadFile(listFile, "http://flying.nineton.cn/api/picture/picturesHumanList?filenum=" + pathNum+"&template_id="+templateId, (code, str) -> {
-           LogUtil.d("OOM", "uploadFileCallBack=" + str);
+        updateFileUtils.uploadFile(listFile, "http://flying.nineton.cn/api/picture/picturesHumanList?filenum=" + pathNum + "&template_id=" + templateId, (code, str) -> {
+            LogUtil.d("OOM", "uploadFileCallBack=" + str);
             WaitingDialog.closePragressDialog();
             Gson gson = new Gson();
             DownImg downIng = gson.fromJson(str, DownImg.class);
-        if(downIng!=null&&downIng.getCode()==1){
+            if (downIng != null && downIng.getCode() == 1) {
                 //成功
                 ArrayList<DownImgDataList> data = downIng.getData();
                 for (DownImgDataList item : data
                 ) {
                     listForMatting.add(item.getHuawei_url());
                 }
-
-                //马卡龙，这里是图片链接，下载下来的方式
-//                if (data.get(0).getType() == 1) {
-                    DownImageManager downImageManager = new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> {
-                        callback.imgList(path);
-                        if(hasCache){
-                            keepTailorImageToCache(path);
-                        }
-
-                    });
-                    downImageManager.downImage(listForMatting.get(0));
-//                } else {
-//                    //百度，face++ 是直接下载的图片编码
-//                    DownImageManager downImageManager = new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> {
-//                        callback.imgList(path);
-//                        keepTailorImageToCache(path);
-//                    });
-//                    downImageManager.downImageForByte(listForMatting.get(0));
-//                }
-
-            }else{
+                DownImageManager downImageManager = new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> {
+                    callback.imgList(path);
+                    if (hasCache) {
+                        keepTailorImageToCache(path);
+                    }
+                });
+                downImageManager.downImage(listForMatting.get(0));
+            } else {
                 //失败
                 WaitingDialog.closePragressDialog();
                 callback.imgList(localImagePaths);
@@ -182,25 +172,25 @@ public class CompressionCuttingManage {
 
     /**
      * 缓存图片到本地
-     * @param paths  下载后的地址列表
+     *
+     * @param paths 下载后的地址列表
      */
     private void keepTailorImageToCache(List<String> paths) {
-        for(int i=0;i<paths.size();i++){
-            String localCacheName=localImagePaths.get(i);
-            File file=new File(paths.get(i));
-            FileManager manager=new FileManager();
-            localCacheName= manager.getFileNameWithSuffix(localCacheName);
-            if(mTailtoFolder!=null){
-                File   mTailto=new File(mTailtoFolder,localCacheName);
-                manager.mCopyFile(file,mTailto);
+        for (int i = 0; i < paths.size(); i++) {
+            String localCacheName = localImagePaths.get(i);
+            File file = new File(paths.get(i));
+            FileManager manager = new FileManager();
+            localCacheName = manager.getFileNameWithSuffix(localCacheName);
+            if (mTailtoFolder != null) {
+                File mTailto = new File(mTailtoFolder, localCacheName);
+                manager.mCopyFile(file, mTailto);
             }
         }
     }
 
 
-
-    public interface  imgListCallback{
-        void imgList(List<String>paths);
+    public interface imgListCallback {
+        void imgList(List<String> paths);
     }
 
 
