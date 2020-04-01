@@ -9,12 +9,14 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.media.ExifInterface;
 import android.media.MediaMetadataRetriever;
 import android.util.Log;
 
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.util.AffineTransform;
 import com.shixing.sxve.ui.util.BitmapCompress;
+import com.shixing.sxve.ui.util.PhotoBitmapUtils;
 import com.shixing.sxve.ui.util.Size;
 import com.shixing.sxvideoengine.SXCompositor;
 import com.shixing.sxvideoengine.SXRenderListener;
@@ -24,6 +26,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.UUID;
 
 public class MediaUiModel2 extends MediaUiModel {
@@ -230,7 +233,8 @@ public class MediaUiModel2 extends MediaUiModel {
 
     public void setImageAsset(String path) {
         mIsVideo = false;
-        mBitmap = getSmallBmpFromFile(path, size.getWidth(), size.getHeight());
+        mBitmap = getSmallBmpFromFile(path, size.getHeight(), size.getWidth());
+        countMatrix(mBitmap,path,false);
         mInitPaint.setAlpha(255);
         initPosition();
         if (mGroupModel != null) {
@@ -278,7 +282,7 @@ public class MediaUiModel2 extends MediaUiModel {
             if (file.exists()) {
 //                FileInputStream fis = new FileInputStream(filePath);
 //                return VEBitmapFactory.decodeFileDescriptor(fis.getFD(), targetW, targetH);
-                return  BitmapCompress.getZoomImage(file.getPath(), targetW, targetH);
+                return  BitmapCompress.zoomImg(file.getPath(), targetW, targetH);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -304,6 +308,63 @@ public class MediaUiModel2 extends MediaUiModel {
         return path;
     }
 
+
+
+    /**
+     * 获得图片的选旋转角度
+     */
+    public boolean getOrientation(String path) {
+        ExifInterface exifInterface = null;
+        try {
+            exifInterface = new ExifInterface(path);
+            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            return orientation != 90 && orientation != 270;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+
+
+    /**
+     * description ：计算matrix
+     * date: ：2019/9/4 15:53
+     * author: 张同举 @邮箱 jutongzhang@sina.com
+     */
+    private void countMatrix(Bitmap bp, String path, boolean isExchangeDirection) {
+
+        if (bp != null) {
+            Log.d("OOM", "重新计算matrix");
+            int widthSize = size.getWidth();
+            try {
+                if (isExchangeDirection) {
+                    mBitmap = PhotoBitmapUtils.amendRotatePhoto(path, bp);
+                } else {
+                    mBitmap = bp;
+                }
+                mMatrix.reset();
+                float scale = widthSize / (float) mBitmap.getWidth();
+                Log.d("mMatrix", "mBitmap=getWidth" + (float) mBitmap.getWidth());
+                Log.d("mMatrix", "scale=" + scale);
+                mMatrix.postScale(scale, scale);
+                double tranY = mBitmap.getHeight() * scale;
+                if (size.getHeight() - tranY > 0) {
+                    int needY = (int) (size.getHeight() - tranY) / 2;
+                    Log.d("mMatrix", "needY=" + needY);
+                    mMatrix.postTranslate(0, needY);
+                } else {
+                    int needY = (int) (tranY - size.getHeight()) / 2;
+                    Log.d("mMatrix", "needY=" + needY);
+                    mMatrix.postTranslate(0, -needY);
+                }
+
+            } catch (Exception e) {
+                mBitmap = bp;
+                e.printStackTrace();
+            }
+        }
+    }
 
 
 }

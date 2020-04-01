@@ -240,7 +240,7 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
         AlbumManager.chooseWhichAlbum(VideoCropActivity.this, 1, 0, new AlbumChooseCallback() {
             @Override
             public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-                CompressionCuttingManage manage = new CompressionCuttingManage(VideoCropActivity.this, tailorPaths -> {
+                CompressionCuttingManage manage = new CompressionCuttingManage(VideoCropActivity.this,"", tailorPaths -> {
                     Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
                         Intent intent = new Intent(VideoCropActivity.this, CreationTemplateActivity.class);
                         Bundle bundle = new Bundle();

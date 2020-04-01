@@ -11,13 +11,11 @@ import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
-import android.widget.StackView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
@@ -44,7 +42,6 @@ import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
-import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -68,8 +65,6 @@ import java.util.List;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.internal.schedulers.NewThreadWorker;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -416,7 +411,7 @@ public class CreationTemplateMvpModel {
 
                     //切換素材
                     AlbumManager.chooseImageAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
-                        CompressionCuttingManage manage = new CompressionCuttingManage(context, tailorPaths -> {
+                        CompressionCuttingManage manage = new CompressionCuttingManage(context,"", tailorPaths -> {
                             Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
                                 stickView.setOriginalPath(paths.get(0));
                                 stickView.setClipPath(s);

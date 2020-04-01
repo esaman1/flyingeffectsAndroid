@@ -35,11 +35,31 @@ public class CompressionCuttingManage {
     private int nowCompressSuccessNum;
     private ArrayList<String> listForMatting = new ArrayList<>();
     private imgListCallback callback;
+    private String  templateId;
+    private boolean hasCache=true;
 
 
-    public CompressionCuttingManage(Context context,imgListCallback callback) {
+    /**
+     * description ：如果templateId 不传，默认显示是扣的全身图
+     * creation date: 2020/3/31
+     * param :
+     * user : zhangtongju
+     */
+    public CompressionCuttingManage(Context context,String templateId,boolean hasCache,imgListCallback callback) {
         this.context = context;
         this.callback=callback;
+        this.templateId= templateId;
+        fileManager = new FileManager();
+        mCatchFolder = fileManager.getCachePath(context);
+        mTailtoFolder = fileManager.getFileCachePath(context, "tailor");
+        this.hasCache=hasCache;
+    }
+
+
+    public CompressionCuttingManage(Context context,String templateId,imgListCallback callback) {
+        this.context = context;
+        this.callback=callback;
+        this.templateId= templateId;
         fileManager = new FileManager();
         mCatchFolder = fileManager.getCachePath(context);
         mTailtoFolder = fileManager.getFileCachePath(context, "tailor");
@@ -119,7 +139,7 @@ public class CompressionCuttingManage {
 
         int pathNum = list.size();
         LogUtil.d("OOM", "pathNum=" + pathNum);
-        updateFileUtils.uploadFile(listFile, "http://flying.nineton.cn/api/picture/picturesHumanList?filenum=" + pathNum, (code, str) -> {
+        updateFileUtils.uploadFile(listFile, "http://flying.nineton.cn/api/picture/picturesHumanList?filenum=" + pathNum+"&template_id="+templateId, (code, str) -> {
            LogUtil.d("OOM", "uploadFileCallBack=" + str);
             WaitingDialog.closePragressDialog();
             Gson gson = new Gson();
@@ -136,7 +156,10 @@ public class CompressionCuttingManage {
 //                if (data.get(0).getType() == 1) {
                     DownImageManager downImageManager = new DownImageManager(BaseApplication.getInstance(), listForMatting, path -> {
                         callback.imgList(path);
-                        keepTailorImageToCache(path);
+                        if(hasCache){
+                            keepTailorImageToCache(path);
+                        }
+
                     });
                     downImageManager.downImage(listForMatting.get(0));
 //                } else {

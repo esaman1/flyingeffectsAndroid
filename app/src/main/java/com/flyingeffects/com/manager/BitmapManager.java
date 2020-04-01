@@ -3,6 +3,7 @@ package com.flyingeffects.com.manager;
 import android.graphics.Bitmap;
 import android.media.ExifInterface;
 import android.media.MediaMetadataRetriever;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
@@ -28,7 +29,6 @@ public class BitmapManager {
 
     /**
      * 获得视频的旋转角度
-     *
      */
     public boolean getSourceVideoDirection(String path) {
         MediaMetadataRetriever mmr = new MediaMetadataRetriever();//实例化MediaMetadataRetriever对象
@@ -58,17 +58,17 @@ public class BitmapManager {
     /**
      * 获得图片的选旋转角度
      */
-        public  boolean getOrientation( String path) {
-            ExifInterface exifInterface = null;
-            try {
-                exifInterface = new ExifInterface(path);
-                int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-                return orientation != 90 && orientation != 270;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return true;
+    public boolean getOrientation(String path) {
+        ExifInterface exifInterface = null;
+        try {
+            exifInterface = new ExifInterface(path);
+            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            return orientation != 90 && orientation != 270;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return true;
+    }
 
 
     public Bitmap saveBitmapToPath(Bitmap bitmap, String path) {
@@ -105,9 +105,7 @@ public class BitmapManager {
     }
 
 
-
-
-    public Bitmap saveBitmapToPath(Bitmap bitmap, String path,saveToFileCallback callback) {
+    public Bitmap saveBitmapToPath(Bitmap bitmap, String path, saveToFileCallback callback) {
         if (!path.endsWith(".png") && !path.endsWith(".PNG")) {
             throw new IllegalArgumentException();
         }
@@ -145,9 +143,10 @@ public class BitmapManager {
     }
 
 
-    public interface  saveToFileCallback{
-            void isSuccess(boolean isSuccess);
+    public interface saveToFileCallback {
+        void isSuccess(boolean isSuccess);
     }
+
 
 
 }

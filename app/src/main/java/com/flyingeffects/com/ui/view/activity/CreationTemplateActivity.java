@@ -253,7 +253,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
                 //添加新的贴纸，这里的贴纸就是用户选择的贴纸
                 AlbumManager.chooseImageAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel, albumFileList) -> {
-                    CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this, tailorPaths -> {
+                    CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this,"", tailorPaths -> {
                         presenter.addNewSticker(tailorPaths.get(0), paths.get(0));
                     });
                     manage.CompressImgAndCache(paths);
