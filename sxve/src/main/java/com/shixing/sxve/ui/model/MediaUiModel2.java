@@ -11,6 +11,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.media.ExifInterface;
 import android.media.MediaMetadataRetriever;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.shixing.sxve.ui.AssetDelegate;
@@ -171,13 +172,14 @@ public class MediaUiModel2 extends MediaUiModel {
     @Override
     public void singleTap(GroupModel groupModel) {
         mGroupModel = groupModel;
+
         mDelegate.pickMedia(this);
     }
 
     @Override
     public String getSnapPath(String folder) {
         if (!mIsVideo) {
-            if (isVideoSlide) {
+            if (isVideoSlide|| TextUtils.isEmpty(lastSavePath)) {
                 Bitmap bitmap = Bitmap.createBitmap(mClipWidth, mClipHeight, Bitmap.Config.ARGB_8888);
                 Canvas canvas = new Canvas(bitmap);
                 Matrix matrix = new Matrix(mMatrix);
@@ -246,6 +248,7 @@ public class MediaUiModel2 extends MediaUiModel {
     }
 
     public void setImageAsset(String path) {
+        isVideoSlide=true;
         mIsVideo = false;
         mBitmap = getSmallBmpFromFile(path, size.getHeight(), size.getWidth());
         countMatrix(mBitmap, path, false);
