@@ -15,6 +15,8 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
@@ -155,7 +157,10 @@ public class VideoMattingModel {
 
                 String fileName = faceFolder + File.separator + frameCount + ".png";
                 BitmapManager.getInstance().saveBitmapToPath(bmp, fileName);
+
+                LogUtil.d("OOM", "bmp.width="+bmp.getWidth()+"bmp.height="+bmp.getHeight()+"config="+bmp.getConfig());
                 GlideBitmapPool.putBitmap(bmp);
+
             }
         });
         frameCount = 0;
