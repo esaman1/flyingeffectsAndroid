@@ -74,7 +74,9 @@ public class CompressionCuttingManage {
         this.templateId = templateId;
         fileManager = new FileManager();
         mCatchFolder = fileManager.getCachePath(context);
+        mRuncatheFolder= fileManager.getFileCachePath(context, "runCatch");
         mTailtoFolder = fileManager.getFileCachePath(context, "tailor");
+        mattingImage = new MattingImage();
     }
 
 

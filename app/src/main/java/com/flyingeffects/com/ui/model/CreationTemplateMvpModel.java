@@ -422,7 +422,7 @@ public class CreationTemplateMvpModel {
                                 }
                               });
                         });
-                        manage.CompressImgAndCache(paths);
+                        manage.CompressImgForFace(paths);
 
                     }, "");
                 }

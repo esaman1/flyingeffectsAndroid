@@ -31,7 +31,6 @@ import com.flyingeffects.com.ui.presenter.PreviewMvpPresenter;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MarqueTextView;
-import com.shixing.sxve.ui.model.MediaUiModel2;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
@@ -158,7 +157,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         if (!fromToMineCollect) {
             Presenter.requestTemplateDetail(templateItem.getId());
         }
-
     }
 
 
@@ -287,11 +285,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                     String alert = templateItem.getIs_anime() == 1 ? "正在变脸中" + "\n" + "上传正脸最佳～" : "正在抠图中" + "\n" + "上传人物最佳";
                     WaitingDialog.openPragressDialog(PreviewActivity.this, alert);
                 }, 200);
-
                 compressImage(paths, templateItem.getId());
-
-
-
             }
         }
 

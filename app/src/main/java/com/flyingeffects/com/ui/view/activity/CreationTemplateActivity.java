@@ -256,7 +256,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this,"", tailorPaths -> {
                         presenter.addNewSticker(tailorPaths.get(0), paths.get(0));
                     });
-                    manage.CompressImgAndCache(paths);
+                    manage.CompressImgForFace(paths);
                 }, "");
                 break;
 
