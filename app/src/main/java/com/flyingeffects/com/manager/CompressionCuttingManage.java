@@ -2,19 +2,27 @@ package com.flyingeffects.com.manager;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Handler;
 
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.enity.DownImg;
 import com.flyingeffects.com.enity.DownImgDataList;
+import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.updateFileUtils;
+import com.glidebitmappool.GlideBitmapPool;
 import com.google.gson.Gson;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import top.zibin.luban.Luban;
 import top.zibin.luban.OnCompressListener;
 
@@ -29,6 +37,7 @@ public class CompressionCuttingManage {
     private List<String> allCompressPaths = new ArrayList<>();
     private String mCatchFolder;
     private String mTailtoFolder;
+    private String mRuncatheFolder;
     private FileManager fileManager;
     private Context context;
     private int nowCompressSuccessNum;
@@ -36,6 +45,7 @@ public class CompressionCuttingManage {
     private imgListCallback callback;
     private String templateId;
     private boolean hasCache = true;
+    private MattingImage mattingImage;
 
 
     /**
@@ -45,13 +55,16 @@ public class CompressionCuttingManage {
      * user : zhangtongju
      */
     public CompressionCuttingManage(Context context, String templateId, boolean hasCache, imgListCallback callback) {
+
         this.context = context;
         this.callback = callback;
         this.templateId = templateId;
         fileManager = new FileManager();
         mCatchFolder = fileManager.getCachePath(context);
         mTailtoFolder = fileManager.getFileCachePath(context, "tailor");
+        mRuncatheFolder= fileManager.getFileCachePath(context, "runCatch");
         this.hasCache = hasCache;
+        mattingImage = new MattingImage();
     }
 
 
@@ -85,6 +98,53 @@ public class CompressionCuttingManage {
 
         //正常压缩下载逻辑
         toCompressImg(paths);
+    }
+
+
+    private List<String> allPaths;
+    private int downSuccessNum;
+
+    public void CompressImgForFace(List<String> allPaths) {
+
+        if (hasCache) {
+            if (allPaths != null && allPaths.size() == 1) {
+                String localCacheName = allPaths.get(0);
+                localCacheName = fileManager.getFileNameWithSuffix(localCacheName);
+                File file = new File(mTailtoFolder + "/" + localCacheName);
+                if (file.exists()) {
+                    List<String> list = new ArrayList<>();
+                    list.add(file.getPath());
+                    callback.imgList(list);
+                    return;
+                }
+            }
+        }
+
+        localImagePaths = allPaths;
+        this.allPaths = allPaths;
+        downSuccessNum = 0;
+        downImage(allPaths.get(0));
+
+    }
+
+    private void downImage(String path) {
+        List<String> list = new ArrayList<>();
+        mattingImage.mattingImage(path, (isSuccess, bp) -> {
+            downSuccessNum++;
+            LogUtil.d("OOM", "正在抠图" + downSuccessNum);
+            String fileName = mRuncatheFolder + File.separator + UUID.randomUUID() + ".png";
+            BitmapManager.getInstance().saveBitmapToPath(bp, fileName);
+            list.add(fileName);
+            GlideBitmapPool.putBitmap(bp);
+            if (allPaths.size() == downSuccessNum) {
+                callback.imgList(list);
+                if (hasCache) {
+                    keepTailorImageToCache(list);
+                }
+            } else {
+                downImage(allPaths.get(downSuccessNum));
+            }
+        });
     }
 
 

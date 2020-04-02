@@ -87,8 +87,8 @@ public class VideoMattingModel {
         FileManager fileManager = new FileManager();
         faceFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceFolder");
         faceMattingFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceMattingFolder");
-        GlideBitmapPool.initialize(10 * 1024 * 1024); // 10mb max memory size
-        SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model));
+
+
         dialog=new WaitingDialog_progress(context);
         dialog.openProgressDialog();
     }

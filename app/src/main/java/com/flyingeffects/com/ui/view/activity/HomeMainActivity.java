@@ -24,14 +24,17 @@ import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.fragment.frag_Bj;
+import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.githang.statusbar.StatusBarCompat;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
 import com.flyingeffects.com.ui.view.fragment.frag_search;
 import com.flyingeffects.com.ui.view.fragment.frag_user_center;
 import com.flyingeffects.com.utils.AssetsUtils;
+import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.videoeditor.LanSongFileUtil;
 import com.lansosdk.videoeditor.LanSongUtil;
+import com.megvii.segjni.SegJni;
 import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
@@ -75,7 +78,8 @@ public class HomeMainActivity extends FragmentActivity {
         clearAllData();
         initView();
         copyFile("default_bj.png");
-
+        SegJni.nativeCreateSegHandler(this, ConUtil.getFileContent(this, R.raw.megviisegment_model));
+        GlideBitmapPool.initialize(10 * 1024 * 1024); // 10mb max memory size
     }
 
 

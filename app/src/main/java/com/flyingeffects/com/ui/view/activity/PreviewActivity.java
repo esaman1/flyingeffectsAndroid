@@ -288,8 +288,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                     WaitingDialog.openPragressDialog(PreviewActivity.this, alert);
                 }, 200);
 
-//                Presenter.CompressImg(paths, templateItem.getId(), templateItem.getIs_anime());
                 compressImage(paths, templateItem.getId());
+
+
+
             }
         }
 
@@ -297,7 +299,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
 
     private void compressImage(List<String> paths,String templateId) {
-
          boolean   hasCache= templateItem.getIs_anime() != 1;
         CompressionCuttingManage manage = new CompressionCuttingManage(PreviewActivity.this, templateId, hasCache,tailorPaths -> {
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
@@ -307,7 +308,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 intoTemplateActivity(tailorPaths, TemplateFilePath);
             }
         });
-        manage.CompressImgAndCache(paths);
+        manage.CompressImgForFace(paths);
     }
 
 
