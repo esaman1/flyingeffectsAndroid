@@ -23,6 +23,7 @@ import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.BitmapManager;
+import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.FileUtil;
@@ -82,50 +83,54 @@ public class VideoMattingModel {
 
     public VideoMattingModel(String videoPath, Context context) {
         this.videoPath = videoPath;
-        this.context=context;
+        this.context = context;
         videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
         FileManager fileManager = new FileManager();
         faceFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceFolder");
         faceMattingFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceMattingFolder");
 
 
-        dialog=new WaitingDialog_progress(context);
+        dialog = new WaitingDialog_progress(context);
         dialog.openProgressDialog();
     }
 
 
+    int allFrame;
+
     public void newFunction() {
+
+
 
         MediaInfo mInfo = new MediaInfo(videoPath);
         if (!mInfo.prepare() || !mInfo.isHaveVideo()) {
             return;
         }
-
+        LogUtil.d("OOM", "视频的总帧数为" + allFrame);
         mExtractFrame = new ExtractVideoFrame(BaseApplication.getInstance(), videoPath);
 
         MediaMetadataRetriever retr = new MediaMetadataRetriever();
         retr.setDataSource(videoPath);
         String rotation = retr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
-        if(TextUtils.isEmpty(rotation)){
+        if (TextUtils.isEmpty(rotation)) {
             if (mInfo.vWidth * mInfo.vHeight > 960 * 540) {
                 mExtractFrame.setBitmapWH(mInfo.vWidth / 2, mInfo.vHeight / 2);
             }
-        }else{
-            int Irotation=Integer.parseInt(rotation);
-            if(Irotation==90||Irotation==180){
+        } else {
+            int Irotation = Integer.parseInt(rotation);
+            if (Irotation == 90 || Irotation == 180) {
                 if (mInfo.vWidth * mInfo.vHeight > 960 * 540) {
                     mExtractFrame.setBitmapWH(mInfo.vHeight / 2, mInfo.vWidth / 2);
                 }
-            }else{
+            } else {
                 if (mInfo.vWidth * mInfo.vHeight > 960 * 540) {
                     mExtractFrame.setBitmapWH(mInfo.vWidth / 2, mInfo.vHeight / 2);
                 }
             }
         }
 
-        int totalFrame = mInfo.vTotalFrames;
+        allFrame = mInfo.vTotalFrames;
         //设置提取多少帧
-        mExtractFrame.setExtractSomeFrame(totalFrame);
+        mExtractFrame.setExtractSomeFrame(allFrame);
         /**
          * 设置处理完成监听.
          */
@@ -134,7 +139,7 @@ public class VideoMattingModel {
             @Override
             public void onCompleted(ExtractVideoFrame v) {
                 LogUtil.d("OOM", "onCompleted");
-                test();
+//                test();
             }
         });
         /**
@@ -149,17 +154,18 @@ public class VideoMattingModel {
             @Override
             public void onExtractBitmap(Bitmap bmp, long ptsUS) {
                 frameCount++;
-                String hint = " 当前是第" + frameCount + "帧" + "\n"
-                        + "时间戳是:" + String.valueOf(ptsUS) + "微秒";
+                String hint = frameCount + "帧" + "\n"
+                        + "s是:" + String.valueOf(ptsUS);
 //                tvProgressHint.setText(hint);
                 dialog.setProgress(hint);
                 LogUtil.d("OOM", hint);
 
-                String fileName = faceFolder + File.separator + frameCount + ".png";
-                BitmapManager.getInstance().saveBitmapToPath(bmp, fileName);
-
-                LogUtil.d("OOM", "bmp.width="+bmp.getWidth()+"bmp.height="+bmp.getHeight()+"config="+bmp.getConfig());
-                GlideBitmapPool.putBitmap(bmp);
+                //   String fileName = faceFolder + File.separator + frameCount + ".png";
+                //    BitmapManager.getInstance().saveBitmapToPath(bmp, fileName);
+                //todo  假如face sdk 抠图的速度和截取帧的速度大抵相同，那么就可以直接抠图，否则的话可能会造成内存回收不及时
+                downImageForBitmap(bmp,frameCount);
+                LogUtil.d("OOM", "bmp.width=" + bmp.getWidth() + "bmp.height=" + bmp.getHeight() + "config=" + bmp.getConfig());
+//                GlideBitmapPool.putBitmap(bmp);
 
             }
         });
@@ -173,13 +179,14 @@ public class VideoMattingModel {
     }
 
 
-   private int nowChooseImageIndex;
-    public void addFrameCompoundVideo() {
-         List<File> getMattingList = FileManager.listFileSortByModifyTime(faceMattingFolder);
-         Bitmap firstBitmap= BitmapFactory.decodeFile(getMattingList.get(0).getPath());
+    private int nowChooseImageIndex;
 
-        long AllTime= videoInfo.getDuration() * 1000;
-        double preTime=AllTime/getMattingList.size();
+    public void addFrameCompoundVideo() {
+        List<File> getMattingList = FileManager.listFileSortByModifyTime(faceMattingFolder);
+        Bitmap firstBitmap = BitmapFactory.decodeFile(getMattingList.get(0).getPath());
+
+        long AllTime = videoInfo.getDuration() * 1000;
+        double preTime = AllTime / getMattingList.size();
         final long[] LpreTime = {(long) preTime};
 
         try {
@@ -190,11 +197,11 @@ public class VideoMattingModel {
                 LogUtil.d("OOM", "错误信息为" + message);
             });
             execute.setOnLanSongSDKProgressListener((l, i) -> {
-                dialog.setProgress("最后渲染的进度为"+i);
-                LogUtil.d("OOM","进度为");
+                dialog.setProgress("最后渲染的进度为" + i);
+                LogUtil.d("OOM", "进度为");
             });
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
-                LogUtil.d("OOM","nowChooseImageIndex"+nowChooseImageIndex);
+                LogUtil.d("OOM", "nowChooseImageIndex" + nowChooseImageIndex);
                 dialog.closePragressDialog();
                 String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
                 try {
@@ -210,18 +217,18 @@ public class VideoMattingModel {
 
             LSOBitmapAsset asset = new LSOBitmapAsset(firstBitmap);
             BitmapLayer bitmapLayerForDrawBackground = execute.addBitmapLayer(asset);
-            CanvasLayer canvasLayer=     execute.addCanvasLayer();
+            CanvasLayer canvasLayer = execute.addCanvasLayer();
             canvasLayer.addCanvasRunnable(new CanvasRunnable() {
                 @Override
                 public void onDrawCanvas(CanvasLayer canvasLayer, Canvas canvas, long currentTime) {
-                    if(currentTime> LpreTime[0]){
-                        LogUtil.d("OOM","当前时间为"+currentTime+"下一个时间为"+LpreTime[0]);
-                        LogUtil.d("OOM","nowChooseImageIndex"+nowChooseImageIndex);
+                    if (currentTime > LpreTime[0]) {
+                        LogUtil.d("OOM", "当前时间为" + currentTime + "下一个时间为" + LpreTime[0]);
+                        LogUtil.d("OOM", "nowChooseImageIndex" + nowChooseImageIndex);
                         //需要切换新的图了
                         nowChooseImageIndex++;
-                        if(nowChooseImageIndex<getMattingList.size()){
+                        if (nowChooseImageIndex < getMattingList.size()) {
                             LpreTime[0] = LpreTime[0]++;
-                            Bitmap firstBitmap= BitmapFactory.decodeFile(getMattingList.get(nowChooseImageIndex).getPath());
+                            Bitmap firstBitmap = BitmapFactory.decodeFile(getMattingList.get(nowChooseImageIndex).getPath());
                             bitmapLayerForDrawBackground.switchBitmap(firstBitmap);
                         }
 
@@ -238,7 +245,10 @@ public class VideoMattingModel {
     }
 
     private void showKeepSuccessDialog(String path) {
-        if ( !DoubleClick.getInstance().isFastDoubleClick()) {
+        DataCleanManager.deleteFilesByDirectory(BaseApplication.getInstance().getExternalFilesDir("faceFolder"));
+        DataCleanManager.deleteFilesByDirectory(BaseApplication.getInstance().getExternalFilesDir("faceMattingFolder"));
+
+        if (!DoubleClick.getInstance().isFastDoubleClick()) {
             AlertDialog.Builder builder = new AlertDialog.Builder( //去除黑边
                     new ContextThemeWrapper(context, R.style.Theme_Transparent));
             builder.setTitle(R.string.notification);
@@ -264,20 +274,19 @@ public class VideoMattingModel {
     }
 
 
-
     private MattingImage mattingImage = new MattingImage();
     private List<File> getFilesAllName;
 
     public void test() {
 
         getFilesAllName = FileManager.listFileSortByModifyTime(faceFolder);
-        downImage(getFilesAllName.get(0).getPath());
+        downImageForPath(getFilesAllName.get(0).getPath());
     }
 
 
     private int downSuccessNum;
 
-    public void downImage(String path) {
+    public void downImageForPath(String path) {
         mattingImage.mattingImage(path, new MattingImage.mattingStatus() {
             @Override
             public void isSuccess(boolean isSuccess, Bitmap bp) {
@@ -286,7 +295,7 @@ public class VideoMattingModel {
                     Observable.just(1).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
                         @Override
                         public void call(Integer integer) {
-                            new Handler().post(() -> dialog.setProgress("完成抠图" ));
+                            new Handler().post(() -> dialog.setProgress("完成抠图"));
                         }
                     });
                     addFrameCompoundVideo();
@@ -303,11 +312,25 @@ public class VideoMattingModel {
                     String fileName = faceMattingFolder + File.separator + downSuccessNum + ".png";
                     BitmapManager.getInstance().saveBitmapToPath(bp, fileName);
                     GlideBitmapPool.putBitmap(bp);
-                    downImage(getFilesAllName.get(downSuccessNum).getPath());
+                    downImageForPath(getFilesAllName.get(downSuccessNum).getPath());
                 }
             }
         });
+    }
 
+
+    private  void downImageForBitmap(Bitmap OriginBitmap,int frameCount) {
+        mattingImage.mattingImage(OriginBitmap, (isSuccess, bp1) -> {
+            downSuccessNum++;
+            LogUtil.d("OOM", "正在抠图" + downSuccessNum);
+            String fileName = faceMattingFolder + File.separator + frameCount + ".png";
+            BitmapManager.getInstance().saveBitmapToPath(bp1, fileName, isSuccess1 -> GlideBitmapPool.putBitmap(
+                    bp1));
+            GlideBitmapPool.putBitmap(OriginBitmap);
+            if (allFrame - 1 == downSuccessNum) {
+                addFrameCompoundVideo();
+            }
+        });
     }
 
 
