@@ -13,6 +13,7 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 
 import com.bumptech.glide.Glide;
@@ -88,8 +89,7 @@ public class VideoMattingModel {
         FileManager fileManager = new FileManager();
         faceFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceFolder");
         faceMattingFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceMattingFolder");
-
-
+        LogUtil.d("OOM","faceMattingFolder="+faceMattingFolder);
         dialog = new WaitingDialog_progress(context);
         dialog.openProgressDialog();
     }
@@ -160,8 +160,8 @@ public class VideoMattingModel {
                 dialog.setProgress(hint);
                 LogUtil.d("OOM", hint);
 
-                //   String fileName = faceFolder + File.separator + frameCount + ".png";
-                //    BitmapManager.getInstance().saveBitmapToPath(bmp, fileName);
+//                   String fileName = faceFolder + File.separator + frameCount + ".png";
+//                    BitmapManager.getInstance().saveBitmapToPath(bmp, fileName);
                 //todo  假如face sdk 抠图的速度和截取帧的速度大抵相同，那么就可以直接抠图，否则的话可能会造成内存回收不及时
                 downImageForBitmap(bmp,frameCount);
                 LogUtil.d("OOM", "bmp.width=" + bmp.getWidth() + "bmp.height=" + bmp.getHeight() + "config=" + bmp.getConfig());
@@ -245,8 +245,8 @@ public class VideoMattingModel {
     }
 
     private void showKeepSuccessDialog(String path) {
-        DataCleanManager.deleteFilesByDirectory(BaseApplication.getInstance().getExternalFilesDir("faceFolder"));
-        DataCleanManager.deleteFilesByDirectory(BaseApplication.getInstance().getExternalFilesDir("faceMattingFolder"));
+//        DataCleanManager.deleteFilesByDirectory(BaseApplication.getInstance().getExternalFilesDir("faceFolder"));
+//        DataCleanManager.deleteFilesByDirectory(BaseApplication.getInstance().getExternalFilesDir("faceMattingFolder"));
 
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             AlertDialog.Builder builder = new AlertDialog.Builder( //去除黑边
@@ -332,6 +332,8 @@ public class VideoMattingModel {
             }
         });
     }
+
+
 
 
 }
