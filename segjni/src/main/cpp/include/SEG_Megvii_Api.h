@@ -75,6 +75,7 @@ typedef struct {
     MG_RETCODE (*CreateApiHandle)(
             const MG_BYTE *model_data,
 			const MG_INT32 model_length,
+            MG_INT32 thread_count,
             MG_SEG_APIHANDLE _OUT *api_handle_ptr);
 
     /**
@@ -154,9 +155,10 @@ typedef struct {
         MG_IMAGEMODE src_mode,
 		MG_SEG_APICONFIG config,
         MG_BYTE **out_image_data,
-        MG_INT32 out_width,
-        MG_INT32 out_height,
-        MG_IMAGEMODE *out_mode
+        MG_INT32* out_width,
+        MG_INT32* out_height,
+        MG_IMAGEMODE *out_mode,
+        MG_BOOL isRealTime
         );
 
 }MG_SEG_API_FUNCTIONS_TYPE;

@@ -5,14 +5,17 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 
+import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.enity.DownImg;
 import com.flyingeffects.com.enity.DownImgDataList;
 import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.utils.updateFileUtils;
 import com.glidebitmappool.GlideBitmapPool;
 import com.google.gson.Gson;
+import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.io.File;

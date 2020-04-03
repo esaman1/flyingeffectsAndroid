@@ -78,7 +78,7 @@ public class HomeMainActivity extends FragmentActivity {
         clearAllData();
         initView();
         copyFile("default_bj.png");
-        SegJni.nativeCreateSegHandler(this, ConUtil.getFileContent(this, R.raw.megviisegment_model));
+        SegJni.nativeCreateSegHandler(this, ConUtil.getFileContent(this, R.raw.megviisegment_model),8);
         GlideBitmapPool.initialize(10 * 1024 * 1024); // 10mb max memory size
     }
 

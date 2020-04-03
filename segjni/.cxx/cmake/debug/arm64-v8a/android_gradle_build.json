@@ -2,11 +2,11 @@
 {
 	"buildFiles" : 
 	[
-		"E:/faceProject/Segment-master-dev/segjni/src/main/cpp/CMakeLists.txt"
+		"E:/faceProject/thread/segment-demo-bigmodel-multiThread/segjni/src/main/cpp/CMakeLists.txt"
 	],
 	"cleanCommands" : 
 	[
-		"E:\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build E:\\faceProject\\Segment-master-dev\\segjni\\.cxx\\cmake\\debug\\arm64-v8a --target clean"
+		"E:\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build E:\\faceProject\\thread\\segment-demo-bigmodel-multiThread\\segjni\\.cxx\\cmake\\debug\\arm64-v8a --target clean"
 	],
 	"cppFileExtensions" : [ "cpp" ],
 	"libraries" : 
@@ -15,18 +15,18 @@
 		{
 			"abi" : "arm64-v8a",
 			"artifactName" : "MegviiSegJni",
-			"buildCommand" : "E:\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build E:\\faceProject\\Segment-master-dev\\segjni\\.cxx\\cmake\\debug\\arm64-v8a --target MegviiSegJni",
+			"buildCommand" : "E:\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build E:\\faceProject\\thread\\segment-demo-bigmodel-multiThread\\segjni\\.cxx\\cmake\\debug\\arm64-v8a --target MegviiSegJni",
 			"buildType" : "debug",
 			"files" : 
 			[
 				
 				{
-					"flags" : "  --target=aarch64-none-linux-android21 --gcc-toolchain=E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot  -DMegviiSegJni_EXPORTS -I. -IE:\\faceProject\\Segment-master-dev\\segjni\\src\\main\\cpp -IE:\\faceProject\\Segment-master-dev\\segjni\\src\\main\\cpp\\include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -O0 -fno-limit-debug-info  -fPIC    -c ",
-					"src" : "E:/faceProject/Segment-master-dev/segjni/src/main/cpp/megvii_seg_jni_new.cpp",
-					"workingDirectory" : "E:/faceProject/Segment-master-dev/segjni/.cxx/cmake/debug/arm64-v8a"
+					"flags" : "  --target=aarch64-none-linux-android21 --gcc-toolchain=E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot  -DMegviiSegJni_EXPORTS -I. -IE:\\faceProject\\thread\\segment-demo-bigmodel-multiThread\\segjni\\src\\main\\cpp -IE:\\faceProject\\thread\\segment-demo-bigmodel-multiThread\\segjni\\src\\main\\cpp\\include -IE:\\faceProject\\thread\\segment-demo-bigmodel-multiThread\\segjni\\src\\main\\cpp\\..\\..\\..\\..\\android_sdk\\jni\\src  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -O0 -fno-limit-debug-info  -fPIC    -c ",
+					"src" : "E:/faceProject/thread/segment-demo-bigmodel-multiThread/segjni/src/main/cpp/megvii_seg_jni_new.cpp",
+					"workingDirectory" : "E:/faceProject/thread/segment-demo-bigmodel-multiThread/segjni/.cxx/cmake/debug/arm64-v8a"
 				}
 			],
-			"output" : "E:/faceProject/Segment-master-dev/segjni/src/main/jniLibs/arm64-v8a/libMegviiSegJni.so",
+			"output" : "E:/faceProject/thread/segment-demo-bigmodel-multiThread/segjni/src/main/jniLibs/arm64-v8a/libMegviiSegJni.so",
 			"toolchain" : "3830737081"
 		},
 		"face_new-Debug-arm64-v8a" : 
@@ -34,7 +34,7 @@
 			"abi" : "arm64-v8a",
 			"artifactName" : "face_new",
 			"buildType" : "debug",
-			"output" : "E:/faceProject/Segment-master-dev/segjni/src/main/cpp/../jniLibs/arm64-v8a/libmegface-new.so",
+			"output" : "E:/faceProject/thread/segment-demo-bigmodel-multiThread/segjni/src/main/cpp/../jniLibs/arm64-v8a/libmegface-new.so",
 			"toolchain" : "3830737081"
 		},
 		"megviisegsdk-Debug-arm64-v8a" : 
@@ -42,15 +42,7 @@
 			"abi" : "arm64-v8a",
 			"artifactName" : "megviisegsdk",
 			"buildType" : "debug",
-			"output" : "E:/faceProject/Segment-master-dev/segjni/src/main/cpp/../jniLibs/arm64-v8a/libmegsegment.so",
-			"toolchain" : "3830737081"
-		},
-		"stl-Debug-arm64-v8a" : 
-		{
-			"abi" : "arm64-v8a",
-			"artifactName" : "stl",
-			"buildType" : "debug",
-			"output" : "E:/faceProject/Segment-master-dev/segjni/src/main/cpp/../jniLibs/arm64-v8a/libgnustl_shared.so",
+			"output" : "E:/faceProject/thread/segment-demo-bigmodel-multiThread/segjni/src/main/cpp/../jniLibs/arm64-v8a/libmegsegment.so",
 			"toolchain" : "3830737081"
 		}
 	},

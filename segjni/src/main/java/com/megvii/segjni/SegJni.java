@@ -13,7 +13,7 @@ public class SegJni {
      * @param context
      * @param segmentModel 模型的二进制数据
      */
-    public static native int nativeCreateSegHandler(Context context, byte[] segmentModel);
+    public static native int nativeCreateSegHandler(Context context, byte[] segmentModel, int threadCount);
 
     // return seg result in orignSize (maybe include the matting functions)
 
