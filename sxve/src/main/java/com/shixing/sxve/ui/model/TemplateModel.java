@@ -208,12 +208,12 @@ public class TemplateModel {
                     if (albumType.isImage(mimeType)) {
                         ((MediaUiModel) assetModel.ui).setImageAsset(paths.get(i));//, context
                     } else if (albumType.isVideo(mimeType)) {
-//                        String VideoPathOrigin = paths.get(i);
+                        String VideoPathOrigin = paths.get(i);
 //                        allVideoNumber++;
 //                        final MediaUiModel1 mModel = (MediaUiModel1) assetModel.ui;
 //                        mModel.setVideoPathOrigin(VideoPathOrigin);//设置视频的源文件地址
 //                        mModel.isVideoSlide = true;
-//                        mModel.setVideoPath(VideoPathOrigin);
+                        ((MediaUiModel) assetModel.ui).setVideoPath(VideoPathOrigin,true,0);//, context
                     }
                 }
             }

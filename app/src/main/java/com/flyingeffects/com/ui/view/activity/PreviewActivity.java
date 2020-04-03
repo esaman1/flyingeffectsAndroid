@@ -27,10 +27,12 @@ import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.PreviewMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
+import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.PreviewMvpPresenter;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MarqueTextView;
+import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
@@ -285,7 +287,24 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                     String alert = templateItem.getIs_anime() == 1 ? "正在变脸中" + "\n" + "上传正脸最佳～" : "正在抠图中" + "\n" + "上传人物最佳";
                     WaitingDialog.openPragressDialog(PreviewActivity.this, alert);
                 }, 200);
-                compressImage(paths, templateItem.getId());
+
+
+                //如果是视频，就不抠图了
+                String path=paths.get(0);
+                String pathType= GetPathTypeModel.getInstance().getMediaType(path);
+                if (albumType.isImage(pathType)) {
+                    compressImage(paths, templateItem.getId());
+                }else{
+                    if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                        Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId());
+                    } else {
+                        WaitingDialog.closePragressDialog();
+                        intoTemplateActivity(paths, TemplateFilePath);
+                    }
+
+                }
+
+
             }
         }
 
@@ -354,7 +373,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         if (!ondestroy) {
             //file 文件下载成功
             this.TemplateFilePath = TemplateFilePath;
-            AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");
+            AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "");
         }
     }
 
