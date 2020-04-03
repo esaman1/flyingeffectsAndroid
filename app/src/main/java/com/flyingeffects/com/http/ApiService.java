@@ -5,6 +5,7 @@ import com.flyingeffects.com.enity.HttpResult;
 import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.enity.UserInfo;
+import com.flyingeffects.com.enity.checkVersion;
 import com.flyingeffects.com.enity.new_fag_template_item;
 
 import java.util.List;
@@ -110,6 +111,11 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/template/templateList")
     Observable<HttpResult<List<new_fag_template_item>>> getTemplate(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST("/api/template/configList")
+    Observable<HttpResult<checkVersion>> checkUpdate(@FieldMap Map<String, String> params);
+
 
 
 

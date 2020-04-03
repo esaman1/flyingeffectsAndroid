@@ -18,12 +18,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.checkVersion;
+import com.flyingeffects.com.http.Api;
+import com.flyingeffects.com.http.HttpUtil;
+import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.fragment.frag_Bj;
+import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.githang.statusbar.StatusBarCompat;
 import com.flyingeffects.com.R;
@@ -39,9 +47,12 @@ import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.subjects.PublishSubject;
 
 
 /****
@@ -59,7 +70,7 @@ public class HomeMainActivity extends FragmentActivity {
     private int[] selectIconArr = {R.mipmap.home_bj,R.mipmap.moban, R.mipmap.chazhao, R.mipmap.wode};
     private int[] unSelectIconArr = { R.mipmap.home_bj_unselect,R.mipmap.moban_unslect, R.mipmap.chazhao_unselect, R.mipmap.wode_unselect};
     private FragmentManager fragmentManager;
-
+    public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
@@ -80,6 +91,7 @@ public class HomeMainActivity extends FragmentActivity {
         copyFile("default_bj.png");
         SegJni.nativeCreateSegHandler(this, ConUtil.getFileContent(this, R.raw.megviisegment_model),8);
         GlideBitmapPool.initialize(10 * 1024 * 1024); // 10mb max memory size
+        checkUpdate();
     }
 
 
@@ -93,48 +105,42 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-//    /**
-//     * description ：检查更新
-//     * date: ：2019/6/13 10:44
-//     * author: 张同举 @邮箱 jutongzhang@sina.com
-//     */
-//    public void checkUpdate(boolean isShowAlert) {
-//        HashMap<String, String> params = new HashMap<>();
-//        Observable ob = Api.getDefault().checkUpdate(BaseConstans.getRequestHead(params));
-//        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<checkVersion>(this) {
-//            @Override
-//            protected void _onError(String message) {
-//                LogUtil.d("checkUpdate", message);
-//                ToastUtil.showToast(message);
-//            }
-//
-//            @Override
-//            protected void _onNext(checkVersion data) {
-//                LogUtil.d("checkUpdate", StringUtil.beanToJSONString(data));
-//                try {
-//                    if (data != null) {
-//                        String uploadVersion = data.getVersion();
-//                        String content = data.getContent();
-//                        int uVersion = Integer.parseInt(uploadVersion);
-//                        int NowVersion = Integer.parseInt(BaseConstans.getVersionCode());
-//                        if (uVersion > NowVersion) { //todo  1231
-//                            intoCheckUpdateAct(data.getPath(), data.getIs_renew(), content);
-//                        } else {
-//                            if (isShowAlert) {
-//                                ToastUtil.showToast(getResources().getString(R.string.already_newest_version));
-//                            }
-//                        }
-//                    } else {
-//                        if (isShowAlert) {
-//                            ToastUtil.showToast(getResources().getString(R.string.already_newest_version));
-//                        }
-//                    }
-//                } catch (NumberFormatException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }, "checkUpdate", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
-//    }
+    /**
+     * description ：检查更新
+     * date: ：2019/6/13 10:44
+     * author: 张同举 @邮箱 jutongzhang@sina.com
+     */
+    public void checkUpdate() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("config_name","android_version_ad");
+        Observable ob = Api.getDefault().checkUpdate(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<checkVersion>(this) {
+            @Override
+            protected void _onError(String message) {
+                LogUtil.d("checkUpdate", message);
+
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(checkVersion data) {
+                LogUtil.d("checkUpdate", StringUtil.beanToJSONString(data));
+                try {
+                    if (data != null) {
+                        String uploadVersion = data.getVersion();
+                        String content = data.getContent();
+                        int uVersion = Integer.parseInt(uploadVersion);
+                        int NowVersion = Integer.parseInt(BaseConstans.getVersionCode());
+                        if (uVersion > NowVersion) {
+                            intoCheckUpdateAct(data.getPath(), data.getIs_renew(), content);
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, "checkUpdate", ActivityLifeCycleEvent.DESTROY,lifecycleSubject , false, true, false);
+    }
 
 
     /**

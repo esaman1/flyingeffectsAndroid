@@ -182,6 +182,7 @@ public class TemplateModel {
                         mediaUIModelList.add(mReplaceableAssets.get(i));
                         textUIModelList.add(null); //todo 考虑到文字在中间的情况，补位，解决数组越界
                     } else if (mReplaceableAssets.get(i).ui instanceof TextUiModel) {
+                        Log.d("OOM","1231231312");
                         textUIModelList.add(mReplaceableAssets.get(i));
                     }
                 }

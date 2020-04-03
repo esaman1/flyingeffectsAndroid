@@ -11,6 +11,7 @@ import android.graphics.Typeface;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.util.Log;
 
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.util.AffineTransform;
@@ -90,10 +91,15 @@ public class TextUiModel extends AssetUi {
     }
 
     public void setText(String text) {
-        mTextCanvas.setContent(text);
+        Log.d("OOM","---------------------------文字模板报错----------------------------");
+        if(text!=null){
+            if(mTextCanvas!=null){
+                mTextCanvas.setContent(text);
+            }
 //        mTextCanvas.adjustSize();
-        if (mGroupModel != null) {
-            mGroupModel.notifyRedraw();
+            if (mGroupModel != null) {
+                mGroupModel.notifyRedraw();
+            }
         }
     }
 

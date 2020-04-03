@@ -40,35 +40,35 @@ public class DownImageManager {
         this.callback = callback;
         downSuccessNum = 0;
         hasDownList.clear();
-        keepUunCatchPath = context.getExternalFilesDir("runCatch/");
+        FileManager fileManager = new FileManager();
+        keepUunCatchPath = new File(fileManager.getFileCachePath(context, "runCatch/"));
     }
 
 
     public void downImage(String path) {
-        Observable.just(path).map(new Func1<String, File>() {
-            @Override
-            public File call(String s) {
-                File file = null;
-                try {
-                    file = Glide.with(context)
-                            .load(s)
-                            .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                            .get();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return file;
+        Observable.just(path).map(s -> {
+            File file = null;
+            try {
+                file = Glide.with(context)
+                        .load(s)
+                        .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                        .get();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+            return file;
         }).subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.newThread()).subscribe(new Action1<File>() {
             @Override
             public void call(File file) {
-                downSuccessNum++;
-                hasDownList.add(file.getPath());
-                if (hasDownList.size() == listForMatting.size()) {
-                    callback.isSuccess(hasDownList);
-                } else {
-                    downImage(listForMatting.get(downSuccessNum));
+                if(file!=null){
+                    downSuccessNum++;
+                    hasDownList.add(file.getPath());
+                    if (hasDownList.size() == listForMatting.size()) {
+                        callback.isSuccess(hasDownList);
+                    } else {
+                        downImage(listForMatting.get(downSuccessNum));
+                    }
                 }
             }
         });
@@ -83,7 +83,7 @@ public class DownImageManager {
                 File file = null;
                 Bitmap bp = convertStringToIcon(s);
                 String path = keepUunCatchPath + File.separator + UUID.randomUUID() + ".png";
-                FileManager.saveBitmapToPath(bp, path,null);
+                FileManager.saveBitmapToPath(bp, path, null);
                 file = new File(path);
                 return file;
             }
@@ -94,7 +94,7 @@ public class DownImageManager {
                 downSuccessNum++;
                 hasDownList.add(file.getPath());
                 if (hasDownList.size() == listForMatting.size()) {
-                  callback.isSuccess(hasDownList);
+                    callback.isSuccess(hasDownList);
                 } else {
                     downImageForByte(listForMatting.get(downSuccessNum));
                 }
@@ -104,21 +104,15 @@ public class DownImageManager {
     }
 
 
-
-
-
-
     /**
      * string转成bitmap
      *
      * @param st
      */
-    public static Bitmap convertStringToIcon(String st)
-    {
+    public static Bitmap convertStringToIcon(String st) {
         // OutputStream out;
         Bitmap bitmap = null;
-        try
-        {
+        try {
             // out = new FileOutputStream("/sdcard/aa.jpg");
             byte[] bitmapArray;
             bitmapArray = Base64.decode(st, Base64.DEFAULT);
@@ -127,9 +121,7 @@ public class DownImageManager {
                             bitmapArray.length);
             // bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             return bitmap;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return null;
         }
     }
