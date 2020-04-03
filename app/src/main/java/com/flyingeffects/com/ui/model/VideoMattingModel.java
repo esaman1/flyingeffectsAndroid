@@ -13,6 +13,7 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 
@@ -45,9 +46,12 @@ import com.lansosdk.videoeditor.VideoOneDo2;
 import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -89,7 +93,7 @@ public class VideoMattingModel {
         FileManager fileManager = new FileManager();
         faceFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceFolder");
         faceMattingFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceMattingFolder");
-        LogUtil.d("OOM","faceMattingFolder="+faceMattingFolder);
+        LogUtil.d("OOM", "faceMattingFolder=" + faceMattingFolder);
         dialog = new WaitingDialog_progress(context);
         dialog.openProgressDialog();
     }
@@ -98,9 +102,6 @@ public class VideoMattingModel {
     int allFrame;
 
     public void newFunction() {
-
-
-
         MediaInfo mInfo = new MediaInfo(videoPath);
         if (!mInfo.prepare() || !mInfo.isHaveVideo()) {
             return;
@@ -131,6 +132,7 @@ public class VideoMattingModel {
         allFrame = mInfo.vTotalFrames;
         //设置提取多少帧
         mExtractFrame.setExtractSomeFrame(allFrame);
+
         /**
          * 设置处理完成监听.
          */
@@ -156,17 +158,14 @@ public class VideoMattingModel {
                 frameCount++;
                 String hint = frameCount + "帧" + "\n"
                         + "s是:" + String.valueOf(ptsUS);
-//                tvProgressHint.setText(hint);
                 dialog.setProgress(hint);
                 LogUtil.d("OOM", hint);
-
-//                   String fileName = faceFolder + File.separator + frameCount + ".png";
-//                    BitmapManager.getInstance().saveBitmapToPath(bmp, fileName);
+//                String fileName = faceFolder + File.separator + frameCount + ".png";
+//                BitmapManager.getInstance().saveBitmapToPath(bmp, fileName);
                 //todo  假如face sdk 抠图的速度和截取帧的速度大抵相同，那么就可以直接抠图，否则的话可能会造成内存回收不及时
-                downImageForBitmap(bmp,frameCount);
-                LogUtil.d("OOM", "bmp.width=" + bmp.getWidth() + "bmp.height=" + bmp.getHeight() + "config=" + bmp.getConfig());
+                downImageForBitmap(bmp, frameCount);
+//                LogUtil.d("OOM", "bmp.width=" + bmp.getWidth() + "bmp.height=" + bmp.getHeight() + "config=" + bmp.getConfig());
 //                GlideBitmapPool.putBitmap(bmp);
-
             }
         });
         frameCount = 0;
@@ -175,7 +174,6 @@ public class VideoMattingModel {
          * mExtractFrame.start(10*1000*1000);则从视频的10秒处开始提取.
          */
         mExtractFrame.start();
-
     }
 
 
@@ -319,21 +317,178 @@ public class VideoMattingModel {
     }
 
 
-    private  void downImageForBitmap(Bitmap OriginBitmap,int frameCount) {
-        mattingImage.mattingImage(OriginBitmap, (isSuccess, bp1) -> {
-            downSuccessNum++;
-            LogUtil.d("OOM", "正在抠图" + downSuccessNum);
-            String fileName = faceMattingFolder + File.separator + frameCount + ".png";
-            BitmapManager.getInstance().saveBitmapToPath(bp1, fileName, isSuccess1 -> GlideBitmapPool.putBitmap(
-                    bp1));
-            GlideBitmapPool.putBitmap(OriginBitmap);
-            if (allFrame - 1 == downSuccessNum) {
-                addFrameCompoundVideo();
-            }
+    private void downImageForBitmap(Bitmap OriginBitmap, int frameCount) {
+//        mattingImage.mattingImage(OriginBitmap, (isSuccess, bp1) -> {
+//            downSuccessNum++;
+//            LogUtil.d("OOM", "正在抠图" + downSuccessNum);
+//            String fileName = faceMattingFolder + File.separator + frameCount + ".png";
+//            BitmapManager.getInstance().saveBitmapToPath(bp1, fileName, isSuccess1 -> GlideBitmapPool.putBitmap(
+//                    bp1));
+//            GlideBitmapPool.putBitmap(OriginBitmap);
+//            if (allFrame - 1 == downSuccessNum) {
+//                addFrameCompoundVideo();
+//            }
+//        });
+        downSuccessNum++;
+        String fileName = faceMattingFolder + File.separator + frameCount + ".png";
+        LogUtil.d("OOM", "正在抠图" + downSuccessNum);
+        mattingImage.mattingImageForMultiple(OriginBitmap, frameCount, new MattingImage.mattingStatus() {
+            @Override
+            public void isSuccess(boolean isSuccess,Bitmap bitmap) {
+                if (isSuccess) {
+
+                        BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, isSuccess1 -> GlideBitmapPool.putBitmap(
+                                bitmap));
+                    } else {
+                        LogUtil.d("OOM", "bitmap=null");
+                    }
+
+                }
+
         });
+
+
+        if (allFrame - 1 == downSuccessNum) {
+            SegJni.nativeReleaseImageBuffer();
+            SegJni.nativeReleaseSegHandler();
+            addFrameCompoundVideo();
+        }
     }
 
 
+    public Bitmap Bytes2Bimap(byte[] b) {
+        if (b.length != 0) {
+            return BitmapFactory.decodeByteArray(b, 0, b.length);
+        } else {
+            return null;
+        }
+    }
+
+
+    public Bitmap rawByteArray2RGBABitmap2(byte[] data, int width, int height) {
+        int frameSize = width * height;
+        int[] rgba = new int[frameSize];
+
+        for (int i = 0; i < height; i++)
+            for (int j = 0; j < width; j++) {
+                int y = (0xff & ((int) data[i * width + j]));
+                int u = (0xff & ((int) data[frameSize + (i >> 1) * width + (j & ~1) + 0]));
+                int v = (0xff & ((int) data[frameSize + (i >> 1) * width + (j & ~1) + 1]));
+                y = y < 16 ? 16 : y;
+
+                int r = Math.round(1.164f * (y - 16) + 1.596f * (v - 128));
+                int g = Math.round(1.164f * (y - 16) - 0.813f * (v - 128) - 0.391f * (u - 128));
+                int b = Math.round(1.164f * (y - 16) + 2.018f * (u - 128));
+
+                r = r < 0 ? 0 : (r > 255 ? 255 : r);
+                g = g < 0 ? 0 : (g > 255 ? 255 : g);
+                b = b < 0 ? 0 : (b > 255 ? 255 : b);
+
+                rgba[i * width + j] = 0xff000000 + (b << 16) + (g << 8) + r;
+            }
+
+        Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        bmp.setPixels(rgba, 0, width, 0, 0, width, height);
+        return bmp;
+    }
+
+
+    private void createFileWithByte(byte[] bytes, File fileName) {
+        // 创建FileOutputStream对象
+        FileOutputStream outputStream = null;
+        // 创建BufferedOutputStream对象
+        BufferedOutputStream bufferedOutputStream = null;
+        try {
+            // 如果文件存在则删除
+            if (fileName.exists()) {
+                fileName.delete();
+            }
+            // 获取FileOutputStream对象
+            outputStream = new FileOutputStream(fileName);
+            // 获取BufferedOutputStream对象
+            bufferedOutputStream = new BufferedOutputStream(outputStream);
+            // 往文件所在的缓冲输出流中写byte数据
+            bufferedOutputStream.write(bytes);
+            // 刷出缓冲输出流，该步很关键，要是不执行flush()方法，那么文件的内容是空的。
+            bufferedOutputStream.flush();
+        } catch (Exception e) {
+            // 打印异常信息
+            e.printStackTrace();
+        } finally {
+            // 关闭创建的流对象
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (bufferedOutputStream != null) {
+                try {
+                    bufferedOutputStream.close();
+                } catch (Exception e2) {
+                    e2.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * 将图片写入到磁盘
+     *
+     * @param img      图片数据流
+     * @param fileName 文件保存时的名称
+     */
+    public static void writeImageToDisk(byte[] img, String fileName) {
+        try {
+            File file = new File(fileName);
+            FileOutputStream fops = new FileOutputStream(file);
+            fops.write(img);
+            fops.flush();
+            fops.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void downImageForByte(byte[] byteData, String path) {
+
+        Observable.just(byteData).map(new Func1<byte[], String>() {
+            @Override
+            public String call(byte[] bytes) {
+                return null;
+            }
+        }).subscribeOn(Schedulers.io()).subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                FileManager.saveBitmapToPath(convertStringToIcon(s), path, null);
+            }
+        });
+
+
+    }
+
+    /**
+     * string转成bitmap
+     *
+     * @param st
+     */
+    public static Bitmap convertStringToIcon(String st) {
+        // OutputStream out;
+        Bitmap bitmap = null;
+        try {
+            // out = new FileOutputStream("/sdcard/aa.jpg");
+            byte[] bitmapArray;
+            bitmapArray = Base64.decode(st, Base64.DEFAULT);
+            bitmap =
+                    BitmapFactory.decodeByteArray(bitmapArray, 0,
+                            bitmapArray.length);
+            // bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            return bitmap;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
 
 }
