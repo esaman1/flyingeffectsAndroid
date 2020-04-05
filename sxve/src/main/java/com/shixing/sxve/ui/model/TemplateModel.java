@@ -3,6 +3,7 @@ package com.shixing.sxve.ui.model;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.support.annotation.WorkerThread;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 import android.webkit.MimeTypeMap;
@@ -34,6 +35,7 @@ public class TemplateModel {
     public SparseArray<GroupModel> groups = new SparseArray<>();
     public final float fps;
     public int groupSize;
+    public String cartoonPath;
 
     @WorkerThread
     public TemplateModel(String templateFolder, AssetDelegate delegate, Context context, int nowTemplateIsAnim) throws IOException, JSONException {
@@ -52,7 +54,6 @@ public class TemplateModel {
             String majorStr = versionStr.substring(0, versionStr.indexOf('.'));
             uiVersionMajor = Integer.parseInt(majorStr);
         }
-
         fps = (float) config.getDouble("fps");
 
         JSONArray assets = config.getJSONArray("assets");
@@ -62,15 +63,38 @@ public class TemplateModel {
                 AssetModel assetModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor);
                 mAssets.add(assetModel);
 
-                if (nowTemplateIsAnim == 1 ) {
-                    JSONObject ob=asset.getJSONObject("ui");
-                    int index=ob.getInt("index");
-                    if(index==0){
-                        //漫画的图不显示
-                        assetModel.setIsAnim(true);
+                //单独针对mask 图层
+                try{
+                    String ui_extra=asset.getString("ui_extra");
+                    if(!TextUtils.isEmpty(ui_extra)&&ui_extra.equals("hideUI")){
+                        //当前页面不显示，不过和漫画规则一样的
+                  continue;
+
                     }
 
+                }catch (Exception e){
+                    Log.d("OOM",e.getMessage());
                 }
+
+
+
+
+                //单独针对漫画
+                if (nowTemplateIsAnim == 1 ) {
+//                    JSONObject ob=asset.getJSONObject("ui");
+//                    int index=ob.getInt("index");
+//                    if(index==0){
+                        //漫画的图不显示
+                        assetModel.setIsAnim(true);
+//                    }
+                }
+
+
+
+
+
+
+
                 int group = assetModel.ui.group;
                 if (groupSize < group) groupSize = group;
 
@@ -123,14 +147,26 @@ public class TemplateModel {
         for (int i = 0; i < mAssets.size(); i++) {
             if (mAssets.get(0).ui.getIsAnim()) {
                 //如果第一个及时漫画，就走漫画的逻辑
-                if (i == 0) {
-//                    //漫画,这里顺序Ae有点问题
-                    MediaUiModel2 model2 = (MediaUiModel2) mAssets.get(1).ui;
-                    MediaUiModel2 model2Last = (MediaUiModel2) mAssets.get(0).ui;
-                    paths[1] = model2.getpathForThisMatrix( folder,model2Last.getOriginalPath());
-                } else {
-                    paths[0] = mAssets.get(i).ui.getSnapPath(folder);
+//                if (i == 0) {
+////                    //漫画,这里顺序Ae有点问题
+//                    MediaUiModel2 model2 = (MediaUiModel2) mAssets.get(1).ui;
+//                    MediaUiModel2 model2Last = (MediaUiModel2) mAssets.get(0).ui;
+//                    paths[1] = model2.getpathForThisMatrix( folder,model2Last.getOriginalPath());
+//                } else {
+//                    paths[0] = mAssets.get(i).ui.getSnapPath(folder);
+//                }
+
+
+
+                if(i== mAssets.size()-1){
+                    //最后一个的时候
+                    MediaUiModel2 model2 = (MediaUiModel2) mAssets.get(i-1).ui;
+                    paths[i] = model2.getpathForThisMatrix( folder,cartoonPath);
+                }else{
+                    paths[i] = mAssets.get(i).ui.getSnapPath(folder);
                 }
+
+
             } else {
                 paths[i] = mAssets.get(i).ui.getSnapPath(folder);
             }

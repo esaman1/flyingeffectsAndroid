@@ -4,13 +4,13 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file('D:\\key2\\feishan.jks')
+            storeFile file('E:\\key2\\feishan.jks')
             storePassword 'android'
             keyAlias = 'jujuname'
             keyPassword 'android'
         }
         realse {
-            storeFile file('D:\\key2\\feishan.jks')
+            storeFile file('E:\\key2\\feishan.jks')
             storePassword 'android'
             keyAlias = 'jujuname'
             keyPassword 'android'

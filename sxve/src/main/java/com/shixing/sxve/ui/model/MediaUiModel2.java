@@ -110,7 +110,7 @@ public class MediaUiModel2 extends MediaUiModel {
     @Override
     public void draw(Canvas canvas, int activeLayer) {
         mPaint = mInitPaint;
-        if (!IsAnim) {
+//        if (!IsAnim) {
             if (b != null) {
                 canvas.drawBitmap(b, 0, 0, null);
             }
@@ -143,7 +143,6 @@ public class MediaUiModel2 extends MediaUiModel {
                 canvas.drawBitmap(f, 0, 0, mPaint);
             }
 
-        }
 
     }
 

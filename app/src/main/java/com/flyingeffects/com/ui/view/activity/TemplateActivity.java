@@ -217,6 +217,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @Override
     public void completeTemplate(TemplateModel templateModel) {
         mTemplateModel = templateModel;
+        if(nowTemplateIsAnim==1){
+            mTemplateModel.cartoonPath=originalPath.get(0);
+        }
         int duration = mTemplateModel.getDuration();
         float allDuration = duration / mTemplateModel.fps;
         tv_end_time.setText(timeUtils.secondToTime((long) (allDuration)));
@@ -398,7 +401,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
             if (nowTemplateIsAnim == 1) {
                 //漫画需要单独前面加一个原图的值，然后第二个值需要隐藏页面
-                list_all.add(originalPath.get(0));
+                list_all.add(paths.get(0));
             }
             new Thread(() -> {
                 mTemplateModel.setReplaceAllFiles(list_all, complete -> TemplateActivity.this.runOnUiThread(() -> {
