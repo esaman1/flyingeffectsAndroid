@@ -287,13 +287,16 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                     String alert = templateItem.getIs_anime() == 1 ? "正在变脸中" + "\n" + "上传正脸最佳～" : "正在抠图中" + "\n" + "上传人物最佳";
                     WaitingDialog.openPragressDialog(PreviewActivity.this, alert);
                 }, 200);
-
-
                 //如果是视频，就不抠图了
                 String path=paths.get(0);
                 String pathType= GetPathTypeModel.getInstance().getMediaType(path);
                 if (albumType.isImage(pathType)) {
-                    compressImage(paths, templateItem.getId());
+                    if(templateItem.getIs_anime()!=1){
+                        compressImage(paths, templateItem.getId());
+                    }else{
+                        //漫画需要去服务器请求
+                        compressImageForServers(paths, templateItem.getId());
+                    }
                 }else{
                     if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
                         Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId());
@@ -322,6 +325,21 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             }
         });
         manage.CompressImgForFace(paths);
+    }
+
+
+
+    private void compressImageForServers(List<String> paths,String templateId) {
+        boolean   hasCache= templateItem.getIs_anime() != 1;
+        CompressionCuttingManage manage = new CompressionCuttingManage(PreviewActivity.this, templateId, hasCache,tailorPaths -> {
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId());
+            } else {
+                WaitingDialog.closePragressDialog();
+                intoTemplateActivity(tailorPaths, TemplateFilePath);
+            }
+        });
+        manage.CompressImgAndCache(paths);
     }
 
 
