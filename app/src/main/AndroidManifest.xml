@@ -42,6 +42,9 @@
     <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
+    <!--闪验-->
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+
 
 
     <application
@@ -160,6 +163,14 @@
 
 
 
+        <!--友盟微信登录-->
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+
         <!-- Since JCore2.0.0 Required SDK核心功能-->
         <!-- 可配置android:process参数将Service放在其他进程中；android:enabled属性不能是false -->
         <!-- 这个是自定义Service，要继承极光JCommonService，可以在更多手机平台上使得推送通道保持的更稳定 -->
@@ -187,5 +198,10 @@
             </intent-filter>
         </receiver>
     </application>
+
+
+
+
+
 
 </manifest>

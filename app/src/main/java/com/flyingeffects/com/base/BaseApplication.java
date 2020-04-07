@@ -18,6 +18,7 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxvideoengine.License;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
+import com.umeng.socialize.PlatformConfig;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.AlbumConfig;
 
@@ -91,7 +92,7 @@ public class BaseApplication extends MultiDexApplication {
         MobclickAgent.setCatchUncaughtExceptions(true);
         UMConfigure.setProcessEvent(true); // 支持在子进程中统计自定义事件
         UMConfigure.setLogEnabled(false);
-
+        PlatformConfig.setWeixin("wx7cb3c7ece8461be7", "6eed0ad743c6026b10b7e036f22aa762");
         UMConfigure.init(this, BaseConstans.UMENGAPPID, ChannelUtil.getChannel(this), UMConfigure.DEVICE_TYPE_PHONE, "");
 //        PlatformConfig.setWeixin("wx48a4ba91f880abcc", "68932433247e0f33ec8c93c89e9bd374");
 //        PlatformConfig.setQQZone("1109289339", "hdOiuQsp2iudqu3v");
