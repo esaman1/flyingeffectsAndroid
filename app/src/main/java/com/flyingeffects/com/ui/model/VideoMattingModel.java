@@ -99,7 +99,7 @@ public class VideoMattingModel {
     }
 
 
-    int allFrame;
+    private int allFrame;
 
     public void newFunction() {
         MediaInfo mInfo = new MediaInfo(videoPath);
@@ -132,7 +132,6 @@ public class VideoMattingModel {
         allFrame = mInfo.vTotalFrames;
         //设置提取多少帧
         mExtractFrame.setExtractSomeFrame(allFrame);
-
         /**
          * 设置处理完成监听.
          */
@@ -142,6 +141,9 @@ public class VideoMattingModel {
             public void onCompleted(ExtractVideoFrame v) {
                 LogUtil.d("OOM", "onCompleted");
 //                test();
+                SegJni.nativeReleaseImageBuffer();
+                SegJni.nativeReleaseSegHandler();
+                addFrameCompoundVideo();
             }
         });
         /**
@@ -158,7 +160,7 @@ public class VideoMattingModel {
                 frameCount++;
                 String hint = frameCount + "帧" + "\n"
                         + "s是:" + String.valueOf(ptsUS);
-                dialog.setProgress(hint);
+                dialog.setProgress( frameCount + "帧");
                 LogUtil.d("OOM", hint);
 //                String fileName = faceFolder + File.separator + frameCount + ".png";
 //                BitmapManager.getInstance().saveBitmapToPath(bmp, fileName);
@@ -178,14 +180,16 @@ public class VideoMattingModel {
 
 
     private int nowChooseImageIndex;
+    private float preTime;
+    //当前进度时间
+    private float nowProgressTime;
 
     public void addFrameCompoundVideo() {
         List<File> getMattingList = FileManager.listFileSortByModifyTime(faceMattingFolder);
         Bitmap firstBitmap = BitmapFactory.decodeFile(getMattingList.get(0).getPath());
-
         long AllTime = videoInfo.getDuration() * 1000;
-        double preTime = AllTime / getMattingList.size();
-        final long[] LpreTime = {(long) preTime};
+        preTime = AllTime / (float) getMattingList.size();
+        nowProgressTime= preTime;
 
         try {
             DrawPadAllExecute2 execute = new DrawPadAllExecute2(BaseApplication.getInstance(), DRAWPADWIDTH, DRAWPADHEIGHT, AllTime);
@@ -216,21 +220,15 @@ public class VideoMattingModel {
             LSOBitmapAsset asset = new LSOBitmapAsset(firstBitmap);
             BitmapLayer bitmapLayerForDrawBackground = execute.addBitmapLayer(asset);
             CanvasLayer canvasLayer = execute.addCanvasLayer();
-            canvasLayer.addCanvasRunnable(new CanvasRunnable() {
-                @Override
-                public void onDrawCanvas(CanvasLayer canvasLayer, Canvas canvas, long currentTime) {
-                    if (currentTime > LpreTime[0]) {
-                        LogUtil.d("OOM", "当前时间为" + currentTime + "下一个时间为" + LpreTime[0]);
-                        LogUtil.d("OOM", "nowChooseImageIndex" + nowChooseImageIndex);
-                        //需要切换新的图了
-                        nowChooseImageIndex++;
-                        if (nowChooseImageIndex < getMattingList.size()) {
-                            LpreTime[0] = LpreTime[0]++;
-                            Bitmap firstBitmap = BitmapFactory.decodeFile(getMattingList.get(nowChooseImageIndex).getPath());
-                            bitmapLayerForDrawBackground.switchBitmap(firstBitmap);
-                        }
-
-
+            canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
+                if (currentTime > nowProgressTime) {
+                    //需要切换新的图了
+                    nowChooseImageIndex++;
+                    if (nowChooseImageIndex < getMattingList.size()) {
+                        LogUtil.d("OOM","preTime="+preTime+"nowChooseImageIndex="+nowChooseImageIndex);
+                        nowProgressTime=preTime +nowProgressTime;
+                        Bitmap firstBitmap1 = BitmapFactory.decodeFile(getMattingList.get(nowChooseImageIndex).getPath());
+                        bitmapLayerForDrawBackground.switchBitmap(firstBitmap1);
                     }
                 }
             });
@@ -334,25 +332,20 @@ public class VideoMattingModel {
         LogUtil.d("OOM", "正在抠图" + downSuccessNum);
         mattingImage.mattingImageForMultiple(OriginBitmap, frameCount, new MattingImage.mattingStatus() {
             @Override
-            public void isSuccess(boolean isSuccess,Bitmap bitmap) {
+            public void isSuccess(boolean isSuccess, Bitmap bitmap) {
                 if (isSuccess) {
 
-                        BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, isSuccess1 -> GlideBitmapPool.putBitmap(
-                                bitmap));
-                    } else {
-                        LogUtil.d("OOM", "bitmap=null");
-                    }
-
+                    BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, isSuccess1 -> GlideBitmapPool.putBitmap(
+                            bitmap));
+                } else {
+                    LogUtil.d("OOM", "bitmap=null");
                 }
+
+            }
 
         });
 
-
-        if (allFrame - 1 == downSuccessNum) {
-            SegJni.nativeReleaseImageBuffer();
-            SegJni.nativeReleaseSegHandler();
-            addFrameCompoundVideo();
-        }
+        LogUtil.d("OOM", "allFrame-1=" + allFrame + "downSuccessNum=?" + downSuccessNum);
     }
 
 
