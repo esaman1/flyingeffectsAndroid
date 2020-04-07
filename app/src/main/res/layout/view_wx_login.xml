@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relative_wx"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/login_weixin"
+        android:gravity="center"
+        android:layout_height="50dp">
+
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="@string/app_name"
+            android:src="@mipmap/wexin" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_toRightOf="@+id/iv_icon"
+            android:text="微信登录"
+            android:textColor="#000000"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>

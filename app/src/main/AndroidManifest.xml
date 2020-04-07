@@ -46,7 +46,6 @@
     <uses-permission android:name="android.permission.GET_TASKS"/>
 
 
-
     <application
         android:name="com.flyingeffects.com.base.BaseApplication"
         android:allowBackup="true"
@@ -90,7 +89,6 @@
             android:name="com.flyingeffects.com.ui.view.activity.HomeMainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
-
 
 
         <activity
@@ -169,6 +167,37 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+
+
+
+        <!--闪验登录 start-->
+        <activity
+            android:name="com.chuanglan.shanyan_sdk.view.CmccLoginActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:theme="@style/dialogStyle" />
+
+        <activity-alias
+            android:name="com.cmic.sso.sdk.activity.LoginAuthActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:targetActivity="com.chuanglan.shanyan_sdk.view.CmccLoginActivity"
+            android:theme="@style/dialogStyle" />
+        <activity
+            android:name="com.chuanglan.shanyan_sdk.view.ShanYanOneKeyActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:theme="@style/dialogStyle" />
+        <activity
+            android:name="com.chuanglan.shanyan_sdk.view.CTCCPrivacyProtocolActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:screenOrientation="behind"
+            android:theme="@style/dialogStyle" />
+
+        <!--闪验登录 end-->
+
 
 
         <!-- Since JCore2.0.0 Required SDK核心功能-->

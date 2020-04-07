@@ -1,10 +1,15 @@
 package com.flyingeffects.com.base;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
+import android.util.Log;
 
+import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
+import com.chuanglan.shanyan_sdk.listener.InitListener;
+import com.flyingeffects.com.BuildConfig;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.MediaLoader;
@@ -50,10 +55,28 @@ public class BaseApplication extends MultiDexApplication {
         initYouMeng();
         initJPush();
         initZt();
-      keepCrash();
+        initShanyanSDK(this);
+        keepCrash();
+        //闪验SDK初始化（建议放在Application的onCreate方法中执行）
 
 
     }
+
+
+
+
+    /**
+     * description ：闪验
+     * creation date: 2020/4/7
+     * user : zhangtongju
+     */
+    private void initShanyanSDK(Context context) {
+        OneKeyLoginManager.getInstance().init(context, "6t6fPQYR", (code, result) -> {
+            //闪验SDK初始化结果回调
+            LogUtil.d("OOM", "初始化： code==" + code + "   result==" + result);
+        });
+    }
+
 
     private void initLansong() {
         LanSoEditor.initSDK(getApplicationContext(), "jiu_LanSongSDK_android5.key");
@@ -64,7 +87,7 @@ public class BaseApplication extends MultiDexApplication {
      * 保存错误日志
      */
     public void keepCrash() {
-        if(ChannelUtil.getChannel(BaseApplication.getInstance()).equals("test")){
+        if (ChannelUtil.getChannel(BaseApplication.getInstance()).equals("test")) {
             CrashHandler.getInstance().init(this);
         }
 
@@ -92,10 +115,8 @@ public class BaseApplication extends MultiDexApplication {
         MobclickAgent.setCatchUncaughtExceptions(true);
         UMConfigure.setProcessEvent(true); // 支持在子进程中统计自定义事件
         UMConfigure.setLogEnabled(false);
-        PlatformConfig.setWeixin("wx7cb3c7ece8461be7", "6eed0ad743c6026b10b7e036f22aa762");
         UMConfigure.init(this, BaseConstans.UMENGAPPID, ChannelUtil.getChannel(this), UMConfigure.DEVICE_TYPE_PHONE, "");
-//        PlatformConfig.setWeixin("wx48a4ba91f880abcc", "68932433247e0f33ec8c93c89e9bd374");
-//        PlatformConfig.setQQZone("1109289339", "hdOiuQsp2iudqu3v");
+        PlatformConfig.setWeixin("wx7cb3c7ece8461be7", "6eed0ad743c6026b10b7e036f22aa762");
 
     }
 

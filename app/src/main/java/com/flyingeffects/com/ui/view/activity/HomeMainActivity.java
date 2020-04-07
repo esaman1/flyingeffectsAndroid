@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -18,6 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
+import com.chuanglan.shanyan_sdk.listener.GetPhoneInfoListener;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -92,6 +95,18 @@ public class HomeMainActivity extends FragmentActivity {
         SegJni.nativeCreateSegHandler(this, ConUtil.getFileContent(this, R.raw.megviisegment_model),8);
         GlideBitmapPool.initialize(10 * 1024 * 1024); // 10mb max memory size
         checkUpdate();
+        getUserPhoneInfo();
+    }
+
+
+    public void getUserPhoneInfo(){
+        OneKeyLoginManager.getInstance().getPhoneInfo(new GetPhoneInfoListener() {
+            @Override
+            public void getPhoneInfoStatus(int code, String result) {
+                //预取号回调
+                Log.e("VVV", "预取号： code==" + code + "   result==" + result);
+            }
+        });
     }
 
 

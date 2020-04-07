@@ -25,10 +25,6 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.activity.AboutActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
-import com.flyingeffects.com.ui.view.activity.TemplateActivity;
-import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.StringUtil;
-import com.flyingeffects.com.utils.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
