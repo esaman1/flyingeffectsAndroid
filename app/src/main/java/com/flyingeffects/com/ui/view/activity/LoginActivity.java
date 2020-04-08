@@ -28,6 +28,7 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.UserInfo;
+import com.flyingeffects.com.enity.WxLogin;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -38,15 +39,22 @@ import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.VideoUtils;
 import com.flyingeffects.com.view.MyVideoView;
+import com.umeng.socialize.PlatformConfig;
+import com.umeng.socialize.UMAuthListener;
+import com.umeng.socialize.UMShareAPI;
+import com.umeng.socialize.bean.SHARE_MEDIA;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import rx.Observable;
 
 /**
@@ -70,6 +78,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     RelativeLayout relative_normal;
     private boolean isOpenAuth = false;
     MyVideoView videoView;
+    private static final String WEIXIN = "wx";
+    private static final String QQ = "qq";
 
 
     /**
@@ -86,6 +96,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
         OneKeyLoginManager.getInstance().setAuthThemeConfig(ShanyanConfigUtils.getCJSConfig(getApplicationContext()), ShanyanConfigUtils.getCJSConfig(getApplicationContext()));
         openLoginActivity();
     }
@@ -102,6 +113,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             videoView.setOnErrorListener(null);
             videoView = null;
         }
+        EventBus.getDefault().unregister(this);
     }
 
     private void openLoginActivity() {
@@ -455,6 +467,85 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
+
+
+
+    public void wxLogin(){
+        UMShareAPI.get(LoginActivity.this).getPlatformInfo(LoginActivity.this, SHARE_MEDIA.WEIXIN, authListener);
+    }
+
+
+
+
+    UMAuthListener authListener = new UMAuthListener() {
+        /**
+         * 授权开始的回调
+         * @param platform 平台名称
+         */
+        @Override
+        public void onStart(SHARE_MEDIA platform) {
+        LogUtil.d("OOM","onstart");
+        }
+
+        /**
+         *  授权成功的回调
+         * @param platform 平台名称
+         * @param action 行为序号，开发者用不上
+         * @param data 用户资料返回
+         */
+        @Override
+        public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data) {
+            if (data != null) {
+                Bundle bundle = new Bundle();
+                String name = data.get("name");
+                String iconUrl = data.get("iconurl");
+                bundle.putSerializable("name", name);
+                bundle.putSerializable("iconUrl", iconUrl);
+                String plamformType = platform.toString();
+                plamformType = (plamformType.equals("QQ") ? QQ : WEIXIN);
+                ToastUtil.showToast(name);
+//                requestLogin(plamformType, data.get("openid"), data.get("unionid"), iconUrl, name);
+            }
+        }
+
+        /**
+         * 授权失败的回调
+         * @param platform 平台名称
+         * @param action 行为序号，开发者用不上
+         * @param t 错误原因
+         */
+        @Override
+        public void onError(SHARE_MEDIA platform, int action, Throwable t) {
+            LogUtil.d("OOM","onError"+t.getMessage());
+            ToastUtil.showToast(getString(R.string.login_fail));
+            clearUmData();
+        }
+
+        /**
+         * 授权取消的回调
+         * @param platform 平台名称
+         * @param action 行为序号，开发者用不上
+         */
+        @Override
+        public void onCancel(SHARE_MEDIA platform, int action) {
+            Toast.makeText(mContext, getString(R.string.cancel_login), Toast.LENGTH_LONG).show();
+        }
+    };
+
+
+    private void clearUmData() {
+        UMShareAPI.get(mContext).deleteOauth(this, SHARE_MEDIA.WEIXIN, authListener);
+        UMShareAPI.get(mContext).deleteOauth(this, SHARE_MEDIA.QQ, authListener);
+    }
+
+
+    @Subscribe
+    public void onEventMainThread(WxLogin event) {
+        if(event.getTag().equals("wxLogin")){
+            wxLogin();
+        }
+
+    }
 
 
 }

@@ -9,6 +9,9 @@ import android.widget.RelativeLayout;
 
 import com.chuanglan.shanyan_sdk.tool.ShanYanUIConfig;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.enity.WxLogin;
+
+import de.greenrobot.event.EventBus;
 
 
 public class ShanyanConfigUtils {
@@ -44,7 +47,15 @@ public class ShanyanConfigUtils {
         layoutParamsOther.addRule(RelativeLayout.CENTER_HORIZONTAL);
         layoutParamsOther.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         relativeLayout.setLayoutParams(layoutParamsOther);
-        otherLogin(context, relativeLayout);
+        RelativeLayout relative_wx_login=relativeLayout.findViewById(R.id.relative_wx_login);
+        relative_wx_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EventBus.getDefault().post(new WxLogin("wxLogin"));
+            }
+        });
+
+//        otherLogin(context, relativeLayout.findViewById(R.id.relative_wx_login));
         ShanYanUIConfig uiConfig = new ShanYanUIConfig.Builder()
                 .setActivityTranslateAnim("shanyan_demo_fade_in_anim", "shanyan_dmeo_fade_out_anim")
                 //授权页导航栏：
@@ -109,11 +120,7 @@ public class ShanyanConfigUtils {
         weixin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-
-
-
+                EventBus.getDefault().post(new WxLogin("wxLogin"));
             }
         });
     }
