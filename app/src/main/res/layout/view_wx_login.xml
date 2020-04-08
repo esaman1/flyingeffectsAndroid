@@ -3,7 +3,6 @@
     android:id="@+id/relative_wx"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
 >
 
 
@@ -16,7 +15,7 @@
         android:layout_marginEnd="20dp"
         android:background="@drawable/login_weixin"
         android:gravity="center"
-        android:layout_height="50dp">
+        android:layout_height="48dp">
 
         <ImageView
             android:id="@+id/iv_icon"

@@ -32,6 +32,7 @@ import com.flyingeffects.com.enity.WxLogin;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.utils.AbScreenUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
 import com.flyingeffects.com.utils.ShanyanConfigUtils;
@@ -88,6 +89,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      */
     private int nowProgressType;
 
+
+    //当前页面类型 0是老板ui ,1 是新版ui
+    private int nowPageType=1;
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_login;
@@ -136,6 +141,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 shanyan_login_relative.addView(videoView, 0, mLayoutParams);
                 VideoUtils.startBgVideo(videoView, getApplicationContext(), "android.resource://" + LoginActivity.this.getPackageName() + "/" + R.raw.login_video);
             } else {
+                nowPageType=0;
                 //拉起授权页失败
                 Log.e("VVV", "拉起授权页失败： _code==" + code + "   _result==" + result);
                 relative_normal.setVisibility(View.VISIBLE);
@@ -250,6 +256,21 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if(  nowPageType==1){
+            VideoUtils.startBgVideo(videoView, getApplicationContext(), "android.resource://" + this.getPackageName() + "/" + R.raw.login_video);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(  nowPageType==1){
+            AbScreenUtils.hideBottomUIMenu(this);
+        }
+    }
 
     @Override
     protected void initView() {
