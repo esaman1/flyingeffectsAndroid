@@ -28,6 +28,11 @@ public interface ApiService {
     @POST("/api/user/mobilelogin")
     Observable<HttpResult<UserInfo>> toLogin(@FieldMap Map<String, String> params);
 
+    //短信验证码的登录
+    @FormUrlEncoded
+    @POST("/api/sms/login")
+    Observable<HttpResult<UserInfo>> toLoginSms(@FieldMap Map<String, String> params);
+
     //普通登录
     @FormUrlEncoded
     @POST("/api/user/login")

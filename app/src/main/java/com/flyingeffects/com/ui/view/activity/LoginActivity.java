@@ -39,12 +39,13 @@ import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.VideoUtils;
 import com.flyingeffects.com.view.MyVideoView;
-import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.UMAuthListener;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -144,10 +145,20 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     Log.e("VVV", "用户点击登录获取token成功： _code==" + code + "   _result==" + result);
                     //OneKeyLoginManager.getInstance().setLoadingVisibility(false);
                     //AbScreenUtils.showToast(getApplicationContext(), "用户点击登录获取token成功");
+                    try {
+                        JSONObject ob=new JSONObject(result);
+                        requestLoginForSdk("4",ob.getString("token"),"","");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+
                 } else {
                     Log.e("VVV", "用户点击登录获取token失败： _code==" + code + "   _result==" + result);
                     ToastUtil.showToast("用户点击登录获取token失败： _code==" + code + "   _result==" + result);
 //                    relative_normal.setVisibility(View.VISIBLE);
+                    LoginActivity.this.finish();
                 }
                 long startTime = System.currentTimeMillis();
                 startResultActivity(code, result, startTime);
@@ -396,6 +407,44 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
+
+
+
+    /**
+     * description ：除了短信登录外的登录
+     * creation date: 2020/4/8
+     * param :type|1=微信2=qq3=苹果4=闪验
+     * user : zhangtongju
+     */
+    private void requestLoginForSdk(String type,String flash_token,String nickname,String photourl) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("type", type);
+        params.put("flash_token", flash_token);
+        params.put("nickname", nickname);
+        params.put("photourl", photourl);
+
+        // 启动时间
+        Observable ob = Api.getDefault().toLoginSms(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(LoginActivity.this) {
+            @Override
+            protected void _onError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(UserInfo data) {
+                String str = StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM", "requestLogin=" + str);
+                BaseConstans.SetUserToken(data.getToken());
+                BaseConstans.SetUserId(data.getId());
+                LoginActivity.this.finish();
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+    }
+
+
+
+
     private Timer timer;
     private TimerTask task;
     private int total_Time = 60;
@@ -505,6 +554,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 plamformType = (plamformType.equals("QQ") ? QQ : WEIXIN);
                 ToastUtil.showToast(name);
 //                requestLogin(plamformType, data.get("openid"), data.get("unionid"), iconUrl, name);
+                requestLoginForSdk("1","",name,iconUrl);
             }
         }
 
