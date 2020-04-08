@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,6 +12,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
@@ -27,6 +29,7 @@ import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -186,25 +189,25 @@ public class UpdateApkActivity extends Activity implements OnClickListener {
             super.handleMessage(msg);
             switch (msg.what) {
                 case 100:
-//                    progressDialog.setProgress(msg.arg1);
                     progressbar.setProgress(msg.arg1);
 
                     break;
                 case 101:
-//                    progressDialog.cancel();
+
+
+
                     dialog.dismiss();
                     break;
                 case 102:
-//                    progressDialog.show();
-
                     showDialog();
-
                     break;
             }
         }
     };
-
+   private  String mImageCopyFolder;
     protected void initView() {
+        FileManager fileManager = new FileManager();
+        mImageCopyFolder = fileManager.getFileCachePath(this, "APKfile");
         inflater = LayoutInflater.from(this);
     }
 
@@ -248,10 +251,17 @@ public class UpdateApkActivity extends Activity implements OnClickListener {
      * 安装apk
      */
     private void installApk(File file) {
+        LogUtil.d("OOM","开始安装");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { //7.0以上就不可以了
-            //之后
+
+//            if (Build.VERSION.SDK_INT >= 26) {
+//                boolean b = getPackageManager().canRequestPackageInstalls();
+//                if (!b) {
+//                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.REQUEST_INSTALL_PACKAGES}, 1);
+//                }
+//            }
+
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            //File file = (new File(apkPath));
             // 由于没有在Activity环境下启动Activity,设置下面的标签
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             //参数1 上下文, 参数2 Provider主机地址 和配置文件中保持一致   参数3  共享的文件
@@ -271,22 +281,6 @@ public class UpdateApkActivity extends Activity implements OnClickListener {
 
     }
 
-//    @Override
-//    public void onClick(View v) {
-//        super.onClick(v);
-//        switch (v.getId()) {
-//            case R.id.iv_close:
-//                this.finish();
-//                break;
-//            case R.id.right_now_update:
-//                if (!DoubleClick.getInstance().isFastDoubleClick()) {
-//                    checkJurisdiction();
-//                }
-//                break;
-//            default:
-//                break;
-//        }
-//    }
 
 
     private void downApk() {
