@@ -624,7 +624,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 }
                 MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
                 mediaUi2.setImageAsset(paths.get(0));
-                mTemplateViews.get(lastChoosePosition).invalidate();
+                if(mTemplateViews.size()-1>=lastChoosePosition){
+                    //加个判断，不知道为什么会出现数组越界
+                    mTemplateViews.get(lastChoosePosition).invalidate();
+                }
                 ModificationSingleThumbItem(paths.get(0));
             } else {
                 boolean hasCache = nowTemplateIsAnim != 1;
