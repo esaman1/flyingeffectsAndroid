@@ -105,6 +105,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+
+
         if (null != shanyan_login_relative) {
             shanyan_login_relative.removeAllViews();
         }
@@ -115,6 +118,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             videoView = null;
         }
         EventBus.getDefault().unregister(this);
+    }
+
+
+    private void dissMissShanYanUi(){
+        OneKeyLoginManager.getInstance().finishAuthActivity();
+        OneKeyLoginManager.getInstance().removeAllListener();
     }
 
     private void openLoginActivity() {
@@ -152,11 +161,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         e.printStackTrace();
                     }
 
-
-
                 } else {
                     Log.e("VVV", "用户点击登录获取token失败： _code==" + code + "   _result==" + result);
-                    ToastUtil.showToast("用户点击登录获取token失败： _code==" + code + "   _result==" + result);
+//                    ToastUtil.showToast("用户点击登录获取token失败： _code==" + code + "   _result==" + result);
 //                    relative_normal.setVisibility(View.VISIBLE);
                     LoginActivity.this.finish();
                 }
@@ -437,9 +444,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 LogUtil.d("OOM", "requestLogin=" + str);
                 BaseConstans.SetUserToken(data.getToken());
                 BaseConstans.SetUserId(data.getId());
+                dissMissShanYanUi();
                 LoginActivity.this.finish();
             }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
 
@@ -551,8 +559,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 bundle.putSerializable("name", name);
                 bundle.putSerializable("iconUrl", iconUrl);
                 String plamformType = platform.toString();
-                plamformType = (plamformType.equals("QQ") ? QQ : WEIXIN);
-                ToastUtil.showToast(name);
+//                plamformType = (plamformType.equals("QQ") ? QQ : WEIXIN);
+//                ToastUtil.showToast(name);
 //                requestLogin(plamformType, data.get("openid"), data.get("unionid"), iconUrl, name);
                 requestLoginForSdk("1","",name,iconUrl);
             }

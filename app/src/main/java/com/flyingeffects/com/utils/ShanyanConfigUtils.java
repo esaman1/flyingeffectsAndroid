@@ -24,11 +24,11 @@ public class ShanyanConfigUtils {
         Drawable backgruond = context.getResources().getDrawable(R.drawable.shanyan_demo_auth_no_bg);
         Drawable returnBg = context.getResources().getDrawable(R.drawable.shanyan_demo_return_left_bg);
         //loading自定义加载框
-        LayoutInflater inflater = LayoutInflater.from(context);
-        RelativeLayout view_dialog = (RelativeLayout) inflater.inflate(R.layout.shanyan_demo_dialog_layout, null);
-        RelativeLayout.LayoutParams mLayoutParams3 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-        view_dialog.setLayoutParams(mLayoutParams3);
-        view_dialog.setVisibility(View.GONE);
+//        LayoutInflater inflater = LayoutInflater.from(context);
+//        RelativeLayout view_dialog = (RelativeLayout) inflater.inflate(R.layout.shanyan_demo_dialog_layout, null);
+//        RelativeLayout.LayoutParams mLayoutParams3 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+//        view_dialog.setLayoutParams(mLayoutParams3);
+//        view_dialog.setVisibility(View.GONE);
 
 //        //号码栏背景
 //        LayoutInflater numberinflater = LayoutInflater.from(context);
@@ -104,7 +104,7 @@ public class ShanyanConfigUtils {
 
 //                .addCustomView(numberLayout, false, false, null)
 
-                .setLoadingView(view_dialog)
+//                .setLoadingView(view_dialog)
                 // 添加自定义控件:
                 .addCustomView(relativeLayout, false, false, null)
                 //标题栏下划线，可以不写
