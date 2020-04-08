@@ -192,11 +192,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 if (!isChecked) {
                     statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutopen");
                     //修改图为裁剪后的素材
-                    presenter.ChangeMaterial(originalPath, bottomButtonCount,needAssetsCount);
+                    presenter.ChangeMaterial(originalPath, bottomButtonCount, needAssetsCount);
                 } else {
                     statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutoff");
                     //修改为裁剪前的素材
-                    presenter.ChangeMaterial(imgPath, bottomButtonCount,needAssetsCount);
+                    presenter.ChangeMaterial(imgPath, bottomButtonCount, needAssetsCount);
                 }
                 if (mPlayer != null) {
                     mPlayer.pause();
@@ -243,7 +243,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
     @Override
-    public void ChangeMaterialCallback(ArrayList<TemplateThumbItem> callbackListItem, List<String> list_all,List<String> listAssets) {
+    public void ChangeMaterialCallback(ArrayList<TemplateThumbItem> callbackListItem, List<String> list_all, List<String> listAssets) {
         listItem.clear();
         listItem.addAll(callbackListItem);
         templateThumbAdapter.notifyDataSetChanged();
@@ -416,7 +416,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 //                //漫画需要单独前面加一个原图的值，然后第二个值需要隐藏页面
 //                list_all.add(paths.get(0));
 //            }
-
 
 
             //这里是为了替换用户操作的页面
@@ -674,7 +673,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                             mTemplateViews.get(lastChoosePosition).invalidate();
                             ModificationSingleThumbItem(paths.get(0));
                         } else {
-                            MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(pickIndex).ui;
+                            int total = mTemplateModel.getAssetsSize()-1;
+                            //倒敘
+                            int nowChooseIndex = total - pickIndex;
+                            MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(nowChooseIndex).ui;
                             mediaUi2.setImageAsset(tailorPaths.get(0));
                             mTemplateViews.get(lastChoosePosition).invalidate();
                             ModificationSingleThumbItem(tailorPaths.get(0));
