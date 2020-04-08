@@ -48,7 +48,7 @@ public class ChannelUtil {
         }
 
         if (channel == null || channel.length() <= 0) {
-            channel = "test";
+            channel = "oppo";
         }
         return channel;
 //        return  "360";

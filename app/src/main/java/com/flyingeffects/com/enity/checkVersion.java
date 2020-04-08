@@ -5,7 +5,16 @@ import java.io.Serializable;
 public class checkVersion implements Serializable {
 
     private String id;
-    private String version;
+
+    public String getNewversion() {
+        return newversion;
+    }
+
+    public void setNewversion(String newversion) {
+        this.newversion = newversion;
+    }
+
+    private String newversion;
 
     public String getId() {
         return id;
@@ -15,13 +24,6 @@ public class checkVersion implements Serializable {
         this.id = id;
     }
 
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
 
     public String getTitle() {
         return title;
@@ -37,14 +39,6 @@ public class checkVersion implements Serializable {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
     }
 
     public String getIs_renew() {
@@ -65,7 +59,16 @@ public class checkVersion implements Serializable {
 
     private String title;
     private String content;
-    private String path;
+
+    public String getDownloadfile() {
+        return downloadfile;
+    }
+
+    public void setDownloadfile(String downloadfile) {
+        this.downloadfile = downloadfile;
+    }
+
+    private String downloadfile;
     private String is_renew;
     private String enabled;
 

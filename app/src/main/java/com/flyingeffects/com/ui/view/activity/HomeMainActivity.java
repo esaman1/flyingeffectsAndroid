@@ -128,6 +128,7 @@ public class HomeMainActivity extends FragmentActivity {
     public void checkUpdate() {
         HashMap<String, String> params = new HashMap<>();
         params.put("config_name","android_version_ad");
+        params.put("channel",BaseConstans.getChannel());
         Observable ob = Api.getDefault().checkUpdate(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<checkVersion>(this) {
             @Override
@@ -142,12 +143,12 @@ public class HomeMainActivity extends FragmentActivity {
                 LogUtil.d("checkUpdate", StringUtil.beanToJSONString(data));
                 try {
                     if (data != null) {
-                        String uploadVersion = data.getVersion();
+                        String uploadVersion = data.getNewversion();
                         String content = data.getContent();
                         int uVersion = Integer.parseInt(uploadVersion);
                         int NowVersion = Integer.parseInt(BaseConstans.getVersionCode());
                         if (uVersion > NowVersion) {
-                            intoCheckUpdateAct(data.getPath(), data.getIs_renew(), content);
+                            intoCheckUpdateAct(data.getDownloadfile(), data.getIs_renew(), content);
                         }
                     }
                 } catch (NumberFormatException e) {

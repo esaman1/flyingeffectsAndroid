@@ -124,7 +124,7 @@ public interface ApiService {
     Observable<HttpResult<List<new_fag_template_item>>> getTemplate(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
-    @POST("/api/template/configList")
+    @POST("/api/version/versionCheck")
     Observable<HttpResult<checkVersion>> checkUpdate(@FieldMap Map<String, String> params);
 
 

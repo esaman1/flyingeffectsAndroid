@@ -1,13 +1,16 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
@@ -46,6 +49,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * ClassName UpdateApkActivity
@@ -53,7 +57,9 @@ import butterknife.BindView;
  * author HRXA)
  * date 2015年3月16日
  */
-public class UpdateApkActivity extends BaseActivity implements OnClickListener {
+public class UpdateApkActivity extends Activity implements OnClickListener {
+
+    private String TAG="UpdateApkActivity";
 
     @BindView(R.id.right_now_update)
     TextView right_now_update;
@@ -156,10 +162,22 @@ public class UpdateApkActivity extends BaseActivity implements OnClickListener {
     }
 
 
+//    @Override
+//    protected int getLayoutId() {
+//        return R.layout.activity_apk_update;
+//    }
+
+
     @Override
-    protected int getLayoutId() {
-        return R.layout.activity_apk_update;
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_apk_update);
+        ButterKnife.bind(this);
+        initView();
+        initAction();
     }
+
+
 
     @SuppressLint("HandlerLeak")
     Handler handler = new Handler() {
@@ -186,12 +204,10 @@ public class UpdateApkActivity extends BaseActivity implements OnClickListener {
         }
     };
 
-    @Override
     protected void initView() {
         inflater = LayoutInflater.from(this);
     }
 
-    @Override
     protected void initAction() {
         content = getIntent().getStringExtra("content");
         if (content != null && !content.equals("")) {
@@ -255,22 +271,22 @@ public class UpdateApkActivity extends BaseActivity implements OnClickListener {
 
     }
 
-    @Override
-    public void onClick(View v) {
-        super.onClick(v);
-        switch (v.getId()) {
-            case R.id.iv_close:
-                this.finish();
-                break;
-            case R.id.right_now_update:
-                if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                    checkJurisdiction();
-                }
-                break;
-            default:
-                break;
-        }
-    }
+//    @Override
+//    public void onClick(View v) {
+//        super.onClick(v);
+//        switch (v.getId()) {
+//            case R.id.iv_close:
+//                this.finish();
+//                break;
+//            case R.id.right_now_update:
+//                if (!DoubleClick.getInstance().isFastDoubleClick()) {
+//                    checkJurisdiction();
+//                }
+//                break;
+//            default:
+//                break;
+//        }
+//    }
 
 
     private void downApk() {
@@ -361,11 +377,10 @@ public class UpdateApkActivity extends BaseActivity implements OnClickListener {
         builder.setView(view);
 
 
-
         builder.setCancelable(false);
         dialog = builder.show();
         final Window window = dialog.getWindow();
-        if(window!=null){
+        if (window != null) {
             window.getDecorView().setBackgroundColor(getResources().getColor(R.color.transparent));
             window.getDecorView().setPadding(0, 0, 0, 0);
         }
@@ -382,8 +397,7 @@ public class UpdateApkActivity extends BaseActivity implements OnClickListener {
     }
 
 
-
-    private void stopUpdate(){
+    private void stopUpdate() {
         if (fos != null) {
             try {
                 fos.close();
@@ -394,6 +408,22 @@ public class UpdateApkActivity extends BaseActivity implements OnClickListener {
         File file = new File(Environment.getExternalStorageDirectory(), "renwodaiUpdate" + ".apk");
         if (file.exists()) {
             file.delete();
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.iv_close:
+                this.finish();
+                break;
+            case R.id.right_now_update:
+                if (!DoubleClick.getInstance().isFastDoubleClick()) {
+                    checkJurisdiction();
+                }
+                break;
+            default:
+                break;
         }
     }
 }
