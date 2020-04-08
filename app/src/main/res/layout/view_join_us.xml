@@ -4,6 +4,7 @@
     android:background="#000000"
     android:orientation="vertical"
     android:layout_marginTop="5dp"
+    android:visibility="gone"
     android:padding="5dp"
     android:id="@+id/ConstraintLayout_addVideo"
     android:layout_height="@dimen/dp_107">

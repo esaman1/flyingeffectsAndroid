@@ -106,8 +106,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     public void onDestroy() {
         super.onDestroy();
 
-
-
         if (null != shanyan_login_relative) {
             shanyan_login_relative.removeAllViews();
         }

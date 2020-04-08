@@ -21,9 +21,9 @@ public class ShanyanConfigUtils {
     //    //沉浸式竖屏样式
     public static ShanYanUIConfig getCJSConfig(final Context context) {
         /************************************************自定义控件**************************************************************/
-        Drawable logBtnImgPath = context.getResources().getDrawable(R.drawable.shanyan_demo_auth_bt);
+        Drawable logBtnImgPath = context.getResources().getDrawable(R.drawable.login_weixin);
         Drawable backgruond = context.getResources().getDrawable(R.drawable.shanyan_demo_auth_no_bg);
-        Drawable returnBg = context.getResources().getDrawable(R.drawable.shanyan_demo_return_left_bg);
+        Drawable returnBg = context.getResources().getDrawable(R.mipmap.close_login);
         //loading自定义加载框
 //        LayoutInflater inflater = LayoutInflater.from(context);
 //        RelativeLayout view_dialog = (RelativeLayout) inflater.inflate(R.layout.shanyan_demo_dialog_layout, null);
@@ -62,16 +62,19 @@ public class ShanyanConfigUtils {
                 //授权页导航栏：
                 .setNavColor(Color.parseColor("#ffffff"))  //设置导航栏颜色
                 .setNavText("")  //设置导航栏标题文字
-                .setNavReturnBtnWidth(35)
-                .setNavReturnBtnHeight(35)
+                .setNavReturnBtnWidth(24)
+                .setNavReturnBtnHeight(24)
                 .setAuthBGImgPath(backgruond)
                 .setLogoHidden(true)   //是否隐藏logo
                 .setDialogDimAmount(0f)
                 .setNavReturnImgPath(returnBg)
                 .setFullScreen(true)
+                .setNavReturnBtnOffsetX(24)
+                .setNavReturnBtnOffsetY(24)
                 .setStatusBarHidden(true)
-                .setAuthNavTransparent(true)
-                .setAuthNavHidden(true)
+                .setLogBtnOffsetY(100)
+//                .setAuthNavTransparent(true)
+//                .setAuthNavHidden(true)
 
 
                 //授权页号码栏：
@@ -84,7 +87,7 @@ public class ShanyanConfigUtils {
 
                 //授权页登录按钮：
                 .setLogBtnText("本机号码一键登录")  //设置登录按钮文字
-                .setLogBtnTextColor(0xffffffff)   //设置登录按钮文字颜色
+                .setLogBtnTextColor(Color.parseColor("#333333"))   //设置登录按钮文字颜色
                 .setLogBtnImgPath(logBtnImgPath)   //设置登录按钮图片
                 .setLogBtnTextSize(15)
                 .setLogBtnHeight(45)

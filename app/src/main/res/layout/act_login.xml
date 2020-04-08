@@ -4,16 +4,7 @@
     android:layout_height="match_parent">
 
 
-    <ImageView
-        android:id="@+id/iv_close"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="20dp"
-        android:contentDescription="@string/app_name"
-        android:padding="5dp"
-        android:src="@mipmap/close_login" />
+
 
     <ImageView
         android:layout_width="wrap_content"
@@ -31,7 +22,16 @@
         android:background="@mipmap/login_bj"
        >
 
-
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/app_name"
+            android:padding="5dp"
+            android:src="@mipmap/close_login" />
 
 
 
