@@ -319,7 +319,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
-    @OnClick({R.id.tv_login, R.id.iv_close})
+    @OnClick({R.id.tv_login, R.id.iv_close,R.id.ll_weixin})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_login:
@@ -336,6 +336,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
             case R.id.iv_close:
                 LoginActivity.this.finish();
+                break;
+
+            case R.id.ll_weixin:
+                wxLogin();
                 break;
             default:
                 break;

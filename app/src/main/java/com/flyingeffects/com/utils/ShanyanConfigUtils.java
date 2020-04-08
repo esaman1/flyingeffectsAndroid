@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 
 import com.chuanglan.shanyan_sdk.tool.ShanYanUIConfig;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.WxLogin;
 
 import de.greenrobot.event.EventBus;
@@ -91,10 +92,10 @@ public class ShanyanConfigUtils {
                 .setLogBtnWidth(AbScreenUtils.getScreenWidth(context, true) - 50)
 
                 //授权页隐私栏：
-                .setAppPrivacyOne("闪验用户协议", "https://api.253.com/api_doc/yin-si-zheng-ce/wei-hu-wang-luo-an-quan-sheng-ming.html")  //设置开发者隐私条款1名称和URL(名称，url)
-                .setAppPrivacyTwo("闪验隐私政策", "https://api.253.com/api_doc/yin-si-zheng-ce/ge-ren-xin-xi-bao-hu-sheng-ming.html")  //设置开发者隐私条款2名称和URL(名称，url)
+                .setAppPrivacyOne("用户协议", BaseConstans.PROTOCOL)  //设置开发者隐私条款1名称和URL(名称，url)
+                .setAppPrivacyTwo("隐私政策", BaseConstans.PRIVACYPOLICY)  //设置开发者隐私条款2名称和URL(名称，url)
                 .setAppPrivacyColor(Color.parseColor("#ffffff"), Color.parseColor("#60C4FC"))    //	设置隐私条款名称颜色(基础文字颜色，协议文字颜色)
-                .setPrivacyText("同意", "和", "、", "、", "并授权闪验测试demo获取手机号")
+                .setPrivacyText("同意", "和", "、", "、", "并授权手机号")
                 .setPrivacyOffsetBottomY(20)//设置隐私条款相对于屏幕下边缘y偏
                 .setPrivacyState(true)
                 .setPrivacyTextSize(10)

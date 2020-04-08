@@ -26,9 +26,10 @@
     <RelativeLayout
         android:id="@+id/relative_normal"
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:layout_height="match_parent"
         android:background="@mipmap/login_bj"
-        android:visibility="gone">
+       >
 
 
 
@@ -171,17 +172,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="32dp"
             android:orientation="horizontal"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <LinearLayout
                 android:id="@+id/ll_weixin"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dp_35"
-                android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -212,6 +213,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dp_35"
+                android:visibility="gone"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
