@@ -1,7 +1,6 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -18,6 +17,7 @@ import android.widget.TextView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.utils.ToastUtil;
 
 import java.util.List;
@@ -50,9 +50,6 @@ public class intoOtherAppActivity extends Activity {
         tv_title_1=findViewById(R.id.tv_title_1);
         tv_tencent=findViewById(R.id.tv_tencent);
         tv_content=findViewById(R.id.tv_content);
-
-
-
         if (BaseConstans.configList != null) {
             pageType = BaseConstans.configList.getType();
             if (pageType == 1) {
@@ -68,6 +65,13 @@ public class intoOtherAppActivity extends Activity {
             tv_title.setText(BaseConstans.configList.getTitle());
             tv_title_1.setText(BaseConstans.configList.getContent());
             tv_tencent.setText(BaseConstans.configList.getCopydata());
+        }else{
+            BaseConstans.configList=new ConfigForTemplateList();
+            BaseConstans.configList.setContent("已为您复制微信号");
+            BaseConstans.configList.setType(1);
+            BaseConstans.configList.setCopydata("wordcq520");
+            BaseConstans.configList.setDescription("加微信领取100套精美背景素材");
+            BaseConstans.configList.setSecondline("领取100套精美素材");
         }
 
 
@@ -113,14 +117,6 @@ public class intoOtherAppActivity extends Activity {
         ClipboardManager tvCopy = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         tvCopy.setPrimaryClip(ClipData.newPlainText(null, BaseConstans.getService_wxi()));
         openWx();
-//        new AlertDialog.Builder(this)
-//                .setTitle(R.string.notification)
-//                .setMessage(getString(R.string.contacts_saved_to_clipboard) +
-//                        BaseConstans.configList.getCopydata() + "\n" +
-//                        getString(R.string.promote_message))
-//                .setPositiveButton(getString(R.string.confirm), (dialog, which) -> openWx())
-//                .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss())
-//                .show();
     }
 
 

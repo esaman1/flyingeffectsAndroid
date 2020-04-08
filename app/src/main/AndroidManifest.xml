@@ -102,9 +102,10 @@
 
 
 
+<!--        Theme.Translucent.NoTitleBar.Fullscreen-->
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.intoOtherAppActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
 
         <activity
