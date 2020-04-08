@@ -1,9 +1,11 @@
 package com.flyingeffects.com.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -14,6 +16,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.GlideRoundTransform;
+import com.flyingeffects.com.ui.view.activity.intoOtherAppActivity;
 
 import java.util.List;
 
@@ -45,9 +48,11 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
 //                .apply(RequestOptions.placeholderOf(getDrawble(offset)))
                 .into((ImageView) helper.getView(R.id.iv_cover));
         ImageView iv_show_author=helper.getView(R.id.iv_show_author);
+        RelativeLayout ConstraintLayout_addVideo = helper.getView(R.id.ConstraintLayout_addVideo);
         TextView tv_name=helper.getView(R.id.tv_name);
         tv_name.setText(item.getTitle());
         if(fromType==1){
+            //背景
             iv_show_author.setVisibility(View.VISIBLE);
             tv_name.setVisibility(View.GONE);
             Glide.with(context)
@@ -55,6 +60,21 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                     .into(iv_show_author);
         }else {
+            //模板
+            if(offset == 1){
+                ConstraintLayout_addVideo.setVisibility(View.VISIBLE);
+                ConstraintLayout_addVideo.setOnClickListener(v -> {
+                    Intent intent = new Intent(context, intoOtherAppActivity.class);
+                    intent.putExtra("wx", "");
+                    intent.putExtra("kuaishou", "");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    context.startActivity(intent);
+                });
+            }else{
+                ConstraintLayout_addVideo.setVisibility(View.GONE);
+            }
+
+
             iv_show_author.setVisibility(View.GONE);
             tv_name.setVisibility(View.VISIBLE);
         }

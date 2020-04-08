@@ -2,24 +2,15 @@ package com.flyingeffects.com.manager;
 
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import rx.Observable;
-import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -46,22 +37,13 @@ public class DownImageManager {
 
 
     public void downImage(String path) {
-        Observable.just(path).map(s -> {
-            File file = null;
+        Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
             try {
-                file = Glide.with(context)
+                File file = Glide.with(context)
                         .load(s)
                         .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                         .get();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return file;
-        }).subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.newThread()).subscribe(new Action1<File>() {
-            @Override
-            public void call(File file) {
-                if(file!=null){
+                if (file != null) {
                     downSuccessNum++;
                     hasDownList.add(file.getPath());
                     if (hasDownList.size() == listForMatting.size()) {
@@ -70,61 +52,64 @@ public class DownImageManager {
                         downImage(listForMatting.get(downSuccessNum));
                     }
                 }
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
-    }
-
-
-    public void downImageForByte(String path) {
-        Observable.just(path).map(new Func1<String, File>() {
-            @Override
-            public File call(String s) {
-                File file = null;
-                Bitmap bp = convertStringToIcon(s);
-                String path = keepUunCatchPath + File.separator + UUID.randomUUID() + ".png";
-                FileManager.saveBitmapToPath(bp, path, null);
-                file = new File(path);
-                return file;
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.newThread()).subscribe(new Action1<File>() {
-            @Override
-            public void call(File file) {
-                downSuccessNum++;
-                hasDownList.add(file.getPath());
-                if (hasDownList.size() == listForMatting.size()) {
-                    callback.isSuccess(hasDownList);
-                } else {
-                    downImageForByte(listForMatting.get(downSuccessNum));
-                }
-            }
-        });
 
     }
 
 
-    /**
-     * string转成bitmap
-     *
-     * @param st
-     */
-    public static Bitmap convertStringToIcon(String st) {
-        // OutputStream out;
-        Bitmap bitmap = null;
-        try {
-            // out = new FileOutputStream("/sdcard/aa.jpg");
-            byte[] bitmapArray;
-            bitmapArray = Base64.decode(st, Base64.DEFAULT);
-            bitmap =
-                    BitmapFactory.decodeByteArray(bitmapArray, 0,
-                            bitmapArray.length);
-            // bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-            return bitmap;
-        } catch (Exception e) {
-            return null;
-        }
-    }
+//    public void downImageForByte(String path) {
+//        Observable.just(path).map(new Func1<String, File>() {
+//            @Override
+//            public File call(String s) {
+//                File file = null;
+//                Bitmap bp = convertStringToIcon(s);
+//                String path = keepUunCatchPath + File.separator + UUID.randomUUID() + ".png";
+//                FileManager.saveBitmapToPath(bp, path, null);
+//                file = new File(path);
+//                return file;
+//            }
+//        }).subscribeOn(Schedulers.io())
+//                .observeOn(Schedulers.newThread()).subscribe(new Action1<File>() {
+//            @Override
+//            public void call(File file) {
+//                downSuccessNum++;
+//                hasDownList.add(file.getPath());
+//                if (hasDownList.size() == listForMatting.size()) {
+//                    callback.isSuccess(hasDownList);
+//                } else {
+//                    downImageForByte(listForMatting.get(downSuccessNum));
+//                }
+//            }
+//        });
+//    }
+
+
+//    /**
+//     * string转成bitmap
+//     *
+//     * @param st
+//     */
+//    public static Bitmap convertStringToIcon(String st) {
+//        // OutputStream out;
+//        Bitmap bitmap = null;
+//        try {
+//            // out = new FileOutputStream("/sdcard/aa.jpg");
+//            byte[] bitmapArray;
+//            bitmapArray = Base64.decode(st, Base64.DEFAULT);
+//            bitmap =
+//                    BitmapFactory.decodeByteArray(bitmapArray, 0,
+//                            bitmapArray.length);
+//            // bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+//            return bitmap;
+//        } catch (Exception e) {
+//            return null;
+//        }
+//    }
 
 
     public interface keepImageToLocalState {

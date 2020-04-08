@@ -40,4 +40,10 @@
     <string name="cancel_login">取消登录</string>
     <string name="login_fail">登录失败</string>
 
+
+    <string name="join_us">加入友友交流群</string>
+
+    <string name="get_gift">领取100套背景素材</string>
+
+
 </resources>

@@ -169,20 +169,22 @@ public class CompressionCuttingManage {
 
                         @Override
                         public void onSuccess(File file) {
-                            nowCompressSuccessNum++;
-                            LogUtil.d("OOM", "onSuccess=" + file.getPath());
-                            //全部图片压缩完成
-                            if (nowCompressSuccessNum == nowChoosePathNum) {
-                                //todo 这里会出现一个bug ,设置了mCatchFolder ，但是裁剪后不会进入到里面去
-                                if (nowChoosePathNum == 1) {
-                                    allCompressPaths.clear();
-                                    allCompressPaths.add(file.getPath());
-                                    upLoad(allCompressPaths);
-                                } else {
-                                    allCompressPaths = FileManager.getFilesAllName(file.getParent());
-                                    upLoad(allCompressPaths);
-                                }
+                            if(file!=null){
+                                nowCompressSuccessNum++;
+                                LogUtil.d("OOM", "onSuccess=" + file.getPath());
+                                //全部图片压缩完成
+                                if (nowCompressSuccessNum == nowChoosePathNum) {
+                                    //todo 这里会出现一个bug ,设置了mCatchFolder ，但是裁剪后不会进入到里面去
+                                    if (nowChoosePathNum == 1) {
+                                        allCompressPaths.clear();
+                                        allCompressPaths.add(file.getPath());
+                                        upLoad(allCompressPaths);
+                                    } else {
+                                        allCompressPaths = FileManager.getFilesAllName(file.getParent());
+                                        upLoad(allCompressPaths);
+                                    }
 
+                                }
                             }
                         }
 

@@ -76,6 +76,10 @@
         </provider>
 
 
+
+
+
+
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.WelcomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -95,6 +99,12 @@
             android:name="com.flyingeffects.com.ui.view.activity.VideoCropActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
+
+
+
+        <activity
+            android:name="com.flyingeffects.com.ui.view.activity.intoOtherAppActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
 
 
         <activity

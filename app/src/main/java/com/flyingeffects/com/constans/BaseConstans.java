@@ -18,6 +18,8 @@ import java.util.HashMap;
 
 public class BaseConstans {
     public static final String UMENGAPPID = "5e5c68a2570df3d6930002b4";
+    public static String titok;
+    public static String kuaishou;
     public static final boolean PRODUCTION = false;
     private static String channel = "";
     private static String versionCode = "";
@@ -146,6 +148,22 @@ public class BaseConstans {
             return service_wxi;
         } else {
             return "wordcq520";
+        }
+    }
+
+    public static String gettitokOrKuaishou(boolean isTiktok) {
+        if (isTiktok) {
+            if (titok != null && !titok.equals("")) {
+                return titok;
+            } else {
+                return "http://v.douyin.com/B62HrT/";
+            }
+        } else {
+            if (kuaishou != null && !kuaishou.equals("")) {
+                return kuaishou;
+            } else {
+                return "看了这么多快手，还是「卡点哥哥」最好玩了！ http://m.gifshow.com/s/xEna7Voi 复制此链接，打开【快手】直接观看！";
+            }
         }
     }
 
