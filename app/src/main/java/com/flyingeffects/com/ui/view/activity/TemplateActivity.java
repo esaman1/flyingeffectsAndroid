@@ -614,7 +614,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-        if (!isCancel && tag == REQUEST_SINGLE_MEDIA) {
+        if (!isCancel && tag == REQUEST_SINGLE_MEDIA&&paths!=null&&paths.size()>0) {
             if (originalPath == null || originalPath.size() == 0) {
                 //不需要抠图
                 if (imgPath.size() > lastChoosePosition) {

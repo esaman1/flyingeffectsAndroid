@@ -70,7 +70,6 @@ public class frag_user_center extends BaseFragment {
     @Override
     protected void initView() {
 
-
         iv_about.setOnClickListener(view -> {
             statisticsEventAffair.getInstance().setFlag(getActivity(), "3_help");
             Intent intent = new Intent(getActivity(), AboutActivity.class);
@@ -159,23 +158,28 @@ public class frag_user_center extends BaseFragment {
 
 
     private void requestUserInfo() {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("token", BaseConstans.GetUserToken());
-        // 启动时间
-        Observable ob = Api.getDefault().getUserInfo(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(getActivity()) {
-            @Override
-            protected void _onError(String message) {
-                tv_id.setText("未登录");
-                BaseConstans.SetUserToken("");
-            }
+        if(getActivity()!=null){
+            HashMap<String, String> params = new HashMap<>();
+            params.put("token", BaseConstans.GetUserToken());
+            // 启动时间
+            Observable ob = Api.getDefault().getUserInfo(BaseConstans.getRequestHead(params));
+            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(getActivity()) {
+                @Override
+                protected void _onError(String message) {
+                    tv_id.setText("未登录");
+                    BaseConstans.SetUserToken("");
+                }
 
-            @Override
-            protected void _onNext(UserInfo data) {
-                tv_id.setText("我的id号：" + data.getId());
-            }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
-    }
+                @Override
+                protected void _onNext(UserInfo data) {
+                    if(getActivity()!=null){
+                        tv_id.setText("我的id号：" + data.getId());
+                    }
+                }
+            }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+        }
+        }
+
 
 
 

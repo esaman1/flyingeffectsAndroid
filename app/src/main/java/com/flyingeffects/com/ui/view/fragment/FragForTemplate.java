@@ -45,8 +45,6 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
     @Override
     protected void initView() {
         home_fagMvpPresenter Presenter = new home_fagMvpPresenter(getActivity(), this);
-
-
         Presenter.getFragmentList();
     }
 
@@ -62,42 +60,45 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
     @Override
     public void setFragmentList(List<TemplateType> data) {
-        if (data != null && data.size() > 0) {
-            ArrayList<Fragment> list = new ArrayList<>();
-            FragmentManager manager = getFragmentManager();
-            String[] titles = new String[data.size()];
-            for (int i = 0; i < data.size(); i++) {
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("id", data.get(i).getId());
-                bundle.putSerializable("num", i);
-                bundle.putSerializable("from", 0);
-                titles[i] = data.get(i).getName();
-                home_item_fag fragment = new home_item_fag();
-                fragment.setArguments(bundle);
-                list.add(fragment);
-            }
-            home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
-            viewpager.setAdapter(adapter);
-            viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int i, float v, int i1) {
-
+        if(getActivity()!=null){
+            if (data != null && data.size() > 0) {
+                ArrayList<Fragment> list = new ArrayList<>();
+                FragmentManager manager = getFragmentManager();
+                String[] titles = new String[data.size()];
+                for (int i = 0; i < data.size(); i++) {
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("id", data.get(i).getId());
+                    bundle.putSerializable("num", i);
+                    bundle.putSerializable("from", 0);
+                    titles[i] = data.get(i).getName();
+                    home_item_fag fragment = new home_item_fag();
+                    fragment.setArguments(bundle);
+                    list.add(fragment);
                 }
+                home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
+                viewpager.setAdapter(adapter);
+                viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int i, float v, int i1) {
 
-                @Override
-                public void onPageSelected(int i) {
-                    if (i <= data.size() - 1) {
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
                     }
-                }
 
-                @Override
-                public void onPageScrollStateChanged(int i) {
+                    @Override
+                    public void onPageSelected(int i) {
+                        if (i <= data.size() - 1) {
+                            statisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
+                        }
+                    }
 
-                }
-            });
-            tabLayout.setViewPager(viewpager, titles);
+                    @Override
+                    public void onPageScrollStateChanged(int i) {
+
+                    }
+                });
+                tabLayout.setViewPager(viewpager, titles);
+            }
         }
+
     }
 
 
