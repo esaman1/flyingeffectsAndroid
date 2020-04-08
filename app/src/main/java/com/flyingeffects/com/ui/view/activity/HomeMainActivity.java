@@ -1,15 +1,19 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View.OnClickListener;
@@ -30,6 +34,7 @@ import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.SPHelper;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.fragment.frag_Bj;
 import com.flyingeffects.com.utils.LogUtil;
@@ -43,6 +48,7 @@ import com.flyingeffects.com.ui.view.fragment.frag_search;
 import com.flyingeffects.com.ui.view.fragment.frag_user_center;
 import com.flyingeffects.com.utils.AssetsUtils;
 import com.glidebitmappool.GlideBitmapPool;
+import com.google.android.exoplayer2.util.NotificationUtil;
 import com.lansosdk.videoeditor.LanSongFileUtil;
 import com.lansosdk.videoeditor.LanSongUtil;
 import com.megvii.segjni.SegJni;
@@ -66,14 +72,15 @@ public class HomeMainActivity extends FragmentActivity {
     private ImageView[] iV_menu = new ImageView[4];
     private TextView[] tv_main = new TextView[4];
     private LinearLayout[] lin_menu = new LinearLayout[4];
-    private int[] lin_Id = {R.id.ll_menu_0, R.id.ll_menu_1, R.id.ll_menu_2,R.id.ll_menu_3};
+    private int[] lin_Id = {R.id.ll_menu_0, R.id.ll_menu_1, R.id.ll_menu_2, R.id.ll_menu_3};
     private int[] img_Id = {R.id.iV_menu_0, R.id.iV_menu_1, R.id.iV_menu_2, R.id.iV_menu_3};
     public HomeMainActivity ThisMain;
-    private int[] tv_main_button = {R.id.tv_main_0, R.id.tv_main_1, R.id.tv_main_2,R.id.tv_main_3};
-    private int[] selectIconArr = {R.mipmap.home_bj,R.mipmap.moban, R.mipmap.chazhao, R.mipmap.wode};
-    private int[] unSelectIconArr = { R.mipmap.home_bj_unselect,R.mipmap.moban_unslect, R.mipmap.chazhao_unselect, R.mipmap.wode_unselect};
+    private int[] tv_main_button = {R.id.tv_main_0, R.id.tv_main_1, R.id.tv_main_2, R.id.tv_main_3};
+    private int[] selectIconArr = {R.mipmap.home_bj, R.mipmap.moban, R.mipmap.chazhao, R.mipmap.wode};
+    private int[] unSelectIconArr = {R.mipmap.home_bj_unselect, R.mipmap.moban_unslect, R.mipmap.chazhao_unselect, R.mipmap.wode_unselect};
     private FragmentManager fragmentManager;
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
+
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
@@ -92,14 +99,15 @@ public class HomeMainActivity extends FragmentActivity {
         clearAllData();
         initView();
         copyFile("default_bj.png");
-        SegJni.nativeCreateSegHandler(this, ConUtil.getFileContent(this, R.raw.megviisegment_model),8);
+        SegJni.nativeCreateSegHandler(this, ConUtil.getFileContent(this, R.raw.megviisegment_model), 8);
         GlideBitmapPool.initialize(10 * 1024 * 1024); // 10mb max memory size
         checkUpdate();
         getUserPhoneInfo();
+        getPushPermission();
     }
 
 
-    public void getUserPhoneInfo(){
+    public void getUserPhoneInfo() {
         OneKeyLoginManager.getInstance().getPhoneInfo(new GetPhoneInfoListener() {
             @Override
             public void getPhoneInfoStatus(int code, String result) {
@@ -111,8 +119,8 @@ public class HomeMainActivity extends FragmentActivity {
 
 
     public void copyFile(String name) {
-        FileManager manager=new FileManager();
-        String dir = manager.getFileCachePath(this,"");
+        FileManager manager = new FileManager();
+        String dir = manager.getFileCachePath(this, "");
         File file = new File(dir, name);
         if (!file.exists()) {
             AssetsUtils.copyFileFromAssets(this, name, file.getPath());
@@ -127,14 +135,13 @@ public class HomeMainActivity extends FragmentActivity {
      */
     public void checkUpdate() {
         HashMap<String, String> params = new HashMap<>();
-        params.put("config_name","android_version_ad");
-        params.put("channel",BaseConstans.getChannel());
+        params.put("config_name", "android_version_ad");
+        params.put("channel", BaseConstans.getChannel());
         Observable ob = Api.getDefault().checkUpdate(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<checkVersion>(this) {
             @Override
             protected void _onError(String message) {
                 LogUtil.d("checkUpdate", message);
-
                 ToastUtil.showToast(message);
             }
 
@@ -155,7 +162,39 @@ public class HomeMainActivity extends FragmentActivity {
                     e.printStackTrace();
                 }
             }
-        }, "checkUpdate", ActivityLifeCycleEvent.DESTROY,lifecycleSubject , false, true, false);
+        }, "checkUpdate", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+
+    private void getPushPermission() {
+        SPHelper spUtil = new SPHelper(this, "fileName");
+        boolean isFirst = spUtil.getBoolean("isFirst", true);
+        if (isFirst) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.permission_alert)
+                    .setMessage(R.string.permission_content)
+                    .setPositiveButton(getString(R.string.toGetPermission), (dialog, which) -> goToSetting())
+                    .show();
+            spUtil.putBoolean("isFirst", false);
+        }
+    }
+
+
+    private void goToSetting() {
+        Intent intent = new Intent();
+        if (Build.VERSION.SDK_INT >= 26) {// android 8.0引导
+            intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+            intent.putExtra("android.provider.extra.APP_PACKAGE", getPackageName());
+        } else if (Build.VERSION.SDK_INT >= 21) { // android 5.0-7.0
+            intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+            intent.putExtra("app_package", getPackageName());
+            intent.putExtra("app_uid", getApplicationInfo().uid);
+        } else {//其它
+            intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+            intent.setData(Uri.fromParts("package", getPackageName(), null));
+        }
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
 
@@ -216,12 +255,11 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-
     private OnClickListener listener = v -> {
         switch (v.getId()) {
             case R.id.ll_menu_0:
                 whichMenuSelect(0);
-                statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this,"5_bj");
+                statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "5_bj");
                 break;
             case R.id.ll_menu_1:
                 whichMenuSelect(1);
@@ -230,7 +268,7 @@ public class HomeMainActivity extends FragmentActivity {
                 whichMenuSelect(2);
                 break;
             case R.id.ll_menu_3:
-                statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this,"3_mine");
+                statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "3_mine");
                 whichMenuSelect(3);
                 break;
 
@@ -494,11 +532,6 @@ public class HomeMainActivity extends FragmentActivity {
 //            }
 //        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
 //    }
-
-
-
-
-
 
 
 }
