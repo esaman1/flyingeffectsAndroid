@@ -64,6 +64,18 @@
 
 
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.flyingeffects.com.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="false"
+            >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+        1
+
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.WelcomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
