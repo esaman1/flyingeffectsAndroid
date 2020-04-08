@@ -200,7 +200,7 @@ public class TemplateMvpModel {
      * @param list
      * @param maxChooseNum
      */
-    public void ChangeMaterial(List<String> list,int maxChooseNum){
+    public void ChangeMaterial(List<String> list,int maxChooseNum,int needAssetsCount){
         ArrayList<TemplateThumbItem> listItem=new ArrayList<>();
         for (int i = 0; i < maxChooseNum; i++) {
             listItem.add(new TemplateThumbItem("", 1, false));
@@ -224,7 +224,21 @@ public class TemplateMvpModel {
             listItem.set(i, templateThumbItem);
         }
 
-        callback.ChangeMaterialCallback(listItem,list_all);
+
+
+
+        //这里是为了替换用户操作的页面
+        List<String> listAssets = new ArrayList<>();
+        for (int i = 0; i < needAssetsCount; i++) {  //填满数据，为了缩略图
+            if (list.size() > i && !TextUtils.isEmpty(list.get(i))) {
+                listAssets.add(list.get(i)); //前面的时path ，后面的为默认的path
+            } else {
+                listAssets.add(SxveConstans.default_bg_path);
+            }
+        }
+
+
+        callback.ChangeMaterialCallback(listItem,list_all,listAssets);
 
 
     }

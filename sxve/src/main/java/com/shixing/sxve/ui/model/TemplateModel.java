@@ -211,7 +211,10 @@ public class TemplateModel {
         isReplaceMaterial = false;
         mediaUIModelList = new ArrayList<>();
         textUIModelList = new ArrayList<>();
-        if (mReplaceableAssets != null && mReplaceableAssets.size() > 0) {
+
+
+
+        if ( mReplaceableAssets.size() > 0) {
             for (int i = 0; i < mReplaceableAssets.size(); i++) {
                 if (mReplaceableAssets.get(i) != null) {
                     if (mReplaceableAssets.get(i).ui instanceof MediaUiModel) {
@@ -227,7 +230,7 @@ public class TemplateModel {
         }
 
 
-        for (int i = 0; i < paths.size(); i++) {
+        for (int i = 0; i < mReplaceableAssets.size(); i++) {
             if (paths.get(i) != null && !paths.get(i).equals("")) {
                 String mimeType;
                 String extension = MimeTypeMap.getFileExtensionFromUrl(paths.get(i)); //获得格式
@@ -246,10 +249,6 @@ public class TemplateModel {
                         ((MediaUiModel) assetModel.ui).setImageAsset(paths.get(i));//, context
                     } else if (albumType.isVideo(mimeType)) {
                         String VideoPathOrigin = paths.get(i);
-//                        allVideoNumber++;
-//                        final MediaUiModel1 mModel = (MediaUiModel1) assetModel.ui;
-//                        mModel.setVideoPathOrigin(VideoPathOrigin);//设置视频的源文件地址
-//                        mModel.isVideoSlide = true;
                         ((MediaUiModel) assetModel.ui).setVideoPath(VideoPathOrigin,true,0);//, context
                     }
                 }

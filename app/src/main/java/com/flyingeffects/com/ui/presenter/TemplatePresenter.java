@@ -47,8 +47,8 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
 
 
 
-    public void ChangeMaterial(List<String> list,int maxChooseNum){
-        home_model.ChangeMaterial(list,maxChooseNum);
+    public void ChangeMaterial(List<String> list,int maxChooseNum,int needAssetsCount ){
+        home_model.ChangeMaterial(list,maxChooseNum,needAssetsCount);
     }
 
 
@@ -63,8 +63,8 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     }
 
     @Override
-    public void ChangeMaterialCallback(ArrayList<TemplateThumbItem> listItem, List<String> list_all) {
-        home_mvpView.ChangeMaterialCallback(listItem,list_all);
+    public void ChangeMaterialCallback(ArrayList<TemplateThumbItem> listItem, List<String> list_all,List<String> listAssets) {
+        home_mvpView.ChangeMaterialCallback(listItem,list_all,listAssets);
     }
 
     @Override

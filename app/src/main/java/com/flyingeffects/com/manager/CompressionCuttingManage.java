@@ -128,23 +128,25 @@ public class CompressionCuttingManage {
         localImagePaths = allPaths;
         this.allPaths = allPaths;
         downSuccessNum = 0;
+        listForFaceMatting.clear();
         downImage(allPaths.get(0));
 
     }
 
+   private List<String> listForFaceMatting = new ArrayList<>();
     private void downImage(String path) {
-        List<String> list = new ArrayList<>();
+
         mattingImage.mattingImage(path, (isSuccess, bp) -> {
             downSuccessNum++;
             LogUtil.d("OOM", "正在抠图" + downSuccessNum);
             String fileName = mRuncatheFolder + File.separator + UUID.randomUUID() + ".png";
             BitmapManager.getInstance().saveBitmapToPath(bp, fileName);
-            list.add(fileName);
+            listForFaceMatting.add(fileName);
             GlideBitmapPool.putBitmap(bp);
             if (allPaths.size() == downSuccessNum) {
-                callback.imgList(list);
+                callback.imgList(listForFaceMatting);
                 if (hasCache) {
-                    keepTailorImageToCache(list);
+                    keepTailorImageToCache(listForFaceMatting);
                 }
             } else {
                 downImage(allPaths.get(downSuccessNum));

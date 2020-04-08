@@ -98,10 +98,15 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     private List<String> originalPath;
     private String templateFilePath;
+
+    /**
+     * 底部按钮数量
+     */
+    private int bottomButtonCount;
     /**
      * 需要素材数量
      */
-    private int defaultNum;
+    private int needAssetsCount;
     private String templateName;
     private String fromTo;
 
@@ -159,7 +164,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         Bundle bundle = intent.getBundleExtra("Message");
         if (bundle != null) {
             fromTo = bundle.getString("fromTo");
-            defaultNum = bundle.getInt("isPicNum");
+            needAssetsCount = bundle.getInt("isPicNum");
             templateId = bundle.getString("templateId");
             templateFilePath = bundle.getString("templateFilePath");
             imgPath = bundle.getStringArrayList("paths");
@@ -178,9 +183,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         FileManager manager = new FileManager();
         String dir = manager.getFileCachePath(this, "");
         mTemplateViews = new ArrayList<>();
-        for (int i = 0; i < defaultNum; i++) {
-            listItem.add(new TemplateThumbItem("", 1, false));
-        }
+
         SxveConstans.default_bg_path = new File(dir, "default_bj.png").getPath();
         seekBar.setOnSeekBarChangeListener(seekBarListener);
         switch_button.setOnCheckedChangeListener(new SwitchButton.OnCheckedChangeListener() {
@@ -189,11 +192,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 if (!isChecked) {
                     statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutopen");
                     //修改图为裁剪后的素材
-                    presenter.ChangeMaterial(originalPath, defaultNum);
+                    presenter.ChangeMaterial(originalPath, bottomButtonCount,needAssetsCount);
                 } else {
                     statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutoff");
                     //修改为裁剪前的素材
-                    presenter.ChangeMaterial(imgPath, defaultNum);
+                    presenter.ChangeMaterial(imgPath, bottomButtonCount,needAssetsCount);
                 }
                 if (mPlayer != null) {
                     mPlayer.pause();
@@ -209,17 +212,19 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     protected void initAction() {
-        initTemplateThumb();
+//        initTemplateThumb();
         presenter.loadTemplate(mFolder.getPath(), this, nowTemplateIsAnim);
         mPlayerView.setPlayCallback(mListener);
     }
 
     @Override
     public void completeTemplate(TemplateModel templateModel) {
+        initTemplateThumb(templateModel.groupSize);
         mTemplateModel = templateModel;
-        if(nowTemplateIsAnim==1){
-            mTemplateModel.cartoonPath=originalPath.get(0);
+        if (nowTemplateIsAnim == 1) {
+            mTemplateModel.cartoonPath = originalPath.get(0);
         }
+        bottomButtonCount = templateModel.groupSize;
         int duration = mTemplateModel.getDuration();
         float allDuration = duration / mTemplateModel.fps;
         tv_end_time.setText(timeUtils.secondToTime((long) (allDuration)));
@@ -238,11 +243,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
     @Override
-    public void ChangeMaterialCallback(ArrayList<TemplateThumbItem> callbackListItem, List<String> list_all) {
+    public void ChangeMaterialCallback(ArrayList<TemplateThumbItem> callbackListItem, List<String> list_all,List<String> listAssets) {
         listItem.clear();
         listItem.addAll(callbackListItem);
         templateThumbAdapter.notifyDataSetChanged();
-        mTemplateModel.setReplaceAllMaterial(list_all);
+        mTemplateModel.setReplaceAllMaterial(listAssets);
         mTemplateViews.get(nowChooseIndex).invalidate();
     }
 
@@ -365,12 +370,20 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
+    /**
+     * description ：第一次添加素材
+     * creation date: 2020/4/8
+     * param :  paths 是第一次用户选择的素材
+     * user : zhangtongju
+     */
     private void isFirstReplace(List<String> paths) {
-
-
         if (mTemplateViews != null && mTemplateViews.size() > 0) {
+
+
+            //这里只是为了底部按钮
+
             List<String> list_all = new ArrayList<>();
-            for (int i = 0; i < defaultNum; i++) {  //填满数据，为了缩略图
+            for (int i = 0; i < bottomButtonCount; i++) {  //填满数据，为了缩略图
                 if (paths.size() > i && !TextUtils.isEmpty(paths.get(i))) {
                     list_all.add(paths.get(i)); //前面的时path ，后面的为默认的path
                 } else {
@@ -399,12 +412,25 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             templateThumbAdapter.notifyDataSetChanged();
             WaitingDialog.openPragressDialog(this);
 
-            if (nowTemplateIsAnim == 1) {
-                //漫画需要单独前面加一个原图的值，然后第二个值需要隐藏页面
-                list_all.add(paths.get(0));
+//            if (nowTemplateIsAnim == 1) {
+//                //漫画需要单独前面加一个原图的值，然后第二个值需要隐藏页面
+//                list_all.add(paths.get(0));
+//            }
+
+
+
+            //这里是为了替换用户操作的页面
+            List<String> listAssets = new ArrayList<>();
+            for (int i = 0; i < needAssetsCount; i++) {  //填满数据，为了缩略图
+                if (paths.size() > i && !TextUtils.isEmpty(paths.get(i))) {
+                    listAssets.add(paths.get(i)); //前面的时path ，后面的为默认的path
+                } else {
+                    listAssets.add(SxveConstans.default_bg_path);
+                }
             }
+
             new Thread(() -> {
-                mTemplateModel.setReplaceAllFiles(list_all, complete -> TemplateActivity.this.runOnUiThread(() -> {
+                mTemplateModel.setReplaceAllFiles(listAssets, complete -> TemplateActivity.this.runOnUiThread(() -> {
                     WaitingDialog.closePragressDialog();
                     selectGroup(0);
                     nowChooseIndex = 0;
@@ -441,7 +467,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
-    public void initTemplateThumb() {
+    public void initTemplateThumb(int bottomButtonCount) {
+        for (int i = 0; i < bottomButtonCount; i++) {
+            listItem.add(new TemplateThumbItem("", 1, false));
+        }
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -614,7 +644,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-        if (!isCancel && tag == REQUEST_SINGLE_MEDIA&&paths!=null&&paths.size()>0) {
+        if (!isCancel && tag == REQUEST_SINGLE_MEDIA && paths != null && paths.size() > 0) {
             if (originalPath == null || originalPath.size() == 0) {
                 //不需要抠图
                 if (imgPath.size() > lastChoosePosition) {
@@ -624,10 +654,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 }
                 MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
                 mediaUi2.setImageAsset(paths.get(0));
-                if(mTemplateViews.size()-1>=lastChoosePosition){
-                    //加个判断，不知道为什么会出现数组越界
-                    mTemplateViews.get(lastChoosePosition).invalidate();
-                }
+                mTemplateViews.get(lastChoosePosition).invalidate();
                 ModificationSingleThumbItem(paths.get(0));
             } else {
                 boolean hasCache = nowTemplateIsAnim != 1;
@@ -647,7 +674,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                             mTemplateViews.get(lastChoosePosition).invalidate();
                             ModificationSingleThumbItem(paths.get(0));
                         } else {
-                            MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
+                            MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(pickIndex).ui;
                             mediaUi2.setImageAsset(tailorPaths.get(0));
                             mTemplateViews.get(lastChoosePosition).invalidate();
                             ModificationSingleThumbItem(tailorPaths.get(0));

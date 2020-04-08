@@ -6,6 +6,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.glidebitmappool.GlideBitmapPool;
 import com.megvii.segjni.SegJni;
+import com.shixing.sxve.ui.util.PhotoBitmapUtils;
 
 import java.io.File;
 
@@ -23,6 +24,7 @@ public class MattingImage {
     public void mattingImage(String path, mattingStatus callback) {
         new Thread(() -> {
             mOriginBitmap = ConUtil.getImage(path);
+            mOriginBitmap = PhotoBitmapUtils.amendRotatePhoto(path, mOriginBitmap);
             if (mOriginBitmap != null) {
                 mBitmapW = mOriginBitmap.getWidth();
                 mBitmapH = mOriginBitmap.getHeight();

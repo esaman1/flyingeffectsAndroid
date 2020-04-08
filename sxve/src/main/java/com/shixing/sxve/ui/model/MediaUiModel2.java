@@ -252,7 +252,7 @@ public class MediaUiModel2 extends MediaUiModel {
         isVideoSlide = true;
         mIsVideo = false;
         mBitmap = getSmallBmpFromFile(path, size.getHeight(), size.getWidth());
-        countMatrix(mBitmap, path, false);
+        countMatrix(mBitmap, path, true);
         mInitPaint.setAlpha(255);
         initPosition();
         if (mGroupModel != null) {
