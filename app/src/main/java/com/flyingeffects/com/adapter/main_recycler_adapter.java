@@ -31,6 +31,7 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
 
     private Context context;
     public final static String TAG = "main_recycler_adapter";
+    //0 模板  1 背景 2 搜索
     private  int fromType;
 
     public main_recycler_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context,int fromType) {
@@ -62,7 +63,7 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                     .into(iv_show_author);
         }else {
             //模板
-            if(offset == 1){
+            if(offset == 1&&fromType==0){
                 ConstraintLayout_addVideo.setVisibility(View.VISIBLE);
                 ConstraintLayout_addVideo.setOnClickListener(v -> {
 
@@ -76,8 +77,6 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
             }else{
                 ConstraintLayout_addVideo.setVisibility(View.GONE);
             }
-
-
             iv_show_author.setVisibility(View.GONE);
             tv_name.setVisibility(View.VISIBLE);
         }

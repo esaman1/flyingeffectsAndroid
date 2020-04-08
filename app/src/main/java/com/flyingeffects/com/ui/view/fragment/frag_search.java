@@ -207,7 +207,7 @@ public class frag_search extends BaseFragment {
 
 
     private void initRecycler() {
-        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), 0);
+        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), 2);
         StaggeredGridLayoutManager layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
