@@ -3,6 +3,7 @@ package com.flyingeffects.com.constans;
 import android.text.TextUtils;
 
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.http.abc;
 import com.flyingeffects.com.manager.SPHelper;
 import com.flyingeffects.com.utils.ChannelUtil;
@@ -26,6 +27,8 @@ public class BaseConstans {
     private static String uuid = "";
     public static final String PRIVACYPOLICY = "http://copy-book.oss-cn-hangzhou.aliyuncs.com/link/FeiShan/FS-PrivacyPolicy.html";
     public static String service_wxi;
+    public static ConfigForTemplateList configList;
+
     public static final String PROTOCOL = "http://copy-book.oss-cn-hangzhou.aliyuncs.com/link/FeiShan/FS-Agreement.html";
 
     public static HashMap getRequestHead(HashMap<String, String> map) {

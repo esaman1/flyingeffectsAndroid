@@ -14,6 +14,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.GlideRoundTransform;
 import com.flyingeffects.com.ui.view.activity.intoOtherAppActivity;
@@ -64,11 +65,13 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
             if(offset == 1){
                 ConstraintLayout_addVideo.setVisibility(View.VISIBLE);
                 ConstraintLayout_addVideo.setOnClickListener(v -> {
-                    Intent intent = new Intent(context, intoOtherAppActivity.class);
-                    intent.putExtra("wx", "");
-                    intent.putExtra("kuaishou", "");
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    context.startActivity(intent);
+                    if(BaseConstans.configList!=null){
+                        Intent intent = new Intent(context, intoOtherAppActivity.class);
+                        intent.putExtra("wx", "");
+                        intent.putExtra("kuaishou", "");
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        context.startActivity(intent);
+                    }
                 });
             }else{
                 ConstraintLayout_addVideo.setVisibility(View.GONE);

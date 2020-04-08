@@ -1,6 +1,7 @@
 package com.flyingeffects.com.http;
 
 import com.flyingeffects.com.enity.Config;
+import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.enity.HttpResult;
 import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.enity.TemplateType;
@@ -43,6 +44,11 @@ public interface ApiService {
     @POST("/api/template/configList")
     Observable<HttpResult<Config>> configList(@FieldMap Map<String, String> params);
 
+
+
+    @FormUrlEncoded
+    @POST("/api/template/homeAlertInfo")
+    Observable<HttpResult<ConfigForTemplateList>> configListForTemplateList(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
     @POST("/api/template/collectionList")

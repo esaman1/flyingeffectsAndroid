@@ -14,6 +14,7 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.Config;
+import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -47,7 +48,9 @@ public class WelcomeActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
+        requestConfigForTemplateList();
         requestConfig();
+
     }
 
 
@@ -134,6 +137,11 @@ public class WelcomeActivity extends BaseActivity {
 
 
 
+    /**
+     * description ：这个配置是请求关于界面的联系我们
+     * creation date: 2020/4/8
+     * user : zhangtongju
+     */
     private void requestConfig() {
         HashMap<String, String> params = new HashMap<>();
         params.put("config_name", "wechat_name");
@@ -148,6 +156,31 @@ public class WelcomeActivity extends BaseActivity {
             @Override
             protected void _onNext(Config data) {
                 BaseConstans.service_wxi=data.getValue();
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+
+
+    /**
+     * description ：这个请求是用来请求模板里面的数据，复制快手或者抖音
+     * creation date: 2020/4/8
+     * user : zhangtongju
+     */
+    private void requestConfigForTemplateList() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("config_name", "wechat_name");
+        // 启动时间
+        Observable ob = Api.getDefault().configListForTemplateList(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ConfigForTemplateList>(WelcomeActivity.this) {
+            @Override
+            protected void _onError(String message) {
+//                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(ConfigForTemplateList data) {
+                BaseConstans.configList=data;
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
