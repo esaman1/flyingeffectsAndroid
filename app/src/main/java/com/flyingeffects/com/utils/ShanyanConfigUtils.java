@@ -108,7 +108,7 @@ public class ShanyanConfigUtils {
 
 //                .addCustomView(numberLayout, false, false, null)
 
-//                .setLoadingView(view_dialog)
+                .setLoadingView(null)
                 // 添加自定义控件:
                 .addCustomView(relativeLayout, false, false, null)
                 //标题栏下划线，可以不写

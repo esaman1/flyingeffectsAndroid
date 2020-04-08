@@ -391,7 +391,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         if (!ondestroy) {
             //file 文件下载成功
             this.TemplateFilePath = TemplateFilePath;
-            AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "");
+            AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");
         }
     }
 

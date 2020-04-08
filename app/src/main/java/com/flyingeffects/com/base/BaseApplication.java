@@ -52,7 +52,7 @@ public class BaseApplication extends MultiDexApplication {
         //registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
         initAlbum();
         initLicense();
-       // initYouMeng();
+        initYouMeng();
         initJPush();
         initZt();
         initShanyanSDK(this);

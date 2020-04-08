@@ -31,7 +31,7 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
 
     private Context context;
     public final static String TAG = "main_recycler_adapter";
-    //0 模板  1 背景 2 搜索
+    //0 模板  1 背景 2 搜索/我的收藏
     private  int fromType;
 
     public main_recycler_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context,int fromType) {
