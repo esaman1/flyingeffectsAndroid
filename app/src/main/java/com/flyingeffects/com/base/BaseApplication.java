@@ -71,7 +71,7 @@ public class BaseApplication extends MultiDexApplication {
      * user : zhangtongju
      */
     private void initShanyanSDK(Context context) {
-        OneKeyLoginManager.getInstance().init(context, "6t6fPQYR", (code, result) -> {
+        OneKeyLoginManager.getInstance().init(context, "SSjHAvIf", (code, result) -> {
             //闪验SDK初始化结果回调
             LogUtil.d("OOM", "初始化： code==" + code + "   result==" + result);
         });

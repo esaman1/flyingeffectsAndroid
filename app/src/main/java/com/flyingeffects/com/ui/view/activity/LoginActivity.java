@@ -1,7 +1,10 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -49,6 +52,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -359,7 +363,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 break;
 
             case R.id.ll_weixin:
-                wxLogin();
+                if(!isWeixinAvilible(this)){
+                    ToastUtil.showToast("您还未安装微信");
+                }else {
+                    wxLogin();
+                }
                 break;
             default:
                 break;
@@ -624,9 +632,36 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Subscribe
     public void onEventMainThread(WxLogin event) {
         if(event.getTag().equals("wxLogin")){
-            wxLogin();
+            if(!isWeixinAvilible(this)){
+                ToastUtil.showToast("您还未安装微信");
+            }else{
+                wxLogin();
+            }
+
         }
 
+    }
+
+
+
+    /**
+     * description ： 是否安装了微信
+     * creation date: 2020/4/9
+     * param :
+     * user : zhangtongju
+     */
+    public static boolean isWeixinAvilible(Context context) {
+        final PackageManager packageManager = context.getPackageManager();// 获取packagemanager
+        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);// 获取所有已安装程序的包信息
+        if (pinfo != null) {
+            for (int i = 0; i < pinfo.size(); i++) {
+                String pn = pinfo.get(i).packageName;
+                if (pn.equals("com.tencent.mm")) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 

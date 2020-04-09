@@ -6,6 +6,7 @@ import android.content.Intent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
+import com.flyingeffects.com.utils.LogUtil;
 
 /**
  * Created by zhangtongju
@@ -44,7 +45,9 @@ public class ApiException extends RuntimeException{
      * @return
      */
     private static String getApiExceptionMessage(int code,String error,String actTag){
+        LogUtil.d("OOM","code="+code);
         switch (code) {
+
             case USER_NOT_EXIST:
                 message = "该用户不存在";
                 break;
@@ -58,6 +61,7 @@ public class ApiException extends RuntimeException{
                 message = error;
                 break;
             case -1:
+                LogUtil.d("OOM","接口提示要重新登录");
                 intoLoginAct();
                 message =error;  //用戶被刪除
                 break;

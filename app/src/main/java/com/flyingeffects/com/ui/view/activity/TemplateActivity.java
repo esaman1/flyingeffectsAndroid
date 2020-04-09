@@ -267,11 +267,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 if (mPlayer != null) {
                     mPlayer.start();
                 }
-                showPreview(true, false);
             } else {
                 WaitingDialog.openPragressDialog(TemplateActivity.this);
                 new Thread(() -> presenter.getReplaceableFilePath()).start();
             }
+            showPreview(true, false);
         }
 
     }

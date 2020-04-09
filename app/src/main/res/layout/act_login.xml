@@ -1,9 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/shanyan_login_relative"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-
+    android:layout_height="match_parent"
+    android:background="@color/home_base_balk_color">
 
 
     <ImageView
@@ -17,10 +16,9 @@
     <RelativeLayout
         android:id="@+id/relative_normal"
         android:layout_width="match_parent"
-        android:visibility="gone"
         android:layout_height="match_parent"
         android:background="@mipmap/login_bj"
-       >
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -35,11 +33,10 @@
             android:layout_height="30dp"
             android:layout_alignParentStart="true"
             android:layout_marginStart="30dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="50dp"
             android:contentDescription="@string/app_name"
             android:padding="5dp"
             android:src="@mipmap/close_login" />
-
 
 
         <LinearLayout
@@ -179,9 +176,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="32dp"
+            android:gravity="center"
             android:orientation="horizontal"
             android:visibility="visible">
 
@@ -219,10 +216,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dp_35"
-                android:visibility="gone"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
 
                 <ImageView
