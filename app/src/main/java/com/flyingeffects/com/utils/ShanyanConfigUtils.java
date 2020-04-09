@@ -104,8 +104,8 @@ public class ShanyanConfigUtils {
                 .setPrivacyTextSize(10)
                 .setPrivacyOffsetX(26)
                 .setSloganHidden(true)
+                .setShanYanSloganHidden(true)
                 .setShanYanSloganTextColor(Color.parseColor("#ffffff"))
-
 //                .addCustomView(numberLayout, false, false, null)
 
                 .setLoadingView(null)

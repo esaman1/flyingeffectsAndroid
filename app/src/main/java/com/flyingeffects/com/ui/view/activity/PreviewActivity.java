@@ -284,7 +284,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             } else {//需要抠图
                 originalImagePath = paths;
                 new Handler().postDelayed(() -> {
-                    String alert = templateItem.getIs_anime() == 1 ? "正在变脸中" + "\n" + "上传正脸最佳～" : "正在抠图中" + "\n" + "上传人物最佳";
+                //    String alert = templateItem.getIs_anime() == 1 ? "正在变脸中" + "\n" + "上传正脸最佳～" : "正在抠图中" + "\n" + "上传人物最佳";
+                    String alert="飞闪极速抠图中...";
                     WaitingDialog.openPragressDialog(PreviewActivity.this, alert);
                 }, 200);
                 //如果是视频，就不抠图了
@@ -324,7 +325,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 intoTemplateActivity(tailorPaths, TemplateFilePath);
             }
         });
-        manage.CompressImgForFace(paths);
+        manage.ToMatting(paths);
     }
 
 

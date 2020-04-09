@@ -54,6 +54,19 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
         TextView tv_name=helper.getView(R.id.tv_name);
         tv_name.setText(item.getTitle());
         if(fromType==1){
+            if(offset == 1){
+                ConstraintLayout_addVideo.setVisibility(View.VISIBLE);
+                helper.setText(R.id.firstline,BaseConstans.configList.getFirstline());
+                helper.setText(R.id.secondline,BaseConstans.configList.getSecondline());
+                helper.setText(R.id.thirdline,BaseConstans.configList.getThirdline());
+                ConstraintLayout_addVideo.setOnClickListener(v -> {
+                    Intent intent = new Intent(context, intoOtherAppActivity.class);
+                    intent.putExtra("wx", "");
+                    intent.putExtra("kuaishou", "");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    context.startActivity(intent);
+                });
+            }
             //背景
             iv_show_author.setVisibility(View.VISIBLE);
             tv_name.setVisibility(View.GONE);
@@ -64,15 +77,16 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
         }else {
             //模板
             if(offset == 1&&fromType==0){
+                helper.setText(R.id.firstline,BaseConstans.configList.getFirstline());
+                helper.setText(R.id.secondline,BaseConstans.configList.getSecondline());
+                helper.setText(R.id.thirdline,BaseConstans.configList.getThirdline());
                 ConstraintLayout_addVideo.setVisibility(View.VISIBLE);
                 ConstraintLayout_addVideo.setOnClickListener(v -> {
-
                         Intent intent = new Intent(context, intoOtherAppActivity.class);
                         intent.putExtra("wx", "");
                         intent.putExtra("kuaishou", "");
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         context.startActivity(intent);
-
                 });
             }else{
                 ConstraintLayout_addVideo.setVisibility(View.GONE);

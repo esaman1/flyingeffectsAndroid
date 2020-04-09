@@ -684,7 +684,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
                     });
                 });
-                manage.CompressImgForFace(paths);
+                manage.ToMatting(paths);
             }
         }
     }

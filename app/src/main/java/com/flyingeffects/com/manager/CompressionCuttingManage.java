@@ -7,6 +7,7 @@ import android.os.Handler;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.DownImg;
 import com.flyingeffects.com.enity.DownImgDataList;
 import com.flyingeffects.com.ui.model.MattingImage;
@@ -81,6 +82,19 @@ public class CompressionCuttingManage {
         mTailtoFolder = fileManager.getFileCachePath(context, "tailor");
         mattingImage = new MattingImage();
     }
+
+
+
+
+
+    public void ToMatting(List<String> paths){
+        if(BaseConstans.UserFaceSdk){
+            CompressImgForFace(paths);
+        }else{
+            CompressImgAndCache(paths);
+        }
+    }
+
 
 
     public void CompressImgAndCache(List<String> paths) {

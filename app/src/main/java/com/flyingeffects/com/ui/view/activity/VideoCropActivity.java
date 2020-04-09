@@ -255,7 +255,7 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
 
                     });
                 });
-                manage.CompressImgForFace(paths);
+                manage.ToMatting(paths);
             }
         }, 1, "");
 

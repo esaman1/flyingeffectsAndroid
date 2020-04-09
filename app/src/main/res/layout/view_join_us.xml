@@ -11,27 +11,50 @@
 
 
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:text="@string/join_us"
-            android:layout_width="0dp"
-            android:textSize="18sp"
-            android:layout_weight="1"
-            android:textColor="#FFFFFF"
-            android:layout_height="wrap_content"/>
-
-
         <ImageView
-            android:layout_width="0dp"
+            android:id="@+id/iv_bj"
+            android:layout_width="wrap_content"
             android:src="@mipmap/wx_black"
-            android:layout_weight="1"
+            android:layout_alignParentEnd="true"
             android:layout_height="82dp"/>
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_centerVertical="true"
+            android:gravity="right"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/firstline"
+                android:text="@string/join_us"
+                android:layout_width="match_parent"       android:singleLine="true"
+                android:ellipsize="end"
+                android:textSize="18sp"
+                android:textColor="#FFFFFF"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/secondline"
+                android:text="@string/join_us"
+                android:layout_width="match_parent"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textSize="18sp"
+                android:textColor="#FFFFFF"
+                android:layout_height="wrap_content"/>
+
+
+
+        </LinearLayout>
+
+
+
+
+    </RelativeLayout>
 
 
 
@@ -43,11 +66,18 @@
         android:gravity="center"
         android:layout_height="wrap_content">
 
-        <TextView
+        <com.flyingeffects.com.view.MarqueTextView
+            android:id="@+id/thirdline"
             android:text="@string/get_gift"
             android:layout_width="wrap_content"
             android:textSize="15sp"
             android:paddingTop="5dp"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
             android:paddingBottom="5dp"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
@@ -57,6 +87,7 @@
 
 
         <ImageView
+
             android:layout_width="wrap_content"
             android:src="@mipmap/template_list_to_next"
             android:layout_height="wrap_content"/>

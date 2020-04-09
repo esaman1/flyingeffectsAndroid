@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
+import com.flyingeffects.com.manager.SPHelper;
 import com.flyingeffects.com.utils.ToastUtil;
 
 import java.util.List;
@@ -65,7 +66,13 @@ public class intoOtherAppActivity extends Activity {
             tv_title.setText(BaseConstans.configList.getTitle());
             tv_title_1.setText(BaseConstans.configList.getContent());
             tv_tencent.setText(BaseConstans.configList.getCopydata());
+
+
         }else{
+
+
+
+
             BaseConstans.configList=new ConfigForTemplateList();
             BaseConstans.configList.setContent("已为您复制微信号");
             BaseConstans.configList.setType(1);
