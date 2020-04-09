@@ -28,6 +28,7 @@ import com.chuanglan.shanyan_sdk.listener.GetPhoneInfoListener;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.enity.checkVersion;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -102,6 +103,7 @@ public class HomeMainActivity extends FragmentActivity {
         SegJni.nativeCreateSegHandler(this, ConUtil.getFileContent(this, R.raw.megviisegment_model), 8);
         GlideBitmapPool.initialize(10 * 1024 * 1024); // 10mb max memory size
         checkUpdate();
+        checkConfig();
         getUserPhoneInfo();
         getPushPermission();
     }
@@ -443,95 +445,41 @@ public class HomeMainActivity extends FragmentActivity {
         }
     }
 
-//    /**
-//     * description ：检查更新
-//     * date: ：2019/6/13 10:44
-//     * author: 张同举 @邮箱 jutongzhang@sina.com
-//     */
-//    public void checkUpdate(boolean isShowAlert) {
-//        HashMap<String, String> params = new HashMap<>();
-//        Observable ob = Api.getDefault().checkUpdate(BaseConstans.getRequestHead(params));
-//        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<checkVersion>(this) {
-//            @Override
-//            protected void _onError(String message) {
-//                LogUtil.d("checkUpdate", message);
-//                ToastUtil.showToast(message);
-//            }
-//
-//            @Override
-//            protected void _onNext(checkVersion data) {
-//                LogUtil.d("checkUpdate", StringUtil.beanToJSONString(data));
-//                try {
-//                    if (data != null) {
-//                        String uploadVersion = data.getVersion();
-//                        String content = data.getContent();
-//                        int uVersion = Integer.parseInt(uploadVersion);
-//                        int NowVersion = Integer.parseInt(BaseConstans.getVersionCode());
-//                        if (uVersion > NowVersion) { //todo  1231
-//                            intoCheckUpdateAct(data.getPath(), data.getIs_renew(), content);
-//                        } else {
-//                            if (isShowAlert) {
-//                                ToastUtil.showToast(getResources().getString(R.string.already_newest_version));
-//                            }
-//                        }
-//                    } else {
-//                        if (isShowAlert) {
-//                            ToastUtil.showToast(getResources().getString(R.string.already_newest_version));
-//                        }
-//                    }
-//                } catch (NumberFormatException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }, "checkUpdate", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
-//    }
-
-//    /**
-//     * user :TongJu  ;描述：跳转到更新界面
-//     * 时间：2018/5/29
-//     **/
-//    private void intoCheckUpdateAct(String url, String is_must_update, String content) {
-//        Intent intent = new Intent(this, UpdateApkActivity.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        intent.putExtra("url", url);
-//        intent.putExtra("content", content);
-//        intent.putExtra("policy", "0");
-//        intent.putExtra("is_must_update", is_must_update);
-//        startActivity(intent);
-//    }
 
 
-//    /**
-//     * description ：更新用户信息
-//     * date: ：2019/10/18 14:52
-//     * author: 张同举 @邮箱 jutongzhang@sina.com
-//     */
-//    private void requestUserInfo() {
-//        HashMap<String, String> params = new HashMap<>();
-//        Observable ob = Api.getDefault().updateUserInfo(BaseConstans.getRequestHead(params));
-//        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<loginResult>(this) {
-//            @Override
-//            protected void _onError(String message) {
-//                ToastUtil.showToast(message);
-//            }
-//
-//            @Override
-//            protected void _onNext(loginResult data) {
-//                LogUtil.d("requestUserInfo", StringUtil.beanToJSONString(data));
-//                if (data.getIs_vip() == 1) { //vip
-//                    BaseConstans.setUseIsVip(true);
-//                    BaseConstans.setIsNewUser(true);
-//                    BaseConstans.getVip_end_time = data.getVip_end_time();
-//                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "vip_start", "vip_start");  //统计视频数量
-//
-//                } else {
-//                    showScreenAdvertising();
-//                    BaseConstans.setUseIsVip(false);
-//
-//                }
-//            }
-//        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
-//    }
+    /**
+     * 检查推广配置是否ok
+     */
+    private void checkConfig(){
+        if(BaseConstans.configList==null) {
+            BaseConstans.configList = new ConfigForTemplateList();
+            BaseConstans.configList.setContent("已为您复制微信号");
+            BaseConstans.configList.setType(1);
+            BaseConstans.configList.setCopydata("wordcq520");
+            BaseConstans.configList.setDescription("加微信领取100套精美背景素材");
+            BaseConstans.configList.setSecondline("领取100套精美素材");
+            requestConfigForTemplateList();
+        }
+    }
 
+
+    private void requestConfigForTemplateList() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("config_name", "wechat_name");
+        // 启动时间
+        Observable ob = Api.getDefault().configListForTemplateList(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ConfigForTemplateList>(HomeMainActivity.this) {
+            @Override
+            protected void _onError(String message) {
+            }
+
+            @Override
+            protected void _onNext(ConfigForTemplateList data) {
+                if (data != null) {
+                    BaseConstans.configList = data;
+                }
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
 
 }

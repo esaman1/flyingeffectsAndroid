@@ -30,9 +30,10 @@ import rx.Observable;
 public class WelcomeActivity extends BaseActivity {
 
     private final int BUILD_VERSION = 23;
-//    private boolean hasPermission = false;
+    //    private boolean hasPermission = false;
     private final int PERMISSION_REQUEST_CODE = 1024;
-    private static  final int RESULT_CODE=3;
+    private static final int RESULT_CODE = 3;
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_welcome;
@@ -54,12 +55,11 @@ public class WelcomeActivity extends BaseActivity {
     }
 
 
-
-    private void showSplashAd(){
+    private void showSplashAd() {
         new Thread(() -> {
             try {
                 Thread.sleep(2000);
-                    goActivity(HomeMainActivity.class);
+                goActivity(HomeMainActivity.class);
                 this.finish();
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -87,7 +87,7 @@ public class WelcomeActivity extends BaseActivity {
         // 权限都已经有了，那么直接调用SDK
         if (lackedPermission.size() == 0) {
 //            hasPermission = true;
-                showSplashAd();
+            showSplashAd();
         } else {
 //            hasPermission = false;
             // 请求所缺少的权限，在onRequestPermissionsResult中再看是否获得权限，如果获得权限就可以调用SDK，否则不要调用SDK。
@@ -110,7 +110,7 @@ public class WelcomeActivity extends BaseActivity {
             new Handler().postDelayed(() -> {
                 PermissionUtil.gotoPermission(WelcomeActivity.this);
                 finish();
-            },3000);
+            }, 3000);
 
         }
     }
@@ -125,16 +125,14 @@ public class WelcomeActivity extends BaseActivity {
     }
 
 
-    private void getPermission(){
-            if (Build.VERSION.SDK_INT >= BUILD_VERSION) {
-                checkPermission();
-            } else {
+    private void getPermission() {
+        if (Build.VERSION.SDK_INT >= BUILD_VERSION) {
+            checkPermission();
+        } else {
 //                hasPermission = true;
-                showSplashAd();
-            }
+            showSplashAd();
+        }
     }
-
-
 
 
     /**
@@ -155,11 +153,10 @@ public class WelcomeActivity extends BaseActivity {
 
             @Override
             protected void _onNext(Config data) {
-                BaseConstans.service_wxi=data.getValue();
+                BaseConstans.service_wxi = data.getValue();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
-
 
 
     /**
@@ -180,13 +177,14 @@ public class WelcomeActivity extends BaseActivity {
 
             @Override
             protected void _onNext(ConfigForTemplateList data) {
-                BaseConstans.configList=data;
+                if (data != null) {
+                    BaseConstans.configList = data;
+                }
+
+
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
-
-
-
 
 
     /**
@@ -211,10 +209,10 @@ public class WelcomeActivity extends BaseActivity {
 
         if (requestCode == 1 && resultCode == RESULT_CODE) {
             boolean agree = data.getBooleanExtra("agree", true);
-            if(agree){
+            if (agree) {
                 BaseConstans.setFirstClickUseApp();
                 getPermission();
-            }else{
+            } else {
                 this.finish();
             }
         }

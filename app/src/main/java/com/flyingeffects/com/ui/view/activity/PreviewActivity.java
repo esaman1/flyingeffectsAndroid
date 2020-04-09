@@ -225,6 +225,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     protected void onPause() {
+        isPlayComplate=true;
         videoPlayer.onVideoPause();
         isIntoPause = true;
         iv_video_play.setVisibility(View.VISIBLE);

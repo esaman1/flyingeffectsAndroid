@@ -151,6 +151,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 //拉起授权页失败
                 Log.e("VVV", "拉起授权页失败： _code==" + code + "   _result==" + result);
                 relative_normal.setVisibility(View.VISIBLE);
+                dissMissShanYanUi();
             }
         }, new OneKeyLoginListener() {
             @Override

@@ -68,17 +68,6 @@ public class intoOtherAppActivity extends Activity {
             tv_tencent.setText(BaseConstans.configList.getCopydata());
 
 
-        }else{
-
-
-
-
-            BaseConstans.configList=new ConfigForTemplateList();
-            BaseConstans.configList.setContent("已为您复制微信号");
-            BaseConstans.configList.setType(1);
-            BaseConstans.configList.setCopydata("wordcq520");
-            BaseConstans.configList.setDescription("加微信领取100套精美背景素材");
-            BaseConstans.configList.setSecondline("领取100套精美素材");
         }
 
 

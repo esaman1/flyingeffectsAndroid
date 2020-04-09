@@ -213,7 +213,8 @@ public class CompressionCuttingManage {
     }
 
     private void upLoad(List<String> list) {
-        String alert = "正在抠图中" + "\n" + "上传人物最佳";
+//        String alert = "正在抠图中" + "\n" + "上传人物最佳";
+        String alert="飞闪极速抠图中...";
         WaitingDialog.openPragressDialog(context, alert);
         listForMatting.clear();
         List<File> listFile = new ArrayList<>();
