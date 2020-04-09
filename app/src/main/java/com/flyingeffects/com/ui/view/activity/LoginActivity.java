@@ -25,7 +25,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
-import com.chuanglan.shanyan_sdk.listener.OneKeyLoginListener;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
@@ -84,10 +83,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     TextView tv_xy;
     @BindView(R.id.relative_normal)
     RelativeLayout relative_normal;
-    private boolean isOpenAuth = false;
+//    private boolean isOpenAuth = false;
     MyVideoView videoView;
-    private static final String WEIXIN = "wx";
-    private static final String QQ = "qq";
+//    private static final String WEIXIN = "wx";
+//    private static final String QQ = "qq";
 
 
     /**
@@ -105,11 +104,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//
-//    }
 
     @Override
     public void onDestroy() {
@@ -138,7 +132,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         OneKeyLoginManager.getInstance().openLoginAuth(false, (code, result) -> {
             WaitingDialog.closePragressDialog();
             if (1000 == code) {
-                isOpenAuth = true;
+//                isOpenAuth = true;
                 //拉起授权页成功
                 Log.e("VVV", "拉起授权页成功： _code==" + code + "   _result==" + result);
                 videoView = new MyVideoView(getApplicationContext());
@@ -152,34 +146,29 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 relative_normal.setVisibility(View.VISIBLE);
                 dissMissShanYanUi();
             }
-        }, new OneKeyLoginListener() {
-            @Override
-            public void getOneKeyLoginStatus(int code, String result) {
-                if (1011 == code) {
-                    isOpenAuth = false;
-                    Log.e("VVV", "用户点击授权页返回： _code==" + code + "   _result==" + result);
-                    LoginActivity.this.finish();
-                    return;
-                } else if (1000 == code) {
-                    Log.e("VVV", "用户点击登录获取token成功： _code==" + code + "   _result==" + result);
-                    //OneKeyLoginManager.getInstance().setLoadingVisibility(false);
-                    //AbScreenUtils.showToast(getApplicationContext(), "用户点击登录获取token成功");
-                    try {
-                        JSONObject ob=new JSONObject(result);
-                        requestLoginForSdk("4",ob.getString("token"),"","","","",false);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+        }, (code, result) -> {
+            if (1011 == code) {
+//                isOpenAuth = false;
+                Log.e("OOM", "用户点击授权页返回： _code==" + code + "   _result==" + result);
+                LoginActivity.this.finish();
+                return;
+            } else if (1000 == code) {
+                Log.e("VVV", "用户点击登录获取token成功： _code==" + code + "   _result==" + result);
+                try {
+                    JSONObject ob=new JSONObject(result);
+                    requestLoginForSdk("4",ob.getString("token"),"","","","",false);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
-                } else {
-                    Log.e("VVV", "用户点击登录获取token失败： _code==" + code + "   _result==" + result);
+            } else {
+                Log.e("VVV", "用户点击登录获取token失败： _code==" + code + "   _result==" + result);
 //                    ToastUtil.showToast("用户点击登录获取token失败： _code==" + code + "   _result==" + result);
 //                    relative_normal.setVisibility(View.VISIBLE);
-                    LoginActivity.this.finish();
-                }
-                long startTime = System.currentTimeMillis();
-                startResultActivity(code, result, startTime);
+                LoginActivity.this.finish();
             }
+            long startTime = System.currentTimeMillis();
+            startResultActivity(code, result, startTime);
         });
     }
 
@@ -654,7 +643,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      * param :
      * user : zhangtongju
      */
-    public static boolean isWeixinAvilible(Context context) {
+    public  boolean isWeixinAvilible(Context context) {
         final PackageManager packageManager = context.getPackageManager();// 获取packagemanager
         List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);// 获取所有已安装程序的包信息
         if (pinfo != null) {
