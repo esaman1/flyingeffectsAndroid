@@ -54,7 +54,9 @@ public class backgroundDraw {
                 LogUtil.d("OOM","错误信息为"+message);
             });
             execute.setOnLanSongSDKProgressListener((l, i) -> {
-                waitingProgress.setProgress(i + "%");
+//                waitingProgress.setProgress(i + "%");
+                waitingProgress.setProgress("正在保存中" + i + "%\n" +
+                        "请勿离开页面");
             });
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
                 waitingProgress.closePragressDialog();

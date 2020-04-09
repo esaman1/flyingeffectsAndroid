@@ -734,8 +734,10 @@ public class CreationTemplateMvpModel {
             AlertDialog.Builder builder = new AlertDialog.Builder( //去除黑边
                     new ContextThemeWrapper(context, R.style.Theme_Transparent));
             builder.setTitle(R.string.notification);
-            builder.setMessage(context.getString(R.string.have_saved_to_sdcard) +
-                    "【" + path + context.getString(R.string.folder) + "】");
+//            builder.setMessage(context.getString(R.string.have_saved_to_sdcard) +
+//                    "【" + path + context.getString(R.string.folder) + "】");
+            builder.setMessage("已为你保存到相册,多多分享给友友\n" + "【" + path + context.getString(R.string.folder) + "】"
+            );
             builder.setNegativeButton(context.getString(R.string.got_it), (dialog, which) -> dialog.dismiss());
             builder.setCancelable(true);
             Dialog dialog = builder.show();

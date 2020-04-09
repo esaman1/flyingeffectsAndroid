@@ -4,13 +4,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
@@ -22,10 +20,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
-import com.flyingeffects.com.ui.view.activity.LoginActivity;
-import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.SxveConstans;
@@ -37,7 +32,6 @@ import com.shixing.sxvideoengine.SXTemplate;
 import com.shixing.sxvideoengine.SXTemplateRender;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,22 +56,20 @@ public class TemplateMvpModel {
         this.context = context;
         this.callback = callback;
         keepUunCatchPath = context.getExternalFilesDir("runCatch/");
-        isOnDestroy=false;
+        isOnDestroy = false;
     }
 
 
-
-
-     public void getReplaceableFilePath(){
+    public void getReplaceableFilePath() {
         callback.returnReplaceableFilePath(mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath())));
     }
 
-    public void onDestroy(){
-        isOnDestroy=true;
+    public void onDestroy() {
+        isOnDestroy = true;
     }
 
 
-    public void loadTemplate(String filePath, AssetDelegate delegate,int nowTemplateIsAnim) {
+    public void loadTemplate(String filePath, AssetDelegate delegate, int nowTemplateIsAnim) {
         Observable.just(filePath).map(s -> {
             try {
                 mTemplateModel = new TemplateModel(filePath, delegate, context, nowTemplateIsAnim);
@@ -92,7 +84,7 @@ public class TemplateMvpModel {
     private String outputPathForVideoSaveToPhoto;
 
     public void renderVideo(String mTemplateFolder, String mAudio1Path, Boolean isPreview) {
-        WaitingDialog_progress waitingDialog_progress =new WaitingDialog_progress(context);
+        WaitingDialog_progress waitingDialog_progress = new WaitingDialog_progress(context);
         waitingDialog_progress.openProgressDialog();
         Observable.create((Observable.OnSubscribe<Boolean>) subscriber -> {
             String[] paths = mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
@@ -116,7 +108,8 @@ public class TemplateMvpModel {
 
                 @Override
                 public void onUpdate(int progress) {
-                    waitingDialog_progress.setProgress(progress+"%");
+                    waitingDialog_progress.setProgress("正在保存中" + progress + "%\n" +
+                            "请勿离开页面");
                     LogUtil.d("OOM", "progress=" + progress);
                 }
 
@@ -144,19 +137,19 @@ public class TemplateMvpModel {
     }
 
 
-    public String[]  getRealTimePreview(){
-       return  mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
+    public String[] getRealTimePreview() {
+        return mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
     }
 
 
-    private void renderFinish(boolean isSucceed, boolean isPreview,String outputPath) {
+    private void renderFinish(boolean isSucceed, boolean isPreview, String outputPath) {
         LogUtil.d("OOM", "onFinish,success?=" + isSucceed + "MSG=" + isSucceed);
         WaitingDialog.closePragressDialog();
 
         if (isPreview) {
             callback.toPreview(outputPath);
         } else {
-            if (isSucceed&&!isOnDestroy) {
+            if (isSucceed && !isOnDestroy) {
                 albumBroadcast(outputPath);
                 showDialog(outputPath);
             }
@@ -182,8 +175,13 @@ public class TemplateMvpModel {
                     //去除黑边
                     new ContextThemeWrapper(context, R.style.Theme_Transparent));
             builder.setTitle(context.getString(R.string.notification));
-            builder.setMessage(context.getString(R.string.have_saved_to_sdcard) +
-                    "【" + path + context.getString(R.string.folder) + "】");
+//            builder.setMessage(context.getString(R.string.have_saved_to_sdcard) +
+//                    "【" + path + context.getString(R.string.folder) + "】");
+
+            builder.setMessage("已为你保存到相册,多多分享给友友\n" + "【" + path + context.getString(R.string.folder) + "】"
+            );
+
+
             builder.setNegativeButton(context.getString(R.string.got_it), (dialog, which) -> {
                 dialog.dismiss();
             });
@@ -197,11 +195,12 @@ public class TemplateMvpModel {
 
     /**
      * todo 需要优化
+     *
      * @param list
      * @param maxChooseNum
      */
-    public void ChangeMaterial(List<String> list,int maxChooseNum,int needAssetsCount){
-        ArrayList<TemplateThumbItem> listItem=new ArrayList<>();
+    public void ChangeMaterial(List<String> list, int maxChooseNum, int needAssetsCount) {
+        ArrayList<TemplateThumbItem> listItem = new ArrayList<>();
         for (int i = 0; i < maxChooseNum; i++) {
             listItem.add(new TemplateThumbItem("", 1, false));
         }
@@ -225,8 +224,6 @@ public class TemplateMvpModel {
         }
 
 
-
-
         //这里是为了替换用户操作的页面
         List<String> listAssets = new ArrayList<>();
         for (int i = 0; i < needAssetsCount; i++) {  //填满数据，为了缩略图
@@ -238,7 +235,7 @@ public class TemplateMvpModel {
         }
 
 
-        callback.ChangeMaterialCallback(listItem,list_all,listAssets);
+        callback.ChangeMaterialCallback(listItem, list_all, listAssets);
 
 
     }
@@ -265,7 +262,7 @@ public class TemplateMvpModel {
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
 
-    private void downBjBitmap(String path){
+    private void downBjBitmap(String path) {
         Observable.just(path).map(s -> {
             File file1 = null;
             try {
@@ -279,10 +276,10 @@ public class TemplateMvpModel {
             return file1;
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> {
             try {
-                if(path1!=null){
+                if (path1 != null) {
                     //下载后的地址
                     callback.getCartoonPath(path1.getPath());
-                }else{
+                } else {
                     WaitingDialog.closePragressDialog();
                     ToastUtil.showToast("请重试");
                 }
@@ -293,8 +290,6 @@ public class TemplateMvpModel {
             }
         });
     }
-
-
 
 
 }
