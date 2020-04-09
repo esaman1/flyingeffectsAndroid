@@ -7,35 +7,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.media.ExifInterface;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Base64;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.BitmapManager;
-import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
-import com.lansosdk.box.CanvasRunnable;
 import com.lansosdk.box.ExtractVideoFrame;
 import com.lansosdk.box.LSOBitmapAsset;
 import com.lansosdk.box.onExtractVideoFrameCompletedListener;
@@ -43,7 +34,6 @@ import com.lansosdk.box.onExtractVideoFrameProgressListener;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.lansosdk.videoeditor.VideoOneDo2;
-import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.BufferedOutputStream;
@@ -51,7 +41,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -139,11 +128,11 @@ public class VideoMattingModel {
 
             @Override
             public void onCompleted(ExtractVideoFrame v) {
-                LogUtil.d("OOM", "onCompleted");
-//                test();
-                SegJni.nativeReleaseImageBuffer();
-                SegJni.nativeReleaseSegHandler();
-                addFrameCompoundVideo();
+//                LogUtil.d("OOM", "onCompleted");
+////                test();
+//                SegJni.nativeReleaseImageBuffer();
+//                SegJni.nativeReleaseSegHandler();
+//                addFrameCompoundVideo();
             }
         });
         /**

@@ -13,7 +13,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View.OnClickListener;
@@ -25,6 +24,7 @@ import android.widget.Toast;
 
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
 import com.chuanglan.shanyan_sdk.listener.GetPhoneInfoListener;
+import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -37,22 +37,18 @@ import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.SPHelper;
 import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
 import com.flyingeffects.com.ui.view.fragment.frag_Bj;
+import com.flyingeffects.com.ui.view.fragment.frag_search;
+import com.flyingeffects.com.ui.view.fragment.frag_user_center;
+import com.flyingeffects.com.utils.AssetsUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.githang.statusbar.StatusBarCompat;
-import com.flyingeffects.com.R;
-import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
-import com.flyingeffects.com.ui.view.fragment.frag_search;
-import com.flyingeffects.com.ui.view.fragment.frag_user_center;
-import com.flyingeffects.com.utils.AssetsUtils;
 import com.glidebitmappool.GlideBitmapPool;
-import com.google.android.exoplayer2.util.NotificationUtil;
 import com.lansosdk.videoeditor.LanSongFileUtil;
-import com.lansosdk.videoeditor.LanSongUtil;
-import com.megvii.segjni.SegJni;
 import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
@@ -100,8 +96,8 @@ public class HomeMainActivity extends FragmentActivity {
         clearAllData();
         initView();
         copyFile("default_bj.png");
-        SegJni.nativeCreateSegHandler(this, ConUtil.getFileContent(this, R.raw.megviisegment_model), 8);
-        GlideBitmapPool.initialize(10 * 1024 * 1024); // 10mb max memory size
+//        SegJni.nativeCreateSegHandler(this, ConUtil.getFileContent(this, R.raw.megviisegment_model), 8);
+//        GlideBitmapPool.initialize(10 * 1024 * 1024); // 10mb max memory size
         checkUpdate();
         checkConfig();
         getUserPhoneInfo();

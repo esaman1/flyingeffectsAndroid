@@ -2,21 +2,16 @@ package com.flyingeffects.com.manager;
 
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.os.Handler;
 
-import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.DownImg;
 import com.flyingeffects.com.enity.DownImgDataList;
 import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.utils.updateFileUtils;
 import com.glidebitmappool.GlideBitmapPool;
 import com.google.gson.Gson;
-import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.io.File;
@@ -24,9 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import top.zibin.luban.Luban;
 import top.zibin.luban.OnCompressListener;
 

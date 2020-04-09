@@ -150,7 +150,7 @@ dependencies {
     implementation project(':sxve')
     implementation project(':album')
     implementation project(':LanSongSDK')
-    implementation project(':segjni')
+//    implementation project(':segjni')
 
 
 
