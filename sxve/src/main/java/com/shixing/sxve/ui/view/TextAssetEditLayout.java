@@ -129,7 +129,10 @@ public class TextAssetEditLayout extends FrameLayout implements RadioGroup.OnChe
 
             @Override
             public void afterTextChanged(Editable s) {
-                mModel.setText(s.toString());
+                if(mModel!=null){
+                    mModel.setText(s.toString());
+                }
+
             }
         });
     }

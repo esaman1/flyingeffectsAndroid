@@ -14,6 +14,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
+import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -327,7 +328,7 @@ public class UpdateApkActivity extends Activity implements OnClickListener {
     @Override
     public final boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (is_must_update.equals("1")) {
+            if (!TextUtils.isEmpty(is_must_update)&&is_must_update.equals("1")) {
                 exitPressAgain();
             } else {
                 this.finish();
