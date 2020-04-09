@@ -44,6 +44,7 @@ import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.VideoUtils;
 import com.flyingeffects.com.view.MyVideoView;
+import com.shixing.sxve.ui.view.WaitingDialog;
 import com.umeng.socialize.UMAuthListener;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -104,14 +105,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
-        OneKeyLoginManager.getInstance().setLoadingVisibility(false);
-        OneKeyLoginManager.getInstance().setAuthThemeConfig(ShanyanConfigUtils.getCJSConfig(getApplicationContext()), ShanyanConfigUtils.getCJSConfig(getApplicationContext()));
-        openLoginActivity();
-    }
+//    @Override
+//    public void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//
+//    }
 
     @Override
     public void onDestroy() {
@@ -138,6 +136,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private void openLoginActivity() {
         //拉取授权页方法
         OneKeyLoginManager.getInstance().openLoginAuth(false, (code, result) -> {
+            WaitingDialog.closePragressDialog();
             if (1000 == code) {
                 isOpenAuth = true;
                 //拉起授权页成功
@@ -167,9 +166,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     //AbScreenUtils.showToast(getApplicationContext(), "用户点击登录获取token成功");
                     try {
                         JSONObject ob=new JSONObject(result);
-
-
-                        requestLoginForSdk("4",ob.getString("token"),"","",false);
+                        requestLoginForSdk("4",ob.getString("token"),"","","","",false);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -273,6 +270,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
+        WaitingDialog.openPragressDialog(this);
+        OneKeyLoginManager.getInstance().setLoadingVisibility(false);
+        OneKeyLoginManager.getInstance().setAuthThemeConfig(ShanyanConfigUtils.getCJSConfig(getApplicationContext()), ShanyanConfigUtils.getCJSConfig(getApplicationContext()));
+        openLoginActivity();
+
         String tips = "登录表示你同意《服务条款》和《隐私政策》";
         SpannableStringBuilder spannableBuilder = new SpannableStringBuilder(tips);
         ClickableSpan clickableSpanOne = new ClickableSpan() {
@@ -449,13 +452,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      * param :type|1=微信2=qq3=苹果4=闪验
      * user : zhangtongju
      */
-    private void requestLoginForSdk(String type,String flash_token,String nickname,String photourl,boolean isShowDialog) {
+    private void requestLoginForSdk(String type,String flash_token,String nickname,String photourl,String openid,String unionid, boolean isShowDialog) {
         if(!DoubleClick.getInstance().isFastDoubleClick()){
             HashMap<String, String> params = new HashMap<>();
             params.put("type", type);
             params.put("flash_token", flash_token);
             params.put("nickname", nickname);
             params.put("photourl", photourl);
+
+            params.put("openid", openid);
+
+            params.put("unionid", unionid);
 
             // 启动时间
             Observable ob = Api.getDefault().toLoginSms(BaseConstans.getRequestHead(params));
@@ -468,7 +475,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 @Override
                 protected void _onNext(UserInfo data) {
                     String str = StringUtil.beanToJSONString(data);
-                    LogUtil.d("OOM", "requestLogin=" + str);
+                    LogUtil.d("OOM", "setToken=" + data.getToken());
                     BaseConstans.SetUserToken(data.getToken());
                     BaseConstans.SetUserId(data.getId());
                     dissMissShanYanUi();
@@ -592,7 +599,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 //                plamformType = (plamformType.equals("QQ") ? QQ : WEIXIN);
 //                ToastUtil.showToast(name);
 //                requestLogin(plamformType, data.get("openid"), data.get("unionid"), iconUrl, name);
-                requestLoginForSdk("1","",name,iconUrl,true);
+                requestLoginForSdk("1","",name,iconUrl,data.get("openid"),data.get("unionid"),true);
             }
         }
 

@@ -7,6 +7,7 @@ import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.http.abc;
 import com.flyingeffects.com.manager.SPHelper;
 import com.flyingeffects.com.utils.ChannelUtil;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.OsUtils;
 import com.flyingeffects.com.utils.StringUtil;
 
@@ -40,6 +41,7 @@ public class BaseConstans {
         map.put("channel", getChannel()); //getChannel()  test
         map.put("version", getVersionCode());
         map.put("timestamp", nowTimestamp);//getTimestamp()+""
+        LogUtil.d("OOM","请求的token=="+ GetUserToken());
         map.put("imei", getUuid());
         map.put("uuid", GetUserUuid());
         map.put("token", GetUserToken());

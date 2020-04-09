@@ -173,12 +173,14 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_zan:
-                if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                    Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), 2 + "");
-                } else {
-                    Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), 1 + "");
-                }
 
+                if(!DoubleClick.getInstance().isFastDoubleClick()){
+                    if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                        Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), 2 + "");
+                    } else {
+                        Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), 1 + "");
+                    }
+                }
                 break;
             case R.id.tv_make:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(3000)) {

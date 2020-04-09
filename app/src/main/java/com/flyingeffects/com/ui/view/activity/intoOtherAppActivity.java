@@ -84,7 +84,7 @@ public class intoOtherAppActivity extends Activity {
                     contactUs();
                 }else{
                     ClipboardManager tvCopy = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                    tvCopy.setPrimaryClip(ClipData.newPlainText(null, BaseConstans.configList.getCopydata()));
+                    tvCopy.setPrimaryClip(ClipData.newPlainText(null, BaseConstans.configList.getKuaishouurl()));
                     doStartApplicationWithPackageName(this, "com.smile.gifmaker");
                 }
 
@@ -97,7 +97,7 @@ public class intoOtherAppActivity extends Activity {
                     contactUs();
                 }else{
                     ClipboardManager tvCopy_dy = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                    tvCopy_dy.setPrimaryClip(ClipData.newPlainText(null, BaseConstans.configList.getCopydata()));
+                    tvCopy_dy.setPrimaryClip(ClipData.newPlainText(null, BaseConstans.configList.getDouyinurl()));
                     doStartApplicationWithPackageName(this, "com.ss.android.ugc.aweme");
                 }
                 break;
