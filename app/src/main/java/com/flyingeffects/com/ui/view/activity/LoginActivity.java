@@ -363,7 +363,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 if(!isWeixinAvilible(this)){
                     ToastUtil.showToast("您还未安装微信");
                 }else {
-                    wxLogin();
+                    if(!DoubleClick.getInstance().isFastZDYDoubleClick(2000)){
+                        wxLogin();
+                    }
+
                 }
                 break;
             default:
@@ -640,7 +643,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             if(!isWeixinAvilible(this)){
                 ToastUtil.showToast("您还未安装微信");
             }else{
-                wxLogin();
+                if(!DoubleClick.getInstance().isFastZDYDoubleClick(2000)){
+                    wxLogin();
+                }
             }
 
         }
