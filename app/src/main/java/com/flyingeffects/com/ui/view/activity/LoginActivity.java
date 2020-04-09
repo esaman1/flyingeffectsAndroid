@@ -450,7 +450,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
 
     /**
-     * description ：除了短信登录外的登录
+     * description ：除了短信登录外的登录 ,之所以加了弹出关闭，因为米面弹出错误日志
      * creation date: 2020/4/8
      * param :type|1=微信2=qq3=苹果4=闪验
      * user : zhangtongju
@@ -462,16 +462,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             params.put("flash_token", flash_token);
             params.put("nickname", nickname);
             params.put("photourl", photourl);
-
             params.put("openid", openid);
-
             params.put("unionid", unionid);
-
             // 启动时间
             Observable ob = Api.getDefault().toLoginSms(BaseConstans.getRequestHead(params));
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(LoginActivity.this) {
                 @Override
                 protected void _onError(String message) {
+                    WaitingDialog.closePragressDialog();
                     ToastUtil.showToast(message);
                 }
 
@@ -482,6 +480,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     BaseConstans.SetUserToken(data.getToken());
                     BaseConstans.SetUserId(data.getId());
                     dissMissShanYanUi();
+                    WaitingDialog.closePragressDialog();
                     LoginActivity.this.finish();
                 }
             }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
@@ -565,8 +564,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
 
 
-
-
     public void wxLogin(){
         UMShareAPI.get(LoginActivity.this).getPlatformInfo(LoginActivity.this, SHARE_MEDIA.WEIXIN, authListener);
     }
@@ -598,11 +595,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 String iconUrl = data.get("iconurl");
                 bundle.putSerializable("name", name);
                 bundle.putSerializable("iconUrl", iconUrl);
-//                String plamformType = platform.toString();
-//                plamformType = (plamformType.equals("QQ") ? QQ : WEIXIN);
-//                ToastUtil.showToast(name);
-//                requestLogin(plamformType, data.get("openid"), data.get("unionid"), iconUrl, name);
-                requestLoginForSdk("1","",name,iconUrl,data.get("openid"),data.get("unionid"),true);
+                WaitingDialog.openPragressDialog(LoginActivity.this);
+                requestLoginForSdk("1","",name,iconUrl,data.get("openid"),data.get("unionid"),false);
             }
         }
 

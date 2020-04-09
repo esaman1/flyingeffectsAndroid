@@ -245,7 +245,6 @@ public class frag_search extends BaseFragment {
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(getActivity()) {
             @Override
             protected void _onError(String message) {
-                ToastUtil.showToast(message);
             }
 
             @Override
