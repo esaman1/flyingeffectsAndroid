@@ -66,6 +66,8 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     context.startActivity(intent);
                 });
+            }else{
+                ConstraintLayout_addVideo.setVisibility(View.GONE);
             }
             //背景
             iv_show_author.setVisibility(View.VISIBLE);

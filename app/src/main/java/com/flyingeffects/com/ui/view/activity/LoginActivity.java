@@ -35,6 +35,7 @@ import com.flyingeffects.com.enity.WxLogin;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.utils.AbScreenUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
@@ -165,7 +166,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     //AbScreenUtils.showToast(getApplicationContext(), "用户点击登录获取token成功");
                     try {
                         JSONObject ob=new JSONObject(result);
-                        requestLoginForSdk("4",ob.getString("token"),"","");
+
+
+                        requestLoginForSdk("4",ob.getString("token"),"","",false);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -184,16 +187,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
 
     private void startResultActivity(int code, String result, long startTime) {
-        LogUtil.d("OOM", "code=" + code + "result=" + result);
-//        Intent intent = new Intent(LoginForShanYanActivity.this, ResultActivity.class);
-//        intent.putExtra("type", "0");
-//        intent.putExtra("startTime", startTime);
-//        intent.putExtra("loginResult", result);
-//        intent.putExtra("loginCode", code);
-//        startActivity(intent);
-//        OneKeyLoginManager.getInstance().finishAuthActivity();
-//        OneKeyLoginManager.getInstance().removeAllListener();
-//        isOpenAuth = false;
     }
 
     @Override
@@ -455,31 +448,35 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      * param :type|1=微信2=qq3=苹果4=闪验
      * user : zhangtongju
      */
-    private void requestLoginForSdk(String type,String flash_token,String nickname,String photourl) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("type", type);
-        params.put("flash_token", flash_token);
-        params.put("nickname", nickname);
-        params.put("photourl", photourl);
+    private void requestLoginForSdk(String type,String flash_token,String nickname,String photourl,boolean isShowDialog) {
+        if(!DoubleClick.getInstance().isFastDoubleClick()){
+            HashMap<String, String> params = new HashMap<>();
+            params.put("type", type);
+            params.put("flash_token", flash_token);
+            params.put("nickname", nickname);
+            params.put("photourl", photourl);
 
-        // 启动时间
-        Observable ob = Api.getDefault().toLoginSms(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(LoginActivity.this) {
-            @Override
-            protected void _onError(String message) {
-                ToastUtil.showToast(message);
-            }
+            // 启动时间
+            Observable ob = Api.getDefault().toLoginSms(BaseConstans.getRequestHead(params));
+            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(LoginActivity.this) {
+                @Override
+                protected void _onError(String message) {
+                    ToastUtil.showToast(message);
+                }
 
-            @Override
-            protected void _onNext(UserInfo data) {
-                String str = StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM", "requestLogin=" + str);
-                BaseConstans.SetUserToken(data.getToken());
-                BaseConstans.SetUserId(data.getId());
-                dissMissShanYanUi();
-                LoginActivity.this.finish();
-            }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+                @Override
+                protected void _onNext(UserInfo data) {
+                    String str = StringUtil.beanToJSONString(data);
+                    LogUtil.d("OOM", "requestLogin=" + str);
+                    BaseConstans.SetUserToken(data.getToken());
+                    BaseConstans.SetUserId(data.getId());
+                    dissMissShanYanUi();
+                    LoginActivity.this.finish();
+                }
+            }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
+        }
+
+
     }
 
 
@@ -590,11 +587,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 String iconUrl = data.get("iconurl");
                 bundle.putSerializable("name", name);
                 bundle.putSerializable("iconUrl", iconUrl);
-                String plamformType = platform.toString();
+//                String plamformType = platform.toString();
 //                plamformType = (plamformType.equals("QQ") ? QQ : WEIXIN);
 //                ToastUtil.showToast(name);
 //                requestLogin(plamformType, data.get("openid"), data.get("unionid"), iconUrl, name);
-                requestLoginForSdk("1","",name,iconUrl);
+                requestLoginForSdk("1","",name,iconUrl,true);
             }
         }
 

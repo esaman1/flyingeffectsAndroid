@@ -202,12 +202,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 break;
 
             case R.id.iv_video_play:
-                videoPlayer.setVisibility(View.VISIBLE);
-                iv_video_play.setVisibility(View.GONE);
-                iv_show_cover.setVisibility(View.GONE);
-                videoPlayer.startPlayLogic();
-                break;
-
             case R.id.iv_click:
                 if (iv_video_play.getVisibility() == View.VISIBLE) {
                     if (isPlayComplate) {

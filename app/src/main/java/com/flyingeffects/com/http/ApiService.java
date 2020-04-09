@@ -31,13 +31,10 @@ public interface ApiService {
 
     //短信验证码的登录
     @FormUrlEncoded
-    @POST("/api/sms/login")
+    @POST("/api/user/login")
     Observable<HttpResult<UserInfo>> toLoginSms(@FieldMap Map<String, String> params);
 
-    //普通登录
-    @FormUrlEncoded
-    @POST("/api/user/login")
-    Observable<HttpResult<UserInfo>> toCommonLogin(@FieldMap Map<String, String> params);
+
 
 
     @FormUrlEncoded
