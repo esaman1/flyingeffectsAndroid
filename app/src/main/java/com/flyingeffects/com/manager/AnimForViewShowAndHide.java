@@ -21,7 +21,7 @@ public class AnimForViewShowAndHide {
 
     public void hide(View view){
         AlphaAnimation    hideAnim  = new AlphaAnimation(1, 0);
-        hideAnim.setDuration(1000);
+        hideAnim.setDuration(500);
         view.startAnimation(hideAnim);
         hideAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -44,7 +44,7 @@ public class AnimForViewShowAndHide {
 
     public void show(View view){
         AlphaAnimation    hideAnim  = new AlphaAnimation(0, 1);
-        hideAnim.setDuration(1000);
+        hideAnim.setDuration(500);
         view.startAnimation(hideAnim);
         hideAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override

@@ -18,6 +18,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
 import android.view.KeyEvent;
+import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
@@ -25,6 +26,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.flyingeffects.com.R;
@@ -47,6 +49,11 @@ public class webViewActivity extends BaseWebActivity {
     @BindView(R.id.webView)
     WebView webView;
 
+    @BindView(R.id.iv_back)
+    ImageView iv_back;
+
+
+
     public ValueCallback<Uri[]> uploadMessage;
     private ValueCallback<Uri> mUploadMessage;
     public static final int REQUEST_SELECT_FILE = 100;
@@ -62,6 +69,12 @@ public class webViewActivity extends BaseWebActivity {
     protected void initView() {
         WaitingDialog.openPragressDialog(this);
         webUrl = getIntent().getStringExtra("webUrl");
+        iv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                webViewActivity.this.finish();
+            }
+        });
     }
 
 

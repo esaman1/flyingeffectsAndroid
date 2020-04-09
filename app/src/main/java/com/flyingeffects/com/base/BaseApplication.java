@@ -55,9 +55,10 @@ public class BaseApplication extends MultiDexApplication {
         initYouMeng();
         initJPush();
         initZt();
-        initShanyanSDK(this);
-//        keepCrash();
         //闪验SDK初始化（建议放在Application的onCreate方法中执行）
+        initShanyanSDK(this);
+        keepCrash();
+
 
 
     }

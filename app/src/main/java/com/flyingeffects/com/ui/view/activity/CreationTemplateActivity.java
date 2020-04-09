@@ -16,6 +16,7 @@ import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
+import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
@@ -198,37 +199,39 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 break;
 
             case R.id.ll_play:
-                if (isPlaying) {
-                    isIntoPause=false;
-                    isPlayComplate=false;
-                    videoToPause();
-                    presenter.showGifAnim(false);
-                    isPlaying = false;
-                    nowStateIsPlaying(false);
-                } else {
-                    nowStateIsPlaying(true);
-                    if(isPlayComplate){
-                        videoPlayer.startPlayLogic();
-                        nowChooseSeek=1000;
+                if(!DoubleClick.getInstance().isFastDoubleClick()){
+                    if (isPlaying) {
                         isIntoPause=false;
-                    }else{
-                        if(isInitVideoLayer){
-                            if(!isIntoPause){
-                                videoPlayer.onVideoResume(false);
+                        isPlayComplate=false;
+                        videoToPause();
+                        presenter.showGifAnim(false);
+                        isPlaying = false;
+                        nowStateIsPlaying(false);
+                    } else {
+                        nowStateIsPlaying(true);
+                        if(isPlayComplate){
+                            videoPlayer.startPlayLogic();
+                            nowChooseSeek=1000;
+                            isIntoPause=false;
+                        }else{
+                            if(isInitVideoLayer){
+                                if(!isIntoPause){
+                                    videoPlayer.onVideoResume(false);
+                                }else{
+                                    videoPlayer.startPlayLogic();
+                                    isIntoPause=false;
+                                    isInitVideoLayer=true;
+                                }
                             }else{
-                                videoPlayer.startPlayLogic();
                                 isIntoPause=false;
                                 isInitVideoLayer=true;
+                                videoPlayer.startPlayLogic();
                             }
-                        }else{
-                            isIntoPause=false;
-                            isInitVideoLayer=true;
-                            videoPlayer.startPlayLogic();
                         }
+                        isPlaying = true;
+                        startTimer();
+                        presenter.showGifAnim(true);
                     }
-                    isPlaying = true;
-                    startTimer();
-                    presenter.showGifAnim(true);
                 }
 
                 break;

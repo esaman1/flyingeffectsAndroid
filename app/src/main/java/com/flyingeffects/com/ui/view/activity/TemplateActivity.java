@@ -307,6 +307,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     private void showPreview(boolean isPreview, boolean hasAnim) {
+        LogUtil.d("OOM", "showPreview=" + isPreview + "isRealtime=" + isRealtime);
+
         if (isPreview) {
             if (isRealtime) {
                 real_time_preview.setVisibility(View.VISIBLE);
@@ -538,7 +540,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 break;
 
             case R.id.iv_play:
-                if (!DoubleClick.getInstance().isFastDoubleClick()) {
+                if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
                     onclickPlaying();
                 }
                 break;
@@ -673,7 +675,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                             mTemplateViews.get(lastChoosePosition).invalidate();
                             ModificationSingleThumbItem(paths.get(0));
                         } else {
-                            int total = mTemplateModel.getAssetsSize()-1;
+                            int total = mTemplateModel.getAssetsSize() - 1;
                             //倒敘
                             int nowChooseIndex = total - pickIndex;
                             MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(nowChooseIndex).ui;

@@ -1,6 +1,5 @@
 package com.flyingeffects.com.http;
 
-import android.content.Context;
 import android.content.Intent;
 
 import com.flyingeffects.com.base.BaseApplication;
