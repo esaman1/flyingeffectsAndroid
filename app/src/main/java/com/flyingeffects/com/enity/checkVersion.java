@@ -41,13 +41,6 @@ public class checkVersion implements Serializable {
         this.content = content;
     }
 
-    public String getIs_renew() {
-        return is_renew;
-    }
-
-    public void setIs_renew(String is_renew) {
-        this.is_renew = is_renew;
-    }
 
     public String getEnabled() {
         return enabled;
@@ -69,7 +62,16 @@ public class checkVersion implements Serializable {
     }
 
     private String downloadfile;
-    private String is_renew;
+
+    public String getIs_forceupdate() {
+        return is_forceupdate;
+    }
+
+    public void setIs_forceupdate(String is_forceupdate) {
+        this.is_forceupdate = is_forceupdate;
+    }
+
+    private String is_forceupdate;
     private String enabled;
 
     public int getIs_advertising() {

@@ -379,7 +379,12 @@ public class UpdateApkActivity extends Activity implements OnClickListener {
             window.getDecorView().setBackgroundColor(getResources().getColor(R.color.transparent));
             window.getDecorView().setPadding(0, 0, 0, 0);
         }
-        dialog.setCanceledOnTouchOutside(true);
+        if(!TextUtils.isEmpty(is_must_update)&&is_must_update.equals("1")){
+            dialog.setCanceledOnTouchOutside(false);
+        }else{
+            dialog.setCanceledOnTouchOutside(true);
+        }
+
         dialog.show();
         dialog.setOnCancelListener(dialogInterface -> UpdateApkActivity.this.finish());
     }

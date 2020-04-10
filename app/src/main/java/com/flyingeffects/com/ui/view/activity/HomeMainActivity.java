@@ -153,7 +153,7 @@ public class HomeMainActivity extends FragmentActivity {
                         int uVersion = Integer.parseInt(uploadVersion);
                         int NowVersion = Integer.parseInt(BaseConstans.getVersionCode());
                         if (uVersion > NowVersion) {
-                            intoCheckUpdateAct(data.getDownloadfile(), data.getIs_renew(), content);
+                            intoCheckUpdateAct(data.getDownloadfile(), data.getIs_forceupdate(), content);
                         }
                     }
                 } catch (NumberFormatException e) {

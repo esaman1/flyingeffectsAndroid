@@ -174,11 +174,13 @@ public class frag_search extends BaseFragment {
             int finalI = i;
             tv.setOnClickListener(view -> {
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "4_recommend", listSearchKey.get(finalI).getName());
-                    String name = listSearchKey.get(finalI).getName();
-                    requestFagData(name);
-                    ll_showResult.setVisibility(View.VISIBLE);
-                    setResultMargin();
+                    if(getActivity()!=null){
+                        statisticsEventAffair.getInstance().setFlag(getActivity(), "4_recommend", listSearchKey.get(finalI).getName());
+                        String name = listSearchKey.get(finalI).getName();
+                        requestFagData(name);
+                        ll_showResult.setVisibility(View.VISIBLE);
+                        setResultMargin();
+                    }
                 }
             });
             GradientDrawable view_ground = (GradientDrawable) tv.getBackground(); //获取控件的背
