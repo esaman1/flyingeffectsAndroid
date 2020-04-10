@@ -2,6 +2,11 @@ package com.flyingeffects.com.ui.model;
 
 import android.graphics.Bitmap;
 
+import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.faceUtil.ConUtil;
+import com.megvii.segjni.SegJni;
+import com.shixing.sxve.ui.util.PhotoBitmapUtils;
+
 
 public class MattingImage {
 
@@ -14,22 +19,22 @@ public class MattingImage {
 
 
     public void mattingImage(String path, mattingStatus callback) {
-//        new Thread(() -> {
-//            mOriginBitmap = ConUtil.getImage(path);
-//            mOriginBitmap = PhotoBitmapUtils.amendRotatePhoto(path, mOriginBitmap);
-//            if (mOriginBitmap != null) {
-//                mBitmapW = mOriginBitmap.getWidth();
-//                mBitmapH = mOriginBitmap.getHeight();
-//                SegJni.nativeCreateImageBuffer(mBitmapW, mBitmapH);
-//                byte segs[] = new byte[mBitmapH * mBitmapW];
-//                byte[] rgba = ConUtil.getPixelsRGBA(mOriginBitmap);
-//                SegJni.nativeSegImage(rgba, mBitmapW, mBitmapH, segs, false);
-//                SegJni.nativeReleaseImageBuffer();
-//                mOriginBitmap = ConUtil.setBitmapAlpha(mOriginBitmap, segs);
-//                callback.isSuccess(true, mOriginBitmap);
-//            }
-//
-//        }).start();
+        new Thread(() -> {
+            mOriginBitmap = ConUtil.getImage(path);
+            mOriginBitmap = PhotoBitmapUtils.amendRotatePhoto(path, mOriginBitmap);
+            if (mOriginBitmap != null) {
+                mBitmapW = mOriginBitmap.getWidth();
+                mBitmapH = mOriginBitmap.getHeight();
+                SegJni.nativeCreateImageBuffer(mBitmapW, mBitmapH);
+                byte segs[] = new byte[mBitmapH * mBitmapW];
+                byte[] rgba = ConUtil.getPixelsRGBA(mOriginBitmap);
+                SegJni.nativeSegImage(rgba, mBitmapW, mBitmapH, segs, false);
+                SegJni.nativeReleaseImageBuffer();
+                mOriginBitmap = ConUtil.setBitmapAlpha(mOriginBitmap, segs);
+                callback.isSuccess(true, mOriginBitmap);
+            }
+
+        }).start();
     }
 
 
@@ -37,17 +42,17 @@ public class MattingImage {
      * 单线程抠图
      */
     public void mattingImage(final Bitmap OriginBitmap, mattingStatus callback) {
-//        new Thread(() -> {
-//            mBitmapW = OriginBitmap.getWidth();
-//            mBitmapH = OriginBitmap.getHeight();
-//            SegJni.nativeCreateImageBuffer(mBitmapW, mBitmapH);
-//            byte segs[] = new byte[mBitmapH * mBitmapW];
-//            byte[] rgba = ConUtil.getPixelsRGBA(OriginBitmap);
-//            SegJni.nativeSegImage(rgba, mBitmapW, mBitmapH, segs, false);
-//            SegJni.nativeReleaseImageBuffer();
-//            Bitmap newBitmap = ConUtil.setBitmapAlpha(OriginBitmap, segs);
-//            callback.isSuccess(true, newBitmap);
-//        }).start();
+        new Thread(() -> {
+            mBitmapW = OriginBitmap.getWidth();
+            mBitmapH = OriginBitmap.getHeight();
+            SegJni.nativeCreateImageBuffer(mBitmapW, mBitmapH);
+            byte segs[] = new byte[mBitmapH * mBitmapW];
+            byte[] rgba = ConUtil.getPixelsRGBA(OriginBitmap);
+            SegJni.nativeSegImage(rgba, mBitmapW, mBitmapH, segs, false);
+            SegJni.nativeReleaseImageBuffer();
+            Bitmap newBitmap = ConUtil.setBitmapAlpha(OriginBitmap, segs);
+            callback.isSuccess(true, newBitmap);
+        }).start();
     }
 
 
@@ -60,22 +65,22 @@ public class MattingImage {
     private int bitmapWH[];
 
     public void mattingImageForMultiple(Bitmap OriginBitmap, int index, mattingStatus callback) {
-//        if (index == 1 && OriginBitmap != null) {
-//            BitmapW = OriginBitmap.getWidth();
-//            BitmapH = OriginBitmap.getHeight();
-//            SegJni.nativeCreateImageBuffer(BitmapW, BitmapH);
-//            bitmapWH = new int[2];
-//            bitmapWH[0] = BitmapW;
-//            bitmapWH[1] = BitmapH;
-//        }
-//        byte[] imageByte = SegJni.nativeSegCamera(getYUVByBitmap(OriginBitmap), BitmapW, BitmapH, 0, 0, 0, bitmapWH);
-//        if (imageByte != null) {
-//            Bitmap newBitmap = ConUtil.setBitmapAlpha(OriginBitmap, imageByte);
-//            callback.isSuccess(true, newBitmap);
-//        } else {
-//            callback.isSuccess(false, OriginBitmap);
-//            LogUtil.d("oom", "IMAGEBYTE==NULL");
-//        }
+        if (index == 1 && OriginBitmap != null) {
+            BitmapW = OriginBitmap.getWidth();
+            BitmapH = OriginBitmap.getHeight();
+            SegJni.nativeCreateImageBuffer(BitmapW, BitmapH);
+            bitmapWH = new int[2];
+            bitmapWH[0] = BitmapW;
+            bitmapWH[1] = BitmapH;
+        }
+        byte[] imageByte = SegJni.nativeSegCamera(getYUVByBitmap(OriginBitmap), BitmapW, BitmapH, 0, 0, 0, bitmapWH);
+        if (imageByte != null) {
+            Bitmap newBitmap = ConUtil.setBitmapAlpha(OriginBitmap, imageByte);
+            callback.isSuccess(true, newBitmap);
+        } else {
+            callback.isSuccess(false, OriginBitmap);
+            LogUtil.d("oom", "IMAGEBYTE==NULL");
+        }
     }
 
 
