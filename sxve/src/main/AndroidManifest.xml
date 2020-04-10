@@ -3,9 +3,6 @@
     package="com.shixing.sxve">
 
     <application>
-        <activity
-            android:name=".ui.VideoClipActivity"
-            android:theme="@style/SXVE" />
         <activity android:name=".ui.VideoPlayActivity" />
     </application>
 

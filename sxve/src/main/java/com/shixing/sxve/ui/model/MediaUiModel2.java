@@ -13,8 +13,10 @@ import android.media.ExifInterface;
 import android.media.MediaMetadataRetriever;
 import android.text.TextUtils;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import com.shixing.sxve.ui.AssetDelegate;
+import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.util.AffineTransform;
 import com.shixing.sxve.ui.util.BitmapCompress;
 import com.shixing.sxve.ui.util.PhotoBitmapUtils;
@@ -312,22 +314,81 @@ public class MediaUiModel2 extends MediaUiModel {
     public Matrix getMediaUiMatrix() {
         return mMatrix;
     }
-
+    String   mimeType;
     public String getpathForThisMatrix(String folder, String cartoonPath) {
 
-        Bitmap cartoonBitmap = getSmallBmpFromFile(cartoonPath, size.getHeight(), size.getWidth());
-        Bitmap bitmap = Bitmap.createBitmap(mClipWidth, mClipHeight, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        Matrix matrix = new Matrix(mMatrix);
-        matrix.postConcat(mInverseMatrix);
-        if (cartoonBitmap != null) {
-            //解决bug 异常情况下bitmap 为null
-            canvas.drawBitmap(cartoonBitmap, matrix, mInitPaint);
+        if (!TextUtils.isEmpty(cartoonPath)) {
+            String extension = MimeTypeMap.getFileExtensionFromUrl(cartoonPath); //获得格式
+            if (extension != null && !extension.equals("")) {
+                mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+                if (mimeType == null) {
+                    mimeType = getPathType(cartoonPath);
+                }
+            } else {  //有些手机获取不到，比如vivo 是中文目录
+                mimeType = getPathType(mimeType);
+            }
+
+            if (albumType.isImage(mimeType)) {
+                Bitmap cartoonBitmap = getSmallBmpFromFile(cartoonPath, size.getHeight(), size.getWidth());
+                Bitmap bitmap = Bitmap.createBitmap(mClipWidth, mClipHeight, Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(bitmap);
+                Matrix matrix = new Matrix(mMatrix);
+                matrix.postConcat(mInverseMatrix);
+                if (cartoonBitmap != null) {
+                    //解决bug 异常情况下bitmap 为null
+                    canvas.drawBitmap(cartoonBitmap, matrix, mInitPaint);
+                }
+                String path = folder + File.separator + UUID.randomUUID() + ".png";
+                saveBitmapToPath(bitmap, path);
+                return path;
+            } else {
+                final String path = folder + File.separator + UUID.randomUUID() + ".mp4";
+                Matrix matrix = new Matrix(mMatrix);
+                matrix.postConcat(mInverseMatrix);
+                SXCompositor sxCompositor = new SXCompositor(mVideoPath, path, matrix, !mMute);
+                sxCompositor.setWidth(mClipWidth);
+                sxCompositor.setHeight(mClipHeight);
+                sxCompositor.setStartTime(mStartTime);
+                sxCompositor.setDuration(mDuration);
+                sxCompositor.setBitrateFactor(1f);
+                sxCompositor.setRenderListener(new SXRenderListener() {
+                    @Override
+                    public void onStart() {
+                    }
+
+                    @Override
+                    public void onUpdate(int progress) {
+
+                    }
+
+                    @Override
+                    public void onFinish(boolean success, String msg) {
+                        Log.d("TEST", "mediaUiModel clip finish: " + path);
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+                });
+                sxCompositor.run();
+                return path;
+            }
         }
-        String path = folder + File.separator + UUID.randomUUID() + ".png";
-        saveBitmapToPath(bitmap, path);
-        return path;
+        return cartoonPath;
+
     }
+
+    private String getPathType(String path) {
+                String mimeType;
+                String suffix = path.substring(path.lastIndexOf(".") + 1).toLowerCase();
+                if (suffix.equalsIgnoreCase("mp4") || suffix.equalsIgnoreCase("M4V") || suffix.equalsIgnoreCase("3gp") || suffix.equals("3G2") || suffix.equalsIgnoreCase("WMV") || suffix.equalsIgnoreCase("ASF") || suffix.equalsIgnoreCase("AVI") || suffix.equalsIgnoreCase("FLV") || suffix.equalsIgnoreCase("MKV") || suffix.equalsIgnoreCase("WEBM")) {
+                    mimeType = "video/*";
+                } else {
+                    mimeType = "image/*";
+                }
+                return mimeType;
+            }
 
 
     /**

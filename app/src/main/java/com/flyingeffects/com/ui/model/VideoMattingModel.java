@@ -76,6 +76,20 @@ public class VideoMattingModel {
     WaitingDialog_progress dialog;
 
 
+    MattingSuccess callback;
+
+    public VideoMattingModel(String videoPath, Context context,MattingSuccess callback) {
+        this.callback=callback;
+        this.videoPath = videoPath;
+        this.context = context;
+        videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
+        FileManager fileManager = new FileManager();
+        faceFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceFolder");
+        faceMattingFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceMattingFolder");
+        LogUtil.d("OOM", "faceMattingFolder=" + faceMattingFolder);
+        dialog = new WaitingDialog_progress(context);
+        dialog.openProgressDialog();
+    }
     public VideoMattingModel(String videoPath, Context context) {
         this.videoPath = videoPath;
         this.context = context;
@@ -87,7 +101,6 @@ public class VideoMattingModel {
         dialog = new WaitingDialog_progress(context);
         dialog.openProgressDialog();
     }
-
 
     private int allFrame;
 
@@ -198,8 +211,11 @@ public class VideoMattingModel {
                 String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
                 try {
                     FileUtil.copyFile(new File(exportPath), albumPath);
-                    albumBroadcast(albumPath);
-                    showKeepSuccessDialog(albumPath);
+                    if(callback!=null){
+                        callback.isSuccess(true,albumPath);
+                    }
+//                    albumBroadcast(albumPath);
+//                    showKeepSuccessDialog(albumPath);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -471,6 +487,13 @@ public class VideoMattingModel {
         } catch (Exception e) {
             return null;
         }
+    }
+
+
+
+
+    public interface  MattingSuccess{
+        void isSuccess(boolean isSuccess,String path);
     }
 
 

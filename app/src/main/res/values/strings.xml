@@ -48,6 +48,7 @@
     <string name="permission_alert">模板更新通知</string>
     <string name="permission_content">开启通知后，将不定时为你推送最新热门模板</string>
     <string name="toGetPermission">去开启通知</string>
-
+    <string name="slide_choose_range">滑动选择视频区间</string>
+    <string name="write_error">写文件时出错</string>
 
 </resources>

@@ -148,6 +148,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     private int nowTemplateIsAnim;
 
+    /**
+     * 有值表示视频
+     */
+    private String videoTime;
+
 
     @Override
     protected int getLayoutId() {
@@ -168,10 +173,16 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             templateId = bundle.getString("templateId");
             templateFilePath = bundle.getString("templateFilePath");
             imgPath = bundle.getStringArrayList("paths");
+            videoTime=bundle.getString("videoTime");
             originalPath = bundle.getStringArrayList("originalPath");
             templateName = bundle.getString("templateName");
             nowTemplateIsAnim = bundle.getInt("is_anime");
         }
+
+        if(!TextUtils.isEmpty(videoTime)){
+            nowTemplateIsAnim=1;
+        }
+
         if (originalPath == null || originalPath.size() == 0 || nowTemplateIsAnim == 1) {
             //不需要抠图
             findViewById(R.id.ll_Matting).setVisibility(View.GONE);
@@ -207,6 +218,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 AnimForViewShowAndHide.getInstance().show(mContainer);
             }
         });
+
+
+
+
+
     }
 
 
@@ -222,7 +238,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         initTemplateThumb(templateModel.groupSize);
         mTemplateModel = templateModel;
         if (nowTemplateIsAnim == 1) {
-            mTemplateModel.cartoonPath = originalPath.get(0);
+//            mTemplateModel.cartoonPath = originalPath.get(0);  //todo
+
+            mTemplateModel.cartoonPath = imgPath.get(0);
         }
         bottomButtonCount = templateModel.groupSize;
         int duration = mTemplateModel.getDuration();
@@ -515,7 +533,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         ) {
             item.setRedate(isRedate);
         }
-        templateThumbAdapter.notifyDataSetChanged();
+        if(templateThumbAdapter!=null){
+            templateThumbAdapter.notifyDataSetChanged();
+        }
+
     }
 
 
@@ -597,6 +618,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private void switchTemplate(String folder, String[] mSources) {
         final SXTemplate template = new SXTemplate(folder, SXTemplate.TemplateUsage.kForPreview);
+      for(int i=0;i<mSources.length;i++){
+          LogUtil.d("OOM","路徑為"+mSources[i]);
+
+      }
+
+
         template.setReplaceableFilePaths(mSources);
         template.enableSourcePrepare();
         new Thread() {

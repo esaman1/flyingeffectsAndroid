@@ -32,6 +32,7 @@ import com.flyingeffects.com.ui.presenter.PreviewMvpPresenter;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MarqueTextView;
+import com.flyingeffects.com.view.MattingVideoEnity;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
@@ -43,6 +44,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
+import retrofit2.http.Path;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -129,6 +133,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     protected void initView() {
         ondestroy = false;
+        EventBus.getDefault().register(this);
         templateItem = (new_fag_template_item) getIntent().getSerializableExtra("person");
         fromTo = getIntent().getStringExtra("fromTo");
         fromToMineCollect = getIntent().getBooleanExtra("fromToMineCollect", false);
@@ -255,6 +260,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         ondestroy = true;
         Presenter.onDestroy();
         videoPlayer.release();
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
@@ -297,7 +303,19 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                         Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId());
                     } else {
                         WaitingDialog.closePragressDialog();
-                        intoTemplateActivity(paths, TemplateFilePath);
+                        String videoTime=templateItem.getVideotime();
+                        if(!TextUtils.isEmpty(videoTime)&&!videoTime.equals("0")){
+                            float needVideoTime= Float.parseFloat(videoTime);
+//                            int needCropDuration= (int) (needVideoTime*1000);
+                            Intent intoCutVideo =new Intent(PreviewActivity.this,TemplateCutVideoActivity.class);
+                            intoCutVideo.putExtra("needCropDuration", needVideoTime);
+                            intoCutVideo.putExtra("videoPath", paths.get(0));
+                            startActivity(intoCutVideo);
+                        }else{
+                            intoTemplateActivity(paths, TemplateFilePath);
+                        }
+
+
                     }
 
                 }
@@ -348,12 +366,18 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         bundle.putInt("is_anime", templateItem.getIs_anime());
         bundle.putString("templateName", templateItem.getTitle());
         bundle.putString("templateId", templateItem.getId());
+        bundle.putString("videoTime",templateItem.getVideotime());
         bundle.putStringArrayList("originalPath", (ArrayList<String>) originalImagePath);
         bundle.putString("templateFilePath", templateFilePath);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("Message", bundle);
         startActivity(intent);
     }
+
+
+
+
+
 
 
     @Override
@@ -386,7 +410,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         if (!ondestroy) {
             //file 文件下载成功
             this.TemplateFilePath = TemplateFilePath;
-            AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");
+            AlbumManager.chooseVideo(this, defaultnum, SELECTALBUM, this, "");
         }
     }
 
@@ -488,6 +512,35 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             iv_video_play.setVisibility(View.GONE);
         }
     }
+
+
+
+
+    @Subscribe
+    public void onEventMainThread(MattingVideoEnity event) {
+        originalImagePath.clear();
+        ArrayList<String>paths=new ArrayList<>();
+        paths.add(event.getMattingPath());
+        originalImagePath.add(event.getOriginalPath());
+        Intent intent = new Intent(this, TemplateActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList("paths",  (ArrayList<String>) originalImagePath);
+        bundle.putInt("isPicNum", defaultnum);
+        bundle.putString("fromTo", fromTo);
+        bundle.putInt("is_anime", templateItem.getIs_anime());
+        bundle.putString("templateName", templateItem.getTitle());
+        bundle.putString("templateId", templateItem.getId());
+        bundle.putString("videoTime",templateItem.getVideotime());
+        bundle.putStringArrayList("originalPath", paths);
+        bundle.putString("templateFilePath", TemplateFilePath);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("Message", bundle);
+        startActivity(intent);
+    }
+
+
+
+
 
 
 }

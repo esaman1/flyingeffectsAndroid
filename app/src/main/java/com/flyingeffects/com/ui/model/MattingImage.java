@@ -77,7 +77,7 @@ public class MattingImage {
             }
             byte[] imageByte = SegJni.nativeSegCamera(getYUVByBitmap(OriginBitmap), BitmapW, BitmapH, 0, 0, 0, bitmapWH);
             if (imageByte != null) {
-                Bitmap newBitmap = SegResultHandleManage.setBitmapAlpha(OriginBitmap, imageByte);
+                Bitmap newBitmap = SegResultHandleManage.setBlackWhite(OriginBitmap, imageByte);
                 callback.isSuccess(true, newBitmap);
             } else {
                 callback.isSuccess(false, OriginBitmap);

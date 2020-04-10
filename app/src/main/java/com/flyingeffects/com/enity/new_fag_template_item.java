@@ -173,6 +173,16 @@ public class new_fag_template_item implements Serializable {
          private String reading;
          private String reading2;
 
+    public String getVideotime() {
+        return videotime;
+    }
+
+    public void setVideotime(String videotime) {
+        this.videotime = videotime;
+    }
+
+    private String videotime;
+
     public long getCreate_time() {
         return create_time;
     }
