@@ -16,6 +16,7 @@ import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -218,7 +219,10 @@ public class CompressionCuttingManage {
 
         int pathNum = list.size();
         LogUtil.d("OOM", "pathNum=" + pathNum);
-        updateFileUtils.uploadFile(listFile, "http://flying.nineton.cn/api/picture/picturesHumanList?filenum=" + pathNum + "&template_id=" + templateId, (code, str) -> {
+
+        LogUtil.d("OOM", "pathNum=" + pathNum);
+
+        updateFileUtils.uploadFile(listFile, "http://flying.nineton.cn/api/picture/picturesHumanList?filenum=" + pathNum + "&template_id=" + templateId+"&version="+BaseConstans.getVersionCode(), (code, str) -> {
             LogUtil.d("OOM", "uploadFileCallBack=" + str);
             WaitingDialog.closePragressDialog();
             Gson gson = new Gson();

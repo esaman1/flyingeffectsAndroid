@@ -57,7 +57,7 @@ public class BaseApplication extends MultiDexApplication {
         initZt();
         //闪验SDK初始化（建议放在Application的onCreate方法中执行）
         initShanyanSDK(this);
-        keepCrash();
+        //keepCrash();
 
 
 
@@ -118,7 +118,6 @@ public class BaseApplication extends MultiDexApplication {
         UMConfigure.setLogEnabled(false);
         UMConfigure.init(this, BaseConstans.UMENGAPPID, ChannelUtil.getChannel(this), UMConfigure.DEVICE_TYPE_PHONE, "");
         PlatformConfig.setWeixin("wx7cb3c7ece8461be7", "6eed0ad743c6026b10b7e036f22aa762");
-
     }
 
     /**

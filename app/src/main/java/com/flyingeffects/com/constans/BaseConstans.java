@@ -24,7 +24,7 @@ public class BaseConstans {
     public static final boolean UserFaceSdk=false;
     public static String titok;
     public static String kuaishou;
-    public static final boolean PRODUCTION = false;
+    public static final boolean PRODUCTION = true;
     private static String channel = "";
     private static String versionCode = "";
     private static String uuid = "";
@@ -55,10 +55,10 @@ public class BaseConstans {
         map.put("platform", "android");
         map.put("channel", getChannel());
         map.put("version", getVersionCode());
-        map.put("uuid", GetUserUuid());
-        map.put("token", GetUserToken());
         map.put("timestamp", nowTimestamp);//getTimestamp()+""
         map.put("imei", getUuid());
+        map.put("uuid", GetUserUuid());
+        map.put("token", GetUserToken());
         return abc.sign(map);
     }
 

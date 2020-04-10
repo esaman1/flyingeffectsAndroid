@@ -95,6 +95,7 @@ public class home_fag_itemMvpModel {
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
         Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
+//        LogUtil.d("sigin",BaseConstans.getRequestHead(params).toString());
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
             @Override
             protected void _onError(String message) {
