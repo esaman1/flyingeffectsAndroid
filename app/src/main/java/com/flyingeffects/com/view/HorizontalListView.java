@@ -252,10 +252,12 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     }
 
     public synchronized void scrollTo(int x) {
-
-        mScroller.startScroll(mNextX, 0, x - mNextX, 0);
+        mScroller.startScroll(mNextX, 0, x - mNextX, 0,5);
         requestLayout();
     }
+
+
+
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {

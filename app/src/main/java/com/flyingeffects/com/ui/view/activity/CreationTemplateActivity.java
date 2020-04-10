@@ -386,15 +386,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             public void run() {
                 Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
                     int nowDuration=videoPlayer.getCurrentPositionWhenPlaying();
-                    LogUtil.d("OOM","allVideoDuration="+allVideoDuration);
-                    LogUtil.d("OOM","nowDuration="+nowDuration);
+//                    LogUtil.d("OOM","allVideoDuration="+allVideoDuration);
+//                    LogUtil.d("OOM","nowDuration="+nowDuration);
                     float percent = nowDuration / (float)allVideoDuration;
                     LogUtil.d("OOM","比例="+percent);
                     int widthX= (int) (percent*listWidth);
                     LogUtil.d("OOM","width="+widthX);
                     hListView.scrollTo(widthX);
-
-
                 });
             }
         };
