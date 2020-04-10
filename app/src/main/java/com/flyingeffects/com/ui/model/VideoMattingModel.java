@@ -34,6 +34,7 @@ import com.lansosdk.box.onExtractVideoFrameProgressListener;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.lansosdk.videoeditor.VideoOneDo2;
+import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.BufferedOutputStream;
@@ -128,11 +129,11 @@ public class VideoMattingModel {
 
             @Override
             public void onCompleted(ExtractVideoFrame v) {
-//                LogUtil.d("OOM", "onCompleted");
-////                test();
-//                SegJni.nativeReleaseImageBuffer();
-//                SegJni.nativeReleaseSegHandler();
-//                addFrameCompoundVideo();
+                LogUtil.d("OOM", "onCompleted");
+//                test();
+                SegJni.nativeReleaseImageBuffer();
+                SegJni.nativeReleaseSegHandler();
+                addFrameCompoundVideo();
             }
         });
         /**

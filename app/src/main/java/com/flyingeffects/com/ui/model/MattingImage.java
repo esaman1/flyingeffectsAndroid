@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.model;
 
 import android.graphics.Bitmap;
 
+import com.flyingeffects.com.manager.SegResultHandleManage;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.megvii.segjni.SegJni;
@@ -65,22 +66,27 @@ public class MattingImage {
     private int bitmapWH[];
 
     public void mattingImageForMultiple(Bitmap OriginBitmap, int index, mattingStatus callback) {
-        if (index == 1 && OriginBitmap != null) {
-            BitmapW = OriginBitmap.getWidth();
-            BitmapH = OriginBitmap.getHeight();
-            SegJni.nativeCreateImageBuffer(BitmapW, BitmapH);
-            bitmapWH = new int[2];
-            bitmapWH[0] = BitmapW;
-            bitmapWH[1] = BitmapH;
-        }
-        byte[] imageByte = SegJni.nativeSegCamera(getYUVByBitmap(OriginBitmap), BitmapW, BitmapH, 0, 0, 0, bitmapWH);
-        if (imageByte != null) {
-            Bitmap newBitmap = ConUtil.setBitmapAlpha(OriginBitmap, imageByte);
-            callback.isSuccess(true, newBitmap);
-        } else {
+        if(OriginBitmap!=null){
+            if (index == 1) {
+                BitmapW = OriginBitmap.getWidth();
+                BitmapH = OriginBitmap.getHeight();
+                SegJni.nativeCreateImageBuffer(BitmapW, BitmapH);
+                bitmapWH = new int[2];
+                bitmapWH[0] = BitmapW;
+                bitmapWH[1] = BitmapH;
+            }
+            byte[] imageByte = SegJni.nativeSegCamera(getYUVByBitmap(OriginBitmap), BitmapW, BitmapH, 0, 0, 0, bitmapWH);
+            if (imageByte != null) {
+                Bitmap newBitmap = SegResultHandleManage.setBitmapAlpha(OriginBitmap, imageByte);
+                callback.isSuccess(true, newBitmap);
+            } else {
+                callback.isSuccess(false, OriginBitmap);
+                LogUtil.d("oom", "IMAGEBYTE==NULL");
+            }
+        }else{
             callback.isSuccess(false, OriginBitmap);
-            LogUtil.d("oom", "IMAGEBYTE==NULL");
         }
+
     }
 
 

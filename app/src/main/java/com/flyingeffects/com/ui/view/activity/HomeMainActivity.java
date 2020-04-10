@@ -49,6 +49,7 @@ import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.githang.statusbar.StatusBarCompat;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.videoeditor.LanSongFileUtil;
+import com.megvii.segjni.SegJni;
 import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
@@ -96,8 +97,8 @@ public class HomeMainActivity extends FragmentActivity {
         clearAllData();
         initView();
         copyFile("default_bj.png");
-//        SegJni.nativeCreateSegHandler(this, ConUtil.getFileContent(this, R.raw.megviisegment_model), 8);
-//        GlideBitmapPool.initialize(10 * 1024 * 1024); // 10mb max memory size
+        SegJni.nativeCreateSegHandler(this, ConUtil.getFileContent(this, R.raw.megviisegment_model), 8);
+        GlideBitmapPool.initialize(10 * 1024 * 1024); // 10mb max memory size
         checkUpdate();
         checkConfig();
         getUserPhoneInfo();

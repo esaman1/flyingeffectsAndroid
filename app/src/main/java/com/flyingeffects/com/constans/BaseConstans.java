@@ -24,7 +24,7 @@ public class BaseConstans {
     public static final boolean UserFaceSdk=false;
     public static String titok;
     public static String kuaishou;
-    public static final boolean PRODUCTION = true;
+    public static final boolean PRODUCTION = false;
     private static String channel = "";
     private static String versionCode = "";
     private static String uuid = "";
