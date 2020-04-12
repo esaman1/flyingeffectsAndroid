@@ -240,7 +240,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         if (nowTemplateIsAnim == 1) {
 //            mTemplateModel.cartoonPath = originalPath.get(0);  //todo
 
-            mTemplateModel.cartoonPath = imgPath.get(0);
+            mTemplateModel.cartoonPath = originalPath.get(0);
         }
         bottomButtonCount = templateModel.groupSize;
         int duration = mTemplateModel.getDuration();

@@ -165,8 +165,8 @@ public class VideoMattingModel {
                         + "s是:" + String.valueOf(ptsUS);
                 dialog.setProgress( frameCount + "帧");
                 LogUtil.d("OOM", hint);
-//                String fileName = faceFolder + File.separator + frameCount + ".png";
-//                BitmapManager.getInstance().saveBitmapToPath(bmp, fileName);
+                String fileName = faceFolder + File.separator + frameCount + ".png";
+                BitmapManager.getInstance().saveBitmapToPath(bmp, fileName);
                 //todo  假如face sdk 抠图的速度和截取帧的速度大抵相同，那么就可以直接抠图，否则的话可能会造成内存回收不及时
                 downImageForBitmap(bmp, frameCount);
 //                LogUtil.d("OOM", "bmp.width=" + bmp.getWidth() + "bmp.height=" + bmp.getHeight() + "config=" + bmp.getConfig());
@@ -225,6 +225,7 @@ public class VideoMattingModel {
 
             LSOBitmapAsset asset = new LSOBitmapAsset(firstBitmap);
             BitmapLayer bitmapLayerForDrawBackground = execute.addBitmapLayer(asset);
+            bitmapLayerForDrawBackground.setScaledToPadSize();
             CanvasLayer canvasLayer = execute.addCanvasLayer();
             canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
                 if (currentTime > nowProgressTime) {

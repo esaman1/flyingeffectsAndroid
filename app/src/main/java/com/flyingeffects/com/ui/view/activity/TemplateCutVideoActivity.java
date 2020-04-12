@@ -159,7 +159,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
                     @Override
                     public void isSuccess(boolean isSuccess, String path) {
-                        LogUtil.d("OOM", path);
+                        LogUtil.d("OOM", "裁剪成功后路径 720*1280="+path);
                         if(isSuccess){
 
                             gotoMattingVideo(path);

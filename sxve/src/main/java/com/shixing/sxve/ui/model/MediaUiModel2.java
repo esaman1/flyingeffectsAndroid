@@ -345,7 +345,7 @@ public class MediaUiModel2 extends MediaUiModel {
                 final String path = folder + File.separator + UUID.randomUUID() + ".mp4";
                 Matrix matrix = new Matrix(mMatrix);
                 matrix.postConcat(mInverseMatrix);
-                SXCompositor sxCompositor = new SXCompositor(mVideoPath, path, matrix, !mMute);
+                SXCompositor sxCompositor = new SXCompositor(cartoonPath, path, matrix, !mMute);
                 sxCompositor.setWidth(mClipWidth);
                 sxCompositor.setHeight(mClipHeight);
                 sxCompositor.setStartTime(mStartTime);
