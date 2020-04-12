@@ -169,23 +169,12 @@
                             android:background="@drawable/stroke_all_in_slow_select" />
 
 
-<!--                        <TextView-->
-<!--                            android:id="@+id/iv_in_slow"-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="match_parent"-->
-<!--                            android:background="@drawable/stroke_all_in_slow"-->
-<!--                            android:contentDescription="@string/app_name"-->
-<!--                            android:gravity="center"-->
-<!--                            android:text="@string/in_show_template"-->
-<!--                            android:textColor="@color/white"-->
-<!--                            android:visibility="gone" />-->
-
 
 
                         <View
                             android:id="@+id/view_line_progress"
                             android:layout_width="@dimen/dp_1"
-                            android:background="#FFE131"
+                            android:background="#FFFFFF"
                             android:layout_height="match_parent"/>
 
 

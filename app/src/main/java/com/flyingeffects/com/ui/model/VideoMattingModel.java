@@ -18,6 +18,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -41,6 +42,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
@@ -78,8 +80,8 @@ public class VideoMattingModel {
 
     MattingSuccess callback;
 
-    public VideoMattingModel(String videoPath, Context context,MattingSuccess callback) {
-        this.callback=callback;
+    public VideoMattingModel(String videoPath, Context context, MattingSuccess callback) {
+        this.callback = callback;
         this.videoPath = videoPath;
         this.context = context;
         videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
@@ -90,6 +92,7 @@ public class VideoMattingModel {
         dialog = new WaitingDialog_progress(context);
         dialog.openProgressDialog();
     }
+
     public VideoMattingModel(String videoPath, Context context) {
         this.videoPath = videoPath;
         this.context = context;
@@ -105,80 +108,95 @@ public class VideoMattingModel {
     private int allFrame;
 
     public void newFunction() {
-        MediaInfo mInfo = new MediaInfo(videoPath);
-        if (!mInfo.prepare() || !mInfo.isHaveVideo()) {
-            return;
-        }
-        LogUtil.d("OOM", "视频的总帧数为" + allFrame);
-        mExtractFrame = new ExtractVideoFrame(BaseApplication.getInstance(), videoPath);
-
-        MediaMetadataRetriever retr = new MediaMetadataRetriever();
-        retr.setDataSource(videoPath);
-        String rotation = retr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
-        if (TextUtils.isEmpty(rotation)) {
-            if (mInfo.vWidth * mInfo.vHeight > 960 * 540) {
-                mExtractFrame.setBitmapWH(mInfo.vWidth / 2, mInfo.vHeight / 2);
+        new Thread(() -> {
+            MediaInfo mInfo = new MediaInfo(videoPath);
+            if (!mInfo.prepare() || !mInfo.isHaveVideo()) {
+                return;
             }
-        } else {
-            int Irotation = Integer.parseInt(rotation);
-            if (Irotation == 90 || Irotation == 180) {
-                if (mInfo.vWidth * mInfo.vHeight > 960 * 540) {
-                    mExtractFrame.setBitmapWH(mInfo.vHeight / 2, mInfo.vWidth / 2);
-                }
-            } else {
+            LogUtil.d("OOM", "视频的总帧数为" + allFrame);
+            mExtractFrame = new ExtractVideoFrame(BaseApplication.getInstance(), videoPath);
+
+            MediaMetadataRetriever retr = new MediaMetadataRetriever();
+            retr.setDataSource(videoPath);
+            String rotation = retr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
+            if (TextUtils.isEmpty(rotation)) {
                 if (mInfo.vWidth * mInfo.vHeight > 960 * 540) {
                     mExtractFrame.setBitmapWH(mInfo.vWidth / 2, mInfo.vHeight / 2);
                 }
+            } else {
+                int Irotation = Integer.parseInt(rotation);
+                if (Irotation == 90 || Irotation == 180) {
+                    if (mInfo.vWidth * mInfo.vHeight > 960 * 540) {
+                        mExtractFrame.setBitmapWH(mInfo.vHeight / 2, mInfo.vWidth / 2);
+                    }
+                } else {
+                    if (mInfo.vWidth * mInfo.vHeight > 960 * 540) {
+                        mExtractFrame.setBitmapWH(mInfo.vWidth / 2, mInfo.vHeight / 2);
+                    }
+                }
             }
-        }
 
-        allFrame = mInfo.vTotalFrames;
-        //设置提取多少帧
-        mExtractFrame.setExtractSomeFrame(allFrame);
-        /**
-         * 设置处理完成监听.
-         */
-        mExtractFrame.setOnExtractCompletedListener(new onExtractVideoFrameCompletedListener() {
-
-            @Override
-            public void onCompleted(ExtractVideoFrame v) {
-                LogUtil.d("OOM", "onCompleted");
-//                test();
-                SegJni.nativeReleaseImageBuffer();
-                SegJni.nativeReleaseSegHandler();
-                addFrameCompoundVideo();
-            }
-        });
-        /**
-         * 设置处理进度监听.
-         */
-        mExtractFrame.setOnExtractProgressListener(new onExtractVideoFrameProgressListener() {
-
+            allFrame = mInfo.vTotalFrames;
+            //设置提取多少帧
+            mExtractFrame.setExtractSomeFrame(allFrame);
             /**
-             * 当前帧的画面回调,, ptsUS:当前帧的时间戳,单位微秒. 拿到图片后,建议放到ArrayList中,
-             * 不要直接在这里处理.
+             * 设置处理完成监听.
              */
-            @Override
-            public void onExtractBitmap(Bitmap bmp, long ptsUS) {
-                frameCount++;
-                String hint = frameCount + "帧" + "\n"
-                        + "s是:" + String.valueOf(ptsUS);
-                dialog.setProgress( frameCount + "帧");
-                LogUtil.d("OOM", hint);
-                String fileName = faceFolder + File.separator + frameCount + ".png";
-                BitmapManager.getInstance().saveBitmapToPath(bmp, fileName);
-                //todo  假如face sdk 抠图的速度和截取帧的速度大抵相同，那么就可以直接抠图，否则的话可能会造成内存回收不及时
-                downImageForBitmap(bmp, frameCount);
+            mExtractFrame.setOnExtractCompletedListener(new onExtractVideoFrameCompletedListener() {
+
+                @Override
+                public void onCompleted(ExtractVideoFrame v) {
+                    LogUtil.d("OOM", "onCompleted");
+//                test();
+
+                    for(int i = 1; i< BaseConstans.THREADCOUNT; i++){
+                        //最后需要补的帧
+                        frameCount++;
+                        downImageForBitmap(null, frameCount);
+                    }
+                    SegJni.nativeReleaseImageBuffer();
+                    SegJni.nativeReleaseSegHandler();
+
+
+                    addFrameCompoundVideo();
+                }
+            });
+            /**
+             * 设置处理进度监听.
+             */
+            mExtractFrame.setOnExtractProgressListener(new onExtractVideoFrameProgressListener() {
+
+                /**
+                 * 当前帧的画面回调,, ptsUS:当前帧的时间戳,单位微秒. 拿到图片后,建议放到ArrayList中,
+                 * 不要直接在这里处理.
+                 */
+                @Override
+                public void onExtractBitmap(Bitmap bmp, long ptsUS) {
+                    frameCount++;
+                    new Handler().post(() -> {
+                        int  progress= (int) ((frameCount/(float)allFrame)*100);
+                        dialog.setProgress("抠图进度为"+progress + "%");
+                    });
+                    String hint = frameCount + "帧" + "\n"
+                                + "s是:" + String.valueOf(ptsUS);
+                    LogUtil.d("OOM", hint);
+                    String fileName = faceFolder + File.separator + frameCount + ".png";
+                    BitmapManager.getInstance().saveBitmapToPath(bmp, fileName);
+                    //todo  假如face sdk 抠图的速度和截取帧的速度大抵相同，那么就可以直接抠图，否则的话可能会造成内存回收不及时
+                    downImageForBitmap(bmp, frameCount);
 //                LogUtil.d("OOM", "bmp.width=" + bmp.getWidth() + "bmp.height=" + bmp.getHeight() + "config=" + bmp.getConfig());
 //                GlideBitmapPool.putBitmap(bmp);
-            }
-        });
-        frameCount = 0;
-        /**
-         * 开始执行. 或者你可以从指定地方开始解码.
-         * mExtractFrame.start(10*1000*1000);则从视频的10秒处开始提取.
-         */
-        mExtractFrame.start();
+                }
+            });
+            frameCount = 0;
+            /**
+             * 开始执行. 或者你可以从指定地方开始解码.
+             * mExtractFrame.start(10*1000*1000);则从视频的10秒处开始提取.
+             */
+            mExtractFrame.start();
+        }).start();
+
+
     }
 
 
@@ -192,7 +210,7 @@ public class VideoMattingModel {
         Bitmap firstBitmap = BitmapFactory.decodeFile(getMattingList.get(0).getPath());
         long AllTime = videoInfo.getDuration() * 1000;
         preTime = AllTime / (float) getMattingList.size();
-        nowProgressTime= preTime;
+        nowProgressTime = preTime;
 
         try {
             DrawPadAllExecute2 execute = new DrawPadAllExecute2(BaseApplication.getInstance(), DRAWPADWIDTH, DRAWPADHEIGHT, AllTime);
@@ -211,8 +229,8 @@ public class VideoMattingModel {
                 String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
                 try {
                     FileUtil.copyFile(new File(exportPath), albumPath);
-                    if(callback!=null){
-                        callback.isSuccess(true,albumPath);
+                    if (callback != null) {
+                        callback.isSuccess(true, albumPath);
                     }
 //                    albumBroadcast(albumPath);
 //                    showKeepSuccessDialog(albumPath);
@@ -232,8 +250,8 @@ public class VideoMattingModel {
                     //需要切换新的图了
                     nowChooseImageIndex++;
                     if (nowChooseImageIndex < getMattingList.size()) {
-                        LogUtil.d("OOM","preTime="+preTime+"nowChooseImageIndex="+nowChooseImageIndex);
-                        nowProgressTime=preTime +nowProgressTime;
+                        LogUtil.d("OOM", "preTime=" + preTime + "nowChooseImageIndex=" + nowChooseImageIndex);
+                        nowProgressTime = preTime + nowProgressTime;
                         Bitmap firstBitmap1 = BitmapFactory.decodeFile(getMattingList.get(nowChooseImageIndex).getPath());
                         bitmapLayerForDrawBackground.switchBitmap(firstBitmap1);
                     }
@@ -281,7 +299,6 @@ public class VideoMattingModel {
     private List<File> getFilesAllName;
 
     public void test() {
-
         getFilesAllName = FileManager.listFileSortByModifyTime(faceFolder);
         downImageForPath(getFilesAllName.get(0).getPath());
     }
@@ -322,6 +339,8 @@ public class VideoMattingModel {
     }
 
 
+
+    private ArrayList<Bitmap> listCatchBitmap=new ArrayList<>();
     private void downImageForBitmap(Bitmap OriginBitmap, int frameCount) {
 //        mattingImage.mattingImage(OriginBitmap, (isSuccess, bp1) -> {
 //            downSuccessNum++;
@@ -334,6 +353,8 @@ public class VideoMattingModel {
 //                addFrameCompoundVideo();
 //            }
 //        });
+
+
         downSuccessNum++;
         String fileName = faceMattingFolder + File.separator + frameCount + ".png";
         LogUtil.d("OOM", "正在抠图" + downSuccessNum);
@@ -341,7 +362,6 @@ public class VideoMattingModel {
             @Override
             public void isSuccess(boolean isSuccess, Bitmap bitmap) {
                 if (isSuccess) {
-
                     BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, isSuccess1 -> GlideBitmapPool.putBitmap(
                             bitmap));
                 } else {
@@ -491,10 +511,8 @@ public class VideoMattingModel {
     }
 
 
-
-
-    public interface  MattingSuccess{
-        void isSuccess(boolean isSuccess,String path);
+    public interface MattingSuccess {
+        void isSuccess(boolean isSuccess, String path);
     }
 
 

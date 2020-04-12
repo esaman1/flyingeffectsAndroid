@@ -2,11 +2,14 @@ package com.flyingeffects.com.ui.model;
 
 import android.graphics.Bitmap;
 
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.SegResultHandleManage;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.util.PhotoBitmapUtils;
+
+import java.util.ArrayList;
 
 
 public class MattingImage {
@@ -58,15 +61,18 @@ public class MattingImage {
 
 
     /**
-     * 多线程抠图g
+     * 多线程抠图，這樣做的目的有 ，正常情况下，如果线程开启第4的时候，那么4个的时候返回第一个的数据，5,2 如果是8的时候，那么8返回第一个数据，
      */
 
     private int BitmapW;
     private int BitmapH;
     private int bitmapWH[];
-
+    private ArrayList<Bitmap>bpList=new ArrayList<>();
     public void mattingImageForMultiple(Bitmap OriginBitmap, int index, mattingStatus callback) {
-        if(OriginBitmap!=null){
+        if(bpList.size()>=BaseConstans.THREADCOUNT){
+            bpList.remove(0);
+        }
+        bpList.add(OriginBitmap);
             if (index == 1) {
                 BitmapW = OriginBitmap.getWidth();
                 BitmapH = OriginBitmap.getHeight();
@@ -75,18 +81,32 @@ public class MattingImage {
                 bitmapWH[0] = BitmapW;
                 bitmapWH[1] = BitmapH;
             }
-            byte[] imageByte = SegJni.nativeSegCamera(getYUVByBitmap(OriginBitmap), BitmapW, BitmapH, 0, 0, 0, bitmapWH);
-            if (imageByte != null) {
-                Bitmap newBitmap = SegResultHandleManage.setBlackWhite(OriginBitmap, imageByte);
-                callback.isSuccess(true, newBitmap);
-            } else {
-                callback.isSuccess(false, OriginBitmap);
-                LogUtil.d("oom", "IMAGEBYTE==NULL");
-            }
-        }else{
-            callback.isSuccess(false, OriginBitmap);
-        }
 
+            byte[] imageByte;
+            if(OriginBitmap!=null){
+                imageByte  =SegJni.nativeSegCamera(getYUVByBitmap(OriginBitmap), BitmapW, BitmapH, 0, 0, 0, bitmapWH);
+            }else{
+                imageByte  =SegJni.nativeSegCamera(getYUVByBitmap(bpList.get(0)), BitmapW, BitmapH, 0, 0, 0, bitmapWH);
+            }
+
+
+            if(index>= BaseConstans.THREADCOUNT){
+                if (imageByte != null) {
+                    Bitmap newBitmap = SegResultHandleManage.setBlackWhite(bpList.get(0), imageByte);//setBlackWhite
+                    callback.isSuccess(true, newBitmap);
+                } else {
+                    callback.isSuccess(false, OriginBitmap);
+                    LogUtil.d("oom", "IMAGEBYTE==NULL");
+                }
+            }else{
+                if (imageByte != null) {
+                    Bitmap newBitmap = SegResultHandleManage.setBitmapAlpha(OriginBitmap, imageByte);
+                    callback.isSuccess(true, newBitmap);
+                } else {
+                    callback.isSuccess(false, OriginBitmap);
+                    LogUtil.d("oom", "IMAGEBYTE==NULL");
+                }
+            }
     }
 
 

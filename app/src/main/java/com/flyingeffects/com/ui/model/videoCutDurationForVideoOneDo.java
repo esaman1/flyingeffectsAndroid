@@ -99,7 +99,7 @@ public class videoCutDurationForVideoOneDo {
     public void CutVideoForDrawPadAllExecute2(Context context, float duration, String path, isSuccess callback) {
         try {
             execute = new DrawPadAllExecute2(context, 720, 1280, (long) (duration * 1000));
-            execute.setFrameRate(25);
+            execute.setFrameRate(20);
             execute.setEncodeBitrate(5 * 1024 * 1024);
             execute.setOnLanSongSDKErrorListener(message -> {
 //                isSaving=false;
@@ -111,7 +111,7 @@ public class videoCutDurationForVideoOneDo {
 //                    dialog.setProgress(i +"%");
 //                    LogUtil.d("execute progress: ", String.valueOf(i));
 //                }
-                callback.isSuccess(false, i+"");
+                callback.progresss(i);
             });
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
                 isSaving = false;
