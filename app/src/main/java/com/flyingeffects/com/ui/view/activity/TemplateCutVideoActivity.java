@@ -119,7 +119,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
     @Override
     protected void initAction() {
         initThumbList();
-        list_thumb.post(() -> initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), videoInfo.getDuration() / (float) 1000, needDuration, videoPath));
+        list_thumb.post(() -> initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), needDuration,videoInfo.getDuration() / (float) 1000,  videoPath));
     }
 
 
@@ -233,7 +233,8 @@ public class TemplateCutVideoActivity extends BaseActivity {
         int thumbWidth = (int) (scale * width);
         mTimelineAdapter.setBitmapSize(thumbWidth, listHeight);
         //其中listWidth表示当前截取的大小
-        int thumbCount = (int) (listWidth * (duration / mTemplateDuration) / thumbWidth);
+        int thumbCount = (int) (listWidth * (duration / mTemplateDuration / thumbWidth));
+//        int thumbCount = (int) (listWidth * (duration / mTemplateDuration) / thumbWidth);
         thumbCount = thumbCount > 0 ? thumbCount : 0;
         //每帧所占的时间
         final int interval = (int) (duration / thumbCount * 1000);
@@ -245,6 +246,10 @@ public class TemplateCutVideoActivity extends BaseActivity {
         mTimelineAdapter.setVideoUri(Uri.fromFile(new File(mVideoPath)));
         mTimelineAdapter.setData(mTimeUs, mData);
         mTotalWidth = thumbWidth * thumbCount;
+
+
+
+
 
     }
 
