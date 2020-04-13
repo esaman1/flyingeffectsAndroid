@@ -1,0 +1,27 @@
+<resources>
+     <string name="app_name">抠像DEV</string>
+     <string name="app_function_title">Face++ 抠像DEOM</string>
+     <string name="home_iv_button_text">图片抠像</string>
+     <string name="home_iv_video_button_text">视频抠像</string>
+     <string name="hair_level_segment_switch_text">发丝抠像</string>
+     <string name="home_batch_processing_button_text">批量处理</string>
+     <string name="tv_title_text">图片抠像</string>
+     <string name="take_picture">拍摄</string>
+     <string name="select_from_gallery">从手机相册选择</string>
+     <string name="processing_dialog_title">抠像</string>
+     <string name="processing_dialog_body">抠像中</string>
+     <string name="log_info_pre_processing">提取图片时间： </string>
+     <string name="log_info_post_processing">合成图片时间： </string>
+     <string name="log_info_segment_time">抠图耗时： </string>
+     <string name="log_info_processing_time">单帧总耗时： </string>
+     <string name="save_image_success">已保存到本地相册</string>
+     <string name="image_gallery_text">相册</string>
+     <string name="image_download_text">下载</string>
+     <string name="long_press_notice_text">长按屏幕对比</string>
+     <string name="setting">设置</string>
+     <string name="detect_divider">检测间隔</string>
+     <string name="feather_radius">羽化半径</string>
+     <string name="confirm">确定</string>
+     <string name="back">返回</string>
+     <string name="cancel">取消</string>
+</resources>
