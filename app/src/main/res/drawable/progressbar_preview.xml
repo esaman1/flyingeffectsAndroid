@@ -12,7 +12,6 @@
         android:useLevel="false">
         <gradient
 
-
             android:endColor="#6B6B6B"
             android:centerColor="#555555"
             android:startColor="#414141" />

@@ -25,6 +25,7 @@ import com.flyingeffects.com.view.MattingVideoEnity;
 import com.glidebitmappool.GlideBitmapPool;
 import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.view.WaitingDialog;
+import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -86,12 +87,12 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
 
     /**
-     * 滑动后选择开始的位置
+     * 滑动后选择开始的位置 单位ms
      */
     private int mStartDuration;
 
     /**
-     * 滑动后选择结束的位置
+     * 滑动后选择结束的位置,单位ms
      */
     private int mEndDuration;
 
@@ -107,7 +108,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
         needDuration = getIntent().getFloatExtra("needCropDuration", 1);
         videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
         videoPlayer.setUp(videoPath, true, "");
-
+        GSYVideoType.setShowType(GSYVideoType.SCREEN_TYPE_DEFAULT);
         videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> {
             videoPlayer.startPlayLogic();
         }));
@@ -124,7 +125,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
     private void startVideo() {
         videoPlayer.startPlayLogic();
-        startTimer();
+       // startTimer();
     }
 
     @Override
@@ -163,8 +164,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
                     }
 
                     @Override
-
-
                     public void isSuccess(boolean isSuccess, String path) {
                         WaitingDialog.closePragressDialog();
                         if (isSuccess) {
@@ -211,9 +210,10 @@ public class TemplateCutVideoActivity extends BaseActivity {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     float percent = (float) mScrollX / mTotalWidth;
                     mStartDuration = (int) (mVideoDuration * percent) * 1000;
-                    mEndDuration = (int) (mStartDuration + needDuration * 1000);
+                    mEndDuration = (int) (mStartDuration + (needDuration * 1000));
+                    LogUtil.d("OOM", "mStartDuration=" + mStartDuration + "mEndDuration=" + mEndDuration);
                     seekTo(mStartDuration);
-                    startTimer();
+                 //   startTimer();
                 }
             }
 
@@ -229,6 +229,10 @@ public class TemplateCutVideoActivity extends BaseActivity {
     private void seekTo(long to) {
         //跳转时暂停播放
         if (videoPlayer != null) {
+            LogUtil.d("OOM","seekTo="+to);
+            if(to<1000){
+                to=1000;
+            }
             videoPlayer.seekTo(to);
         }
     }
@@ -236,7 +240,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
     private Timer timer;
     private TimerTask task;
-    private long correctValue;
 
     private void startTimer() {
         if (timer != null) {
@@ -250,12 +253,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
         }
 
 
-        if (mEndDuration - getCurrentPos() != mEndDuration) {
-            correctValue = mStartDuration;
-        } else {
-            correctValue = getCurrentPos();
-        }
-        LogUtil.d("OOM", "correctValue" + correctValue);
 
         timer = new Timer();
         task = new TimerTask() {
@@ -263,16 +260,13 @@ public class TemplateCutVideoActivity extends BaseActivity {
             public void run() {
                 Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
                     if (getCurrentPos() >= mEndDuration) {
-                        LogUtil.d("OOM", "getCurrentPos() >= mEndDuration*1000" + "getCurrentPos()=" + getCurrentPos() + "mEndDuration=" + mEndDuration);
-                        videoPlayer.onVideoPause();
-                        videoPlayer.seekTo(mStartDuration);
-                        videoPlayer.onVideoResume(true);
+                        LogUtil.d("OOM","getCurrentPos() >= mEndDuration");
+                        seekTo(mStartDuration);
                     } else if (getCurrentPos() < mStartDuration) {
-//                                LogUtil.d("OOM", "getCurrentPos() < mStartDuration*1000 " + "getCurrentPos()="+getCurrentPos()+"mEndDuration="+mEndDuration);
-                        videoPlayer.seekTo(mStartDuration);
+                        seekTo(mStartDuration);
+                        LogUtil.d("OOM","getCurrentPos() < mStartDuration");
                     }
-                    seekProgress((getCurrentPos() - correctValue) / ((float) mEndDuration * 1000 - correctValue));
-//                    LogUtil.d("OOM", "mStartDuration ="+ mStartDuration);
+
                 });
             }
         };
