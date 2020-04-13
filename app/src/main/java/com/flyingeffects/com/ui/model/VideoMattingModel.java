@@ -71,7 +71,7 @@ public class VideoMattingModel {
     private int frameCount;
     private static final int DRAWPADWIDTH = 720;
     private static final int DRAWPADHEIGHT = 1280;
-    private static final int FRAME_RATE = 40;
+    private static final int FRAME_RATE = 20;
     private Context context;
 
     private VideoInfo videoInfo;
@@ -200,14 +200,14 @@ public class VideoMattingModel {
     }
 
 
-    private int nowChooseImageIndex;
+    private int nowChooseImageIndex=1;
     private float preTime;
     //当前进度时间
     private float nowProgressTime;
 
     public void addFrameCompoundVideo() {
         List<File> getMattingList = FileManager.listFileSortByModifyTime(faceMattingFolder);
-        Bitmap firstBitmap = BitmapFactory.decodeFile(getMattingList.get(0).getPath());
+        Bitmap firstBitmap = BitmapFactory.decodeFile(getMattingList.get(1).getPath());
         long AllTime = videoInfo.getDuration() * 1000;
         preTime = AllTime / (float) getMattingList.size();
         nowProgressTime = preTime;
@@ -250,7 +250,7 @@ public class VideoMattingModel {
                     //需要切换新的图了
                     nowChooseImageIndex++;
                     if (nowChooseImageIndex < getMattingList.size()) {
-                        LogUtil.d("OOM", "preTime=" + preTime + "nowChooseImageIndex=" + nowChooseImageIndex);
+                        LogUtil.d("CanvasRunnable", "addCanvasRunnable=" + preTime +"currentTime="+currentTime+ "nowChooseImageIndex=" + nowChooseImageIndex);
                         nowProgressTime = preTime + nowProgressTime;
                         Bitmap firstBitmap1 = BitmapFactory.decodeFile(getMattingList.get(nowChooseImageIndex).getPath());
                         bitmapLayerForDrawBackground.switchBitmap(firstBitmap1);

@@ -71,6 +71,7 @@ public class MattingImage {
     public void mattingImageForMultiple(Bitmap OriginBitmap, int index, mattingStatus callback) {
         if(bpList.size()>=BaseConstans.THREADCOUNT){
             bpList.remove(0);
+            LogUtil.d("mattingImage","队列只有"+bpList.size());
         }
         bpList.add(OriginBitmap);
             if (index == 1) {
@@ -84,29 +85,31 @@ public class MattingImage {
 
             byte[] imageByte;
             if(OriginBitmap!=null){
+                LogUtil.d("mattingImage","渲染图片地址为index="+OriginBitmap);
                 imageByte  =SegJni.nativeSegCamera(getYUVByBitmap(OriginBitmap), BitmapW, BitmapH, 0, 0, 0, bitmapWH);
             }else{
                 imageByte  =SegJni.nativeSegCamera(getYUVByBitmap(bpList.get(0)), BitmapW, BitmapH, 0, 0, 0, bitmapWH);
             }
 
-
-            if(index>= BaseConstans.THREADCOUNT){
+            if(index>= BaseConstans.THREADCOUNT-1){
                 if (imageByte != null) {
                     Bitmap newBitmap = SegResultHandleManage.setBlackWhite(bpList.get(0), imageByte);//setBlackWhite
+                    LogUtil.d("mattingImage","接受源图片地址"+bpList.get(0));
                     callback.isSuccess(true, newBitmap);
                 } else {
+                    LogUtil.d("mattingImage","不接受");
                     callback.isSuccess(false, OriginBitmap);
                     LogUtil.d("oom", "IMAGEBYTE==NULL");
                 }
             }else{
-                if (imageByte != null) {
-                    Bitmap newBitmap = SegResultHandleManage.setBitmapAlpha(OriginBitmap, imageByte);
-                    callback.isSuccess(true, newBitmap);
-                } else {
-                    callback.isSuccess(false, OriginBitmap);
-                    LogUtil.d("oom", "IMAGEBYTE==NULL");
-                }
+                LogUtil.d("mattingImage","不接受");
             }
+
+
+
+
+
+
     }
 
 

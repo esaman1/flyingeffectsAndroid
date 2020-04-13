@@ -196,8 +196,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
                 videoMattingModel.newFunction();
             }
         });
-
-
     }
 
 
