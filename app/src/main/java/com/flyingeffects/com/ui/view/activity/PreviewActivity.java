@@ -484,7 +484,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
 
     /**
-     * description ：下载视频成功后跳转到创作页面
+     * description ：下载视频成功后跳转到裁剪视频页面
      * creation date: 2020/3/20
      * user : zhangtongju
      */
@@ -525,6 +525,14 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
 
 
+
+
+
+    /**
+     * description ：裁剪页面裁剪成功后返回的数据
+     * creation date: 2020/4/13
+     * user : zhangtongju
+     */
     @Subscribe
     public void onEventMainThread(MattingVideoEnity event) {
         originalImagePath.clear();
@@ -533,14 +541,14 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         originalImagePath.add(event.getOriginalPath());
         Intent intent = new Intent(this, TemplateActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putStringArrayList("paths",  (ArrayList<String>) originalImagePath);
+        bundle.putStringArrayList("paths", paths);
         bundle.putInt("isPicNum", defaultnum);
         bundle.putString("fromTo", fromTo);
         bundle.putInt("is_anime", templateItem.getIs_anime());
         bundle.putString("templateName", templateItem.getTitle());
         bundle.putString("templateId", templateItem.getId());
         bundle.putString("videoTime",templateItem.getVideotime());
-        bundle.putStringArrayList("originalPath", paths);
+        bundle.putStringArrayList("originalPath", (ArrayList<String>) originalImagePath );
         bundle.putString("templateFilePath", TemplateFilePath);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("Message", bundle);

@@ -200,7 +200,7 @@ public class VideoMattingModel {
     }
 
 
-    private int nowChooseImageIndex=1;
+    private int nowChooseImageIndex=0;
     private float preTime;
     //当前进度时间
     private float nowProgressTime;
@@ -226,15 +226,15 @@ public class VideoMattingModel {
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
                 LogUtil.d("OOM", "nowChooseImageIndex" + nowChooseImageIndex);
                 dialog.closePragressDialog();
-                String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
+//                String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
                 try {
-                    FileUtil.copyFile(new File(exportPath), albumPath);
+//                    FileUtil.copyFile(new File(exportPath), albumPath);
                     if (callback != null) {
-                        callback.isSuccess(true, albumPath);
+                        callback.isSuccess(true, exportPath);
                     }
 //                    albumBroadcast(albumPath);
 //                    showKeepSuccessDialog(albumPath);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 //todo 需要移除全部的子图层

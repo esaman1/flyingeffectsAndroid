@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Path;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
@@ -63,7 +64,7 @@ import rx.schedulers.Schedulers;
 
 /**
  * 模板页面
- * 漫画比较特殊，独立于全部逻辑之外，不过漫画只有1个图片的情况，
+ * 漫画和抠图比较特殊,
  */
 public class TemplateActivity extends BaseActivity implements TemplateMvpView, AssetDelegate, AlbumChooseCallback {
 
@@ -97,6 +98,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      * 原图地址,如果不需要抠图，原图地址为null
      */
     private List<String> originalPath;
+
     private String templateFilePath;
 
     /**
@@ -179,7 +181,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             nowTemplateIsAnim = bundle.getInt("is_anime");
         }
 
-        if(!TextUtils.isEmpty(videoTime)){
+        if(!TextUtils.isEmpty(videoTime)&&!videoTime.equals("0")){
             nowTemplateIsAnim=1;
         }
 
@@ -239,8 +241,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         mTemplateModel = templateModel;
         if (nowTemplateIsAnim == 1) {
 //            mTemplateModel.cartoonPath = originalPath.get(0);  //todo
-
-            mTemplateModel.cartoonPath = originalPath.get(0);
+            mTemplateModel.cartoonPath = imgPath.get(0);  //设置灰度图
         }
         bottomButtonCount = templateModel.groupSize;
         int duration = mTemplateModel.getDuration();
@@ -432,17 +433,16 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             templateThumbAdapter.notifyDataSetChanged();
             WaitingDialog.openPragressDialog(this);
 
-//            if (nowTemplateIsAnim == 1) {
-//                //漫画需要单独前面加一个原图的值，然后第二个值需要隐藏页面
-//                list_all.add(paths.get(0));
-//            }
-
-
             //这里是为了替换用户操作的页面
             List<String> listAssets = new ArrayList<>();
             for (int i = 0; i < needAssetsCount; i++) {  //填满数据，为了缩略图
                 if (paths.size() > i && !TextUtils.isEmpty(paths.get(i))) {
-                    listAssets.add(paths.get(i)); //前面的时path ，后面的为默认的path
+                    if(nowTemplateIsAnim==1){
+                        //漫画或者灰度图
+                        listAssets.add(originalPath.get(i));
+                    }else{
+                        listAssets.add(paths.get(i));
+                    }
                 } else {
                     listAssets.add(SxveConstans.default_bg_path);
                 }
