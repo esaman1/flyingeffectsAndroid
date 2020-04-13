@@ -52,6 +52,8 @@ public class TemplateCutVideoActivity extends BaseActivity {
     @BindView(R.id.list_thumb)
     RecyclerView list_thumb;
 
+
+
     private TimelineAdapterForCutVideo mTimelineAdapter;
 
 
@@ -113,7 +115,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
             videoPlayer.startPlayLogic();
         }));
         mEndDuration = (int) (needDuration * 1000);
-
+        tv_duration.setText("模板时长 "+needDuration+"s");
     }
 
     @Override
@@ -157,7 +159,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
             case R.id.tv_kt:
                 videoPlayer.onVideoPause();
                 WaitingDialog.openPragressDialog(this);
-                new Thread(() -> videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(TemplateCutVideoActivity.this, needDuration * 1000, videoPath, new videoCutDurationForVideoOneDo.isSuccess() {
+                new Thread(() -> videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(TemplateCutVideoActivity.this, needDuration * 1000,videoPath,mStartDuration, new videoCutDurationForVideoOneDo.isSuccess() {
                     @Override
                     public void progresss(int progress) {
                         LogUtil.d("OOM", "progress=" + progress);

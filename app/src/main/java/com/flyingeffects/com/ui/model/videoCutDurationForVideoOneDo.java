@@ -97,7 +97,7 @@ public class videoCutDurationForVideoOneDo {
     private boolean isSaving = false;
     DrawPadAllExecute2 execute;
 
-    public void CutVideoForDrawPadAllExecute2(Context context, float duration, String path, isSuccess callback) {
+    public void CutVideoForDrawPadAllExecute2(Context context, float duration, String path, long startDurtion,isSuccess callback) {
         try {
             execute = new DrawPadAllExecute2(context, 720, 1280, (long) (duration * 1000));
             execute.setFrameRate(20);
@@ -135,8 +135,9 @@ public class videoCutDurationForVideoOneDo {
                 if (execute != null) {
                     try {
                         LSOVideoOption option = new LSOVideoOption(path);
+                        long startDuration=startDurtion*1000;
                         long durationUs = (long) (duration * 1000);
-                        option.setCutDurationUs(0, durationUs);
+                        option.setCutDurationUs(startDuration, durationUs+startDuration);
                         VideoFrameLayer videoLayer = execute.addVideoLayer(option);
                         videoLayer.setScaledToPadSize();
                     } catch (Exception e) {

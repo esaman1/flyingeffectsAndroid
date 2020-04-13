@@ -46,7 +46,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
-import retrofit2.http.Path;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -319,8 +318,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                     }
 
                 }
-
-
             }
         }
 
@@ -405,12 +402,24 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         });
     }
 
+
+
+
+    /**
+     * description ：模板下载成功
+     * creation date: 2020/4/13
+     * user : zhangtongju
+     */
     @Override
     public void getTemplateFileSuccess(String TemplateFilePath) {
         if (!ondestroy) {
             //file 文件下载成功
             this.TemplateFilePath = TemplateFilePath;
-            AlbumManager.chooseVideo(this, defaultnum, SELECTALBUM, this, "");
+            if(!TextUtils.isEmpty(templateItem.getVideotime())&&!templateItem.getVideotime().equals("0")){
+                AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "");
+            }else{
+                AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");
+            }
         }
     }
 

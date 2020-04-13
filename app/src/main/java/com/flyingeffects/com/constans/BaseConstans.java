@@ -21,7 +21,7 @@ import java.util.HashMap;
 public class BaseConstans {
     public static final String UMENGAPPID = "5e5c68a2570df3d6930002b4";
     //当前抠图是用sdk 还是用服务器
-    public static final boolean UserFaceSdk=false;
+    public static final boolean UserFaceSdk=true;
     public static final int  THREADCOUNT=4;
     public static String titok;
     public static String kuaishou;
