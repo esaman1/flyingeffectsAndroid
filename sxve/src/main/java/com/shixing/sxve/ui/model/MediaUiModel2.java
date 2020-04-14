@@ -57,6 +57,8 @@ public class MediaUiModel2 extends MediaUiModel {
 
     private boolean isVideoSlide = false;
     private String lastSavePath;
+    //这里主要是为了，漫画和视频抠图这里，
+    private String lastOtherPath;
     private String path;
 
     public MediaUiModel2(String folder, JSONObject ui, Bitmap bitmap, AssetDelegate delegate, Size size) throws JSONException {
@@ -201,39 +203,48 @@ public class MediaUiModel2 extends MediaUiModel {
 
 
         } else {
-            final String path = folder + File.separator + UUID.randomUUID() + ".mp4";
-            Matrix matrix = new Matrix(mMatrix);
-            matrix.postConcat(mInverseMatrix);
-            SXCompositor sxCompositor = new SXCompositor(mVideoPath, path, matrix, !mMute);
-            sxCompositor.setWidth(mClipWidth);
-            sxCompositor.setHeight(mClipHeight);
-            sxCompositor.setStartTime(mStartTime);
-            sxCompositor.setDuration(mDuration);
-            sxCompositor.setBitrateFactor(1f);
-            sxCompositor.setRenderListener(new SXRenderListener() {
-                @Override
-                public void onStart() {
-                }
 
-                @Override
-                public void onUpdate(int progress) {
+            if (isVideoSlide || TextUtils.isEmpty(lastSavePath)) {
+                final String path = folder + File.separator + UUID.randomUUID() + ".mp4";
+                Matrix matrix = new Matrix(mMatrix);
+                matrix.postConcat(mInverseMatrix);
+                SXCompositor sxCompositor = new SXCompositor(mVideoPath, path, matrix, !mMute);
+                sxCompositor.setWidth(mClipWidth);
+                sxCompositor.setHeight(mClipHeight);
+                sxCompositor.setStartTime(mStartTime);
+                sxCompositor.setDuration(mDuration);
+                sxCompositor.setBitrateFactor(1f);
+                sxCompositor.setRenderListener(new SXRenderListener() {
+                    @Override
+                    public void onStart() {
+                    }
 
-                }
+                    @Override
+                    public void onUpdate(int progress) {
 
-                @Override
-                public void onFinish(boolean success, String msg) {
-                    Log.d("TEST", "mediaUiModel clip finish: " + path);
-                }
+                    }
 
-                @Override
-                public void onCancel() {
+                    @Override
+                    public void onFinish(boolean success, String msg) {
+                        Log.d("TEST", "mediaUiModel clip finish: " + path);
+                    }
 
-                }
-            });
-            sxCompositor.run();
-            return path;
+                    @Override
+                    public void onCancel() {
 
-//            return mVideoPath;
+                    }
+                });
+                sxCompositor.run();
+                lastSavePath = path;
+                isVideoSlide=false;
+                return path;
+            }else{
+                          return lastSavePath;
+            }
+
+
+
+
         }
     }
 
@@ -268,21 +279,24 @@ public class MediaUiModel2 extends MediaUiModel {
         mStartTime = startTime;
         mIsVideo = true;
         mInitPaint.setAlpha(255);
-
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(path);
         mBitmap = retriever.getFrameAtTime((long) (startTime * 1000 * 1000));
-
-
-
-
         retriever.release();
-
         initPosition();
-
         if (mGroupModel != null) {
             mGroupModel.notifyRedraw();
         }
+    }
+
+
+    /**
+     * description ：设置第一针显示，只针对抠图视频的时候
+     * creation date: 2020/4/14
+     * user : zhangtongju
+     */
+    public void setVideoCover(Bitmap mBitmap){
+        this.mBitmap=mBitmap;
     }
 
     private void initPosition() {
@@ -346,37 +360,45 @@ public class MediaUiModel2 extends MediaUiModel {
                 saveBitmapToPath(bitmap, path);
                 return path;
             } else {
-                final String path = folder + File.separator + UUID.randomUUID() + ".mp4";
-                Matrix matrix = new Matrix(mMatrix);
-                matrix.postConcat(mInverseMatrix);
-                SXCompositor sxCompositor = new SXCompositor(cartoonPath, path, matrix, !mMute);
-                sxCompositor.setWidth(mClipWidth);
-                sxCompositor.setHeight(mClipHeight);
-                sxCompositor.setStartTime(mStartTime);
-                sxCompositor.setDuration(mDuration);
-                sxCompositor.setBitrateFactor(1f);
-                sxCompositor.setRenderListener(new SXRenderListener() {
-                    @Override
-                    public void onStart() {
-                    }
+                if (isVideoSlide || TextUtils.isEmpty(lastOtherPath)) {
+                    final String path = folder + File.separator + UUID.randomUUID() + ".mp4";
+                    Matrix matrix = new Matrix(mMatrix);
+                    matrix.postConcat(mInverseMatrix);
+                    SXCompositor sxCompositor = new SXCompositor(cartoonPath, path, matrix, !mMute);
+                    sxCompositor.setWidth(mClipWidth);
+                    sxCompositor.setHeight(mClipHeight);
+                    sxCompositor.setStartTime(mStartTime);
+                    sxCompositor.setDuration(mDuration);
+                    sxCompositor.setBitrateFactor(1f);
+                    sxCompositor.setRenderListener(new SXRenderListener() {
+                        @Override
+                        public void onStart() {
+                        }
 
-                    @Override
-                    public void onUpdate(int progress) {
+                        @Override
+                        public void onUpdate(int progress) {
 
-                    }
+                        }
 
-                    @Override
-                    public void onFinish(boolean success, String msg) {
-                        Log.d("TEST", "mediaUiModel clip finish: " + path);
-                    }
+                        @Override
+                        public void onFinish(boolean success, String msg) {
+                            Log.d("TEST", "mediaUiModel clip finish: " + path);
+                        }
 
-                    @Override
-                    public void onCancel() {
+                        @Override
+                        public void onCancel() {
 
-                    }
-                });
-                sxCompositor.run();
-                return path;
+                        }
+                    });
+                    sxCompositor.run();
+                    lastOtherPath=path;
+
+                    return path;
+                }else{
+                    return lastOtherPath;
+                }
+
+
             }
         }
         return cartoonPath;

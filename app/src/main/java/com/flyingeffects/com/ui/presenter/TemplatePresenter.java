@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.presenter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.enity.TemplateThumbItem;
@@ -32,6 +33,11 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
 
     public void getReplaceableFilePath(){
         home_model.getReplaceableFilePath();
+    }
+
+
+    public void getMattingVideoCover(String path){
+        home_model.getMattingVideoCover(path);
     }
 
 
@@ -75,5 +81,10 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     @Override
     public void getCartoonPath(String path) {
         home_mvpView.getCartoonPath(path);
+    }
+
+    @Override
+    public void showMattingVideoCover(Bitmap bitmap) {
+        home_mvpView.showMattingVideoCover(bitmap);
     }
 }

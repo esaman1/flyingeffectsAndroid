@@ -22,9 +22,12 @@ import android.widget.TextView;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateThumbAdapter;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.AnimForViewShowAndHide;
+import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
@@ -36,9 +39,12 @@ import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.EmptyControlVideo;
+import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.videoeditor.MediaInfo;
+import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.SxveConstans;
 import com.shixing.sxve.ui.model.GroupModel;
@@ -63,6 +69,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 
@@ -99,7 +106,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @BindView(R.id.video_player)
     EmptyControlVideo videoPlayer;
     /**
-     * 原图地址,如果不需要抠图，原图地址为null
+     * 原图地址,如果不需要抠图，原图地址为null,有抠图的情况下，默认使用原图
      */
     private List<String> originalPath;
 
@@ -160,6 +167,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private String videoTime;
 
 
+    /**
+     * 只针对视频抠图，然后吧第一针的封面传过去
+     */
+    private Bitmap videoMattingCaver;
+
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_template_edit;
@@ -187,21 +200,22 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
             nowTemplateIsAnim = 1;
-
-
-
-            //如果是选择视频，那么需要第一针显示为用户上传的视频
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-             retriever.setDataSource(originalPath.get(0));
-            String sss= retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT);
-            LogUtil.d("OOM2","原视频帧数是"+sss);
+            //如果是选择视频，那么需要第一针显示为用户上传的视频  //todo test
+            if(originalPath!=null&&originalPath.size()>0){
+                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                retriever.setDataSource(originalPath.get(0));
+                String sss = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT);
+                LogUtil.d("OOM2", "原视频帧数是" + sss);
+            }
             MediaMetadataRetriever retriever2 = new MediaMetadataRetriever();
             retriever2.setDataSource(imgPath.get(0));
-            String sss2= retriever2.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT);
-            LogUtil.d("OOM2","灰度图帧数是"+sss2);
-
+            String sss2 = retriever2.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT);
+            LogUtil.d("OOM2", "灰度图帧数是" + sss2);
+            //不需要抠图就不需要扣第一帧页面
+            if (originalPath != null && originalPath.size() != 0) {
+                presenter.getMattingVideoCover(originalPath.get(0));
+            }
         }
-
         if (originalPath == null || originalPath.size() == 0 || nowTemplateIsAnim == 1) {
             //不需要抠图
             findViewById(R.id.ll_Matting).setVisibility(View.GONE);
@@ -320,6 +334,27 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
+    /**
+     * description ：获得的视频封面，且扣了图片的
+     * creation date: 2020/4/14
+     * user : zhangtongju
+     */
+    @Override
+    public void showMattingVideoCover(Bitmap bp) {
+        if (mTemplateModel != null) {
+            if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
+                if (bp != null) {
+                    for (int i = 0; i < mTemplateModel.mAssets.size(); i++) {
+                        MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.mAssets.get(i).ui;
+                        mediaUiModel2.setVideoCover(bp);
+                    }
+                }
+            }
+        }
+        videoMattingCaver = bp;
+    }
+
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -429,7 +464,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             if (nowTemplateIsAnim == 1) {
                 //漫画 特殊
                 TemplateThumbItem templateThumbItem = new TemplateThumbItem();
-                templateThumbItem.setPathUrl(originalPath.get(0));
+                if(originalPath!=null){
+                    templateThumbItem.setPathUrl(originalPath.get(0));
+                }else{
+                    templateThumbItem.setPathUrl(imgPath.get(0));
+                }
                 templateThumbItem.setIsCheck(0);
                 listItem.set(0, templateThumbItem);
             } else {
@@ -453,7 +492,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 if (paths.size() > i && !TextUtils.isEmpty(paths.get(i))) {
                     if (nowTemplateIsAnim == 1) {
                         //漫画或者灰度图
-                        listAssets.add(originalPath.get(i));
+                        if(originalPath!=null){
+                            listAssets.add(originalPath.get(i));
+                        }else{
+                            listAssets.add(paths.get(i));
+                        }
                     } else {
                         listAssets.add(paths.get(i));
                     }
@@ -468,22 +511,17 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     selectGroup(0);
                     nowChooseIndex = 0;
                     templateThumbAdapter.notifyDataSetChanged();
+                    if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
+                        if (videoMattingCaver != null) {
+                            for (int i = 0; i < mTemplateModel.mAssets.size(); i++) {
+                                MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.mAssets.get(i).ui;
+                                mediaUiModel2.setVideoCover(videoMattingCaver);
+                            }
+                        }
+                    }
                     if (mTemplateViews != null && mTemplateViews.size() > 0) {
                         mTemplateViews.get(nowChooseIndex).invalidate(); //提示重新绘制预览图
                     }
-
-//                    if(!TextUtils.isEmpty(videoTime)&&!videoTime.equals("0")){
-//                        //如果是选择视频，那么需要第一针显示为用户上传的视频
-//                        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-//                        retriever.setDataSource(originalPath.get(0));
-//                        MattingImage  mattingImage=new MattingImage();
-//                        mattingImage.mattingImageForBitmap(retriever.getFrameAtTime((long) (0 * 1000 * 1000)), new MattingImage.mattingStatus() {
-//                            @Override
-//                            public void isSuccess(boolean isSuccess, Bitmap bp) {
-//
-//                            }
-//                        });
-//                    }
 
                 }));  //批量替换图片
             }).start();

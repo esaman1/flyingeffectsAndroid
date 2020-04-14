@@ -1,5 +1,7 @@
 package com.flyingeffects.com.ui.interfaces.view;
 
+import android.graphics.Bitmap;
+
 import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.shixing.sxve.ui.model.TemplateModel;
 
@@ -17,4 +19,6 @@ public interface TemplateMvpView {
     void returnReplaceableFilePath(String[]paths);
 
     void getCartoonPath(String path);
+
+    void showMattingVideoCover(Bitmap bp);
 }

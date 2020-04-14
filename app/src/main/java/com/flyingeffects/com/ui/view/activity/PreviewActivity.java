@@ -538,7 +538,12 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         originalImagePath.clear();
         ArrayList<String>paths=new ArrayList<>();
         paths.add(event.getMattingPath());
-        originalImagePath.add(event.getOriginalPath());
+        //用户没选择抠图
+        if(event.getOriginalPath()!=null){
+            originalImagePath.add(event.getOriginalPath());
+        }else{
+            originalImagePath=null;
+        }
         Intent intent = new Intent(this, TemplateActivity.class);
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("paths", paths);

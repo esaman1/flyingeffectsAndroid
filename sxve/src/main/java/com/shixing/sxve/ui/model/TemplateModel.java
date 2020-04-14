@@ -27,7 +27,7 @@ public class TemplateModel {
     private static final String CONFIG_FILE_NAME = "config.json";
     private int mDuration;
     // 所有可替换的asset，用于编辑完，渲染开始前获取替换的素材路径
-    private List<AssetModel> mAssets = new ArrayList<>();
+    public List<AssetModel> mAssets = new ArrayList<>();
 
     // 可替换图片和视频的asset，用于批量替换时
     private List<AssetModel> mReplaceableAssets = new ArrayList<>();

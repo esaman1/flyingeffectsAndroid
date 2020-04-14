@@ -136,7 +136,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.iv_close, R.id.iv_correct, R.id.tv_kt})
+    @OnClick({R.id.iv_close, R.id.iv_correct, R.id.tv_kt,R.id.tv_no_kt})
     public void onMyClick(View v) {
         switch (v.getId()) {
             case R.id.iv_close:
@@ -157,6 +157,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
                 break;
 
             case R.id.tv_kt:
+            case R.id.tv_no_kt:
                 videoPlayer.onVideoPause();
                 WaitingDialog.openPragressDialog(this);
                 new Thread(() -> videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(TemplateCutVideoActivity.this, needDuration * 1000,videoPath,mStartDuration, new videoCutDurationForVideoOneDo.isSuccess() {
@@ -169,13 +170,14 @@ public class TemplateCutVideoActivity extends BaseActivity {
                     public void isSuccess(boolean isSuccess, String path) {
                         WaitingDialog.closePragressDialog();
                         if (isSuccess) {
-                            LogUtil.d("OOM", "裁剪成功后路径 720*1280=" + path);
-                            gotoMattingVideo(path);
+                            if(v.getId()==R.id.tv_kt){
+                                gotoMattingVideo(path);
+                            }else{
+                                EventBus.getDefault().post(new MattingVideoEnity(null, path));
+                            }
                         }
                     }
                 })).start();
-
-
                 break;
 
         }
