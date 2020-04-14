@@ -23,5 +23,7 @@ public interface TemplateMvpCallback {
 
     void showMattingVideoCover(Bitmap bitmap);
 
+    void ChangeMaterialCallbackForVideo(String originalPath,String path);
+
 
 }

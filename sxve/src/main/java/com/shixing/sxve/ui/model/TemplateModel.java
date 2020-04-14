@@ -155,9 +155,6 @@ public class TemplateModel {
 //                } else {
 //                    paths[0] = mAssets.get(i).ui.getSnapPath(folder);
 //                }
-
-
-
                 if(i== mAssets.size()-1){
                     //最后一个的时候
                     MediaUiModel2 model2 = (MediaUiModel2) mAssets.get(i-1).ui;
@@ -266,7 +263,29 @@ public class TemplateModel {
                 if (mReplaceableAssets.get(i) != null) {
                     if (mReplaceableAssets.get(i).ui instanceof MediaUiModel) {
                         MediaUiModel2 media = (MediaUiModel2) mReplaceableAssets.get(i).ui;
-                        media.setImageAsset(list.get(i));
+                        if (list.get(i) != null && !list.get(i).equals("")) {
+                            String mimeType;
+                            String extension = MimeTypeMap.getFileExtensionFromUrl(list.get(i)); //获得格式
+                            if (extension != null && !extension.equals("")) {
+                                mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+                                if (mimeType == null) {
+                                    mimeType = getPathType(list.get(i));
+                                }
+                            } else {  //有些手机获取不到，比如vivo 是中文目录
+                                mimeType = getPathType(list.get(i));
+                            }
+
+                            if (albumType.isImage(mimeType)) {
+                                media.setImageAsset(list.get(i));
+                            }else{
+                                media.setVideoPath(list.get(i),true,0);
+                            }
+                        }
+
+
+
+
+
                         textUIModelList.add(null); //todo 考虑到文字在中间的情况，补位，解决数组越界
                     } else if (mReplaceableAssets.get(i).ui instanceof TextUiModel) {
                         textUIModelList.add(mReplaceableAssets.get(i));
@@ -275,9 +294,9 @@ public class TemplateModel {
 
             }
         }
-
-
     }
+
+
 
 
     private String getPathType(String path) {

@@ -14,6 +14,7 @@ import com.flyingeffects.com.adapter.TimelineAdapterForCutVideo;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.model.VideoMattingModel;
 import com.flyingeffects.com.ui.model.videoCutDurationForVideoOneDo;
@@ -106,6 +107,8 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+
+        DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
         videoPath = getIntent().getStringExtra("videoPath");
         needDuration = getIntent().getFloatExtra("needCropDuration", 1);
         videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
@@ -173,7 +176,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
                             if(v.getId()==R.id.tv_kt){
                                 gotoMattingVideo(path);
                             }else{
-                                EventBus.getDefault().post(new MattingVideoEnity(null, path));
+                                EventBus.getDefault().post(new MattingVideoEnity(null, path,0));
                             }
                         }
                     }
@@ -193,7 +196,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
                 VideoMattingModel videoMattingModel = new VideoMattingModel(originalPath, TemplateCutVideoActivity.this, new VideoMattingModel.MattingSuccess() {
                     @Override
                     public void isSuccess(boolean isSuccess, String path) {
-                        EventBus.getDefault().post(new MattingVideoEnity(originalPath, path));
+                        EventBus.getDefault().post(new MattingVideoEnity(originalPath, path,0));
                     }
                 });
                 videoMattingModel.newFunction();

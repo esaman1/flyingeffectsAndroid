@@ -23,6 +23,10 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
         home_model = new TemplateMvpModel(context, this);
     }
 
+    public void intoMattingVideo(String path){
+        home_model.intoMattingVideo(path);
+    }
+
 
 
 
@@ -86,5 +90,10 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     @Override
     public void showMattingVideoCover(Bitmap bitmap) {
         home_mvpView.showMattingVideoCover(bitmap);
+    }
+
+    @Override
+    public void ChangeMaterialCallbackForVideo(String originalPath, String path) {
+        home_mvpView.ChangeMaterialCallbackForVideo(originalPath,path);
     }
 }

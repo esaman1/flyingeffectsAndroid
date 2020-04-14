@@ -68,6 +68,13 @@ public class VideoMattingModel {
      * 专门用来存储已经抠图的文件夹
      */
     private String faceMattingFolder;
+
+    /**
+     * 专门用来储存已经合成视频的文件夹
+     */
+    private String cacheCutVideoPath;
+
+
     private int frameCount;
     private static final int DRAWPADWIDTH = 720;
     private static final int DRAWPADHEIGHT = 1280;
@@ -88,6 +95,7 @@ public class VideoMattingModel {
         FileManager fileManager = new FileManager();
         faceFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceFolder");
         faceMattingFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceMattingFolder");
+        cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
         LogUtil.d("OOM", "faceMattingFolder=" + faceMattingFolder);
         dialog = new WaitingDialog_progress(context);
         dialog.openProgressDialog();
@@ -99,6 +107,7 @@ public class VideoMattingModel {
         videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
         FileManager fileManager = new FileManager();
         faceFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceFolder");
+        cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
         faceMattingFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceMattingFolder");
         LogUtil.d("OOM", "faceMattingFolder=" + faceMattingFolder);
         dialog = new WaitingDialog_progress(context);
@@ -149,7 +158,6 @@ public class VideoMattingModel {
                 public void onCompleted(ExtractVideoFrame v) {
                     LogUtil.d("OOM", "onCompleted");
 //                test();
-
                     for(int i = 1; i< BaseConstans.THREADCOUNT; i++){
                         LogUtil.d("OOM2", "补了"+i+"帧");
                         //最后需要补的帧
@@ -160,8 +168,6 @@ public class VideoMattingModel {
 
                     SegJni.nativeReleaseImageBuffer();
                     SegJni.nativeReleaseSegHandler();
-
-
                     addFrameCompoundVideo();
                 }
             });
@@ -243,14 +249,13 @@ public class VideoMattingModel {
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
                 LogUtil.d("OOM", "nowChooseImageIndex" + nowChooseImageIndex);
                 dialog.closePragressDialog();
-//                String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
+                String albumPath=cacheCutVideoPath+"/Matting.mp4";
+
                 try {
-//                    FileUtil.copyFile(new File(exportPath), albumPath);
+                    FileUtil.copyFile(new File(exportPath), albumPath);
                     if (callback != null) {
-                        callback.isSuccess(true, exportPath);
+                        callback.isSuccess(true, albumPath);
                     }
-//                    albumBroadcast(albumPath);
-//                    showKeepSuccessDialog(albumPath);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -535,29 +535,31 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
      */
     @Subscribe
     public void onEventMainThread(MattingVideoEnity event) {
-        originalImagePath.clear();
-        ArrayList<String>paths=new ArrayList<>();
-        paths.add(event.getMattingPath());
-        //用户没选择抠图
-        if(event.getOriginalPath()!=null){
-            originalImagePath.add(event.getOriginalPath());
-        }else{
-            originalImagePath=null;
+        if(event.getTag()==0){
+            originalImagePath.clear();
+            ArrayList<String>paths=new ArrayList<>();
+            paths.add(event.getMattingPath());
+            //用户没选择抠图
+            if(event.getOriginalPath()!=null){
+                originalImagePath.add(event.getOriginalPath());
+            }else{
+                originalImagePath=null;
+            }
+            Intent intent = new Intent(this, TemplateActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList("paths", paths);
+            bundle.putInt("isPicNum", defaultnum);
+            bundle.putString("fromTo", fromTo);
+            bundle.putInt("is_anime", templateItem.getIs_anime());
+            bundle.putString("templateName", templateItem.getTitle());
+            bundle.putString("templateId", templateItem.getId());
+            bundle.putString("videoTime",templateItem.getVideotime());
+            bundle.putStringArrayList("originalPath", (ArrayList<String>) originalImagePath );
+            bundle.putString("templateFilePath", TemplateFilePath);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("Message", bundle);
+            startActivity(intent);
         }
-        Intent intent = new Intent(this, TemplateActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putStringArrayList("paths", paths);
-        bundle.putInt("isPicNum", defaultnum);
-        bundle.putString("fromTo", fromTo);
-        bundle.putInt("is_anime", templateItem.getIs_anime());
-        bundle.putString("templateName", templateItem.getTitle());
-        bundle.putString("templateId", templateItem.getId());
-        bundle.putString("videoTime",templateItem.getVideotime());
-        bundle.putStringArrayList("originalPath", (ArrayList<String>) originalImagePath );
-        bundle.putString("templateFilePath", TemplateFilePath);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("Message", bundle);
-        startActivity(intent);
     }
 
 

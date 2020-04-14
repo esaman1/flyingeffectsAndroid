@@ -3,7 +3,6 @@ package com.flyingeffects.com.ui.view.activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Path;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,12 +21,9 @@ import android.widget.TextView;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateThumbAdapter;
 import com.flyingeffects.com.base.BaseActivity;
-import com.flyingeffects.com.base.BaseApplication;
-import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.AnimForViewShowAndHide;
-import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
@@ -36,15 +32,11 @@ import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
-import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.EmptyControlVideo;
-import com.glidebitmappool.GlideBitmapPool;
-import com.lansosdk.videoeditor.MediaInfo;
-import com.megvii.segjni.SegJni;
+import com.flyingeffects.com.view.MattingVideoEnity;
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.SxveConstans;
 import com.shixing.sxve.ui.model.GroupModel;
@@ -67,9 +59,10 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 
@@ -105,11 +98,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private TextAssetEditLayout mTextEditLayout;
     @BindView(R.id.video_player)
     EmptyControlVideo videoPlayer;
+
     /**
      * 原图地址,如果不需要抠图，原图地址为null,有抠图的情况下，默认使用原图
      */
     private List<String> originalPath;
-
     private String templateFilePath;
 
     /**
@@ -161,6 +154,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     private int nowTemplateIsAnim;
 
+
+    /**
+     * 当前是不是视频抠图功能,1是
+     */
+    private int nowTemplateIsMattingVideo;
+
     /**
      * 有值表示视频
      */
@@ -180,6 +179,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         findViewById(R.id.iv_top_back).setOnClickListener(this);
         findViewById(R.id.tv_top_submit).setVisibility(View.VISIBLE);
         ((TextView) findViewById(R.id.tv_top_submit)).setText("保存");
@@ -199,9 +199,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         }
 
         if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
-            nowTemplateIsAnim = 1;
+            nowTemplateIsMattingVideo = 1;
             //如果是选择视频，那么需要第一针显示为用户上传的视频  //todo test
-            if(originalPath!=null&&originalPath.size()>0){
+            if (originalPath != null && originalPath.size() > 0) {
                 MediaMetadataRetriever retriever = new MediaMetadataRetriever();
                 retriever.setDataSource(originalPath.get(0));
                 String sss = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT);
@@ -217,9 +217,15 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         }
         if (originalPath == null || originalPath.size() == 0 || nowTemplateIsAnim == 1) {
-            //不需要抠图
-            findViewById(R.id.ll_Matting).setVisibility(View.GONE);
+
+            if (nowTemplateIsMattingVideo != 1) {
+                //不需要抠图,视频抠图无论如何都需要的
+                findViewById(R.id.ll_Matting).setVisibility(View.GONE);
+            }
+
         }
+
+
         mTextEditLayout = findViewById(R.id.text_edit_layout);
         mFolder = new File(templateFilePath);
         mAudio1Path = mFolder.getPath() + MUSIC_PATH;
@@ -230,27 +236,40 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         SxveConstans.default_bg_path = new File(dir, "default_bj.png").getPath();
         seekBar.setOnSeekBarChangeListener(seekBarListener);
-        switch_button.setOnCheckedChangeListener(new SwitchButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(SwitchButton view, boolean isChecked) {
-                if (!isChecked) {
+        switch_button.setOnCheckedChangeListener((view, isChecked) -> {
+            //这里isChecked 效果和ui设计相反，意思是，选中就是对应的未选中
+            if (!isChecked) {
+                if (nowTemplateIsMattingVideo == 1) {
+                    //视频抠图
+                    presenter.intoMattingVideo(imgPath.get(0));
+                } else {
                     statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutopen");
                     //修改图为裁剪后的素材
                     presenter.ChangeMaterial(originalPath, bottomButtonCount, needAssetsCount);
+                }
+            } else {
+
+                if (nowTemplateIsMattingVideo == 1) {
+
                 } else {
                     statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutoff");
                     //修改为裁剪前的素材
                     presenter.ChangeMaterial(imgPath, bottomButtonCount, needAssetsCount);
                 }
-                if (mPlayer != null) {
-                    mPlayer.pause();
-                    ivPlayButton.setImageResource(R.mipmap.iv_play);
-                    isPlaying = false;
-                }
-                showPreview(false, true);
-                AnimForViewShowAndHide.getInstance().show(mContainer);
             }
+            if (mPlayer != null) {
+                mPlayer.pause();
+                ivPlayButton.setImageResource(R.mipmap.iv_play);
+                isPlaying = false;
+            }
+            showPreview(false, true);
+            AnimForViewShowAndHide.getInstance().show(mContainer);
         });
+
+        if (nowTemplateIsMattingVideo == 1&&originalPath==null) {
+            //当前是视频的情况下，且用户没有选择扣视频,上面的选中效果就取消
+            switch_button.setChecked(true);
+        }
 
 
     }
@@ -258,8 +277,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     protected void initAction() {
-//        initTemplateThumb();
-        presenter.loadTemplate(mFolder.getPath(), this, nowTemplateIsAnim);
+        //漫画逻辑和视频抠图逻辑大体差不多
+        if (nowTemplateIsMattingVideo == 1 || nowTemplateIsAnim == 1) {
+            presenter.loadTemplate(mFolder.getPath(), this, 1);
+        } else {
+            presenter.loadTemplate(mFolder.getPath(), this, 0);
+        }
         mPlayerView.setPlayCallback(mListener);
     }
 
@@ -267,8 +290,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public void completeTemplate(TemplateModel templateModel) {
         initTemplateThumb(templateModel.groupSize);
         mTemplateModel = templateModel;
-        if (nowTemplateIsAnim == 1) {
-//            mTemplateModel.cartoonPath = originalPath.get(0);  //todo
+        if (nowTemplateIsAnim == 1 || nowTemplateIsMattingVideo == 1) {
             mTemplateModel.cartoonPath = imgPath.get(0);  //设置灰度图
         }
         bottomButtonCount = templateModel.groupSize;
@@ -353,6 +375,33 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         }
         videoMattingCaver = bp;
     }
+
+
+
+    /**
+     * description ：是否抠图按钮切换时间出发
+     * creation date: 2020/4/14
+     * user : zhangtongju
+     */
+    @Override
+    public void ChangeMaterialCallbackForVideo(String originalVideoPath, String path) {
+        originalPath.clear();
+        originalPath.add(originalVideoPath);
+        imgPath.clear();
+        imgPath.add(path);
+        List<String>list=new ArrayList<>();
+        if(!TextUtils.isEmpty(originalVideoPath)){
+            list.add(originalVideoPath);
+            mTemplateModel.setReplaceAllMaterial(list);
+        }else{
+            list.add(path);
+            mTemplateModel.setReplaceAllMaterial(list);
+        }
+        mTemplateViews.get(nowChooseIndex).invalidate();
+    }
+
+
+
 
 
     @Override
@@ -461,12 +510,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 }
             }
 
-            if (nowTemplateIsAnim == 1) {
+            if (nowTemplateIsAnim == 1 || nowTemplateIsAnim == 1) {
                 //漫画 特殊
                 TemplateThumbItem templateThumbItem = new TemplateThumbItem();
-                if(originalPath!=null){
+                if (originalPath != null) {
                     templateThumbItem.setPathUrl(originalPath.get(0));
-                }else{
+                } else {
                     templateThumbItem.setPathUrl(imgPath.get(0));
                 }
                 templateThumbItem.setIsCheck(0);
@@ -491,10 +540,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             for (int i = 0; i < needAssetsCount; i++) {  //填满数据，为了缩略图
                 if (paths.size() > i && !TextUtils.isEmpty(paths.get(i))) {
                     if (nowTemplateIsAnim == 1) {
-                        //漫画或者灰度图
-                        if(originalPath!=null){
+                        //漫画或者灰度图，
+                        if (originalPath != null) {
                             listAssets.add(originalPath.get(i));
-                        }else{
+                        } else {
                             listAssets.add(paths.get(i));
                         }
                     } else {
@@ -657,6 +706,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         super.onDestroy();
         presenter.onDestroy();
         videoPlayer.release();
+        EventBus.getDefault().unregister(this);
     }
 
 
@@ -783,4 +833,19 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         }
     }
+
+
+    /**
+     * description ：来自抠图按钮切换
+     * creation date: 2020/4/14
+     * user : zhangtongju
+     */
+    @Subscribe
+    public void onEventMainThread(MattingVideoEnity event) {
+        if (event.getTag() == 1) {
+            //扣了新的视频
+            ChangeMaterialCallbackForVideo(event.getOriginalPath(),event.getMattingPath());
+        }
+    }
+
 }

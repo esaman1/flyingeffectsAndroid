@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -27,11 +28,16 @@ import rx.schedulers.Schedulers;
 public class videoCutDurationForVideoOneDo {
     private VideoOneDo2 videoOneDo;
     private static videoCutDurationForVideoOneDo thisModel;
-
+    /**
+     * 裁剪保存后的地址
+     */
+    private static String cacheCutVideoPath;
     public static videoCutDurationForVideoOneDo getInstance() {
 
         if (thisModel == null) {
             thisModel = new videoCutDurationForVideoOneDo();
+            FileManager fileManager = new FileManager();
+            cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
         }
         return thisModel;
 
@@ -103,15 +109,9 @@ public class videoCutDurationForVideoOneDo {
             execute.setFrameRate(20);
             execute.setEncodeBitrate(5 * 1024 * 1024);
             execute.setOnLanSongSDKErrorListener(message -> {
-//                isSaving=false;
-//                dialog.closePragressDialog();
                 LogUtil.e("execute", String.valueOf(message));
             });
             execute.setOnLanSongSDKProgressListener((l, i) -> {
-//                if (dialog!=null){
-//                    dialog.setProgress(i +"%");
-//                    LogUtil.d("execute progress: ", String.valueOf(i));
-//                }
                 callback.progresss(i);
             });
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
@@ -124,10 +124,16 @@ public class videoCutDurationForVideoOneDo {
                 }
                 File video = new File(exportPath);
                 if (video.exists()) {
-                    callback.isSuccess(true, exportPath);
+                    try {
+                        String savePath=cacheCutVideoPath+"/noMatting.mp4";
+                        FileUtil.copyFile(video, savePath);
+                        callback.isSuccess(true, savePath);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                 } else {
                     callback.isSuccess(false, "");
-//                    dialog.closePragressDialog();
                     ToastUtil.showToast(context.getString(R.string.export_failure));
                 }
             });

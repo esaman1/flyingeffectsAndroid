@@ -21,4 +21,6 @@ public interface TemplateMvpView {
     void getCartoonPath(String path);
 
     void showMattingVideoCover(Bitmap bp);
+
+    void ChangeMaterialCallbackForVideo(String originalPath,String path);
 }

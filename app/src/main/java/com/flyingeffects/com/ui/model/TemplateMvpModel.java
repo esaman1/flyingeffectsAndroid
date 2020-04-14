@@ -27,10 +27,13 @@ import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
+import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateActivity;
+import com.flyingeffects.com.ui.view.activity.TemplateCutVideoActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
+import com.flyingeffects.com.view.MattingVideoEnity;
 import com.glidebitmappool.GlideBitmapPool;
 import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.AssetDelegate;
@@ -49,6 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -63,11 +67,14 @@ public class TemplateMvpModel {
     private TemplateModel mTemplateModel = null;
     private File keepUunCatchPath;
     private boolean isOnDestroy;
+    private String cacheCutVideoPath;
 
     public TemplateMvpModel(Context context, TemplateMvpCallback callback) {
         this.context = context;
         this.callback = callback;
         keepUunCatchPath = context.getExternalFilesDir("runCatch/");
+        FileManager fileManager = new FileManager();
+        cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
         isOnDestroy = false;
     }
 
@@ -289,6 +296,49 @@ public class TemplateMvpModel {
 
 
     }
+
+
+
+
+    /**
+     * description ：去重新抠图
+     * creation date: 2020/4/14
+     * user : zhangtongju
+     */
+    public void intoMattingVideo(String path){
+
+        String cacheVideoPath=cacheCutVideoPath+"/Matting.mp4";
+        File file=new File(cacheVideoPath);
+        if(file.exists()){
+            //已经扣过视频了,那么原视频地址就是没抠图之前的地址，而imagePaht就是抠图之后的地址
+            callback.ChangeMaterialCallbackForVideo(path,cacheVideoPath);
+        }else{
+            //还没抠过视频
+            gotoMattingVideo(path);
+        }
+
+
+
+    }
+
+    private void gotoMattingVideo(String originalPath) {
+        SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), 4);
+        Observable.just(originalPath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                VideoMattingModel videoMattingModel = new VideoMattingModel(originalPath, context, new VideoMattingModel.MattingSuccess() {
+                    @Override
+                    public void isSuccess(boolean isSuccess, String path) {
+                        EventBus.getDefault().post(new MattingVideoEnity(originalPath, path,1));
+                    }
+                });
+                videoMattingModel.newFunction();
+            }
+        });
+    }
+
+
+
 
 
     /**
