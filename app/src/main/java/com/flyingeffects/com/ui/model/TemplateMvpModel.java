@@ -332,7 +332,7 @@ public class TemplateMvpModel {
                         EventBus.getDefault().post(new MattingVideoEnity(originalPath, path,1));
                     }
                 });
-                videoMattingModel.newFunction();
+                videoMattingModel.ToExtractFrame();
             }
         });
     }

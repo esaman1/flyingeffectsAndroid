@@ -115,37 +115,37 @@ public class MediaUiModel2 extends MediaUiModel {
     public void draw(Canvas canvas, int activeLayer) {
         mPaint = mInitPaint;
 //        if (!IsAnim) {
-            if (b != null) {
-                canvas.drawBitmap(b, 0, 0, null);
-            }
+        if (b != null) {
+            canvas.drawBitmap(b, 0, 0, null);
+        }
 
 //        隐藏的这段代码是控制同组里面不同位置，滑动前面一个，后面一个就透明
 //        if (activeLayer >= 0 && activeLayer < index) {
 //            mPaint = mTransparentPaint;
 //        }
 
-            if (mBitmap != null) {
-                if (activeLayer != index) {
-                    Log.d("OOM", "activeLayer != index");
-                    //静态的时候
-                    canvas.save();
-                    canvas.clipPath(mPath);
-                    canvas.drawBitmap(mBitmap, mMatrix, mPaint);
-                    canvas.restore();
-                } else {
-                    Log.d("OOM", "activeLayer == index");
-                    //滑动的时候
-                    canvas.drawPath(mPath, mPaint);
-                    canvas.drawBitmap(mBitmap, mMatrix, mPaint);
-                }
+        if (mBitmap != null) {
+            if (activeLayer != index) {
+                Log.d("OOM", "activeLayer != index");
+                //静态的时候
+                canvas.save();
+                canvas.clipPath(mPath);
+                canvas.drawBitmap(mBitmap, mMatrix, mPaint);
+                canvas.restore();
+            } else {
+                Log.d("OOM", "activeLayer == index");
+                //滑动的时候
+                canvas.drawPath(mPath, mPaint);
+                canvas.drawBitmap(mBitmap, mMatrix, mPaint);
             }
+        }
 
-            if (f != null) {
-                if (activeLayer > 0) {
-                    mPaint = mTransparentPaint;
-                }
-                canvas.drawBitmap(f, 0, 0, mPaint);
+        if (f != null) {
+            if (activeLayer > 0) {
+                mPaint = mTransparentPaint;
             }
+            canvas.drawBitmap(f, 0, 0, mPaint);
+        }
 
 
     }
@@ -235,16 +235,14 @@ public class MediaUiModel2 extends MediaUiModel {
                     }
                 });
 
-                Log.d("oom","视频地址为"+mVideoPath);
+                Log.d("oom", "视频地址为" + mVideoPath);
                 sxCompositor.run();
                 lastSavePath = path;
-                isVideoSlide=false;
+                isVideoSlide = false;
                 return path;
-            }else{
-                          return lastSavePath;
+            } else {
+                return lastSavePath;
             }
-
-
 
 
         }
@@ -263,7 +261,7 @@ public class MediaUiModel2 extends MediaUiModel {
     }
 
     public void setImageAsset(String path) {
-        this.path=path;
+        this.path = path;
         isVideoSlide = true;
         mIsVideo = false;
         mBitmap = getSmallBmpFromFile(path, size.getHeight(), size.getWidth());
@@ -297,9 +295,16 @@ public class MediaUiModel2 extends MediaUiModel {
      * creation date: 2020/4/14
      * user : zhangtongju
      */
-    public void setVideoCover(Bitmap mBitmap){
-        this.mBitmap=mBitmap;
+    public void setVideoCover(Bitmap mBitmap) {
+        this.mBitmap = mBitmap;
     }
+
+
+    public void resetUi() {
+        lastOtherPath = "";
+        isVideoSlide = true;
+    }
+
 
     private void initPosition() {
         if (mBitmap != null) {
@@ -334,7 +339,9 @@ public class MediaUiModel2 extends MediaUiModel {
     public Matrix getMediaUiMatrix() {
         return mMatrix;
     }
-    String   mimeType;
+
+    String mimeType;
+
     public String getpathForThisMatrix(String folder, String cartoonPath) {
 
         if (!TextUtils.isEmpty(cartoonPath)) {
@@ -393,10 +400,10 @@ public class MediaUiModel2 extends MediaUiModel {
                         }
                     });
                     sxCompositor.run();
-                    lastOtherPath=path;
-                    Log.d("oom","视频地址2为"+cartoonPath);
+                    lastOtherPath = path;
+                    Log.d("oom", "视频地址2为" + cartoonPath);
                     return path;
-                }else{
+                } else {
                     return lastOtherPath;
                 }
 
@@ -408,15 +415,15 @@ public class MediaUiModel2 extends MediaUiModel {
     }
 
     private String getPathType(String path) {
-                String mimeType;
-                String suffix = path.substring(path.lastIndexOf(".") + 1).toLowerCase();
-                if (suffix.equalsIgnoreCase("mp4") || suffix.equalsIgnoreCase("M4V") || suffix.equalsIgnoreCase("3gp") || suffix.equals("3G2") || suffix.equalsIgnoreCase("WMV") || suffix.equalsIgnoreCase("ASF") || suffix.equalsIgnoreCase("AVI") || suffix.equalsIgnoreCase("FLV") || suffix.equalsIgnoreCase("MKV") || suffix.equalsIgnoreCase("WEBM")) {
-                    mimeType = "video/*";
-                } else {
-                    mimeType = "image/*";
-                }
-                return mimeType;
-            }
+        String mimeType;
+        String suffix = path.substring(path.lastIndexOf(".") + 1).toLowerCase();
+        if (suffix.equalsIgnoreCase("mp4") || suffix.equalsIgnoreCase("M4V") || suffix.equalsIgnoreCase("3gp") || suffix.equals("3G2") || suffix.equalsIgnoreCase("WMV") || suffix.equalsIgnoreCase("ASF") || suffix.equalsIgnoreCase("AVI") || suffix.equalsIgnoreCase("FLV") || suffix.equalsIgnoreCase("MKV") || suffix.equalsIgnoreCase("WEBM")) {
+            mimeType = "video/*";
+        } else {
+            mimeType = "image/*";
+        }
+        return mimeType;
+    }
 
 
     /**
@@ -474,7 +481,7 @@ public class MediaUiModel2 extends MediaUiModel {
         }
     }
 
-    public String getOriginalPath(){
+    public String getOriginalPath() {
         return path;
     }
 

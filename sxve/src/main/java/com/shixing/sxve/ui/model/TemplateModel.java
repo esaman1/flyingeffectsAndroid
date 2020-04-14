@@ -298,6 +298,21 @@ public class TemplateModel {
 
 
 
+    public void resetUi() {
+        if (mReplaceableAssets != null && mReplaceableAssets.size() > 0) {
+            for (int i = 0; i < mReplaceableAssets.size(); i++) {
+                if (mReplaceableAssets.get(i) != null) {
+                    if (mReplaceableAssets.get(i).ui instanceof MediaUiModel) {
+                        MediaUiModel2 media = (MediaUiModel2) mReplaceableAssets.get(i).ui;
+                        media.resetUi();
+                        }
+                }
+
+            }
+        }
+    }
+
+
 
     private String getPathType(String path) {
         String mimeType;
