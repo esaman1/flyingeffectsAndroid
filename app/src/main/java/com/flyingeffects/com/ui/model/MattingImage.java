@@ -37,9 +37,28 @@ public class MattingImage {
                 mOriginBitmap = ConUtil.setBitmapAlpha(mOriginBitmap, segs);
                 callback.isSuccess(true, mOriginBitmap);
             }
-
         }).start();
     }
+
+    public void mattingImageForBitmap( Bitmap mOriginBitmap, mattingStatus callback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mBitmapW = mOriginBitmap.getWidth();
+                mBitmapH = mOriginBitmap.getHeight();
+                SegJni.nativeCreateImageBuffer(mBitmapW, mBitmapH);
+                byte segs[] = new byte[mBitmapH * mBitmapW];
+                byte[] rgba = ConUtil.getPixelsRGBA(mOriginBitmap);
+                SegJni.nativeSegImage(rgba, mBitmapW, mBitmapH, segs, false);
+                SegJni.nativeReleaseImageBuffer();
+                callback.isSuccess(true,  ConUtil.setBitmapAlpha(mOriginBitmap, segs));
+            }
+        }).start();
+
+    }
+
+
+
 
 
     /**

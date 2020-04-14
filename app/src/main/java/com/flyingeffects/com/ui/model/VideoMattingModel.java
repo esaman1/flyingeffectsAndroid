@@ -113,7 +113,7 @@ public class VideoMattingModel {
             if (!mInfo.prepare() || !mInfo.isHaveVideo()) {
                 return;
             }
-            LogUtil.d("OOM", "视频的总帧数为" + allFrame);
+
             mExtractFrame = new ExtractVideoFrame(BaseApplication.getInstance(), videoPath);
 
             MediaMetadataRetriever retr = new MediaMetadataRetriever();
@@ -137,6 +137,7 @@ public class VideoMattingModel {
             }
 
             allFrame = mInfo.vTotalFrames;
+            LogUtil.d("OOM2", "视频的总帧数为" + allFrame);
             //设置提取多少帧
             mExtractFrame.setExtractSomeFrame(allFrame);
             /**
@@ -150,10 +151,13 @@ public class VideoMattingModel {
 //                test();
 
                     for(int i = 1; i< BaseConstans.THREADCOUNT; i++){
+                        LogUtil.d("OOM2", "补了"+i+"帧");
                         //最后需要补的帧
                         frameCount++;
                         downImageForBitmap(null, frameCount);
                     }
+                    LogUtil.d("OOM2", "frameCount的值为"+frameCount);
+
                     SegJni.nativeReleaseImageBuffer();
                     SegJni.nativeReleaseSegHandler();
 
@@ -180,10 +184,11 @@ public class VideoMattingModel {
                     String hint = frameCount + "帧" + "\n"
                                 + "s是:" + String.valueOf(ptsUS);
                     LogUtil.d("OOM", hint);
-                    String fileName = faceFolder + File.separator + frameCount + ".png";
-                    BitmapManager.getInstance().saveBitmapToPath(bmp, fileName);
+//                    String fileName = faceFolder + File.separator + frameCount + ".png";
+//                    BitmapManager.getInstance().saveBitmapToPath(bmp, fileName);
                     //todo  假如face sdk 抠图的速度和截取帧的速度大抵相同，那么就可以直接抠图，否则的话可能会造成内存回收不及时
                     downImageForBitmap(bmp, frameCount);
+//                    LogUtil.d("OOM2", "正在扣"+frameCount+"帧");
 //                LogUtil.d("OOM", "bmp.width=" + bmp.getWidth() + "bmp.height=" + bmp.getHeight() + "config=" + bmp.getConfig());
 //                GlideBitmapPool.putBitmap(bmp);
                 }
@@ -204,14 +209,26 @@ public class VideoMattingModel {
     private float preTime;
     //当前进度时间
     private float nowProgressTime;
-
+    boolean addFirstFrame=false;
     public void addFrameCompoundVideo() {
         List<File> getMattingList = FileManager.listFileSortByModifyTime(faceMattingFolder);
-        Bitmap firstBitmap = BitmapFactory.decodeFile(getMattingList.get(1).getPath());
+        LogUtil.d("OOM2","得到所有增有"+getMattingList.size());
+
+//        //蓝松截取帧会少一帧 //todo
+//        File file=getMattingList.get(0);
+//        String path=file.getParent()+"/aa.png";
+//        try {
+//            FileUtil.copyFile(file, path);
+//            getMattingList.add(0,new File(path));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        Bitmap firstBitmap = BitmapFactory.decodeFile(getMattingList.get(0).getPath());
+        LogUtil.d("OOM2","第一针的地址为"+getMattingList.get(0).getPath());
         long AllTime = videoInfo.getDuration() * 1000;
         preTime = AllTime / (float) getMattingList.size();
         nowProgressTime = preTime;
-
+        LogUtil.d("OOM2","添加后数量"+getMattingList.size());
         try {
             DrawPadAllExecute2 execute = new DrawPadAllExecute2(BaseApplication.getInstance(), DRAWPADWIDTH, DRAWPADHEIGHT, AllTime);
             execute.setFrameRate(FRAME_RATE);
@@ -246,6 +263,14 @@ public class VideoMattingModel {
             bitmapLayerForDrawBackground.setScaledToPadSize();
             CanvasLayer canvasLayer = execute.addCanvasLayer();
             canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
+
+//                if(nowChooseImageIndex==0){
+//
+//                    Bitmap firstBitmap1 = BitmapFactory.decodeFile(getMattingList.get(0).getPath());
+//                    bitmapLayerForDrawBackground.switchBitmap(firstBitmap1);
+//                }
+
+
                 if (currentTime > nowProgressTime) {
                     //需要切换新的图了
                     nowChooseImageIndex++;

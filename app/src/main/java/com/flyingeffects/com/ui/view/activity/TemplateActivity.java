@@ -1,8 +1,10 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Path;
+import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,10 +33,12 @@ import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
+import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.EmptyControlVideo;
+import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.SxveConstans;
 import com.shixing.sxve.ui.model.GroupModel;
@@ -175,14 +179,27 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             templateId = bundle.getString("templateId");
             templateFilePath = bundle.getString("templateFilePath");
             imgPath = bundle.getStringArrayList("paths");
-            videoTime=bundle.getString("videoTime");
+            videoTime = bundle.getString("videoTime");
             originalPath = bundle.getStringArrayList("originalPath");
             templateName = bundle.getString("templateName");
             nowTemplateIsAnim = bundle.getInt("is_anime");
         }
 
-        if(!TextUtils.isEmpty(videoTime)&&!videoTime.equals("0")){
-            nowTemplateIsAnim=1;
+        if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
+            nowTemplateIsAnim = 1;
+
+
+
+            //如果是选择视频，那么需要第一针显示为用户上传的视频
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+             retriever.setDataSource(originalPath.get(0));
+            String sss= retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT);
+            LogUtil.d("OOM2","原视频帧数是"+sss);
+            MediaMetadataRetriever retriever2 = new MediaMetadataRetriever();
+            retriever2.setDataSource(imgPath.get(0));
+            String sss2= retriever2.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT);
+            LogUtil.d("OOM2","灰度图帧数是"+sss2);
+
         }
 
         if (originalPath == null || originalPath.size() == 0 || nowTemplateIsAnim == 1) {
@@ -220,9 +237,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 AnimForViewShowAndHide.getInstance().show(mContainer);
             }
         });
-
-
-
 
 
     }
@@ -437,10 +451,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             List<String> listAssets = new ArrayList<>();
             for (int i = 0; i < needAssetsCount; i++) {  //填满数据，为了缩略图
                 if (paths.size() > i && !TextUtils.isEmpty(paths.get(i))) {
-                    if(nowTemplateIsAnim==1){
+                    if (nowTemplateIsAnim == 1) {
                         //漫画或者灰度图
                         listAssets.add(originalPath.get(i));
-                    }else{
+                    } else {
                         listAssets.add(paths.get(i));
                     }
                 } else {
@@ -457,6 +471,20 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     if (mTemplateViews != null && mTemplateViews.size() > 0) {
                         mTemplateViews.get(nowChooseIndex).invalidate(); //提示重新绘制预览图
                     }
+
+//                    if(!TextUtils.isEmpty(videoTime)&&!videoTime.equals("0")){
+//                        //如果是选择视频，那么需要第一针显示为用户上传的视频
+//                        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+//                        retriever.setDataSource(originalPath.get(0));
+//                        MattingImage  mattingImage=new MattingImage();
+//                        mattingImage.mattingImageForBitmap(retriever.getFrameAtTime((long) (0 * 1000 * 1000)), new MattingImage.mattingStatus() {
+//                            @Override
+//                            public void isSuccess(boolean isSuccess, Bitmap bp) {
+//
+//                            }
+//                        });
+//                    }
+
                 }));  //批量替换图片
             }).start();
         }
@@ -533,7 +561,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         ) {
             item.setRedate(isRedate);
         }
-        if(templateThumbAdapter!=null){
+        if (templateThumbAdapter != null) {
             templateThumbAdapter.notifyDataSetChanged();
         }
 
@@ -618,10 +646,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private void switchTemplate(String folder, String[] mSources) {
         final SXTemplate template = new SXTemplate(folder, SXTemplate.TemplateUsage.kForPreview);
-      for(int i=0;i<mSources.length;i++){
-          LogUtil.d("OOM","路徑為"+mSources[i]);
+        for (int i = 0; i < mSources.length; i++) {
+            LogUtil.d("OOM", "路徑為" + mSources[i]);
 
-      }
+        }
 
 
         template.setReplaceableFilePaths(mSources);

@@ -272,6 +272,10 @@ public class MediaUiModel2 extends MediaUiModel {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(path);
         mBitmap = retriever.getFrameAtTime((long) (startTime * 1000 * 1000));
+
+
+
+
         retriever.release();
 
         initPosition();
