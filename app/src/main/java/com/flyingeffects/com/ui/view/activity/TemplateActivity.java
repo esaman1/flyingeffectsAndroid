@@ -510,7 +510,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 }
             }
 
-            if (nowTemplateIsAnim == 1 || nowTemplateIsAnim == 1) {
+            if (nowTemplateIsAnim == 1 || nowTemplateIsMattingVideo== 1) {
                 //漫画 特殊
                 TemplateThumbItem templateThumbItem = new TemplateThumbItem();
                 if (originalPath != null) {
@@ -539,7 +539,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             List<String> listAssets = new ArrayList<>();
             for (int i = 0; i < needAssetsCount; i++) {  //填满数据，为了缩略图
                 if (paths.size() > i && !TextUtils.isEmpty(paths.get(i))) {
-                    if (nowTemplateIsAnim == 1) {
+                    if (nowTemplateIsAnim == 1||nowTemplateIsMattingVideo==1) {
                         //漫画或者灰度图，
                         if (originalPath != null) {
                             listAssets.add(originalPath.get(i));
