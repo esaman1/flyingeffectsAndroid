@@ -119,10 +119,10 @@ public class AboutActivity extends BaseActivity {
 
             case R.id.ll_test:
                 //抠图测试
-                AlbumManager.chooseVideo(this, 1, 1, (tag, paths, isCancel, albumFileList) -> {
-                    VideoMattingModel videoMattingModel=new VideoMattingModel(paths.get(0),AboutActivity.this);
-                    videoMattingModel.addLansongCompoundVideo(paths.get(0));
-                }, "");
+//                AlbumManager.chooseVideo(this, 1, 1, (tag, paths, isCancel, albumFileList) -> {
+//                    VideoMattingModel videoMattingModel=new VideoMattingModel(paths.get(0),AboutActivity.this);
+//                    videoMattingModel.addLansongCompoundVideo(paths.get(0));
+//                }, "");
                 break;
 
             default:

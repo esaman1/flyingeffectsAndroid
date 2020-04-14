@@ -199,7 +199,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
                         EventBus.getDefault().post(new MattingVideoEnity(originalPath, path,0));
                     }
                 });
-                videoMattingModel.newFunction();
+                videoMattingModel.ToExtractFrame();
             }
         });
     }
