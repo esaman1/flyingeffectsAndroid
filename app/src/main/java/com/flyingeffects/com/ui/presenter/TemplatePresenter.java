@@ -93,7 +93,7 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     }
 
     @Override
-    public void ChangeMaterialCallbackForVideo(String originalPath, String path) {
-        home_mvpView.ChangeMaterialCallbackForVideo(originalPath,path);
+    public void ChangeMaterialCallbackForVideo(String originalPath, String path,boolean needMatting) {
+        home_mvpView.ChangeMaterialCallbackForVideo(originalPath,path,needMatting);
     }
 }

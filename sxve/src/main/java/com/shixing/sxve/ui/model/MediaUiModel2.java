@@ -234,6 +234,8 @@ public class MediaUiModel2 extends MediaUiModel {
 
                     }
                 });
+
+                Log.d("oom","视频地址为"+mVideoPath);
                 sxCompositor.run();
                 lastSavePath = path;
                 isVideoSlide=false;
@@ -392,7 +394,7 @@ public class MediaUiModel2 extends MediaUiModel {
                     });
                     sxCompositor.run();
                     lastOtherPath=path;
-
+                    Log.d("oom","视频地址2为"+cartoonPath);
                     return path;
                 }else{
                     return lastOtherPath;

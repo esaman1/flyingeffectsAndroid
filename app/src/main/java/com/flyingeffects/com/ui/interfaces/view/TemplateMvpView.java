@@ -22,5 +22,5 @@ public interface TemplateMvpView {
 
     void showMattingVideoCover(Bitmap bp);
 
-    void ChangeMaterialCallbackForVideo(String originalPath,String path);
+    void ChangeMaterialCallbackForVideo(String originalPath,String path,boolean needMatting);
 }

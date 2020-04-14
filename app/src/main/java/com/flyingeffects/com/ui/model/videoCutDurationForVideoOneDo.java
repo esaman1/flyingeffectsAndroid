@@ -141,6 +141,8 @@ public class videoCutDurationForVideoOneDo {
                 if (execute != null) {
                     try {
                         LSOVideoOption option = new LSOVideoOption(path);
+
+
                         long startDuration=startDurtion*1000;
                         long durationUs = (long) (duration * 1000);
                         option.setCutDurationUs(startDuration, durationUs+startDuration);

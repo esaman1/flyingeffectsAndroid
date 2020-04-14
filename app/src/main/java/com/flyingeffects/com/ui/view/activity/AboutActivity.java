@@ -121,7 +121,7 @@ public class AboutActivity extends BaseActivity {
                 //抠图测试
                 AlbumManager.chooseVideo(this, 1, 1, (tag, paths, isCancel, albumFileList) -> {
                     VideoMattingModel videoMattingModel=new VideoMattingModel(paths.get(0),AboutActivity.this);
-                    videoMattingModel.newFunction();
+                    videoMattingModel.addLansongCompoundVideo(paths.get(0));
                 }, "");
                 break;
 

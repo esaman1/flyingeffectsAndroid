@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 
 import com.flyingeffects.com.R;
@@ -30,6 +31,9 @@ import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
 import com.lansosdk.box.ExtractVideoFrame;
 import com.lansosdk.box.LSOBitmapAsset;
+import com.lansosdk.box.LSOLog;
+import com.lansosdk.box.LSOVideoOption;
+import com.lansosdk.box.OnCustomFrameOutListener;
 import com.lansosdk.box.onExtractVideoFrameCompletedListener;
 import com.lansosdk.box.onExtractVideoFrameProgressListener;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
@@ -42,6 +46,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -158,13 +163,13 @@ public class VideoMattingModel {
                 public void onCompleted(ExtractVideoFrame v) {
                     LogUtil.d("OOM", "onCompleted");
 //                test();
-                    for(int i = 1; i< BaseConstans.THREADCOUNT; i++){
-                        LogUtil.d("OOM2", "补了"+i+"帧");
+                    for (int i = 1; i < BaseConstans.THREADCOUNT; i++) {
+                        LogUtil.d("OOM2", "补了" + i + "帧");
                         //最后需要补的帧
                         frameCount++;
                         downImageForBitmap(null, frameCount);
                     }
-                    LogUtil.d("OOM2", "frameCount的值为"+frameCount);
+                    LogUtil.d("OOM2", "frameCount的值为" + frameCount);
 
                     SegJni.nativeReleaseImageBuffer();
                     SegJni.nativeReleaseSegHandler();
@@ -184,11 +189,11 @@ public class VideoMattingModel {
                 public void onExtractBitmap(Bitmap bmp, long ptsUS) {
                     frameCount++;
                     new Handler().post(() -> {
-                        int  progress= (int) ((frameCount/(float)allFrame)*100);
-                        dialog.setProgress("抠图进度为"+progress + "%");
+                        int progress = (int) ((frameCount / (float) allFrame) * 100);
+                        dialog.setProgress("抠图进度为" + progress + "%");
                     });
                     String hint = frameCount + "帧" + "\n"
-                                + "s是:" + String.valueOf(ptsUS);
+                            + "s是:" + String.valueOf(ptsUS);
                     LogUtil.d("OOM", hint);
 //                    String fileName = faceFolder + File.separator + frameCount + ".png";
 //                    BitmapManager.getInstance().saveBitmapToPath(bmp, fileName);
@@ -211,14 +216,15 @@ public class VideoMattingModel {
     }
 
 
-    private int nowChooseImageIndex=0;
+    private int nowChooseImageIndex = 0;
     private float preTime;
     //当前进度时间
     private float nowProgressTime;
-    boolean addFirstFrame=false;
+    boolean addFirstFrame = false;
+
     public void addFrameCompoundVideo() {
         List<File> getMattingList = FileManager.listFileSortByModifyTime(faceMattingFolder);
-        LogUtil.d("OOM2","得到所有增有"+getMattingList.size());
+        LogUtil.d("OOM2", "得到所有增有" + getMattingList.size());
 
 //        //蓝松截取帧会少一帧 //todo
 //        File file=getMattingList.get(0);
@@ -230,11 +236,11 @@ public class VideoMattingModel {
 //            e.printStackTrace();
 //        }
         Bitmap firstBitmap = BitmapFactory.decodeFile(getMattingList.get(0).getPath());
-        LogUtil.d("OOM2","第一针的地址为"+getMattingList.get(0).getPath());
+        LogUtil.d("OOM2", "第一针的地址为" + getMattingList.get(0).getPath());
         long AllTime = videoInfo.getDuration() * 1000;
         preTime = AllTime / (float) getMattingList.size();
         nowProgressTime = preTime;
-        LogUtil.d("OOM2","添加后数量"+getMattingList.size());
+        LogUtil.d("OOM2", "添加后数量" + getMattingList.size());
         try {
             DrawPadAllExecute2 execute = new DrawPadAllExecute2(BaseApplication.getInstance(), DRAWPADWIDTH, DRAWPADHEIGHT, AllTime);
             execute.setFrameRate(FRAME_RATE);
@@ -242,6 +248,7 @@ public class VideoMattingModel {
             execute.setOnLanSongSDKErrorListener(message -> {
                 LogUtil.d("OOM", "错误信息为" + message);
             });
+
             execute.setOnLanSongSDKProgressListener((l, i) -> {
                 dialog.setProgress("最后渲染的进度为" + i);
                 LogUtil.d("OOM", "进度为");
@@ -249,7 +256,7 @@ public class VideoMattingModel {
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
                 LogUtil.d("OOM", "nowChooseImageIndex" + nowChooseImageIndex);
                 dialog.closePragressDialog();
-                String albumPath=cacheCutVideoPath+"/Matting.mp4";
+                String albumPath = cacheCutVideoPath + "/Matting.mp4";
 
                 try {
                     FileUtil.copyFile(new File(exportPath), albumPath);
@@ -280,7 +287,7 @@ public class VideoMattingModel {
                     //需要切换新的图了
                     nowChooseImageIndex++;
                     if (nowChooseImageIndex < getMattingList.size()) {
-                        LogUtil.d("CanvasRunnable", "addCanvasRunnable=" + preTime +"currentTime="+currentTime+ "nowChooseImageIndex=" + nowChooseImageIndex);
+                        LogUtil.d("CanvasRunnable", "addCanvasRunnable=" + preTime + "currentTime=" + currentTime + "nowChooseImageIndex=" + nowChooseImageIndex);
                         nowProgressTime = preTime + nowProgressTime;
                         Bitmap firstBitmap1 = BitmapFactory.decodeFile(getMattingList.get(nowChooseImageIndex).getPath());
                         bitmapLayerForDrawBackground.switchBitmap(firstBitmap1);
@@ -294,6 +301,101 @@ public class VideoMattingModel {
             e.printStackTrace();
         }
     }
+
+
+
+
+
+
+
+        int nowChooseIndex;
+
+    public void addLansongCompoundVideo(String videoPath) {
+
+
+        long AllTime = videoInfo.getDuration() * 1000;
+        try {
+            DrawPadAllExecute2 execute = new DrawPadAllExecute2(BaseApplication.getInstance(), DRAWPADWIDTH, DRAWPADHEIGHT, AllTime);
+            execute.setFrameRate(FRAME_RATE);
+            execute.setEncodeBitrate(5 * 1024 * 1024);
+            execute.setOnLanSongSDKErrorListener(message -> {
+                LogUtil.d("OOM", "错误信息为" + message);
+            });
+
+            execute.setOnLanSongSDKProgressListener((l, i) -> {
+                dialog.setProgress("最后渲染的进度为" + i);
+                LogUtil.d("OOM", "进度为");
+            });
+            execute.setOnLanSongSDKCompletedListener(exportPath -> {
+                LogUtil.d("OOM", "nowChooseImageIndex" + nowChooseImageIndex);
+                dialog.closePragressDialog();
+                String albumPath = cacheCutVideoPath + "/Matting.mp4";
+
+                try {
+                    FileUtil.copyFile(new File(exportPath), albumPath);
+                    if (callback != null) {
+                        callback.isSuccess(true, albumPath);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                //todo 需要移除全部的子图层
+                execute.release();
+            });
+
+//            LSOVideoOption option = new LSOVideoOption(videoPath);
+//            option.setOnCustomFrameOutListener(new OnCustomFrameOutListener() {
+//                @Override
+//                public int onCustomFrameOut(ByteBuffer srcBuffer, ByteBuffer dstBuffer, int previewWidth, int previewHeight) {
+//
+//                    // srcBuffer是我们内部当前解码好的RGBA数据, dstBuffer是你们处理 后的数组,这个数据如果是灰度,则返回Mask 如果是rgba则返回RGBA,如果是错误,则返回ERROR;
+//                    Log.e("LSDelete", "--------preview width: " +previewWidth + " x "+ previewHeight);
+//
+//
+//                   arrayCopy(srcBuffer.array(), 0,dstBuffer.array(),0,dstBuffer.array().length);
+//                    return OnCustomFrameOutListener.CUSTOM_FRAME_RETURN_RGBA;
+//                }
+//            });
+//
+
+
+            LSOVideoOption option = new LSOVideoOption(videoPath);
+            option.setOnCustomFrameOutListener(new OnCustomFrameOutListener() {
+                @Override
+                public int onCustomFrameOut(ByteBuffer srcBuffer, ByteBuffer dstBuffer, int previewWidth, int previewHeight) {
+                    // srcBuffer是我们内部当前解码好的RGBA数据, dstBuffer是你们处理 后的数组,这个数据如果是灰度,
+                    // 则返回Mask 如果是rgba则返回RGBA,如果是错误,则返回ERROR;
+                    LogUtil.d("OOM","nowChooseIndex="+nowChooseIndex);
+                    byte[] bs = new byte[srcBuffer.capacity()];
+                    byte[] getData = mattingImage.test(nowChooseIndex, videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), bs);
+                    LogUtil.d("OOM","抠图完成");
+                    arrayCopy(getData, 0,dstBuffer.array(),0,dstBuffer.array().length);
+//                    dstBuffer.put(getData);
+                    nowChooseIndex++;
+                    return OnCustomFrameOutListener.CUSTOM_FRAME_RETURN_MASK;
+                }
+            });
+            execute.addVideoLayer(option);
+            execute.start();
+        } catch (Exception e) {
+            LogUtil.d("OOM", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public static void arrayCopy(Object src, int srcPos, Object dest, int destPos,int length) {
+        try {
+            System.arraycopy(src, srcPos, dest, destPos, length);
+        }catch (IndexOutOfBoundsException e){
+            LSOLog.e("memory error  IndexOutOfBoundsException ",e);
+        }catch (ArrayStoreException e){
+            LSOLog.e("memory error  ArrayStoreException ",e);
+        }
+
+    }
+
 
     private void showKeepSuccessDialog(String path) {
 //        DataCleanManager.deleteFilesByDirectory(BaseApplication.getInstance().getExternalFilesDir("faceFolder"));
@@ -369,8 +471,8 @@ public class VideoMattingModel {
     }
 
 
+    private ArrayList<Bitmap> listCatchBitmap = new ArrayList<>();
 
-    private ArrayList<Bitmap> listCatchBitmap=new ArrayList<>();
     private void downImageForBitmap(Bitmap OriginBitmap, int frameCount) {
 //        mattingImage.mattingImage(OriginBitmap, (isSuccess, bp1) -> {
 //            downSuccessNum++;

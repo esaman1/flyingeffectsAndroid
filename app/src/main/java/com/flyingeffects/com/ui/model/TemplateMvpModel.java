@@ -311,7 +311,7 @@ public class TemplateMvpModel {
         File file=new File(cacheVideoPath);
         if(file.exists()){
             //已经扣过视频了,那么原视频地址就是没抠图之前的地址，而imagePaht就是抠图之后的地址
-            callback.ChangeMaterialCallbackForVideo(path,cacheVideoPath);
+            callback.ChangeMaterialCallbackForVideo(path,cacheVideoPath,true);
         }else{
             //还没抠过视频
             gotoMattingVideo(path);

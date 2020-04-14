@@ -222,7 +222,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 //不需要抠图,视频抠图无论如何都需要的
                 findViewById(R.id.ll_Matting).setVisibility(View.GONE);
             }
-
         }
 
 
@@ -239,18 +238,18 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         switch_button.setOnCheckedChangeListener((view, isChecked) -> {
             //这里isChecked 效果和ui设计相反，意思是，选中就是对应的未选中
             if (!isChecked) {
+                //选中
                 if (nowTemplateIsMattingVideo == 1) {
-                    //视频抠图
-                    presenter.intoMattingVideo(imgPath.get(0));
+                    presenter.intoMattingVideo(originalPath.get(0));
                 } else {
                     statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutopen");
                     //修改图为裁剪后的素材
                     presenter.ChangeMaterial(originalPath, bottomButtonCount, needAssetsCount);
                 }
             } else {
-
+                //取消选中
                 if (nowTemplateIsMattingVideo == 1) {
-
+                    presenter.ChangeMaterialCallbackForVideo(null,imgPath.get(0),false);
                 } else {
                     statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutoff");
                     //修改为裁剪前的素材
@@ -266,7 +265,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             AnimForViewShowAndHide.getInstance().show(mContainer);
         });
 
-        if (nowTemplateIsMattingVideo == 1&&originalPath==null) {
+        if (nowTemplateIsMattingVideo == 1 && originalPath == null) {
             //当前是视频的情况下，且用户没有选择扣视频,上面的选中效果就取消
             switch_button.setChecked(true);
         }
@@ -370,6 +369,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.mAssets.get(i).ui;
                         mediaUiModel2.setVideoCover(bp);
                     }
+                    if (mTemplateViews != null && mTemplateViews.size() > 0) {
+                        mTemplateViews.get(nowChooseIndex).invalidate(); //提示重新绘制预览图
+                    }
                 }
             }
         }
@@ -377,31 +379,46 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
-
     /**
      * description ：是否抠图按钮切换时间出发
+     * needMatting 是否需要抠图
      * creation date: 2020/4/14
      * user : zhangtongju
      */
     @Override
-    public void ChangeMaterialCallbackForVideo(String originalVideoPath, String path) {
-        originalPath.clear();
-        originalPath.add(originalVideoPath);
-        imgPath.clear();
-        imgPath.add(path);
-        List<String>list=new ArrayList<>();
-        if(!TextUtils.isEmpty(originalVideoPath)){
-            list.add(originalVideoPath);
-            mTemplateModel.setReplaceAllMaterial(list);
-        }else{
-            list.add(path);
-            mTemplateModel.setReplaceAllMaterial(list);
+    public void ChangeMaterialCallbackForVideo(String originalVideoPath, String path, boolean needMatting) {
+        //可能之前没勾选抠图，所以originalPath 为null，这里需要null 判断
+        if (needMatting) {
+            if (originalPath == null) {
+                originalPath = new ArrayList<>();
+            }
+            originalPath.clear();
+            originalPath.add(originalVideoPath);
+            imgPath.clear();
+            imgPath.add(path);
+            List<String> list = new ArrayList<>();
+            if (!TextUtils.isEmpty(originalVideoPath)) {
+                list.add(originalVideoPath);
+                mTemplateModel.setReplaceAllMaterial(list);
+            } else {
+                list.add(path);
+                mTemplateModel.setReplaceAllMaterial(list);
+            }
+            //不需要抠图就不需要扣第一帧页面
+            if (originalPath != null && originalPath.size() != 0) {
+                presenter.getMattingVideoCover(originalPath.get(0));
+                mTemplateModel.cartoonPath = imgPath.get(0);  //设置灰度图
+            }
+        } else {
+            originalPath = null;
+            imgPath.clear();
+            imgPath.add(path);
+            mTemplateModel.setReplaceAllMaterial(imgPath);
+            mTemplateViews.get(nowChooseIndex).invalidate();
         }
-        mTemplateViews.get(nowChooseIndex).invalidate();
+
+
     }
-
-
-
 
 
     @Override
@@ -510,7 +527,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 }
             }
 
-            if (nowTemplateIsAnim == 1 || nowTemplateIsMattingVideo== 1) {
+            if (nowTemplateIsAnim == 1 || nowTemplateIsMattingVideo == 1) {
                 //漫画 特殊
                 TemplateThumbItem templateThumbItem = new TemplateThumbItem();
                 if (originalPath != null) {
@@ -539,7 +556,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             List<String> listAssets = new ArrayList<>();
             for (int i = 0; i < needAssetsCount; i++) {  //填满数据，为了缩略图
                 if (paths.size() > i && !TextUtils.isEmpty(paths.get(i))) {
-                    if (nowTemplateIsAnim == 1||nowTemplateIsMattingVideo==1) {
+                    if (nowTemplateIsAnim == 1 || nowTemplateIsMattingVideo == 1) {
                         //漫画或者灰度图，
                         if (originalPath != null) {
                             listAssets.add(originalPath.get(i));
@@ -844,7 +861,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public void onEventMainThread(MattingVideoEnity event) {
         if (event.getTag() == 1) {
             //扣了新的视频
-            ChangeMaterialCallbackForVideo(event.getOriginalPath(),event.getMattingPath());
+            ChangeMaterialCallbackForVideo(event.getOriginalPath(), event.getMattingPath(), true);
         }
     }
 
