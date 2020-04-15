@@ -175,7 +175,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
                     @Override
                     public void progresss(int progress) {
                         LogUtil.d("OOM", "progress=" + progress);
-                        progressNowAnim.setProgress("正在抠图中"+progress);
+                        progressNowAnim.setProgress("正在裁剪中"+progress);
                     }
 
                     @Override

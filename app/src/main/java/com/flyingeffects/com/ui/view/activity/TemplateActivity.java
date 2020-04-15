@@ -768,8 +768,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             LogUtil.d("OOM", "路徑為" + mSources[i]);
 
         }
-
-
         template.setReplaceableFilePaths(mSources);
         template.enableSourcePrepare();
         new Thread() {

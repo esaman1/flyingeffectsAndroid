@@ -1,13 +1,16 @@
 package com.flyingeffects.com.ui.model;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.widget.ProgressBar;
 
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
@@ -93,6 +96,7 @@ public class VideoMattingModel {
         LogUtil.d("OOM", "faceMattingFolder=" + faceMattingFolder);
         dialog = new WaitingDialogProgressNowAnim(context);
         dialog.openProgressDialog();
+
     }
 
     public VideoMattingModel(String videoPath, Context context) {
@@ -183,8 +187,9 @@ public class VideoMattingModel {
                 public void onExtractBitmap(Bitmap bmp, long ptsUS) {
                     frameCount++;
                     new Handler().post(() -> {
-                        int progress = (int) ((frameCount / (float) allFrame) * 100);
-                        dialog.setProgress("抠图进度为" + progress + "%");
+                         progress = (int) ((frameCount / (float) allFrame) * 90);
+//                        dialog.setProgress("抠图进度为" + progress + "%");
+                        handler.sendEmptyMessage(1);
                     });
                     String hint = frameCount + "帧" + "\n"
                             + "s是:" + String.valueOf(ptsUS);
@@ -234,7 +239,15 @@ public class VideoMattingModel {
             });
 
             execute.setOnLanSongSDKProgressListener((l, i) -> {
-                dialog.setProgress("最后渲染的进度为" + i);
+
+
+
+                float f_progress=(i/(float)100)*5;
+                progress= (int) (95+f_progress);
+                handler.sendEmptyMessage(1);
+
+
+//                dialog.setProgress("最后渲染的进度为" + i);
                 LogUtil.d("OOM", "进度为");
             });
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
@@ -297,9 +310,15 @@ public class VideoMattingModel {
             });
 
             execute.setOnLanSongSDKProgressListener((l, i) -> {
-                LogUtil.d("OOM", "进度为");
-                dialog.setProgress("第一次" +
-                        "渲染的进度为" + i);
+//                LogUtil.d("OOM", "进度为");
+//                dialog.setProgress("第一次" +
+//                        "渲染的进度为" + i);
+
+
+                float f_progress=(i/(float)100)*5;
+                progress= (int) (90+f_progress);
+                handler.sendEmptyMessage(1);
+
             });
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
                 LogUtil.d("OOM", "nowChooseImageIndex" + nowChooseImageIndex);
@@ -365,7 +384,7 @@ public class VideoMattingModel {
                 Observable.just(1).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
                     @Override
                     public void call(Integer integer) {
-                        new Handler().post(() -> dialog.setProgress("完成抠图"));
+//                        new Handler().post(() -> dialog.setProgress("完成抠图"));
                     }
                 });
                 addFrameCompoundVideo();
@@ -373,7 +392,7 @@ public class VideoMattingModel {
                 Observable.just(1).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
                     @Override
                     public void call(Integer integer) {
-                        new Handler().post(() -> dialog.setProgress("正在抠图" + downSuccessNum));
+//                        new Handler().post(() -> dialog.setProgress("正在抠图" + downSuccessNum));
                     }
                 });
 
@@ -542,6 +561,19 @@ public class VideoMattingModel {
     public interface MattingSuccess {
         void isSuccess(boolean isSuccess, String path);
     }
+
+
+
+  private  int progress;
+    @SuppressLint("HandlerLeak")
+    Handler handler =new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            dialog.setProgress(progress+"%");
+
+        }
+    };
 
 
 }

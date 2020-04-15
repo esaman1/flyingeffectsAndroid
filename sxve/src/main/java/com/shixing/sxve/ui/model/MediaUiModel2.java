@@ -56,6 +56,7 @@ public class MediaUiModel2 extends MediaUiModel {
 //    private Paint paintTest;
 
     private boolean isVideoSlide = false;
+    private boolean isMaskSlide = false;
     private String lastSavePath;
     //这里主要是为了，漫画和视频抠图这里，
     private String lastOtherPath;
@@ -153,18 +154,21 @@ public class MediaUiModel2 extends MediaUiModel {
     @Override
     public void scroll(float distanceX, float distanceY) {
         isVideoSlide = true;
+        isMaskSlide=true;
         mMatrix.postTranslate(-distanceX, -distanceY);
     }
 
     @Override
     public void scale(float sx, float sy, float px, float py) {
         isVideoSlide = true;
+        isMaskSlide=true;
         mMatrix.postScale(sx, sy, px, py);
     }
 
     @Override
     public void rotate(float degrees, float px, float py) {
         isVideoSlide = true;
+        isMaskSlide=true;
         mMatrix.postRotate(degrees, px, py);
     }
 
@@ -263,6 +267,7 @@ public class MediaUiModel2 extends MediaUiModel {
     public void setImageAsset(String path) {
         this.path = path;
         isVideoSlide = true;
+        isMaskSlide=true;
         mIsVideo = false;
         mBitmap = getSmallBmpFromFile(path, size.getHeight(), size.getWidth());
         countMatrix(mBitmap, path, true);
@@ -303,6 +308,7 @@ public class MediaUiModel2 extends MediaUiModel {
     public void resetUi() {
         lastOtherPath = "";
         isVideoSlide = true;
+        isMaskSlide=true;
     }
 
 
@@ -369,7 +375,7 @@ public class MediaUiModel2 extends MediaUiModel {
                 saveBitmapToPath(bitmap, path);
                 return path;
             } else {
-                if (isVideoSlide || TextUtils.isEmpty(lastOtherPath)) {
+                if (isMaskSlide || TextUtils.isEmpty(lastOtherPath)) {
                     final String path = folder + File.separator + UUID.randomUUID() + ".mp4";
                     Matrix matrix = new Matrix(mMatrix);
                     matrix.postConcat(mInverseMatrix);
@@ -400,6 +406,7 @@ public class MediaUiModel2 extends MediaUiModel {
                         }
                     });
                     sxCompositor.run();
+                    isMaskSlide=false;
                     lastOtherPath = path;
                     Log.d("oom", "视频地址2为" + cartoonPath);
                     return path;

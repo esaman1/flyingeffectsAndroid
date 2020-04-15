@@ -322,12 +322,8 @@ public class TemplateMvpModel {
     }
 
     private void gotoMattingVideo(String originalPath) {
-
-        WaitingDialog_progress progress=new WaitingDialog_progress(context);
-        progress.openProgressDialog();
-
-        SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), 4);
-        Observable.just(originalPath).subscribeOn(Schedulers.io()).subscribe(new Action1<String>() {
+//        SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), 4);
+        Observable.just(originalPath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
                 VideoMattingModel videoMattingModel = new VideoMattingModel(originalPath, context, new VideoMattingModel.MattingSuccess() {

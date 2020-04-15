@@ -8,7 +8,7 @@
     android:toDegrees="360"
     tools:ignore="ResourceName">
     <shape
-        android:innerRadius="5dp"
+        android:innerRadius="7dp"
         android:shape="ring"
         android:thickness="5dp"
         android:useLevel="false">
