@@ -86,7 +86,7 @@ private String id;
         this.extend = extend;
     }
 
-    private String name;
+     private String name;
         private String group;
         private String title;
         private String tip;

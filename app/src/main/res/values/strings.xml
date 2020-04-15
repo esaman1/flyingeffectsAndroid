@@ -51,4 +51,7 @@
     <string name="slide_choose_range">滑动选择视频区间</string>
     <string name="write_error">写文件时出错</string>
 
+
+    <string name="Permissions_repulse">你已拒绝权限，打开即可获得卡点优质功能</string>
+
 </resources>

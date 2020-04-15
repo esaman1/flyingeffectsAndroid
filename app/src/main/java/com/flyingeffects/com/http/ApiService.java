@@ -98,10 +98,7 @@ public interface ApiService {
     @POST("/api/v1.record/ossgetpolicy")
     Observable<HttpResult<Object>> getOOS(@FieldMap Map<String, String> params);
 
-    //登录
-    @FormUrlEncoded
-    @POST("/api/v1.sysinfo/config")
-    Observable<HttpResult<Object>> toConfig(@FieldMap Map<String, String> params);
+
 
 
     //模板类型

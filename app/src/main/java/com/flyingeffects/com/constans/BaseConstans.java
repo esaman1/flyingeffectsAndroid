@@ -32,6 +32,7 @@ public class BaseConstans {
     public static final String PRIVACYPOLICY = "http://copy-book.oss-cn-hangzhou.aliyuncs.com/link/FeiShan/FS-PrivacyPolicy.html";
     public static String service_wxi;
     public static ConfigForTemplateList configList;
+    private static int hasAdvertising = 1;  //是否有广告，0表示没得，1表示有，全局控制
 
     public static final String PROTOCOL = "http://copy-book.oss-cn-hangzhou.aliyuncs.com/link/FeiShan/FS-Agreement.html";
 
@@ -175,5 +176,23 @@ public class BaseConstans {
         }
     }
 
+
+
+    public static int getHasAdvertising() {
+        if (hasAdvertising == 0) {
+            SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+            hasAdvertising = spUtil.getInt("AdvertisingNum", 0);
+            return hasAdvertising;
+        } else {
+            return hasAdvertising;
+        }
+
+    }
+
+    public static void setHasAdvertising(int num) {
+        hasAdvertising = num;
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putInt("AdvertisingNum", num);
+    }
 
 }

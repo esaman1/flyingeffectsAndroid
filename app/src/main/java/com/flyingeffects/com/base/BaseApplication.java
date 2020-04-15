@@ -71,7 +71,7 @@ public class BaseApplication extends MultiDexApplication {
                 , new NTAdConfig.Builder()
                         .appName("飞闪")
                         .appVersion(BuildConfig.VERSION_NAME)
-                        .appId("25ec9b73d90cd9b4588397e4fe391135")
+                        .appId("61074cddf23c0a8dd2b7e00996057e78")
                         .appChannel(ChannelUtil.getChannel(this))
                         .TTAppKey("5001478")
                         .BaiduAppKey("f36dd747")
