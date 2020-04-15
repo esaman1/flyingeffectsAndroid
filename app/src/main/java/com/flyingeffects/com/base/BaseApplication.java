@@ -9,7 +9,6 @@ import android.util.Log;
 
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
 import com.chuanglan.shanyan_sdk.listener.InitListener;
-import com.flyingeffects.com.BuildConfig;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.MediaLoader;
@@ -17,6 +16,9 @@ import com.flyingeffects.com.utils.ChannelUtil;
 import com.flyingeffects.com.utils.CrashHandler;
 import com.flyingeffects.com.utils.LogUtil;
 import com.lansosdk.videoeditor.LanSoEditor;
+import com.nineton.ntadsdk.BuildConfig;
+import com.nineton.ntadsdk.NTAdConfig;
+import com.nineton.ntadsdk.NTAdSDK;
 import com.orhanobut.hawk.Hawk;
 import com.scwang.smartrefresh.header.MaterialHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -58,10 +60,25 @@ public class BaseApplication extends MultiDexApplication {
         //闪验SDK初始化（建议放在Application的onCreate方法中执行）
         initShanyanSDK(this);
         //keepCrash();
-
+        initNTAdSDK();
 
 
     }
+
+
+    private  void initNTAdSDK(){
+        NTAdSDK.init(this
+                , new NTAdConfig.Builder()
+                        .appName("飞闪")
+                        .appVersion(BuildConfig.VERSION_NAME)
+                        .appId("25ec9b73d90cd9b4588397e4fe391135")
+                        .appChannel(ChannelUtil.getChannel(this))
+                        .TTAppKey("5001478")
+                        .BaiduAppKey("f36dd747")
+                        .isDebug(true)
+                        .build());
+
+        }
 
 
 
