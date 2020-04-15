@@ -68,6 +68,7 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 
@@ -208,7 +209,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             nowTemplateIsAnim = bundle.getInt("is_anime");
         }
 
-        if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
+        if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")&&albumType.isVideo(GetPathType.getInstance().getMediaType(imgPath.get(0)))) {
             nowTemplateIsMattingVideo = 1;
             //不需要抠图就不需要扣第一帧页面
             if (originalPath != null && originalPath.size() != 0) {
@@ -222,7 +223,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 findViewById(R.id.ll_Matting).setVisibility(View.GONE);
             }
         }
-
 
         mTextEditLayout = findViewById(R.id.text_edit_layout);
         mFolder = new File(templateFilePath);
@@ -338,20 +338,19 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 if (mPlayer != null) {
                     mPlayer.start();
                 }
+                showPreview(true, false);
             } else {
                 WaitingDialog.openPragressDialog(TemplateActivity.this);
                 new Thread(() -> presenter.getReplaceableFilePath()).start();
             }
-            showPreview(true, false);
+
         }
 
     }
 
     @Override
     public void returnReplaceableFilePath(String[] paths) {
-//        if(nowTemplateIsMattingVideo==1&&!nowIsChooseMatting){
-//            paths[1]= whiteImagePng;
-//        }
+        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().post(() -> showPreview(true, false)));
         switchTemplate(mFolder.getPath(), paths);
     }
 

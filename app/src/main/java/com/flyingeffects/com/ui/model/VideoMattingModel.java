@@ -315,7 +315,17 @@ public class VideoMattingModel {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            dialog.setProgress(progress + "%");
+            if(progress<=25){
+                dialog.setProgress("请耐心等待 不要离开"+progress + "%");
+            }else if(progress<=40){
+                dialog.setProgress("快了，友友稍等片刻"+progress + "%");
+            }else if(progress<=60){
+                dialog.setProgress("抠像太强大，即将生成"+progress + "%");
+            }else if(progress<=80){
+                dialog.setProgress("马上就好，不要离开"+progress + "%");
+            }else{
+                dialog.setProgress("最后合成中，请稍后"+progress + "%");
+            }
         }
     };
 

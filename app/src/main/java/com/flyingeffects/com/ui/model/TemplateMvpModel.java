@@ -31,8 +31,10 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.glidebitmappool.GlideBitmapPool;
+import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.SxveConstans;
 import com.shixing.sxve.ui.albumType;
@@ -80,6 +82,7 @@ public class TemplateMvpModel {
 
 
     public void getReplaceableFilePath() {
+
         callback.returnReplaceableFilePath(mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath())));
     }
 
@@ -102,6 +105,7 @@ public class TemplateMvpModel {
             String faceMattingFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "tailor");
             String savePath = faceMattingFolder + "/cover.png";
             BitmapManager.getInstance().saveBitmapToPath(bp, savePath, isSuccess -> {
+                SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
                 CompressionCuttingManage manage = new CompressionCuttingManage(context, "0", false, tailorPaths -> {
                     Bitmap mattingMp = BitmapFactory.decodeFile(tailorPaths.get(0));
                     callback.showMattingVideoCover(mattingMp);

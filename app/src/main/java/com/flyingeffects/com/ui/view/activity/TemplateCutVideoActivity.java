@@ -164,7 +164,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
                 new Thread(() -> videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(TemplateCutVideoActivity.this, needDuration * 1000,videoPath,mStartDuration, new videoCutDurationForVideoOneDo.isSuccess() {
                     @Override
                     public void progresss(int progress) {
-                        progressNowAnim.setProgress("正在裁剪中"+progress);
+                        progressNowAnim.setProgress("正在裁剪中"+progress+"%");
                     }
 
                     @Override
