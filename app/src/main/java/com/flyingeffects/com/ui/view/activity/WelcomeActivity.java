@@ -21,12 +21,17 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AdConfigs;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.nineton.ntadsdk.NTAdSDK;
 import com.nineton.ntadsdk.itr.SplashAdCallBack;
 import com.nineton.ntadsdk.utils.ScreenUtils;
 import com.nineton.ntadsdk.view.NTSkipView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +45,6 @@ public class WelcomeActivity extends BaseActivity {
     private final int BUILD_VERSION = 23;
     private final int PERMISSION_REQUEST_CODE = 1024;
     private static final int RESULT_CODE = 3;
-
     @BindView(R.id.rl_ad_container)
     RelativeLayout rlAdContainer;
 
@@ -56,6 +60,16 @@ public class WelcomeActivity extends BaseActivity {
     public boolean canJump = false;
 
     private boolean hasPermission = false;
+
+    /**
+     * 使用了app 的次数
+     */
+    private int openAppNum;
+
+    /**
+     * 是否是第一次使用app
+     */
+    private boolean isFirstOpenApp;
 
     @Override
     protected int getLayoutId() {
@@ -74,13 +88,21 @@ public class WelcomeActivity extends BaseActivity {
         }
         tvSkip = findViewById(R.id.tv_skip);
         rlAdContainer = findViewById(R.id.rl_ad_container);
+        isFirstOpenApp = BaseConstans.isFirstOpenApp();
+        if (isFirstOpenApp) {
+            BaseConstans.setFirstOpenApp(System.currentTimeMillis()); //记录第一次打开app的时间
+            BaseConstans.setOpenAppNum(1); //打开app的次数为1
+        } else {
+            openAppNum = BaseConstans.getOpenAppNum();
+            openAppNum++;
+            BaseConstans.setOpenAppNum(openAppNum); //打开app的次数为1
+            LogUtil.d("OOM", "openAppNum=" + openAppNum);
+        }
         gotoPrivacyPolicyActivity();
     }
 
     @Override
     protected void initAction() {
-        requestConfigForTemplateList();
-        requestConfig();
     }
 
 
@@ -108,6 +130,9 @@ public class WelcomeActivity extends BaseActivity {
                 requestConfigForTemplateList();
             }
             hasPermission = true;
+
+            LogUtil.d("oom","BaseConstans.getHasAdvertising()="+BaseConstans.getHasAdvertising());
+
             if (BaseConstans.getHasAdvertising() == 1) {
                 showSplashAd();
             }
@@ -165,6 +190,7 @@ public class WelcomeActivity extends BaseActivity {
                 if (!fromBackstage) {
                     requestConfig();
                 }
+                LogUtil.d("oom","BaseConstans.getHasAdvertising()="+BaseConstans.getHasAdvertising());
                 if (BaseConstans.getHasAdvertising() == 1) {
                     showSplashAd();
                 }
@@ -317,17 +343,52 @@ public class WelcomeActivity extends BaseActivity {
      */
     private void requestConfig() {
         HashMap<String, String> params = new HashMap<>();
-        params.put("config_name", "wechat_name|hot_restart");
         // 启动时间
         Observable ob = Api.getDefault().configList(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Config>(WelcomeActivity.this) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<Config>>(WelcomeActivity.this) {
             @Override
             protected void _onError(String message) {
             }
 
             @Override
-            protected void _onNext(Config data) {
-                BaseConstans.service_wxi = data.getValue();
+            protected void _onNext(List<Config> data) {
+
+
+                if(data!=null&&data.size()>0){
+                    for (int i=0;i<data.size();i++){
+                        Config config=data.get(i);
+                        int id=config.getId();
+                        if(id==18){
+                            //弹出微信
+                            BaseConstans.service_wxi = config.getValue();
+                        }else if(id==20){
+                            //android 审核数据
+                            String AuditModeJson=config.getValue();
+                            AuditModeConfig(AuditModeJson);
+                        }else if(id==22){
+                            //获得热更新时长
+                            String outTime=config.getValue();
+                            BaseConstans.showAgainKaipingAd=Integer.parseInt(outTime);
+                        }else if(id==24){  //todo 暂时没用
+                            //首次安装前几次无广告
+//                            int newUserIsVip=Integer.parseInt(config.getValue());
+//                            if (openAppNum <= newUserIsVip) { //新用户没广告
+//                                LogUtil.d(TAG, "当前为新用户");
+//                                BaseConstans.setIsNewUser(true);
+//                            } else {
+//                                BaseConstans.setOpenAppNum(integerNoAdvertisingNum + 1); //防止数组越界
+//                                BaseConstans.setIsNewUser(false);
+//                            }
+                        }
+
+
+
+                    }
+                }
+
+
+
+
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
@@ -356,6 +417,42 @@ public class WelcomeActivity extends BaseActivity {
 
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+
+
+
+
+    private void AuditModeConfig(String str){
+        JSONArray jsonArray = null;
+        try {
+            jsonArray = new JSONArray(str);
+            if (jsonArray.length() > 0) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obArray = jsonArray.getJSONObject(i);
+                    String Channel = obArray.getString("channel");
+                    if (Channel.equals("isVideoadvertising")) { //控制了版本号
+                        int id = obArray.getInt("id");
+                        int NowVersion = Integer.parseInt(BaseConstans.getVersionCode());
+                        if (NowVersion != id) {//不是最新版本，都默认开启广告
+                            BaseConstans.setHasAdvertising(1);
+                            break;
+                        }
+                    }
+                    if (Channel.equals(BaseConstans.getChannel())) { //最新版的审核模式
+                        boolean audit_on = obArray.getBoolean("audit_on");
+                        if (audit_on) {
+                            BaseConstans.setHasAdvertising(1);
+                        } else {
+                            BaseConstans.setHasAdvertising(0);
+                        }
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
 

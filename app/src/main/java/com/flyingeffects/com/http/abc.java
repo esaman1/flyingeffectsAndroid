@@ -40,8 +40,6 @@ public class abc {
         result.append(abc.API_SALT);
         String fResult = result.toString();
         fResult = AuthCode.MD5(fResult);
-
-        LogUtil.d("OOM123123",fResult);
         return fResult;
     }
 

@@ -32,8 +32,9 @@ public class BaseConstans {
     public static final String PRIVACYPOLICY = "http://copy-book.oss-cn-hangzhou.aliyuncs.com/link/FeiShan/FS-PrivacyPolicy.html";
     public static String service_wxi;
     public static ConfigForTemplateList configList;
-    private static int hasAdvertising = 1;  //是否有广告，0表示没得，1表示有，全局控制
-
+    private static int hasAdvertising = 0;  //是否有广告，0表示没得，1表示有，全局控制
+    public static int showAgainKaipingAd = 60; //退出后台后多少秒后会重新显示插屏
+    private static boolean isNewUserForAdvertising = false; //只是用前几次的新用户
     public static final String PROTOCOL = "http://copy-book.oss-cn-hangzhou.aliyuncs.com/link/FeiShan/FS-Agreement.html";
 
     public static HashMap getRequestHead(HashMap<String, String> map) {
@@ -43,7 +44,6 @@ public class BaseConstans {
         map.put("channel", getChannel()); //getChannel()  test
         map.put("version", getVersionCode());
         map.put("timestamp", nowTimestamp);//getTimestamp()+""
-        LogUtil.d("OOM","请求的token=="+ GetUserToken());
         map.put("imei", getUuid());
         map.put("uuid", GetUserUuid());
         map.put("token", GetUserToken());
@@ -193,6 +193,49 @@ public class BaseConstans {
         hasAdvertising = num;
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putInt("AdvertisingNum", num);
+    }
+
+
+
+    public static boolean getIsNewUser() {
+        if (!isNewUserForAdvertising) {
+            SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+            isNewUserForAdvertising = spUtil.getBoolean("isNewUserForAdvertising", false);
+            return isNewUserForAdvertising;
+        }
+        return true;
+    }
+
+    public static void setIsNewUser(boolean newUser) {
+        isNewUserForAdvertising = newUser;
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putBoolean("isNewUserForAdvertising", newUser);
+    }
+
+
+
+    public static boolean isFirstOpenApp() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getBoolean("isFirstOpen", true);
+    }
+
+    public static void setFirstOpenApp(long time) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putBoolean("isFirstOpen", false);
+        spUtil.putLong("lastShowAdvertisingTime", time);
+    }
+
+    //设置打开app的次数
+    public static void setOpenAppNum(int num) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putInt("OpenAppNum", num);
+    }
+
+
+    //得到打开app的次数
+    public static int getOpenAppNum() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getInt("OpenAppNum", 0);
     }
 
 }

@@ -2,18 +2,19 @@ package com.flyingeffects.com.base;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
-import android.util.Log;
 
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
-import com.chuanglan.shanyan_sdk.listener.InitListener;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.MediaLoader;
+import com.flyingeffects.com.ui.view.activity.WelcomeActivity;
 import com.flyingeffects.com.utils.ChannelUtil;
 import com.flyingeffects.com.utils.CrashHandler;
+import com.flyingeffects.com.utils.DateUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.lansosdk.videoeditor.LanSoEditor;
 import com.nineton.ntadsdk.BuildConfig;
@@ -33,6 +34,7 @@ import java.util.Locale;
 
 import cn.jpush.android.api.JPushInterface;
 import cn.nt.lib.analytics.NTAnalytics;
+import de.greenrobot.event.EventBus;
 import rx.subjects.PublishSubject;
 
 /**
@@ -42,12 +44,13 @@ import rx.subjects.PublishSubject;
 
 public class BaseApplication extends MultiDexApplication {
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
-    private static BaseApplication myzxApp;
+    private static BaseApplication baseApp;
+    private boolean isActive = true;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        myzxApp = this;
+        baseApp = this;
         MultiDex.install(this); //分包支持
         initLansong();
         Hawk.init(this).build();
@@ -61,6 +64,7 @@ public class BaseApplication extends MultiDexApplication {
         initShanyanSDK(this);
         //keepCrash();
         initNTAdSDK();
+        registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
 
 
     }
@@ -143,12 +147,14 @@ public class BaseApplication extends MultiDexApplication {
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     public void initLicense() {
-//        String licenseID="UJ03ctDfZ1ZTWzTF2uC2dmWnOeyD0dk/UhyEu+npLrXEgeMlo2PBMaoHwffFV7bS6O48q0I/8qI4epo2acEbZyiXD1Im4oUNERrPhVtu2nPtxeIz1yRO1BKPQGh5Jult1SlspS6g9pD/6zyP3KsdfoW5wUkc19dzSZrq9kmuYULB2j/o7g6Rh71HYMIYoq4avDT8DDeO1P+GmeUz793hELjUMUBbZwUiYC+xDMNM2LOnWK1DEAzAWWwyh3/mJdcwCyc4MY2LttOa0ksn6iWPtFxrBxw97cIFLdhLkEoMibeCPCLtmfjofB3VnEvo9AWC85vbpSQbzw5mqD8mALQbJJe8/vZWgBFSPqv3PwDZL3OI2APv5CBxgKTmWE5lDRHpUN4f8LDFqi/yyhoRj4Nc/aJdqdte38RjJPLX1tt6J78=";
         String licenseID = "nnogIjD3C8du/T2PWYvFbMkJxM2Vw8FpkCs9RqiwjjrEgeMlo2PBMaoHwffFV7bS6O48q0I/8qI4epo2acEbZyiXD1Im4oUNERrPhVtu2nNSnXyjUGr9dLmrYazM4YmNE/A9T6ir5gt3XEs7IjfWfsFAdP+uvPvoKEzu8/pZLRQacEoaYzl1w04Wkn0t0aXWu3l92WacTnKG2JFyCSzPwUgZiqh2Z8xbQdpRYL22HYqMAkhHeNO5Vix3sYRWtKfm59U3wgWtXoU+1gmAICjM1WDRlgyg80Os1BRSzkp9TG7sb7QJUzFdLvo2cpfhnFyBfRBvoykvllQZaPmbC73J+FB8X4zyN1ZESuYOdfoKvYZ3i0S68Rk0izoqbarUpUnkTUUNViGopPKKUXSaufSd+ZxWOxnqjIdyx4a2OhE4vbY=";
         License l = License.init(licenseID);
         boolean isValid = l.isValid();
         LogUtil.d("OOM", "isValid=" + isValid);
     }
+
+
+
 
 
     private long onStopTime;
@@ -166,6 +172,12 @@ public class BaseApplication extends MultiDexApplication {
         @Override
         public void onActivityResumed(Activity activity) {
 
+            if (!isActive && BaseConstans.getHasAdvertising() == 1) {
+                isActive = true;
+                LogUtil.d("BASEACTIVITY2", "进入了前台");
+                intoKaiPing(System.currentTimeMillis() - onStopTime);
+              //  EventBus.getDefault().post(new isIntoBackground(false));  //消息通知
+            }
 
         }
 
@@ -177,6 +189,10 @@ public class BaseApplication extends MultiDexApplication {
         public void onActivityStopped(Activity activity) {
             activityAount--;
             if (activityAount == 0) {
+               // EventBus.getDefault().post(new isIntoBackground(true));  //消息通知
+                onStopTime = System.currentTimeMillis();
+                isActive = false;
+                LogUtil.d("BASEACTIVITY2", "进入了后台");
             }
         }
 
@@ -186,8 +202,28 @@ public class BaseApplication extends MultiDexApplication {
 
         @Override
         public void onActivityDestroyed(Activity activity) {
+
         }
     };
+
+
+
+    /**
+     * description ：进入开屏广告
+     * date: ：2019/11/5 15:21
+     * author: 张同举 @邮箱 jutongzhang@sina.com
+     */
+    private void intoKaiPing(long time) {
+        String times = DateUtils.getCurrentTime_m(time);
+        int timeI = Integer.parseInt(times);
+        LogUtil.d("BASEACTIVITY", "timeI=" + timeI);
+        if (timeI > BaseConstans.showAgainKaipingAd) {
+            Intent intent = new Intent(this, WelcomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("fromBackstage", true);
+            startActivity(intent);
+        }
+    }
 
 
     static {
@@ -199,7 +235,7 @@ public class BaseApplication extends MultiDexApplication {
 
 
     public static BaseApplication getInstance() {
-        return myzxApp;
+        return baseApp;
     }
 
     private void initAlbum() {

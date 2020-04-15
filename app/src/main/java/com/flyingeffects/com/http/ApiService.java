@@ -38,8 +38,8 @@ public interface ApiService {
 
 
     @FormUrlEncoded
-    @POST("/api/template/configList")
-    Observable<HttpResult<Config>> configList(@FieldMap Map<String, String> params);
+    @POST("/api/template/allconfig")
+    Observable<HttpResult<List<Config>>> configList(@FieldMap Map<String, String> params);
 
 
 
