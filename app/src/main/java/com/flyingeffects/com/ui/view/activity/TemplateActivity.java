@@ -26,6 +26,7 @@ import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.AnimForViewShowAndHide;
+import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
@@ -204,17 +205,17 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
             nowTemplateIsMattingVideo = 1;
-            //如果是选择视频，那么需要第一针显示为用户上传的视频  //todo test
-            if (originalPath != null && originalPath.size() > 0) {
-                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                retriever.setDataSource(originalPath.get(0));
-                String sss = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT);
-                LogUtil.d("OOM2", "原视频帧数是" + sss);
-            }
-            MediaMetadataRetriever retriever2 = new MediaMetadataRetriever();
-            retriever2.setDataSource(imgPath.get(0));
-            String sss2 = retriever2.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT);
-            LogUtil.d("OOM2", "灰度图帧数是" + sss2);
+            //如果是选择视频，那么需要第一针显示为用户上传的视频
+//            if (originalPath != null && originalPath.size() > 0) {
+//                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+//                retriever.setDataSource(originalPath.get(0));
+//                String sss = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT);
+//                LogUtil.d("OOM2", "原视频帧数是" + sss);
+//            }
+//            MediaMetadataRetriever retriever2 = new MediaMetadataRetriever();
+//            retriever2.setDataSource(imgPath.get(0));
+//            String sss2 = retriever2.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT);
+//            LogUtil.d("OOM2", "灰度图帧数是" + sss2);
             //不需要抠图就不需要扣第一帧页面
             if (originalPath != null && originalPath.size() != 0) {
                 presenter.getMattingVideoCover(originalPath.get(0));
@@ -379,6 +380,15 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         }
         videoMattingCaver = bp;
+
+    }
+
+    @Override
+    public void showBottomIcon(String path) {
+        TemplateThumbItem item1 = listItem.get(lastChoosePosition);
+        item1.setPathUrl(path);
+        listItem.set(lastChoosePosition, item1);
+        templateThumbAdapter.notifyItemChanged(lastChoosePosition);
     }
 
 
@@ -686,10 +696,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     private void ModificationSingleThumbItem(String path) {
+
+
+
         TemplateThumbItem item1 = listItem.get(lastChoosePosition);
         item1.setPathUrl(path);
         listItem.set(lastChoosePosition, item1);
-        templateThumbAdapter.notifyDataSetChanged();
+        templateThumbAdapter.notifyItemChanged(lastChoosePosition);
     }
 
 
@@ -902,13 +915,19 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             //替换素材
             if (event.getOriginalPath() == null) {
                 //用户没有选择抠图
-                presenter.ChangeMaterialCallbackForVideo(null, event.getMattingPath(), false);
-                ModificationSingleThumbItem(event.getMattingPath());
+               ChangeMaterialCallbackForVideo(null, event.getMattingPath(), false);
+               //这里需要重新设置底部图，但是glide 视频路径相同。所有glide 不会刷新
+                presenter.getButtomIcon(event.getMattingPath());
             }else{
                 //用户选择了抠图
                 ChangeMaterialCallbackForVideo(event.getOriginalPath(), event.getMattingPath(), true);
-                ModificationSingleThumbItem(event.getOriginalPath());
+                presenter.getButtomIcon(event.getOriginalPath());
             }
+
+
+
+
+
 
         }
 

@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.request.target.Target;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
@@ -89,7 +90,7 @@ public class TemplateMvpModel {
      * creation date: 2020/4/14
      * user : zhangtongju
      */
-    public void getMattingVideoCover(String path){
+    public void getMattingVideoCover(String path) {
         //如果是选择视频，那么需要第一针显示为用户s
         SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
@@ -97,21 +98,19 @@ public class TemplateMvpModel {
         Bitmap bp = retriever.getFrameAtTime((long) 0);
         FileManager fileManager = new FileManager();
         String faceMattingFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceMattingFolder");
-        String savePath=faceMattingFolder + "/cover.png";
+        String savePath = faceMattingFolder + "/cover.png";
         BitmapManager.getInstance().saveBitmapToPath(bp, savePath, new BitmapManager.saveToFileCallback() {
             @Override
             public void isSuccess(boolean isSuccess) {
                 CompressionCuttingManage manage = new CompressionCuttingManage(context, "0", false, tailorPaths -> {
-                    Bitmap mattingMp=BitmapFactory.decodeFile(tailorPaths.get(0));
+                    Bitmap mattingMp = BitmapFactory.decodeFile(tailorPaths.get(0));
                     callback.showMattingVideoCover(mattingMp);
                 });
-                List<String>list=new ArrayList<>();
+                List<String> list = new ArrayList<>();
                 list.add(savePath);
                 manage.ToMatting(list);
             }
         });
-
-
 
 
 //        BitmapManager.getInstance().saveBitmapToPath(bp,faceMattingFolder + "/cover.png" , isSuccess -> {
@@ -298,27 +297,39 @@ public class TemplateMvpModel {
     }
 
 
-
-
     /**
      * description ：去重新抠图
      * creation date: 2020/4/14
      * user : zhangtongju
      */
-    public void intoMattingVideo(String path){
+    public void intoMattingVideo(String path) {
 
-        String cacheVideoPath=cacheCutVideoPath+"/Matting.mp4";
-        File file=new File(cacheVideoPath);
-        if(file.exists()){
+        String cacheVideoPath = cacheCutVideoPath + "/Matting.mp4";
+        File file = new File(cacheVideoPath);
+        if (file.exists()) {
             //已经扣过视频了,那么原视频地址就是没抠图之前的地址，而imagePaht就是抠图之后的地址
-            callback.ChangeMaterialCallbackForVideo(path,cacheVideoPath,true);
-        }else{
+            callback.ChangeMaterialCallbackForVideo(path, cacheVideoPath, true);
+        } else {
             //还没抠过视频
             gotoMattingVideo(path);
         }
 
 
+    }
 
+
+    public void getButtomIcon(String path) {
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(path);
+        Bitmap mBitmap = retriever.getFrameAtTime(0);
+        String fileName = cacheCutVideoPath + File.separator + "bottomIcon.png";
+        BitmapManager.getInstance().saveBitmapToPath(mBitmap, fileName, new BitmapManager.saveToFileCallback() {
+            @Override
+            public void isSuccess(boolean isSuccess) {
+                callback.showBottomIcon(fileName);
+                GlideBitmapPool.putBitmap(mBitmap);
+            }
+        });
     }
 
     private void gotoMattingVideo(String originalPath) {
@@ -329,16 +340,13 @@ public class TemplateMvpModel {
                 VideoMattingModel videoMattingModel = new VideoMattingModel(originalPath, context, new VideoMattingModel.MattingSuccess() {
                     @Override
                     public void isSuccess(boolean isSuccess, String path) {
-                        EventBus.getDefault().post(new MattingVideoEnity(originalPath, path,1));
+                        EventBus.getDefault().post(new MattingVideoEnity(originalPath, path, 1));
                     }
                 });
                 videoMattingModel.ToExtractFrame();
             }
         });
     }
-
-
-
 
 
     /**

@@ -29,6 +29,12 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
 
 
 
+    public void getButtomIcon(String path){
+        home_model.getButtomIcon(path);
+    }
+
+
+
 
     public void onDestroy(){
         home_model.onDestroy();
@@ -95,5 +101,10 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     @Override
     public void ChangeMaterialCallbackForVideo(String originalPath, String path,boolean needMatting) {
         home_mvpView.ChangeMaterialCallbackForVideo(originalPath,path,needMatting);
+    }
+
+    @Override
+    public void showBottomIcon(String path) {
+        home_mvpView.showBottomIcon(path);
     }
 }

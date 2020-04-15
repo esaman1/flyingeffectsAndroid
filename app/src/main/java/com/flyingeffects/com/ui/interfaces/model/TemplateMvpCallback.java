@@ -25,5 +25,7 @@ public interface TemplateMvpCallback {
 
     void ChangeMaterialCallbackForVideo(String originalPath,String path,boolean needMatting);
 
+    void showBottomIcon(String path);
+
 
 }
