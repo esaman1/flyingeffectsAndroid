@@ -60,6 +60,7 @@ import com.yanzhenjie.album.AlbumFile;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -176,6 +177,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     private Bitmap videoMattingCaver;
 
+    private boolean nowIsChooseMatting=true;
+
+//    private String whiteImagePng;
+
 
     @Override
     protected int getLayoutId() {
@@ -232,10 +237,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         if (nowTemplateIsMattingVideo == 1 && originalPath == null) {
             //当前是视频的情况下，且用户没有选择扣视频,上面的选中效果就取消
             switch_button.setChecked(false);
+            nowIsChooseMatting=false;
         }
         switch_button.setOnCheckedChangeListener((view, isChecked) -> {
             mTemplateModel.resetUi();
             if (!isChecked) {
+                nowIsChooseMatting=false;
                 if (nowTemplateIsMattingVideo == 1) {
                     presenter.ChangeMaterialCallbackForVideo(null, originalPath.get(0), false);
                 } else {
@@ -244,6 +251,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     presenter.ChangeMaterial(originalPath, bottomButtonCount, needAssetsCount);
                 }
             } else {
+                nowIsChooseMatting=true;
                 //选中状态
                 if (nowTemplateIsMattingVideo == 1) {
                     presenter.intoMattingVideo(imgPath.get(0));
@@ -280,8 +288,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     public void completeTemplate(TemplateModel templateModel) {
+//        this.whiteImagePng=whiteImagePng;
         initTemplateThumb(templateModel.groupSize);
         mTemplateModel = templateModel;
+
         if (nowTemplateIsAnim == 1 || nowTemplateIsMattingVideo == 1) {
             mTemplateModel.cartoonPath = imgPath.get(0);  //设置灰度图
         }
@@ -339,6 +349,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     public void returnReplaceableFilePath(String[] paths) {
+//        if(nowTemplateIsMattingVideo==1&&!nowIsChooseMatting){
+//            paths[1]= whiteImagePng;
+//        }
         switchTemplate(mFolder.getPath(), paths);
     }
 
@@ -414,9 +427,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         } else {
             //不需要抠图
             originalPath = null;
-            mTemplateModel.cartoonPath = imgPath.get(0);
             imgPath.clear();
             imgPath.add(path);
+            mTemplateModel.cartoonPath =path;
             mTemplateModel.setReplaceAllMaterial(imgPath);
             mTemplateViews.get(nowChooseIndex).invalidate();
         }

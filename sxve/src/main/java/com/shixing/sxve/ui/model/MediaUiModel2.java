@@ -154,21 +154,21 @@ public class MediaUiModel2 extends MediaUiModel {
     @Override
     public void scroll(float distanceX, float distanceY) {
         isVideoSlide = true;
-        isMaskSlide=true;
+        isMaskSlide = true;
         mMatrix.postTranslate(-distanceX, -distanceY);
     }
 
     @Override
     public void scale(float sx, float sy, float px, float py) {
         isVideoSlide = true;
-        isMaskSlide=true;
+        isMaskSlide = true;
         mMatrix.postScale(sx, sy, px, py);
     }
 
     @Override
     public void rotate(float degrees, float px, float py) {
         isVideoSlide = true;
-        isMaskSlide=true;
+        isMaskSlide = true;
         mMatrix.postRotate(degrees, px, py);
     }
 
@@ -267,7 +267,7 @@ public class MediaUiModel2 extends MediaUiModel {
     public void setImageAsset(String path) {
         this.path = path;
         isVideoSlide = true;
-        isMaskSlide=true;
+        isMaskSlide = true;
         mIsVideo = false;
         mBitmap = getSmallBmpFromFile(path, size.getHeight(), size.getWidth());
         countMatrix(mBitmap, path, true);
@@ -308,7 +308,7 @@ public class MediaUiModel2 extends MediaUiModel {
     public void resetUi() {
         lastOtherPath = "";
         isVideoSlide = true;
-        isMaskSlide=true;
+        isMaskSlide = true;
     }
 
 
@@ -347,7 +347,7 @@ public class MediaUiModel2 extends MediaUiModel {
     }
 
     String mimeType;
-
+    Bitmap bitmapWhite;
     public String getpathForThisMatrix(String folder, String cartoonPath) {
 
         if (!TextUtils.isEmpty(cartoonPath)) {
@@ -361,20 +361,33 @@ public class MediaUiModel2 extends MediaUiModel {
                 mimeType = getPathType(mimeType);
             }
 
-            if (albumType.isImage(mimeType)) {
+            //是图片或者第二张图片和第一张一样，说明用户选择了视频没有抠图，那么和图片的逻辑一样的，需要一个白色图片
+            if (albumType.isImage(mimeType) || cartoonPath.equals(mVideoPath)) {
                 Bitmap cartoonBitmap = getSmallBmpFromFile(cartoonPath, size.getHeight(), size.getWidth());
                 Bitmap bitmap = Bitmap.createBitmap(mClipWidth, mClipHeight, Bitmap.Config.ARGB_8888);
                 Canvas canvas = new Canvas(bitmap);
                 Matrix matrix = new Matrix(mMatrix);
                 matrix.postConcat(mInverseMatrix);
                 if (cartoonBitmap != null) {
-                    //解决bug 异常情况下bitmap 为null
                     canvas.drawBitmap(cartoonBitmap, matrix, mInitPaint);
+                } else {
+                    //需要一个白色图片
+                    if (cartoonPath.equals(mVideoPath)) {
+                        if (mBitmap != null) {
+                            bitmapWhite = Bitmap.createBitmap(mBitmap.getWidth(), mBitmap.getHeight(), mBitmap.getConfig());
+                            Canvas canvas2 = new Canvas(bitmapWhite);
+                            canvas2.drawBitmap(mBitmap, new Matrix(), new Paint());
+                            canvas.drawBitmap(getImage(bitmapWhite), matrix, mInitPaint);
+                        }
+                    }
                 }
                 String path = folder + File.separator + UUID.randomUUID() + ".png";
                 saveBitmapToPath(bitmap, path);
+                recycleWhiteBitmap();
                 return path;
             } else {
+
+
                 if (isMaskSlide || TextUtils.isEmpty(lastOtherPath)) {
                     final String path = folder + File.separator + UUID.randomUUID() + ".mp4";
                     Matrix matrix = new Matrix(mMatrix);
@@ -406,19 +419,25 @@ public class MediaUiModel2 extends MediaUiModel {
                         }
                     });
                     sxCompositor.run();
-                    isMaskSlide=false;
+                    isMaskSlide = false;
                     lastOtherPath = path;
                     Log.d("oom", "视频地址2为" + cartoonPath);
                     return path;
                 } else {
                     return lastOtherPath;
                 }
-
-
             }
         }
+
         return cartoonPath;
 
+    }
+
+    private void recycleWhiteBitmap(){
+        if(bitmapWhite!=null&&!bitmapWhite.isRecycled()){
+            bitmapWhite.recycle();
+            bitmapWhite=null;
+        }
     }
 
     private String getPathType(String path) {
@@ -490,6 +509,23 @@ public class MediaUiModel2 extends MediaUiModel {
 
     public String getOriginalPath() {
         return path;
+    }
+
+
+    //把透明转换成白色
+    public static Bitmap getImage(Bitmap mBitmap) {
+        if (mBitmap != null) {
+            int mWidth = mBitmap.getWidth();
+            int mHeight = mBitmap.getHeight();
+            for (int i = 0; i < mHeight; i++) {
+                for (int j = 0; j < mWidth; j++) {
+                    int color = mBitmap.getPixel(j, i);
+                    color = Color.argb(255, 255, 255, 255);
+                    mBitmap.setPixel(j, i, color);
+                }
+            }
+        }
+        return mBitmap;
     }
 
 

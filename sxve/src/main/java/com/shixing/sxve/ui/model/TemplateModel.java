@@ -34,6 +34,7 @@ public class TemplateModel {
 
     public SparseArray<GroupModel> groups = new SparseArray<>();
     public final float fps;
+    public int[]templateSize=new int[2];
     public int groupSize;
     public String cartoonPath;
 
@@ -64,36 +65,23 @@ public class TemplateModel {
                 mAssets.add(assetModel);
 
                 //单独针对mask 图层
-                try{
-                    String ui_extra=asset.getString("ui_extra");
-                    if(!TextUtils.isEmpty(ui_extra)&&ui_extra.equals("hideUI")){
+                try {
+                    String ui_extra = asset.getString("ui_extra");
+                    if (!TextUtils.isEmpty(ui_extra) && ui_extra.equals("hideUI")) {
                         //当前页面不显示，不过和漫画规则一样的
-                  continue;
+                        continue;
 
                     }
 
-                }catch (Exception e){
-                    Log.d("OOM",e.getMessage());
+                } catch (Exception e) {
+                    Log.d("OOM", e.getMessage());
                 }
-
-
-
 
                 //单独针对漫画
-                if (nowTemplateIsAnim == 1 ) {
-//                    JSONObject ob=asset.getJSONObject("ui");
-//                    int index=ob.getInt("index");
-//                    if(index==0){
-                        //漫画的图不显示
-                        assetModel.setIsAnim(true);
-//                    }
+                if (nowTemplateIsAnim == 1) {
+                    //漫画的图不显示
+                    assetModel.setIsAnim(true);
                 }
-
-
-
-
-
-
 
                 int group = assetModel.ui.group;
                 if (groupSize < group) groupSize = group;
@@ -110,7 +98,11 @@ public class TemplateModel {
 
         try {
             JSONArray assetsComps = config.getJSONArray("comps");
+
             JSONObject comoOb = (JSONObject) assetsComps.get(0);
+            JSONArray isze= (JSONArray) comoOb.get("size");
+            templateSize[0]= (int) isze.get(0);
+            templateSize[1]= (int) isze.get(1);
             mDuration = comoOb.getInt("duration");
         } catch (Exception e) {
             Log.d("Exception", e.getMessage());
@@ -146,24 +138,13 @@ public class TemplateModel {
         String[] paths = new String[mAssets.size()];
         for (int i = 0; i < mAssets.size(); i++) {
             if (mAssets.get(0).ui.getIsAnim()) {
-                //如果第一个及时漫画，就走漫画的逻辑
-//                if (i == 0) {
-////                    //漫画,这里顺序Ae有点问题
-//                    MediaUiModel2 model2 = (MediaUiModel2) mAssets.get(1).ui;
-//                    MediaUiModel2 model2Last = (MediaUiModel2) mAssets.get(0).ui;
-//                    paths[1] = model2.getpathForThisMatrix( folder,model2Last.getOriginalPath());
-//                } else {
-//                    paths[0] = mAssets.get(i).ui.getSnapPath(folder);
-//                }
-                if(i== mAssets.size()-1){
+                if (i == mAssets.size() - 1) {
                     //最后一个的时候
-                    MediaUiModel2 model2 = (MediaUiModel2) mAssets.get(i-1).ui;
-                    paths[i] = model2.getpathForThisMatrix( folder,cartoonPath);
-                }else{
+                    MediaUiModel2 model2 = (MediaUiModel2) mAssets.get(i - 1).ui;
+                    paths[i] = model2.getpathForThisMatrix(folder, cartoonPath);
+                } else {
                     paths[i] = mAssets.get(i).ui.getSnapPath(folder);
                 }
-
-
             } else {
                 paths[i] = mAssets.get(i).ui.getSnapPath(folder);
             }
@@ -210,15 +191,14 @@ public class TemplateModel {
         textUIModelList = new ArrayList<>();
 
 
-
-        if ( mReplaceableAssets.size() > 0) {
+        if (mReplaceableAssets.size() > 0) {
             for (int i = 0; i < mReplaceableAssets.size(); i++) {
                 if (mReplaceableAssets.get(i) != null) {
                     if (mReplaceableAssets.get(i).ui instanceof MediaUiModel) {
                         mediaUIModelList.add(mReplaceableAssets.get(i));
                         textUIModelList.add(null); //todo 考虑到文字在中间的情况，补位，解决数组越界
                     } else if (mReplaceableAssets.get(i).ui instanceof TextUiModel) {
-                        Log.d("OOM","1231231312");
+                        Log.d("OOM", "1231231312");
                         textUIModelList.add(mReplaceableAssets.get(i));
                     }
                 }
@@ -246,7 +226,7 @@ public class TemplateModel {
                         ((MediaUiModel) assetModel.ui).setImageAsset(paths.get(i));//, context
                     } else if (albumType.isVideo(mimeType)) {
                         String VideoPathOrigin = paths.get(i);
-                        ((MediaUiModel) assetModel.ui).setVideoPath(VideoPathOrigin,true,0);//, context
+                        ((MediaUiModel) assetModel.ui).setVideoPath(VideoPathOrigin, true, 0);//, context
                     }
                 }
             }
@@ -277,13 +257,10 @@ public class TemplateModel {
 
                             if (albumType.isImage(mimeType)) {
                                 media.setImageAsset(list.get(i));
-                            }else{
-                                media.setVideoPath(list.get(i),true,0);
+                            } else {
+                                media.setVideoPath(list.get(i), true, 0);
                             }
                         }
-
-
-
 
 
                         textUIModelList.add(null); //todo 考虑到文字在中间的情况，补位，解决数组越界
@@ -297,7 +274,6 @@ public class TemplateModel {
     }
 
 
-
     public void resetUi() {
         if (mReplaceableAssets != null && mReplaceableAssets.size() > 0) {
             for (int i = 0; i < mReplaceableAssets.size(); i++) {
@@ -305,13 +281,12 @@ public class TemplateModel {
                     if (mReplaceableAssets.get(i).ui instanceof MediaUiModel) {
                         MediaUiModel2 media = (MediaUiModel2) mReplaceableAssets.get(i).ui;
                         media.resetUi();
-                        }
+                    }
                 }
 
             }
         }
     }
-
 
 
     private String getPathType(String path) {

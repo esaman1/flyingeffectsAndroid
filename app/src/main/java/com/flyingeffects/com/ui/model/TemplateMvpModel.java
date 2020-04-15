@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -47,6 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
@@ -64,6 +66,7 @@ public class TemplateMvpModel {
     private File keepUunCatchPath;
     private boolean isOnDestroy;
     private String cacheCutVideoPath;
+    private String backgroundPath;
 
     public TemplateMvpModel(Context context, TemplateMvpCallback callback) {
         this.context = context;
@@ -71,6 +74,7 @@ public class TemplateMvpModel {
         keepUunCatchPath = context.getExternalFilesDir("runCatch/");
         FileManager fileManager = new FileManager();
         cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
+        backgroundPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "background");
         isOnDestroy = false;
     }
 
@@ -87,10 +91,10 @@ public class TemplateMvpModel {
      */
     public void getMattingVideoCover(String path) {
         //如果是选择视频，那么需要第一针显示为用户
-        if(albumType.isImage(GetPathType.getInstance().getPathType(path))){
+        if (albumType.isImage(GetPathType.getInstance().getPathType(path))) {
             Bitmap mattingMp = BitmapFactory.decodeFile(path);
             callback.showMattingVideoCover(mattingMp);
-        }else{
+        } else {
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             retriever.setDataSource(path);
             Bitmap bp = retriever.getFrameAtTime((long) 0);
@@ -122,7 +126,14 @@ public class TemplateMvpModel {
                 e.printStackTrace();
             }
             return mTemplateModel;
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(templateModel -> callback.completeTemplate(templateModel));
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(templateModel -> {
+//            String path = backgroundPath + File.separator + "white .png";
+//            Bitmap bitmap = Bitmap.createBitmap(templateModel.templateSize[0], templateModel.templateSize[1],
+//                    Bitmap.Config.ARGB_8888);
+//            bitmap.eraseColor(Color.parseColor("#FFFFFF"));//填充颜色
+//            BitmapManager.getInstance().saveBitmapToPath(bitmap, path);
+            callback.completeTemplate(templateModel);
+        });
     }
 
 
