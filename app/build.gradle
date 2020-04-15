@@ -139,7 +139,10 @@ dependencies {
 
     implementation 'com.umeng.umsdk:share-core:6.9.4'
     implementation 'com.umeng.umsdk:share-wx:6.9.4'
-
+    //exo视频播放器
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.9.5'
+//    implementation 'com.google.android.exoplayer:exoplayer-dash:2.6.1'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.9.5'
     //极光
     implementation 'cn.jiguang.sdk:jpush:3.5.8'
     implementation 'cn.jiguang.sdk:jcore:2.2.8'

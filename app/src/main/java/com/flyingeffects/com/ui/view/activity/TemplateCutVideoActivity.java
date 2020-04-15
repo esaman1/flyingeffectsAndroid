@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -22,6 +23,16 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.glidebitmappool.GlideBitmapPool;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
@@ -30,6 +41,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -77,8 +91,11 @@ public class TemplateCutVideoActivity extends BaseActivity {
     private String videoPath;
 
 
-    @BindView(R.id.video_player)
-    EmptyControlVideo videoPlayer;
+//    @BindView(R.id.video_player)
+////    EmptyControlVideo videoPlayer;
+
+    @BindView(R.id.exo_player)
+    PlayerView playerView;
 
     VideoInfo videoInfo;
     private int mScrollX;
@@ -99,6 +116,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
      */
     private int isFrom;
 
+    private ExoPlayer exoPlayer;
 
     @Override
     protected int getLayoutId() {
@@ -113,11 +131,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
         needDuration = getIntent().getFloatExtra("needCropDuration", 1);
         isFrom=getIntent().getIntExtra("isFrom",0);
         videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
-        videoPlayer.setUp(videoPath, true, "");
-        GSYVideoType.setShowType(GSYVideoType.SCREEN_TYPE_DEFAULT);
-        videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> {
-            videoPlayer.startPlayLogic();
-        }));
         mEndDuration = (int) (needDuration * 1000);
         tv_duration.setText("模板时长 "+needDuration+"s");
     }
@@ -126,11 +139,67 @@ public class TemplateCutVideoActivity extends BaseActivity {
     protected void initAction() {
         initThumbList();
         list_thumb.post(() -> initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), needDuration, videoInfo.getDuration() / (float) 1000, videoPath));
+        initExo(videoPath,needDuration);
     }
 
 
     private void startVideo() {
-        videoPlayer.startPlayLogic();
+    }
+
+
+    private void initExo(String videoPath, float duration) {
+        tv_duration.setText(String.format(Locale.US, "%.1fs", duration));
+        if (TextUtils.isEmpty(videoPath)) {
+            return;
+        }
+        exoPlayer = ExoPlayerFactory.newSimpleInstance(TemplateCutVideoActivity.this, new DefaultRenderersFactory(this), new DefaultTrackSelector(), new DefaultLoadControl());
+        playerView.setPlayer(exoPlayer);
+
+        //不使用控制器
+        playerView.setUseController(false);
+        exoPlayer.setRepeatMode(Player.REPEAT_MODE_OFF);
+        exoPlayer.addListener(new Player.EventListener() {
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                switch (playbackState) {
+                    case Player.STATE_READY:
+//                        initSingleThumbSize(sourceVideoWidth, sourceVideoHeight, (int) exoPlayer.getDuration(), duration, videoPath);
+                        videoPlay();
+                        break;
+                    case Player.STATE_ENDED:
+                        seekTo(0);
+                        break;
+                    case Player.STATE_BUFFERING:
+                    case Player.STATE_IDLE:
+                    default:
+                        break;
+                }
+            }
+        });
+        MediaSource mediaSource = new ExtractorMediaSource.Factory(
+                new DefaultDataSourceFactory(TemplateCutVideoActivity.this, "exoplayer-codelab")).
+                createMediaSource(Uri.fromFile(new File(videoPath)));
+        exoPlayer.prepare(mediaSource, true, false);
+        videoPause();
+    }
+
+    /**
+     * 开始播放
+     */
+    private void videoPlay() {
+        if (exoPlayer != null) {
+            LogUtil.d("video", "play");
+            exoPlayer.setPlayWhenReady(true);
+        }
+        startTimer();
+    }
+
+    private void videoPause() {
+        if (exoPlayer != null) {
+            LogUtil.d("video", "videoPause");
+            exoPlayer.setPlayWhenReady(false);
+
+        }
     }
 
     @Override
@@ -148,6 +217,8 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
 
             case R.id.iv_correct:
+
+
                 File file = new File(videoPath);
                 if (file.exists()) {
                     WaitingDialog.openPragressDialog(this);
@@ -155,11 +226,15 @@ public class TemplateCutVideoActivity extends BaseActivity {
                     ToastUtil.showToast(getResources().getString(R.string.write_error));
 //                    endTimer();
                 }
+
+
                 break;
 
             case R.id.tv_kt:
             case R.id.tv_no_kt:
-                videoPlayer.onVideoPause();
+                videoStop();
+                endTimer();
+
                 progressNowAnim.openProgressDialog();
                 new Thread(() -> videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(TemplateCutVideoActivity.this, needDuration * 1000,videoPath,mStartDuration, new videoCutDurationForVideoOneDo.isSuccess() {
                     @Override
@@ -185,6 +260,15 @@ public class TemplateCutVideoActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 释放资源
+     */
+    private void videoStop() {
+        if (exoPlayer != null) {
+            exoPlayer.stop();
+            exoPlayer.release();
+        }
+    }
 
     private void gotoMattingVideo(String originalPath) {
         Observable.just(originalPath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
@@ -211,6 +295,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
                     mEndDuration = (int) (mStartDuration + (needDuration * 1000));
                     LogUtil.d("OOM", "mStartDuration=" + mStartDuration + "mEndDuration=" + mEndDuration);
                     seekTo(mStartDuration);
+                    startTimer();
                 }
             }
 
@@ -224,13 +309,16 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
 
     private void seekTo(long to) {
-        //跳转时暂停播放
-        if (videoPlayer != null) {
-            LogUtil.d("OOM","seekTo="+to);
-            if(to<1000){
-                to=1000;
-            }
-            videoPlayer.seekTo(to);
+//        //跳转时暂停播放
+//        if (videoPlayer != null) {
+//            LogUtil.d("OOM","seekTo="+to);
+//            if(to<1000){
+//                to=1000;
+//            }
+//            videoPlayer.seekTo(to);
+//        }
+        if (exoPlayer != null) {
+            exoPlayer.seekTo(to);
         }
     }
 
@@ -286,54 +374,77 @@ public class TemplateCutVideoActivity extends BaseActivity {
 //    }
 
 
-//    /**
-//     * 关闭timer 和task
-//     */
-//    private void endTimer() {
-//        destroyTimer();
-//    }
+    /**
+     * 关闭timer 和task
+     */
+    private void endTimer() {
+        destroyTimer();
+    }
 
 
-//    /**
-//     * user :TongJu  ; email:jutongzhang@sina.com
-//     * time：2018/10/15
-//     * describe:严防内存泄露
-//     **/
-//    private void destroyTimer() {
-//        if (timer != null) {
-//            timer.purge();
-//            timer.cancel();
-//            timer = null;
-//        }
-//        if (task != null) {
-//            task.cancel();
-//            task = null;
-//        }
-//    }
+    /**
+     * user :TongJu  ; email:jutongzhang@sina.com
+     * time：2018/10/15
+     * describe:严防内存泄露
+     **/
+    private void destroyTimer() {
+        if (timer != null) {
+            timer.purge();
+            timer.cancel();
+            timer = null;
+        }
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+    }
+
+    private Timer timer;
+    private TimerTask task;
+    private void startTimer() {
+        if (timer != null) {
+            timer.purge();
+            timer.cancel();
+            timer = null;
+        }
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+
+        timer = new Timer();
+        task = new TimerTask() {
+            @Override
+            public void run() {
+                Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+                    if (exoPlayer != null) {
+                        exoPlayer.setPlayWhenReady(true);
+                        if (getCurrentPos() >= mEndDuration) {
+                            exoPlayer.seekTo(mStartDuration);
+                        } else if (getCurrentPos() < mStartDuration) {
+                            exoPlayer.seekTo(mStartDuration);
+                        }
+
+                    }
+                });
+            }
+        };
+        timer.schedule(task, 0, 16);
+    }
 
 
-//    /**
-//     * 获取当前进度
-//     */
-//    private long getCurrentPos() {
-//        return videoPlayer.getCurrentPositionWhenPlaying();
-//    }
-//
-//
-//    public static void setMargins(View v, int l, int t, int r, int b) {
-//        if (v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
-//            ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
-//            p.setMargins(l, t, r, b);
-//            v.requestLayout();
-//        }
-//    }
-
+    /**
+     * 获取当前进度
+     */
+    private long getCurrentPos() {
+        return exoPlayer != null ? exoPlayer.getCurrentPosition() : 0;
+    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        videoPlayer.release();
+        videoStop();
         GlideBitmapPool.clearMemory();
-//        endTimer();
+        endTimer();
     }
 }
