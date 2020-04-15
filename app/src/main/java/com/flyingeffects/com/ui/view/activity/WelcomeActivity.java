@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
+import com.bigkoo.convenientbanner.utils.ScreenUtil;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
@@ -243,9 +244,7 @@ public class WelcomeActivity extends BaseActivity {
      * 展示开屏广告
      */
     private void showSplashAd() {
-
-        int sloganHeight = (ScreenUtils.getScreenWidth(NTAdSDK.getAppContext()) * 250 / 720);
-        NTAdSDK.getInstance().showSplashAd(this, rlAdContainer, tvSkip, sloganHeight, AdConfigs.AD_SPLASH, new SplashAdCallBack() {
+        NTAdSDK.getInstance().showSplashAd(this, rlAdContainer, tvSkip, ScreenUtil.dip2px(this,110), AdConfigs.AD_SPLASH, new SplashAdCallBack() {
             @Override
             public void onAdSuccess() {
                 isShow = true;
