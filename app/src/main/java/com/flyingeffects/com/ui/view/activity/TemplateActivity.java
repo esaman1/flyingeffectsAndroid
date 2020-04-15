@@ -13,6 +13,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
+import android.webkit.MimeTypeMap;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateThumbAdapter;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.AnimForViewShowAndHide;
@@ -39,6 +41,7 @@ import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.SxveConstans;
+import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.model.GroupModel;
 import com.shixing.sxve.ui.model.MediaUiModel;
 import com.shixing.sxve.ui.model.MediaUiModel2;
@@ -412,7 +415,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         } else {
             //不需要抠图
             originalPath = null;
-            mTemplateModel.cartoonPath=imgPath.get(0);
+            mTemplateModel.cartoonPath = imgPath.get(0);
             imgPath.clear();
             imgPath.add(path);
             mTemplateModel.setReplaceAllMaterial(imgPath);
@@ -470,10 +473,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public void pickMedia(MediaUiModel model) {
         if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
             pickIndex = model.getNowIndex();
-            if(nowTemplateIsMattingVideo==1){
-                AlbumManager.chooseAlbum(TemplateActivity.this, 1, REQUEST_SINGLE_MEDIA_VIDEO, this,  "");
-
-            }else{
+            if (nowTemplateIsMattingVideo == 1) {
+                // 只有是否选择视频的区别
+                AlbumManager.chooseAlbum(TemplateActivity.this, 1, REQUEST_SINGLE_MEDIA, this, "");
+            } else {
                 AlbumManager.chooseWhichAlbum(TemplateActivity.this, 1, REQUEST_SINGLE_MEDIA, this, 1, "");
 
             }
@@ -815,64 +818,80 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-        if(!isCancel){
-            if ( tag == REQUEST_SINGLE_MEDIA  ) {
-                if(paths != null && paths.size() > 0){
-                    if (originalPath == null || originalPath.size() == 0) {
-                        //不需要抠图
-                        if (imgPath.size() > lastChoosePosition) {
-                            imgPath.set(lastChoosePosition, paths.get(0));
-                        } else {
-                            imgPath.add(paths.get(0));
+        if (!isCancel) {
+            if (tag == REQUEST_SINGLE_MEDIA) {
+                if (paths != null && paths.size() > 0) {
+                    String mimeType;
+                    String path = paths.get(0);
+                    String extension = MimeTypeMap.getFileExtensionFromUrl(path);
+                    if (!TextUtils.isEmpty(extension)) {
+                        mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+                        if (mimeType == null) {
+                            mimeType = GetPathType.getInstance().getPathType(path);
                         }
-                        MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
-                        mediaUi2.setImageAsset(paths.get(0));
-                        mTemplateViews.get(lastChoosePosition).invalidate();
-                        ModificationSingleThumbItem(paths.get(0));
                     } else {
-                        boolean hasCache = nowTemplateIsAnim != 1;
-                        CompressionCuttingManage manage = new CompressionCuttingManage(TemplateActivity.this, templateId, hasCache, tailorPaths -> {
-                            originalPath.set(lastChoosePosition, paths.get(0));
-                            imgPath.set(lastChoosePosition, tailorPaths.get(0));
-                            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+                        mimeType = GetPathType.getInstance().getPathType(path);
+                    }
+                    if (albumType.isImage(mimeType)) {
+                        if (originalPath == null || originalPath.size() == 0) {
+                            //不需要抠图
+                            if (imgPath.size() > lastChoosePosition) {
+                                imgPath.set(lastChoosePosition, paths.get(0));
+                            } else {
+                                imgPath.add(paths.get(0));
+                            }
+                            MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
+                            mediaUi2.setImageAsset(paths.get(0));
+                            mTemplateViews.get(lastChoosePosition).invalidate();
+                            ModificationSingleThumbItem(paths.get(0));
+                        } else {
+                            boolean hasCache = nowTemplateIsAnim != 1;
+                            CompressionCuttingManage manage = new CompressionCuttingManage(TemplateActivity.this, templateId, hasCache, tailorPaths -> {
+                                originalPath.set(lastChoosePosition, paths.get(0));
+                                imgPath.set(lastChoosePosition, tailorPaths.get(0));
+                                Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
 
-                                if (nowTemplateIsAnim == 1) {
-                                    //如果是漫画，逻辑会变
-                                    MediaUiModel2 mediaUi1 = (MediaUiModel2) mTemplateModel.getAssets().get(0).ui;
-                                    mediaUi1.setImageAsset(tailorPaths.get(0));
+                                    if (nowTemplateIsAnim == 1) {
+                                        //如果是漫画，逻辑会变
+                                        MediaUiModel2 mediaUi1 = (MediaUiModel2) mTemplateModel.getAssets().get(0).ui;
+                                        mediaUi1.setImageAsset(tailorPaths.get(0));
 
-                                    MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(1).ui;
-                                    mediaUi2.setImageAsset(paths.get(0));
+                                        MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(1).ui;
+                                        mediaUi2.setImageAsset(paths.get(0));
 
-                                    mTemplateViews.get(lastChoosePosition).invalidate();
-                                    ModificationSingleThumbItem(paths.get(0));
-                                } else {
-                                    int total = mTemplateModel.getAssetsSize() - 1;
-                                    //倒敘
-                                    int nowChooseIndex = total - pickIndex;
-                                    MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(nowChooseIndex).ui;
-                                    mediaUi2.setImageAsset(tailorPaths.get(0));
-                                    mTemplateViews.get(lastChoosePosition).invalidate();
-                                    ModificationSingleThumbItem(tailorPaths.get(0));
-                                }
+                                        mTemplateViews.get(lastChoosePosition).invalidate();
+                                        ModificationSingleThumbItem(paths.get(0));
+                                    } else {
+                                        int total = mTemplateModel.getAssetsSize() - 1;
+                                        //倒敘
+                                        int nowChooseIndex = total - pickIndex;
+                                        MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(nowChooseIndex).ui;
+                                        mediaUi2.setImageAsset(tailorPaths.get(0));
+                                        mTemplateViews.get(lastChoosePosition).invalidate();
+                                        ModificationSingleThumbItem(tailorPaths.get(0));
+                                    }
 
+                                });
                             });
-                        });
-                        manage.ToMatting(paths);
+                            manage.ToMatting(paths);
+                        }
+                    } else {
+                        //如果是视频.就进入裁剪页面
+                        float needVideoTime = Float.parseFloat(videoTime);
+                        Intent intoCutVideo = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
+                        intoCutVideo.putExtra("needCropDuration", needVideoTime);
+                        intoCutVideo.putExtra("videoPath", paths.get(0));
+                        intoCutVideo.putExtra("isFrom",2);
+                        startActivity(intoCutVideo);
                     }
                 }
-            }else if(tag==REQUEST_SINGLE_MEDIA_VIDEO){
-                //选种图片或者视频
-
             }
         }
-
-
     }
 
 
     /**
-     * description ：来自抠图按钮切换
+     * description ：来自抠图按钮切换或者替换素材
      * creation date: 2020/4/14
      * user : zhangtongju
      */
@@ -881,7 +900,26 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         if (event.getTag() == 1) {
             //扣了新的视频
             ChangeMaterialCallbackForVideo(event.getOriginalPath(), event.getMattingPath(), true);
+        } else if (event.getTag() == 2) {
+            //替换素材
+            if (event.getOriginalPath() == null) {
+                //用户没有选择抠图
+                presenter.ChangeMaterialCallbackForVideo(null, event.getMattingPath(), false);
+                ModificationSingleThumbItem(event.getMattingPath());
+            }else{
+                //用户选择了抠图
+                ChangeMaterialCallbackForVideo(event.getOriginalPath(), event.getMattingPath(), true);
+                ModificationSingleThumbItem(event.getOriginalPath());
+            }
+
         }
+
     }
+
+
+
+
+
+
 
 }

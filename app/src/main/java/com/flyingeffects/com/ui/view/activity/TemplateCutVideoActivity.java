@@ -26,6 +26,8 @@ import com.flyingeffects.com.view.MattingVideoEnity;
 import com.glidebitmappool.GlideBitmapPool;
 import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.view.WaitingDialog;
+import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
+import com.shixing.sxve.ui.view.WaitingDialog_progress;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +55,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
     @BindView(R.id.list_thumb)
     RecyclerView list_thumb;
 
-
+    WaitingDialogProgressNowAnim progressNowAnim;
 
     private TimelineAdapterForCutVideo mTimelineAdapter;
 
@@ -99,6 +101,11 @@ public class TemplateCutVideoActivity extends BaseActivity {
      */
     private int mEndDuration;
 
+    /**
+     * 来自哪个页面，2来自模板想起切换视频素材  0表示预览选择视频入口页面
+     */
+    private int isFrom;
+
 
     @Override
     protected int getLayoutId() {
@@ -107,10 +114,11 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-
+        progressNowAnim=new WaitingDialogProgressNowAnim(this);
         DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
         videoPath = getIntent().getStringExtra("videoPath");
         needDuration = getIntent().getFloatExtra("needCropDuration", 1);
+        isFrom=getIntent().getIntExtra("isFrom",0);
         videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
         videoPlayer.setUp(videoPath, true, "");
         GSYVideoType.setShowType(GSYVideoType.SCREEN_TYPE_DEFAULT);
@@ -162,29 +170,30 @@ public class TemplateCutVideoActivity extends BaseActivity {
             case R.id.tv_kt:
             case R.id.tv_no_kt:
                 videoPlayer.onVideoPause();
-                WaitingDialog.openPragressDialog(this);
+                progressNowAnim.openProgressDialog();
                 new Thread(() -> videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(TemplateCutVideoActivity.this, needDuration * 1000,videoPath,mStartDuration, new videoCutDurationForVideoOneDo.isSuccess() {
                     @Override
                     public void progresss(int progress) {
                         LogUtil.d("OOM", "progress=" + progress);
+                        progressNowAnim.setProgress("正在抠图中"+progress);
                     }
 
                     @Override
                     public void isSuccess(boolean isSuccess, String path) {
-                        WaitingDialog.closePragressDialog();
+                        progressNowAnim.closePragressDialog();
                         if (isSuccess) {
                             if(v.getId()==R.id.tv_kt){
                                 gotoMattingVideo(path);
                             }else{
-                                EventBus.getDefault().post(new MattingVideoEnity(null, path,0));
+                                TemplateCutVideoActivity.this.finish();
+                                EventBus.getDefault().post(new MattingVideoEnity(null, path,isFrom));
                             }
                         }
+
                     }
                 })).start();
                 break;
-
         }
-
     }
 
 
@@ -196,7 +205,8 @@ public class TemplateCutVideoActivity extends BaseActivity {
                 VideoMattingModel videoMattingModel = new VideoMattingModel(originalPath, TemplateCutVideoActivity.this, new VideoMattingModel.MattingSuccess() {
                     @Override
                     public void isSuccess(boolean isSuccess, String path) {
-                        EventBus.getDefault().post(new MattingVideoEnity(originalPath, path,0));
+                        TemplateCutVideoActivity.this.finish();
+                        EventBus.getDefault().post(new MattingVideoEnity(originalPath, path,isFrom));
                     }
                 });
                 videoMattingModel.ToExtractFrame();

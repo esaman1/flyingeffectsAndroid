@@ -33,13 +33,13 @@ public class videoCutDurationForVideoOneDo {
      */
     private static String cacheCutVideoPath;
     public static videoCutDurationForVideoOneDo getInstance() {
-
+        FileManager fileManager = new FileManager();
+        cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
         if (thisModel == null) {
             thisModel = new videoCutDurationForVideoOneDo();
-            FileManager fileManager = new FileManager();
-            cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
         }
         return thisModel;
+
 
     }
 
@@ -100,7 +100,6 @@ public class videoCutDurationForVideoOneDo {
      * param :
      * user : zhangtongju
      */
-    private boolean isSaving = false;
     DrawPadAllExecute2 execute;
 
     public void CutVideoForDrawPadAllExecute2(Context context, float duration, String path, long startDurtion,isSuccess callback) {
@@ -115,7 +114,7 @@ public class videoCutDurationForVideoOneDo {
                 callback.progresss(i);
             });
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
-                isSaving = false;
+                execute.removeAllLayer();
                 execute.release();
                 if (exportPath == null) {
                     ToastUtil.showToast(context.getString(R.string.render_error));
@@ -126,6 +125,10 @@ public class videoCutDurationForVideoOneDo {
                 if (video.exists()) {
                     try {
                         String savePath=cacheCutVideoPath+"/noMatting.mp4";
+                        File file=new File(savePath);
+                        if(file.exists()){
+                            file.delete();
+                        }
                         FileUtil.copyFile(video, savePath);
                         callback.isSuccess(true, savePath);
                     } catch (IOException e) {
@@ -141,8 +144,6 @@ public class videoCutDurationForVideoOneDo {
                 if (execute != null) {
                     try {
                         LSOVideoOption option = new LSOVideoOption(path);
-
-
                         long startDuration=startDurtion*1000;
                         long durationUs = (long) (duration * 1000);
                         option.setCutDurationUs(startDuration, durationUs+startDuration);
@@ -161,7 +162,7 @@ public class videoCutDurationForVideoOneDo {
             }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(aInteger -> {
 //                dialog.setProgress(aInteger + "");
             }, throwable -> {
-                isSaving = false;
+                execute.removeAllLayer();
                 execute.release();
                 callback.isSuccess(false, "");
                 ToastUtil.showToast(context.getString(R.string.export_failure));

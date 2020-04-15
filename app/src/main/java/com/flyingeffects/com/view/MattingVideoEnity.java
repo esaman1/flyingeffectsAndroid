@@ -48,7 +48,7 @@ public class MattingVideoEnity implements Serializable {
     }
 
     /**
-     * description ：界面标志，目前有2个，一个是来自预览界面 0，另一个是来自抠图开关按钮1
+     * description ：界面标志，目前有3个，一个是来自预览界面 0，另一个是来自抠图开关按钮1,2来自替换素材
      * creation date: 2020/4/14
      * user : zhangtongju
      */
