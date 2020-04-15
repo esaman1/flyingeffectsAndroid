@@ -187,7 +187,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
 
     private void gotoMattingVideo(String originalPath) {
-//        SegJni.nativeCreateSegHandler(this, ConUtil.getFileContent(this, R.raw.megviisegment_model), 4);
         Observable.just(originalPath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
             VideoMattingModel videoMattingModel = new VideoMattingModel(originalPath, TemplateCutVideoActivity.this, (isSuccess, path) -> {
                 TemplateCutVideoActivity.this.finish();
@@ -236,40 +235,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
     }
 
 
-//    private Timer timer;
-//    private TimerTask task;
-//
-//    private void startTimer() {
-//        if (timer != null) {
-//            timer.purge();
-//            timer.cancel();
-//            timer = null;
-//        }
-//        if (task != null) {
-//            task.cancel();
-//            task = null;
-//        }
-//
-//
-//
-//        timer = new Timer();
-//        task = new TimerTask() {
-//            @Override
-//            public void run() {
-//                Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-//                    if (getCurrentPos() >= mEndDuration) {
-//                        LogUtil.d("OOM","getCurrentPos() >= mEndDuration");
-//                        seekTo(mStartDuration);
-//                    } else if (getCurrentPos() < mStartDuration) {
-//                        seekTo(mStartDuration);
-//                        LogUtil.d("OOM","getCurrentPos() < mStartDuration");
-//                    }
-//
-//                });
-//            }
-//        };
-//        timer.schedule(task, 0, 16);
-//    }
 
 
     /**

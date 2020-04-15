@@ -12,12 +12,12 @@ import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.request.target.Target;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.DoubleClick;
+import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.TemplateThumbItem;
@@ -28,18 +28,13 @@ import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
-import com.flyingeffects.com.ui.view.activity.PreviewActivity;
-import com.flyingeffects.com.ui.view.activity.TemplateActivity;
-import com.flyingeffects.com.ui.view.activity.TemplateCutVideoActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.glidebitmappool.GlideBitmapPool;
-import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.SxveConstans;
-import com.shixing.sxve.ui.model.MediaUiModel2;
+import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.model.TemplateModel;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
@@ -91,17 +86,18 @@ public class TemplateMvpModel {
      * user : zhangtongju
      */
     public void getMattingVideoCover(String path) {
-        //如果是选择视频，那么需要第一针显示为用户s
-        SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        retriever.setDataSource(path);
-        Bitmap bp = retriever.getFrameAtTime((long) 0);
-        FileManager fileManager = new FileManager();
-        String faceMattingFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceMattingFolder");
-        String savePath = faceMattingFolder + "/cover.png";
-        BitmapManager.getInstance().saveBitmapToPath(bp, savePath, new BitmapManager.saveToFileCallback() {
-            @Override
-            public void isSuccess(boolean isSuccess) {
+        //如果是选择视频，那么需要第一针显示为用户
+        if(albumType.isImage(GetPathType.getInstance().getPathType(path))){
+            Bitmap mattingMp = BitmapFactory.decodeFile(path);
+            callback.showMattingVideoCover(mattingMp);
+        }else{
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(path);
+            Bitmap bp = retriever.getFrameAtTime((long) 0);
+            FileManager fileManager = new FileManager();
+            String faceMattingFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "tailor");
+            String savePath = faceMattingFolder + "/cover.png";
+            BitmapManager.getInstance().saveBitmapToPath(bp, savePath, isSuccess -> {
                 CompressionCuttingManage manage = new CompressionCuttingManage(context, "0", false, tailorPaths -> {
                     Bitmap mattingMp = BitmapFactory.decodeFile(tailorPaths.get(0));
                     callback.showMattingVideoCover(mattingMp);
@@ -109,15 +105,8 @@ public class TemplateMvpModel {
                 List<String> list = new ArrayList<>();
                 list.add(savePath);
                 manage.ToMatting(list);
-            }
-        });
-
-
-//        BitmapManager.getInstance().saveBitmapToPath(bp,faceMattingFolder + "/cover.png" , isSuccess -> {
-//            Observable.just(faceMattingFolder + "/cover.png").subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> mattingImage.mattingImage(faceMattingFolder + "/cover.png", (isSuccess1, bp1) -> callback.showMattingVideoCover(bp1)));
-//            GlideBitmapPool.putBitmap(
-//                    bp);
-//        });
+            });
+        }
     }
 
     public void onDestroy() {
@@ -183,12 +172,7 @@ public class TemplateMvpModel {
                 }
             });
 
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Boolean>() {
-            @Override
-            public void call(Boolean aBoolean) {
-                renderFinish(aBoolean, isPreview, outputPathForVideoSaveToPhoto);
-            }
-        });
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(aBoolean -> renderFinish(aBoolean, isPreview, outputPathForVideoSaveToPhoto));
 
     }
 

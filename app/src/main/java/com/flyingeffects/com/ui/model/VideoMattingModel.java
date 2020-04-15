@@ -15,6 +15,7 @@ import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.BitmapManager;
+import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -58,7 +59,7 @@ public class VideoMattingModel {
     private static final int DRAWPADWIDTH = 720;
     private static final int DRAWPADHEIGHT = 1280;
     private static final int FRAME_RATE = 20;
-//    private Context context;
+    private Context context;
 
     private VideoInfo videoInfo;
     private WaitingDialogProgressNowAnim dialog;
@@ -69,6 +70,7 @@ public class VideoMattingModel {
     public VideoMattingModel(String videoPath, Context context, MattingSuccess callback) {
         this.callback = callback;
         this.videoPath = videoPath;
+        this.context=context;
         videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
         FileManager fileManager = new FileManager();
         faceFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceFolder");
@@ -89,6 +91,7 @@ public class VideoMattingModel {
     private int allFrame;
 
     public void ToExtractFrame() {
+
         new Thread(() -> {
             MediaInfo mInfo = new MediaInfo(videoPath);
             if (!mInfo.prepare() || !mInfo.isHaveVideo()) {
@@ -181,6 +184,8 @@ public class VideoMattingModel {
                 String albumPath = cacheCutVideoPath + "/Matting.mp4";
                 try {
                     FileUtil.copyFile(new File(exportPath), albumPath);
+                    DataCleanManager.deleteFilesByDirectory(context.getExternalFilesDir("faceMattingFolder"));
+                    DataCleanManager.deleteFilesByDirectory(context.getExternalFilesDir("faceFolder"));
                     if (callback != null) {
                         callback.isSuccess(true, albumPath);
                     }
