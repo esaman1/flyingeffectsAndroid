@@ -92,9 +92,7 @@ public class FileManager {
                     int dot2 = file2.lastIndexOf('.');
                     String name2 = file2.substring(0, dot2);
                     int fileId2 = Integer.parseInt(name2);
-                    LogUtil.d("OOM", "fileId=" + fileId);
-                    LogUtil.d("OOM", "file2=" + fileId2
-                    );
+
                     if (fileId < fileId2) {
                         return -1;
                     } else if (fileId == fileId2) {

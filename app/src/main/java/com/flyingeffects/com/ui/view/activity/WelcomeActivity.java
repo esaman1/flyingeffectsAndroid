@@ -27,7 +27,6 @@ import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.nineton.ntadsdk.NTAdSDK;
 import com.nineton.ntadsdk.itr.SplashAdCallBack;
-import com.nineton.ntadsdk.utils.ScreenUtils;
 import com.nineton.ntadsdk.view.NTSkipView;
 
 import org.json.JSONArray;
@@ -62,15 +61,6 @@ public class WelcomeActivity extends BaseActivity {
 
     private boolean hasPermission = false;
 
-    /**
-     * 使用了app 的次数
-     */
-    private int openAppNum;
-
-    /**
-     * 是否是第一次使用app
-     */
-    private boolean isFirstOpenApp;
 
     @Override
     protected int getLayoutId() {
@@ -89,12 +79,11 @@ public class WelcomeActivity extends BaseActivity {
         }
         tvSkip = findViewById(R.id.tv_skip);
         rlAdContainer = findViewById(R.id.rl_ad_container);
-        isFirstOpenApp = BaseConstans.isFirstOpenApp();
-        if (isFirstOpenApp) {
+        if (BaseConstans.isFirstOpenApp()) {
             BaseConstans.setFirstOpenApp(System.currentTimeMillis()); //记录第一次打开app的时间
             BaseConstans.setOpenAppNum(1); //打开app的次数为1
         } else {
-            openAppNum = BaseConstans.getOpenAppNum();
+            int openAppNum = BaseConstans.getOpenAppNum();
             openAppNum++;
             BaseConstans.setOpenAppNum(openAppNum); //打开app的次数为1
             LogUtil.d("OOM", "openAppNum=" + openAppNum);
@@ -112,7 +101,7 @@ public class WelcomeActivity extends BaseActivity {
      */
     @TargetApi(Build.VERSION_CODES.M)
     private void checkPermission() {
-        List<String> lackedPermission = new ArrayList<String>();
+        List<String> lackedPermission = new ArrayList<>();
         if (!(checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED)) {
             lackedPermission.add(Manifest.permission.READ_PHONE_STATE);
         }
@@ -120,9 +109,6 @@ public class WelcomeActivity extends BaseActivity {
         if (!(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
             lackedPermission.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
-
-
-
 
         // 权限都已经有了，那么直接调用SDK
         if (lackedPermission.size() == 0) {
@@ -132,7 +118,7 @@ public class WelcomeActivity extends BaseActivity {
             }
             hasPermission = true;
 
-            LogUtil.d("oom","BaseConstans.getHasAdvertising()="+BaseConstans.getHasAdvertising());
+            LogUtil.d("oom", "BaseConstans.getHasAdvertising()=" + BaseConstans.getHasAdvertising());
 
             if (BaseConstans.getHasAdvertising() == 1) {
                 showSplashAd();
@@ -191,7 +177,7 @@ public class WelcomeActivity extends BaseActivity {
                 if (!fromBackstage) {
                     requestConfig();
                 }
-                LogUtil.d("oom","BaseConstans.getHasAdvertising()="+BaseConstans.getHasAdvertising());
+                LogUtil.d("oom", "BaseConstans.getHasAdvertising()=" + BaseConstans.getHasAdvertising());
                 if (BaseConstans.getHasAdvertising() == 1) {
                     showSplashAd();
                 }
@@ -244,7 +230,7 @@ public class WelcomeActivity extends BaseActivity {
      * 展示开屏广告
      */
     private void showSplashAd() {
-        NTAdSDK.getInstance().showSplashAd(this, rlAdContainer, tvSkip, ScreenUtil.dip2px(this,110), AdConfigs.AD_SPLASH, new SplashAdCallBack() {
+        NTAdSDK.getInstance().showSplashAd(this, rlAdContainer, tvSkip, ScreenUtil.dip2px(this, 110), AdConfigs.AD_SPLASH, new SplashAdCallBack() {
             @Override
             public void onAdSuccess() {
                 isShow = true;
@@ -353,22 +339,23 @@ public class WelcomeActivity extends BaseActivity {
             protected void _onNext(List<Config> data) {
 
 
-                if(data!=null&&data.size()>0){
-                    for (int i=0;i<data.size();i++){
-                        Config config=data.get(i);
-                        int id=config.getId();
-                        if(id==18){
+                if (data != null && data.size() > 0) {
+                    for (int i = 0; i < data.size(); i++) {
+                        Config config = data.get(i);
+                        int id = config.getId();
+                        if (id == 18) {
                             //弹出微信
                             BaseConstans.service_wxi = config.getValue();
-                        }else if(id==20){
+                        } else if (id == 20) {
                             //android 审核数据
-                            String AuditModeJson=config.getValue();
+                            String AuditModeJson = config.getValue();
                             AuditModeConfig(AuditModeJson);
-                        }else if(id==22){
+                        } else if (id == 22) {
                             //获得热更新时长
-                            String outTime=config.getValue();
-                            BaseConstans.showAgainKaipingAd=Integer.parseInt(outTime);
-                        }else if(id==24){  //todo 暂时没用
+                            String outTime = config.getValue();
+                            BaseConstans.showAgainKaipingAd = Integer.parseInt(outTime);
+                        }
+//                        else if (id == 24) {  //todo 暂时没用
                             //首次安装前几次无广告
 //                            int newUserIsVip=Integer.parseInt(config.getValue());
 //                            if (openAppNum <= newUserIsVip) { //新用户没广告
@@ -378,16 +365,9 @@ public class WelcomeActivity extends BaseActivity {
 //                                BaseConstans.setOpenAppNum(integerNoAdvertisingNum + 1); //防止数组越界
 //                                BaseConstans.setIsNewUser(false);
 //                            }
-                        }
-
-
-
+//                        }
                     }
                 }
-
-
-
-
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
@@ -419,11 +399,8 @@ public class WelcomeActivity extends BaseActivity {
     }
 
 
-
-
-
-    private void AuditModeConfig(String str){
-        JSONArray jsonArray = null;
+    private void AuditModeConfig(String str) {
+        JSONArray jsonArray  ;
         try {
             jsonArray = new JSONArray(str);
             if (jsonArray.length() > 0) {
