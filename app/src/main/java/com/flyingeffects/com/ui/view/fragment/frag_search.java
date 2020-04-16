@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Editable;
@@ -98,7 +99,7 @@ public class frag_search extends BaseFragment {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
                 String text = ed_text.getText().toString().trim();
                 if (!text.equals("")) {
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search",text);
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search", text);
                     requestFagData(text);
                     ll_showResult.setVisibility(View.VISIBLE);
                     setResultMargin();
@@ -134,7 +135,7 @@ public class frag_search extends BaseFragment {
             ed_text.setText("");
             ll_showResult.setVisibility(View.GONE);
         });
-     //   showSoftInputFromWindow(ed_text);
+        //   showSoftInputFromWindow(ed_text);
     }
 
 
@@ -174,7 +175,7 @@ public class frag_search extends BaseFragment {
             int finalI = i;
             tv.setOnClickListener(view -> {
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                    if(getActivity()!=null){
+                    if (getActivity() != null) {
                         statisticsEventAffair.getInstance().setFlag(getActivity(), "4_recommend", listSearchKey.get(finalI).getName());
                         String name = listSearchKey.get(finalI).getName();
                         requestFagData(name);
@@ -215,6 +216,14 @@ public class frag_search extends BaseFragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                ed_text.clearFocus();
+            }
+        });
+
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
                 statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_click", allData.get(position).getTitle());
@@ -291,7 +300,7 @@ public class frag_search extends BaseFragment {
                 allData.addAll(data);
                 if (data.size() == 0) {
                     ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none",name);
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none", name);
                 }
                 adapter.notifyDataSetChanged();
             }

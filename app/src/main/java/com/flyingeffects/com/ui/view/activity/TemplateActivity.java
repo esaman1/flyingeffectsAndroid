@@ -251,7 +251,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             if (!isChecked) {
                 nowIsChooseMatting = false;
                 if (nowTemplateIsMattingVideo == 1 && !albumType.isImage(GetPathType.getInstance().getPathType(imgPath.get(0)))) {
-                    presenter.ChangeMaterialCallbackForVideo(null, originalPath.get(0), false);
+                  ChangeMaterialCallbackForVideo(null, originalPath.get(0), false);
                 } else {
                     statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutopen");
                     //修改图为裁剪后的素材
@@ -398,7 +398,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         }
         videoMattingCaver = bp;
-        ModificationSingleThumbItem(bpPath);
+        runOnUiThread(() -> ModificationSingleThumbItem(bpPath));
     }
 
     @Override
@@ -451,10 +451,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             mTemplateModel.setReplaceAllMaterial(imgPath);
             WaitingDialog.closePragressDialog();
             mTemplateViews.get(nowChooseIndex).invalidate();
-            ModificationSingleThumbItem(path);
-
-
-
+            presenter.getButtomIcon(path);
         }
 
 
