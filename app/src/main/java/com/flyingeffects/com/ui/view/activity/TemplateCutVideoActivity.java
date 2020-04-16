@@ -208,10 +208,13 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.iv_close, R.id.iv_correct, R.id.tv_kt,R.id.tv_no_kt})
+    @OnClick({R.id.iv_close, R.id.iv_correct, R.id.tv_kt,R.id.tv_no_kt,R.id.iv_back})
     public void onMyClick(View v) {
         switch (v.getId()) {
             case R.id.iv_close:
+                this.finish();
+                break;
+            case R.id.iv_back:
                 this.finish();
                 break;
 
