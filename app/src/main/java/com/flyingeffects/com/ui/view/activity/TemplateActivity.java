@@ -51,6 +51,7 @@ import com.shixing.sxve.ui.model.TextUiModel;
 import com.shixing.sxve.ui.view.TemplateView;
 import com.shixing.sxve.ui.view.TextAssetEditLayout;
 import com.shixing.sxve.ui.view.WaitingDialog;
+import com.shixing.sxve.ui.view.WaitingDialog_progress;
 import com.shixing.sxvideoengine.SXPlayerSurfaceView;
 import com.shixing.sxvideoengine.SXTemplate;
 import com.shixing.sxvideoengine.SXTemplatePlayer;
@@ -181,6 +182,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private boolean nowIsChooseMatting=true;
 
 //    private String whiteImagePng;
+
+
+    /**
+     * 只针对预览显示的文案
+     */
+    private WaitingDialog_progress waitingDialogProgress;
 
 
     @Override
@@ -340,7 +347,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 }
                 showPreview(true, false);
             } else {
-                WaitingDialog.openPragressDialog(TemplateActivity.this);
+                waitingDialogProgress=new WaitingDialog_progress(this);
+                waitingDialogProgress.openProgressDialog();
+                waitingDialogProgress.setProgress("生成中~\n" +
+                        "如预览卡顿\n" +
+                        "保存效果最佳");
                 new Thread(() -> presenter.getReplaceableFilePath()).start();
             }
 
@@ -789,7 +800,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             public void run() {
                 template.commit();
                 runOnUiThread(() -> {
-                    new Handler().post(WaitingDialog::closePragressDialog);
+                    new Handler().post(waitingDialogProgress::closePragressDialog);
                     showPreview(true, false);
                     mDuration = template.realDuration();
                     seekBar.setMax(mDuration);
