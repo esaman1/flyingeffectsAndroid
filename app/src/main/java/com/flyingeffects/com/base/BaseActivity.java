@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -98,6 +99,8 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         lifecycleSubject.onNext(ActivityLifeCycleEvent.CREATE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(getLayoutId());
         StatusBarCompat.setStatusBarColor(this, Color.parseColor("#181818"));
 //        StatusBarCompat.setStatusBarColor(this, Color.parseColor("#181818"), true);

@@ -49,6 +49,9 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
+    <!--禁止息屏-->
+    <uses-permission android:name="android.permission.DEVICE_POWER"/>
+
 
     <application
         android:name="com.flyingeffects.com.base.BaseApplication"

@@ -134,7 +134,7 @@ public class frag_search extends BaseFragment {
             ed_text.setText("");
             ll_showResult.setVisibility(View.GONE);
         });
-        showSoftInputFromWindow(ed_text);
+     //   showSoftInputFromWindow(ed_text);
     }
 
 
