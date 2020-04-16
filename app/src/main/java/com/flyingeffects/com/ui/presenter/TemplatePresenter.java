@@ -95,6 +95,12 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
 
     @Override
     public void showMattingVideoCover(Bitmap bitmap) {
+
+
+
+
+
+
         home_mvpView.showMattingVideoCover(bitmap);
     }
 

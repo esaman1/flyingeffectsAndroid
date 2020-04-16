@@ -376,7 +376,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             return;
         }
 
-        requestSms(editTextUsername.getText().toString());
+        requestSms(editTextUsername.getText().toString().trim());
 
     }
 

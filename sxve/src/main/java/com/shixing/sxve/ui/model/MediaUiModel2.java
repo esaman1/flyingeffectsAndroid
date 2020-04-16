@@ -301,7 +301,9 @@ public class MediaUiModel2 extends MediaUiModel {
      * user : zhangtongju
      */
     public void setVideoCover(Bitmap mBitmap) {
-        this.mBitmap = mBitmap;
+        this.mBitmap=mBitmap;
+//        countMatrix(BitmapCompress.zoomImg(mBitmap,size.getWidth(),size.getHeight()), path, true);
+        initPosition();
     }
 
 

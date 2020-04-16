@@ -163,7 +163,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 switch (playbackState) {
                     case Player.STATE_READY:
-//                        initSingleThumbSize(sourceVideoWidth, sourceVideoHeight, (int) exoPlayer.getDuration(), duration, videoPath);
                         videoPlay();
                         break;
                     case Player.STATE_ENDED:
@@ -227,7 +226,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
                     WaitingDialog.openPragressDialog(this);
                 } else {
                     ToastUtil.showToast(getResources().getString(R.string.write_error));
-//                    endTimer();
                 }
 
 
@@ -312,14 +310,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
 
     private void seekTo(long to) {
-//        //跳转时暂停播放
-//        if (videoPlayer != null) {
-//            LogUtil.d("OOM","seekTo="+to);
-//            if(to<1000){
-//                to=1000;
-//            }
-//            videoPlayer.seekTo(to);
-//        }
         if (exoPlayer != null) {
             exoPlayer.seekTo(to);
         }
@@ -360,21 +350,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
     }
 
 
-//    /**
-//     * description ：添加滑动效果
-//     * creation date: 2020/1/20
-//     * user : zhangtongju
-//     */
-//    int relativeSelectDurationW;
-//
-//    private void seekProgress(float progress) {
-//        //  LogUtil.d("OOM", "progress=" + progress);
-//        if (relativeSelectDurationW == 0) {
-//            relativeSelectDurationW = relative_select_duration.getMeasuredWidth();
-//        }
-//        int marginProgress = (int) (progress * relativeSelectDurationW);
-//        setMargins(view_line_progress, marginProgress, 0, 0, 0);
-//    }
 
 
     /**
