@@ -30,9 +30,11 @@ import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.PreviewMvpPresenter;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MarqueTextView;
 import com.flyingeffects.com.view.MattingVideoEnity;
+import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
@@ -283,7 +285,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             } else {//需要抠图
                 originalImagePath = paths;
                 new Handler().postDelayed(() -> {
-                //    String alert = templateItem.getIs_anime() == 1 ? "正在变脸中" + "\n" + "上传正脸最佳～" : "正在抠图中" + "\n" + "上传人物最佳";
                     String alert="飞闪极速抠图中...";
                     WaitingDialog.openPragressDialog(PreviewActivity.this, alert);
                 }, 200);
@@ -325,6 +326,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
 
     private void compressImage(List<String> paths,String templateId) {
+
          boolean   hasCache= templateItem.getIs_anime() != 1;
         CompressionCuttingManage manage = new CompressionCuttingManage(PreviewActivity.this, templateId, hasCache,tailorPaths -> {
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {

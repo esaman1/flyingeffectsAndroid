@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -256,10 +257,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
                 //添加新的贴纸，这里的贴纸就是用户选择的贴纸
                 AlbumManager.chooseImageAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel, albumFileList) -> {
-                    CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this,"", tailorPaths -> {
-                        presenter.addNewSticker(tailorPaths.get(0), paths.get(0));
-                    });
-                    manage.ToMatting(paths);
+                    Log.d("OOM","isCancel="+isCancel);
+                    if(!isCancel){
+                        CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this,"", tailorPaths -> {
+                            presenter.addNewSticker(tailorPaths.get(0), paths.get(0));
+                        });
+                        manage.ToMatting(paths);
+                    }
+
                 }, "");
                 break;
 

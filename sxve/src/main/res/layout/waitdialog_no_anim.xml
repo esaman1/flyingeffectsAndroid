@@ -36,6 +36,8 @@
             android:layout_height="wrap_content"
                 android:textStyle="bold"
             android:layout_marginTop="10dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
             android:gravity="center"
             android:text="加载中..."
             android:textColor="#4D4C4C"
