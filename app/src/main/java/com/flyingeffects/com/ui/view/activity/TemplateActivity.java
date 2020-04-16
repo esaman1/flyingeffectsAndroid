@@ -247,35 +247,37 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             nowIsChooseMatting = false;
         }
         switch_button.setOnCheckedChangeListener((view, isChecked) -> {
-            mTemplateModel.resetUi();
-            if (!isChecked) {
-                nowIsChooseMatting = false;
-                if (nowTemplateIsMattingVideo == 1 && !albumType.isImage(GetPathType.getInstance().getPathType(imgPath.get(0)))) {
-                  ChangeMaterialCallbackForVideo(null, originalPath.get(0), false);
+            if(!isFastDoubleClick()){
+                mTemplateModel.resetUi();
+                if (!isChecked) {
+                    nowIsChooseMatting = false;
+                    if (nowTemplateIsMattingVideo == 1 && !albumType.isImage(GetPathType.getInstance().getPathType(imgPath.get(0)))) {
+                        ChangeMaterialCallbackForVideo(null, originalPath.get(0), false);
+                    } else {
+                        statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutopen");
+                        //修改图为裁剪后的素材
+                        presenter.ChangeMaterial(originalPath, bottomButtonCount, needAssetsCount);
+                    }
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutopen");
-                    //修改图为裁剪后的素材
-                    presenter.ChangeMaterial(originalPath, bottomButtonCount, needAssetsCount);
+                    nowIsChooseMatting = true;
+                    //选中状态
+                    if (nowTemplateIsMattingVideo == 1 && !albumType.isImage(GetPathType.getInstance().getPathType(imgPath.get(0)))) {
+                        handler.sendEmptyMessage(1);
+                        new Thread(() -> presenter.intoMattingVideo(imgPath.get(0))).start();
+                    } else {
+                        statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutoff");
+                        //修改为裁剪前的素材
+                        presenter.ChangeMaterial(imgPath, bottomButtonCount, needAssetsCount);
+                    }
                 }
-            } else {
-                nowIsChooseMatting = true;
-                //选中状态
-                if (nowTemplateIsMattingVideo == 1 && !albumType.isImage(GetPathType.getInstance().getPathType(imgPath.get(0)))) {
-                    handler.sendEmptyMessage(1);
-                    new Thread(() -> presenter.intoMattingVideo(imgPath.get(0))).start();
-                } else {
-                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutoff");
-                    //修改为裁剪前的素材
-                    presenter.ChangeMaterial(imgPath, bottomButtonCount, needAssetsCount);
+                if (mPlayer != null) {
+                    mPlayer.pause();
+                    ivPlayButton.setImageResource(R.mipmap.iv_play);
+                    isPlaying = false;
                 }
+                showPreview(false, true);
+                AnimForViewShowAndHide.getInstance().show(mContainer);
             }
-            if (mPlayer != null) {
-                mPlayer.pause();
-                ivPlayButton.setImageResource(R.mipmap.iv_play);
-                isPlaying = false;
-            }
-            showPreview(false, true);
-            AnimForViewShowAndHide.getInstance().show(mContainer);
         });
 
 
@@ -717,12 +719,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     private void ModificationSingleThumbItem(String path) {
-
-
-        TemplateThumbItem item1 = listItem.get(lastChoosePosition);
-        item1.setPathUrl(path);
-        listItem.set(lastChoosePosition, item1);
-        templateThumbAdapter.notifyItemChanged(lastChoosePosition);
+        if (listItem!=null&&listItem.size()>0) {
+            TemplateThumbItem item1 = listItem.get(lastChoosePosition);
+            item1.setPathUrl(path);
+            listItem.set(lastChoosePosition, item1);
+            templateThumbAdapter.notifyItemChanged(lastChoosePosition);
+        }
     }
 
 

@@ -6,7 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -108,6 +111,9 @@ public class TemplateMvpModel {
                 SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
                 CompressionCuttingManage manage = new CompressionCuttingManage(context, "0", false, tailorPaths -> {
                     Bitmap mattingMp = BitmapFactory.decodeFile(tailorPaths.get(0));
+                    mattingMp=test(mattingMp,bp.getWidth(),bp.getHeight());
+
+
                     callback.showMattingVideoCover(mattingMp,tailorPaths.get(0));
                 });
                 List<String> list = new ArrayList<>();
@@ -119,6 +125,36 @@ public class TemplateMvpModel {
 
     public void onDestroy() {
         isOnDestroy = true;
+    }
+
+
+
+
+    /**
+     * description ：抠图会压缩图片，这里重新把它加入到本来画布大小中
+     * creation date: 2020/4/16
+     * param :
+     * user : zhangtongju
+     */
+    public Bitmap test(Bitmap bitmap, int width, int height) {
+        int bmpWidth = bitmap.getWidth();
+        int bmpHeight = bitmap.getHeight();
+        float scaleWidth = ((float) width) / bmpWidth;
+        Bitmap target = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas temp_canvas = new Canvas(target);
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleWidth);
+        int tranH = (int) (bmpHeight*scaleWidth - height);
+        if(tranH>0){
+            tranH = Math.abs(tranH) / 2;
+            tranH=-tranH;
+
+        }else{
+            tranH = Math.abs(tranH) / 2;
+        }
+        matrix.postTranslate(0, tranH);
+        temp_canvas.drawBitmap(bitmap, matrix, new Paint());
+        return target;
     }
 
 
