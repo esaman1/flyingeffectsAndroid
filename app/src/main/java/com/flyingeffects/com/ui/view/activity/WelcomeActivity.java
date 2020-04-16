@@ -355,7 +355,7 @@ public class WelcomeActivity extends BaseActivity {
                             String outTime = config.getValue();
                             BaseConstans.showAgainKaipingAd = Integer.parseInt(outTime);
                         }
-//                        else if (id == 24) {  //todo 暂时没用
+                        else if (id == 24) {  //todo 暂时没用
                             //首次安装前几次无广告
 //                            int newUserIsVip=Integer.parseInt(config.getValue());
 //                            if (openAppNum <= newUserIsVip) { //新用户没广告
@@ -365,7 +365,7 @@ public class WelcomeActivity extends BaseActivity {
 //                                BaseConstans.setOpenAppNum(integerNoAdvertisingNum + 1); //防止数组越界
 //                                BaseConstans.setIsNewUser(false);
 //                            }
-//                        }
+                        }
                     }
                 }
             }

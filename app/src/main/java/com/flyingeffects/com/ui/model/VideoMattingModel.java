@@ -102,17 +102,17 @@ public class VideoMattingModel {
             mediaMetadataRetriever.setDataSource(videoPath);
             String rotation = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
             if (TextUtils.isEmpty(rotation)) {
-                if (mInfo.vWidth * mInfo.vHeight > 960 * 540) {
+                if (mInfo.vWidth * mInfo.vHeight > 1280 * 720) {
                     mExtractFrame.setBitmapWH(mInfo.vWidth / 2, mInfo.vHeight / 2);
                 }
             } else {
                 int iRotation = Integer.parseInt(rotation);
                 if (iRotation == 90 || iRotation == 180) {
-                    if (mInfo.vWidth * mInfo.vHeight > 960 * 540) {
+                    if (mInfo.vWidth * mInfo.vHeight > 1280 * 720) {
                         mExtractFrame.setBitmapWH(mInfo.vHeight / 2, mInfo.vWidth / 2);
                     }
                 } else {
-                    if (mInfo.vWidth * mInfo.vHeight > 960 * 540) {
+                    if (mInfo.vWidth * mInfo.vHeight > 1280 * 720) {
                         mExtractFrame.setBitmapWH(mInfo.vWidth / 2, mInfo.vHeight / 2);
                     }
                 }
@@ -316,15 +316,15 @@ public class VideoMattingModel {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if(progress<=25){
-                dialog.setProgress("请耐心等待 不要离开"+progress + "%");
+                dialog.setProgress("飞闪视频抠像中"+progress + "%\n"+"请耐心等待 不要离开");
             }else if(progress<=40){
-                dialog.setProgress("快了，友友稍等片刻"+progress + "%");
+                dialog.setProgress("飞闪视频抠像中"+progress + "%\n"+"快了，友友稍等片刻");
             }else if(progress<=60){
-                dialog.setProgress("抠像太强大，即将生成"+progress + "%");
+                dialog.setProgress("飞闪视频抠像中"+progress + "%\n"+"抠像太强大，即将生成");
             }else if(progress<=80){
-                dialog.setProgress("马上就好，不要离开"+progress + "%");
+                dialog.setProgress("飞闪视频抠像中"+progress + "%\n"+"马上就好，不要离开");
             }else{
-                dialog.setProgress("最后合成中，请稍后"+progress + "%");
+                dialog.setProgress("飞闪视频抠像中"+progress + "%\n"+"最后合成中，请稍后");
             }
         }
     };

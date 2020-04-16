@@ -146,6 +146,7 @@ public class TemplateMvpModel {
     public void renderVideo(String mTemplateFolder, String mAudio1Path, Boolean isPreview) {
         WaitingDialog_progress waitingDialog_progress = new WaitingDialog_progress(context);
         waitingDialog_progress.openProgressDialog();
+        waitingDialog_progress.setProgress("生成中...");
         Observable.create((Observable.OnSubscribe<Boolean>) subscriber -> {
             String[] paths = mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
             LogUtil.d("OOM", "得到全部地址");
