@@ -77,8 +77,8 @@ public class BaseApplication extends MultiDexApplication {
                         .appVersion(BuildConfig.VERSION_NAME)
                         .appId("61074cddf23c0a8dd2b7e00996057e78")
                         .appChannel(ChannelUtil.getChannel(this))
-                        .TTAppKey("5001478")
-                        .BaiduAppKey("f36dd747")
+//                        .TTAppKey("5001478")
+//                        .BaiduAppKey("f36dd747")
                         .isDebug(true)
                         .build());
 
