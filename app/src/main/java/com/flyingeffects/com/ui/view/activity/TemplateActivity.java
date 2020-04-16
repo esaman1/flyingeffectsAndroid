@@ -377,7 +377,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      * user : zhangtongju
      */
     @Override
-    public void showMattingVideoCover(Bitmap bp) {
+    public void showMattingVideoCover(Bitmap bp,String bpPath) {
         if (mTemplateModel != null) {
             if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
                 if (bp != null) {
@@ -398,6 +398,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         }
         videoMattingCaver = bp;
+        ModificationSingleThumbItem(bpPath);
     }
 
     @Override
@@ -410,7 +411,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     /**
-     * description ：是否抠图按钮切换时间出发
+     * description ：是否抠图按钮切换 针对于视频
      * needMatting 是否需要抠图
      * creation date: 2020/4/14
      * user : zhangtongju
@@ -450,6 +451,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             mTemplateModel.setReplaceAllMaterial(imgPath);
             WaitingDialog.closePragressDialog();
             mTemplateViews.get(nowChooseIndex).invalidate();
+            ModificationSingleThumbItem(path);
+
+
+
         }
 
 
@@ -960,7 +965,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             if (event.getOriginalPath() == null) {
                 //用户没有选择抠图
                 ChangeMaterialCallbackForVideo(null, event.getMattingPath(), false);
-                //这里需要重新设置底部图，但是glide 视频路径相同。所有glide 不会刷新
+                //这里需要重新设置底部图，但是glide 视频路径相同。所以glide 不会刷新
                 presenter.getButtomIcon(event.getMattingPath());
             } else {
                 //用户选择了抠图

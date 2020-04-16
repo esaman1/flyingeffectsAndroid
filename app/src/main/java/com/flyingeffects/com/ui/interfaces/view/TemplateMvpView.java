@@ -20,7 +20,7 @@ public interface TemplateMvpView {
 
     void getCartoonPath(String path);
 
-    void showMattingVideoCover(Bitmap bp);
+    void showMattingVideoCover(Bitmap bp,String bpPath);
     void showBottomIcon(String path);
 
     void ChangeMaterialCallbackForVideo(String originalPath,String path,boolean needMatting);

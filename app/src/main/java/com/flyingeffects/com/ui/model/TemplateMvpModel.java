@@ -96,19 +96,19 @@ public class TemplateMvpModel {
         //如果是选择视频，那么需要第一针显示为用户
         if (albumType.isImage(GetPathType.getInstance().getPathType(path))) {
             Bitmap mattingMp = BitmapFactory.decodeFile(path);
-            callback.showMattingVideoCover(mattingMp);
+            callback.showMattingVideoCover(mattingMp,path);
         } else {
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             retriever.setDataSource(path);
             Bitmap bp = retriever.getFrameAtTime((long) 0);
             FileManager fileManager = new FileManager();
             String faceMattingFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "tailor");
-            String savePath = faceMattingFolder + "/cover.png";
+            String savePath = faceMattingFolder +  File.separator +  UUID.randomUUID()+"cover.png";
             BitmapManager.getInstance().saveBitmapToPath(bp, savePath, isSuccess -> {
                 SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
                 CompressionCuttingManage manage = new CompressionCuttingManage(context, "0", false, tailorPaths -> {
                     Bitmap mattingMp = BitmapFactory.decodeFile(tailorPaths.get(0));
-                    callback.showMattingVideoCover(mattingMp);
+                    callback.showMattingVideoCover(mattingMp,tailorPaths.get(0));
                 });
                 List<String> list = new ArrayList<>();
                 list.add(savePath);
@@ -322,7 +322,11 @@ public class TemplateMvpModel {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(path);
         Bitmap mBitmap = retriever.getFrameAtTime(0);
-        String fileName = cacheCutVideoPath + File.separator + "bottomIcon.png";
+        String fileName = cacheCutVideoPath + File.separator +  UUID.randomUUID()+"bottomIcon.png";
+        File file =new File(fileName);
+        if(file.exists()){
+            file.delete();
+        }
         BitmapManager.getInstance().saveBitmapToPath(mBitmap, fileName, new BitmapManager.saveToFileCallback() {
             @Override
             public void isSuccess(boolean isSuccess) {

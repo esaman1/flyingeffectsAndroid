@@ -21,7 +21,7 @@ public interface TemplateMvpCallback {
 
     void getCartoonPath(String path);
 
-    void showMattingVideoCover(Bitmap bitmap);
+    void showMattingVideoCover(Bitmap bitmap,String imgPath);
 
     void ChangeMaterialCallbackForVideo(String originalPath,String path,boolean needMatting);
 
