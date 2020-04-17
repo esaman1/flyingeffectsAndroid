@@ -324,7 +324,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             ToastUtil.showToast("请输入验证码");
             return;
         }
-        requestLogin(editTextUsername.getText().toString(), editTextPassword.getText().toString());
+        requestLogin(editTextUsername.getText().toString().trim(), editTextPassword.getText().toString().trim());
 
     }
 

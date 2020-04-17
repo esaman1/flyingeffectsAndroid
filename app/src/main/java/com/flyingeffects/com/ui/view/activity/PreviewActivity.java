@@ -284,42 +284,44 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 intoTemplateActivity(paths, TemplateFilePath);
                 originalImagePath = null;
             } else {//需要抠图
-                originalImagePath = paths;
                 new Handler().postDelayed(() -> {
                     String alert="飞闪极速抠图中...";
                     WaitingDialog.openPragressDialog(PreviewActivity.this, alert);
                 }, 200);
-                //如果是视频，就不抠图了
-                String path=paths.get(0);
-                String pathType= GetPathTypeModel.getInstance().getMediaType(path);
-                if (albumType.isImage(pathType)) {
-                    if(templateItem.getIs_anime()!=1){
-                        compressImage(paths, templateItem.getId());
-                    }else{
-                        //漫画需要去服务器请求
-                        compressImageForServers(paths, templateItem.getId());
-                    }
-                }else{
-                    if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                        Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId());
-                    } else {
-                        WaitingDialog.closePragressDialog();
-                        String videoTime=templateItem.getVideotime();
-                        if(!TextUtils.isEmpty(videoTime)&&!videoTime.equals("0")){
-                            float needVideoTime= Float.parseFloat(videoTime);
-//                            int needCropDuration= (int) (needVideoTime*1000);
-                            Intent intoCutVideo =new Intent(PreviewActivity.this,TemplateCutVideoActivity.class);
-                            intoCutVideo.putExtra("needCropDuration", needVideoTime);
-                            intoCutVideo.putExtra("videoPath", paths.get(0));
-                            startActivity(intoCutVideo);
+                new Thread(() -> {
+                    originalImagePath = paths;
+                    //如果是视频，就不抠图了
+                    String path=paths.get(0);
+                    String pathType= GetPathTypeModel.getInstance().getMediaType(path);
+                    if (albumType.isImage(pathType)) {
+                        if(templateItem.getIs_anime()!=1){
+                            compressImage(paths, templateItem.getId());
                         }else{
-                            intoTemplateActivity(paths, TemplateFilePath);
+                            //漫画需要去服务器请求
+                            compressImageForServers(paths, templateItem.getId());
                         }
-
-
+                    }else{
+                        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                            Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId());
+                        } else {
+                            WaitingDialog.closePragressDialog();
+                            String videoTime=templateItem.getVideotime();
+                            if(!TextUtils.isEmpty(videoTime)&&!videoTime.equals("0")){
+                                float needVideoTime= Float.parseFloat(videoTime);
+//                            int needCropDuration= (int) (needVideoTime*1000);
+                                Intent intoCutVideo =new Intent(PreviewActivity.this,TemplateCutVideoActivity.class);
+                                intoCutVideo.putExtra("needCropDuration", needVideoTime);
+                                intoCutVideo.putExtra("videoPath", paths.get(0));
+                                startActivity(intoCutVideo);
+                            }else{
+                                intoTemplateActivity(paths, TemplateFilePath);
+                            }
+                        }
                     }
+                }).start();
 
-                }
+
+
             }
         }
 

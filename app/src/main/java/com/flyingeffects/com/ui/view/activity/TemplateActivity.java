@@ -509,7 +509,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             pickIndex = model.getNowIndex();
             if (nowTemplateIsMattingVideo == 1) {
                 // 只有是否选择视频的区别
-                AlbumManager.chooseAlbum(TemplateActivity.this, 1, REQUEST_SINGLE_MEDIA, this, "");
+                float  videoTimeF=Float.parseFloat(videoTime);
+                AlbumManager.chooseAlbum(TemplateActivity.this, 1, REQUEST_SINGLE_MEDIA, this, "", (long) (videoTimeF*1000));
             } else {
                 AlbumManager.chooseWhichAlbum(TemplateActivity.this, 1, REQUEST_SINGLE_MEDIA, this, 1, "");
 
@@ -956,6 +957,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     @Subscribe
     public void onEventMainThread(MattingVideoEnity event) {
+        mTemplateModel.resetUi();
         if (event.getTag() == 1) {
             //扣了新的视频
             ChangeMaterialCallbackForVideo(event.getOriginalPath(), event.getMattingPath(), true);
