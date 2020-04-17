@@ -983,6 +983,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             ChangeMaterialCallbackForVideo(event.getOriginalPath(), event.getMattingPath(), true);
         } else if (event.getTag() == 2) {
             nowTemplateIsMattingVideo = 1;
+            mTemplateModel.mAssets.get(0).setIsAnim(true);
             //替换素材
             if (event.getOriginalPath() == null || !nowIsChooseMatting) {
                 if (event.getOriginalPath() == null
