@@ -15,6 +15,7 @@ import com.lansosdk.box.OnLanSongSDKProgressListener;
 import com.lansosdk.box.VideoFrameLayer;
 import com.lansosdk.box.VideoLayer;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
+import com.lansosdk.videoeditor.DrawPadView;
 import com.lansosdk.videoeditor.VideoOneDo2;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
@@ -147,8 +148,9 @@ public class videoCutDurationForVideoOneDo {
                         long startDuration=startDurtion*1000;
                         long durationUs = (long) (duration * 1000);
                         option.setCutDurationUs(startDuration, durationUs+startDuration);
-                        VideoFrameLayer videoLayer = execute.addVideoLayer(option);
-                        videoLayer.setScaledToPadSize();
+                       execute.addVideoLayer(option);
+//                        float scale=videoLayer.getLayerWidth()/(float) execute.getPadWidth();
+//                     videoLayer.setScale(scale);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

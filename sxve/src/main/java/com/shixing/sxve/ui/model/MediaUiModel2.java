@@ -348,8 +348,15 @@ public class MediaUiModel2 extends MediaUiModel {
         return mMatrix;
     }
 
-    String mimeType;
-    Bitmap bitmapWhite;
+
+
+    /**
+     * description ：只要不是视频，就都用白色的底图
+     * creation date: 2020/4/17
+     * user : zhangtongju
+     */
+  private  String mimeType;
+    private Bitmap bitmapWhite;
     public String getpathForThisMatrix(String folder, String cartoonPath) {
 
         if (!TextUtils.isEmpty(cartoonPath)) {
@@ -365,24 +372,16 @@ public class MediaUiModel2 extends MediaUiModel {
 
             //是图片或者第二张图片和第一张一样，说明用户选择了视频没有抠图，那么和图片的逻辑一样的，需要一个白色图片
             if (albumType.isImage(mimeType) || cartoonPath.equals(mVideoPath)) {
-                Bitmap cartoonBitmap = getSmallBmpFromFile(cartoonPath, size.getHeight(), size.getWidth());
                 Bitmap bitmap = Bitmap.createBitmap(mClipWidth, mClipHeight, Bitmap.Config.ARGB_8888);
                 Canvas canvas = new Canvas(bitmap);
                 Matrix matrix = new Matrix(mMatrix);
                 matrix.postConcat(mInverseMatrix);
-                if (cartoonBitmap != null) {
-                    canvas.drawBitmap(cartoonBitmap, matrix, mInitPaint);
-                } else {
-                    //需要一个白色图片
-                    if (cartoonPath.equals(mVideoPath)) {
                         if (mBitmap != null) {
                             bitmapWhite = Bitmap.createBitmap(mBitmap.getWidth(), mBitmap.getHeight(), mBitmap.getConfig());
                             Canvas canvas2 = new Canvas(bitmapWhite);
                             canvas2.drawBitmap(mBitmap, new Matrix(), new Paint());
                             canvas.drawBitmap(getImage(bitmapWhite), matrix, mInitPaint);
                         }
-                    }
-                }
                 String path = folder + File.separator + UUID.randomUUID() + ".png";
                 saveBitmapToPath(bitmap, path);
                 recycleWhiteBitmap();

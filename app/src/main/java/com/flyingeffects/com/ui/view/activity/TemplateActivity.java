@@ -167,6 +167,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     private int nowTemplateIsMattingVideo;
 
+
+    /**
+     * 当前可以选择视频
+     */
+    private  boolean isCanChooseVideo=false;
+
     /**
      * 有值表示视频
      */
@@ -222,6 +228,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 handler.sendEmptyMessage(1);
                 presenter.getMattingVideoCover(originalPath.get(0));
             }
+        }
+
+        if(!TextUtils.isEmpty(videoTime) && !videoTime.equals("0") ){
+            isCanChooseVideo=true;
         }
         if (originalPath == null || originalPath.size() == 0 || nowTemplateIsAnim == 1) {
 
@@ -507,7 +517,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public void pickMedia(MediaUiModel model) {
         if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
             pickIndex = model.getNowIndex();
-            if (nowTemplateIsMattingVideo == 1) {
+            if (isCanChooseVideo) {
                 // 只有是否选择视频的区别
                 float  videoTimeF=Float.parseFloat(videoTime);
                 AlbumManager.chooseAlbum(TemplateActivity.this, 1, REQUEST_SINGLE_MEDIA, this, "", (long) (videoTimeF*1000));
@@ -924,7 +934,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             imgPath.set(lastChoosePosition, tailorPaths.get(0));
             Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
 
-                if (nowTemplateIsAnim == 1) {
+                if (nowTemplateIsAnim == 1||nowTemplateIsMattingVideo==1) {
                     //如果是漫画，逻辑会变
                     MediaUiModel2 mediaUi1 = (MediaUiModel2) mTemplateModel.getAssets().get(0).ui;
                     mediaUi1.setImageAsset(tailorPaths.get(0));
@@ -934,6 +944,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
                     mTemplateViews.get(lastChoosePosition).invalidate();
                     ModificationSingleThumbItem(paths.get(0));
+
+                    mTemplateModel.cartoonPath=paths.get(0);
                 } else {
                     int total = mTemplateModel.getAssetsSize() - 1;
                     //倒敘
