@@ -40,12 +40,14 @@ public class ChannelUtil {
         } finally {
             if (zipfile != null) {
                 try {
+
                     zipfile.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
+
 
         if (channel == null || channel.length() <= 0) {
             channel = "360";
