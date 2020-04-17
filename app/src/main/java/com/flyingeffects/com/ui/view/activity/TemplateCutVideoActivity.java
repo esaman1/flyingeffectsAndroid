@@ -90,6 +90,8 @@ public class TemplateCutVideoActivity extends BaseActivity {
      */
     private String videoPath;
 
+    private String templateName;
+
 
 //    @BindView(R.id.video_player)
 ////    EmptyControlVideo videoPlayer;
@@ -129,6 +131,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
         DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
         videoPath = getIntent().getStringExtra("videoPath");
         needDuration = getIntent().getFloatExtra("needCropDuration", 1);
+        templateName=getIntent().getStringExtra("templateName");
         isFrom=getIntent().getIntExtra("isFrom",0);
         videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
         mEndDuration = (int) (needDuration * 1000);
@@ -277,7 +280,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
                 TemplateCutVideoActivity.this.finish();
                 EventBus.getDefault().post(new MattingVideoEnity(originalPath, path,isFrom));
             });
-            videoMattingModel.ToExtractFrame();
+            videoMattingModel.ToExtractFrame(templateName);
         });
     }
 

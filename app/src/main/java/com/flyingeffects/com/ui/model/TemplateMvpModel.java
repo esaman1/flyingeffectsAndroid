@@ -338,7 +338,7 @@ public class TemplateMvpModel {
      * creation date: 2020/4/14
      * user : zhangtongju
      */
-    public void intoMattingVideo(String path) {
+    public void intoMattingVideo(String path,String templatename) {
 
         String cacheVideoPath = cacheCutVideoPath + "/Matting.mp4";
         File file = new File(cacheVideoPath);
@@ -347,7 +347,7 @@ public class TemplateMvpModel {
             callback.ChangeMaterialCallbackForVideo(path, cacheVideoPath, true);
         } else {
             //还没抠过视频
-            gotoMattingVideo(path);
+            gotoMattingVideo(path,templatename);
         }
 
 
@@ -372,7 +372,7 @@ public class TemplateMvpModel {
         });
     }
 
-    private void gotoMattingVideo(String originalPath) {
+    private void gotoMattingVideo(String originalPath,String templatename) {
 //        SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), 4);
         Observable.just(originalPath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
             @Override
@@ -383,7 +383,7 @@ public class TemplateMvpModel {
                         EventBus.getDefault().post(new MattingVideoEnity(originalPath, path, 1));
                     }
                 });
-                videoMattingModel.ToExtractFrame();
+                videoMattingModel.ToExtractFrame(templatename);
             }
         });
     }

@@ -273,7 +273,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     //选中状态
                     if (nowTemplateIsMattingVideo == 1 && !albumType.isImage(GetPathType.getInstance().getPathType(imgPath.get(0)))) {
                         handler.sendEmptyMessage(1);
-                        new Thread(() -> presenter.intoMattingVideo(imgPath.get(0))).start();
+                        new Thread(() -> presenter.intoMattingVideo(imgPath.get(0),templateName)).start();
                     } else {
                         statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutoff");
                         //修改为裁剪前的素材
@@ -913,6 +913,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         Intent intoCutVideo = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
                         intoCutVideo.putExtra("needCropDuration", needVideoTime);
                         intoCutVideo.putExtra("videoPath", paths.get(0));
+                        intoCutVideo.putExtra("templateName",templateName);
                         intoCutVideo.putExtra("isFrom", 2);
                         startActivity(intoCutVideo);
                     }
@@ -981,6 +982,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             //点击了切换按钮且没扣过视频
             ChangeMaterialCallbackForVideo(event.getOriginalPath(), event.getMattingPath(), true);
         } else if (event.getTag() == 2) {
+            nowTemplateIsMattingVideo = 1;
             //替换素材
             if (event.getOriginalPath() == null || !nowIsChooseMatting) {
                 if (event.getOriginalPath() == null

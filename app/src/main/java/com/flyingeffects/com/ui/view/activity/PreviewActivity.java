@@ -308,6 +308,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 //                            int needCropDuration= (int) (needVideoTime*1000);
                                 Intent intoCutVideo =new Intent(PreviewActivity.this,TemplateCutVideoActivity.class);
                                 intoCutVideo.putExtra("needCropDuration", needVideoTime);
+                                intoCutVideo.putExtra("templateName",templateItem.getTitle());
                                 intoCutVideo.putExtra("videoPath", paths.get(0));
                                 startActivity(intoCutVideo);
                             }else{

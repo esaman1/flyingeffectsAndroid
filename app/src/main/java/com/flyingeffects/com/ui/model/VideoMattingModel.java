@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.util.TimeUtils;
 import android.text.TextUtils;
 
 import com.flyingeffects.com.base.BaseApplication;
@@ -17,8 +18,11 @@ import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.ui.view.activity.TemplateActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.timeUtils;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
@@ -89,9 +93,11 @@ public class VideoMattingModel {
      * user : zhangtongju
      */
     private int allFrame;
-
-    public void ToExtractFrame() {
-
+    private long nowCurtime;
+    private String templateName;
+    public void ToExtractFrame(String templateName) {
+        this.templateName=templateName;
+        nowCurtime= System.currentTimeMillis();
         new Thread(() -> {
             MediaInfo mInfo = new MediaInfo(videoPath);
             if (!mInfo.prepare() || !mInfo.isHaveVideo()) {
@@ -186,6 +192,10 @@ public class VideoMattingModel {
                     FileUtil.copyFile(new File(exportPath), albumPath);
                     DataCleanManager.deleteFilesByDirectory(context.getExternalFilesDir("faceMattingFolder"));
                     DataCleanManager.deleteFilesByDirectory(context.getExternalFilesDir("faceFolder"));
+                  long  time= System.currentTimeMillis()-nowCurtime;
+                    String ss= timeUtils.timeParse(time);
+                    LogUtil.d("OOM","总共扣视频需要了"+ss);
+                    statisticsEventAffair.getInstance().setFlag(context, "mattingVideoTime", templateName);
                     if (callback != null) {
                         callback.isSuccess(true, albumPath);
                     }
