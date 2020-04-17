@@ -83,6 +83,8 @@ public class AlbumMultipleWrapper extends BasicChoiceAlbumWrapper<AlbumMultipleW
         intent.putExtra(Album.KEY_INPUT_FUNCTION, Album.FUNCTION_CHOICE_ALBUM);
         intent.putExtra(Album.KEY_INPUT_CHOICE_MODE, Album.MODE_MULTIPLE);
         intent.putExtra(Album.KEY_INPUT_COLUMN_COUNT, mColumnCount);
+        intent.putExtra(Album.VIDEOTIME, videoTime);
+
         intent.putExtra(Album.KEY_INPUT_ALLOW_CAMERA, mHasCamera);
         intent.putExtra(Album.KEY_INPUT_LIMIT_COUNT, mLimitCount);
         intent.putExtra(Album.KEY_INPUT_MATERIALINFO, material_info);

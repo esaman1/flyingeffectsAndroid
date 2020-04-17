@@ -29,6 +29,7 @@ import com.flyingeffects.com.ui.interfaces.view.PreviewMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.PreviewMvpPresenter;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
@@ -418,7 +419,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             //file 文件下载成功
             this.TemplateFilePath = TemplateFilePath;
             if(!TextUtils.isEmpty(templateItem.getVideotime())&&!templateItem.getVideotime().equals("0")){
-                AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "");
+                float  videoTime=Float.parseFloat(templateItem.getVideotime());
+                AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "", (long) (videoTime*1000));
             }else{
                 AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");
             }

@@ -58,6 +58,7 @@ public final class Album {
     public static final int FUNCTION_CHOICE_VIDEO = 1;
     public static final int FUNCTION_CHOICE_ALBUM = 2;
 
+    public static final String  VIDEOTIME = "VIDEOTIME";
     public static final int FUNCTION_CAMERA_IMAGE = 0;
     public static final int FUNCTION_CAMERA_VIDEO = 1;
 

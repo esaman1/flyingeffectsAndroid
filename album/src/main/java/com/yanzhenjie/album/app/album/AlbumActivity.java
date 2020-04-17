@@ -15,6 +15,7 @@
  */
 package com.yanzhenjie.album.app.album;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -79,12 +80,14 @@ public class AlbumActivity extends BaseActivity implements
     private String material_info;
     private int mChoiceMode;
     private int mColumnCount;
+    private long mMineVideoTime;
     private boolean mHasCamera;
     private int mLimitCount;
 
     private int mQuality;
     private long mLimitDuration;
     private long mLimitBytes;
+    private long videoTimeFlite;
 
     private boolean mFilterVisibility;
 
@@ -119,9 +122,11 @@ public class AlbumActivity extends BaseActivity implements
         mFunction = argument.getInt(Album.KEY_INPUT_FUNCTION);
         mChoiceMode = argument.getInt(Album.KEY_INPUT_CHOICE_MODE);
         mColumnCount = argument.getInt(Album.KEY_INPUT_COLUMN_COUNT);
+        mMineVideoTime= argument.getLong(Album.VIDEOTIME);
         mHasCamera = argument.getBoolean(Album.KEY_INPUT_ALLOW_CAMERA);
         mLimitCount = argument.getInt(Album.KEY_INPUT_LIMIT_COUNT);
         mQuality = argument.getInt(Album.KEY_INPUT_CAMERA_QUALITY);
+        videoTimeFlite=argument.getInt(Album.VIDEOTIME);
         mLimitDuration = argument.getLong(Album.KEY_INPUT_CAMERA_DURATION);
         mLimitBytes = argument.getLong(Album.KEY_INPUT_CAMERA_BYTES);
         material_info=argument.getString(Album.KEY_INPUT_MATERIALINFO);
@@ -562,10 +567,45 @@ public class AlbumActivity extends BaseActivity implements
 
     /**
      * Callback result action.
+     * 如果传了最低要求视频时长且只选了一个视频的时候，当选择视频时长小于规定时长时需要给出提示
      */
     private void callbackResult() {
-        ThumbnailBuildTask task = new ThumbnailBuildTask(this, mCheckedList, this);
-        task.execute();
+        long chooseDuration=mCheckedList.get(0).getDuration();
+        if(mMineVideoTime!=0&&mCheckedList.get(0).getMediaType()==AlbumFile.TYPE_VIDEO&&mCheckedList.size()==1){
+            if(chooseDuration<mMineVideoTime){
+                showDialog();
+            }else{
+                ThumbnailBuildTask task = new ThumbnailBuildTask(this, mCheckedList, this);
+                task.execute();
+            }
+        }else{
+            ThumbnailBuildTask task = new ThumbnailBuildTask(this, mCheckedList, this);
+            task.execute();
+        }
+
+    }
+
+
+
+    public void showDialog() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(AlbumActivity.this);
+        builder.setTitle("提示");
+        int needTime= (int) (mMineVideoTime/(float)1000);
+        builder.setMessage("此模板上传"+needTime+"秒视频最佳\n" +
+                "不然画面会少一些哟");
+        builder.setNegativeButton("取消", (dialog, which) -> {
+            mView.setSingleCompletion(false);
+            dialog.dismiss();
+        });
+        builder.setPositiveButton("确定",(dialog, which) -> {
+            ThumbnailBuildTask task = new ThumbnailBuildTask(this, mCheckedList, this);
+            task.execute();
+            dialog.dismiss();
+        });
+        builder.setCancelable(true);
+        Dialog mDialog = builder.show();
+        mDialog.setCanceledOnTouchOutside(false);
+        mDialog.show();
     }
 
     @Override

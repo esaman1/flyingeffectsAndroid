@@ -16,6 +16,8 @@
 package com.yanzhenjie.album.app.album;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -25,6 +27,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -104,10 +107,16 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
         if (itemId == R.id.album_menu_finish) {
             if(!isFastDoubleClick()&&!singleCompletion){
                 singleCompletion=true;
+//                long xx=item.get
                 getPresenter().complete();
             }
         }
     }
+
+
+
+
+
 
     private long lastClickTime;
     public boolean isFastDoubleClick() {

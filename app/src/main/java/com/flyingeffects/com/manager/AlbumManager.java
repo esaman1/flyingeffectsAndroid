@@ -63,6 +63,58 @@ public class AlbumManager {
     }
 
 
+
+
+    /**
+     * description ：选择视频和图片,过滤视频
+     * date: ：2019/5/29 10:41
+     * author: 张同举 @邮箱 jutongzhang@sina.com
+     */
+    public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String material_info,long duration) {
+        Album.album(context)
+                .multipleChoice()
+                .columnCount(3)
+                .selectCount(selectNum)
+                .camera(false)
+                .material_info(material_info)
+                .setMineVideoTime(duration)
+//                .filterDuration(new Filter<Long>() {
+//                    @Override
+//                    public boolean filter(Long attributes) {
+//                    LogUtil.d("OOM","时长为"+attributes);
+//                        return attributes<duration;
+//                    }
+//                })
+
+                .cameraVideoQuality(1)
+                .cameraVideoLimitDuration(Integer.MAX_VALUE)
+                .cameraVideoLimitBytes(Integer.MAX_VALUE)
+                .widget(
+                        Widget.newLightBuilder(context)
+                                .title(R.string.better_to_choose_all)
+                                .statusBarColor(Color.WHITE)
+                                .toolBarColor(Color.WHITE)
+                                .mediaItemCheckSelector(Color.WHITE, Color.parseColor("#FEE131"))
+                                .bucketItemCheckSelector(Color.WHITE, Color.parseColor("#FEE131"))
+                                .buttonStyle(
+                                        Widget.ButtonStyle.newLightBuilder(context)
+                                                .setButtonSelector(Color.WHITE, Color.WHITE)
+                                                .build()
+                                )
+                                .build()
+                )
+                .onResult(result -> {
+                    List<String> paths = new ArrayList<>();
+                    for (AlbumFile albumFile : result
+                    ) {
+                        paths.add(albumFile.getPath());
+                    }
+                    callback.resultFilePath(tag, paths, false, result);
+                })
+                .onCancel(result ->
+                        callback.resultFilePath(tag, new ArrayList<>(), true, new ArrayList<>()))
+                .start();
+    }
     /**
      * description ：只选择图片
      * date: ：2019/5/29 10:41
