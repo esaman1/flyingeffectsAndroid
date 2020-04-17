@@ -167,8 +167,8 @@ dependencies {
     implementation(name: 'Baidu_MobAds_SDK-release_v5.85', ext: 'aar')
     // 穿山甲
     implementation(name: 'open_ad_sdk_v2.7.0.0', ext: 'aar')
-
-
+    //oppo
+    implementation(name: 'mobad_normal_pub_333_2019_11_11', ext: 'aar')
 
 }
 

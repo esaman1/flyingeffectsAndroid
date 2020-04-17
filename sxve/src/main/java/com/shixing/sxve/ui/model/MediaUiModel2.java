@@ -378,8 +378,6 @@ public class MediaUiModel2 extends MediaUiModel {
                 matrix.postConcat(mInverseMatrix);
                         if (mBitmap != null) {
                             bitmapWhite = Bitmap.createBitmap(mBitmap.getWidth(), mBitmap.getHeight(), mBitmap.getConfig());
-                            Canvas canvas2 = new Canvas(bitmapWhite);
-                            canvas2.drawBitmap(mBitmap, new Matrix(), new Paint());
                             canvas.drawBitmap(getImage(bitmapWhite), matrix, mInitPaint);
                         }
                 String path = folder + File.separator + UUID.randomUUID() + ".png";

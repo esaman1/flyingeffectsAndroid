@@ -8,6 +8,7 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.lansosdk.box.LSOScaleType;
 import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.box.OnLanSongSDKCompletedListener;
 import com.lansosdk.box.OnLanSongSDKErrorListener;
@@ -148,9 +149,8 @@ public class videoCutDurationForVideoOneDo {
                         long startDuration=startDurtion*1000;
                         long durationUs = (long) (duration * 1000);
                         option.setCutDurationUs(startDuration, durationUs+startDuration);
-                       execute.addVideoLayer(option);
-//                        float scale=videoLayer.getLayerWidth()/(float) execute.getPadWidth();
-//                     videoLayer.setScale(scale);
+                     VideoFrameLayer videoLayer=  execute.addVideoLayer(option);
+                     videoLayer.setScaleType(LSOScaleType.VIDEO_SCALE_TYPE);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
