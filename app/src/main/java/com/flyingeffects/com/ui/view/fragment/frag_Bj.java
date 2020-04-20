@@ -1,11 +1,13 @@
 package com.flyingeffects.com.ui.view.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -20,10 +22,13 @@ import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.FagBjMvpView;
+import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.FagBjMvpPresenter;
+import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
+import com.shixing.sxve.ui.albumType;
 import com.yanzhenjie.album.AlbumFile;
 
 import java.util.ArrayList;
@@ -199,25 +204,39 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
 
                 if(BaseConstans.hasLogin()){
                     statisticsEventAffair.getInstance().setFlag(getActivity(), "6_customize_bj");
-                    AlbumManager.chooseVideo(getActivity(), 1, SELECTALBUM, new AlbumChooseCallback() {
+
+                    AlbumManager.chooseAlbum(getActivity(), 1, SELECTALBUM, new AlbumChooseCallback() {
                         @Override
                         public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
                             if(!isCancel){
-                                Intent intent = new Intent(getActivity(), VideoCropActivity.class);
-                                intent.putExtra("videoPath",paths.get(0));
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(intent);
+                                if (TextUtils.isEmpty(paths.get(0))) {
+                                    String pathType = GetPathTypeModel.getInstance().getMediaType(paths.get(0));
+                                    if (albumType.isVideo(pathType)) {
+                                        Intent intent = new Intent(getActivity(), VideoCropActivity.class);
+                                        intent.putExtra("videoPath",paths.get(0));
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(intent);
+                                    }else {
+                                        Intent intent = new Intent(getActivity(), CreationTemplateActivity.class);
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("paths", paths.get(0));
+                                        bundle.putSerializable("bjTemplateTitle", "");
+                                        bundle.putString("originalPath", paths.get(0));
+                                        bundle.putString("video_path", "");
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        intent.putExtra("Message", bundle);
+                                        startActivity(intent);
+                                    }
+                                }
                             }
+
                         }
-                    }, "");
+                    },"");
                 }else{
                     Intent intent=new Intent(getActivity(), LoginActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(intent);
-
                 }
-
-
                 break;
 
                 default:

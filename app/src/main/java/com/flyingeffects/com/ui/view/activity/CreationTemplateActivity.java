@@ -22,6 +22,7 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
+import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
@@ -29,6 +30,7 @@ import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.HorizontalListView;
 import com.lansosdk.box.ViewLayerRelativeLayout;
+import com.shixing.sxve.ui.albumType;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 import com.suke.widget.SwitchButton;
 
@@ -62,7 +64,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 //    @BindView(R.id.list_thumb)
 //    RecyclerView list_thumb;
 
-    private boolean isIntoPause=false;
+    private boolean isIntoPause = false;
 
     @BindView(R.id.iv_list)
     HorizontalListView hListView;
@@ -94,18 +96,20 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 当前预览状态，是否在播放中
      */
     private boolean isPlaying = false;
-    /**;
+    /**
+     * ;
      * 是否初始化过播放器
      */
-    private boolean isInitVideoLayer=false;
+    private boolean isInitVideoLayer = false;
     private int allVideoDuration;
     private int thumbCount;
-    private boolean isPlayComplate=false;
+    private boolean isPlayComplate = false;
     /**
      * 只有背景模板才有，自定义的话这个值为""
      */
     private String title;
-    private long nowChooseSeek=1000;
+    private long nowChooseSeek = 1000;
+    private boolean nowFileTypeIsVideo = false;
 
     @Override
     protected int getLayoutId() {
@@ -122,24 +126,45 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             imgPath = bundle.getString("paths");
             videoPath = bundle.getString("video_path");
             originalPath = bundle.getString("originalPath");
-            title=bundle.getString("bjTemplateTitle");
+            title = bundle.getString("bjTemplateTitle");
+        }
+
+        if (TextUtils.isEmpty(originalPath)) {
+            String pathType = GetPathTypeModel.getInstance().getMediaType(originalPath);
+            if (albumType.isVideo(pathType)) {
+                nowFileTypeIsVideo = true;
+            }
         }
         presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout);
+        if(!TextUtils.isEmpty(videoPath)){
+            //有视频的时候，初始化视频值
+            initVideoPlayer();
+        }
+        presenter.requestStickersList();
+    }
+
+
+
+    /**
+     * description ：初始化视频播放器，一般是用户下载了背景后才能调用
+     * creation date: 2020/4/20
+     * user : zhangtongju
+     */
+    private void initVideoPlayer() {
         videoPlayer.setUp(videoPath, true, "");
         GSYVideoType.setShowType(GSYVideoType.SCREEN_TYPE_DEFAULT);
         videoPlayerInit();
-        videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> {
-//            list_thumb.scrollToPosition(0);
-            isPlayComplate=true;
+        videoPlayer.setVideoAllCallBack(new
+                VideoPlayerCallbackForTemplate(isSuccess ->
+        {
+            isPlayComplate = true;
             endTimer();
             isPlaying = false;
             presenter.showGifAnim(false);
             videoPlayerInit();
             nowStateIsPlaying(false);
         }));
-        presenter.requestStickersList();
     }
-
 
     private void videoPlayerInit() {
         videoPlayer.startPlayLogic();
@@ -151,7 +176,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     protected void onResume() {
         super.onResume();
-        if(isIntoPause){
+        if (isIntoPause) {
             videoPlayerInit();
         }
     }
@@ -164,17 +189,17 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         switchButton.setOnCheckedChangeListener(new SwitchButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(SwitchButton view, boolean isChecked) {
-                if(isChecked){
-                    if(UiStep.isFromDownBj){
-                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"5_mb_bj_Cutoutopen");
-                    }else{
-                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"6_customize_bj_Cutoutopen");
+                if (isChecked) {
+                    if (UiStep.isFromDownBj) {
+                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_Cutoutopen");
+                    } else {
+                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_Cutoutopen");
                     }
-                }else{
-                    if(UiStep.isFromDownBj){
-                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"5_mb_bj_Cutoutoff");
-                    }else{
-                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"6_customize_bj_Cutoutoff");
+                } else {
+                    if (UiStep.isFromDownBj) {
+                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_Cutoutoff");
+                    } else {
+                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_Cutoutoff");
                     }
                 }
                 presenter.CheckedChanged(isChecked);
@@ -183,7 +208,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker,R.id.iv_top_back})
+    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker, R.id.iv_top_back})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
@@ -191,41 +216,41 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     videoToPause();
                     endTimer();
                 }
-                if(!TextUtils.isEmpty(title)){
-                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this,"5_mb_bj_save",title);
-                }else{
-                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this,"6_customize_bj_save");
+                if (!TextUtils.isEmpty(title)) {
+                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "5_mb_bj_save", title);
+                } else {
+                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_save");
                 }
                 presenter.toSaveVideo();
                 break;
 
             case R.id.ll_play:
-                if(!DoubleClick.getInstance().isFastDoubleClick()){
+                if (!DoubleClick.getInstance().isFastDoubleClick()) {
                     if (isPlaying) {
-                        isIntoPause=false;
-                        isPlayComplate=false;
+                        isIntoPause = false;
+                        isPlayComplate = false;
                         videoToPause();
                         presenter.showGifAnim(false);
                         isPlaying = false;
                         nowStateIsPlaying(false);
                     } else {
                         nowStateIsPlaying(true);
-                        if(isPlayComplate){
+                        if (isPlayComplate) {
                             videoPlayer.startPlayLogic();
-                            nowChooseSeek=1000;
-                            isIntoPause=false;
-                        }else{
-                            if(isInitVideoLayer){
-                                if(!isIntoPause){
+                            nowChooseSeek = 1000;
+                            isIntoPause = false;
+                        } else {
+                            if (isInitVideoLayer) {
+                                if (!isIntoPause) {
                                     videoPlayer.onVideoResume(false);
-                                }else{
+                                } else {
                                     videoPlayer.startPlayLogic();
-                                    isIntoPause=false;
-                                    isInitVideoLayer=true;
+                                    isIntoPause = false;
+                                    isInitVideoLayer = true;
                                 }
-                            }else{
-                                isIntoPause=false;
-                                isInitVideoLayer=true;
+                            } else {
+                                isIntoPause = false;
+                                isInitVideoLayer = true;
                                 videoPlayer.startPlayLogic();
                             }
                         }
@@ -249,17 +274,17 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     presenter.showGifAnim(false);
                     nowStateIsPlaying(false);
                 }
-                if(UiStep.isFromDownBj){
+                if (UiStep.isFromDownBj) {
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "5_mb_bj_material");
-                }else{
+                } else {
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_material");
                 }
 
                 //添加新的贴纸，这里的贴纸就是用户选择的贴纸
                 AlbumManager.chooseImageAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel, albumFileList) -> {
-                    Log.d("OOM","isCancel="+isCancel);
-                    if(!isCancel){
-                        CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this,"", tailorPaths -> {
+                    Log.d("OOM", "isCancel=" + isCancel);
+                    if (!isCancel) {
+                        CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this, "", tailorPaths -> {
                             presenter.addNewSticker(tailorPaths.get(0), paths.get(0));
                         });
                         manage.ToMatting(paths);
@@ -315,7 +340,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     protected void onPause() {
         videoToPause();
-        isIntoPause=true;
+        isIntoPause = true;
         super.onPause();
     }
 
@@ -342,7 +367,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         LogUtil.d("OOM", "videoProgress=" + progress);
 
         if (!isPlaying) {
-            nowChooseSeek=progress;
+            nowChooseSeek = progress;
             videoPlayer.seekTo(progress);
         }
     }
@@ -373,9 +398,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private int listWidth;
 
     private void startTimer() {
-        int screenWidth=screenUtil.getScreenWidth(this);
+        int screenWidth = screenUtil.getScreenWidth(this);
         //真实长度
-         listWidth=(screenWidth-screenUtil.dip2px(this,43))*2;
+        listWidth = (screenWidth - screenUtil.dip2px(this, 43)) * 2;
         if (timer != null) {
             timer.purge();
             timer.cancel();
@@ -390,13 +415,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             @Override
             public void run() {
                 Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                    int nowDuration=videoPlayer.getCurrentPositionWhenPlaying();
+                    int nowDuration = videoPlayer.getCurrentPositionWhenPlaying();
 //                    LogUtil.d("OOM","allVideoDuration="+allVideoDuration);
 //                    LogUtil.d("OOM","nowDuration="+nowDuration);
-                    float percent = nowDuration / (float)allVideoDuration;
-                    LogUtil.d("OOM","比例="+percent);
-                    int widthX= (int) (percent*listWidth);
-                    LogUtil.d("OOM","width="+widthX);
+                    float percent = nowDuration / (float) allVideoDuration;
+                    LogUtil.d("OOM", "比例=" + percent);
+                    int widthX = (int) (percent * listWidth);
+                    LogUtil.d("OOM", "width=" + widthX);
                     hListView.scrollTo(widthX);
                 });
             }

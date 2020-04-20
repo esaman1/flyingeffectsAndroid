@@ -18,4 +18,6 @@ public interface PreviewMvpView {
     void hasLogin(boolean hasLogin);
 
     void downVideoSuccess(String path,String imagePath);
+
+    void getVideoCover(String filePath,String originalPath,String videoPath);
 }

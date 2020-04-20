@@ -58,4 +58,14 @@ public class AllStickerData implements Serializable {
 
     private String path;
 
+    public boolean isVideo() {
+        return isVideo;
+    }
+
+    public void setVideo(boolean video) {
+        isVideo = video;
+    }
+
+    private boolean isVideo=false;
+
 }

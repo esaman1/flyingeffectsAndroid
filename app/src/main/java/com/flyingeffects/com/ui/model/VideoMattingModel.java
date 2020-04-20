@@ -8,7 +8,6 @@ import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.util.TimeUtils;
 import android.text.TextUtils;
 
 import com.flyingeffects.com.base.BaseApplication;
@@ -19,7 +18,6 @@ import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
-import com.flyingeffects.com.ui.view.activity.TemplateActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.timeUtils;

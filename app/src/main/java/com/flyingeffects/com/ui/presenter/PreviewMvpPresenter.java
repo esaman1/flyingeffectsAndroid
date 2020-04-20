@@ -24,6 +24,10 @@ public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCall
         PreviewModel.DownVideo(path,imagePath,id);
     }
 
+    public void GetVideoCover(String imagePath,String videoPath){
+        PreviewModel.GetVideoCover(imagePath,videoPath);
+    }
+
 
     public void requestUserInfo(){
         PreviewModel.requestUserInfo();
@@ -82,5 +86,10 @@ public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCall
     @Override
     public void downVideoSuccess(String path,String imagePath) {
         PreviewView.downVideoSuccess(path,imagePath);
+    }
+
+    @Override
+    public void getVideoCover(String filePath,String originalPath,String videoPath) {
+        PreviewView.getVideoCover(filePath,originalPath,videoPath);
     }
 }

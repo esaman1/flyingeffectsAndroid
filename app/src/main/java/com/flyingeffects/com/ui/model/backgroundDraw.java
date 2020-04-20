@@ -15,6 +15,7 @@ import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.box.VideoFrameLayer;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.lansosdk.videoeditor.VideoOneDo2;
+import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.IOException;
@@ -68,11 +69,21 @@ public class backgroundDraw {
             setMainLayer();
             for (AllStickerData item : list
             ) {
-                if (item.getPath().endsWith(".gif")) {
-                    addGifLayer(item);
-                } else {
-                    addBitmapLayer(item);
+
+                String pathType= GetPathTypeModel.getInstance().getMediaType(item.getPath());
+                if (albumType.isVideo(pathType)) {
+                    addCanversLayer(item);
+                }else{
+                    if (item.getPath().endsWith(".gif")) {
+                        addGifLayer(item);
+                    } else {
+                        addBitmapLayer(item);
+                    }
                 }
+
+
+
+
             }
             execute.start();
         } catch (Exception e) {
@@ -169,6 +180,54 @@ public class backgroundDraw {
      //   float posY = (bpLayer.getPadHeight() + bpLayer.getLayerHeight()) * percentY - bpLayer.getLayerHeight() / 2.0f;
         bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight()*percentY);
 
+    }
+
+
+
+
+    private  void addCanversLayer(AllStickerData stickerItem){
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Bitmap bp = BitmapFactory.decodeFile(stickerItem.getPath());
+        BitmapLayer bpLayer = execute.addBitmapLayer(bp);
+
+        float layerScale = DRAWPADWIDTH /(float) bpLayer.getLayerWidth();
+        LogUtil.d("OOM", "图层的缩放为" +layerScale+ "");
+        float stickerScale = stickerItem.getScale();
+        LogUtil.d("OOM", "gif+图层的缩放为" +layerScale * stickerScale+ "");
+        bpLayer.setScale(layerScale * stickerScale);
+        LogUtil.d("OOM", "mvLayerW=" + bpLayer.getLayerWidth() + "");
+        LogUtil.d("OOM", "mvLayerpadW=" + bpLayer.getPadWidth() + "");
+        int rotate = (int) stickerItem.getRotation();
+        if (rotate < 0) {
+            rotate = 360 + rotate;
+        }
+        LogUtil.d("OOM", "rotate=" + rotate);
+        bpLayer.setRotate(rotate);
+        LogUtil.d("OOM", "Scale=" + stickerItem.getScale() + "");
+        //蓝松这边规定，0.5就是刚刚居中的位置
+        float percentX = stickerItem.getTranslationX();
+//        float posX = (bpLayer.getPadWidth() + bpLayer.getLayerWidth()) * percentX - bpLayer.getLayerWidth() / 2.0f;
+        bpLayer.setPosition(bpLayer.getPadWidth()*percentX , bpLayer.getPositionY());
+
+
+        float percentY = stickerItem.getTranslationy();
+        LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
+        //   float posY = (bpLayer.getPadHeight() + bpLayer.getLayerHeight()) * percentY - bpLayer.getLayerHeight() / 2.0f;
+        bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight()*percentY);
     }
 
 

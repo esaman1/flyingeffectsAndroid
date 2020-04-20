@@ -1,9 +1,12 @@
 package com.flyingeffects.com.ui.model;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.os.Handler;
 import android.text.TextUtils;
 
+import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.UserInfo;
@@ -11,19 +14,29 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.BitmapManager;
+import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
 import com.flyingeffects.com.ui.interfaces.model.PreviewMvpCallback;
+import com.flyingeffects.com.ui.view.activity.TemplateActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.utils.faceUtil.ConUtil;
+import com.glidebitmappool.GlideBitmapPool;
+import com.glidebitmappool.internal.BitmapPool;
+import com.megvii.segjni.SegJni;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 import rx.Observable;
 import rx.functions.Action1;
@@ -42,7 +55,7 @@ public class PreviewMvpModel {
         this.context = context;
         this.callback = callback;
         fileManager = new FileManager();
-        mVideoFolder=fileManager.getFileCachePath(context, "downVideo");
+        mVideoFolder = fileManager.getFileCachePath(context, "downVideo");
     }
 
 
@@ -50,40 +63,50 @@ public class PreviewMvpModel {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-    public void DownVideo(String path,String imagePath,String id){
-        String videoName= mVideoFolder + File.separator + id + "synthetic.mp4";
-        File File=new File(videoName);
-        if(File.exists()){
-            callback.downVideoSuccess(videoName,imagePath);
+    public void DownVideo(String path, String imagePath, String id) {
+        String videoName = mVideoFolder + File.separator + id + "synthetic.mp4";
+        File File = new File(videoName);
+        if (File.exists()) {
+            callback.downVideoSuccess(videoName, imagePath);
             return;
         }
 
         Observable.just(path).subscribeOn(Schedulers.io()).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
-                DownloadVideoManage manage=new DownloadVideoManage(new DownloadVideoManage.downloadSuccess() {
+                DownloadVideoManage manage = new DownloadVideoManage(new DownloadVideoManage.downloadSuccess() {
                     @Override
                     public void isSuccess(boolean isSuccess) {
-                        callback.downVideoSuccess(videoName,imagePath);
+                        callback.downVideoSuccess(videoName, imagePath);
                     }
                 });
-                manage.DownloadVideo(path,videoName);
+                manage.DownloadVideo(path, videoName);
             }
         });
 
     }
 
 
+    /**
+     * description ：得到视频的封面
+     * creation date: 2020/4/20
+     * user : zhangtongju
+     */
+    public void GetVideoCover(String originalPath, String videoPath) {
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(originalPath);
+        Bitmap mBitmap = retriever.getFrameAtTime(0);
+        String fileName = mVideoFolder + File.separator + UUID.randomUUID() + ".png";
+        BitmapManager.getInstance().saveBitmapToPath(mBitmap, fileName, isSuccess -> {
+            CompressionCuttingManage manage = new CompressionCuttingManage(context, "", false, tailorPaths -> {
+                callback.getVideoCover(tailorPaths.get(0),originalPath,videoPath);
+            });
+            List mattingPath=new ArrayList();
+            mattingPath.add(fileName);
+            manage.ToMatting(mattingPath);
+            GlideBitmapPool.putBitmap(mBitmap);
+        });
+    }
 
 
     public void requestTemplateDetail(String templateId) {
@@ -129,23 +152,13 @@ public class PreviewMvpModel {
     }
 
 
-
-
-
-
-
-
-
-
-
-
     /**
      * description ：
      * creation date: 2020/3/24
      * param : template_type 1 muban  2背景
      * user : zhangtongju
      */
-    public void collectTemplate(String templateId, String title,String template_type) {
+    public void collectTemplate(String templateId, String title, String template_type) {
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", templateId);
         params.put("token", BaseConstans.GetUserToken());

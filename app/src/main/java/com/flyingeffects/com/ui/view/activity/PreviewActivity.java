@@ -488,7 +488,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
 
     /**
-     * description ：下载视频成功后跳转到裁剪视频页面
+     * description ：下载视频成功后跳转到创作界面
      * creation date: 2020/3/20
      * user : zhangtongju
      */
@@ -496,17 +496,35 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void downVideoSuccess(String videoPath, String imagePath) {
         WaitingDialog.closePragressDialog();
         Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-            Intent intent = new Intent(PreviewActivity.this, CreationTemplateActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putString("paths", imagePath);
-            bundle.putSerializable("bjTemplateTitle", templateItem.getTitle());
-            bundle.putString("originalPath", originalImagePath.get(0));
-            bundle.putString("video_path", videoPath);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra("Message", bundle);
-            startActivity(intent);
-            setResult(Activity.RESULT_OK, intent);
+            if( originalImagePath.get(0).equals(imagePath)){
+                //源图地址和剪切之后的地址完全一样，那说明只有一个情况，就是当前选择的素材是视频的情况，那么需要去得到视频的第一针，然后传过去
+                    Presenter.GetVideoCover(imagePath,videoPath);
+            }else{
+                intoCreationTemplateActivity(imagePath,videoPath,originalImagePath.get(0));
+            }
         });
+    }
+
+
+
+    private void intoCreationTemplateActivity(String imagePath,String videoPath,String originalPath){
+        Intent intent = new Intent(PreviewActivity.this, CreationTemplateActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("paths", imagePath);
+        bundle.putSerializable("bjTemplateTitle", templateItem.getTitle());
+        bundle.putString("originalPath",originalPath );
+        bundle.putString("video_path", videoPath);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("Message", bundle);
+        startActivity(intent);
+        setResult(Activity.RESULT_OK, intent);
+    }
+
+
+
+    @Override
+    public void getVideoCover(String filePath,String originalPath,String videoPath) {
+        intoCreationTemplateActivity(filePath,videoPath,originalPath);
     }
 
 
