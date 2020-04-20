@@ -33,6 +33,14 @@ import java.util.List;
 import butterknife.BindView;
 import rx.Observable;
 
+
+
+/**
+ * description ：背景页面，背景栏目下面模板列表，
+ * creation date: 2020/4/20
+ * param :
+ * user : zhangtongju
+ */
 public class fragBjItem extends BaseFragment   {
 
     private int perPageCount=10;

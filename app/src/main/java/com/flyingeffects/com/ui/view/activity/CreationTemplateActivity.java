@@ -115,7 +115,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     protected void initView() {
-        ((TextView) findViewById(R.id.tv_top_submit)).setText("保存");
+        ((TextView) findViewById(R.id.tv_top_submit)).setText("预览效果");
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("Message");
         if (bundle != null) {

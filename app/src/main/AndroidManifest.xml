@@ -100,6 +100,14 @@
 
         </activity>
 
+
+
+
+        <activity
+            android:name="com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.VideoCropActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

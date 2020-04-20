@@ -474,7 +474,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void hasLogin(boolean hasLogin) {
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
             //来做背景页面
-            AlbumManager.chooseImageAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
+            AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
         } else {
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMSEARCH)) {
                 statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "4_search_make", templateItem.getTitle());
