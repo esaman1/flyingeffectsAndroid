@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.model;
 
 import android.content.Context;
+import android.os.Handler;
 import android.text.TextUtils;
 
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
@@ -244,7 +245,7 @@ public class PreviewMvpModel {
 
                     } catch (Exception e) {
                         isDownZipUrl = false;
-                        ToastUtil.showToast("下载异常，请重试");
+                        new Handler().post(() -> ToastUtil.showToast("下载异常，请重试"));
                         LogUtil.d("onVideoAdError", "Exception=" + e.getMessage());
                     }
                     super.run();

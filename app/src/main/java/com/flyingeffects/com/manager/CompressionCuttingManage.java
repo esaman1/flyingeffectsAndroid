@@ -140,7 +140,10 @@ public class CompressionCuttingManage {
         this.allPaths = allPaths;
         downSuccessNum = 0;
         listForFaceMatting.clear();
-        downImage(allPaths.get(0));
+        if(allPaths!=null&&allPaths.size()>0){
+            downImage(allPaths.get(0));
+        }
+
 
     }
 
