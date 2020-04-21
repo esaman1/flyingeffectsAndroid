@@ -3,18 +3,21 @@ package com.flyingeffects.com.ui.model;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.LogUtil;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.ExtractVideoFrame;
 import com.lansosdk.videoeditor.MediaInfo;
+import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
 
 import java.io.File;
@@ -41,12 +44,17 @@ public class videoGetFrameModel {
     private isSuccess callback;
     private FileManager fileManager;
     private String nowUseFile;
+    /**
+     * 专门用来存储已经抠图的文件夹
+     */
+//    private String faceMattingFolder;
 
     public videoGetFrameModel(Context context, List<String> videoPath, isSuccess callback) {
         this.context = context;
         this.videoPath = videoPath;
         this.callback = callback;
         fileManager = new FileManager();
+//        faceMattingFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceMattingFolder");
         extractFrameFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "ExtractFrame");
         dialog = new WaitingDialogProgressNowAnim(context);
         dialog.openProgressDialog();
@@ -100,15 +108,19 @@ public class videoGetFrameModel {
                 //设置提取多少帧
                 mExtractFrame.setExtractSomeFrame(allFrame);
                 mExtractFrame.setOnExtractCompletedListener(v -> {
-                    mExtractFrame.release();
-                    mExtractFrame = null;
-                    if (videoPath.size() == nowExtractVideoNum) {
-                        //完成
-                        callback.isExtractSuccess(true);
-                    } else {
-                        ToExtractFrame(videoPath.get(nowExtractVideoNum), nowUseFile);
+                    LogUtil.d("OOM2", "提取完成" + allFrame);
+                    for (int i = 1; i < BaseConstans.THREADCOUNT; i++) {
+                        //最后需要补的帧
+                        frameCount++;
+                        downImageForBitmap(null, frameCount);
                     }
-
+                    LogUtil.d("OOM2", "frameCount的值为" + frameCount);
+                    dialog.closePragressDialog();
+                    SegJni.nativeReleaseImageBuffer();
+                    SegJni.nativeReleaseSegHandler();
+                    if (callback != null) {
+                        callback.isExtractSuccess(true);
+                    }
                 });
                 //设置处理进度监听.
                 //当前帧的画面回调,, ptsUS:当前帧的时间戳,单位微秒. 拿到图片后,建议放到ArrayList中,不要直接在这里处理.
@@ -118,9 +130,8 @@ public class videoGetFrameModel {
                         progress = (int) ((frameCount / (float) allFrame) * 100);
                         handler.sendEmptyMessage(1);
                     });
-                    LogUtil.d("OOM", frameCount + "帧");
-                    String fileName = nowUseFile + File.separator + name + frameCount + ".png";
-                    BitmapManager.getInstance().saveBitmapToPath(bmp, fileName, isSuccess -> GlideBitmapPool.putBitmap(bmp));
+                    LogUtil.d("OOM2", frameCount + "帧");
+                    downImageForBitmap(bmp, frameCount);
                 });
                 frameCount = 0;
                 //开始执行. 或者你可以从指定地方开始解码.mExtractFrame.start(10*1000*1000);则从视频的10秒处开始提取.
@@ -137,6 +148,25 @@ public class videoGetFrameModel {
             }
         };
 
+
+    private int downSuccessNum;
+    private MattingImage mattingImage = new MattingImage();
+    private void downImageForBitmap(Bitmap OriginBitmap, int frameCount) {
+        downSuccessNum++;
+        String fileName = nowUseFile + File.separator + frameCount + ".png";
+        LogUtil.d("OOM2", "正在抠图" + downSuccessNum);
+        mattingImage.mattingImageForMultipleForLucency(OriginBitmap, frameCount, (isSuccess, bitmap) -> {
+            if (isSuccess) {
+                BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, isSuccess1 -> GlideBitmapPool.putBitmap(
+                        bitmap));
+            } else {
+                LogUtil.d("OOM2", "bitmap=null");
+            }
+
+        });
+
+        LogUtil.d("OOM2", "allFrame-1=" + allFrame + "downSuccessNum=?" + downSuccessNum);
+    }
 
         interface isSuccess {
 

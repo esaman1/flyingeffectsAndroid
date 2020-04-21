@@ -15,12 +15,10 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.DataCleanManager;
-import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.model.VideoMattingModel;
 import com.flyingeffects.com.ui.model.videoCutDurationForVideoOneDo;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.glidebitmappool.GlideBitmapPool;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -35,7 +33,6 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
-import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -214,15 +211,12 @@ public class TemplateCutVideoActivity extends BaseActivity {
     public void onMyClick(View v) {
         switch (v.getId()) {
             case R.id.iv_close:
-                this.finish();
-                break;
             case R.id.iv_back:
                 this.finish();
                 break;
 
 
             case R.id.iv_correct:
-
 
                 File file = new File(videoPath);
                 if (file.exists()) {

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.util.Log;
+import android.view.View;
 
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.enity.AllStickerData;
@@ -56,13 +57,14 @@ public class backgroundDraw {
     }
 
     public void toSaveVideo(ArrayList<AllStickerData> list) {
+        LogUtil.d("OOM2","进入到了最后渲染");
         waitingProgress.openProgressDialog();
         try {
             execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, (long) (duration * 1000));
             execute.setFrameRate(FRAME_RATE);
             execute.setEncodeBitrate(5 * 1024 * 1024);
             execute.setOnLanSongSDKErrorListener(message -> {
-                LogUtil.d("OOM","错误信息为"+message);
+                LogUtil.d("OOM2","错误信息为"+message);
             });
             execute.setOnLanSongSDKProgressListener((l, i) -> {
 //                waitingProgress.setProgress(i + "%");
@@ -77,7 +79,6 @@ public class backgroundDraw {
                 Log.d("OOM", "exportPath=" + exportPath);
             });
             setMainLayer();
-
 
             for (int i=0;i<list.size();i++){
                 AllStickerData item=list.get(i);
@@ -117,6 +118,7 @@ public class backgroundDraw {
             option = new LSOVideoOption(videoPath);
             VideoFrameLayer bgLayer=  execute.addVideoLayer(option);
             bgLayer.setScaledToPadSize();
+            LogUtil.d("OOM","主图层添加完毕");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -197,10 +199,14 @@ public class backgroundDraw {
     private float preTime;
     private int nowChooseImageIndex = 0;
     private  void addCanversLayer(AllStickerData stickerItem,int i){
-
-        Bitmap bp = BitmapFactory.decodeFile(stickerItem.getPath());
+        LogUtil.d("OOM","开始添加CanversLayer");
+        String path=ExtractFramegFolder+"/"+(i+1);
+        LogUtil.d("OOM","path"+path);
+        List<File> getMattingList = FileManager.listFileSortByModifyTime(path);
+        LogUtil.d("OOM","第一张图片地址为"+getMattingList.get(0).getPath());
+        Bitmap bp = BitmapFactory.decodeFile(getMattingList.get(0).getPath());
+        LogUtil.d("OOM","图片宽为"+bp.getWidth());
         BitmapLayer bpLayer = execute.addBitmapLayer(bp);
-
         float layerScale = DRAWPADWIDTH /(float) bpLayer.getLayerWidth();
         LogUtil.d("OOM", "图层的缩放为" +layerScale+ "");
         float stickerScale = stickerItem.getScale();
@@ -223,9 +229,8 @@ public class backgroundDraw {
         LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
         //   float posY = (bpLayer.getPadHeight() + bpLayer.getLayerHeight()) * percentY - bpLayer.getLayerHeight() / 2.0f;
         bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight()*percentY);
-        String path=ExtractFramegFolder+"/"+(i+1);
-        List<File> getMattingList = FileManager.listFileSortByModifyTime(path);
-        preTime = duration *1000/ (float) getMattingList.size();
+
+        preTime = stickerItem.getDuration() *1000/ (float) getMattingList.size();
         nowProgressTime=preTime;
         CanvasLayer canvasLayer = execute.addCanvasLayer();
         canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
@@ -237,6 +242,8 @@ public class backgroundDraw {
                     nowProgressTime = preTime + nowProgressTime;
                     Bitmap firstBitmap1 = BitmapFactory.decodeFile(getMattingList.get(nowChooseImageIndex).getPath());
                     bpLayer.switchBitmap(firstBitmap1);
+                }else{
+                    bpLayer.setVisibility(View.GONE);
                 }
             }
         });

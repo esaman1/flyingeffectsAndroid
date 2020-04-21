@@ -88,7 +88,8 @@ public class MattingImage {
 
 
     /**
-     * 多线程抠图，這樣做的目的有 ，正常情况下，如果线程开启第4的时候，那么4个的时候返回第一个的数据，5,2 如果是8的时候，那么8返回第一个数据，
+     * 多线程抠图，這樣做的目的有 ，正常情况下，如果线程开启第4的时候，那么4个的时候返回第一个的数据，
+     * 5,2 如果是8的时候，那么8返回第一个数据，这里的多线程抠图扣得是灰度图
      */
 
     private int BitmapW;
@@ -133,6 +134,45 @@ public class MattingImage {
             LogUtil.d("mattingImage", "不接受");
         }
 
+    }
+
+
+    public void mattingImageForMultipleForLucency(Bitmap OriginBitmap, int index, mattingStatus callback) {
+        if (bpList.size() >= BaseConstans.THREADCOUNT) {
+            bpList.remove(0);
+            LogUtil.d("mattingImage", "队列只有" + bpList.size());
+        }
+        bpList.add(OriginBitmap);
+        if (index == 1) {
+            BitmapW = OriginBitmap.getWidth();
+            BitmapH = OriginBitmap.getHeight();
+            SegJni.nativeCreateImageBuffer(BitmapW, BitmapH);
+            bitmapWH = new int[2];
+            bitmapWH[0] = BitmapW;
+            bitmapWH[1] = BitmapH;
+        }
+
+        byte[] imageByte;
+        if (OriginBitmap != null) {
+            LogUtil.d("mattingImage", "渲染图片地址为index=" + OriginBitmap);
+            imageByte = SegJni.nativeSegCamera(getYUVByBitmap(OriginBitmap), BitmapW, BitmapH, 0, 0, 0, bitmapWH);
+        } else {
+            imageByte = SegJni.nativeSegCamera(getYUVByBitmap(bpList.get(0)), BitmapW, BitmapH, 0, 0, 0, bitmapWH);
+        }
+
+        if (index >= BaseConstans.THREADCOUNT - 1) {
+            if (imageByte != null) {
+                Bitmap newBitmap = SegResultHandleManage.setBitmapAlpha(bpList.get(0), imageByte);//setBlackWhite
+                LogUtil.d("mattingImage", "接受源图片地址" + bpList.get(0));
+                callback.isSuccess(true, newBitmap);
+            } else {
+                LogUtil.d("mattingImage", "不接受");
+                callback.isSuccess(false, OriginBitmap);
+                LogUtil.d("oom", "IMAGEBYTE==NULL");
+            }
+        } else {
+            LogUtil.d("mattingImage", "不接受");
+        }
 
     }
 

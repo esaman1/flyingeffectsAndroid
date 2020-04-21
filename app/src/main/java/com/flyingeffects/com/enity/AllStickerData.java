@@ -78,4 +78,15 @@ public class AllStickerData implements Serializable {
 
     private boolean isVideo=false;
 
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
+    private long duration;
+
 }

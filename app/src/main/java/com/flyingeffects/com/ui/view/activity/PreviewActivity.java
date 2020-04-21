@@ -526,6 +526,12 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
 
 
+
+    /**
+     * description ：获得视频第一针，这里用来背景模板页面，用户选择的是视频的情况
+     * creation date: 2020/4/21
+     * user : zhangtongju
+     */
     @Override
     public void getVideoCover(String filePath,String originalPath,String videoPath) {
         intoCreationTemplateActivity(filePath,videoPath,originalPath);

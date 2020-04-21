@@ -42,6 +42,7 @@ import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
+import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateCutVideoActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -663,6 +664,7 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
 
+    //需要裁剪视频的集合
     private ArrayList<videoType> cutVideoPathList = new ArrayList<>();
     private backgroundDraw backgroundDraw;
     WaitingDialogProgressNowAnim progressNowAnim;
@@ -672,14 +674,16 @@ public class CreationTemplateMvpModel {
         cutSuccessNum = 0;
         cutVideoPathList.clear();
         backgroundDraw = new backgroundDraw(context, mVideoPath, path -> {
-            String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
-            try {
-                FileUtil.copyFile(new File(path), albumPath);
-                albumBroadcast(albumPath);
-                showKeepSuccessDialog(albumPath);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+
+            Intent intent=new Intent(context, CreationTemplatePreviewActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.putExtra("path",path);
+            context.startActivity(intent);
+
+
+
+
         });
 
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
@@ -698,6 +702,9 @@ public class CreationTemplateMvpModel {
                 if (isMatting) {
                     stickerData.setPath(stickerView.getClipPath());
                     stickerData.setOriginalPath(stickerView.getOriginalPath());
+                    VideoInfo   materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
+                    stickerData.setDuration(materialVideoInfo.getDuration());
+
                 } else { //这里也会出现蓝松一样的，相同地址只有一个图层
                     stickerData.setPath(stickerView.getOriginalPath());
                 }
@@ -710,7 +717,7 @@ public class CreationTemplateMvpModel {
 
         for (int i = 0; i < listAllSticker.size(); i++) {
             if (listAllSticker.get(i).isVideo()) {
-                cutVideoPathList.add(  new videoType(listAllSticker.get(i).getOriginalPath(),i)  );
+                cutVideoPathList.add(  new videoType(listAllSticker.get(i).getOriginalPath(),i,listAllSticker.get(i).getDuration())  );
             }
         }
         if(cutVideoPathList.size()==0){
@@ -720,7 +727,7 @@ public class CreationTemplateMvpModel {
             //有视频的情况下需要先裁剪视频，然后取帧
             progressNowAnim=new WaitingDialogProgressNowAnim(context);
             progressNowAnim.openProgressDialog();
-            cutVideo(cutVideoPathList.get(0), videoInfo.getDuration());
+            cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(),cutVideoPathList.get(0).getDuration());
         }
 
 
@@ -730,9 +737,21 @@ public class CreationTemplateMvpModel {
     private int cutSuccessNum;
     private ArrayList<String>cutList=new ArrayList<>();
 
-    private void cutVideo(videoType videoType, long duration) {
+
+    /**
+     * description ：裁剪视频，如果视频小于模板时长，那么就裁剪当前时长，如果视频大于当前模板时长，那么就裁剪模板时长
+     * creation date: 2020/4/21
+     * user : zhangtongju
+     */
+    private void cutVideo(videoType videoType, long duration,long materialDuration) {
+        long needDuration;
+        if(duration<materialDuration){
+            needDuration=duration;
+        }else{
+            needDuration=materialDuration;
+        }
         cutList.clear();
-        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, duration , videoType.getPath(), 0, new videoCutDurationForVideoOneDo.isSuccess() {
+        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, needDuration , videoType.getPath(), 0, new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
             public void progresss(int progress) {
                progressNowAnim.setProgress("正在裁剪中"+progress+"%");
@@ -746,51 +765,24 @@ public class CreationTemplateMvpModel {
                 sticker.setPath(path);
                 cutSuccessNum++;
                 if (cutSuccessNum == cutVideoPathList.size()) {
+                    LogUtil.d("OOM2","裁剪完成，准备抠图");
                     progressNowAnim.closePragressDialog();
                     //全部裁剪完成之后需要去把视频裁剪成全部帧
                     videoGetFrameModel getFrameModel=new videoGetFrameModel(context, cutList, new videoGetFrameModel.isSuccess() {
                         @Override
                         public void isExtractSuccess(boolean isSuccess) {
-                            backgroundDraw.toSaveVideo(listAllSticker);
+                           backgroundDraw.toSaveVideo(listAllSticker);
                         }
                     });
                     getFrameModel.ToExtractFrame(cutList.get(0),"");
                 } else {
-                    cutVideo(cutVideoPathList.get(cutSuccessNum), videoInfo.getDuration());
+                    cutVideo(cutVideoPathList.get(cutSuccessNum), videoInfo.getDuration(),cutVideoPathList.get(cutSuccessNum).getDuration());
                 }
             }
         });
     }
 
 
-    /**
-     * description ：通知相册更新
-     * date: ：2019/8/16 14:24
-     * author: 张同举 @邮箱 jutongzhang@sina.com
-     */
-    private void albumBroadcast(String outputFile) {
-        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        intent.setData(Uri.fromFile(new File(outputFile)));
-        context.sendBroadcast(intent);
-    }
-
-
-    private void showKeepSuccessDialog(String path) {
-        if (!isDestroy && !DoubleClick.getInstance().isFastDoubleClick()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder( //去除黑边
-                    new ContextThemeWrapper(context, R.style.Theme_Transparent));
-            builder.setTitle(R.string.notification);
-//            builder.setMessage(context.getString(R.string.have_saved_to_sdcard) +
-//                    "【" + path + context.getString(R.string.folder) + "】");
-            builder.setMessage("已为你保存到相册,多多分享给友友\n" + "【" + path + context.getString(R.string.folder) + "】"
-            );
-            builder.setNegativeButton(context.getString(R.string.got_it), (dialog, which) -> dialog.dismiss());
-            builder.setCancelable(true);
-            Dialog dialog = builder.show();
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.show();
-        }
-    }
 
 
     public void requestStickersList(boolean isShowDialog) {
@@ -881,8 +873,9 @@ public class CreationTemplateMvpModel {
 
     class videoType{
 
-        public videoType(String path,int position){
+        public videoType(String path,int position,long duration){
             this.path=path;
+            this.duration=duration;
             this.position=position;
         }
 
@@ -905,6 +898,16 @@ public class CreationTemplateMvpModel {
         }
 
         int position;
+
+        public long getDuration() {
+            return duration;
+        }
+
+        public void setDuration(long duration) {
+            this.duration = duration;
+        }
+
+        long duration;
     }
 
 }
