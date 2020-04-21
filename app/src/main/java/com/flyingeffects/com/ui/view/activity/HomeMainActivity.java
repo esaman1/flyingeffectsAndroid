@@ -255,6 +255,7 @@ public class HomeMainActivity extends FragmentActivity {
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("faceFolder"));
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("faceMattingFolder"));
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("ExtractFrame"));
 
         }
 

@@ -3,6 +3,7 @@ package com.flyingeffects.com.ui.view.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
@@ -170,6 +171,9 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     protected void initAction() {
         DataCleanManager.cleanExternalCache();
         DataCleanManager.cleanInternalCache(BaseApplication.getInstance());
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("ExtractFrame"));
+        }
     }
 
 
