@@ -66,7 +66,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     private String imagePath;
     private long mEndDuration;
 
-    private VideoInfo videoInfo;
+//    private VideoInfo videoInfo;
 
     @BindView(R.id.tv_start_time)
     TextView tv_start_time;
@@ -84,7 +84,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     @Override
     protected void initView() {
         imagePath = getIntent().getStringExtra("path");
-        videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
+        VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
         timeUtils = new timeUtils();
         tv_end_time.setText(timeUtils.timeParse(videoInfo.getDuration()));
         exoPlayer = ExoPlayerFactory.newSimpleInstance(CreationTemplatePreviewActivity.this, new DefaultRenderersFactory(this), new DefaultTrackSelector(), new DefaultLoadControl());
