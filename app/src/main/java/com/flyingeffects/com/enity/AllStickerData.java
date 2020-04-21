@@ -58,6 +58,16 @@ public class AllStickerData implements Serializable {
 
     private String path;
 
+    public String getOriginalPath() {
+        return originalPath;
+    }
+
+    public void setOriginalPath(String originalPath) {
+        this.originalPath = originalPath;
+    }
+
+    private String originalPath;
+
     public boolean isVideo() {
         return isVideo;
     }

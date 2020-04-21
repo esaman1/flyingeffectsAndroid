@@ -7,9 +7,12 @@ import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.util.Log;
 
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.enity.AllStickerData;
+import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.LogUtil;
 import com.lansosdk.box.BitmapLayer;
+import com.lansosdk.box.CanvasLayer;
 import com.lansosdk.box.GifLayer;
 import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.box.VideoFrameLayer;
@@ -18,8 +21,10 @@ import com.lansosdk.videoeditor.VideoOneDo2;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 蓝松后台绘制方法
@@ -35,6 +40,9 @@ public class backgroundDraw {
     private String videoPath;
     private saveCallback callback;
     private int duration;
+    //当前进度时间
+    private float nowProgressTime;
+    private String ExtractFramegFolder;
 
     public backgroundDraw(Context context, String videoPath, saveCallback callback) {
         this.context = context;
@@ -43,6 +51,8 @@ public class backgroundDraw {
         waitingProgress = new WaitingDialog_progress(context);
         duration = getRingDuring(videoPath);
         LogUtil.d("OOM", "backgroundDrawdurationF=" + duration);
+        FileManager fileManager = new FileManager();
+        ExtractFramegFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "ExtractFrame");
     }
 
     public void toSaveVideo(ArrayList<AllStickerData> list) {
@@ -67,12 +77,13 @@ public class backgroundDraw {
                 Log.d("OOM", "exportPath=" + exportPath);
             });
             setMainLayer();
-            for (AllStickerData item : list
-            ) {
 
+
+            for (int i=0;i<list.size();i++){
+                AllStickerData item=list.get(i);
                 String pathType= GetPathTypeModel.getInstance().getMediaType(item.getPath());
                 if (albumType.isVideo(pathType)) {
-                    addCanversLayer(item);
+                    addCanversLayer(item,i);
                 }else{
                     if (item.getPath().endsWith(".gif")) {
                         addGifLayer(item);
@@ -81,10 +92,9 @@ public class backgroundDraw {
                     }
                 }
 
-
-
-
             }
+
+
             execute.start();
         } catch (Exception e) {
             LogUtil.d("OOM",e.getMessage());
@@ -184,22 +194,9 @@ public class backgroundDraw {
 
 
 
-
-    private  void addCanversLayer(AllStickerData stickerItem){
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    private float preTime;
+    private int nowChooseImageIndex = 0;
+    private  void addCanversLayer(AllStickerData stickerItem,int i){
 
         Bitmap bp = BitmapFactory.decodeFile(stickerItem.getPath());
         BitmapLayer bpLayer = execute.addBitmapLayer(bp);
@@ -222,12 +219,41 @@ public class backgroundDraw {
         float percentX = stickerItem.getTranslationX();
 //        float posX = (bpLayer.getPadWidth() + bpLayer.getLayerWidth()) * percentX - bpLayer.getLayerWidth() / 2.0f;
         bpLayer.setPosition(bpLayer.getPadWidth()*percentX , bpLayer.getPositionY());
-
-
         float percentY = stickerItem.getTranslationy();
         LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
         //   float posY = (bpLayer.getPadHeight() + bpLayer.getLayerHeight()) * percentY - bpLayer.getLayerHeight() / 2.0f;
         bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight()*percentY);
+        String path=ExtractFramegFolder+"/"+(i+1);
+        List<File> getMattingList = FileManager.listFileSortByModifyTime(path);
+        preTime = duration *1000/ (float) getMattingList.size();
+        nowProgressTime=preTime;
+        CanvasLayer canvasLayer = execute.addCanvasLayer();
+        canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
+            if (currentTime > nowProgressTime) {
+                //需要切换新的图了
+                nowChooseImageIndex++;
+                if (nowChooseImageIndex < getMattingList.size()) {
+                    LogUtil.d("CanvasRunnable", "addCanvasRunnable=" + preTime + "currentTime=" + currentTime + "nowChooseImageIndex=" + nowChooseImageIndex);
+                    nowProgressTime = preTime + nowProgressTime;
+                    Bitmap firstBitmap1 = BitmapFactory.decodeFile(getMattingList.get(nowChooseImageIndex).getPath());
+                    bpLayer.switchBitmap(firstBitmap1);
+                }
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
 

@@ -697,6 +697,7 @@ public class CreationTemplateMvpModel {
                 //来自相册，不是gif
                 if (isMatting) {
                     stickerData.setPath(stickerView.getClipPath());
+                    stickerData.setOriginalPath(stickerView.getOriginalPath());
                 } else { //这里也会出现蓝松一样的，相同地址只有一个图层
                     stickerData.setPath(stickerView.getOriginalPath());
                 }
@@ -709,12 +710,14 @@ public class CreationTemplateMvpModel {
 
         for (int i = 0; i < listAllSticker.size(); i++) {
             if (listAllSticker.get(i).isVideo()) {
-                cutVideoPathList.add(  new videoType(listAllSticker.get(i).getPath(),i)  );
+                cutVideoPathList.add(  new videoType(listAllSticker.get(i).getOriginalPath(),i)  );
             }
         }
         if(cutVideoPathList.size()==0){
+            //都不是视频的情况下，就直接渲染
             backgroundDraw.toSaveVideo(listAllSticker);
         }else{
+            //有视频的情况下需要先裁剪视频，然后取帧
             progressNowAnim=new WaitingDialogProgressNowAnim(context);
             progressNowAnim.openProgressDialog();
             cutVideo(cutVideoPathList.get(0), videoInfo.getDuration());
@@ -725,9 +728,11 @@ public class CreationTemplateMvpModel {
 
 
     private int cutSuccessNum;
+    private ArrayList<String>cutList=new ArrayList<>();
 
     private void cutVideo(videoType videoType, long duration) {
-        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, duration * 1000, videoType.getPath(), 0, new videoCutDurationForVideoOneDo.isSuccess() {
+        cutList.clear();
+        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, duration , videoType.getPath(), 0, new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
             public void progresss(int progress) {
                progressNowAnim.setProgress("正在裁剪中"+progress+"%");
@@ -736,17 +741,20 @@ public class CreationTemplateMvpModel {
             @Override
             public void isSuccess(boolean isSuccess, String path) {
                 int position=videoType.getPosition();
+                cutList.add(path);
                 AllStickerData sticker=listAllSticker.get(position);
                 sticker.setPath(path);
                 cutSuccessNum++;
                 if (cutSuccessNum == cutVideoPathList.size()) {
                     progressNowAnim.closePragressDialog();
-                    //全部裁剪完成
-
-                    //还是先需要去把视频裁剪成全部帧
-//                    videoGetFrameModel getFrameModel=new videoGetFrameModel(context,);
-
-                  //  backgroundDraw.toSaveVideo(listAllSticker);
+                    //全部裁剪完成之后需要去把视频裁剪成全部帧
+                    videoGetFrameModel getFrameModel=new videoGetFrameModel(context, cutList, new videoGetFrameModel.isSuccess() {
+                        @Override
+                        public void isExtractSuccess(boolean isSuccess) {
+                            backgroundDraw.toSaveVideo(listAllSticker);
+                        }
+                    });
+                    getFrameModel.ToExtractFrame(cutList.get(0),"");
                 } else {
                     cutVideo(cutVideoPathList.get(cutSuccessNum), videoInfo.getDuration());
                 }
