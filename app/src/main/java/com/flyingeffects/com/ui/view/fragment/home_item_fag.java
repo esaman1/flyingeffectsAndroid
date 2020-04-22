@@ -43,7 +43,7 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View
     @BindView(R.id.lin_show_nodata)
     LinearLayout lin_show_nodata;
     /**
-     * 0 表示来做模板，1表示来自背景
+     * 0 表示来做模板，1表示来自背景 3表示来自背景下载
      */
     private int fromType;
 
@@ -92,8 +92,10 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View
                 Intent intent =new Intent(getActivity(), PreviewActivity.class);
                 if(fromType==0){
                     intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
-                }else{
+                }else if(fromType==1){
                     intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+                }else if(fromType==3){
+                    intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
                 }
                 intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
                 startActivity(intent);

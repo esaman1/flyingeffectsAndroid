@@ -1,26 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/home_base_balk_color"
-    android:orientation="vertical">
+    android:fitsSystemWindows="true">
 
 
     <RelativeLayout
+        android:id="@+id/relative_top"
         android:layout_width="match_parent"
+        android:background="@color/home_base_balk_color"
         android:layout_height="wrap_content">
-
 
         <ImageView
             android:id="@+id/iv_back"
             android:layout_width="wrap_content"
             android:padding="5dp"
-            android:src="@mipmap/back"
-            android:layout_height="wrap_content"/>
-
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/back" />
 
         <com.flyco.tablayout.SlidingTabLayout
             android:id="@+id/tl_tabs"
@@ -28,8 +27,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:background="@color/home_base_balk_color"
             android:layout_marginTop="7dp"
             android:layout_marginBottom="7dp"
+            android:layout_centerVertical="true"
             app:tl_indicator_color="#5694FA"
             app:tl_indicator_corner_radius="@dimen/dp_5"
             app:tl_indicator_height="@dimen/dp_4"
@@ -41,16 +42,15 @@
             app:tl_textSelectColor="#FFFFFF"
             app:tl_textUnselectColor="#BBBBBB"
             app:tl_textsize="@dimen/sp_16" />
-
-
     </RelativeLayout>
 
 
     <android.support.v4.view.ViewPager
-        android:layout_marginTop="15dp"
         android:id="@+id/viewpager_bj"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/relative_top"
+        android:layout_marginTop="15dp" />
 
 
-</LinearLayout>
+</RelativeLayout>

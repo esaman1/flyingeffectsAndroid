@@ -100,6 +100,10 @@
 
         </activity>
 
+        <activity
+            android:name="com.flyingeffects.com.ui.view.activity.ChooseBackgroundTemplateActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
 
 
 

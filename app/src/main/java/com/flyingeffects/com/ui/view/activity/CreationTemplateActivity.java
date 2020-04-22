@@ -17,6 +17,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.UiStep;
+import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -27,20 +28,25 @@ import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.HorizontalListView;
+import com.flyingeffects.com.view.MattingVideoEnity;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.shixing.sxve.ui.albumType;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 import com.suke.widget.SwitchButton;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -122,6 +128,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @BindView(R.id.ll_green_background)
     LinearLayout ll_green_background;
 
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_creation_template_edit;
@@ -130,6 +137,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         ((TextView) findViewById(R.id.tv_top_submit)).setText("预览效果");
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("Message");
@@ -221,7 +229,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker, R.id.iv_top_back})
+    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker, R.id.iv_top_back,R.id.tv_background})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
@@ -301,8 +309,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     if (!isCancel) {
 
                         //如果是选择的视频，就需要得到封面，然后设置在matting里面去，然后吧原图设置为视频地址
-
-
                         String path=paths.get(0);
                         String pathType= GetPathTypeModel.getInstance().getMediaType(path);
                         if (albumType.isImage(pathType)) {
@@ -318,6 +324,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     }
 
                 }, "");
+
+
+            case R.id.tv_background:
+                Intent intent =new Intent(this,ChooseBackgroundTemplateActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
                 break;
 
             default:
@@ -401,6 +413,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         destroyTimer();
         videoPlayer.onVideoPause();
         videoPlayer.release();
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
@@ -526,6 +539,22 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             task = null;
         }
     }
+
+
+    /**
+     * description ：裁剪页面裁剪成功后返回的数据
+     * creation date: 2020/4/13
+     * user : zhangtongju
+     */
+    @Subscribe
+    public void onEventMainThread(DownVideoPath event) {
+        videoPath=event.getPath();
+        initVideoPlayer();
+        presenter.setmVideoPath(videoPath);
+        presenter.initVideoProgressView(hListView);
+    }
+
+
 
 
 }

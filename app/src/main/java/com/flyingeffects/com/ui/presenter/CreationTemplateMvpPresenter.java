@@ -21,6 +21,10 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel = new CreationTemplateMvpModel(context, this,mVideoPath,viewLayerRelativeLayout);
     }
 
+    public void setmVideoPath(String path){
+        creationTemplatemodel.setmVideoPath(path);
+    }
+
     public void CheckedChanged(boolean isChecked){
         creationTemplatemodel.CheckedChanged(isChecked);
     }

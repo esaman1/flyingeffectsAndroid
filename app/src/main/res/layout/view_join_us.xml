@@ -12,6 +12,7 @@
 
 
     <RelativeLayout
+        android:id="@+id/ll_relative_0"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:gravity="center_vertical"
@@ -59,6 +60,7 @@
 
 
     <LinearLayout
+        android:id="@+id/ll_relative_1"
         android:layout_width="match_parent"
         android:background="@drawable/template_add_gift"
         android:layout_alignParentBottom="true"
@@ -96,6 +98,43 @@
 
 
     </LinearLayout>
+
+
+
+
+
+    <RelativeLayout
+        android:id="@+id/ll_relative_2"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:src="@mipmap/add_local_material"
+            android:layout_height="wrap_content"/>
+
+
+
+        <TextView
+            android:id="@+id/tv_add_local_material"
+            android:textColor="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/base_blue_bk"
+            android:layout_centerHorizontal="true"
+            android:paddingStart="24dp"
+            android:paddingRight="24dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:textSize="15sp"
+            android:text="上传本地背景"
+            android:layout_height="wrap_content"/>
+
+
+    </RelativeLayout>
 
 
 

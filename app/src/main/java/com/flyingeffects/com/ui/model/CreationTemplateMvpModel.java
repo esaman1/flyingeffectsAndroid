@@ -1,8 +1,6 @@
 package com.flyingeffects.com.ui.model;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,7 +11,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +27,6 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.commonlyModel.GetVideoCover;
-import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
@@ -43,18 +39,15 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
-import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
-import com.flyingeffects.com.ui.view.activity.TemplateCutVideoActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.HorizontalListView;
-import com.flyingeffects.com.view.MattingVideoEnity;
 import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.glidebitmappool.GlideBitmapPool;
@@ -74,7 +67,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -122,6 +114,18 @@ public class CreationTemplateMvpModel {
         FileManager fileManager = new FileManager();
         mGifFolder = fileManager.getFileCachePath(context, "gifFolder");
         mImageCopyFolder = fileManager.getFileCachePath(context, "imageCopy");
+    }
+
+
+
+    /**
+     * description ：单独设置背景视频，有可能用户第一次进来不选择背景视频
+     * creation date: 2020/4/22
+     * user : zhangtongju
+     */
+    public void setmVideoPath(String mVideoPath){
+        this.mVideoPath = mVideoPath;
+        videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
     }
 
 
@@ -793,9 +797,7 @@ public class CreationTemplateMvpModel {
                 //没选择背景默认裁剪10秒
                 cutVideo(cutVideoPathList.get(0), 1000*10, cutVideoPathList.get(0).getDuration());
             }
-
         }
-
 
     }
 

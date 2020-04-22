@@ -81,14 +81,14 @@
 
 
     <LinearLayout
+        android:id="@+id/ll_green_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/ll_green_background"
-        android:visibility="gone"
         android:layout_above="@+id/ll_progress"
-        android:gravity="center"
         android:layout_marginTop="50dp"
-        android:orientation="horizontal">
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/iv_green_background"
@@ -229,17 +229,37 @@
         android:id="@+id/view_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_above="@+id/tv_tiezhi"
+        android:layout_above="@+id/ll_bottom"
         android:background="#606074" />
 
-    <TextView
-        android:id="@+id/tv_tiezhi"
+
+    <LinearLayout
+        android:id="@+id/ll_bottom"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:text="贴纸"
-        android:textColor="#5496FF" />
+        android:orientation="horizontal">
+
+
+        <TextView
+            android:id="@+id/tv_background"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="背景"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/tv_tiezhi"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="贴纸"
+            android:textColor="#5496FF" />
+
+    </LinearLayout>
 
 
 </RelativeLayout>
