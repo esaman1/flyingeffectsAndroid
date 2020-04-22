@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -473,6 +474,7 @@ public class CreationTemplateMvpModel {
         stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
         stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
         stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
+
         stickView.setComeFromAlbum(isFromAubum);
         if (isFromAubum) {
             stickView.setClipPath(path);
@@ -480,6 +482,7 @@ public class CreationTemplateMvpModel {
         }
         if (hasReplace) {
             stickView.setLeftBottomBitmap(context.getDrawable(R.mipmap.sticker_change));
+            stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
         }
         if (isCopy && copyStickerView != null) {
             //来做复制或者来自联系点击下面的item
@@ -710,10 +713,10 @@ public class CreationTemplateMvpModel {
             stickerData.setScale(stickerView.getScale());
             stickerData.setTranslationX(stickerView.getTranslationX());
             stickerData.setTranslationy(stickerView.getTranslationY());
-            String pathType = GetPathTypeModel.getInstance().getMediaType(stickerView.getOriginalPath());
-            stickerData.setVideo(albumType.isVideo(pathType));
-
-
+            if(!TextUtils.isEmpty(stickerView.getOriginalPath())){
+                String pathType = GetPathTypeModel.getInstance().getMediaType(stickerView.getOriginalPath());
+                stickerData.setVideo(albumType.isVideo(pathType));
+            }
             if (stickerView.getComeFrom()) {
                 //来自相册，不是gif
                 if (isMatting) {
@@ -788,22 +791,16 @@ public class CreationTemplateMvpModel {
                 cutSuccessNum++;
                 if (cutSuccessNum == cutVideoPathList.size()) {
                     LogUtil.d("OOM2", "裁剪完成，准备抠图");
-                    LogUtil.d("OOM2", "cutList="+cutList.size());
                     progressNowAnim.closePragressDialog();
                     //全部裁剪完成之后需要去把视频裁剪成全部帧
                     videoGetFrameModel getFrameModel = new videoGetFrameModel(context, cutList, new videoGetFrameModel.isSuccess() {
                         @Override
                         public void isExtractSuccess(boolean isSuccess) {
-//                            getFrameSuccessNum++;
-//                            LogUtil.d("OOM2", "getFrameSuccessNum="+getFrameSuccessNum+"cutList.size()="+cutList.size());
-//                            if(getFrameSuccessNum==cutList.size()){
                                 LogUtil.d("OOM2", "全部抠图完成");
                                 backgroundDraw.toSaveVideo(listAllSticker);
-//                            }
                         }
                     });
                     getFrameModel.startExecute();
-//                    getFrameModel.ToExtractFrame(cutList.get(0), "");
                 } else {
                     cutVideo(cutVideoPathList.get(cutSuccessNum), videoInfo.getDuration(), cutVideoPathList.get(cutSuccessNum).getDuration());
                 }

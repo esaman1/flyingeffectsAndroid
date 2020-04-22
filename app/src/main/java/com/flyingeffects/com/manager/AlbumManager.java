@@ -90,6 +90,7 @@ public class AlbumManager {
                         return attributes.equals("image/gif")||attributes.equals("image/svg+xml")||attributes.equals("image/x-icon");
                     }
                 })
+                .afterFilterVisibility(false)
 
                 .cameraVideoQuality(1)
                 .cameraVideoLimitDuration(Integer.MAX_VALUE)

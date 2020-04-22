@@ -205,11 +205,11 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                 if(BaseConstans.hasLogin()){
                     statisticsEventAffair.getInstance().setFlag(getActivity(), "6_customize_bj");
 
-                    AlbumManager.chooseAlbum(getActivity(), 1, SELECTALBUM, new AlbumChooseCallback() {
+                    AlbumManager.chooseVideo(getActivity(), 1, SELECTALBUM, new AlbumChooseCallback() {
                         @Override
                         public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
                             if(!isCancel){
-                                if (TextUtils.isEmpty(paths.get(0))) {
+                                if (!TextUtils.isEmpty(paths.get(0))) {
                                     String pathType = GetPathTypeModel.getInstance().getMediaType(paths.get(0));
                                     if (albumType.isVideo(pathType)) {
                                         Intent intent = new Intent(getActivity(), VideoCropActivity.class);

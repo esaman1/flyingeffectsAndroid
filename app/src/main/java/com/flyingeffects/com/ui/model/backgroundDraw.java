@@ -40,8 +40,7 @@ public class backgroundDraw {
     private String videoPath;
     private saveCallback callback;
     private int duration;
-    //当前进度时间
-    private float nowProgressTime;
+    private int intoCanvesCount;
     private String ExtractFramegFolder;
 
     public backgroundDraw(Context context, String videoPath, saveCallback callback) {
@@ -51,6 +50,7 @@ public class backgroundDraw {
         waitingProgress = new WaitingDialog_progress(context);
         duration = getRingDuring(videoPath);
         LogUtil.d("OOM", "backgroundDrawdurationF=" + duration);
+        intoCanvesCount=0;
         FileManager fileManager = new FileManager();
         ExtractFramegFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "ExtractFrame");
     }
@@ -83,7 +83,8 @@ public class backgroundDraw {
                 AllStickerData item=list.get(i);
                 String pathType= GetPathTypeModel.getInstance().getMediaType(item.getPath());
                 if (albumType.isVideo(pathType)) {
-                    addCanversLayer(item,i);
+                    intoCanvesCount++;
+                    addCanversLayer(item,intoCanvesCount);
                 }else{
                     if (item.getPath().endsWith(".gif")) {
                         addGifLayer(item);
@@ -199,9 +200,11 @@ public class backgroundDraw {
 
     private  void addCanversLayer(AllStickerData stickerItem,int i){
         int[] nowChooseImageIndex = {0};
+        //当前进度时间
+         float[] nowProgressTime={0};
         float preTime;
         LogUtil.d("OOM","开始添加CanversLayer");
-        String path=ExtractFramegFolder+"/"+(i+1);
+        String path=ExtractFramegFolder+"/"+i;
         LogUtil.d("OOM","path"+path);
         List<File> getMattingList = FileManager.listFileSortByModifyTime(path);
         LogUtil.d("OOM","第一张图片地址为"+getMattingList.get(0).getPath());
@@ -232,15 +235,15 @@ public class backgroundDraw {
         bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight()*percentY);
 
         preTime = stickerItem.getDuration() *1000/ (float) getMattingList.size();
-        nowProgressTime=preTime;
+        nowProgressTime[0]=preTime;
         CanvasLayer canvasLayer = execute.addCanvasLayer();
         canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
-            if (currentTime > nowProgressTime) {
+            if (currentTime >  nowProgressTime[0]) {
                 //需要切换新的图了
                 nowChooseImageIndex[0]++;
                 if ( nowChooseImageIndex[0] < getMattingList.size()) {
                     LogUtil.d("CanvasRunnable", "addCanvasRunnable=" + preTime + "currentTime=" + currentTime + "nowChooseImageIndex=" + nowChooseImageIndex);
-                    nowProgressTime = preTime + nowProgressTime;
+                    nowProgressTime[0] = preTime + nowProgressTime[0];
                     Bitmap firstBitmap1 = BitmapFactory.decodeFile(getMattingList.get( nowChooseImageIndex[0]).getPath());
                     bpLayer.switchBitmap(firstBitmap1);
                 }else{
