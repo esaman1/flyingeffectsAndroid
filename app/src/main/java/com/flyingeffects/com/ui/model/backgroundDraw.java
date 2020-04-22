@@ -4,7 +4,9 @@ package com.flyingeffects.com.ui.model;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -39,6 +41,9 @@ public class backgroundDraw {
     private WaitingDialog_progress waitingProgress;
     private String videoPath;
     private saveCallback callback;
+    /**
+     * 渲染视频时长，默认为10s
+     */
     private int duration;
     private int intoCanvesCount;
     private String ExtractFramegFolder;
@@ -48,7 +53,11 @@ public class backgroundDraw {
         this.videoPath = videoPath;
         this.callback = callback;
         waitingProgress = new WaitingDialog_progress(context);
-        duration = getRingDuring(videoPath);
+        if(!TextUtils.isEmpty(videoPath)){
+            duration = getRingDuring(videoPath);
+        }else{
+            duration=10*1000;
+        }
         LogUtil.d("OOM", "backgroundDrawdurationF=" + duration);
         intoCanvesCount=0;
         FileManager fileManager = new FileManager();
@@ -77,8 +86,11 @@ public class backgroundDraw {
                 execute.release();
                 Log.d("OOM", "exportPath=" + exportPath);
             });
-            setMainLayer();
-
+            if(!TextUtils.isEmpty(videoPath)){
+                setMainLayer();
+            }else{
+                execute.setBackgroundColor(Color.parseColor("#00FF00"));
+            }
             for (int i=0;i<list.size();i++){
                 AllStickerData item=list.get(i);
                 String pathType= GetPathTypeModel.getInstance().getMediaType(item.getPath());

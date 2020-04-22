@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.flyingeffects.com.R;
@@ -91,6 +93,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private String originalPath;
     private String imgPath;
     private CreationTemplateMvpPresenter presenter;
+    /**
+     * 默认背景，也是是否选择了背景的重要判断，
+     */
     private String videoPath;
     /**
      * 当前预览状态，是否在播放中
@@ -110,6 +115,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private String title;
     private long nowChooseSeek = 1000;
     private boolean nowFileTypeIsVideo = false;
+
+    @BindView(R.id.iv_green_background)
+    ImageView iv_green_background;
+
+    @BindView(R.id.ll_green_background)
+    LinearLayout ll_green_background;
 
     @Override
     protected int getLayoutId() {
@@ -139,6 +150,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if(!TextUtils.isEmpty(videoPath)){
             //有视频的时候，初始化视频值
             initVideoPlayer();
+        }else{
+            showGreenBj();
         }
         presenter.requestStickersList();
     }
@@ -235,23 +248,25 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         nowStateIsPlaying(false);
                     } else {
                         nowStateIsPlaying(true);
-                        if (isPlayComplate) {
-                            videoPlayer.startPlayLogic();
-                            nowChooseSeek = 1000;
-                            isIntoPause = false;
-                        } else {
-                            if (isInitVideoLayer) {
-                                if (!isIntoPause) {
-                                    videoPlayer.onVideoResume(false);
+                        if(!TextUtils.isEmpty(videoPath)){
+                            if (isPlayComplate) {
+                                videoPlayer.startPlayLogic();
+                                nowChooseSeek = 1000;
+                                isIntoPause = false;
+                            } else {
+                                if (isInitVideoLayer) {
+                                    if (!isIntoPause) {
+                                        videoPlayer.onVideoResume(false);
+                                    } else {
+                                        videoPlayer.startPlayLogic();
+                                        isIntoPause = false;
+                                        isInitVideoLayer = true;
+                                    }
                                 } else {
-                                    videoPlayer.startPlayLogic();
                                     isIntoPause = false;
                                     isInitVideoLayer = true;
+                                    videoPlayer.startPlayLogic();
                                 }
-                            } else {
-                                isIntoPause = false;
-                                isInitVideoLayer = true;
-                                videoPlayer.startPlayLogic();
                             }
                         }
                         isPlaying = true;
@@ -345,8 +360,32 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             RelativeLayoutParams.height = oriHeight;
             viewLayerRelativeLayout.setLayoutParams(RelativeLayoutParams);
         });
-        hListView.post(() -> presenter.initVideoProgressView(hListView));
+
+        if(!TextUtils.isEmpty(videoPath)){
+            hListView.post(() -> presenter.initVideoProgressView(hListView));
+        }
     }
+
+
+
+
+    private void showGreenBj(){
+        ll_green_background.setVisibility(View.VISIBLE);
+       float oriRatio = 9f / 16f;
+        //保证获得mContainer大小不为0
+        LinearLayout.LayoutParams RelativeLayoutParams = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        //如果没有选择下载视频，那么就是自定义视频入口进来，那么默认为绿布
+        iv_green_background.post(() -> {
+            int oriHeight = iv_green_background.getHeight();
+            RelativeLayoutParams.width = Math.round(1f * oriHeight * oriRatio);
+            RelativeLayoutParams.height = oriHeight;
+            iv_green_background.setLayoutParams(RelativeLayoutParams);
+
+        });
+      hListView.post(() -> presenter.initVideoProgressView(hListView));
+    }
+
+
 
 
     @Override
@@ -413,7 +452,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private Timer timer;
     private TimerTask task;
     private int listWidth;
-
+    private long nowTime=5;
     private void startTimer() {
         int screenWidth = screenUtil.getScreenWidth(this);
         //真实长度
@@ -432,14 +471,30 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             @Override
             public void run() {
                 Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                    int nowDuration = videoPlayer.getCurrentPositionWhenPlaying();
-//                    LogUtil.d("OOM","allVideoDuration="+allVideoDuration);
-//                    LogUtil.d("OOM","nowDuration="+nowDuration);
-                    float percent = nowDuration / (float) allVideoDuration;
-                    LogUtil.d("OOM", "比例=" + percent);
-                    int widthX = (int) (percent * listWidth);
-                    LogUtil.d("OOM", "width=" + widthX);
-                    hListView.scrollTo(widthX);
+                    if(!TextUtils.isEmpty(videoPath)){
+                        int nowDuration = videoPlayer.getCurrentPositionWhenPlaying();
+                        float percent = nowDuration / (float) allVideoDuration;
+                        LogUtil.d("OOM", "比例=" + percent);
+                        int widthX = (int) (percent * listWidth);
+                        LogUtil.d("OOM", "width=" + widthX);
+                        hListView.scrollTo(widthX);
+                    }else{
+                        //没有选择背景
+                        nowTime=nowTime+5;
+                        LogUtil.d("OOM", "nowTime=" + nowTime);
+                        float percent = nowTime / (float) 10000;
+                        LogUtil.d("OOM", "比例=" + percent);
+                        int widthX = (int) (percent * listWidth);
+                        hListView.scrollTo(widthX);
+                        if(percent>=1){
+                            nowTime=5;
+                            isPlayComplate = true;
+                            endTimer();
+                            isPlaying = false;
+                            presenter.showGifAnim(false);
+                            nowStateIsPlaying(false);
+                        }
+                    }
                 });
             }
         };

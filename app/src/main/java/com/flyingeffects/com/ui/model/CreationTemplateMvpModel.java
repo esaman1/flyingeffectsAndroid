@@ -115,7 +115,10 @@ public class CreationTemplateMvpModel {
         this.callback = callback;
         this.mVideoPath = mVideoPath;
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
-        videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
+
+        if(!TextUtils.isEmpty(mVideoPath)){
+            videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
+        }
         FileManager fileManager = new FileManager();
         mGifFolder = fileManager.getFileCachePath(context, "gifFolder");
         mImageCopyFolder = fileManager.getFileCachePath(context, "imageCopy");
@@ -633,8 +636,12 @@ public class CreationTemplateMvpModel {
     public void initVideoProgressView(HorizontalListView hListView) {
         this.hListView = hListView;
         //动态设置距离左边的位置
-        initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), videoInfo.getDuration(), videoInfo.getDuration() / 2, mVideoPath);
 
+        if(videoInfo!=null){
+            initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), videoInfo.getDuration(), videoInfo.getDuration() / 2, mVideoPath);
+        }else{
+            initSingleThumbSize(720, 1280, 1000*10, 1000*10 / 2, "");
+        }
     }
 
 
@@ -657,16 +664,22 @@ public class CreationTemplateMvpModel {
             mTimeUs[i] = i * interval * 1000;
         }
         mTotalWidth = thumbWidth * thumbCount;
-        callback.getVideoDuration(videoInfo.getDuration(), thumbCount);
+        callback.getVideoDuration((int) duration, thumbCount);
         int dp40 = screenUtil.dip2px(context, 43);
         int screenWidth = screenUtil.getScreenWidth((Activity) context);
-        listViewForVideoThumbAdapter adapter = new listViewForVideoThumbAdapter(context, mTimeUs, Uri.fromFile(new File(mVideoPath)), thumbWidth, listHeight, screenWidth / 2, screenWidth / 2 - dp40);
+        listViewForVideoThumbAdapter adapter;
+        if(!TextUtils.isEmpty(mVideoPath)){
+             adapter = new listViewForVideoThumbAdapter(context, mTimeUs, Uri.fromFile(new File(mVideoPath)), thumbWidth, listHeight, screenWidth / 2, screenWidth / 2 - dp40);
+        }else{
+            adapter = new listViewForVideoThumbAdapter(context, mTimeUs, null, thumbWidth, listHeight, screenWidth / 2, screenWidth / 2 - dp40);
+        }
+
         hListView.setAdapter(adapter);
         int realWidth = (screenWidth - screenUtil.dip2px(context, 43)) * 2;
         LogUtil.d("OOM", "realWidth=" + realWidth);
         hListView.setOnScrollListener(mNextX -> {
             float preF = mNextX / realWidth;
-            int frame = (int) (videoInfo.getDuration() * preF);
+            int frame = (int) (duration * preF);
             LogUtil.d("OOM", "preF=" + preF);
             LogUtil.d("OOM", "frame=" + frame);
             callback.setgsyVideoProgress(frame);
@@ -773,7 +786,14 @@ public class CreationTemplateMvpModel {
             progressNowAnim = new WaitingDialogProgressNowAnim(context);
             progressNowAnim.openProgressDialog();
             cutList.clear();
-            cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration());
+
+            if(videoInfo!=null){
+                cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration());
+            }else{
+                //没选择背景默认裁剪10秒
+                cutVideo(cutVideoPathList.get(0), 1000*10, cutVideoPathList.get(0).getDuration());
+            }
+
         }
 
 
@@ -827,7 +847,11 @@ public class CreationTemplateMvpModel {
                     });
                     getFrameModel.startExecute();
                 } else {
-                    cutVideo(cutVideoPathList.get(cutSuccessNum), videoInfo.getDuration(), cutVideoPathList.get(cutSuccessNum).getDuration());
+                    if(videoInfo!=null){
+                        cutVideo(cutVideoPathList.get(cutSuccessNum), videoInfo.getDuration(), cutVideoPathList.get(cutSuccessNum).getDuration());
+                    }else{
+                        cutVideo(cutVideoPathList.get(cutSuccessNum), 10*1000, cutVideoPathList.get(cutSuccessNum).getDuration());
+                    }
                 }
             }
         });

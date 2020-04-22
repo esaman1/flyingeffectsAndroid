@@ -77,11 +77,21 @@ public class listViewForVideoThumbAdapter extends BaseAdapter {
         }
         RequestOptions options = RequestOptions.frameOf(mTimePositions[position]);
         RequestOptions cacheOptions = RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE);
-        Glide.with(holder.image.getContext())
-                .load(mUri)
-                .apply(options)
-                .apply(cacheOptions)
-                .into(holder.image);
+
+        if(mUri!=null){
+            Glide.with(holder.image.getContext())
+                    .load(mUri)
+                    .apply(options)
+                    .apply(cacheOptions)
+                    .into(holder.image);
+        }else{
+            Glide.with(holder.image.getContext())
+                    .load(R.mipmap.green)
+                    .apply(options)
+                    .apply(cacheOptions)
+                    .into(holder.image);
+        }
+
         if (position == mTimePositions.length - 1) {
             holder.view_right.setLayoutParams(new LinearLayout.LayoutParams(marginRight, 0));
         } else  if(position==0){

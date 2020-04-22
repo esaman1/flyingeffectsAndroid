@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.commonlyModel.GetVideoCover;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
@@ -236,28 +237,52 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
 
     @Override
     public void finishCrop(String videoPath) {
+        //自定义只能够选择素材
+        GetVideoCover getVideoCover=new GetVideoCover(this);
+        getVideoCover.getCover(videoPath, path -> Observable.just(path).subscribeOn(AndroidSchedulers.mainThread()).subscribe(cover -> {
+            Intent intent = new Intent(VideoCropActivity.this, CreationTemplateActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("paths", cover);
+            bundle.putString("originalPath",videoPath );
+            bundle.putString("video_path", "");
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("Message", bundle);
+            startActivity(intent);
+            setResult(Activity.RESULT_OK, intent);
+            finish();
 
-        AlbumManager.chooseWhichAlbum(VideoCropActivity.this, 1, 0, new AlbumChooseCallback() {
-            @Override
-            public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-                CompressionCuttingManage manage = new CompressionCuttingManage(VideoCropActivity.this,"", tailorPaths -> {
-                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                        Intent intent = new Intent(VideoCropActivity.this, CreationTemplateActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putString("paths", tailorPaths.get(0));
-                        bundle.putString("originalPath",paths.get(0) );
-                        bundle.putString("video_path", videoPath);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.putExtra("Message", bundle);
-                        startActivity(intent);
-                        setResult(Activity.RESULT_OK, intent);
-                        finish();
+        }));
 
-                    });
-                });
-                manage.ToMatting(paths);
-            }
-        }, 1, "");
+
+
+
+
+
+
+
+
+
+//        AlbumManager.chooseWhichAlbum(VideoCropActivity.this, 1, 0, new AlbumChooseCallback() {
+//            @Override
+//            public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
+//                CompressionCuttingManage manage = new CompressionCuttingManage(VideoCropActivity.this,"", tailorPaths -> {
+//                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+//                        Intent intent = new Intent(VideoCropActivity.this, CreationTemplateActivity.class);
+//                        Bundle bundle = new Bundle();
+//                        bundle.putString("paths", tailorPaths.get(0));
+//                        bundle.putString("originalPath",paths.get(0) );
+//                        bundle.putString("video_path", videoPath);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        intent.putExtra("Message", bundle);
+//                        startActivity(intent);
+//                        setResult(Activity.RESULT_OK, intent);
+//                        finish();
+//
+//                    });
+//                });
+//                manage.ToMatting(paths);
+//            }
+//        }, 1, "");
 
 
     }

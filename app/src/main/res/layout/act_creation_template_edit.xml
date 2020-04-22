@@ -61,9 +61,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:padding="8dp"
-            android:background="@drawable/base_blue_bk"
             android:layout_marginEnd="15dp"
+            android:background="@drawable/base_blue_bk"
+            android:padding="8dp"
             android:text="@string/app_name"
             android:textColor="@color/white"
             android:textSize="@dimen/text_16sp_size" />
@@ -77,9 +77,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/ll_progress"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="50dp" />
 
-      />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/ll_green_background"
+        android:visibility="gone"
+        android:layout_above="@+id/ll_progress"
+        android:gravity="center"
+        android:layout_marginTop="50dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_green_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00ff00" />
+    </LinearLayout>
 
 
     <LinearLayout
@@ -171,14 +187,11 @@
                 <!--                    />-->
 
 
-
-
-
                 <com.flyingeffects.com.view.HorizontalListView
                     android:id="@+id/iv_list"
-                    android:background="@color/home_base_balk_color"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:background="@color/home_base_balk_color" />
 
                 <ImageView
                     android:id="@+id/iv_add_sticker"
