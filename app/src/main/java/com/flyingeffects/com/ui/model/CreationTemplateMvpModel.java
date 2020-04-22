@@ -28,6 +28,8 @@ import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.adapter.listViewForVideoThumbAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.commonlyModel.GetPathType;
+import com.flyingeffects.com.commonlyModel.GetVideoCover;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -126,7 +128,7 @@ public class CreationTemplateMvpModel {
     }
 
     public void initStickerView(String imagePath, String originalPath) {
-        new Handler().postDelayed(() -> addSticker(imagePath, true, true, originalPath, false, null), 500);
+        new Handler().postDelayed(() -> addSticker(imagePath, true, true, true, originalPath, false, null), 500);
     }
 
 
@@ -154,9 +156,9 @@ public class CreationTemplateMvpModel {
         String fileName = mImageCopyFolder + File.separator + UUID.randomUUID() + ".png";
         BitmapManager.getInstance().saveBitmapToPath(mBitmap, fileName, isSuccess -> {
             CompressionCuttingManage manage = new CompressionCuttingManage(context, "", false, tailorPaths -> {
-                callback.getVideoCover(tailorPaths.get(0),path);
+                callback.getVideoCover(tailorPaths.get(0), path);
             });
-            List mattingPath=new ArrayList();
+            List mattingPath = new ArrayList();
             mattingPath.add(fileName);
             manage.ToMatting(mattingPath);
             GlideBitmapPool.putBitmap(mBitmap);
@@ -305,7 +307,7 @@ public class CreationTemplateMvpModel {
                     WaitingDialog.closePragressDialog();
                     return;
                 } else {
-                    addSticker(fileName, false, false, null, false, null);
+                    addSticker(fileName, false, false, false, null, false, null);
                     WaitingDialog.closePragressDialog();
                     return;
                 }
@@ -326,7 +328,7 @@ public class CreationTemplateMvpModel {
                 try {
                     if (path1 != null) {
                         FileUtil.copyFile(path1, fileName);
-                        addSticker(fileName, false, false, null, false, null);
+                        addSticker(fileName, false, false, false, null, false, null);
                         WaitingDialog.closePragressDialog();
                         modificationSingleItem(position);
                     } else {
@@ -362,7 +364,7 @@ public class CreationTemplateMvpModel {
                                 @Override
                                 public void succeed(boolean isSucceed) {
                                     modificationSingleItem(position);
-                                    addSticker(copyName, false, false, null, false, null);
+                                    addSticker(copyName, false, false, false, null, false, null);
                                 }
                             });
                         }
@@ -404,6 +406,7 @@ public class CreationTemplateMvpModel {
      *
      * @param path         资源地址
      * @param hasReplace   是有有替换功能，目前替换功能只针对用户从相册里面选择的，
+     * @param isFirstAdd    第一个贴纸
      * @param isFromAubum  是否来自于相册选择的素材，而不是自己点击下载的，
      * @param originalPath 如果是相册选择的，没抠图的的地址，
      * @param isCopy       是否来自复制功能
@@ -412,7 +415,7 @@ public class CreationTemplateMvpModel {
 
     int stickerViewID;
 
-    private void addSticker(String path, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView) {
+    private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView) {
         closeAllAnim();
         StickerView stickView = new StickerView(context);
         stickerViewID++;
@@ -440,19 +443,39 @@ public class CreationTemplateMvpModel {
 
 
                     //切換素材
-                    AlbumManager.chooseImageAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
-                        CompressionCuttingManage manage = new CompressionCuttingManage(context, "", tailorPaths -> {
-                            Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
-                                stickView.setOriginalPath(paths.get(0));
-                                stickView.setClipPath(s);
-                                if (!isCheckedMatting) {
-                                    stickView.changeImage(paths.get(0), false);
-                                } else {
-                                    stickView.changeImage(s, false);
-                                }
+                    AlbumManager.chooseVideo((Activity) context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
+                        if(albumType.isVideo(GetPathType.getInstance().getPathType(paths.get(0)))){
+                            GetVideoCover getVideoCover=new GetVideoCover(context);
+                            getVideoCover.getCover(paths.get(0), path1 -> {
+                                Observable.just(path1).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
+                                    stickView.setOriginalPath(paths.get(0));
+                                    stickView.setClipPath(s);
+                                    if (!isCheckedMatting) {
+                                        stickView.changeImage(paths.get(0), false);
+                                    } else {
+                                        stickView.changeImage(s, false);
+                                    }
+                                });
                             });
-                        });
-                        manage.ToMatting(paths);
+                        }else{
+                            CompressionCuttingManage manage = new CompressionCuttingManage(context, "", tailorPaths -> {
+                                Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
+                                    stickView.setOriginalPath(paths.get(0));
+                                    stickView.setClipPath(s);
+                                    if (!isCheckedMatting) {
+                                        stickView.changeImage(paths.get(0), false);
+                                    } else {
+                                        stickView.changeImage(s, false);
+                                    }
+                                });
+                            });
+                            manage.ToMatting(paths);
+                        }
+
+
+
+
+
 
                     }, "");
                 }
@@ -480,9 +503,11 @@ public class CreationTemplateMvpModel {
             stickView.setClipPath(path);
             stickView.setOriginalPath(originalPath);
         }
+        if (isFirstAdd) {
+            stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
+        }
         if (hasReplace) {
             stickView.setLeftBottomBitmap(context.getDrawable(R.mipmap.sticker_change));
-            stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
         }
         if (isCopy && copyStickerView != null) {
             //来做复制或者来自联系点击下面的item
@@ -571,7 +596,7 @@ public class CreationTemplateMvpModel {
                 FileUtil.copyFile(new File(getResPath), copyName, new FileUtil.copySucceed() {
                     @Override
                     public void isSucceed() {
-                        addSticker(finalCopyName, false, isFromAubum, getResPath, true, stickerView);
+                        addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView);
                     }
                 });
             } else {
@@ -586,7 +611,7 @@ public class CreationTemplateMvpModel {
                 FileUtil.copyFile(new File(path), copyName, new FileUtil.copySucceed() {
                     @Override
                     public void isSucceed() {
-                        addSticker(finalCopyName1, true, isFromAubum, OriginalPath, true, stickerView);
+                        addSticker(finalCopyName1, false, true, isFromAubum, OriginalPath, true, stickerView);
                     }
                 });
             }
@@ -713,7 +738,7 @@ public class CreationTemplateMvpModel {
             stickerData.setScale(stickerView.getScale());
             stickerData.setTranslationX(stickerView.getTranslationX());
             stickerData.setTranslationy(stickerView.getTranslationY());
-            if(!TextUtils.isEmpty(stickerView.getOriginalPath())){
+            if (!TextUtils.isEmpty(stickerView.getOriginalPath())) {
                 String pathType = GetPathTypeModel.getInstance().getMediaType(stickerView.getOriginalPath());
                 stickerData.setVideo(albumType.isVideo(pathType));
             }
@@ -757,7 +782,7 @@ public class CreationTemplateMvpModel {
 
     //裁剪成功数量
     private int cutSuccessNum;
-//    //得到全部帧且保存在本地数量
+    //    //得到全部帧且保存在本地数量
 //    private int getFrameSuccessNum;
     private ArrayList<String> cutList = new ArrayList<>();
 
@@ -796,8 +821,8 @@ public class CreationTemplateMvpModel {
                     videoGetFrameModel getFrameModel = new videoGetFrameModel(context, cutList, new videoGetFrameModel.isSuccess() {
                         @Override
                         public void isExtractSuccess(boolean isSuccess) {
-                                LogUtil.d("OOM2", "全部抠图完成");
-                                backgroundDraw.toSaveVideo(listAllSticker);
+                            LogUtil.d("OOM2", "全部抠图完成");
+                            backgroundDraw.toSaveVideo(listAllSticker);
                         }
                     });
                     getFrameModel.startExecute();
@@ -889,7 +914,7 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     public void addNewSticker(String path, String originalPath) {
-        Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> addSticker(path1, true, true, originalPath, false, null));
+        Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> addSticker(path1, false, true, true, originalPath, false, null));
 
     }
 
