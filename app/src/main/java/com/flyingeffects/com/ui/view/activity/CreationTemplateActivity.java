@@ -127,6 +127,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     LinearLayout ll_green_background;
 
 
+
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_creation_template_edit;

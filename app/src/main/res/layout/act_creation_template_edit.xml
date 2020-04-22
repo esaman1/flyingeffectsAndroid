@@ -98,13 +98,12 @@
     </LinearLayout>
 
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/ll_content_patents"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/ll_progress"
-        android:layout_marginStart="70dp"
         android:layout_marginTop="50dp"
-        android:layout_marginEnd="70dp"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -120,7 +119,7 @@
         </com.lansosdk.box.ViewLayerRelativeLayout>
 
 
-    </LinearLayout>
+    </RelativeLayout>
 
 
     <TextView
