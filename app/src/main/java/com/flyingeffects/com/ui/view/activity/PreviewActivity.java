@@ -18,6 +18,7 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
+import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
@@ -479,7 +480,9 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
             //来做背景页面
             AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
-        } else {
+        } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)){
+            Presenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId());
+        }else {
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMSEARCH)) {
                 statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "4_search_make", templateItem.getTitle());
             }
@@ -499,14 +502,22 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     public void downVideoSuccess(String videoPath, String imagePath) {
         WaitingDialog.closePragressDialog();
-        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-            if( originalImagePath.get(0).equals(imagePath)){
-                //源图地址和剪切之后的地址完全一样，那说明只有一个情况，就是当前选择的素材是视频的情况，那么需要去得到视频的第一针，然后传过去
+        if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)){
+            EventBus.getDefault().post(new DownVideoPath(videoPath));
+            finish();
+        }else{
+
+            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+                if( originalImagePath.get(0).equals(imagePath)){
+                    //源图地址和剪切之后的地址完全一样，那说明只有一个情况，就是当前选择的素材是视频的情况，那么需要去得到视频的第一针，然后传过去
                     Presenter.GetVideoCover(imagePath,videoPath);
-            }else{
-                intoCreationTemplateActivity(imagePath,videoPath,originalImagePath.get(0));
-            }
-        });
+                }else{
+                    intoCreationTemplateActivity(imagePath,videoPath,originalImagePath.get(0));
+                }
+            });
+        }
+
+
     }
 
 

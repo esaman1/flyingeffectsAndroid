@@ -69,8 +69,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     ViewLayerRelativeLayout viewLayerRelativeLayout;
 
 
-//    @BindView(R.id.list_thumb)
-//    RecyclerView list_thumb;
 
     private boolean isIntoPause = false;
 

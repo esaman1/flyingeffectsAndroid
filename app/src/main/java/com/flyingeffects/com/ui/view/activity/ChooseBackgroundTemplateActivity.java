@@ -17,6 +17,7 @@ import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.ui.view.fragment.fragBjItem;
 import com.flyingeffects.com.ui.view.fragment.home_item_fag;
 import com.flyingeffects.com.utils.ToastUtil;
 
@@ -73,7 +74,7 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
 
 
         HashMap<String, String> params = new HashMap<>();
-        Observable ob = Api.getDefault().getTemplateType(BaseConstans.getRequestHead(params));
+        Observable ob = Api.getDefault().getbackCategoryType(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<TemplateType>>(this) {
             @Override
             protected void _onError(String message) {
@@ -96,10 +97,10 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
             for (int i = 0; i < data.size(); i++) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("id", data.get(i).getId());
-                bundle.putSerializable("num", i);
                 bundle.putSerializable("from", 3);
+                bundle.putSerializable("num", i);
                 titles[i] = data.get(i).getName();
-                home_item_fag fragment = new home_item_fag();
+                fragBjItem fragment = new fragBjItem();
                 fragment.setArguments(bundle);
                 list.add(fragment);
             }

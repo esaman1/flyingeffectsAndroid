@@ -58,7 +58,7 @@ public class fragBjItem extends BaseFragment   {
     private int selectPage = 1;
 
     /**
-     * 0 表示来做模板，1表示来自背景
+     * 0 表示来做模板，1表示来自背景 3表示创作下载页面
      */
     private int fromType;
 
@@ -105,6 +105,9 @@ public class fragBjItem extends BaseFragment   {
                 Intent intent =new Intent(getActivity(), PreviewActivity.class);
                 if(fromType==0){
                     intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
+                }else if(fromType==3){
+
+                    intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
                 }else{
                     intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
                 }
