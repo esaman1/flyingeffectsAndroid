@@ -26,6 +26,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
+    public void GetVideoCover(String path){
+        creationTemplatemodel.GetVideoCover(path);
+    }
+
+
     public void scrollToPosition(int position){
         creationTemplatemodel.scrollToPosition(position);
     }
@@ -89,6 +94,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     @Override
     public void needPauseVideo() {
         creationTemplatemvpView.needPauseVideo();
+    }
+
+    @Override
+    public void getVideoCover(String path,String originalPath) {
+        creationTemplatemvpView.getVideoCover(path,originalPath);
     }
 
 

@@ -78,13 +78,18 @@ public class AlbumManager {
                 .camera(false)
                 .material_info(material_info)
                 .setMineVideoTime(duration)
-//                .filterDuration(new Filter<Long>() {
-//                    @Override
-//                    public boolean filter(Long attributes) {
-//                    LogUtil.d("OOM","时长为"+attributes);
-//                        return attributes<duration;
-//                    }
-//                })
+                .filterSize(new Filter<Long>() {
+                    @Override
+                    public boolean filter(Long attributes) {
+                        return attributes<20000;
+                    }
+                })
+                .filterMimeType(new Filter<String>() {
+                    @Override
+                    public boolean filter(String attributes) {
+                        return attributes.equals("image/gif")||attributes.equals("image/svg+xml")||attributes.equals("image/x-icon");
+                    }
+                })
 
                 .cameraVideoQuality(1)
                 .cameraVideoLimitDuration(Integer.MAX_VALUE)

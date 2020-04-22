@@ -9,11 +9,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
+import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.ExtractVideoFrame;
 import com.lansosdk.videoeditor.MediaInfo;
@@ -39,7 +41,6 @@ public class videoGetFrameModel {
     private String extractFrameFolder;
     private WaitingDialogProgressNowAnim dialog;
     private List<String> videoPath = new ArrayList<>();
-    //    int nowExecute
     private int nowExtractVideoNum;
     private isSuccess callback;
     private FileManager fileManager;
@@ -64,14 +65,47 @@ public class videoGetFrameModel {
 
 
 
+
+    /**
+     * description ：开始执行
+     * creation date: 2020/4/21
+     * user : zhangtongju
+     */
+    public void startExecute(){
+        LogUtil.d("OOM","要执行的次数为"+videoPath.size());
+        LogUtil.d("OOM","nowExtractVideoNum="+nowExtractVideoNum);
+        if(videoPath.size()==nowExtractVideoNum){
+            //全部执行完成了
+            LogUtil.d("OOM","全部搞完");
+            dialog.closePragressDialog();
+            if (callback != null) {
+                LogUtil.d("OOM","callback!=null");
+                callback.isExtractSuccess(true);
+            }else{
+                LogUtil.d("OOM","callback==null");
+            }
+        }else{
+            frameCount=0;
+            downSuccessNum=0;
+            LogUtil.d("OOM","开始取帧第"+nowExtractVideoNum+"个视频");
+            nowExtractVideoNum++;
+            SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
+            ToExtractFrame(videoPath.get(nowExtractVideoNum-1),nowExtractVideoNum+"");
+
+        }
+    }
+
+
+
+
+
     /**
      * description ： 取帧之后的文件夹，分别对应ExtractFrame里面的123。。。文件夹中，抠了多少视频，就对应对手数值
      * creation date: 2020/4/21
      * user : zhangtongju
      */
     public void ToExtractFrame(String path, String name) {
-        nowExtractVideoNum++;
-        nowUseFile=extractFrameFolder+"/"+nowExtractVideoNum;
+        nowUseFile=extractFrameFolder+"/"+name;
         File file=new File(nowUseFile);
         if (!file.exists()) {
             //通过file的mkdirs()方法创建目录中包含却不存在的文件夹
@@ -115,12 +149,10 @@ public class videoGetFrameModel {
                         downImageForBitmap(null, frameCount);
                     }
                     LogUtil.d("OOM2", "frameCount的值为" + frameCount);
-                    dialog.closePragressDialog();
+//                    dialog.closePragressDialog();
                     SegJni.nativeReleaseImageBuffer();
                     SegJni.nativeReleaseSegHandler();
-                    if (callback != null) {
-                        callback.isExtractSuccess(true);
-                    }
+                    startExecute();
                 });
                 //设置处理进度监听.
                 //当前帧的画面回调,, ptsUS:当前帧的时间戳,单位微秒. 拿到图片后,建议放到ArrayList中,不要直接在这里处理.

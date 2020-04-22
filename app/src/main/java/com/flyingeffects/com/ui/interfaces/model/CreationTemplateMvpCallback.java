@@ -15,4 +15,6 @@ public interface CreationTemplateMvpCallback {
 
     void needPauseVideo();
 
+    void getVideoCover(String path,String originalPath);
+
 }

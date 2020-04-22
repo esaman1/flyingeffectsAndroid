@@ -14,4 +14,6 @@ public interface CreationTemplateMvpView {
     void getVideoDuration(int duration,int thumbCount);
 
     void needPauseVideo();
+
+    void getVideoCover(String path,String originalPath);
 }

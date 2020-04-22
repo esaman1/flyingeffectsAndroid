@@ -281,13 +281,25 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 }
 
                 //添加新的贴纸，这里的贴纸就是用户选择的贴纸
-                AlbumManager.chooseImageAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel, albumFileList) -> {
+                AlbumManager.chooseAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel, albumFileList) -> {
                     Log.d("OOM", "isCancel=" + isCancel);
                     if (!isCancel) {
-                        CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this, "", tailorPaths -> {
-                            presenter.addNewSticker(tailorPaths.get(0), paths.get(0));
-                        });
-                        manage.ToMatting(paths);
+
+                        //如果是选择的视频，就需要得到封面，然后设置在matting里面去，然后吧原图设置为视频地址
+
+
+                        String path=paths.get(0);
+                        String pathType= GetPathTypeModel.getInstance().getMediaType(path);
+                        if (albumType.isImage(pathType)) {
+                            CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this, "", tailorPaths -> {
+                                presenter.addNewSticker(tailorPaths.get(0), paths.get(0));
+                            });
+                            manage.ToMatting(paths);
+                        }else{
+                            //贴纸选择的视频
+                            presenter.GetVideoCover(paths.get(0));
+                        }
+
                     }
 
                 }, "");
@@ -390,6 +402,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             isPlaying = false;
             nowStateIsPlaying(false);
         }
+    }
+
+    @Override
+    public void getVideoCover(String path,String originalPath) {
+        presenter.addNewSticker(path, originalPath);
     }
 
 

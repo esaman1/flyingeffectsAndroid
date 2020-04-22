@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
@@ -37,6 +38,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AlbumManager;
+import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
@@ -52,6 +54,7 @@ import com.flyingeffects.com.view.HorizontalListView;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
+import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxve.ui.adapter.TimelineAdapter;
@@ -66,6 +69,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
@@ -139,6 +143,23 @@ public class CreationTemplateMvpModel {
                 }
             }
         }
+    }
+
+
+    public void GetVideoCover(String path) {
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(path);
+        Bitmap mBitmap = retriever.getFrameAtTime(0);
+        String fileName = mImageCopyFolder + File.separator + UUID.randomUUID() + ".png";
+        BitmapManager.getInstance().saveBitmapToPath(mBitmap, fileName, isSuccess -> {
+            CompressionCuttingManage manage = new CompressionCuttingManage(context, "", false, tailorPaths -> {
+                callback.getVideoCover(tailorPaths.get(0),path);
+            });
+            List mattingPath=new ArrayList();
+            mattingPath.add(fileName);
+            manage.ToMatting(mattingPath);
+            GlideBitmapPool.putBitmap(mBitmap);
+        });
     }
 
 
@@ -668,22 +689,18 @@ public class CreationTemplateMvpModel {
     private ArrayList<videoType> cutVideoPathList = new ArrayList<>();
     private backgroundDraw backgroundDraw;
     WaitingDialogProgressNowAnim progressNowAnim;
-    private  ArrayList<AllStickerData> listAllSticker = new ArrayList<>();
-    public void toSaveVideo() {
+    private ArrayList<AllStickerData> listAllSticker = new ArrayList<>();
 
+    public void toSaveVideo() {
+        listAllSticker.clear();
         cutSuccessNum = 0;
         cutVideoPathList.clear();
         backgroundDraw = new backgroundDraw(context, mVideoPath, path -> {
-
-
-            Intent intent=new Intent(context, CreationTemplatePreviewActivity.class);
+            //成功后的回调
+            Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            intent.putExtra("path",path);
+            intent.putExtra("path", path);
             context.startActivity(intent);
-
-
-
-
         });
 
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
@@ -702,7 +719,7 @@ public class CreationTemplateMvpModel {
                 if (isMatting) {
                     stickerData.setPath(stickerView.getClipPath());
                     stickerData.setOriginalPath(stickerView.getOriginalPath());
-                    VideoInfo   materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
+                    VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
                     stickerData.setDuration(materialVideoInfo.getDuration());
 
                 } else { //这里也会出现蓝松一样的，相同地址只有一个图层
@@ -717,25 +734,29 @@ public class CreationTemplateMvpModel {
 
         for (int i = 0; i < listAllSticker.size(); i++) {
             if (listAllSticker.get(i).isVideo()) {
-                cutVideoPathList.add(  new videoType(listAllSticker.get(i).getOriginalPath(),i,listAllSticker.get(i).getDuration())  );
+                cutVideoPathList.add(new videoType(listAllSticker.get(i).getOriginalPath(), i, listAllSticker.get(i).getDuration()));
             }
         }
-        if(cutVideoPathList.size()==0){
+        if (cutVideoPathList.size() == 0) {
             //都不是视频的情况下，就直接渲染
             backgroundDraw.toSaveVideo(listAllSticker);
-        }else{
+        } else {
             //有视频的情况下需要先裁剪视频，然后取帧
-            progressNowAnim=new WaitingDialogProgressNowAnim(context);
+            progressNowAnim = new WaitingDialogProgressNowAnim(context);
             progressNowAnim.openProgressDialog();
-            cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(),cutVideoPathList.get(0).getDuration());
+            cutList.clear();
+            cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration());
         }
 
 
     }
 
 
+    //裁剪成功数量
     private int cutSuccessNum;
-    private ArrayList<String>cutList=new ArrayList<>();
+//    //得到全部帧且保存在本地数量
+//    private int getFrameSuccessNum;
+    private ArrayList<String> cutList = new ArrayList<>();
 
 
     /**
@@ -743,46 +764,52 @@ public class CreationTemplateMvpModel {
      * creation date: 2020/4/21
      * user : zhangtongju
      */
-    private void cutVideo(videoType videoType, long duration,long materialDuration) {
+    private void cutVideo(videoType videoType, long duration, long materialDuration) {
+//        getFrameSuccessNum=0;
         long needDuration;
-        if(duration<materialDuration){
-            needDuration=duration;
-        }else{
-            needDuration=materialDuration;
+        if (duration < materialDuration) {
+            needDuration = duration;
+        } else {
+            needDuration = materialDuration;
         }
-        cutList.clear();
-        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, needDuration , videoType.getPath(), 0, new videoCutDurationForVideoOneDo.isSuccess() {
+
+        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, needDuration, videoType.getPath(), 0, new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
             public void progresss(int progress) {
-               progressNowAnim.setProgress("正在裁剪中"+progress+"%");
+                progressNowAnim.setProgress("正在裁剪中" + progress + "%");
             }
 
             @Override
             public void isSuccess(boolean isSuccess, String path) {
-                int position=videoType.getPosition();
+                int position = videoType.getPosition();
                 cutList.add(path);
-                AllStickerData sticker=listAllSticker.get(position);
+                AllStickerData sticker = listAllSticker.get(position);
                 sticker.setPath(path);
                 cutSuccessNum++;
                 if (cutSuccessNum == cutVideoPathList.size()) {
-                    LogUtil.d("OOM2","裁剪完成，准备抠图");
+                    LogUtil.d("OOM2", "裁剪完成，准备抠图");
+                    LogUtil.d("OOM2", "cutList="+cutList.size());
                     progressNowAnim.closePragressDialog();
                     //全部裁剪完成之后需要去把视频裁剪成全部帧
-                    videoGetFrameModel getFrameModel=new videoGetFrameModel(context, cutList, new videoGetFrameModel.isSuccess() {
+                    videoGetFrameModel getFrameModel = new videoGetFrameModel(context, cutList, new videoGetFrameModel.isSuccess() {
                         @Override
                         public void isExtractSuccess(boolean isSuccess) {
-                           backgroundDraw.toSaveVideo(listAllSticker);
+//                            getFrameSuccessNum++;
+//                            LogUtil.d("OOM2", "getFrameSuccessNum="+getFrameSuccessNum+"cutList.size()="+cutList.size());
+//                            if(getFrameSuccessNum==cutList.size()){
+                                LogUtil.d("OOM2", "全部抠图完成");
+                                backgroundDraw.toSaveVideo(listAllSticker);
+//                            }
                         }
                     });
-                    getFrameModel.ToExtractFrame(cutList.get(0),"");
+                    getFrameModel.startExecute();
+//                    getFrameModel.ToExtractFrame(cutList.get(0), "");
                 } else {
-                    cutVideo(cutVideoPathList.get(cutSuccessNum), videoInfo.getDuration(),cutVideoPathList.get(cutSuccessNum).getDuration());
+                    cutVideo(cutVideoPathList.get(cutSuccessNum), videoInfo.getDuration(), cutVideoPathList.get(cutSuccessNum).getDuration());
                 }
             }
         });
     }
-
-
 
 
     public void requestStickersList(boolean isShowDialog) {
@@ -870,13 +897,12 @@ public class CreationTemplateMvpModel {
     }
 
 
+    class videoType {
 
-    class videoType{
-
-        public videoType(String path,int position,long duration){
-            this.path=path;
-            this.duration=duration;
-            this.position=position;
+        public videoType(String path, int position, long duration) {
+            this.path = path;
+            this.duration = duration;
+            this.position = position;
         }
 
         public String getPath() {

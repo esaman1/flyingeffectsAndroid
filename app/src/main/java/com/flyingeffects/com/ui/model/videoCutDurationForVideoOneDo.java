@@ -36,13 +36,11 @@ public class videoCutDurationForVideoOneDo {
     private static String cacheCutVideoPath;
     public static videoCutDurationForVideoOneDo getInstance() {
         FileManager fileManager = new FileManager();
-        cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
+        cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "zdyVideoCut");
         if (thisModel == null) {
             thisModel = new videoCutDurationForVideoOneDo();
         }
         return thisModel;
-
-
     }
 
 
@@ -126,7 +124,7 @@ public class videoCutDurationForVideoOneDo {
                 File video = new File(exportPath);
                 if (video.exists()) {
                     try {
-                        String savePath=cacheCutVideoPath+"/noMatting.mp4";
+                        String savePath=cacheCutVideoPath+"/"+System.currentTimeMillis()+".mp4";
                         File file=new File(savePath);
                         if(file.exists()){
                             file.delete();

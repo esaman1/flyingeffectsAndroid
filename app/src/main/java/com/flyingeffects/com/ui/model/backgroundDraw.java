@@ -18,7 +18,6 @@ import com.lansosdk.box.GifLayer;
 import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.box.VideoFrameLayer;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
-import com.lansosdk.videoeditor.VideoOneDo2;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
@@ -196,9 +195,11 @@ public class backgroundDraw {
 
 
 
-    private float preTime;
-    private int nowChooseImageIndex = 0;
+
+
     private  void addCanversLayer(AllStickerData stickerItem,int i){
+        int[] nowChooseImageIndex = {0};
+        float preTime;
         LogUtil.d("OOM","开始添加CanversLayer");
         String path=ExtractFramegFolder+"/"+(i+1);
         LogUtil.d("OOM","path"+path);
@@ -236,30 +237,17 @@ public class backgroundDraw {
         canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
             if (currentTime > nowProgressTime) {
                 //需要切换新的图了
-                nowChooseImageIndex++;
-                if (nowChooseImageIndex < getMattingList.size()) {
+                nowChooseImageIndex[0]++;
+                if ( nowChooseImageIndex[0] < getMattingList.size()) {
                     LogUtil.d("CanvasRunnable", "addCanvasRunnable=" + preTime + "currentTime=" + currentTime + "nowChooseImageIndex=" + nowChooseImageIndex);
                     nowProgressTime = preTime + nowProgressTime;
-                    Bitmap firstBitmap1 = BitmapFactory.decodeFile(getMattingList.get(nowChooseImageIndex).getPath());
+                    Bitmap firstBitmap1 = BitmapFactory.decodeFile(getMattingList.get( nowChooseImageIndex[0]).getPath());
                     bpLayer.switchBitmap(firstBitmap1);
                 }else{
                     bpLayer.setVisibility(View.GONE);
                 }
             }
         });
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     }
 
