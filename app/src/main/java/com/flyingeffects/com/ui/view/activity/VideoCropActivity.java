@@ -26,6 +26,7 @@ import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.VideoCropMVPView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.presenter.VideoCropMVPPresenter;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.RoundImageView;
@@ -254,10 +255,10 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
 
     @Override
     public void finishCrop(String videoPath) {
+        LogUtil.d("OOM","finishCrop"+"isFrom="+isFrom);
         //自定义只能够选择素材
         GetVideoCover getVideoCover=new GetVideoCover(this);
         getVideoCover.getCover(videoPath, path -> Observable.just(path).subscribeOn(AndroidSchedulers.mainThread()).subscribe(cover -> {
-
             if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEO)){
                 EventBus.getDefault().post(new CreateCutCallback(cover,videoPath,isNeedCut));
             }else{

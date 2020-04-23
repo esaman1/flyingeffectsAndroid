@@ -2,18 +2,19 @@ package com.flyingeffects.com.commonlyModel;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.FileManager;
 import com.glidebitmappool.GlideBitmapPool;
+import com.shixing.sxve.ui.albumType;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 
 
 /**
@@ -29,13 +30,19 @@ public class GetVideoCover {
 
     public GetVideoCover(Context context) {
         this.context = context;
-        FileManager  fileManager = new FileManager();
+        FileManager fileManager = new FileManager();
         mVideoFolder = fileManager.getFileCachePath(context, "runCatch");
     }
 
 
 
-    public void getCover(String originalPath,getCoverSuccess callback){
+    /**
+     * description ：得到视频的封面，是扣完图的封面
+     * creation date: 2020/4/23
+     * param :
+     * user : zhangtongju
+     */
+    public void getCover(String originalPath, getCoverSuccess callback) {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(originalPath);
         Bitmap mBitmap = retriever.getFrameAtTime(0);
@@ -44,7 +51,7 @@ public class GetVideoCover {
             CompressionCuttingManage manage = new CompressionCuttingManage(context, "", false, tailorPaths -> {
                 callback.getCoverPath(tailorPaths.get(0));
             });
-            List mattingPath=new ArrayList();
+            List mattingPath = new ArrayList();
             mattingPath.add(fileName);
             manage.ToMatting(mattingPath);
             GlideBitmapPool.putBitmap(mBitmap);
@@ -52,13 +59,32 @@ public class GetVideoCover {
     }
 
 
-  public   interface  getCoverSuccess{
-        void getCoverPath(String path);
 
+
+    /**
+     * description ：得到视频封面，没有抠图的封面，返回的时bitmap
+     * creation date: 2020/4/23
+     * param :
+     * user : zhangtongju
+     */
+    public void getFileCoverForBitmap(String path,getCoverSuccessForBitmap callback) {
+        if (albumType.isVideo(GetPathType.getInstance().getPathType(path))) {
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(path);
+            callback.getCoverBitmap(retriever.getFrameAtTime(0));
+        } else {
+            callback.getCoverBitmap(BitmapFactory.decodeFile(path));
+        }
     }
 
 
+    public interface getCoverSuccess {
+        void getCoverPath(String path);
+    }
 
 
+    public interface getCoverSuccessForBitmap {
+        void getCoverBitmap(Bitmap path);
+    }
 
 }

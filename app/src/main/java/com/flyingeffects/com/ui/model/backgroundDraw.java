@@ -14,6 +14,7 @@ import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.enity.AllStickerData;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.view.lansongCommendView.StickerItem;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
 import com.lansosdk.box.GifLayer;
@@ -75,7 +76,7 @@ public class backgroundDraw {
         ExtractFramegFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "ExtractFrame");
     }
 
-    public void toSaveVideo(ArrayList<AllStickerData> list) {
+    public void toSaveVideo(ArrayList<AllStickerData> list,boolean isMatting) {
         //说明没得背景视频，那么渲染时长就是
         if(duration==0){
             for (AllStickerData  data:list
@@ -115,8 +116,12 @@ public class backgroundDraw {
                 AllStickerData item=list.get(i);
                 String pathType= GetPathTypeModel.getInstance().getMediaType(item.getPath());
                 if (albumType.isVideo(pathType)) {
-                    intoCanvesCount++;
-                    addCanversLayer(item,intoCanvesCount);
+                    if(isMatting){
+                        intoCanvesCount++;
+                        addCanversLayer(item,intoCanvesCount);
+                    }else{
+                        addVideoLayer(item);
+                    }
                 }else{
                     if (item.getPath().endsWith(".gif")) {
                         addGifLayer(item);
@@ -124,7 +129,6 @@ public class backgroundDraw {
                         addBitmapLayer(item);
                     }
                 }
-
             }
 
             if(!TextUtils.isEmpty(videoVoice)){
@@ -162,6 +166,46 @@ public class backgroundDraw {
             e.printStackTrace();
         }
     }
+
+  public void  addVideoLayer(AllStickerData stickerItem){
+      LSOVideoOption option = null;
+      try {
+          option = new LSOVideoOption(stickerItem.getPath());
+          option.setAudioMute();
+          VideoFrameLayer mvLayer = execute.addVideoLayer(option);
+          //默认gif 的缩放位置是gif 宽度最大
+          float layerScale = DRAWPADWIDTH / (float)mvLayer.getLayerWidth();
+          LogUtil.d("OOM", "图层的缩放为" +layerScale+ "");
+          float stickerScale = stickerItem.getScale();
+          LogUtil.d("OOM", "gif+图层的缩放为" +layerScale * stickerScale+ "");
+          mvLayer.setScale(layerScale * stickerScale);
+          LogUtil.d("OOM", "mvLayerW=" + mvLayer.getLayerWidth() + "");
+          LogUtil.d("OOM", "mvLayerpadW=" + mvLayer.getPadWidth() + "");
+          int rotate = (int) stickerItem.getRotation();
+          if (rotate < 0) {
+              rotate = 360 + rotate;
+          }
+          LogUtil.d("OOM", "rotate=" + rotate);
+          mvLayer.setRotate(rotate);
+          LogUtil.d("OOM", "Scale=" + stickerItem.getScale() + "");
+          //蓝松这边规定，0.5就是刚刚居中的位置
+          float percentX = stickerItem.getTranslationX();
+          mvLayer.setPosition(mvLayer.getPadWidth()*percentX , mvLayer.getPositionY());
+          float percentY = stickerItem.getTranslationy();
+          LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
+          mvLayer.setPosition(mvLayer.getPositionX(), mvLayer.getPadHeight()*percentY);
+
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
+
+
+  }
+
+
+
+
+
 
     /**
      * 增加一个MV图层.

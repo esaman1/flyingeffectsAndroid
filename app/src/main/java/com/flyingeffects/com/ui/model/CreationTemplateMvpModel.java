@@ -480,43 +480,37 @@ public class CreationTemplateMvpModel {
                     } else {
                         statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_replace");
                     }
-
-
                     //切換素材
-                    AlbumManager.chooseVideo((Activity) context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
-                        if(albumType.isVideo(GetPathType.getInstance().getPathType(paths.get(0)))){
-                            GetVideoCover getVideoCover=new GetVideoCover(context);
-                            getVideoCover.getCover(paths.get(0), path1 -> {
-                                Observable.just(path1).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
-                                    stickView.setOriginalPath(paths.get(0));
-                                    stickView.setClipPath(s);
-                                    if (!isCheckedMatting) {
-                                        stickView.changeImage(paths.get(0), false);
-                                    } else {
-                                        stickView.changeImage(s, false);
-                                    }
+                    AlbumManager.chooseAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
+                        if(!isCancel){
+                            if(albumType.isVideo(GetPathType.getInstance().getPathType(paths.get(0)))){
+                                GetVideoCover getVideoCover=new GetVideoCover(context);
+                                getVideoCover.getCover(paths.get(0), path1 -> {
+                                    Observable.just(path1).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
+                                        stickView.setOriginalPath(paths.get(0));
+                                        stickView.setClipPath(s);
+                                        if (!isCheckedMatting) {
+                                            stickView.changeImage(paths.get(0), false);
+                                        } else {
+                                            stickView.changeImage(s, false);
+                                        }
+                                    });
                                 });
-                            });
-                        }else{
-                            CompressionCuttingManage manage = new CompressionCuttingManage(context, "", tailorPaths -> {
-                                Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
-                                    stickView.setOriginalPath(paths.get(0));
-                                    stickView.setClipPath(s);
-                                    if (!isCheckedMatting) {
-                                        stickView.changeImage(paths.get(0), false);
-                                    } else {
-                                        stickView.changeImage(s, false);
-                                    }
+                            }else{
+                                CompressionCuttingManage manage = new CompressionCuttingManage(context, "", tailorPaths -> {
+                                    Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
+                                        stickView.setOriginalPath(paths.get(0));
+                                        stickView.setClipPath(s);
+                                        if (!isCheckedMatting) {
+                                            stickView.changeImage(paths.get(0), false);
+                                        } else {
+                                            stickView.changeImage(s, false);
+                                        }
+                                    });
                                 });
-                            });
-                            manage.ToMatting(paths);
+                                manage.ToMatting(paths);
+                            }
                         }
-
-
-
-
-
-
                     }, "");
                 }
             }
@@ -798,6 +792,10 @@ public class CreationTemplateMvpModel {
 
                 } else { //这里也会出现蓝松一样的，相同地址只有一个图层
                     stickerData.setPath(stickerView.getOriginalPath());
+                    stickerData.setOriginalPath(stickerView.getOriginalPath());
+                    VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
+                    stickerData.setDuration(materialVideoInfo.getDuration());
+
                 }
             } else {
                 stickerData.setPath(stickerView.getResPath());
@@ -816,7 +814,7 @@ public class CreationTemplateMvpModel {
         }
         if (cutVideoPathList.size() == 0) {
             //都不是视频的情况下，就直接渲染
-            backgroundDraw.toSaveVideo(listAllSticker);
+            backgroundDraw.toSaveVideo(listAllSticker,isMatting);
         } else {
             //有视频的情况下需要先裁剪视频，然后取帧
             progressNowAnim = new WaitingDialogProgressNowAnim(context);
@@ -866,17 +864,22 @@ public class CreationTemplateMvpModel {
                 sticker.setPath(path);
                 cutSuccessNum++;
                 if (cutSuccessNum == cutVideoPathList.size()) {
-                    LogUtil.d("OOM2", "裁剪完成，准备抠图");
-                    progressNowAnim.closePragressDialog();
-                    //全部裁剪完成之后需要去把视频裁剪成全部帧
-                    videoGetFrameModel getFrameModel = new videoGetFrameModel(context, cutList, new videoGetFrameModel.isSuccess() {
-                        @Override
-                        public void isExtractSuccess(boolean isSuccess) {
-                            LogUtil.d("OOM2", "全部抠图完成");
-                            backgroundDraw.toSaveVideo(listAllSticker);
-                        }
-                    });
-                    getFrameModel.startExecute();
+                    if(isMatting){
+                        LogUtil.d("OOM2", "裁剪完成，准备抠图");
+                        progressNowAnim.closePragressDialog();
+                        //全部裁剪完成之后需要去把视频裁剪成全部帧
+                        videoGetFrameModel getFrameModel = new videoGetFrameModel(context, cutList, new videoGetFrameModel.isSuccess() {
+                            @Override
+                            public void isExtractSuccess(boolean isSuccess) {
+                                LogUtil.d("OOM2", "全部抠图完成");
+                                backgroundDraw.toSaveVideo(listAllSticker,true);
+                            }
+                        });
+                        getFrameModel.startExecute();
+                    }else{
+                        progressNowAnim.closePragressDialog();
+                        backgroundDraw.toSaveVideo(listAllSticker,false);
+                    }
                 } else {
                     if(videoInfo!=null){
                         cutVideo(cutVideoPathList.get(cutSuccessNum), videoInfo.getDuration(), cutVideoPathList.get(cutSuccessNum).getDuration());

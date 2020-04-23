@@ -517,7 +517,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 //                    Presenter.GetVideoCover(imagePath,videoPath);
                     Intent intent = new Intent(PreviewActivity.this, VideoCropActivity.class);
                     intent.putExtra("videoPath",imagePath);
-                    intent.putExtra("comFrom",FromToTemplate.ISFROMEDOWNVIDEO);
+                    intent.putExtra("comeFrom",FromToTemplate.ISFROMEDOWNVIDEO);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
 
@@ -625,7 +625,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
      */
     @Subscribe
     public void onEventMainThread(CreateCutCallback event) {
-        LogUtil.d("OOM","接收到消息");
+        LogUtil.d("OOM","event.getCoverPath()="+event.getCoverPath()+"createDownVideoPath="+createDownVideoPath+"createDownVideoPath="+createDownVideoPath+"event.isNeedCut()="+event.isNeedCut());
         if(event!=null){
             intoCreationTemplateActivity(event.getCoverPath(),createDownVideoPath,event.getOriginalPath(),event.isNeedCut());
         }
