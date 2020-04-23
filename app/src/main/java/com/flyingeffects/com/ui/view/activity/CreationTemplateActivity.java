@@ -367,12 +367,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                             //贴纸选择的视频
                             presenter.GetVideoCover(paths.get(0));
                         }
-
                     }
-
                 }, "");
 
-
+                break;
             case R.id.tv_background:
                 Intent intent =new Intent(this,ChooseBackgroundTemplateActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
