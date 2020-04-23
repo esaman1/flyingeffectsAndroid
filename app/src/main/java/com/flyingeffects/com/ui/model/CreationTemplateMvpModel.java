@@ -40,6 +40,7 @@ import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
@@ -94,9 +95,19 @@ public class CreationTemplateMvpModel {
     private RecyclerView list_thumb;
     private VideoInfo videoInfo;
     private String mGifFolder;
+    private String soundFolder;
     private String mImageCopyFolder;
     private boolean isCheckedMatting = true;
     private HorizontalListView hListView;
+    //需要裁剪视频的集合
+    private ArrayList<videoType> cutVideoPathList = new ArrayList<>();
+    private backgroundDraw backgroundDraw;
+    WaitingDialogProgressNowAnim progressNowAnim;
+    private ArrayList<AllStickerData> listAllSticker = new ArrayList<>();
+    /**
+     * 视频默认声音
+     */
+    private String videoVoicePath;
     /**
      * 是否抠图,true 抠图
      */
@@ -107,12 +118,12 @@ public class CreationTemplateMvpModel {
         this.callback = callback;
         this.mVideoPath = mVideoPath;
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
-
         if(!TextUtils.isEmpty(mVideoPath)){
             videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
         }
         FileManager fileManager = new FileManager();
         mGifFolder = fileManager.getFileCachePath(context, "gifFolder");
+        soundFolder = fileManager.getFileCachePath(context, "soundFolder");
         mImageCopyFolder = fileManager.getFileCachePath(context, "imageCopy");
     }
 
@@ -175,7 +186,6 @@ public class CreationTemplateMvpModel {
 
     public void scrollToPosition(int position) {
         linearLayoutManager.scrollToPositionWithOffset(position, 0);
-
     }
 
 
@@ -440,7 +450,24 @@ public class CreationTemplateMvpModel {
                     //copy
                     copyGif(stickView.getResPath(), path, stickView.getComeFrom(), stickView, stickView.getOriginalPath());
 
-                } else if (type == StickerView.LEFT_BOTTOM_MODE) {
+                }else if(type == StickerView.RIGHT_CENTER_MODE){
+                    if(!stickView.isOpenVoice){
+                        //打开声音
+                        getVideoVoice(stickView.getOriginalPath(),soundFolder);
+                        stickView.setOpenVoice(true);
+                        stickView.setRightCenterBitmapForChangeIcon(context.getDrawable(R.mipmap.sticker_open_voice));
+                        callback.getBgmPath(videoVoicePath);
+                    }else{
+                        //关闭声音
+                        videoVoicePath="";
+                        stickView.setOpenVoice(false);
+                        stickView.setRightCenterBitmapForChangeIcon(context.getDrawable(R.mipmap.sticker_close_voice));
+                        callback.getBgmPath("");
+                    }
+
+                }
+
+                else if (type == StickerView.LEFT_BOTTOM_MODE) {
 
                     if (UiStep.isFromDownBj) {
                         statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_replace");
@@ -511,6 +538,7 @@ public class CreationTemplateMvpModel {
             stickView.setOriginalPath(originalPath);
         }
         if (isFirstAdd) {
+            stickView.setFirstAddSticker(true);
             stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
         }
         if (hasReplace) {
@@ -523,7 +551,6 @@ public class CreationTemplateMvpModel {
             fromCopy.setDegree(copyStickerView.getRotateAngle());
             fromCopy.setTranX(copyStickerView.getCenterX());
             fromCopy.setTranY(copyStickerView.getCenterY());
-
             stickView.setImageRes(path, false, fromCopy);
             stickView.showFrame();
         } else {
@@ -730,17 +757,13 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
 
-    //需要裁剪视频的集合
-    private ArrayList<videoType> cutVideoPathList = new ArrayList<>();
-    private backgroundDraw backgroundDraw;
-    WaitingDialogProgressNowAnim progressNowAnim;
-    private ArrayList<AllStickerData> listAllSticker = new ArrayList<>();
+
 
     public void toSaveVideo() {
         listAllSticker.clear();
         cutSuccessNum = 0;
         cutVideoPathList.clear();
-        backgroundDraw = new backgroundDraw(context, mVideoPath, path -> {
+        backgroundDraw = new backgroundDraw(context, mVideoPath,videoVoicePath, path -> {
             //成功后的回调
             Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -804,8 +827,6 @@ public class CreationTemplateMvpModel {
 
     //裁剪成功数量
     private int cutSuccessNum;
-    //    //得到全部帧且保存在本地数量
-//    private int getFrameSuccessNum;
     private ArrayList<String> cutList = new ArrayList<>();
 
 
@@ -907,7 +928,7 @@ public class CreationTemplateMvpModel {
             if (file.exists()) {
                 StickerList item1 = list.get(i);
                 item1.setIsDownload(1);
-                list.set(i, item1);//修改对应的元素
+                list.set(i, item1);
             }
         }
         gridAdapter.notifyDataSetChanged();
@@ -941,8 +962,37 @@ public class CreationTemplateMvpModel {
      */
     public void addNewSticker(String path, String originalPath) {
         Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> addSticker(path1, false, true, true, originalPath, false, null));
-
     }
+
+
+
+    /**
+     * description ：视频音视频分离，获得视频的声音
+     * creation date: 2020/4/23
+     * user : zhangtongju
+     */
+    private void getVideoVoice(String videoPath,String outputPath){
+        WaitingDialog.openPragressDialog(context);
+        new Thread(() -> {
+            mediaManager manager=new mediaManager(context);
+            manager.splitMp4(videoPath, new File(outputPath), (isSuccess, putPath) -> {
+                WaitingDialog.closePragressDialog();
+                if(isSuccess){
+                    LogUtil.d("OOM","分离出来的因为地址为"+outputPath);
+                    videoVoicePath=outputPath+ File.separator +"bgm.mp3";
+                    callback.getBgmPath(videoVoicePath);
+                }
+            });
+        }).start();
+    }
+
+
+
+
+
+
+
+
 
 
     class videoType {

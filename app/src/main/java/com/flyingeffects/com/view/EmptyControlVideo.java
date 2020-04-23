@@ -49,4 +49,8 @@ public class EmptyControlVideo extends StandardGSYVideoPlayer {
         //super.touchDoubleUp();
         //不需要双击暂停
     }
+
+
+
+
 }

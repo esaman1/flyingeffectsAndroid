@@ -72,12 +72,24 @@
     </RelativeLayout>
 
 
-    <com.flyingeffects.com.view.EmptyControlVideo
-        android:id="@+id/video_player"
+<!--    <com.flyingeffects.com.view.EmptyControlVideo-->
+<!--        android:id="@+id/video_player"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_above="@+id/ll_progress"-->
+<!--        android:layout_marginTop="50dp" />-->
+
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/exo_player"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#1D1D1D"
         android:layout_above="@+id/ll_progress"
-        android:layout_marginTop="50dp" />
+        android:layout_marginTop="50dp"
+        app:surface_type="texture_view"
+        app:use_controller="false" />
+
 
 
     <LinearLayout

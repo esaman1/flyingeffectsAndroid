@@ -16,4 +16,6 @@ public interface CreationTemplateMvpView {
     void needPauseVideo();
 
     void getVideoCover(String path,String originalPath);
+
+    void getBgmPath(String path);
 }

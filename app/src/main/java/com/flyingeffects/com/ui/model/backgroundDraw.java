@@ -47,10 +47,22 @@ public class backgroundDraw {
     private int duration;
     private int intoCanvesCount;
     private String ExtractFramegFolder;
+    /**
+     * 视频图层声音
+     */
+    private String videoVoice;
 
-    public backgroundDraw(Context context, String videoPath, saveCallback callback) {
+
+
+    /**
+     * description ：后台绘制，如果videoVoice不为null,那么需要把主视频图层的声音替换为用户选择的背景声音
+     * creation date: 2020/4/23
+     * user : zhangtongju
+     */
+    public backgroundDraw(Context context, String videoPath,String videoVoice, saveCallback callback) {
         this.context = context;
         this.videoPath = videoPath;
+        this.videoVoice=videoVoice;
         this.callback = callback;
         waitingProgress = new WaitingDialog_progress(context);
         if(!TextUtils.isEmpty(videoPath)){
@@ -59,6 +71,7 @@ public class backgroundDraw {
             duration=10*1000;
         }
         LogUtil.d("OOM", "backgroundDrawdurationF=" + duration);
+        LogUtil.d("OOM","videoVoice="+videoVoice);
         intoCanvesCount=0;
         FileManager fileManager = new FileManager();
         ExtractFramegFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "ExtractFrame");
@@ -107,7 +120,10 @@ public class backgroundDraw {
 
             }
 
-
+            if(!TextUtils.isEmpty(videoVoice)){
+                //如果有videoVoice 字段，那么需要设置在对应的主图层上面去
+                execute.addAudioLayer(videoVoice,false);
+            }
             execute.start();
         } catch (Exception e) {
             LogUtil.d("OOM",e.getMessage());
@@ -128,7 +144,11 @@ public class backgroundDraw {
 //            VideoFrameLayer bgLayer=execute.addVideoLayer(option,0, Long.MAX_VALUE, true, true);
 //            bgLayer.setScaledToPadSize();
             option = new LSOVideoOption(videoPath);
+            if(!TextUtils.isEmpty(videoVoice)){
+                option.setAudioMute();
+            }
             VideoFrameLayer bgLayer=  execute.addVideoLayer(option);
+
             bgLayer.setScaledToPadSize();
             LogUtil.d("OOM","主图层添加完毕");
         } catch (Exception e) {

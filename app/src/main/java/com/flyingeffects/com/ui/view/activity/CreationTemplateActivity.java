@@ -1,8 +1,8 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -22,24 +22,30 @@ import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
-import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.utils.timeUtils;
-import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.HorizontalListView;
-import com.flyingeffects.com.view.MattingVideoEnity;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.shixing.sxve.ui.albumType;
-import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 import com.suke.widget.SwitchButton;
 
-import java.util.ArrayList;
+import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -68,15 +74,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @BindView(R.id.id_vview_realtime_gllayout)
     ViewLayerRelativeLayout viewLayerRelativeLayout;
 
-
-
     private boolean isIntoPause = false;
 
     @BindView(R.id.iv_list)
     HorizontalListView hListView;
-
-    @BindView(R.id.video_player)
-    EmptyControlVideo videoPlayer;
 
 
     @BindView(R.id.iv_play)
@@ -87,7 +88,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @BindView(R.id.tv_total)
     TextView tv_total;
-
 
     public final static int SELECTALBUM = 0;
 
@@ -106,19 +106,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     private boolean isPlaying = false;
     /**
-     * ;
      * 是否初始化过播放器
      */
     private boolean isInitVideoLayer = false;
     private int allVideoDuration;
-    private int thumbCount;
     private boolean isPlayComplate = false;
     /**
      * 只有背景模板才有，自定义的话这个值为""
      */
     private String title;
-    private long nowChooseSeek = 1000;
-    private boolean nowFileTypeIsVideo = false;
 
     @BindView(R.id.iv_green_background)
     ImageView iv_green_background;
@@ -126,8 +122,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @BindView(R.id.ll_green_background)
     LinearLayout ll_green_background;
 
+    /**
+     * 获得背景视频音乐
+     */
+    private String bgmPath;
 
+    @BindView(R.id.exo_player)
+    PlayerView playerView;
 
+    private SimpleExoPlayer exoPlayer;
 
     @Override
     protected int getLayoutId() {
@@ -147,17 +150,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             originalPath = bundle.getString("originalPath");
             title = bundle.getString("bjTemplateTitle");
         }
-
-        if (TextUtils.isEmpty(originalPath)) {
-            String pathType = GetPathTypeModel.getInstance().getMediaType(originalPath);
-            if (albumType.isVideo(pathType)) {
-                nowFileTypeIsVideo = true;
-            }
-        }
         presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout);
         if(!TextUtils.isEmpty(videoPath)){
             //有视频的时候，初始化视频值
-            initVideoPlayer();
+            initExo(videoPath);
         }else{
             showGreenBj();
         }
@@ -165,41 +161,81 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
+    private void initExo(String videoPath) {
+        if (TextUtils.isEmpty(videoPath)) {
+            return;
+        }
+
+
+        exoPlayer = ExoPlayerFactory.newSimpleInstance(CreationTemplateActivity.this);
+
+        playerView.setPlayer(exoPlayer);
+        //不使用控制器
+        playerView.setUseController(false);
+        exoPlayer.setRepeatMode(Player.REPEAT_MODE_OFF);
+        exoPlayer.addListener(new Player.EventListener() {
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                switch (playbackState) {
+                    case Player.STATE_READY:
+                        break;
+                    case Player.STATE_ENDED:
+                        isPlayComplate = true;
+                        endTimer();
+                        isPlaying = false;
+                        presenter.showGifAnim(false);
+                        videoPause();
+                        seekTo(0);
+                        nowStateIsPlaying(false);
+                        break;
+                    case Player.STATE_BUFFERING:
+                    case Player.STATE_IDLE:
+                    default:
+                        break;
+                }
+            }
+        });
+        MediaSource mediaSource = new ExtractorMediaSource.Factory(
+                new DefaultDataSourceFactory(CreationTemplateActivity.this, "exoplayer-codelab")).
+                createMediaSource(Uri.fromFile(new File(videoPath)));
+
+        exoPlayer.prepare(mediaSource, true, false);
+        videoPause();
+    }
+
+
+    private void videoPause() {
+        if (exoPlayer != null) {
+            LogUtil.d("video", "videoPause");
+            exoPlayer.setPlayWhenReady(false);
+        }
+    }
+
 
     /**
-     * description ：初始化视频播放器，一般是用户下载了背景后才能调用
-     * creation date: 2020/4/20
-     * user : zhangtongju
+     * 开始播放
      */
-    private void initVideoPlayer() {
-        videoPlayer.setUp(videoPath, true, "");
-        GSYVideoType.setShowType(GSYVideoType.SCREEN_TYPE_DEFAULT);
-        videoPlayerInit();
-        videoPlayer.setVideoAllCallBack(new
-                VideoPlayerCallbackForTemplate(isSuccess ->
-        {
-            isPlayComplate = true;
-            endTimer();
-            isPlaying = false;
-            presenter.showGifAnim(false);
-            videoPlayerInit();
-            nowStateIsPlaying(false);
-        }));
+    private void videoPlay() {
+        if (exoPlayer != null) {
+            LogUtil.d("video", "play");
+            if(!TextUtils.isEmpty(bgmPath)){
+                exoPlayer.setVolume(0f);
+            }else{
+                exoPlayer.setVolume(1f);
+            }
+
+            exoPlayer.setPlayWhenReady(true);
+        }
+        startTimer();
     }
 
-    private void videoPlayerInit() {
-        videoPlayer.startPlayLogic();
-        videoPlayer.onVideoPause();
-        new Handler().postDelayed(() -> videoPlayer.seekTo(nowChooseSeek), 1000);
-    }
+
+
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (isIntoPause) {
-            videoPlayerInit();
-        }
     }
 
     @Override
@@ -207,24 +243,21 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         presenter.initStickerView(imgPath, originalPath);
         presenter.initBottomLayout(viewPager);
         initViewLayerRelative();
-        switchButton.setOnCheckedChangeListener(new SwitchButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(SwitchButton view, boolean isChecked) {
-                if (isChecked) {
-                    if (UiStep.isFromDownBj) {
-                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_Cutoutopen");
-                    } else {
-                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_Cutoutopen");
-                    }
+        switchButton.setOnCheckedChangeListener((view, isChecked) -> {
+            if (isChecked) {
+                if (UiStep.isFromDownBj) {
+                    statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_Cutoutopen");
                 } else {
-                    if (UiStep.isFromDownBj) {
-                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_Cutoutoff");
-                    } else {
-                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_Cutoutoff");
-                    }
+                    statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_Cutoutopen");
                 }
-                presenter.CheckedChanged(isChecked);
+            } else {
+                if (UiStep.isFromDownBj) {
+                    statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_Cutoutoff");
+                } else {
+                    statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_Cutoutoff");
+                }
             }
+            presenter.CheckedChanged(isChecked);
         });
     }
 
@@ -258,22 +291,21 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         nowStateIsPlaying(true);
                         if(!TextUtils.isEmpty(videoPath)){
                             if (isPlayComplate) {
-                                videoPlayer.startPlayLogic();
-                                nowChooseSeek = 1000;
+                                videoPlay();
                                 isIntoPause = false;
                             } else {
                                 if (isInitVideoLayer) {
                                     if (!isIntoPause) {
-                                        videoPlayer.onVideoResume(false);
+                                        videoPlay();
                                     } else {
-                                        videoPlayer.startPlayLogic();
+                                        videoPlay();
                                         isIntoPause = false;
                                         isInitVideoLayer = true;
                                     }
                                 } else {
                                     isIntoPause = false;
                                     isInitVideoLayer = true;
-                                    videoPlayer.startPlayLogic();
+                                    videoPlay();
                                 }
                             }
                         }
@@ -291,7 +323,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
             case R.id.iv_add_sticker:
                 if (isPlaying) {
-                    videoPlayer.onVideoPause();
+                    videoToPause();
                     isPlaying = false;
                     endTimer();
                     presenter.showGifAnim(false);
@@ -307,7 +339,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 AlbumManager.chooseAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel, albumFileList) -> {
                     Log.d("OOM", "isCancel=" + isCancel);
                     if (!isCancel) {
-
                         //如果是选择的视频，就需要得到封面，然后设置在matting里面去，然后吧原图设置为视频地址
                         String path=paths.get(0);
                         String pathType= GetPathTypeModel.getInstance().getMediaType(path);
@@ -334,12 +365,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
             default:
                 break;
-
         }
     }
 
     private void videoToPause() {
-        videoPlayer.onVideoPause();
+        videoPause();
         isPlaying = false;
         endTimer();
         presenter.showGifAnim(false);
@@ -379,8 +409,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-
-
     private void showGreenBj(){
         ll_green_background.setVisibility(View.VISIBLE);
        float oriRatio = 9f / 16f;
@@ -392,12 +420,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             RelativeLayoutParams.width = Math.round(1f * oriHeight * oriRatio);
             RelativeLayoutParams.height = oriHeight;
             iv_green_background.setLayoutParams(RelativeLayoutParams);
-
         });
       hListView.post(() -> presenter.initVideoProgressView(hListView));
     }
-
-
 
 
     @Override
@@ -411,8 +436,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     public void onDestroy() {
         presenter.onDestroy();
         destroyTimer();
-        videoPlayer.onVideoPause();
-        videoPlayer.release();
+        videoStop();
         EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
@@ -429,17 +453,20 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void setgsyVideoProgress(int progress) {
         LogUtil.d("OOM", "videoProgress=" + progress);
-
         if (!isPlaying) {
-            nowChooseSeek = progress;
-            videoPlayer.seekTo(progress);
+            seekTo(progress);
+        }
+    }
+
+    private void seekTo(long to) {
+        if (exoPlayer != null) {
+            exoPlayer.seekTo(to);
         }
     }
 
     @Override
     public void getVideoDuration(int allVideoDuration, int thumbCount) {
         this.allVideoDuration = allVideoDuration;
-        this.thumbCount = thumbCount;
         LogUtil.d("OOM", "allVideoDuration=" + allVideoDuration);
         tv_total.setText(timeUtils.timeParse(allVideoDuration) + "s");
     }
@@ -459,6 +486,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void getVideoCover(String path,String originalPath) {
         presenter.addNewSticker(path, originalPath);
+    }
+
+
+
+    @Override
+    public void getBgmPath(String path) {
+        this.bgmPath=path;
     }
 
 
@@ -485,7 +519,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             public void run() {
                 Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
                     if(!TextUtils.isEmpty(videoPath)){
-                        int nowDuration = videoPlayer.getCurrentPositionWhenPlaying();
+                        int nowDuration = (int) getCurrentPos();
                         float percent = nowDuration / (float) allVideoDuration;
                         LogUtil.d("OOM", "比例=" + percent);
                         int widthX = (int) (percent * listWidth);
@@ -514,6 +548,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         timer.schedule(task, 0, 5);
     }
 
+    /**
+     * 获取当前进度
+     */
+    private long getCurrentPos() {
+        return exoPlayer != null ? exoPlayer.getCurrentPosition() : 0;
+    }
 
     /**
      * 关闭timer 和task
@@ -549,11 +589,22 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Subscribe
     public void onEventMainThread(DownVideoPath event) {
         videoPath=event.getPath();
-        initVideoPlayer();
+        ll_green_background.setVisibility(View.GONE);
+        initExo(videoPath);
         presenter.setmVideoPath(videoPath);
         presenter.initVideoProgressView(hListView);
     }
 
+
+    /**
+     * 释放资源
+     */
+    private void videoStop() {
+        if (exoPlayer != null) {
+            exoPlayer.stop();
+            exoPlayer.release();
+        }
+    }
 
 
 

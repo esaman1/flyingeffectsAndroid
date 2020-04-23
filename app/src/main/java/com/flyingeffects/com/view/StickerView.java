@@ -98,6 +98,17 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public static final int RIGHT_CENTER_MODE = 10;
 
 
+
+
+    public boolean isOpenVoice=false;
+
+
+    /**
+     * 是否是第一次添加的贴纸
+     */
+    private boolean isFirstAddSticker=false;
+
+
     public int layoutX = 0;
     public int layoutY = 0;
 
@@ -355,6 +366,13 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     rightBottomBitmap.getIntrinsicHeight());
             rightCenterDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
                     STICKER_BTN_HALF_SIZE << 1);
+        }
+    }
+
+    public void setRightCenterBitmapForChangeIcon(Drawable rightCenterBitmap) {
+        if (rightCenterBitmap != null) {
+            this.rightCenterBitmap = rightCenterBitmap;
+
         }
     }
 
@@ -759,9 +777,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     } else {
                         statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), " 6_customize_bj_Spin");
                     }
+                    return true;
                 }else if(mCurrentMode == RIGHT_CENTER_MODE){
-                    ToastUtil.showToast("123");
-
+                    callback.stickerOnclick(RIGHT_CENTER_MODE);
+                    return true;
                 }
                 lastX = x;
                 lastY = y;
@@ -1425,6 +1444,31 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             invalidate();
         }
     }
+
+    public boolean isFirstAddSticker() {
+        return isFirstAddSticker;
+    }
+
+    public void setFirstAddSticker(boolean firstAddSticker) {
+        isFirstAddSticker = firstAddSticker;
+    }
+
+
+
+
+
+
+    public boolean isOpenVoice() {
+        return isOpenVoice;
+    }
+
+    public void setOpenVoice(boolean openVoice) {
+        isOpenVoice = openVoice;
+    }
+
+
+
+
 
 
 }

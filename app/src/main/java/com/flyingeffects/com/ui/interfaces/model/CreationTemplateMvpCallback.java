@@ -17,4 +17,8 @@ public interface CreationTemplateMvpCallback {
 
     void getVideoCover(String path,String originalPath);
 
+    void getBgmPath(String path);
+
+
+
 }

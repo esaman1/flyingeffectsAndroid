@@ -105,6 +105,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemvpView.getVideoCover(path,originalPath);
     }
 
+    @Override
+    public void getBgmPath(String path) {
+        creationTemplatemvpView.getBgmPath(path);
+    }
+
 
     public void toSaveVideo(){
         creationTemplatemodel.toSaveVideo();
