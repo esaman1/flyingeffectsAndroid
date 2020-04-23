@@ -117,7 +117,7 @@ public class CreationTemplateMvpModel {
     /**
      * 默认视频时长,如果没选择背景的时候会用到
      */
-    private int defaultVideoDuration;
+    private int defaultVideoDuration=0;
 
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout) {
         this.context = context;
