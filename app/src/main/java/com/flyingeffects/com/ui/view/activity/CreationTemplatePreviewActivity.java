@@ -4,9 +4,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
-
-import com.flyingeffects.com.utils.timeUtils;
-
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageView;
@@ -21,16 +18,15 @@ import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayer;
+import com.flyingeffects.com.utils.timeUtils;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +47,7 @@ import rx.android.schedulers.AndroidSchedulers;
 public class CreationTemplatePreviewActivity extends BaseActivity {
 
 
-    private ExoPlayer exoPlayer;
+    private SimpleExoPlayer exoPlayer;
 
     @BindView(R.id.exo_player)
     PlayerView playerView;
@@ -75,7 +71,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     ImageView iv_play;
 
     private timeUtils timeUtils;
-
+    private  MediaSource mediaSource;
     @Override
     protected int getLayoutId() {
         return R.layout.act_creation_template_preview;
@@ -87,7 +83,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
         VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
         timeUtils = new timeUtils();
         tv_end_time.setText(timeUtils.timeParse(videoInfo.getDuration()));
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(CreationTemplatePreviewActivity.this, new DefaultRenderersFactory(this), new DefaultTrackSelector(), new DefaultLoadControl());
+        exoPlayer = ExoPlayerFactory.newSimpleInstance(CreationTemplatePreviewActivity.this);
         playerView.setPlayer(exoPlayer);
 
         //不使用控制器
@@ -111,17 +107,19 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
                 }
             }
         });
-        MediaSource mediaSource = new ExtractorMediaSource.Factory(
+        mediaSource  = new ExtractorMediaSource.Factory(
                 new DefaultDataSourceFactory(CreationTemplatePreviewActivity.this, "exoplayer-codelab")).
                 createMediaSource(Uri.fromFile(new File(imagePath)));
         exoPlayer.prepare(mediaSource, true, false);
-        videoPause();
+//        videoPause();
     }
 
     @Override
     protected void initAction() {
 
     }
+
+
 
 
     private void seekTo(long to) {
@@ -140,11 +138,11 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
 
     private void videoPause() {
         if (exoPlayer != null) {
-            LogUtil.d("video", "videoPause");
-            exoPlayer.setPlayWhenReady(false);
-
+            exoPlayer.stop();
         }
     }
+
+
 
 
     private void saveToAlbum(String path) {
@@ -202,17 +200,23 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
             case R.id.iv_play:
                 if (isPlaying()) {
                     showIsPlay(false);
-                    videoStop();
+                    videoPause();
                     destroyTimer();
-
                 } else {
-                    videoPlay();
+                    videoOnResume();
                     showIsPlay(true);
                 }
                 break;
 
         }
         super.onClick(v);
+    }
+
+
+    private void videoOnResume() {
+        if (exoPlayer != null) {
+            exoPlayer.prepare(mediaSource, false, false);
+        }
     }
 
 

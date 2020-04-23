@@ -282,6 +282,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             case R.id.tv_top_submit:
                 if (isPlaying) {
                     videoToPause();
+                    pauseBgmMusic();
                     endTimer();
                 }
                 if (!TextUtils.isEmpty(title)) {

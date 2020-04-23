@@ -18,7 +18,6 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.ui.view.fragment.fragBjItem;
-import com.flyingeffects.com.ui.view.fragment.home_item_fag;
 import com.flyingeffects.com.utils.ToastUtil;
 
 import java.util.ArrayList;
@@ -71,8 +70,6 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
 
 
     private void requestMainData() {
-
-
         HashMap<String, String> params = new HashMap<>();
         Observable ob = Api.getDefault().getbackCategoryType(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<TemplateType>>(this) {
