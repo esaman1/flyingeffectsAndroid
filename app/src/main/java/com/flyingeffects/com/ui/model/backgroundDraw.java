@@ -67,8 +67,6 @@ public class backgroundDraw {
         waitingProgress = new WaitingDialog_progress(context);
         if(!TextUtils.isEmpty(videoPath)){
             duration = getRingDuring(videoPath);
-        }else{
-            duration=10*1000;
         }
         LogUtil.d("OOM", "backgroundDrawdurationF=" + duration);
         LogUtil.d("OOM","videoVoice="+videoVoice);
@@ -78,6 +76,15 @@ public class backgroundDraw {
     }
 
     public void toSaveVideo(ArrayList<AllStickerData> list) {
+        //说明没得背景视频，那么渲染时长就是
+        if(duration==0){
+            for (AllStickerData  data:list
+                 ) {
+                if( duration< (int) data.getDuration()){
+                    duration=(int) data.getDuration();
+                }
+            }
+        }
         LogUtil.d("OOM2","进入到了最后渲染");
         waitingProgress.openProgressDialog();
         try {

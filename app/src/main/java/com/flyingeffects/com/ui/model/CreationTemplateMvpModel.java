@@ -113,6 +113,12 @@ public class CreationTemplateMvpModel {
      */
     private boolean isMatting = true;
 
+
+    /**
+     * 默认视频时长,如果没选择背景的时候会用到
+     */
+    private int defaultVideoDuration;
+
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout) {
         this.context = context;
         this.callback = callback;
@@ -801,6 +807,9 @@ public class CreationTemplateMvpModel {
 
 
         for (int i = 0; i < listAllSticker.size(); i++) {
+            if(defaultVideoDuration<listAllSticker.get(i).getDuration()){
+                defaultVideoDuration= (int) listAllSticker.get(i).getDuration();
+            }
             if (listAllSticker.get(i).isVideo()) {
                 cutVideoPathList.add(new videoType(listAllSticker.get(i).getOriginalPath(), i, listAllSticker.get(i).getDuration()));
             }
@@ -813,12 +822,11 @@ public class CreationTemplateMvpModel {
             progressNowAnim = new WaitingDialogProgressNowAnim(context);
             progressNowAnim.openProgressDialog();
             cutList.clear();
-
             if(videoInfo!=null){
                 cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration());
             }else{
                 //没选择背景默认裁剪10秒
-                cutVideo(cutVideoPathList.get(0), 1000*10, cutVideoPathList.get(0).getDuration());
+                cutVideo(cutVideoPathList.get(0), defaultVideoDuration, cutVideoPathList.get(0).getDuration());
             }
         }
 
@@ -873,7 +881,7 @@ public class CreationTemplateMvpModel {
                     if(videoInfo!=null){
                         cutVideo(cutVideoPathList.get(cutSuccessNum), videoInfo.getDuration(), cutVideoPathList.get(cutSuccessNum).getDuration());
                     }else{
-                        cutVideo(cutVideoPathList.get(cutSuccessNum), 10*1000, cutVideoPathList.get(cutSuccessNum).getDuration());
+                        cutVideo(cutVideoPathList.get(cutSuccessNum), defaultVideoDuration, cutVideoPathList.get(cutSuccessNum).getDuration());
                     }
                 }
             }
