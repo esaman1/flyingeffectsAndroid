@@ -135,6 +135,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     private  MediaPlayer  bgmPlayer;
 
+
+    /**
+     * 默认抠图开关
+     */
+    private boolean isNeedCut;
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_creation_template_edit;
@@ -144,6 +150,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
+        LogUtil.d("OOM","进入到创作页面");
         ((TextView) findViewById(R.id.tv_top_submit)).setText("预览效果");
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("Message");
@@ -151,6 +158,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             imgPath = bundle.getString("paths");
             videoPath = bundle.getString("video_path");
             originalPath = bundle.getString("originalPath");
+            isNeedCut=bundle.getBoolean("isNeedCut");
             title = bundle.getString("bjTemplateTitle");
         }
         presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout);

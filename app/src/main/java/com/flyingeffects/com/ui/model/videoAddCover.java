@@ -51,8 +51,6 @@ public class videoAddCover {
             videoOneDo.setOnVideoOneDoProgressListener(new OnLanSongSDKProgressListener() {
                 @Override
                 public void onLanSongSDKProgress(long ptsUs, int percent) {
-                    LogUtil.d("OOM","percent="+percent);
-                    LogUtil.d("OOM","ptsUs="+ptsUs);
                     callback.progresss(percent);
                 }
             });

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -15,6 +16,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.GetVideoCover;
 import com.flyingeffects.com.constans.UiStep;
+import com.flyingeffects.com.enity.CreateCutCallback;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -22,6 +24,7 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.VideoCropMVPView;
+import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.presenter.VideoCropMVPPresenter;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.RangeSeekBarView;
@@ -38,6 +41,7 @@ import java.util.TimeZone;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -69,10 +73,13 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
     TextView startMs;
     @BindView(R.id.crop_show_end)
     TextView endMs;
-    /**
-     * 用户设置的固定剪切时长，只针对自定义卡点视频界面
-     */
-    private long userSetDuration;
+//    /**
+//     * 用户设置的固定剪切时长，只针对自定义卡点视频界面
+//     */
+//    private long userSetDuration;
+    private boolean isNeedCut=true;
+
+    private String isFrom;
 
 
     @Override
@@ -85,7 +92,8 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
         Presenter = new VideoCropMVPPresenter(this, this);
         //点击进入视频剪切界面
         String videoPath = getIntent().getStringExtra("videoPath");
-        userSetDuration = getIntent().getLongExtra("duration", 0);
+        isFrom=getIntent().getStringExtra("comeFrom");
+//        userSetDuration = getIntent().getLongExtra("duration", 0);
         initVideoDrawPad(videoPath, false);
         UiStep.nowUiTag="";
         UiStep.isFromDownBj=false;
@@ -98,16 +106,25 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
     }
 
     @Override
-    @OnClick({R.id.iv_back, R.id.tv_choose_pic})
+    @OnClick({R.id.iv_back, R.id.tv_choose_pic,R.id.tv_no_kt
+    })
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_back:
                 onBackPressed();
                 break;
-            case R.id.tv_choose_pic: //继续
+            case R.id.tv_choose_pic: //抠图
                 statisticsEventAffair.getInstance().setFlag(this, "2_Titles_cutdone", "手动卡点_片头裁剪完成");
                 statisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Cutout");
                 saveVideo();
+                isNeedCut=true;
+                break;
+
+            case R.id.tv_no_kt: //不需要抠图
+                statisticsEventAffair.getInstance().setFlag(this, "2_Titles_cutdone", "手动卡点_片头裁剪完成");
+                statisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Cutout");
+                saveVideo();
+                isNeedCut=false;
                 break;
             default:
                 break;
@@ -240,17 +257,22 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
         //自定义只能够选择素材
         GetVideoCover getVideoCover=new GetVideoCover(this);
         getVideoCover.getCover(videoPath, path -> Observable.just(path).subscribeOn(AndroidSchedulers.mainThread()).subscribe(cover -> {
-            Intent intent = new Intent(VideoCropActivity.this, CreationTemplateActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putString("paths", cover);
-            bundle.putString("originalPath",videoPath );
-            bundle.putString("video_path", "");
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra("Message", bundle);
-            startActivity(intent);
-            setResult(Activity.RESULT_OK, intent);
-            finish();
 
+            if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEO)){
+                EventBus.getDefault().post(new CreateCutCallback(cover,videoPath,isNeedCut));
+            }else{
+                Intent intent = new Intent(VideoCropActivity.this, CreationTemplateActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("paths", cover);
+                bundle.putString("originalPath",videoPath );
+                bundle.putString("video_path", "");
+                bundle.putBoolean("isNeedCut",isNeedCut);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("Message", bundle);
+                startActivity(intent);
+                setResult(Activity.RESULT_OK, intent);
+            }
+            finish();
         }));
 
 

@@ -18,6 +18,7 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
+import com.flyingeffects.com.enity.CreateCutCallback;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
@@ -31,6 +32,7 @@ import com.flyingeffects.com.ui.interfaces.view.PreviewMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.PreviewMvpPresenter;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MarqueTextView;
@@ -304,7 +306,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                         }
                     }else{
                         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                            Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId());
+                           Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId());
                         } else {
                             WaitingDialog.closePragressDialog();
                             String videoTime=templateItem.getVideotime();
@@ -499,6 +501,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
      * creation date: 2020/3/20
      * user : zhangtongju
      */
+    private String createDownVideoPath;
     @Override
     public void downVideoSuccess(String videoPath, String imagePath) {
         WaitingDialog.closePragressDialog();
@@ -509,10 +512,19 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
             Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
                 if( originalImagePath.get(0).equals(imagePath)){
+                    createDownVideoPath=videoPath;
                     //源图地址和剪切之后的地址完全一样，那说明只有一个情况，就是当前选择的素材是视频的情况，那么需要去得到视频的第一针，然后传过去
-                    Presenter.GetVideoCover(imagePath,videoPath);
+//                    Presenter.GetVideoCover(imagePath,videoPath);
+                    Intent intent = new Intent(PreviewActivity.this, VideoCropActivity.class);
+                    intent.putExtra("videoPath",imagePath);
+                    intent.putExtra("comFrom",FromToTemplate.ISFROMEDOWNVIDEO);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+
+
+
                 }else{
-                    intoCreationTemplateActivity(imagePath,videoPath,originalImagePath.get(0));
+                    intoCreationTemplateActivity(imagePath,videoPath,originalImagePath.get(0),true);
                 }
             });
         }
@@ -522,13 +534,14 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
 
 
-    private void intoCreationTemplateActivity(String imagePath,String videoPath,String originalPath){
+    private void intoCreationTemplateActivity(String imagePath,String videoPath,String originalPath,boolean isNeedCut){
         Intent intent = new Intent(PreviewActivity.this, CreationTemplateActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("paths", imagePath);
         bundle.putSerializable("bjTemplateTitle", templateItem.getTitle());
         bundle.putString("originalPath",originalPath );
         bundle.putString("video_path", videoPath);
+        bundle.putBoolean("isNeedCut", isNeedCut);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("Message", bundle);
         startActivity(intent);
@@ -539,13 +552,13 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
 
     /**
-     * description ：获得视频第一针，这里用来背景模板页面，用户选择的是视频的情况
+     * description ：获得视频第一针，这里用来背景模板页面，用户选择的是视频的情况,废弃
      * creation date: 2020/4/21
      * user : zhangtongju
      */
     @Override
     public void getVideoCover(String filePath,String originalPath,String videoPath) {
-        intoCreationTemplateActivity(filePath,videoPath,originalPath);
+//        intoCreationTemplateActivity(filePath,videoPath,originalPath);
     }
 
 
@@ -572,7 +585,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
 
     /**
-     * description ：裁剪页面裁剪成功后返回的数据
+     * description ：裁剪页面裁剪成功后返回的数据,针对跳转到一键模板
      * creation date: 2020/4/13
      * user : zhangtongju
      */
@@ -605,7 +618,19 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         }
     }
 
+    /**
+     * description ：裁剪页面裁剪成功后返回的数据,针对跳转到自定义创作页面
+     * creation date: 2020/4/13
+     * user : zhangtongju
+     */
+    @Subscribe
+    public void onEventMainThread(CreateCutCallback event) {
+        LogUtil.d("OOM","接收到消息");
+        if(event!=null){
+            intoCreationTemplateActivity(event.getCoverPath(),createDownVideoPath,event.getOriginalPath(),event.isNeedCut());
+        }
 
+    }
 
 
 
