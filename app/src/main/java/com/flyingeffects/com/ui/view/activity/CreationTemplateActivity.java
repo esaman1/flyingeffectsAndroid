@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -30,15 +31,11 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.HorizontalListView;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.lansosdk.box.ViewLayerRelativeLayout;
@@ -46,6 +43,7 @@ import com.shixing.sxve.ui.albumType;
 import com.suke.widget.SwitchButton;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -132,6 +130,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private SimpleExoPlayer exoPlayer;
 
+    /**
+     * 背景音乐播放器
+     */
+    private  MediaPlayer  bgmPlayer;
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_creation_template_edit;
@@ -168,7 +171,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
         exoPlayer = ExoPlayerFactory.newSimpleInstance(CreationTemplateActivity.this);
-
         playerView.setPlayer(exoPlayer);
         //不使用控制器
         playerView.setUseController(false);
@@ -180,6 +182,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     case Player.STATE_READY:
                         break;
                     case Player.STATE_ENDED:
+                        if(bgmPlayer!=null){
+                            bgmPlayer.stop();
+                            bgmPlayer=null;
+                        }
                         isPlayComplate = true;
                         endTimer();
                         isPlaying = false;
@@ -219,6 +225,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if (exoPlayer != null) {
             LogUtil.d("video", "play");
             if(!TextUtils.isEmpty(bgmPath)){
+                if(bgmPlayer!=null){
+                    //继续播放
+                    bgmPlayer.start();
+                }else{
+                    seekTo(0);
+                    playBGMMusic();
+                }
+
                 exoPlayer.setVolume(0f);
             }else{
                 exoPlayer.setVolume(1f);
@@ -281,6 +295,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             case R.id.ll_play:
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
                     if (isPlaying) {
+                        pauseBgmMusic();
                         isIntoPause = false;
                         isPlayComplate = false;
                         videoToPause();
@@ -462,6 +477,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if (exoPlayer != null) {
             exoPlayer.seekTo(to);
         }
+
+        if(bgmPlayer!=null){
+            bgmPlayer.seekTo((int) to);
+        }
+
     }
 
     @Override
@@ -606,6 +626,28 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
     }
 
+
+
+
+
+
+    private void playBGMMusic(){
+        bgmPlayer = new MediaPlayer();
+        try {
+            bgmPlayer.setDataSource(bgmPath);
+            bgmPlayer.prepare();
+            bgmPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void pauseBgmMusic(){
+        if(bgmPlayer!=null){
+            bgmPlayer.pause();
+        }
+    }
 
 
 }
