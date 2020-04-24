@@ -56,6 +56,12 @@ import rx.android.schedulers.AndroidSchedulers;
  */
 public class TemplateCutVideoActivity extends BaseActivity {
 
+    @BindView(R.id.tv_kt)
+    TextView tv_kt;
+
+    @BindView(R.id.tv_no_kt)
+    TextView tv_no_kt;
+
     @BindView(R.id.list_thumb)
     RecyclerView list_thumb;
 
@@ -88,6 +94,9 @@ public class TemplateCutVideoActivity extends BaseActivity {
     private String videoPath;
 
     private String templateName;
+
+    //0 表示不需要抠图，1 表示需要抠图
+    private int picout;
 
 
 //    @BindView(R.id.video_player)
@@ -130,9 +139,15 @@ public class TemplateCutVideoActivity extends BaseActivity {
         needDuration = getIntent().getFloatExtra("needCropDuration", 1);
         templateName=getIntent().getStringExtra("templateName");
         isFrom=getIntent().getIntExtra("isFrom",0);
+        picout=getIntent().getIntExtra("picout",0);
         videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
         mEndDuration = (int) (needDuration * 1000);
         tv_duration.setText("模板时长 "+needDuration+"s");
+        if(picout==0){
+            tv_kt.setVisibility(View.GONE);
+            tv_no_kt.setText("下一步");
+        }
+
     }
 
     @Override

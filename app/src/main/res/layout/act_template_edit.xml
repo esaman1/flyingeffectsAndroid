@@ -32,7 +32,7 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:text="智能抠图"
+                android:text="智能抠像"
                 android:textColor="@color/white"
                 android:layout_height="wrap_content"/>
 

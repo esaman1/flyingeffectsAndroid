@@ -2,7 +2,7 @@
     <string name="app_name">飞闪</string>
     <string name="loading">加载中...</string>
     <string name="no_more_data">没有更多数据了</string>
-    <string name="better_to_choose_all">选清晰图片最佳</string>
+    <string name="better_to_choose_all">选清晰素材最佳</string>
     <string name="confirm">确定</string>
     <string name="install_app_store_notification">请先安装相关应用市场</string>
     <string name="contacts_saved_to_clipboard" translatable="false">友友你好，已为你复制微信号</string>

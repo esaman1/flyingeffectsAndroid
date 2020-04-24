@@ -186,6 +186,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private boolean nowIsChooseMatting = true;
 
+
+    private int picout;
+
 //    private String whiteImagePng;
 
 
@@ -233,13 +236,20 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
             isCanChooseVideo = true;
         }
-        if (originalPath == null || originalPath.size() == 0 || nowTemplateIsAnim == 1) {
-
+        if (originalPath == null || originalPath.size() == 0) {
             if (nowTemplateIsMattingVideo != 1) {
-                //不需要抠图,视频抠图无论如何都需要的
-                findViewById(R.id.ll_Matting).setVisibility(View.GONE);
+//                //不需要抠图,视频抠图无论如何都需要的
+//                findViewById(R.id.ll_Matting).setVisibility(View.GONE);
+                switch_button.setChecked(false);
+                nowIsChooseMatting = false;
             }
         }
+
+        if(nowTemplateIsAnim == 1){
+            findViewById(R.id.ll_Matting).setVisibility(View.GONE);
+        }
+
+
 
         mTextEditLayout = findViewById(R.id.text_edit_layout);
         mFolder = new File(templateFilePath);
@@ -373,6 +383,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     public void returnReplaceableFilePath(String[] paths) {
+        for(int i=0;i<paths.length;i++){
+            LogUtil.d("oom","渲染需要的地址为"+paths[i]);
+        }
         Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().post(() -> showPreview(true, false)));
         switchTemplate(mFolder.getPath(), paths);
     }
@@ -644,6 +657,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     }
                     if (mTemplateViews != null && mTemplateViews.size() > 0) {
                         mTemplateViews.get(nowChooseIndex).invalidate(); //提示重新绘制预览图
+                    }
+
+                    if(picout==0){
+                        //不抠图默认就取消选中，但是切换按钮还是存在
+                        switch_button.setChecked(false);
                     }
 
                 }));  //批量替换图片

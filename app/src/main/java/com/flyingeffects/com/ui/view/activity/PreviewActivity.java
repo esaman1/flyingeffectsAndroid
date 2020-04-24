@@ -118,6 +118,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     private boolean isPlayComplate = false;
 
+
+
     /**
      * 来着来个页面
      */
@@ -139,6 +141,9 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         EventBus.getDefault().register(this);
         templateItem = (new_fag_template_item) getIntent().getSerializableExtra("person");
         fromTo = getIntent().getStringExtra("fromTo");
+        if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)){
+            tv_make.setText("tv_make");
+        }
         fromToMineCollect = getIntent().getBooleanExtra("fromToMineCollect", false);
         defaultnum = templateItem.getDefaultnum();
         is_picout = templateItem.getIs_picout();
@@ -163,7 +168,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 .into(iv_writer);
         tv_writer_name.setText(templateItem.getAuth());
         tv_title.setText(templateItem.getTitle());
-        tv_describe.setText("友友们    " + "上传" + templateItem.getDefaultnum() + "张照片即可制作");
+        tv_describe.setText("友友们    " + "上传" + templateItem.getDefaultnum() + "个素材即可制作");
         if (!fromToMineCollect) {
             Presenter.requestTemplateDetail(templateItem.getId());
         }
@@ -283,11 +288,11 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel && !ondestroy) {
-            //如果不需要抠图
-            if (is_picout == 0) {
-                intoTemplateActivity(paths, TemplateFilePath);
-                originalImagePath = null;
-            } else {//需要抠图
+//            //如果不需要抠图
+//            if (is_picout == 0) {
+//                intoTemplateActivity(paths, TemplateFilePath);
+//                originalImagePath = null;
+//            } else {//需要抠图
                 new Handler().postDelayed(() -> {
                     String alert="飞闪极速抠图中...";
                     WaitingDialog.openPragressDialog(PreviewActivity.this, alert);
@@ -317,6 +322,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                                 intoCutVideo.putExtra("needCropDuration", needVideoTime);
                                 intoCutVideo.putExtra("templateName",templateItem.getTitle());
                                 intoCutVideo.putExtra("videoPath", paths.get(0));
+                                intoCutVideo.putExtra("picout", templateItem.getIs_picout());
                                 startActivity(intoCutVideo);
                             }else{
                                 intoTemplateActivity(paths, TemplateFilePath);
@@ -328,7 +334,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
 
             }
-        }
+//        }
 
     }
 
@@ -370,6 +376,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         bundle.putStringArrayList("paths", (ArrayList<String>) paths);
         bundle.putInt("isPicNum", defaultnum);
         bundle.putString("fromTo", fromTo);
+        bundle.putInt("picout", templateItem.getIs_picout());
         bundle.putInt("is_anime", templateItem.getIs_anime());
         bundle.putString("templateName", templateItem.getTitle());
         bundle.putString("templateId", templateItem.getId());
