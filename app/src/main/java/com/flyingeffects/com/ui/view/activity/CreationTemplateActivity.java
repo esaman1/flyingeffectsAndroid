@@ -470,6 +470,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         destroyTimer();
         videoStop();
         EventBus.getDefault().unregister(this);
+        if(bgmPlayer!=null){
+            bgmPlayer.pause();
+            bgmPlayer.release();
+        }
         super.onDestroy();
     }
 
@@ -498,7 +502,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if(bgmPlayer!=null){
             bgmPlayer.seekTo((int) to);
         }
-
     }
 
     @Override
@@ -531,6 +534,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     public void getBgmPath(String path) {
         this.bgmPath=path;
     }
+
+//    @Override
+//    public void showRenderVideoTime(int duration) {
+//        tv_total.setText(timeUtils.timeParse(allVideoDuration) + "s");
+//    }
 
 
     private Timer timer;

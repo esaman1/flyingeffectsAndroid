@@ -110,6 +110,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemvpView.getBgmPath(path);
     }
 
+    @Override
+    public void showRenderVideoTime(int duration) {
+//        creationTemplatemvpView.showRenderVideoTime(duration);
+    }
+
 
     public void toSaveVideo(){
         creationTemplatemodel.toSaveVideo();

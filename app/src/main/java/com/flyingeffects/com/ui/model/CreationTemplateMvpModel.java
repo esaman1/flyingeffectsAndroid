@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
+import android.widget.ListView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
@@ -112,6 +113,7 @@ public class CreationTemplateMvpModel {
      * 是否抠图,true 抠图
      */
     private boolean isMatting = true;
+
 
 
     /**
@@ -437,7 +439,6 @@ public class CreationTemplateMvpModel {
      */
 
     int stickerViewID;
-
     private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView) {
         closeAllAnim();
         StickerView stickView = new StickerView(context);
@@ -538,12 +539,16 @@ public class CreationTemplateMvpModel {
             stickView.setOriginalPath(originalPath);
         }
         if (isFirstAdd) {
-            stickView.setFirstAddSticker(true);
-            stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
+            if(albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))){
+                stickView.setFirstAddSticker(true);
+                stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
+            }
         }
         if (hasReplace) {
             stickView.setLeftBottomBitmap(context.getDrawable(R.mipmap.sticker_change));
         }
+
+
         if (isCopy && copyStickerView != null) {
             //来做复制或者来自联系点击下面的item
             StickerView.isFromCopy fromCopy = new StickerView.isFromCopy();
@@ -667,12 +672,42 @@ public class CreationTemplateMvpModel {
     public void initVideoProgressView(HorizontalListView hListView) {
         this.hListView = hListView;
         //动态设置距离左边的位置
-
         if(videoInfo!=null){
             initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), videoInfo.getDuration(), videoInfo.getDuration() / 2, mVideoPath);
         }else{
-            initSingleThumbSize(720, 1280, 1000*10, 1000*10 / 2, "");
+            getPlayVideoDuration();
+            initSingleThumbSize(720, 1280, defaultVideoDuration, defaultVideoDuration / 2, "");
         }
+    }
+
+
+
+
+   private  List<Integer>perSticker=new ArrayList<>();
+    private void getPlayVideoDuration(){
+         defaultVideoDuration = 0;
+        for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
+            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
+            if (albumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath()))) {
+                VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
+                perSticker.add(materialVideoInfo.getDuration());
+            }
+        }
+        if(perSticker!=null&&perSticker.size()>0){
+
+            for (int duration:perSticker
+            ) {
+                if(defaultVideoDuration<duration){
+                    defaultVideoDuration=duration;
+                }
+            }
+            LogUtil.d("OOM","获得贴纸时长为"+defaultVideoDuration);
+        }else{
+            LogUtil.d("OOM","获得贴纸时长失败");
+            defaultVideoDuration=10*1000;
+        }
+
+//        callback.showRenderVideoTime(defaultVideoDuration);
     }
 
 

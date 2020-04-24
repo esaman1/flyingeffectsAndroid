@@ -18,4 +18,6 @@ public interface CreationTemplateMvpView {
     void getVideoCover(String path,String originalPath);
 
     void getBgmPath(String path);
+
+//    void showRenderVideoTime(int duration);
 }

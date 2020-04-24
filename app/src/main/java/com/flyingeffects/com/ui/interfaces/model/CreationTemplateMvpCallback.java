@@ -19,6 +19,8 @@ public interface CreationTemplateMvpCallback {
 
     void getBgmPath(String path);
 
+    void showRenderVideoTime(int duration);
+
 
 
 }
