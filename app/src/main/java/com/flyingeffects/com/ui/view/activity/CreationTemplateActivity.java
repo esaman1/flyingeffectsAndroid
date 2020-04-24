@@ -241,7 +241,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     seekTo(0);
                     playBGMMusic();
                 }
-
                 exoPlayer.setVolume(0f);
             }else{
                 exoPlayer.setVolume(1f);
@@ -340,6 +339,17 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                                     isIntoPause = false;
                                     isInitVideoLayer = true;
                                     videoPlay();
+                                }
+                            }
+                        }else{
+                            //如果有背景还是播放背景音乐
+                            if(!TextUtils.isEmpty(bgmPath)){
+                                if(bgmPlayer!=null){
+                                    //继续播放
+                                    bgmPlayer.start();
+                                }else{
+                                    seekTo(0);
+                                    playBGMMusic();
                                 }
                             }
                         }

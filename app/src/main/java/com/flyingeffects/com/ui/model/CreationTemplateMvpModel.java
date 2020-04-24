@@ -463,7 +463,7 @@ public class CreationTemplateMvpModel {
                         getVideoVoice(stickView.getOriginalPath(),soundFolder);
                         stickView.setOpenVoice(true);
                         stickView.setRightCenterBitmapForChangeIcon(context.getDrawable(R.mipmap.sticker_open_voice));
-                        callback.getBgmPath(videoVoicePath);
+                    //    callback.getBgmPath(videoVoicePath);
                     }else{
                         //关闭声音
                         videoVoicePath="";
