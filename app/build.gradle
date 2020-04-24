@@ -171,6 +171,11 @@ dependencies {
     //oppo
     implementation(name: 'mobad_normal_pub_333_2019_11_11', ext: 'aar')
 
+
+
+    // 抖音1
+    implementation(name: 'RangersAppLog-Lite-cn-3.3.12', ext: 'aar')
+
 }
 
 

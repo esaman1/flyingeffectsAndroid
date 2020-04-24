@@ -170,6 +170,7 @@ public class VideoMattingModel {
         Bitmap firstBitmap = BitmapFactory.decodeFile(getMattingList.get(0).getPath());
         long AllTime = videoInfo.getDuration() * 1000;
         preTime = AllTime / (float) getMattingList.size();
+        LogUtil.d("OOM2", "AllTime2222="+AllTime );
         nowProgressTime = preTime;
         try {
             DrawPadAllExecute2 execute = new DrawPadAllExecute2(BaseApplication.getInstance(), DRAWPADWIDTH, DRAWPADHEIGHT, AllTime);
@@ -230,6 +231,7 @@ public class VideoMattingModel {
         List<File> getMattingList = FileManager.listFileSortByModifyTime(faceFolder);
         Bitmap firstBitmap = BitmapFactory.decodeFile(getMattingList.get(0).getPath());
         long AllTime = videoInfo.getDuration() * 1000;
+        LogUtil.d("OOM2", "AllTime="+AllTime );
         preTime = AllTime / (float) getMattingList.size();
         nowProgressTime = preTime;
         try {

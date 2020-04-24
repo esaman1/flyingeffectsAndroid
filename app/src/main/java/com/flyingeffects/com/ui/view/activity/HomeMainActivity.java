@@ -22,6 +22,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bytedance.applog.AppLog;
+import com.bytedance.applog.GameReportHelper;
+import com.bytedance.applog.InitConfig;
+import com.bytedance.applog.util.UriConfig;
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
 import com.chuanglan.shanyan_sdk.listener.GetPhoneInfoListener;
 import com.flyingeffects.com.R;
@@ -60,6 +64,8 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.subjects.PublishSubject;
+
+import static com.flyingeffects.com.constans.BaseConstans.getChannel;
 
 
 /****
@@ -103,6 +109,30 @@ public class HomeMainActivity extends FragmentActivity {
         checkConfig();
         getUserPhoneInfo();
         getPushPermission();
+        initTiktok();
+    }
+
+
+    private void  initTiktok(){
+
+        /* 初始化开始 */
+        // appid和渠道，appid须保证与广告后台申请记录一致，渠道可自定义，如有多个马甲包建议设置渠道号唯一标识一个马甲包。
+        final InitConfig config = new InitConfig("181569", getChannel());
+         /*
+         域名默认国内: DEFAULT, 新加坡:SINGAPORE, 美东:AMERICA
+         注意：国内外不同vendor服务注册的did不一样。由DEFAULT切换到SINGAPORE或者AMERICA，会发生变化，
+         切回来也会发生变化。因此vendor的切换一定要慎重，随意切换导致用户新增和统计的问题，需要自行评估。
+         */
+        config.setUriConfig(UriConfig.DEFAULT);
+        //配置心跳，游戏模式
+        config.setEnablePlay(true);
+        // 是否在控制台输出日志，可用于观察用户行为日志上报情况，建议仅在调试时使用，release版本请设置为false ！
+        AppLog.setEnableLog(true);
+        AppLog.init(this, config);
+        /* 初始化结束 */
+        GameReportHelper.onEventRegister("wechat",true);
+        GameReportHelper.onEventPurchase("gift","flower", "008",1,
+                "wechat","¥", true, 1);
     }
 
 
@@ -135,7 +165,7 @@ public class HomeMainActivity extends FragmentActivity {
     public void checkUpdate() {
         HashMap<String, String> params = new HashMap<>();
         params.put("config_name", "android_version_ad");
-        params.put("channel", BaseConstans.getChannel());
+        params.put("channel", getChannel());
         Observable ob = Api.getDefault().checkUpdate(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<checkVersion>(this) {
             @Override
