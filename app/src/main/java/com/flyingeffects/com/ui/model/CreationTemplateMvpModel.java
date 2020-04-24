@@ -115,18 +115,17 @@ public class CreationTemplateMvpModel {
     private boolean isMatting = true;
 
 
-
     /**
      * 默认视频时长,如果没选择背景的时候会用到
      */
-    private int defaultVideoDuration=0;
+    private int defaultVideoDuration = 0;
 
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout) {
         this.context = context;
         this.callback = callback;
         this.mVideoPath = mVideoPath;
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
-        if(!TextUtils.isEmpty(mVideoPath)){
+        if (!TextUtils.isEmpty(mVideoPath)) {
             videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
         }
         FileManager fileManager = new FileManager();
@@ -136,13 +135,12 @@ public class CreationTemplateMvpModel {
     }
 
 
-
     /**
      * description ：单独设置背景视频，有可能用户第一次进来不选择背景视频
      * creation date: 2020/4/22
      * user : zhangtongju
      */
-    public void setmVideoPath(String mVideoPath){
+    public void setmVideoPath(String mVideoPath) {
         this.mVideoPath = mVideoPath;
         videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
     }
@@ -439,6 +437,7 @@ public class CreationTemplateMvpModel {
      */
 
     int stickerViewID;
+
     private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView) {
         closeAllAnim();
         StickerView stickView = new StickerView(context);
@@ -457,24 +456,22 @@ public class CreationTemplateMvpModel {
                     //copy
                     copyGif(stickView.getResPath(), path, stickView.getComeFrom(), stickView, stickView.getOriginalPath());
 
-                }else if(type == StickerView.RIGHT_CENTER_MODE){
-                    if(!stickView.isOpenVoice){
+                } else if (type == StickerView.RIGHT_CENTER_MODE) {
+                    if (!stickView.isOpenVoice) {
                         //打开声音
-                        getVideoVoice(stickView.getOriginalPath(),soundFolder);
+                        getVideoVoice(stickView.getOriginalPath(), soundFolder);
                         stickView.setOpenVoice(true);
                         stickView.setRightCenterBitmapForChangeIcon(context.getDrawable(R.mipmap.sticker_open_voice));
-                    //    callback.getBgmPath(videoVoicePath);
-                    }else{
+                        //    callback.getBgmPath(videoVoicePath);
+                    } else {
                         //关闭声音
-                        videoVoicePath="";
+                        videoVoicePath = "";
                         stickView.setOpenVoice(false);
                         stickView.setRightCenterBitmapForChangeIcon(context.getDrawable(R.mipmap.sticker_close_voice));
                         callback.getBgmPath("");
                     }
 
-                }
-
-                else if (type == StickerView.LEFT_BOTTOM_MODE) {
+                } else if (type == StickerView.LEFT_BOTTOM_MODE) {
 
                     if (UiStep.isFromDownBj) {
                         statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_replace");
@@ -483,9 +480,12 @@ public class CreationTemplateMvpModel {
                     }
                     //切換素材
                     AlbumManager.chooseAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
-                        if(!isCancel){
-                            if(albumType.isVideo(GetPathType.getInstance().getPathType(paths.get(0)))){
-                                GetVideoCover getVideoCover=new GetVideoCover(context);
+                        if (!isCancel) {
+                            if (albumType.isVideo(GetPathType.getInstance().getPathType(paths.get(0)))) {
+                                if (stickView.isFirstAddSticker()) {
+                                    stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
+                                }
+                                GetVideoCover getVideoCover = new GetVideoCover(context);
                                 getVideoCover.getCover(paths.get(0), path1 -> {
                                     Observable.just(path1).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
                                         stickView.setOriginalPath(paths.get(0));
@@ -497,7 +497,7 @@ public class CreationTemplateMvpModel {
                                         }
                                     });
                                 });
-                            }else{
+                            } else {
                                 CompressionCuttingManage manage = new CompressionCuttingManage(context, "", tailorPaths -> {
                                     Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
                                         stickView.setOriginalPath(paths.get(0));
@@ -539,8 +539,8 @@ public class CreationTemplateMvpModel {
             stickView.setOriginalPath(originalPath);
         }
         if (isFirstAdd) {
-            if(albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))){
-                stickView.setFirstAddSticker(true);
+            stickView.setFirstAddSticker(true);
+            if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
                 stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
             }
         }
@@ -672,20 +672,19 @@ public class CreationTemplateMvpModel {
     public void initVideoProgressView(HorizontalListView hListView) {
         this.hListView = hListView;
         //动态设置距离左边的位置
-        if(videoInfo!=null){
+        if (videoInfo != null) {
             initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), videoInfo.getDuration(), videoInfo.getDuration() / 2, mVideoPath);
-        }else{
+        } else {
             getPlayVideoDuration();
             initSingleThumbSize(720, 1280, defaultVideoDuration, defaultVideoDuration / 2, "");
         }
     }
 
 
+    private List<Integer> perSticker = new ArrayList<>();
 
-
-   private  List<Integer>perSticker=new ArrayList<>();
-    private void getPlayVideoDuration(){
-         defaultVideoDuration = 0;
+    private void getPlayVideoDuration() {
+        defaultVideoDuration = 0;
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             if (albumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath()))) {
@@ -693,18 +692,18 @@ public class CreationTemplateMvpModel {
                 perSticker.add(materialVideoInfo.getDuration());
             }
         }
-        if(perSticker!=null&&perSticker.size()>0){
+        if (perSticker != null && perSticker.size() > 0) {
 
-            for (int duration:perSticker
+            for (int duration : perSticker
             ) {
-                if(defaultVideoDuration<duration){
-                    defaultVideoDuration=duration;
+                if (defaultVideoDuration < duration) {
+                    defaultVideoDuration = duration;
                 }
             }
-            LogUtil.d("OOM","获得贴纸时长为"+defaultVideoDuration);
-        }else{
-            LogUtil.d("OOM","获得贴纸时长失败");
-            defaultVideoDuration=10*1000;
+            LogUtil.d("OOM", "获得贴纸时长为" + defaultVideoDuration);
+        } else {
+            LogUtil.d("OOM", "获得贴纸时长失败");
+            defaultVideoDuration = 10 * 1000;
         }
 
 //        callback.showRenderVideoTime(defaultVideoDuration);
@@ -734,9 +733,9 @@ public class CreationTemplateMvpModel {
         int dp40 = screenUtil.dip2px(context, 43);
         int screenWidth = screenUtil.getScreenWidth((Activity) context);
         listViewForVideoThumbAdapter adapter;
-        if(!TextUtils.isEmpty(mVideoPath)){
-             adapter = new listViewForVideoThumbAdapter(context, mTimeUs, Uri.fromFile(new File(mVideoPath)), thumbWidth, listHeight, screenWidth / 2, screenWidth / 2 - dp40);
-        }else{
+        if (!TextUtils.isEmpty(mVideoPath)) {
+            adapter = new listViewForVideoThumbAdapter(context, mTimeUs, Uri.fromFile(new File(mVideoPath)), thumbWidth, listHeight, screenWidth / 2, screenWidth / 2 - dp40);
+        } else {
             adapter = new listViewForVideoThumbAdapter(context, mTimeUs, null, thumbWidth, listHeight, screenWidth / 2, screenWidth / 2 - dp40);
         }
 
@@ -793,12 +792,11 @@ public class CreationTemplateMvpModel {
      */
 
 
-
     public void toSaveVideo() {
         listAllSticker.clear();
         cutSuccessNum = 0;
         cutVideoPathList.clear();
-        backgroundDraw = new backgroundDraw(context, mVideoPath,videoVoicePath, path -> {
+        backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, path -> {
             //成功后的回调
             Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -840,8 +838,8 @@ public class CreationTemplateMvpModel {
 
 
         for (int i = 0; i < listAllSticker.size(); i++) {
-            if(defaultVideoDuration<listAllSticker.get(i).getDuration()){
-                defaultVideoDuration= (int) listAllSticker.get(i).getDuration();
+            if (defaultVideoDuration < listAllSticker.get(i).getDuration()) {
+                defaultVideoDuration = (int) listAllSticker.get(i).getDuration();
             }
             if (listAllSticker.get(i).isVideo()) {
                 cutVideoPathList.add(new videoType(listAllSticker.get(i).getOriginalPath(), i, listAllSticker.get(i).getDuration()));
@@ -849,15 +847,15 @@ public class CreationTemplateMvpModel {
         }
         if (cutVideoPathList.size() == 0) {
             //都不是视频的情况下，就直接渲染
-            backgroundDraw.toSaveVideo(listAllSticker,isMatting);
+            backgroundDraw.toSaveVideo(listAllSticker, isMatting);
         } else {
             //有视频的情况下需要先裁剪视频，然后取帧
             progressNowAnim = new WaitingDialogProgressNowAnim(context);
             progressNowAnim.openProgressDialog();
             cutList.clear();
-            if(videoInfo!=null){
+            if (videoInfo != null) {
                 cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration());
-            }else{
+            } else {
                 //没选择背景默认裁剪10秒
                 cutVideo(cutVideoPathList.get(0), defaultVideoDuration, cutVideoPathList.get(0).getDuration());
             }
@@ -899,7 +897,7 @@ public class CreationTemplateMvpModel {
                 sticker.setPath(path);
                 cutSuccessNum++;
                 if (cutSuccessNum == cutVideoPathList.size()) {
-                    if(isMatting){
+                    if (isMatting) {
                         LogUtil.d("OOM2", "裁剪完成，准备抠图");
                         progressNowAnim.closePragressDialog();
                         //全部裁剪完成之后需要去把视频裁剪成全部帧
@@ -907,18 +905,18 @@ public class CreationTemplateMvpModel {
                             @Override
                             public void isExtractSuccess(boolean isSuccess) {
                                 LogUtil.d("OOM2", "全部抠图完成");
-                                backgroundDraw.toSaveVideo(listAllSticker,true);
+                                backgroundDraw.toSaveVideo(listAllSticker, true);
                             }
                         });
                         getFrameModel.startExecute();
-                    }else{
+                    } else {
                         progressNowAnim.closePragressDialog();
-                        backgroundDraw.toSaveVideo(listAllSticker,false);
+                        backgroundDraw.toSaveVideo(listAllSticker, false);
                     }
                 } else {
-                    if(videoInfo!=null){
+                    if (videoInfo != null) {
                         cutVideo(cutVideoPathList.get(cutSuccessNum), videoInfo.getDuration(), cutVideoPathList.get(cutSuccessNum).getDuration());
-                    }else{
+                    } else {
                         cutVideo(cutVideoPathList.get(cutSuccessNum), defaultVideoDuration, cutVideoPathList.get(cutSuccessNum).getDuration());
                     }
                 }
@@ -1011,34 +1009,25 @@ public class CreationTemplateMvpModel {
     }
 
 
-
     /**
      * description ：视频音视频分离，获得视频的声音
      * creation date: 2020/4/23
      * user : zhangtongju
      */
-    private void getVideoVoice(String videoPath,String outputPath){
+    private void getVideoVoice(String videoPath, String outputPath) {
         WaitingDialog.openPragressDialog(context);
         new Thread(() -> {
-            mediaManager manager=new mediaManager(context);
+            mediaManager manager = new mediaManager(context);
             manager.splitMp4(videoPath, new File(outputPath), (isSuccess, putPath) -> {
                 WaitingDialog.closePragressDialog();
-                if(isSuccess){
-                    LogUtil.d("OOM","分离出来的因为地址为"+outputPath);
-                    videoVoicePath=outputPath+ File.separator +"bgm.mp3";
+                if (isSuccess) {
+                    LogUtil.d("OOM", "分离出来的因为地址为" + outputPath);
+                    videoVoicePath = outputPath + File.separator + "bgm.mp3";
                     callback.getBgmPath(videoVoicePath);
                 }
             });
         }).start();
     }
-
-
-
-
-
-
-
-
 
 
     class videoType {

@@ -114,6 +114,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
 
 
+
     public boolean isOpenVoice=false;
 
 
