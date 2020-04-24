@@ -21,6 +21,7 @@ import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.CreateCutCallback;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DataCleanManager;
@@ -37,6 +38,8 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MarqueTextView;
 import com.flyingeffects.com.view.MattingVideoEnity;
+import com.nineton.ntadsdk.itr.VideoAdCallBack;
+import com.nineton.ntadsdk.manager.VideoAdManager;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
@@ -486,21 +489,69 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void hasLogin(boolean hasLogin) {
-        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-            //来做背景页面
-            AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
-        } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)){
-            Presenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId());
-        }else {
-            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMSEARCH)) {
-                statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "4_search_make", templateItem.getTitle());
-            }
-            statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "mb_make", templateItem.getTitle());
-            videoPlayer.onVideoPause();
-            VideoPlaybackCompleted(true, true);
-            Presenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
+
+
+        if (!TextUtils.isEmpty(templateItem.getType()) && templateItem.getType().equals("0")) {
+            //需要激励视频
+            VideoAdManager videoAdManager = new VideoAdManager();
+            videoAdManager.showVideoAd(this, AdConfigs.AD_stimulate_video, new VideoAdCallBack() {
+                @Override
+                public void onVideoAdSuccess() {
+
+                }
+
+                @Override
+                public void onVideoAdError(String s) {
+
+                }
+
+                @Override
+                public void onVideoAdClose() {
+
+                }
+
+                @Override
+                public void onVideoAdSkip() {
+
+                }
+
+                @Override
+                public void onVideoAdComplete() {
+                    hasLoginToNext();
+                }
+
+                @Override
+                public void onVideoAdClicked() {
+
+                }
+            });
+
+        } else {
+            hasLoginToNext();
         }
     }
+
+
+
+    private void hasLoginToNext(){
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                //来做背景页面
+                AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
+            } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)){
+                Presenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId());
+            }else {
+                if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMSEARCH)) {
+                    statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "4_search_make", templateItem.getTitle());
+                }
+                statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "mb_make", templateItem.getTitle());
+                videoPlayer.onVideoPause();
+                VideoPlaybackCompleted(true, true);
+                Presenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
+            }
+        }
+
+
+
 
 
     /**

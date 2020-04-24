@@ -3,8 +3,8 @@ package com.flyingeffects.com.enity;
 import java.io.Serializable;
 
 public class new_fag_template_item implements Serializable {
-    
-     private String id;
+
+    private String id;
 
     public String getId() {
         return id;
@@ -95,7 +95,6 @@ public class new_fag_template_item implements Serializable {
     }
 
 
-
     public String getMbsearch() {
         return mbsearch;
     }
@@ -111,7 +110,6 @@ public class new_fag_template_item implements Serializable {
     public void setIos_diversion(String ios_diversion) {
         this.ios_diversion = ios_diversion;
     }
-
 
 
     public String getAuth() {
@@ -163,15 +161,18 @@ public class new_fag_template_item implements Serializable {
     }
 
     private String title;
-         private String image;
-         private String vidoefile;
-         private String temcategory_id;
-         private String type;
-         private String sort;
-         private String test;
-         private String preview;
-         private String reading;
-         private String reading2;
+    private String image;
+    private String vidoefile;
+    private String temcategory_id;
+    /**
+     * 0 需要激励视频，1 不需要激励视频
+     */
+    private String type;
+    private String sort;
+    private String test;
+    private String preview;
+    private String reading;
+    private String reading2;
 
     public String getVideotime() {
         return videotime;
@@ -192,8 +193,8 @@ public class new_fag_template_item implements Serializable {
     }
 
     private long create_time;
-         private String mbsearch;
-         private String ios_diversion;
+    private String mbsearch;
+    private String ios_diversion;
 
     public int getIs_picout() {
         return is_picout;
@@ -218,12 +219,12 @@ public class new_fag_template_item implements Serializable {
     }
 
     private int defaultnum;
-         private String auth;
-         private String auth_image;
-         private String remark;
-         private String collection;
-         private String templatefile;
-         private String zipid;
+    private String auth;
+    private String auth_image;
+    private String remark;
+    private String collection;
+    private String templatefile;
+    private String zipid;
 
     public int getIs_collection() {
         return is_collection;
@@ -245,6 +246,7 @@ public class new_fag_template_item implements Serializable {
     }
 
     //1 表示是漫画，0 表示是普通类
-    private int is_anime=0;
+    private int is_anime = 0;
+
 
 }

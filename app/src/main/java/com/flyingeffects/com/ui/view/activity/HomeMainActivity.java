@@ -37,6 +37,7 @@ import com.flyingeffects.com.enity.checkVersion;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.SPHelper;
@@ -54,15 +55,21 @@ import com.githang.statusbar.StatusBarCompat;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.videoeditor.LanSongFileUtil;
 import com.megvii.segjni.SegJni;
+import com.nineton.ntadsdk.itr.ScreenAdCallBack;
+import com.nineton.ntadsdk.manager.ScreenAdManager;
 import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.subjects.PublishSubject;
 
 import static com.flyingeffects.com.constans.BaseConstans.getChannel;
@@ -84,6 +91,8 @@ public class HomeMainActivity extends FragmentActivity {
     private int[] unSelectIconArr = {R.mipmap.home_bj_unselect, R.mipmap.moban_unslect, R.mipmap.chazhao_unselect, R.mipmap.wode_unselect};
     private FragmentManager fragmentManager;
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
+    private Timer timer;
+    private TimerTask task;
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -110,7 +119,91 @@ public class HomeMainActivity extends FragmentActivity {
         getUserPhoneInfo();
         getPushPermission();
         initTiktok();
+        requestCPad();
     }
+
+
+
+    /**
+     * description ：请求插屏广告
+     * creation date: 2020/4/24
+     * user : zhangtongju
+     */
+    private void   requestCPad(){
+        int second=BaseConstans.getInterstitial();
+        startTimer(second);
+    }
+
+    private void startTimer(int second) {
+        if (timer != null) {
+            timer.purge();
+            timer.cancel();
+            timer = null;
+        }
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+        timer = new Timer();
+        task = new TimerTask() {
+            @Override
+            public void run() {
+                showCpAd();
+                destroyTimer();
+            }
+        };
+        timer.schedule(task, second*1000, second*1000);
+    }
+
+    /**
+     * user :TongJu  ; email:jutongzhang@sina.com
+     * time：2018/10/15
+     * describe:严防内存泄露
+     **/
+    private void destroyTimer() {
+        if (timer != null) {
+            timer.purge();
+            timer.cancel();
+            timer = null;
+        }
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+    }
+
+
+
+    private void showCpAd(){
+
+        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+            ScreenAdManager   screenAdManager = new ScreenAdManager();
+            screenAdManager.showScreenAd(HomeMainActivity.this, AdConfigs.AD_SCREEN, new ScreenAdCallBack() {
+                @Override
+                public void onScreenAdShow() {
+
+                }
+
+                @Override
+                public void onScreenAdError(String errorMsg) {
+
+                }
+
+                @Override
+                public void onScreenAdClose() {
+
+                }
+
+                @Override
+                public boolean onScreenAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
+                    return false;
+                }
+            });
+        });
+
+
+    }
+
 
 
     private void  initTiktok(){

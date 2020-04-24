@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
@@ -25,6 +26,7 @@ import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.utils.screenUtil;
 import com.nineton.ntadsdk.NTAdSDK;
 import com.nineton.ntadsdk.itr.SplashAdCallBack;
 import com.nineton.ntadsdk.view.NTSkipView;
@@ -36,9 +38,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 public class WelcomeActivity extends BaseActivity {
 
@@ -368,6 +373,10 @@ public class WelcomeActivity extends BaseActivity {
                                 LogUtil.d("OOM", "当前为lao用户");
                                 BaseConstans.setIsNewUser(false);
                             }
+                        }else if(id==25){
+                            //启动APP多少秒后显示插屏广告
+                            int second = Integer.parseInt(config.getValue());
+                            BaseConstans.setInterstitial(second);
                         }
                     }
                 }
@@ -433,6 +442,10 @@ public class WelcomeActivity extends BaseActivity {
         }
 
     }
+
+
+
+
 
 
 }

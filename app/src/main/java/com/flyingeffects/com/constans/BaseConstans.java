@@ -238,4 +238,20 @@ public class BaseConstans {
         return spUtil.getInt("OpenAppNum", 0);
     }
 
+    //启动APP多少秒后显示插屏广告
+    public static void setInterstitial(int num) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putInt("interstitial", num);
+    }
+
+
+    //启动APP多少秒后显示插屏广告
+    public static int getInterstitial() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getInt("interstitial", 5);
+    }
+
+
+
+
 }
