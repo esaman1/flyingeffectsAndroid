@@ -10,6 +10,7 @@ import android.support.multidex.MultiDexApplication;
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.MediaLoader;
 import com.flyingeffects.com.ui.view.activity.WelcomeActivity;
 import com.flyingeffects.com.utils.ChannelUtil;
@@ -77,8 +78,7 @@ public class BaseApplication extends MultiDexApplication {
                         .appVersion(BuildConfig.VERSION_NAME)
                         .appId("61074cddf23c0a8dd2b7e00996057e78")
                         .appChannel(ChannelUtil.getChannel(this))
-//                        .TTAppKey("5001478")
-//                        .BaiduAppKey("f36dd747")
+                        .TTAppKey(AdConfigs.APP_ID_CSJ)
                         .isDebug(true)
                         .build());
 

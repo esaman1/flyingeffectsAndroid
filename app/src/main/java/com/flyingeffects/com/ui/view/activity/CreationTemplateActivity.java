@@ -191,10 +191,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     case Player.STATE_READY:
                         break;
                     case Player.STATE_ENDED:
-                        if(bgmPlayer!=null){
-                            bgmPlayer.stop();
-                            bgmPlayer=null;
-                        }
+
                         isPlayComplate = true;
                         endTimer();
                         isPlaying = false;
@@ -615,6 +612,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     private void endTimer() {
         destroyTimer();
+        if(bgmPlayer!=null){
+            bgmPlayer.stop();
+            bgmPlayer=null;
+        }
     }
 
 

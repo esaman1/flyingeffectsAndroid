@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -28,7 +29,9 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Toast;
@@ -53,8 +56,11 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.lansongCommendView.RectUtil;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
+import com.shixing.sxve.ui.util.RotationGestureDetector;
+import com.shixing.sxve.ui.view.TemplateView;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.List;
 //com.flyingeffects.com.view.StickerView
 
@@ -66,6 +72,13 @@ import java.util.List;
  * @date 2019/12/19
  */
 public class StickerView<D extends Drawable> extends View implements TickerAnimated {
+
+
+    private GestureDetector mGestureDetector;
+    private ScaleGestureDetector mScaleDetector;
+    private RotationGestureDetector mRotationDetector;
+
+
     public static final int STICKER_BTN_HALF_SIZE = 30;
     // 控件的几种模式
     /**
@@ -120,6 +133,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public float mScale = 1;
     private Paint debugPaint = new Paint();
     private TextPaint textPaint = new TextPaint();
+    private TextPaint whitePaint = new TextPaint();
     private TextPaint shadowPaint = new TextPaint();
     private Paint mHelpPaint = new Paint();
     private RectF mHelpBoxRect = new RectF();
@@ -141,6 +155,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private RectF rightCenterDstRect = new RectF();
     private RectF rightTopDstRect = new RectF();
     private RectF leftBottomDstRect = new RectF();
+    private RectF textRect = new RectF();
     private Drawable leftTopBitmap;
     private Drawable rightTopBitmap;
     private Drawable leftBottomBitmap;
@@ -440,7 +455,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
     private void initView(Context context, AttributeSet attributeSet) {
-
+        setupGestureListeners();
         TypedArray mTypedArray = context.obtainStyledAttributes(attributeSet,
                 R.styleable.StickerView);
         leftTopBitmap = mTypedArray.getDrawable(R.styleable.StickerView_sv_left_top_drawable);
@@ -465,10 +480,12 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         shadowPaint.setTextSize(40);
         shadowPaint.setColor(Color.BLUE);
 
+        whitePaint.setColor(Color.WHITE);
+        whitePaint.setTextSize(40);
         if (leftTopBitmap != null) {
             leftTopRect.set(0, 0, leftTopBitmap.getIntrinsicWidth(),
                     leftTopBitmap.getIntrinsicHeight());
-            leftTopDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
+            leftTopDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,  //相当于STICKER_BTN_HALF_SIZE*2 左移运算符
                     STICKER_BTN_HALF_SIZE << 1);
         }
         if (rightBottomBitmap != null) {
@@ -633,7 +650,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             canvas.restore();
 
             mHelpBoxRect.set(rectF);
+            textRect.set(mHelpBoxRect.left,mHelpBoxRect.bottom-50,mHelpBoxRect.right,mHelpBoxRect.bottom);
             RectUtil.scaleRect(mHelpBoxRect, mScale);
+//            RectUtil.scaleRect(textRect, mScale);
             if (frameShow) {
                 // draw x and rotate button
                 int offsetValue = 0;
@@ -675,11 +694,17 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 RectUtil.rotateRect(rightCenterDstRect, mHelpBoxRect.centerX(),
                         mHelpBoxRect.centerY(), mRotateAngle);
 
+                RectUtil.rotateRect(textRect, mHelpBoxRect.centerX(),
+                        mHelpBoxRect.centerY(), mRotateAngle);
+
                 canvas.save();
                 canvas.rotate(mRotateAngle, mHelpBoxRect.centerX(),
                         mHelpBoxRect.centerY());
                 canvas.drawRoundRect(mHelpBoxRect, 10, 10, mHelpPaint);
                 canvas.restore();
+
+
+
 
                 if (leftTopBitmap != null) {
                     leftTopBitmap.setBounds((int) leftTopDstRect.left, (int) leftTopDstRect.top, (int) leftTopDstRect.right, (int) leftTopDstRect.bottom);
@@ -702,6 +727,14 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     rightCenterBitmap.setBounds((int) rightCenterDstRect.left, (int) rightCenterDstRect.top, (int) rightCenterDstRect.right, (int) rightCenterDstRect.bottom);
                     rightCenterBitmap.draw(canvas);
                 }
+
+
+//                Path circlePath=new Path();
+//                circlePath.moveTo(leftBottomDstRect.left,leftBottomDstRect.bottom);
+//                LogUtil.d("OOM","leftBottomDstRect.left="+leftBottomDstRect.left);
+//                LogUtil.d("OOM","leftBottomDstRect.bottom"+leftBottomDstRect.bottom);
+//                circlePath.lineTo(rightBottomDstRect.left,rightBottomDstRect.bottom);
+//                canvas.drawTextOnPath("预览后视频可动", circlePath, 20, 20, whitePaint);
 
             }
 
@@ -772,16 +805,16 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 } else if (mCurrentMode == LEFT_BOTTOM_MODE) {
                     callback.stickerOnclick(LEFT_BOTTOM_MODE);
                     return true;
-                } else if (mCurrentMode == RIGHT_BOTTOM_MODE) {
+                }
+                else if(mCurrentMode == RIGHT_CENTER_MODE){
+                    callback.stickerOnclick(RIGHT_CENTER_MODE);
+                    return true;
+                }else if (mCurrentMode == RIGHT_BOTTOM_MODE) {
                     if (UiStep.isFromDownBj) {
                         statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), " 5_mb_bj_Spin");
                     } else {
                         statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), " 6_customize_bj_Spin");
                     }
-                    return true;
-                }else if(mCurrentMode == RIGHT_CENTER_MODE){
-                    callback.stickerOnclick(RIGHT_CENTER_MODE);
-                    return true;
                 }
                 lastX = x;
                 lastY = y;
@@ -1478,6 +1511,91 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
 
 
+
+    /**
+     * description ：手势开发
+     * creation date: 2020/4/24
+     * user : zhangtongju
+     */
+    private void setupGestureListeners() {
+        mGestureDetector = new GestureDetector(getContext(), new GestureListener());
+        mScaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
+        mRotationDetector = new RotationGestureDetector(new RotationListener());
+
+        try {
+            Field minSpan = mScaleDetector.getClass().getDeclaredField("mMinSpan");
+            minSpan.setAccessible(true);
+            minSpan.set(mScaleDetector, 20);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+//            mGroup.singleTap(new PointF(e.getX() / mOverallScale, e.getY() / mOverallScale));
+            return true;
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+//            isSliding = false;
+            return super.onSingleTapUp(e);
+        }
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+//            isSliding = true;
+//            mGroup.down(new PointF(e.getX() / mOverallScale, e.getY() / mOverallScale));
+            return true;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+//            mGroup.scroll(distanceX / mOverallScale, distanceY / mOverallScale);
+
+
+            mCurrentMode = MOVE_MODE;
+            float dx = e1.getX() - lastX;
+            float dy = e1.getY() - lastY;
+
+            layoutX += dx;
+            layoutY += dy;
+            adjustCenter(dx, dy);
+
+            invalidate();
+
+            return true;
+        }
+
+
+    }
+
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+//            float deltaScale = detector.getScaleFactor();
+//            mGroup.scale(deltaScale, deltaScale, mMidPntX, mMidPntY);
+            return true;
+        }
+    }
+
+    private class RotationListener extends RotationGestureDetector.SimpleOnRotationGestureListener {
+        @Override
+        public boolean onRotation(RotationGestureDetector detector) {
+//            mGroup.rotate(detector.getAngle(), mMidPntX, mMidPntY);
+
+
+
+
+
+            return true;
+        }
+    }
 
 
 
