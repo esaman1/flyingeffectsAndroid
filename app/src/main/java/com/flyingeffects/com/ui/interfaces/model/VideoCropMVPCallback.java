@@ -13,4 +13,6 @@ public interface VideoCropMVPCallback {
     void showCursor();
 
     void finishCrop(String path);
+
+    void getRealCutTime(float RealCutTime);
 }

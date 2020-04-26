@@ -10,14 +10,21 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
+import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.http.Api;
+import com.flyingeffects.com.http.HttpUtil;
+import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.DataCleanManager;
+import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.timeUtils;
@@ -32,7 +39,10 @@ import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+
+import rx.Observable;
 
 /**
  * description ：视频抠图控制类
@@ -194,6 +204,7 @@ public class VideoMattingModel {
                   long  time= System.currentTimeMillis()-nowCurtime;
                     String ss= timeUtils.timeParse(time);
                     LogUtil.d("OOM","总共扣视频需要了"+ss);
+                    requestLoginForSdk(ss);
                     statisticsEventAffair.getInstance().setFlag(context, "mattingVideoTime", templateName);
                     if (callback != null) {
                         callback.isSuccess(true, albumPath);
@@ -222,6 +233,27 @@ public class VideoMattingModel {
         } catch (Exception e) {
             LogUtil.d("OOM", e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+
+    private void requestLoginForSdk(String cutTime) {
+        if(!DoubleClick.getInstance().isFastDoubleClick()){
+            HashMap<String, String> params = new HashMap<>();
+            params.put("type","2");
+            params.put("timelength",cutTime);
+            // 启动时间
+            Observable ob = Api.getDefault().userDefine(BaseConstans.getRequestHead(params));
+            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(context) {
+                @Override
+                protected void _onError(String message) {
+                }
+
+                @Override
+                protected void _onNext(UserInfo data) {
+
+                }
+            }, "cacheKey", ActivityLifeCycleEvent.DESTROY, null, false, true, false);
         }
     }
 

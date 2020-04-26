@@ -35,6 +35,11 @@ public interface ApiService {
     Observable<HttpResult<UserInfo>> toLoginSms(@FieldMap Map<String, String> params);
 
 
+    //用户自定义裁剪视频当做背景的时候，时长统计
+    @FormUrlEncoded
+    @POST("/api/template/userDefine")
+    Observable<HttpResult<UserInfo>> userDefine(@FieldMap Map<String, String> params);
+
 
 
     @FormUrlEncoded

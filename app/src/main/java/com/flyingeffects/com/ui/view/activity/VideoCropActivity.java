@@ -13,11 +13,17 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.GetVideoCover;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.CreateCutCallback;
 import com.flyingeffects.com.enity.DownVideoPath;
+import com.flyingeffects.com.enity.UserInfo;
+import com.flyingeffects.com.http.Api;
+import com.flyingeffects.com.http.HttpUtil;
+import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -28,16 +34,19 @@ import com.flyingeffects.com.ui.interfaces.view.VideoCropMVPView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.presenter.VideoCropMVPPresenter;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.RoundImageView;
 import com.flyingeffects.com.view.VideoFrameRecycler;
 import com.lansosdk.videoeditor.DrawPadView2;
 import com.lansosdk.videoeditor.MediaInfo;
+import com.shixing.sxve.ui.view.WaitingDialog;
 import com.yanzhenjie.album.AlbumFile;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -324,6 +333,36 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
 
 
     }
+
+    @Override
+    public void getRealCutTime(float RealCutTime) {
+        if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORUSER)) {
+            requestLoginForSdk(RealCutTime);
+        }
+    }
+
+
+
+    private void requestLoginForSdk(float cutTime) {
+        if(!DoubleClick.getInstance().isFastDoubleClick()){
+            HashMap<String, String> params = new HashMap<>();
+            params.put("type","1");
+            params.put("timelength",cutTime+"");
+            // 启动时间
+            Observable ob = Api.getDefault().userDefine(BaseConstans.getRequestHead(params));
+            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(VideoCropActivity.this) {
+                @Override
+                protected void _onError(String message) {
+                }
+
+                @Override
+                protected void _onNext(UserInfo data) {
+
+                }
+            }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+        }
+    }
+
 
     @Override
     public void onDestroy() {

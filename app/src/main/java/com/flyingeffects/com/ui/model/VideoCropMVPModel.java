@@ -666,6 +666,7 @@ public class VideoCropMVPModel {
         isSaving = true;
 
         long durationUs = getDuration() * 1000;
+        getUserChooseDuration(cropStartRatio,cropEndRatio);
         videoCutDurationForVideoOneDo.getInstance().startCutDurtion(videoPath, Math.round(cropStartRatio * durationUs), Math.round(cropEndRatio * durationUs), new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
             public void progresss(int progress) {
@@ -788,6 +789,21 @@ public class VideoCropMVPModel {
 //        }
 
     }
+
+
+
+    /**
+     * description ：用来统计视频截取的时长
+     * creation date: 2020/4/26
+     * user : zhangtongju
+     */
+    private void getUserChooseDuration(float startTime,float endTime){
+        float realCutTime=endTime-startTime;
+        LogUtil.d("OOM","realCutTime="+realCutTime);
+        callback.getRealCutTime(realCutTime);
+
+    }
+
 
 
     private String getTempVideoPath(Context mContext) {

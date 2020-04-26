@@ -56,6 +56,11 @@ public class VideoCropMVPPresenter extends BasePresenter implements VideoCropMVP
         mvp_view.finishCrop(path);
     }
 
+    @Override
+    public void getRealCutTime(float RealCutTime) {
+        mvp_view.getRealCutTime(RealCutTime);
+    }
+
     public void setUpTrimmer(RangeSeekBarView mRangeSeekBarView, VideoFrameRecycler mTimeLineView, RoundImageView progressCursor) {
         model.initTrimmer(mRangeSeekBarView,mTimeLineView,progressCursor);
     }

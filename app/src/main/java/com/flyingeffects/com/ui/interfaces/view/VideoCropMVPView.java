@@ -17,4 +17,6 @@ public interface VideoCropMVPView {
     void showCursor();
 
     void finishCrop(String path);
+
+    void  getRealCutTime(float RealCutTime);
 }
