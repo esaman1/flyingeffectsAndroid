@@ -163,17 +163,16 @@ public class MattingImage {
         if (index >= BaseConstans.THREADCOUNT - 1) {
             if (imageByte != null) {
                 Bitmap newBitmap = SegResultHandleManage.setBitmapAlpha(bpList.get(0), imageByte);//setBlackWhite
-                LogUtil.d("mattingImage", "接受源图片地址" + bpList.get(0));
+                LogUtil.d("mattingImage", "接收源图片地址" + bpList.get(0));
                 callback.isSuccess(true, newBitmap);
             } else {
-                LogUtil.d("mattingImage", "不接受");
+                LogUtil.d("mattingImage", "不接收");
                 callback.isSuccess(false, OriginBitmap);
                 LogUtil.d("oom", "IMAGEBYTE==NULL");
             }
         } else {
             LogUtil.d("mattingImage", "不接受");
         }
-
     }
 
 

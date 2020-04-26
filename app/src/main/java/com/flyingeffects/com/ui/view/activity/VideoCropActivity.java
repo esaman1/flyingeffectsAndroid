@@ -116,8 +116,8 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
         UiStep.isFromDownBj=false;
         statisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Crop");
         if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORUSER)){
-            tv_no_kt.setVisibility(View.GONE);
-            tv_choose_pic.setText("下一步");
+            tv_choose_pic.setVisibility(View.GONE);
+            tv_no_kt.setText("下一步");
         }
 
 
@@ -139,14 +139,14 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
             case R.id.tv_choose_pic: //抠图
                 statisticsEventAffair.getInstance().setFlag(this, "2_Titles_cutdone", "手动卡点_片头裁剪完成");
                 statisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Cutout");
-                saveVideo();
+                saveVideo(true);
                 isNeedCut=true;
                 break;
 
             case R.id.tv_no_kt: //不需要抠图
                 statisticsEventAffair.getInstance().setFlag(this, "2_Titles_cutdone", "手动卡点_片头裁剪完成");
                 statisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Cutout");
-                saveVideo();
+                saveVideo(false);
                 isNeedCut=false;
                 break;
             default:
@@ -390,10 +390,10 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
         this.finish();
     }
 
-    private void saveVideo() {
+    private void saveVideo(boolean needCut) {
 
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
-            Presenter.saveVideo();
+            Presenter.saveVideo(needCut);
         }
 
     }

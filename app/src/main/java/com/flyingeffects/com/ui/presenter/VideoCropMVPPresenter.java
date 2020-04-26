@@ -77,7 +77,7 @@ public class VideoCropMVPPresenter extends BasePresenter implements VideoCropMVP
         model.onResume();
     }
 
-    public void saveVideo() {
-        model.saveVideo();
+    public void saveVideo(boolean needCut) {
+        model.saveVideo(needCut);
     }
 }

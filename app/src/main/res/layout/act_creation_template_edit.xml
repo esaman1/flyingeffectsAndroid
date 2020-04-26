@@ -106,7 +106,7 @@
             android:id="@+id/iv_green_background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#00ff00" />
+            android:background="#1FA400" />
     </LinearLayout>
 
 

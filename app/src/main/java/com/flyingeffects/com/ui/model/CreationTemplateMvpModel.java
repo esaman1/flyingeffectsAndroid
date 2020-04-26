@@ -924,12 +924,13 @@ private String originalPath;
                         LogUtil.d("OOM2", "裁剪完成，准备抠图");
                         progressNowAnim.closePragressDialog();
                         //全部裁剪完成之后需要去把视频裁剪成全部帧
-                        videoGetFrameModel getFrameModel = new videoGetFrameModel(context, cutList, new videoGetFrameModel.isSuccess() {
-                            @Override
-                            public void isExtractSuccess(boolean isSuccess) {
-                                LogUtil.d("OOM2", "全部抠图完成");
+                        videoGetFrameModel getFrameModel = new videoGetFrameModel(context, cutList, (isSuccess1) -> {
+                            LogUtil.d("OOM2", "全部抠图完成");
+
+                            if(isSuccess1){
                                 backgroundDraw.toSaveVideo(listAllSticker, true);
                             }
+
                         });
                         getFrameModel.startExecute();
                     } else {

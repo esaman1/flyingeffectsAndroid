@@ -634,7 +634,7 @@ public class VideoCropMVPModel {
     private boolean is4kVideo = false;
     WaitingDialog_progress dialog;
     DrawPadAllExecute2 execute= null;
-    public void saveVideo() {
+    public void saveVideo(boolean needCut) {
         if (!fullyInitiated || isSaving) {
             ToastUtil.showToast("还在加载请稍等");
             return;
@@ -671,7 +671,13 @@ public class VideoCropMVPModel {
             @Override
             public void progresss(int progress) {
                 if (dialog != null) {
-                    dialog.setProgress(progress + "%");
+                    if(needCut){
+                        dialog.setProgress("飞闪正在视频抠像中~"+progress + "%"+"\n" +
+                                "上传清晰人物最佳");
+                    }else{
+                        dialog.setProgress(progress + "%");
+                    }
+
                 }
             }
 
