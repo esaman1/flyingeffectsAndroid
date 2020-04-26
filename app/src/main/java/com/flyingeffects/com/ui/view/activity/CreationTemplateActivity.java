@@ -162,7 +162,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             isNeedCut=bundle.getBoolean("isNeedCut");
             title = bundle.getString("bjTemplateTitle");
         }
-        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout);
+        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout,originalPath);
         if(!TextUtils.isEmpty(videoPath)){
             //有视频的时候，初始化视频值
             initExo(videoPath);

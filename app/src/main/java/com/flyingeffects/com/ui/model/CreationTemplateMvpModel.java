@@ -120,7 +120,11 @@ public class CreationTemplateMvpModel {
      */
     private int defaultVideoDuration = 0;
 
-    public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout) {
+    /***
+     * originalPath  初始化第一张的时长
+     */
+
+    public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout,String originalPath) {
         this.context = context;
         this.callback = callback;
         this.mVideoPath = mVideoPath;
@@ -685,15 +689,26 @@ public class CreationTemplateMvpModel {
 
     private void getPlayVideoDuration() {
         defaultVideoDuration = 0;
-        for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
-            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
-            if (albumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath()))) {
-                VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
-                perSticker.add(materialVideoInfo.getDuration());
-            }
-        }
-        if (perSticker != null && perSticker.size() > 0) {
+        LogUtil.d("OOM", " viewLayerRelativeLayout.getChildCount())="+viewLayerRelativeLayout.getChildCount());
 
+        if(viewLayerRelativeLayout.getChildCount()>0){
+            for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
+                StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
+                if (albumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath()))) {
+                    VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
+                    LogUtil.d("OOM", "materialVideoInfo.getDuration()="+materialVideoInfo.getDuration());
+                    perSticker.add(materialVideoInfo.getDuration());
+                }
+            }
+        }else{
+            //只有第一次初始化的时候，可能为0.因为viewLayerRelativeLayout还没加载进入数据，所有就需要手动加上
+//            albumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath()))
+
+
+        }
+
+
+        if (perSticker != null && perSticker.size() > 0) {
             for (int duration : perSticker
             ) {
                 if (defaultVideoDuration < duration) {
