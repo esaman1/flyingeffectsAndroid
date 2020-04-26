@@ -39,7 +39,7 @@ public class backgroundDraw {
     private static final int FRAME_RATE = 30;
     private DrawPadAllExecute2 execute;
     private Context context;
-    private WaitingDialog_progress waitingProgress;
+//    private WaitingDialog_progress waitingProgress;
     private String videoPath;
     private saveCallback callback;
     /**
@@ -65,7 +65,7 @@ public class backgroundDraw {
         this.videoPath = videoPath;
         this.videoVoice=videoVoice;
         this.callback = callback;
-        waitingProgress = new WaitingDialog_progress(context);
+//        waitingProgress = new WaitingDialog_progress(context);
         if(!TextUtils.isEmpty(videoPath)){
             duration = getRingDuring(videoPath);
         }
@@ -87,7 +87,7 @@ public class backgroundDraw {
             }
         }
         LogUtil.d("OOM2","进入到了最后渲染");
-        waitingProgress.openProgressDialog();
+//        waitingProgress.openProgressDialog();
         try {
             execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, (long) (duration * 1000));
             execute.setFrameRate(FRAME_RATE);
@@ -97,11 +97,11 @@ public class backgroundDraw {
             });
             execute.setOnLanSongSDKProgressListener((l, i) -> {
 //                waitingProgress.setProgress(i + "%");
-                waitingProgress.setProgress("正在保存中" + i + "%\n" +
-                        "请勿离开页面");
+//                waitingProgress.setProgress("正在保存中" + i + "%\n" +
+//                        "请勿离开页面");
             });
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
-                waitingProgress.closePragressDialog();
+//                waitingProgress.closePragressDialog();
                 callback.saveSuccessPath(exportPath);
                 //todo 需要移除全部的子图层
                 execute.release();

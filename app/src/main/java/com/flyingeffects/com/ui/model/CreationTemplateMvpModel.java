@@ -61,6 +61,7 @@ import com.shixing.sxve.ui.adapter.TimelineAdapter;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
+import com.shixing.sxve.ui.view.WatingDialogProgressForTime;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -106,7 +107,8 @@ public class CreationTemplateMvpModel {
     //需要裁剪视频的集合
     private ArrayList<videoType> cutVideoPathList = new ArrayList<>();
     private backgroundDraw backgroundDraw;
-    WaitingDialogProgressNowAnim progressNowAnim;
+//    WaitingDialogProgressNowAnim progressNowAnim;
+    WatingDialogProgressForTime progressNowAnim;
     private ArrayList<AllStickerData> listAllSticker = new ArrayList<>();
     /**
      * 视频默认声音
@@ -133,6 +135,7 @@ public class CreationTemplateMvpModel {
         this.callback = callback;
         this.originalPath = originalPath;
         this.mVideoPath = mVideoPath;
+        progressNowAnim=new WatingDialogProgressForTime(context);
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
         vibrator = (Vibrator) context.getSystemService(Service.VIBRATOR_SERVICE);
         if (!TextUtils.isEmpty(mVideoPath)) {
@@ -854,6 +857,7 @@ public class CreationTemplateMvpModel {
         cutSuccessNum = 0;
         cutVideoPathList.clear();
         backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, path -> {
+            progressNowAnim.closePragressDialog();
             //成功后的回调
             Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -903,12 +907,14 @@ public class CreationTemplateMvpModel {
             }
         }
         if (cutVideoPathList.size() == 0) {
+            progressNowAnim.openProgressDialog(0);
             //都不是视频的情况下，就直接渲染
             backgroundDraw.toSaveVideo(listAllSticker, isMatting);
         } else {
-            //有视频的情况下需要先裁剪视频，然后取帧
-            progressNowAnim = new WaitingDialogProgressNowAnim(context);
-            progressNowAnim.openProgressDialog();
+//            //有视频的情况下需要先裁剪视频，然后取帧
+//            progressNowAnim = new WaitingDialogProgressNowAnim(context);
+//            progressNowAnim.openProgressDialog();
+            progressNowAnim.openProgressDialog(0);
             cutList.clear();
             if (videoInfo != null) {
                 cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration());
@@ -944,7 +950,7 @@ public class CreationTemplateMvpModel {
         videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, needDuration, videoType.getPath(), 0, new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
             public void progresss(int progress) {
-                progressNowAnim.setProgress("正在裁剪中" + progress + "%");
+//                progressNowAnim.setProgress("正在裁剪中" + progress + "%");
             }
 
             @Override
@@ -957,7 +963,7 @@ public class CreationTemplateMvpModel {
                 if (cutSuccessNum == cutVideoPathList.size()) {
                     if (isMatting) {
                         LogUtil.d("OOM2", "裁剪完成，准备抠图");
-                        progressNowAnim.closePragressDialog();
+//                        progressNowAnim.closePragressDialog();
                         //全部裁剪完成之后需要去把视频裁剪成全部帧
                         videoGetFrameModel getFrameModel = new videoGetFrameModel(context, cutList, (isSuccess1) -> {
                             LogUtil.d("OOM2", "全部抠图完成");

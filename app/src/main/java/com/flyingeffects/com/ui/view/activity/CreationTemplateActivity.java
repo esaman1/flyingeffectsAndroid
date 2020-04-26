@@ -262,7 +262,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     protected void initAction() {
-
         presenter.initStickerView(imgPath, originalPath);
         presenter.initBottomLayout(viewPager);
         initViewLayerRelative();

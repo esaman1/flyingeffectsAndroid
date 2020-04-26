@@ -39,7 +39,7 @@ public class videoGetFrameModel {
     private int frameCount;
     private int progress;
     private String extractFrameFolder;
-    private WaitingDialogProgressNowAnim dialog;
+//    private WaitingDialogProgressNowAnim dialog;
     private List<String> videoPath = new ArrayList<>();
     private int nowExtractVideoNum;
     private isSuccess callback;
@@ -57,8 +57,8 @@ public class videoGetFrameModel {
         fileManager = new FileManager();
 //        faceMattingFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceMattingFolder");
         extractFrameFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "ExtractFrame");
-        dialog = new WaitingDialogProgressNowAnim(context);
-        dialog.openProgressDialog();
+//        dialog = new WaitingDialogProgressNowAnim(context);
+//        dialog.openProgressDialog();
         nowExtractVideoNum=0;
     }
 
@@ -77,7 +77,7 @@ public class videoGetFrameModel {
         if(videoPath.size()==nowExtractVideoNum){
             //全部执行完成了
             LogUtil.d("OOM","全部搞完");
-            dialog.closePragressDialog();
+//            dialog.closePragressDialog();
             if (callback != null) {
                 LogUtil.d("OOM","callback!=null");
                 callback.isExtractSuccess(true);
@@ -176,7 +176,7 @@ public class videoGetFrameModel {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                dialog.setProgress("飞闪视频抠像中" + progress + "%\n" + "请耐心等待 不要离开");
+//                dialog.setProgress("飞闪视频抠像中" + progress + "%\n" + "请耐心等待 不要离开");
             }
         };
 
