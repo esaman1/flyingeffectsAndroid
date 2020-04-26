@@ -18,6 +18,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.ui.view.fragment.fragBjItem;
+import com.flyingeffects.com.ui.view.fragment.frag_user_collect;
 import com.flyingeffects.com.utils.ToastUtil;
 
 import java.util.ArrayList;
@@ -54,7 +55,6 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
-
     }
 
     @Override
@@ -88,19 +88,37 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
 
     public void setFragmentList(List<TemplateType> data) {
         if (data != null && data.size() > 0) {
+            TemplateType templateType =new TemplateType();
+            templateType.setId("collect");
+            templateType.setName("收藏");
+            data.add(templateType);
             ArrayList<Fragment> list = new ArrayList<>();
             FragmentManager manager = getSupportFragmentManager();
             String[] titles = new String[data.size()];
             for (int i = 0; i < data.size(); i++) {
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("id", data.get(i).getId());
-                bundle.putSerializable("from", 3);
-                bundle.putSerializable("num", i);
-                titles[i] = data.get(i).getName();
-                fragBjItem fragment = new fragBjItem();
-                fragment.setArguments(bundle);
-                list.add(fragment);
+                if(i==data.size()-1){
+                    //手动添加收藏模板
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("template_type", "2");
+                    titles[i] = data.get(i).getName();
+                    frag_user_collect fag_0 = new frag_user_collect();
+                    fag_0.setArguments(bundle);
+                    list.add(fag_0);
+                }else{
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("id", data.get(i).getId());
+                    bundle.putSerializable("from", 3);
+                    bundle.putSerializable("num", i);
+                    titles[i] = data.get(i).getName();
+                    fragBjItem fragment = new fragBjItem();
+                    fragment.setArguments(bundle);
+                    list.add(fragment);
+                }
             }
+
+
+
+
             home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
             viewpager.setAdapter(adapter);
             tabLayout.setViewPager(viewpager, titles);

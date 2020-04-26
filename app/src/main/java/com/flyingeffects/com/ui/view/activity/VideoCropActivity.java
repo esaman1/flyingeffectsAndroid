@@ -17,6 +17,7 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.GetVideoCover;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.CreateCutCallback;
+import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -261,6 +262,8 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
         getVideoCover.getCover(videoPath, path -> Observable.just(path).subscribeOn(AndroidSchedulers.mainThread()).subscribe(cover -> {
             if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEO)){
                 EventBus.getDefault().post(new CreateCutCallback(cover,videoPath,isNeedCut));
+            }else if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORUSER)){
+                EventBus.getDefault().post(new DownVideoPath(videoPath));
             }else{
                 Intent intent = new Intent(VideoCropActivity.this, CreationTemplateActivity.class);
                 Bundle bundle = new Bundle();

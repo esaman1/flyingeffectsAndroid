@@ -21,6 +21,8 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.GlideRoundTransform;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
+import com.flyingeffects.com.ui.model.FromToTemplate;
+import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.flyingeffects.com.ui.view.activity.intoOtherAppActivity;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.yanzhenjie.album.AlbumFile;
@@ -102,7 +104,14 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                 ConstraintLayout_addVideo.setOnClickListener(v -> {
                     AlbumManager.chooseAlbum(context, 1, 1, (tag, paths, isCancel, albumFileList) -> {
                         if(!isCancel){
-                            EventBus.getDefault().post(new DownVideoPath(paths.get(0)));
+                           // EventBus.getDefault().post(new DownVideoPath(paths.get(0)));
+
+                            Intent intent = new Intent(context, VideoCropActivity.class);
+                            intent.putExtra("videoPath",paths.get(0));
+                            intent.putExtra("comeFrom", FromToTemplate.ISFROMEDOWNVIDEOFORUSER);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            context.startActivity(intent);
+
                         }
                     }, "");
                 });

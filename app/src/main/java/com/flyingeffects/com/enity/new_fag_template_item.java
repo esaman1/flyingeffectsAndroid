@@ -165,7 +165,7 @@ public class new_fag_template_item implements Serializable {
     private String vidoefile;
     private String temcategory_id;
     /**
-     * 0 需要激励视频，1 不需要激励视频
+     * 1需要激励视频，0 不需要激励视频
      */
     private String type;
     private String sort;
