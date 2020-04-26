@@ -670,6 +670,9 @@ public class VideoCropMVPModel {
         videoCutDurationForVideoOneDo.getInstance().startCutDurtion(videoPath, Math.round(cropStartRatio * durationUs), Math.round(cropEndRatio * durationUs), new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
             public void progresss(int progress) {
+                if(progress>100){
+                    progress=100;
+                }
                 if (dialog != null) {
                     if(needCut){
                         dialog.setProgress("飞闪正在视频抠像中~"+progress + "%"+"\n" +

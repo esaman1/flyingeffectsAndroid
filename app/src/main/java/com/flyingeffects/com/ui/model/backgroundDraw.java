@@ -330,6 +330,8 @@ public class backgroundDraw {
                     Bitmap firstBitmap1 = BitmapFactory.decodeFile(getMattingList.get( nowChooseImageIndex[0]).getPath());
                     bpLayer.switchBitmap(firstBitmap1);
                 }else{
+                    LogUtil.d("OOM","隐藏当前图层");
+                    bpLayer.switchBitmap( Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888));
                     bpLayer.setVisibility(View.GONE);
                 }
             }

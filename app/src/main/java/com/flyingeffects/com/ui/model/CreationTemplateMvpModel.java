@@ -13,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -925,6 +926,7 @@ private String originalPath;
         } else {
             needDuration = materialDuration;
         }
+        LogUtil.d("OOM","需要裁剪的时长为"+needDuration);
 
         videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, needDuration, videoType.getPath(), 0, new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
