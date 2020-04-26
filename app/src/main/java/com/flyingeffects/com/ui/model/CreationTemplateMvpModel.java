@@ -1,12 +1,14 @@
 package com.flyingeffects.com.ui.model;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -96,6 +98,7 @@ public class CreationTemplateMvpModel {
     private VideoInfo videoInfo;
     private String mGifFolder;
     private String soundFolder;
+    private Vibrator vibrator;
     private String mImageCopyFolder;
     private boolean isCheckedMatting = true;
     private HorizontalListView hListView;
@@ -129,6 +132,7 @@ private String originalPath;
         this.originalPath=originalPath;
         this.mVideoPath = mVideoPath;
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
+        vibrator = (Vibrator) context.getSystemService(Service.VIBRATOR_SERVICE);
         if (!TextUtils.isEmpty(mVideoPath)) {
             videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
         }
@@ -138,6 +142,13 @@ private String originalPath;
         mImageCopyFolder = fileManager.getFileCachePath(context, "imageCopy");
     }
 
+
+
+    private void showVibrator() {
+        if (vibrator.hasVibrator()) {
+            vibrator.vibrate(5);  //设置手机振动
+        }
+    }
 
     /**
      * description ：单独设置背景视频，有可能用户第一次进来不选择背景视频
@@ -458,6 +469,7 @@ private String originalPath;
                     copyGif(stickView.getResPath(), path, stickView.getComeFrom(), stickView, stickView.getOriginalPath());
 
                 } else if (type == StickerView.RIGHT_CENTER_MODE) {
+                    showVibrator();
                     if (!stickView.isOpenVoice) {
                         //打开声音
                         stickView.setOpenVoice(true);
@@ -537,7 +549,15 @@ private String originalPath;
         if (isFromAubum) {
             stickView.setClipPath(path);
             stickView.setOriginalPath(originalPath);
+            if(albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))){
+                stickView.setNowMaterialIsVideo(true);
+            }else{
+                stickView.setNowMaterialIsVideo(false);
+            }
+
+
         }
+
         if (isFirstAdd) {
             stickView.setFirstAddSticker(true);
             if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {

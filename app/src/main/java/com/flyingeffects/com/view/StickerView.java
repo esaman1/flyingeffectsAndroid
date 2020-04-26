@@ -79,6 +79,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private RotationGestureDetector mRotationDetector;
 
 
+    /**
+     * 当前素材是否是视频
+     */
+    private boolean NowMaterialIsVideo = false;
+
     public static final int STICKER_BTN_HALF_SIZE = 30;
     // 控件的几种模式
     /**
@@ -195,7 +200,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     /**
      * 边框自动消息时长
      */
-    private static final long AUTO_FADE_FRAME_TIMEOUT = 2000;
+    private static final long AUTO_FADE_FRAME_TIMEOUT = 1000;
     /**
      * 显示边框事件ID
      */
@@ -343,6 +348,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         }
     }
 
+
+    public void setNowMaterialIsVideo(boolean isVideo) {
+        NowMaterialIsVideo = isVideo;
+    }
+
     public void setFrameColor(int frameColor) {
         this.frameColor = frameColor;
     }
@@ -476,7 +486,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
         whitePaint.setColor(Color.WHITE);
         whitePaint.setTextSize(40);
-        whitePaint.getTextBounds("预览后视频可动", 0, "预览后视频可动".length(), bounds);
+        whitePaint.getTextBounds("预览后人物可动", 0, "预览后人物可动".length(), bounds);
         if (leftTopBitmap != null) {
             leftTopRect.set(0, 0, leftTopBitmap.getIntrinsicWidth(),
                     leftTopBitmap.getIntrinsicHeight());
@@ -631,7 +641,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             return new StaticLayout(content, textPaint, drawWidth, Layout.Alignment.ALIGN_CENTER, 1f, 0, true);
         }
     }
+
     Rect bounds = new Rect();
+
     private void drawContent(Canvas canvas) {
         if (currentDrawable != null) {
             // drawGuideLine(canvas);
@@ -720,16 +732,19 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     rightCenterBitmap.setBounds((int) rightCenterDstRect.left, (int) rightCenterDstRect.top, (int) rightCenterDstRect.right, (int) rightCenterDstRect.bottom);
                     rightCenterBitmap.draw(canvas);
                 }
+                if (NowMaterialIsVideo) {
+                    //动态设置文字大小
+                    int desiredTextSize = (int) (40 * (rightBottomDstRect.left - leftBottomDstRect.right) / bounds.width());
+                    LogUtil.d("OOM", "desiredTextSize=" + desiredTextSize);
+                    whitePaint.setTextAlign(Paint.Align.CENTER);
+                    whitePaint.setTextSize(desiredTextSize);
+                    Path circlePath = new Path();
+                    circlePath.moveTo(leftBottomDstRect.left, leftBottomDstRect.bottom);
+                    circlePath.lineTo(rightBottomDstRect.left, rightBottomDstRect.bottom);
+                    canvas.drawTextOnPath("预览后人物可动", circlePath, 20, 20, whitePaint);
+                }
 
-                //动态设置文字大小
-                int desiredTextSize = (int) (40 * (rightBottomDstRect.left - leftBottomDstRect.right) / bounds.width());
-                LogUtil.d("OOM", "desiredTextSize=" + desiredTextSize);
-                whitePaint.setTextAlign(Paint.Align.CENTER);
-                whitePaint.setTextSize(desiredTextSize);
-                Path circlePath = new Path();
-                circlePath.moveTo(leftBottomDstRect.left, leftBottomDstRect.bottom);
-                circlePath.lineTo(rightBottomDstRect.left, rightBottomDstRect.bottom);
-                canvas.drawTextOnPath("预览后视频可动", circlePath, 20, 20, whitePaint);
+
             }
 
 
