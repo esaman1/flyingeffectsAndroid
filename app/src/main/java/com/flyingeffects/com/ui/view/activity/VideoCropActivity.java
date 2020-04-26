@@ -75,6 +75,12 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
     TextView startMs;
     @BindView(R.id.crop_show_end)
     TextView endMs;
+    @BindView(R.id.tv_no_kt)
+    TextView tv_no_kt;
+
+    @BindView(R.id.tv_choose_pic)
+    TextView tv_choose_pic;
+
 //    /**
 //     * 用户设置的固定剪切时长，只针对自定义卡点视频界面
 //     */
@@ -100,6 +106,12 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
         UiStep.nowUiTag="";
         UiStep.isFromDownBj=false;
         statisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Crop");
+        if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORUSER)){
+            tv_no_kt.setVisibility(View.GONE);
+            tv_choose_pic.setText("下一步");
+        }
+
+
     }
 
     @Override

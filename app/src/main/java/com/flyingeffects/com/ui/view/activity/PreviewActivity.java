@@ -145,7 +145,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         templateItem = (new_fag_template_item) getIntent().getSerializableExtra("person");
         fromTo = getIntent().getStringExtra("fromTo");
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
-            tv_make.setText("tv_make");
+            tv_make.setText("使用背景");
         }
         fromToMineCollect = getIntent().getBooleanExtra("fromToMineCollect", false);
         defaultnum = templateItem.getDefaultnum();

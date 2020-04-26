@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 
 import com.flyco.tablayout.SlidingTabLayout;
 import com.flyingeffects.com.R;
@@ -35,7 +36,6 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
     ViewPager viewpager;
 
 
-
     @Override
     protected int getContentLayout() {
         return R.layout.fag_0;
@@ -50,7 +50,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
     @Override
     protected void initAction() {
-
+        findViewById(R.id.iv_back).setVisibility(View.GONE);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
     @Override
     public void setFragmentList(List<TemplateType> data) {
-        if(getActivity()!=null){
+        if (getActivity() != null) {
             if (data != null && data.size() > 0) {
                 ArrayList<Fragment> list = new ArrayList<>();
                 FragmentManager manager = getFragmentManager();
@@ -100,10 +100,6 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
         }
 
     }
-
-
-
-
 
 
 //    @OnClick({R.id.tv_filtrate,R.id.column_more})
