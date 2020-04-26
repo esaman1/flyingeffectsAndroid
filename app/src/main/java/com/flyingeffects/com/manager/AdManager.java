@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.ui.view.activity.HomeMainActivity;
+import com.flyingeffects.com.utils.LogUtil;
 import com.nineton.ntadsdk.itr.ScreenAdCallBack;
 import com.nineton.ntadsdk.manager.ScreenAdManager;
 
@@ -26,23 +27,22 @@ public class AdManager {
 
 
     public void showCpAd(Context context){
-
         Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
             ScreenAdManager screenAdManager = new ScreenAdManager();
             screenAdManager.showScreenAd((Activity) context, AdConfigs.AD_SCREEN, new ScreenAdCallBack() {
                 @Override
                 public void onScreenAdShow() {
-
+                    LogUtil.d("OOM","onScreenAdShow");
                 }
 
                 @Override
                 public void onScreenAdError(String errorMsg) {
-
+                    LogUtil.d("OOM","onScreenAdError="+errorMsg);
                 }
 
                 @Override
                 public void onScreenAdClose() {
-
+                    LogUtil.d("OOM","onScreenAdClose=");
                 }
 
                 @Override
