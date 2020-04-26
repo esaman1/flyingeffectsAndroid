@@ -911,9 +911,6 @@ public class CreationTemplateMvpModel {
             //都不是视频的情况下，就直接渲染
             backgroundDraw.toSaveVideo(listAllSticker, isMatting);
         } else {
-//            //有视频的情况下需要先裁剪视频，然后取帧
-//            progressNowAnim = new WaitingDialogProgressNowAnim(context);
-//            progressNowAnim.openProgressDialog();
             progressNowAnim.openProgressDialog(0);
             cutList.clear();
             if (videoInfo != null) {
