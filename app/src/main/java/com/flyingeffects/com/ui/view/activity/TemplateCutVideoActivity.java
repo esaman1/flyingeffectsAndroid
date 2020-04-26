@@ -65,7 +65,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
     @BindView(R.id.list_thumb)
     RecyclerView list_thumb;
 
-    WaitingDialogProgressNowAnim progressNowAnim;
+    private WaitingDialogProgressNowAnim progressNowAnim;
 
     private TimelineAdapterForCutVideo mTimelineAdapter;
 
@@ -126,6 +126,9 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
     private ExoPlayer exoPlayer;
 
+
+    private boolean nowActivityIsDestroy = false;
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_template_cut_video;
@@ -133,28 +136,27 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        progressNowAnim=new WaitingDialogProgressNowAnim(this);
+        progressNowAnim = new WaitingDialogProgressNowAnim(this);
         DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
         videoPath = getIntent().getStringExtra("videoPath");
         needDuration = getIntent().getFloatExtra("needCropDuration", 1);
-        templateName=getIntent().getStringExtra("templateName");
-        isFrom=getIntent().getIntExtra("isFrom",0);
-        picout=getIntent().getIntExtra("picout",0);
+        templateName = getIntent().getStringExtra("templateName");
+        isFrom = getIntent().getIntExtra("isFrom", 0);
+        picout = getIntent().getIntExtra("picout", 0);
         videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
         mEndDuration = (int) (needDuration * 1000);
-        tv_duration.setText("模板时长 "+needDuration+"s");
-        if(picout==0){
+        tv_duration.setText("模板时长 " + needDuration + "s");
+        if (picout == 0) {
             tv_kt.setVisibility(View.GONE);
             tv_no_kt.setText("下一步");
         }
-
     }
 
     @Override
     protected void initAction() {
         initThumbList();
         list_thumb.post(() -> initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), needDuration, videoInfo.getDuration() / (float) 1000, videoPath));
-        initExo(videoPath,needDuration);
+        initExo(videoPath, needDuration);
     }
 
 
@@ -222,7 +224,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.iv_close, R.id.iv_correct, R.id.tv_kt,R.id.tv_no_kt,R.id.iv_back})
+    @OnClick({R.id.iv_close, R.id.iv_correct, R.id.tv_kt, R.id.tv_no_kt, R.id.iv_back})
     public void onMyClick(View v) {
         switch (v.getId()) {
             case R.id.iv_close:
@@ -247,23 +249,29 @@ public class TemplateCutVideoActivity extends BaseActivity {
             case R.id.tv_no_kt:
                 videoStop();
                 endTimer();
-
-                progressNowAnim.openProgressDialog();
-                new Thread(() -> videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(TemplateCutVideoActivity.this, needDuration * 1000,videoPath,mStartDuration, new videoCutDurationForVideoOneDo.isSuccess() {
+                if(!nowActivityIsDestroy){
+                    progressNowAnim.openProgressDialog();
+                }
+                new Thread(() -> videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(TemplateCutVideoActivity.this, needDuration * 1000, videoPath, mStartDuration, new videoCutDurationForVideoOneDo.isSuccess() {
                     @Override
                     public void progresss(int progress) {
-                        progressNowAnim.setProgress("正在裁剪中"+progress+"%");
+                        if (!nowActivityIsDestroy) {
+                            progressNowAnim.setProgress("正在裁剪中" + progress + "%");
+                        }
+
                     }
 
                     @Override
                     public void isSuccess(boolean isSuccess, String path) {
-                        progressNowAnim.closePragressDialog();
+                        if (!nowActivityIsDestroy) {
+                            progressNowAnim.closePragressDialog();
+                        }
                         if (isSuccess) {
-                            if(v.getId()==R.id.tv_kt){
+                            if (v.getId() == R.id.tv_kt) {
                                 gotoMattingVideo(path);
-                            }else{
+                            } else {
                                 TemplateCutVideoActivity.this.finish();
-                                EventBus.getDefault().post(new MattingVideoEnity(null, path,isFrom));
+                                EventBus.getDefault().post(new MattingVideoEnity(null, path, isFrom));
                             }
                         }
 
@@ -287,7 +295,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
         Observable.just(originalPath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
             VideoMattingModel videoMattingModel = new VideoMattingModel(originalPath, TemplateCutVideoActivity.this, (isSuccess, path) -> {
                 TemplateCutVideoActivity.this.finish();
-                EventBus.getDefault().post(new MattingVideoEnity(originalPath, path,isFrom));
+                EventBus.getDefault().post(new MattingVideoEnity(originalPath, path, isFrom));
             });
             videoMattingModel.ToExtractFrame(templateName);
         });
@@ -328,8 +336,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
     }
 
 
-
-
     /**
      * description ：
      * creation date: 2020/1/20
@@ -362,8 +368,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
     }
 
 
-
-
     /**
      * 关闭timer 和task
      */
@@ -391,6 +395,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
     private Timer timer;
     private TimerTask task;
+
     private void startTimer() {
         if (timer != null) {
             timer.purge();
@@ -433,6 +438,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        nowActivityIsDestroy = true;
         videoStop();
         GlideBitmapPool.clearMemory();
         endTimer();

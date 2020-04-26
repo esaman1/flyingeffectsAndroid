@@ -14,11 +14,8 @@ import com.lansosdk.box.OnLanSongSDKCompletedListener;
 import com.lansosdk.box.OnLanSongSDKErrorListener;
 import com.lansosdk.box.OnLanSongSDKProgressListener;
 import com.lansosdk.box.VideoFrameLayer;
-import com.lansosdk.box.VideoLayer;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
-import com.lansosdk.videoeditor.DrawPadView;
 import com.lansosdk.videoeditor.VideoOneDo2;
-import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
 import java.io.IOException;
