@@ -54,6 +54,7 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 /**
  * description ：用户创作页面,里面主要用了langSong 的工具类，对视频进行贴纸的功能
@@ -134,7 +135,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     /**
      * 背景音乐播放器
      */
-    private  MediaPlayer  bgmPlayer;
+    private MediaPlayer bgmPlayer;
 
 
     /**
@@ -151,7 +152,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
-        LogUtil.d("OOM","进入到创作页面");
+        LogUtil.d("OOM", "进入到创作页面");
         ((TextView) findViewById(R.id.tv_top_submit)).setText("预览效果");
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("Message");
@@ -159,14 +160,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             imgPath = bundle.getString("paths");
             videoPath = bundle.getString("video_path");
             originalPath = bundle.getString("originalPath");
-            isNeedCut=bundle.getBoolean("isNeedCut");
+            isNeedCut = bundle.getBoolean("isNeedCut");
             title = bundle.getString("bjTemplateTitle");
         }
-        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout,originalPath);
-        if(!TextUtils.isEmpty(videoPath)){
+        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout, originalPath);
+        if (!TextUtils.isEmpty(videoPath)) {
             //有视频的时候，初始化视频值
             initExo(videoPath);
-        }else{
+        } else {
             showGreenBj();
         }
         presenter.requestStickersList();
@@ -209,7 +210,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-    private void videoToStart(){
+    private void videoToStart() {
         isPlayComplate = true;
         endTimer();
         isPlaying = false;
@@ -234,16 +235,16 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private void videoPlay() {
         if (exoPlayer != null) {
             LogUtil.d("video", "play");
-            if(!TextUtils.isEmpty(bgmPath)){
-                if(bgmPlayer!=null){
+            if (!TextUtils.isEmpty(bgmPath)) {
+                if (bgmPlayer != null) {
                     //继续播放
                     bgmPlayer.start();
-                }else{
+                } else {
                     seekTo(0);
                     playBGMMusic();
                 }
                 exoPlayer.setVolume(0f);
-            }else{
+            } else {
                 exoPlayer.setVolume(1f);
             }
 
@@ -251,9 +252,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
         startTimer();
     }
-
-
-
 
 
     @Override
@@ -285,16 +283,16 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         });
 
         new Handler().postDelayed(() -> {
-            if(!isNeedCut){
+            if (!isNeedCut) {
                 switchButton.setChecked(false);
             }
-        },1500);
+        }, 1500);
 
 
     }
 
 
-    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker, R.id.iv_top_back,R.id.tv_background})
+    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker, R.id.iv_top_back, R.id.tv_background})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
@@ -323,7 +321,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         nowStateIsPlaying(false);
                     } else {
                         nowStateIsPlaying(true);
-                        if(!TextUtils.isEmpty(videoPath)){
+                        if (!TextUtils.isEmpty(videoPath)) {
                             if (isPlayComplate) {
                                 videoPlay();
                                 isIntoPause = false;
@@ -342,13 +340,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                                     videoPlay();
                                 }
                             }
-                        }else{
+                        } else {
                             //如果有背景还是播放背景音乐
-                            if(!TextUtils.isEmpty(bgmPath)){
-                                if(bgmPlayer!=null){
+                            if (!TextUtils.isEmpty(bgmPath)) {
+                                if (bgmPlayer != null) {
                                     //继续播放
                                     bgmPlayer.start();
-                                }else{
+                                } else {
                                     seekTo(0);
                                     playBGMMusic();
                                 }
@@ -385,14 +383,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     Log.d("OOM", "isCancel=" + isCancel);
                     if (!isCancel) {
                         //如果是选择的视频，就需要得到封面，然后设置在matting里面去，然后吧原图设置为视频地址
-                        String path=paths.get(0);
-                        String pathType= GetPathTypeModel.getInstance().getMediaType(path);
+                        String path = paths.get(0);
+                        String pathType = GetPathTypeModel.getInstance().getMediaType(path);
                         if (albumType.isImage(pathType)) {
                             CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this, "", tailorPaths -> {
                                 presenter.addNewSticker(tailorPaths.get(0), paths.get(0));
                             });
                             manage.ToMatting(paths);
-                        }else{
+                        } else {
                             //贴纸选择的视频
                             presenter.GetVideoCover(paths.get(0));
                         }
@@ -401,7 +399,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
                 break;
             case R.id.tv_background:
-                Intent intent =new Intent(this,ChooseBackgroundTemplateActivity.class);
+                Intent intent = new Intent(this, ChooseBackgroundTemplateActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 break;
@@ -446,15 +444,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             viewLayerRelativeLayout.setLayoutParams(RelativeLayoutParams);
         });
 
-        if(!TextUtils.isEmpty(videoPath)){
+        if (!TextUtils.isEmpty(videoPath)) {
             hListView.post(() -> presenter.initVideoProgressView(hListView));
         }
     }
 
 
-    private void showGreenBj(){
+    private void showGreenBj() {
         ll_green_background.setVisibility(View.VISIBLE);
-       float oriRatio = 9f / 16f;
+        float oriRatio = 9f / 16f;
         //保证获得mContainer大小不为0
         LinearLayout.LayoutParams RelativeLayoutParams = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         //如果没有选择下载视频，那么就是自定义视频入口进来，那么默认为绿布
@@ -464,7 +462,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             RelativeLayoutParams.height = oriHeight;
             iv_green_background.setLayoutParams(RelativeLayoutParams);
         });
-      hListView.post(() -> presenter.initVideoProgressView(hListView));
+        hListView.post(() -> presenter.initVideoProgressView(hListView));
     }
 
 
@@ -481,7 +479,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         destroyTimer();
         videoStop();
         EventBus.getDefault().unregister(this);
-        if(bgmPlayer!=null){
+        if (bgmPlayer != null) {
             bgmPlayer.pause();
             bgmPlayer.release();
         }
@@ -510,7 +508,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             exoPlayer.seekTo(to);
         }
 
-        if(bgmPlayer!=null){
+        if (bgmPlayer != null) {
             bgmPlayer.seekTo((int) to);
         }
     }
@@ -535,28 +533,28 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
     @Override
-    public void getVideoCover(String path,String originalPath) {
+    public void getVideoCover(String path, String originalPath) {
         presenter.addNewSticker(path, originalPath);
+        if (TextUtils.isEmpty(videoPath)) {
+            //如果还是绿屏。那么需要刷新底部的时长
+            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> presenter.initVideoProgressView(hListView));
+        }
     }
-
 
 
     @Override
     public void getBgmPath(String path) {
         videoToStart();
-        this.bgmPath=path;
+        this.bgmPath = path;
     }
 
-//    @Override
-//    public void showRenderVideoTime(int duration) {
-//        tv_total.setText(timeUtils.timeParse(allVideoDuration) + "s");
-//    }
 
 
     private Timer timer;
     private TimerTask task;
     private int listWidth;
-    private long nowTime=5;
+    private long nowTime = 5;
+
     private void startTimer() {
         int screenWidth = screenUtil.getScreenWidth(this);
         //真实长度
@@ -575,23 +573,23 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             @Override
             public void run() {
                 Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                    if(!TextUtils.isEmpty(videoPath)){
+                    if (!TextUtils.isEmpty(videoPath)) {
                         int nowDuration = (int) getCurrentPos();
                         float percent = nowDuration / (float) allVideoDuration;
                         LogUtil.d("OOM", "比例=" + percent);
                         int widthX = (int) (percent * listWidth);
                         LogUtil.d("OOM", "width=" + widthX);
                         hListView.scrollTo(widthX);
-                    }else{
+                    } else {
                         //没有选择背景
-                        nowTime=nowTime+5;
+                        nowTime = nowTime + 5;
                         LogUtil.d("OOM", "nowTime=" + nowTime);
                         float percent = nowTime / (float) 10000;
                         LogUtil.d("OOM", "比例=" + percent);
                         int widthX = (int) (percent * listWidth);
                         hListView.scrollTo(widthX);
-                        if(percent>=1){
-                            nowTime=5;
+                        if (percent >= 1) {
+                            nowTime = 5;
                             isPlayComplate = true;
                             endTimer();
                             isPlaying = false;
@@ -617,9 +615,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     private void endTimer() {
         destroyTimer();
-        if(bgmPlayer!=null){
+        if (bgmPlayer != null) {
             bgmPlayer.stop();
-            bgmPlayer=null;
+            bgmPlayer = null;
         }
     }
 
@@ -649,7 +647,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     @Subscribe
     public void onEventMainThread(DownVideoPath event) {
-        videoPath=event.getPath();
+        videoPath = event.getPath();
         ll_green_background.setVisibility(View.GONE);
         initExo(videoPath);
         presenter.setmVideoPath(videoPath);
@@ -668,11 +666,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-
-
-
-
-    private void playBGMMusic(){
+    private void playBGMMusic() {
         bgmPlayer = new MediaPlayer();
         try {
             bgmPlayer.setDataSource(bgmPath);
@@ -684,8 +678,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-    private void pauseBgmMusic(){
-        if(bgmPlayer!=null){
+    private void pauseBgmMusic() {
+        if (bgmPlayer != null) {
             bgmPlayer.pause();
         }
     }
