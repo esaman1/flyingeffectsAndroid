@@ -38,6 +38,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AdConfigs;
+import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.SPHelper;
@@ -148,7 +149,7 @@ public class HomeMainActivity extends FragmentActivity {
         task = new TimerTask() {
             @Override
             public void run() {
-                showCpAd();
+                AdManager.getInstance().showCpAd(HomeMainActivity.this);
                 destroyTimer();
             }
         };
@@ -174,35 +175,6 @@ public class HomeMainActivity extends FragmentActivity {
 
 
 
-    private void showCpAd(){
-
-        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-            ScreenAdManager   screenAdManager = new ScreenAdManager();
-            screenAdManager.showScreenAd(HomeMainActivity.this, AdConfigs.AD_SCREEN, new ScreenAdCallBack() {
-                @Override
-                public void onScreenAdShow() {
-
-                }
-
-                @Override
-                public void onScreenAdError(String errorMsg) {
-
-                }
-
-                @Override
-                public void onScreenAdClose() {
-
-                }
-
-                @Override
-                public boolean onScreenAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
-                    return false;
-                }
-            });
-        });
-
-
-    }
 
 
 

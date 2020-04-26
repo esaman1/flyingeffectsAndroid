@@ -661,6 +661,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             @Override
             public void onVideoAdClose() {
                 LogUtil.d("OOM", "onVideoAdClose");
+                hasLoginToNext();
             }
 
             @Override
@@ -670,7 +671,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
             @Override
             public void onVideoAdComplete() {
-                hasLoginToNext();
             }
 
             @Override

@@ -30,21 +30,19 @@ public class AdHintActivity extends Activity {
 
 
 
-    View.OnClickListener listenner=new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            switch (view.getId()) {
-                case R.id.tv_cancle:
-                    //取消
-                    AdHintActivity.this.finish();
-                    break;
+    View.OnClickListener listenner= view -> {
+        switch (view.getId()) {
+            case R.id.tv_cancle:
+                //取消
+                AdHintActivity.this.finish();
+                break;
 
-                case R.id.tv_watch_ad:
-                    //观看广告
-                    EventBus.getDefault().post(new showAdCallback());
-                    break;
+            case R.id.tv_watch_ad:
+                //观看广告
+                EventBus.getDefault().post(new showAdCallback());
+                AdHintActivity.this.finish();
+                break;
 
-            }
         }
     };
 

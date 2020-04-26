@@ -15,6 +15,7 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -71,7 +72,8 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     ImageView iv_play;
 
     private timeUtils timeUtils;
-    private  MediaSource mediaSource;
+    private MediaSource mediaSource;
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_creation_template_preview;
@@ -107,7 +109,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
                 }
             }
         });
-        mediaSource  = new ExtractorMediaSource.Factory(
+        mediaSource = new ExtractorMediaSource.Factory(
                 new DefaultDataSourceFactory(CreationTemplatePreviewActivity.this, "exoplayer-codelab")).
                 createMediaSource(Uri.fromFile(new File(imagePath)));
         exoPlayer.prepare(mediaSource, true, false);
@@ -118,8 +120,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     protected void initAction() {
 
     }
-
-
 
 
     private void seekTo(long to) {
@@ -141,8 +141,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
             exoPlayer.stop();
         }
     }
-
-
 
 
     private void saveToAlbum(String path) {
@@ -195,6 +193,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
 
             case R.id.tv_save:
                 saveToAlbum(imagePath);
+                AdManager.getInstance().showCpAd(CreationTemplatePreviewActivity.this);
                 break;
 
             case R.id.iv_play:

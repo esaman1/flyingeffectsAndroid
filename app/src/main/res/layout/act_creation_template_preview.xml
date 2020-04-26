@@ -120,7 +120,7 @@
             <TextView
                 android:id="@+id/tv_save"
                 android:layout_width="191dp"
-                android:layout_height="39dp"
+                android:layout_height="match_parent"
                 android:background="@drawable/base_blue_bk"
                 android:gravity="center"
                 android:text="保存"
