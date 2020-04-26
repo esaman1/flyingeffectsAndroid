@@ -721,7 +721,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     rightCenterBitmap.draw(canvas);
                 }
 
-
+                //动态设置文字大小
                 int desiredTextSize = (int) (40 * (rightBottomDstRect.left - leftBottomDstRect.right) / bounds.width());
                 LogUtil.d("OOM", "desiredTextSize=" + desiredTextSize);
                 whitePaint.setTextAlign(Paint.Align.CENTER);
