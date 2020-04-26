@@ -112,16 +112,13 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public static final int RIGHT_CENTER_MODE = 10;
 
 
-
-
-
-    public boolean isOpenVoice=false;
+    public boolean isOpenVoice = false;
 
 
     /**
      * 是否是第一次添加的贴纸
      */
-    private boolean isFirstAddSticker=false;
+    private boolean isFirstAddSticker = false;
 
 
     public int layoutX = 0;
@@ -394,10 +391,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-
-
-
-
     public void setLeftTopBitmap(Drawable leftTopBitmap) {
         if (leftTopBitmap != null) {
             this.leftTopBitmap = leftTopBitmap;
@@ -483,6 +476,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
         whitePaint.setColor(Color.WHITE);
         whitePaint.setTextSize(40);
+        whitePaint.getTextBounds("预览后视频可动", 0, "预览后视频可动".length(), bounds);
         if (leftTopBitmap != null) {
             leftTopRect.set(0, 0, leftTopBitmap.getIntrinsicWidth(),
                     leftTopBitmap.getIntrinsicHeight());
@@ -637,7 +631,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             return new StaticLayout(content, textPaint, drawWidth, Layout.Alignment.ALIGN_CENTER, 1f, 0, true);
         }
     }
-
+    Rect bounds = new Rect();
     private void drawContent(Canvas canvas) {
         if (currentDrawable != null) {
             // drawGuideLine(canvas);
@@ -651,7 +645,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             canvas.restore();
 
             mHelpBoxRect.set(rectF);
-            textRect.set(mHelpBoxRect.left,mHelpBoxRect.bottom-50,mHelpBoxRect.right,mHelpBoxRect.bottom);
+            textRect.set(mHelpBoxRect.left, mHelpBoxRect.bottom - 50, mHelpBoxRect.right, mHelpBoxRect.bottom);
             RectUtil.scaleRect(mHelpBoxRect, mScale);
 //            RectUtil.scaleRect(textRect, mScale);
             if (frameShow) {
@@ -665,7 +659,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     offsetValue = ((int) leftBottomDstRect.width()) >> 1;
                 } else if (rightBottomBitmap != null) {
                     offsetValue = ((int) rightBottomDstRect.width()) >> 1;
-                }else if(rightCenterBitmap!=null){
+                } else if (rightCenterBitmap != null) {
                     offsetValue = ((int) rightCenterDstRect.width()) >> 1;
                 }
                 leftTopDstRect.offsetTo(mHelpBoxRect.left - offsetValue,
@@ -677,11 +671,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 rightTopDstRect.offsetTo(mHelpBoxRect.right - offsetValue,
                         mHelpBoxRect.top - offsetValue);
 
-                float center=(mHelpBoxRect.bottom-mHelpBoxRect.top)/(float)2;
-               LogUtil.d("center","center="+center);
-                LogUtil.d("center","mHelpBoxRect.top="+mHelpBoxRect.top);
+                float center = (mHelpBoxRect.bottom - mHelpBoxRect.top) / (float) 2;
+                LogUtil.d("center", "center=" + center);
+                LogUtil.d("center", "mHelpBoxRect.top=" + mHelpBoxRect.top);
                 rightCenterDstRect.offsetTo(mHelpBoxRect.right - offsetValue,
-                        mHelpBoxRect.top+center-offsetValue);
+                        mHelpBoxRect.top + center - offsetValue);
 
                 RectUtil.rotateRect(leftTopDstRect, mHelpBoxRect.centerX(),
                         mHelpBoxRect.centerY(), mRotateAngle);
@@ -703,8 +697,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                         mHelpBoxRect.centerY());
                 canvas.drawRoundRect(mHelpBoxRect, 10, 10, mHelpPaint);
                 canvas.restore();
-
-
 
 
                 if (leftTopBitmap != null) {
@@ -730,13 +722,14 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 }
 
 
-//                Path circlePath=new Path();
-//                circlePath.moveTo(leftBottomDstRect.left,leftBottomDstRect.bottom);
-//                LogUtil.d("OOM","leftBottomDstRect.left="+leftBottomDstRect.left);
-//                LogUtil.d("OOM","leftBottomDstRect.bottom"+leftBottomDstRect.bottom);
-//                circlePath.lineTo(rightBottomDstRect.left,rightBottomDstRect.bottom);
-//                canvas.drawTextOnPath("预览后视频可动", circlePath, 20, 20, whitePaint);
-
+                int desiredTextSize = (int) (40 * (rightBottomDstRect.left - leftBottomDstRect.right) / bounds.width());
+                LogUtil.d("OOM", "desiredTextSize=" + desiredTextSize);
+                whitePaint.setTextAlign(Paint.Align.CENTER);
+                whitePaint.setTextSize(desiredTextSize);
+                Path circlePath = new Path();
+                circlePath.moveTo(leftBottomDstRect.left, leftBottomDstRect.bottom);
+                circlePath.lineTo(rightBottomDstRect.left, rightBottomDstRect.bottom);
+                canvas.drawTextOnPath("预览后视频可动", circlePath, 20, 20, whitePaint);
             }
 
 
@@ -769,10 +762,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             return RIGHT_BOTTOM_MODE;
         } else if (rightCenterDstRect != null && rightCenterDstRect.contains(x, y)) {
             return RIGHT_CENTER_MODE;
-        }
-
-
-        else if (isIn(mHelpBoxRect, x, y, mRotateAngle)) {
+        } else if (isIn(mHelpBoxRect, x, y, mRotateAngle)) {
             return MOVE_MODE;
         } else {
             return IDLE_MODE;
@@ -806,11 +796,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 } else if (mCurrentMode == LEFT_BOTTOM_MODE) {
                     callback.stickerOnclick(LEFT_BOTTOM_MODE);
                     return true;
-                }
-                else if(mCurrentMode == RIGHT_CENTER_MODE){
+                } else if (mCurrentMode == RIGHT_CENTER_MODE) {
                     callback.stickerOnclick(RIGHT_CENTER_MODE);
                     return true;
-                }else if (mCurrentMode == RIGHT_BOTTOM_MODE) {
+                } else if (mCurrentMode == RIGHT_BOTTOM_MODE) {
                     if (UiStep.isFromDownBj) {
                         statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), " 5_mb_bj_Spin");
                     } else {
@@ -1205,7 +1194,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             if (autoRun) {
                 start();
             }
-            if(!isMatting){
+            if (!isMatting) {
                 moveX = (getMeasuredWidth() + originalBitmapWidth) / 2;
                 moveY = (getMeasuredHeight() + originalBitmapHeight) / 2;
 
@@ -1278,7 +1267,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     contentWidth = getMeasuredWidth() / 2f;
                     originalBitmapWidth = (int) contentWidth;
                     originalBitmap = BitmapFactory.decodeFile(path);
-                    if(originalBitmap!=null){
+                    if (originalBitmap != null) {
                         int bitmapW = originalBitmap.getWidth();
                         int bitmapH = originalBitmap.getHeight();
                         boolean direction = BitmapManager.getInstance().getOrientation(path);
@@ -1291,8 +1280,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                         originalBitmapHeight = (int) contentHeight;
                         LogUtil.d("OOM", "contentHeight=" + contentHeight);
                         LogUtil.d("OOM", "contentWidth=" + contentWidth);
-                    }else{
-                        contentHeight=getMeasuredHeight()/2;
+                    } else {
+                        contentHeight = getMeasuredHeight() / 2;
                     }
                     // contentHeight = (int) (getMinDisplayWidth() / 2f);
                     RequestManager manager = Glide.with(getContext());
@@ -1361,7 +1350,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-
     /**
      * 區別第一次設置素材，这里主要用于切换素材，切换素材后，需要重新计算
      *
@@ -1376,9 +1364,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             contentWidth = getMeasuredWidth() / 2f;
             originalBitmapWidth = (int) contentWidth;
 //            originalBitmap = BitmapFactory.decodeFile(path);
-            GetVideoCover getVideoCover=new GetVideoCover(BaseApplication.getInstance());
+            GetVideoCover getVideoCover = new GetVideoCover(BaseApplication.getInstance());
             getVideoCover.getFileCoverForBitmap(path, cover -> {
-                originalBitmap=cover;
+                originalBitmap = cover;
                 int bitmapW = originalBitmap.getWidth();
                 int bitmapH = originalBitmap.getHeight();
                 boolean direction = BitmapManager.getInstance().getOrientation(path);
@@ -1408,17 +1396,15 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         } else {
             //路径不存在
 //            Toast.makeText(getContext(), "文件不存在", Toast.LENGTH_LONG).show();
-            LogUtil.d("OOM","文件不存在");
+            LogUtil.d("OOM", "文件不存在");
         }
     }
 
 
+    boolean isMatting = false;
 
-
-
-    boolean isMatting=false;
-    public void mattingChange(String path){
-        isMatting=true;
+    public void mattingChange(String path) {
+        isMatting = true;
         RequestManager manager = Glide.with(getContext());
         RequestBuilder builder = null;
         if (path.endsWith(".gif")) {
@@ -1430,8 +1416,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 .apply(options)
                 .into(getTarger());
     }
-
-
 
 
     public static Uri getImageStreamFromExternal(String imageName) {
@@ -1498,10 +1482,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-
-
-
-
     public boolean isOpenVoice() {
         return isOpenVoice;
     }
@@ -1509,8 +1489,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public void setOpenVoice(boolean openVoice) {
         isOpenVoice = openVoice;
     }
-
-
 
 
     /**
@@ -1591,13 +1569,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 //            mGroup.rotate(detector.getAngle(), mMidPntX, mMidPntY);
 
 
-
-
-
             return true;
         }
     }
-
 
 
 }
