@@ -3,8 +3,6 @@ package com.flyingeffects.com.manager;
 import android.app.Activity;
 import android.content.Context;
 
-import com.flyingeffects.com.base.BaseApplication;
-import com.flyingeffects.com.ui.view.activity.HomeMainActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.nineton.ntadsdk.itr.ScreenAdCallBack;
 import com.nineton.ntadsdk.manager.ScreenAdManager;
