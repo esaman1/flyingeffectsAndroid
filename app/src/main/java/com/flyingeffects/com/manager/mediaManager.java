@@ -68,7 +68,7 @@ public class mediaManager {
             }
         }catch (Exception e) {
             callback.splitSuccess(false,"");
-            ToastUtil.showToast(context.getString(R.string.no_audio_files));
+         //   ToastUtil.showToast(context.getString(R.string.no_audio_files));
         }
 
     }

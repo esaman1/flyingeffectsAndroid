@@ -21,6 +21,7 @@ public interface CreationTemplateMvpCallback {
 
     void showRenderVideoTime(int duration);
 
+    void changFirstVideoSticker(String path);
 
 
 }

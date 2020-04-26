@@ -19,5 +19,7 @@ public interface CreationTemplateMvpView {
 
     void getBgmPath(String path);
 
+    void changFirstVideoSticker(String path);
+
 //    void showRenderVideoTime(int duration);
 }

@@ -106,7 +106,6 @@ public class fragBjItem extends BaseFragment   {
                 if(fromType==0){
                     intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
                 }else if(fromType==3){
-
                     intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
                 }else{
                     intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);

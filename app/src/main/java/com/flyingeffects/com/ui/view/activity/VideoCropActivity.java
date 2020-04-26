@@ -18,6 +18,7 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.GetVideoCover;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
+import com.flyingeffects.com.enity.ChooseVideoAddSticker;
 import com.flyingeffects.com.enity.CreateCutCallback;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.UserInfo;
@@ -115,9 +116,11 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
         UiStep.nowUiTag="";
         UiStep.isFromDownBj=false;
         statisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Crop");
-        if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORUSER)){
-            tv_choose_pic.setVisibility(View.GONE);
-            tv_no_kt.setText("下一步");
+        if(!TextUtils.isEmpty(isFrom)){
+            if (isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORUSER)||isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)){
+                tv_choose_pic.setVisibility(View.GONE);
+                tv_no_kt.setText("下一步");
+            }
         }
 
 
@@ -285,7 +288,11 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
                 EventBus.getDefault().post(new CreateCutCallback(cover,videoPath,isNeedCut));
             }else if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORUSER)){
                 EventBus.getDefault().post(new DownVideoPath(videoPath));
-            }else{
+            }else if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)){
+                EventBus.getDefault().post(new ChooseVideoAddSticker(videoPath));
+            }
+
+            else{
                 Intent intent = new Intent(VideoCropActivity.this, CreationTemplateActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("paths", cover);

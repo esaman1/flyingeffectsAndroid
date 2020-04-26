@@ -115,6 +115,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
 //        creationTemplatemvpView.showRenderVideoTime(duration);
     }
 
+    @Override
+    public void changFirstVideoSticker(String path) {
+        creationTemplatemvpView.changFirstVideoSticker(path);
+    }
+
 
     public void toSaveVideo(){
         creationTemplatemodel.toSaveVideo();

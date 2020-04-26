@@ -126,11 +126,12 @@ public class CreationTemplateMvpModel {
     /***
      * originalPath  初始化第一张的时长
      */
-private String originalPath;
-    public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout,String originalPath) {
+    private String originalPath;
+
+    public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath) {
         this.context = context;
         this.callback = callback;
-        this.originalPath=originalPath;
+        this.originalPath = originalPath;
         this.mVideoPath = mVideoPath;
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
         vibrator = (Vibrator) context.getSystemService(Service.VIBRATOR_SERVICE);
@@ -142,7 +143,6 @@ private String originalPath;
         soundFolder = fileManager.getFileCachePath(context, "soundFolder");
         mImageCopyFolder = fileManager.getFileCachePath(context, "imageCopy");
     }
-
 
 
     private void showVibrator() {
@@ -495,9 +495,7 @@ private String originalPath;
                     AlbumManager.chooseAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
                         if (!isCancel) {
                             if (albumType.isVideo(GetPathType.getInstance().getPathType(paths.get(0)))) {
-                                if (stickView.isFirstAddSticker()) {
-                                    stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
-                                }
+
                                 GetVideoCover getVideoCover = new GetVideoCover(context);
                                 getVideoCover.getCover(paths.get(0), path1 -> {
                                     Observable.just(path1).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
@@ -508,8 +506,18 @@ private String originalPath;
                                         } else {
                                             stickView.changeImage(s, false);
                                         }
+
+                                        if (stickView.isFirstAddSticker()) {
+                                            stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
+                                            callback.changFirstVideoSticker(paths.get(0));
+                                        }
+
                                     });
                                 });
+
+
+
+
                             } else {
                                 CompressionCuttingManage manage = new CompressionCuttingManage(context, "", tailorPaths -> {
                                     Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
@@ -550,9 +558,9 @@ private String originalPath;
         if (isFromAubum) {
             stickView.setClipPath(path);
             stickView.setOriginalPath(originalPath);
-            if(albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))){
+            if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
                 stickView.setNowMaterialIsVideo(true);
-            }else{
+            } else {
                 stickView.setNowMaterialIsVideo(false);
             }
 
@@ -563,14 +571,14 @@ private String originalPath;
             stickView.setFirstAddSticker(true);
             if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
 
-                LogUtil.d("OOM","mVideoPath="+mVideoPath);
-                if(!TextUtils.isEmpty(mVideoPath)){
-                    LogUtil.d("OOM","默认是有背景");
+                LogUtil.d("OOM", "mVideoPath=" + mVideoPath);
+                if (!TextUtils.isEmpty(mVideoPath)) {
+                    LogUtil.d("OOM", "默认是有背景");
                     //有背景音乐
                     stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
                     callback.getBgmPath("");
-                }else {
-                    LogUtil.d("OOM","默认是没有背景");
+                } else {
+                    LogUtil.d("OOM", "默认是没有背景");
                     //无背景音乐
                     stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_open_voice));
                     getVideoVoice(stickView.getOriginalPath(), soundFolder);
@@ -718,30 +726,35 @@ private String originalPath;
 
     private void getPlayVideoDuration() {
         defaultVideoDuration = 0;
-        LogUtil.d("OOM", " viewLayerRelativeLayout.getChildCount())="+viewLayerRelativeLayout.getChildCount());
+        LogUtil.d("OOM", " viewLayerRelativeLayout.getChildCount())=" + viewLayerRelativeLayout.getChildCount());
 
-        if(viewLayerRelativeLayout.getChildCount()>0){
+        if (viewLayerRelativeLayout.getChildCount() > 0) {
             for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
                 StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
                 if (albumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath()))) {
                     VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
-                    LogUtil.d("OOM", "materialVideoInfo.getDuration()="+materialVideoInfo.getDuration());
+                    LogUtil.d("OOM", "materialVideoInfo.getDuration()=" + materialVideoInfo.getDuration());
                     perSticker.add(materialVideoInfo.getDuration());
                 }
             }
-        }else{
+        } else {
             //只有第一次初始化的时候，可能为0.因为viewLayerRelativeLayout还没加载进入数据，所有就需要手动加上
-            if( albumType.isVideo(GetPathType.getInstance().getPathType(originalPath))){
+            if (albumType.isVideo(GetPathType.getInstance().getPathType(originalPath))) {
                 VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(originalPath);
-                LogUtil.d("OOM", "materialVideoInfo.getDuration()="+materialVideoInfo.getDuration());
+                LogUtil.d("OOM", "materialVideoInfo.getDuration()=" + materialVideoInfo.getDuration());
                 perSticker.add(materialVideoInfo.getDuration());
             }
         }
+        //只有一个的情况就不需要比较大小了
         if (perSticker != null && perSticker.size() > 0) {
-            for (int duration : perSticker
-            ) {
-                if (defaultVideoDuration < duration) {
-                    defaultVideoDuration = duration;
+            if (perSticker.size() == 1) {
+                defaultVideoDuration = perSticker.get(0);
+            } else {
+                for (int duration : perSticker
+                ) {
+                    if (defaultVideoDuration < duration) {
+                        defaultVideoDuration = duration;
+                    }
                 }
             }
             LogUtil.d("OOM", "获得贴纸时长为" + defaultVideoDuration);
@@ -926,7 +939,7 @@ private String originalPath;
         } else {
             needDuration = materialDuration;
         }
-        LogUtil.d("OOM","需要裁剪的时长为"+needDuration);
+        LogUtil.d("OOM", "需要裁剪的时长为" + needDuration);
 
         videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, needDuration, videoType.getPath(), 0, new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
@@ -949,7 +962,7 @@ private String originalPath;
                         videoGetFrameModel getFrameModel = new videoGetFrameModel(context, cutList, (isSuccess1) -> {
                             LogUtil.d("OOM2", "全部抠图完成");
 
-                            if(isSuccess1){
+                            if (isSuccess1) {
                                 backgroundDraw.toSaveVideo(listAllSticker, true);
                             }
 

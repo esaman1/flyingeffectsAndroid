@@ -6,9 +6,14 @@ public class FromToTemplate {
     public static final String ISFROMSEARCH="ISFROMSEARCH";
     public static final String ISFROMEDOWNVIDEO="ISFROMDOWNVIDEO";
     /**
-     * 用戶自己選擇的背景
+     * 用戶自己选择的背景
      */
     public static final String ISFROMEDOWNVIDEOFORUSER="ISFROMDOWNVIDEOFORUSER";
+
+    /**
+     * 用戶新增加贴纸
+     */
+    public static final String ISFROMEDOWNVIDEOFORADDSTICKER="ISFROMEDOWNVIDEOFORADDSTICKER";
 
 
 }

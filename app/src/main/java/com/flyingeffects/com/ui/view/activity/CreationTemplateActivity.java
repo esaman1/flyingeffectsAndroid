@@ -19,6 +19,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.UiStep;
+import com.flyingeffects.com.enity.ChooseVideoAddSticker;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
@@ -26,6 +27,7 @@ import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
+import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
@@ -391,7 +393,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                             manage.ToMatting(paths);
                         } else {
                             //贴纸选择的视频
-                            presenter.GetVideoCover(paths.get(0));
+                            intoVideoCropActivity(paths.get(0));
+
+
                         }
                     }
                 }, "");
@@ -407,6 +411,16 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 break;
         }
     }
+
+
+    private void intoVideoCropActivity(String path) {
+        Intent intent = new Intent(CreationTemplateActivity.this, VideoCropActivity.class);
+        intent.putExtra("videoPath", path);
+        intent.putExtra("comeFrom", FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
 
     private void videoToPause() {
         videoPause();
@@ -543,10 +557,30 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void getBgmPath(String path) {
-        videoToStart();
         this.bgmPath = path;
+        if (isPlaying) {
+            if (!TextUtils.isEmpty(path)) {
+                exoPlayer.setVolume(0f);
+                playBGMMusic();
+                if (bgmPlayer != null) {
+                    bgmPlayer.seekTo((int) getCurrentPos());
+                }
+            } else {
+                exoPlayer.setVolume(1f);
+                pauseBgmMusic();
+            }
+        } else {
+            videoToStart();
+        }
     }
 
+    @Override
+    public void changFirstVideoSticker(String path) {
+        if (TextUtils.isEmpty(videoPath)) {
+            //如果还是绿屏。那么需要刷新底部的时长
+            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> presenter.initVideoProgressView(hListView));
+        }
+    }
 
 
     private Timer timer;
@@ -651,6 +685,17 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         initExo(videoPath);
         presenter.setmVideoPath(videoPath);
         presenter.initVideoProgressView(hListView);
+    }
+
+
+    /**
+     * description ：选择视频后新增的贴纸
+     * creation date: 2020/4/13
+     * user : zhangtongju
+     */
+    @Subscribe
+    public void onEventMainThread(ChooseVideoAddSticker event) {
+        presenter.GetVideoCover(event.getPath());
     }
 
 
