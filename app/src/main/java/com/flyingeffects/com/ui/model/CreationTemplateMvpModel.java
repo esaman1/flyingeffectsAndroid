@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
-import android.widget.ListView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
@@ -123,10 +122,11 @@ public class CreationTemplateMvpModel {
     /***
      * originalPath  初始化第一张的时长
      */
-
+private String originalPath;
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout,String originalPath) {
         this.context = context;
         this.callback = callback;
+        this.originalPath=originalPath;
         this.mVideoPath = mVideoPath;
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
         if (!TextUtils.isEmpty(mVideoPath)) {
@@ -201,7 +201,6 @@ public class CreationTemplateMvpModel {
 
     private TemplateGridViewAdapter gridAdapter;
     private List<StickerList> listForSticker = new ArrayList<>();
-
     private int selectPage = 1;
     private int perPageCount = 20;
     private SmartRefreshLayout smartRefreshLayout;
@@ -278,7 +277,6 @@ public class CreationTemplateMvpModel {
             for (AnimStickerModel stickerModel : listForStickerView
             ) {
                 StickerView stickerView = stickerModel.getStickerView();
-
                 if (stickerView != null && !stickerView.getComeFrom()) {
                     stickerView.stop();
                     viewLayerRelativeLayout.removeView(stickerView);
@@ -308,7 +306,6 @@ public class CreationTemplateMvpModel {
                 }
             }
         }
-
     }
 
 
@@ -463,10 +460,9 @@ public class CreationTemplateMvpModel {
                 } else if (type == StickerView.RIGHT_CENTER_MODE) {
                     if (!stickView.isOpenVoice) {
                         //打开声音
-                        getVideoVoice(stickView.getOriginalPath(), soundFolder);
                         stickView.setOpenVoice(true);
                         stickView.setRightCenterBitmapForChangeIcon(context.getDrawable(R.mipmap.sticker_open_voice));
-                        //    callback.getBgmPath(videoVoicePath);
+                        getVideoVoice(stickView.getOriginalPath(), soundFolder);
                     } else {
                         //关闭声音
                         videoVoicePath = "";
@@ -545,7 +541,19 @@ public class CreationTemplateMvpModel {
         if (isFirstAdd) {
             stickView.setFirstAddSticker(true);
             if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
-                stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
+
+                LogUtil.d("OOM","mVideoPath="+mVideoPath);
+                if(!TextUtils.isEmpty(mVideoPath)){
+                    LogUtil.d("OOM","默认是有背景");
+                    //有背景音乐
+                    stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
+                    callback.getBgmPath("");
+                }else {
+                    LogUtil.d("OOM","默认是没有背景");
+                    //无背景音乐
+                    stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_open_voice));
+                    getVideoVoice(stickView.getOriginalPath(), soundFolder);
+                }
             }
         }
         if (hasReplace) {
@@ -702,12 +710,12 @@ public class CreationTemplateMvpModel {
             }
         }else{
             //只有第一次初始化的时候，可能为0.因为viewLayerRelativeLayout还没加载进入数据，所有就需要手动加上
-//            albumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath()))
-
-
+            if( albumType.isVideo(GetPathType.getInstance().getPathType(originalPath))){
+                VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(originalPath);
+                LogUtil.d("OOM", "materialVideoInfo.getDuration()="+materialVideoInfo.getDuration());
+                perSticker.add(materialVideoInfo.getDuration());
+            }
         }
-
-
         if (perSticker != null && perSticker.size() > 0) {
             for (int duration : perSticker
             ) {

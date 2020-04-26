@@ -191,14 +191,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     case Player.STATE_READY:
                         break;
                     case Player.STATE_ENDED:
-
-                        isPlayComplate = true;
-                        endTimer();
-                        isPlaying = false;
-                        presenter.showGifAnim(false);
-                        videoPause();
-                        seekTo(0);
-                        nowStateIsPlaying(false);
+                        videoToStart();
                         break;
                     case Player.STATE_BUFFERING:
                     case Player.STATE_IDLE:
@@ -213,6 +206,17 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
         exoPlayer.prepare(mediaSource, true, false);
         videoPause();
+    }
+
+
+    private void videoToStart(){
+        isPlayComplate = true;
+        endTimer();
+        isPlaying = false;
+        presenter.showGifAnim(false);
+        videoPause();
+        seekTo(0);
+        nowStateIsPlaying(false);
     }
 
 
@@ -539,6 +543,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void getBgmPath(String path) {
+        videoToStart();
         this.bgmPath=path;
     }
 
