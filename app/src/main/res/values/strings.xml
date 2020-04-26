@@ -55,4 +55,12 @@
     <string name="Permissions_repulse">你已拒绝权限，打开即可获得卡点优质功能</string>
     <string name="no_audio_files">没有音频文件！</string>
 
+
+    <string name="ad_alert_title">亲爱的友友</string>
+    <string name="ad_alert_content_0">这个模板需要观看几秒广告</string>
+    <string name="ad_alert_content_1">「看完后就能制作飞闪视频」</string>
+
+
+
+
 </resources>

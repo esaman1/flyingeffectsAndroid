@@ -25,7 +25,6 @@
 
     </style>
 
-    <!-- radio自定义 -->
     <style name="TransparentTheme" parent="android:style/Theme.Dialog">
         <item name="android:background">@android:color/transparent</item>
         <item name="android:windowBackground">@android:color/transparent</item>
