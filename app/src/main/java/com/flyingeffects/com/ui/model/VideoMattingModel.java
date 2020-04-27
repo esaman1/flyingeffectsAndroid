@@ -204,7 +204,7 @@ public class VideoMattingModel {
                   long  time= System.currentTimeMillis()-nowCurtime;
                     String ss= timeUtils.timeParse(time);
                     LogUtil.d("OOM","总共扣视频需要了"+ss);
-                    requestLoginForSdk(ss);
+                //    requestLoginForSdk(ss);
                     statisticsEventAffair.getInstance().setFlag(context, "mattingVideoTime", templateName);
                     if (callback != null) {
                         callback.isSuccess(true, albumPath);
