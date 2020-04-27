@@ -12,6 +12,7 @@ import android.view.View;
 
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.enity.AllStickerData;
+import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.lansongCommendView.StickerItem;
@@ -114,8 +115,8 @@ public class backgroundDraw {
                 setMainLayer();
             } else {
                 if (!TextUtils.isEmpty(imagePath)) {
-                    LSOBitmapAsset bp = new LSOBitmapAsset(BitmapFactory.decodeFile(imagePath));
-                    execute.addBitmapLayer(bp);
+                    Bitmap bt_nj= BitmapManager.getInstance().getOrientationBitmap(imagePath);
+                    execute.addBitmapLayer(bt_nj) ;
                 } else {
                     execute.setBackgroundColor(Color.parseColor("#00FF00"));
                 }
