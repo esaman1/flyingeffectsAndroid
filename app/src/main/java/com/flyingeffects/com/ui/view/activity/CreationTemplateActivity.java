@@ -312,6 +312,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 } else {
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_save");
                 }
+                statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Preview");
                 presenter.toSaveVideo(imageBjPath);
                 break;
 
@@ -383,7 +384,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 } else {
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_material");
                 }
-
+                statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_material");
                 //添加新的贴纸，这里的贴纸就是用户选择的贴纸
                 AlbumManager.chooseAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel, albumFileList) -> {
                     Log.d("OOM", "isCancel=" + isCancel);

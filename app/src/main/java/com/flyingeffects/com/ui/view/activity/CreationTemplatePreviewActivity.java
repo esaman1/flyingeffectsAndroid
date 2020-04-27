@@ -18,6 +18,7 @@ import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.timeUtils;
@@ -188,11 +189,14 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_back:
+                statisticsEventAffair.getInstance().setFlag(this, "7_return" );
                 CreationTemplatePreviewActivity.this.finish();
-
                 break;
 
             case R.id.tv_save:
+                statisticsEventAffair.getInstance().setFlag(this, "7_save" );
+
+
                 saveToAlbum(imagePath);
                 AdManager.getInstance().showCpAd(CreationTemplatePreviewActivity.this, AdConfigs.AD_SCREEN_FOR_keep);
                 break;

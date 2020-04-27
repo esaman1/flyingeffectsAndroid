@@ -204,32 +204,10 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
 
         switch (view.getId()) {
             case R.id.iv_add:
-            case R.id.iv_cover:
+
             case R.id.Toolbar:
-
                 if (BaseConstans.hasLogin()) {
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "6_customize_bj");
-
-                    AlbumManager.chooseAlbum(getActivity(), 1, SELECTALBUM, new AlbumChooseCallback() {
-                        @Override
-                        public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-                            if (!isCancel) {
-                                if (!TextUtils.isEmpty(paths.get(0))) {
-                                    String pathType = GetPathTypeModel.getInstance().getMediaType(paths.get(0));
-                                    if (albumType.isVideo(pathType)) {
-                                        Intent intent = new Intent(getActivity(), VideoCropActivity.class);
-                                        intent.putExtra("videoPath", paths.get(0));
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        startActivity(intent);
-                                    } else {
-                                        compressImage(paths.get(0));
-
-                                    }
-                                }
-                            }
-
-                        }
-                    }, "");
+                    toAddSticker();
                 } else {
                     Intent intent = new Intent(getActivity(), LoginActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -237,11 +215,41 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                 }
                 break;
 
+            case R.id.iv_cover:
+                toAddSticker();
+                statisticsEventAffair.getInstance().setFlag(getActivity(), "7_background");
+                break;
+
             default:
                 break;
         }
+    }
 
 
+    private void toAddSticker(){
+        statisticsEventAffair.getInstance().setFlag(getActivity(), "6_customize_bj");
+        AlbumManager.chooseAlbum(getActivity(), 1, SELECTALBUM, new AlbumChooseCallback() {
+            @Override
+            public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
+                if (!isCancel) {
+                    if (!TextUtils.isEmpty(paths.get(0))) {
+                        String pathType = GetPathTypeModel.getInstance().getMediaType(paths.get(0));
+                        if (albumType.isVideo(pathType)) {
+                            Intent intent = new Intent(getActivity(), VideoCropActivity.class);
+                            intent.putExtra("videoPath", paths.get(0));
+                            intent.putExtra("comeFrom", FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER);
+
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                        } else {
+                            compressImage(paths.get(0));
+
+                        }
+                    }
+                }
+
+            }
+        }, "");
     }
 
 

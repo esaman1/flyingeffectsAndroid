@@ -478,7 +478,9 @@ public class CreationTemplateMvpModel {
                     stickView.dismissFrame();
                     //copy
                     copyGif(stickView.getResPath(), path, stickView.getComeFrom(), stickView, stickView.getOriginalPath());
-
+                    if(albumType.isVideo(GetPathType.getInstance().getMediaType(stickView.getOriginalPath()))){
+                        statisticsEventAffair.getInstance().setFlag(context, "7_plusone" );
+                    }
                 } else if (type == StickerView.RIGHT_CENTER_MODE) {
                     showVibrator();
                     if (!stickView.isOpenVoice) {
@@ -486,12 +488,16 @@ public class CreationTemplateMvpModel {
                         stickView.setOpenVoice(true);
                         stickView.setRightCenterBitmapForChangeIcon(context.getDrawable(R.mipmap.sticker_open_voice));
                         getVideoVoice(stickView.getOriginalPath(), soundFolder);
+                        statisticsEventAffair.getInstance().setFlag(context, "7_open" );
+
+
                     } else {
                         //关闭声音
                         videoVoicePath = "";
                         stickView.setOpenVoice(false);
                         stickView.setRightCenterBitmapForChangeIcon(context.getDrawable(R.mipmap.sticker_close_voice));
                         callback.getBgmPath("");
+                        statisticsEventAffair.getInstance().setFlag(context, "7_turnoff" );
                     }
 
                 } else if (type == StickerView.LEFT_BOTTOM_MODE) {

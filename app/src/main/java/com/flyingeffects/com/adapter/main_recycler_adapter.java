@@ -20,6 +20,7 @@ import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.GlideRoundTransform;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
@@ -106,8 +107,8 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                 ConstraintLayout_addVideo.setOnClickListener(v -> {
                     AlbumManager.chooseAlbum(context, 1, 1, (tag, paths, isCancel, albumFileList) -> {
                         if(!isCancel){
+                            statisticsEventAffair.getInstance().setFlag(context, "7_local" );
                            // EventBus.getDefault().post(new DownVideoPath(paths.get(0)));
-
                             String pathType = GetPathTypeModel.getInstance().getMediaType(paths.get(0));
                             if (albumType.isImage(pathType)) {
                                 EventBus.getDefault().post(new DownVideoPath(paths.get(0)));

@@ -16,6 +16,7 @@ import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.DataCleanManager;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.VideoMattingModel;
 import com.flyingeffects.com.ui.model.videoCutDurationForVideoOneDo;
 import com.flyingeffects.com.utils.LogUtil;
@@ -271,6 +272,8 @@ public class TemplateCutVideoActivity extends BaseActivity {
                         }
                         if (isSuccess) {
                             if (v.getId() == R.id.tv_kt) {
+
+
                                 gotoMattingVideo(path);
                             } else {
                                 TemplateCutVideoActivity.this.finish();

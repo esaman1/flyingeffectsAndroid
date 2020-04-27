@@ -140,15 +140,31 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
                 onBackPressed();
                 break;
             case R.id.tv_choose_pic: //抠图
-                statisticsEventAffair.getInstance().setFlag(this, "2_Titles_cutdone", "手动卡点_片头裁剪完成");
-                statisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Cutout");
+
+                if (TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)){
+                    statisticsEventAffair.getInstance().setFlag(this, "7_Chromakey" );
+                }else if(TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMBJ)){
+                    statisticsEventAffair.getInstance().setFlag(this, "8_Chromakey" );
+                }else{
+                    statisticsEventAffair.getInstance().setFlag(this, "2_Titles_cutdone", "手动卡点_片头裁剪完成");
+                    statisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Cutout");
+                }
+
+
                 saveVideo(true);
                 isNeedCut=true;
                 break;
 
             case R.id.tv_no_kt: //不需要抠图
-                statisticsEventAffair.getInstance().setFlag(this, "2_Titles_cutdone", "手动卡点_片头裁剪完成");
-                statisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Cutout");
+
+                if (TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)){
+                    statisticsEventAffair.getInstance().setFlag(this, "7_Nokeying" );
+                }else if(TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMBJ)){
+                    statisticsEventAffair.getInstance().setFlag(this, "8_Nokeying" );
+                }else{
+                    statisticsEventAffair.getInstance().setFlag(this, "2_Titles_cutdone", "手动卡点_片头裁剪完成");
+                    statisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Cutout");
+                }
                 saveVideo(false);
                 isNeedCut=false;
                 break;

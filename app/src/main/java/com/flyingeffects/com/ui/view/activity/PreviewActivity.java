@@ -306,6 +306,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 String path = paths.get(0);
                 String pathType = GetPathTypeModel.getInstance().getMediaType(path);
                 if (albumType.isImage(pathType)) {
+
+                    if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)){
+                        statisticsEventAffair.getInstance().setFlag(this, "8_SelectImage" );
+                    }
                     if (templateItem.getIs_anime() != 1) {
                         compressImage(paths, templateItem.getId());
                     } else {
@@ -314,6 +318,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                     }
                 } else {
                     if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                        statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo" );
                         Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId());
                     } else {
                         WaitingDialog.closePragressDialog();

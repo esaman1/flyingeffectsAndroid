@@ -15,5 +15,9 @@ public class FromToTemplate {
      */
     public static final String ISFROMEDOWNVIDEOFORADDSTICKER="ISFROMEDOWNVIDEOFORADDSTICKER";
 
+    /**
+     * 用户第一次点击背景模块顶部的+号去选择视频
+     */
 
+    public static final String ISFROMADDFIRSRADDSTICKER="ISFROMADDFIRSRADDSTICKER";
 }
