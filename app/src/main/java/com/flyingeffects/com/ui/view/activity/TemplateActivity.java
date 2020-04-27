@@ -139,9 +139,16 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private static final int REQUEST_SINGLE_MEDIA_VIDEO = 12;
     /**
-     * 点击事件选择的位置
+     * 点击事件选择的组位置
      */
     private int pickIndex;
+
+    /**
+     *当前点击事件选择group 的位置
+     */
+    private int pickGroupIndex;
+
+
 
 
     /**
@@ -187,7 +194,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private boolean nowIsChooseMatting = true;
 
 
-    private int picout;
+//    private int picout;
 
 //    private String whiteImagePng;
 
@@ -248,19 +255,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 //        String sss2 = retriever2.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT);
 //        LogUtil.d("OOM2", "灰度图帧数是" + sss2);
 
-        if (originalPath == null || originalPath.size() == 0) {
-            if (nowTemplateIsMattingVideo != 1) {
-//                //不需要抠图,视频抠图无论如何都需要的
-//                findViewById(R.id.ll_Matting).setVisibility(View.GONE);
-                switch_button.setChecked(false);
-                nowIsChooseMatting = false;
-            }
-        }
-
-        if(nowTemplateIsAnim == 1){
-            findViewById(R.id.ll_Matting).setVisibility(View.GONE);
-        }
-
+//        if (originalPath == null || originalPath.size() == 0) {
+//            if (nowTemplateIsMattingVideo != 1) {
+////                //不需要抠图,视频抠图无论如何都需要的
+////                findViewById(R.id.ll_Matting).setVisibility(View.GONE);
+//                switch_button.setChecked(false);
+//                nowIsChooseMatting = false;
+//            }
+//        }
 
 
         mTextEditLayout = findViewById(R.id.text_edit_layout);
@@ -273,10 +275,25 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         SxveConstans.default_bg_path = new File(dir, "default_bj.png").getPath();
         seekBar.setOnSeekBarChangeListener(seekBarListener);
-        if (nowTemplateIsMattingVideo == 1 && originalPath == null) {
-            //当前是视频的情况下，且用户没有选择扣视频,上面的选中效果就取消
-            switch_button.setChecked(false);
-            nowIsChooseMatting = false;
+        if (nowTemplateIsMattingVideo == 1 ) {
+            if( originalPath == null || originalPath.size() == 0){
+                //当前是视频的情况下，且用户没有选择扣视频,上面的选中效果就取消
+                switch_button.setChecked(false);
+                nowIsChooseMatting = false;
+            }else{
+                switch_button.setChecked(true);
+                nowIsChooseMatting = true;
+            }
+        }else{
+            if( originalPath == null || originalPath.size() == 0){
+                //当前是视频的情况下，且用户没有选择扣视频,上面的选中效果就取消
+                switch_button.setChecked(false);
+                nowIsChooseMatting = false;
+            }
+        }
+
+        if(nowTemplateIsAnim == 1){
+            findViewById(R.id.ll_Matting).setVisibility(View.GONE);
         }
         switch_button.setOnCheckedChangeListener((view, isChecked) -> {
             if (!isFastDoubleClick()) {
@@ -284,7 +301,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 if (!isChecked) {
                     nowIsChooseMatting = false;
                     if (nowTemplateIsMattingVideo == 1 && !albumType.isImage(GetPathType.getInstance().getPathType(imgPath.get(0)))) {
-                        ChangeMaterialCallbackForVideo(null, originalPath.get(0), false);
+                        if(originalPath!=null&&originalPath.size()!=0){
+                            ChangeMaterialCallbackForVideo(null, originalPath.get(0), false);
+                        }else{
+                            ChangeMaterialCallbackForVideo(null,imgPath.get(0), false);
+                        }
+
+
                     } else {
                         statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutopen");
                         //修改图为裁剪后的素材
@@ -440,6 +463,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     public void showBottomIcon(String path) {
+        LogUtil.d("OOM","底部图的路径为"+path);
         TemplateThumbItem item1 = listItem.get(lastChoosePosition);
         item1.setPathUrl(path);
         listItem.set(lastChoosePosition, item1);
@@ -542,6 +566,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public void pickMedia(MediaUiModel model) {
         if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
             pickIndex = model.getNowIndex();
+            pickGroupIndex=model.getNowGroup();
+            LogUtil.d("OOM","当前的点击位置为"+pickIndex);
             if (isCanChooseVideo) {
                 // 只有是否选择视频的区别
                 float videoTimeF = Float.parseFloat(videoTime);
@@ -671,10 +697,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         mTemplateViews.get(nowChooseIndex).invalidate(); //提示重新绘制预览图
                     }
 
-                    if(picout==0){
-                        //不抠图默认就取消选中，但是切换按钮还是存在
-                        switch_button.setChecked(false);
-                    }
+//                    if(picout==0){
+//                        //不抠图默认就取消选中，但是切换按钮还是存在
+//                        switch_button.setChecked(false);
+//                    }
 
                 }));  //批量替换图片
             }).start();
@@ -943,6 +969,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         Intent intoCutVideo = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
                         intoCutVideo.putExtra("needCropDuration", needVideoTime);
                         intoCutVideo.putExtra("videoPath", paths.get(0));
+                        intoCutVideo.putExtra("picout", 1);
                         intoCutVideo.putExtra("templateName",templateName);
                         intoCutVideo.putExtra("isFrom", 2);
                         startActivity(intoCutVideo);
@@ -977,21 +1004,27 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
                     mTemplateModel.cartoonPath = paths.get(0);
                 } else {
-
-
-                    int total = mTemplateModel.getAssetsSize() - 1;
+//                    int total = mTemplateModel.getAssetsSize() - 1;
                     //倒敘
-                    int nowChooseIndex = total - pickIndex;
-                    MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(nowChooseIndex).ui;
-
-                    if (nowIsChooseMatting) {
-                        mediaUi2.setImageAsset(tailorPaths.get(0));
-                        ModificationSingleThumbItem(tailorPaths.get(0));
-                    } else {
-                        mediaUi2.setImageAsset(paths.get(0));
-                        ModificationSingleThumbItem(paths.get(0));
+//                    int nowChooseIndex = total - pickIndex;
+//                    MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(nowChooseIndex).ui;
+//
+                    for (int i=0;i<mTemplateModel.getAssets().size();i++){
+                        MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(i).ui;
+                        if(pickGroupIndex==mediaUi2.getNowGroup()){
+                            if(pickIndex==mediaUi2.getNowIndex()){
+                                if (nowIsChooseMatting) {
+                                    mediaUi2.setImageAsset(tailorPaths.get(0));
+                                    ModificationSingleThumbItem(tailorPaths.get(0));
+                                } else {
+                                    mediaUi2.setImageAsset(paths.get(0));
+                                    ModificationSingleThumbItem(paths.get(0));
+                                }
+                                return;
+                            }
+                        }
+                        mTemplateViews.get(lastChoosePosition).invalidate();
                     }
-                    mTemplateViews.get(lastChoosePosition).invalidate();
                 }
 
             });
@@ -1022,6 +1055,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     ChangeMaterialCallbackForVideo(null, event.getMattingPath(), false);
                     //这里需要重新设置底部图，但是glide 视频路径相同。所以glide 不会刷新
                     presenter.getButtomIcon(event.getMattingPath());
+                    switch_button.setChecked(false);
+
                 } else {
                     //用户选择了抠图但是没有切换抠图
                     ChangeMaterialCallbackForVideo(null, event.getOriginalPath(), false);

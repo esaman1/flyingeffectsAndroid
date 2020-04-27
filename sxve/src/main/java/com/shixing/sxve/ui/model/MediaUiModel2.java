@@ -264,6 +264,11 @@ public class MediaUiModel2 extends MediaUiModel {
         return index;
     }
 
+    @Override
+    public int getNowGroup() {
+        return group;
+    }
+
     public void setImageAsset(String path) {
         this.path = path;
         isVideoSlide = true;

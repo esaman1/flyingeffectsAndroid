@@ -19,6 +19,8 @@ public abstract class MediaUiModel extends AssetUi {
 
     public abstract int getNowIndex();
 
+    public abstract int getNowGroup();
+
     public abstract void setImageAsset(String path);
 
     public abstract void setVideoPath(String path, boolean mute, float startTime);

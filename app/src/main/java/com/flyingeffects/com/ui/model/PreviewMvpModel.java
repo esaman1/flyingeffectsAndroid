@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.UUID;
 
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -258,7 +259,7 @@ public class PreviewMvpModel {
 
                     } catch (Exception e) {
                         isDownZipUrl = false;
-                        new Handler().post(() -> ToastUtil.showToast("下载异常，请重试"));
+                        Observable.just(e).subscribeOn(AndroidSchedulers.mainThread()).subscribe(e1 -> new Handler().post(() -> ToastUtil.showToast("下载异常，请重试")));
                         LogUtil.d("onVideoAdError", "Exception=" + e.getMessage());
                     }
                     super.run();

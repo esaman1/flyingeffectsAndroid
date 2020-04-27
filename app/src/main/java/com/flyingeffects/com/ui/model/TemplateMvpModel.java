@@ -362,7 +362,7 @@ public class TemplateMvpModel {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(path);
         Bitmap mBitmap = retriever.getFrameAtTime(0);
-        String fileName = cacheCutVideoPath + File.separator +  UUID.randomUUID()+"bottomIcon.png";
+        String fileName = backgroundPath + File.separator +  UUID.randomUUID()+"bottomIcon.png";
         File file =new File(fileName);
         if(file.exists()){
             file.delete();
