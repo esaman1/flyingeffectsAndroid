@@ -23,6 +23,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AdConfigs;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -186,6 +187,7 @@ public class WelcomeActivity extends BaseActivity {
                 }
                 LogUtil.d("oom", "BaseConstans.getHasAdvertising()=" + BaseConstans.getHasAdvertising());
                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+
                     showSplashAd();
                 }
             }
@@ -237,10 +239,12 @@ public class WelcomeActivity extends BaseActivity {
      * 展示开屏广告
      */
     private void showSplashAd() {
+        statisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request");
         NTAdSDK.getInstance().showSplashAd(this, rlAdContainer, tvSkip, ScreenUtil.dip2px(this, 110), AdConfigs.AD_SPLASH, new SplashAdCallBack() {
             @Override
             public void onAdSuccess() {
                 isShow = true;
+                statisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request_success");
             }
 
             @Override

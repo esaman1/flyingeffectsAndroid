@@ -479,7 +479,11 @@ public class CreationTemplateMvpModel {
                     //copy
                     copyGif(stickView.getResPath(), path, stickView.getComeFrom(), stickView, stickView.getOriginalPath());
                     if(albumType.isVideo(GetPathType.getInstance().getMediaType(stickView.getOriginalPath()))){
-                        statisticsEventAffair.getInstance().setFlag(context, "7_plusone" );
+                        if (UiStep.isFromDownBj) {
+                            statisticsEventAffair.getInstance().setFlag(context, "7_plusone" );
+                        }else{
+                            statisticsEventAffair.getInstance().setFlag(context, "8_plusone" );
+                        }
                     }
                 } else if (type == StickerView.RIGHT_CENTER_MODE) {
                     showVibrator();
@@ -488,7 +492,12 @@ public class CreationTemplateMvpModel {
                         stickView.setOpenVoice(true);
                         stickView.setRightCenterBitmapForChangeIcon(context.getDrawable(R.mipmap.sticker_open_voice));
                         getVideoVoice(stickView.getOriginalPath(), soundFolder);
-                        statisticsEventAffair.getInstance().setFlag(context, "7_open" );
+                        if (UiStep.isFromDownBj) {
+                            statisticsEventAffair.getInstance().setFlag(context, "7_open" );
+                        }else{
+                            statisticsEventAffair.getInstance().setFlag(context, "8_open" );
+                        }
+
 
 
                     } else {
@@ -497,7 +506,13 @@ public class CreationTemplateMvpModel {
                         stickView.setOpenVoice(false);
                         stickView.setRightCenterBitmapForChangeIcon(context.getDrawable(R.mipmap.sticker_close_voice));
                         callback.getBgmPath("");
-                        statisticsEventAffair.getInstance().setFlag(context, "7_turnoff" );
+
+                        if (UiStep.isFromDownBj) {
+                            statisticsEventAffair.getInstance().setFlag(context, "7_turnoff" );
+                        }else{
+                            statisticsEventAffair.getInstance().setFlag(context, "8_turnoff" );
+                        }
+
                     }
 
                 } else if (type == StickerView.LEFT_BOTTOM_MODE) {

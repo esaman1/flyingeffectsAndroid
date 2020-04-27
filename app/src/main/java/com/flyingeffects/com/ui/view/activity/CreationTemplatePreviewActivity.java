@@ -14,6 +14,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
+import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
@@ -189,12 +190,24 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_back:
+                if (UiStep.isFromDownBj) {
+                    statisticsEventAffair.getInstance().setFlag(this, "7_return" );
+                }else{
+                    statisticsEventAffair.getInstance().setFlag(this, "8_return" );
+                }
+
                 statisticsEventAffair.getInstance().setFlag(this, "7_return" );
                 CreationTemplatePreviewActivity.this.finish();
                 break;
 
             case R.id.tv_save:
-                statisticsEventAffair.getInstance().setFlag(this, "7_save" );
+
+                if (UiStep.isFromDownBj) {
+                    statisticsEventAffair.getInstance().setFlag(this, "7_save" );
+                }else{
+                    statisticsEventAffair.getInstance().setFlag(this, "8_save" );
+                }
+
 
 
                 saveToAlbum(imagePath);

@@ -487,6 +487,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void hasLogin(boolean hasLogin) {
         if (!TextUtils.isEmpty(templateItem.getType()) && templateItem.getType().equals("1")) {
             Intent intent = new Intent(PreviewActivity.this, AdHintActivity.class);
+            intent.putExtra("from",fromTo);
+            intent.putExtra("templateTitle",templateItem.getTitle());
             startActivity(intent);
         } else {
             hasLoginToNext();

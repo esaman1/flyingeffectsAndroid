@@ -312,7 +312,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 } else {
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_save");
                 }
-                statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Preview");
+
+                if (UiStep.isFromDownBj) {
+                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Preview");
+                }else{
+                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
+                }
+
                 presenter.toSaveVideo(imageBjPath);
                 break;
 
@@ -381,10 +387,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 }
                 if (UiStep.isFromDownBj) {
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "5_mb_bj_material");
+                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_material");
                 } else {
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_material");
+                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_material");
                 }
-                statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_material");
+
                 //添加新的贴纸，这里的贴纸就是用户选择的贴纸
                 AlbumManager.chooseAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel, albumFileList) -> {
                     Log.d("OOM", "isCancel=" + isCancel);
@@ -392,7 +400,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         //如果是选择的视频，就需要得到封面，然后设置在matting里面去，然后吧原图设置为视频地址
                         String path = paths.get(0);
                         String pathType = GetPathTypeModel.getInstance().getMediaType(path);
-                        if (albumType.isImage(pathType)) {
+                        if (albumType.isImage(pathType))
+                        {
+
+
+                            statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_SelectImage" );
+
                             CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this, "", tailorPaths -> {
                                 presenter.addNewSticker(tailorPaths.get(0), paths.get(0));
                             });
@@ -400,7 +413,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         } else {
                             //贴纸选择的视频
                             intoVideoCropActivity(paths.get(0));
-
+                            statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Selectvideo\n" );
 
                         }
                     }
