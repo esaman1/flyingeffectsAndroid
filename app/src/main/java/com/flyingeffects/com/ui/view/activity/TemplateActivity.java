@@ -614,7 +614,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             if (nowTemplateIsAnim == 1 || nowTemplateIsMattingVideo == 1) {
                 //漫画 特殊
                 TemplateThumbItem templateThumbItem = new TemplateThumbItem();
-                if (originalPath != null) {
+                if (originalPath != null&&originalPath.size()!=0) {
                     templateThumbItem.setPathUrl(originalPath.get(0));
                 } else {
                     templateThumbItem.setPathUrl(imgPath.get(0));
@@ -641,7 +641,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 if (paths.size() > i && !TextUtils.isEmpty(paths.get(i))) {
                     if (nowTemplateIsAnim == 1 || nowTemplateIsMattingVideo == 1) {
                         //漫画或者灰度图，
-                        if (originalPath != null) {
+                        if (originalPath != null&&originalPath.size()!=0) {
                             listAssets.add(originalPath.get(i));
                         } else {
                             listAssets.add(paths.get(i));
@@ -956,7 +956,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private void mattingImage(List<String> paths) {
         boolean hasCache = nowTemplateIsAnim != 1;
         CompressionCuttingManage manage = new CompressionCuttingManage(TemplateActivity.this, templateId, hasCache, tailorPaths -> {
-            if (originalPath != null) {
+            if (originalPath != null&&originalPath.size()!=0) {
                 originalPath.set(lastChoosePosition, paths.get(0));
             } else {
                 //可能来自视频抠图页面，所以会出现出现null
