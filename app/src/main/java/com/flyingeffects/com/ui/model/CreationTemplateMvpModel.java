@@ -948,6 +948,14 @@ public class CreationTemplateMvpModel {
             @Override
             public void progresss(int progress) {
 //                progressNowAnim.setProgress("正在裁剪中" + progress + "%");
+
+                float  positionF=progress/(float)100;
+                Log.d("OOM","裁剪的进度为0"+positionF);
+                float  prencent=5/(cutVideoPathList.size()+1);
+                Log.d("OOM","裁剪的进度prencent为"+prencent);
+                int positipom= (int) ((int) (positionF*prencent)+cutSuccessNum*prencent);
+                Log.d("OOM","裁剪的进度为"+positipom);
+
             }
 
             @Override
@@ -962,7 +970,7 @@ public class CreationTemplateMvpModel {
                         LogUtil.d("OOM2", "裁剪完成，准备抠图");
 //                        progressNowAnim.closePragressDialog();
                         //全部裁剪完成之后需要去把视频裁剪成全部帧
-                        videoGetFrameModel getFrameModel = new videoGetFrameModel(context, cutList, (isSuccess1) -> {
+                        videoGetFrameModel getFrameModel = new videoGetFrameModel(context, cutList, (isSuccess1,progress) -> {
                             LogUtil.d("OOM2", "全部抠图完成");
 
                             if (isSuccess1) {

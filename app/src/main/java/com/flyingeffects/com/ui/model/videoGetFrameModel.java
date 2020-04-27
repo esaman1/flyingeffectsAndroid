@@ -80,7 +80,7 @@ public class videoGetFrameModel {
 //            dialog.closePragressDialog();
             if (callback != null) {
                 LogUtil.d("OOM","callback!=null");
-                callback.isExtractSuccess(true);
+                callback.isExtractSuccess(true,95);
             }else{
                 LogUtil.d("OOM","callback==null");
             }
@@ -158,10 +158,12 @@ public class videoGetFrameModel {
                 //当前帧的画面回调,, ptsUS:当前帧的时间戳,单位微秒. 拿到图片后,建议放到ArrayList中,不要直接在这里处理.
                 mExtractFrame.setOnExtractProgressListener((bmp, ptsUS) -> {
                     frameCount++;
-                    new Handler().post(() -> {
-                        progress = (int) ((frameCount / (float) allFrame) * 100);
-                        handler.sendEmptyMessage(1);
-                    });
+
+                    callback.isExtractSuccess(false,95);
+//                    new Handler().post(() -> {
+//                        progress = (int) ((frameCount / (float) allFrame) * 100);
+//                        handler.sendEmptyMessage(1);
+//                    });
                     LogUtil.d("OOM2", frameCount + "帧");
                     downImageForBitmap(bmp, frameCount);
                 });
@@ -202,7 +204,7 @@ public class videoGetFrameModel {
 
         interface isSuccess {
 
-            void isExtractSuccess(boolean isSuccess);
+            void isExtractSuccess(boolean isSuccess,int position);
         }
 
     }
