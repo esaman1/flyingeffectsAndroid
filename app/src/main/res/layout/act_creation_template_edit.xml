@@ -98,10 +98,10 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/ll_progress"
         android:layout_marginTop="50dp"
-        android:background="#ff0000"
         android:gravity="center"
+        android:background="@color/black"
         android:orientation="horizontal"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <ImageView
             android:contentDescription="@string/app_name"

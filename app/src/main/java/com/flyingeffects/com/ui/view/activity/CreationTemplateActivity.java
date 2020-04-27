@@ -176,7 +176,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             //有视频的时候，初始化视频值
             initExo(videoPath);
         } else {
-            showGreenBj(true);
+            showGreenBj();
         }
         presenter.requestStickersList();
     }
@@ -469,9 +469,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-    private void showGreenBj(boolean againInitImage) {
+    boolean isInitImageBj=false;
+    private void showGreenBj() {
         ll_green_background.setVisibility(View.VISIBLE);
-        if(againInitImage){
+        iv_green_background.setVisibility(View.VISIBLE);
+        if(!isInitImageBj){
             float oriRatio = 9f / 16f;
             //保证获得mContainer大小不为0
             LinearLayout.LayoutParams RelativeLayoutParams = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
@@ -482,6 +484,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 RelativeLayoutParams.height = oriHeight;
                 iv_green_background.setLayoutParams(RelativeLayoutParams);
             });
+            isInitImageBj=true;
         }
         hListView.post(() -> presenter.initVideoProgressView(hListView));
     }
@@ -696,7 +699,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 ll_green_background.setVisibility(View.VISIBLE);
                 presenter.setmVideoPath("");
                 videoPath = "";
-                showGreenBj(false);
+                showGreenBj();
                 imageBjPath = event.getPath();
               new Handler().postDelayed(() -> Glide.with(CreationTemplateActivity.this).load(s).into(iv_green_background),500);
 
