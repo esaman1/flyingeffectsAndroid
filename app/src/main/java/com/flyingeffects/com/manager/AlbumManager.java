@@ -32,6 +32,20 @@ public class AlbumManager {
                 .selectCount(selectNum)
                 .camera(false)
                 .material_info(material_info)
+                .filterSize(new Filter<Long>() {
+                    @Override
+                    public boolean filter(Long attributes) {
+                        return attributes<20000;
+                    }
+                })
+                .filterMimeType(new Filter<String>() {
+                    @Override
+                    public boolean filter(String attributes) {
+                        LogUtil.d("filter","attributes="+attributes);
+                        return attributes.equals("image/gif")||attributes.equals("image/svg+xml")||attributes.equals("image/x-icon");
+                    }
+                })
+                .afterFilterVisibility(false)
                 .cameraVideoQuality(1)
                 .cameraVideoLimitDuration(Integer.MAX_VALUE)
                 .cameraVideoLimitBytes(Integer.MAX_VALUE)

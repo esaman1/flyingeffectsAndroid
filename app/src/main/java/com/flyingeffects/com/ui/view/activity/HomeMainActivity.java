@@ -56,8 +56,6 @@ import com.githang.statusbar.StatusBarCompat;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.videoeditor.LanSongFileUtil;
 import com.megvii.segjni.SegJni;
-import com.nineton.ntadsdk.itr.ScreenAdCallBack;
-import com.nineton.ntadsdk.manager.ScreenAdManager;
 import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
@@ -69,8 +67,6 @@ import java.util.TimerTask;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.subjects.PublishSubject;
 
 import static com.flyingeffects.com.constans.BaseConstans.getChannel;

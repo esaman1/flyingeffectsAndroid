@@ -98,15 +98,18 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/ll_progress"
         android:layout_marginTop="50dp"
+        android:background="#ff0000"
         android:gravity="center"
         android:orientation="horizontal"
         android:visibility="gone">
 
         <ImageView
+            android:contentDescription="@string/app_name"
             android:id="@+id/iv_green_background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#1FA400" />
+            android:src="@mipmap/green"
+           />
     </LinearLayout>
 
 

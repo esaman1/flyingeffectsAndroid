@@ -121,7 +121,7 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
-    public void toSaveVideo(){
-        creationTemplatemodel.toSaveVideo();
+    public void toSaveVideo(String imageBjPath){
+        creationTemplatemodel.toSaveVideo(imageBjPath);
     }
 }

@@ -35,7 +35,6 @@ import java.util.Locale;
 
 import cn.jpush.android.api.JPushInterface;
 import cn.nt.lib.analytics.NTAnalytics;
-import de.greenrobot.event.EventBus;
 import rx.subjects.PublishSubject;
 
 /**

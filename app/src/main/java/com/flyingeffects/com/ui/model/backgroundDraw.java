@@ -18,6 +18,7 @@ import com.flyingeffects.com.view.lansongCommendView.StickerItem;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
 import com.lansosdk.box.GifLayer;
+import com.lansosdk.box.LSOBitmapAsset;
 import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.box.VideoFrameLayer;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
@@ -39,7 +40,7 @@ public class backgroundDraw {
     private static final int FRAME_RATE = 30;
     private DrawPadAllExecute2 execute;
     private Context context;
-//    private WaitingDialog_progress waitingProgress;
+    //    private WaitingDialog_progress waitingProgress;
     private String videoPath;
     private saveCallback callback;
     /**
@@ -52,48 +53,50 @@ public class backgroundDraw {
      * 视频图层声音
      */
     private String videoVoice;
-
+    private String imagePath;
 
 
     /**
      * description ：后台绘制，如果videoVoice不为null,那么需要把主视频图层的声音替换为用户选择的背景声音
+     * imagePath 如果videoPath 没有且imagePath 有的情况，需要把绿幕背景替换为图片背景
      * creation date: 2020/4/23
      * user : zhangtongju
      */
-    public backgroundDraw(Context context, String videoPath,String videoVoice, saveCallback callback) {
+    public backgroundDraw(Context context, String videoPath, String videoVoice, String imagePath, saveCallback callback) {
         this.context = context;
         this.videoPath = videoPath;
-        this.videoVoice=videoVoice;
+        this.videoVoice = videoVoice;
+        this.imagePath = imagePath;
         this.callback = callback;
 //        waitingProgress = new WaitingDialog_progress(context);
-        if(!TextUtils.isEmpty(videoPath)){
+        if (!TextUtils.isEmpty(videoPath)) {
             duration = getRingDuring(videoPath);
         }
         LogUtil.d("OOM", "backgroundDrawdurationF=" + duration);
-        LogUtil.d("OOM","videoVoice="+videoVoice);
-        intoCanvesCount=0;
+        LogUtil.d("OOM", "videoVoice=" + videoVoice);
+        intoCanvesCount = 0;
         FileManager fileManager = new FileManager();
         ExtractFramegFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "ExtractFrame");
     }
 
-    public void toSaveVideo(ArrayList<AllStickerData> list,boolean isMatting) {
+    public void toSaveVideo(ArrayList<AllStickerData> list, boolean isMatting) {
         //说明没得背景视频，那么渲染时长就是
-        if(duration==0){
-            for (AllStickerData  data:list
-                 ) {
-                if( duration< (int) data.getDuration()){
-                    duration=(int) data.getDuration();
+        if (duration == 0) {
+            for (AllStickerData data : list
+            ) {
+                if (duration < (int) data.getDuration()) {
+                    duration = (int) data.getDuration();
                 }
             }
         }
-        LogUtil.d("OOM2","进入到了最后渲染");
+        LogUtil.d("OOM2", "进入到了最后渲染");
 //        waitingProgress.openProgressDialog();
         try {
             execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, (long) (duration * 1000));
             execute.setFrameRate(FRAME_RATE);
             execute.setEncodeBitrate(5 * 1024 * 1024);
             execute.setOnLanSongSDKErrorListener(message -> {
-                LogUtil.d("OOM2","错误信息为"+message);
+                LogUtil.d("OOM2", "错误信息为" + message);
             });
             execute.setOnLanSongSDKProgressListener((l, i) -> {
 //                waitingProgress.setProgress(i + "%");
@@ -107,22 +110,27 @@ public class backgroundDraw {
                 execute.release();
                 Log.d("OOM", "exportPath=" + exportPath);
             });
-            if(!TextUtils.isEmpty(videoPath)){
+            if (!TextUtils.isEmpty(videoPath)) {
                 setMainLayer();
-            }else{
-                execute.setBackgroundColor(Color.parseColor("#00FF00"));
+            } else {
+                if (!TextUtils.isEmpty(imagePath)) {
+                    LSOBitmapAsset bp = new LSOBitmapAsset(BitmapFactory.decodeFile(imagePath));
+                    execute.addBitmapLayer(bp);
+                } else {
+                    execute.setBackgroundColor(Color.parseColor("#00FF00"));
+                }
             }
-            for (int i=0;i<list.size();i++){
-                AllStickerData item=list.get(i);
-                String pathType= GetPathTypeModel.getInstance().getMediaType(item.getPath());
+            for (int i = 0; i < list.size(); i++) {
+                AllStickerData item = list.get(i);
+                String pathType = GetPathTypeModel.getInstance().getMediaType(item.getPath());
                 if (albumType.isVideo(pathType)) {
-                    if(isMatting){
+                    if (isMatting) {
                         intoCanvesCount++;
-                        addCanversLayer(item,intoCanvesCount);
-                    }else{
+                        addCanversLayer(item, intoCanvesCount);
+                    } else {
                         addVideoLayer(item);
                     }
-                }else{
+                } else {
                     if (item.getPath().endsWith(".gif")) {
                         addGifLayer(item);
                     } else {
@@ -131,80 +139,73 @@ public class backgroundDraw {
                 }
             }
 
-            if(!TextUtils.isEmpty(videoVoice)){
+            if (!TextUtils.isEmpty(videoVoice)) {
                 //如果有videoVoice 字段，那么需要设置在对应的主图层上面去
-                execute.addAudioLayer(videoVoice,false);
+                execute.addAudioLayer(videoVoice, false);
             }
             execute.start();
         } catch (Exception e) {
-            LogUtil.d("OOM",e.getMessage());
+            LogUtil.d("OOM", e.getMessage());
             e.printStackTrace();
         }
 
     }
 
 
-
-
-
     private void setMainLayer() {
-        LSOVideoOption option  ;
+        LSOVideoOption option;
         try {
 //            option = new LSOVideoOption(videoPath);
 //            option.setLooping(true);
 //            VideoFrameLayer bgLayer=execute.addVideoLayer(option,0, Long.MAX_VALUE, true, true);
 //            bgLayer.setScaledToPadSize();
             option = new LSOVideoOption(videoPath);
-            if(!TextUtils.isEmpty(videoVoice)){
+            if (!TextUtils.isEmpty(videoVoice)) {
                 option.setAudioMute();
             }
-            VideoFrameLayer bgLayer=  execute.addVideoLayer(option);
+            VideoFrameLayer bgLayer = execute.addVideoLayer(option);
 
             bgLayer.setScaledToPadSize();
-            LogUtil.d("OOM","主图层添加完毕");
+            LogUtil.d("OOM", "主图层添加完毕");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-  public void  addVideoLayer(AllStickerData stickerItem){
-      LSOVideoOption option = null;
-      try {
-          option = new LSOVideoOption(stickerItem.getPath());
-          option.setAudioMute();
-          VideoFrameLayer mvLayer = execute.addVideoLayer(option);
-          //默认gif 的缩放位置是gif 宽度最大
-          float layerScale = DRAWPADWIDTH / (float)mvLayer.getLayerWidth();
-          LogUtil.d("OOM", "图层的缩放为" +layerScale+ "");
-          float stickerScale = stickerItem.getScale();
-          LogUtil.d("OOM", "gif+图层的缩放为" +layerScale * stickerScale+ "");
-          mvLayer.setScale(layerScale * stickerScale);
-          LogUtil.d("OOM", "mvLayerW=" + mvLayer.getLayerWidth() + "");
-          LogUtil.d("OOM", "mvLayerpadW=" + mvLayer.getPadWidth() + "");
-          int rotate = (int) stickerItem.getRotation();
-          if (rotate < 0) {
-              rotate = 360 + rotate;
-          }
-          LogUtil.d("OOM", "rotate=" + rotate);
-          mvLayer.setRotate(rotate);
-          LogUtil.d("OOM", "Scale=" + stickerItem.getScale() + "");
-          //蓝松这边规定，0.5就是刚刚居中的位置
-          float percentX = stickerItem.getTranslationX();
-          mvLayer.setPosition(mvLayer.getPadWidth()*percentX , mvLayer.getPositionY());
-          float percentY = stickerItem.getTranslationy();
-          LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
-          mvLayer.setPosition(mvLayer.getPositionX(), mvLayer.getPadHeight()*percentY);
+    public void addVideoLayer(AllStickerData stickerItem) {
+        LSOVideoOption option = null;
+        try {
+            option = new LSOVideoOption(stickerItem.getPath());
+            option.setAudioMute();
+            VideoFrameLayer mvLayer = execute.addVideoLayer(option);
+            //默认gif 的缩放位置是gif 宽度最大
+            float layerScale = DRAWPADWIDTH / (float) mvLayer.getLayerWidth();
+            LogUtil.d("OOM", "图层的缩放为" + layerScale + "");
+            float stickerScale = stickerItem.getScale();
+            LogUtil.d("OOM", "gif+图层的缩放为" + layerScale * stickerScale + "");
+            mvLayer.setScale(layerScale * stickerScale);
+            LogUtil.d("OOM", "mvLayerW=" + mvLayer.getLayerWidth() + "");
+            LogUtil.d("OOM", "mvLayerpadW=" + mvLayer.getPadWidth() + "");
+            int rotate = (int) stickerItem.getRotation();
+            if (rotate < 0) {
+                rotate = 360 + rotate;
+            }
+            LogUtil.d("OOM", "rotate=" + rotate);
+            mvLayer.setRotate(rotate);
+            LogUtil.d("OOM", "Scale=" + stickerItem.getScale() + "");
+            //蓝松这边规定，0.5就是刚刚居中的位置
+            float percentX = stickerItem.getTranslationX();
+            mvLayer.setPosition(mvLayer.getPadWidth() * percentX, mvLayer.getPositionY());
+            float percentY = stickerItem.getTranslationy();
+            LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
+            mvLayer.setPosition(mvLayer.getPositionX(), mvLayer.getPadHeight() * percentY);
 
-      } catch (Exception e) {
-          e.printStackTrace();
-      }
-
-
-  }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
-
-
+    }
 
 
     /**
@@ -214,10 +215,10 @@ public class backgroundDraw {
         LogUtil.d("OOM", "addMVLayer");
         GifLayer mvLayer = execute.addGifLayer(stickerItem.getPath());
         //默认gif 的缩放位置是gif 宽度最大
-        float layerScale = DRAWPADWIDTH / (float)mvLayer.getLayerWidth();
-        LogUtil.d("OOM", "图层的缩放为" +layerScale+ "");
+        float layerScale = DRAWPADWIDTH / (float) mvLayer.getLayerWidth();
+        LogUtil.d("OOM", "图层的缩放为" + layerScale + "");
         float stickerScale = stickerItem.getScale();
-        LogUtil.d("OOM", "gif+图层的缩放为" +layerScale * stickerScale+ "");
+        LogUtil.d("OOM", "gif+图层的缩放为" + layerScale * stickerScale + "");
         mvLayer.setScale(layerScale * stickerScale);
         LogUtil.d("OOM", "mvLayerW=" + mvLayer.getLayerWidth() + "");
         LogUtil.d("OOM", "mvLayerpadW=" + mvLayer.getPadWidth() + "");
@@ -231,13 +232,13 @@ public class backgroundDraw {
         //蓝松这边规定，0.5就是刚刚居中的位置
         float percentX = stickerItem.getTranslationX();
 //        float posX = (mvLayer.getPadWidth() + mvLayer.getLayerWidth()) * percentX - mvLayer.getLayerWidth() / 2.0f;
-        mvLayer.setPosition(mvLayer.getPadWidth()*percentX , mvLayer.getPositionY());
+        mvLayer.setPosition(mvLayer.getPadWidth() * percentX, mvLayer.getPositionY());
 
         float percentY = stickerItem.getTranslationy();
         LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
 //        float posY = (mvLayer.getPadHeight() + mvLayer.getLayerHeight()) * percentY - mvLayer.getLayerHeight() / 2.0f;
 //        mvLayer.setPosition(mvLayer.getPositionX(), posY);
-        mvLayer.setPosition(mvLayer.getPositionX(), mvLayer.getPadHeight()*percentY);
+        mvLayer.setPosition(mvLayer.getPositionX(), mvLayer.getPadHeight() * percentY);
 
     }
 
@@ -250,10 +251,10 @@ public class backgroundDraw {
         Bitmap bp = BitmapFactory.decodeFile(stickerItem.getPath());
         BitmapLayer bpLayer = execute.addBitmapLayer(bp);
 
-        float layerScale = DRAWPADWIDTH /(float) bpLayer.getLayerWidth();
-        LogUtil.d("OOM", "图层的缩放为" +layerScale+ "");
+        float layerScale = DRAWPADWIDTH / (float) bpLayer.getLayerWidth();
+        LogUtil.d("OOM", "图层的缩放为" + layerScale + "");
         float stickerScale = stickerItem.getScale();
-        LogUtil.d("OOM", "gif+图层的缩放为" +layerScale * stickerScale+ "");
+        LogUtil.d("OOM", "gif+图层的缩放为" + layerScale * stickerScale + "");
         bpLayer.setScale(layerScale * stickerScale);
         LogUtil.d("OOM", "mvLayerW=" + bpLayer.getLayerWidth() + "");
         LogUtil.d("OOM", "mvLayerpadW=" + bpLayer.getPadWidth() + "");
@@ -267,37 +268,34 @@ public class backgroundDraw {
         //蓝松这边规定，0.5就是刚刚居中的位置
         float percentX = stickerItem.getTranslationX();
 //        float posX = (bpLayer.getPadWidth() + bpLayer.getLayerWidth()) * percentX - bpLayer.getLayerWidth() / 2.0f;
-        bpLayer.setPosition(bpLayer.getPadWidth()*percentX , bpLayer.getPositionY());
+        bpLayer.setPosition(bpLayer.getPadWidth() * percentX, bpLayer.getPositionY());
 
 
         float percentY = stickerItem.getTranslationy();
         LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
-     //   float posY = (bpLayer.getPadHeight() + bpLayer.getLayerHeight()) * percentY - bpLayer.getLayerHeight() / 2.0f;
-        bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight()*percentY);
+        //   float posY = (bpLayer.getPadHeight() + bpLayer.getLayerHeight()) * percentY - bpLayer.getLayerHeight() / 2.0f;
+        bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight() * percentY);
 
     }
 
 
-
-
-
-    private  void addCanversLayer(AllStickerData stickerItem,int i){
+    private void addCanversLayer(AllStickerData stickerItem, int i) {
         int[] nowChooseImageIndex = {0};
         //当前进度时间
-         float[] nowProgressTime={0};
+        float[] nowProgressTime = {0};
         float preTime;
-        LogUtil.d("OOM","开始添加CanversLayer");
-        String path=ExtractFramegFolder+"/"+i;
-        LogUtil.d("OOM","path"+path);
+        LogUtil.d("OOM", "开始添加CanversLayer");
+        String path = ExtractFramegFolder + "/" + i;
+        LogUtil.d("OOM", "path" + path);
         List<File> getMattingList = FileManager.listFileSortByModifyTime(path);
-        LogUtil.d("OOM","第一张图片地址为"+getMattingList.get(0).getPath());
+        LogUtil.d("OOM", "第一张图片地址为" + getMattingList.get(0).getPath());
         Bitmap bp = BitmapFactory.decodeFile(getMattingList.get(0).getPath());
-        LogUtil.d("OOM","图片宽为"+bp.getWidth());
+        LogUtil.d("OOM", "图片宽为" + bp.getWidth());
         BitmapLayer bpLayer = execute.addBitmapLayer(bp);
-        float layerScale = DRAWPADWIDTH /(float) bpLayer.getLayerWidth();
-        LogUtil.d("OOM", "图层的缩放为" +layerScale+ "");
+        float layerScale = DRAWPADWIDTH / (float) bpLayer.getLayerWidth();
+        LogUtil.d("OOM", "图层的缩放为" + layerScale + "");
         float stickerScale = stickerItem.getScale();
-        LogUtil.d("OOM", "gif+图层的缩放为" +layerScale * stickerScale+ "");
+        LogUtil.d("OOM", "gif+图层的缩放为" + layerScale * stickerScale + "");
         bpLayer.setScale(layerScale * stickerScale);
         LogUtil.d("OOM", "mvLayerW=" + bpLayer.getLayerWidth() + "");
         LogUtil.d("OOM", "mvLayerpadW=" + bpLayer.getPadWidth() + "");
@@ -311,27 +309,27 @@ public class backgroundDraw {
         //蓝松这边规定，0.5就是刚刚居中的位置
         float percentX = stickerItem.getTranslationX();
 //        float posX = (bpLayer.getPadWidth() + bpLayer.getLayerWidth()) * percentX - bpLayer.getLayerWidth() / 2.0f;
-        bpLayer.setPosition(bpLayer.getPadWidth()*percentX , bpLayer.getPositionY());
+        bpLayer.setPosition(bpLayer.getPadWidth() * percentX, bpLayer.getPositionY());
         float percentY = stickerItem.getTranslationy();
         LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
         //   float posY = (bpLayer.getPadHeight() + bpLayer.getLayerHeight()) * percentY - bpLayer.getLayerHeight() / 2.0f;
-        bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight()*percentY);
+        bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight() * percentY);
 
-        preTime = stickerItem.getDuration() *1000/ (float) getMattingList.size();
-        nowProgressTime[0]=preTime;
+        preTime = stickerItem.getDuration() * 1000 / (float) getMattingList.size();
+        nowProgressTime[0] = preTime;
         CanvasLayer canvasLayer = execute.addCanvasLayer();
         canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
-            if (currentTime >  nowProgressTime[0]) {
+            if (currentTime > nowProgressTime[0]) {
                 //需要切换新的图了
                 nowChooseImageIndex[0]++;
-                if ( nowChooseImageIndex[0] < getMattingList.size()) {
+                if (nowChooseImageIndex[0] < getMattingList.size()) {
                     LogUtil.d("CanvasRunnable", "addCanvasRunnable=" + preTime + "currentTime=" + currentTime + "nowChooseImageIndex=" + nowChooseImageIndex);
                     nowProgressTime[0] = preTime + nowProgressTime[0];
-                    Bitmap firstBitmap1 = BitmapFactory.decodeFile(getMattingList.get( nowChooseImageIndex[0]).getPath());
+                    Bitmap firstBitmap1 = BitmapFactory.decodeFile(getMattingList.get(nowChooseImageIndex[0]).getPath());
                     bpLayer.switchBitmap(firstBitmap1);
-                }else{
-                    LogUtil.d("OOM","隐藏当前图层");
-                    bpLayer.switchBitmap( Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888));
+                } else {
+                    LogUtil.d("OOM", "隐藏当前图层");
+                    bpLayer.switchBitmap(Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888));
                     bpLayer.setVisibility(View.GONE);
                 }
             }

@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
@@ -55,7 +56,6 @@ import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
-import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
@@ -104,6 +104,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 默认背景，也是是否选择了背景的重要判断，
      */
     private String videoPath;
+
+    /**
+     * 默认图片背景，""表示绿幕
+     */
+    private String imageBjPath;
     /**
      * 当前预览状态，是否在播放中
      */
@@ -171,7 +176,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             //有视频的时候，初始化视频值
             initExo(videoPath);
         } else {
-            showGreenBj();
+            showGreenBj(true);
         }
         presenter.requestStickersList();
     }
@@ -308,7 +313,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 } else {
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_save");
                 }
-                presenter.toSaveVideo();
+                presenter.toSaveVideo(imageBjPath);
                 break;
 
             case R.id.ll_play:
@@ -464,18 +469,20 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-    private void showGreenBj() {
+    private void showGreenBj(boolean againInitImage) {
         ll_green_background.setVisibility(View.VISIBLE);
-        float oriRatio = 9f / 16f;
-        //保证获得mContainer大小不为0
-        LinearLayout.LayoutParams RelativeLayoutParams = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-        //如果没有选择下载视频，那么就是自定义视频入口进来，那么默认为绿布
-        iv_green_background.post(() -> {
-            int oriHeight = iv_green_background.getHeight();
-            RelativeLayoutParams.width = Math.round(1f * oriHeight * oriRatio);
-            RelativeLayoutParams.height = oriHeight;
-            iv_green_background.setLayoutParams(RelativeLayoutParams);
-        });
+        if(againInitImage){
+            float oriRatio = 9f / 16f;
+            //保证获得mContainer大小不为0
+            LinearLayout.LayoutParams RelativeLayoutParams = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+            //如果没有选择下载视频，那么就是自定义视频入口进来，那么默认为绿布
+            iv_green_background.post(() -> {
+                int oriHeight = iv_green_background.getHeight();
+                RelativeLayoutParams.width = Math.round(1f * oriHeight * oriRatio);
+                RelativeLayoutParams.height = oriHeight;
+                iv_green_background.setLayoutParams(RelativeLayoutParams);
+            });
+        }
         hListView.post(() -> presenter.initVideoProgressView(hListView));
     }
 
@@ -567,7 +574,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     bgmPlayer.seekTo((int) getCurrentPos());
                 }
             } else {
-                if(exoPlayer!=null){
+                if (exoPlayer != null) {
                     exoPlayer.setVolume(1f);
                 }
                 pauseBgmMusic();
@@ -684,10 +691,17 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Subscribe
     public void onEventMainThread(DownVideoPath event) {
 //        videoStop();
-        Observable.just(event.getPath()).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
-            @Override
-            public void call(String s) {
-                LogUtil.d("OOM","重新选择了视频背景,地址为"+event.getPath());
+        Observable.just(event.getPath()).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
+            if (albumType.isImage(GetPathTypeModel.getInstance().getMediaType(event.getPath()))) {
+                ll_green_background.setVisibility(View.VISIBLE);
+                presenter.setmVideoPath("");
+                videoPath = "";
+                showGreenBj(false);
+                imageBjPath = event.getPath();
+              new Handler().postDelayed(() -> Glide.with(CreationTemplateActivity.this).load(s).into(iv_green_background),500);
+
+            } else {
+                LogUtil.d("OOM", "重新选择了视频背景,地址为" + event.getPath());
                 videoPath = event.getPath();
                 ll_green_background.setVisibility(View.GONE);
                 initExo(videoPath);
@@ -695,8 +709,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 presenter.initVideoProgressView(hListView);
             }
         });
-
-
     }
 
 

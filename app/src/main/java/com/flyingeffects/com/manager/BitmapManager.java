@@ -1,6 +1,8 @@
 package com.flyingeffects.com.manager;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.media.MediaMetadataRetriever;
 import android.text.TextUtils;
@@ -145,6 +147,34 @@ public class BitmapManager {
 
     public interface saveToFileCallback {
         void isSuccess(boolean isSuccess);
+    }
+
+    /**
+     * description ：获得bitmap 且修复了角度的
+     * creation date: 2020/4/27
+     * user : zhangtongju
+     */
+    public Bitmap getOrientationBitmap(String imagePath){
+        Matrix mat = new Matrix();
+        Bitmap bitmap = BitmapFactory.decodeFile(imagePath, new BitmapFactory.Options());
+        ExifInterface ei = null;
+        try {
+            ei = new ExifInterface(imagePath);
+            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    mat.postRotate(90);
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    mat.postRotate(180);
+                    break;
+            }
+            return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mat, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return  null;
     }
 
 

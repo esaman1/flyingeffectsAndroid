@@ -160,8 +160,15 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     public void setmVideoPath(String mVideoPath) {
-        this.mVideoPath = mVideoPath;
-        videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
+
+        if(!TextUtils.isEmpty(mVideoPath)){
+            this.mVideoPath = mVideoPath;
+            videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
+        }else{
+            this.mVideoPath=null;
+            videoInfo=null;
+        }
+
     }
 
 
@@ -852,11 +859,11 @@ public class CreationTemplateMvpModel {
      */
 
 
-    public void toSaveVideo() {
+    public void toSaveVideo(String imageBjPath) {
         listAllSticker.clear();
         cutSuccessNum = 0;
         cutVideoPathList.clear();
-        backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, path -> {
+        backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath,imageBjPath, path -> {
             progressNowAnim.closePragressDialog();
             //成功后的回调
             Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
