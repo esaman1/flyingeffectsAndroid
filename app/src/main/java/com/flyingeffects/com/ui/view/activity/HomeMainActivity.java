@@ -149,7 +149,7 @@ public class HomeMainActivity extends FragmentActivity {
         task = new TimerTask() {
             @Override
             public void run() {
-                AdManager.getInstance().showCpAd(HomeMainActivity.this);
+                AdManager.getInstance().showCpAd(HomeMainActivity.this,AdConfigs.AD_SCREEN);
                 destroyTimer();
             }
         };
@@ -352,6 +352,7 @@ public class HomeMainActivity extends FragmentActivity {
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("soundFolder"));
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("ExtractFrame"));
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("DownVideo"));
 
         }
 

@@ -5,8 +5,13 @@ public class AdConfigs {
     public static final String AD_SPLASH = "348";
     //    // 图片广告
 //    public static final String AD_IMAGE = "201";
-//    // 插屏广告
+    // 插屏广告
    public static final String AD_SCREEN = "372";
+
+
+    // 保存后的插屏广告
+    public static final String AD_SCREEN_FOR_keep = "374";
+
 //
 //    // 预览视频的时候插屏广告
  //   public static final String AD_SCREEN_PREVIEW = "253"; //253

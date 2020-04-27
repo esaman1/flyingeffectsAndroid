@@ -24,10 +24,10 @@ public class AdManager {
     }
 
 
-    public void showCpAd(Context context){
+    public void showCpAd(Context context,String  id){
         Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
             ScreenAdManager screenAdManager = new ScreenAdManager();
-            screenAdManager.showScreenAd((Activity) context, AdConfigs.AD_SCREEN, new ScreenAdCallBack() {
+            screenAdManager.showScreenAd((Activity) context,id , new ScreenAdCallBack() {
                 @Override
                 public void onScreenAdShow() {
                     LogUtil.d("OOM","onScreenAdShow");

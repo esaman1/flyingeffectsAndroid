@@ -1094,6 +1094,8 @@ public class CreationTemplateMvpModel {
                     LogUtil.d("OOM", "分离出来的因为地址为" + outputPath);
                     videoVoicePath = outputPath + File.separator + "bgm.mp3";
                     callback.getBgmPath(videoVoicePath);
+                }else{
+                    callback.getBgmPath("");
                 }
             });
         }).start();

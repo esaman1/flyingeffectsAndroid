@@ -28,6 +28,7 @@ import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
@@ -246,7 +247,7 @@ public class TemplateMvpModel {
             if (isSucceed && !isOnDestroy) {
                 albumBroadcast(outputPath);
                 showDialog(outputPath);
-                AdManager.getInstance().showCpAd(context);
+                AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
             }
         }
     }

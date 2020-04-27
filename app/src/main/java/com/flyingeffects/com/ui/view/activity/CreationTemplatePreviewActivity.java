@@ -15,6 +15,7 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.utils.FileUtil;
@@ -193,7 +194,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
 
             case R.id.tv_save:
                 saveToAlbum(imagePath);
-                AdManager.getInstance().showCpAd(CreationTemplatePreviewActivity.this);
+                AdManager.getInstance().showCpAd(CreationTemplatePreviewActivity.this, AdConfigs.AD_SCREEN_FOR_keep);
                 break;
 
             case R.id.iv_play:
@@ -321,4 +322,13 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     }
 
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (isPlaying()) {
+            showIsPlay(false);
+            videoPause();
+            destroyTimer();
+        }
+    }
 }

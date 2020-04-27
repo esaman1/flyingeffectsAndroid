@@ -55,7 +55,9 @@ import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
+import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 /**
  * description ：用户创作页面,里面主要用了langSong 的工具类，对视频进行贴纸的功能
@@ -565,7 +567,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     bgmPlayer.seekTo((int) getCurrentPos());
                 }
             } else {
-                exoPlayer.setVolume(1f);
+                if(exoPlayer!=null){
+                    exoPlayer.setVolume(1f);
+                }
                 pauseBgmMusic();
             }
         } else {
@@ -673,17 +677,26 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
     /**
-     * description ：裁剪页面裁剪成功后返回的数据
+     * description ：重新选择了背景视频的回调
      * creation date: 2020/4/13
      * user : zhangtongju
      */
     @Subscribe
     public void onEventMainThread(DownVideoPath event) {
-        videoPath = event.getPath();
-        ll_green_background.setVisibility(View.GONE);
-        initExo(videoPath);
-        presenter.setmVideoPath(videoPath);
-        presenter.initVideoProgressView(hListView);
+//        videoStop();
+        Observable.just(event.getPath()).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                LogUtil.d("OOM","重新选择了视频背景,地址为"+event.getPath());
+                videoPath = event.getPath();
+                ll_green_background.setVisibility(View.GONE);
+                initExo(videoPath);
+                presenter.setmVideoPath(videoPath);
+                presenter.initVideoProgressView(hListView);
+            }
+        });
+
+
     }
 
 

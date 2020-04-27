@@ -19,9 +19,11 @@ import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.manager.AlbumManager;
+import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.FagBjMvpView;
+import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.FagBjMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
@@ -29,6 +31,7 @@ import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.shixing.sxve.ui.albumType;
+import com.shixing.sxve.ui.view.WaitingDialog;
 import com.yanzhenjie.album.AlbumFile;
 
 import java.util.ArrayList;
@@ -94,13 +97,14 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
         super.onPause();
     }
 
-   private  ArrayList<Fragment> list = new ArrayList<>();
+    private ArrayList<Fragment> list = new ArrayList<>();
+
     @Override
     public void setFragmentList(List<TemplateType> data) {
-        if(getActivity()!=null){
-            if(data!=null&&data.size()>0){
+        if (getActivity() != null) {
+            if (data != null && data.size() > 0) {
                 ll_add_child.removeAllViews();
-                TemplateType templateType =new TemplateType();
+                TemplateType templateType = new TemplateType();
                 templateType.setId("collect");
                 templateType.setName("收藏");
                 data.add(templateType);
@@ -120,7 +124,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                     listView.add(view_line);
                     ll_add_child.addView(view);
                     titles[i] = data.get(i).getName();
-                    if(i==data.size()-1){
+                    if (i == data.size() - 1) {
                         //手动添加收藏模板
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("template_type", "2");
@@ -128,7 +132,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                         frag_user_collect fag_0 = new frag_user_collect();
                         fag_0.setArguments(bundle);
                         list.add(fag_0);
-                    }else{
+                    } else {
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("id", data.get(i).getId());
                         bundle.putSerializable("from", 1);
@@ -194,55 +198,75 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     }
 
 
-    @OnClick({R.id.iv_add,R.id.iv_cover})
+    @OnClick({R.id.iv_add, R.id.iv_cover, R.id.Toolbar})
     public void onClick(View view) {
 
 
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.iv_add:
             case R.id.iv_cover:
+            case R.id.Toolbar:
 
-                if(BaseConstans.hasLogin()){
+                if (BaseConstans.hasLogin()) {
                     statisticsEventAffair.getInstance().setFlag(getActivity(), "6_customize_bj");
 
-                    AlbumManager.chooseVideo(getActivity(), 1, SELECTALBUM, new AlbumChooseCallback() {
+                    AlbumManager.chooseAlbum(getActivity(), 1, SELECTALBUM, new AlbumChooseCallback() {
                         @Override
                         public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-                            if(!isCancel){
+                            if (!isCancel) {
                                 if (!TextUtils.isEmpty(paths.get(0))) {
                                     String pathType = GetPathTypeModel.getInstance().getMediaType(paths.get(0));
                                     if (albumType.isVideo(pathType)) {
                                         Intent intent = new Intent(getActivity(), VideoCropActivity.class);
-                                        intent.putExtra("videoPath",paths.get(0));
+                                        intent.putExtra("videoPath", paths.get(0));
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                         startActivity(intent);
-                                    }else {
-                                        Intent intent = new Intent(getActivity(), CreationTemplateActivity.class);
-                                        Bundle bundle = new Bundle();
-                                        bundle.putString("paths", paths.get(0));
-                                        bundle.putSerializable("bjTemplateTitle", "");
-                                        bundle.putString("originalPath", paths.get(0));
-                                        bundle.putString("video_path", "");
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        intent.putExtra("Message", bundle);
-                                        startActivity(intent);
+                                    } else {
+                                        compressImage(paths.get(0));
+
                                     }
                                 }
                             }
 
                         }
-                    },"");
-                }else{
-                    Intent intent=new Intent(getActivity(), LoginActivity.class);
+                    }, "");
+                } else {
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(intent);
                 }
                 break;
 
-                default:
-                    break;
+            default:
+                break;
         }
 
+
+    }
+
+
+    private void compressImage(String path) {
+        if (getActivity() != null) {
+//            WaitingDialog.openPragressDialog(getActivity(), "飞闪极速抠图中");
+            CompressionCuttingManage manage = new CompressionCuttingManage(getActivity(), "", true, tailorPaths -> {
+                if (getActivity() != null) {
+//                    WaitingDialog.closePragressDialog();
+                    Intent intent = new Intent(getActivity(), CreationTemplateActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("paths", tailorPaths.get(0));
+                    bundle.putSerializable("bjTemplateTitle", "");
+                    bundle.putBoolean("isNeedCut", true);
+                    bundle.putString("originalPath", path);
+                    bundle.putString("video_path", "");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.putExtra("Message", bundle);
+                    startActivity(intent);
+                }
+            });
+            List<String> Paths = new ArrayList<>();
+            Paths.add(path);
+            manage.ToMatting(Paths);
+        }
 
     }
 

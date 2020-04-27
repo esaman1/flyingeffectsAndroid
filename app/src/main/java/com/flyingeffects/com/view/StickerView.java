@@ -200,7 +200,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     /**
      * 边框自动消息时长
      */
-    private static final long AUTO_FADE_FRAME_TIMEOUT = 1000;
+    private static final long AUTO_FADE_FRAME_TIMEOUT = 3000;
     /**
      * 显示边框事件ID
      */

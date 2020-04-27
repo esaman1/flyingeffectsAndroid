@@ -491,11 +491,18 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     private void hasLoginToNext() {
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+            LogUtil.d("OOM","来自背景");
             //来做背景页面
             AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
         } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
+            //来自下载背景，就是用户重新选择背景页面
+            new Handler().postDelayed(() -> {
+                String alert = "飞闪极速下载中...";
+                WaitingDialog.openPragressDialog(PreviewActivity.this, alert);
+            }, 200);
             Presenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId());
         } else {
+            LogUtil.d("OOM","来自其他");
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMSEARCH)) {
                 statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "4_search_make", templateItem.getTitle());
             }
@@ -518,10 +525,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void downVideoSuccess(String videoPath, String imagePath) {
         WaitingDialog.closePragressDialog();
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
+            WaitingDialog.closePragressDialog();
             EventBus.getDefault().post(new DownVideoPath(videoPath));
             finish();
         } else {
-
             Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
                 if (originalImagePath.get(0).equals(imagePath)) {
                     createDownVideoPath = videoPath;

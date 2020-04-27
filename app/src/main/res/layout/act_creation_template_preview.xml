@@ -76,7 +76,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginEnd="10dp"
                     android:layout_toLeftOf="@+id/tv_end_time"
                     android:max="100"
                     android:maxHeight="2dp"
