@@ -38,13 +38,7 @@ public class home_fagMvpModel {
 
     //得到banner缓存数据
     private  void requestData() {
-        ArrayList<TemplateType>     cacheTemplateData= Hawk.get("mainData", new ArrayList<>());
-        if (cacheTemplateData != null) {
-            callback.setFragmentList(cacheTemplateData);
-            requestMainData(false); //首页杂数据
-        } else {
-            requestMainData(true); //首页杂数据
-        }
+        requestMainData(false); //首页杂数据
     }
 
 

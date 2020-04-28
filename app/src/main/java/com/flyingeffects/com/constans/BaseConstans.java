@@ -214,6 +214,18 @@ public class BaseConstans {
 
 
 
+    public static void setKaiPingADTimeOut(int time) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putInt("KaiPingADTimeOut", time);
+    }
+
+
+    public static int getKaiPingADTimeOut() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getInt("KaiPingADTimeOut",5000);
+    }
+
+
     public static boolean isFirstOpenApp() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getBoolean("isFirstOpen", true);

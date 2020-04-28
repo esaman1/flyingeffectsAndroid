@@ -245,16 +245,16 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             isCanChooseVideo = true;
         }
 //        //如果是选择视频，那么需要第一针显示为用户上传的视频  //todo test
-        if (originalPath != null && originalPath.size() > 0) {
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            retriever.setDataSource(originalPath.get(0));
-            String sss = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT);
-            LogUtil.d("OOM2", "原视频帧数是" + sss);
-        }
-        MediaMetadataRetriever retriever2 = new MediaMetadataRetriever();
-        retriever2.setDataSource(imgPath.get(0));
-        String sss2 = retriever2.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT);
-        LogUtil.d("OOM2", "灰度图帧数是" + sss2);
+//        if (originalPath != null && originalPath.size() > 0) {
+//            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+//            retriever.setDataSource(originalPath.get(0));
+//            String sss = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT);
+//            LogUtil.d("OOM2", "原视频帧数是" + sss);
+//        }
+//        MediaMetadataRetriever retriever2 = new MediaMetadataRetriever();
+//        retriever2.setDataSource(imgPath.get(0));
+//        String sss2 = retriever2.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT);
+//        LogUtil.d("OOM2", "灰度图帧数是" + sss2);
 
 //        if (originalPath == null || originalPath.size() == 0) {
 //            if (nowTemplateIsMattingVideo != 1) {

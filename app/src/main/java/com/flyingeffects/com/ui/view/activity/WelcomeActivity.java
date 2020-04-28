@@ -198,7 +198,8 @@ public class WelcomeActivity extends BaseActivity {
                 finish();
                 overridePendingTransition(R.anim.nt_ad_fade_in, R.anim.nt_ad_fade_out);
             }
-        }, 5000);
+        },    BaseConstans.getKaiPingADTimeOut());
+        LogUtil.d("oom","开屏广告的时长为"+BaseConstans.getKaiPingADTimeOut());
 
 
     }
@@ -381,6 +382,10 @@ public class WelcomeActivity extends BaseActivity {
                             //启动APP多少秒后显示插屏广告
                             int second = Integer.parseInt(config.getValue());
                             BaseConstans.setInterstitial(second);
+                        }else if(id==26){
+                            //开屏广告延迟时间
+                            int second = Integer.parseInt(config.getValue());
+                            BaseConstans.setKaiPingADTimeOut(second);
                         }
                     }
                 }

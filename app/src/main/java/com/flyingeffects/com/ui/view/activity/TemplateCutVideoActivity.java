@@ -272,8 +272,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
                         }
                         if (isSuccess) {
                             if (v.getId() == R.id.tv_kt) {
-
-
                                 gotoMattingVideo(path);
                             } else {
                                 TemplateCutVideoActivity.this.finish();

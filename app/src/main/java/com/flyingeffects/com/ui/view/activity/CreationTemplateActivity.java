@@ -181,6 +181,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
+
     private void initExo(String videoPath) {
         if (TextUtils.isEmpty(videoPath)) {
             return;
@@ -215,7 +216,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         exoPlayer.prepare(mediaSource, true, false);
         videoPause();
     }
-
 
     private void videoToStart() {
         isPlayComplate = true;
