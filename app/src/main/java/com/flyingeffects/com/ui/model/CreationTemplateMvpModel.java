@@ -760,7 +760,7 @@ public class CreationTemplateMvpModel {
     private void getPlayVideoDuration() {
         defaultVideoDuration = 0;
         LogUtil.d("OOM", " viewLayerRelativeLayout.getChildCount())=" + viewLayerRelativeLayout.getChildCount());
-
+        perSticker.clear();
         if (viewLayerRelativeLayout.getChildCount() > 0) {
             for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
                 StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
