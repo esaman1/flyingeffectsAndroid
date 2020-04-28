@@ -116,7 +116,10 @@ public class HomeMainActivity extends FragmentActivity {
         getUserPhoneInfo();
         getPushPermission();
         initTiktok();
-        requestCPad();
+        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+            requestCPad();
+        }
+
     }
 
 
@@ -184,16 +187,17 @@ public class HomeMainActivity extends FragmentActivity {
          注意：国内外不同vendor服务注册的did不一样。由DEFAULT切换到SINGAPORE或者AMERICA，会发生变化，
          切回来也会发生变化。因此vendor的切换一定要慎重，随意切换导致用户新增和统计的问题，需要自行评估。
          */
+
         config.setUriConfig(UriConfig.DEFAULT);
-        //配置心跳，游戏模式
-        config.setEnablePlay(true);
+//        //配置心跳，游戏模式
+//        config.setEnablePlay(true);
         // 是否在控制台输出日志，可用于观察用户行为日志上报情况，建议仅在调试时使用，release版本请设置为false ！
-        AppLog.setEnableLog(true);
+        AppLog.setEnableLog(false);
         AppLog.init(this, config);
-        /* 初始化结束 */
-        GameReportHelper.onEventRegister("wechat",true);
-        GameReportHelper.onEventPurchase("gift","flower", "008",1,
-                "wechat","¥", true, 1);
+//        /* 初始化结束 */
+//        GameReportHelper.onEventRegister("wechat",true);
+//        GameReportHelper.onEventPurchase("gift","flower", "008",1,
+//                "wechat","¥", true, 1);
     }
 
 

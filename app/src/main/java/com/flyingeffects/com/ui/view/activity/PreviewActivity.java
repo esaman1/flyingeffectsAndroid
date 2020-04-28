@@ -23,6 +23,7 @@ import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.manager.AdConfigs;
+import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DataCleanManager;
@@ -290,7 +291,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         this.finish();
     }
 
-
+    String alert = "飞闪极速抠图中...";
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel && !ondestroy) {
@@ -299,9 +300,11 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 //                intoTemplateActivity(paths, TemplateFilePath);
 //                originalImagePath = null;
 //            } else {//需要抠图
+            if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)){
+                alert="正在加载中~";
+            }
             new Handler().postDelayed(() -> {
                 if(!ondestroy){
-                    String alert = "飞闪极速抠图中...";
                     WaitingDialog.openPragressDialog(PreviewActivity.this, alert);
                 }
             }, 200);
@@ -684,38 +687,43 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Subscribe
     public void onEventMainThread(showAdCallback event) {
 //            //需要激励视频
-        VideoAdManager videoAdManager = new VideoAdManager();
-        videoAdManager.showVideoAd(this, AdConfigs.AD_stimulate_video, new VideoAdCallBack() {
-            @Override
-            public void onVideoAdSuccess() {
-                LogUtil.d("OOM", "onVideoAdSuccess");
-            }
+        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+            VideoAdManager videoAdManager = new VideoAdManager();
+            videoAdManager.showVideoAd(this, AdConfigs.AD_stimulate_video, new VideoAdCallBack() {
+                @Override
+                public void onVideoAdSuccess() {
+                    LogUtil.d("OOM", "onVideoAdSuccess");
+                }
 
-            @Override
-            public void onVideoAdError(String s) {
-                LogUtil.d("OOM", "onVideoAdError"+s);
-            }
+                @Override
+                public void onVideoAdError(String s) {
+                    LogUtil.d("OOM", "onVideoAdError"+s);
+                }
 
-            @Override
-            public void onVideoAdClose() {
-                LogUtil.d("OOM", "onVideoAdClose");
-                hasLoginToNext();
-            }
+                @Override
+                public void onVideoAdClose() {
+                    LogUtil.d("OOM", "onVideoAdClose");
+                    hasLoginToNext();
+                }
 
-            @Override
-            public void onVideoAdSkip() {
-                LogUtil.d("OOM", "onVideoAdSkip");
-            }
+                @Override
+                public void onVideoAdSkip() {
+                    LogUtil.d("OOM", "onVideoAdSkip");
+                }
 
-            @Override
-            public void onVideoAdComplete() {
-            }
+                @Override
+                public void onVideoAdComplete() {
+                }
 
-            @Override
-            public void onVideoAdClicked() {
-                LogUtil.d("OOM", "onVideoAdClicked");
-            }
-        });
+                @Override
+                public void onVideoAdClicked() {
+                    LogUtil.d("OOM", "onVideoAdClicked");
+                }
+            });
+        }else{
+            hasLoginToNext();
+        }
+
     }
 
 

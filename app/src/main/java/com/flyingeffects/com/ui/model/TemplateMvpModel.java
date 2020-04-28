@@ -247,7 +247,12 @@ public class TemplateMvpModel {
             if (isSucceed && !isOnDestroy) {
                 albumBroadcast(outputPath);
                 showDialog(outputPath);
-                AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
+
+                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                    AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
+                }
+
+
             }
         }
     }

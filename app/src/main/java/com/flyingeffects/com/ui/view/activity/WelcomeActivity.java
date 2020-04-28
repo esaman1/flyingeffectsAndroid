@@ -421,6 +421,7 @@ public class WelcomeActivity extends BaseActivity {
 
 
     private void AuditModeConfig(String str) {
+        LogUtil.d("AuditModeConfig","AuditModeConfig="+str);
         JSONArray jsonArray;
         try {
             jsonArray = new JSONArray(str);

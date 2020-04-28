@@ -14,6 +14,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.AdConfigs;
@@ -211,7 +212,12 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
 
 
                 saveToAlbum(imagePath);
-                AdManager.getInstance().showCpAd(CreationTemplatePreviewActivity.this, AdConfigs.AD_SCREEN_FOR_keep);
+
+
+                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                    AdManager.getInstance().showCpAd(CreationTemplatePreviewActivity.this, AdConfigs.AD_SCREEN_FOR_keep);
+                }
+
                 break;
 
             case R.id.iv_play:

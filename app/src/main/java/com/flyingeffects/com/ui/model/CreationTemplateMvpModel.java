@@ -764,10 +764,12 @@ public class CreationTemplateMvpModel {
         if (viewLayerRelativeLayout.getChildCount() > 0) {
             for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
                 StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
-                if (albumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath()))) {
-                    VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
-                    LogUtil.d("OOM", "materialVideoInfo.getDuration()=" + materialVideoInfo.getDuration());
-                    perSticker.add(materialVideoInfo.getDuration());
+                if(!TextUtils.isEmpty(stickerView.getOriginalPath())){
+                    if (albumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath()))) {
+                        VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
+                        LogUtil.d("OOM", "materialVideoInfo.getDuration()=" + materialVideoInfo.getDuration());
+                        perSticker.add(materialVideoInfo.getDuration());
+                    }
                 }
             }
         } else {
