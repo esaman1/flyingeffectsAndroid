@@ -288,11 +288,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             presenter.CheckedChanged(isChecked);
         });
 
-        new Handler().postDelayed(() -> {
-            if (!isNeedCut) {
-                switchButton.setChecked(false);
-            }
-        }, 1500);
+
 
 
     }
@@ -603,6 +599,19 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             //如果还是绿屏。那么需要刷新底部的时长
             Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> presenter.initVideoProgressView(hListView));
         }
+    }
+
+
+    /**
+     * 第一次添加贴纸后修改切换按钮状态栏
+     */
+    @Override
+    public void isFirstAddSuccess() {
+        new Handler().postDelayed(() -> {
+            if (!isNeedCut) {
+                switchButton.setChecked(false);
+            }
+        }, 1500);
     }
 
 

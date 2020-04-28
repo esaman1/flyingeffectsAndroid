@@ -237,7 +237,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                         if (albumType.isVideo(pathType)) {
                             Intent intent = new Intent(getActivity(), VideoCropActivity.class);
                             intent.putExtra("videoPath", paths.get(0));
-                            intent.putExtra("comeFrom", FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER);
+                            intent.putExtra("comeFrom","");
 
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
@@ -277,6 +277,8 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
         }
 
     }
+
+
 
 
 }

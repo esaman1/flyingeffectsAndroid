@@ -21,5 +21,7 @@ public interface CreationTemplateMvpView {
 
     void changFirstVideoSticker(String path);
 
+    void isFirstAddSuccess();
+
 //    void showRenderVideoTime(int duration);
 }

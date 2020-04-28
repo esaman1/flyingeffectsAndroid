@@ -8,6 +8,7 @@ import android.media.MediaMetadataRetriever;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.utils.LogUtil;
 import com.glidebitmappool.GlideBitmapPool;
 import com.shixing.sxve.ui.albumType;
 
@@ -52,6 +53,7 @@ public class GetVideoCover {
                 callback.getCoverPath(tailorPaths.get(0));
             });
             List mattingPath = new ArrayList();
+            LogUtil.d("OOM","抠图的图片地址为"+fileName);
             mattingPath.add(fileName);
             manage.ToMatting(mattingPath);
             GlideBitmapPool.putBitmap(mBitmap);

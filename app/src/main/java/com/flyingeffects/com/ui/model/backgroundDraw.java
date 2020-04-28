@@ -50,6 +50,8 @@ public class backgroundDraw {
     private int duration;
     private int intoCanvesCount;
     private String ExtractFramegFolder;
+
+    private boolean noVideo=false;
     /**
      * 视频图层声音
      */
@@ -90,6 +92,12 @@ public class backgroundDraw {
                 }
             }
         }
+        //如果还是0,说明全是图片，就修改为10
+        if(duration==0){
+
+            noVideo=true;
+            duration=10000;
+        }
         LogUtil.d("OOM2", "进入到了最后渲染");
 //        waitingProgress.openProgressDialog();
         try {
@@ -100,14 +108,23 @@ public class backgroundDraw {
                 LogUtil.d("OOM2", "错误信息为" + message);
             });
             execute.setOnLanSongSDKProgressListener((l, i) -> {
-                float f_progress = (i / (float) 100) * 5;
-                int progress;
-                if(isMatting){
-                    progress = (int) (95 + f_progress);
+
+                if(noVideo){
+                    callback.saveSuccessPath("", i);
                 }else{
-                    progress = (int) (5 + f_progress);
+                    float f_progress = (i / (float) 100) * 5;
+                    int progress;
+                    if(isMatting){
+                        progress = (int) (95 + f_progress);
+                    }else{
+                        progress = (int) (5 + f_progress);
+                    }
+                    LogUtil.d("OOM2", "progress="+progress );
+                    callback.saveSuccessPath("", progress);
                 }
-                callback.saveSuccessPath("", progress);
+
+
+                LogUtil.d("OOM2", "saveSuccessPath" );
 //                waitingProgress.setProgress(i + "%");
 //                waitingProgress.setProgress("正在保存中" + i + "%\n" +
 //                        "请勿离开页面");
@@ -221,7 +238,6 @@ public class backgroundDraw {
      * 增加一个MV图层.
      */
     private void addGifLayer(AllStickerData stickerItem) {
-        LogUtil.d("OOM", "addMVLayer");
         GifLayer mvLayer = execute.addGifLayer(stickerItem.getPath());
         //默认gif 的缩放位置是gif 宽度最大
         float layerScale = DRAWPADWIDTH / (float) mvLayer.getLayerWidth();
@@ -256,7 +272,7 @@ public class backgroundDraw {
      * 增加一个图片图层.
      */
     private void addBitmapLayer(AllStickerData stickerItem) {
-        LogUtil.d("OOM", "addMVLayer");
+        LogUtil.d("OOM", "addBitmapLayer");
         Bitmap bp = BitmapFactory.decodeFile(stickerItem.getPath());
         BitmapLayer bpLayer = execute.addBitmapLayer(bp);
 

@@ -593,8 +593,6 @@ public class CreationTemplateMvpModel {
             } else {
                 stickView.setNowMaterialIsVideo(false);
             }
-
-
         }
 
         if (isFirstAdd) {
@@ -664,6 +662,11 @@ public class CreationTemplateMvpModel {
             }
         }
         viewLayerRelativeLayout.addView(stickView);
+
+        if(isFirstAdd){
+            callback.isFirstAddSuccess();
+        }
+
 
     }
 

@@ -23,5 +23,7 @@ public interface CreationTemplateMvpCallback {
 
     void changFirstVideoSticker(String path);
 
+    void isFirstAddSuccess();
+
 
 }
