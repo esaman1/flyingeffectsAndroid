@@ -772,11 +772,14 @@ public class CreationTemplateMvpModel {
             }
         } else {
             //只有第一次初始化的时候，可能为0.因为viewLayerRelativeLayout还没加载进入数据，所有就需要手动加上
-            if (albumType.isVideo(GetPathType.getInstance().getPathType(originalPath))) {
-                VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(originalPath);
-                LogUtil.d("OOM", "materialVideoInfo.getDuration()=" + materialVideoInfo.getDuration());
-                perSticker.add(materialVideoInfo.getDuration());
+            if(!TextUtils.isEmpty(originalPath)){
+                if (albumType.isVideo(GetPathType.getInstance().getPathType(originalPath))) {
+                    VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(originalPath);
+                    LogUtil.d("OOM", "materialVideoInfo.getDuration()=" + materialVideoInfo.getDuration());
+                    perSticker.add(materialVideoInfo.getDuration());
+                }
             }
+
         }
         //只有一个的情况就不需要比较大小了
         if (perSticker != null && perSticker.size() > 0) {
@@ -1199,13 +1202,13 @@ public class CreationTemplateMvpModel {
             if (dialogProgress <= 25) {
                 dialog.setProgress("飞闪预览处理中" + dialogProgress + "%\n" + "请耐心等待 不要离开");
             } else if (dialogProgress <= 40) {
-                dialog.setProgress("飞闪视频抠像中" + dialogProgress + "%\n" + "快了，友友稍等片刻");
+                dialog.setProgress("飞闪音频添加中" + dialogProgress + "%\n" + "快了，友友稍等片刻");
             } else if (dialogProgress <= 60) {
-                dialog.setProgress("飞闪视频抠像中" + dialogProgress + "%\n" + "抠像太强大，即将生成");
+                dialog.setProgress("飞闪视频处理中" + dialogProgress + "%\n" + "抠像太强大，即将生成");
             } else if (dialogProgress <= 80) {
-                dialog.setProgress("飞闪视频抠像中" + dialogProgress + "%\n" + "马上就好，不要离开");
+                dialog.setProgress("飞闪视频合成中" + dialogProgress + "%\n" + "马上就好，不要离开");
             } else {
-                dialog.setProgress("飞闪视频抠像中" + dialogProgress + "%\n" + "最后合成中，请稍后");
+                dialog.setProgress("视频即将呈现啦" + dialogProgress + "%\n" + "最后合成中，请稍后");
             }
         }
     };
