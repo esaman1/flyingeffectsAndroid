@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.model;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
@@ -8,6 +9,7 @@ import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Message;
 import android.os.Vibrator;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -107,8 +109,9 @@ public class CreationTemplateMvpModel {
     //需要裁剪视频的集合
     private ArrayList<videoType> cutVideoPathList = new ArrayList<>();
     private backgroundDraw backgroundDraw;
-//    WaitingDialogProgressNowAnim progressNowAnim;
-    WatingDialogProgressForTime progressNowAnim;
+    //    WaitingDialogProgressNowAnim progressNowAnim;
+//    WatingDialogProgressForTime progressNowAnim;
+    private WaitingDialogProgressNowAnim dialog;
     private ArrayList<AllStickerData> listAllSticker = new ArrayList<>();
     /**
      * 视频默认声音
@@ -135,7 +138,7 @@ public class CreationTemplateMvpModel {
         this.callback = callback;
         this.originalPath = originalPath;
         this.mVideoPath = mVideoPath;
-        progressNowAnim=new WatingDialogProgressForTime(context);
+        dialog = new WaitingDialogProgressNowAnim(context);
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
         vibrator = (Vibrator) context.getSystemService(Service.VIBRATOR_SERVICE);
         if (!TextUtils.isEmpty(mVideoPath)) {
@@ -160,13 +163,12 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     public void setmVideoPath(String mVideoPath) {
-
-        if(!TextUtils.isEmpty(mVideoPath)){
+        if (!TextUtils.isEmpty(mVideoPath)) {
             this.mVideoPath = mVideoPath;
             videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
-        }else{
-            this.mVideoPath=null;
-            videoInfo=null;
+        } else {
+            this.mVideoPath = null;
+            videoInfo = null;
         }
 
     }
@@ -478,11 +480,11 @@ public class CreationTemplateMvpModel {
                     stickView.dismissFrame();
                     //copy
                     copyGif(stickView.getResPath(), path, stickView.getComeFrom(), stickView, stickView.getOriginalPath());
-                    if(albumType.isVideo(GetPathType.getInstance().getMediaType(stickView.getOriginalPath()))){
+                    if (albumType.isVideo(GetPathType.getInstance().getMediaType(stickView.getOriginalPath()))) {
                         if (UiStep.isFromDownBj) {
-                            statisticsEventAffair.getInstance().setFlag(context, "7_plusone" );
-                        }else{
-                            statisticsEventAffair.getInstance().setFlag(context, "8_plusone" );
+                            statisticsEventAffair.getInstance().setFlag(context, "7_plusone");
+                        } else {
+                            statisticsEventAffair.getInstance().setFlag(context, "8_plusone");
                         }
                     }
                 } else if (type == StickerView.RIGHT_CENTER_MODE) {
@@ -493,11 +495,10 @@ public class CreationTemplateMvpModel {
                         stickView.setRightCenterBitmapForChangeIcon(context.getDrawable(R.mipmap.sticker_open_voice));
                         getVideoVoice(stickView.getOriginalPath(), soundFolder);
                         if (UiStep.isFromDownBj) {
-                            statisticsEventAffair.getInstance().setFlag(context, "7_open" );
-                        }else{
-                            statisticsEventAffair.getInstance().setFlag(context, "8_open" );
+                            statisticsEventAffair.getInstance().setFlag(context, "7_open");
+                        } else {
+                            statisticsEventAffair.getInstance().setFlag(context, "8_open");
                         }
-
 
 
                     } else {
@@ -508,9 +509,9 @@ public class CreationTemplateMvpModel {
                         callback.getBgmPath("");
 
                         if (UiStep.isFromDownBj) {
-                            statisticsEventAffair.getInstance().setFlag(context, "7_turnoff" );
-                        }else{
-                            statisticsEventAffair.getInstance().setFlag(context, "8_turnoff" );
+                            statisticsEventAffair.getInstance().setFlag(context, "7_turnoff");
+                        } else {
+                            statisticsEventAffair.getInstance().setFlag(context, "8_turnoff");
                         }
 
                     }
@@ -545,8 +546,6 @@ public class CreationTemplateMvpModel {
 
                                     });
                                 });
-
-
 
 
                             } else {
@@ -884,14 +883,25 @@ public class CreationTemplateMvpModel {
         listAllSticker.clear();
         cutSuccessNum = 0;
         cutVideoPathList.clear();
-        backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath,imageBjPath, path -> {
-            progressNowAnim.closePragressDialog();
-            //成功后的回调
-            Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            intent.putExtra("path", path);
-            context.startActivity(intent);
+        backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, new backgroundDraw.saveCallback() {
+            @Override
+            public void saveSuccessPath(String path, int progress) {
+                if(!TextUtils.isEmpty(path)){
+                    dialog.closePragressDialog();
+                    //成功后的回调
+                    Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    intent.putExtra("path", path);
+                    context.startActivity(intent);
+                }else{
+                    dialogProgress = progress;
+                    handler.sendEmptyMessage(1);
+                }
+            }
         });
+
+
+
 
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
@@ -935,11 +945,11 @@ public class CreationTemplateMvpModel {
             }
         }
         if (cutVideoPathList.size() == 0) {
-            progressNowAnim.openProgressDialog(0);
+            dialog.openProgressDialog();
             //都不是视频的情况下，就直接渲染
             backgroundDraw.toSaveVideo(listAllSticker, isMatting);
         } else {
-            progressNowAnim.openProgressDialog(0);
+            dialog.openProgressDialog();
             cutList.clear();
             if (videoInfo != null) {
                 cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration());
@@ -977,13 +987,14 @@ public class CreationTemplateMvpModel {
             public void progresss(int progress) {
 //                progressNowAnim.setProgress("正在裁剪中" + progress + "%");
 
-                float  positionF=progress/(float)100;
-                Log.d("OOM","裁剪的进度为0"+positionF);
-                float  prencent=5/(cutVideoPathList.size()+1);
-                Log.d("OOM","裁剪的进度prencent为"+prencent);
-                int positipom= (int) ((int) (positionF*prencent)+cutSuccessNum*prencent);
-                Log.d("OOM","裁剪的进度为"+positipom);
-
+                float positionF = progress / (float) 100;
+                Log.d("OOM", "裁剪的进度百分比为" + positionF);
+                float prencent = 5 / (float) (cutVideoPathList.size() + 1);
+                Log.d("OOM", "裁剪有几份" + prencent);
+                int position = (int) ((int) (positionF * prencent) + cutSuccessNum * prencent);
+                Log.d("OOM", "裁剪的总进度为" + position);
+                dialogProgress = position;
+                handler.sendEmptyMessage(1);
             }
 
             @Override
@@ -998,17 +1009,19 @@ public class CreationTemplateMvpModel {
                         LogUtil.d("OOM2", "裁剪完成，准备抠图");
 //                        progressNowAnim.closePragressDialog();
                         //全部裁剪完成之后需要去把视频裁剪成全部帧
-                        videoGetFrameModel getFrameModel = new videoGetFrameModel(context, cutList, (isSuccess1,progress) -> {
+                        videoGetFrameModel getFrameModel = new videoGetFrameModel(context, cutList, (isSuccess1, progress) -> {
                             LogUtil.d("OOM2", "全部抠图完成");
-
                             if (isSuccess1) {
                                 backgroundDraw.toSaveVideo(listAllSticker, true);
+                            } else {
+                                dialogProgress = progress;
+                                handler.sendEmptyMessage(1);
                             }
 
                         });
                         getFrameModel.startExecute();
                     } else {
-                        progressNowAnim.closePragressDialog();
+                        dialog.closePragressDialog();
                         backgroundDraw.toSaveVideo(listAllSticker, false);
                     }
                 } else {
@@ -1122,7 +1135,7 @@ public class CreationTemplateMvpModel {
                     LogUtil.d("OOM", "分离出来的因为地址为" + outputPath);
                     videoVoicePath = outputPath + File.separator + "bgm.mp3";
                     callback.getBgmPath(videoVoicePath);
-                }else{
+                } else {
                     callback.getBgmPath("");
                 }
             });
@@ -1168,5 +1181,29 @@ public class CreationTemplateMvpModel {
 
         long duration;
     }
+
+
+    private int dialogProgress;
+    @SuppressLint("HandlerLeak")
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (dialogProgress <= 25) {
+                dialog.setProgress("飞闪预览处理中" + dialogProgress + "%\n" + "请耐心等待 不要离开");
+            } else if (dialogProgress <= 40) {
+                dialog.setProgress("飞闪视频抠像中" + dialogProgress + "%\n" + "快了，友友稍等片刻");
+            } else if (dialogProgress <= 60) {
+                dialog.setProgress("飞闪视频抠像中" + dialogProgress + "%\n" + "抠像太强大，即将生成");
+            } else if (dialogProgress <= 80) {
+                dialog.setProgress("飞闪视频抠像中" + dialogProgress + "%\n" + "马上就好，不要离开");
+            } else {
+                dialog.setProgress("飞闪视频抠像中" + dialogProgress + "%\n" + "最后合成中，请稍后");
+            }
+        }
+    };
+
+
+
 
 }

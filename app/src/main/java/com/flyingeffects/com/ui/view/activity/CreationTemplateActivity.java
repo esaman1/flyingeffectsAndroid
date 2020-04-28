@@ -402,10 +402,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         String pathType = GetPathTypeModel.getInstance().getMediaType(path);
                         if (albumType.isImage(pathType))
                         {
-
-
                             statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_SelectImage" );
-
                             CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this, "", tailorPaths -> {
                                 presenter.addNewSticker(tailorPaths.get(0), paths.get(0));
                             });

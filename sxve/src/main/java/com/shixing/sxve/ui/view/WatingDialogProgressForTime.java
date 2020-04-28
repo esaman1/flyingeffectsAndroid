@@ -29,17 +29,23 @@ public class WatingDialogProgressForTime {
     private Dialog loadingDialog;
     Context context;
     ArrayList<String[]> list = new ArrayList<>();
-    String[] str1 = {"飞闪预览处理中\n" +
-            "请耐心等待 不要离开", "飞闪音频添加中\n" +
-            "快了，友友稍等片刻", "即将呈现...", "飞闪视频处理中\n" +
-            "视频太好看，即将预览", "人数较多...", "飞闪视频合成中\n" +
-            "马上就好，不要离开", "视频即将呈现啦\n" +
+    public int progress;
+    String[] str1 = {"飞闪预览处理中"+progress+"\n" +
+            "请耐心等待 不要离开", "飞闪音频添加中"+progress+"\n" +
+            "快了，友友稍等片刻", "即将呈现...", "飞闪视频处理中"+progress+"\n" +
+            "视频太好看，即将预览", "人数较多...", "飞闪视频合成中"+progress+"\n" +
+            "马上就好，不要离开", "视频即将呈现啦"+progress+"\n" +
             "最后合成中，请稍后"};
     private int type = 0; //0  生成预览，1正在保存
 
     public WatingDialogProgressForTime(Context context) {
         this.context = context;
         list.add(str1);
+    }
+
+
+    public void setProgress(int progress){
+        this.progress=progress;
     }
 
     /**

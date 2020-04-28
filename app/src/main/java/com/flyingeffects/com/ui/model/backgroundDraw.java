@@ -100,13 +100,21 @@ public class backgroundDraw {
                 LogUtil.d("OOM2", "错误信息为" + message);
             });
             execute.setOnLanSongSDKProgressListener((l, i) -> {
+                float f_progress = (i / (float) 100) * 5;
+                int progress;
+                if(isMatting){
+                    progress = (int) (95 + f_progress);
+                }else{
+                    progress = (int) (5 + f_progress);
+                }
+                callback.saveSuccessPath("", progress);
 //                waitingProgress.setProgress(i + "%");
 //                waitingProgress.setProgress("正在保存中" + i + "%\n" +
 //                        "请勿离开页面");
             });
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
 //                waitingProgress.closePragressDialog();
-                callback.saveSuccessPath(exportPath);
+                callback.saveSuccessPath(exportPath, 100);
                 //todo 需要移除全部的子图层
                 execute.release();
                 Log.d("OOM", "exportPath=" + exportPath);
@@ -115,8 +123,8 @@ public class backgroundDraw {
                 setMainLayer();
             } else {
                 if (!TextUtils.isEmpty(imagePath)) {
-                    Bitmap bt_nj= BitmapManager.getInstance().getOrientationBitmap(imagePath);
-                    execute.addBitmapLayer(bt_nj) ;
+                    Bitmap bt_nj = BitmapManager.getInstance().getOrientationBitmap(imagePath);
+                    execute.addBitmapLayer(bt_nj);
                 } else {
                     execute.setBackgroundColor(Color.parseColor("#00FF00"));
                 }
@@ -340,7 +348,7 @@ public class backgroundDraw {
 
 
     public interface saveCallback {
-        void saveSuccessPath(String path);
+        void saveSuccessPath(String path, int progress);
     }
 
 
