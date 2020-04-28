@@ -1014,6 +1014,10 @@ public class CreationTemplateMvpModel {
                             if (isSuccess1) {
                                 backgroundDraw.toSaveVideo(listAllSticker, true);
                             } else {
+                                //todo  零时手段
+                                if(progress<=5){
+                                    progress=5;
+                                }
                                 dialogProgress = progress;
                                 handler.sendEmptyMessage(1);
                             }
