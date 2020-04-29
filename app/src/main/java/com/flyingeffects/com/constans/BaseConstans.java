@@ -18,6 +18,7 @@ import java.util.HashMap;
  * on 2017/8/14.
  */
 
+
 public class BaseConstans {
     public static final String UMENGAPPID = "5e5c68a2570df3d6930002b4";
     //当前抠图是用sdk 还是用服务器
@@ -25,7 +26,7 @@ public class BaseConstans {
     public static final int  THREADCOUNT=4;
     public static String titok;
     public static String kuaishou;
-    public static final boolean PRODUCTION = true;
+    public static final boolean PRODUCTION = false;
     private static String channel = "";
     private static String versionCode = "";
     private static String uuid = "";

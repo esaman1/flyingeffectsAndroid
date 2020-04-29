@@ -23,7 +23,6 @@ import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.manager.AdConfigs;
-import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DataCleanManager;
