@@ -2,6 +2,7 @@ package com.shixing.sxve.ui.view;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -56,7 +57,7 @@ public class WaitingDialog_progress {
     }
 
     public void setProgress(String progress) {
-        if(tv_progress!=null){
+        if (tv_progress != null) {
             tv_progress.setText(progress);
         }
     }
@@ -66,23 +67,18 @@ public class WaitingDialog_progress {
      * 关闭Loading
      */
     public void closePragressDialog() {
-        if (tv_progress != null) {
-            tv_progress = null;
-        }
-        if (loadingDialog != null) {
-            loadingDialog.dismiss();
-            loadingDialog = null;
-
+        try {
+            if (context != null) {
+                if (tv_progress != null) {
+                    tv_progress = null;
+                }
+                if (loadingDialog != null) {
+                    loadingDialog.dismiss();
+                    loadingDialog = null;
+                }
+            }
+        } catch (Exception e) {
+            Log.d("OOM", "not attached to window manager");
         }
     }
-
-
-
-
-
-
-
-
-
-
 }

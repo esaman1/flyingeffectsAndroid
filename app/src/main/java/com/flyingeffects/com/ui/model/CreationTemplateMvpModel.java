@@ -914,6 +914,12 @@ public class CreationTemplateMvpModel {
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             AllStickerData stickerData = new AllStickerData();
+
+
+
+
+
+
             stickerData.setRotation(stickerView.getRotateAngle());
             stickerData.setScale(stickerView.getScale());
             stickerData.setTranslationX(stickerView.getTranslationX());
@@ -934,16 +940,20 @@ public class CreationTemplateMvpModel {
                     stickerData.setPath(stickerView.getOriginalPath());
                     stickerData.setOriginalPath(stickerView.getOriginalPath());
                     VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
-                    stickerData.setDuration(materialVideoInfo.getDuration());
-
+                    int materialDuration=materialVideoInfo.getDuration();
+                    int needDuration;
+                    if (videoInfo.getDuration() < materialDuration) {
+                        needDuration = videoInfo.getDuration();
+                    } else {
+                        needDuration = materialDuration;
+                    }
+                    stickerData.setDuration(needDuration);
                 }
             } else {
                 stickerData.setPath(stickerView.getResPath());
             }
             listAllSticker.add(stickerData);
         }
-
-
         for (int i = 0; i < listAllSticker.size(); i++) {
             if (defaultVideoDuration < listAllSticker.get(i).getDuration()) {
                 defaultVideoDuration = (int) listAllSticker.get(i).getDuration();
@@ -982,15 +992,15 @@ public class CreationTemplateMvpModel {
      */
     private void cutVideo(videoType videoType, long duration, long materialDuration) {
 //        getFrameSuccessNum=0;
-        long needDuration;
-        if (duration < materialDuration) {
-            needDuration = duration;
-        } else {
-            needDuration = materialDuration;
-        }
-        LogUtil.d("OOM", "需要裁剪的时长为" + needDuration);
+//        long needDuration;
+//        if (duration < materialDuration) {
+//            needDuration = duration;
+//        } else {
+//            needDuration = materialDuration;
+//        }
+        LogUtil.d("oom3", "需要裁剪的时长为" + materialDuration);
 
-        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, needDuration, videoType.getPath(), 0, new videoCutDurationForVideoOneDo.isSuccess() {
+        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, materialDuration, videoType.getPath(), 0, new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
             public void progresss(int progress) {
 //                progressNowAnim.setProgress("正在裁剪中" + progress + "%");

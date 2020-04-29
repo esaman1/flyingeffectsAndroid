@@ -420,4 +420,8 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
         }
 
     }
+
+
+
+
 }

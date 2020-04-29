@@ -38,7 +38,7 @@ public class backgroundDraw {
 
     private static final int DRAWPADWIDTH = 720;
     private static final int DRAWPADHEIGHT = 1280;
-    private static final int FRAME_RATE = 30;
+    private static final int FRAME_RATE = 20;
     private DrawPadAllExecute2 execute;
     private Context context;
     //    private WaitingDialog_progress waitingProgress;
@@ -94,7 +94,6 @@ public class backgroundDraw {
         }
         //如果还是0,说明全是图片，就修改为10
         if(duration==0){
-
             noVideo=true;
             duration=10000;
         }
@@ -103,6 +102,7 @@ public class backgroundDraw {
         try {
             execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, (long) (duration * 1000));
             execute.setFrameRate(FRAME_RATE);
+            LogUtil.d("OOM2", "时长为" + FRAME_RATE);
             execute.setEncodeBitrate(5 * 1024 * 1024);
             execute.setOnLanSongSDKErrorListener(message -> {
                 LogUtil.d("OOM2", "错误信息为" + message);
@@ -143,7 +143,7 @@ public class backgroundDraw {
                     Bitmap bt_nj = BitmapManager.getInstance().getOrientationBitmap(imagePath);
                     execute.addBitmapLayer(bt_nj);
                 } else {
-                    execute.setBackgroundColor(Color.parseColor("#00FF00"));
+                    execute.setBackgroundColor(Color.parseColor("#1FA400"));
                 }
             }
             for (int i = 0; i < list.size(); i++) {
@@ -179,6 +179,7 @@ public class backgroundDraw {
 
 
     private void setMainLayer() {
+
         LSOVideoOption option;
         try {
 //            option = new LSOVideoOption(videoPath);
@@ -341,6 +342,10 @@ public class backgroundDraw {
         bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight() * percentY);
 
         preTime = stickerItem.getDuration() * 1000 / (float) getMattingList.size();
+        LogUtil.d("OOM3","贴纸的时长为"+stickerItem.getDuration() );
+        LogUtil.d("OOM3","贴纸的数量为时长为"+(float) getMattingList.size() );
+        LogUtil.d("OOM3","preTime="+preTime );
+
         nowProgressTime[0] = preTime;
         CanvasLayer canvasLayer = execute.addCanvasLayer();
         canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {

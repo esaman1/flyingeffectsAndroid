@@ -8,8 +8,10 @@ import android.text.TextUtils;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
+import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.UserInfo;
+import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -71,21 +73,36 @@ public class PreviewMvpModel {
             callback.downVideoSuccess(videoName, imagePath);
             return;
         }
+        Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
+            DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> Observable.just(videoName).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+                @Override
+                public void call(String s1) {
+                    VideoInfo info= getVideoInfo.getInstance().getRingDuring(s1);
+                    videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, info.getDuration(),videoName ,0, new videoCutDurationForVideoOneDo.isSuccess() {
+                        @Override
+                        public void progresss(int progress) {
+                            LogUtil.d("oom","下载时候后重新裁剪进度为="+progress);
+                        }
 
-        Observable.just(path).subscribeOn(Schedulers.io()).subscribe(new Action1<String>() {
-            @Override
-            public void call(String s) {
-                DownloadVideoManage manage = new DownloadVideoManage(new DownloadVideoManage.downloadSuccess() {
-                    @Override
-                    public void isSuccess(boolean isSuccess) {
-                        callback.downVideoSuccess(videoName, imagePath);
-                    }
-                });
-                manage.DownloadVideo(path, videoName);
-            }
+                        @Override
+                        public void isSuccess(boolean isSuccess, String path1) {
+                            callback.downVideoSuccess(path1, imagePath);
+                        }
+                    });
+                }
+            }));
+            manage.DownloadVideo(path, videoName);
         });
 
     }
+
+
+
+
+
+
+
+
 
 
     /**

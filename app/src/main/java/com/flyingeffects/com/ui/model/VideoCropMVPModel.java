@@ -415,6 +415,7 @@ public class VideoCropMVPModel {
     private float seekbarPercent;
     private float marginLeft;
     private boolean fullyInitiated = false;
+    private boolean isOndestroy=false;
 
     public void initTrimmer(RangeSeekBarView mRangeSeekBarView, VideoFrameRecycler mTimeLineView, RoundImageView progressCursor) {
         this.cursor = progressCursor;
@@ -562,6 +563,7 @@ public class VideoCropMVPModel {
 
 
     public void onDestroy() {
+        isOndestroy=true;
         fullyInitiated = false;
         destroyTimer();
         if (frameAdapter != null) {
@@ -628,6 +630,9 @@ public class VideoCropMVPModel {
         }
     }
 
+
+
+
     private static final long maxCropDurationMs = 300 * 1000;
     private static final long minCropDurationMs = 2 * 1000;
     private boolean isSaving = false;
@@ -673,7 +678,7 @@ public class VideoCropMVPModel {
                 if(progress>100){
                     progress=100;
                 }
-                if (dialog != null) {
+                if (dialog != null&&!isOndestroy) {
                     if(needCut){
                         dialog.setProgress("飞闪正在视频抠像中~"+progress + "%"+"\n" +
                                 "上传清晰人物最佳");
@@ -693,17 +698,22 @@ public class VideoCropMVPModel {
             }
             File video = new File(path);
             if (video.exists()){
-                dialog.closePragressDialog();
-                String tempPath = getTempVideoPath(mContext)+video.getName();
-                try {
-                    FileUtil.copyFile(video, tempPath);
-                    callback.finishCrop(tempPath);
+                if(!isOndestroy){
+                    dialog.closePragressDialog();
+                    String tempPath = getTempVideoPath(mContext)+video.getName();
+                    try {
+                        FileUtil.copyFile(video, tempPath);
+                        callback.finishCrop(tempPath);
 
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }else {
-                dialog.closePragressDialog();
+                if(!isOndestroy){
+                    dialog.closePragressDialog();
+                }
+
                 ToastUtil.showToast(mContext.getString(R.string.export_failure));
             }
             }
