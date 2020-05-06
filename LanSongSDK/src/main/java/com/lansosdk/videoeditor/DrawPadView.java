@@ -27,7 +27,6 @@ import com.lansosdk.box.LSOLog;
 import com.lansosdk.box.LSOMVAsset;
 import com.lansosdk.box.LSOPhotoAlbumAsset;
 import com.lansosdk.box.LSOPhotoAlbumLayer;
-import com.lansosdk.box.LSOVideoAsset;
 import com.lansosdk.box.Layer;
 import com.lansosdk.box.MVLayer;
 import com.lansosdk.box.SubLayer;
@@ -206,15 +205,15 @@ public class DrawPadView extends FrameLayout {
     public boolean isTextureAvailable(){
         return mSurfaceTexture!=null && isDrawPadSizeChanged;
     }
+
     /**
-     * 此回调仅仅是作为演示: 当跳入到别的Activity后的返回时,会再次预览当前画面的功能.
-     * 你完全可以重新按照你的界面需求来修改这个DrawPadView类.
+     * 设置当前view显示有效后的监听.
+     * 当界面有效后, 执行listener;
+     * @param listener
      */
     public void setOnViewAvailable(onViewAvailable listener) {
         mViewAvailable = listener;
     }
-
-
     @Deprecated
     public void setRealEncodeEnable(int encW, int encH, int encBr, int encFr,
                                     String outPath) {
@@ -312,13 +311,6 @@ public class DrawPadView extends FrameLayout {
         }
         drawPadRunTimeListener = li;
     }
-
-//    public void setLoopAtTime(long timeUs){
-//        if (renderer != null) {
-//            renderer.setDrawPadRunTimeListener(li);
-//        }
-//    }
-
     /**
      * 把运行的时间复位到某一个值, 这样的话, drawpad继续显示, 就会以这个值为参考, 增加相对运行的时间. drawpad已经运行了10秒钟,
      * 你复位到2秒.则drawpad下一个onDrawPadRunTimeListener返回的值,就是2秒+相对运行的值,可能是2000*1000 +
@@ -988,7 +980,7 @@ public class DrawPadView extends FrameLayout {
         if (renderer != null)
             return renderer.addVideoLayer(width, height, filter);
         else {
-            LSOLog.e( "addVideoLayer error render is not avalid");
+            LSOLog.e( "addVideoLayer error render is invalid");
             return null;
         }
     }
@@ -996,36 +988,32 @@ public class DrawPadView extends FrameLayout {
 
     /**
      * 输入一个视频资源, 内部自动启动播放器;
-     * @param videoAsset
      * @return
      */
-    public VideoLayer2 addVideoLayer2(LSOVideoAsset videoAsset){
+    public VideoLayer2 addVideoLayer2(String path){
         if(renderer!=null){
-            return renderer.addVideoLayer2(videoAsset);
+            return renderer.addVideoLayer2(path);
         }else{
-            LSOLog.e( "addVideoLayer error render is not avalid");
+            LSOLog.e( "addVideoLayer error render is invalid");
             return null;
         }
     }
 
-
-
     /**
      *
-     * @param videoAsset
      * @param startTimeUs 从容器的什么时间点开始
      * @param endTimeUs 从容器的什么时间点结束;
      * @return
      */
-    public VideoLayer2 addVideoLayer2(LSOVideoAsset videoAsset,long startTimeUs,long endTimeUs){
+    public VideoLayer2 addVideoLayer2(String path, long startTimeUs, long endTimeUs){
         if(renderer!=null){
-            VideoLayer2 layer2= renderer.addVideoLayer2(videoAsset);
+            VideoLayer2 layer2= renderer.addVideoLayer2(path);
             if(layer2!=null){
                 layer2.setDisplayTimeRange(startTimeUs,endTimeUs);
             }
             return layer2;
         }else{
-            LSOLog.e( "addVideoLayer error render is not avalid");
+            LSOLog.e( "addVideoLayer error render is invalid");
             return null;
         }
     }
@@ -1042,7 +1030,7 @@ public class DrawPadView extends FrameLayout {
         if(renderer!=null){
             return renderer.addAECompositionLayer(asset,startTimeUs,endTimeUs);
         }else{
-            LSOLog.e( "addVideoLayer error render is not avalid");
+            LSOLog.e( "addAECompositionLayer error render is not avalid");
             return null;
         }
     }
@@ -1084,7 +1072,7 @@ public class DrawPadView extends FrameLayout {
         if(renderer!=null){
             return renderer.addPhotoAlbumLayer(asset,startTimeUs,endTimeUs);
         }else{
-            LSOLog.e( "addVideoLayer error render is not avalid");
+            LSOLog.e( "addPhotoAlbumLayer error render is not avalid");
             return null;
         }
     }

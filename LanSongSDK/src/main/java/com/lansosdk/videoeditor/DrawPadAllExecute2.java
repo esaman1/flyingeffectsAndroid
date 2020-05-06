@@ -8,6 +8,7 @@ import android.os.Build;
 import com.lansosdk.LanSongAe.LSOAeDrawable;
 import com.lansosdk.box.AEJsonLayer;
 import com.lansosdk.box.AudioLayer;
+import com.lansosdk.box.BitmapArrayLayer;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
 import com.lansosdk.box.DataLayer;
@@ -32,6 +33,8 @@ import com.lansosdk.box.OnLanSongSDKThreadProgressListener;
 import com.lansosdk.box.SubLayer;
 import com.lansosdk.box.VideoFrameLayer;
 import com.lansosdk.box.YUVLayer;
+
+import java.util.List;
 
 /**
  * 自动执行容器.
@@ -63,7 +66,8 @@ public class DrawPadAllExecute2 {
      */
     public DrawPadAllExecute2(Context ctx, int padWidth, int padHeight, long  durationUS) throws Exception {
         if(!LanSoEditor.isLoadLanSongSDK.get()){
-            throw  new Exception("没有加载SDK, 或你的APP崩溃后,重新启动当前Activity,请查看完整的logcat:(No SDK is loaded, or the current activity is restarted after your app crashes, please see the full logcat)");
+            throw  new Exception("没有加载SDK, 或你的APP崩溃后,重新启动当前Activity,请查看完整的logcat:" +
+                    "(No SDK is loaded, or the current activity is restarted after your app crashes, please see the full logcat)");
         }
 
         LanSongFileUtil.deleteFile(padDstPath);
@@ -91,14 +95,13 @@ public class DrawPadAllExecute2 {
             }
         }
 
-
         //小于等于8.0 支持nv21, 麒麟处理器.
         if(!forceUseOLD && Build.VERSION.SDK_INT<=Build.VERSION_CODES.O && LanSoEditor.isQiLinSoc() && VideoEditor.isSupportNV21ColorFormat() ){
             pixelRunnable =new DrawPadPixelRunnable(ctx,w,h,durationUS);
-            LSOLog.d("DrawPadAllExecute2 run  new pixel_mode Runnable...");
+            LSOLog.i("DrawPadAllExecute2 run  new pixel_mode Runnable...");
         }else{
             runnable=new DrawPadAllRunnable2(ctx,w,h,durationUS);
-            LSOLog.d("DrawPadAllExecute2 run  COMMON  Runnable(DrawPadAllRunnable2)...");
+            LSOLog.i("DrawPadAllExecute2 run  COMMON  Runnable(DrawPadAllRunnable2)...");
         }
 
         this.padWidth= w;
@@ -188,10 +191,14 @@ public class DrawPadAllExecute2 {
             pixelRunnable.setCompositionBackGroundColor(r,g,b,a);
         }
     }
+
     /**
-     * 已废弃,请用LSOBitmapAsset类型的addBitmapLayer
+     * 增加一张图片到容器中. 增加后返回图片图层对象;
+     * @param bmp 图片对象
+     * @param startTimeUs 从容器的什么时间点开始增加
+     * @param endTimeUs 增加到容器的
+     * @return
      */
-    @Deprecated
     public BitmapLayer addBitmapLayer(Bitmap bmp,long startTimeUs,long endTimeUs) {
         if (runnable != null && setup()) {
             return runnable.addBitmapLayer(bmp, startTimeUs, endTimeUs);
@@ -202,24 +209,24 @@ public class DrawPadAllExecute2 {
             return null;
         }
     }
-
     /**
-     * 已废弃,请用 String类型的addBitmapLayer
+     * 增加一张图片到容器中. 增加后返回图片图层对象;
+     * @param bmp 图片对象
+     * @return 返回图片图层;
      */
-    @Deprecated
     public BitmapLayer addBitmapLayer(Bitmap bmp) {
         if (runnable != null && setup()) {
             return runnable.addBitmapLayer(bmp,0,Long.MAX_VALUE);
         }else if (pixelRunnable != null && setup()) {
             return pixelRunnable.addBitmapLayer(bmp,0,Long.MAX_VALUE);
-        }else {
+        } else {
             LSOLog.e("DrawPadAllExecute2  addBitmapLayer error. return null, success status is:"+ success);
             return null;
         }
     }
 
     /**
-     * 增加图片图层
+     * 增加一张图片到容器中. 增加后返回图片图层对象;
      * @param asset  图片路径,
      * @param startTimeUs 从容器的什么时间开始增加
      * @param endTimeUs 在容器的什么时间消失, 如果到文件尾,请输入Long.MAX_VALUE
@@ -237,7 +244,7 @@ public class DrawPadAllExecute2 {
     }
 
     /**
-     * 增加图片图层
+     * 增加一张图片到容器中. 增加后返回图片图层对象;
      * @param asset 图片路径
      * @return 返回图片图层对象
      */
@@ -252,11 +259,14 @@ public class DrawPadAllExecute2 {
         }
     }
 
-
     /**
-     * 请用 addBitmapLayer(LSOBitmapAsset asset, long startTimeUs, long endTimeUs)
+     * 增加一张图片到容器中. 增加后返回图片图层对象;
+     * @param path  图片路径
+     * @param startTimeUs 在容器中的开始时间, 单位微秒
+     * @param endTimeUs 在容器中的结束时间, 单位微秒;
+     * @return 返回
+     * @throws Exception
      */
-    @Deprecated
     public BitmapLayer addBitmapLayer(String path, long startTimeUs, long endTimeUs)  throws  Exception{
 
         LSOBitmapAsset asset=new LSOBitmapAsset(path);
@@ -271,9 +281,11 @@ public class DrawPadAllExecute2 {
     }
 
     /**
-     * 请用BitmapLayer addBitmapLayer(LSOBitmapAsset asset)
-     * */
-    @Deprecated
+     *  增加一张图片到容器中. 增加后返回图片图层对象;
+     * @param path 图片路径
+     * @return 返回图片图层对象
+     * @throws Exception 抛出异常;
+     */
     public BitmapLayer addBitmapLayer(String path) throws Exception{
         LSOBitmapAsset asset=new LSOBitmapAsset(path);
         if (runnable != null && setup()) {
@@ -285,6 +297,31 @@ public class DrawPadAllExecute2 {
             return null;
         }
     }
+
+
+    public BitmapArrayLayer addBitmapArrayLayer(List<Bitmap> list, int frameRate,boolean loop){
+        if (runnable != null && setup()) {
+            return runnable.addBitmapArrayLayer(list,frameRate,loop,0,Long.MAX_VALUE);
+        }else if (pixelRunnable != null && setup()) {
+            return pixelRunnable.addBitmapArrayLayer(list,frameRate,loop,0,Long.MAX_VALUE);
+        }else {
+            LSOLog.e("DrawPadAllExecute2  addBitmapArrayLayer error. return null, success status is:"+ success);
+            return null;
+        }
+    }
+
+
+    public BitmapArrayLayer addBitmapArrayLayer2(List<String> list, int frameRate,boolean loop){
+        if (runnable != null && setup()) {
+            return runnable.addBitmapArrayLayer2(list,frameRate,loop);
+        }else if (pixelRunnable != null && setup()) {
+            return pixelRunnable.addBitmapArrayLayer2(list,frameRate,loop);
+        }else {
+            LSOLog.e("DrawPadAllExecute2  addBitmapArrayLayer error. return null, success status is:"+ success);
+            return null;
+        }
+    }
+
     /**
      *  增加mv图层
      *  默认是循环
@@ -478,7 +515,6 @@ public class DrawPadAllExecute2 {
             return null;
         }
     }
-
     /**
      * 增加Gif图层
      * @param resId
@@ -631,12 +667,25 @@ public class DrawPadAllExecute2 {
      LSOPhotoAlbumAsset(List<Bitmap> bitmaps, String jsonPath) throws Exception
 
 
+
      用AE制作动画的规则:
      1. 不能使用预合成,
      2. 每个图层对应一张图片, 不能一张图片应用到多个图层;
      3. json总时长不能超过20秒,每个图片时间建议是2--3秒,分辨率建议720x1280,帧率是20fps或15fps;
      4. 图片数量,建议不超过20张.
-     4. 我们内部会根据你的图片多少,和json的时长来裁剪或拼接
+     5. 我们内部会根据你的图片多少,和json的时长来裁剪或拼接
+     6. LSOPhotoAlbumAsset在使用完毕后,确认不再使用时, 一定要调用release,比如在让用户重新选择图片的前一行调用;
+
+
+     String jsonPath = copyAeAssets(getApplicationContext(), "morePicture.json");
+     List<Bitmap> bitmaps=new ArrayList<>();
+
+     for (int i = 0; i <10;i++) {
+     String name = "morePicture_img_" + i + ".jpeg";
+     bitmaps.add(BitmapFactory.decodeFile(copyAeAssets(getApplicationContext(),name)));
+     }
+     LSOPhotoAlbumAsset albumAsset=new LSOPhotoAlbumAsset(bitmaps,jsonPath);
+     allExecute.addPhotoAlbumLayer(albumAsset);
 
      * @param asset 影集图层资源.
      * @return
@@ -1041,12 +1090,12 @@ public class DrawPadAllExecute2 {
      LSOVideoOption option3 = new LSOVideoOption(SDCARD.file("d1.mp4"));
      option3.setScaleSize(320,320);
      VideoFrameLayer layer3 = allExecute.addVideoLayer(option3);
-     layer3.setPosition(LSOLayerPosition.RightTop);
+     layer3.setPosition(LSOLayerPosition.RIGHT_TOP);
 
 
 
      layer1.setMaskBitmapWithRecycle(BitmapFactory.decodeResource(getResources(),R.drawable.ls_logo),true);
-     allExecute.start();
+     allExecute.play();
 
 
      }

@@ -23,7 +23,6 @@ import com.lansosdk.box.onDrawPadThreadProgressListener;
  * 对单个视频做VideoOneDo2无法完成的工作.
  * 视频容器, 仅作为单个视频使用.
  */
-@Deprecated
 public class DrawPadVideoExecute {
 
     protected boolean isCheckBitRate = true;

@@ -38,7 +38,7 @@ public class LanSoEditor {
             LanSoEditor.setTempFileDir(Environment.getExternalStorageDirectory().getPath() + "/lansongBox/");
         }
 
-        LSOLog.init(context);
+        LSOLog.init();
         printSDKVersion();
     }
 
@@ -220,6 +220,7 @@ public class LanSoEditor {
         nativeInit(context, context.getAssets(), str);
         LanSoEditorBox.init(context);
     }
+
     private static void unInitSo() {
         nativeUninit();
         LanSoEditorBox.unInit();
