@@ -17,6 +17,7 @@ import com.flyingeffects.com.utils.ChannelUtil;
 import com.flyingeffects.com.utils.CrashHandler;
 import com.flyingeffects.com.utils.DateUtils;
 import com.flyingeffects.com.utils.LogUtil;
+import com.lansosdk.box.OnLanSongLogOutListener;
 import com.lansosdk.videoeditor.LanSoEditor;
 import com.nineton.ntadsdk.BuildConfig;
 import com.nineton.ntadsdk.NTAdConfig;
@@ -101,6 +102,12 @@ public class BaseApplication extends MultiDexApplication {
 
     private void initLansong() {
         LanSoEditor.initSDK(getApplicationContext(), "jiu_LanSongSDK_android5.key");
+        LanSoEditor.setSDKLogOutListener(new OnLanSongLogOutListener() {
+            @Override
+            public void onLogOut(int i, String s) {
+                LogUtil.d("OOM","蓝松具体错误信息为"+s);
+            }
+        });
     }
 
 

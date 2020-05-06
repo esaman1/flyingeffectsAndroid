@@ -106,6 +106,7 @@ public class backgroundDraw {
             execute.setEncodeBitrate(5 * 1024 * 1024);
             execute.setOnLanSongSDKErrorListener(message -> {
                 LogUtil.d("OOM2", "错误信息为" + message);
+                callback.saveSuccessPath("", 10000);
             });
             execute.setOnLanSongSDKProgressListener((l, i) -> {
 
@@ -122,8 +123,6 @@ public class backgroundDraw {
                     LogUtil.d("OOM2", "progress="+progress );
                     callback.saveSuccessPath("", progress);
                 }
-
-
                 LogUtil.d("OOM2", "saveSuccessPath" );
 //                waitingProgress.setProgress(i + "%");
 //                waitingProgress.setProgress("正在保存中" + i + "%\n" +
@@ -171,6 +170,7 @@ public class backgroundDraw {
             }
             execute.start();
         } catch (Exception e) {
+            callback.saveSuccessPath("", 10000);
             LogUtil.d("OOM", e.getMessage());
             e.printStackTrace();
         }

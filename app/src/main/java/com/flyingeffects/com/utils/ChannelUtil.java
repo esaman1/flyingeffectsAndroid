@@ -50,7 +50,7 @@ public class ChannelUtil {
 
 
         if (channel == null || channel.length() <= 0) {
-            channel = "huawei";
+            channel = "test";
         }
         return channel;
 //        return  "360";

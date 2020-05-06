@@ -902,8 +902,14 @@ public class CreationTemplateMvpModel {
                     intent.putExtra("path", path);
                     context.startActivity(intent);
                 }else{
-                    dialogProgress = progress;
-                    handler.sendEmptyMessage(1);
+                    if(progress==10000){
+                        //渲染失败
+                        dialog.closePragressDialog();
+                    }else{
+                        dialogProgress = progress;
+                        handler.sendEmptyMessage(1);
+                    }
+
                 }
             }
         });
