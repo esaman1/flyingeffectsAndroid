@@ -408,19 +408,24 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             if (real_time_preview.getVisibility() == View.VISIBLE) {
                 if (mPlayer != null) {
                     mPlayer.start();
+                    showPreview(true, false);
+                }else{
+                    toShowPreview();
                 }
-                showPreview(true, false);
             } else {
-                waitingDialogProgress = new WaitingDialog_progress(this);
-                waitingDialogProgress.openProgressDialog();
-                waitingDialogProgress.setProgress("生成中~\n" +
-                        "如预览卡顿\n" +
-                        "保存效果最佳");
-                new Thread(() -> presenter.getReplaceableFilePath()).start();
+                toShowPreview();
             }
-
         }
+    }
 
+
+    private void toShowPreview(){
+        waitingDialogProgress = new WaitingDialog_progress(this);
+        waitingDialogProgress.openProgressDialog();
+        waitingDialogProgress.setProgress("生成中~\n" +
+                "如预览卡顿\n" +
+                "保存效果最佳");
+        new Thread(() -> presenter.getReplaceableFilePath()).start();
     }
 
     @Override
@@ -806,17 +811,16 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "4_search_save", templateName);
                 }
                 statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_save", templateName);
-
                 if (isPlaying) {
                     if (mPlayer != null) {
                         mPlayer.pause();
                         mPlayer.stop();
+                        mPlayer=null;
                         ivPlayButton.setImageResource(R.mipmap.iv_play);
                         isPlaying = false;
                         showPreview(true, false);
                     }
                 }
-
                 presenter.renderVideo(mFolder.getPath(), mAudio1Path, false);
                 break;
 

@@ -641,6 +641,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             Bundle bundle = new Bundle();
             bundle.putStringArrayList("paths", paths);
             bundle.putInt("isPicNum", defaultnum);
+            bundle.putInt("picout", templateItem.getIs_picout());
             bundle.putString("fromTo", fromTo);
             bundle.putInt("is_anime", templateItem.getIs_anime());
             bundle.putString("templateName", templateItem.getTitle());
