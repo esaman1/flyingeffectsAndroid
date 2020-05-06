@@ -163,7 +163,7 @@ dependencies {
     //开屏广告
     implementation(name: 'GDTSDK.union.4.90.960', ext: 'aar')
     // 广告sdk
-    implementation(name: 'NTADSDK-v2.2.9', ext: 'aar')
+    implementation(name: 'NTADSDK-v2.3.0', ext: 'aar')
     // 百度联盟
     implementation(name: 'Baidu_MobAds_SDK-release_v5.85', ext: 'aar')
     // 穿山甲
