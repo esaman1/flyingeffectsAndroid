@@ -2,6 +2,7 @@ package com.shixing.sxve.ui.view;
 
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Handler;
@@ -60,7 +61,10 @@ public class WatingDialogProgressForTime {
         }
         loadingDialog = createLoadingDialog(context);
         if (loadingDialog != null) {
-            loadingDialog.show();
+            Activity activity = loadingDialog.getOwnerActivity();
+            if (activity != null && !activity.isFinishing()) {
+                loadingDialog.show();
+            }
         }
         startTimer();
     }
@@ -94,11 +98,12 @@ public class WatingDialogProgressForTime {
         if (tv_progress != null) {
             tv_progress = null;
         }
-        if (loadingDialog != null) {
-            destroyTimer();
-            loadingDialog.dismiss();
-            loadingDialog = null;
-
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            Activity activity = loadingDialog.getOwnerActivity();
+            if (activity != null && !activity.isFinishing()) {
+                loadingDialog.dismiss();
+                loadingDialog = null;
+            }
         }
     }
 

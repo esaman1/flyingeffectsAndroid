@@ -1,5 +1,6 @@
 package com.shixing.sxve.ui.view;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.text.TextUtils;
@@ -31,7 +32,10 @@ public class WaitingDialog {
         }
         loadingDialog = createLoadingDialog(context,"",true);
         if (loadingDialog != null) {
-            loadingDialog.show();
+            Activity activity = loadingDialog.getOwnerActivity();
+            if (activity != null && !activity.isFinishing()) {
+                loadingDialog.show();
+            }
         }
     }
 
@@ -71,9 +75,12 @@ public class WaitingDialog {
      * 关闭Loading
      */
     public static void closePragressDialog() {
-        if (loadingDialog != null) {
-            loadingDialog.dismiss();
-            loadingDialog = null;
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            Activity activity = loadingDialog.getOwnerActivity();
+            if (activity != null && !activity.isFinishing()) {
+                loadingDialog.dismiss();
+                loadingDialog = null;
+            }
         }
     }
 }
