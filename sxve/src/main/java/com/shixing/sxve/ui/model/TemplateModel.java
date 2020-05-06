@@ -1,7 +1,7 @@
 package com.shixing.sxve.ui.model;
 
 import android.content.Context;
-import android.graphics.Matrix;
+import android.os.Handler;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 import android.util.Log;
@@ -34,7 +34,7 @@ public class TemplateModel {
 
     public SparseArray<GroupModel> groups = new SparseArray<>();
     public final float fps;
-    public int[]templateSize=new int[2];
+    public int[] templateSize = new int[2];
     public int groupSize;
     public String cartoonPath;
 
@@ -100,9 +100,9 @@ public class TemplateModel {
             JSONArray assetsComps = config.getJSONArray("comps");
 
             JSONObject comoOb = (JSONObject) assetsComps.get(0);
-            JSONArray isze= (JSONArray) comoOb.get("size");
-            templateSize[0]= (int) isze.get(0);
-            templateSize[1]= (int) isze.get(1);
+            JSONArray isze = (JSONArray) comoOb.get("size");
+            templateSize[0] = (int) isze.get(0);
+            templateSize[1] = (int) isze.get(1);
             mDuration = comoOb.getInt("duration");
         } catch (Exception e) {
             Log.d("Exception", e.getMessage());
@@ -152,16 +152,16 @@ public class TemplateModel {
         return paths;
     }
 
-    public int getAssetsSize() {
-        return mReplaceableAssets.size();
-    }
-
-    public void setReplaceFiles(List<String> paths) {
-        for (int i = 0; i < paths.size(); i++) {
-            AssetModel assetModel = mReplaceableAssets.get(i);
-            ((MediaUiModel) assetModel.ui).setImageAsset(paths.get(i));
-        }
-    }
+//    public int getAssetsSize() {
+//        return mReplaceableAssets.size();
+//    }
+//
+//    public void setReplaceFiles(List<String> paths) {
+//        for (int i = 0; i < paths.size(); i++) {
+//            AssetModel assetModel = mReplaceableAssets.get(i);
+//            ((MediaUiModel) assetModel.ui).setImageAsset(paths.get(i));
+//        }
+//    }
 
 
     public int getDuration() {
@@ -176,18 +176,10 @@ public class TemplateModel {
      * date: ：2019/5/14 14:37
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
-    private int allVideoNumber = 0;
-    private int isReadyCutVideo;
-
-    private List<AssetModel> mediaUIModelList;
-    private boolean isReplaceMaterial = false;
     private List<AssetModel> textUIModelList;
 
     public void setReplaceAllFiles(List<String> paths, isFirstReplaceComplete firstReplaceComplete) {  //批量选择图片,视频的替换方法
-        allVideoNumber = 0;
-        isReadyCutVideo = 0;
-        isReplaceMaterial = false;
-        mediaUIModelList = new ArrayList<>();
+        List<AssetModel>   mediaUIModelList = new ArrayList<>();
         textUIModelList = new ArrayList<>();
 
 
@@ -254,15 +246,8 @@ public class TemplateModel {
                             } else {  //有些手机获取不到，比如vivo 是中文目录
                                 mimeType = getPathType(list.get(i));
                             }
-
-                            if (albumType.isImage(mimeType)) {
-                                media.setImageAsset(list.get(i));
-                            } else {
-                                media.setVideoPath(list.get(i), true, 0);
-                            }
+                            refreshMediaModel(mimeType, media, list.get(i));
                         }
-
-
                         textUIModelList.add(null); //todo 考虑到文字在中间的情况，补位，解决数组越界
                     } else if (mReplaceableAssets.get(i).ui instanceof TextUiModel) {
                         textUIModelList.add(mReplaceableAssets.get(i));
@@ -271,6 +256,22 @@ public class TemplateModel {
 
             }
         }
+    }
+
+
+    /**
+     * description ：解决bug Only the original thread that created a view hierarchy can touch its views.
+     * creation date: 2020/5/6
+     * user : zhangtongju
+     */
+    private void refreshMediaModel(String finalMimeType, MediaUiModel2 media, String path) {
+        new Handler().post(() -> {
+            if (albumType.isImage(finalMimeType)) {
+                media.setImageAsset(path);
+            } else {
+                media.setVideoPath(path, true, 0);
+            }
+        });
     }
 
 
