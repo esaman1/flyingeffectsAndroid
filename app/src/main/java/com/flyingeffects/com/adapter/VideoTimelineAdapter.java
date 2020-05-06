@@ -94,7 +94,7 @@ public class VideoTimelineAdapter extends RecyclerView.Adapter<VideoTimelineAdap
             mFrameList.clear();
         }
     }
-    public static final int FULL_SCROLL_DURATION=60*1000;
+    public static final int FULL_SCROLL_DURATION=180*1000;
     private static final int FULL_SCROLL_FRAMES=8;
     public void getFrames(final int viewWidth, final int viewHeight, boolean canScroll){
 

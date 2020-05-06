@@ -440,7 +440,9 @@ public class TemplateCutVideoActivity extends BaseActivity {
     public void onDestroy() {
         super.onDestroy();
         nowActivityIsDestroy = true;
-        videoMattingModel.nowActivityIsDestroy(true);
+        if(videoMattingModel!=null){
+            videoMattingModel.nowActivityIsDestroy(true);
+        }
         videoStop();
         GlideBitmapPool.clearMemory();
         endTimer();
