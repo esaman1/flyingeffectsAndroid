@@ -105,6 +105,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private TextAssetEditLayout mTextEditLayout;
     @BindView(R.id.video_player)
     EmptyControlVideo videoPlayer;
+    private int nowSeekBarProgress;
 
     /**
      * 原图地址,如果不需要抠图，原图地址为null,有抠图的情况下，默认使用原图
@@ -312,7 +313,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         });
 
-        test();
+//        test();
     }
 
 
@@ -858,7 +859,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         @Override
         public void onProgressChanged(SeekBar seekBar, int nowProgress, boolean fromUser) {
             if (fromUser && mPlayer != null) {
-                mPlayer.seek(nowProgress);
+                LogUtil.d("OOM","nowProgress="+nowProgress);
+                nowSeekBarProgress=nowProgress;
             }
         }
 
@@ -869,7 +871,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
-
+            mPlayer.seek(nowSeekBarProgress);
         }
     };
 
@@ -909,6 +911,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         @Override
         public void onProgressChanged(final int frame) {
             mPlayerView.post(() -> {
+                LogUtil.d("OOM","onProgressChangedFrame="+frame);
                 seekBar.setProgress(frame);
                 float nowDuration = frame / mTemplateModel.fps;
                 tv_start_time.setText(timeUtils.secondToTime((long) (nowDuration)));

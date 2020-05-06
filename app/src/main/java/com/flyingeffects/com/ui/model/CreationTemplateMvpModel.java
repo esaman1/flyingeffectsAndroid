@@ -563,7 +563,7 @@ public class CreationTemplateMvpModel {
 
 
                                 if(stickView.isFirstAddSticker()){
-                                    if(stickView.isOpenVoice){
+                                    if(stickView.isOpenVoice()){
                                         stickView.setOpenVoice(false);
                                         stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
                                         callback.getBgmPath("");
@@ -619,10 +619,12 @@ public class CreationTemplateMvpModel {
                     //有背景音乐
                     stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
                     callback.getBgmPath("");
+                    stickView.setOpenVoice(false);
                 } else {
                     LogUtil.d("OOM", "默认是没有背景");
                     //无背景音乐
                     stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_open_voice));
+                    stickView.setOpenVoice(true);
                     getVideoVoice(stickView.getOriginalPath(), soundFolder);
                 }
             }
