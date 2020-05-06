@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.coremedia.iso.boxes.Container;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.googlecode.mp4parser.authoring.Movie;
 import com.googlecode.mp4parser.authoring.Track;
@@ -68,6 +69,8 @@ public class mediaManager {
             }
         }catch (Exception e) {
             callback.splitSuccess(false,"");
+
+            LogUtil.d("OOM2","分离音频Exception="+e.getMessage());
          //   ToastUtil.showToast(context.getString(R.string.no_audio_files));
         }
 

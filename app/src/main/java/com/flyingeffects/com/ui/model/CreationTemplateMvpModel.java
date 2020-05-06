@@ -501,15 +501,12 @@ public class CreationTemplateMvpModel {
                         } else {
                             statisticsEventAffair.getInstance().setFlag(context, "8_open");
                         }
-
-
                     } else {
                         //关闭声音
                         videoVoicePath = "";
                         stickView.setOpenVoice(false);
                         stickView.setRightCenterBitmapForChangeIcon(context.getDrawable(R.mipmap.sticker_close_voice));
                         callback.getBgmPath("");
-
                         if (UiStep.isFromDownBj) {
                             statisticsEventAffair.getInstance().setFlag(context, "7_turnoff");
                         } else {
@@ -1013,20 +1010,10 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     private void cutVideo(videoType videoType, long duration, long materialDuration) {
-//        getFrameSuccessNum=0;
-//        long needDuration;
-//        if (duration < materialDuration) {
-//            needDuration = duration;
-//        } else {
-//            needDuration = materialDuration;
-//        }
         LogUtil.d("oom3", "需要裁剪的时长为" + materialDuration);
-
         videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, materialDuration, videoType.getPath(), 0, new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
             public void progresss(int progress) {
-//                progressNowAnim.setProgress("正在裁剪中" + progress + "%");
-
                 float positionF = progress / (float) 100;
                 Log.d("OOM", "裁剪的进度百分比为" + positionF);
                 float prencent = 5 / (float) (cutVideoPathList.size() + 1);
@@ -1176,10 +1163,11 @@ public class CreationTemplateMvpModel {
             manager.splitMp4(videoPath, new File(outputPath), (isSuccess, putPath) -> {
                 WaitingDialog.closePragressDialog();
                 if (isSuccess) {
-                    LogUtil.d("OOM", "分离出来的因为地址为" + outputPath);
+                    LogUtil.d("OOM2", "分离出来的因为地址为" + outputPath);
                     videoVoicePath = outputPath + File.separator + "bgm.mp3";
                     callback.getBgmPath(videoVoicePath);
                 } else {
+                    LogUtil.d("OOM2", "分离出来的因为地址为null" + outputPath);
                     callback.getBgmPath("");
                 }
             });

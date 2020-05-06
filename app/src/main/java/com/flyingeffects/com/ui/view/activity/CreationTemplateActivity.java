@@ -574,12 +574,19 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void getBgmPath(String path) {
         this.bgmPath = path;
+        LogUtil.d("OOM","getBgmPath="+path);
         if (isPlaying) {
             if (!TextUtils.isEmpty(path)) {
-                exoPlayer.setVolume(0f);
+                if (exoPlayer != null) {
+                    exoPlayer.setVolume(0f);
+                }
                 playBGMMusic();
                 if (bgmPlayer != null) {
-                    bgmPlayer.seekTo((int) getCurrentPos());
+                    if(exoPlayer!=null){
+                        bgmPlayer.seekTo((int) getCurrentPos());
+                    }else{
+                        bgmPlayer.seekTo(totalPlayTime);
+                    }
                 }
             } else {
                 if (exoPlayer != null) {
@@ -618,8 +625,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private TimerTask task;
     private int listWidth;
     private long nowTime = 5;
+    //自己计算的播放时间
+    private int totalPlayTime;
 
     private void startTimer() {
+        totalPlayTime=0;
         int screenWidth = screenUtil.getScreenWidth(this);
         //真实长度
         listWidth = (screenWidth - screenUtil.dip2px(this, 43)) * 2;
@@ -636,6 +646,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         task = new TimerTask() {
             @Override
             public void run() {
+                totalPlayTime=totalPlayTime+5;
                 Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
                     if (!TextUtils.isEmpty(videoPath)) {
                         int nowDuration = (int) getCurrentPos();
