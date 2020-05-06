@@ -374,44 +374,43 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 break;
 
             case R.id.iv_add_sticker:
-                if (isPlaying) {
-                    videoToPause();
-                    isPlaying = false;
-                    endTimer();
-                    presenter.showGifAnim(false);
-                    nowStateIsPlaying(false);
-                }
-                if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "5_mb_bj_material");
-                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_material");
-                } else {
-                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_material");
-                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_material");
-                }
-
-                //添加新的贴纸，这里的贴纸就是用户选择的贴纸
-                AlbumManager.chooseAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel, albumFileList) -> {
-                    Log.d("OOM", "isCancel=" + isCancel);
-                    if (!isCancel) {
-                        //如果是选择的视频，就需要得到封面，然后设置在matting里面去，然后吧原图设置为视频地址
-                        String path = paths.get(0);
-                        String pathType = GetPathTypeModel.getInstance().getMediaType(path);
-                        if (albumType.isImage(pathType))
-                        {
-                            statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_SelectImage" );
-                            CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this, "", tailorPaths -> {
-                                presenter.addNewSticker(tailorPaths.get(0), paths.get(0));
-                            });
-                            manage.ToMatting(paths);
-                        } else {
-                            //贴纸选择的视频
-                            intoVideoCropActivity(paths.get(0));
-                            statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Selectvideo\n" );
-
-                        }
+                if(!DoubleClick.getInstance().isFastZDYDoubleClick(1000)){
+                    if (isPlaying) {
+                        videoToPause();
+                        isPlaying = false;
+                        endTimer();
+                        presenter.showGifAnim(false);
+                        nowStateIsPlaying(false);
                     }
-                }, "");
-
+                    if (UiStep.isFromDownBj) {
+                        statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "5_mb_bj_material");
+                        statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_material");
+                    } else {
+                        statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_material");
+                        statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_material");
+                    }
+                    //添加新的贴纸，这里的贴纸就是用户选择的贴纸
+                    AlbumManager.chooseAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel, albumFileList) -> {
+                        Log.d("OOM", "isCancel=" + isCancel);
+                        if (!isCancel) {
+                            //如果是选择的视频，就需要得到封面，然后设置在matting里面去，然后吧原图设置为视频地址
+                            String path = paths.get(0);
+                            String pathType = GetPathTypeModel.getInstance().getMediaType(path);
+                            if (albumType.isImage(pathType))
+                            {
+                                statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_SelectImage" );
+                                CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this, "", tailorPaths -> {
+                                    presenter.addNewSticker(tailorPaths.get(0), paths.get(0));
+                                });
+                                manage.ToMatting(paths);
+                            } else {
+                                //贴纸选择的视频
+                                intoVideoCropActivity(paths.get(0));
+                                statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Selectvideo\n" );
+                            }
+                        }
+                    }, "");
+                }
                 break;
             case R.id.tv_background:
                 Intent intent = new Intent(this, ChooseBackgroundTemplateActivity.class);

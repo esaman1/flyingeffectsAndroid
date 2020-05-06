@@ -37,10 +37,7 @@ public class WaitingDialogProgressNowAnim {
         }
         loadingDialog = createLoadingDialog(context);
         if (loadingDialog != null) {
-            Activity activity = loadingDialog.getOwnerActivity();
-            if (activity != null && !activity.isFinishing()) {
                 loadingDialog.show();
-            }
         }
     }
 
@@ -73,9 +70,7 @@ public class WaitingDialogProgressNowAnim {
         if (tv_progress != null) {
             tv_progress = null;
         }
-        if (loadingDialog != null && loadingDialog.isShowing()) {
-            Activity activity = loadingDialog.getOwnerActivity();
-            if (activity != null && !activity.isFinishing()) {
+        if (loadingDialog != null ) {
                 loadingDialog.dismiss();
                 loadingDialog = null;
             }
@@ -84,4 +79,3 @@ public class WaitingDialogProgressNowAnim {
     }
 
 
-}

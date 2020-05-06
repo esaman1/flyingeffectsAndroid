@@ -38,10 +38,7 @@ public class WaitingDialog_progress {
         }
         loadingDialog = createLoadingDialog(context);
         if (loadingDialog != null) {
-            Activity activity = loadingDialog.getOwnerActivity();
-            if (activity != null && !activity.isFinishing()) {
                 loadingDialog.show();
-            }
         }
     }
 
@@ -77,11 +74,8 @@ public class WaitingDialog_progress {
                     tv_progress = null;
                 }
                 if (loadingDialog != null && loadingDialog.isShowing()) {
-                    Activity activity = loadingDialog.getOwnerActivity();
-                    if (activity != null && !activity.isFinishing()) {
                         loadingDialog.dismiss();
                         loadingDialog = null;
-                    }
                 }
             }
         } catch (Exception e) {

@@ -61,10 +61,7 @@ public class WatingDialogProgressForTime {
         }
         loadingDialog = createLoadingDialog(context);
         if (loadingDialog != null) {
-            Activity activity = loadingDialog.getOwnerActivity();
-            if (activity != null && !activity.isFinishing()) {
                 loadingDialog.show();
-            }
         }
         startTimer();
     }
@@ -99,11 +96,8 @@ public class WatingDialogProgressForTime {
             tv_progress = null;
         }
         if (loadingDialog != null && loadingDialog.isShowing()) {
-            Activity activity = loadingDialog.getOwnerActivity();
-            if (activity != null && !activity.isFinishing()) {
                 loadingDialog.dismiss();
                 loadingDialog = null;
-            }
         }
     }
 
