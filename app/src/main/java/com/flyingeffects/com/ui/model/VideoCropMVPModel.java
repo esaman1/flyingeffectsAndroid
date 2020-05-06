@@ -613,13 +613,14 @@ public class VideoCropMVPModel {
     private static final long minCropDurationMs = 2 * 1000;
     private boolean isSaving = false;
     private boolean is4kVideo = false;
-    WaitingDialog_progress dialog;
+   private WaitingDialog_progress dialog;
 
     public void saveVideo(boolean needCut) {
         if (!fullyInitiated || isSaving) {
             ToastUtil.showToast("还在加载请稍等");
             return;
         }
+
 
         dialog = new WaitingDialog_progress(mContext);
         dialog.openProgressDialog();
