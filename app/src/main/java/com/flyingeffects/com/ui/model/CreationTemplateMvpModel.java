@@ -519,7 +519,6 @@ public class CreationTemplateMvpModel {
                     }
 
                 } else if (type == StickerView.LEFT_BOTTOM_MODE) {
-
                     if (UiStep.isFromDownBj) {
                         statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_replace");
                     } else {
@@ -529,7 +528,6 @@ public class CreationTemplateMvpModel {
                     AlbumManager.chooseAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
                         if (!isCancel) {
                             if (albumType.isVideo(GetPathType.getInstance().getPathType(paths.get(0)))) {
-
                                 GetVideoCover getVideoCover = new GetVideoCover(context);
                                 getVideoCover.getCover(paths.get(0), path1 -> {
                                     Observable.just(path1).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
@@ -544,12 +542,11 @@ public class CreationTemplateMvpModel {
                                         if (stickView.isFirstAddSticker()) {
                                             stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
                                             callback.changFirstVideoSticker(paths.get(0));
+                                            callback.getBgmPath("");
                                         }
 
                                     });
                                 });
-
-
                             } else {
                                 CompressionCuttingManage manage = new CompressionCuttingManage(context, "", tailorPaths -> {
                                     Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
@@ -563,9 +560,24 @@ public class CreationTemplateMvpModel {
                                     });
                                 });
                                 manage.ToMatting(paths);
+
+
+                                if(stickView.isFirstAddSticker()){
+                                    if(stickView.isOpenVoice){
+                                        stickView.setOpenVoice(false);
+                                        stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
+                                        callback.getBgmPath("");
+                                    }
+                                }
+
                             }
                         }
                     }, "");
+
+
+
+
+
                 }
             }
 
