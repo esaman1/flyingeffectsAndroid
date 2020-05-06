@@ -334,7 +334,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                         String videoTime = templateItem.getVideotime();
                         if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
                             float needVideoTime = Float.parseFloat(videoTime);
-//                            int needCropDuration= (int) (needVideoTime*1000);
                             Intent intoCutVideo = new Intent(PreviewActivity.this, TemplateCutVideoActivity.class);
                             intoCutVideo.putExtra("needCropDuration", needVideoTime);
                             intoCutVideo.putExtra("templateName", templateItem.getTitle());
@@ -347,11 +346,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                     }
                 }
             }).start();
-
-
         }
-//        }
-
     }
 
 
@@ -415,7 +410,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
             Presenter.DownVideo(templateItem.getVidoefile(), imgList.get(0), templateItem.getId());
         } else {
-
             if(!ondestroy){
                 WaitingDialog.closePragressDialog();
             }

@@ -176,11 +176,13 @@ public class frag_search extends BaseFragment {
             tv.setOnClickListener(view -> {
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
                     if (getActivity() != null) {
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "4_recommend", listSearchKey.get(finalI).getName());
-                        String name = listSearchKey.get(finalI).getName();
-                        requestFagData(name);
-                        ll_showResult.setVisibility(View.VISIBLE);
-                        setResultMargin();
+                        if(listSearchKey.size()>=finalI+1){
+                            statisticsEventAffair.getInstance().setFlag(getActivity(), "4_recommend", listSearchKey.get(finalI).getName());
+                            String name = listSearchKey.get(finalI).getName();
+                            requestFagData(name);
+                            ll_showResult.setVisibility(View.VISIBLE);
+                            setResultMargin();
+                        }
                     }
                 }
             });

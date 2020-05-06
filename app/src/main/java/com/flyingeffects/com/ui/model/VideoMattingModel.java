@@ -261,60 +261,62 @@ public class VideoMattingModel {
     private void addFrameCompoundVideoNoMatting() {
         LogUtil.d("OOM2", "开始合成原图" );
         List<File> getMattingList = FileManager.listFileSortByModifyTime(faceFolder);
-        Bitmap firstBitmap = BitmapFactory.decodeFile(getMattingList.get(0).getPath());
-        long AllTime = videoInfo.getDuration() * 1000;
-        LogUtil.d("OOM2", "AllTime="+AllTime );
-        preTime = AllTime / (float) getMattingList.size();
-        nowProgressTime = preTime;
-        try {
-            DrawPadAllExecute2 execute = new DrawPadAllExecute2(BaseApplication.getInstance(), DRAWPADWIDTH, DRAWPADHEIGHT, AllTime);
-            execute.setFrameRate(FRAME_RATE);
-            execute.setEncodeBitrate(5 * 1024 * 1024);
-            execute.setOnLanSongSDKErrorListener(message -> LogUtil.d("OOM", "错误信息为" + message));
-            execute.setOnLanSongSDKProgressListener((l, i) -> {
-                float f_progress = (i / (float) 100) * 5;
-                progress = (int) (90 + f_progress);
-                handler.sendEmptyMessage(1);
-            });
-            execute.setOnLanSongSDKCompletedListener(exportPath -> {
-                execute.removeAllLayer();
-                execute.release();
-                LogUtil.d("OOM", "合成没有原图成功");
-                String albumPath = cacheCutVideoPath + "/noMatting.mp4";
-                File file = new File(albumPath);
-                if (file.exists()) {
-                  boolean isDeleted=  file.delete();
-                  LogUtil.d("OOM",""+isDeleted);
-                }
-                try {
-                    FileUtil.copyFile(new File(exportPath), albumPath);
-                    addFrameCompoundVideo();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            });
-
-            LSOBitmapAsset asset = new LSOBitmapAsset(firstBitmap);
-            BitmapLayer bitmapLayerForDrawBackground = execute.addBitmapLayer(asset);
-            bitmapLayerForDrawBackground.setScaledToPadSize();
-            CanvasLayer canvasLayer = execute.addCanvasLayer();
-            canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
-                if (currentTime > nowProgressTime) {
-                    //需要切换新的图了
-                    nowChooseImageIndex++;
-                    if (nowChooseImageIndex < getMattingList.size()) {
-                        LogUtil.d("CanvasRunnable", "addCanvasRunnable=" + preTime + "currentTime=" + currentTime + "nowChooseImageIndex=" + nowChooseImageIndex);
-                        nowProgressTime = preTime + nowProgressTime;
-                        Bitmap firstBitmap1 = BitmapFactory.decodeFile(getMattingList.get(nowChooseImageIndex).getPath());
-                        bitmapLayerForDrawBackground.switchBitmap(firstBitmap1);
+        if(getMattingList!=null&&getMattingList.size()>0){
+            Bitmap firstBitmap = BitmapFactory.decodeFile(getMattingList.get(0).getPath());
+            long AllTime = videoInfo.getDuration() * 1000;
+            LogUtil.d("OOM2", "AllTime="+AllTime );
+            preTime = AllTime / (float) getMattingList.size();
+            nowProgressTime = preTime;
+            try {
+                DrawPadAllExecute2 execute = new DrawPadAllExecute2(BaseApplication.getInstance(), DRAWPADWIDTH, DRAWPADHEIGHT, AllTime);
+                execute.setFrameRate(FRAME_RATE);
+                execute.setEncodeBitrate(5 * 1024 * 1024);
+                execute.setOnLanSongSDKErrorListener(message -> LogUtil.d("OOM", "错误信息为" + message));
+                execute.setOnLanSongSDKProgressListener((l, i) -> {
+                    float f_progress = (i / (float) 100) * 5;
+                    progress = (int) (90 + f_progress);
+                    handler.sendEmptyMessage(1);
+                });
+                execute.setOnLanSongSDKCompletedListener(exportPath -> {
+                    execute.removeAllLayer();
+                    execute.release();
+                    LogUtil.d("OOM", "合成没有原图成功");
+                    String albumPath = cacheCutVideoPath + "/noMatting.mp4";
+                    File file = new File(albumPath);
+                    if (file.exists()) {
+                        boolean isDeleted=  file.delete();
+                        LogUtil.d("OOM",""+isDeleted);
                     }
-                }
-            });
-            execute.start();
-        } catch (Exception e) {
-            LogUtil.d("OOM", e.getMessage());
-            e.printStackTrace();
+                    try {
+                        FileUtil.copyFile(new File(exportPath), albumPath);
+                        addFrameCompoundVideo();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+                LSOBitmapAsset asset = new LSOBitmapAsset(firstBitmap);
+                BitmapLayer bitmapLayerForDrawBackground = execute.addBitmapLayer(asset);
+                bitmapLayerForDrawBackground.setScaledToPadSize();
+                CanvasLayer canvasLayer = execute.addCanvasLayer();
+                canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
+                    if (currentTime > nowProgressTime) {
+                        //需要切换新的图了
+                        nowChooseImageIndex++;
+                        if (nowChooseImageIndex < getMattingList.size()) {
+                            LogUtil.d("CanvasRunnable", "addCanvasRunnable=" + preTime + "currentTime=" + currentTime + "nowChooseImageIndex=" + nowChooseImageIndex);
+                            nowProgressTime = preTime + nowProgressTime;
+                            Bitmap firstBitmap1 = BitmapFactory.decodeFile(getMattingList.get(nowChooseImageIndex).getPath());
+                            bitmapLayerForDrawBackground.switchBitmap(firstBitmap1);
+                        }
+                    }
+                });
+                execute.start();
+            } catch (Exception e) {
+                LogUtil.d("OOM", e.getMessage());
+                e.printStackTrace();
+            }
+        }else{
+            callback.isSuccess(false, "");
         }
     }
 

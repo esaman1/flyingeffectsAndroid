@@ -480,11 +480,13 @@ public class CreationTemplateMvpModel {
                     stickView.dismissFrame();
                     //copy
                     copyGif(stickView.getResPath(), path, stickView.getComeFrom(), stickView, stickView.getOriginalPath());
-                    if (albumType.isVideo(GetPathType.getInstance().getMediaType(stickView.getOriginalPath()))) {
-                        if (UiStep.isFromDownBj) {
-                            statisticsEventAffair.getInstance().setFlag(context, "7_plusone");
-                        } else {
-                            statisticsEventAffair.getInstance().setFlag(context, "8_plusone");
+                    if(!TextUtils.isEmpty(stickView.getOriginalPath())){
+                        if (albumType.isVideo(GetPathType.getInstance().getMediaType(stickView.getOriginalPath()))) {
+                            if (UiStep.isFromDownBj) {
+                                statisticsEventAffair.getInstance().setFlag(context, "7_plusone");
+                            } else {
+                                statisticsEventAffair.getInstance().setFlag(context, "8_plusone");
+                            }
                         }
                     }
                 } else if (type == StickerView.RIGHT_CENTER_MODE) {

@@ -1247,6 +1247,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         this.originalPath = originalPath;
     }
 
+
+
+
+    //贴纸里面获得源地址，切记，选择的gif 是没得这个功能的
     public String getOriginalPath() {
         return originalPath;
     }
