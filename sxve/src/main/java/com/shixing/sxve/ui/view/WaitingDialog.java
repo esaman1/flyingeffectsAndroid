@@ -30,34 +30,31 @@ public class WaitingDialog {
         if (loadingDialog != null) {
             WaitingDialog.closePragressDialog();
         }
-        loadingDialog = createLoadingDialog(context,"",true);
-        if (loadingDialog != null) {
-            Activity activity = loadingDialog.getOwnerActivity();
-            if (activity != null && !activity.isFinishing()) {
-                loadingDialog.show();
-            }
-        }
-    }
-
-    public static void openPragressDialog(Context context,String alert
-    ) {
-        if (loadingDialog != null) {
-            WaitingDialog.closePragressDialog();
-        }
-        loadingDialog = createLoadingDialog(context,alert,false);
+        loadingDialog = createLoadingDialog(context, "", true);
         if (loadingDialog != null) {
             loadingDialog.show();
         }
     }
 
-    private static Dialog createLoadingDialog(Context context,String alert,boolean cancelable) {
+    public static void openPragressDialog(Context context, String alert
+    ) {
+        if (loadingDialog != null) {
+            WaitingDialog.closePragressDialog();
+        }
+        loadingDialog = createLoadingDialog(context, alert, false);
+        if (loadingDialog != null) {
+            loadingDialog.show();
+        }
+    }
+
+    private static Dialog createLoadingDialog(Context context, String alert, boolean cancelable) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View v = inflater.inflate(R.layout.waitdialog, null, false);// 得到加载view
-        if(!TextUtils.isEmpty(alert)){
-            TextView tv_alert=v.findViewById(R.id.tv_show_alert);
+        if (!TextUtils.isEmpty(alert)) {
+            TextView tv_alert = v.findViewById(R.id.tv_show_alert);
             tv_alert.setText(alert);
         }
-        RelativeLayout layout =  v.findViewById(R.id.loading);
+        RelativeLayout layout = v.findViewById(R.id.loading);
         loadingDialog = new Dialog(context, R.style.loading_dialog);// 创建自定义样式dialog
         loadingDialog.setContentView(layout, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT));// 设置布局
@@ -67,20 +64,13 @@ public class WaitingDialog {
     }
 
 
-
-
-
-
     /**
      * 关闭Loading
      */
     public static void closePragressDialog() {
         if (loadingDialog != null && loadingDialog.isShowing()) {
-            Activity activity = loadingDialog.getOwnerActivity();
-            if (activity != null && !activity.isFinishing()) {
-                loadingDialog.dismiss();
-                loadingDialog = null;
-            }
+            loadingDialog.dismiss();
+            loadingDialog = null;
         }
     }
 }

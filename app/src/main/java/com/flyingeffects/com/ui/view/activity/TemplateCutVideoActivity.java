@@ -16,7 +16,6 @@ import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.DataCleanManager;
-import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.VideoMattingModel;
 import com.flyingeffects.com.ui.model.videoCutDurationForVideoOneDo;
 import com.flyingeffects.com.utils.LogUtil;
@@ -102,9 +101,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
     //0 表示不需要抠图，1 表示需要抠图
     private int picout;
 
-
-//    @BindView(R.id.video_player)
-////    EmptyControlVideo videoPlayer;
 
     @BindView(R.id.exo_player)
     PlayerView playerView;

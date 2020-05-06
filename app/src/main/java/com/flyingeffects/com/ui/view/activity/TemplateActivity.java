@@ -194,11 +194,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     /**
-     * 0 表示不需要抠图，1表示需要抠图
+     * 0 表示不需要抠图，1表示需要抠图，无论扣不抠图，都是默认进来就抠好了图，然后在通过这个字段在改变顶部按钮选中状态
      */
     private int picout;
-
-
 
     /**
      * 只针对预览显示的文案
@@ -275,7 +273,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 File(dir, "default_bj.png").
                 getPath();
         seekBar.setOnSeekBarChangeListener(seekBarListener);
-
         switch_button.setOnCheckedChangeListener((view, isChecked) ->
         {
             if (!isFastDoubleClick()) {
@@ -314,6 +311,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 AnimForViewShowAndHide.getInstance().show(mContainer);
             }
         });
+
+        test();
     }
 
 
@@ -721,7 +720,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 TemplateView nowChooseTemplateView = mTemplateViews.get(index);
                 nowChooseTemplateView.setVisibility(View.VISIBLE);
                 nowChooseTemplateView.invalidate();
-                rx.Observable.from(mTemplateViews).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(templateView -> {
+                Observable.from(mTemplateViews).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(templateView -> {
                     if (templateView != nowChooseTemplateView && templateView.getVisibility() != View.GONE) {
                         templateView.setVisibility(View.GONE);
                     }
