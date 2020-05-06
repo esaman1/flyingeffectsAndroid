@@ -25,30 +25,22 @@ import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.AlbumManager;
-import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
-import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.VideoCropMVPView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.presenter.VideoCropMVPPresenter;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.RoundImageView;
 import com.flyingeffects.com.view.VideoFrameRecycler;
 import com.lansosdk.videoeditor.DrawPadView2;
 import com.lansosdk.videoeditor.MediaInfo;
-import com.shixing.sxve.ui.view.WaitingDialog;
-import com.yanzhenjie.album.AlbumFile;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.TimeZone;
 
 import butterknife.BindView;
@@ -61,7 +53,6 @@ import rx.android.schedulers.AndroidSchedulers;
  * @author Liya
  */
 public class VideoCropActivity extends BaseActivity implements VideoCropMVPView {
-    public static final int VIDEO_FOR_CROP = 0x100;
     private VideoCropMVPPresenter Presenter;
     @BindView(R.id.crop_preivew_icon)
     ImageView playIcon;
@@ -91,10 +82,6 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
     @BindView(R.id.tv_choose_pic)
     TextView tv_choose_pic;
 
-//    /**
-//     * 用户设置的固定剪切时长，只针对自定义卡点视频界面
-//     */
-//    private long userSetDuration;
     private boolean isNeedCut=true;
 
     private String isFrom;
@@ -202,16 +189,6 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
     private boolean hasResult = false;
     private static final int MAX_DURATION_SEC = 300;
     private static final int MIN_DURATION_SEC = 2;
-    private AlbumChooseCallback albumCallback = (tag, paths, isCancel, albumFileList) -> {
-        hasResult = true;
-        if (paths.size() > 0) {
-            String path = paths.get(0);
-            initVideoDrawPad(path, isCancel);
-        } else {
-            finish();
-        }
-
-    };
 
 
     private void initVideoDrawPad(String path, boolean isCancel) {
@@ -323,38 +300,6 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
             finish();
         }));
 
-
-
-
-
-
-
-
-
-
-//        AlbumManager.chooseWhichAlbum(VideoCropActivity.this, 1, 0, new AlbumChooseCallback() {
-//            @Override
-//            public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-//                CompressionCuttingManage manage = new CompressionCuttingManage(VideoCropActivity.this,"", tailorPaths -> {
-//                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-//                        Intent intent = new Intent(VideoCropActivity.this, CreationTemplateActivity.class);
-//                        Bundle bundle = new Bundle();
-//                        bundle.putString("paths", tailorPaths.get(0));
-//                        bundle.putString("originalPath",paths.get(0) );
-//                        bundle.putString("video_path", videoPath);
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                        intent.putExtra("Message", bundle);
-//                        startActivity(intent);
-//                        setResult(Activity.RESULT_OK, intent);
-//                        finish();
-//
-//                    });
-//                });
-//                manage.ToMatting(paths);
-//            }
-//        }, 1, "");
-
-
     }
 
     @Override
@@ -414,11 +359,9 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
     }
 
     private void saveVideo(boolean needCut) {
-
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             Presenter.saveVideo(needCut);
         }
-
     }
 
 

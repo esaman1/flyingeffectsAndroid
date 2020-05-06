@@ -247,20 +247,25 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         videoPlayer.onVideoPause();
         isIntoPause = true;
         iv_video_play.setVisibility(View.VISIBLE);
-        WaitingDialog.closePragressDialog();
+        toClosePragressDialog();
         super.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(!ondestroy){
-            WaitingDialog.closePragressDialog();
-        }
-
+        toClosePragressDialog();
         if (isIntoPause) {
             videoPlayerInit();
             isIntoPause = false;
+        }
+    }
+
+
+
+    private void toClosePragressDialog(){
+        if(!ondestroy){
+            WaitingDialog.closePragressDialog();
         }
     }
 
@@ -328,9 +333,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                         statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo" );
                         Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId());
                     } else {
-                        if(!ondestroy){
-                            WaitingDialog.closePragressDialog();
-                        }
+                        toClosePragressDialog();
                         String videoTime = templateItem.getVideotime();
                         if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
                             float needVideoTime = Float.parseFloat(videoTime);
@@ -357,9 +360,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
                 Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId());
             } else {
-                if(!ondestroy){
-                    WaitingDialog.closePragressDialog();
-                }
+                toClosePragressDialog();
                 intoTemplateActivity(tailorPaths, TemplateFilePath);
             }
         });
@@ -373,9 +374,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
                 Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId());
             } else {
-                if(!ondestroy){
-                    WaitingDialog.closePragressDialog();
-                }
+                toClosePragressDialog();
                 intoTemplateActivity(tailorPaths, TemplateFilePath);
             }
         });
@@ -384,9 +383,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
 
     private void intoTemplateActivity(List<String> paths, String templateFilePath) {
-        if(!ondestroy){
-            WaitingDialog.closePragressDialog();
-        }
+        toClosePragressDialog();
         Intent intent = new Intent(this, TemplateActivity.class);
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("paths", (ArrayList<String>) paths);
@@ -410,9 +407,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
             Presenter.DownVideo(templateItem.getVidoefile(), imgList.get(0), templateItem.getId());
         } else {
-            if(!ondestroy){
-                WaitingDialog.closePragressDialog();
-            }
+            toClosePragressDialog();
             intoTemplateActivity(imgList, TemplateFilePath);
         }
     }
@@ -545,13 +540,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     public void downVideoSuccess(String videoPath, String imagePath) {
 
-        if(!ondestroy){
-            WaitingDialog.closePragressDialog();
-        }
+        toClosePragressDialog();
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
-            if(!ondestroy){
-                WaitingDialog.closePragressDialog();
-            }
             EventBus.getDefault().post(new DownVideoPath(videoPath));
             finish();
         } else {

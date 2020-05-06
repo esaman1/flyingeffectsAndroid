@@ -2,7 +2,6 @@ package com.shixing.sxve.ui.view;
 
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Handler;

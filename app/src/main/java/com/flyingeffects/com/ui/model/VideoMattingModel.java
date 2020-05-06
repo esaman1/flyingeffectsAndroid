@@ -79,6 +79,11 @@ public class VideoMattingModel {
 
    private  MattingSuccess callback;
 
+    /**
+     * 依附的宿主activity 是否被销毁
+     */
+   private boolean nowActivityIsOndestroy=false;
+
     public VideoMattingModel(String videoPath, Context context, MattingSuccess callback) {
         this.callback = callback;
         this.videoPath = videoPath;
@@ -90,7 +95,10 @@ public class VideoMattingModel {
         cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
         LogUtil.d("OOM", "faceMattingFolder=" + faceMattingFolder);
         dialog = new WaitingDialogProgressNowAnim(context);
-        dialog.openProgressDialog();
+        if(!nowActivityIsOndestroy){
+            dialog.openProgressDialog();
+        }
+
     }
 
 
@@ -195,7 +203,10 @@ public class VideoMattingModel {
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
                 execute.removeAllLayer();
                 execute.release();
-                dialog.closePragressDialog();
+                if(!nowActivityIsOndestroy){
+                    dialog.closePragressDialog();
+                }
+
                 String albumPath = cacheCutVideoPath + "/Matting.mp4";
                 try {
                     FileUtil.copyFile(new File(exportPath), albumPath);
@@ -359,19 +370,35 @@ public class VideoMattingModel {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if(progress<=25){
-                dialog.setProgress("飞闪视频抠像中"+progress + "%\n"+"请耐心等待 不要离开");
-            }else if(progress<=40){
-                dialog.setProgress("飞闪视频抠像中"+progress + "%\n"+"快了，友友稍等片刻");
-            }else if(progress<=60){
-                dialog.setProgress("飞闪视频抠像中"+progress + "%\n"+"抠像太强大，即将生成");
-            }else if(progress<=80){
-                dialog.setProgress("飞闪视频抠像中"+progress + "%\n"+"马上就好，不要离开");
-            }else{
-                dialog.setProgress("飞闪视频抠像中"+progress + "%\n"+"最后合成中，请稍后");
+            if(!nowActivityIsOndestroy){
+                if(progress<=25){
+                    dialog.setProgress("飞闪视频抠像中"+progress + "%\n"+"请耐心等待 不要离开");
+                }else if(progress<=40){
+                    dialog.setProgress("飞闪视频抠像中"+progress + "%\n"+"快了，友友稍等片刻");
+                }else if(progress<=60){
+                    dialog.setProgress("飞闪视频抠像中"+progress + "%\n"+"抠像太强大，即将生成");
+                }else if(progress<=80){
+                    dialog.setProgress("飞闪视频抠像中"+progress + "%\n"+"马上就好，不要离开");
+                }else{
+                    dialog.setProgress("飞闪视频抠像中"+progress + "%\n"+"最后合成中，请稍后");
+                }
             }
+
+
         }
     };
+
+
+
+
+    /**
+     * description ：宿主activity 是否销毁
+     * creation date: 2020/5/6
+     * user : zhangtongju
+     */
+    public void nowActivityIsDestroy(boolean nowActivityIsOndestroy){
+            this.nowActivityIsOndestroy=nowActivityIsOndestroy;
+    }
 
 
 }

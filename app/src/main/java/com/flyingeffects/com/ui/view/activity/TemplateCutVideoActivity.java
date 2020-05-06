@@ -290,11 +290,11 @@ public class TemplateCutVideoActivity extends BaseActivity {
             exoPlayer.release();
         }
     }
-
+    private VideoMattingModel videoMattingModel;
     private void gotoMattingVideo(String originalPath) {
         SegJni.nativeCreateSegHandler(this, ConUtil.getFileContent(this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
         Observable.just(originalPath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
-            VideoMattingModel videoMattingModel = new VideoMattingModel(originalPath, TemplateCutVideoActivity.this, (isSuccess, path) -> {
+            videoMattingModel  = new VideoMattingModel(originalPath, TemplateCutVideoActivity.this, (isSuccess, path) -> {
                 TemplateCutVideoActivity.this.finish();
                 EventBus.getDefault().post(new MattingVideoEnity(originalPath, path, isFrom));
             });
@@ -440,6 +440,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
     public void onDestroy() {
         super.onDestroy();
         nowActivityIsDestroy = true;
+        videoMattingModel.nowActivityIsDestroy(true);
         videoStop();
         GlideBitmapPool.clearMemory();
         endTimer();

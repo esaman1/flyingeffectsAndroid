@@ -31,15 +31,10 @@ import com.flyingeffects.com.view.VideoFrameRecycler;
 import com.flyingeffects.com.view.beans.Thumb;
 import com.flyingeffects.com.view.interfaces.OnProgressVideoListener;
 import com.flyingeffects.com.view.interfaces.OnRangeSeekBarListener;
-import com.lansosdk.LanSongFilter.LanSongBlurFilter;
-import com.lansosdk.LanSongFilter.LanSongFilter;
 import com.lansosdk.box.DrawPadUpdateMode;
-import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.box.SubLayer;
-import com.lansosdk.box.VideoFrameLayer;
 import com.lansosdk.box.VideoLayer;
 import com.lansosdk.box.onDrawPadCompletedListener;
-import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.lansosdk.videoeditor.DrawPadView2;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
@@ -71,7 +66,6 @@ public class VideoCropMVPModel {
     private float vLayerH;
     private MediaPlayer player;
     private RangeSeekBarView mRangeSeekBarView;
-    private VideoFrameRecycler mTimeLineView;
     private VideoTimelineAdapter frameAdapter;
     private RoundImageView cursor;
     private Vibrator vibrator;
@@ -89,7 +83,6 @@ public class VideoCropMVPModel {
         drawPadView.setDrawPadSize(DRAWPAD_WIDTH, DRAWPAD_HEIGHT, (i, i1) -> {
             padRealWidth = i;
             padRealHeight = i1;
-          //  changeVideoZoom(50);
         });
         drawPadView.setOnDrawPadRecordProgressListener((drawPad, currentTimeUs) -> {
             LogUtil.d("drawPadView", "currentTimeUs=" + currentTimeUs);
@@ -135,11 +128,8 @@ public class VideoCropMVPModel {
 
     private void initVideo(DrawPadView2 drawPadView) {
         if (drawPadView.setupDrawPad()) {
-            //暂停drawpad添加层
             drawPadView.pausePreview();
             clearDrawpad();
-            //添加背景
-            //添加视频
             if (!videoPath.trim().isEmpty()) {
                 MediaInfo videoInfo = new MediaInfo(videoPath);
                 if (videoInfo.prepare()) {
@@ -151,16 +141,10 @@ public class VideoCropMVPModel {
                     videoRatio = 1f * videoInfo.getWidth() / videoInfo.getHeight();
                     vLayerW = drawPadView.getDrawPadWidth();
                     vLayerH = vLayerW / videoRatio;
-//                    LanSongFilter filter = new LanSongBlurFilter();
                     backgroundLayer = drawPadView.addVideoLayer(padRealWidth, padRealHeight, null);
                     backgroundLayer.setScaledValue(padRealHeight * videoRatio, padRealHeight);
                     backgroundLayer.setPosition(drawPadView.getDrawPadWidth() * 0.5f, drawPadView.getDrawPadHeight() * 0.5f);
                     if (backgroundLayer != null) {
-//                        mainLayer = backgroundLayer.addSubLayer();
-//                        if (mainLayer != null) {
-//                            mainLayer.setScaledValue(vLayerW, vLayerH);
-//                            mainLayer.setPosition(drawPadView.getDrawPadWidth() * 0.5f, drawPadView.getDrawPadHeight() * 0.5f);
-//                        }
                         player = new MediaPlayer();
                         player.setLooping(false);
                         try {
@@ -259,20 +243,15 @@ public class VideoCropMVPModel {
         }
     }
 
-    /**
-     * 获取总时长
-     *
-     * @return
-     */
     public long getDuration() {
         try {
             if (player != null) {
                 return player.getDuration();
             }
         } catch (NullPointerException | IllegalStateException e) {
+            LogUtil.d("oom", e.getMessage());
         }
         return 0;
-//        return mediaController != null ? mediaController.getDuration() : 0;
     }
 
     /**
@@ -415,12 +394,11 @@ public class VideoCropMVPModel {
     private float seekbarPercent;
     private float marginLeft;
     private boolean fullyInitiated = false;
-    private boolean isOndestroy=false;
+    private boolean isOndestroy = false;
 
     public void initTrimmer(RangeSeekBarView mRangeSeekBarView, VideoFrameRecycler mTimeLineView, RoundImageView progressCursor) {
         this.cursor = progressCursor;
         this.mRangeSeekBarView = mRangeSeekBarView;
-        this.mTimeLineView = mTimeLineView;
         canScroll = getDuration() > VideoTimelineAdapter.FULL_SCROLL_DURATION;
         RecyclerView.LayoutManager layoutManager =
                 new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false) {
@@ -563,7 +541,7 @@ public class VideoCropMVPModel {
 
 
     public void onDestroy() {
-        isOndestroy=true;
+        isOndestroy = true;
         fullyInitiated = false;
         destroyTimer();
         if (frameAdapter != null) {
@@ -631,14 +609,12 @@ public class VideoCropMVPModel {
     }
 
 
-
-
     private static final long maxCropDurationMs = 300 * 1000;
     private static final long minCropDurationMs = 2 * 1000;
     private boolean isSaving = false;
     private boolean is4kVideo = false;
     WaitingDialog_progress dialog;
-    DrawPadAllExecute2 execute= null;
+
     public void saveVideo(boolean needCut) {
         if (!fullyInitiated || isSaving) {
             ToastUtil.showToast("还在加载请稍等");
@@ -664,151 +640,55 @@ public class VideoCropMVPModel {
         //视频尺寸限制
         if (videoInfo.vCodecWidth > 1920 || videoInfo.vCodecHeight > 1080) {
             is4kVideo = true;
-//            ToastUtil.showToast("原视频尺寸过大，请重新选择");
-//            return;
         }
         onPause();
         isSaving = true;
 
         long durationUs = getDuration() * 1000;
-        getUserChooseDuration(cropStartRatio,cropEndRatio);
+        getUserChooseDuration(cropStartRatio, cropEndRatio);
         videoCutDurationForVideoOneDo.getInstance().startCutDurtion(videoPath, Math.round(cropStartRatio * durationUs), Math.round(cropEndRatio * durationUs), new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
             public void progresss(int progress) {
-                if(progress>100){
-                    progress=100;
+                if (progress > 100) {
+                    progress = 100;
                 }
-                if (dialog != null&&!isOndestroy) {
-                    if(needCut){
-                        dialog.setProgress("飞闪正在视频抠像中~"+progress + "%"+"\n" +
+                if (dialog != null && !isOndestroy) {
+                    if (needCut) {
+                        dialog.setProgress("飞闪正在视频抠像中~" + progress + "%" + "\n" +
                                 "上传清晰人物最佳");
-                    }else{
+                    } else {
                         dialog.setProgress(progress + "%");
                     }
-
                 }
             }
 
             @Override
             public void isSuccess(boolean isSuccess, String path) {
-            isSaving=false;
-            if (path == null) {
-                ToastUtil.showToast(mContext.getString(R.string.render_error));
-                return;
-            }
-            File video = new File(path);
-            if (video.exists()){
-                if(!isOndestroy){
-                    dialog.closePragressDialog();
-                    String tempPath = getTempVideoPath(mContext)+video.getName();
-                    try {
-                        FileUtil.copyFile(video, tempPath);
-                        callback.finishCrop(tempPath);
+                isSaving = false;
+                if (path == null) {
+                    ToastUtil.showToast(mContext.getString(R.string.render_error));
+                    return;
+                }
+                File video = new File(path);
+                if (video.exists()) {
+                    if (!isOndestroy) {
+                        toCloseDialog();
+                        String tempPath = getTempVideoPath(mContext) + video.getName();
+                        try {
+                            FileUtil.copyFile(video, tempPath);
+                            callback.finishCrop(tempPath);
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
+                } else {
+                    toCloseDialog();
+                    ToastUtil.showToast(mContext.getString(R.string.export_failure));
                 }
-            }else {
-                if(!isOndestroy){
-                    dialog.closePragressDialog();
-                }
-
-                ToastUtil.showToast(mContext.getString(R.string.export_failure));
-            }
             }
         });
-
-
-
-//        try {
-//            execute = new DrawPadAllExecute2(mContext,DRAWPAD_WIDTH,DRAWPAD_HEIGHT,(cropDurationMs*1000));
-//            execute.setFrameRate(FRAME_RATE);
-//            execute.setEncodeBitrate(5 * 1024 * 1024);
-//            execute.setOnLanSongSDKErrorListener(message -> {
-//                isSaving=false;
-//                dialog.closePragressDialog();
-//                LogUtil.e("execute", String.valueOf(message));
-//            });
-//            execute.setOnLanSongSDKProgressListener((l, i) -> {
-//                if (dialog!=null){
-//                    dialog.setProgress(i +"%");
-//                    LogUtil.d("execute progress: ", String.valueOf(i));
-//                }
-//            });
-//            execute.setOnLanSongSDKCompletedListener(exportPath -> {
-//                isSaving=false;
-//                execute.release();
-//                if (exportPath == null) {
-//                    ToastUtil.showToast(mContext.getString(R.string.render_error));
-//                    return;
-//                }
-//                File video = new File(exportPath);
-//                if (video.exists()){
-//                    dialog.closePragressDialog();
-//                    String tempPath = getTempVideoPath(mContext)+video.getName();
-//                    try {
-//                        FileUtil.copyFile(video, tempPath);
-//                        callback.finishCrop(tempPath);
-//
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }else {
-//                    dialog.closePragressDialog();
-//                    ToastUtil.showToast(mContext.getString(R.string.export_failure));
-//                }
-//            });
-//            Observable.create((Observable.OnSubscribe<Integer>) subscriber -> {
-//                if (execute!=null){
-//                    try {
-//                        LSOVideoOption option=new LSOVideoOption(videoPath);
-//                        long durationUs=getDuration()*1000;
-//                        option.setCutDurationUs(Math.round(cropStartRatio*durationUs),Math.round(cropEndRatio*durationUs));
-////                        VideoFrameLayer bgLayer=execute.addVideoLayer(option,0, Long.MAX_VALUE, true, true);
-////                        if (bgLayer != null) {
-////                            bgLayer.setScaledValue(videoRatio*execute.getPadHeight(), execute.getPadHeight());
-////                            bgLayer.setPosition(execute.getPadWidth() * 0.5f, execute.getPadHeight() * 0.5f);
-////                            LanSongFilter filter = new LanSongBlurFilter();
-////                            bgLayer.switchFilterTo(filter);
-////                        }else {
-////                            subscriber.onError(new Throwable());
-////                        }
-//                        VideoFrameLayer mainLayer=execute.addVideoLayer(option);
-//                        if (mainLayer!=null){
-//                            mainLayer.setScaledValue(DRAWPAD_WIDTH*mScale,mScale*DRAWPAD_WIDTH/videoRatio);
-//                            mainLayer.setPosition(execute.getPadWidth()*0.5f,execute.getPadHeight()*0.5f);
-//                        }else {
-//                            subscriber.onError(new Throwable());
-//                        }
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                if (execute.start()) {
-//                    subscriber.onNext(0);
-//                } else {
-//                    subscriber.onError(new Throwable());
-//                }
-//                subscriber.onCompleted();
-//            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(aInteger -> {
-//                dialog.setProgress(aInteger+"");
-//            }, throwable -> {
-//                if (is4kVideo){
-//                    statisticsEventAffair.getInstance().setFlag(mContext,"4kVideoFail","4k视频导出崩溃");
-//                }
-//                isSaving=false;
-//                execute.release();
-//                onResume();
-//                ToastUtil.showToast(mContext.getString(R.string.export_failure));
-//                dialog.closePragressDialog();
-//            });
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
     }
-
 
 
     /**
@@ -816,13 +696,11 @@ public class VideoCropMVPModel {
      * creation date: 2020/4/26
      * user : zhangtongju
      */
-    private void getUserChooseDuration(float startTime,float endTime){
-        float realCutTime=endTime-startTime;
-        LogUtil.d("OOM","realCutTime="+realCutTime);
+    private void getUserChooseDuration(float startTime, float endTime) {
+        float realCutTime = endTime - startTime;
+        LogUtil.d("OOM", "realCutTime=" + realCutTime);
         callback.getRealCutTime(realCutTime);
-
     }
-
 
 
     private String getTempVideoPath(Context mContext) {
@@ -841,4 +719,13 @@ public class VideoCropMVPModel {
         }
         return mContext.getExternalCacheDir().getAbsolutePath();
     }
+
+
+    private void toCloseDialog() {
+        if (!isOndestroy) {
+            dialog.closePragressDialog();
+        }
+    }
+
+
 }
