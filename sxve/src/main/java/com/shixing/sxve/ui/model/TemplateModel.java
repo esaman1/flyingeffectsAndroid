@@ -2,6 +2,7 @@ package com.shixing.sxve.ui.model;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 import android.util.Log;
@@ -265,7 +266,9 @@ public class TemplateModel {
      * user : zhangtongju
      */
     private void refreshMediaModel(String finalMimeType, MediaUiModel2 media, String path) {
-        new Handler().post(() -> {
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+        mainHandler.post(() -> {
+            //已在主线程中，可以更新UI
             if (albumType.isImage(finalMimeType)) {
                 media.setImageAsset(path);
             } else {

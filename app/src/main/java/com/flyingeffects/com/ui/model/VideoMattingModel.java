@@ -207,10 +207,11 @@ public class VideoMattingModel {
                 if (!nowActivityIsOnDestroy) {
                     dialog.closePragressDialog();
                 }
-
+//                test(cacheCutVideoPath + "/noMatting.mp4",exportPath);
                 String albumPath = cacheCutVideoPath + "/Matting.mp4";
                 try {
                     FileUtil.copyFile(new File(exportPath), albumPath);
+//                    test(cacheCutVideoPath + "/noMatting.mp4",albumPath);
                     DataCleanManager.deleteFilesByDirectory(context.getExternalFilesDir("faceMattingFolder"));
                     DataCleanManager.deleteFilesByDirectory(context.getExternalFilesDir("faceFolder"));
                     long time = System.currentTimeMillis() - nowCurtime;
@@ -219,7 +220,7 @@ public class VideoMattingModel {
                     //    requestLoginForSdk(ss);
                     statisticsEventAffair.getInstance().setFlag(context, "mattingVideoTime", templateName);
                     if (callback != null) {
-                        callback.isSuccess(true, albumPath);
+                        callback.isSuccess(true, albumPath,cacheCutVideoPath + "/noMatting.mp4");
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -333,7 +334,7 @@ public class VideoMattingModel {
                 e.printStackTrace();
             }
         } else {
-            callback.isSuccess(false, "");
+            callback.isSuccess(false, "","");
         }
     }
 
@@ -359,7 +360,7 @@ public class VideoMattingModel {
 
 
     public interface MattingSuccess {
-        void isSuccess(boolean isSuccess, String path);
+        void isSuccess(boolean isSuccess, String path,String noMakingPath);
     }
 
 
@@ -394,6 +395,18 @@ public class VideoMattingModel {
     public void nowActivityIsDestroy(boolean nowActivityIsOnDestroy) {
         this.nowActivityIsOnDestroy = nowActivityIsOnDestroy;
     }
+
+//
+//    private void test(String path1, String path2) {
+//        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+//        retriever.setDataSource(path1);
+//        String sss = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT);
+//        LogUtil.d("OOM2", "11原视频帧数是" + sss);
+//        MediaMetadataRetriever retriever2 = new MediaMetadataRetriever();
+//        retriever2.setDataSource(path2);
+//        String sss2 = retriever2.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_FRAME_COUNT);
+//        LogUtil.d("OOM2", "11灰度图帧数是" + sss2);
+//    }
 
 
 }

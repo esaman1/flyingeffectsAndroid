@@ -388,8 +388,8 @@ public class TemplateMvpModel {
             public void call(String s) {
                 VideoMattingModel videoMattingModel = new VideoMattingModel(originalPath, context, new VideoMattingModel.MattingSuccess() {
                     @Override
-                    public void isSuccess(boolean isSuccess, String path) {
-                        EventBus.getDefault().post(new MattingVideoEnity(originalPath, path, 1));
+                    public void isSuccess(boolean isSuccess, String path,String noMaskingPath) {
+                        EventBus.getDefault().post(new MattingVideoEnity(noMaskingPath, path, 1));
                     }
                 });
                 videoMattingModel.ToExtractFrame(templatename);
