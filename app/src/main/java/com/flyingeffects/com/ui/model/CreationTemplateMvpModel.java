@@ -914,23 +914,25 @@ public class CreationTemplateMvpModel {
             backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, new backgroundDraw.saveCallback() {
                 @Override
                 public void saveSuccessPath(String path, int progress) {
+                    if(!isDestroy){
+                        if (!TextUtils.isEmpty(path)) {
 
-                    if (!TextUtils.isEmpty(path)) {
-                        dialog.closePragressDialog();
-                        //成功后的回调
-                        Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        intent.putExtra("path", path);
-                        context.startActivity(intent);
-                        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> isIntoSaveVideo = false,500));
-                    } else {
-                        if (progress == 10000) {
-                            isIntoSaveVideo = false;
-                            //渲染失败
                             dialog.closePragressDialog();
+                            //成功后的回调
+                            Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            intent.putExtra("path", path);
+                            context.startActivity(intent);
+                            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> isIntoSaveVideo = false,500));
                         } else {
-                            dialogProgress = progress;
-                            handler.sendEmptyMessage(1);
+                            if (progress == 10000) {
+                                isIntoSaveVideo = false;
+                                //渲染失败
+                                dialog.closePragressDialog();
+                            } else {
+                                dialogProgress = progress;
+                                handler.sendEmptyMessage(1);
+                            }
                         }
                     }
                 }
@@ -1048,7 +1050,6 @@ public class CreationTemplateMvpModel {
                 if (cutSuccessNum == cutVideoPathList.size()) {
                     if (isMatting) {
                         LogUtil.d("OOM2", "裁剪完成，准备抠图");
-//                        progressNowAnim.closePragressDialog();
                         //全部裁剪完成之后需要去把视频裁剪成全部帧
                         videoGetFrameModel getFrameModel = new videoGetFrameModel(context, cutList, (isSuccess1, progress) -> {
                             LogUtil.d("OOM2", "全部抠图完成");
@@ -1066,7 +1067,6 @@ public class CreationTemplateMvpModel {
                         });
                         getFrameModel.startExecute();
                     } else {
-                        dialog.closePragressDialog();
                         backgroundDraw.toSaveVideo(listAllSticker, false);
                     }
                 } else {
