@@ -70,6 +70,7 @@ import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.observers.Observers;
 import rx.schedulers.Schedulers;
 
 
@@ -523,11 +524,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             mTemplateModel.cartoonPath = path;
             mTemplateModel.setReplaceAllMaterial(imgPath);
             WaitingDialog.closePragressDialog();
-            mTemplateViews.get(nowChooseIndex).invalidate();
             presenter.getButtomIcon(path);
+            Observable.just(nowChooseIndex).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+                @Override
+                public void call(Integer integer) {
+                    mTemplateViews.get(integer).invalidate();
+                }
+            });
         }
-
-
     }
 
 
