@@ -305,7 +305,13 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 //                originalImagePath = null;
 //            } else {//需要抠图
             if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)){
-                alert="正在加载中~";
+                //背景模板文案
+                alert="正在生成中~";
+            }else{
+                //一键模板不抠图的情况下
+                if (is_picout == 0){
+                    alert="正在生成中~";
+                }
             }
             new Handler().postDelayed(() -> {
                 if(!ondestroy){
