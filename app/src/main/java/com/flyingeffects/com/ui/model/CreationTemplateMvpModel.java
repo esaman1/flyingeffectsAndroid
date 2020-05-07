@@ -916,7 +916,6 @@ public class CreationTemplateMvpModel {
                 public void saveSuccessPath(String path, int progress) {
                     if(!isDestroy){
                         if (!TextUtils.isEmpty(path)) {
-
                             dialog.closePragressDialog();
                             //成功后的回调
                             Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
