@@ -391,7 +391,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         listItem.addAll(callbackListItem);
         templateThumbAdapter.notifyDataSetChanged();
         mTemplateModel.setReplaceAllMaterial(listAssets);
-        mTemplateViews.get(nowChooseIndex).invalidate();
+//        mTemplateViews.get(nowChooseIndex).invalidate();
+        invalidateView();
     }
 
 
@@ -1088,5 +1089,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             WaitingDialog.openPragressDialog(TemplateActivity.this);
         }
     };
+
+
+
+    private void invalidateView(){
+        Observable.just(nowChooseIndex).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> mTemplateViews.get(integer).invalidate(),200));
+    }
 
 }

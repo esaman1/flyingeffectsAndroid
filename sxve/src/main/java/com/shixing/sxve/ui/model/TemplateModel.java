@@ -141,8 +141,12 @@ public class TemplateModel {
             if (mAssets.get(0).ui.getIsAnim()) {
                 if (i == mAssets.size() - 1) {
                     //最后一个的时候
-                    MediaUiModel2 model2 = (MediaUiModel2) mAssets.get(i - 1).ui;
-                    paths[i] = model2.getpathForThisMatrix(folder, cartoonPath);
+                    if(i - 1!=-1){
+                        MediaUiModel2 model2 = (MediaUiModel2) mAssets.get(i - 1).ui;
+                        paths[i] = model2.getpathForThisMatrix(folder, cartoonPath);
+                    }else{
+                        paths[i] = mAssets.get(i).ui.getSnapPath(folder);
+                    }
                 } else {
                     paths[i] = mAssets.get(i).ui.getSnapPath(folder);
                 }

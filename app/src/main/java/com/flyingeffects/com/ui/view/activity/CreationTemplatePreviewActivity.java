@@ -341,7 +341,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
      */
     private long getCurrentPos() {
         return exoPlayer != null ? exoPlayer.getCurrentPosition() : 0;
-
     }
 
 

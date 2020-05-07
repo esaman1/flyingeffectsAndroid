@@ -85,7 +85,7 @@ public class WelcomeActivity extends BaseActivity {
         }
         tvSkip = findViewById(R.id.tv_skip);
         rlAdContainer = findViewById(R.id.rl_ad_container);
-        if (!fromBackstage) {
+//        if (!fromBackstage) {
             //记录是不是新用户
             if (BaseConstans.isFirstOpenApp()) {
                 BaseConstans.setFirstOpenApp(System.currentTimeMillis()); //记录第一次打开app的时间
@@ -95,7 +95,7 @@ public class WelcomeActivity extends BaseActivity {
                 openAppNum++;
                 BaseConstans.setOpenAppNum(openAppNum); //打开app的次数为1
             }
-        }
+//        }
         gotoPrivacyPolicyActivity();
     }
 
