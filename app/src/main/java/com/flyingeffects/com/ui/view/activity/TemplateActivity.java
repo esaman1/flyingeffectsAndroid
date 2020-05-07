@@ -313,7 +313,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         });
 
-        test();
+//        test();
     }
 
 

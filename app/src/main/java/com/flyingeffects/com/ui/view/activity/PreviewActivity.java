@@ -382,6 +382,11 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     }
 
 
+    /**
+     * description ：选择图片进入的逻辑
+     * creation date: 2020/5/7
+     * user : zhangtongju
+     */
     private void intoTemplateActivity(List<String> paths, String templateFilePath) {
         toClosePragressDialog();
         Intent intent = new Intent(this, TemplateActivity.class);
@@ -621,17 +626,18 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             originalImagePath.clear();
             ArrayList<String> paths = new ArrayList<>();
             paths.add(event.getMattingPath());
+            Intent intent = new Intent(this, TemplateActivity.class);
+            Bundle bundle = new Bundle();
             //用户没选择抠图
             if (event.getOriginalPath() != null) {
                 originalImagePath.add(event.getOriginalPath());
+                bundle.putInt("picout", 1);
             } else {
                 originalImagePath = null;
+                bundle.putInt("picout", 0);
             }
-            Intent intent = new Intent(this, TemplateActivity.class);
-            Bundle bundle = new Bundle();
             bundle.putStringArrayList("paths", paths);
             bundle.putInt("isPicNum", defaultnum);
-            bundle.putInt("picout", templateItem.getIs_picout());
             bundle.putString("fromTo", fromTo);
             bundle.putInt("is_anime", templateItem.getIs_anime());
             bundle.putString("templateName", templateItem.getTitle());
