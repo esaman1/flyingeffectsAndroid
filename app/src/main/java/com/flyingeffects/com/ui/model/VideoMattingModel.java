@@ -17,6 +17,7 @@ import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.ThreadJudgeManage;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -33,6 +34,11 @@ import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
 
 import java.io.File;
 import java.util.List;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * description ：视频抠图控制类
@@ -71,7 +77,7 @@ public class VideoMattingModel {
     /**
      * 依附的宿主activity 是否被销毁
      */
-    private boolean nowActivityIsOndestroy = false;
+    private boolean nowActivityIsOnDestroy = false;
 
     public VideoMattingModel(String videoPath, Context context, MattingSuccess callback) {
         this.callback = callback;
@@ -84,10 +90,9 @@ public class VideoMattingModel {
         cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
         LogUtil.d("OOM", "faceMattingFolder=" + faceMattingFolder);
         dialog = new WaitingDialogProgressNowAnim(context);
-        if (!nowActivityIsOndestroy) {
+        if (!nowActivityIsOnDestroy) {
             dialog.openProgressDialog();
         }
-
     }
 
 
@@ -112,6 +117,7 @@ public class VideoMattingModel {
         mediaMetadataRetriever.setDataSource(videoPath);
         String rotation = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
         if (TextUtils.isEmpty(rotation)) {
+
             if (mInfo.vWidth * mInfo.vHeight > 1280 * 720) {
                 mExtractFrame.setBitmapWH(mInfo.vWidth / 2, mInfo.vHeight / 2);
             }
@@ -141,7 +147,11 @@ public class VideoMattingModel {
             LogUtil.d("OOM2", "frameCount的值为" + frameCount);
             SegJni.nativeReleaseImageBuffer();
             SegJni.nativeReleaseSegHandler();
-            addFrameCompoundVideoNoMatting();
+            boolean isMainThread= ThreadJudgeManage.isMainThread();
+            LogUtil.d("OOM","当前线程运行在主线程吗？"+isMainThread);
+            Observable.just(0).subscribeOn(Schedulers.io()).subscribe(integer ->   addFrameCompoundVideoNoMatting());
+
+
         });
 
         //设置处理进度监听.
@@ -169,7 +179,9 @@ public class VideoMattingModel {
     private float nowProgressTime;
 
     private void addFrameCompoundVideo() {
-        LogUtil.d("OOM", "开始合成mask视频");
+        boolean isMainThread= ThreadJudgeManage.isMainThread();
+        LogUtil.d("OOM2","当前线程运行在主线程吗？"+isMainThread);
+        LogUtil.d("OOM2", "开始合成mask视频");
         nowChooseImageIndex = 0;
         List<File> getMattingList = FileManager.listFileSortByModifyTime(faceMattingFolder);
         LogUtil.d("OOM2", "getMattingList2=" + getMattingList.size());
@@ -192,7 +204,7 @@ public class VideoMattingModel {
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
                 execute.removeAllLayer();
                 execute.release();
-                if (!nowActivityIsOndestroy) {
+                if (!nowActivityIsOnDestroy) {
                     dialog.closePragressDialog();
                 }
 
@@ -259,6 +271,8 @@ public class VideoMattingModel {
 
 
     private void addFrameCompoundVideoNoMatting() {
+        boolean isMainThread= ThreadJudgeManage.isMainThread();
+        LogUtil.d("OOM","当前线程运行在主线程吗？"+isMainThread);
         LogUtil.d("OOM2", "开始合成原图");
         List<File> getMattingList = FileManager.listFileSortByModifyTime(faceFolder);
 
@@ -283,7 +297,7 @@ public class VideoMattingModel {
                 execute.setOnLanSongSDKCompletedListener(exportPath -> {
                     execute.removeAllLayer();
                     execute.release();
-                    LogUtil.d("OOM", "合成没有原图成功");
+                    LogUtil.d("OOM", "合成原图成功");
                     String albumPath = cacheCutVideoPath + "/noMatting.mp4";
                     File file = new File(albumPath);
                     if (file.exists()) {
@@ -292,7 +306,7 @@ public class VideoMattingModel {
                     }
                     try {
                         FileUtil.copyFile(new File(exportPath), albumPath);
-                        addFrameCompoundVideo();
+                        Observable.just(0).subscribeOn(Schedulers.io()).subscribe(integer -> addFrameCompoundVideo());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -355,7 +369,7 @@ public class VideoMattingModel {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (!nowActivityIsOndestroy) {
+            if (!nowActivityIsOnDestroy) {
                 if (progress <= 25) {
                     dialog.setProgress("飞闪视频抠像中" + progress + "%\n" + "请耐心等待 不要离开");
                 } else if (progress <= 40) {
@@ -377,8 +391,8 @@ public class VideoMattingModel {
      * creation date: 2020/5/6
      * user : zhangtongju
      */
-    public void nowActivityIsDestroy(boolean nowActivityIsOndestroy) {
-        this.nowActivityIsOndestroy = nowActivityIsOndestroy;
+    public void nowActivityIsDestroy(boolean nowActivityIsOnDestroy) {
+        this.nowActivityIsOnDestroy = nowActivityIsOnDestroy;
     }
 
 
