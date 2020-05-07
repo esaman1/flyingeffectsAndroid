@@ -394,7 +394,7 @@ public class VideoCropMVPModel {
     private float seekbarPercent;
     private float marginLeft;
     private boolean fullyInitiated = false;
-    private boolean isOndestroy = false;
+    private boolean isOnDestroy = false;
 
     public void initTrimmer(RangeSeekBarView mRangeSeekBarView, VideoFrameRecycler mTimeLineView, RoundImageView progressCursor) {
         this.cursor = progressCursor;
@@ -541,7 +541,7 @@ public class VideoCropMVPModel {
 
 
     public void onDestroy() {
-        isOndestroy = true;
+        isOnDestroy = true;
         fullyInitiated = false;
         destroyTimer();
         if (frameAdapter != null) {
@@ -653,7 +653,7 @@ public class VideoCropMVPModel {
                 if (progress > 100) {
                     progress = 100;
                 }
-                if (dialog != null && !isOndestroy) {
+                if (dialog != null && !isOnDestroy) {
                     if (needCut) {
                         dialog.setProgress("飞闪正在视频抠像中~" + progress + "%" + "\n" +
                                 "上传清晰人物最佳");
@@ -672,7 +672,7 @@ public class VideoCropMVPModel {
                 }
                 File video = new File(path);
                 if (video.exists()) {
-                    if (!isOndestroy) {
+                    if (!isOnDestroy) {
                         toCloseDialog();
                         String tempPath = getTempVideoPath(mContext) + video.getName();
                         try {
@@ -723,7 +723,7 @@ public class VideoCropMVPModel {
 
 
     private void toCloseDialog() {
-        if (!isOndestroy) {
+        if (!isOnDestroy) {
             dialog.closePragressDialog();
         }
     }

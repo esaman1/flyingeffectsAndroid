@@ -115,8 +115,6 @@ public class TemplateMvpModel {
                 CompressionCuttingManage manage = new CompressionCuttingManage(context, "0", false, tailorPaths -> {
                     Bitmap mattingMp = BitmapFactory.decodeFile(tailorPaths.get(0));
                     mattingMp=test(mattingMp,bp.getWidth(),bp.getHeight());
-
-
                     callback.showMattingVideoCover(mattingMp,tailorPaths.get(0));
                 });
                 List<String> list = new ArrayList<>();

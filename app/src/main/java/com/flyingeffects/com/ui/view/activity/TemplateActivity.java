@@ -525,12 +525,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             mTemplateModel.setReplaceAllMaterial(imgPath);
             WaitingDialog.closePragressDialog();
             presenter.getButtomIcon(path);
-            Observable.just(nowChooseIndex).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
-                @Override
-                public void call(Integer integer) {
-                    mTemplateViews.get(integer).invalidate();
-                }
-            });
+            Observable.just(nowChooseIndex).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> mTemplateViews.get(integer).invalidate(),200));
         }
     }
 

@@ -474,8 +474,13 @@ public class CreationTemplateMvpModel {
                 if (type == StickerView.LEFT_TOP_MODE) {//刪除
                     viewLayerRelativeLayout.removeView(stickView);
                     int nowId = stickView.getId();
+                    if(stickView.isFirstAddSticker()){
+                        if(stickView.isOpenVoice()){
+                            stickView.setOpenVoice(false);
+                            callback.getBgmPath("");
+                        }
+                    }
                     delectedListForSticker(nowId);
-
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     stickView.dismissFrame();
                     //copy
@@ -933,12 +938,6 @@ public class CreationTemplateMvpModel {
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             AllStickerData stickerData = new AllStickerData();
-
-
-
-
-
-
             stickerData.setRotation(stickerView.getRotateAngle());
             stickerData.setScale(stickerView.getScale());
             stickerData.setTranslationX(stickerView.getTranslationX());
@@ -960,10 +959,14 @@ public class CreationTemplateMvpModel {
                     stickerData.setOriginalPath(stickerView.getOriginalPath());
                     VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
                     int materialDuration=materialVideoInfo.getDuration();
-                    int needDuration;
-                    if (videoInfo.getDuration() < materialDuration) {
-                        needDuration = videoInfo.getDuration();
-                    } else {
+                    int needDuration = 0;
+                    if(videoInfo!=null){
+                        if (videoInfo.getDuration() < materialDuration) {
+                            needDuration = videoInfo.getDuration();
+                        } else {
+                            needDuration = materialDuration;
+                        }
+                    }else{
                         needDuration = materialDuration;
                     }
                     stickerData.setDuration(needDuration);
@@ -973,6 +976,13 @@ public class CreationTemplateMvpModel {
             }
             listAllSticker.add(stickerData);
         }
+
+
+        if(listAllSticker.size()==0){
+            ToastUtil.showToast("你未选择素材");
+            return;
+        }
+
         for (int i = 0; i < listAllSticker.size(); i++) {
             if (defaultVideoDuration < listAllSticker.get(i).getDuration()) {
                 defaultVideoDuration = (int) listAllSticker.get(i).getDuration();
@@ -982,6 +992,7 @@ public class CreationTemplateMvpModel {
             }
         }
         if (cutVideoPathList.size() == 0) {
+
             dialog.openProgressDialog();
             //都不是视频的情况下，就直接渲染
             backgroundDraw.toSaveVideo(listAllSticker, isMatting);
