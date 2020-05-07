@@ -29,8 +29,8 @@ public class timeUtils {
     public static String timeParse(long duration) {
         String time = "" ;
 
-        long minute = duration / 60000 ;
-        long seconds = duration % 60000 ;
+        long minute = duration / 59000 ;
+        long seconds = duration % 59000 ;
 
         long second = Math.round((float)seconds/1000) ;
 

@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
@@ -474,8 +475,8 @@ public class CreationTemplateMvpModel {
                 if (type == StickerView.LEFT_TOP_MODE) {//刪除
                     viewLayerRelativeLayout.removeView(stickView);
                     int nowId = stickView.getId();
-                    if(stickView.isFirstAddSticker()){
-                        if(stickView.isOpenVoice()){
+                    if (stickView.isFirstAddSticker()) {
+                        if (stickView.isOpenVoice()) {
                             stickView.setOpenVoice(false);
                             callback.getBgmPath("");
                         }
@@ -485,7 +486,7 @@ public class CreationTemplateMvpModel {
                     stickView.dismissFrame();
                     //copy
                     copyGif(stickView.getResPath(), path, stickView.getComeFrom(), stickView, stickView.getOriginalPath());
-                    if(!TextUtils.isEmpty(stickView.getOriginalPath())){
+                    if (!TextUtils.isEmpty(stickView.getOriginalPath())) {
                         if (albumType.isVideo(GetPathType.getInstance().getMediaType(stickView.getOriginalPath()))) {
                             if (UiStep.isFromDownBj) {
                                 statisticsEventAffair.getInstance().setFlag(context, "7_plusone");
@@ -564,8 +565,8 @@ public class CreationTemplateMvpModel {
                                 manage.ToMatting(paths);
 
 
-                                if(stickView.isFirstAddSticker()){
-                                    if(stickView.isOpenVoice()){
+                                if (stickView.isFirstAddSticker()) {
+                                    if (stickView.isOpenVoice()) {
                                         stickView.setOpenVoice(false);
                                         stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
                                         callback.getBgmPath("");
@@ -575,9 +576,6 @@ public class CreationTemplateMvpModel {
                             }
                         }
                     }, "");
-
-
-
 
 
                 }
@@ -681,7 +679,7 @@ public class CreationTemplateMvpModel {
         }
         viewLayerRelativeLayout.addView(stickView);
 
-        if(isFirstAdd){
+        if (isFirstAdd) {
             callback.isFirstAddSuccess();
         }
 
@@ -782,7 +780,7 @@ public class CreationTemplateMvpModel {
         if (viewLayerRelativeLayout.getChildCount() > 0) {
             for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
                 StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
-                if(!TextUtils.isEmpty(stickerView.getOriginalPath())){
+                if (!TextUtils.isEmpty(stickerView.getOriginalPath())) {
                     if (albumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath()))) {
                         VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
                         LogUtil.d("OOM", "materialVideoInfo.getDuration()=" + materialVideoInfo.getDuration());
@@ -792,7 +790,7 @@ public class CreationTemplateMvpModel {
             }
         } else {
             //只有第一次初始化的时候，可能为0.因为viewLayerRelativeLayout还没加载进入数据，所有就需要手动加上
-            if(!TextUtils.isEmpty(originalPath)){
+            if (!TextUtils.isEmpty(originalPath)) {
                 if (albumType.isVideo(GetPathType.getInstance().getPathType(originalPath))) {
                     VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(originalPath);
                     LogUtil.d("OOM", "materialVideoInfo.getDuration()=" + materialVideoInfo.getDuration());
@@ -904,108 +902,113 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
 
+    private boolean isIntoSaveVideo = false;
 
     public void toSaveVideo(String imageBjPath) {
-        listAllSticker.clear();
-        cutSuccessNum = 0;
-        cutVideoPathList.clear();
-        backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, new backgroundDraw.saveCallback() {
-            @Override
-            public void saveSuccessPath(String path, int progress) {
-                if(!TextUtils.isEmpty(path)){
-                    dialog.closePragressDialog();
-                    //成功后的回调
-                    Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    intent.putExtra("path", path);
-                    context.startActivity(intent);
-                }else{
-                    if(progress==10000){
-                        //渲染失败
+
+        if (!isIntoSaveVideo) {
+            isIntoSaveVideo = true;
+            listAllSticker.clear();
+            cutSuccessNum = 0;
+            cutVideoPathList.clear();
+            backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, new backgroundDraw.saveCallback() {
+                @Override
+                public void saveSuccessPath(String path, int progress) {
+
+                    if (!TextUtils.isEmpty(path)) {
                         dialog.closePragressDialog();
-                    }else{
-                        dialogProgress = progress;
-                        handler.sendEmptyMessage(1);
+                        //成功后的回调
+                        Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        intent.putExtra("path", path);
+                        context.startActivity(intent);
+                        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> isIntoSaveVideo = false,500));
+                    } else {
+                        if (progress == 10000) {
+                            isIntoSaveVideo = false;
+                            //渲染失败
+                            dialog.closePragressDialog();
+                        } else {
+                            dialogProgress = progress;
+                            handler.sendEmptyMessage(1);
+                        }
                     }
-
                 }
-            }
-        });
+            });
 
 
+            for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
+                StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
+                AllStickerData stickerData = new AllStickerData();
+                stickerData.setRotation(stickerView.getRotateAngle());
+                stickerData.setScale(stickerView.getScale());
+                stickerData.setTranslationX(stickerView.getTranslationX());
+                stickerData.setTranslationy(stickerView.getTranslationY());
+                if (!TextUtils.isEmpty(stickerView.getOriginalPath())) {
+                    String pathType = GetPathTypeModel.getInstance().getMediaType(stickerView.getOriginalPath());
+                    stickerData.setVideo(albumType.isVideo(pathType));
+                }
+                if (stickerView.getComeFrom()) {
+                    //来自相册，不是gif
+                    if (isMatting) {
+                        stickerData.setPath(stickerView.getClipPath());
+                        stickerData.setOriginalPath(stickerView.getOriginalPath());
+                        VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
+                        stickerData.setDuration(materialVideoInfo.getDuration());
 
-
-        for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
-            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
-            AllStickerData stickerData = new AllStickerData();
-            stickerData.setRotation(stickerView.getRotateAngle());
-            stickerData.setScale(stickerView.getScale());
-            stickerData.setTranslationX(stickerView.getTranslationX());
-            stickerData.setTranslationy(stickerView.getTranslationY());
-            if (!TextUtils.isEmpty(stickerView.getOriginalPath())) {
-                String pathType = GetPathTypeModel.getInstance().getMediaType(stickerView.getOriginalPath());
-                stickerData.setVideo(albumType.isVideo(pathType));
-            }
-            if (stickerView.getComeFrom()) {
-                //来自相册，不是gif
-                if (isMatting) {
-                    stickerData.setPath(stickerView.getClipPath());
-                    stickerData.setOriginalPath(stickerView.getOriginalPath());
-                    VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
-                    stickerData.setDuration(materialVideoInfo.getDuration());
-
-                } else { //这里也会出现蓝松一样的，相同地址只有一个图层
-                    stickerData.setPath(stickerView.getOriginalPath());
-                    stickerData.setOriginalPath(stickerView.getOriginalPath());
-                    VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
-                    int materialDuration=materialVideoInfo.getDuration();
-                    int needDuration = 0;
-                    if(videoInfo!=null){
-                        if (videoInfo.getDuration() < materialDuration) {
-                            needDuration = videoInfo.getDuration();
+                    } else { //这里也会出现蓝松一样的，相同地址只有一个图层
+                        stickerData.setPath(stickerView.getOriginalPath());
+                        stickerData.setOriginalPath(stickerView.getOriginalPath());
+                        VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
+                        int materialDuration = materialVideoInfo.getDuration();
+                        int needDuration = 0;
+                        if (videoInfo != null) {
+                            if (videoInfo.getDuration() < materialDuration) {
+                                needDuration = videoInfo.getDuration();
+                            } else {
+                                needDuration = materialDuration;
+                            }
                         } else {
                             needDuration = materialDuration;
                         }
-                    }else{
-                        needDuration = materialDuration;
+                        stickerData.setDuration(needDuration);
                     }
-                    stickerData.setDuration(needDuration);
+                } else {
+                    stickerData.setPath(stickerView.getResPath());
                 }
+                listAllSticker.add(stickerData);
+            }
+
+            if (listAllSticker.size() == 0) {
+                isIntoSaveVideo = false;
+                Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().post(() -> Toast.makeText(context,"你未选择素材",Toast.LENGTH_SHORT).show()));
+                return;
+            }
+
+            for (int i = 0; i < listAllSticker.size(); i++) {
+                if (defaultVideoDuration < listAllSticker.get(i).getDuration()) {
+                    defaultVideoDuration = (int) listAllSticker.get(i).getDuration();
+                }
+                if (listAllSticker.get(i).isVideo()) {
+                    cutVideoPathList.add(new videoType(listAllSticker.get(i).getOriginalPath(), i, listAllSticker.get(i).getDuration()));
+                }
+            }
+            if (cutVideoPathList.size() == 0) {
+                dialog.openProgressDialog();
+                //都不是视频的情况下，就直接渲染
+                backgroundDraw.toSaveVideo(listAllSticker, isMatting);
             } else {
-                stickerData.setPath(stickerView.getResPath());
-            }
-            listAllSticker.add(stickerData);
-        }
-
-
-        if(listAllSticker.size()==0){
-            ToastUtil.showToast("你未选择素材");
-            return;
-        }
-
-        for (int i = 0; i < listAllSticker.size(); i++) {
-            if (defaultVideoDuration < listAllSticker.get(i).getDuration()) {
-                defaultVideoDuration = (int) listAllSticker.get(i).getDuration();
-            }
-            if (listAllSticker.get(i).isVideo()) {
-                cutVideoPathList.add(new videoType(listAllSticker.get(i).getOriginalPath(), i, listAllSticker.get(i).getDuration()));
+                dialog.openProgressDialog();
+                cutList.clear();
+                if (videoInfo != null) {
+                    cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration());
+                } else {
+                    //没选择背景默认裁剪10秒
+                    cutVideo(cutVideoPathList.get(0), defaultVideoDuration, cutVideoPathList.get(0).getDuration());
+                }
             }
         }
-        if (cutVideoPathList.size() == 0) {
 
-            dialog.openProgressDialog();
-            //都不是视频的情况下，就直接渲染
-            backgroundDraw.toSaveVideo(listAllSticker, isMatting);
-        } else {
-            dialog.openProgressDialog();
-            cutList.clear();
-            if (videoInfo != null) {
-                cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration());
-            } else {
-                //没选择背景默认裁剪10秒
-                cutVideo(cutVideoPathList.get(0), defaultVideoDuration, cutVideoPathList.get(0).getDuration());
-            }
-        }
 
     }
 
@@ -1052,9 +1055,9 @@ public class CreationTemplateMvpModel {
                             if (isSuccess1) {
                                 backgroundDraw.toSaveVideo(listAllSticker, true);
                             } else {
-                                //todo  零时手段
-                                if(progress<=5){
-                                    progress=5;
+                                //todo  临时手段
+                                if (progress <= 5) {
+                                    progress = 5;
                                 }
                                 dialogProgress = progress;
                                 handler.sendEmptyMessage(1);
@@ -1245,8 +1248,6 @@ public class CreationTemplateMvpModel {
             }
         }
     };
-
-
 
 
 }

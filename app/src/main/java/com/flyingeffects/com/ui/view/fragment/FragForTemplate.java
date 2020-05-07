@@ -28,12 +28,14 @@ import butterknife.BindView;
 
 public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
-
+    home_fagMvpPresenter Presenter;
     @BindView(R.id.tl_tabs)
     SlidingTabLayout tabLayout;
 
     @BindView(R.id.viewpager_bj)
     ViewPager viewpager;
+
+    private List<TemplateType> data;
 
 
     @Override
@@ -44,8 +46,8 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
     @Override
     protected void initView() {
-        home_fagMvpPresenter Presenter = new home_fagMvpPresenter(getActivity(), this);
-        Presenter.getFragmentList();
+        Presenter = new home_fagMvpPresenter(getActivity(), this);
+
     }
 
     @Override
@@ -58,10 +60,20 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(data==null||data.size()==0){
+            Presenter.getFragmentList();
+        }
+    }
+
     @Override
     public void setFragmentList(List<TemplateType> data) {
         if (getActivity() != null) {
             if (data != null && data.size() > 0) {
+                this.data=data;
                 ArrayList<Fragment> list = new ArrayList<>();
                 FragmentManager manager = getFragmentManager();
                 String[] titles = new String[data.size()];
@@ -102,25 +114,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
     }
 
 
-//    @OnClick({R.id.tv_filtrate,R.id.column_more})
-//    public void onClick(View view) {
-//        switch (view.getId()) {
-//            case R.id.tv_filtrate:
-//
-//                break;
-//
-//            case R.id.column_more:
-//
-//                break;
-//
-//
-//            default:
-//                break;
-//
-//        }
-//
-//
-//    }
+
 }
 
 

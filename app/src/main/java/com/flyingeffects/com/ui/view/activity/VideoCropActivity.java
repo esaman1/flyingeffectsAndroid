@@ -211,11 +211,12 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
 //                    ToastUtil.showToast("视频时长超过3分钟");
 //                    this.finish();
 //                    return;
-//                } else if (duration < MIN_DURATION_SEC) {
-//                    ToastUtil.showToast("视频时长小于2秒");
-//                    this.finish();
-//                    return;
-//                }
+//                } else
+                if (duration < MIN_DURATION_SEC) {
+                    ToastUtil.showToast("视频时长小于2秒");
+                    this.finish();
+                    return;
+                }
             } else {
                 ToastUtil.showToast("本视频暂不支持");
                 MediaInfo.checkFile(path);
