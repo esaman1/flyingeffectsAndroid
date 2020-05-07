@@ -10,21 +10,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
-import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.VideoInfo;
-import com.flyingeffects.com.http.Api;
-import com.flyingeffects.com.http.HttpUtil;
-import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.DataCleanManager;
-import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
-import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.timeUtils;
@@ -39,10 +32,7 @@ import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
-
-import rx.Observable;
 
 /**
  * description ：视频抠图控制类
@@ -50,7 +40,6 @@ import rx.Observable;
  * user : zhangtongju
  */
 public class VideoMattingModel {
-    private ExtractVideoFrame mExtractFrame;
     private String videoPath;
     /**
      * 专门用来存储face 抠像的文件夹
@@ -77,17 +66,17 @@ public class VideoMattingModel {
     private WaitingDialogProgressNowAnim dialog;
 
 
-   private  MattingSuccess callback;
+    private MattingSuccess callback;
 
     /**
      * 依附的宿主activity 是否被销毁
      */
-   private boolean nowActivityIsOndestroy=false;
+    private boolean nowActivityIsOndestroy = false;
 
     public VideoMattingModel(String videoPath, Context context, MattingSuccess callback) {
         this.callback = callback;
         this.videoPath = videoPath;
-        this.context=context;
+        this.context = context;
         videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
         FileManager fileManager = new FileManager();
         faceFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceFolder");
@@ -95,12 +84,11 @@ public class VideoMattingModel {
         cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
         LogUtil.d("OOM", "faceMattingFolder=" + faceMattingFolder);
         dialog = new WaitingDialogProgressNowAnim(context);
-        if(!nowActivityIsOndestroy){
+        if (!nowActivityIsOndestroy) {
             dialog.openProgressDialog();
         }
 
     }
-
 
 
     /**
@@ -111,68 +99,67 @@ public class VideoMattingModel {
     private int allFrame;
     private long nowCurtime;
     private String templateName;
+
     public void ToExtractFrame(String templateName) {
-        this.templateName=templateName;
-        nowCurtime= System.currentTimeMillis();
-        new Thread(() -> {
-            MediaInfo mInfo = new MediaInfo(videoPath);
-            if (!mInfo.prepare() || !mInfo.isHaveVideo()) {
-                return;
+        this.templateName = templateName;
+        nowCurtime = System.currentTimeMillis();
+        MediaInfo mInfo = new MediaInfo(videoPath);
+        if (!mInfo.prepare() || !mInfo.isHaveVideo()) {
+            return;
+        }
+        ExtractVideoFrame mExtractFrame = new ExtractVideoFrame(BaseApplication.getInstance(), videoPath);
+        MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+        mediaMetadataRetriever.setDataSource(videoPath);
+        String rotation = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
+        if (TextUtils.isEmpty(rotation)) {
+            if (mInfo.vWidth * mInfo.vHeight > 1280 * 720) {
+                mExtractFrame.setBitmapWH(mInfo.vWidth / 2, mInfo.vHeight / 2);
             }
-            mExtractFrame = new ExtractVideoFrame(BaseApplication.getInstance(), videoPath);
-            MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
-            mediaMetadataRetriever.setDataSource(videoPath);
-            String rotation = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
-            if (TextUtils.isEmpty(rotation)) {
+        } else {
+            int iRotation = Integer.parseInt(rotation);
+            if (iRotation == 90 || iRotation == 180) {
+                if (mInfo.vWidth * mInfo.vHeight > 1280 * 720) {
+                    mExtractFrame.setBitmapWH(mInfo.vHeight / 2, mInfo.vWidth / 2);
+                }
+            } else {
                 if (mInfo.vWidth * mInfo.vHeight > 1280 * 720) {
                     mExtractFrame.setBitmapWH(mInfo.vWidth / 2, mInfo.vHeight / 2);
                 }
-            } else {
-                int iRotation = Integer.parseInt(rotation);
-                if (iRotation == 90 || iRotation == 180) {
-                    if (mInfo.vWidth * mInfo.vHeight > 1280 * 720) {
-                        mExtractFrame.setBitmapWH(mInfo.vHeight / 2, mInfo.vWidth / 2);
-                    }
-                } else {
-                    if (mInfo.vWidth * mInfo.vHeight > 1280 * 720) {
-                        mExtractFrame.setBitmapWH(mInfo.vWidth / 2, mInfo.vHeight / 2);
-                    }
-                }
             }
+        }
 
-            allFrame = mInfo.vTotalFrames;
-            LogUtil.d("OOM2", "视频的总帧数为" + allFrame);
-            //设置提取多少帧
-            mExtractFrame.setExtractSomeFrame(allFrame);
-            mExtractFrame.setOnExtractCompletedListener(v -> {
-                for (int i = 1; i < BaseConstans.THREADCOUNT; i++) {
-                    //最后需要补的帧
-                    frameCount++;
-                    downImageForBitmap(null, frameCount);
-                }
-                LogUtil.d("OOM2", "frameCount的值为" + frameCount);
-                SegJni.nativeReleaseImageBuffer();
-                SegJni.nativeReleaseSegHandler();
-                addFrameCompoundVideoNoMatting();
-            });
-
-            //设置处理进度监听.
-            //当前帧的画面回调,, ptsUS:当前帧的时间戳,单位微秒. 拿到图片后,建议放到ArrayList中,不要直接在这里处理.
-            mExtractFrame.setOnExtractProgressListener((bmp, ptsUS) -> {
+        allFrame = mInfo.vTotalFrames;
+        LogUtil.d("OOM2", "视频的总帧数为" + allFrame);
+        //设置提取多少帧
+        mExtractFrame.setExtractSomeFrame(allFrame);
+        mExtractFrame.setOnExtractCompletedListener(v -> {
+            for (int i = 1; i < BaseConstans.THREADCOUNT; i++) {
+                //最后需要补的帧
                 frameCount++;
-                new Handler().post(() -> {
-                    progress = (int) ((frameCount / (float) allFrame) * 90);
-                    handler.sendEmptyMessage(1);
-                });
-                LogUtil.d("OOM", frameCount + "帧");
-                String fileName = faceFolder + File.separator + frameCount + ".png";
-                BitmapManager.getInstance().saveBitmapToPath(bmp, fileName);
-                downImageForBitmap(bmp, frameCount);
+                downImageForBitmap(null, frameCount);
+            }
+            LogUtil.d("OOM2", "frameCount的值为" + frameCount);
+            SegJni.nativeReleaseImageBuffer();
+            SegJni.nativeReleaseSegHandler();
+            addFrameCompoundVideoNoMatting();
+        });
+
+        //设置处理进度监听.
+        //当前帧的画面回调,, ptsUS:当前帧的时间戳,单位微秒. 拿到图片后,建议放到ArrayList中,不要直接在这里处理.
+        mExtractFrame.setOnExtractProgressListener((bmp, ptsUS) -> {
+            frameCount++;
+            new Handler().post(() -> {
+                progress = (int) ((frameCount / (float) allFrame) * 90);
+                handler.sendEmptyMessage(1);
             });
-            frameCount = 0;
-            //开始执行. 或者你可以从指定地方开始解码.mExtractFrame.start(10*1000*1000);则从视频的10秒处开始提取.
-            mExtractFrame.start();
-        }).start();
+            LogUtil.d("OOM", frameCount + "帧");
+            String fileName = faceFolder + File.separator + frameCount + ".png";
+            BitmapManager.getInstance().saveBitmapToPath(bmp, fileName);
+            downImageForBitmap(bmp, frameCount);
+        });
+        frameCount = 0;
+        //开始执行. 或者你可以从指定地方开始解码.mExtractFrame.start(10*1000*1000);则从视频的10秒处开始提取.
+        mExtractFrame.start();
     }
 
 
@@ -182,13 +169,15 @@ public class VideoMattingModel {
     private float nowProgressTime;
 
     private void addFrameCompoundVideo() {
-        LogUtil.d("OOM", "开始合成mask视频" );
+        LogUtil.d("OOM", "开始合成mask视频");
         nowChooseImageIndex = 0;
         List<File> getMattingList = FileManager.listFileSortByModifyTime(faceMattingFolder);
+        LogUtil.d("OOM2", "getMattingList2=" + getMattingList.size());
         Bitmap firstBitmap = BitmapFactory.decodeFile(getMattingList.get(0).getPath());
         long AllTime = videoInfo.getDuration() * 1000;
         preTime = AllTime / (float) getMattingList.size();
-        LogUtil.d("OOM2", "AllTime2222="+AllTime );
+        LogUtil.d("OOM2", "AllTime2222=" + AllTime);
+        LogUtil.d("OOM2", "preTime2=" + preTime);
         nowProgressTime = preTime;
         try {
             DrawPadAllExecute2 execute = new DrawPadAllExecute2(BaseApplication.getInstance(), DRAWPADWIDTH, DRAWPADHEIGHT, AllTime);
@@ -203,7 +192,7 @@ public class VideoMattingModel {
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
                 execute.removeAllLayer();
                 execute.release();
-                if(!nowActivityIsOndestroy){
+                if (!nowActivityIsOndestroy) {
                     dialog.closePragressDialog();
                 }
 
@@ -212,10 +201,10 @@ public class VideoMattingModel {
                     FileUtil.copyFile(new File(exportPath), albumPath);
                     DataCleanManager.deleteFilesByDirectory(context.getExternalFilesDir("faceMattingFolder"));
                     DataCleanManager.deleteFilesByDirectory(context.getExternalFilesDir("faceFolder"));
-                  long  time= System.currentTimeMillis()-nowCurtime;
-                    String ss= timeUtils.timeParse(time);
-                    LogUtil.d("OOM","总共扣视频需要了"+ss);
-                //    requestLoginForSdk(ss);
+                    long time = System.currentTimeMillis() - nowCurtime;
+                    String ss = timeUtils.timeParse(time);
+                    LogUtil.d("OOM", "总共扣视频需要了" + ss);
+                    //    requestLoginForSdk(ss);
                     statisticsEventAffair.getInstance().setFlag(context, "mattingVideoTime", templateName);
                     if (callback != null) {
                         callback.isSuccess(true, albumPath);
@@ -248,35 +237,38 @@ public class VideoMattingModel {
     }
 
 
-    private void requestLoginForSdk(String cutTime) {
-        if(!DoubleClick.getInstance().isFastDoubleClick()){
-            HashMap<String, String> params = new HashMap<>();
-            params.put("type","2");
-            params.put("timelength",cutTime);
-            // 启动时间
-            Observable ob = Api.getDefault().userDefine(BaseConstans.getRequestHead(params));
-            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(context) {
-                @Override
-                protected void _onError(String message) {
-                }
-
-                @Override
-                protected void _onNext(UserInfo data) {
-
-                }
-            }, "cacheKey", ActivityLifeCycleEvent.DESTROY, null, false, true, false);
-        }
-    }
+//    private void requestLoginForSdk(String cutTime) {
+//        if(!DoubleClick.getInstance().isFastDoubleClick()){
+//            HashMap<String, String> params = new HashMap<>();
+//            params.put("type","2");
+//            params.put("timelength",cutTime);
+//            // 启动时间
+//            Observable ob = Api.getDefault().userDefine(BaseConstans.getRequestHead(params));
+//            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(context) {
+//                @Override
+//                protected void _onError(String message) {
+//                }
+//
+//                @Override
+//                protected void _onNext(UserInfo data) {
+//
+//                }
+//            }, "cacheKey", ActivityLifeCycleEvent.DESTROY, null, false, true, false);
+//        }
+//    }
 
 
     private void addFrameCompoundVideoNoMatting() {
-        LogUtil.d("OOM2", "开始合成原图" );
+        LogUtil.d("OOM2", "开始合成原图");
         List<File> getMattingList = FileManager.listFileSortByModifyTime(faceFolder);
-        if(getMattingList!=null&&getMattingList.size()>0){
+
+        if (getMattingList != null && getMattingList.size() > 0) {
+            LogUtil.d("OOM2", "getMattingList=" + getMattingList.size());
             Bitmap firstBitmap = BitmapFactory.decodeFile(getMattingList.get(0).getPath());
             long AllTime = videoInfo.getDuration() * 1000;
-            LogUtil.d("OOM2", "AllTime="+AllTime );
+            LogUtil.d("OOM2", "AllTime=" + AllTime);
             preTime = AllTime / (float) getMattingList.size();
+            LogUtil.d("OOM2", "preTime=" + preTime);
             nowProgressTime = preTime;
             try {
                 DrawPadAllExecute2 execute = new DrawPadAllExecute2(BaseApplication.getInstance(), DRAWPADWIDTH, DRAWPADHEIGHT, AllTime);
@@ -295,8 +287,8 @@ public class VideoMattingModel {
                     String albumPath = cacheCutVideoPath + "/noMatting.mp4";
                     File file = new File(albumPath);
                     if (file.exists()) {
-                        boolean isDeleted=  file.delete();
-                        LogUtil.d("OOM",""+isDeleted);
+                        boolean isDeleted = file.delete();
+                        LogUtil.d("OOM", "" + isDeleted);
                     }
                     try {
                         FileUtil.copyFile(new File(exportPath), albumPath);
@@ -326,18 +318,14 @@ public class VideoMattingModel {
                 LogUtil.d("OOM", e.getMessage());
                 e.printStackTrace();
             }
-        }else{
+        } else {
             callback.isSuccess(false, "");
         }
     }
 
-
     private MattingImage mattingImage = new MattingImage();
 
-
-
     private int downSuccessNum;
-
 
     private void downImageForBitmap(Bitmap OriginBitmap, int frameCount) {
         downSuccessNum++;
@@ -350,13 +338,10 @@ public class VideoMattingModel {
             } else {
                 LogUtil.d("OOM", "bitmap=null");
             }
-
         });
 
         LogUtil.d("OOM", "allFrame-1=" + allFrame + "downSuccessNum=?" + downSuccessNum);
     }
-
-
 
 
     public interface MattingSuccess {
@@ -366,29 +351,25 @@ public class VideoMattingModel {
 
     private int progress;
     @SuppressLint("HandlerLeak")
-    Handler handler = new Handler() {
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if(!nowActivityIsOndestroy){
-                if(progress<=25){
-                    dialog.setProgress("飞闪视频抠像中"+progress + "%\n"+"请耐心等待 不要离开");
-                }else if(progress<=40){
-                    dialog.setProgress("飞闪视频抠像中"+progress + "%\n"+"快了，友友稍等片刻");
-                }else if(progress<=60){
-                    dialog.setProgress("飞闪视频抠像中"+progress + "%\n"+"抠像太强大，即将生成");
-                }else if(progress<=80){
-                    dialog.setProgress("飞闪视频抠像中"+progress + "%\n"+"马上就好，不要离开");
-                }else{
-                    dialog.setProgress("飞闪视频抠像中"+progress + "%\n"+"最后合成中，请稍后");
+            if (!nowActivityIsOndestroy) {
+                if (progress <= 25) {
+                    dialog.setProgress("飞闪视频抠像中" + progress + "%\n" + "请耐心等待 不要离开");
+                } else if (progress <= 40) {
+                    dialog.setProgress("飞闪视频抠像中" + progress + "%\n" + "快了，友友稍等片刻");
+                } else if (progress <= 60) {
+                    dialog.setProgress("飞闪视频抠像中" + progress + "%\n" + "抠像太强大，即将生成");
+                } else if (progress <= 80) {
+                    dialog.setProgress("飞闪视频抠像中" + progress + "%\n" + "马上就好，不要离开");
+                } else {
+                    dialog.setProgress("飞闪视频抠像中" + progress + "%\n" + "最后合成中，请稍后");
                 }
             }
-
-
         }
     };
-
-
 
 
     /**
@@ -396,8 +377,8 @@ public class VideoMattingModel {
      * creation date: 2020/5/6
      * user : zhangtongju
      */
-    public void nowActivityIsDestroy(boolean nowActivityIsOndestroy){
-            this.nowActivityIsOndestroy=nowActivityIsOndestroy;
+    public void nowActivityIsDestroy(boolean nowActivityIsOndestroy) {
+        this.nowActivityIsOndestroy = nowActivityIsOndestroy;
     }
 
 

@@ -313,7 +313,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         });
 
-//        test();
+        test();
     }
 
 
@@ -552,17 +552,20 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private void showPreview(boolean isPreview, boolean hasAnim) {
         LogUtil.d("OOM", "showPreview=" + isPreview + "isRealtime=" + isRealtime);
-
         if (isPreview) {
             if (isRealtime) {
-                real_time_preview.setVisibility(View.VISIBLE);
+                AnimForViewShowAndHide.getInstance().show(real_time_preview);
+//                real_time_preview.setVisibility(View.VISIBLE);
             } else {
-                videoPlayer.setVisibility(View.VISIBLE);
+//                videoPlayer.setVisibility(View.VISIBLE);
+                AnimForViewShowAndHide.getInstance().show(videoPlayer);
             }
             if (hasAnim) {
                 AnimForViewShowAndHide.getInstance().hide(mContainer);
             } else {
-                mContainer.setVisibility(View.GONE);
+//                mContainer.setVisibility(View.GONE);
+                AnimForViewShowAndHide.getInstance().hide(mContainer);
+
             }
             modificationThumbForRedactData(true);
         } else {
