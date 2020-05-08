@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
@@ -27,7 +26,6 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.utils.screenUtil;
 import com.nineton.ntadsdk.NTAdSDK;
 import com.nineton.ntadsdk.itr.SplashAdCallBack;
 import com.nineton.ntadsdk.view.NTSkipView;
@@ -39,12 +37,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.BindView;
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 
 public class WelcomeActivity extends BaseActivity {
 
@@ -120,7 +115,7 @@ public class WelcomeActivity extends BaseActivity {
 
         // 权限都已经有了，那么直接调用SDK
         if (lackedPermission.size() == 0) {
-            if (!fromBackstage) {
+            if (!fromBackstage||BaseConstans.getIsNewUser()) {
                 requestConfig();
                 requestConfigForTemplateList();
             }
@@ -182,9 +177,9 @@ public class WelcomeActivity extends BaseActivity {
                 checkPermission();
             } else {
                 hasPermission = true;
-                if (!fromBackstage) {
+               if (!fromBackstage||BaseConstans.getIsNewUser()) {
                     requestConfig();
-                }
+              }
                 LogUtil.d("oom", "BaseConstans.getHasAdvertising()=" + BaseConstans.getHasAdvertising());
                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
 

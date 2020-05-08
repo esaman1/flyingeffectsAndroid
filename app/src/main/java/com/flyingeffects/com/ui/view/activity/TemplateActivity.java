@@ -100,7 +100,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private TemplateThumbAdapter templateThumbAdapter;
     private ArrayList<TemplateThumbItem> listItem = new ArrayList<>();
     private ArrayList<TemplateView> mTemplateViews;
-    private int nowChooseIndex = 0;
     private String mAudio1Path;
     private static final String MUSIC_PATH = "/bj.mp3";
     private TextAssetEditLayout mTextEditLayout;
@@ -460,11 +459,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         mediaUiModel2.setVideoCover(bp);
                     }
                     if (mTemplateViews != null && mTemplateViews.size() > 0) {
-                        Observable.just(nowChooseIndex).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+                        Observable.just(nowChoosePosition).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
                             @Override
                             public void call(Integer integer) {
                                 WaitingDialog.closePragressDialog();
-                                mTemplateViews.get(nowChooseIndex).invalidate(); //提示重新绘制预览图
+                                mTemplateViews.get(nowChoosePosition).invalidate(); //提示重新绘制预览图
                             }
                         });
                     }
@@ -526,7 +525,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             mTemplateModel.setReplaceAllMaterial(imgPath);
             WaitingDialog.closePragressDialog();
             presenter.getButtomIcon(path);
-            Observable.just(nowChooseIndex).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> mTemplateViews.get(integer).invalidate(),200));
+            Observable.just(nowChoosePosition).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> mTemplateViews.get(integer).invalidate(),200));
         }
     }
 
@@ -693,7 +692,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 mTemplateModel.setReplaceAllFiles(listAssets, complete -> TemplateActivity.this.runOnUiThread(() -> {
                     WaitingDialog.closePragressDialog();
                     selectGroup(0);
-                    nowChooseIndex = 0;
+                    nowChoosePosition = 0;
                     templateThumbAdapter.notifyDataSetChanged();
                     if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
                         if (videoMattingCaver != null) {
@@ -704,7 +703,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         }
                     }
                     if (mTemplateViews != null && mTemplateViews.size() > 0) {
-                        mTemplateViews.get(nowChooseIndex).invalidate(); //提示重新绘制预览图
+                        mTemplateViews.get(nowChoosePosition).invalidate(); //提示重新绘制预览图
                     }
 
 //                    if(picout==0){
@@ -1093,7 +1092,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     private void invalidateView(){
-        Observable.just(nowChooseIndex).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> mTemplateViews.get(integer).invalidate(),200));
+        Observable.just(nowChoosePosition).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> mTemplateViews.get(integer).invalidate(),200));
     }
 
 }
