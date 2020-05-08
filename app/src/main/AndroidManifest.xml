@@ -87,8 +87,6 @@
 
 
 
-
-
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.WelcomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
