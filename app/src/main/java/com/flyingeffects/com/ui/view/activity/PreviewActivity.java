@@ -525,9 +525,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 if(!ondestroy){
                     String alert = "飞闪极速下载中...";
                     WaitingDialog.openPragressDialog(PreviewActivity.this, alert);
+                    Presenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId());
                 }
             }, 200);
-            Presenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId());
+
         } else {
             LogUtil.d("OOM","来自其他");
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMSEARCH)) {

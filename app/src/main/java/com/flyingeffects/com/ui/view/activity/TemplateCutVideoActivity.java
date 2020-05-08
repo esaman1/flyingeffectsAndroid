@@ -156,7 +156,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
     protected void initAction() {
         initThumbList();
         list_thumb.post(() -> initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), needDuration, videoInfo.getDuration() / (float) 1000, videoPath));
-        initExo(videoPath, needDuration);
+
     }
 
 
@@ -214,13 +214,14 @@ public class TemplateCutVideoActivity extends BaseActivity {
         if (exoPlayer != null) {
             LogUtil.d("video", "videoPause");
             exoPlayer.setPlayWhenReady(false);
-
+            endTimer();
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        initExo(videoPath, needDuration);
 
     }
 
@@ -280,6 +281,18 @@ public class TemplateCutVideoActivity extends BaseActivity {
                 break;
         }
     }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        videoStop();
+        endTimer();
+    }
+
+
+
+
 
     /**
      * 释放资源

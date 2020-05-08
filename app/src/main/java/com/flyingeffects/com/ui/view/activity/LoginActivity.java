@@ -460,6 +460,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 protected void _onError(String message) {
                     WaitingDialog.closePragressDialog();
                     ToastUtil.showToast(message);
+                    dissMissShanYanUi();
                     LoginActivity.this.finish();
                 }
 

@@ -19,6 +19,7 @@ import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.ui.view.fragment.fragBjItem;
 import com.flyingeffects.com.ui.view.fragment.frag_user_collect;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 
 import java.util.ArrayList;
@@ -82,7 +83,7 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
             protected void _onNext(List<TemplateType> data) {
                 setFragmentList(data);
             }
-        }, "mainData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, true, true, true);
+        }, "mainData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, true, true, false);
     }
 
 
@@ -146,6 +147,7 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
      */
     @Subscribe
     public void onEventMainThread(DownVideoPath event) {
+        LogUtil.d("OOM2","销毁了onEventMainThread");
         this.finish();
     }
 
