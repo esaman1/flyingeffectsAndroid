@@ -4,27 +4,36 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.webkit.MimeTypeMap;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.flyco.tablayout.CommonTabLayout;
+import com.flyco.tablayout.listener.CustomTabEntity;
+import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateThumbAdapter;
+import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.GetPathType;
+import com.flyingeffects.com.enity.TabEntity;
 import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.AnimForViewShowAndHide;
@@ -38,6 +47,8 @@ import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MattingVideoEnity;
@@ -70,7 +81,6 @@ import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.observers.Observers;
 import rx.schedulers.Schedulers;
 
 
@@ -84,7 +94,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     SwitchButton switch_button;
     @BindView(R.id.edit_view_container)
     FrameLayout mContainer;
-    @BindView(R.id.recyclerView)
+    //    @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.seekBar)
     SeekBar seekBar;
@@ -205,6 +215,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private WaitingDialog_progress waitingDialogProgress;
 
 
+    @BindView(R.id.template_viewPager)
+    ViewPager viewPager;
+
+
+    @BindView(R.id.template_tablayout)
+    CommonTabLayout commonTabLayout;
+
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_template_edit;
@@ -226,7 +244,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             templateFilePath = bundle.getString("templateFilePath");
             imgPath = bundle.getStringArrayList("paths");
             videoTime = bundle.getString("videoTime");
-            picout=bundle.getInt("picout");
+            picout = bundle.getInt("picout");
             originalPath = bundle.getStringArrayList("originalPath");
             templateName = bundle.getString("templateName");
             nowTemplateIsAnim = bundle.getInt("is_anime");
@@ -318,7 +336,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     private void setMattingBtnState() {
-        if (picout==0) {
+        if (picout == 0) {
             //当前是视频的情况下，且用户没有选择扣视频,上面的选中效果就取消
             switch_button.setChecked(false);
             nowIsChooseMatting = false;
@@ -360,8 +378,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     public void completeTemplate(TemplateModel templateModel) {
-        initTemplateThumb(templateModel.groupSize);
+
+        // initTemplateThumb(templateModel.groupSize);
         mTemplateModel = templateModel;
+        initBottomLayout();
         if (nowTemplateIsAnim == 1 || nowTemplateIsMattingVideo == 1) {
             mTemplateModel.cartoonPath = imgPath.get(0);  //设置灰度图
         }
@@ -372,7 +392,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         initTemplateViews(mTemplateModel);
         //设置切换按钮
 
-        new Handler().postDelayed(this::setMattingBtnState,500);
+        new Handler().postDelayed(this::setMattingBtnState, 500);
     }
 
     @Override
@@ -410,7 +430,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 if (mPlayer != null) {
                     mPlayer.start();
                     showPreview(true, false);
-                }else{
+                } else {
                     toShowPreview();
                 }
             } else {
@@ -420,7 +440,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
-    private void toShowPreview(){
+    private void toShowPreview() {
         waitingDialogProgress = new WaitingDialog_progress(this);
         waitingDialogProgress.openProgressDialog();
         waitingDialogProgress.setProgress("生成中~\n" +
@@ -525,7 +545,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             mTemplateModel.setReplaceAllMaterial(imgPath);
             WaitingDialog.closePragressDialog();
             presenter.getButtomIcon(path);
-            Observable.just(nowChoosePosition).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> mTemplateViews.get(integer).invalidate(),200));
+            Observable.just(nowChoosePosition).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> mTemplateViews.get(integer).invalidate(), 200));
         }
     }
 
@@ -706,10 +726,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         mTemplateViews.get(nowChoosePosition).invalidate(); //提示重新绘制预览图
                     }
 
-//                    if(picout==0){
-//                        //不抠图默认就取消选中，但是切换按钮还是存在
-//                        switch_button.setChecked(false);
-//                    }
 
                 }));  //批量替换图片
             }).start();
@@ -817,7 +833,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     if (mPlayer != null) {
                         mPlayer.pause();
                         mPlayer.stop();
-                        mPlayer=null;
+                        mPlayer = null;
                         ivPlayButton.setImageResource(R.mipmap.iv_play);
                         isPlaying = false;
                         showPreview(true, false);
@@ -865,8 +881,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         @Override
         public void onProgressChanged(SeekBar seekBar, int nowProgress, boolean fromUser) {
             if (fromUser && mPlayer != null) {
-                LogUtil.d("OOM","nowProgress="+nowProgress);
-                nowSeekBarProgress=nowProgress;
+                LogUtil.d("OOM", "nowProgress=" + nowProgress);
+                nowSeekBarProgress = nowProgress;
             }
         }
 
@@ -877,7 +893,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
-            mPlayer.seek(nowSeekBarProgress);
+            if (mPlayer != null) {
+                mPlayer.seek(nowSeekBarProgress);
+            }
         }
     };
 
@@ -917,7 +935,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         @Override
         public void onProgressChanged(final int frame) {
             mPlayerView.post(() -> {
-                LogUtil.d("OOM","onProgressChangedFrame="+frame);
+                LogUtil.d("OOM", "onProgressChangedFrame=" + frame);
                 seekBar.setProgress(frame);
                 float nowDuration = frame / mTemplateModel.fps;
                 tv_start_time.setText(timeUtils.secondToTime((long) (nowDuration)));
@@ -1090,9 +1108,58 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     };
 
 
-
-    private void invalidateView(){
-        Observable.just(nowChoosePosition).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> mTemplateViews.get(integer).invalidate(),200));
+    private void invalidateView() {
+        Observable.just(nowChoosePosition).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> mTemplateViews.get(integer).invalidate(), 200));
     }
+
+
+    public void initBottomLayout() {
+        ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
+        String[] titlesHasBj = {getString(R.string.template_edit), getString(R.string.template_bj),
+                getString(R.string.template_music)};
+        for (String title : titlesHasBj) {
+            mTabEntities.add(new TabEntity(title, 0, 0));
+        }
+        commonTabLayout.setTabData(mTabEntities);
+        commonTabLayout.setOnTabSelectListener(new OnTabSelectListener() {
+            @Override
+            public void onTabSelect(int position) {
+                //防止快速点击造成的bug
+                if (position == 1) {
+                    ToastUtil.showToast("test");
+                } else if (position == 2) {
+//                    commonTabLayout.setCurrentTab(1);
+                    viewPager.setCurrentItem(1);
+                } else {
+//                    commonTabLayout.setCurrentTab(0);
+                    viewPager.setCurrentItem(0);
+                }
+            }
+
+            @Override
+            public void onTabReselect(int position) {
+            }
+        });
+        ArrayList<View> pagerList = new ArrayList<>();
+        View templateThumb = LayoutInflater.from(this).inflate(R.layout.view_template_bg, null);
+        recyclerView = templateThumb.findViewById(R.id.recyclerView);
+        pagerList.add(recyclerView);
+        initTemplateThumb(mTemplateModel.groupSize);
+        View templateThumb2 = LayoutInflater.from(this).inflate(R.layout.view_template_music, null);
+        CheckBox cb_0=templateThumb2.findViewById(R.id.cb_0);
+        CheckBox cb_1=templateThumb2.findViewById(R.id.cb_1);
+        CheckBox cb_2=templateThumb2.findViewById(R.id.cb_2);
+        Drawable drawable_news = getResources().getDrawable(R.drawable.template_choose_btn);
+        //当这个图片被绘制时，给他绑定一个矩形 ltrb规定这个矩形
+        int radio_size = StringUtil.dip2px(this, 16);
+        drawable_news.setBounds(0, 0, radio_size, radio_size);
+        cb_0.setCompoundDrawables(drawable_news, null, null, null);
+        cb_1.setCompoundDrawables(drawable_news, null, null, null);
+        cb_2.setCompoundDrawables(drawable_news, null, null, null);
+        pagerList.add(templateThumb2);
+        TemplateViewPager adapter = new TemplateViewPager(pagerList);
+        viewPager.setAdapter(adapter);
+    }
+
 
 }

@@ -121,7 +121,7 @@
         android:id="@+id/ll_progress"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:layout_above="@+id/recyclerView"
+        android:layout_above="@+id/ll_viewpager_container"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -182,12 +182,54 @@
     </LinearLayout>
 
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
+<!--    <android.support.v7.widget.RecyclerView-->
+<!--        android:id="@+id/recyclerView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="120dp"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:layout_marginBottom="33dp" />-->
+
+
+    <LinearLayout
+        android:id="@+id/ll_viewpager_container"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="33dp" />
+        android:layout_height="240dp"
+        android:background="#000000"
+        android:orientation="vertical">
+        <android.support.v4.view.ViewPager
+            android:id="@+id/template_viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#606074"
+            />
+
+
+
+        <com.flyco.tablayout.CommonTabLayout
+            android:id="@+id/template_tablayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="40dp"
+            android:layout_weight="1"
+            app:tl_iconVisible="false"
+            app:tl_indicator_color="@color/white"
+            app:tl_indicator_corner_radius="1.5dp"
+            app:tl_indicator_height="3dp"
+            app:tl_indicator_width="30dp"
+            app:tl_textSelectColor="@color/white"
+            app:tl_textsize="16sp" />
+    </LinearLayout>
+
+
+
+
+
 
     <com.shixing.sxve.ui.view.TextAssetEditLayout
         android:id="@+id/text_edit_layout"

@@ -62,5 +62,9 @@
 
 
 
+    <string name="template_edit">编辑</string>
+    <string name="template_bj">背景</string>
+    <string name="template_music">音乐</string>
+
 
 </resources>
