@@ -213,6 +213,7 @@ public class MediaUiModel2 extends MediaUiModel {
             b=BitmapCompress.zoomImg(b,360, 540);
             countMatrixBj(b);
             retriever.release();
+            setVideoPath(path,false,0);
         }
 
     }
