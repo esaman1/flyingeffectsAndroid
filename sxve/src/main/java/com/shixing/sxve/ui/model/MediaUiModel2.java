@@ -61,6 +61,14 @@ public class MediaUiModel2 extends MediaUiModel {
     //这里主要是为了，漫画和视频抠图这里，
     private String lastOtherPath;
     private String path;
+    //是否有背景
+    private boolean hasBg;
+
+    private String nowChooseBjPath = "";
+
+    private Bitmap bgBitmap;
+
+    private Matrix mMatrixBj;
 
     public MediaUiModel2(String folder, JSONObject ui, Bitmap bitmap, AssetDelegate delegate, Size size) throws JSONException {
         super(folder, ui, delegate, size);
@@ -86,6 +94,7 @@ public class MediaUiModel2 extends MediaUiModel {
         AffineTransform affineTransform = new AffineTransform();
         affineTransform.set(new PointF(a[0], a[1]), new PointF(p[0], p[1]), new PointF(s[0], s[1]), (float) Math.toRadians(mR));
         mInitMatrix = affineTransform.getMatrix();
+        mMatrixBj = affineTransform.getMatrix();
         mMatrix = new Matrix(mInitMatrix);
         mInverseMatrix = new Matrix();
         mInitMatrix.invert(mInverseMatrix);
@@ -116,8 +125,17 @@ public class MediaUiModel2 extends MediaUiModel {
     public void draw(Canvas canvas, int activeLayer) {
         mPaint = mInitPaint;
 //        if (!IsAnim) {
+
+
         if (b != null) {
-            canvas.drawBitmap(b, 0, 0, null);
+            //有用户选择的背景的情况
+            if(!TextUtils.isEmpty(nowChooseBjPath)){
+                canvas.drawBitmap(b, mMatrixBj, null);
+            }else{
+                canvas.drawBitmap(b, 0, 0, null);
+            }
+
+
         }
 
 //        隐藏的这段代码是控制同组里面不同位置，滑动前面一个，后面一个就透明
@@ -182,6 +200,21 @@ public class MediaUiModel2 extends MediaUiModel {
         mGroupModel = groupModel;
 
         mDelegate.pickMedia(this);
+    }
+
+    @Override
+    public void hasChooseBg(String path) {
+        nowChooseBjPath = path;
+        hasBg = path != null && !path.equals("");
+        if (hasBg) {  //先生成背景，在生成滤镜
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(path);
+            b = retriever.getFrameAtTime(0);
+            b=BitmapCompress.zoomImg(b,360, 540);
+            countMatrixBj(b);
+            retriever.release();
+        }
+
     }
 
     @Override
@@ -306,7 +339,7 @@ public class MediaUiModel2 extends MediaUiModel {
      * user : zhangtongju
      */
     public void setVideoCover(Bitmap mBitmap) {
-        this.mBitmap=mBitmap;
+        this.mBitmap = mBitmap;
 //        countMatrix(BitmapCompress.zoomImg(mBitmap,size.getWidth(),size.getHeight()), path, true);
         initPosition();
     }
@@ -354,14 +387,14 @@ public class MediaUiModel2 extends MediaUiModel {
     }
 
 
-
     /**
      * description ：只要不是视频，就都用白色的底图
      * creation date: 2020/4/17
      * user : zhangtongju
      */
-  private  String mimeType;
+    private String mimeType;
     private Bitmap bitmapWhite;
+
     public String getpathForThisMatrix(String folder, String cartoonPath) {
 
         if (!TextUtils.isEmpty(cartoonPath)) {
@@ -381,10 +414,10 @@ public class MediaUiModel2 extends MediaUiModel {
                 Canvas canvas = new Canvas(bitmap);
                 Matrix matrix = new Matrix(mMatrix);
                 matrix.postConcat(mInverseMatrix);
-                        if (mBitmap != null) {
-                            bitmapWhite = Bitmap.createBitmap(mBitmap.getWidth(), mBitmap.getHeight(), mBitmap.getConfig());
-                            canvas.drawBitmap(getImage(bitmapWhite), matrix, mInitPaint);
-                        }
+                if (mBitmap != null) {
+                    bitmapWhite = Bitmap.createBitmap(mBitmap.getWidth(), mBitmap.getHeight(), mBitmap.getConfig());
+                    canvas.drawBitmap(getImage(bitmapWhite), matrix, mInitPaint);
+                }
                 String path = folder + File.separator + UUID.randomUUID() + ".png";
                 saveBitmapToPath(bitmap, path);
                 recycleWhiteBitmap();
@@ -437,10 +470,10 @@ public class MediaUiModel2 extends MediaUiModel {
 
     }
 
-    private void recycleWhiteBitmap(){
-        if(bitmapWhite!=null&&!bitmapWhite.isRecycled()){
+    private void recycleWhiteBitmap() {
+        if (bitmapWhite != null && !bitmapWhite.isRecycled()) {
             bitmapWhite.recycle();
-            bitmapWhite=null;
+            bitmapWhite = null;
         }
     }
 
@@ -530,6 +563,29 @@ public class MediaUiModel2 extends MediaUiModel {
             }
         }
         return mBitmap;
+    }
+
+
+    private void countMatrixBj(Bitmap bp) {
+        if (bp != null) {
+            int widthSize = size.getWidth();
+            mMatrixBj.reset();
+            float scale = widthSize / (float) bp.getWidth();
+            Log.d("mMatrix", "mBitmap=getWidth" + (float) bp.getWidth());
+            Log.d("mMatrix", "scale=" + scale);
+            mMatrixBj.postScale(scale, scale);
+            double tranY = bp.getHeight() * scale;
+            if (size.getHeight() - tranY > 0) {
+                int needY = (int) (size.getHeight() - tranY) / 2;
+                Log.d("mMatrix", "needY=" + needY);
+                mMatrixBj.postTranslate(0, needY);
+            } else {
+                int needY = (int) (tranY - size.getHeight()) / 2;
+                Log.d("mMatrix", "needY=" + needY);
+                mMatrixBj.postTranslate(0, -needY);
+            }
+
+        }
     }
 
 

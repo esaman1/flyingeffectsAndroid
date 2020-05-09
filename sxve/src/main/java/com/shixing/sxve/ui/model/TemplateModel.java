@@ -38,6 +38,8 @@ public class TemplateModel {
     public int[] templateSize = new int[2];
     public int groupSize;
     public String cartoonPath;
+    public Boolean HasBj = false;
+    private AssetModel bgModel;
 
     @WorkerThread
     public TemplateModel(String templateFolder, AssetDelegate delegate, Context context, int nowTemplateIsAnim) throws IOException, JSONException {
@@ -62,44 +64,54 @@ public class TemplateModel {
         for (int i = 0; i < assets.length(); i++) {
             JSONObject asset = assets.getJSONObject(i);
             if (asset.has("ui")) {
-                AssetModel assetModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor);
-                mAssets.add(assetModel);
 
-                //单独针对mask 图层
-                try {
-                    String ui_extra = asset.getString("ui_extra");
-                    if (!TextUtils.isEmpty(ui_extra) && ui_extra.equals("hideUI")) {
-                        //当前页面不显示，不过和漫画规则一样的
-                        continue;
+                String ui_extra = asset.getString("ui_extra");
+                //可以替换背景功能
+                if (!TextUtils.isEmpty(ui_extra) && ui_extra.equals("BG")) {
+                    HasBj = true;
+                    bgModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor);
+                    int group = bgModel.ui.group;
+                    if (groupSize < group)
+                        groupSize = group; //得到最大的group 的值，group 就是位置，但这里最大值是没包括背景的
+                } else {
+                    AssetModel assetModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor);
+                    mAssets.add(assetModel);
 
+                    //单独针对mask 图层
+                    try {
+                        if (!TextUtils.isEmpty(ui_extra) && ui_extra.equals("hideUI")) {
+                            //当前页面不显示，不过和漫画规则一样的
+                            continue;
+                        }
+
+                    } catch (Exception e) {
+                        Log.d("OOM", e.getMessage());
                     }
 
-                } catch (Exception e) {
-                    Log.d("OOM", e.getMessage());
+                    //单独针对漫画
+                    if (nowTemplateIsAnim == 1) {
+                        //漫画的图不显示
+                        assetModel.setIsAnim(true);
+                    }
+
+                    int group = assetModel.ui.group;
+                    if (groupSize < group) groupSize = group;
+
+                    GroupModel groupModel = groups.get(group);
+                    if (groupModel == null) {
+                        groupModel = new GroupModel();
+                        groups.put(group, groupModel);
+                    }
+
+                    groupModel.add(assetModel);
+
                 }
 
-                //单独针对漫画
-                if (nowTemplateIsAnim == 1) {
-                    //漫画的图不显示
-                    assetModel.setIsAnim(true);
-                }
-
-                int group = assetModel.ui.group;
-                if (groupSize < group) groupSize = group;
-
-                GroupModel groupModel = groups.get(group);
-                if (groupModel == null) {
-                    groupModel = new GroupModel();
-                    groups.put(group, groupModel);
-                }
-
-                groupModel.add(assetModel);
             }
         }
 
         try {
             JSONArray assetsComps = config.getJSONArray("comps");
-
             JSONObject comoOb = (JSONObject) assetsComps.get(0);
             JSONArray isze = (JSONArray) comoOb.get("size");
             templateSize[0] = (int) isze.get(0);
@@ -141,10 +153,10 @@ public class TemplateModel {
             if (mAssets.get(0).ui.getIsAnim()) {
                 if (i == mAssets.size() - 1) {
                     //最后一个的时候
-                    if(i - 1!=-1){
+                    if (i - 1 != -1) {
                         MediaUiModel2 model2 = (MediaUiModel2) mAssets.get(i - 1).ui;
                         paths[i] = model2.getpathForThisMatrix(folder, cartoonPath);
-                    }else{
+                    } else {
                         paths[i] = mAssets.get(i).ui.getSnapPath(folder);
                     }
                 } else {
@@ -184,7 +196,7 @@ public class TemplateModel {
     private List<AssetModel> textUIModelList;
 
     public void setReplaceAllFiles(List<String> paths, isFirstReplaceComplete firstReplaceComplete) {  //批量选择图片,视频的替换方法
-        List<AssetModel>   mediaUIModelList = new ArrayList<>();
+        List<AssetModel> mediaUIModelList = new ArrayList<>();
         textUIModelList = new ArrayList<>();
 
 
@@ -316,6 +328,17 @@ public class TemplateModel {
 
     public List<AssetModel> getAssets() {
         return mAssets;
+    }
+
+
+
+    public void setHasBg(String backgroundPath){
+        for (int i = 0; i < mAssets.size(); i++) {
+            AssetModel model = mAssets.get(i);
+            if (model.type == AssetModel.TYPE_MEDIA) { //如果类型是meidiaUiModel
+                model.ui.hasChooseBg(backgroundPath);
+            }
+        }
     }
 
 }

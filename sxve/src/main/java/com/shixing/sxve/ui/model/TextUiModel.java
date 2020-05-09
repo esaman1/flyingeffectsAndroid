@@ -80,6 +80,11 @@ public class TextUiModel extends AssetUi {
     }
 
     @Override
+    public void hasChooseBg(String path) {
+
+    }
+
+    @Override
     public String getSnapPath(String folder) {
         String path = folder + File.separator + UUID.randomUUID() + ".png";
         mTextCanvas.saveToPath(path);

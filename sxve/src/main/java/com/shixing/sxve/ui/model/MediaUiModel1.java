@@ -145,6 +145,11 @@ public class MediaUiModel1 extends MediaUiModel {
     }
 
     @Override
+    public void hasChooseBg(String path) {
+
+    }
+
+    @Override
     public String getSnapPath(String folder) {
         if (!mIsVideo) {
             Bitmap bitmap = Bitmap.createBitmap(size.getWidth(), size.getHeight(), Bitmap.Config.ARGB_8888);

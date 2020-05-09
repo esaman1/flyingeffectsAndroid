@@ -24,7 +24,7 @@ public abstract class AssetUi {
     protected final AssetDelegate mDelegate;
     public final Size size;
     protected final Bitmap f;
-    protected final Bitmap b;
+    protected  Bitmap b;
     public boolean IsAnim=false;
 
     public AssetUi(String folder, JSONObject ui, AssetDelegate delegate, Size size) throws JSONException {
@@ -80,6 +80,9 @@ public abstract class AssetUi {
     public abstract boolean isPointInside(PointF point);
 
     public abstract void singleTap(GroupModel groupModel);
+
+
+    public abstract void hasChooseBg(String path);
 
     public abstract String getSnapPath(String folder);
 

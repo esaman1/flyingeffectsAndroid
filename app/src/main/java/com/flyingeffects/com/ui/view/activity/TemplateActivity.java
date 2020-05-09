@@ -381,10 +381,15 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     public void completeTemplate(TemplateModel templateModel) {
-
-        // initTemplateThumb(templateModel.groupSize);
         mTemplateModel = templateModel;
-        initBottomLayout();
+        if (templateModel.HasBj) {
+            findViewById(R.id.ll_viewpager_container).setVisibility(View.VISIBLE);
+            initBottomLayout();
+        } else {
+            recyclerView = findViewById(R.id.recyclerView);
+            recyclerView.setVisibility(View.VISIBLE);
+            initTemplateThumb(templateModel.groupSize);
+        }
         if (nowTemplateIsAnim == 1 || nowTemplateIsMattingVideo == 1) {
             mTemplateModel.cartoonPath = imgPath.get(0);  //设置灰度图
         }
@@ -1117,7 +1122,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     private int lastChooseCommonTabLayout;
+    private CheckBox cb_0;
+    private CheckBox cb_1;
+    private CheckBox cb_2;
+
     public void initBottomLayout() {
+
         ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
         String[] titlesHasBj = {getString(R.string.template_edit), getString(R.string.template_bj),
                 getString(R.string.template_music)};
@@ -1132,11 +1142,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     presenter.chooseBj();
                     commonTabLayout.setCurrentTab(lastChooseCommonTabLayout);
                 } else if (position == 2) {
-                    lastChooseCommonTabLayout=2;
+                    lastChooseCommonTabLayout = 2;
                     viewPager.setCurrentItem(1);
-
                 } else {
-                    lastChooseCommonTabLayout=0;
+                    lastChooseCommonTabLayout = 0;
                     viewPager.setCurrentItem(0);
                 }
             }
@@ -1151,9 +1160,16 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         pagerList.add(recyclerView);
         initTemplateThumb(mTemplateModel.groupSize);
         View templateThumb2 = LayoutInflater.from(this).inflate(R.layout.view_template_music, null);
-        CheckBox cb_0 = templateThumb2.findViewById(R.id.cb_0);
-        CheckBox cb_1 = templateThumb2.findViewById(R.id.cb_1);
-        CheckBox cb_2 = templateThumb2.findViewById(R.id.cb_2);
+        TextView tv0 = templateThumb2.findViewById(R.id.tv_0);
+        TextView tv1 = templateThumb2.findViewById(R.id.tv_1);
+        TextView tv2 = templateThumb2.findViewById(R.id.tv_2);
+        tv0.setOnClickListener(tvMusicListener);
+        tv1.setOnClickListener(tvMusicListener);
+        tv2.setOnClickListener(tvMusicListener);
+        cb_0 = templateThumb2.findViewById(R.id.cb_0);
+        cb_1 = templateThumb2.findViewById(R.id.cb_1);
+
+        cb_2 = templateThumb2.findViewById(R.id.cb_2);
         Drawable drawable_news = getResources().getDrawable(R.drawable.template_choose_btn);
         Drawable drawable_news1 = getResources().getDrawable(R.drawable.template_choose_btn);
         Drawable drawable_news2 = getResources().getDrawable(R.drawable.template_choose_btn);
@@ -1165,17 +1181,46 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         cb_0.setCompoundDrawables(drawable_news, null, null, null);
         cb_1.setCompoundDrawables(drawable_news1, null, null, null);
         cb_2.setCompoundDrawables(drawable_news2, null, null, null);
+        cb_1.setChecked(true);
         pagerList.add(templateThumb2);
         TemplateViewPager adapter = new TemplateViewPager(pagerList);
         viewPager.setAdapter(adapter);
     }
 
 
+    View.OnClickListener tvMusicListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()) {
+                case R.id.tv_0:
+                    clearCheckBox();
+                    cb_0.setChecked(true);
+                    break;
+                case R.id.tv_1:
+                    clearCheckBox();
+                    cb_1.setChecked(true);
+                    break;
+                case R.id.tv_2:
+                    clearCheckBox();
+                    cb_2.setChecked(true);
+                    break;
+            }
+        }
+    };
+
+
+    private void clearCheckBox() {
+        cb_0.setChecked(false);
+        cb_1.setChecked(false);
+        cb_2.setChecked(false);
+    }
+
     @Subscribe
     public void onEventMainThread(DownVideoPath event) {
         Observable.just(event.getPath()).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
             LogUtil.d("OOM", "重新选择了视频背景,地址为" + event.getPath());
             String videoBjPath = event.getPath();
+            mTemplateModel.setHasBg(videoBjPath);
         });
     }
 
