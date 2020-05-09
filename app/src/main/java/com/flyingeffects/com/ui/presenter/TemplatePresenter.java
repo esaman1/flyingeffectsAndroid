@@ -27,6 +27,10 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
         home_model.intoMattingVideo(path,name);
     }
 
+    public void chooseBj(){
+        home_model.chooseBj();
+    }
+
 
 
     public void getButtomIcon(String path){

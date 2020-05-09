@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
@@ -33,6 +34,7 @@ import com.flyingeffects.com.adapter.TemplateThumbAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.GetPathType;
+import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.TabEntity;
 import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.manager.AlbumManager;
@@ -45,6 +47,7 @@ import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
+import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
@@ -1113,6 +1116,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
+    private int lastChooseCommonTabLayout;
     public void initBottomLayout() {
         ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
         String[] titlesHasBj = {getString(R.string.template_edit), getString(R.string.template_bj),
@@ -1124,14 +1128,15 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         commonTabLayout.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelect(int position) {
-                //防止快速点击造成的bug
                 if (position == 1) {
-                    ToastUtil.showToast("test");
+                    presenter.chooseBj();
+                    commonTabLayout.setCurrentTab(lastChooseCommonTabLayout);
                 } else if (position == 2) {
-//                    commonTabLayout.setCurrentTab(1);
+                    lastChooseCommonTabLayout=2;
                     viewPager.setCurrentItem(1);
+
                 } else {
-//                    commonTabLayout.setCurrentTab(0);
+                    lastChooseCommonTabLayout=0;
                     viewPager.setCurrentItem(0);
                 }
             }
@@ -1146,19 +1151,32 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         pagerList.add(recyclerView);
         initTemplateThumb(mTemplateModel.groupSize);
         View templateThumb2 = LayoutInflater.from(this).inflate(R.layout.view_template_music, null);
-        CheckBox cb_0=templateThumb2.findViewById(R.id.cb_0);
-        CheckBox cb_1=templateThumb2.findViewById(R.id.cb_1);
-        CheckBox cb_2=templateThumb2.findViewById(R.id.cb_2);
+        CheckBox cb_0 = templateThumb2.findViewById(R.id.cb_0);
+        CheckBox cb_1 = templateThumb2.findViewById(R.id.cb_1);
+        CheckBox cb_2 = templateThumb2.findViewById(R.id.cb_2);
         Drawable drawable_news = getResources().getDrawable(R.drawable.template_choose_btn);
+        Drawable drawable_news1 = getResources().getDrawable(R.drawable.template_choose_btn);
+        Drawable drawable_news2 = getResources().getDrawable(R.drawable.template_choose_btn);
         //当这个图片被绘制时，给他绑定一个矩形 ltrb规定这个矩形
         int radio_size = StringUtil.dip2px(this, 16);
         drawable_news.setBounds(0, 0, radio_size, radio_size);
+        drawable_news1.setBounds(0, 0, radio_size, radio_size);
+        drawable_news2.setBounds(0, 0, radio_size, radio_size);
         cb_0.setCompoundDrawables(drawable_news, null, null, null);
-        cb_1.setCompoundDrawables(drawable_news, null, null, null);
-        cb_2.setCompoundDrawables(drawable_news, null, null, null);
+        cb_1.setCompoundDrawables(drawable_news1, null, null, null);
+        cb_2.setCompoundDrawables(drawable_news2, null, null, null);
         pagerList.add(templateThumb2);
         TemplateViewPager adapter = new TemplateViewPager(pagerList);
         viewPager.setAdapter(adapter);
+    }
+
+
+    @Subscribe
+    public void onEventMainThread(DownVideoPath event) {
+        Observable.just(event.getPath()).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
+            LogUtil.d("OOM", "重新选择了视频背景,地址为" + event.getPath());
+            String videoBjPath = event.getPath();
+        });
     }
 
 

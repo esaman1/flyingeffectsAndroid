@@ -34,6 +34,7 @@ import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
+import com.flyingeffects.com.ui.view.activity.ChooseBackgroundTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -355,8 +356,19 @@ public class TemplateMvpModel {
             //还没抠过视频
             gotoMattingVideo(path,templatename);
         }
+    }
 
 
+
+    /**
+     * description ：选择音乐
+     * creation date: 2020/5/9
+     * user : zhangtongju
+     */
+    public void chooseBj(){
+        Intent intent = new Intent(context, ChooseBackgroundTemplateActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        context.startActivity(intent);
     }
 
 
