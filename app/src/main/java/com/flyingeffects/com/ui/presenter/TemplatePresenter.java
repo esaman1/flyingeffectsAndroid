@@ -31,6 +31,9 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
         home_model.chooseBj();
     }
 
+    public void getBjMusic(String videoPath){
+        home_model.getBjMusic(videoPath);
+    }
 
 
     public void getButtomIcon(String path){
@@ -116,5 +119,10 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     @Override
     public void showBottomIcon(String path) {
         home_mvpView.showBottomIcon(path);
+    }
+
+    @Override
+    public void getSpliteMusic(String path) {
+        home_mvpView.getSpliteMusic(path);
     }
 }

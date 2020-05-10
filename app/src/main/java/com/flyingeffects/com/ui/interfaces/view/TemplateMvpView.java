@@ -24,4 +24,6 @@ public interface TemplateMvpView {
     void showBottomIcon(String path);
 
     void ChangeMaterialCallbackForVideo(String originalPath,String path,boolean needMatting);
+
+    void getSpliteMusic(String path);
 }

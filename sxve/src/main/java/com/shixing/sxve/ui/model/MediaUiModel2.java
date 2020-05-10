@@ -471,6 +471,44 @@ public class MediaUiModel2 extends MediaUiModel {
 
     }
 
+
+    public String getpathForThisBjMatrix(String folder, String cartoonPath) {
+                    final String path = folder + File.separator + UUID.randomUUID() + ".mp4";
+                    Matrix matrix = new Matrix(mMatrixBj);
+                    matrix.postConcat(mInverseMatrix);
+                    SXCompositor sxCompositor = new SXCompositor(cartoonPath, path, matrix, !mMute);
+                    sxCompositor.setWidth(mClipWidth);
+                    sxCompositor.setHeight(mClipHeight);
+                    sxCompositor.setStartTime(mStartTime);
+                    sxCompositor.setDuration(mDuration);
+                    sxCompositor.setBitrateFactor(1f);
+                    sxCompositor.setRenderListener(new SXRenderListener() {
+                        @Override
+                        public void onStart() {
+                        }
+
+                        @Override
+                        public void onUpdate(int progress) {
+
+                        }
+
+                        @Override
+                        public void onFinish(boolean success, String msg) {
+                            Log.d("TEST", "mediaUiModel clip finish: " + path);
+                        }
+
+                        @Override
+                        public void onCancel() {
+
+                        }
+                    });
+                    sxCompositor.run();
+                    isMaskSlide = false;
+                    lastOtherPath = path;
+                    Log.d("oom", "视频地址2为" + cartoonPath);
+                    return path;
+    }
+
     private void recycleWhiteBitmap() {
         if (bitmapWhite != null && !bitmapWhite.isRecycled()) {
             bitmapWhite.recycle();

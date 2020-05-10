@@ -25,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
@@ -47,11 +46,9 @@ import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
-import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
-import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MattingVideoEnity;
@@ -76,6 +73,7 @@ import com.yanzhenjie.album.AlbumFile;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -224,6 +222,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @BindView(R.id.template_tablayout)
     CommonTabLayout commonTabLayout;
+
+    //模板背景音乐 0表示模板音乐 1表示素材音乐  2 表示背景音乐
+    private int nowChooseMusic=0;
+
+    /**
+     * 当前分离出来的视频音乐
+     */
+    private String nowSpliteMusic;
 
 
     @Override
@@ -463,7 +469,19 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             LogUtil.d("oom", "渲染需要的地址为" + path);
         }
         Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().post(() -> showPreview(true, false)));
-        switchTemplate(mFolder.getPath(), paths);
+
+       if(mTemplateModel.HasBj){
+           String[]newPaths=new String[paths.length+1];
+           System.arraycopy(paths, 0, newPaths, 0, paths.length);
+           MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.mAssets.get(0).ui;
+           newPaths[newPaths.length-1]=mediaUiModel2.getpathForThisBjMatrix(Objects.requireNonNull(getExternalFilesDir("runCatch/")).getPath(),mTemplateModel.getBackgroundPath());
+//           newPaths[newPaths.length-1]=mTemplateModel.getBackgroundPath();
+           switchTemplate(mFolder.getPath(), newPaths);
+       }else{
+           switchTemplate(mFolder.getPath(), paths);
+       }
+
+
     }
 
     @Override
@@ -555,6 +573,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             presenter.getButtomIcon(path);
             Observable.just(nowChoosePosition).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> mTemplateViews.get(integer).invalidate(), 200));
         }
+    }
+
+
+    @Override
+    public void getSpliteMusic(String path) {
+        nowSpliteMusic=path;
+        setBjMusic();
     }
 
 
@@ -914,9 +939,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         final SXTemplate template = new SXTemplate(folder, SXTemplate.TemplateUsage.kForPreview);
         for (String mSource : mSources) {
             LogUtil.d("OOM", "路徑為" + mSource);
-
         }
+
         template.setReplaceableFilePaths(mSources);
+
         template.enableSourcePrepare();
         new Thread() {
             @Override
@@ -929,7 +955,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     seekBar.setMax(mDuration);
                     mPlayer = mPlayerView.setTemplate(template);
                     seekBar.setProgress(0);
-                    mPlayer.replaceAudio(mAudio1Path);
+                    if(nowChooseMusic!=0){
+                        mPlayer.replaceAudio(nowSpliteMusic);
+                    }else{
+                        mPlayer.replaceAudio(mAudio1Path);
+                    }
+
                     LogUtil.d("OOM", "start");
                     mPlayer.start();
                     isPlaying = true;
@@ -1195,18 +1226,32 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 case R.id.tv_0:
                     clearCheckBox();
                     cb_0.setChecked(true);
+                    nowChooseMusic=1;
                     break;
                 case R.id.tv_1:
                     clearCheckBox();
                     cb_1.setChecked(true);
+                    nowChooseMusic=2;
+                    presenter.getBjMusic(mTemplateModel.getBackgroundPath());
                     break;
                 case R.id.tv_2:
                     clearCheckBox();
                     cb_2.setChecked(true);
+                    nowChooseMusic=0;
                     break;
             }
         }
     };
+
+
+
+    private void setBjMusic(){
+        if (isPlaying) {
+            mPlayer.replaceAudio(nowSpliteMusic);
+        } else {
+//            videoToStart();
+        }
+    }
 
 
     private void clearCheckBox() {

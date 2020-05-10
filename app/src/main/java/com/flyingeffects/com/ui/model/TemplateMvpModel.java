@@ -33,6 +33,7 @@ import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.ChooseBackgroundTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
@@ -76,6 +77,7 @@ public class TemplateMvpModel {
     private boolean isOnDestroy;
     private String cacheCutVideoPath;
     private String backgroundPath;
+    private String soundFolder;
 
     public TemplateMvpModel(Context context, TemplateMvpCallback callback) {
         this.context = context;
@@ -84,12 +86,24 @@ public class TemplateMvpModel {
         FileManager fileManager = new FileManager();
         cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
         backgroundPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "background");
+        soundFolder = fileManager.getFileCachePath(context, "soundFolder");
         isOnDestroy = false;
     }
 
 
     public void getReplaceableFilePath() {
         callback.returnReplaceableFilePath(mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath())));
+    }
+
+
+    public void getBjMusic(String videoPath){
+        mediaManager manager=new mediaManager(context);
+        manager.splitMp4(videoPath, new File(soundFolder), new mediaManager.splitMp4Callback() {
+            @Override
+            public void splitSuccess(boolean isSuccess, String putPath) {
+                callback.getSpliteMusic(putPath);
+            }
+        });
     }
 
 

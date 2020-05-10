@@ -331,14 +331,19 @@ public class TemplateModel {
     }
 
 
-
+String backgroundPath;
     public void setHasBg(String backgroundPath){
-        for (int i = 0; i < mAssets.size(); i++) {
-            AssetModel model = mAssets.get(i);
-            if (model.type == AssetModel.TYPE_MEDIA) { //如果类型是meidiaUiModel
-                model.ui.hasChooseBg(backgroundPath);
-            }
-        }
+//        for (int i = 0; i < mAssets.size(); i++) {
+//            AssetModel model = mAssets.get(i);
+//            if (model.type == AssetModel.TYPE_MEDIA) { //如果类型是meidiaUiModel
+//                model.ui.hasChooseBg(backgroundPath);
+//            }
+//        }
+        this.backgroundPath=backgroundPath;
+    }
+
+    public String getBackgroundPath(){
+        return  backgroundPath;
     }
 
 }

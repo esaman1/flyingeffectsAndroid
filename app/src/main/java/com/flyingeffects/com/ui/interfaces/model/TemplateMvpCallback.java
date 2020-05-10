@@ -27,5 +27,7 @@ public interface TemplateMvpCallback {
 
     void showBottomIcon(String path);
 
+    void getSpliteMusic(String path);
+
 
 }
