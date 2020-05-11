@@ -59,7 +59,17 @@ public class TemplateModel {
             uiVersionMajor = Integer.parseInt(majorStr);
         }
         fps = (float) config.getDouble("fps");
-
+        try {
+            JSONArray assetsComps = config.getJSONArray("comps");
+            JSONObject comoOb = (JSONObject) assetsComps.get(0);
+            JSONArray isze = (JSONArray) comoOb.get("size");
+            templateSize[0] = (int) isze.get(0);
+            templateSize[1] = (int) isze.get(1);
+            mDuration = comoOb.getInt("duration");
+        } catch (Exception e) {
+            Log.d("Exception", e.getMessage());
+        }
+        Size temSize=new Size(templateSize[0],templateSize[1]);
         JSONArray assets = config.getJSONArray("assets");
         for (int i = 0; i < assets.length(); i++) {
             JSONObject asset = assets.getJSONObject(i);
@@ -69,12 +79,12 @@ public class TemplateModel {
                 //可以替换背景功能
                 if (!TextUtils.isEmpty(ui_extra) && ui_extra.equals("BG")) {
                     HasBj = true;
-                    bgModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor);
+                    bgModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor,null);
                     int group = bgModel.ui.group;
                     if (groupSize < group)
                         groupSize = group; //得到最大的group 的值，group 就是位置，但这里最大值是没包括背景的
                 } else {
-                    AssetModel assetModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor);
+                    AssetModel assetModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor,temSize);
                     mAssets.add(assetModel);
 
                     //单独针对mask 图层
@@ -110,16 +120,7 @@ public class TemplateModel {
             }
         }
 
-        try {
-            JSONArray assetsComps = config.getJSONArray("comps");
-            JSONObject comoOb = (JSONObject) assetsComps.get(0);
-            JSONArray isze = (JSONArray) comoOb.get("size");
-            templateSize[0] = (int) isze.get(0);
-            templateSize[1] = (int) isze.get(1);
-            mDuration = comoOb.getInt("duration");
-        } catch (Exception e) {
-            Log.d("Exception", e.getMessage());
-        }
+
 
 
         //一个GroupModel 里面可能包含多个同组不同index
@@ -331,19 +332,20 @@ public class TemplateModel {
     }
 
 
-String backgroundPath;
-    public void setHasBg(String backgroundPath){
-//        for (int i = 0; i < mAssets.size(); i++) {
-//            AssetModel model = mAssets.get(i);
-//            if (model.type == AssetModel.TYPE_MEDIA) { //如果类型是meidiaUiModel
-//                model.ui.hasChooseBg(backgroundPath);
-//            }
-//        }
-        this.backgroundPath=backgroundPath;
+    private String backgroundPath;
+
+    public void setHasBg(String backgroundPath) {
+        for (int i = 0; i < mAssets.size(); i++) {
+            AssetModel model = mAssets.get(i);
+            if (model.type == AssetModel.TYPE_MEDIA) { //如果类型是meidiaUiModel
+                model.ui.hasChooseBg(backgroundPath);
+            }
+        }
+        this.backgroundPath = backgroundPath;
     }
 
-    public String getBackgroundPath(){
-        return  backgroundPath;
+    public String getBackgroundPath() {
+        return backgroundPath;
     }
 
 }

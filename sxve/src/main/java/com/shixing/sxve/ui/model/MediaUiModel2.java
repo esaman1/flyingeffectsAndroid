@@ -70,10 +70,13 @@ public class MediaUiModel2 extends MediaUiModel {
 
     private Matrix mMatrixBj;
 
-    public MediaUiModel2(String folder, JSONObject ui, Bitmap bitmap, AssetDelegate delegate, Size size) throws JSONException {
+    //最后渲染出来模板大小
+    private Size temSize;
+
+    public MediaUiModel2(String folder, JSONObject ui, Bitmap bitmap, AssetDelegate delegate, Size size,Size temSize) throws JSONException {
         super(folder, ui, delegate, size);
         mBitmap = bitmap;
-
+        this.temSize=temSize;
         int[] editSize = getIntArray(ui.getJSONArray("editSize"));
         mClipWidth = editSize[0];
         mClipHeight = editSize[1];
@@ -94,7 +97,7 @@ public class MediaUiModel2 extends MediaUiModel {
         AffineTransform affineTransform = new AffineTransform();
         affineTransform.set(new PointF(a[0], a[1]), new PointF(p[0], p[1]), new PointF(s[0], s[1]), (float) Math.toRadians(mR));
         mInitMatrix = affineTransform.getMatrix();
-        mMatrixBj = affineTransform.getMatrix();
+//        mMatrixBj = affineTransform.getMatrix();
         mMatrix = new Matrix(mInitMatrix);
         mInverseMatrix = new Matrix();
         mInitMatrix.invert(mInverseMatrix);
@@ -129,9 +132,9 @@ public class MediaUiModel2 extends MediaUiModel {
 
         if (b != null) {
             //有用户选择的背景的情况
-            if(!TextUtils.isEmpty(nowChooseBjPath)){
+            if (!TextUtils.isEmpty(nowChooseBjPath)) {
                 canvas.drawBitmap(b, mMatrixBj, null);
-            }else{
+            } else {
                 canvas.drawBitmap(b, 0, 0, null);
             }
 
@@ -210,10 +213,10 @@ public class MediaUiModel2 extends MediaUiModel {
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             retriever.setDataSource(path);
             b = retriever.getFrameAtTime(0);
-            b=BitmapCompress.zoomImg(b,360, 540);
+//            b=BitmapCompress.zoomImg(b,360, 540);
             countMatrixBj(b);
             retriever.release();
-            setVideoPath(path,false,0);
+            //  setVideoPath(path,false,0);
         }
 
     }
@@ -473,40 +476,36 @@ public class MediaUiModel2 extends MediaUiModel {
 
 
     public String getpathForThisBjMatrix(String folder, String cartoonPath) {
-                    final String path = folder + File.separator + UUID.randomUUID() + ".mp4";
-                    Matrix matrix = new Matrix(mMatrixBj);
-                    matrix.postConcat(mInverseMatrix);
-                    SXCompositor sxCompositor = new SXCompositor(cartoonPath, path, matrix, !mMute);
-                    sxCompositor.setWidth(mClipWidth);
-                    sxCompositor.setHeight(mClipHeight);
-                    sxCompositor.setStartTime(mStartTime);
-                    sxCompositor.setDuration(mDuration);
-                    sxCompositor.setBitrateFactor(1f);
-                    sxCompositor.setRenderListener(new SXRenderListener() {
-                        @Override
-                        public void onStart() {
-                        }
+        final String path = folder + File.separator + UUID.randomUUID() + ".mp4";
+        SXCompositor sxCompositor = new SXCompositor(cartoonPath, path, mMatrixBj, false);
+        sxCompositor.setWidth(temSize.getWidth());
+        sxCompositor.setHeight(temSize.getHeight());
+        sxCompositor.setStartTime(mStartTime);
+        sxCompositor.setDuration(mDuration);
+        sxCompositor.setBitrateFactor(1f);
+        sxCompositor.setRenderListener(new SXRenderListener() {
+            @Override
+            public void onStart() {
+            }
 
-                        @Override
-                        public void onUpdate(int progress) {
+            @Override
+            public void onUpdate(int progress) {
 
-                        }
+            }
 
-                        @Override
-                        public void onFinish(boolean success, String msg) {
-                            Log.d("TEST", "mediaUiModel clip finish: " + path);
-                        }
+            @Override
+            public void onFinish(boolean success, String msg) {
+                Log.d("TEST", "mediaUiModel clip finish: " + path);
+            }
 
-                        @Override
-                        public void onCancel() {
+            @Override
+            public void onCancel() {
 
-                        }
-                    });
-                    sxCompositor.run();
-                    isMaskSlide = false;
-                    lastOtherPath = path;
-                    Log.d("oom", "视频地址2为" + cartoonPath);
-                    return path;
+            }
+        });
+        sxCompositor.run();
+        Log.d("oom", "视频地址2为" + cartoonPath);
+        return path;
     }
 
     private void recycleWhiteBitmap() {
@@ -607,23 +606,30 @@ public class MediaUiModel2 extends MediaUiModel {
 
     private void countMatrixBj(Bitmap bp) {
         if (bp != null) {
-            int widthSize = size.getWidth();
-            mMatrixBj.reset();
-            float scale = widthSize / (float) bp.getWidth();
-            Log.d("mMatrix", "mBitmap=getWidth" + (float) bp.getWidth());
-            Log.d("mMatrix", "scale=" + scale);
-            mMatrixBj.postScale(scale, scale);
-            double tranY = bp.getHeight() * scale;
-            if (size.getHeight() - tranY > 0) {
-                int needY = (int) (size.getHeight() - tranY) / 2;
-                Log.d("mMatrix", "needY=" + needY);
-                mMatrixBj.postTranslate(0, needY);
-            } else {
-                int needY = (int) (tranY - size.getHeight()) / 2;
-                Log.d("mMatrix", "needY=" + needY);
-                mMatrixBj.postTranslate(0, -needY);
-            }
+            float rw = temSize.getWidth();
+            float rh = temSize.getHeight();
+            float bw = bp.getWidth();
+            float bh = bp.getHeight();
 
+            Log.d("OOM2","size.getWidth()="+rw+"bw="+bw);
+            Log.d("OOM2"," size.getHeight()="+rh+"bh="+bh);
+            Log.d("OOM2"," mClipWidth="+mClipWidth+"mClipHeight="+mClipHeight);
+            float scale = Math.max(rw / bw, rh / bh);
+            Log.d("OOM2","scale="+scale);
+            Log.d("OOM2","SIZEw="+scale);
+            mMatrixBj = new Matrix();
+            float tranX=(rw - bw * scale) / 2;
+//            if(tranX<0){
+//                tranX=0;
+//            }
+            float tranY=(rh - bh * scale) / 2;
+//            if(tranY<0){
+//                tranY=0;
+//            }
+
+            mMatrixBj.postTranslate(tranX, tranY);
+            Log.d("OOM2","tranX="+tranX+"tranY="+tranY);
+            mMatrixBj.preScale(scale, scale);
         }
     }
 
