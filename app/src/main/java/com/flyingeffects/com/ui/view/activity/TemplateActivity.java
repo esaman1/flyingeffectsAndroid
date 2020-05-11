@@ -1045,10 +1045,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                                 mTemplateViews.get(lastChoosePosition).invalidate();
                                 ModificationSingleThumbItem(paths.get(0));
                             }
-
                         } else {
                             mattingImage(paths);
                         }
+                        chooseTemplateMusic();
+                        templateThumbForMusic.findViewById(R.id.ll_0).setVisibility(View.GONE);
                     } else {
                         //如果是视频.就进入裁剪页面
                         float needVideoTime = Float.parseFloat(videoTime);
@@ -1284,16 +1285,22 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     presenter.getBjMusic(mTemplateModel.getBackgroundPath());
                     break;
                 case R.id.ll_2:
-                    clearCheckBox();
-                    cb_2.setChecked(true);
-                    nowChooseMusic = 0;
-                    if (isPlaying) {
-                        mPlayer.replaceAudio(mAudio1Path);
-                    }
+
+                    chooseTemplateMusic();
                     break;
             }
         }
     };
+
+
+    private void chooseTemplateMusic(){
+        clearCheckBox();
+        cb_2.setChecked(true);
+        nowChooseMusic = 0;
+        if (isPlaying) {
+            mPlayer.replaceAudio(mAudio1Path);
+        }
+    }
 
     private void setBjMusic() {
         if (isPlaying) {
