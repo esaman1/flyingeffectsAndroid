@@ -37,6 +37,7 @@ import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.TabEntity;
 import com.flyingeffects.com.enity.TemplateThumbItem;
+import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.AnimForViewShowAndHide;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
@@ -239,6 +240,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     private String primitivePath;
 
+    private new_fag_template_item templateItem;
+
 
     @Override
     protected int getLayoutId() {
@@ -263,12 +266,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             videoTime = bundle.getString("videoTime");
             primitivePath = bundle.getString("primitivePath");
             picout = bundle.getInt("picout");
+
             originalPath = bundle.getStringArrayList("originalPath");
             templateName = bundle.getString("templateName");
             nowTemplateIsAnim = bundle.getInt("is_anime");
         }
-
-
+        templateItem = (new_fag_template_item) getIntent().getSerializableExtra("person");
         if (originalPath != null && originalPath.size() > 0) {
             int totalMaterial = needAssetsCount;
             if (originalPath.size() < totalMaterial) {
@@ -1201,7 +1204,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             public void onTabSelect(int position) {
                 if (position == 1) {
                     if (mTemplateModel.HasBj) {
-                        presenter.chooseBj();
+                        presenter.chooseBj(templateItem);
                         commonTabLayout.setCurrentTab(lastChooseCommonTabLayout);
                     } else {
                         //如果不是背景模板，那么还是有音乐

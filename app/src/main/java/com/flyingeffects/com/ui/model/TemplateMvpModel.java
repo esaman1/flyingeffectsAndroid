@@ -26,6 +26,7 @@ import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.TemplateThumbItem;
+import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -388,8 +389,9 @@ public class TemplateMvpModel {
      * creation date: 2020/5/9
      * user : zhangtongju
      */
-    public void chooseBj() {
+    public void chooseBj(new_fag_template_item templateItem) {
         Intent intent = new Intent(context, ChooseBackgroundTemplateActivity.class);
+        intent.putExtra("templateItem",templateItem);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         context.startActivity(intent);
     }

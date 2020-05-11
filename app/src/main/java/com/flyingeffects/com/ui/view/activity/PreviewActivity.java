@@ -402,6 +402,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         bundle.putString("fromTo", fromTo);
         bundle.putInt("picout", templateItem.getIs_picout());
         bundle.putInt("is_anime", templateItem.getIs_anime());
+
         bundle.putString("templateName", templateItem.getTitle());
         bundle.putString("templateId", templateItem.getId());
         bundle.putString("videoTime", templateItem.getVideotime());
@@ -409,6 +410,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         bundle.putString("templateFilePath", templateFilePath);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("Message", bundle);
+        intent.putExtra("person", templateItem);
         startActivity(intent);
     }
 
@@ -649,6 +651,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             bundle.putString("primitivePath",event.getPrimitivePath());
             bundle.putInt("is_anime", templateItem.getIs_anime());
             bundle.putString("templateName", templateItem.getTitle());
+            intent.putExtra("person",templateItem);//直接存入被序列化的对象实例
             bundle.putString("templateId", templateItem.getId());
             bundle.putString("videoTime", templateItem.getVideotime());
             bundle.putStringArrayList("originalPath", (ArrayList<String>) originalImagePath);

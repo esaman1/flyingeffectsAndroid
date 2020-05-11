@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -62,6 +63,11 @@ public class fragBjItem extends BaseFragment   {
      */
     private int fromType;
 
+    /**
+     * 封面图，来自一键模板切换背景的时候，这个封面图代表默认的背景选择
+     */
+    private String cover;
+
 
     @Override
     protected int getContentLayout() {
@@ -74,6 +80,7 @@ public class fragBjItem extends BaseFragment   {
         if (bundle != null) {
             templateId = bundle.getString("id");
             fromType=bundle.getInt("from");
+            cover=bundle.getString("cover");
         }
         initRecycler();
         initSmartRefreshLayout();
@@ -174,6 +181,12 @@ public class fragBjItem extends BaseFragment   {
                 finishData();
                 if (isRefresh) {
                     listData.clear();
+                    if(!TextUtils.isEmpty(cover)){
+                        new_fag_template_item item=new new_fag_template_item();
+                        item.setImage(cover);
+                        item.setTitle("默认背景");
+                        listData.add(item);
+                    }
                 }
                 if (isRefresh && data.size() == 0) {
                   showNoData(true);

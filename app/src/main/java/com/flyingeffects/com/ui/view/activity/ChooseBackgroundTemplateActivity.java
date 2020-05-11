@@ -14,6 +14,7 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.TemplateType;
+import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -48,6 +49,9 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
     @BindView(R.id.tl_tabs)
     SlidingTabLayout tabLayout;
 
+
+    private new_fag_template_item templateItem;
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_choose_background_template;
@@ -56,6 +60,7 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
+        templateItem = (new_fag_template_item) getIntent().getSerializableExtra("templateItem");
     }
 
     @Override
@@ -89,7 +94,7 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
 
     public void setFragmentList(List<TemplateType> data) {
         if (data != null && data.size() > 0) {
-            TemplateType templateType =new TemplateType();
+            TemplateType templateType = new TemplateType();
             templateType.setId("collect");
             templateType.setName("收藏");
             data.add(templateType);
@@ -97,7 +102,7 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
             FragmentManager manager = getSupportFragmentManager();
             String[] titles = new String[data.size()];
             for (int i = 0; i < data.size(); i++) {
-                if(i==data.size()-1){
+                if (i == data.size() - 1) {
                     //手动添加收藏模板
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("template_type", "2");
@@ -105,19 +110,18 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
                     frag_user_collect fag_0 = new frag_user_collect();
                     fag_0.setArguments(bundle);
                     list.add(fag_0);
-                }else{
+                } else {
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("id", data.get(i).getId());
                     bundle.putSerializable("from", 3);
                     bundle.putSerializable("num", i);
+                    bundle.putSerializable("cover",templateItem.getImage());
                     titles[i] = data.get(i).getName();
                     fragBjItem fragment = new fragBjItem();
                     fragment.setArguments(bundle);
                     list.add(fragment);
                 }
             }
-
-
 
 
             home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
@@ -147,7 +151,7 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
      */
     @Subscribe
     public void onEventMainThread(DownVideoPath event) {
-        LogUtil.d("OOM2","销毁了onEventMainThread");
+        LogUtil.d("OOM2", "销毁了onEventMainThread");
         this.finish();
     }
 
