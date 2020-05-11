@@ -49,6 +49,7 @@ public class ChannelUtil {
         }
 
 
+
         if (channel == null || channel.length() <= 0) {
             channel = "test";
         }

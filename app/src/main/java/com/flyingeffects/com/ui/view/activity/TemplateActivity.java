@@ -46,9 +46,11 @@ import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
+import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MattingVideoEnity;
@@ -224,7 +226,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     CommonTabLayout commonTabLayout;
 
     //模板背景音乐 0表示模板音乐 1表示素材音乐  2 表示背景音乐
-    private int nowChooseMusic=0;
+    private int nowChooseMusic = 0;
 
     /**
      * 当前分离出来的视频音乐
@@ -470,16 +472,15 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         }
         Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().post(() -> showPreview(true, false)));
 
-       if(mTemplateModel.HasBj){
-           String[]newPaths=new String[paths.length+1];
-           System.arraycopy(paths, 0, newPaths, 0, paths.length);
-           MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.mAssets.get(0).ui;
-           newPaths[newPaths.length-1]=mediaUiModel2.getpathForThisBjMatrix(Objects.requireNonNull(getExternalFilesDir("runCatch/")).getPath(),mTemplateModel.getBackgroundPath());
-//           newPaths[newPaths.length-1]=mTemplateModel.getBackgroundPath();
-           switchTemplate(mFolder.getPath(), newPaths);
-       }else{
-           switchTemplate(mFolder.getPath(), paths);
-       }
+        if (mTemplateModel.HasBj && !TextUtils.isEmpty(mTemplateModel.getBackgroundPath())) {
+            String[] newPaths = new String[paths.length + 1];
+            System.arraycopy(paths, 0, newPaths, 0, paths.length);
+            MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.mAssets.get(0).ui;
+            newPaths[newPaths.length - 1] = mediaUiModel2.getpathForThisBjMatrix(Objects.requireNonNull(getExternalFilesDir("runCatch/")).getPath(), mTemplateModel.getBackgroundPath());
+            switchTemplate(mFolder.getPath(), newPaths);
+        } else {
+            switchTemplate(mFolder.getPath(), paths);
+        }
 
 
     }
@@ -578,7 +579,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     public void getSpliteMusic(String path) {
-        nowSpliteMusic=path;
+        nowSpliteMusic = path;
         setBjMusic();
     }
 
@@ -872,7 +873,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         showPreview(true, false);
                     }
                 }
-                presenter.renderVideo(mFolder.getPath(), mAudio1Path, false);
+                if (nowChooseMusic != 0) {
+                    presenter.renderVideo(mFolder.getPath(), nowSpliteMusic, false);
+                } else {
+                    presenter.renderVideo(mFolder.getPath(), mAudio1Path, false);
+                }
                 break;
 
             case R.id.iv_play:
@@ -956,9 +961,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     mPlayer = mPlayerView.setTemplate(template);
 
                     seekBar.setProgress(0);
-                    if(nowChooseMusic!=0){
+                    if (nowChooseMusic != 0) {
                         mPlayer.replaceAudio(nowSpliteMusic);
-                    }else{
+                    } else {
                         mPlayer.replaceAudio(mAudio1Path);
                     }
 
@@ -1227,30 +1232,42 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 case R.id.tv_0:
                     clearCheckBox();
                     cb_0.setChecked(true);
-                    nowChooseMusic=1;
+                    nowChooseMusic = 1;
+                    String path = imgPath.get(0);
+                    if (albumType.isVideo(GetPathTypeModel.getInstance().getMediaType(path))) {
+                        if (originalPath != null && !TextUtils.isEmpty(originalPath.get(0))) {
+                            presenter.getBjMusic(originalPath.get(0));
+                        } else {
+                            presenter.getBjMusic(imgPath.get(0));
+                        }
+                    } else {
+                        ToastUtil.showToast("没有素材");
+                    }
                     break;
                 case R.id.tv_1:
                     clearCheckBox();
                     cb_1.setChecked(true);
-                    nowChooseMusic=2;
+                    nowChooseMusic = 2;
                     presenter.getBjMusic(mTemplateModel.getBackgroundPath());
                     break;
                 case R.id.tv_2:
                     clearCheckBox();
                     cb_2.setChecked(true);
-                    nowChooseMusic=0;
+                    nowChooseMusic = 0;
+                    if (isPlaying) {
+                        mPlayer.replaceAudio(mAudio1Path);
+                    }
                     break;
             }
         }
     };
 
 
-
-    private void setBjMusic(){
+    private void setBjMusic() {
         if (isPlaying) {
-            int progress=mPlayer.getDuration();
-            mPlayer.replaceAudio("");
-            presenter.playBGMMusic(nowSpliteMusic,progress);
+//            int progress=mPlayer.getDuration();
+            mPlayer.replaceAudio(nowSpliteMusic);
+//            presenter.playBGMMusic(nowSpliteMusic,progress);
         }
     }
 

@@ -47,6 +47,7 @@ import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.SxveConstans;
 import com.shixing.sxve.ui.albumType;
+import com.shixing.sxve.ui.model.MediaUiModel2;
 import com.shixing.sxve.ui.model.TemplateModel;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
@@ -200,10 +201,18 @@ public class TemplateMvpModel {
         waitingDialog_progress.openProgressDialog();
         waitingDialog_progress.setProgress("生成中...");
         Observable.create((Observable.OnSubscribe<Boolean>) subscriber -> {
-            String[] paths = mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
             LogUtil.d("OOM", "得到全部地址");
             SXTemplate template = new SXTemplate(mTemplateFolder, SXTemplate.TemplateUsage.kForRender); //模板对象类，需要传入模板路径和使用方式
-            template.setReplaceableFilePaths(paths); //设置用户可修改的视频路径
+            String[] paths = mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
+            if (mTemplateModel.HasBj && !TextUtils.isEmpty(mTemplateModel.getBackgroundPath())) {
+                String[] newPaths = new String[paths.length + 1];
+                System.arraycopy(paths, 0, newPaths, 0, paths.length);
+                MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.mAssets.get(0).ui;
+                newPaths[newPaths.length - 1] = mediaUiModel2.getpathForThisBjMatrix(Objects.requireNonNull(context.getExternalFilesDir("runCatch/")).getPath(), mTemplateModel.getBackgroundPath());
+                template.setReplaceableFilePaths(newPaths); //设置用户可修改的视频路径
+            } else {
+                template.setReplaceableFilePaths(paths); //设置用户可修改的视频路径
+            }
             template.commit();
             template.setFileForAsset("black", SxveConstans.default_bg_path); //控制默认颜色
             SXTemplateRender sxTemplateRender;
@@ -479,6 +488,7 @@ public class TemplateMvpModel {
                 bgmPlayer.setDataSource(bgmPath);
                 bgmPlayer.prepare();
                 bgmPlayer.start();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
