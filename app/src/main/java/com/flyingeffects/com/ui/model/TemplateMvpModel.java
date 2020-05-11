@@ -493,6 +493,8 @@ public class TemplateMvpModel {
                 e.printStackTrace();
             }
         }
+
+
         bgmPlayer.seekTo(progress);
 
     }
@@ -503,13 +505,15 @@ public class TemplateMvpModel {
             bgmPlayer.pause();
         }
     }
-
-
-    public void BgmSeekTo(int progress) {
+    public void StopBgmMusic() {
         if (bgmPlayer != null) {
-            bgmPlayer.seekTo(progress);
+            bgmPlayer.stop();
+            bgmPlayer.release();
+            bgmPlayer=null;
         }
     }
+
+
 
 
 }

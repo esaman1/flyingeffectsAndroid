@@ -261,7 +261,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             templateFilePath = bundle.getString("templateFilePath");
             imgPath = bundle.getStringArrayList("paths");
             videoTime = bundle.getString("videoTime");
-            primitivePath=bundle.getString("primitivePath");
+            primitivePath = bundle.getString("primitivePath");
             picout = bundle.getInt("picout");
             originalPath = bundle.getStringArrayList("originalPath");
             templateName = bundle.getString("templateName");
@@ -972,17 +972,18 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     mDuration = template.realDuration();
                     seekBar.setMax(mDuration);
                     mPlayer = mPlayerView.setTemplate(template);
-
                     seekBar.setProgress(0);
+                    LogUtil.d("OOM", "start");
+
                     if (nowChooseMusic != 0) {
+//                        presenter.playBGMMusic(nowSpliteMusic, 0);
                         mPlayer.replaceAudio(nowSpliteMusic);
                     } else {
+//                        presenter.playBGMMusic(nowSpliteMusic, 0);
                         mPlayer.replaceAudio(mAudio1Path);
                     }
-
-                    LogUtil.d("OOM", "start");
-                    mPlayer.start();
                     isPlaying = true;
+                    mPlayer.start();
                 });
             }
         }.start();
@@ -1155,7 +1156,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         }
         templateThumbForMusic.findViewById(R.id.ll_0).setVisibility(View.VISIBLE);
-        primitivePath=event.getPrimitivePath();
+        primitivePath = event.getPrimitivePath();
     }
 
 
@@ -1180,6 +1181,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private CheckBox cb_2;
     String[] titlesHasBj;
     private View templateThumbForMusic;
+
     public void initBottomLayout() {
         ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
         if (mTemplateModel.HasBj) {
@@ -1224,7 +1226,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         recyclerView = templateThumb.findViewById(R.id.recyclerView);
         pagerList.add(recyclerView);
         initTemplateThumb(mTemplateModel.groupSize);
-        templateThumbForMusic  = LayoutInflater.from(this).inflate(R.layout.view_template_music, null);
+        templateThumbForMusic = LayoutInflater.from(this).inflate(R.layout.view_template_music, null);
         //素材
         LinearLayout tv0 = templateThumbForMusic.findViewById(R.id.ll_0);
         //背景
@@ -1272,7 +1274,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     nowChooseMusic = 1;
                     String path = imgPath.get(0);
                     if (albumType.isVideo(GetPathTypeModel.getInstance().getMediaType(path))) {
-                            presenter.getBjMusic(primitivePath);
+                        presenter.getBjMusic(primitivePath);
                     } else {
                         cb_2.setChecked(true);
                         ToastUtil.showToast("没有素材");
@@ -1285,7 +1287,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     presenter.getBjMusic(mTemplateModel.getBackgroundPath());
                     break;
                 case R.id.ll_2:
-
                     chooseTemplateMusic();
                     break;
             }
@@ -1293,7 +1294,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     };
 
 
-    private void chooseTemplateMusic(){
+    private void chooseTemplateMusic() {
         clearCheckBox();
         cb_2.setChecked(true);
         nowChooseMusic = 0;
