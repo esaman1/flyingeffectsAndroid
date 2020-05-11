@@ -271,7 +271,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
                             if (v.getId() == R.id.tv_kt) {
                                 gotoMattingVideo(path);
                             } else {
-                                EventBus.getDefault().post(new MattingVideoEnity(null, path, isFrom));
+                                EventBus.getDefault().post(new MattingVideoEnity(null, path,path, isFrom));
                                 TemplateCutVideoActivity.this.finish();
                             }
                         }
@@ -308,7 +308,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
         SegJni.nativeCreateSegHandler(this, ConUtil.getFileContent(this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
         Observable.just(originalPath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
             videoMattingModel  = new VideoMattingModel(originalPath, TemplateCutVideoActivity.this, (isSuccess, path,noMakingPath) -> {
-                EventBus.getDefault().post(new MattingVideoEnity(noMakingPath, path, isFrom));
+                EventBus.getDefault().post(new MattingVideoEnity(noMakingPath, path,originalPath, isFrom));
                 TemplateCutVideoActivity.this.finish();
             });
             videoMattingModel.ToExtractFrame(templateName);

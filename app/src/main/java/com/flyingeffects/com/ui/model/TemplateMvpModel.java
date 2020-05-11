@@ -421,7 +421,7 @@ public class TemplateMvpModel {
                 VideoMattingModel videoMattingModel = new VideoMattingModel(originalPath, context, new VideoMattingModel.MattingSuccess() {
                     @Override
                     public void isSuccess(boolean isSuccess, String path, String noMaskingPath) {
-                        EventBus.getDefault().post(new MattingVideoEnity(noMaskingPath, path, 1));
+                        EventBus.getDefault().post(new MattingVideoEnity(noMaskingPath, path,originalPath ,1));
                     }
                 });
                 videoMattingModel.ToExtractFrame(templatename);

@@ -234,6 +234,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     private String nowSpliteMusic;
 
+    /**
+     * 这里也是原图地址，如果是扣完图视频后，这个值是指真正意义上的原图地址且包含音乐而originalPath 是拼装后的原图地址
+     */
+    private String primitivePath;
+
 
     @Override
     protected int getLayoutId() {
@@ -256,6 +261,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             templateFilePath = bundle.getString("templateFilePath");
             imgPath = bundle.getStringArrayList("paths");
             videoTime = bundle.getString("videoTime");
+            primitivePath=bundle.getString("primitivePath");
             picout = bundle.getInt("picout");
             originalPath = bundle.getStringArrayList("originalPath");
             templateName = bundle.getString("templateName");
@@ -1148,6 +1154,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         }
         templateThumbForMusic.findViewById(R.id.ll_0).setVisibility(View.VISIBLE);
+        primitivePath=event.getPrimitivePath();
     }
 
 
@@ -1264,11 +1271,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     nowChooseMusic = 1;
                     String path = imgPath.get(0);
                     if (albumType.isVideo(GetPathTypeModel.getInstance().getMediaType(path))) {
-                        if (originalPath != null && !TextUtils.isEmpty(originalPath.get(0))) {
-                            presenter.getBjMusic(originalPath.get(0));
-                        } else {
-                            presenter.getBjMusic(imgPath.get(0));
-                        }
+                            presenter.getBjMusic(primitivePath);
                     } else {
                         cb_2.setChecked(true);
                         ToastUtil.showToast("没有素材");

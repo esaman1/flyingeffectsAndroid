@@ -10,11 +10,13 @@ public class MattingVideoEnity implements Serializable {
      * description ：
      * creation date: 2020/4/14
      * param : tag  界面标志 1 表示模板详情页 0表示预览页面
+     * originalPath 拼装后原图地址   mattingPath 裁剪后地址  primitivePath 原图地址，主要是用于模板页面的音乐切换功能
      * user : zhangtongju
      */
-    public MattingVideoEnity(String originalPath,String mattingPath,int tag){
+    public MattingVideoEnity(String originalPath,String mattingPath,String primitivePath,int tag){
         this.originalPath=originalPath;
         this.mattingPath=mattingPath;
+        this.primitivePath=primitivePath;
         this.tag=tag;
     }
 
@@ -37,6 +39,16 @@ public class MattingVideoEnity implements Serializable {
 
     private String originalPath;
     private String mattingPath;
+
+    public String getPrimitivePath() {
+        return primitivePath;
+    }
+
+    public void setPrimitivePath(String primitivePath) {
+        this.primitivePath = primitivePath;
+    }
+
+    private String primitivePath;
 
 
     public int getTag() {
