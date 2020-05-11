@@ -22,6 +22,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -390,14 +391,20 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @Override
     public void completeTemplate(TemplateModel templateModel) {
         mTemplateModel = templateModel;
-        if (templateModel.HasBj) {
-            findViewById(R.id.ll_viewpager_container).setVisibility(View.VISIBLE);
-            initBottomLayout();
-        } else {
-            recyclerView = findViewById(R.id.recyclerView);
-            recyclerView.setVisibility(View.VISIBLE);
-            initTemplateThumb(templateModel.groupSize);
-        }
+//        if (templateModel.HasBj) {
+//            findViewById(R.id.ll_viewpager_container).setVisibility(View.VISIBLE);
+//            initBottomLayout();
+//        } else {
+//            recyclerView = findViewById(R.id.recyclerView);
+//            recyclerView.setVisibility(View.VISIBLE);
+//            initTemplateThumb(templateModel.groupSize);
+//        }
+
+
+        findViewById(R.id.ll_viewpager_container).setVisibility(View.VISIBLE);
+        initBottomLayout();
+
+
         if (nowTemplateIsAnim == 1 || nowTemplateIsMattingVideo == 1) {
             mTemplateModel.cartoonPath = imgPath.get(0);  //设置灰度图
         }
@@ -1140,6 +1147,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 presenter.getButtomIcon(event.getOriginalPath());
             }
         }
+        templateThumbForMusic.findViewById(R.id.ll_0).setVisibility(View.VISIBLE);
     }
 
 
@@ -1162,12 +1170,18 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private CheckBox cb_0;
     private CheckBox cb_1;
     private CheckBox cb_2;
-
+    String[] titlesHasBj;
+    private View templateThumbForMusic;
     public void initBottomLayout() {
-
         ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
-        String[] titlesHasBj = {getString(R.string.template_edit), getString(R.string.template_bj),
-                getString(R.string.template_music)};
+        if (mTemplateModel.HasBj) {
+            titlesHasBj = new String[]{getString(R.string.template_edit), getString(R.string.template_bj),
+                    getString(R.string.template_music)};
+        } else {
+            titlesHasBj = new String[]{getString(R.string.template_edit),
+                    getString(R.string.template_music)};
+        }
+
         for (String title : titlesHasBj) {
             mTabEntities.add(new TabEntity(title, 0, 0));
         }
@@ -1176,8 +1190,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             @Override
             public void onTabSelect(int position) {
                 if (position == 1) {
-                    presenter.chooseBj();
-                    commonTabLayout.setCurrentTab(lastChooseCommonTabLayout);
+                    if (mTemplateModel.HasBj) {
+                        presenter.chooseBj();
+                        commonTabLayout.setCurrentTab(lastChooseCommonTabLayout);
+                    } else {
+                        //如果不是背景模板，那么还是有音乐
+                        lastChooseCommonTabLayout = 2;
+                        viewPager.setCurrentItem(1);
+                    }
                 } else if (position == 2) {
                     lastChooseCommonTabLayout = 2;
                     viewPager.setCurrentItem(1);
@@ -1196,17 +1216,26 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         recyclerView = templateThumb.findViewById(R.id.recyclerView);
         pagerList.add(recyclerView);
         initTemplateThumb(mTemplateModel.groupSize);
-        View templateThumb2 = LayoutInflater.from(this).inflate(R.layout.view_template_music, null);
-        TextView tv0 = templateThumb2.findViewById(R.id.tv_0);
-        TextView tv1 = templateThumb2.findViewById(R.id.tv_1);
-        TextView tv2 = templateThumb2.findViewById(R.id.tv_2);
+        templateThumbForMusic  = LayoutInflater.from(this).inflate(R.layout.view_template_music, null);
+        //素材
+        LinearLayout tv0 = templateThumbForMusic.findViewById(R.id.ll_0);
+        //背景
+        LinearLayout tv1 = templateThumbForMusic.findViewById(R.id.ll_1);
+        //模板
+        LinearLayout tv2 = templateThumbForMusic.findViewById(R.id.ll_2);
+
+        if (!mTemplateModel.HasBj) {
+            tv1.setVisibility(View.GONE);
+        }
+        if (albumType.isImage(GetPathTypeModel.getInstance().getMediaType(imgPath.get(0)))) {
+            tv0.setVisibility(View.GONE);
+        }
         tv0.setOnClickListener(tvMusicListener);
         tv1.setOnClickListener(tvMusicListener);
         tv2.setOnClickListener(tvMusicListener);
-        cb_0 = templateThumb2.findViewById(R.id.cb_0);
-        cb_1 = templateThumb2.findViewById(R.id.cb_1);
-
-        cb_2 = templateThumb2.findViewById(R.id.cb_2);
+        cb_0 = templateThumbForMusic.findViewById(R.id.cb_0);
+        cb_1 = templateThumbForMusic.findViewById(R.id.cb_1);
+        cb_2 = templateThumbForMusic.findViewById(R.id.cb_2);
         Drawable drawable_news = getResources().getDrawable(R.drawable.template_choose_btn);
         Drawable drawable_news1 = getResources().getDrawable(R.drawable.template_choose_btn);
         Drawable drawable_news2 = getResources().getDrawable(R.drawable.template_choose_btn);
@@ -1219,7 +1248,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         cb_1.setCompoundDrawables(drawable_news1, null, null, null);
         cb_2.setCompoundDrawables(drawable_news2, null, null, null);
         cb_2.setChecked(true);
-        pagerList.add(templateThumb2);
+        pagerList.add(templateThumbForMusic);
         TemplateViewPager adapter = new TemplateViewPager(pagerList);
         viewPager.setAdapter(adapter);
     }
@@ -1229,7 +1258,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         @Override
         public void onClick(View view) {
             switch (view.getId()) {
-                case R.id.tv_0:
+                case R.id.ll_0:
                     clearCheckBox();
                     cb_0.setChecked(true);
                     nowChooseMusic = 1;
@@ -1241,16 +1270,17 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                             presenter.getBjMusic(imgPath.get(0));
                         }
                     } else {
+                        cb_2.setChecked(true);
                         ToastUtil.showToast("没有素材");
                     }
                     break;
-                case R.id.tv_1:
+                case R.id.ll_1:
                     clearCheckBox();
                     cb_1.setChecked(true);
                     nowChooseMusic = 2;
                     presenter.getBjMusic(mTemplateModel.getBackgroundPath());
                     break;
-                case R.id.tv_2:
+                case R.id.ll_2:
                     clearCheckBox();
                     cb_2.setChecked(true);
                     nowChooseMusic = 0;
@@ -1261,7 +1291,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         }
     };
-
 
     private void setBjMusic() {
         if (isPlaying) {
