@@ -954,6 +954,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     mDuration = template.realDuration();
                     seekBar.setMax(mDuration);
                     mPlayer = mPlayerView.setTemplate(template);
+
                     seekBar.setProgress(0);
                     if(nowChooseMusic!=0){
                         mPlayer.replaceAudio(nowSpliteMusic);
@@ -1212,7 +1213,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         cb_0.setCompoundDrawables(drawable_news, null, null, null);
         cb_1.setCompoundDrawables(drawable_news1, null, null, null);
         cb_2.setCompoundDrawables(drawable_news2, null, null, null);
-        cb_1.setChecked(true);
+        cb_2.setChecked(true);
         pagerList.add(templateThumb2);
         TemplateViewPager adapter = new TemplateViewPager(pagerList);
         viewPager.setAdapter(adapter);
@@ -1247,9 +1248,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private void setBjMusic(){
         if (isPlaying) {
-            mPlayer.replaceAudio(nowSpliteMusic);
-        } else {
-//            videoToStart();
+            int progress=mPlayer.getDuration();
+            mPlayer.replaceAudio("");
+            presenter.playBGMMusic(nowSpliteMusic,progress);
         }
     }
 

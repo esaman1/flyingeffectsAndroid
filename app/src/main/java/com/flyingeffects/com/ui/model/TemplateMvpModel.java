@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.media.MediaMetadataRetriever;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
@@ -54,6 +55,7 @@ import com.shixing.sxvideoengine.SXTemplate;
 import com.shixing.sxvideoengine.SXTemplateRender;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +71,7 @@ import rx.subjects.PublishSubject;
 
 
 public class TemplateMvpModel {
+    MediaPlayer bgmPlayer;
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private TemplateMvpCallback callback;
     private Context context;
@@ -96,8 +99,8 @@ public class TemplateMvpModel {
     }
 
 
-    public void getBjMusic(String videoPath){
-        mediaManager manager=new mediaManager(context);
+    public void getBjMusic(String videoPath) {
+        mediaManager manager = new mediaManager(context);
         manager.splitMp4(videoPath, new File(soundFolder), new mediaManager.splitMp4Callback() {
             @Override
             public void splitSuccess(boolean isSuccess, String putPath) {
@@ -116,20 +119,20 @@ public class TemplateMvpModel {
         //如果是选择视频，那么需要第一针显示为用户
         if (albumType.isImage(GetPathType.getInstance().getPathType(path))) {
             Bitmap mattingMp = BitmapFactory.decodeFile(path);
-            callback.showMattingVideoCover(mattingMp,path);
+            callback.showMattingVideoCover(mattingMp, path);
         } else {
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             retriever.setDataSource(path);
             Bitmap bp = retriever.getFrameAtTime((long) 0);
             FileManager fileManager = new FileManager();
             String faceMattingFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "tailor");
-            String savePath = faceMattingFolder +  File.separator +  UUID.randomUUID()+"cover.png";
+            String savePath = faceMattingFolder + File.separator + UUID.randomUUID() + "cover.png";
             BitmapManager.getInstance().saveBitmapToPath(bp, savePath, isSuccess -> {
                 SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
                 CompressionCuttingManage manage = new CompressionCuttingManage(context, "0", false, tailorPaths -> {
                     Bitmap mattingMp = BitmapFactory.decodeFile(tailorPaths.get(0));
-                    mattingMp=test(mattingMp,bp.getWidth(),bp.getHeight());
-                    callback.showMattingVideoCover(mattingMp,tailorPaths.get(0));
+                    mattingMp = test(mattingMp, bp.getWidth(), bp.getHeight());
+                    callback.showMattingVideoCover(mattingMp, tailorPaths.get(0));
                 });
                 List<String> list = new ArrayList<>();
                 list.add(savePath);
@@ -141,8 +144,6 @@ public class TemplateMvpModel {
     public void onDestroy() {
         isOnDestroy = true;
     }
-
-
 
 
     /**
@@ -159,12 +160,12 @@ public class TemplateMvpModel {
         Canvas temp_canvas = new Canvas(target);
         Matrix matrix = new Matrix();
         matrix.postScale(scaleWidth, scaleWidth);
-        int tranH = (int) (bmpHeight*scaleWidth - height);
-        if(tranH>0){
+        int tranH = (int) (bmpHeight * scaleWidth - height);
+        if (tranH > 0) {
             tranH = Math.abs(tranH) / 2;
-            tranH=-tranH;
+            tranH = -tranH;
 
-        }else{
+        } else {
             tranH = Math.abs(tranH) / 2;
         }
         matrix.postTranslate(0, tranH);
@@ -359,7 +360,7 @@ public class TemplateMvpModel {
      * creation date: 2020/4/14
      * user : zhangtongju
      */
-    public void intoMattingVideo(String path,String templatename) {
+    public void intoMattingVideo(String path, String templatename) {
 
         String cacheVideoPath = cacheCutVideoPath + "/Matting.mp4";
         File file = new File(cacheVideoPath);
@@ -368,10 +369,9 @@ public class TemplateMvpModel {
             callback.ChangeMaterialCallbackForVideo(path, cacheVideoPath, true);
         } else {
             //还没抠过视频
-            gotoMattingVideo(path,templatename);
+            gotoMattingVideo(path, templatename);
         }
     }
-
 
 
     /**
@@ -379,7 +379,7 @@ public class TemplateMvpModel {
      * creation date: 2020/5/9
      * user : zhangtongju
      */
-    public void chooseBj(){
+    public void chooseBj() {
         Intent intent = new Intent(context, ChooseBackgroundTemplateActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         context.startActivity(intent);
@@ -390,9 +390,9 @@ public class TemplateMvpModel {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(path);
         Bitmap mBitmap = retriever.getFrameAtTime(0);
-        String fileName = backgroundPath + File.separator +  UUID.randomUUID()+"bottomIcon.png";
-        File file =new File(fileName);
-        if(file.exists()){
+        String fileName = backgroundPath + File.separator + UUID.randomUUID() + "bottomIcon.png";
+        File file = new File(fileName);
+        if (file.exists()) {
             file.delete();
         }
         BitmapManager.getInstance().saveBitmapToPath(mBitmap, fileName, new BitmapManager.saveToFileCallback() {
@@ -404,14 +404,14 @@ public class TemplateMvpModel {
         });
     }
 
-    private void gotoMattingVideo(String originalPath,String templatename) {
+    private void gotoMattingVideo(String originalPath, String templatename) {
 //        SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), 4);
         Observable.just(originalPath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
                 VideoMattingModel videoMattingModel = new VideoMattingModel(originalPath, context, new VideoMattingModel.MattingSuccess() {
                     @Override
-                    public void isSuccess(boolean isSuccess, String path,String noMaskingPath) {
+                    public void isSuccess(boolean isSuccess, String path, String noMaskingPath) {
                         EventBus.getDefault().post(new MattingVideoEnity(noMaskingPath, path, 1));
                     }
                 });
@@ -469,6 +469,36 @@ public class TemplateMvpModel {
                 e.printStackTrace();
             }
         });
+    }
+
+
+    public void playBGMMusic(String bgmPath, int progress) {
+        if (bgmPlayer == null) {
+            bgmPlayer = new MediaPlayer();
+            try {
+                bgmPlayer.setDataSource(bgmPath);
+                bgmPlayer.prepare();
+                bgmPlayer.start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        bgmPlayer.seekTo(progress);
+
+    }
+
+
+    public void PauseBgmMusic() {
+        if (bgmPlayer != null) {
+            bgmPlayer.pause();
+        }
+    }
+
+
+    public void BgmSeekTo(int progress) {
+        if (bgmPlayer != null) {
+            bgmPlayer.seekTo(progress);
+        }
     }
 
 

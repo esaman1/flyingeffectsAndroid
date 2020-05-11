@@ -52,6 +52,10 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
         home_model.getReplaceableFilePath();
     }
 
+    public void playBGMMusic(String path,int progress){
+        home_model.playBGMMusic(path,progress);
+    }
+
 
     public void getMattingVideoCover(String path){
         home_model.getMattingVideoCover(path);
