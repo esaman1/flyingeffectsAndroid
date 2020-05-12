@@ -1,9 +1,14 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.util.Log;
+import android.util.TimeUtils;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -11,29 +16,50 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
+import com.flyingeffects.com.enity.UserInfo;
+import com.flyingeffects.com.http.Api;
+import com.flyingeffects.com.http.HttpUtil;
+import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AlbumManager;
+import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.huaweiObs;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.UploadMaterialMVPView;
 import com.flyingeffects.com.ui.presenter.UploadMaterialMVPPresenter;
+import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.RoundImageView;
 import com.flyingeffects.com.view.VideoFrameRecycler;
 import com.lansosdk.videoeditor.DrawPadView2;
 import com.lansosdk.videoeditor.MediaInfo;
+import com.obs.services.ObsClient;
+import com.shixing.sxve.ui.view.WaitingDialog;
 import com.yanzhenjie.album.AlbumFile;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 /**
  * description ：上傳背景頁面
@@ -71,7 +97,18 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     @BindView(R.id.add_head)
     ImageView add_head;
 
+    @BindView(R.id.ed_nickname)
+    EditText ed_nickname;
 
+
+    private String uploadPath;
+    /**
+     * 用戶头像
+     */
+    private String imageHeadPath;
+
+    private String huaweiVideoPath;
+    private String huaweiImagePath;
 
 
     @Override
@@ -85,11 +122,9 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         //点击进入视频剪切界面
         String videoPath = getIntent().getStringExtra("videoPath");
         initVideoDrawPad(videoPath, false);
-        UiStep.nowUiTag="";
-        UiStep.isFromDownBj=false;
+        UiStep.nowUiTag = "";
+        UiStep.isFromDownBj = false;
         statisticsEventAffair.getInstance().setFlag(UploadMaterialActivity.this, "6_customize_bj_Crop");
-
-
     }
 
     @Override
@@ -98,23 +133,39 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     }
 
     @Override
-    @OnClick({R.id.iv_back, R.id.tv_choose_pic,R.id.add_head
+    @OnClick({R.id.iv_back, R.id.tv_choose_pic, R.id.add_head
     })
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_back:
                 onBackPressed();
                 break;
-            case R.id.tv_choose_pic: //抠图
+            case R.id.tv_choose_pic:
+
+                if (ed_nickname.getText() == null || ed_nickname.getText().equals("")) {
+                    ToastUtil.showToast("请输入昵称");
+                    return;
+                }
+
+
+                if(TextUtils.isEmpty(imageHeadPath)){
+                    ToastUtil.showToast("请选择头像");
+                    return;
+                }
+
+
+                saveVideo(false);
+
                 break;
 
             case R.id.add_head:
-                AlbumManager.chooseImageAlbum(UploadMaterialActivity.this,1,0, new AlbumChooseCallback() {
+                AlbumManager.chooseImageAlbum(UploadMaterialActivity.this, 1, 0, new AlbumChooseCallback() {
                     @Override
                     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
                         Glide.with(UploadMaterialActivity.this).load(paths.get(0)).into(add_head);
+                        imageHeadPath = paths.get(0);
                     }
-                },"");
+                }, "");
                 break;
 
 
@@ -231,7 +282,12 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
 
     @Override
     public void finishCrop(String videoPath) {
-
+        WaitingDialog.openPragressDialog(this);
+        String aa = videoPath.substring(videoPath.length() - 4);
+        String nowTime = StringUtil.getCurrentTime_hh();
+        LogUtil.d("OOM", "nowTime=" + nowTime);
+        String copyName = "media/android/" + nowTime + "/" + System.currentTimeMillis() + aa;
+        uploadFileToHuawei(videoPath, copyName, false);
     }
 
     @Override
@@ -264,6 +320,93 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         }
         this.finish();
     }
+
+
+    private void saveVideo(boolean needCut) {
+        if (!DoubleClick.getInstance().isFastDoubleClick()) {
+            Presenter.saveVideo(needCut);
+        }
+    }
+
+
+    private void requestData() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("videofile", huaweiVideoPath);
+        params.put("auth", ed_nickname.getText().toString());
+        params.put("auth_image", huaweiImagePath);
+        // 启动时间
+        Observable ob = Api.getDefault().toLogin(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(UploadMaterialActivity.this) {
+            @Override
+            protected void _onError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(UserInfo data) {
+                String str = StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM", "requestLogin=" + str);
+                UploadMaterialActivity.this.finish();
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+
+
+
+
+
+    }
+
+
+    private void uploadFileToHuawei(String videoPath, String copyName, boolean isHeadIcon) {
+        new Thread(() -> huaweiObs.getInstance().uploadFileToHawei(videoPath, copyName, new huaweiObs.Callback() {
+            @Override
+            public void isSuccess(String str) {
+                Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        LogUtil.d("PutObject------result", s);
+//                        WaitingDialog.closePragressDialog();
+                        String str = s.substring(s.indexOf("[") + 1, s.indexOf("]"));
+                        LogUtil.d("PutObject------str", str);
+                        String[] test = str.split(",");
+                        for (int i = 0; i < test.length; i++) {
+                            Log.d("PutObject------test", test[i]);
+                            if (test[i].contains("objectUrl")) {
+                                String path = test[i];
+                                if(!isHeadIcon){
+                                    huaweiVideoPath= path.substring(path.indexOf("objectUrl=") + 1);
+                                    LogUtil.d("OOM", "huaweiVideoPath=" + huaweiVideoPath);
+                                }else{
+                                    huaweiImagePath= path.substring(path.indexOf("objectUrl=") + 1);
+                                    LogUtil.d("OOM", "huaweiVideoPath=" + huaweiImagePath);
+                                }
+                                if (!isHeadIcon) {
+                                    String aa = videoPath.substring(videoPath.length() - 4);
+                                    String nowTime = StringUtil.getCurrentTime_hh();
+                                    LogUtil.d("OOM", "nowTime=" + nowTime);
+                                    String copyName = "image/android/" + nowTime + "/" + System.currentTimeMillis() + aa;
+                                    uploadFileToHuawei(imageHeadPath,copyName,true);
+                                }else{
+
+
+                                    requestData();
+
+                                }
+
+
+                                break;
+                            }
+                        }
+                    }
+                });
+
+            }
+        })).start();
+    }
+
+
+
+
 
 
 

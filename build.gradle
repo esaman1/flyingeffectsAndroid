@@ -26,6 +26,14 @@ allprojects {
         maven { url 'https://dl.bintray.com/umsdk/release' }
 
 
+        maven {
+            url 'http://mirrors.huaweicloud.com/repository/maven/huaweicloudsdk/'
+        }
+        maven {
+            url 'http://mirrors.huaweicloud.com/repository/maven/'
+        }
+        mavenCentral()
+
     }
 }
 
