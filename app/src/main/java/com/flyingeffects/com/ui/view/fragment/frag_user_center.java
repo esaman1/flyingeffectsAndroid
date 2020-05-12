@@ -42,7 +42,7 @@ import rx.Observable;
 public class frag_user_center extends BaseFragment {
 
 
-    private String[] titles = {"我的收藏"};
+    private String[] titles = {"我上传的背景","我的收藏"};
 
     @BindView(R.id.viewpager)
     ViewPager viewpager;
@@ -115,10 +115,12 @@ public class frag_user_center extends BaseFragment {
     private void initTabData() {
         FragmentManager manager = getChildFragmentManager();
         ArrayList<Fragment> list = new ArrayList<>();
+        frag_user_upload_bj fag_1 = new frag_user_upload_bj();
+        list.add(fag_1);
         frag_user_collect fag_0 = new frag_user_collect();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("template_type", "1");
-        fag_0.setArguments(bundle);
+        Bundle bundle2 = new Bundle();
+        bundle2.putSerializable("template_type", "1");
+        fag_0.setArguments(bundle2);
         list.add(fag_0);
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
         viewpager.setAdapter(adapter);

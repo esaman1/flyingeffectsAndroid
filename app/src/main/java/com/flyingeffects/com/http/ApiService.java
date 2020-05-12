@@ -56,6 +56,14 @@ public interface ApiService {
     @POST("/api/template/collectionList")
     Observable<HttpResult<List<new_fag_template_item>>> collectionList(@FieldMap Map<String, String> params);
 
+
+
+    @FormUrlEncoded
+    @POST("/api/media/uploadList")
+    Observable<HttpResult<List<Object>>> uploadList(@FieldMap Map<String, String> params);
+
+
+
     @FormUrlEncoded
     @POST("/api/user/cancelUser")
     Observable<HttpResult<Object>> toDelete(@FieldMap Map<String, String> params);

@@ -4,9 +4,8 @@
     package="com.flyingeffects.com">
 
 
-
     <!--悬浮窗权限-->
-<!--    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />-->
+    <!--    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />-->
     <uses-permission android:name="android.permission.FLASHLIGHT" /><!--压力测试 -->
 
     <uses-permission android:name="android.permission.CALL_PHONE" />
@@ -27,8 +26,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!--外存储读权限，构建语法需要用到此权限 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-<!--    &lt;!&ndash;配置权限，用来记录应用配置信息 &ndash;&gt;-->
-<!--    <uses-permission android:name="android.permission.WRITE_SETTINGS" />-->
+    <!--    &lt;!&ndash;配置权限，用来记录应用配置信息 &ndash;&gt;-->
+    <!--    <uses-permission android:name="android.permission.WRITE_SETTINGS" />-->
     <!--手机定位信息，用来为语义等功能提供定位，提供更精准的服务-->
     <!--定位信息是敏感信息，可通过Setting.setLocationEnable(false)关闭定位请求 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -51,10 +50,10 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <!--禁止息屏-->
-    <uses-permission android:name="android.permission.DEVICE_POWER"/>
+    <uses-permission android:name="android.permission.DEVICE_POWER" />
 
     <!--震动权限-->
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
 
     <application
@@ -85,8 +84,6 @@
         </provider>
 
 
-
-
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.WelcomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -108,12 +105,9 @@
             android:screenOrientation="portrait" />
 
 
-
-
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.AdHintActivity"
-            android:theme="@style/AllTransparentTheme"
-          />
+            android:theme="@style/AllTransparentTheme" />
 
 
         <activity
@@ -127,8 +121,7 @@
             android:screenOrientation="portrait" />
 
 
-
-<!--        Theme.Translucent.NoTitleBar.Fullscreen-->
+        <!--        Theme.Translucent.NoTitleBar.Fullscreen-->
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.intoOtherAppActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
@@ -154,6 +147,12 @@
             android:name="com.flyingeffects.com.ui.view.activity.LoginActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.flyingeffects.com.ui.view.activity.UploadMaterialActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+
 
 
         <activity
@@ -212,30 +211,23 @@
             android:screenOrientation="portrait" />
 
 
-
-
-
-
-
-
-
-
         <!-- 广告开始  广点通配置Start-->
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
-<!--        <provider-->
-<!--            android:name="android.support.v4.content.FileProvider"-->
-<!--            android:authorities="${applicationId}.fileprovider"-->
-<!--            android:exported="false"-->
-<!--            android:grantUriPermissions="true">-->
-<!--            <meta-data-->
-<!--                android:name="android.support.FILE_PROVIDER_PATHS"-->
-<!--                android:resource="@xml/gdt_file_path" />-->
-<!--        </provider>-->
+        <!--        <provider-->
+        <!--            android:name="android.support.v4.content.FileProvider"-->
+        <!--            android:authorities="${applicationId}.fileprovider"-->
+        <!--            android:exported="false"-->
+        <!--            android:grantUriPermissions="true">-->
+        <!--            <meta-data-->
+        <!--                android:name="android.support.FILE_PROVIDER_PATHS"-->
+        <!--                android:resource="@xml/gdt_file_path" />-->
+        <!--        </provider>-->
         <service
             android:name="com.qq.e.comm.DownloadService"
             android:exported="false" />
+
         <activity
             android:name="com.qq.e.ads.ADActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />
@@ -267,7 +259,7 @@
         <activity
             android:name="com.baidu.mobads.AppActivity"
             android:configChanges="screenSize|keyboard|keyboardHidden|orientation"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <provider
             android:name="com.baidu.mobads.openad.BdFileProvider"
             android:authorities="${packageName}.bd.provider"
@@ -278,11 +270,6 @@
                 android:resource="@xml/bd_file_path" />
         </provider>
         <!-- 广告所有配置结束  百度配置End-->
-
-
-
-
-
 
 
         <!--友盟微信登录-->
