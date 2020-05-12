@@ -112,7 +112,7 @@ public class frag_user_collect extends BaseFragment {
                 if (isRefresh) {
                     listData.clear();
                 }
-                if (data.size() == 0&&isRefresh) {
+                if (data.size() == 0 && isRefresh) {
                     tv_hint.setVisibility(View.VISIBLE);
                     tv_hint.setText("暂无收藏模板");
                 }
@@ -128,9 +128,6 @@ public class frag_user_collect extends BaseFragment {
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
     }
-
-
-
 
 
     private void showData(ArrayList<new_fag_template_item> listData) {
@@ -169,50 +166,49 @@ public class frag_user_collect extends BaseFragment {
 
     @Override
     public void onResume() {
-        if (!TextUtils.isEmpty(template_type) && template_type.equals("3")) {
-            if (BaseConstans.hasLogin()) {
-                isRefresh = true;
-                selectPage = 1;
-                smartRefreshLayout.setEnableLoadMore(true);
-                requestCollectionList(false);
-            } else {
-                tv_hint.setVisibility(View.VISIBLE);
-                tv_hint.setText("暂无收藏模板");
-                allData.clear();
-                adapter.notifyDataSetChanged();
-            }
+        if (BaseConstans.hasLogin()) {
+            isRefresh = true;
+            selectPage = 1;
+            smartRefreshLayout.setEnableLoadMore(true);
+            requestCollectionList(false);
+        } else {
+            tv_hint.setVisibility(View.VISIBLE);
+            tv_hint.setText("暂无收藏模板");
+            allData.clear();
+            adapter.notifyDataSetChanged();
         }
+
         super.onResume();
     }
 
-        @Override
-        public void onPause () {
-            super.onPause();
-        }
-
-
-        private void initRecycler () {
-            adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), 2);
-            layoutManager =
-                    new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-            recyclerView.setLayoutManager(layoutManager);
-            recyclerView.setHasFixedSize(true);
-            recyclerView.setAdapter(adapter);
-            adapter.setOnItemClickListener((adapter, view, position) -> {
-                if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                    Intent intent = new Intent(getActivity(), PreviewActivity.class);
-                    intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
-                    if (template_type != null && template_type.equals("1")) {
-                        intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
-                    } else {
-                        intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
-                    }
-                    intent.putExtra("fromToMineCollect", true);
-                    intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
-                    startActivity(intent);
-                }
-            });
-        }
+    @Override
+    public void onPause() {
+        super.onPause();
     }
+
+
+    private void initRecycler() {
+        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), 2);
+        layoutManager =
+                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(adapter);
+        adapter.setOnItemClickListener((adapter, view, position) -> {
+            if (!DoubleClick.getInstance().isFastDoubleClick()) {
+                Intent intent = new Intent(getActivity(), PreviewActivity.class);
+                intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
+                if (template_type != null && template_type.equals("1")) {
+                    intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
+                } else {
+                    intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+                }
+                intent.putExtra("fromToMineCollect", true);
+                intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
+                startActivity(intent);
+            }
+        });
+    }
+}
 
 

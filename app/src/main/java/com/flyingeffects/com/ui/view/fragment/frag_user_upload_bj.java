@@ -96,7 +96,7 @@ public class frag_user_upload_bj extends BaseFragment {
 
             @Override
             protected void _onNext(List<Object> data) {
-                LogUtil.d("OOM",StringUtil.beanToJSONString(data));
+                LogUtil.d("OOM", StringUtil.beanToJSONString(data));
 //                finishData();
 //                if (isRefresh) {
 //                    listData.clear();
@@ -114,7 +114,7 @@ public class frag_user_upload_bj extends BaseFragment {
 //                listData.addAll(data);
 //                showData(listData);
 
-                new_fag_template_item item=new new_fag_template_item();
+                new_fag_template_item item = new new_fag_template_item();
                 item.setTitle("test");
                 listData.add(item);
                 showData(listData);
@@ -122,9 +122,6 @@ public class frag_user_upload_bj extends BaseFragment {
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
     }
-
-
-
 
 
     private void showData(ArrayList<new_fag_template_item> listData) {
@@ -163,17 +160,12 @@ public class frag_user_upload_bj extends BaseFragment {
 
     @Override
     public void onResume() {
-        if(!TextUtils.isEmpty(template_type)&&template_type.equals("3")) {
-
-            if (BaseConstans.hasLogin()) {
-                isRefresh = true;
-                selectPage = 1;
-                smartRefreshLayout.setEnableLoadMore(true);
-                requestUploadBjList(false);
-            }
-
+        if (BaseConstans.hasLogin()) {
+            isRefresh = true;
+            selectPage = 1;
+            smartRefreshLayout.setEnableLoadMore(true);
+            requestUploadBjList(false);
         }
-
         super.onResume();
     }
 
@@ -195,9 +187,9 @@ public class frag_user_upload_bj extends BaseFragment {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
                 Intent intent = new Intent(getActivity(), PreviewActivity.class);
                 intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
-                if(template_type!=null&&template_type.equals("1")){
+                if (template_type != null && template_type.equals("1")) {
                     intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
-                }else{
+                } else {
                     intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
                 }
                 intent.putExtra("fromToMineCollect", true);

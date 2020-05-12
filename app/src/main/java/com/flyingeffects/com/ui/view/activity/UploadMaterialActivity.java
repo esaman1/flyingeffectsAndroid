@@ -1,55 +1,39 @@
 package com.flyingeffects.com.ui.view.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
-import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
-import com.flyingeffects.com.commonlyModel.GetVideoCover;
-import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
-import com.flyingeffects.com.enity.ChooseVideoAddSticker;
-import com.flyingeffects.com.enity.CreateCutCallback;
-import com.flyingeffects.com.enity.DownVideoPath;
-import com.flyingeffects.com.enity.UserInfo;
-import com.flyingeffects.com.http.Api;
-import com.flyingeffects.com.http.HttpUtil;
-import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.UploadMaterialMVPView;
-import com.flyingeffects.com.ui.interfaces.view.VideoCropMVPView;
-import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.presenter.UploadMaterialMVPPresenter;
-import com.flyingeffects.com.ui.presenter.VideoCropMVPPresenter;
-import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.RoundImageView;
 import com.flyingeffects.com.view.VideoFrameRecycler;
 import com.lansosdk.videoeditor.DrawPadView2;
 import com.lansosdk.videoeditor.MediaInfo;
+import com.yanzhenjie.album.AlbumFile;
 
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TimeZone;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import de.greenrobot.event.EventBus;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * description ：上傳背景頁面
@@ -80,20 +64,19 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     TextView startMs;
     @BindView(R.id.crop_show_end)
     TextView endMs;
-    @BindView(R.id.tv_no_kt)
-    TextView tv_no_kt;
 
     @BindView(R.id.tv_choose_pic)
     TextView tv_choose_pic;
 
-    private boolean isNeedCut=true;
+    @BindView(R.id.add_head)
+    ImageView add_head;
 
-    private String isFrom;
+
 
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_video_crop;
+        return R.layout.act_upload_material;
     }
 
     @Override
@@ -101,18 +84,10 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         Presenter = new UploadMaterialMVPPresenter(this, this);
         //点击进入视频剪切界面
         String videoPath = getIntent().getStringExtra("videoPath");
-        isFrom=getIntent().getStringExtra("comeFrom");
-//        userSetDuration = getIntent().getLongExtra("duration", 0);
         initVideoDrawPad(videoPath, false);
         UiStep.nowUiTag="";
         UiStep.isFromDownBj=false;
         statisticsEventAffair.getInstance().setFlag(UploadMaterialActivity.this, "6_customize_bj_Crop");
-        if(!TextUtils.isEmpty(isFrom)){
-            if (isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORUSER)||isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)){
-                tv_choose_pic.setVisibility(View.GONE);
-                tv_no_kt.setText("下一步");
-            }
-        }
 
 
     }
@@ -123,7 +98,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     }
 
     @Override
-    @OnClick({R.id.iv_back, R.id.tv_choose_pic,R.id.tv_no_kt
+    @OnClick({R.id.iv_back, R.id.tv_choose_pic,R.id.add_head
     })
     public void onClick(View v) {
         switch (v.getId()) {
@@ -131,34 +106,18 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                 onBackPressed();
                 break;
             case R.id.tv_choose_pic: //抠图
-
-                if (TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)){
-                    statisticsEventAffair.getInstance().setFlag(this, "7_Chromakey" );
-                }else if(TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMBJ)){
-                    statisticsEventAffair.getInstance().setFlag(this, "8_Chromakey" );
-                }else{
-                    statisticsEventAffair.getInstance().setFlag(this, "2_Titles_cutdone", "手动卡点_片头裁剪完成");
-                    statisticsEventAffair.getInstance().setFlag(UploadMaterialActivity.this, "6_customize_bj_Cutout");
-                }
-
-
-                saveVideo(true);
-                isNeedCut=true;
                 break;
 
-            case R.id.tv_no_kt: //不需要抠图
-
-                if (TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)){
-                    statisticsEventAffair.getInstance().setFlag(this, "7_Nokeying" );
-                }else if(TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMBJ)){
-                    statisticsEventAffair.getInstance().setFlag(this, "8_Nokeying" );
-                }else{
-                    statisticsEventAffair.getInstance().setFlag(this, "2_Titles_cutdone", "手动卡点_片头裁剪完成");
-                    statisticsEventAffair.getInstance().setFlag(UploadMaterialActivity.this, "6_customize_bj_Cutout");
-                }
-                saveVideo(false);
-                isNeedCut=false;
+            case R.id.add_head:
+                AlbumManager.chooseImageAlbum(UploadMaterialActivity.this,1,0, new AlbumChooseCallback() {
+                    @Override
+                    public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
+                        Glide.with(UploadMaterialActivity.this).load(paths.get(0)).into(add_head);
+                    }
+                },"");
                 break;
+
+
             default:
                 break;
         }
@@ -191,7 +150,6 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     }
 
     private boolean hasResult = false;
-    private static final int MAX_DURATION_SEC = 300;
     private static final int MIN_DURATION_SEC = 2;
 
 
@@ -211,11 +169,6 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                     duration = Float.parseFloat(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)) / 1000;
                     retriever.release();
                 }
-//                if (duration > MAX_DURATION_SEC) {
-//                    ToastUtil.showToast("视频时长超过3分钟");
-//                    this.finish();
-//                    return;
-//                } else
                 if (duration < MIN_DURATION_SEC) {
                     ToastUtil.showToast("视频时长小于2秒");
                     this.finish();
@@ -278,64 +231,13 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
 
     @Override
     public void finishCrop(String videoPath) {
-        LogUtil.d("OOM","finishCrop"+"isFrom="+isFrom);
-        //自定义只能够选择素材
-        GetVideoCover getVideoCover=new GetVideoCover(this);
-        getVideoCover.getCover(videoPath, path -> Observable.just(path).subscribeOn(AndroidSchedulers.mainThread()).subscribe(cover -> {
-            if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEO)){
-                EventBus.getDefault().post(new CreateCutCallback(cover,videoPath,isNeedCut));
-            }else if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORUSER)){
-                EventBus.getDefault().post(new DownVideoPath(videoPath));
-            }else if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)){
-                EventBus.getDefault().post(new ChooseVideoAddSticker(videoPath));
-            }
-
-            else{
-                Intent intent = new Intent(UploadMaterialActivity.this, CreationTemplateActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString("paths", cover);
-                bundle.putString("originalPath",videoPath );
-                bundle.putString("video_path", "");
-                bundle.putBoolean("isNeedCut",isNeedCut);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("Message", bundle);
-                startActivity(intent);
-                setResult(Activity.RESULT_OK, intent);
-            }
-            finish();
-        }));
 
     }
 
     @Override
     public void getRealCutTime(float RealCutTime) {
-        if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORUSER)) {
-            requestLoginForSdk(RealCutTime);
-        }
+
     }
-
-
-
-    private void requestLoginForSdk(float cutTime) {
-        if(!DoubleClick.getInstance().isFastDoubleClick()){
-            HashMap<String, String> params = new HashMap<>();
-            params.put("type","1");
-            params.put("timelength",cutTime+"");
-            // 启动时间
-            Observable ob = Api.getDefault().userDefine(BaseConstans.getRequestHead(params));
-            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(UploadMaterialActivity.this) {
-                @Override
-                protected void _onError(String message) {
-                }
-
-                @Override
-                protected void _onNext(UserInfo data) {
-
-                }
-            }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
-        }
-    }
-
 
     @Override
     public void onDestroy() {
@@ -363,11 +265,6 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         this.finish();
     }
 
-    private void saveVideo(boolean needCut) {
-        if (!DoubleClick.getInstance().isFastDoubleClick()) {
-            Presenter.saveVideo(needCut);
-        }
-    }
 
 
 
