@@ -120,6 +120,14 @@ public class StringUtil {
     }
 
 
+    public static String getCurrentTimeymd() {
+        Date d = new Date();
+        d.setTime(System.currentTimeMillis());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        return format.format(d);
+    }
+
+
     /**
      * 获取当前秒
      *

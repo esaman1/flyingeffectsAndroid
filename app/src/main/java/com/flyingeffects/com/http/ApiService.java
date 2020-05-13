@@ -69,6 +69,12 @@ public interface ApiService {
     Observable<HttpResult<Object>> toDelete(@FieldMap Map<String, String> params);
 
 
+    @FormUrlEncoded
+    @POST("/api/media/uploadTemplate")
+    Observable<HttpResult<Object>> toLoadTemplate(@FieldMap Map<String, String> params);
+
+
+
 
     @FormUrlEncoded
     @POST("/api/template/keywordList")

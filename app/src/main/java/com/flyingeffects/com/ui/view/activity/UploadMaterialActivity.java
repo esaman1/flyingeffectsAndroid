@@ -3,6 +3,7 @@ package com.flyingeffects.com.ui.view.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
@@ -125,7 +126,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     private String huaweiFolder;
 
 
-
+    private ArrayList<String> uploadPathList;
 
 
     @Override
@@ -168,11 +169,10 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                     return;
                 }
 
-                if(TextUtils.isEmpty(imageHeadPath)){
+                if (TextUtils.isEmpty(imageHeadPath)) {
                     ToastUtil.showToast("请选择头像");
                     return;
                 }
-
 
 
                 saveVideo(false);
@@ -303,61 +303,39 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
 
     @Override
     public void finishCrop(String videoPath) {
-        WaitingDialog.openPragressDialog(this);
-
+//        WaitingDialog.openPragressDialog(this);
         //分为3步 1 提取音频，2提取封面  3 ，提取头像
 
-
-
-
-        toNext(videoPath);
-
-
-
-
+        new Handler().postDelayed(() -> WaitingDialog.openPragressDialog(UploadMaterialActivity.this),500);
+        new Thread(() -> toNext(videoPath)).start();
 
 
     }
 
 
-
-    private void toNext(String videoPath){
-
-
-        coverImagePath=  huaweiFolder + File.separator + "cover.png";
+    private void toNext(String videoPath) {
+        coverImagePath = huaweiFolder + File.separator + "cover.png";
         //等到封面地址
-        videoAddCover.getInstance().getCoverForPath(videoPath,coverImagePath);
-
+        videoAddCover.getInstance().getCoverForPath(videoPath, coverImagePath);
         //得到音频地址
         mediaManager manager = new mediaManager(UploadMaterialActivity.this);
         manager.splitMp4(videoPath, new File(huaweiFolder), (isSuccess, putPath) -> {
-            WaitingDialog.closePragressDialog();
             if (isSuccess) {
-                LogUtil.d("OOM2", "分离出来的因为地址为" + huaweiFolder);
+                LogUtil.d("OOM2", "分离出来的音频地址为" + huaweiFolder);
                 huaweiSound = huaweiFolder + File.separator + "bgm.mp3";
             } else {
-                LogUtil.d("OOM2", "分离出来的因为地址为null" );
-                huaweiSound="";
+                LogUtil.d("OOM2", "分离出来的音频地址为null");
+                huaweiSound = "";
             }
         });
-
-
-        ArrayList<String>list=new ArrayList<>();
-        list.add(videoPath);
-        list.add(imageHeadPath);
-        list.add(huaweiSound);
-        list.add(coverImagePath);
-
-        String aa = videoPath.substring(videoPath.length() - 4);
-        String nowTime = StringUtil.getCurrentTime_hh();
-        LogUtil.d("OOM", "nowTime=" + nowTime);
-        String copyName = "media/android/" + nowTime + "/" + System.currentTimeMillis() + aa;
-        uploadFileToHuawei(videoPath, copyName, false);
-
+        uploadPathList = new ArrayList<>();
+        uploadPathList.add(videoPath);
+        uploadPathList.add(imageHeadPath);
+        uploadPathList.add(huaweiSound);
+        uploadPathList.add(coverImagePath);
+        nowUpdateIndex=0;
+        uploadFileToHuawei(videoPath, getPathName(0,videoPath));
     }
-
-
-
 
 
     @Override
@@ -400,73 +378,78 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
 
 
     private void requestData() {
+        LogUtil.d("OOM2", "requestData" );
         HashMap<String, String> params = new HashMap<>();
         params.put("videofile", huaweiVideoPath);
         params.put("auth", ed_nickname.getText().toString());
         params.put("auth_image", huaweiImagePath);
+        params.put("audiourl", huaweiSound);
+        params.put("image",coverImagePath);
         // 启动时间
-        Observable ob = Api.getDefault().toLogin(BaseConstans.getRequestHead(params));
+        LogUtil.d("OOM2", params.toString() );
+        Observable ob = Api.getDefault().toLoadTemplate(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(UploadMaterialActivity.this) {
             @Override
             protected void _onError(String message) {
+                WaitingDialog.closePragressDialog();
                 ToastUtil.showToast(message);
             }
 
             @Override
             protected void _onNext(UserInfo data) {
+                WaitingDialog.closePragressDialog();
                 String str = StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM", "requestLogin=" + str);
+                LogUtil.d("OOM2", "requestLogin=" + str);
                 UploadMaterialActivity.this.finish();
             }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
-
-
-
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
 
 
     }
 
 
-    private void uploadFileToHuawei(String videoPath, String copyName, boolean isHeadIcon) {
+    //当前上传的标识
+    int nowUpdateIndex;
+
+    private void uploadFileToHuawei(String videoPath, String copyName) {
+        Log.d("OOM2","uploadFileToHuawei");
         new Thread(() -> huaweiObs.getInstance().uploadFileToHawei(videoPath, copyName, new huaweiObs.Callback() {
             @Override
             public void isSuccess(String str) {
+
                 Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                     @Override
                     public void call(String s) {
-                        LogUtil.d("PutObject------result", s);
-//                        WaitingDialog.closePragressDialog();
-                        String str = s.substring(s.indexOf("[") + 1, s.indexOf("]"));
-                        LogUtil.d("PutObject------str", str);
-                        String[] test = str.split(",");
-                        for (int i = 0; i < test.length; i++) {
-                            Log.d("PutObject------test", test[i]);
-                            if (test[i].contains("objectUrl")) {
-                                String path = test[i];
-                                if(!isHeadIcon){
-                                    huaweiVideoPath= path.substring(path.indexOf("objectUrl=") + 1);
-                                    LogUtil.d("OOM", "huaweiVideoPath=" + huaweiVideoPath);
-                                }else{
-                                    huaweiImagePath= path.substring(path.indexOf("objectUrl=") + 1);
-                                    LogUtil.d("OOM", "huaweiVideoPath=" + huaweiImagePath);
-                                }
-                                if (!isHeadIcon) {
-                                    String aa = videoPath.substring(videoPath.length() - 4);
-                                    String nowTime = StringUtil.getCurrentTime_hh();
-                                    LogUtil.d("OOM", "nowTime=" + nowTime);
-                                    String copyName = "image/android/" + nowTime + "/" + System.currentTimeMillis() + aa;
-                                    uploadFileToHuawei(imageHeadPath,copyName,true);
-                                }else{
 
-
-                                    requestData();
-
-                                }
-
-
-                                break;
-                            }
+                        if (nowUpdateIndex != uploadPathList.size()-1) {
+                            nowUpdateIndex++;
+                            Log.d("OOM2","nowUpdateIndex="+nowUpdateIndex);
+                            uploadFileToHuawei(uploadPathList.get(nowUpdateIndex),getPathName(nowUpdateIndex,uploadPathList.get(nowUpdateIndex)));
+                        } else {
+                            requestData();
                         }
+
+
+//                        LogUtil.d("OOM2", s);
+//                        String str = s.substring(s.indexOf("[") + 1, s.indexOf("]"));
+//                        LogUtil.d("OOM2", str);
+//                        String[] test = str.split(",");
+//                        for (int i = 0; i < test.length; i++) {
+//                            Log.d("OOM2", test[i]);
+//                            if (test[i].contains("objectUrl")) {
+//                                String path = test[i];
+//                                Log.d("OOM2","得到下载地址wei"+ test[i]);
+//                                huaweiVideoPath = path.substring(path.indexOf("objectUrl=") + 1);
+//                                if (nowUpdateIndex != uploadPathList.size()-1) {
+//                                    nowUpdateIndex++;
+//                                    Log.d("OOM2","nowUpdateIndex="+nowUpdateIndex);
+//                                    uploadFileToHuawei(uploadPathList.get(nowUpdateIndex),getPathName(nowUpdateIndex,uploadPathList.get(nowUpdateIndex)));
+//                                } else {
+//                                    requestData();
+//                                }
+//                                break;
+//                            }
+//                        }
                     }
                 });
 
@@ -474,6 +457,41 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         })).start();
     }
 
+
+
+
+
+
+    private String getPathName(int position,String videoPath) {
+        String type = videoPath.substring(videoPath.length() - 4);
+        String nowTime = StringUtil.getCurrentTimeymd();
+        if (position == 0) {
+            //视频
+            LogUtil.d("OOM", "nowTime=" + nowTime);
+            String path="media/android/video/" + nowTime + "/" + System.currentTimeMillis() + type;
+            huaweiVideoPath="http://cdn.flying.nineton.cn/"+path;
+            return path;
+        }else if(position == 1){
+            //头像
+            LogUtil.d("OOM", "nowTime=" + nowTime);
+            String path="media/android/image/" + nowTime + "/" + System.currentTimeMillis() + type;
+            huaweiImagePath="http://cdn.flying.nineton.cn/"+path;
+            return path;
+        }else if(position==2){
+            //音频地址
+            LogUtil.d("OOM", "nowTime=" + nowTime);
+            String path="media/android/sound/" + nowTime + "/" + System.currentTimeMillis() + type;
+            huaweiSound="http://cdn.flying.nineton.cn/"+path;
+            return path;
+
+        }else {
+            //封面
+            LogUtil.d("OOM", "nowTime=" + nowTime);
+            String path= "media/android/cover/" + nowTime + "/" + System.currentTimeMillis() + type;
+            coverImagePath="http://cdn.flying.nineton.cn/"+path;
+            return path;
+        }
+    }
 
 
 

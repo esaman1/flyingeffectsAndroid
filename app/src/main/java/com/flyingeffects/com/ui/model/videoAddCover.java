@@ -1,26 +1,17 @@
 package com.flyingeffects.com.ui.model;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
-import android.util.Log;
-import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.manager.BitmapManager;
-import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.lansosdk.box.OnLanSongSDKCompletedListener;
 import com.lansosdk.box.OnLanSongSDKErrorListener;
 import com.lansosdk.box.OnLanSongSDKProgressListener;
 import com.lansosdk.videoeditor.VideoOneDo2;
-
-import java.io.File;
 
 import static android.media.MediaMetadataRetriever.OPTION_PREVIOUS_SYNC;
 
