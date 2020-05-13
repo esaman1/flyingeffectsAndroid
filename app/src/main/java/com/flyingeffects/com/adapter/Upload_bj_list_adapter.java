@@ -73,7 +73,7 @@ public class Upload_bj_list_adapter extends BaseQuickAdapter<new_fag_template_it
                 GradientDrawable view_ground = (GradientDrawable) tv_audit.getBackground(); //获取控件的背
                 view_ground.setStroke(2, Color.parseColor("#FF7272"));
                 tv_audit.setTextColor(Color.parseColor("#FF7272"));
-                tv_audit.setText("未通过");
+                tv_audit.setText("未通过："+item.getRemark());
             }
         }
         RelativeLayout ll_relative_1 = helper.getView(R.id.ll_relative_1);
