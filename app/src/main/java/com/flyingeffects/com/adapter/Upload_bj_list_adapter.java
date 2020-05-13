@@ -107,6 +107,21 @@ public class Upload_bj_list_adapter extends BaseQuickAdapter<new_fag_template_it
 
 
 
+    /**
+     * description ：更新界面
+     * creation date: 2020/5/13
+     * user : zhangtongju
+     */
+    public void  uploadData(){
+
+    }
+
+
+
+
+
+
+
 }
 
 

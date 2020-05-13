@@ -22,6 +22,7 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.UserInfo;
+import com.flyingeffects.com.enity.uploadMaterialEvent;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -60,6 +61,7 @@ import java.util.TimeZone;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -333,6 +335,9 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         uploadPathList.add(huaweiSound);
         uploadPathList.add(coverImagePath);
         nowUpdateIndex=0;
+//        EventBus.getDefault().post(new uploadMaterialEvent(uploadPathList,ed_nickname.getText().toString()));
+
+
         uploadFileToHuawei(videoPath, getPathName(0,videoPath));
     }
 
@@ -426,28 +431,6 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                         } else {
                             requestData();
                         }
-
-
-//                        LogUtil.d("OOM2", s);
-//                        String str = s.substring(s.indexOf("[") + 1, s.indexOf("]"));
-//                        LogUtil.d("OOM2", str);
-//                        String[] test = str.split(",");
-//                        for (int i = 0; i < test.length; i++) {
-//                            Log.d("OOM2", test[i]);
-//                            if (test[i].contains("objectUrl")) {
-//                                String path = test[i];
-//                                Log.d("OOM2","得到下载地址wei"+ test[i]);
-//                                huaweiVideoPath = path.substring(path.indexOf("objectUrl=") + 1);
-//                                if (nowUpdateIndex != uploadPathList.size()-1) {
-//                                    nowUpdateIndex++;
-//                                    Log.d("OOM2","nowUpdateIndex="+nowUpdateIndex);
-//                                    uploadFileToHuawei(uploadPathList.get(nowUpdateIndex),getPathName(nowUpdateIndex,uploadPathList.get(nowUpdateIndex)));
-//                                } else {
-//                                    requestData();
-//                                }
-//                                break;
-//                            }
-//                        }
                     }
                 });
 

@@ -8,9 +8,7 @@
     android:paddingStart="@dimen/dp_4"
     android:paddingEnd="@dimen/dp_4">
 
-
     <include layout="@layout/view_join_us" />
-
 
     <RelativeLayout
         android:layout_width="match_parent"

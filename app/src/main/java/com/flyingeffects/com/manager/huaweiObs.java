@@ -37,6 +37,12 @@ public class huaweiObs {
             obsClient = new ObsClient(ak, sk, endPoint);
             // 调用接口进行操作，例如上传对象，其中localfile为待上传的本地文件路径，需要指定到具体的文件名
             HeaderResponse response = obsClient.putObject("flying", fileName, new File(filePath));
+
+
+
+
+
+
             callback.isSuccess(response.toString());
 
         } catch (ObsException e) {
@@ -62,6 +68,12 @@ public class huaweiObs {
   public  interface  Callback{
         void isSuccess(String str);
     }
+
+
+
+
+
+
 
 
 

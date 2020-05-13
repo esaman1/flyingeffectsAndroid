@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -13,11 +14,14 @@ import com.flyingeffects.com.adapter.Upload_bj_list_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.uploadMaterialEvent;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.huaweiObs;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.LogUtil;
@@ -30,7 +34,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 
 /***
@@ -40,7 +48,7 @@ import rx.Observable;
 public class frag_user_upload_bj extends BaseFragment {
     private boolean isRefresh = true;
 
-    private BaseQuickAdapter adapter;
+    private Upload_bj_list_adapter adapter;
 
     private List<new_fag_template_item> allData = new ArrayList<>();
     @BindView(R.id.smart_refresh_layout_collect)
@@ -72,6 +80,7 @@ public class frag_user_upload_bj extends BaseFragment {
 
     @Override
     protected void initView() {
+//        EventBus.getDefault().register(getActivity());
         initSmartRefreshLayout();
     }
 
@@ -192,6 +201,53 @@ public class frag_user_upload_bj extends BaseFragment {
             }
         });
     }
+
+
+
+
+//    @Subscribe
+//    public void onEventMainThread(uploadMaterialEvent event) {
+//        uploadPathList
+//        new_fag_template_item item = new new_fag_template_item();
+//        item.setTitle("test");
+//        item.setImage(event.getUploadPathList().get(3));
+//        item.setTitle(event.getNickName());
+//        listData.add(1,item);
+//        adapter.notifyDataSetChanged();
+//    }
+
+
+//
+//    //当前上传的标识
+//    int nowUpdateIndex;
+//    private ArrayList<String> uploadPathList;
+//    private void uploadFileToHuawei(String videoPath, String copyName) {
+//        Log.d("OOM2","uploadFileToHuawei");
+//        new Thread(() -> huaweiObs.getInstance().uploadFileToHawei(videoPath, copyName, new huaweiObs.Callback() {
+//            @Override
+//            public void isSuccess(String str) {
+//
+//                Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+//                    @Override
+//                    public void call(String s) {
+//                        if (nowUpdateIndex != uploadPathList.size()-1) {
+//                            nowUpdateIndex++;
+//                            Log.d("OOM2","nowUpdateIndex="+nowUpdateIndex);
+//                            uploadFileToHuawei(uploadPathList.get(nowUpdateIndex),getPathName(nowUpdateIndex,uploadPathList.get(nowUpdateIndex)));
+//                        } else {
+//                            requestData();
+//                        }
+//                    }
+//                });
+//
+//            }
+//        })).start();
+//    }
+
+
+
+
+
 
 
 }
