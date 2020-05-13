@@ -28,9 +28,11 @@ import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.huaweiObs;
+import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.UploadMaterialMVPView;
+import com.flyingeffects.com.ui.model.videoAddCover;
 import com.flyingeffects.com.ui.presenter.UploadMaterialMVPPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
@@ -107,8 +109,23 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
      */
     private String imageHeadPath;
 
+    //视频地址
     private String huaweiVideoPath;
+
+    //图片地址
     private String huaweiImagePath;
+
+    //音频地址
+    private String huaweiSound;
+
+
+    //封面地址
+    private String coverImagePath;
+
+    private String huaweiFolder;
+
+
+
 
 
     @Override
@@ -118,12 +135,15 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
 
     @Override
     protected void initView() {
+
         Presenter = new UploadMaterialMVPPresenter(this, this);
         //点击进入视频剪切界面
         String videoPath = getIntent().getStringExtra("videoPath");
         initVideoDrawPad(videoPath, false);
         UiStep.nowUiTag = "";
         UiStep.isFromDownBj = false;
+        FileManager fileManager = new FileManager();
+        huaweiFolder = fileManager.getFileCachePath(this, "toHawei");
         statisticsEventAffair.getInstance().setFlag(UploadMaterialActivity.this, "6_customize_bj_Crop");
     }
 
@@ -142,16 +162,17 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                 break;
             case R.id.tv_choose_pic:
 
+
                 if (ed_nickname.getText() == null || ed_nickname.getText().equals("")) {
                     ToastUtil.showToast("请输入昵称");
                     return;
                 }
 
-
                 if(TextUtils.isEmpty(imageHeadPath)){
                     ToastUtil.showToast("请选择头像");
                     return;
                 }
+
 
 
                 saveVideo(false);
@@ -283,12 +304,61 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     @Override
     public void finishCrop(String videoPath) {
         WaitingDialog.openPragressDialog(this);
+
+        //分为3步 1 提取音频，2提取封面  3 ，提取头像
+
+
+
+
+        toNext(videoPath);
+
+
+
+
+
+
+    }
+
+
+
+    private void toNext(String videoPath){
+
+
+        coverImagePath=  huaweiFolder + File.separator + "cover.png";
+        //等到封面地址
+        videoAddCover.getInstance().getCoverForPath(videoPath,coverImagePath);
+
+        //得到音频地址
+        mediaManager manager = new mediaManager(UploadMaterialActivity.this);
+        manager.splitMp4(videoPath, new File(huaweiFolder), (isSuccess, putPath) -> {
+            WaitingDialog.closePragressDialog();
+            if (isSuccess) {
+                LogUtil.d("OOM2", "分离出来的因为地址为" + huaweiFolder);
+                huaweiSound = huaweiFolder + File.separator + "bgm.mp3";
+            } else {
+                LogUtil.d("OOM2", "分离出来的因为地址为null" );
+                huaweiSound="";
+            }
+        });
+
+
+        ArrayList<String>list=new ArrayList<>();
+        list.add(videoPath);
+        list.add(imageHeadPath);
+        list.add(huaweiSound);
+        list.add(coverImagePath);
+
         String aa = videoPath.substring(videoPath.length() - 4);
         String nowTime = StringUtil.getCurrentTime_hh();
         LogUtil.d("OOM", "nowTime=" + nowTime);
         String copyName = "media/android/" + nowTime + "/" + System.currentTimeMillis() + aa;
         uploadFileToHuawei(videoPath, copyName, false);
+
     }
+
+
+
+
 
     @Override
     public void getRealCutTime(float RealCutTime) {

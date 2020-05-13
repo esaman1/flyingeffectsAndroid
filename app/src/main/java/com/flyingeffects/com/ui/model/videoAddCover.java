@@ -12,12 +12,15 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.lansosdk.box.OnLanSongSDKCompletedListener;
 import com.lansosdk.box.OnLanSongSDKErrorListener;
 import com.lansosdk.box.OnLanSongSDKProgressListener;
 import com.lansosdk.videoeditor.VideoOneDo2;
+
+import java.io.File;
 
 import static android.media.MediaMetadataRetriever.OPTION_PREVIOUS_SYNC;
 
@@ -96,5 +99,15 @@ public class videoAddCover {
         mmr.setDataSource(path);
       return mmr.getFrameAtTime( 2000*1000, OPTION_PREVIOUS_SYNC);
     }
+
+
+
+    public  void getCoverForPath(String path,String fileName){
+        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+        mmr.setDataSource(path);
+        Bitmap bp= mmr.getFrameAtTime( 0, OPTION_PREVIOUS_SYNC);
+        BitmapManager.getInstance().saveBitmapToPath(bp, fileName);
+    }
+
 
 }
