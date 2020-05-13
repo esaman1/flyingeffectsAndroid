@@ -10,8 +10,9 @@
 
 
     <ImageView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:src="@mipmap/upload"
+        android:scaleType="fitXY"
         android:layout_height="wrap_content"/>
 
 

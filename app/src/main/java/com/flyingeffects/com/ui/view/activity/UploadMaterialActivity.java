@@ -163,9 +163,8 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                 break;
             case R.id.tv_choose_pic:
 
-
-                if (ed_nickname.getText() == null || ed_nickname.getText().equals("")) {
-                    ToastUtil.showToast("请输入昵称");
+                if (ed_nickname.getText() == null || ed_nickname.getText().toString().equals("")) {
+                    ToastUtil.showToast("请填写昵称");
                     return;
                 }
 
@@ -420,7 +419,6 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                 Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                     @Override
                     public void call(String s) {
-
                         if (nowUpdateIndex != uploadPathList.size()-1) {
                             nowUpdateIndex++;
                             Log.d("OOM2","nowUpdateIndex="+nowUpdateIndex);

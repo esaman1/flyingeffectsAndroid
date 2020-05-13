@@ -162,7 +162,6 @@
                     android:layout_height="@dimen/dp_14"
                     android:layout_alignBottom="@id/timeLineBar"
                     android:layout_centerHorizontal="true"
-                    android:text="限长一分钟"
                     android:textAlignment="center"
                     android:textColor="@color/colorWhite"
                     android:textSize="10sp"

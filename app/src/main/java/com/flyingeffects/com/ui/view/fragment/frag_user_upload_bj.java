@@ -22,6 +22,7 @@ import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -88,37 +89,30 @@ public class frag_user_upload_bj extends BaseFragment {
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
         Observable ob = Api.getDefault().uploadList(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<Object>>(getActivity()) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override
             protected void _onError(String message) {
                 finishData();
             }
 
             @Override
-            protected void _onNext(List<Object> data) {
+            protected void _onNext(List<new_fag_template_item> data) {
                 LogUtil.d("OOM", StringUtil.beanToJSONString(data));
-//                finishData();
-//                if (isRefresh) {
-//                    listData.clear();
-//                }
-//                if (data.size() == 0&&isRefresh) {
-//                    tv_hint.setVisibility(View.VISIBLE);
-//                    tv_hint.setText("暂无收藏模板");
-//                }
-//                if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
-//                    ToastUtil.showToast(getResources().getString(R.string.no_more_data));
-//                }
-//                if (data.size() < perPageCount) {
-//                    smartRefreshLayout.setEnableLoadMore(false);
-//                }
-//                listData.addAll(data);
-//                showData(listData);
-
-                new_fag_template_item item = new new_fag_template_item();
-                item.setTitle("test");
-                listData.add(item);
+                finishData();
+                if (isRefresh) {
+                    listData.clear();
+                    new_fag_template_item item = new new_fag_template_item();
+                    item.setTitle("test");
+                    listData.add(item);
+                }
+                if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
+                    ToastUtil.showToast(getResources().getString(R.string.no_more_data));
+                }
+                if (data.size() < perPageCount) {
+                    smartRefreshLayout.setEnableLoadMore(false);
+                }
+                listData.addAll(data);
                 showData(listData);
-
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
     }

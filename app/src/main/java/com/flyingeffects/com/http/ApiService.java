@@ -60,7 +60,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("/api/media/uploadList")
-    Observable<HttpResult<List<Object>>> uploadList(@FieldMap Map<String, String> params);
+    Observable<HttpResult<List<new_fag_template_item>>> uploadList(@FieldMap Map<String, String> params);
 
 
 

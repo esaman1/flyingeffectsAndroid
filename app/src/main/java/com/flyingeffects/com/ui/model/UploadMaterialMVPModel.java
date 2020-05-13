@@ -428,9 +428,9 @@ public class UploadMaterialMVPModel {
                         }
                     }
                 });
-                seekbarTime = 180 * 1000;
+                seekbarTime = 60 * 1000;
                 seekbarPercent = 1f * mTimeLineView.getWidth() / (frameAdapter.getItemWidth() * frameAdapter.getItemCount());
-                float timeRatio = 1f * 180 * 1000 / getDuration();
+                float timeRatio = 1f * 60 * 1000 / getDuration();
                 float adjustRatio = timeRatio / seekbarPercent;
                 seekbarPercent *= adjustRatio;
                 mRangeSeekBarView.setMinDistance(Math.round(getDuration() * adjustRatio));
@@ -609,7 +609,7 @@ public class UploadMaterialMVPModel {
     }
 
 
-    private static final long maxCropDurationMs = 180 * 1000;
+    private static final long maxCropDurationMs = 60 * 1000;
     private static final long minCropDurationMs = 2 * 1000;
     private boolean isSaving = false;
     private boolean is4kVideo = false;
@@ -621,7 +621,6 @@ public class UploadMaterialMVPModel {
             return;
         }
 
-
         dialog = new WaitingDialog_progress(mContext);
         dialog.openProgressDialog();
         MediaInfo videoInfo = new MediaInfo(videoPath);
@@ -632,7 +631,7 @@ public class UploadMaterialMVPModel {
         long cropDurationMs = (long) (getDuration() * (cropEndRatio - cropStartRatio));
         //裁剪时长限制
         if (cropDurationMs > maxCropDurationMs) {
-            ToastUtil.showToast(mContext.getString(R.string.toast_crop_toolong));
+            ToastUtil.showToast("时长超过1分钟，请重新选择");
             return;
         } else if (cropDurationMs < minCropDurationMs) {
             ToastUtil.showToast(mContext.getString(R.string.toast_crop_tooshort));

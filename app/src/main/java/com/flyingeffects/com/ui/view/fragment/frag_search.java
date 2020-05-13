@@ -105,6 +105,7 @@ public class frag_search extends BaseFragment {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
                 nowShowText = ed_text.getText().toString().trim();
                 if (!nowShowText.equals("")) {
+                    selectPage=1;
                     statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search", nowShowText);
                     requestFagData(nowShowText, true);
                     ll_showResult.setVisibility(View.VISIBLE);
@@ -184,6 +185,7 @@ public class frag_search extends BaseFragment {
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
                     if (getActivity() != null) {
                         if (listSearchKey.size() >= finalI + 1) {
+                            selectPage=1;
                             statisticsEventAffair.getInstance().setFlag(getActivity(), "4_recommend", listSearchKey.get(finalI).getName());
                             nowShowText = listSearchKey.get(finalI).getName();
                             ed_text.setText(nowShowText);

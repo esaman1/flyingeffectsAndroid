@@ -45,37 +45,35 @@ public class Upload_bj_list_adapter extends BaseQuickAdapter<new_fag_template_it
                 .load(item.getImage())
                 .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 5)))
                 .into((ImageView) helper.getView(R.id.iv_cover));
-        ImageView iv_show_author = helper.getView(R.id.iv_show_author);
         RelativeLayout ll_relative_1 = helper.getView(R.id.ll_relative_1);
         RelativeLayout ll_relative_0 = helper.getView(R.id.ll_relative_0);
         TextView tv_name = helper.getView(R.id.tv_name);
-        tv_name.setText(item.getTitle());
+
+        tv_name.setText(item.getAuth());
         if (offset == 0) {
             ll_relative_1.setVisibility(View.GONE);
             ll_relative_0.setVisibility(View.VISIBLE);
+            tv_name.setVisibility(View.GONE);
             ll_relative_0.setOnClickListener(v -> {
                 uploadVideo();
-
             });
         } else {
             ll_relative_0.setVisibility(View.GONE);
+            tv_name.setVisibility(View.VISIBLE);
             ll_relative_1.setVisibility(View.VISIBLE);
         }
-        //背景
-        iv_show_author.setVisibility(View.VISIBLE);
-        tv_name.setVisibility(View.GONE);
-
     }
 
 
     private void uploadVideo() {
         AlbumManager.chooseVideo((Activity) context, 1, 1, (tag, paths, isCancel, albumFileList) -> {
-            Intent intent = new Intent(context, UploadMaterialActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra("videoPath", paths.get(0));
-            context.startActivity(intent);
+            if(!isCancel){
+                Intent intent = new Intent(context, UploadMaterialActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("videoPath", paths.get(0));
+                context.startActivity(intent);
+            }
         }, "");
-
     }
 
 
