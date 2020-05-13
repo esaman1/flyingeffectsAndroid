@@ -209,8 +209,18 @@ public class TemplateMvpModel {
                 String[] newPaths = new String[paths.length + 1];
                 System.arraycopy(paths, 0, newPaths, 0, paths.length);
                 MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.mAssets.get(0).ui;
-                newPaths[newPaths.length - 1] = mediaUiModel2.getpathForThisBjMatrix(Objects.requireNonNull(context.getExternalFilesDir("runCatch/")).getPath(), mTemplateModel.getBackgroundPath());
-                template.setReplaceableFilePaths(newPaths); //设置用户可修改的视频路径
+
+                if(albumType.isVideo(GetPathType.getInstance().getPathType(mTemplateModel.getBackgroundPath()))){
+                    newPaths[newPaths.length - 1] = mediaUiModel2.getpathForThisBjMatrixVideo(Objects.requireNonNull(context.getExternalFilesDir("runCatch/")).getPath(), mTemplateModel.getBackgroundPath());
+
+                }else{
+                    newPaths[newPaths.length - 1] =mediaUiModel2.getpathForThisBjMatrixImage(Objects.requireNonNull(context.getExternalFilesDir("runCatch/")).getPath(),mTemplateModel.getBackgroundPath());
+                }
+
+
+                   template.setReplaceableFilePaths(newPaths); //设置用户可修改的视频路径
+
+
             } else {
                 template.setReplaceableFilePaths(paths); //设置用户可修改的视频路径
             }

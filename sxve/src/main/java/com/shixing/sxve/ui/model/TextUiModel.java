@@ -80,7 +80,7 @@ public class TextUiModel extends AssetUi {
     }
 
     @Override
-    public void hasChooseBg(String path) {
+    public void hasChooseBg(String path,boolean isVideo) {
 
     }
 

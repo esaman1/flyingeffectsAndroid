@@ -190,11 +190,10 @@ public class frag_user_upload_bj extends BaseFragment {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
                 Intent intent = new Intent(getActivity(), PreviewActivity.class);
                 intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
-                if (template_type != null && template_type.equals("1")) {
-                    intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
-                } else {
-                    intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+                if(allData.get(position).getTest()!=0){
+
                 }
+                intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
                 intent.putExtra("fromToMineCollect", true);
                 intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
                 startActivity(intent);

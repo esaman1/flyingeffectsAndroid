@@ -205,19 +205,21 @@ public class MediaUiModel2 extends MediaUiModel {
     }
 
     @Override
-    public void hasChooseBg(String path) {
+    public void hasChooseBg(String path, boolean isVideo) {
         nowChooseBjPath = path;
         hasBg = path != null && !path.equals("");
-        if (hasBg) {  //先生成背景，在生成滤镜
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            retriever.setDataSource(path);
-            bgBitmap = retriever.getFrameAtTime(0);
-//            b=BitmapCompress.zoomImg(b,360, 540);
-            countMatrixBj(bgBitmap);
-            retriever.release();
-            //  setVideoPath(path,false,0);
+        if (hasBg) {
+            if (isVideo) {
+                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                retriever.setDataSource(path);
+                bgBitmap = retriever.getFrameAtTime(0);
+                countMatrixBj(bgBitmap);
+                retriever.release();
+            } else {
+                bgBitmap = getSmallBmpFromFile(path, size.getHeight(), size.getWidth());
+                countMatrixBj(bgBitmap);
+            }
         }
-
     }
 
     @Override
@@ -474,7 +476,7 @@ public class MediaUiModel2 extends MediaUiModel {
     }
 
 
-    public String getpathForThisBjMatrix(String folder, String cartoonPath) {
+    public String getpathForThisBjMatrixVideo(String folder, String cartoonPath) {
         final String path = folder + File.separator + UUID.randomUUID() + ".mp4";
         SXCompositor sxCompositor = new SXCompositor(cartoonPath, path, mMatrixBj, false);
         sxCompositor.setWidth(temSize.getWidth());
@@ -505,6 +507,22 @@ public class MediaUiModel2 extends MediaUiModel {
         sxCompositor.run();
         Log.d("oom", "视频地址2为" + cartoonPath);
         return path;
+    }
+
+
+    public String getpathForThisBjMatrixImage(String folder, String cartoonPath) {
+        Bitmap bgBitmap = getSmallBmpFromFile(cartoonPath, size.getWidth(), size.getWidth());
+        String keepPath = folder + File.separator + UUID.randomUUID() + ".png";
+        countMatrixBj(bgBitmap);
+
+
+        if(bgBitmap!=null){
+            Bitmap bitmap = Bitmap.createBitmap(temSize.getWidth(), temSize.getHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            canvas.drawBitmap(bgBitmap, mMatrixBj, mInitPaint);
+            saveBitmapToPath(bitmap, keepPath);
+        }
+        return keepPath;
     }
 
     private void recycleWhiteBitmap() {

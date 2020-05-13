@@ -334,11 +334,11 @@ public class TemplateModel {
 
     private String backgroundPath;
 
-    public void setHasBg(String backgroundPath) {
+    public void setHasBg(String backgroundPath,boolean isVideo) {
         for (int i = 0; i < mAssets.size(); i++) {
             AssetModel model = mAssets.get(i);
             if (model.type == AssetModel.TYPE_MEDIA) { //如果类型是meidiaUiModel
-                model.ui.hasChooseBg(backgroundPath);
+                model.ui.hasChooseBg(backgroundPath,isVideo);
             }
         }
         this.backgroundPath = backgroundPath;

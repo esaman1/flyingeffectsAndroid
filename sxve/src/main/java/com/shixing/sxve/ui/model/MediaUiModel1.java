@@ -145,7 +145,7 @@ public class MediaUiModel1 extends MediaUiModel {
     }
 
     @Override
-    public void hasChooseBg(String path) {
+    public void hasChooseBg(String path,boolean isVideo) {
 
     }
 

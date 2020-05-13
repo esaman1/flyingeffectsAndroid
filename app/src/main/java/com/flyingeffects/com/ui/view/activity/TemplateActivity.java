@@ -493,7 +493,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             String[] newPaths = new String[paths.length + 1];
             System.arraycopy(paths, 0, newPaths, 0, paths.length);
             MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.mAssets.get(0).ui;
-            newPaths[newPaths.length - 1] = mediaUiModel2.getpathForThisBjMatrix(Objects.requireNonNull(getExternalFilesDir("runCatch/")).getPath(), mTemplateModel.getBackgroundPath());
+            if(albumType.isVideo(GetPathType.getInstance().getPathType(mTemplateModel.getBackgroundPath()))){
+                newPaths[newPaths.length - 1] = mediaUiModel2.getpathForThisBjMatrixVideo(Objects.requireNonNull(getExternalFilesDir("runCatch/")).getPath(), mTemplateModel.getBackgroundPath());
+            }else{
+                newPaths[newPaths.length - 1] =mediaUiModel2.getpathForThisBjMatrixImage(Objects.requireNonNull(getExternalFilesDir("runCatch/")).getPath(),mTemplateModel.getBackgroundPath());
+            }
             switchTemplate(mFolder.getPath(), newPaths);
         } else {
             switchTemplate(mFolder.getPath(), paths);
@@ -1287,8 +1291,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 case R.id.ll_1:
                     clearCheckBox();
                     cb_1.setChecked(true);
-                    nowChooseMusic = 2;
-                    presenter.getBjMusic(mTemplateModel.getBackgroundPath());
+                    if(TextUtils.isEmpty(mTemplateModel.getBackgroundPath())){
+                        chooseTemplateMusic();
+                        ToastUtil.showToast("背景音乐为默认模板音乐");
+                    }else{
+                        nowChooseMusic = 2;
+                        presenter.getBjMusic(mTemplateModel.getBackgroundPath());
+                    }
+
                     break;
                 case R.id.ll_2:
                     chooseTemplateMusic();
@@ -1329,11 +1339,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             String videoBjPath = event.getPath();
             if(TextUtils.isEmpty(videoBjPath)){
                 ToastUtil.showToast("选择了默认背景");
-                mTemplateModel.setHasBg("");
+                mTemplateModel.setHasBg("",false);
             }else{
-                mTemplateModel.setHasBg(videoBjPath);
+                if(albumType.isVideo(GetPathType.getInstance().getPathType(videoBjPath))){
+                    mTemplateModel.setHasBg(videoBjPath,true);
+                }else{
+                    mTemplateModel.setHasBg(videoBjPath,false);
+                }
             }
-
         });
     }
 
