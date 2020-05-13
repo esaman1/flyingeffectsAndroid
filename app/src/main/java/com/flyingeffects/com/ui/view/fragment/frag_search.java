@@ -40,6 +40,7 @@ import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.WarpLinearLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -79,10 +80,15 @@ public class frag_search extends BaseFragment {
     @BindView(R.id.tv_youyou)
     TextView tv_youyou;
 
+    @BindView(R.id.smart_refresh_layout)
+    SmartRefreshLayout smartRefreshLayout;
+
     private List<new_fag_template_item> allData = new ArrayList<>();
     private main_recycler_adapter adapter;
     private ArrayList<SearchKeyWord> listSearchKey = new ArrayList<>();
     private ArrayList<TextView> ListForTv = new ArrayList<>();
+    private int perPageCount = 10;
+    private String nowShowText;
 
     @Override
     protected int getContentLayout() {
@@ -97,10 +103,10 @@ public class frag_search extends BaseFragment {
         //键盘的搜索按钮
         ed_text.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
-                String text = ed_text.getText().toString().trim();
-                if (!text.equals("")) {
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search", text);
-                    requestFagData(text);
+                nowShowText = ed_text.getText().toString().trim();
+                if (!nowShowText.equals("")) {
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search", nowShowText);
+                    requestFagData(nowShowText, true);
                     ll_showResult.setVisibility(View.VISIBLE);
                     setResultMargin();
                 }
@@ -147,6 +153,7 @@ public class frag_search extends BaseFragment {
     @Override
     protected void initData() {
         initRecycler();
+        initSmartRefreshLayout();
     }
 
 
@@ -176,10 +183,11 @@ public class frag_search extends BaseFragment {
             tv.setOnClickListener(view -> {
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
                     if (getActivity() != null) {
-                        if(listSearchKey.size()>=finalI+1){
+                        if (listSearchKey.size() >= finalI + 1) {
                             statisticsEventAffair.getInstance().setFlag(getActivity(), "4_recommend", listSearchKey.get(finalI).getName());
-                            String name = listSearchKey.get(finalI).getName();
-                            requestFagData(name);
+                            nowShowText = listSearchKey.get(finalI).getName();
+                            ed_text.setText(nowShowText);
+                            requestFagData(nowShowText, true);
                             ll_showResult.setVisibility(View.VISIBLE);
                             setResultMargin();
                         }
@@ -285,28 +293,67 @@ public class frag_search extends BaseFragment {
     }
 
 
-    private void requestFagData(String name) {
+    private void requestFagData(String name, boolean isShowDialog) {
         HashMap<String, String> params = new HashMap<>();
         params.put("search", name);
+        params.put("page", selectPage + "");
+        params.put("pageSize", perPageCount + "");
         Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override
             protected void _onError(String message) {
+                finishData();
                 ToastUtil.showToast(message);
             }
 
             @Override
             protected void _onNext(List<new_fag_template_item> data) {
-                LogUtil.d("OOM", StringUtil.beanToJSONString(data));
-                allData.clear();
-                allData.addAll(data);
-                if (data.size() == 0) {
+                finishData();
+                if (isRefresh) {
+                    allData.clear();
+                }
+
+                if (isRefresh && data.size() == 0) {
                     ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
                     statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none", name);
                 }
+                if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
+                    ToastUtil.showToast(getResources().getString(R.string.no_more_data));
+                }
+                if (data.size() < perPageCount) {
+                    smartRefreshLayout.setEnableLoadMore(false);
+                }
+                allData.addAll(data);
                 adapter.notifyDataSetChanged();
+
+
             }
-        }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+        }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
+    }
+
+    private void finishData() {
+        smartRefreshLayout.finishRefresh();
+        smartRefreshLayout.finishLoadMore();
+    }
+
+
+    private int selectPage = 1;
+    private boolean isRefresh = true;
+
+    public void initSmartRefreshLayout() {
+        smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
+//            isOnRefresh();
+            isRefresh = true;
+            refreshLayout.setEnableLoadMore(true);
+            selectPage = 1;
+            requestFagData(nowShowText, true);
+        });
+        smartRefreshLayout.setOnLoadMoreListener(refresh -> {
+//            isOnLoadMore();
+            isRefresh = false;
+            selectPage++;
+            requestFagData(nowShowText, false);
+        });
     }
 
 
