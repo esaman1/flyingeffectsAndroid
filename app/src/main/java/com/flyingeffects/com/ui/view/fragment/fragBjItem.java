@@ -7,12 +7,14 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.main_recycler_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -32,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 
@@ -108,17 +111,26 @@ public class fragBjItem extends BaseFragment   {
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if(!DoubleClick.getInstance().isFastDoubleClick()){
-                statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
-                Intent intent =new Intent(getActivity(), PreviewActivity.class);
-                if(fromType==0){
-                    intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
-                }else if(fromType==3){
-                    intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
+
+
+                if(!TextUtils.isEmpty(cover)&&position==0){
+                    EventBus.getDefault().post(new DownVideoPath(""));
                 }else{
-                    intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
+                    Intent intent =new Intent(getActivity(), PreviewActivity.class);
+                    if(fromType==0){
+                        intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
+                    }else if(fromType==3){
+                        intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
+                    }else{
+                        intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+                    }
+                    intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
+                    startActivity(intent);
                 }
-                intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
-                startActivity(intent);
+
+
+
             }
         });
     }

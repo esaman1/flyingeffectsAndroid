@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
@@ -1326,7 +1327,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         Observable.just(event.getPath()).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
             LogUtil.d("OOM", "重新选择了视频背景,地址为" + event.getPath());
             String videoBjPath = event.getPath();
-            mTemplateModel.setHasBg(videoBjPath);
+            if(TextUtils.isEmpty(videoBjPath)){
+                ToastUtil.showToast("选择了默认背景");
+                mTemplateModel.setHasBg("");
+            }else{
+                mTemplateModel.setHasBg(videoBjPath);
+            }
+
         });
     }
 

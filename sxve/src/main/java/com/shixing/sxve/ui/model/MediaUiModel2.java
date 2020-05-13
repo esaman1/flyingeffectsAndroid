@@ -73,10 +73,10 @@ public class MediaUiModel2 extends MediaUiModel {
     //最后渲染出来模板大小
     private Size temSize;
 
-    public MediaUiModel2(String folder, JSONObject ui, Bitmap bitmap, AssetDelegate delegate, Size size,Size temSize) throws JSONException {
+    public MediaUiModel2(String folder, JSONObject ui, Bitmap bitmap, AssetDelegate delegate, Size size, Size temSize) throws JSONException {
         super(folder, ui, delegate, size);
         mBitmap = bitmap;
-        this.temSize=temSize;
+        this.temSize = temSize;
         int[] editSize = getIntArray(ui.getJSONArray("editSize"));
         mClipWidth = editSize[0];
         mClipHeight = editSize[1];
@@ -130,16 +130,15 @@ public class MediaUiModel2 extends MediaUiModel {
 //        if (!IsAnim) {
 
 
-        if (b != null) {
+        if (b != null && TextUtils.isEmpty(nowChooseBjPath)) {
+            canvas.drawBitmap(b, 0, 0, null);
+        } else {
             //有用户选择的背景的情况
             if (!TextUtils.isEmpty(nowChooseBjPath)) {
-                canvas.drawBitmap(b, mMatrixBj, null);
-            } else {
-                canvas.drawBitmap(b, 0, 0, null);
+                canvas.drawBitmap(bgBitmap, mMatrixBj, null);
             }
-
-
         }
+
 
 //        隐藏的这段代码是控制同组里面不同位置，滑动前面一个，后面一个就透明
 //        if (activeLayer >= 0 && activeLayer < index) {
@@ -212,9 +211,9 @@ public class MediaUiModel2 extends MediaUiModel {
         if (hasBg) {  //先生成背景，在生成滤镜
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             retriever.setDataSource(path);
-            b = retriever.getFrameAtTime(0);
+            bgBitmap = retriever.getFrameAtTime(0);
 //            b=BitmapCompress.zoomImg(b,360, 540);
-            countMatrixBj(b);
+            countMatrixBj(bgBitmap);
             retriever.release();
             //  setVideoPath(path,false,0);
         }
@@ -611,24 +610,24 @@ public class MediaUiModel2 extends MediaUiModel {
             float bw = bp.getWidth();
             float bh = bp.getHeight();
 
-            Log.d("OOM2","size.getWidth()="+rw+"bw="+bw);
-            Log.d("OOM2"," size.getHeight()="+rh+"bh="+bh);
-            Log.d("OOM2"," mClipWidth="+mClipWidth+"mClipHeight="+mClipHeight);
+            Log.d("OOM2", "size.getWidth()=" + rw + "bw=" + bw);
+            Log.d("OOM2", " size.getHeight()=" + rh + "bh=" + bh);
+            Log.d("OOM2", " mClipWidth=" + mClipWidth + "mClipHeight=" + mClipHeight);
             float scale = Math.max(rw / bw, rh / bh);
-            Log.d("OOM2","scale="+scale);
-            Log.d("OOM2","SIZEw="+scale);
+            Log.d("OOM2", "scale=" + scale);
+            Log.d("OOM2", "SIZEw=" + scale);
             mMatrixBj = new Matrix();
-            float tranX=(rw - bw * scale) / 2;
+            float tranX = (rw - bw * scale) / 2;
 //            if(tranX<0){
 //                tranX=0;
 //            }
-            float tranY=(rh - bh * scale) / 2;
+            float tranY = (rh - bh * scale) / 2;
 //            if(tranY<0){
 //                tranY=0;
 //            }
 
             mMatrixBj.postTranslate(tranX, tranY);
-            Log.d("OOM2","tranX="+tranX+"tranY="+tranY);
+            Log.d("OOM2", "tranX=" + tranX + "tranY=" + tranY);
             mMatrixBj.preScale(scale, scale);
         }
     }

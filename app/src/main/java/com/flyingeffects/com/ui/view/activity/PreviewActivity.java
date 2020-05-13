@@ -670,11 +670,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Subscribe
     public void onEventMainThread(CreateCutCallback event) {
         LogUtil.d("OOM", "event.getCoverPath()=" + event.getCoverPath() + "createDownVideoPath=" + createDownVideoPath + "createDownVideoPath=" + createDownVideoPath + "event.isNeedCut()=" + event.isNeedCut());
-
-
-
-
-
         intoCreationTemplateActivity(event.getCoverPath(), createDownVideoPath, event.getOriginalPath(), event.isNeedCut());
 
     }
