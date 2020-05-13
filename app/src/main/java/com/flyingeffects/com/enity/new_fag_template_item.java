@@ -62,13 +62,6 @@ public class new_fag_template_item implements Serializable {
         this.sort = sort;
     }
 
-    public String getTest() {
-        return test;
-    }
-
-    public void setTest(String test) {
-        this.test = test;
-    }
 
     public String getPreview() {
         return preview;
@@ -169,7 +162,16 @@ public class new_fag_template_item implements Serializable {
      */
     private String type;
     private String sort;
-    private String test;
+
+    public int getTest() {
+        return test;
+    }
+
+    public void setTest(int test) {
+        this.test = test;
+    }
+
+    private int test;
     private String preview;
     private String reading;
     private String reading2;
