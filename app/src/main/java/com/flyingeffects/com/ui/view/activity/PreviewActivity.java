@@ -123,6 +123,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     private boolean isPlayComplate = false;
 
 
+
     /**
      * 来着来个页面
      */
@@ -144,6 +145,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         EventBus.getDefault().register(this);
         templateItem = (new_fag_template_item) getIntent().getSerializableExtra("person");
         fromTo = getIntent().getStringExtra("fromTo");
+        boolean readOnly=getIntent().getBooleanExtra("readOnly",false);
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
             tv_make.setText("使用背景");
         }
@@ -174,6 +176,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         tv_describe.setText("友友们    " + "上传" + templateItem.getDefaultnum() + "个素材即可制作");
         if (!fromToMineCollect) {
             Presenter.requestTemplateDetail(templateItem.getId());
+        }
+        if(readOnly){
+            tv_make.setVisibility(View.GONE);
+            iv_zan.setVisibility(View.GONE);
         }
     }
 
@@ -306,6 +312,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 //            } else {//需要抠图
             if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)){
                 //背景模板文案
+
                 alert="正在生成中~";
             }else{
                 //一键模板不抠图的情况下

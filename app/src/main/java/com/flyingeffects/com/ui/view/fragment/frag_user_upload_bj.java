@@ -3,25 +3,19 @@ package com.flyingeffects.com.ui.view.fragment;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.Upload_bj_list_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.new_fag_template_item;
-import com.flyingeffects.com.enity.uploadMaterialEvent;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.huaweiObs;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.LogUtil;
@@ -34,11 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
-import de.greenrobot.event.EventBus;
-import de.greenrobot.event.Subscribe;
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 
 
 /***
@@ -191,10 +181,11 @@ public class frag_user_upload_bj extends BaseFragment {
                 Intent intent = new Intent(getActivity(), PreviewActivity.class);
                 intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
                 if(allData.get(position).getTest()!=0){
-
+                    intent.putExtra("readOnly", true);
+                }else{
+                    intent.putExtra("readOnly", false);
                 }
                 intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
-                intent.putExtra("fromToMineCollect", true);
                 intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
                 startActivity(intent);
             }

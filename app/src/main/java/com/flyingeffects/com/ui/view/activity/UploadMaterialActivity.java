@@ -1,13 +1,11 @@
 package com.flyingeffects.com.ui.view.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.TimeUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -22,7 +20,6 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.UserInfo;
-import com.flyingeffects.com.enity.uploadMaterialEvent;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -44,13 +41,8 @@ import com.flyingeffects.com.view.RoundImageView;
 import com.flyingeffects.com.view.VideoFrameRecycler;
 import com.lansosdk.videoeditor.DrawPadView2;
 import com.lansosdk.videoeditor.MediaInfo;
-import com.obs.services.ObsClient;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.yanzhenjie.album.AlbumFile;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -61,7 +53,6 @@ import java.util.TimeZone;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -306,8 +297,12 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     public void finishCrop(String videoPath) {
 //        WaitingDialog.openPragressDialog(this);
         //分为3步 1 提取音频，2提取封面  3 ，提取头像
-
-        new Handler().postDelayed(() -> WaitingDialog.openPragressDialog(UploadMaterialActivity.this),500);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                WaitingDialog.openPragressDialog(UploadMaterialActivity.this,"上传中");
+            }
+        },500);
         new Thread(() -> toNext(videoPath)).start();
 
 

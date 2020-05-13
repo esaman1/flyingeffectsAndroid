@@ -43,11 +43,12 @@ public class Upload_bj_list_adapter extends BaseQuickAdapter<new_fag_template_it
     @Override
     protected void convert(final BaseViewHolder helper, final new_fag_template_item item) {
         int offset = helper.getLayoutPosition();
-
+        ImageView black_lucency=helper.getView(R.id.black_lucency);
         ImageView iv_cover = helper.getView(R.id.iv_cover);
         TextView tv_audit=helper.getView(R.id.tv_audit);
 
         if (item.getTest() == 0) {
+            black_lucency.setVisibility(View.GONE);
             tv_audit.setVisibility(View.GONE);
             //审核成功
             Glide.with(context)
@@ -55,6 +56,7 @@ public class Upload_bj_list_adapter extends BaseQuickAdapter<new_fag_template_it
                     .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 5)))
                     .into(iv_cover);
         } else {
+            black_lucency.setVisibility(View.VISIBLE);
             tv_audit.setVisibility(View.VISIBLE);
             Glide.with(context)
                     .load(item.getImage())
