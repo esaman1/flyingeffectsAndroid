@@ -428,7 +428,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "requestLogin=" + str);
                 BaseConstans.SetUserToken(data.getToken());
-                BaseConstans.SetUserId(data.getId());
+                BaseConstans.SetUserId(data.getId(),data.getNickname(),data.getPhotourl());
                 LoginActivity.this.finish();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
@@ -469,7 +469,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     String str = StringUtil.beanToJSONString(data);
                     LogUtil.d("OOM", "setToken=" + data.getToken());
                     BaseConstans.SetUserToken(data.getToken());
-                    BaseConstans.SetUserId(data.getId());
+                    BaseConstans.SetUserId(data.getId(),data.getNickname(),data.getPhotourl());
                     dissMissShanYanUi();
                     WaitingDialog.closePragressDialog();
                     LoginActivity.this.finish();

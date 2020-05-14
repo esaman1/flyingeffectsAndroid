@@ -73,7 +73,6 @@ public class frag_user_center extends BaseFragment {
 
     @Override
     protected void initView() {
-
         iv_about.setOnClickListener(view -> {
             statisticsEventAffair.getInstance().setFlag(getActivity(), "3_help");
             Intent intent = new Intent(getActivity(), AboutActivity.class);
@@ -99,7 +98,6 @@ public class frag_user_center extends BaseFragment {
             if (BaseConstans.hasLogin()) {
                 tv_id.setText("我的id号：" + BaseConstans.GetUserId());
                 requestUserInfo();
-
             } else {
                 Glide.with(this)
                         .load(R.mipmap.head)
@@ -198,6 +196,7 @@ public class frag_user_center extends BaseFragment {
                                     .into(iv_head);
                         }
                     }
+                    BaseConstans.SetUserId(data.getId(),data.getNickname(),data.getPhotourl());
                 }
             }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
         }

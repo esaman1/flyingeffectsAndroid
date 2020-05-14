@@ -84,9 +84,25 @@ public class BaseConstans {
     }
 
 
-    public static void SetUserId(String id) {
+    public static void SetUserId(String id,String userName,String headUrl) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putString("userId", id);
+        spUtil.putString("userName", userName);
+        spUtil.putString("headUrl", headUrl);
+
+    }
+
+
+
+    public static String NickName() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getString("userName", "");
+    }
+
+
+    public static String headUrl() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getString("headUrl", "");
     }
 
 

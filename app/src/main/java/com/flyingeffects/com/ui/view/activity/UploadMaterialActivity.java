@@ -15,6 +15,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
@@ -131,7 +133,6 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
 
     @Override
     protected void initView() {
-
         Presenter = new UploadMaterialMVPPresenter(this, this);
         //点击进入视频剪切界面
         String videoPath = getIntent().getStringExtra("videoPath");
@@ -141,6 +142,19 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         FileManager fileManager = new FileManager();
         huaweiFolder = fileManager.getFileCachePath(this, "toHawei");
         statisticsEventAffair.getInstance().setFlag(UploadMaterialActivity.this, "6_customize_bj_Crop");
+        if(!TextUtils.isEmpty(BaseConstans.NickName())){
+            ed_nickname.setText(BaseConstans.NickName());
+        }
+
+        if(!TextUtils.isEmpty(BaseConstans.headUrl())){
+            Glide.with(UploadMaterialActivity.this)
+                    .load(BaseConstans.headUrl())
+                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                    .into(add_head);
+            imageHeadPath=BaseConstans.headUrl();
+        }
+
+
     }
 
     @Override
@@ -341,13 +355,17 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         });
         uploadPathList = new ArrayList<>();
         uploadPathList.add(videoPath);
+        LogUtil.d("OOM","imageHeadPath="+imageHeadPath);
+//        if(!imageHeadPath.contains("http")){
+//            uploadPathList.add("");
+//            huaweiImagePath=imageHeadPath;
+//        }else{
+//            uploadPathList.add(imageHeadPath);
+//        }
         uploadPathList.add(imageHeadPath);
         uploadPathList.add(huaweiSound);
         uploadPathList.add(coverImagePath);
         nowUpdateIndex=0;
-//        EventBus.getDefault().post(new uploadMaterialEvent(uploadPathList,ed_nickname.getText().toString()));
-
-
         uploadFileToHuawei(videoPath, getPathName(0,videoPath));
     }
 
@@ -436,6 +454,12 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                     public void call(String s) {
                         if (nowUpdateIndex != uploadPathList.size()-1) {
                             nowUpdateIndex++;
+
+                            if(nowUpdateIndex==1&&videoPath.equals("")){
+                                //已经上传了用户头像，不需要重新上传
+                                nowUpdateIndex++;
+                                Log.d("OOM2","不需要上传头像"+"videoPath="+videoPath);
+                            }
                             Log.d("OOM2","nowUpdateIndex="+nowUpdateIndex);
                             uploadFileToHuawei(uploadPathList.get(nowUpdateIndex),getPathName(nowUpdateIndex,uploadPathList.get(nowUpdateIndex)));
                         } else {

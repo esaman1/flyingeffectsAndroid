@@ -12,7 +12,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
@@ -22,8 +21,6 @@ import com.flyingeffects.com.manager.GlideRoundTransform;
 import com.flyingeffects.com.ui.view.activity.UploadMaterialActivity;
 
 import java.util.List;
-
-import jp.wasabeef.glide.transformations.BlurTransformation;
 
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
@@ -93,18 +90,18 @@ public class Upload_bj_list_adapter extends BaseQuickAdapter<new_fag_template_it
         }
         RelativeLayout ll_relative_1 = helper.getView(R.id.ll_relative_1);
         RelativeLayout ll_relative_0 = helper.getView(R.id.ll_relative_0);
-        TextView tv_name = helper.getView(R.id.tv_name);
-        tv_name.setText(item.getAuth());
+//        TextView tv_name = helper.getView(R.id.tv_name);
+//        tv_name.setText(item.getAuth());
         if (offset == 0) {
             ll_relative_1.setVisibility(View.GONE);
             ll_relative_0.setVisibility(View.VISIBLE);
-            tv_name.setVisibility(View.GONE);
+//            tv_name.setVisibility(View.GONE);
             ll_relative_0.setOnClickListener(v -> {
                 uploadVideo(item);
             });
         } else {
             ll_relative_0.setVisibility(View.GONE);
-            tv_name.setVisibility(View.VISIBLE);
+//            tv_name.setVisibility(View.VISIBLE);
             ll_relative_1.setVisibility(View.VISIBLE);
         }
     }
