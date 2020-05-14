@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:button="@null"
-            android:enabled="false" />
+           />
 
     </LinearLayout>
 
@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:button="@null"
-            android:enabled="false" />
+            />
 
     </LinearLayout>
 
@@ -85,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:button="@null"
-            android:enabled="false" />
+           />
 
     </LinearLayout>
 

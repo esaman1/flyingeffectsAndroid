@@ -1265,6 +1265,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         cb_0.setCompoundDrawables(drawable_news, null, null, null);
         cb_1.setCompoundDrawables(drawable_news1, null, null, null);
         cb_2.setCompoundDrawables(drawable_news2, null, null, null);
+        cb_0.setOnClickListener(tvMusicListener);
+        cb_1.setOnClickListener(tvMusicListener);
+        cb_2.setOnClickListener(tvMusicListener);
+
+
         cb_2.setChecked(true);
         pagerList.add(templateThumbForMusic);
         TemplateViewPager adapter = new TemplateViewPager(pagerList);
@@ -1277,6 +1282,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.ll_0:
+                case R.id.cb_0:
                     clearCheckBox();
                     cb_0.setChecked(true);
                     nowChooseMusic = 1;
@@ -1289,6 +1295,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     }
                     break;
                 case R.id.ll_1:
+                case R.id.cb_1:
                     clearCheckBox();
                     cb_1.setChecked(true);
                     if(TextUtils.isEmpty(mTemplateModel.getBackgroundPath())){
@@ -1301,6 +1308,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
                     break;
                 case R.id.ll_2:
+                case R.id.cb_2:
                     chooseTemplateMusic();
                     break;
             }
