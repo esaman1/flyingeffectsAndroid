@@ -210,7 +210,19 @@ public class AlbumManager {
                 .columnCount(3)
                 .material_info(material_info)
                 .selectCount(selectNum)
-//                .checkedList(mAlbumFiles)
+                .filterSize(new Filter<Long>() {
+                    @Override
+                    public boolean filter(Long attributes) {
+                        return attributes<20000;
+                    }
+                })
+                .filterMimeType(new Filter<String>() {
+                    @Override
+                    public boolean filter(String attributes) {
+                        return  filterAlbum(attributes);
+                    }
+                })
+                .afterFilterVisibility(false)
                 .widget(
                         Widget.newLightBuilder(act)
                                 .title(R.string.better_to_choose_all)

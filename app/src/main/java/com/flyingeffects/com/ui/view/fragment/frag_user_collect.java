@@ -64,6 +64,8 @@ public class frag_user_collect extends BaseFragment {
     private int selectPage = 1;
 
     private StaggeredGridLayoutManager layoutManager;
+    //3为模板页面选择背景
+    private int from;
 
     @Override
     protected int getContentLayout() {
@@ -77,6 +79,7 @@ public class frag_user_collect extends BaseFragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             template_type = bundle.getString("template_type");
+            from=bundle.getInt("from",0);
         }
     }
 
@@ -198,11 +201,17 @@ public class frag_user_collect extends BaseFragment {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
                 Intent intent = new Intent(getActivity(), PreviewActivity.class);
                 intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
-                if (template_type != null && template_type.equals("1")) {
-                    intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
-                } else {
-                    intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+
+                if(from==3){
+                    intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
+                }else{
+                    if (template_type != null && template_type.equals("1")) {
+                        intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
+                    } else {
+                        intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+                    }
                 }
+
                 intent.putExtra("fromToMineCollect", true);
                 intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
                 startActivity(intent);

@@ -106,8 +106,13 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
                     //手动添加收藏模板
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("template_type", "2");
+                    bundle.putSerializable("from", 3);
                     titles[i] = data.get(i).getName();
                     frag_user_collect fag_0 = new frag_user_collect();
+                    if(templateItem!=null){
+                        //一键模板选择背景
+                        bundle.putSerializable("cover",templateItem.getImage());
+                    }
                     fag_0.setArguments(bundle);
                     list.add(fag_0);
                 } else {

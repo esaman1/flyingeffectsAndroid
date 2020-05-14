@@ -278,6 +278,11 @@ public class UploadMaterialMVPModel {
             }
         } catch (NullPointerException | IllegalStateException e) {
         }
+
+
+        if (drawPadView != null) {
+            drawPadView.resumePreview();
+        }
     }
 
     /**
@@ -431,7 +436,7 @@ public class UploadMaterialMVPModel {
                 });
                 seekbarTime = BaseConstans.getMaxuploadTime() * 1000;
                 seekbarPercent = 1f * mTimeLineView.getWidth() / (frameAdapter.getItemWidth() * frameAdapter.getItemCount());
-                float timeRatio = 1f * BaseConstans.getMaxuploadTime()  * 1000 / getDuration();
+                float timeRatio = 1f * BaseConstans.getMaxuploadTime() * 1000 / getDuration();
                 float adjustRatio = timeRatio / seekbarPercent;
                 seekbarPercent *= adjustRatio;
                 mRangeSeekBarView.setMinDistance(Math.round(getDuration() * adjustRatio));
@@ -601,20 +606,20 @@ public class UploadMaterialMVPModel {
     }
 
     public void onResume() {
-        if (player != null && !player.isPlaying()) {
-            seekTo(Math.round(getDuration() * getCropStartRatio()));
-        }
-        if (drawPadView != null) {
-            drawPadView.resumePreview();
-        }
+//        if (player != null && !player.isPlaying()) {
+//            seekTo(Math.round(getDuration() * getCropStartRatio()));
+//        }
+//        if (drawPadView != null) {
+//            drawPadView.resumePreview();
+//        }
     }
 
 
-    private static final long maxCropDurationMs = BaseConstans.getMaxuploadTime()  * 1000;
+    private static final long maxCropDurationMs = BaseConstans.getMaxuploadTime() * 1000;
     private static final long minCropDurationMs = 2 * 1000;
     private boolean isSaving = false;
     private boolean is4kVideo = false;
-   private WaitingDialog_progress dialog;
+    private WaitingDialog_progress dialog;
 
     public void saveVideo(boolean needCut) {
         if (!fullyInitiated || isSaving) {
@@ -648,7 +653,7 @@ public class UploadMaterialMVPModel {
 //        long durationUs = getDuration() * 1000;
         long durationUs = getDuration();
         getUserChooseDuration(cropStartRatio, cropEndRatio);
-        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(mContext, Math.round(cropEndRatio * durationUs)- Math.round(cropStartRatio * durationUs),videoPath , Math.round(cropStartRatio * durationUs),new videoCutDurationForVideoOneDo.isSuccess() {
+        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(mContext, Math.round(cropEndRatio * durationUs) - Math.round(cropStartRatio * durationUs), videoPath, Math.round(cropStartRatio * durationUs), new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
             public void progresss(int progress) {
                 if (progress > 100) {

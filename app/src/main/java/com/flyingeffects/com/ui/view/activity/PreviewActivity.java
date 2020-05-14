@@ -172,7 +172,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(iv_writer);
         tv_writer_name.setText(templateItem.getAuth());
-        tv_title.setText(templateItem.getTitle());
+        tv_title.setText(templateItem.getRemark());
         tv_describe.setText("友友们    " + "上传" + templateItem.getDefaultnum() + "个素材即可制作");
         if (!fromToMineCollect) {
             Presenter.requestTemplateDetail(templateItem.getId());

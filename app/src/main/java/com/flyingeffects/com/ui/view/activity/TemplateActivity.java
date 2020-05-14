@@ -1351,6 +1351,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }else{
                 if(albumType.isVideo(GetPathType.getInstance().getPathType(videoBjPath))){
                     mTemplateModel.setHasBg(videoBjPath,true);
+                    LogUtil.d("OOM","当前选择的位置为"+nowChooseMusic);
+                    LogUtil.d("OOM","videoBjPath="+videoBjPath);
+                    if(nowChooseMusic==2){
+                        //如果本来就是选择的背景音乐，那么需要重新得到背景音乐
+                        presenter.getBjMusic(videoBjPath);
+                    }
                 }else{
                     mTemplateModel.setHasBg(videoBjPath,false);
                 }
