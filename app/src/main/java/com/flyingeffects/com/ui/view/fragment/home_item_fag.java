@@ -68,14 +68,11 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View
         initRecycler();
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
 
-        if(getActivity()!=null){
-            if(NetworkUtils.isNetworkAvailable(getActivity())){
-                Presenter.requestData(templateId, actTag);
-            }
-        }
-
-
-
+//        if(getActivity()!=null){
+//            if(NetworkUtils.isNetworkAvailable(getActivity())){
+//                Presenter.requestData(templateId, actTag);
+//            }
+//        }
     }
 
 
@@ -124,6 +121,11 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View
     @Override
     public void onResume() {
         super.onResume();
+        if(getActivity()!=null){
+            if(NetworkUtils.isNetworkAvailable(getActivity())){
+                Presenter.requestData(templateId, actTag);
+            }
+        }
     }
 
 

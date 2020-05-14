@@ -6,7 +6,7 @@ public class filterSupportMedia {
 
     static filterSupportMedia supportMedia;
 
-    String []strList={".wmv",".WMV",".mov",".MOV",".mpg",".MPG",".3gp",".3GP","lansongBox",".avi",".AVI",".gif"};
+    String []strList={".wmv",".WMV",".mov",".MOV",".mpg",".MPG",".3gp",".3GP","lansongBox",".avi",".AVI",".gif",".svg+xml"};
 
     public static filterSupportMedia getInstance(){
         if(supportMedia==null){
@@ -32,6 +32,16 @@ public class filterSupportMedia {
             return  false;
     }
 
+
+    public boolean needFilerMediaContains(String str){
+        for (String s:strList
+        ) {
+            if(str.contains(s)){
+                return  true;
+            }
+        }
+        return  false;
+    }
 
 
     public boolean fileIsExists(String strFile) {

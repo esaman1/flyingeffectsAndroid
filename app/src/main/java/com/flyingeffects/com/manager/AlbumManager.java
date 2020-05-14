@@ -12,6 +12,7 @@ import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.AlbumFile;
 import com.yanzhenjie.album.Filter;
 import com.yanzhenjie.album.api.widget.Widget;
+import com.yanzhenjie.filterSupportMedia;
 
 import java.util.ArrayList;
 import java.util.IllegalFormatCodePointException;
@@ -41,8 +42,14 @@ public class AlbumManager {
                 .filterMimeType(new Filter<String>() {
                     @Override
                     public boolean filter(String attributes) {
-                        LogUtil.d("filter","attributes="+attributes);
-                        return attributes.equals("image/gif")||attributes.equals("image/svg+xml")||attributes.equals("image/x-icon");
+                        LogUtil.d("filter2222222","attributes="+attributes);
+//                        return attributes.equals("image/gif")||attributes.equals("image/svg+xml")||attributes.equals("image/x-icon");
+
+                        return  filterAlbum(attributes);
+
+
+
+
                     }
                 })
                 .afterFilterVisibility(false)
@@ -101,7 +108,8 @@ public class AlbumManager {
                 .filterMimeType(new Filter<String>() {
                     @Override
                     public boolean filter(String attributes) {
-                        return attributes.equals("image/gif")||attributes.equals("image/svg+xml")||attributes.equals("image/x-icon");
+//                        return attributes.equals("image/gif")||attributes.equals("image/svg+xml")||attributes.equals("image/x-icon")||attributes.equals("video/x-ms-wmv");
+                        return  filterAlbum(attributes);
                     }
                 })
                 .afterFilterVisibility(false)
@@ -258,4 +266,24 @@ public class AlbumManager {
                 break;
         }
     }
+
+
+
+    private static boolean filterAlbum(String attributes){
+
+        LogUtil.d("xxxx","attributes="+attributes);
+        String []strList={"image/gif","image/svg+xml","image/x-icon","video/x-ms-wmv","avi","wmv","WMV","mov","MOV","mpg","MPG","3gp","3GP","lansongBox","avi","AVI","gif","svg+xml","quicktime"};
+        for (String str:strList
+             ) {
+
+            if(attributes.contains(str)){
+                LogUtil.d("xxxx","过滤的值为="+attributes);
+                return true;
+            }
+
+        }
+        return false;
+
+    }
+
 }

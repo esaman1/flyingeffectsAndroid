@@ -356,14 +356,20 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         uploadPathList = new ArrayList<>();
         uploadPathList.add(videoPath);
         LogUtil.d("OOM","imageHeadPath="+imageHeadPath);
-//        if(!imageHeadPath.contains("http")){
-//            uploadPathList.add("");
-//            huaweiImagePath=imageHeadPath;
-//        }else{
-//            uploadPathList.add(imageHeadPath);
-//        }
-        uploadPathList.add(imageHeadPath);
-        uploadPathList.add(huaweiSound);
+        if(!imageHeadPath.contains("http")){
+            LogUtil.d("OOM","不包含http");
+            uploadPathList.add(imageHeadPath);
+        }else{
+            LogUtil.d("OOM","包含http");
+            uploadPathList.add("");
+            huaweiImagePath=imageHeadPath;
+        }
+        if(!TextUtils.isEmpty(huaweiSound)){
+            uploadPathList.add(huaweiSound);
+        }else{
+            uploadPathList.add("");
+            huaweiSound="";
+        }
         uploadPathList.add(coverImagePath);
         nowUpdateIndex=0;
         uploadFileToHuawei(videoPath, getPathName(0,videoPath));
@@ -444,7 +450,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     int nowUpdateIndex;
 
     private void uploadFileToHuawei(String videoPath, String copyName) {
-        Log.d("OOM2","uploadFileToHuawei");
+        Log.d("OOM2","uploadFileToHuawei"+"当前上传的地址为"+videoPath+"当前的名字为"+copyName);
         new Thread(() -> huaweiObs.getInstance().uploadFileToHawei(videoPath, copyName, new huaweiObs.Callback() {
             @Override
             public void isSuccess(String str) {
@@ -454,13 +460,18 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                     public void call(String s) {
                         if (nowUpdateIndex != uploadPathList.size()-1) {
                             nowUpdateIndex++;
-
-                            if(nowUpdateIndex==1&&videoPath.equals("")){
+                            if(nowUpdateIndex==1&&TextUtils.isEmpty(uploadPathList.get(nowUpdateIndex))){
                                 //已经上传了用户头像，不需要重新上传
-                                nowUpdateIndex++;
+                                nowUpdateIndex=nowUpdateIndex+1;
                                 Log.d("OOM2","不需要上传头像"+"videoPath="+videoPath);
                             }
-                            Log.d("OOM2","nowUpdateIndex="+nowUpdateIndex);
+
+                            if(nowUpdateIndex==2&&TextUtils.isEmpty(uploadPathList.get(nowUpdateIndex))){
+                                //已经上传了用户头像，不需要重新上传
+                                nowUpdateIndex=nowUpdateIndex+1;
+                                Log.d("OOM2","不需要上传音频"+"videoPath="+videoPath);
+                            }
+
                             uploadFileToHuawei(uploadPathList.get(nowUpdateIndex),getPathName(nowUpdateIndex,uploadPathList.get(nowUpdateIndex)));
                         } else {
                             requestData();

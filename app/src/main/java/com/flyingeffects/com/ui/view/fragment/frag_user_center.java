@@ -43,7 +43,7 @@ import rx.Observable;
 public class frag_user_center extends BaseFragment {
 
 
-    private String[] titles = {"我上传的背景", "我的收藏"};
+    private String[] titles = {"我上传的背景", "模板收藏"};
 
     @BindView(R.id.viewpager)
     ViewPager viewpager;

@@ -63,7 +63,7 @@ public class BaseApplication extends MultiDexApplication {
         initZt();
         //闪验SDK初始化（建议放在Application的onCreate方法中执行）
         initShanyanSDK(this);
-//        keepCrash();
+        keepCrash();
         initNTAdSDK();
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
 
