@@ -645,9 +645,10 @@ public class UploadMaterialMVPModel {
         onPause();
         isSaving = true;
 
-        long durationUs = getDuration() * 1000;
+//        long durationUs = getDuration() * 1000;
+        long durationUs = getDuration();
         getUserChooseDuration(cropStartRatio, cropEndRatio);
-        videoCutDurationForVideoOneDo.getInstance().startCutDurtion(videoPath, Math.round(cropStartRatio * durationUs), Math.round(cropEndRatio * durationUs), new videoCutDurationForVideoOneDo.isSuccess() {
+        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(mContext, Math.round(cropEndRatio * durationUs)- Math.round(cropStartRatio * durationUs),videoPath , Math.round(cropStartRatio * durationUs),new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
             public void progresss(int progress) {
                 if (progress > 100) {

@@ -59,8 +59,6 @@ import butterknife.OnClick;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import top.zibin.luban.Luban;
-import top.zibin.luban.OnCompressListener;
 
 /**
  * description ：上傳背景頁面
@@ -169,10 +167,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                     ToastUtil.showToast("请选择头像");
                     return;
                 }
-
-
                 saveVideo(false);
-
                 break;
 
             case R.id.add_head:
