@@ -221,6 +221,18 @@ public class BaseConstans {
     }
 
 
+
+    public static void setMaxuploadTime(int time) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putInt("setMaxuploadTime", time);
+    }
+
+
+    public static int getMaxuploadTime() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getInt("setMaxuploadTime",60);
+    }
+
     public static int getKaiPingADTimeOut() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getInt("KaiPingADTimeOut",5000);

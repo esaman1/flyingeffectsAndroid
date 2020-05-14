@@ -25,6 +25,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AlbumManager;
+import com.flyingeffects.com.manager.CompressImgManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.huaweiObs;
@@ -58,6 +59,8 @@ import butterknife.OnClick;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import top.zibin.luban.Luban;
+import top.zibin.luban.OnCompressListener;
 
 /**
  * description ：上傳背景頁面
@@ -123,7 +126,6 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
 
     private ArrayList<String> uploadPathList;
 
-
     @Override
     protected int getLayoutId() {
         return R.layout.act_upload_material;
@@ -179,7 +181,18 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
                         if(!isCancel){
                             Glide.with(UploadMaterialActivity.this).load(paths.get(0)).into(add_head);
-                            imageHeadPath = paths.get(0);
+                            CompressImgManage compressImgManage=new CompressImgManage(UploadMaterialActivity.this, new CompressImgManage.compressCallback() {
+                                @Override
+                                public void isSuccess(boolean b, String filePath) {
+                                    LogUtil.d("OOM","当前压缩情况为"+b+"压缩之后的地址为"+filePath);
+                                    if(b){
+                                        imageHeadPath=filePath;
+                                    }else{
+                                        imageHeadPath = paths.get(0);
+                                    }
+                                }
+                            });
+                            compressImgManage.toCompressImg(paths);
                         }
                     }
                 }, "");
@@ -190,6 +203,9 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                 break;
         }
     }
+
+
+
 
     private SeekBar.OnSeekBarChangeListener zoomChangeListener = new SeekBar.OnSeekBarChangeListener() {
         @Override

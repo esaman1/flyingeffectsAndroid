@@ -89,7 +89,7 @@ public class Upload_bj_list_adapter extends BaseQuickAdapter<new_fag_template_it
             ll_relative_0.setVisibility(View.VISIBLE);
             tv_name.setVisibility(View.GONE);
             ll_relative_0.setOnClickListener(v -> {
-                uploadVideo();
+                uploadVideo(item);
             });
         } else {
             ll_relative_0.setVisibility(View.GONE);
@@ -99,7 +99,7 @@ public class Upload_bj_list_adapter extends BaseQuickAdapter<new_fag_template_it
     }
 
 
-    private void uploadVideo() {
+    private void uploadVideo(new_fag_template_item item) {
         AlbumManager.chooseVideo((Activity) context, 1, 1, (tag, paths, isCancel, albumFileList) -> {
             if (!isCancel) {
                 Intent intent = new Intent(context, UploadMaterialActivity.class);
@@ -113,14 +113,6 @@ public class Upload_bj_list_adapter extends BaseQuickAdapter<new_fag_template_it
 
 
 
-    /**
-     * description ：更新界面
-     * creation date: 2020/5/13
-     * user : zhangtongju
-     */
-    public void  uploadData(){
-
-    }
 
 
 

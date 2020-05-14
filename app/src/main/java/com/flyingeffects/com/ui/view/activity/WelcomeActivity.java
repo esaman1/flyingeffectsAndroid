@@ -25,6 +25,7 @@ import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.PermissionUtil;
+import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.nineton.ntadsdk.NTAdSDK;
 import com.nineton.ntadsdk.itr.SplashAdCallBack;
@@ -345,6 +346,12 @@ public class WelcomeActivity extends BaseActivity {
             @Override
             protected void _onNext(List<Config> data) {
 
+//
+//                for(int i=0;i<data.size();i++){
+//                    String tet= StringUtil.beanToJSONString(data.get(i));
+//                    LogUtil.d("_onNext","i-"+i+"Config="+tet);
+//                }
+
 
                 if (data != null && data.size() > 0) {
                     for (int i = 0; i < data.size(); i++) {
@@ -381,6 +388,10 @@ public class WelcomeActivity extends BaseActivity {
                             //开屏广告延迟时间
                             int second = Integer.parseInt(config.getValue());
                             BaseConstans.setKaiPingADTimeOut(second);
+                        }else if(id==27){
+                            //上传的时候
+                            int second = Integer.parseInt(config.getValue());
+                            BaseConstans.setMaxuploadTime(second);
                         }
                     }
                 }

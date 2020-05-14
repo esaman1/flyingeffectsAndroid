@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.VideoTimelineAdapter;
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.UploadMaterialMVPCallback;
 import com.flyingeffects.com.utils.FileUtil;
@@ -428,9 +429,9 @@ public class UploadMaterialMVPModel {
                         }
                     }
                 });
-                seekbarTime = 60 * 1000;
+                seekbarTime = BaseConstans.getMaxuploadTime() * 1000;
                 seekbarPercent = 1f * mTimeLineView.getWidth() / (frameAdapter.getItemWidth() * frameAdapter.getItemCount());
-                float timeRatio = 1f * 60 * 1000 / getDuration();
+                float timeRatio = 1f * BaseConstans.getMaxuploadTime()  * 1000 / getDuration();
                 float adjustRatio = timeRatio / seekbarPercent;
                 seekbarPercent *= adjustRatio;
                 mRangeSeekBarView.setMinDistance(Math.round(getDuration() * adjustRatio));
@@ -609,7 +610,7 @@ public class UploadMaterialMVPModel {
     }
 
 
-    private static final long maxCropDurationMs = 60 * 1000;
+    private static final long maxCropDurationMs = BaseConstans.getMaxuploadTime()  * 1000;
     private static final long minCropDurationMs = 2 * 1000;
     private boolean isSaving = false;
     private boolean is4kVideo = false;
