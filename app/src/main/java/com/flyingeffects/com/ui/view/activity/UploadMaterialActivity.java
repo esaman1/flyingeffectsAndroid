@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -36,6 +37,7 @@ import com.flyingeffects.com.ui.presenter.UploadMaterialMVPPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.utils.keyBordUtils;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.RoundImageView;
 import com.flyingeffects.com.view.VideoFrameRecycler;
@@ -175,8 +177,10 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                 AlbumManager.chooseImageAlbum(UploadMaterialActivity.this, 1, 0, new AlbumChooseCallback() {
                     @Override
                     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-                        Glide.with(UploadMaterialActivity.this).load(paths.get(0)).into(add_head);
-                        imageHeadPath = paths.get(0);
+                        if(!isCancel){
+                            Glide.with(UploadMaterialActivity.this).load(paths.get(0)).into(add_head);
+                            imageHeadPath = paths.get(0);
+                        }
                     }
                 }, "");
                 break;
@@ -470,7 +474,19 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     }
 
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                View view = getCurrentFocus();
+                keyBordUtils.hideKeyboard(ev, view, UploadMaterialActivity.this);//调用方法判断是否需要隐藏键盘
+                break;
 
+            default:
+                break;
+        }
+        return super.dispatchTouchEvent(ev);
+    }
 
 
 
