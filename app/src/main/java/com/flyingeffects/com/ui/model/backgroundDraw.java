@@ -20,6 +20,7 @@ import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
 import com.lansosdk.box.GifLayer;
 import com.lansosdk.box.LSOBitmapAsset;
+import com.lansosdk.box.LSOScaleType;
 import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.box.VideoFrameLayer;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
@@ -187,12 +188,12 @@ public class backgroundDraw {
 //            VideoFrameLayer bgLayer=execute.addVideoLayer(option,0, Long.MAX_VALUE, true, true);
 //            bgLayer.setScaledToPadSize();
             option = new LSOVideoOption(videoPath);
+
             if (!TextUtils.isEmpty(videoVoice)) {
                 option.setAudioMute();
             }
             VideoFrameLayer bgLayer = execute.addVideoLayer(option);
-
-            bgLayer.setScaledToPadSize();
+            bgLayer.setScaleType(LSOScaleType.VIDEO_SCALE_TYPE);
             LogUtil.d("OOM", "主图层添加完毕");
         } catch (Exception e) {
             e.printStackTrace();

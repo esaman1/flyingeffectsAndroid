@@ -287,10 +287,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             }
             presenter.CheckedChanged(isChecked);
         });
-
-
-
-
     }
 
 
