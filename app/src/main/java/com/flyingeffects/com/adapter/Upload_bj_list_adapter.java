@@ -23,6 +23,10 @@ import com.flyingeffects.com.ui.view.activity.UploadMaterialActivity;
 
 import java.util.List;
 
+import jp.wasabeef.glide.transformations.BlurTransformation;
+
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
+
 
 /**
  * user :TongJu  ; email:jutongzhang@sina.com
@@ -56,7 +60,7 @@ public class Upload_bj_list_adapter extends BaseQuickAdapter<new_fag_template_it
             //审核成功
             Glide.with(context)
                     .load(item.getImage())
-                    .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 5)))
+                    .apply(bitmapTransform(new GlideRoundTransform(context, 5)))
                     .into(iv_cover);
         } else {
             tv_play_num.setVisibility(View.GONE);
@@ -64,8 +68,15 @@ public class Upload_bj_list_adapter extends BaseQuickAdapter<new_fag_template_it
             tv_audit.setVisibility(View.VISIBLE);
             Glide.with(context)
                     .load(item.getImage())
-                    .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 5)))
+                    .apply(bitmapTransform(new GlideRoundTransform(context, 5)))
                     .into(iv_cover);
+
+
+
+//            Glide.with(context)
+//                    .load(item.getImage())
+//                    .apply(bitmapTransform(new BlurTransformation(context 25, 4)))
+//                    .into(iv_cover);
             if(item.getTest() == 1){
             //审核中
                 GradientDrawable view_ground = (GradientDrawable) tv_audit.getBackground(); //获取控件的背

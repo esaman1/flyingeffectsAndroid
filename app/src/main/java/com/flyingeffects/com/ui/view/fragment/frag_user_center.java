@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -42,7 +43,7 @@ import rx.Observable;
 public class frag_user_center extends BaseFragment {
 
 
-    private String[] titles = {"我上传的背景","我的收藏"};
+    private String[] titles = {"我上传的背景", "我的收藏"};
 
     @BindView(R.id.viewpager)
     ViewPager viewpager;
@@ -59,6 +60,9 @@ public class frag_user_center extends BaseFragment {
 
     @BindView(R.id.tv_id)
     TextView tv_id;
+
+    @BindView(R.id.tv_name)
+    TextView tv_name;
 
 
     @Override
@@ -89,16 +93,18 @@ public class frag_user_center extends BaseFragment {
 
     @Override
     public void onResume() {
-        Glide.with(this)
-                .load(R.mipmap.head)
-                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                .into(iv_head);
+
         if (getActivity() != null) {
             //未登陆
             if (BaseConstans.hasLogin()) {
                 tv_id.setText("我的id号：" + BaseConstans.GetUserId());
                 requestUserInfo();
+
             } else {
+                Glide.with(this)
+                        .load(R.mipmap.head)
+                        .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                        .into(iv_head);
                 tv_id.setText("未登录");
             }
         }
@@ -154,13 +160,11 @@ public class frag_user_center extends BaseFragment {
                 }
                 break;
         }
-
     }
 
 
-
     private void requestUserInfo() {
-        if(getActivity()!=null){
+        if (getActivity() != null) {
             HashMap<String, String> params = new HashMap<>();
             params.put("token", BaseConstans.GetUserToken());
             // 启动时间
@@ -174,16 +178,30 @@ public class frag_user_center extends BaseFragment {
 
                 @Override
                 protected void _onNext(UserInfo data) {
-                    if(getActivity()!=null){
-                        tv_id.setText("我的id号：" + data.getId());
+                    if (getActivity() != null) {
+                        tv_id.setText("飞友号：" + data.getId());
+                        if(!TextUtils.isEmpty(data.getNickname())){
+                            tv_name.setText(data.getNickname());
+                            tv_name.setVisibility(View.VISIBLE);
+                        }else{
+                            tv_name.setVisibility(View.GONE);
+                        }
+                        if (!TextUtils.isEmpty(data.getPhotourl())) {
+                            Glide.with(getActivity())
+                                    .load(data.getPhotourl())
+                                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                                    .into(iv_head);
+                        } else {
+                            Glide.with(getActivity())
+                                    .load(R.mipmap.head)
+                                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                                    .into(iv_head);
+                        }
                     }
                 }
             }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
         }
-        }
-
-
-
+    }
 
 }
 
