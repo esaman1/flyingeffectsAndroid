@@ -665,6 +665,7 @@ public class VideoCropMVPModel {
 
             @Override
             public void isSuccess(boolean isSuccess, String path) {
+                LogUtil.d("OOM","裁剪后导出的地址为"+path);
                 isSaving = false;
                 if (path == null) {
                     ToastUtil.showToast(mContext.getString(R.string.render_error));
