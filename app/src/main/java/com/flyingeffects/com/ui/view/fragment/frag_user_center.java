@@ -96,7 +96,7 @@ public class frag_user_center extends BaseFragment {
         if (getActivity() != null) {
             //未登陆
             if (BaseConstans.hasLogin()) {
-                tv_id.setText("我的id号：" + BaseConstans.GetUserId());
+                tv_id.setText("飞友号：" + BaseConstans.GetUserId());
                 requestUserInfo();
             } else {
                 Glide.with(this)

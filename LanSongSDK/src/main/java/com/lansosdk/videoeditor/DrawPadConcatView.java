@@ -274,7 +274,7 @@ public class DrawPadConcatView extends FrameLayout {
     public int getDrawPadHeight() {
         return drawPadHeight;
     }
-    //---------------------------------------------容器代码--------------------------------------------------------
+   //---------------------------------------------容器代码--------------------------------------------------------
 
 
     private void createRender(){
@@ -293,7 +293,7 @@ public class DrawPadConcatView extends FrameLayout {
     public void setPreviewLooping(boolean is){
         createRender();
         if(renderer !=null) {
-            renderer.setPreviewLooping(is);
+           renderer.setPreviewLooping(is);
         }
     }
     //---------------------------容器背景颜色;
@@ -724,7 +724,7 @@ public class DrawPadConcatView extends FrameLayout {
      */
     public void release(){
         if(renderer!=null){
-            renderer.release();
+           renderer.release();
             renderer=null;
         }
         setupSuccess=false;

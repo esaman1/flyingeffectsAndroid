@@ -152,8 +152,8 @@ public class VideoEditor {
         } else if ((looper = Looper.getMainLooper()) != null) {
             mEventHandler = new EventHandler(this, looper);
         } else {
+            LSOLog.e("Unable to obtain the thread Looper, may not be able to send listener;");
             mEventHandler = null;
-            LSOLog.w( "cannot get Looper handler. may be cannot receive video editor progress!!");
         }
     }
 
@@ -2449,8 +2449,6 @@ public class VideoEditor {
     /**
      * 把一个mp4文件中的音频部分和视频都倒序播放。
      * <p>
-     * 注意：此处理会占用大量的内存，建议视频最好是480x480的分辨率, 并且不要过长，尽量在15秒内
-     * 注意：此处理会占用大量的内存，建议视频最好是480x480的分辨率, 并且不要过长，尽量在15秒内
      * 如您的视频过大, 则可能导致:Failed to inject frame into filter network: Out of memory;这个是正常的.因为已超过APP可使用的内容范围, 内存不足.
      *
      * @param srcPath 　　原mp4文件

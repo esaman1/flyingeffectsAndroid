@@ -192,15 +192,12 @@ public class FilterLibrary {
 
         filterList.addFilter("Grayscale灰度", FilterType.GRAYSCALE);
         filterList.addFilter("Contrast对比度", FilterType.CONTRAST);
-
         filterList.addFilter("Saturation饱和度", FilterType.SATURATION);
 
         filterList.addFilter("Blend (Difference)", FilterType.BLEND_DIFFERENCE);
-        filterList.addFilter("Blend (Source Over)",
-                FilterType.BLEND_SOURCE_OVER);
+        filterList.addFilter("Blend (Source Over)", FilterType.BLEND_SOURCE_OVER);
         filterList.addFilter("Blend (Color Burn)", FilterType.BLEND_COLOR_BURN);
-        filterList.addFilter("Blend (Color Dodge)",
-                FilterType.BLEND_COLOR_DODGE);
+        filterList.addFilter("Blend (Color Dodge)",FilterType.BLEND_COLOR_DODGE);
         filterList.addFilter("Blend (Darken)", FilterType.BLEND_DARKEN);
         filterList.addFilter("Blend (Dissolve)", FilterType.BLEND_DISSOLVE);
         filterList.addFilter("Blend (Exclusion)", FilterType.BLEND_EXCLUSION);
@@ -216,8 +213,7 @@ public class FilterLibrary {
         filterList.addFilter("Blend (Hue)", FilterType.BLEND_HUE);
         filterList.addFilter("Blend (Saturation)", FilterType.BLEND_SATURATION);
         filterList.addFilter("Blend (Luminosity)", FilterType.BLEND_LUMINOSITY);
-        filterList.addFilter("Blend (Linear Burn)",
-                FilterType.BLEND_LINEAR_BURN);
+        filterList.addFilter("Blend (Linear Burn)",FilterType.BLEND_LINEAR_BURN);
         filterList.addFilter("Blend (Soft Light)", FilterType.BLEND_SOFT_LIGHT);
         filterList.addFilter("Blend (Subtract)", FilterType.BLEND_SUBTRACT);
         filterList.addFilter("Blend (Chroma Key)", FilterType.BLEND_CHROMA_KEY);

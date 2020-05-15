@@ -46,11 +46,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.lansosdk.LanSongFilter.LanSongFilter;
 
-/**
- * 处理预览和实时保存的View, 继承自FrameLayout.
- * <p>
- * 适用在增加到UI界面中, 一边预览,一边实时保存的场合.
- */
 public class DrawPadCameraView extends FrameLayout {
 
     private DrawPadCameraRunnable renderer;
@@ -77,15 +72,6 @@ public class DrawPadCameraView extends FrameLayout {
      */
     private LanSongFilter initFilter = null;
     private float encodeSpeed = 1.0f;
-    // private FocusImageView focusView;
-    // /**
-    // * 把外界的用来聚焦的动画
-    // * @param view
-    // */
-    // public void setFocusView(FocusImageView view)
-    // {
-    // focusView=view;
-    // }
     private String encodeOutput = null; // 编码输出路径
     private onViewAvailable mViewAvailable = null;
     private onDrawPadSizeChangedListener mSizeChangedCB = null;
@@ -217,10 +203,14 @@ public class DrawPadCameraView extends FrameLayout {
      * 你完全可以重新按照你的界面需求来修改这个DrawPadView类.
      */
     public void setOnViewAvailable(onViewAvailable listener) {
-        mViewAvailable = listener;
+        mViewAvailable = listener; 
         if(surfaceTexture !=null){
             mViewAvailable.viewAvailable(this);
         }
+    }
+
+    public static void setForceCameraOutDraw(boolean is){
+       DrawPadCameraRunnable.setForceCameraOutDraw(is);
     }
 
     @Deprecated
@@ -279,9 +269,6 @@ public class DrawPadCameraView extends FrameLayout {
         } else {
             LSOLog.e(  "enable real encode is error");
         }
-    }
-    public void setExtCameraLayer(CameraLayer layer){
-        extCameraLayer=layer;
     }
 
     public void setRealEncodeEnable(int encW, int encH, int encFr,
@@ -604,7 +591,7 @@ public class DrawPadCameraView extends FrameLayout {
                 isCameraOpened = ret;
                 if (!ret) { // 用中文注释.
                     LSOLog.e( "开启 drawPad 失败, 或许是您之前的DrawPad没有Stop, 或者传递进去的surface对象已经被系统Destory!!,"
-                            + "请检测您 的代码或直接拷贝我们的代码过去,在我们代码基础上修改参数;\n");
+                                    + "请检测您 的代码或直接拷贝我们的代码过去,在我们代码基础上修改参数;\n");
                 } else {
                     renderer.setDisplaySurface(mTextureRenderView, new Surface(surfaceTexture));
                 }

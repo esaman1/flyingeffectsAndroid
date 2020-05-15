@@ -259,8 +259,6 @@ public class DrawPadView extends FrameLayout {
      * 默认是宽度对齐到手机的左右两边, 然后调整高度,
      * 把调整后的高度作为DrawPad渲染线程的真正宽度和高度.
      *
-     * 比如设置的宽度和高度是480,480,而父view的宽度是等于手机分辨率是1080x1920,则DrawPad默认对齐到手机宽度1080,然后把高度也按照比例缩放到1080.
-     *
      * @param width  设置的容器的等比例宽度, 我们会根据你的宽高和布局的最大宽高, 做等比例缩放, 缩放后,把缩放后的宽高通过 listener 返回给你;
      * @param height 设置容器的等比例高度
      * @param listener    自适应等比例后, 把实际布局的宽高返回.
@@ -296,12 +294,6 @@ public class DrawPadView extends FrameLayout {
 
     /**
      * 当前drawpad容器运行了多长时间, 仅供参考使用. 没有特别的意义.
-     * <p>
-     * 此listener中的long类型是当前时间,单位是微秒, currentTimeUs; 此时间为即将渲染这一帧的时间,
-     * 比如你要在第3秒增加别的图层或调整指定图层的参数 则应该判断时间是否大于或等于3*1000*1000;
-     * <p>
-     * 仅仅作为drawpad容器运行时间的参考, 如果你要看当前视频图层的运行时间,则应设置图层的监听,而不是容器运行时间的监听, 可以通过
-     * {@link #resetDrawPadRunTime(long)}来复位这个时间.
      *
      * @param li
      */
@@ -312,9 +304,8 @@ public class DrawPadView extends FrameLayout {
         drawPadRunTimeListener = li;
     }
     /**
-     * 把运行的时间复位到某一个值, 这样的话, drawpad继续显示, 就会以这个值为参考, 增加相对运行的时间. drawpad已经运行了10秒钟,
-     * 你复位到2秒.则drawpad下一个onDrawPadRunTimeListener返回的值,就是2秒+相对运行的值,可能是2000*1000 +
-     * 40*1000;
+     * 把运行的时间复位到某一个值,
+     * drawpad继续显示, 就会以这个值为参考, 增加相对运行的时间. drawpad已经运行了10秒钟,
      *
      * @param runtimeUs
      */
@@ -331,16 +322,6 @@ public class DrawPadView extends FrameLayout {
         drawPadProgressListener = listener;
     }
 
-    /**
-     * 方法与 onDrawPadProgressListener不同的地方在于: 即将开始一帧渲染的时候,
-     * 直接执行这个回调中的代码,不通过Handler传递出去,你可以精确的执行一些这一帧的如何操作.
-     * <p>
-     * listener中的方法是在DrawPad线程中执行的, 请不要在此监听里放置耗时的处理, 以免造成DrawPad线程的卡顿.
-     * <p>
-     * 不能在回调 内增加各种UI相关的代码.
-     *
-     * @param listener 此listner工作在opengl线程， 非UI线程。
-     */
     public void setOnDrawPadThreadProgressListener(
             onDrawPadThreadProgressListener listener) {
         if (renderer != null) {
@@ -350,10 +331,6 @@ public class DrawPadView extends FrameLayout {
     }
 
 
-    /**
-     * 设置 获取当前DrawPad这一帧的画面的监听, 设置截图监听,当截图完成后, 返回当前图片的btimap格式的图片. 此方法工作在主线程.
-     * 请不要在此方法里做图片的处理,以免造成拥堵; 建议获取到bitmap后,放入到一个链表中,在外面或另开一个线程处理.
-     */
     public void setOnDrawPadSnapShotListener(onDrawPadSnapShotListener listener) {
         if (renderer != null) {
             renderer.setDrawPadSnapShotListener(listener);
@@ -361,13 +338,6 @@ public class DrawPadView extends FrameLayout {
         drawPadSnapShotListener = listener;
     }
 
-    /**
-     * 触发一下截取当前DrawPad中的内容. 触发后, 会在DrawPad内部设置一个标志位,DrawPad线程会检测到这标志位后,
-     * 截取DrawPad, 并通过onDrawPadSnapShotListener监听反馈给您. 请不要多次或每一帧都截取DrawPad,
-     * 以免操作DrawPad处理过慢.
-     * <p>
-     * 此方法,仅在前台工作时有效. (注意:截取的仅仅是各种图层的内容, 不会截取DrawPad的黑色背景)
-     */
     public void toggleSnatShot() {
         if (drawPadSnapShotListener != null && renderer != null && renderer.isRunning()) {
             renderer.toggleSnapShot(drawPadWidth, drawPadHeight);
@@ -525,8 +495,8 @@ public class DrawPadView extends FrameLayout {
     public boolean startDrawPad(boolean pauseRecord) {
         boolean ret = false;
         if(!LanSoEditor.isLoadLanSongSDK.get()){
-            LSOLog.e("没有加载SDK, 或你的APP崩溃后,重新启动当前Activity,请查看完整的logcat:(No SDK is loaded, or the current activity is restarted after your app crashes, please see the full logcat)");
-            return false;
+           LSOLog.e("没有加载SDK, 或你的APP崩溃后,重新启动当前Activity,请查看完整的logcat:(No SDK is loaded, or the current activity is restarted after your app crashes, please see the full logcat)");
+           return false;
         }
 
         if(renderer!=null){
@@ -536,66 +506,66 @@ public class DrawPadView extends FrameLayout {
 
         if (mSurfaceTexture != null && drawPadWidth > 0 && drawPadHeight > 0) {
             renderer = new DrawPadViewRender(getContext(), drawPadWidth,drawPadHeight);
-            renderer.setUseMainVideoPts(isUseMainPts);
-            // 因为要预览,这里设置显示的Surface,当然如果您有特殊情况需求,也可以不用设置,但displayersurface和EncoderEnable要设置一个,DrawPadRender才可以工作.
-            renderer.setDisplaySurface(new Surface(mSurfaceTexture));
+                renderer.setUseMainVideoPts(isUseMainPts);
+                // 因为要预览,这里设置显示的Surface,当然如果您有特殊情况需求,也可以不用设置,但displayersurface和EncoderEnable要设置一个,DrawPadRender才可以工作.
+                renderer.setDisplaySurface(new Surface(mSurfaceTexture));
 
-            if (isCheckPadSize) {
-                encWidth = LanSongUtil.make16Multi(encWidth); // 编码默认16字节对齐.
-                encHeight = LanSongUtil.make16Multi(encHeight);
-            }
-            if (isCheckBitRate || encBitRate == 0) {
-                encBitRate = LanSongUtil.checkSuggestBitRate(encHeight
-                        * encWidth, encBitRate);
-            }
-            if(encWidth>0 && encHeight>0 && encodeOutput!=null){
-                renderer.setEncoderEnable(encWidth, encHeight, encBitRate,
-                        encFrameRate, encodeOutput);
-            }
-            renderer.setEditModeVideo(editModeVideo);
-            renderer.setUpdateMode(mUpdateMode, mAutoFlushFps);
+                if (isCheckPadSize) {
+                    encWidth = LanSongUtil.make16Multi(encWidth); // 编码默认16字节对齐.
+                    encHeight = LanSongUtil.make16Multi(encHeight);
+                }
+                if (isCheckBitRate || encBitRate == 0) {
+                    encBitRate = LanSongUtil.checkSuggestBitRate(encHeight
+                            * encWidth, encBitRate);
+                }
+                if(encWidth>0 && encHeight>0 && encodeOutput!=null){
+                    renderer.setEncoderEnable(encWidth, encHeight, encBitRate,
+                            encFrameRate, encodeOutput);
+                }
+                renderer.setEditModeVideo(editModeVideo);
+                renderer.setUpdateMode(mUpdateMode, mAutoFlushFps);
 
 
-            renderer.setDrawPadBackGroundColor(padBGRed,padBGGreen,padBGBlur,padBGAlpha);
+                renderer.setDrawPadBackGroundColor(padBGRed,padBGGreen,padBGBlur,padBGAlpha);
 
-            // 设置DrawPad处理的进度监听, 回传的currentTimeUs单位是微秒.
-            renderer.setDrawPadSnapShotListener(drawPadSnapShotListener);
-            renderer.setDrawpadOutFrameListener(previewFrameWidth,
-                    previewFrameHeight, previewFrameType,
-                    drawPadPreviewFrameListener);
-            renderer.setOutFrameInDrawPad(frameListenerInDrawPad);
+                // 设置DrawPad处理的进度监听, 回传的currentTimeUs单位是微秒.
+                renderer.setDrawPadSnapShotListener(drawPadSnapShotListener);
+                renderer.setDrawpadOutFrameListener(previewFrameWidth,
+                        previewFrameHeight, previewFrameType,
+                        drawPadPreviewFrameListener);
+                renderer.setOutFrameInDrawPad(frameListenerInDrawPad);
 
-            renderer.setDrawPadProgressListener(drawPadProgressListener);
-            renderer.setDrawPadCompletedListener(drawpadCompletedListener);
-            renderer.setDrawPadThreadProgressListener(drawPadThreadProgressListener);
-            renderer.setDrawPadErrorListener(drawPadErrorListener);
-            renderer.setDrawPadRunTimeListener(drawPadRunTimeListener);
+                renderer.setDrawPadProgressListener(drawPadProgressListener);
+                renderer.setDrawPadCompletedListener(drawpadCompletedListener);
+                renderer.setDrawPadThreadProgressListener(drawPadThreadProgressListener);
+                renderer.setDrawPadErrorListener(drawPadErrorListener);
+                renderer.setDrawPadRunTimeListener(drawPadRunTimeListener);
 
-            renderer.setLoopingWhenReachTime(reachTimeLoopTimeUs);
-            if (isRecordMic) {
-                renderer.setRecordMic(true);
-            } else if (isRecordExtPcm) {
-                renderer.setRecordExtraPcm(true, pcmChannels,pcmSampleRate, pcmBitRate);
-            }
+                renderer.setLoopingWhenReachTime(reachTimeLoopTimeUs);
+                if (isRecordMic) {
+                    renderer.setRecordMic(true);
+                } else if (isRecordExtPcm) {
+                    renderer.setRecordExtraPcm(true, pcmChannels,pcmSampleRate, pcmBitRate);
+                }
 
-            if (pauseRecord || isPauseRecord) {
-                renderer.pauseRecordDrawPad();
-            }
-            if (isPauseRefreshDrawPad) {
-                renderer.pauseRefreshDrawPad();
-            }
-            if (isPausePreviewDrawPad) {
-                renderer.pausePreviewDrawPad();
-            }
-            renderer.adjustEncodeSpeed(encodeSpeed);
+                if (pauseRecord || isPauseRecord) {
+                    renderer.pauseRecordDrawPad();
+                }
+                if (isPauseRefreshDrawPad) {
+                    renderer.pauseRefreshDrawPad();
+                }
+                if (isPausePreviewDrawPad) {
+                    renderer.pausePreviewDrawPad();
+                }
+                renderer.adjustEncodeSpeed(encodeSpeed);
 
-            ret = renderer.startDrawPad();
-            if (!ret) {
-                LSOLog.e("开启 drawPad 失败, 或许是您之前的DrawPad没有Stop, 或者传递进去的surface对象已经被系统Destory!!,"
-                        + "请检测您 的代码或参考本文件中的SurfaceCallback 这个类中的注释;\n");
-            }else {
-                LSOLog.i("DrawPadView is running..."+ret);
-            }
+                ret = renderer.startDrawPad();
+                if (!ret) {
+                    LSOLog.e("开启 drawPad 失败, 或许是您之前的DrawPad没有Stop, 或者传递进去的surface对象已经被系统Destory!!,"
+                                    + "请检测您 的代码或参考本文件中的SurfaceCallback 这个类中的注释;\n");
+                }else {
+                    LSOLog.i("DrawPadView is running..."+ret);
+                }
         } else {
             if (mSurfaceTexture == null) {
                 LSOLog.e(
@@ -1095,26 +1065,9 @@ public class DrawPadView extends FrameLayout {
     }
 
     /**
-     * 因之前有客户自定义一个Camera图层, 我们的Drawpad可以接受外部客户自定义图层.这里填入.
-     */
-    // public AeLayer addCustemLayer()
-    // {
-    // CameraLayer ret=null;
-    // if(aeRenderer!=null){
-    // ret =new
-    // CameraLayer(getContext(),false,viewWidth,viewHeight,null,mUpdateMode);
-    // aeRenderer.addCustemLayer(ret);
-    // }else{
-    // Log.e(TAG,"CameraMaskLayer error render is not avalid");
-    // }
-    // return ret;
-    // }
-
-    /**
      * 获取一个BitmapLayer 注意:此方法一定在 startDrawPad之后,在stopDrawPad之前调用.
      *
-     * @param bmp 图片的bitmap对象,可以来自png或jpg等类型,这里是通过BitmapFactory.
-     *            decodeXXX的方法转换后的bitmap对象.
+     * @param bmp 图片的bitmap对象
      * @return 一个BitmapLayer对象
      */
     public BitmapLayer addBitmapLayer(Bitmap bmp) {
@@ -1139,9 +1092,9 @@ public class DrawPadView extends FrameLayout {
      */
     public BitmapLayer addBitmapLayer(Bitmap bmp, LanSongFilter filter) {
         if (bmp != null) {
-            if (renderer != null)
+            if (renderer != null){
                 return renderer.addBitmapLayer(bmp, filter);
-            else {
+            }else {
                 LSOLog.e( "addBitmapLayer error render is not avalid");
                 return null;
             }

@@ -185,6 +185,7 @@ public class frag_user_upload_bj extends BaseFragment {
                 }else{
                     intent.putExtra("readOnly", false);
                 }
+                intent.putExtra("fromToMineCollect", true);
                 intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
                 intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
                 startActivity(intent);

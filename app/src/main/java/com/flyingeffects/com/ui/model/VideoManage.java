@@ -1,6 +1,10 @@
 package com.flyingeffects.com.ui.model;
 
 import android.media.MediaMetadataRetriever;
+import android.text.TextUtils;
+
+import com.flyingeffects.com.commonlyModel.getVideoInfo;
+import com.flyingeffects.com.enity.VideoInfo;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,6 +51,17 @@ public class VideoManage {
     }
 
 
+
+    public VideoInfo getVideoInfo(String path){
+        VideoInfo videoInfo = null;
+        if (!TextUtils.isEmpty(path)) {
+            videoInfo  = getVideoInfo.getInstance().getRingDuring(path);
+        }
+        return videoInfo;
+
+    }
+
+
     public int GetVideoIsRotation(String path) {
         MediaMetadataRetriever mmr = new MediaMetadataRetriever();//实例化MediaMetadataRetriever对象
         File file = new File(path);//实例化File对象，文件路径为/storage/sdcard/Movies/music1.mp4
@@ -69,5 +84,9 @@ public class VideoManage {
         }
         return 0;
     }
+
+
+
+
 
 }

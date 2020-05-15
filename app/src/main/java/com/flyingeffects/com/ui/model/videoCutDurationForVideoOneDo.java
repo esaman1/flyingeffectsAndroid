@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -42,7 +43,7 @@ public class videoCutDurationForVideoOneDo {
     }
 
 
-        public void startCutDurtion(String path, long startUs, long total, isSuccess callback) {
+    public void startCutDurtion(String path, long startUs, long total, isSuccess callback) {
         LogUtil.d("OOM", "startUs=" + startUs + "total=" + total);
         try {
             videoOneDo = new VideoOneDo2(BaseApplication.getInstance(), path);
@@ -100,11 +101,6 @@ public class videoCutDurationForVideoOneDo {
 
     public void CutVideoForDrawPadAllExecute2(Context context, float duration, String path, long startDurtion, isSuccess callback) {
         try {
-//            if (VideoManage.getInstance().NowVideoIsRotation(path)) {
-//                execute = new DrawPadAllExecute2(context, 720, 1280, (long) (duration * 1000));
-//            } else {
-//                execute = new DrawPadAllExecute2(context, 1280, 720, (long) (duration * 1000));
-//            }
             execute = new DrawPadAllExecute2(context, 720, 1280, (long) (duration * 1000));
             execute.setFrameRate(30);
             execute.setEncodeBitrate(5 * 1024 * 1024);
@@ -151,19 +147,17 @@ public class videoCutDurationForVideoOneDo {
                         option.setCutDurationUs(startDuration, durationUs + startDuration);
                         VideoFrameLayer videoLayer = execute.addVideoLayer(option);
                         videoLayer.setScaleType(LSOScaleType.VIDEO_SCALE_TYPE);
-                        int roation = VideoManage.getInstance().GetVideoIsRotation(path);
-                        LogUtil.d("OOM","视频的旋转角度为"+roation);
-                        videoLayer.setRotate(roation);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
+                    if (execute.start()) {
+                        subscriber.onNext(0);
+                    } else {
+                        subscriber.onError(new Throwable());
+                    }
+                    subscriber.onCompleted();
                 }
-                if (execute.start()) {
-                    subscriber.onNext(0);
-                } else {
-                    subscriber.onError(new Throwable());
-                }
-                subscriber.onCompleted();
             }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(aInteger -> {
 //                dialog.setProgress(aInteger + "");
             }, throwable -> {

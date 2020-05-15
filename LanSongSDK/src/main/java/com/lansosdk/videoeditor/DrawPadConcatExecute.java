@@ -392,7 +392,7 @@ public class DrawPadConcatExecute {
             pixelRender.setOnLanSongSDKErrorListener(listener);
         }
     }
-    //-------------------------listener end -------------------------------------------
+//-------------------------listener end -------------------------------------------
     public boolean isRunning() {
         if(renderer !=null){
             return renderer.isRunning();
@@ -511,25 +511,25 @@ public class DrawPadConcatExecute {
     //---------------------------test Demo测试例子------------------------------------------------
     /**
      private void testConcatExecute() throws Exception  {
-     DrawPadConcatExecute concatExecute=new DrawPadConcatExecute(getApplicationContext(),720,1280);
+             DrawPadConcatExecute concatExecute=new DrawPadConcatExecute(getApplicationContext(),720,1280);
 
-     concatExecute.concatVideoLayer(new LSOVideoAssetOld(SDCARD.d1()),null);
-     concatExecute.concatVideoLayer(new LSOVideoAssetOld(SDCARD.t720P()),null);
+             concatExecute.concatVideoLayer(new LSOVideoAssetOld(SDCARD.d1()),null);
+             concatExecute.concatVideoLayer(new LSOVideoAssetOld(SDCARD.t720P()),null);
 
-     concatExecute.setOnLanSongSDKProgressListener(new OnLanSongSDKProgressListener() {
-    @Override
-    public void onLanSongSDKProgress(long ptsUs, int percent) {
-    Log.e("TAG", "---ptsUs: " +ptsUs+ " percent :"+percent);
-    }
-    });
+             concatExecute.setOnLanSongSDKProgressListener(new OnLanSongSDKProgressListener() {
+            @Override
+            public void onLanSongSDKProgress(long ptsUs, int percent) {
+            Log.e("TAG", "---ptsUs: " +ptsUs+ " percent :"+percent);
+            }
+            });
 
-     concatExecute.setOnLanSongSDKCompletedListener(new OnLanSongSDKCompletedListener() {
-    @Override
-    public void onLanSongSDKCompleted(String dstVideo) {
-    MediaInfo.checkFile(dstVideo);
-    }
-    });
-     concatExecute.startExport();
+             concatExecute.setOnLanSongSDKCompletedListener(new OnLanSongSDKCompletedListener() {
+            @Override
+            public void onLanSongSDKCompleted(String dstVideo) {
+            MediaInfo.checkFile(dstVideo);
+            }
+            });
+             concatExecute.startExport();
      }
      */
 }

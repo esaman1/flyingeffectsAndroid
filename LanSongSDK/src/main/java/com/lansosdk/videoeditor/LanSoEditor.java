@@ -34,11 +34,18 @@ public class LanSoEditor {
         }
 
         initSo(context, str);
+
+        //使用默认包路径下的文件夹; LSDELETE:打开
+        /**
+         * 发布的时,打开;
+         */
         if(Environment.getExternalStorageDirectory()!=null){
-            LanSoEditor.setTempFileDir(Environment.getExternalStorageDirectory().getPath() + "/lansongBox/");
+            setTempFileDir(context.getFilesDir() + "/lansongBox/");
         }
 
         LSOLog.init();
+        LanSoEditorBox.deleteDefaultDirFiles();
+        LanSongFileUtil.deleteDefaultDir();
         printSDKVersion();
     }
 
@@ -57,7 +64,6 @@ public class LanSoEditor {
     }
     /**
      * 设置默认产生文件的文件夹,
-     * 默认是:/sdcard/lansongBox/
      * @param tmpDir  设置临时文件夹的完整路径
      */
     public static void setTempFileDir(String tmpDir) {
@@ -71,17 +77,6 @@ public class LanSoEditor {
     public static void setOnlySoftWareDecoder(boolean is){
         LanSoEditorBox.setOnlySoftWareDecoder(is);
     }
-
-
-    /**
-     * 是否不限制Ae模板的尺寸;
-     * 默认是限制, 最大是1200x1920;
-     * @param is  如果您不想被限制,则设置为true;
-     */
-    public static void setNoLimiteAESize(boolean is){
-        LanSoEditorBox.setNoLimiteAESize(is);
-    }
-
 
 
     /**
@@ -188,19 +183,6 @@ public class LanSoEditor {
     public static int getCPULevel() {
         return LanSoEditorBox.getCPULevel();
     }
-    private static String getDiskCacheDir(Context context) {
-        String cachePath = null;
-        //  LanSoEditor.setTempFileDir(Environment.getExternalStorageDirectory().getPath() + "/lansongBox/");
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
-                || !Environment.isExternalStorageRemovable()) {
-            cachePath = context.getExternalCacheDir().getPath();
-        } else {
-            cachePath = context.getCacheDir().getPath();
-        }
-
-        return cachePath;
-    }
-
 
     private static synchronized void loadLibraries() throws  UnsatisfiedLinkError{
         if (isLoadLanSongSDK.get())
@@ -220,7 +202,6 @@ public class LanSoEditor {
         nativeInit(context, context.getAssets(), str);
         LanSoEditorBox.init(context);
     }
-
     private static void unInitSo() {
         nativeUninit();
         LanSoEditorBox.unInit();
@@ -247,11 +228,6 @@ public class LanSoEditor {
             }
         }
         return false;
-    }
-
-
-    public static boolean isSupportNV21(){
-        return LanSoEditorBox.isSupportNV21();
     }
 
 

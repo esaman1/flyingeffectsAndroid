@@ -13,6 +13,7 @@ import com.lansosdk.box.onDrawPadProgressListener;
 
 import java.util.List;
 
+
 /**
  * 请用DrawPadAllExecute2
  */

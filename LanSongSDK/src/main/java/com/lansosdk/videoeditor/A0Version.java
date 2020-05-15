@@ -16,5 +16,5 @@ public class A0Version {
     /**
      * jar的版本号.
      */
-    public final  static  String  JAVA_JAR_VERSION= "20200427_debug_v1_3.8.0";
+    public final  static  String  JAVA_JAR_VERSION= "20200216_debug_for_mc_v1";
 }

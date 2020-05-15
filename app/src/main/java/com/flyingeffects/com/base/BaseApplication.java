@@ -105,7 +105,7 @@ public class BaseApplication extends MultiDexApplication {
         LanSoEditor.setSDKLogOutListener(new OnLanSongLogOutListener() {
             @Override
             public void onLogOut(int i, String s) {
-                LogUtil.d("OOM","蓝松具体错误信息为"+s);
+                LogUtil.d("lansong","蓝松具体错误信息为"+s);
             }
         });
     }
