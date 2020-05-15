@@ -47,7 +47,9 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
     @Override
     protected void initView() {
         Presenter = new home_fagMvpPresenter(getActivity(), this);
-
+        if(data==null||data.size()==0){
+            Presenter.getFragmentList();
+        }
     }
 
     @Override
@@ -64,9 +66,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
     @Override
     public void onResume() {
         super.onResume();
-        if(data==null||data.size()==0){
-            Presenter.getFragmentList();
-        }
+
     }
 
     @Override

@@ -1292,6 +1292,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     String path = imgPath.get(0);
                     if (albumType.isVideo(GetPathTypeModel.getInstance().getMediaType(path))) {
                         presenter.getBjMusic(primitivePath);
+                        changeMusic();
                     } else {
                         cb_2.setChecked(true);
                         ToastUtil.showToast("没有素材");
@@ -1310,12 +1311,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     }
 
 
-                    dada();
+                    changeMusic();
 
                     break;
                 case R.id.ll_2:
                 case R.id.cb_2:
-                    dada();
+                    changeMusic();
                     chooseTemplateMusic();
                     break;
             }
@@ -1335,7 +1336,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
-    private void dada(){
+    private void changeMusic(){
         if (real_time_preview.getVisibility() == View.VISIBLE) {
             //预览暂停状态
             if (!isPlaying) {
