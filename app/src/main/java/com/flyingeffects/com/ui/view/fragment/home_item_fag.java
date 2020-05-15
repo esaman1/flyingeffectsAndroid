@@ -28,11 +28,11 @@ import java.util.List;
 import butterknife.BindView;
 
 
-public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View.OnClickListener {
+public class home_item_fag extends BaseFragment implements HomeItemMvpView, View.OnClickListener {
 
     private home_fag_itemMvpPresenter Presenter;
     @BindView(R.id.RecyclerView)
-    RecyclerView  recyclerView;
+    RecyclerView recyclerView;
     private main_recycler_adapter adapter;
     private List<new_fag_template_item> allData = new ArrayList<>();
     private String templateId = "";
@@ -48,7 +48,6 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View
     private int fromType;
 
 
-
     @Override
     protected int getContentLayout() {
         return R.layout.fag_0_item;
@@ -61,10 +60,10 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View
         if (bundle != null) {
             templateId = bundle.getString("id");
             actTag = bundle.getInt("num");
-            fromType=bundle.getInt("from");
+            fromType = bundle.getInt("from");
         }
-        LogUtil.d("OOM","2222fromType="+fromType);
-        Presenter = new home_fag_itemMvpPresenter(getActivity(), this,fromType);
+        LogUtil.d("OOM", "2222fromType=" + fromType);
+        Presenter = new home_fag_itemMvpPresenter(getActivity(), this, fromType);
         initRecycler();
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
 
@@ -77,39 +76,33 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View
 
 
     private void initRecycler() {
-        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(),fromType);
+        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), fromType);
         layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-            if(!DoubleClick.getInstance().isFastDoubleClick()){
+            if (!DoubleClick.getInstance().isFastDoubleClick()) {
                 statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
-                Intent intent =new Intent(getActivity(), PreviewActivity.class);
-                if(fromType==0){
+                Intent intent = new Intent(getActivity(), PreviewActivity.class);
+                if (fromType == 0) {
                     intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
-                }else if(fromType==1){
+                } else if (fromType == 1) {
                     intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
-                }else if(fromType==3){
+                } else if (fromType == 3) {
                     intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
                 }
-                intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
+                intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
                 startActivity(intent);
             }
         });
     }
 
 
-
-
-
-
     @Override
     protected void initAction() {
     }
-
-
 
 
     @Override
@@ -121,10 +114,8 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View
     @Override
     public void onResume() {
         super.onResume();
-        if(getActivity()!=null){
-            if(NetworkUtils.isNetworkAvailable(getActivity())){
-                Presenter.requestData(templateId, actTag);
-            }
+        if (getActivity() != null) {
+            Presenter.requestData(templateId, actTag);
         }
     }
 
@@ -141,8 +132,6 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View
     }
 
 
-
-
     @Override
     public void isOnRefresh() {
     }
@@ -153,6 +142,7 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View
     }
 
     private boolean isFirstData = true;
+
     @Override
     public void isShowData(ArrayList<new_fag_template_item> listData) {
         if (getActivity() != null) {
@@ -175,6 +165,7 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View
         mLastVisibleItems = layoutManager.findLastVisibleItemPositions(mLastVisibleItems);
         statisticsCount(mFirstVisibleItems, mLastVisibleItems);
     }
+
     private ArrayList<Integer> lastData = new ArrayList<>();
     private ArrayList<Integer> nowData = new ArrayList<>();
 
@@ -211,9 +202,9 @@ public class home_item_fag extends BaseFragment implements HomeItemMvpView ,View
 
     @Override
     public void showNoData(boolean isShowNoData) {
-        if(isShowNoData){
+        if (isShowNoData) {
             lin_show_nodata.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             lin_show_nodata.setVisibility(View.GONE);
         }
 
