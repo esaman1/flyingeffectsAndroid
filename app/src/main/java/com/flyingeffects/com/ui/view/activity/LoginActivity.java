@@ -105,10 +105,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
 
 
+    boolean isOnDestroy=false;
     @Override
     public void onDestroy() {
         super.onDestroy();
-
+        isOnDestroy=true;
         if (null != shanyan_login_relative) {
             shanyan_login_relative.removeAllViews();
         }
@@ -259,6 +260,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     protected void initView() {
+        isOnDestroy=false;
         EventBus.getDefault().register(this);
         WaitingDialog.openPragressDialog(this);
         OneKeyLoginManager.getInstance().setLoadingVisibility(false);
@@ -458,21 +460,27 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(LoginActivity.this) {
                 @Override
                 protected void _onError(String message) {
-                    WaitingDialog.closePragressDialog();
-                    ToastUtil.showToast(message);
-                    dissMissShanYanUi();
-                    LoginActivity.this.finish();
+                    if(!isOnDestroy){
+                        WaitingDialog.closePragressDialog();
+                        ToastUtil.showToast(message);
+                        dissMissShanYanUi();
+                        LoginActivity.this.finish();
+                    }
+
                 }
 
                 @Override
                 protected void _onNext(UserInfo data) {
-                    String str = StringUtil.beanToJSONString(data);
-                    LogUtil.d("OOM", "setToken=" + data.getToken());
-                    BaseConstans.SetUserToken(data.getToken());
-                    BaseConstans.SetUserId(data.getId(),data.getNickname(),data.getPhotourl());
-                    dissMissShanYanUi();
-                    WaitingDialog.closePragressDialog();
-                    LoginActivity.this.finish();
+                    if(!isOnDestroy){
+                        String str = StringUtil.beanToJSONString(data);
+                        LogUtil.d("OOM", "setToken=" + data.getToken());
+                        BaseConstans.SetUserToken(data.getToken());
+                        BaseConstans.SetUserId(data.getId(),data.getNickname(),data.getPhotourl());
+                        dissMissShanYanUi();
+                        WaitingDialog.closePragressDialog();
+                        LoginActivity.this.finish();
+                    }
+
                 }
             }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
         }
@@ -580,16 +588,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
          */
         @Override
         public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data) {
-            if (data != null) {
+            if (data != null&&!isOnDestroy) {
                 Bundle bundle = new Bundle();
                 String name = data.get("name");
                 String iconUrl = data.get("iconurl");
                 bundle.putSerializable("name", name);
                 bundle.putSerializable("iconUrl", iconUrl);
+
                 WaitingDialog.openPragressDialog(LoginActivity.this);
                 requestLoginForSdk("1","",name,iconUrl,data.get("openid"),data.get("unionid"),false);
             }
         }
+
+
 
         /**
          * 授权失败的回调

@@ -106,7 +106,7 @@ public class TemplateMvpModel {
         params.put("template_id", templateId);
         params.put("action_type", 2+"");
         // 启动时间
-        Observable ob = Api.getDefault().toSms(BaseConstans.getRequestHead(params));
+        Observable ob = Api.getDefault().saveTemplate(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
             @Override
             protected void _onError(String message) {

@@ -100,6 +100,11 @@ public interface ApiService {
 
 
 
+
+    @FormUrlEncoded
+    @POST("/api/template/saveTemplate")
+    Observable<HttpResult<Object>> saveTemplate(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded
     @POST("/api/user/getUserInfo")
     Observable<HttpResult<UserInfo>> getUserInfo(@FieldMap Map<String, String> params);
