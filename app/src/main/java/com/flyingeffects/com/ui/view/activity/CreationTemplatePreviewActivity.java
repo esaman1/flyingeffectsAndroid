@@ -91,7 +91,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
         tv_end_time.setText(timeUtils.timeParse(videoInfo.getDuration()));
         exoPlayer = ExoPlayerFactory.newSimpleInstance(CreationTemplatePreviewActivity.this);
         playerView.setPlayer(exoPlayer);
-
         //不使用控制器
         playerView.setUseController(false);
         exoPlayer.setRepeatMode(Player.REPEAT_MODE_OFF);
@@ -116,7 +115,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
         mediaSource = new ExtractorMediaSource.Factory(
                 new DefaultDataSourceFactory(CreationTemplatePreviewActivity.this, "exoplayer-codelab")).
                 createMediaSource(Uri.fromFile(new File(imagePath)));
-        exoPlayer.prepare(mediaSource, true, false);
+
 //        videoPause();
     }
 
@@ -124,6 +123,9 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     protected void initAction() {
 
     }
+
+
+
 
 
     private void seekTo(long to) {
@@ -236,10 +238,17 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        exoPlayer.prepare(mediaSource, true, false);
+        showIsPlay(true);
+    }
+
     private void videoOnResume() {
-        if (exoPlayer != null) {
-            exoPlayer.prepare(mediaSource, false, false);
-        }
+//        if (exoPlayer != null) {
+//            exoPlayer.prepare(mediaSource, false, false);
+//        }
     }
 
 

@@ -32,7 +32,6 @@ public class AdHintActivity extends Activity {
         findViewById(R.id.tv_watch_ad).setOnClickListener(listenner);
         from=getIntent().getStringExtra("from");
         title=getIntent().getStringExtra("templateTitle");
-
     }
 
 

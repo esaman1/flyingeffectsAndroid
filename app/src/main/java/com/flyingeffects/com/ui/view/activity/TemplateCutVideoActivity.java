@@ -127,6 +127,9 @@ public class TemplateCutVideoActivity extends BaseActivity {
     private ExoPlayer exoPlayer;
 
 
+    private boolean isIntoOnpause=false;
+
+
     private boolean nowActivityIsDestroy = false;
 
     @Override
@@ -136,6 +139,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        isIntoOnpause=false;
         progressNowAnim = new WaitingDialogProgressNowAnim(this);
         DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
         videoPath = getIntent().getStringExtra("videoPath");
@@ -180,7 +184,10 @@ public class TemplateCutVideoActivity extends BaseActivity {
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 switch (playbackState) {
                     case Player.STATE_READY:
-                        videoPlay();
+                        if(!isIntoOnpause){
+                            videoPlay();
+                        }
+
                         break;
                     case Player.STATE_ENDED:
                         seekTo(0);
@@ -222,6 +229,12 @@ public class TemplateCutVideoActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         initExo(videoPath, needDuration);
+//        if(isIntoOnpause){
+//            videoStop();
+//            endTimer();
+//            isIntoOnpause=false;
+//        }
+
 
     }
 
@@ -288,6 +301,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
         super.onPause();
         videoStop();
         endTimer();
+        isIntoOnpause=true;
     }
 
 
@@ -456,7 +470,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
         if(videoMattingModel!=null){
             videoMattingModel.nowActivityIsDestroy(true);
         }
-        nowActivityIsDestroy = true;
+
         videoStop();
         GlideBitmapPool.clearMemory();
         endTimer();

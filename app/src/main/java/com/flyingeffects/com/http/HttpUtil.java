@@ -126,7 +126,7 @@ public class HttpUtil {
                     public void call() {
                         //显示Dialog和一些其他操作
                         if(isShowDilog){
-                            subscriber.showProgressDialog();
+                            subscriber.showProgressDialog(true);
                         }
                     }
                 });
@@ -160,7 +160,7 @@ public class HttpUtil {
                     public void call() {
                         //显示Dialog和一些其他操作
                         if(isShowDialog){
-                            subscriber.showProgressDialog();
+                            subscriber.showProgressDialog(true);
                         }
                     }
                 });

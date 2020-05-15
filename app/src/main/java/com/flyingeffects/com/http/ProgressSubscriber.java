@@ -27,14 +27,18 @@ public abstract class ProgressSubscriber<T> extends Subscriber<T> implements Pro
 
     @Override
     public void onCompleted() {
-        dismissProgressDialog();
+        if(isShowDialog){
+            dismissProgressDialog();
+        }
     }
 
 
+    private boolean isShowDialog;
     /**
      * 显示Dialog
      */
-    public void showProgressDialog() {
+    public void showProgressDialog( boolean isShowDialog) {
+        this.isShowDialog=isShowDialog;
         WaitingDialog.openPragressDialog(context);
     }
 

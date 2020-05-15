@@ -174,9 +174,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         tv_writer_name.setText(templateItem.getAuth());
         tv_title.setText(templateItem.getRemark());
         tv_describe.setText("友友们    " + "上传" + templateItem.getDefaultnum() + "个素材即可制作");
-        if (!fromToMineCollect) {
-            Presenter.requestTemplateDetail(templateItem.getId());
-        }
+
         if(readOnly){
             tv_make.setVisibility(View.GONE);
             iv_zan.setVisibility(View.GONE);
@@ -260,6 +258,9 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     protected void onResume() {
         super.onResume();
+        if (!fromToMineCollect) {
+            Presenter.requestTemplateDetail(templateItem.getId());
+        }
         toClosePragressDialog();
         if (isIntoPause) {
             videoPlayerInit();
@@ -312,7 +313,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 //            } else {//需要抠图
             if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)){
                 //背景模板文案
-
                 alert="正在生成中~";
             }else{
                 //一键模板不抠图的情况下
@@ -560,7 +560,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void downVideoSuccess(String videoPath, String imagePath) {
-
+        LogUtil.d("OOM","downVideoSuccess");
         toClosePragressDialog();
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
             EventBus.getDefault().post(new DownVideoPath(videoPath));
