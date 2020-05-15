@@ -134,4 +134,12 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     public void getSpliteMusic(String path) {
         home_mvpView.getSpliteMusic(path);
     }
+
+
+    public void StatisticsToSave(String templateId){
+        home_model.StatisticsToSave(templateId);
+
+    }
+
+
 }

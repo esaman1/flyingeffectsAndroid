@@ -101,6 +101,26 @@ public class TemplateMvpModel {
     }
 
 
+    public void StatisticsToSave(String templateId) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("template_id", templateId);
+        params.put("action_type", 2+"");
+        // 启动时间
+        Observable ob = Api.getDefault().toSms(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
+            @Override
+            protected void _onError(String message) {
+            }
+
+            @Override
+            protected void _onNext(Object data) {
+
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+
+    }
+
+
     public void getBjMusic(String videoPath) {
         mediaManager manager = new mediaManager(context);
         manager.splitMp4(videoPath, new File(soundFolder), new mediaManager.splitMp4Callback() {
@@ -210,15 +230,15 @@ public class TemplateMvpModel {
                 System.arraycopy(paths, 0, newPaths, 0, paths.length);
                 MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.mAssets.get(0).ui;
 
-                if(albumType.isVideo(GetPathType.getInstance().getPathType(mTemplateModel.getBackgroundPath()))){
+                if (albumType.isVideo(GetPathType.getInstance().getPathType(mTemplateModel.getBackgroundPath()))) {
                     newPaths[newPaths.length - 1] = mediaUiModel2.getpathForThisBjMatrixVideo(Objects.requireNonNull(context.getExternalFilesDir("runCatch/")).getPath(), mTemplateModel.getBackgroundPath());
 
-                }else{
-                    newPaths[newPaths.length - 1] =mediaUiModel2.getpathForThisBjMatrixImage(Objects.requireNonNull(context.getExternalFilesDir("runCatch/")).getPath(),mTemplateModel.getBackgroundPath());
+                } else {
+                    newPaths[newPaths.length - 1] = mediaUiModel2.getpathForThisBjMatrixImage(Objects.requireNonNull(context.getExternalFilesDir("runCatch/")).getPath(), mTemplateModel.getBackgroundPath());
                 }
 
 
-                   template.setReplaceableFilePaths(newPaths); //设置用户可修改的视频路径
+                template.setReplaceableFilePaths(newPaths); //设置用户可修改的视频路径
 
 
             } else {
@@ -401,7 +421,7 @@ public class TemplateMvpModel {
      */
     public void chooseBj(new_fag_template_item templateItem) {
         Intent intent = new Intent(context, ChooseBackgroundTemplateActivity.class);
-        intent.putExtra("templateItem",templateItem);
+        intent.putExtra("templateItem", templateItem);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         context.startActivity(intent);
     }
@@ -433,7 +453,7 @@ public class TemplateMvpModel {
                 VideoMattingModel videoMattingModel = new VideoMattingModel(originalPath, context, new VideoMattingModel.MattingSuccess() {
                     @Override
                     public void isSuccess(boolean isSuccess, String path, String noMaskingPath) {
-                        EventBus.getDefault().post(new MattingVideoEnity(noMaskingPath, path,originalPath ,1));
+                        EventBus.getDefault().post(new MattingVideoEnity(noMaskingPath, path, originalPath, 1));
                     }
                 });
                 videoMattingModel.ToExtractFrame(templatename);
@@ -517,15 +537,14 @@ public class TemplateMvpModel {
             bgmPlayer.pause();
         }
     }
+
     public void StopBgmMusic() {
         if (bgmPlayer != null) {
             bgmPlayer.stop();
             bgmPlayer.release();
-            bgmPlayer=null;
+            bgmPlayer = null;
         }
     }
-
-
 
 
 }

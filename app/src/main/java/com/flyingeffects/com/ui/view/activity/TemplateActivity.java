@@ -899,6 +899,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 } else {
                     presenter.renderVideo(mFolder.getPath(), mAudio1Path, false);
                 }
+
+                presenter.StatisticsToSave(templateId);
+
                 break;
 
             case R.id.iv_play:
@@ -1306,14 +1309,20 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         presenter.getBjMusic(mTemplateModel.getBackgroundPath());
                     }
 
+
+                    dada();
+
                     break;
                 case R.id.ll_2:
                 case R.id.cb_2:
+                    dada();
                     chooseTemplateMusic();
                     break;
             }
         }
     };
+
+
 
 
     private void chooseTemplateMusic() {
@@ -1322,6 +1331,17 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         nowChooseMusic = 0;
         if (isPlaying) {
             mPlayer.replaceAudio(mAudio1Path);
+        }
+    }
+
+
+    private void dada(){
+        if (real_time_preview.getVisibility() == View.VISIBLE) {
+            //预览暂停状态
+            if (!isPlaying) {
+                showPreview(false, true);
+                AnimForViewShowAndHide.getInstance().show(mContainer);
+            }
         }
     }
 

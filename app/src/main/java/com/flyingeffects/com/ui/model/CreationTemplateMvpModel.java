@@ -45,6 +45,7 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
+import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
@@ -248,6 +249,7 @@ public class CreationTemplateMvpModel {
 
         GridView gridView = templateThumbView.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view, i, l) -> {
+        if(!DoubleClick.getInstance().isFastZDYDoubleClick(1000)){
             callback.needPauseVideo();
             modificationSingleItemIsChecked(i);
             if (i == 0) {
@@ -266,6 +268,7 @@ public class CreationTemplateMvpModel {
                 }
                 downSticker(listForSticker.get(i).getImage(), listForSticker.get(i).getId(), i);
             }
+        }
 
         });
         gridAdapter = new TemplateGridViewAdapter(listForSticker, context);

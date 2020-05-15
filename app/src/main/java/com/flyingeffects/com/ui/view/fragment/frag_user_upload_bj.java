@@ -158,7 +158,15 @@ public class frag_user_upload_bj extends BaseFragment {
             selectPage = 1;
             smartRefreshLayout.setEnableLoadMore(true);
             requestUploadBjList(false);
+        }else{
+            tv_hint.setVisibility(View.VISIBLE);
+            tv_hint.setText("请先登录");
+            allData.clear();
+            adapter.notifyDataSetChanged();
+
         }
+
+
         super.onResume();
     }
 
