@@ -31,6 +31,7 @@ public class videoCutDurationForVideoOneDo {
      * 裁剪保存后的地址
      */
     private static String cacheCutVideoPath;
+
     public static videoCutDurationForVideoOneDo getInstance() {
         FileManager fileManager = new FileManager();
         cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "zdyVideoCut");
@@ -41,7 +42,7 @@ public class videoCutDurationForVideoOneDo {
     }
 
 
-    public void startCutDurtion(String path, long startUs, long total, isSuccess callback) {
+        public void startCutDurtion(String path, long startUs, long total, isSuccess callback) {
         LogUtil.d("OOM", "startUs=" + startUs + "total=" + total);
         try {
             videoOneDo = new VideoOneDo2(BaseApplication.getInstance(), path);
@@ -95,15 +96,17 @@ public class videoCutDurationForVideoOneDo {
      * param :
      * user : zhangtongju
      */
-    DrawPadAllExecute2 execute;
+    private DrawPadAllExecute2 execute;
 
-    public void CutVideoForDrawPadAllExecute2(Context context, float duration, String path, long startDurtion,isSuccess callback) {
+    public void CutVideoForDrawPadAllExecute2(Context context, float duration, String path, long startDurtion, isSuccess callback) {
         try {
-
-
-
+//            if (VideoManage.getInstance().NowVideoIsRotation(path)) {
+//                execute = new DrawPadAllExecute2(context, 720, 1280, (long) (duration * 1000));
+//            } else {
+//                execute = new DrawPadAllExecute2(context, 1280, 720, (long) (duration * 1000));
+//            }
             execute = new DrawPadAllExecute2(context, 720, 1280, (long) (duration * 1000));
-            execute.setFrameRate(20);
+            execute.setFrameRate(30);
             execute.setEncodeBitrate(5 * 1024 * 1024);
             execute.setOnLanSongSDKErrorListener(message -> {
                 LogUtil.e("execute", String.valueOf(message));
@@ -111,6 +114,7 @@ public class videoCutDurationForVideoOneDo {
             execute.setOnLanSongSDKProgressListener((l, i) -> {
                 callback.progresss(i);
             });
+
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
                 execute.removeAllLayer();
                 execute.release();
@@ -122,9 +126,9 @@ public class videoCutDurationForVideoOneDo {
                 File video = new File(exportPath);
                 if (video.exists()) {
                     try {
-                        String savePath=cacheCutVideoPath+"/"+System.currentTimeMillis()+".mp4";
-                        File file=new File(savePath);
-                        if(file.exists()){
+                        String savePath = cacheCutVideoPath + "/" + System.currentTimeMillis() + ".mp4";
+                        File file = new File(savePath);
+                        if (file.exists()) {
                             file.delete();
                         }
                         FileUtil.copyFile(video, savePath);
@@ -142,11 +146,14 @@ public class videoCutDurationForVideoOneDo {
                 if (execute != null) {
                     try {
                         LSOVideoOption option = new LSOVideoOption(path);
-                        long startDuration=startDurtion*1000;
+                        long startDuration = startDurtion * 1000;
                         long durationUs = (long) (duration * 1000);
-                        option.setCutDurationUs(startDuration, durationUs+startDuration);
-                     VideoFrameLayer videoLayer=  execute.addVideoLayer(option);
-                     videoLayer.setScaleType(LSOScaleType.VIDEO_SCALE_TYPE);
+                        option.setCutDurationUs(startDuration, durationUs + startDuration);
+                        VideoFrameLayer videoLayer = execute.addVideoLayer(option);
+                        videoLayer.setScaleType(LSOScaleType.VIDEO_SCALE_TYPE);
+                        int roation = VideoManage.getInstance().GetVideoIsRotation(path);
+                        LogUtil.d("OOM","视频的旋转角度为"+roation);
+                        videoLayer.setRotate(roation);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

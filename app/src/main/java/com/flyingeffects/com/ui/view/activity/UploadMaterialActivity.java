@@ -145,7 +145,6 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         if(!TextUtils.isEmpty(BaseConstans.NickName())){
             ed_nickname.setText(BaseConstans.NickName());
         }
-
         if(!TextUtils.isEmpty(BaseConstans.headUrl())){
             Glide.with(UploadMaterialActivity.this)
                     .load(BaseConstans.headUrl())

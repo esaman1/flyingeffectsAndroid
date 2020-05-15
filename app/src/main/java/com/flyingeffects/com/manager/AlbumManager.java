@@ -284,7 +284,7 @@ public class AlbumManager {
     private static boolean filterAlbum(String attributes){
 
         LogUtil.d("xxxx","attributes="+attributes);
-        String []strList={"image/gif","image/svg+xml","image/x-icon","video/x-ms-wmv","avi","wmv","WMV","mov","MOV","mpg","MPG","3gp","3GP","lansongBox","avi","AVI","gif","svg+xml","quicktime"};
+        String []strList={"image/gif","image/svg+xml","image/x-icon","video/x-ms-wmv","avi","wmv","WMV","mov","MOV","mpg","MPG","3gp","3GP","lansongBox","avi","AVI","gif","mpeg","svg+xml","quicktime"};
         for (String str:strList
              ) {
 

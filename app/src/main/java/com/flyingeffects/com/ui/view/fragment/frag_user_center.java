@@ -104,6 +104,8 @@ public class frag_user_center extends BaseFragment {
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                         .into(iv_head);
                 tv_id.setText("未登录");
+                tv_name.setVisibility(View.GONE);
+
             }
         }
         super.onResume();

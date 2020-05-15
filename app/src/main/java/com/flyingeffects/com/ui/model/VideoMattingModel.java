@@ -117,7 +117,6 @@ public class VideoMattingModel {
         mediaMetadataRetriever.setDataSource(videoPath);
         String rotation = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
         if (TextUtils.isEmpty(rotation)) {
-
             if (mInfo.vWidth * mInfo.vHeight > 1280 * 720) {
                 mExtractFrame.setBitmapWH(mInfo.vWidth / 2, mInfo.vHeight / 2);
             }
@@ -133,6 +132,7 @@ public class VideoMattingModel {
                 }
             }
         }
+
 
         allFrame = mInfo.vTotalFrames;
         LogUtil.d("OOM2", "视频的总帧数为" + allFrame);
