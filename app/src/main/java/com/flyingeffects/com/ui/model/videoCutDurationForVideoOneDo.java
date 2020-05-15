@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.FileUtil;
@@ -101,6 +102,11 @@ public class videoCutDurationForVideoOneDo {
 
     public void CutVideoForDrawPadAllExecute2(Context context, float duration, String path, long startDurtion, isSuccess callback) {
         try {
+
+
+
+
+
             execute = new DrawPadAllExecute2(context, 720, 1280, (long) (duration * 1000));
             execute.setFrameRate(30);
             execute.setEncodeBitrate(5 * 1024 * 1024);

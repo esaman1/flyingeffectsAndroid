@@ -100,6 +100,10 @@ public class backgroundDraw {
         }
         LogUtil.d("OOM2", "进入到了最后渲染");
 //        waitingProgress.openProgressDialog();
+
+
+
+
         try {
             execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, (long) (duration * 1000));
             execute.setFrameRate(FRAME_RATE);
