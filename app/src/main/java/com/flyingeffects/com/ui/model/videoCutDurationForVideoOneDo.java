@@ -108,7 +108,7 @@ public class videoCutDurationForVideoOneDo {
 
 
             execute = new DrawPadAllExecute2(context, 720, 1280, (long) (duration * 1000));
-            execute.setFrameRate(30);
+            execute.setFrameRate(20);
             execute.setEncodeBitrate(5 * 1024 * 1024);
             execute.setOnLanSongSDKErrorListener(message -> {
                 LogUtil.e("execute", String.valueOf(message));
