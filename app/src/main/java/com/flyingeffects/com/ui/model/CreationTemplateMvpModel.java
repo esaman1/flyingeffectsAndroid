@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -93,6 +94,7 @@ import static com.flyingeffects.com.manager.FileManager.saveBitmapToPath;
  * user : zhangtongju
  */
 public class CreationTemplateMvpModel {
+//    private AnimContainer animContainer;
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private CreationTemplateMvpCallback callback;
     private Context context;
@@ -151,6 +153,8 @@ public class CreationTemplateMvpModel {
         mGifFolder = fileManager.getFileCachePath(context, "gifFolder");
         soundFolder = fileManager.getFileCachePath(context, "soundFolder");
         mImageCopyFolder = fileManager.getFileCachePath(context, "imageCopy");
+//        animContainer = new AnimContainer(0, 0, 0, 0, null, null);
+
     }
 
 
@@ -292,12 +296,21 @@ public class CreationTemplateMvpModel {
         list.add("4");
         View viewForChooseAnim = LayoutInflater.from(context).inflate(R.layout.view_create_template_anim, viewPager, false);
         GridView gridViewAnim = viewForChooseAnim.findViewById(R.id.gridView_anim);
+        gridViewAnim.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+
+            }
+        });
         TemplateGridViewAnimAdapter gridAdapter = new TemplateGridViewAnimAdapter(list, context);
         gridViewAnim.setAdapter(gridAdapter);
 
         listForInitBottom.add(templateThumbView);
         listForInitBottom.add(viewForChooseAnim);
         TemplateViewPager adapter = new TemplateViewPager(listForInitBottom);
+
+
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
