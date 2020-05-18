@@ -17,17 +17,17 @@ import com.flyingeffects.com.manager.GlideRoundTransform;
 import java.util.List;
 
 /**
- * user :TongJu  ;描述：贴纸item
+ * user :TongJu  ;描述：创作页面动画item
  * 时间：2018/5/3
  **/
-public class TemplateGridViewAdapter extends BaseAdapter {
+public class TemplateGridViewAnimAdapter extends BaseAdapter {
 
 
-    private List<StickerList> list;
+    private List<String> list;
     private Context context;
 //    private String mGifFolder;
 
-    public TemplateGridViewAdapter(List<StickerList> list, Context context) {
+    public TemplateGridViewAnimAdapter(List<String> list, Context context) {
         this.list = list;
         this.context = context;
 //        FileManager fileManager = new FileManager();
@@ -54,44 +54,26 @@ public class TemplateGridViewAdapter extends BaseAdapter {
         final ViewHold holder;
         if (view == null) {
             holder = new ViewHold();
-            view = LayoutInflater.from(context).inflate(R.layout.item_template_gridview, parent, false);
+            view = LayoutInflater.from(context).inflate(R.layout.item_template_anim, parent, false);
             holder.image = view.findViewById(R.id.iv_icon);
             holder.tv_name = view.findViewById(R.id.tv_name);
-            holder.iv_download = view.findViewById(R.id.iv_download);
-                    holder.tv_checked=view.findViewById(R.id.tv_checked);
             view.setTag(holder);
         } else {
             holder = (ViewHold) view.getTag();
         }
 
-        StickerList stickerList = list.get(position);
-        if (stickerList.isClearSticker()) {
-            holder.iv_download.setVisibility(View.GONE);
-            holder.image.setImageResource(R.mipmap.sticker_clear);
-            holder.tv_name.setText("默认");
-        } else {
-            Glide.with(context)
-                    .load(list.get(position).getThumbnailimage())
-                    .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 3)))
-                    .into(holder.image);
-            holder.tv_name.setText(list.get(position).getTitle());
-//            if (stickerList.getIsDownload() == 1) {
-//                holder.iv_download.setVisibility(View.GONE);
-//            } else {
-//                holder.iv_download.setVisibility(View.GONE);
-//            }
-
-            if (stickerList.isChecked() ) {
-                holder.tv_checked.setVisibility(View.VISIBLE);
-            } else {
-                holder.tv_checked.setVisibility(View.GONE);
-            }
-
-        }
-
-
-
-
+        holder.tv_name.setText(list.get(position));
+//        StickerList stickerList = list.get(position);
+//        if (stickerList.isClearSticker()) {
+//            holder.image.setImageResource(R.mipmap.sticker_clear);
+//            holder.tv_name.setText("默认");
+//        } else {
+//            Glide.with(context)
+//                    .load(list.get(position).getThumbnailimage())
+//                    .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 3)))
+//                    .into(holder.image);
+//            holder.tv_name.setText(list.get(position).getTitle());
+//        }
         return view;
     }
 
@@ -99,8 +81,6 @@ public class TemplateGridViewAdapter extends BaseAdapter {
     class ViewHold {
         ImageView image;
         TextView tv_name;
-        ImageView iv_download;
-        TextView tv_checked;
     }
 
 

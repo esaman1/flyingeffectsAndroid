@@ -49,6 +49,10 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.showGifAnim(isShow);
     }
 
+    public void chooseAnim(int pageNum){
+        creationTemplatemodel.chooseAnim(pageNum);
+    }
+
 
     public void initBottomLayout(ViewPager viewPager){
         creationTemplatemodel.initBottomLayout(viewPager);

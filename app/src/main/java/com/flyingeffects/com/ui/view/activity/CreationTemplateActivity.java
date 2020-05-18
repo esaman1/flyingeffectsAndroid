@@ -290,7 +290,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker, R.id.iv_top_back, R.id.tv_background})
+    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker, R.id.iv_top_back, R.id.tv_background,R.id.tv_anim,R.id.tv_tiezhi})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
@@ -412,6 +412,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 Intent intent = new Intent(this, ChooseBackgroundTemplateActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
+                break;
+
+            case R.id.tv_anim:
+                presenter.chooseAnim(1);
+                break;
+            case R.id.tv_tiezhi:
+                presenter.chooseAnim(0);
                 break;
 
             default:

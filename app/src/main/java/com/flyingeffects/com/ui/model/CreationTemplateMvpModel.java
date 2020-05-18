@@ -27,6 +27,7 @@ import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateGridViewAdapter;
+import com.flyingeffects.com.adapter.TemplateGridViewAnimAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.adapter.listViewForVideoThumbAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
@@ -203,6 +204,13 @@ public class CreationTemplateMvpModel {
     }
 
 
+
+
+    public void chooseAnim(int pageNum){
+        viewPager.setCurrentItem(pageNum);
+    }
+
+
     public void GetVideoCover(String path) {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(path);
@@ -231,8 +239,10 @@ public class CreationTemplateMvpModel {
     private int perPageCount = 20;
     private SmartRefreshLayout smartRefreshLayout;
     private boolean isRefresh = true;
+    private ViewPager viewPager;
 
     public void initBottomLayout(ViewPager viewPager) {
+        this.viewPager=viewPager;
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager, false);
         smartRefreshLayout = templateThumbView.findViewById(R.id.smart_refresh_layout);
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
@@ -273,7 +283,20 @@ public class CreationTemplateMvpModel {
         });
         gridAdapter = new TemplateGridViewAdapter(listForSticker, context);
         gridView.setAdapter(gridAdapter);
+
+
+        ArrayList<String>list=new ArrayList<>();
+        list.add("1");
+        list.add("2");
+        list.add("3");
+        list.add("4");
+        View viewForChooseAnim = LayoutInflater.from(context).inflate(R.layout.view_create_template_anim, viewPager, false);
+        GridView gridViewAnim = viewForChooseAnim.findViewById(R.id.gridView_anim);
+        TemplateGridViewAnimAdapter gridAdapter = new TemplateGridViewAnimAdapter(list, context);
+        gridViewAnim.setAdapter(gridAdapter);
+
         listForInitBottom.add(templateThumbView);
+        listForInitBottom.add(viewForChooseAnim);
         TemplateViewPager adapter = new TemplateViewPager(listForInitBottom);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -291,6 +314,9 @@ public class CreationTemplateMvpModel {
 
             }
         });
+
+
+
 
     }
 
