@@ -35,7 +35,7 @@ public class home_fagMvpModel {
     public void getFragmentList() {
         requestData();
     }
-    ArrayList<TemplateType> data;
+//    ArrayList<TemplateType> data;
     //得到banner缓存数据
     private  void requestData() {
 //        data= Hawk.get("mainData", new ArrayList<>());
