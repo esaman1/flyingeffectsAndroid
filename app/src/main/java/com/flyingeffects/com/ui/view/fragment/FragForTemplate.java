@@ -47,7 +47,6 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
     @Override
     protected void initView() {
         Presenter = new home_fagMvpPresenter(getActivity(), this);
-
     }
 
     @Override

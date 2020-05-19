@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -50,6 +51,7 @@ import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 
 /**
@@ -277,13 +279,21 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
                     @Override
                     public void isSuccess(boolean isSuccess, String path) {
-                        if (!nowActivityIsDestroy) {
-                            progressNowAnim.closePragressDialog();
-                        }
+
                         if (isSuccess) {
                             if (v.getId() == R.id.tv_kt) {
                                 gotoMattingVideo(path);
+
+                                Observable.just(isSuccess).subscribeOn(AndroidSchedulers.mainThread()).subscribe(aBoolean -> new Handler().postDelayed(() -> {
+                                    if (!nowActivityIsDestroy) {
+                                        progressNowAnim.closePragressDialog();
+                                    }
+                                },500));
+
                             } else {
+                                if (!nowActivityIsDestroy) {
+                                    progressNowAnim.closePragressDialog();
+                                }
                                 EventBus.getDefault().post(new MattingVideoEnity(null, path,path, isFrom));
                                 TemplateCutVideoActivity.this.finish();
                             }
