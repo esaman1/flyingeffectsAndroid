@@ -340,7 +340,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     private void toNext(String videoPath) {
         coverImagePath = huaweiFolder + File.separator + "cover.png";
         //等到封面地址
-        videoAddCover.getInstance().getCoverForPath(videoPath, coverImagePath);
+        videoAddCover.getInstance().getCoverForPathToCompress(videoPath, coverImagePath);
         //得到音频地址
         mediaManager manager = new mediaManager(UploadMaterialActivity.this);
         manager.splitMp4(videoPath, new File(huaweiFolder), (isSuccess, putPath) -> {

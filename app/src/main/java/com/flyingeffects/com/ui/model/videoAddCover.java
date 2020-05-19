@@ -7,6 +7,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.manager.BitmapManager;
+import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.lansosdk.box.OnLanSongSDKCompletedListener;
 import com.lansosdk.box.OnLanSongSDKErrorListener;
@@ -99,6 +100,18 @@ public class videoAddCover {
         Bitmap bp= mmr.getFrameAtTime( 0, OPTION_PREVIOUS_SYNC);
         BitmapManager.getInstance().saveBitmapToPath(bp, fileName);
     }
+
+
+
+    public void getCoverForPathToCompress(String path,String fileName){
+        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+        mmr.setDataSource(path);
+        Bitmap bp= mmr.getFrameAtTime( 0, OPTION_PREVIOUS_SYNC);
+        bp= StringUtil.zoomImg(bp,360,640);
+        BitmapManager.getInstance().saveBitmapToPath(bp, fileName);
+    }
+
+
 
 
 }
