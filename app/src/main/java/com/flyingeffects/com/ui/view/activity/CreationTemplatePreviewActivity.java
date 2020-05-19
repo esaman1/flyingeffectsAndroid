@@ -246,9 +246,9 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     }
 
     private void videoOnResume() {
-//        if (exoPlayer != null) {
-//            exoPlayer.prepare(mediaSource, false, false);
-//        }
+        if (exoPlayer != null) {
+            exoPlayer.prepare(mediaSource, false, false);
+        }
     }
 
 
