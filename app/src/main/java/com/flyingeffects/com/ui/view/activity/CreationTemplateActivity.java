@@ -43,6 +43,8 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.lansosdk.box.ViewLayerRelativeLayout;
+import com.lansosdk.videoeditor.DrawPadView;
+import com.lansosdk.videoeditor.DrawPadView2;
 import com.shixing.sxve.ui.albumType;
 import com.suke.widget.SwitchButton;
 
@@ -150,6 +152,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     private boolean isNeedCut;
 
+
+    @BindView(R.id.DrawPad_view)
+    DrawPadView2 drawPadView;
+
+
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_creation_template_edit;
@@ -170,7 +178,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             isNeedCut = bundle.getBoolean("isNeedCut");
             title = bundle.getString("bjTemplateTitle");
         }
-        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout, originalPath);
+        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout, originalPath,drawPadView);
         if (!TextUtils.isEmpty(videoPath)) {
             //有视频的时候，初始化视频值
             initExo(videoPath);
@@ -474,6 +482,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if (!TextUtils.isEmpty(videoPath)) {
             hListView.post(() -> presenter.initVideoProgressView(hListView));
         }
+
+        ViewGroup.LayoutParams RelativeLayoutParams2 = drawPadView.getLayoutParams();
+        drawPadView.post(() -> {
+            int oriHeight = drawPadView.getHeight();
+            RelativeLayoutParams2.width = Math.round(1f * oriHeight * oriRatio);
+            RelativeLayoutParams2.height = oriHeight;
+            drawPadView.setLayoutParams(RelativeLayoutParams2);
+        });
+
     }
 
 

@@ -11,14 +11,15 @@ import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.model.CreationTemplateMvpModel;
 import com.flyingeffects.com.view.HorizontalListView;
 import com.lansosdk.box.ViewLayerRelativeLayout;
+import com.lansosdk.videoeditor.DrawPadView2;
 
 public class CreationTemplateMvpPresenter extends BasePresenter implements CreationTemplateMvpCallback {
     private CreationTemplateMvpView creationTemplatemvpView;
     private CreationTemplateMvpModel creationTemplatemodel;
 
-    public CreationTemplateMvpPresenter(Context context, CreationTemplateMvpView mvp_view,String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout,String originalPath) {
+    public CreationTemplateMvpPresenter(Context context, CreationTemplateMvpView mvp_view, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath, DrawPadView2 drawPadView2) {
         this.creationTemplatemvpView = mvp_view;
-        creationTemplatemodel = new CreationTemplateMvpModel(context, this,mVideoPath,viewLayerRelativeLayout,originalPath);
+        creationTemplatemodel = new CreationTemplateMvpModel(context, this,mVideoPath,viewLayerRelativeLayout,originalPath,drawPadView2);
     }
 
     public void setmVideoPath(String path){

@@ -62,6 +62,7 @@ import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.ViewLayerRelativeLayout;
+import com.lansosdk.videoeditor.DrawPadView2;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxve.ui.adapter.TimelineAdapter;
 import com.shixing.sxve.ui.albumType;
@@ -138,9 +139,12 @@ public class CreationTemplateMvpModel {
      */
     private String originalPath;
 
-    public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath) {
+    private DrawPadView2 drawPadView2;
+
+    public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath, DrawPadView2 drawPadView2) {
         this.context = context;
         this.callback = callback;
+        this.drawPadView2=drawPadView2;
         this.originalPath = originalPath;
         this.mVideoPath = mVideoPath;
         dialog = new WaitingDialogProgressNowAnim(context);
@@ -299,7 +303,7 @@ public class CreationTemplateMvpModel {
         gridViewAnim.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
+                //绘制动画
 
             }
         });
@@ -332,6 +336,20 @@ public class CreationTemplateMvpModel {
 
 
     }
+
+
+
+    /**
+     * description ：开启单个动画
+     * creation date: 2020/5/19
+     * user : zhangtongju
+     */
+    private void startSingleAnim(){
+
+
+    }
+
+
 
 
     private void finishData() {
