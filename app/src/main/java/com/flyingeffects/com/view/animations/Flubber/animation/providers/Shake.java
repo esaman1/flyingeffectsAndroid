@@ -5,11 +5,11 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.view.View;
 
-import com.mobile.kadian.utils.Flubber.AnimationBody;
-import com.mobile.kadian.utils.Flubber.utils.DimensionUtils;
-import com.mobile.kadian.utils.Flubber.utils.KeyFrameUtil;
+import com.flyingeffects.com.view.animations.Flubber.AnimationBody;
+import com.flyingeffects.com.view.animations.Flubber.utils.DimensionUtils;
+import com.flyingeffects.com.view.animations.Flubber.utils.KeyFrameUtil;
 
-import static com.mobile.kadian.utils.Flubber.Flubber.FRACTIONS;
+import static com.flyingeffects.com.view.animations.Flubber.Flubber.FRACTIONS;
 
 
 public class Shake extends BaseProvider {

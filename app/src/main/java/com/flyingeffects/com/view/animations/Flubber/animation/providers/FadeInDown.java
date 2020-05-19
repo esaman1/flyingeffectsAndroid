@@ -4,8 +4,8 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.view.View;
 
-import com.mobile.kadian.utils.Flubber.AnimationBody;
-import com.mobile.kadian.utils.Flubber.utils.DimensionUtils;
+import com.flyingeffects.com.view.animations.Flubber.AnimationBody;
+import com.flyingeffects.com.view.animations.Flubber.utils.DimensionUtils;
 
 
 public class FadeInDown extends BaseFadeIn {

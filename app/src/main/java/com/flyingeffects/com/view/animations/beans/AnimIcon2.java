@@ -1,30 +1,31 @@
 package com.flyingeffects.com.view.animations.beans;
 
-import com.mobile.kadian.R;
+
+import com.flyingeffects.com.R;
 
 public enum AnimIcon2 {
     ANIM_ICON_DEFAULT(-1,-1,false),
-    ANIM_ICON_1(1,R.drawable.anim_rotate_down,false),
-    ANIM_ICON_2(2,R.drawable.anim_down_rotate,false),
-    ANIM_ICON_3(3,R.drawable.anim_rotate_zoom,false),
-    ANIM_ICON_4(4,R.drawable.anim_zoom_rotate,false),
-    ANIM_ICON_5(5,R.drawable.anim_normal_zoom_out,false),
-    ANIM_ICON_6(6,R.drawable.anim_normal_zoom_in,false),
-    ANIM_ICON_7(7,R.drawable.anim_zoom_inout,false),
-    ANIM_ICON_8(8,R.drawable.anim_left_down,false),
-    ANIM_ICON_9(9,R.drawable.anim_down_left,false),
-    ANIM_ICON_10(10,R.drawable.anim_shake_zoom_in,false),
-    ANIM_ICON_11(11,R.drawable.anim_right_shake,false),
-    ANIM_ICON_12(12,R.drawable.anim_down_shake,false),
-    ANIM_ICON_13(13,R.drawable.anim_shake_right_down,false),
-    ANIM_ICON_14(14,R.drawable.anim_shake_left_up,false),
-    ANIM_ICON_15(15,R.drawable.anim_shake_up_right,false),
-    ANIM_ICON_16(16,R.drawable.anim_shake_left_down,false),
-    ANIM_ICON_17(17,R.drawable.anim_s_shake,false),
-    ANIM_ICON_18(18,R.drawable.anim_shake_up_down,false),
-    ANIM_ICON_19(19,R.drawable.anim_shake_left_right,false),
-    ANIM_ICON_20(20,R.drawable.anim_up_phantom,false),
-    ANIM_ICON_21(21,R.drawable.anim_down_phantom,false);
+    ANIM_ICON_1(1, R.drawable.ic_launcher_round,false),
+    ANIM_ICON_2(2,R.drawable.ic_launcher_round,false),
+    ANIM_ICON_3(3,R.drawable.ic_launcher_round,false),
+    ANIM_ICON_4(4,R.drawable.ic_launcher_round,false),
+    ANIM_ICON_5(5,R.drawable.ic_launcher_round,false),
+    ANIM_ICON_6(6,R.drawable.ic_launcher_round,false),
+    ANIM_ICON_7(7,R.drawable.ic_launcher_round,false),
+    ANIM_ICON_8(8,R.drawable.ic_launcher_round,false),
+    ANIM_ICON_9(9,R.drawable.ic_launcher_round,false),
+    ANIM_ICON_10(10,R.drawable.ic_launcher_round,false),
+    ANIM_ICON_11(11,R.drawable.ic_launcher_round,false),
+    ANIM_ICON_12(12,R.drawable.ic_launcher_round,false),
+    ANIM_ICON_13(13,R.drawable.ic_launcher_round,false),
+    ANIM_ICON_14(14,R.drawable.ic_launcher_round,false),
+    ANIM_ICON_15(15,R.drawable.ic_launcher_round,false),
+    ANIM_ICON_16(16,R.drawable.ic_launcher_round,false),
+    ANIM_ICON_17(17,R.drawable.ic_launcher_round,false),
+    ANIM_ICON_18(18,R.drawable.ic_launcher_round,false),
+    ANIM_ICON_19(19,R.drawable.ic_launcher_round,false),
+    ANIM_ICON_20(20,R.drawable.ic_launcher_round,false),
+    ANIM_ICON_21(21,R.drawable.ic_launcher_round,false);
     public int getId() {
         return id;
     }

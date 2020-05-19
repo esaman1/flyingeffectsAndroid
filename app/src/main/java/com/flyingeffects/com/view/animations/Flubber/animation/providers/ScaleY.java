@@ -4,7 +4,7 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.view.View;
 
-import com.mobile.kadian.utils.Flubber.AnimationBody;
+import com.flyingeffects.com.view.animations.Flubber.AnimationBody;
 
 
 public class ScaleY extends BaseProvider {

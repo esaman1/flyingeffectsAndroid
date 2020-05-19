@@ -3,10 +3,10 @@ package com.flyingeffects.com.view.animations.utils;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.support.v4.util.SparseArrayCompat;
-import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 
-
+import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.view.animations.Flubber.interpolators.BounceInterpolator;
 import com.flyingeffects.com.view.animations.Ease.Ease;
 import com.flyingeffects.com.view.animations.Ease.EasingInterpolator;
 import com.flyingeffects.com.view.animations.Flubber.interpolators.OscillationInterpolator;

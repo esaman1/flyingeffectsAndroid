@@ -8,6 +8,9 @@ import com.flyingeffects.com.utils.LogUtil;
 
 import java.util.ArrayList;
 
+import static com.flyingeffects.com.view.animations.utils.AnimUtils.ALIGN_HORIZONTAL_CENTER;
+import static com.flyingeffects.com.view.animations.utils.AnimUtils.ALIGN_VERTICAL_CENTER;
+
 
 @Deprecated
 public class AnimTypeMatrix {
