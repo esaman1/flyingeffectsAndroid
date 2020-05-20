@@ -71,6 +71,7 @@ public class WelcomeActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+
         //解决广告bug ,点击图标后广告爆款广告不弹出来
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, //去掉状态栏
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -98,7 +99,6 @@ public class WelcomeActivity extends BaseActivity {
     @Override
     protected void initAction() {
     }
-
 
     /**
      * 权限检测
@@ -158,7 +158,6 @@ public class WelcomeActivity extends BaseActivity {
                 PermissionUtil.gotoPermission(WelcomeActivity.this);
                 finish();
             }, 3000);
-
         }
     }
 
@@ -183,7 +182,6 @@ public class WelcomeActivity extends BaseActivity {
               }
                 LogUtil.d("oom", "BaseConstans.getHasAdvertising()=" + BaseConstans.getHasAdvertising());
                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-
                     showSplashAd();
                 }
             }
@@ -196,7 +194,6 @@ public class WelcomeActivity extends BaseActivity {
             }
         },    BaseConstans.getKaiPingADTimeOut());
         LogUtil.d("oom","开屏广告的时长为"+BaseConstans.getKaiPingADTimeOut());
-
 
     }
 

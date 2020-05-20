@@ -66,8 +66,6 @@ public class BaseApplication extends MultiDexApplication {
 //        keepCrash();
         initNTAdSDK();
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
-
-
     }
 
 

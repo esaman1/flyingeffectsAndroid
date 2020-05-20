@@ -131,7 +131,6 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
                 }
             }
 
-
             home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
             viewpager.setAdapter(adapter);
             tabLayout.setViewPager(viewpager, titles);

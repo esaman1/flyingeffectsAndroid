@@ -144,7 +144,6 @@ public class CompressionCuttingManage {
             downImage(allPaths.get(0));
         }
 
-
     }
 
    private List<String> listForFaceMatting = new ArrayList<>();

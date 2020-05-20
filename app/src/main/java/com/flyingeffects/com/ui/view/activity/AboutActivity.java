@@ -45,7 +45,6 @@ public class AboutActivity extends BaseActivity {
     @Override
     protected void initView() {
         ((TextView) findViewById(R.id.tv_top_title)).setText("关于");
-
     }
 
     @Override

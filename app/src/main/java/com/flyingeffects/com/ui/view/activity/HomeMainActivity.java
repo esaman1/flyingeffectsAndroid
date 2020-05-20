@@ -293,7 +293,6 @@ public class HomeMainActivity extends FragmentActivity {
             startActivity(intent);
         }catch (Exception e){
             LogUtil.d("OOM","锤子手机这里会闪退");
-
         }
 
     }
@@ -329,7 +328,6 @@ public class HomeMainActivity extends FragmentActivity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-
     }
 
 
@@ -418,7 +416,6 @@ public class HomeMainActivity extends FragmentActivity {
         MobclickAgent.onResume(this);
     }
 
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -459,7 +456,6 @@ public class HomeMainActivity extends FragmentActivity {
                 case 2: {
                     if (menu2F == null) {
                         menu2F = new frag_search();
-
                     }
                     fragmentTransaction.replace(R.id.rL_show, menu2F, menu2F.getClass().getName()).commitAllowingStateLoss();
                     break;
@@ -467,7 +463,6 @@ public class HomeMainActivity extends FragmentActivity {
                 case 3: {
                     if (menu3F == null) {
                         menu3F = new frag_user_center();
-
                     }
                     fragmentTransaction.replace(R.id.rL_show, menu3F, menu3F.getClass().getName()).commitAllowingStateLoss();
                     break;

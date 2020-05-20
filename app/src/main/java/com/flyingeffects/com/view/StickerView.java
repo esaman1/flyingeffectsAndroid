@@ -116,6 +116,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      */
     public static final int RIGHT_CENTER_MODE = 10;
 
+    /**
+     * 双指动作
+     */
+    public static final int NEW_POINTER_DOWN_MODE = 11;
 
     public boolean isOpenVoice = false;
 
@@ -185,6 +189,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private Vibrator vibrator;
     //是否显示
     private boolean frameShow = false;
+
+    //双手指
+    float dx0 = 0f;
+    float dy0 = 0f;
 
     private Bitmap originalBitmap;
 
@@ -766,7 +774,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         return super.performClick();
     }
 
-    private int adjustMode(float x, float y) {
+    private int adjustMode(float x, float y, int pointerCount, boolean pointerUp) {
         if (leftTopDstRect != null && leftTopDstRect.contains(x, y)) {
             return LEFT_TOP_MODE;
         } else if (leftBottomDstRect != null && leftBottomDstRect.contains(x, y)) {
@@ -777,8 +785,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             return RIGHT_BOTTOM_MODE;
         } else if (rightCenterDstRect != null && rightCenterDstRect.contains(x, y)) {
             return RIGHT_CENTER_MODE;
-        } else if (isIn(mHelpBoxRect, x, y, mRotateAngle)) {
+        } else if (isIn(mHelpBoxRect, x, y, mRotateAngle) && (pointerCount == 1) && !pointerUp) {
             return MOVE_MODE;
+        } else if (pointerCount > 1) {
+            return NEW_POINTER_DOWN_MODE;
         } else {
             return IDLE_MODE;
         }
@@ -787,16 +797,21 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // 是否向下传递事件标志 true为消耗
+        LogUtil.d("event", "onTouchEvent");
         super.onTouchEvent(event);
+        int pointerCount = event.getPointerCount();
+        LogUtil.d("event", "pointerCount =" + pointerCount);
         int action = event.getAction();
         float x = event.getX();
         float y = event.getY();
-        switch (action) {
+
+        switch (action & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
+                LogUtil.d("event", "ACTION_DOWN");
                 if (callback != null) {
                     callback.stickerMove();
                 }
-                mCurrentMode = adjustMode(x, y);
+                mCurrentMode = adjustMode(x, y, pointerCount, false);
                 if (mCurrentMode == IDLE_MODE) {
                     return false;
                 } else if (mCurrentMode == LEFT_TOP_MODE) {
@@ -833,8 +848,20 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 }
                 handler.removeMessages(DISMISS_FRAME);
                 break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                //float startRotation = getRotation(event);
+                mCurrentMode = adjustMode(x, y, pointerCount, false);
+                dx0 = event.getX(1) - event.getX(0);
+                dy0 = event.getY(1) - event.getY(0);
+                LogUtil.d("event", "ACTION_POINTER_DOWN pointerCount =" + pointerCount);
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+                pointerCount = 1;
+                mCurrentMode = adjustMode(x, y, pointerCount, true);
+                LogUtil.d("event", "ACTION_POINTER_UP pointerCount =" + pointerCount);
+                break;
             case MotionEvent.ACTION_MOVE:
-
+                LogUtil.d("event", "ACTION_MOVE");
                 if (UiStep.isFromDownBj) {
                     statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_drag");
                 } else {
@@ -847,7 +874,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
                 if (mCurrentMode == MOVE_MODE) {
                     // 移动贴图
-                    mCurrentMode = MOVE_MODE;
                     float dx = x - lastX;
                     float dy = y - lastY;
 
@@ -882,19 +908,25 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
                 } else if (mCurrentMode == rotateLocation) {
                     // 旋转 缩放文字操作
-                    mCurrentMode = rotateLocation;
                     float dx = x - lastX;
                     float dy = y - lastY;
                     updateRotateAndScale(dx, dy);
                     invalidate();
                     lastX = x;
                     lastY = y;
+                } else if (mCurrentMode == NEW_POINTER_DOWN_MODE) {
+                    LogUtil.d("event", "NEW_POINTER_DOWN_MODE");
+                    float dx1 = event.getX(1) - event.getX(0);
+                    float dy1 = event.getY(1) - event.getY(0);
+                    updateRotateAndScalePointerDown(dx0, dy0, dx1, dy1);
+                    invalidate();
+                    dx0 = dx1;
+                    dy0 = dy1;
                 }
-
-
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
+                LogUtil.d("event", "ACTION_CANCEL");
                 if (mCurrentMode == IDLE_MODE) {
                     return false;
                 }
@@ -968,7 +1000,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         // 计算缩放比
         float scale = curLen / srcLen;
 
-
         mScale *= scale;
 
         float newWidth = mHelpBoxRect.width() * mScale;
@@ -998,6 +1029,52 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         moveY = mHelpBoxRect.bottom;
 
     }
+
+    /**
+     * 双指 旋转 缩放 更新
+     *
+     * @param dx0 初始x坐标差
+     * @param dy0 初始y坐标差
+     * @param dx1 第二次x坐标查
+     * @param dy1 第二次y坐标差
+     */
+    public void updateRotateAndScalePointerDown(final float dx0, final float dy0, final float dx1, final float dy1) {
+
+        float srcLen = (float) Math.sqrt(dx0 * dx0 + dy0 * dy0);
+        float curLen = (float) Math.sqrt(dx1 * dx1 + dy1 * dy1);
+        // 计算缩放比
+        float scale = curLen / srcLen;
+
+        mScale *= scale;
+
+        float newWidth = mHelpBoxRect.width() * mScale;
+
+        if (newWidth < 70) {
+            mScale /= scale;
+            return;
+        }
+
+        double cos = (dx0 * dx1 + dy0 * dy1) / (srcLen * curLen);
+        if (cos > 1 || cos < -1) {
+            return;
+        }
+        float angle = (float) Math.toDegrees(Math.acos(cos));
+        // 行列式计算 确定转动方向
+        float calMatrix = dx0 * dy1 - dx1 * dy0;
+
+        int flag = calMatrix > 0 ? 1 : -1;
+        angle = flag * angle;
+
+        mRotateAngle = adjustDegree(mRotateAngle, angle);//+= angle;
+
+        LogUtil.d("updateRotateAndScale", "mScale=" + mScale);
+        LogUtil.d("updateRotateAndScale", "mRotateAngle=" + mRotateAngle);
+
+        moveX = mHelpBoxRect.right;
+        moveY = mHelpBoxRect.bottom;
+
+    }
+
 
     boolean degreeTurned = false;
     float tempDegree = 0;
@@ -1246,8 +1323,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public void setOriginalPath(String originalPath) {
         this.originalPath = originalPath;
     }
-
-
 
 
     //贴纸里面获得源地址，切记，选择的gif 是没得这个功能的

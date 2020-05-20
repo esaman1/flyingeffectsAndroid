@@ -706,7 +706,7 @@ public class CreationTemplateMvpModel {
 
 
     private void closeAllAnim() {
-        ArrayList<AllStickerData> list = new ArrayList<>();
+        //ArrayList<AllStickerData> list = new ArrayList<>();
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             stickerView.pause();
