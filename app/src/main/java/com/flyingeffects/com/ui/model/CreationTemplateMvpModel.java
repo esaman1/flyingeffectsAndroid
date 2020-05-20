@@ -95,7 +95,7 @@ import static com.flyingeffects.com.manager.FileManager.saveBitmapToPath;
  * user : zhangtongju
  */
 public class CreationTemplateMvpModel {
-//    private AnimContainer animContainer;
+    //    private AnimContainer animContainer;
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private CreationTemplateMvpCallback callback;
     private Context context;
@@ -140,11 +140,12 @@ public class CreationTemplateMvpModel {
     private String originalPath;
 
     private DrawPadView2 drawPadView2;
+    private CreateVideoAnimModel createVideoAnimModel;
 
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath, DrawPadView2 drawPadView2) {
         this.context = context;
         this.callback = callback;
-        this.drawPadView2=drawPadView2;
+        this.drawPadView2 = drawPadView2;
         this.originalPath = originalPath;
         this.mVideoPath = mVideoPath;
         dialog = new WaitingDialogProgressNowAnim(context);
@@ -157,6 +158,7 @@ public class CreationTemplateMvpModel {
         mGifFolder = fileManager.getFileCachePath(context, "gifFolder");
         soundFolder = fileManager.getFileCachePath(context, "soundFolder");
         mImageCopyFolder = fileManager.getFileCachePath(context, "imageCopy");
+        createVideoAnimModel = new CreateVideoAnimModel(drawPadView2);
 //        animContainer = new AnimContainer(0, 0, 0, 0, null, null);
 
     }
@@ -212,9 +214,7 @@ public class CreationTemplateMvpModel {
     }
 
 
-
-
-    public void chooseAnim(int pageNum){
+    public void chooseAnim(int pageNum) {
         viewPager.setCurrentItem(pageNum);
     }
 
@@ -250,7 +250,7 @@ public class CreationTemplateMvpModel {
     private ViewPager viewPager;
 
     public void initBottomLayout(ViewPager viewPager) {
-        this.viewPager=viewPager;
+        this.viewPager = viewPager;
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager, false);
         smartRefreshLayout = templateThumbView.findViewById(R.id.smart_refresh_layout);
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
@@ -267,33 +267,33 @@ public class CreationTemplateMvpModel {
 
         GridView gridView = templateThumbView.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view, i, l) -> {
-        if(!DoubleClick.getInstance().isFastZDYDoubleClick(1000)){
-            callback.needPauseVideo();
-            modificationSingleItemIsChecked(i);
-            if (i == 0) {
-                //删除选择的帖子
-                deleteAllSticker();
-                if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Stickeroff");
+            if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
+                callback.needPauseVideo();
+                modificationSingleItemIsChecked(i);
+                if (i == 0) {
+                    //删除选择的帖子
+                    deleteAllSticker();
+                    if (UiStep.isFromDownBj) {
+                        statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Stickeroff");
+                    } else {
+                        statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_Stickeroff");
+                    }
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_Stickeroff");
+                    if (UiStep.isFromDownBj) {
+                        statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Sticker", listForSticker.get(i).getTitle());
+                    } else {
+                        statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_Sticker", listForSticker.get(i).getTitle());
+                    }
+                    downSticker(listForSticker.get(i).getImage(), listForSticker.get(i).getId(), i);
                 }
-            } else {
-                if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Sticker", listForSticker.get(i).getTitle());
-                } else {
-                    statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_Sticker", listForSticker.get(i).getTitle());
-                }
-                downSticker(listForSticker.get(i).getImage(), listForSticker.get(i).getId(), i);
             }
-        }
 
         });
         gridAdapter = new TemplateGridViewAdapter(listForSticker, context);
         gridView.setAdapter(gridAdapter);
 
 
-        ArrayList<String>list=new ArrayList<>();
+        ArrayList<String> list = new ArrayList<>();
         list.add("1");
         list.add("2");
         list.add("3");
@@ -303,8 +303,18 @@ public class CreationTemplateMvpModel {
         gridViewAnim.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                callback.showCreateTemplateAnim(true);
                 //绘制动画
-
+                StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(0);//todo 默认为0
+                AllStickerData stickerData = GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo);
+                createVideoAnimModel.initLayerSingleAnim(stickerData, new CreateVideoAnimModel.showAnimComplete() {
+                    @Override
+                    public void progress(boolean isComplete, int progress) {
+                        if(isComplete){
+                            callback.showCreateTemplateAnim(false);
+                        }
+                    }
+                });
             }
         });
         TemplateGridViewAnimAdapter gridAdapter = new TemplateGridViewAnimAdapter(list, context);
@@ -333,10 +343,7 @@ public class CreationTemplateMvpModel {
         });
 
 
-
-
     }
-
 
 
     /**
@@ -344,12 +351,10 @@ public class CreationTemplateMvpModel {
      * creation date: 2020/5/19
      * user : zhangtongju
      */
-    private void startSingleAnim(){
+    private void startSingleAnim() {
 
 
     }
-
-
 
 
     private void finishData() {
@@ -974,7 +979,7 @@ public class CreationTemplateMvpModel {
             backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, new backgroundDraw.saveCallback() {
                 @Override
                 public void saveSuccessPath(String path, int progress) {
-                    if(!isDestroy){
+                    if (!isDestroy) {
                         if (!TextUtils.isEmpty(path)) {
                             dialog.closePragressDialog();
                             //成功后的回调
@@ -982,7 +987,7 @@ public class CreationTemplateMvpModel {
                             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                             intent.putExtra("path", path);
                             context.startActivity(intent);
-                            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> isIntoSaveVideo = false,500));
+                            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> isIntoSaveVideo = false, 500));
                         } else {
                             if (progress == 10000) {
                                 isIntoSaveVideo = false;
@@ -1000,49 +1005,12 @@ public class CreationTemplateMvpModel {
 
             for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
                 StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
-                AllStickerData stickerData = new AllStickerData();
-                stickerData.setRotation(stickerView.getRotateAngle());
-                stickerData.setScale(stickerView.getScale());
-                stickerData.setTranslationX(stickerView.getTranslationX());
-                stickerData.setTranslationy(stickerView.getTranslationY());
-                if (!TextUtils.isEmpty(stickerView.getOriginalPath())) {
-                    String pathType = GetPathTypeModel.getInstance().getMediaType(stickerView.getOriginalPath());
-                    stickerData.setVideo(albumType.isVideo(pathType));
-                }
-                if (stickerView.getComeFrom()) {
-                    //来自相册，不是gif
-                    if (isMatting) {
-                        stickerData.setPath(stickerView.getClipPath());
-                        stickerData.setOriginalPath(stickerView.getOriginalPath());
-                        VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
-                        stickerData.setDuration(materialVideoInfo.getDuration());
-
-                    } else { //这里也会出现蓝松一样的，相同地址只有一个图层
-                        stickerData.setPath(stickerView.getOriginalPath());
-                        stickerData.setOriginalPath(stickerView.getOriginalPath());
-                        VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
-                        int materialDuration = materialVideoInfo.getDuration();
-                        int needDuration = 0;
-                        if (videoInfo != null) {
-                            if (videoInfo.getDuration() < materialDuration) {
-                                needDuration = videoInfo.getDuration();
-                            } else {
-                                needDuration = materialDuration;
-                            }
-                        } else {
-                            needDuration = materialDuration;
-                        }
-                        stickerData.setDuration(needDuration);
-                    }
-                } else {
-                    stickerData.setPath(stickerView.getResPath());
-                }
-                listAllSticker.add(stickerData);
+                listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
             }
 
             if (listAllSticker.size() == 0) {
                 isIntoSaveVideo = false;
-                Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().post(() -> Toast.makeText(context,"你未选择素材",Toast.LENGTH_SHORT).show()));
+                Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().post(() -> Toast.makeText(context, "你未选择素材", Toast.LENGTH_SHORT).show()));
                 return;
             }
 

@@ -122,7 +122,10 @@
         android:gravity="center"
         android:orientation="vertical">
 
-
+        <com.lansosdk.videoeditor.DrawPadView2
+            android:id="@+id/DrawPad_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
         <com.lansosdk.box.ViewLayerRelativeLayout
             android:id="@+id/id_vview_realtime_gllayout"
             android:layout_width="match_parent"
@@ -135,11 +138,7 @@
 
         </com.lansosdk.box.ViewLayerRelativeLayout>
 
-        <com.lansosdk.videoeditor.DrawPadView2
-            android:id="@+id/DrawPad_view"
-            android:visibility="invisible"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+
 
 
     </RelativeLayout>

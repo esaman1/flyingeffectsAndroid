@@ -130,6 +130,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemvpView.isFirstAddSuccess();
     }
 
+    @Override
+    public void showCreateTemplateAnim(boolean isShow) {
+        creationTemplatemvpView.showCreateTemplateAnim(isShow);
+    }
+
 
     public void toSaveVideo(String imageBjPath){
         creationTemplatemodel.toSaveVideo(imageBjPath);

@@ -640,6 +640,19 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }, 1500);
     }
 
+    @Override
+    public void showCreateTemplateAnim(boolean isShow) {
+        if(isShow){
+//            drawPadView.setVisibility(View.VISIBLE);
+            viewLayerRelativeLayout.setVisibility(View.GONE);
+        }else{
+//            drawPadView.setVisibility(View.GONE);
+            viewLayerRelativeLayout.setVisibility(View.VISIBLE);
+        }
+
+
+    }
+
 
     private Timer timer;
     private TimerTask task;

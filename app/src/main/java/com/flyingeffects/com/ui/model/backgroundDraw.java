@@ -62,7 +62,7 @@ public class backgroundDraw {
 
     /**
      * description ：后台绘制，如果videoVoice不为null,那么需要把主视频图层的声音替换为用户选择的背景声音
-     * imagePath 如果videoPath 没有且imagePath 有的情况，需要把绿幕背景替换为图片背景
+     * imagePath 如果videoPath没有且imagePath 有的情况，需要把绿幕背景替换为图片背景
      * creation date: 2020/4/23
      * user : zhangtongju
      */
