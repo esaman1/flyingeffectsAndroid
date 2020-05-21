@@ -26,6 +26,8 @@ public class GetAllStickerDataModel {
 
         AllStickerData stickerData = new AllStickerData();
         stickerData.setRotation(stickerView.getRotateAngle());
+        stickerData.setBoxH((int) stickerView.getmHelpBoxRectH());
+        stickerData.setBoxW((int) stickerView.getmHelpBoxRectW());
         stickerData.setScale(stickerView.getScale());
         stickerData.setTranslationX(stickerView.getTranslationX());
         stickerData.setTranslationy(stickerView.getTranslationY());

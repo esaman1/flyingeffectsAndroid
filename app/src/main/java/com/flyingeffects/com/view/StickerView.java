@@ -1174,6 +1174,14 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
+    public float getmHelpBoxRectW(){
+        return mHelpBoxRect.width();
+    }
+    public float getmHelpBoxRectH(){
+        return mHelpBoxRect.height();
+    }
+
+
     public float getTranslationY() {
         float HelpBoxRectWidth = mHelpBoxRect.height();
         float centerLine = HelpBoxRectWidth / 2;

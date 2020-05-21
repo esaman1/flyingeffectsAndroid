@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -59,6 +60,7 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.HorizontalListView;
 import com.flyingeffects.com.view.StickerView;
+import com.flyingeffects.com.view.animations.CustomMove.AnimateCallBack;
 import com.flyingeffects.com.view.animations.CustomMove.RightToLeft;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.glidebitmappool.GlideBitmapPool;
@@ -311,22 +313,56 @@ public class CreationTemplateMvpModel {
 
                 //绘制动画
                 StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(0);//todo 默认为0
-                RightToLeft rightToLeft=new RightToLeft(viewLayerRelativeLayout.getWidth(),viewLayerRelativeLayout.getHeight(),stickerView.getWidth(),stickerView.getHeight(),listAllSticker.get(0));
-                rightToLeft.startAnim(stickerView);
-//
-//                for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
-//                    StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(y);
-//                    listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
-//                }
-//
-//
-//                AllStickerData stickerData = GetAllStickerDataModel.getInstance().getStickerData(listAllSticker, isMatting, videoInfo);
-//                createVideoAnimModel.initLayerSingleAnim(stickerData, new CreateVideoAnimModel.showAnimComplete() {
+                RightToLeft rightToLeft=new RightToLeft(viewLayerRelativeLayout.getWidth(),viewLayerRelativeLayout.getHeight(),stickerView.getWidth(),stickerView.getHeight(),stickerView.getCenterX(),stickerView.getCenterY(),listAllSticker.get(0));
+                stickerView.setDrawingCacheEnabled(true);
+                Bitmap screenShotAsBitmap = Bitmap.createBitmap(stickerView.getDrawingCache());
+                stickerView.setDrawingCacheEnabled(false);
+                ImageView iv=new ImageView(context);
+                iv.setImageBitmap(screenShotAsBitmap);
+//                viewLayerRelativeLayout.addView(iv);
+
+                rightToLeft.startAnim(stickerView,null);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        viewLayerRelativeLayout.addView(iv);
+                        rightToLeft.startAnim(iv,null);
+                    }
+                },1000);
+
+
+
+//                rightToLeft.startAnim(stickerView, new AnimateCallBack() {
 //                    @Override
-//                    public void progress(boolean isComplete, int progress) {
-//                        if(isComplete){
-//                            callback.showCreateTemplateAnim(false);
-//                        }
+//                    public void animatorTranXCallBack(float tranX) {
+//                        float needTranX=tranX/(float)2;
+//                        iv.setTranslationX(needTranX);
+//                    }
+//
+//                    @Override
+//                    public void animatorTranYCallBack(float tranY) {
+//
+//                        float needTranY=tranY/(float)2;
+//                        iv.setTranslationX(needTranY);
+//                    }
+//
+//                    @Override
+//                    public void animatorScaleXCallback(float scaleX) {
+//
+//                    }
+//
+//                    @Override
+//                    public void animatorScaleYCallback(float scaleY) {
+//                    }
+//
+//                    @Override
+//                    public void animatorRotateCallback(float rotate) {
+//
+//                    }
+//
+//                    @Override
+//                    public void closeAnimate(){
+//                        viewLayerRelativeLayout.removeView(iv);
 //                    }
 //                });
             }
