@@ -1593,4 +1593,14 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
+    /**
+     * description ：控制贴纸水平移动,且放大
+     * creation date: 2020/5/20
+     * user : zhangtongju
+     */
+    public void toTranMove(){
+
+    }
+
+
 }

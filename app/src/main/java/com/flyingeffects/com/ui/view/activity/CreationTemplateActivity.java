@@ -643,10 +643,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void showCreateTemplateAnim(boolean isShow) {
         if(isShow){
-//            drawPadView.setVisibility(View.VISIBLE);
             viewLayerRelativeLayout.setVisibility(View.GONE);
         }else{
-//            drawPadView.setVisibility(View.GONE);
             viewLayerRelativeLayout.setVisibility(View.VISIBLE);
         }
 

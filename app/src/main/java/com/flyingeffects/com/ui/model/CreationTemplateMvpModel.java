@@ -59,6 +59,7 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.HorizontalListView;
 import com.flyingeffects.com.view.StickerView;
+import com.flyingeffects.com.view.animations.CustomMove.RightToLeft;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.ViewLayerRelativeLayout;
@@ -68,7 +69,6 @@ import com.shixing.sxve.ui.adapter.TimelineAdapter;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
-import com.shixing.sxve.ui.view.WatingDialogProgressForTime;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -303,18 +303,32 @@ public class CreationTemplateMvpModel {
         gridViewAnim.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                callback.showCreateTemplateAnim(true);
+
+                for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
+                    StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(y);
+                    listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
+                }
+
                 //绘制动画
                 StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(0);//todo 默认为0
-                AllStickerData stickerData = GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo);
-                createVideoAnimModel.initLayerSingleAnim(stickerData, new CreateVideoAnimModel.showAnimComplete() {
-                    @Override
-                    public void progress(boolean isComplete, int progress) {
-                        if(isComplete){
-                            callback.showCreateTemplateAnim(false);
-                        }
-                    }
-                });
+                RightToLeft rightToLeft=new RightToLeft(viewLayerRelativeLayout.getWidth(),viewLayerRelativeLayout.getHeight(),stickerView.getWidth(),stickerView.getHeight(),listAllSticker.get(0));
+                rightToLeft.startAnim(stickerView);
+//
+//                for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
+//                    StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(y);
+//                    listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
+//                }
+//
+//
+//                AllStickerData stickerData = GetAllStickerDataModel.getInstance().getStickerData(listAllSticker, isMatting, videoInfo);
+//                createVideoAnimModel.initLayerSingleAnim(stickerData, new CreateVideoAnimModel.showAnimComplete() {
+//                    @Override
+//                    public void progress(boolean isComplete, int progress) {
+//                        if(isComplete){
+//                            callback.showCreateTemplateAnim(false);
+//                        }
+//                    }
+//                });
             }
         });
         TemplateGridViewAnimAdapter gridAdapter = new TemplateGridViewAnimAdapter(list, context);

@@ -15,6 +15,8 @@ import com.lansosdk.box.DrawPadUpdateMode;
 import com.lansosdk.box.onDrawPadCompletedListener;
 import com.lansosdk.videoeditor.DrawPadView2;
 
+import java.util.ArrayList;
+
 /**
  * description ：自定义动画集成
  * creation date: 2020/5/20
@@ -37,6 +39,7 @@ public class CreateVideoAnimModel {
     private float LayerW;
     private  float LayerH;
     private showAnimComplete callback;
+    private ArrayList<AllStickerData> listAllSticker;
 
 
     public CreateVideoAnimModel(DrawPadView2 drawPadView) {
@@ -58,6 +61,24 @@ public class CreateVideoAnimModel {
             }
         }
     }
+
+    public void initLayerSingleAnim2(ArrayList<AllStickerData> listAllSticker  , boolean isMatting, showAnimComplete callback) {
+        this.listAllSticker=listAllSticker;
+        this.callback=callback;
+        this.stickerData = stickerData;
+
+
+
+
+
+
+    }
+
+
+
+
+
+
 
 
     public void initLayerSingleAnim(AllStickerData stickerData,showAnimComplete callback) {
