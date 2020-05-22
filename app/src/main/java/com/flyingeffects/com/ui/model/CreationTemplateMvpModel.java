@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -60,9 +59,7 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.HorizontalListView;
 import com.flyingeffects.com.view.StickerView;
-import com.flyingeffects.com.view.animations.CustomMove.AnimateCallBack;
-import com.flyingeffects.com.view.animations.CustomMove.AnimationLinearInterpolator;
-import com.flyingeffects.com.view.animations.CustomMove.RightToLeft;
+import com.flyingeffects.com.view.animations.CustomMove.StartAnimModel;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.ViewLayerRelativeLayout;
@@ -145,6 +142,8 @@ public class CreationTemplateMvpModel {
     private DrawPadView2 drawPadView2;
     private CreateVideoAnimModel createVideoAnimModel;
 
+    private ArrayList<StickerView>nowChooseAnimList=new ArrayList<>();
+
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath, DrawPadView2 drawPadView2) {
         this.context = context;
         this.callback = callback;
@@ -196,7 +195,7 @@ public class CreationTemplateMvpModel {
     }
 
     public void initStickerView(String imagePath, String originalPath) {
-        new Handler().postDelayed(() -> addSticker(imagePath, true, true, true, originalPath, false, null), 500);
+        new Handler().postDelayed(() -> addSticker(imagePath, true, true, true, originalPath, false, null,false), 500);
     }
 
 
@@ -297,10 +296,8 @@ public class CreationTemplateMvpModel {
 
 
         ArrayList<String> list = new ArrayList<>();
-        list.add("1");
-        list.add("2");
-        list.add("3");
-        list.add("4");
+        list.add("左到右");
+
         View viewForChooseAnim = LayoutInflater.from(context).inflate(R.layout.view_create_template_anim, viewPager, false);
         GridView gridViewAnim = viewForChooseAnim.findViewById(R.id.gridView_anim);
         gridViewAnim.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -310,16 +307,22 @@ public class CreationTemplateMvpModel {
                     StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(y);
                     listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
                 }
+
                 //绘制动画
                 StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(0);//todo 测试默认为0
-                AnimationLinearInterpolator  animationLinearInterpolator=new AnimationLinearInterpolator(3000,0, new AnimationLinearInterpolator.GetProgressCallback() {
-                    @Override
-                    public void progress(float progress) {
-                        LogUtil.d("OOM","当前的值为"+progress);
-                        stickerView.toTranMoveX(progress);
-                    }
-                });
-                animationLinearInterpolator.PlayAnimation();
+                for(int x=0;x<=1;x++){
+                    copyGif(stickerView.getResPath(), stickerView.getResPath(), stickerView.getComeFrom(), stickerView, stickerView.getOriginalPath(),true);
+                }
+
+
+                new Handler().postDelayed(() -> {
+                    StartAnimModel model=new StartAnimModel(stickerView,nowChooseAnimList);
+                    model.ToStart();
+                },500);
+
+
+
+
             }
         });
         TemplateGridViewAnimAdapter gridAdapter = new TemplateGridViewAnimAdapter(list, context);
@@ -422,11 +425,11 @@ public class CreationTemplateMvpModel {
                 //如果已经下载了，就用已经下载的，但是如果已经展示了，就不能复用，需要类似于复制功能，只针对gif
                 if (nowStickerHasChoosse(imageId, path)) {
                     String copyName = mGifFolder + File.separator + System.currentTimeMillis() + format;
-                    copyGif(fileName, copyName, false, null, fileName);
+                    copyGif(fileName, copyName, false, null, fileName,false);
                     WaitingDialog.closePragressDialog();
                     return;
                 } else {
-                    addSticker(fileName, false, false, false, null, false, null);
+                    addSticker(fileName, false, false, false, null, false, null,false);
                     WaitingDialog.closePragressDialog();
                     return;
                 }
@@ -447,7 +450,7 @@ public class CreationTemplateMvpModel {
                 try {
                     if (path1 != null) {
                         FileUtil.copyFile(path1, fileName);
-                        addSticker(fileName, false, false, false, null, false, null);
+                        addSticker(fileName, false, false, false, null, false, null,false);
                         WaitingDialog.closePragressDialog();
                         modificationSingleItem(position);
                     } else {
@@ -483,7 +486,7 @@ public class CreationTemplateMvpModel {
                                 @Override
                                 public void succeed(boolean isSucceed) {
                                     modificationSingleItem(position);
-                                    addSticker(copyName, false, false, false, null, false, null);
+                                    addSticker(copyName, false, false, false, null, false, null,false);
                                 }
                             });
                         }
@@ -529,12 +532,13 @@ public class CreationTemplateMvpModel {
      * @param isFromAubum  是否来自于相册选择的素材，而不是自己点击下载的，
      * @param originalPath 如果是相册选择的，没抠图的的地址，
      * @param isCopy       是否来自复制功能
+     * @param  isFromShowAnim   是否来自分身动画，如果是的话，不纳入最后的渲染
      * user : zhangtongju
      */
 
     int stickerViewID;
 
-    private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView) {
+    private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView,boolean isFromShowAnim) {
         closeAllAnim();
         StickerView stickView = new StickerView(context);
         stickerViewID++;
@@ -555,7 +559,7 @@ public class CreationTemplateMvpModel {
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     stickView.dismissFrame();
                     //copy
-                    copyGif(stickView.getResPath(), path, stickView.getComeFrom(), stickView, stickView.getOriginalPath());
+                    copyGif(stickView.getResPath(), path, stickView.getComeFrom(), stickView, stickView.getOriginalPath(),false);
                     if (!TextUtils.isEmpty(stickView.getOriginalPath())) {
                         if (albumType.isVideo(GetPathType.getInstance().getMediaType(stickView.getOriginalPath()))) {
                             if (UiStep.isFromDownBj) {
@@ -667,7 +671,7 @@ public class CreationTemplateMvpModel {
         stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
         stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
         stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
-
+        stickView.setIsFromStickerAnim(isFromShowAnim);
         stickView.setComeFromAlbum(isFromAubum);
         if (isFromAubum) {
             stickView.setClipPath(path);
@@ -709,8 +713,15 @@ public class CreationTemplateMvpModel {
             StickerView.isFromCopy fromCopy = new StickerView.isFromCopy();
             fromCopy.setScale(copyStickerView.getScale());
             fromCopy.setDegree(copyStickerView.getRotateAngle());
-            fromCopy.setTranX(copyStickerView.getCenterX());
-            fromCopy.setTranY(copyStickerView.getCenterY());
+            if(isFromShowAnim){
+                fromCopy.setTranX(copyStickerView.getCenterX()-30);
+                fromCopy.setTranY(copyStickerView.getCenterY()-30);
+            }else{
+                fromCopy.setTranX(copyStickerView.getCenterX());
+                fromCopy.setTranY(copyStickerView.getCenterY());
+            }
+
+
             stickView.setImageRes(path, false, fromCopy);
             stickView.showFrame();
         } else {
@@ -754,6 +765,11 @@ public class CreationTemplateMvpModel {
         }
 
 
+        if(isFromShowAnim){
+            nowChooseAnimList.add(stickView);
+        }
+
+
     }
 
 
@@ -781,7 +797,15 @@ public class CreationTemplateMvpModel {
     }
 
 
-    private void copyGif(String getResPath, String path, boolean isFromAubum, StickerView stickerView, String OriginalPath) {
+
+
+    /**
+     * description ：复制一个gif出来
+     * creation date: 2020/5/22
+     * param :  getResPath 图片地址，path  isFromAubum 是否来自相册 stickerView 原贴纸 OriginalPath 原图地址 isFromShowAnim 是否是因为来自动画分身
+     * user : zhangtongju
+     */
+    private void copyGif(String getResPath, String path, boolean isFromAubum, StickerView stickerView, String OriginalPath,boolean isFromShowAnim) {
         try {
             String copyName = null;
             if (getResPath.endsWith(".gif")) {
@@ -795,7 +819,7 @@ public class CreationTemplateMvpModel {
                 FileUtil.copyFile(new File(getResPath), copyName, new FileUtil.copySucceed() {
                     @Override
                     public void isSucceed() {
-                        addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView);
+                        addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView,isFromShowAnim);
                     }
                 });
             } else {
@@ -810,7 +834,7 @@ public class CreationTemplateMvpModel {
                 FileUtil.copyFile(new File(path), copyName, new FileUtil.copySucceed() {
                     @Override
                     public void isSucceed() {
-                        addSticker(finalCopyName1, false, true, isFromAubum, OriginalPath, true, stickerView);
+                        addSticker(finalCopyName1, false, true, isFromAubum, OriginalPath, true, stickerView,isFromShowAnim);
                     }
                 });
             }
@@ -1193,7 +1217,7 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     public void addNewSticker(String path, String originalPath) {
-        Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> addSticker(path1, false, true, true, originalPath, false, null));
+        Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> addSticker(path1, false, true, true, originalPath, false, null,false));
     }
 
 

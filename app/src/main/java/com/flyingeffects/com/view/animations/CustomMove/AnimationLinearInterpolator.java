@@ -2,6 +2,8 @@ package com.flyingeffects.com.view.animations.CustomMove;
 
 import android.view.animation.DecelerateInterpolator;
 
+import com.flyingeffects.com.utils.LogUtil;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -53,8 +55,14 @@ public class AnimationLinearInterpolator {
         endTimer();
     }
 
+    public void PlayAnimation(int delay){
+        endTimer();
+        startTimer(delay);
+    }
+
     public void PlayAnimation(){
-        startTimer();
+        endTimer();
+        startTimer(0);
     }
 
 
@@ -98,7 +106,9 @@ public class AnimationLinearInterpolator {
      * creation date: 2020/5/21
      * user : zhangtongju
      */
-    private void startTimer() {
+    private boolean  isDone;
+    private void startTimer(int delay) {
+        isDone=false;
         if(!isPlaying){
             isPlaying=true;
             if (timer != null) {
@@ -116,16 +126,20 @@ public class AnimationLinearInterpolator {
                 public void run() {
                     if(nowDuration>=totalDuration){
                         //绘制结束
+                        isDone=true;
+                        callback.progress(100,isDone);
                         endTimer();
                     }
-                    nowDuration+=50;
+                    nowDuration+=10;
+                    LogUtil.d("xxx2","nowDuration="+nowDuration);
                     float nowFloatTime=nowDuration/(float)totalDuration;
+                    LogUtil.d("xxx2","nowFloatTime="+nowFloatTime);
                     float progress=getNowInterpolatorProgress(nowFloatTime);
-                    callback.progress(progress);
+                    callback.progress(progress,isDone);
 
                 }
             };
-            timer.schedule(task, 0, 50);
+            timer.schedule(task, delay, 10);
         }
     }
 
@@ -138,7 +152,7 @@ public class AnimationLinearInterpolator {
      * user : zhangtongju
      */
     public interface  GetProgressCallback{
-        void progress(float progress);
+        void progress(float progress,boolean isDown);
     }
 
 

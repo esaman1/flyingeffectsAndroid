@@ -74,6 +74,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private GestureDetector mGestureDetector;
     private ScaleGestureDetector mScaleDetector;
     private RotationGestureDetector mRotationDetector;
+    private boolean isFromStickerAnim=false;
 
 
     /**
@@ -855,6 +856,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     invalidate();
 
                     lastX = x;
+                    LogUtil.d("toTranMove2","Old-----lastX="+lastX);
                     lastY = y;
                     moveX = mHelpBoxRect.right;
                     moveY = mHelpBoxRect.bottom;
@@ -1069,6 +1071,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      * @param dy
      */
     private void adjustCenter(float dx, float dy) {
+
+        LogUtil.d("adjustCenter","dx="+dx+"dy"+dy);
         if (!enableAutoAdjustCenter) {
             center.offset(dx, dy);
         } else {
@@ -1598,24 +1602,100 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
+
+    //-------------------零时搭建动画管理
+
+
+
+
+    public float GetHelpBoxRectScale() {
+        return mScale;
+    }
+
+    public float GetHelpBoxRectWidth() {
+        return mHelpBoxRect.width();
+    }
+
+
     /**
-     * description ：控制贴纸水平移动,且放大
+     * description ：控制贴纸水平移动
      * creation date: 2020/5/20
      * user : zhangtongju
      */
-    public void toTranMoveX(Float percent){
-        int totalW= (int) mHelpBoxRect.width();
+    public void toTranMoveX(Float percent,float totalW){
         LogUtil.d("toTranMove","totalW="+totalW);
         float needToX=totalW*percent;
-        LogUtil.d("toTranMove","needToX="+needToX);
+        LogUtil.d("toTranMove2","needToX="+needToX);
+
         float dx = needToX - lastX;
+        LogUtil.d("toTranMove2","New-----lastX="+lastX);
         LogUtil.d("toTranMove","dx="+dx);
-        layoutX += dx;
-        adjustCenter(dx, lastY);
+//        layoutX += dx;
+        adjustCenter(dx, 0);
         invalidate();
         lastX = needToX;
-
     }
+
+
+
+
+
+
+
+    public void toTranMoveY(Float percent){
+        int totalH= (int) (getMeasuredHeight()+mHelpBoxRect.height());
+        LogUtil.d("toTranMove","totalW="+totalH);
+        float needToH=totalH*percent;
+        LogUtil.d("toTranMove","needToX="+needToH);
+        float dy = needToH - lastY;
+        LogUtil.d("toTranMove","dx="+dy);
+        layoutY += dy;
+        adjustCenter(0, dy);
+        LogUtil.d("toTranMove","dy="+lastY);
+        invalidate();
+        lastY = needToH;
+    }
+
+
+    public void toScale(Float percent,float lastScale,boolean isDone){
+
+        if(isDone){
+            mScale = lastScale;
+        }else{
+            LogUtil.d("toScale","mScale1111="+mScale);
+            mScale = lastScale+percent*lastScale;
+            LogUtil.d("toScale","mScale2222="+mScale);
+        }
+        invalidate();
+//        float totalW=  getMeasuredWidth()+mHelpBoxRect.width();
+//        float totalH=  getMeasuredHeight()+mHelpBoxRect.height();
+//        LogUtil.d("toTranMove","totalW="+totalW);
+//        float needToX=totalW*percent;
+//        float needToY=totalH*percent;
+//        LogUtil.d("toTranMove2","needToX="+needToX);
+//
+//        float dx = needToX - lastX;
+//        float dy = needToY - lastY;
+//        updateRotateAndScale(dx, dy);
+//        LogUtil.d("toTranMove2","New-----lastX="+lastX);
+//        LogUtil.d("toTranMove","dx="+dx);
+//        invalidate();
+//        lastX = needToX;
+//        lastY=needToY;
+    }
+
+
+
+
+
+    public void setIsFromStickerAnim(boolean isFromStickerAnim){
+        this.isFromStickerAnim=isFromStickerAnim;
+    }
+
+    public boolean  getIsFromStickerAnim(){
+        return  isFromStickerAnim;
+    }
+
 
 
 }
