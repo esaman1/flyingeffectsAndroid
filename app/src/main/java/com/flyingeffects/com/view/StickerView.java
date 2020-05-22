@@ -50,14 +50,11 @@ import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.TickerAnimated;
-import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.lansongCommendView.RectUtil;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.shixing.sxve.ui.util.RotationGestureDetector;
-import com.shixing.sxve.ui.view.TemplateView;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -1606,7 +1603,17 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      * creation date: 2020/5/20
      * user : zhangtongju
      */
-    public void toTranMove(){
+    public void toTranMoveX(Float percent){
+        int totalW= (int) mHelpBoxRect.width();
+        LogUtil.d("toTranMove","totalW="+totalW);
+        float needToX=totalW*percent;
+        LogUtil.d("toTranMove","needToX="+needToX);
+        float dx = needToX - lastX;
+        LogUtil.d("toTranMove","dx="+dx);
+        layoutX += dx;
+        adjustCenter(dx, lastY);
+        invalidate();
+        lastX = needToX;
 
     }
 

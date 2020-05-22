@@ -49,8 +49,12 @@ public class AnimationLinearInterpolator {
      * creation date: 2020/5/21
      * user : zhangtongju
      */
-    public void stopAnimation(){
+    public void StopAnimation(){
         endTimer();
+    }
+
+    public void PlayAnimation(){
+        startTimer();
     }
 
 

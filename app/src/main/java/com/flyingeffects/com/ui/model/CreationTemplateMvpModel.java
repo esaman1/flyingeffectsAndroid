@@ -61,6 +61,7 @@ import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.HorizontalListView;
 import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.animations.CustomMove.AnimateCallBack;
+import com.flyingeffects.com.view.animations.CustomMove.AnimationLinearInterpolator;
 import com.flyingeffects.com.view.animations.CustomMove.RightToLeft;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.glidebitmappool.GlideBitmapPool;
@@ -305,66 +306,20 @@ public class CreationTemplateMvpModel {
         gridViewAnim.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
                 for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
                     StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(y);
                     listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
                 }
-
                 //绘制动画
-                StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(0);//todo 默认为0
-                RightToLeft rightToLeft=new RightToLeft(viewLayerRelativeLayout.getWidth(),viewLayerRelativeLayout.getHeight(),stickerView.getWidth(),stickerView.getHeight(),stickerView.getCenterX(),stickerView.getCenterY(),listAllSticker.get(0));
-                stickerView.setDrawingCacheEnabled(true);
-                Bitmap screenShotAsBitmap = Bitmap.createBitmap(stickerView.getDrawingCache());
-                stickerView.setDrawingCacheEnabled(false);
-                ImageView iv=new ImageView(context);
-                iv.setImageBitmap(screenShotAsBitmap);
-//                viewLayerRelativeLayout.addView(iv);
-
-                rightToLeft.startAnim(stickerView,null);
-                new Handler().postDelayed(new Runnable() {
+                StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(0);//todo 测试默认为0
+                AnimationLinearInterpolator  animationLinearInterpolator=new AnimationLinearInterpolator(3000,0, new AnimationLinearInterpolator.GetProgressCallback() {
                     @Override
-                    public void run() {
-                        viewLayerRelativeLayout.addView(iv);
-                        rightToLeft.startAnim(iv,null);
+                    public void progress(float progress) {
+                        LogUtil.d("OOM","当前的值为"+progress);
+                        stickerView.toTranMoveX(progress);
                     }
-                },1000);
-
-
-
-//                rightToLeft.startAnim(stickerView, new AnimateCallBack() {
-//                    @Override
-//                    public void animatorTranXCallBack(float tranX) {
-//                        float needTranX=tranX/(float)2;
-//                        iv.setTranslationX(needTranX);
-//                    }
-//
-//                    @Override
-//                    public void animatorTranYCallBack(float tranY) {
-//
-//                        float needTranY=tranY/(float)2;
-//                        iv.setTranslationX(needTranY);
-//                    }
-//
-//                    @Override
-//                    public void animatorScaleXCallback(float scaleX) {
-//
-//                    }
-//
-//                    @Override
-//                    public void animatorScaleYCallback(float scaleY) {
-//                    }
-//
-//                    @Override
-//                    public void animatorRotateCallback(float rotate) {
-//
-//                    }
-//
-//                    @Override
-//                    public void closeAnimate(){
-//                        viewLayerRelativeLayout.removeView(iv);
-//                    }
-//                });
+                });
+                animationLinearInterpolator.PlayAnimation();
             }
         });
         TemplateGridViewAnimAdapter gridAdapter = new TemplateGridViewAnimAdapter(list, context);
