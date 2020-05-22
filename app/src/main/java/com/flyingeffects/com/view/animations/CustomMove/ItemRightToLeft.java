@@ -26,7 +26,7 @@ public class ItemRightToLeft {
         float mScale = stickerView.GetHelpBoxRectScale();
         float percent = stickerViewWidth / totalWidth;
         LogUtil.d("OOM", "即将开始的进度为" + percent);
-        AnimationLinearInterpolator animationLinearInterpolator = new AnimationLinearInterpolator(3000, (int) ((3000-delay) * percent), new AnimationLinearInterpolator.GetProgressCallback() {
+        AnimationLinearInterpolator animationLinearInterpolator = new AnimationLinearInterpolator(3000, (int) (3000* percent)+delay, new AnimationLinearInterpolator.GetProgressCallback() {
             @Override
             public void progress(float progress, boolean isDone) {
                 LogUtil.d("OOM","progress="+progress);
