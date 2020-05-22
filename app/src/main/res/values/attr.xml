@@ -81,6 +81,7 @@
         <attr name="sv_left_bottom_drawable" format="reference" />
         <attr name="sv_right_top_drawable" format="reference" />
         <attr name="sv_right_bottom_drawable" format="reference" />
+        <attr name="sv_right_drawable" format="reference" />
         <attr name="sv_frame_color" format="color" />
         <attr name="sv_frame_width" format="dimension" />
         <!--控制按钮位置-->

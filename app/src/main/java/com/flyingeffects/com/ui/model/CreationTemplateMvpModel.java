@@ -124,7 +124,6 @@ public class CreationTemplateMvpModel {
      */
     private boolean isMatting = true;
 
-
     /**
      * 默认视频时长,如果没选择背景的时候会用到
      */
@@ -567,7 +566,6 @@ public class CreationTemplateMvpModel {
                                 });
                                 manage.ToMatting(paths);
 
-
                                 if (stickView.isFirstAddSticker()) {
                                     if (stickView.isOpenVoice()) {
                                         stickView.setOpenVoice(false);
@@ -600,6 +598,7 @@ public class CreationTemplateMvpModel {
         stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
         stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
         stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
+        stickView.setRightBitmap(context.getDrawable(R.mipmap.sticker_redact));
 
         stickView.setComeFromAlbum(isFromAubum);
         if (isFromAubum) {
