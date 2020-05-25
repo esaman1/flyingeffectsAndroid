@@ -51,7 +51,6 @@ public class AboutActivity extends BaseActivity {
     protected void initAction() {
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -98,7 +97,6 @@ public class AboutActivity extends BaseActivity {
                 Intent intentProtocol = new Intent(this, webViewActivity.class);
                 intentProtocol.putExtra("webUrl", BaseConstans.PROTOCOL);
                 startActivity(intentProtocol);
-
                 break;
             case R.id.ll_clear_cache:
                 //清除外部cache下的内容
@@ -114,7 +112,6 @@ public class AboutActivity extends BaseActivity {
                 //退出
                 showDialog();
                 break;
-
 
             case R.id.ll_test:
                 //抠图测试

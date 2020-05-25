@@ -47,7 +47,6 @@ public class CompressionCuttingManage {
     private boolean hasCache = true;
     private MattingImage mattingImage;
 
-
     /**
      * description ：如果templateId 不传，默认显示是扣的全身图
      * creation date: 2020/3/31

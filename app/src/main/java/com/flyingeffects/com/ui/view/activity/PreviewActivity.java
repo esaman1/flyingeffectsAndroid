@@ -122,8 +122,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     private boolean isPlayComplate = false;
 
-
-
     /**
      * 来着来个页面
      */

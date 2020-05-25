@@ -107,6 +107,7 @@ public class backgroundDraw {
         try {
             execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, (long) (duration * 1000));
             execute.setFrameRate(FRAME_RATE);
+
             LogUtil.d("OOM2", "时长为" + FRAME_RATE);
             execute.setEncodeBitrate(5 * 1024 * 1024);
             execute.setOnLanSongSDKErrorListener(message -> {
@@ -153,6 +154,7 @@ public class backgroundDraw {
             for (int i = 0; i < list.size(); i++) {
                 AllStickerData item = list.get(i);
                 String pathType = GetPathTypeModel.getInstance().getMediaType(item.getPath());
+                //todo
                 if (albumType.isVideo(pathType)) {
                     if (isMatting) {
                         intoCanvesCount++;

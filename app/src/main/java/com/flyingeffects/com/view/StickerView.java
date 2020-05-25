@@ -53,19 +53,15 @@ import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.TickerAnimated;
-import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.lansongCommendView.RectUtil;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.shixing.sxve.ui.util.RotationGestureDetector;
-import com.shixing.sxve.ui.view.TemplateView;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.List;
-//com.flyingeffects.com.view.StickerView
 
 
 /**
@@ -358,7 +354,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
     static Bitmap makeDst(int w, int h, Drawable drawable) {
-        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
+        Bitmap bitmap = Bitmap.createBitmap(w, h,
                 drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565);
         Canvas canvas = new Canvas(bitmap);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
@@ -720,14 +716,15 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             mHelpBoxRect.set(rectF);
             textRect.set(mHelpBoxRect.left, mHelpBoxRect.bottom - 50, mHelpBoxRect.right, mHelpBoxRect.bottom);
             //透明遮罩
-            int w = (int) (mHelpBoxRect.width() + 0.5);
-            int h = (int) (mHelpBoxRect.height() + 0.5);
+            int w = (int) (currentDrawable.getIntrinsicWidth() + 0.5);
+            int h = (int) (currentDrawable.getIntrinsicHeight() + 0.5);
             Bitmap bm = makeSrc(w, h);
             Bitmap dstBm = makeDst(w, h, currentDrawable);
-
+            LogUtil.d("draw","height1 = "+canvas.getHeight());
+            LogUtil.d("draw","width1 = "+canvas.getWidth());
             float topLength = mHelpBoxRect.bottom - mRightOffsetPercent * (mHelpBoxRect.bottom - mHelpBoxRect.top);
             //todo 实现透明可调节遮罩
-            int layerID = canvas.saveLayer(0, 0, w * 2, h * 2, mHelpDstPaint, Canvas.ALL_SAVE_FLAG);
+            int layerID = canvas.saveLayer(0, 0, canvas.getWidth(), canvas.getHeight(), mHelpDstPaint, Canvas.ALL_SAVE_FLAG);
 
             canvas.scale(mScale, mScale, center.x, center.y);
             canvas.rotate(mRotateAngle, center.x, center.y);

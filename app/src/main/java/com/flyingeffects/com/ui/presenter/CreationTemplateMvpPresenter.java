@@ -39,16 +39,13 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.scrollToPosition(position);
     }
 
-
     public void addNewSticker(String path,String originalPath){
         creationTemplatemodel.addNewSticker(path,originalPath);
     }
 
-
     public void showGifAnim(boolean isShow){
         creationTemplatemodel.showGifAnim(isShow);
     }
-
 
     public void initBottomLayout(ViewPager viewPager){
         creationTemplatemodel.initBottomLayout(viewPager);
@@ -73,7 +70,6 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     public void onDestroy(){
         creationTemplatemodel.onDestroy();
     }
-
 
     @Override
     public void ItemClickForStickView(AnimStickerModel stickView) {

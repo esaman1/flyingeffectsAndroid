@@ -428,7 +428,6 @@ public class CreationTemplateMvpModel {
         }
     }
 
-
     /**
      * 当前的item 是否已经被选中上了预览页面
      */
@@ -442,7 +441,6 @@ public class CreationTemplateMvpModel {
                 if (path.equals(copyName)) {
                     return true;
                 }
-
             }
         }
 
@@ -469,6 +467,7 @@ public class CreationTemplateMvpModel {
     private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView) {
         closeAllAnim();
         StickerView stickView = new StickerView(context);
+
         stickerViewID++;
         stickView.setId(stickerViewID);
         stickView.setOnitemClickListener(new StickerItemOnitemclick() {
