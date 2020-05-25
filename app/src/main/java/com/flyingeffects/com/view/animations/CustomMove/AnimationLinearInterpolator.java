@@ -1,6 +1,7 @@
 package com.flyingeffects.com.view.animations.CustomMove;
 
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 
 import com.flyingeffects.com.utils.LogUtil;
 
@@ -25,11 +26,7 @@ public class AnimationLinearInterpolator {
     private Timer timer;
     private TimerTask task;
     private GetProgressCallback callback;
-    /**
-     * 当前时长
-     */
-    private int nowDuration=0;
-
+    int nowDuration;
 
 
 
@@ -39,10 +36,9 @@ public class AnimationLinearInterpolator {
      * param : totalDuration 插值器时长 nowDuration 当前时长  GetProgressCallback 返回阶段值
      * user : zhangtongju
      */
-    public AnimationLinearInterpolator(int totalDuration,int nowDuration ,GetProgressCallback callback) {
+    public AnimationLinearInterpolator(int totalDuration ,GetProgressCallback callback) {
         this.totalDuration = totalDuration;
         this.callback=callback;
-        this.nowDuration=nowDuration;
     }
 
 
@@ -67,7 +63,7 @@ public class AnimationLinearInterpolator {
 
 
     public float getNowInterpolatorProgress(float progress) {
-        DecelerateInterpolator linearInterpolator = new DecelerateInterpolator();
+        LinearInterpolator linearInterpolator = new LinearInterpolator();
         return linearInterpolator.getInterpolation(progress);
     }
 
@@ -75,7 +71,7 @@ public class AnimationLinearInterpolator {
     /**
      * 关闭timer 和task
      */
-    private void endTimer() {
+    public void endTimer() {
         isPlaying=false;
         destroyTimer();
     }
@@ -125,10 +121,7 @@ public class AnimationLinearInterpolator {
                 @Override
                 public void run() {
                     if(nowDuration>=totalDuration){
-                        //绘制结束
-                        isDone=true;
-                        callback.progress(100,isDone);
-                        endTimer();
+                        nowDuration=0;
                     }
                     nowDuration+=10;
                     LogUtil.d("xxx2","nowDuration="+nowDuration);

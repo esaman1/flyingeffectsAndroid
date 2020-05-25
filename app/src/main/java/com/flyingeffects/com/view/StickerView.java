@@ -53,6 +53,7 @@ import com.flyingeffects.com.ui.interfaces.TickerAnimated;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.lansongCommendView.RectUtil;
+import com.flyingeffects.com.view.lansongCommendView.StickerItemOnDragListener;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.shixing.sxve.ui.util.RotationGestureDetector;
 
@@ -194,6 +195,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     private int originalBitmapHeight;
 
+    /**
+     * 是否来自动画子view
+     */
+    private boolean isFromAnim=false;
+
 
     /**
      * 边框自动消息时长
@@ -215,6 +221,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
     private StickerItemOnitemclick callback;
+    private StickerItemOnDragListener dragCallback;
 
     /**
      * 视频原图地址
@@ -438,6 +445,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         this.callback = callback;
     }
 
+    public void setOnItemDragListener(StickerItemOnDragListener dragCallback){
+    this.dragCallback=dragCallback;
+    }
+
 
     public StickerView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -658,7 +669,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             textRect.set(mHelpBoxRect.left, mHelpBoxRect.bottom - 50, mHelpBoxRect.right, mHelpBoxRect.bottom);
             RectUtil.scaleRect(mHelpBoxRect, mScale);
 //            RectUtil.scaleRect(textRect, mScale);
-            if (frameShow) {
+            //显示编辑框
+            if (frameShow&&!isFromAnim) {
                 // draw x and rotate button
                 int offsetValue = 0;
                 if (leftTopBitmap != null) {
@@ -786,131 +798,122 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public boolean onTouchEvent(MotionEvent event) {
         // 是否向下传递事件标志 true为消耗
         super.onTouchEvent(event);
-        int action = event.getAction();
-        float x = event.getX();
-        float y = event.getY();
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                if (callback != null) {
-                    callback.stickerMove();
-                }
-                mCurrentMode = adjustMode(x, y);
-                if (mCurrentMode == IDLE_MODE) {
-                    return false;
-                } else if (mCurrentMode == LEFT_TOP_MODE) {
-                    if (this.isRunning) {
-                        stop();
+        if(!isFromAnim){
+            int action = event.getAction();
+            float x = event.getX();
+            float y = event.getY();
+            switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    if (callback != null) {
+                        callback.stickerMove();
                     }
-                    callback.stickerOnclick(LEFT_TOP_MODE);
-                    return true;
-                } else if (mCurrentMode == RIGHT_TOP_MODE) {
-                    callback.stickerOnclick(RIGHT_TOP_MODE);
-                    return true;
-                } else if (mCurrentMode == LEFT_BOTTOM_MODE) {
-                    callback.stickerOnclick(LEFT_BOTTOM_MODE);
-                    return true;
-                } else if (mCurrentMode == RIGHT_CENTER_MODE) {
-                    callback.stickerOnclick(RIGHT_CENTER_MODE);
-                    return true;
-                } else if (mCurrentMode == RIGHT_BOTTOM_MODE) {
+                    mCurrentMode = adjustMode(x, y);
+                    if (mCurrentMode == IDLE_MODE) {
+                        return false;
+                    } else if (mCurrentMode == LEFT_TOP_MODE) {
+                        if (this.isRunning) {
+                            stop();
+                        }
+                        callback.stickerOnclick(LEFT_TOP_MODE);
+                        return true;
+                    } else if (mCurrentMode == RIGHT_TOP_MODE) {
+                        callback.stickerOnclick(RIGHT_TOP_MODE);
+                        return true;
+                    } else if (mCurrentMode == LEFT_BOTTOM_MODE) {
+                        callback.stickerOnclick(LEFT_BOTTOM_MODE);
+                        return true;
+                    } else if (mCurrentMode == RIGHT_CENTER_MODE) {
+                        callback.stickerOnclick(RIGHT_CENTER_MODE);
+                        return true;
+                    } else if (mCurrentMode == RIGHT_BOTTOM_MODE) {
+                        if (UiStep.isFromDownBj) {
+                            statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), " 5_mb_bj_Spin");
+                        } else {
+                            statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), " 6_customize_bj_Spin");
+                        }
+                    }
+                    lastX = x;
+                    lastY = y;
+                    guideLineShowOntouch = true;
+                    if (tickerListener != null) {
+                        tickerListener.onActionStart(this, mCurrentMode, mScale, mRotateAngle, center);
+                    }
+                    if (!frameShow) {
+                        frameShow = true;
+                        invalidate();
+                    }
+                    handler.removeMessages(DISMISS_FRAME);
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    if(dragCallback!=null){
+                        dragCallback.stickerDragMove();
+                    }
                     if (UiStep.isFromDownBj) {
-                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), " 5_mb_bj_Spin");
+                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_drag");
                     } else {
-                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), " 6_customize_bj_Spin");
+                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_drag");
                     }
-                }
-                lastX = x;
-                lastY = y;
-                guideLineShowOntouch = true;
-                if (tickerListener != null) {
-                    tickerListener.onActionStart(this, mCurrentMode, mScale, mRotateAngle, center);
-                }
-                if (!frameShow) {
-                    frameShow = true;
+
+                    if (mCurrentMode == IDLE_MODE) {
+                        return false;
+                    }
+
+                    if (mCurrentMode == MOVE_MODE) {
+                        // 移动贴图
+                        mCurrentMode = MOVE_MODE;
+                        float dx = x - lastX;
+                        float dy = y - lastY;
+
+                        layoutX += dx;
+                        layoutY += dy;
+                        adjustCenter(dx, dy);
+                        invalidate();
+                        lastX = x;
+                        LogUtil.d("toTranMove2","Old-----lastX="+lastX);
+                        lastY = y;
+                        moveX = mHelpBoxRect.right;
+                        moveY = mHelpBoxRect.bottom;
+                        LogUtil.d("OOM", "moveX" + moveX);
+                        LogUtil.d("OOM", "width" + getMeasuredWidth());
+
+                    } else if (mCurrentMode == rotateLocation) {
+                        // 旋转 缩放文字操作
+                        mCurrentMode = rotateLocation;
+                        float dx = x - lastX;
+                        float dy = y - lastY;
+                        updateRotateAndScale(dx, dy);
+                        invalidate();
+                        lastX = x;
+                        lastY = y;
+                    }
+
+
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                case MotionEvent.ACTION_UP:
+                    if(dragCallback!=null){
+                        dragCallback.stickerDragUp();
+                    }
+
+                    if (mCurrentMode == IDLE_MODE) {
+                        return false;
+                    }
+                    handler.removeMessages(DISMISS_FRAME);
+                    handler.sendEmptyMessageDelayed(DISMISS_FRAME, AUTO_FADE_FRAME_TIMEOUT);
+                    guideLineShowOntouch = false;
                     invalidate();
-                }
-                handler.removeMessages(DISMISS_FRAME);
-                break;
-            case MotionEvent.ACTION_MOVE:
+                    if (tickerListener != null) {
+                        tickerListener.onActionEnd(this, mCurrentMode, mScale, mRotateAngle, center);
+                    }
+                    mCurrentMode = IDLE_MODE;
+                    break;
+                default:
+                    break;
+            }// end switch
 
-                if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_drag");
-                } else {
-                    statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_drag");
-                }
-
-                if (mCurrentMode == IDLE_MODE) {
-                    return false;
-                }
-
-                if (mCurrentMode == MOVE_MODE) {
-                    // 移动贴图
-                    mCurrentMode = MOVE_MODE;
-                    float dx = x - lastX;
-                    float dy = y - lastY;
-
-                    layoutX += dx;
-                    layoutY += dy;
-                    adjustCenter(dx, dy);
-
-                    invalidate();
-
-                    lastX = x;
-                    LogUtil.d("toTranMove2","Old-----lastX="+lastX);
-                    lastY = y;
-                    moveX = mHelpBoxRect.right;
-                    moveY = mHelpBoxRect.bottom;
-//                    LogUtil.d("OOM","x=PPP="+lastX/(float)getMeasuredWidth());
-                    LogUtil.d("OOM", "moveX" + moveX);
-                    LogUtil.d("OOM", "width" + getMeasuredWidth());
-
-                    float xx = mHelpBoxRect.width();
-                    float xx2 = xx / 2;
-                    LogUtil.d("OOM", "xx2 ==" + xx2);
-                    float aaaa = moveX - xx2;
-                    LogUtil.d("OOM", "aaaa ==" + aaaa);
-                    float bbb = aaaa / getMeasuredWidth();
-                    LogUtil.d("OOM", "P=" + bbb);
-
-
-                    float xx1 = mHelpBoxRect.height();
-                    float xx21 = xx1 / 2;
-                    float aaaa1 = moveY - xx21;
-                    float bbb1 = aaaa1 / getMeasuredHeight();
-                    LogUtil.d("OOM", "P=" + bbb1);
-
-                } else if (mCurrentMode == rotateLocation) {
-                    // 旋转 缩放文字操作
-                    mCurrentMode = rotateLocation;
-                    float dx = x - lastX;
-                    float dy = y - lastY;
-                    updateRotateAndScale(dx, dy);
-                    invalidate();
-                    lastX = x;
-                    lastY = y;
-                }
-
-
-                break;
-            case MotionEvent.ACTION_CANCEL:
-            case MotionEvent.ACTION_UP:
-                if (mCurrentMode == IDLE_MODE) {
-                    return false;
-                }
-                handler.removeMessages(DISMISS_FRAME);
-                handler.sendEmptyMessageDelayed(DISMISS_FRAME, AUTO_FADE_FRAME_TIMEOUT);
-                guideLineShowOntouch = false;
-                invalidate();
-                if (tickerListener != null) {
-                    tickerListener.onActionEnd(this, mCurrentMode, mScale, mRotateAngle, center);
-                }
-                mCurrentMode = IDLE_MODE;
-                break;
-            default:
-                break;
-        }// end switch
-
-        return true;
+            return true;
+        }
+        return false;
     }
 
 
@@ -1615,6 +1618,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public float GetHelpBoxRectWidth() {
         return mHelpBoxRect.width();
     }
+    public float GetHelpBoxRectRight() {
+        return mHelpBoxRect.right;
+    }
 
 
     /**
@@ -1623,15 +1629,21 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      * user : zhangtongju
      */
     public void toTranMoveX(Float percent,float totalW){
+        LogUtil.d("OOM","percent="+percent);
         LogUtil.d("toTranMove","totalW="+totalW);
-        float needToX=totalW*percent;
-        LogUtil.d("toTranMove2","needToX="+needToX);
+        float needToX=totalW*percent-mHelpBoxRect.width();
+//        LogUtil.d("toTranMove2","needToX="+needToX);
+//
+//        float dx = needToX - lastX;
+//        LogUtil.d("toTranMove2","New-----lastX="+lastX);
+//        LogUtil.d("toTranMove","dx="+dx);
+////        layoutX += dx;
+////        adjustCenter(dx, 0);
 
-        float dx = needToX - lastX;
-        LogUtil.d("toTranMove2","New-----lastX="+lastX);
-        LogUtil.d("toTranMove","dx="+dx);
-//        layoutX += dx;
-        adjustCenter(dx, 0);
+        center.set(needToX,mHelpBoxRect.centerY());
+
+
+
         invalidate();
         lastX = needToX;
     }
@@ -1658,7 +1670,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
 
     public void toScale(Float percent,float lastScale,boolean isDone){
-
         if(isDone){
             mScale = lastScale;
         }else{
@@ -1666,22 +1677,15 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             mScale = lastScale+percent*lastScale;
             LogUtil.d("toScale","mScale2222="+mScale);
         }
-        invalidate();
-//        float totalW=  getMeasuredWidth()+mHelpBoxRect.width();
-//        float totalH=  getMeasuredHeight()+mHelpBoxRect.height();
-//        LogUtil.d("toTranMove","totalW="+totalW);
-//        float needToX=totalW*percent;
-//        float needToY=totalH*percent;
-//        LogUtil.d("toTranMove2","needToX="+needToX);
-//
-//        float dx = needToX - lastX;
-//        float dy = needToY - lastY;
-//        updateRotateAndScale(dx, dy);
-//        LogUtil.d("toTranMove2","New-----lastX="+lastX);
-//        LogUtil.d("toTranMove","dx="+dx);
-//        invalidate();
-//        lastX = needToX;
-//        lastY=needToY;
+
+    }
+
+
+    /**
+     * 是否来自动画页面
+     */
+    public void setIsfromAnim(boolean isFromAnim){
+        this.isFromAnim=isFromAnim;
     }
 
 
