@@ -1630,25 +1630,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-    /**
-     * description ：控制贴纸水平移动
-     * creation date: 2020/5/20
-     * user : zhangtongju
-     */
-    public void toTranMoveX(Float percent, float totalW) {
-        LogUtil.d("OOM", "percent=" + percent);
-        LogUtil.d("toTranMove", "totalW=" + totalW);
-        float needToX = totalW * percent - mHelpBoxRect.width();
-//        LogUtil.d("toTranMove2","needToX="+needToX);
-//        float dx = needToX - lastX;
-//        LogUtil.d("toTranMove2","New-----lastX="+lastX);
-//        LogUtil.d("toTranMove","dx="+dx);
-////        layoutX += dx;
-////        adjustCenter(dx, 0);
-        center.set(needToX, mHelpBoxRect.centerY());
-        invalidate();
-        lastX = needToX;
-    }
 
 
 
@@ -1671,19 +1652,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         lastX = needToX;
     }
 
-    public void toTranMoveY(Float percent) {
-        int totalH = (int) (getMeasuredHeight() + mHelpBoxRect.height());
-        LogUtil.d("toTranMove", "totalW=" + totalH);
-        float needToH = totalH * percent;
-        LogUtil.d("toTranMove", "needToX=" + needToH);
-        float dy = needToH - lastY;
-        LogUtil.d("toTranMove", "dx=" + dy);
-        layoutY += dy;
-        adjustCenter(0, dy);
-        LogUtil.d("toTranMove", "dy=" + lastY);
-        invalidate();
-        lastY = needToH;
-    }
 
 
     public void toScale(Float percent, float lastScale, boolean isDone) {

@@ -256,7 +256,8 @@ public class CreationTemplateMvpModel {
     private SmartRefreshLayout smartRefreshLayout;
     private boolean isRefresh = true;
     private ViewPager viewPager;
-    private  StartAnimModel startAnimModel;
+    private StartAnimModel startAnimModel;
+
     public void initBottomLayout(ViewPager viewPager) {
         this.viewPager = viewPager;
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager, false);
@@ -349,6 +350,10 @@ public class CreationTemplateMvpModel {
                     @Override
                     public void stickerDragUp() {
                         if (isIntoDragMove[0]) {
+                            for (int x = 1; x <= AnimCollect.getInstance().getAnimNeedSubLayerCount(listAllAnima.get(i).getAnimType()); x++) {
+                                //通过动画属性得到需要分身的数量，然后复制出贴纸在数组里面nowChooseAnimList，最后需要删除
+                                copyGif(stickerView.getResPath(), stickerView.getResPath(), stickerView.getComeFrom(), stickerView, stickerView.getOriginalPath(), true);
+                            }
                             new Handler().postDelayed(() -> {
                                 startAnimModel.ToStart(animType);
                             }, 1000);
@@ -877,7 +882,7 @@ public class CreationTemplateMvpModel {
 
     public void onDestroy() {
         isDestroy = true;
-        if(startAnimModel!=null){
+        if (startAnimModel != null) {
             startAnimModel.ToEnd();
         }
     }

@@ -16,8 +16,6 @@ public class ItemRightToLeft extends baseAnimModel {
 
     private static ItemRightToLeft thisModel;
     private AnimationLinearInterpolator animationLinearInterpolator;
-    private float pristineStickerX;
-    private float pristineStickerY;
     private StickerView mainStickerView;
 
     public static ItemRightToLeft getInstance() {
@@ -36,11 +34,15 @@ public class ItemRightToLeft extends baseAnimModel {
         StickerView sub2 = subLayer.get(1);
         float stickerViewWidth = mainStickerView.GetHelpBoxRectWidth();
         float totalWidth = mainStickerView.getMeasuredWidth() + stickerViewWidth;
+        float perWidth=totalWidth/3;
         LogUtil.d("OOM", "totalWidth=" + totalWidth);
         float mScale = mainStickerView.GetHelpBoxRectScale();
+        //view 右边的位置
         float stickerViewPosition = mainStickerView.GetHelpBoxRectRight();
+        //view 右边位置的比例
         float percent = stickerViewPosition / totalWidth;
-        float percentWidth = stickerViewWidth / (float) totalWidth;
+        //view 大小的比例
+        float percentWidth = stickerViewWidth / totalWidth;
         float percentWidth2 = 1 - percentWidth;
         LogUtil.d("OOM", "即将开始的进度为" + percent);
         //第一个参数为总时长
@@ -51,49 +53,48 @@ public class ItemRightToLeft extends baseAnimModel {
                 float needProgress = 1 - progress;
                 if (isDone) {
                     mainStickerView.toScale(percent, mScale, isDone);
-                    mainStickerView.toTranMoveX(percent, totalWidth);
+                    mainStickerView.toTranMoveX(percent*totalWidth);
                 } else {
-                    //第一个子view大约位置一半位置
+                  //  第一个子view大约位置一半位置
                     if (sub1 != null) {
-                        float tranx;
+                        float translationToX;
                         if (needProgress < 0.5) {
-                            tranx = (float) (needProgress + 0.5);
-                            sub1.toTranMoveX(tranx, totalWidth);
+                            translationToX = (float) (needProgress + 0.5);
+                            sub1.toTranMoveX(translationToX*totalWidth);
 
                         } else {
-                            tranx = (float) (needProgress - 0.5);
-                            sub1.toTranMoveX(tranx, totalWidth);
+                            translationToX = (float) (needProgress - 0.5);
+                            sub1.toTranMoveX(translationToX*totalWidth);
                         }
-                        LogUtil.d("OOM", "Tranx=" + tranx);
-                        sub1.toScale(1 - tranx, mScale, isDone);
+                        LogUtil.d("OOM", "translationToX=" + translationToX);
+                        sub1.toScale(1 - translationToX, mScale, isDone);
                     }
 
                     if (sub2 != null) {
-                        float tranx;
+                        float translationToX;
                         if (needProgress < percentWidth) {
-                            tranx = (needProgress + percentWidth2);
-                            sub2.toTranMoveX(tranx, totalWidth);
+                            translationToX = (needProgress + percentWidth2);
+                            sub2.toTranMoveX(translationToX* totalWidth);
 
                         } else {
-                            tranx = (needProgress - percentWidth);
-                            sub2.toTranMoveX(tranx, totalWidth);
+                            translationToX = (needProgress - percentWidth);
+                            sub2.toTranMoveX(translationToX*totalWidth);
                         }
-                        LogUtil.d("OOM", "Tranx2=" + tranx);
-                        sub2.toScale(1 - tranx, mScale, isDone);
+                        LogUtil.d("OOM", "translationToX2=" + translationToX);
+                        sub2.toScale(1 - translationToX, mScale, isDone);
                     }
 
 
-                    float tranx;
+                    float translationToX;
                     if (needProgress < percentWidth2) {
-                        tranx = (needProgress + percentWidth);
-                        mainStickerView.toTranMoveX(tranx, totalWidth);
-
+                        translationToX = (needProgress + percentWidth);
+                        mainStickerView.toTranMoveX(translationToX*totalWidth);
                     } else {
-                        tranx = (needProgress - percentWidth2);
-                        mainStickerView.toTranMoveX(tranx, totalWidth);
+                        translationToX = (needProgress - percentWidth2);
+                        mainStickerView.toTranMoveX(translationToX*totalWidth);
                     }
-                    LogUtil.d("OOM", "Tranx2=" + tranx);
-                    mainStickerView.toScale(1 - tranx, mScale, isDone);
+                    LogUtil.d("OOM", "translationToX2=" + translationToX);
+                   mainStickerView.toScale(1 - translationToX, mScale, isDone);
 
 
                 }
