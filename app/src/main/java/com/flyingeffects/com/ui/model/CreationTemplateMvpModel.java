@@ -248,26 +248,26 @@ public class CreationTemplateMvpModel {
 
         GridView gridView = templateThumbView.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view, i, l) -> {
-        if(!DoubleClick.getInstance().isFastZDYDoubleClick(1000)){
-            callback.needPauseVideo();
-            modificationSingleItemIsChecked(i);
-            if (i == 0) {
-                //删除选择的帖子
-                deleteAllSticker();
-                if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Stickeroff");
+            if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
+                callback.needPauseVideo();
+                modificationSingleItemIsChecked(i);
+                if (i == 0) {
+                    //删除选择的帖子
+                    deleteAllSticker();
+                    if (UiStep.isFromDownBj) {
+                        statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Stickeroff");
+                    } else {
+                        statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_Stickeroff");
+                    }
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_Stickeroff");
+                    if (UiStep.isFromDownBj) {
+                        statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Sticker", listForSticker.get(i).getTitle());
+                    } else {
+                        statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_Sticker", listForSticker.get(i).getTitle());
+                    }
+                    downSticker(listForSticker.get(i).getImage(), listForSticker.get(i).getId(), i);
                 }
-            } else {
-                if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Sticker", listForSticker.get(i).getTitle());
-                } else {
-                    statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_Sticker", listForSticker.get(i).getTitle());
-                }
-                downSticker(listForSticker.get(i).getImage(), listForSticker.get(i).getId(), i);
             }
-        }
 
         });
         gridAdapter = new TemplateGridViewAdapter(listForSticker, context);
@@ -597,7 +597,7 @@ public class CreationTemplateMvpModel {
         stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
         stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
         stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
-        stickView.setRightBitmap(context.getDrawable(R.mipmap.sticker_redact));
+        stickView.setRightBitmap(context.getDrawable(R.mipmap.sticker_updown));
 
         stickView.setComeFromAlbum(isFromAubum);
         if (isFromAubum) {
@@ -915,7 +915,7 @@ public class CreationTemplateMvpModel {
             backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, new backgroundDraw.saveCallback() {
                 @Override
                 public void saveSuccessPath(String path, int progress) {
-                    if(!isDestroy){
+                    if (!isDestroy) {
                         if (!TextUtils.isEmpty(path)) {
                             dialog.closePragressDialog();
                             //成功后的回调
@@ -923,7 +923,7 @@ public class CreationTemplateMvpModel {
                             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                             intent.putExtra("path", path);
                             context.startActivity(intent);
-                            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> isIntoSaveVideo = false,500));
+                            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> isIntoSaveVideo = false, 500));
                         } else {
                             if (progress == 10000) {
                                 isIntoSaveVideo = false;
@@ -946,6 +946,7 @@ public class CreationTemplateMvpModel {
                 stickerData.setScale(stickerView.getScale());
                 stickerData.setTranslationX(stickerView.getTranslationX());
                 stickerData.setTranslationy(stickerView.getTranslationY());
+                stickerData.setMaskBitmap(stickerView.getMaskBitmap());
                 if (!TextUtils.isEmpty(stickerView.getOriginalPath())) {
                     String pathType = GetPathTypeModel.getInstance().getMediaType(stickerView.getOriginalPath());
                     stickerData.setVideo(albumType.isVideo(pathType));
@@ -983,7 +984,7 @@ public class CreationTemplateMvpModel {
 
             if (listAllSticker.size() == 0) {
                 isIntoSaveVideo = false;
-                Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().post(() -> Toast.makeText(context,"你未选择素材",Toast.LENGTH_SHORT).show()));
+                Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().post(() -> Toast.makeText(context, "你未选择素材", Toast.LENGTH_SHORT).show()));
                 return;
             }
 

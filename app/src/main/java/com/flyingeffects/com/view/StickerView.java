@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
+import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -17,6 +18,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -231,6 +233,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     private StickerListener tickerListener;
 
+    private Bitmap mMaskBitmap;
+
     public StickerListener getTickerListener() {
         return tickerListener;
     }
@@ -343,12 +347,17 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         vibrator = (Vibrator) getContext().getSystemService(Service.VIBRATOR_SERVICE);
     }
 
-    static Bitmap makeSrc(int w, int h) {
+    static Bitmap makeSrc(int w, int h, float percent) {
         Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(bm);
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-        p.setColor(Color.TRANSPARENT);
+        int graLine = (int) (h - h * percent);
+
+        LinearGradient gradient = new LinearGradient(w, graLine, w, graLine + 50,
+                Color.parseColor("#ffffff"), Color.TRANSPARENT, Shader.TileMode.CLAMP);
+        //p.setColor(Color.TRANSPARENT);
+        p.setShader(gradient);
         c.drawRect(0, 0, w, h, p);
         return bm;
     }
@@ -718,19 +727,19 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             //透明遮罩
             int w = (int) (currentDrawable.getIntrinsicWidth() + 0.5);
             int h = (int) (currentDrawable.getIntrinsicHeight() + 0.5);
-            Bitmap bm = makeSrc(w, h);
+            mMaskBitmap = makeSrc(w, h, mRightOffsetPercent);
             Bitmap dstBm = makeDst(w, h, currentDrawable);
-            LogUtil.d("draw","height1 = "+canvas.getHeight());
-            LogUtil.d("draw","width1 = "+canvas.getWidth());
-            float topLength = mHelpBoxRect.bottom - mRightOffsetPercent * (mHelpBoxRect.bottom - mHelpBoxRect.top);
+            LogUtil.d("draw", "height1 = " + canvas.getHeight());
+            LogUtil.d("draw", "width1 = " + canvas.getWidth());
+            //float topLength = mHelpBoxRect.bottom - mRightOffsetPercent * (mHelpBoxRect.bottom - mHelpBoxRect.top);
             //todo 实现透明可调节遮罩
             int layerID = canvas.saveLayer(0, 0, canvas.getWidth(), canvas.getHeight(), mHelpDstPaint, Canvas.ALL_SAVE_FLAG);
 
             canvas.scale(mScale, mScale, center.x, center.y);
             canvas.rotate(mRotateAngle, center.x, center.y);
             canvas.drawBitmap(dstBm, mHelpBoxRect.left, mHelpBoxRect.top, mHelpDstPaint);
-            mHelpDstPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-            canvas.drawBitmap(bm, mHelpBoxRect.left, topLength, mHelpDstPaint);
+            mHelpDstPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+            canvas.drawBitmap(mMaskBitmap, mHelpBoxRect.left, mHelpBoxRect.top, mHelpDstPaint);
             mHelpDstPaint.setXfermode(null);
             canvas.restoreToCount(layerID);
 
@@ -1363,6 +1372,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     public float getRotateAngle() {
         return mRotateAngle;
+    }
+
+    public Bitmap getMaskBitmap() {
+        return mMaskBitmap;
     }
 
     public StickerTarger getTarger() {

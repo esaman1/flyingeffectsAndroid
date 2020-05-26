@@ -1,5 +1,7 @@
 package com.flyingeffects.com.enity;
 
+import android.graphics.Bitmap;
+
 import java.io.Serializable;
 
 
@@ -7,6 +9,16 @@ import java.io.Serializable;
 public class AllStickerData implements Serializable {
 
     private float rotation;
+
+    public Bitmap getMaskBitmap() {
+        return mMaskBitmap;
+    }
+
+    public void setMaskBitmap(Bitmap mMaskBitmap) {
+        this.mMaskBitmap = mMaskBitmap;
+    }
+
+    private Bitmap mMaskBitmap;
 
     public float getRotation() {
         return rotation;

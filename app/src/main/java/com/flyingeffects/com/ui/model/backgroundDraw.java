@@ -14,8 +14,10 @@ import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.enity.AllStickerData;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.utils.FilterUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.lansongCommendView.StickerItem;
+import com.lansosdk.LanSongFilter.LanSongMaskBlendFilter;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
 import com.lansosdk.box.GifLayer;
@@ -52,7 +54,7 @@ public class backgroundDraw {
     private int intoCanvesCount;
     private String ExtractFramegFolder;
 
-    private boolean noVideo=false;
+    private boolean noVideo = false;
     /**
      * 视频图层声音
      */
@@ -94,14 +96,12 @@ public class backgroundDraw {
             }
         }
         //如果还是0,说明全是图片，就修改为10
-        if(duration==0){
-            noVideo=true;
-            duration=10000;
+        if (duration == 0) {
+            noVideo = true;
+            duration = 10000;
         }
         LogUtil.d("OOM2", "进入到了最后渲染");
 //        waitingProgress.openProgressDialog();
-
-
 
 
         try {
@@ -116,20 +116,20 @@ public class backgroundDraw {
             });
             execute.setOnLanSongSDKProgressListener((l, i) -> {
 
-                if(noVideo){
+                if (noVideo) {
                     callback.saveSuccessPath("", i);
-                }else{
+                } else {
                     float f_progress = (i / (float) 100) * 5;
                     int progress;
-                    if(isMatting){
+                    if (isMatting) {
                         progress = (int) (95 + f_progress);
-                    }else{
+                    } else {
                         progress = (int) (5 + f_progress);
                     }
-                    LogUtil.d("OOM2", "progress="+progress );
+                    LogUtil.d("OOM2", "progress=" + progress);
                     callback.saveSuccessPath("", progress);
                 }
-                LogUtil.d("OOM2", "saveSuccessPath" );
+                LogUtil.d("OOM2", "saveSuccessPath");
 //                waitingProgress.setProgress(i + "%");
 //                waitingProgress.setProgress("正在保存中" + i + "%\n" +
 //                        "请勿离开页面");
@@ -307,7 +307,7 @@ public class backgroundDraw {
         LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
         //   float posY = (bpLayer.getPadHeight() + bpLayer.getLayerHeight()) * percentY - bpLayer.getLayerHeight() / 2.0f;
         bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight() * percentY);
-
+        bpLayer.switchFilterTo(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class, stickerItem.getMaskBitmap()));
     }
 
 
@@ -348,9 +348,9 @@ public class backgroundDraw {
         bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight() * percentY);
 
         preTime = stickerItem.getDuration() * 1000 / (float) getMattingList.size();
-        LogUtil.d("OOM3","贴纸的时长为"+stickerItem.getDuration() );
-        LogUtil.d("OOM3","贴纸的数量为时长为"+(float) getMattingList.size() );
-        LogUtil.d("OOM3","preTime="+preTime );
+        LogUtil.d("OOM3", "贴纸的时长为" + stickerItem.getDuration());
+        LogUtil.d("OOM3", "贴纸的数量为时长为" + (float) getMattingList.size());
+        LogUtil.d("OOM3", "preTime=" + preTime);
 
         nowProgressTime[0] = preTime;
         CanvasLayer canvasLayer = execute.addCanvasLayer();
