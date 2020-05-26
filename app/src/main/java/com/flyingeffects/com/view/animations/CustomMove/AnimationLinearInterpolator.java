@@ -1,6 +1,5 @@
 package com.flyingeffects.com.view.animations.CustomMove;
 
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 
 import com.flyingeffects.com.utils.LogUtil;
@@ -26,7 +25,7 @@ public class AnimationLinearInterpolator {
     private Timer timer;
     private TimerTask task;
     private GetProgressCallback callback;
-    int nowDuration;
+    private  int nowDuration;
 
 
 

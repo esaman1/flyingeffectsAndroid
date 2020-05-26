@@ -23,6 +23,9 @@ public class StartAnimModel {
 
     public void ToEnd(){
         ItemRightToLeft.getInstance().StopAnim();
+        ItemEightBorther.getInstance().StopAnim();
+
+
     }
 
 

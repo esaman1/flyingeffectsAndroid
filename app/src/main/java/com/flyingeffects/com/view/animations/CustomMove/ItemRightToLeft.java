@@ -12,10 +12,14 @@ import java.util.List;
  * user : zhangtongju
  */
 
-public class ItemRightToLeft {
+public class ItemRightToLeft extends baseAnimModel {
 
     private static ItemRightToLeft thisModel;
-    private  AnimationLinearInterpolator animationLinearInterpolator;
+    private AnimationLinearInterpolator animationLinearInterpolator;
+    private float pristineStickerX;
+    private float pristineStickerY;
+    private StickerView mainStickerView;
+
     public static ItemRightToLeft getInstance() {
 
         if (thisModel == null) {
@@ -26,6 +30,8 @@ public class ItemRightToLeft {
 
 
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer, int delay) {
+        this.mainStickerView=mainStickerView;
+        setOriginal(mainStickerView.getCenterX(),mainStickerView.getCenterY());
         StickerView sub1 = subLayer.get(0);
         StickerView sub2 = subLayer.get(1);
         float stickerViewWidth = mainStickerView.GetHelpBoxRectWidth();
@@ -38,7 +44,7 @@ public class ItemRightToLeft {
         float percentWidth2 = 1 - percentWidth;
         LogUtil.d("OOM", "即将开始的进度为" + percent);
         //第一个参数为总时长
-        animationLinearInterpolator  = new AnimationLinearInterpolator(3000, new AnimationLinearInterpolator.GetProgressCallback() {
+        animationLinearInterpolator = new AnimationLinearInterpolator(3000, new AnimationLinearInterpolator.GetProgressCallback() {
             @Override
             public void progress(float progress, boolean isDone) {
                 //拟定倒叙
@@ -59,9 +65,8 @@ public class ItemRightToLeft {
                             sub1.toTranMoveX(tranx, totalWidth);
                         }
                         LogUtil.d("OOM", "Tranx=" + tranx);
-                    sub1.toScale(1 - tranx, mScale, isDone);
+                        sub1.toScale(1 - tranx, mScale, isDone);
                     }
-
 
                     if (sub2 != null) {
                         float tranx;
@@ -98,9 +103,13 @@ public class ItemRightToLeft {
     }
 
 
-    public void StopAnim(){
-        if(animationLinearInterpolator!=null){
+    public void StopAnim() {
+
+
+
+        if (animationLinearInterpolator != null) {
             animationLinearInterpolator.endTimer();
+            resetAnimState(mainStickerView);
         }
 
     }

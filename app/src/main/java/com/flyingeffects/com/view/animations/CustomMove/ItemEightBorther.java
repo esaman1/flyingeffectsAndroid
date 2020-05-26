@@ -9,16 +9,16 @@ import java.util.List;
 
 
 /**
- * description ：动画，右到左动画
+ * description ：动画，花生动画，8兄弟动画  8888888
  * creation date: 2020/5/25
  * user : zhangtongju
  */
 
-public class ItemEightBorther {
+public class ItemEightBorther extends baseAnimModel{
 
     private static ItemEightBorther thisModel;
     private AnimationLinearInterpolator animationLinearInterpolator;
-
+    private StickerView mainStickerView;
     public static ItemEightBorther getInstance() {
 
         if (thisModel == null) {
@@ -29,6 +29,8 @@ public class ItemEightBorther {
 
 
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
+        this.mainStickerView=mainStickerView;
+        setOriginal(mainStickerView.getCenterX(),mainStickerView.getCenterY());
         mainStickerView.drawAnimPath();
         float[] pos = new float[2];
         float[] tan = new float[2];
@@ -41,30 +43,26 @@ public class ItemEightBorther {
         LogUtil.d("OOM", "totalWidth=" + totalWidth);
         float stickerViewPosition = mainStickerView.GetHelpBoxRectRight();
         float percent = stickerViewPosition / totalWidth;
-//        float percentWidth = stickerViewWidth / totalWidth;
         LogUtil.d("OOM", "即将开始的进度为" + percent);
         //第一个参数为总时长
-        animationLinearInterpolator = new AnimationLinearInterpolator(10000, new AnimationLinearInterpolator.GetProgressCallback() {
-            @Override
-            public void progress(float progress, boolean isDone) {
-                //主图层应该走的位置
-                float nowDistance = totalDistancePathMeasure * progress;
-                mPathMeasure.getPosTan(nowDistance, pos, tan);
-                mainStickerView.toTranMoveXY(pos[0], pos[1]);
-                for (int i=0;i<subLayer.size();i++){
-                    StickerView sub=subLayer.get(i);
-                    if(sub!=null){
-                        float needDistance = perDistance*i + nowDistance;
-                        if (needDistance > totalDistancePathMeasure) {
-                            needDistance = needDistance - totalDistancePathMeasure;
-                        }
-                        mPathMeasure.getPosTan(needDistance, pos, tan);
-                        sub.toTranMoveXY(pos[0], pos[1]);
+        animationLinearInterpolator = new AnimationLinearInterpolator(10000, (progress, isDone) -> {
+            //主图层应该走的位置
+            float nowDistance = totalDistancePathMeasure * progress;
+            mPathMeasure.getPosTan(nowDistance, pos, tan);
+            mainStickerView.toTranMoveXY(pos[0], pos[1]);
+            for (int i=0;i<subLayer.size();i++){
+                StickerView sub=subLayer.get(i);
+                if(sub!=null){
+                    float needDistance = perDistance*i + nowDistance;
+                    if (needDistance > totalDistancePathMeasure) {
+                        needDistance = needDistance - totalDistancePathMeasure;
                     }
+                    mPathMeasure.getPosTan(needDistance, pos, tan);
+                    sub.toTranMoveXY(pos[0], pos[1]);
                 }
-
-
             }
+
+
         });
         animationLinearInterpolator.PlayAnimation();
     }
@@ -73,6 +71,7 @@ public class ItemEightBorther {
     public void StopAnim() {
         if (animationLinearInterpolator != null) {
             animationLinearInterpolator.endTimer();
+            resetAnimState(mainStickerView);
         }
     }
 
