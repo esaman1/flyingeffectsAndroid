@@ -28,23 +28,19 @@ public class ItemRightToLeft extends baseAnimModel {
 
 
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer, int delay) {
-        this.mainStickerView=mainStickerView;
-        setOriginal(mainStickerView.getCenterX(),mainStickerView.getCenterY());
+        this.mainStickerView = mainStickerView;
+        setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
         StickerView sub1 = subLayer.get(0);
         StickerView sub2 = subLayer.get(1);
-        float stickerViewWidth = mainStickerView.GetHelpBoxRectWidth();
-        float totalWidth = mainStickerView.getMeasuredWidth() + stickerViewWidth;
-        float perWidth=totalWidth/3;
+
+        //(mainStickerView.getmHelpBoxRectW())  解决方法效果很突兀的情况
+        float totalWidth = mainStickerView.getMeasuredWidth()+(mainStickerView.getmHelpBoxRectW());
         LogUtil.d("OOM", "totalWidth=" + totalWidth);
         float mScale = mainStickerView.GetHelpBoxRectScale();
         //view 右边的位置
         float stickerViewPosition = mainStickerView.GetHelpBoxRectRight();
         //view 右边位置的比例
         float percent = stickerViewPosition / totalWidth;
-        //view 大小的比例
-        float percentWidth = stickerViewWidth / totalWidth;
-        float percentWidth2 = 1 - percentWidth;
-        LogUtil.d("OOM", "即将开始的进度为" + percent);
         //第一个参数为总时长
         animationLinearInterpolator = new AnimationLinearInterpolator(3000, new AnimationLinearInterpolator.GetProgressCallback() {
             @Override
@@ -53,32 +49,32 @@ public class ItemRightToLeft extends baseAnimModel {
                 float needProgress = 1 - progress;
                 if (isDone) {
                     mainStickerView.toScale(percent, mScale, isDone);
-                    mainStickerView.toTranMoveX(percent*totalWidth);
+                    mainStickerView.toTranMoveX(percent * totalWidth);
                 } else {
-                  //  第一个子view大约位置一半位置
+                    //  第一个子view大约位置一半位置,显示在中间位置
                     if (sub1 != null) {
                         float translationToX;
-                        if (needProgress < 0.5) {
-                            translationToX = (float) (needProgress + 0.5);
-                            sub1.toTranMoveX(translationToX*totalWidth);
+                        if (needProgress < 0.66) {
+                            translationToX = (float) (needProgress + 0.33);
+                            sub1.toTranMoveX(translationToX * totalWidth);
 
                         } else {
-                            translationToX = (float) (needProgress - 0.5);
-                            sub1.toTranMoveX(translationToX*totalWidth);
+                            translationToX = (float) (needProgress - 0.66);
+                            sub1.toTranMoveX(translationToX * totalWidth);
                         }
-                        LogUtil.d("OOM", "translationToX=" + translationToX);
-                        sub1.toScale(1 - translationToX, mScale, isDone);
+                        LogUtil.d("OOM", "needToX=" + translationToX * totalWidth);
+                     sub1.toScale(1 - translationToX, mScale, isDone);
                     }
 
                     if (sub2 != null) {
                         float translationToX;
-                        if (needProgress < percentWidth) {
-                            translationToX = (needProgress + percentWidth2);
-                            sub2.toTranMoveX(translationToX* totalWidth);
+                        if (needProgress < 0.33) {
+                            translationToX = (float) (needProgress +  0.66);
+                            sub2.toTranMoveX(translationToX * totalWidth);
 
                         } else {
-                            translationToX = (needProgress - percentWidth);
-                            sub2.toTranMoveX(translationToX*totalWidth);
+                            translationToX = (float) (needProgress - 0.33);
+                            sub2.toTranMoveX(translationToX * totalWidth);
                         }
                         LogUtil.d("OOM", "translationToX2=" + translationToX);
                         sub2.toScale(1 - translationToX, mScale, isDone);
@@ -86,15 +82,15 @@ public class ItemRightToLeft extends baseAnimModel {
 
 
                     float translationToX;
-                    if (needProgress < percentWidth2) {
-                        translationToX = (needProgress + percentWidth);
-                        mainStickerView.toTranMoveX(translationToX*totalWidth);
+                    if (needProgress < (1 - 0.99)) {
+                        translationToX = (float) (needProgress + 0.01);
+                        mainStickerView.toTranMoveX(translationToX * totalWidth);
                     } else {
-                        translationToX = (needProgress - percentWidth2);
-                        mainStickerView.toTranMoveX(translationToX*totalWidth);
+                        translationToX = (float) (needProgress - (1 - 0.99));
+                        mainStickerView.toTranMoveX(translationToX * totalWidth);
                     }
-                    LogUtil.d("OOM", "translationToX2=" + translationToX);
-                   mainStickerView.toScale(1 - translationToX, mScale, isDone);
+                    LogUtil.d("OOM", "needToX=" + translationToX * totalWidth);
+                mainStickerView.toScale(1 - translationToX, mScale, isDone);
 
 
                 }
@@ -105,7 +101,6 @@ public class ItemRightToLeft extends baseAnimModel {
 
 
     public void StopAnim() {
-
 
 
         if (animationLinearInterpolator != null) {

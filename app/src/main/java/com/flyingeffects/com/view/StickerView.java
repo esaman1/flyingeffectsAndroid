@@ -1085,7 +1085,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      */
     private void adjustCenter(float dx, float dy) {
 
-        LogUtil.d("adjustCenter", "dx=" + dx + "dy" + dy);
         if (!enableAutoAdjustCenter) {
             center.offset(dx, dy);
         } else {
