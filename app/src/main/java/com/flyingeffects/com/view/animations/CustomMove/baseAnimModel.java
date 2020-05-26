@@ -2,18 +2,18 @@ package com.flyingeffects.com.view.animations.CustomMove;
 
 import com.flyingeffects.com.view.StickerView;
 
-public class baseAnimModel {
+public abstract class baseAnimModel {
 
     private float originalX;
     private float originalY;
-
+    public AnimationLinearInterpolator animationLinearInterpolator;
     public void setOriginal(float originalX,float originalY) {
         this.originalY = originalY;
         this.originalX = originalX;
     }
 
 
-
+    public  abstract void StopAnim();
 
 
 
@@ -27,8 +27,6 @@ public class baseAnimModel {
         if(mainStickerView!=null){
             mainStickerView.toTranMoveXY(originalX,originalY);
         }
-
-
     }
 
 

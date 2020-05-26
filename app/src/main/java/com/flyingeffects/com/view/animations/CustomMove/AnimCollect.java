@@ -15,16 +15,14 @@ import static com.flyingeffects.com.view.animations.CustomMove.AnimType.LEFTTORI
  * creation date: 2020/5/25
  * user : zhangtongju
  */
-public class AnimCollect {
+public  class AnimCollect {
 
-    static AnimCollect manager;
+    baseAnimModel animModel;
 
-    public static AnimCollect getInstance() {
-        if (manager == null) {
-            manager = new AnimCollect();
-        }
-        return manager;
-    }
+
+
+
+
 
 
     public int getAnimNeedSubLayerCount(AnimType type) {
@@ -39,18 +37,29 @@ public class AnimCollect {
 
 
     public void startAnimForChooseAnim(AnimType type, StickerView mainStickerView, List<StickerView> subLayer) {
+
         switch (type) {
             //8个动画飞天效果
             case EIGHTBORTHER:
-                ItemEightBorther.getInstance().toChangeStickerView(mainStickerView, subLayer);
+                animModel=new ItemEightBorther();
+                ((ItemEightBorther)animModel).toChangeStickerView(mainStickerView, subLayer);
                 break;
             //左进右出
             case LEFTTORIGHT:
-                ItemRightToLeft.getInstance().toChangeStickerView(mainStickerView, subLayer, 0);
+                animModel=new ItemRightToLeft();
+                ((ItemRightToLeft)animModel).toChangeStickerView(mainStickerView, subLayer,0);
                 break;
         }
 
     }
+
+    public void stopAnim(){
+        if(animModel!=null){
+            animModel.StopAnim();
+        }
+    }
+
+
 
 
     public ArrayList<StickerAnim> getAnimList() {

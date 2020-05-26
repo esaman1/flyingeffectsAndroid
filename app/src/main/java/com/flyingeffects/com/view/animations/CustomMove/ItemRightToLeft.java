@@ -14,17 +14,9 @@ import java.util.List;
 
 public class ItemRightToLeft extends baseAnimModel {
 
-    private static ItemRightToLeft thisModel;
-    private AnimationLinearInterpolator animationLinearInterpolator;
+
     private StickerView mainStickerView;
 
-    public static ItemRightToLeft getInstance() {
-
-        if (thisModel == null) {
-            thisModel = new ItemRightToLeft();
-        }
-        return thisModel;
-    }
 
 
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer, int delay) {

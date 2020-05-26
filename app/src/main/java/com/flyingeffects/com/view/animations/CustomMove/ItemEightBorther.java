@@ -16,16 +16,10 @@ import java.util.List;
 
 public class ItemEightBorther extends baseAnimModel{
 
-    private static ItemEightBorther thisModel;
     private AnimationLinearInterpolator animationLinearInterpolator;
     private StickerView mainStickerView;
-    public static ItemEightBorther getInstance() {
 
-        if (thisModel == null) {
-            thisModel = new ItemEightBorther();
-        }
-        return thisModel;
-    }
+
 
 
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
@@ -68,11 +62,11 @@ public class ItemEightBorther extends baseAnimModel{
     }
 
 
+    @Override
     public void StopAnim() {
         if (animationLinearInterpolator != null) {
             animationLinearInterpolator.endTimer();
             resetAnimState(mainStickerView);
         }
     }
-
 }

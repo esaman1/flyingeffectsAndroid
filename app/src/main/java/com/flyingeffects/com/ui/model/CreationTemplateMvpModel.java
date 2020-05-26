@@ -16,11 +16,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -109,7 +107,6 @@ public class CreationTemplateMvpModel {
     private ViewLayerRelativeLayout viewLayerRelativeLayout;
     private ArrayList<AnimStickerModel> listForStickerView = new ArrayList<>();
     private boolean isDestroy = false;
-    private RecyclerView list_thumb;
     private VideoInfo videoInfo;
     private String mGifFolder;
     private String soundFolder;
@@ -144,15 +141,13 @@ public class CreationTemplateMvpModel {
      */
     private String originalPath;
 
-    private DrawPadView2 drawPadView2;
-    private CreateVideoAnimModel createVideoAnimModel;
     private ArrayList<StickerAnim> listAllAnima;
     private ArrayList<StickerView> nowChooseAnimList = new ArrayList<>();
+    AnimCollect animCollect;
 
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath, DrawPadView2 drawPadView2) {
         this.context = context;
         this.callback = callback;
-        this.drawPadView2 = drawPadView2;
         this.originalPath = originalPath;
         this.mVideoPath = mVideoPath;
         dialog = new WaitingDialogProgressNowAnim(context);
@@ -165,8 +160,9 @@ public class CreationTemplateMvpModel {
         mGifFolder = fileManager.getFileCachePath(context, "gifFolder");
         soundFolder = fileManager.getFileCachePath(context, "soundFolder");
         mImageCopyFolder = fileManager.getFileCachePath(context, "imageCopy");
-        createVideoAnimModel = new CreateVideoAnimModel(drawPadView2);
-        listAllAnima = AnimCollect.getInstance().getAnimList();
+//        createVideoAnimModel = new CreateVideoAnimModel(drawPadView2);
+        animCollect=new AnimCollect();
+        listAllAnima = animCollect.getAnimList();
 //        animContainer = new AnimContainer(0, 0, 0, 0, null, null);
 
     }
@@ -328,7 +324,7 @@ public class CreationTemplateMvpModel {
 
             //得到目标贴纸,永远都是最顶上一个
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(nowChooseStickerPosition);
-            startAnimModel = new StartAnimModel(stickerView, nowChooseAnimList);
+            startAnimModel = new StartAnimModel(stickerView, nowChooseAnimList,animCollect);
             startAnimModel.ToEnd();
             if (i == 0) {
                 //贴纸还原,显示到之前的位置
@@ -350,7 +346,7 @@ public class CreationTemplateMvpModel {
                     @Override
                     public void stickerDragUp() {
                         if (isIntoDragMove[0]) {
-                            for (int x = 1; x <= AnimCollect.getInstance().getAnimNeedSubLayerCount(listAllAnima.get(i).getAnimType()); x++) {
+                            for (int x = 1; x <= animCollect.getAnimNeedSubLayerCount(listAllAnima.get(i).getAnimType()); x++) {
                                 //通过动画属性得到需要分身的数量，然后复制出贴纸在数组里面nowChooseAnimList，最后需要删除
                                 copyGif(stickerView.getResPath(), stickerView.getResPath(), stickerView.getComeFrom(), stickerView, stickerView.getOriginalPath(), true);
                             }
@@ -362,7 +358,7 @@ public class CreationTemplateMvpModel {
                     }
                 });
 
-                for (int x = 1; x <= AnimCollect.getInstance().getAnimNeedSubLayerCount(listAllAnima.get(i).getAnimType()); x++) {
+                for (int x = 1; x <= animCollect.getAnimNeedSubLayerCount(listAllAnima.get(i).getAnimType()); x++) {
                     //通过动画属性得到需要分身的数量，然后复制出贴纸在数组里面nowChooseAnimList，最后需要删除
                     copyGif(stickerView.getResPath(), stickerView.getResPath(), stickerView.getComeFrom(), stickerView, stickerView.getOriginalPath(), true);
                 }
@@ -1002,7 +998,7 @@ public class CreationTemplateMvpModel {
         int screenWidth = screenUtil.getScreenWidth((Activity) context);
         int dp40 = screenUtil.dip2px(context, 40);
         list_thumb.setPadding(screenWidth / 2 - dp40, 0, 0, 0);
-        this.list_thumb = list_thumb;
+//        this.list_thumb = list_thumb;
         linearLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         list_thumb.setLayoutManager(linearLayoutManager);
         mTimelineAdapter = new TimelineAdapter();

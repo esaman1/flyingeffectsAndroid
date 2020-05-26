@@ -8,28 +8,27 @@ public class StartAnimModel {
 
     private List<StickerView> subLayer;
     private StickerView mainStickerView;
+    private AnimCollect animCollect;
 
-    public StartAnimModel(StickerView mainStickerView, List<StickerView> subLayer) {
+
+    public StartAnimModel(StickerView mainStickerView, List<StickerView> subLayer, AnimCollect animCollect) {
         this.subLayer = subLayer;
         this.mainStickerView = mainStickerView;
+        this.animCollect = animCollect;
     }
 
 
+    public void ToStart(AnimType animType) {
 
-    public void ToStart(AnimType animType){
-        AnimCollect.getInstance().startAnimForChooseAnim(animType,mainStickerView,subLayer);
+        animCollect.startAnimForChooseAnim(animType, mainStickerView, subLayer);
     }
 
 
-    public void ToEnd(){
-        ItemRightToLeft.getInstance().StopAnim();
-        ItemEightBorther.getInstance().StopAnim();
+    public void ToEnd() {
+        animCollect.stopAnim();
 
 
     }
-
-
-
 
 
 }
