@@ -1025,6 +1025,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         return true;
     }
 
+    //右侧滑动
     private void changeRightOffset(float dx, float dy) {
         float sqrt = (float) Math.sqrt(dx * dx + dy * dy);
 
