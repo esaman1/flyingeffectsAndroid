@@ -11,6 +11,7 @@ import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PathMeasure;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -75,7 +76,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private GestureDetector mGestureDetector;
     private ScaleGestureDetector mScaleDetector;
     private RotationGestureDetector mRotationDetector;
-    private boolean isFromStickerAnim=false;
+    private boolean isFromStickerAnim = false;
 
 
     /**
@@ -198,7 +199,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     /**
      * 是否来自动画子view
      */
-    private boolean isFromAnim=false;
+    private boolean isFromAnim = false;
 
 
     /**
@@ -237,6 +238,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private String clipPath;
 
     private boolean isFromAlbum = false;
+
+    /**
+     * 透明画笔
+     */
+    private Paint transparency = new Paint();
 
 
     public void setTickerListener(StickerListener tickerListener) {
@@ -445,8 +451,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         this.callback = callback;
     }
 
-    public void setOnItemDragListener(StickerItemOnDragListener dragCallback){
-    this.dragCallback=dragCallback;
+    public void setOnItemDragListener(StickerItemOnDragListener dragCallback) {
+        this.dragCallback = dragCallback;
     }
 
 
@@ -670,7 +676,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             RectUtil.scaleRect(mHelpBoxRect, mScale);
 //            RectUtil.scaleRect(textRect, mScale);
             //显示编辑框
-            if (frameShow&&!isFromAnim) {
+            if (frameShow && !isFromAnim) {
                 // draw x and rotate button
                 int offsetValue = 0;
                 if (leftTopBitmap != null) {
@@ -757,6 +763,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
             }
 
+//            if (mAnimPath != null) {
+//                canvas.drawPath(mAnimPath, mHelpPaint);
+//            }
+
 
         }
     }
@@ -798,7 +808,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public boolean onTouchEvent(MotionEvent event) {
         // 是否向下传递事件标志 true为消耗
         super.onTouchEvent(event);
-        if(!isFromAnim){
+        if (!isFromAnim) {
             int action = event.getAction();
             float x = event.getX();
             float y = event.getY();
@@ -845,7 +855,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     handler.removeMessages(DISMISS_FRAME);
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    if(dragCallback!=null){
+                    if (dragCallback != null) {
                         dragCallback.stickerDragMove();
                     }
                     if (UiStep.isFromDownBj) {
@@ -869,7 +879,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                         adjustCenter(dx, dy);
                         invalidate();
                         lastX = x;
-                        LogUtil.d("toTranMove2","Old-----lastX="+lastX);
+                        LogUtil.d("toTranMove2", "Old-----lastX=" + lastX);
                         lastY = y;
                         moveX = mHelpBoxRect.right;
                         moveY = mHelpBoxRect.bottom;
@@ -891,7 +901,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     break;
                 case MotionEvent.ACTION_CANCEL:
                 case MotionEvent.ACTION_UP:
-                    if(dragCallback!=null){
+                    if (dragCallback != null) {
                         dragCallback.stickerDragUp();
                     }
 
@@ -1075,7 +1085,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      */
     private void adjustCenter(float dx, float dy) {
 
-        LogUtil.d("adjustCenter","dx="+dx+"dy"+dy);
+        LogUtil.d("adjustCenter", "dx=" + dx + "dy" + dy);
         if (!enableAutoAdjustCenter) {
             center.offset(dx, dy);
         } else {
@@ -1178,10 +1188,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-    public float getmHelpBoxRectW(){
+    public float getmHelpBoxRectW() {
         return mHelpBoxRect.width();
     }
-    public float getmHelpBoxRectH(){
+
+    public float getmHelpBoxRectH() {
         return mHelpBoxRect.height();
     }
 
@@ -1258,8 +1269,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public void setOriginalPath(String originalPath) {
         this.originalPath = originalPath;
     }
-
-
 
 
     //贴纸里面获得源地址，切记，选择的gif 是没得这个功能的
@@ -1605,10 +1614,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-
-    //-------------------零时搭建动画管理
-
-
+    //-------------------动画开始
 
 
     public float GetHelpBoxRectScale() {
@@ -1618,6 +1624,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public float GetHelpBoxRectWidth() {
         return mHelpBoxRect.width();
     }
+
     public float GetHelpBoxRectRight() {
         return mHelpBoxRect.right;
     }
@@ -1628,54 +1635,64 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      * creation date: 2020/5/20
      * user : zhangtongju
      */
-    public void toTranMoveX(Float percent,float totalW){
-        LogUtil.d("OOM","percent="+percent);
-        LogUtil.d("toTranMove","totalW="+totalW);
-        float needToX=totalW*percent-mHelpBoxRect.width();
+    public void toTranMoveX(Float percent, float totalW) {
+        LogUtil.d("OOM", "percent=" + percent);
+        LogUtil.d("toTranMove", "totalW=" + totalW);
+        float needToX = totalW * percent - mHelpBoxRect.width();
 //        LogUtil.d("toTranMove2","needToX="+needToX);
-//
 //        float dx = needToX - lastX;
 //        LogUtil.d("toTranMove2","New-----lastX="+lastX);
 //        LogUtil.d("toTranMove","dx="+dx);
 ////        layoutX += dx;
 ////        adjustCenter(dx, 0);
-
-        center.set(needToX,mHelpBoxRect.centerY());
-
-
-
+        center.set(needToX, mHelpBoxRect.centerY());
         invalidate();
         lastX = needToX;
     }
 
 
 
+    public void toTranMoveX( float needToX) {
+        center.set(needToX, mHelpBoxRect.centerY());
+        invalidate();
+        lastX = needToX;
+    }
 
+    public void toTranMoveY( float needToY) {
+        center.set(mHelpBoxRect.centerX(),needToY);
+        invalidate();
+        lastY = needToY;
+    }
 
+    public void toTranMoveXY( float needToX,float needToY) {
+        center.set(needToX,needToY);
+        invalidate();
+        lastY = needToY;
+        lastX = needToX;
+    }
 
-
-    public void toTranMoveY(Float percent){
-        int totalH= (int) (getMeasuredHeight()+mHelpBoxRect.height());
-        LogUtil.d("toTranMove","totalW="+totalH);
-        float needToH=totalH*percent;
-        LogUtil.d("toTranMove","needToX="+needToH);
+    public void toTranMoveY(Float percent) {
+        int totalH = (int) (getMeasuredHeight() + mHelpBoxRect.height());
+        LogUtil.d("toTranMove", "totalW=" + totalH);
+        float needToH = totalH * percent;
+        LogUtil.d("toTranMove", "needToX=" + needToH);
         float dy = needToH - lastY;
-        LogUtil.d("toTranMove","dx="+dy);
+        LogUtil.d("toTranMove", "dx=" + dy);
         layoutY += dy;
         adjustCenter(0, dy);
-        LogUtil.d("toTranMove","dy="+lastY);
+        LogUtil.d("toTranMove", "dy=" + lastY);
         invalidate();
         lastY = needToH;
     }
 
 
-    public void toScale(Float percent,float lastScale,boolean isDone){
-        if(isDone){
+    public void toScale(Float percent, float lastScale, boolean isDone) {
+        if (isDone) {
             mScale = lastScale;
-        }else{
-            LogUtil.d("toScale","mScale1111="+mScale);
-            mScale = lastScale+percent*lastScale;
-            LogUtil.d("toScale","mScale2222="+mScale);
+        } else {
+            LogUtil.d("toScale", "mScale1111=" + mScale);
+            mScale = lastScale + percent * lastScale;
+            LogUtil.d("toScale", "mScale2222=" + mScale);
         }
 
     }
@@ -1684,22 +1701,50 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     /**
      * 是否来自动画页面
      */
-    public void setIsfromAnim(boolean isFromAnim){
-        this.isFromAnim=isFromAnim;
+    public void setIsfromAnim(boolean isFromAnim) {
+        this.isFromAnim = isFromAnim;
     }
 
 
-
-
-
-    public void setIsFromStickerAnim(boolean isFromStickerAnim){
-        this.isFromStickerAnim=isFromStickerAnim;
+    public void setIsFromStickerAnim(boolean isFromStickerAnim) {
+        this.isFromStickerAnim = isFromStickerAnim;
     }
 
-    public boolean  getIsFromStickerAnim(){
-        return  isFromStickerAnim;
+    public boolean getIsFromStickerAnim() {
+        return isFromStickerAnim;
     }
 
+
+    /**
+     * description ：绘制2个圆路径动画，通过贝塞尔画正余弦曲线
+     * creation date: 2020/5/25
+     * user : zhangtongju
+     */
+
+    Path mAnimPath;
+    PathMeasure mPathMeasure;
+
+    public void drawAnimPath() {
+        float helpBoxHeight = mHelpBoxRect.height();
+        float diameter = helpBoxHeight / 3 * 2;
+        mAnimPath = new Path();
+        mAnimPath.moveTo(mHelpBoxRect.centerX(),mHelpBoxRect.centerY()-diameter*2);
+        mAnimPath.rQuadTo(-diameter*2, diameter, 0,diameter*2);
+        mAnimPath.rQuadTo(diameter*2, diameter,0, diameter*2);
+
+        mAnimPath.rQuadTo(-diameter*2, -diameter,0, -diameter*2);
+        mAnimPath.rQuadTo(diameter*2, -diameter,0, -diameter*2);
+//        mAnimPath.addCircle(mHelpBoxRect.centerX(), mHelpBoxRect.centerY() - diameter, diameter, Path.Direction.CCW);
+//        mAnimPath.addCircle(mHelpBoxRect.centerX(), mHelpBoxRect.centerY() + diameter, diameter, Path.Direction.CCW);
+        mPathMeasure = new PathMeasure();
+        mPathMeasure.setPath(mAnimPath, true);
+        LogUtil.d("OOM", " mPathMeasure.getLength()=" + mPathMeasure.getLength());
+    }
+
+
+    public PathMeasure getAnimPathMeasure() {
+        return mPathMeasure;
+    }
 
 
 }

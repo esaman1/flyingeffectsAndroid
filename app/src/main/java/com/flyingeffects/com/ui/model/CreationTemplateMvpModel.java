@@ -40,6 +40,7 @@ import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.AllStickerData;
+import com.flyingeffects.com.enity.StickerAnim;
 import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.http.Api;
@@ -60,6 +61,8 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.HorizontalListView;
 import com.flyingeffects.com.view.StickerView;
+import com.flyingeffects.com.view.animations.CustomMove.AnimCollect;
+import com.flyingeffects.com.view.animations.CustomMove.AnimType;
 import com.flyingeffects.com.view.animations.CustomMove.StartAnimModel;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnDragListener;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
@@ -143,7 +146,7 @@ public class CreationTemplateMvpModel {
 
     private DrawPadView2 drawPadView2;
     private CreateVideoAnimModel createVideoAnimModel;
-
+    private ArrayList<StickerAnim> listAllAnima;
     private ArrayList<StickerView> nowChooseAnimList = new ArrayList<>();
 
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath, DrawPadView2 drawPadView2) {
@@ -163,6 +166,7 @@ public class CreationTemplateMvpModel {
         soundFolder = fileManager.getFileCachePath(context, "soundFolder");
         mImageCopyFolder = fileManager.getFileCachePath(context, "imageCopy");
         createVideoAnimModel = new CreateVideoAnimModel(drawPadView2);
+        listAllAnima = AnimCollect.getInstance().getAnimList();
 //        animContainer = new AnimContainer(0, 0, 0, 0, null, null);
 
     }
@@ -296,71 +300,64 @@ public class CreationTemplateMvpModel {
         gridAdapter = new TemplateGridViewAdapter(listForSticker, context);
         gridView.setAdapter(gridAdapter);
 
-        ArrayList<String> list = new ArrayList<>();
-        list.add("左到右");
+
         View viewForChooseAnim = LayoutInflater.from(context).inflate(R.layout.view_create_template_anim, viewPager, false);
         GridView gridViewAnim = viewForChooseAnim.findViewById(R.id.gridView_anim);
-        gridViewAnim.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (nowChooseAnimList != null && nowChooseAnimList.size() > 0) {
-                    for (StickerView stickerView : nowChooseAnimList
-                    ) {
-                        deleteStickView(stickerView);
-                    }
+        gridViewAnim.setOnItemClickListener((adapterView, view, i, l) -> {
+            //当前动画类型
+            AnimType animType = listAllAnima.get(i).getAnimType();
+            if (nowChooseAnimList != null && nowChooseAnimList.size() > 0) {
+                for (StickerView stickerView : nowChooseAnimList
+                ) {
+                    deleteStickView(stickerView);
                 }
-
-                //重新得到所有的贴纸列表
-                for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
-                    StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(y);
-                    listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
-                }
-
-
-                //得到目标贴纸,永远都是最顶上一个
-                StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(viewLayerRelativeLayout.getChildCount()-1);
-                StartAnimModel model = new StartAnimModel(stickerView, nowChooseAnimList);
-                final boolean[] isIntoDragMove = {false};
-                stickerView.setOnItemDragListener(new StickerItemOnDragListener() {
-                    @Override
-                    public void stickerDragMove() {
-                        isIntoDragMove[0] =true;
-                        model.ToEnd();
-                        for (StickerView subStickerView : nowChooseAnimList
-                        ) {
-                            deleteStickView(subStickerView);
-                        }
-                    }
-
-                    @Override
-                    public void stickerDragUp() {
-                        if(isIntoDragMove[0]){
-                            new Handler().postDelayed(() -> {
-                                model.ToStart();
-                            }, 1000);
-                        }
-                        isIntoDragMove[0]  =false;
-                    }
-                });
-
-                for (int x = 0; x <= 1; x++) {
-                    //通过动画属性得到需要分身的数量，然后复制出贴纸在数组里面nowChooseAnimList，最后需要删除
-                    copyGif(stickerView.getResPath(), stickerView.getResPath(), stickerView.getComeFrom(), stickerView, stickerView.getOriginalPath(), true);
-                }
-
-                new Handler().postDelayed(() -> model.ToStart(), 1000);
-
-
             }
-        });
-        TemplateGridViewAnimAdapter gridAdapter = new TemplateGridViewAnimAdapter(list, context);
-        gridViewAnim.setAdapter(gridAdapter);
+            //重新得到所有的贴纸列表
+            for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
+                StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(y);
+                listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
+            }
+            //当前选中的贴纸
+            int nowChooseStickerPosition = viewLayerRelativeLayout.getChildCount() - 1;
+            //得到目标贴纸,永远都是最顶上一个
+            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(nowChooseStickerPosition);
+            StartAnimModel model = new StartAnimModel(stickerView, nowChooseAnimList);
 
+            final boolean[] isIntoDragMove = {false};
+            stickerView.setOnItemDragListener(new StickerItemOnDragListener() {
+                @Override
+                public void stickerDragMove() {
+                    isIntoDragMove[0] = true;
+                    model.ToEnd();
+                    for (StickerView subStickerView : nowChooseAnimList
+                    ) {
+                        deleteStickView(subStickerView);
+                    }
+                }
+
+                @Override
+                public void stickerDragUp() {
+                    if (isIntoDragMove[0]) {
+                        new Handler().postDelayed(() -> {
+                            model.ToStart(animType);
+                        }, 1000);
+                    }
+                    isIntoDragMove[0] = false;
+                }
+            });
+
+            for (int x = 1; x <= AnimCollect.getInstance().getAnimNeedSubLayerCount(listAllAnima.get(i).getAnimType()); x++) {
+                //通过动画属性得到需要分身的数量，然后复制出贴纸在数组里面nowChooseAnimList，最后需要删除
+                copyGif(stickerView.getResPath(), stickerView.getResPath(), stickerView.getComeFrom(), stickerView, stickerView.getOriginalPath(), true);
+            }
+            new Handler().postDelayed(() -> model.ToStart(animType), 1000);
+
+        });
+        TemplateGridViewAnimAdapter gridAdapter = new TemplateGridViewAnimAdapter(listAllAnima, context);
+        gridViewAnim.setAdapter(gridAdapter);
         listForInitBottom.add(templateThumbView);
         listForInitBottom.add(viewForChooseAnim);
         TemplateViewPager adapter = new TemplateViewPager(listForInitBottom);
-
-
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -377,17 +374,6 @@ public class CreationTemplateMvpModel {
 
             }
         });
-
-
-    }
-
-
-    /**
-     * description ：开启单个动画
-     * creation date: 2020/5/19
-     * user : zhangtongju
-     */
-    private void startSingleAnim() {
 
 
     }
@@ -803,7 +789,6 @@ public class CreationTemplateMvpModel {
             }
         }
         delectedListForSticker(nowId);
-
     }
 
 

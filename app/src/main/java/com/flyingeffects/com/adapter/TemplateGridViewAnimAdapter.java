@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.enity.StickerAnim;
 import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.manager.GlideRoundTransform;
 
@@ -23,11 +24,11 @@ import java.util.List;
 public class TemplateGridViewAnimAdapter extends BaseAdapter {
 
 
-    private List<String> list;
+    private List<StickerAnim> list;
     private Context context;
 //    private String mGifFolder;
 
-    public TemplateGridViewAnimAdapter(List<String> list, Context context) {
+    public TemplateGridViewAnimAdapter(List<StickerAnim> list, Context context) {
         this.list = list;
         this.context = context;
 //        FileManager fileManager = new FileManager();
@@ -62,7 +63,7 @@ public class TemplateGridViewAnimAdapter extends BaseAdapter {
             holder = (ViewHold) view.getTag();
         }
 
-        holder.tv_name.setText(list.get(position));
+        holder.tv_name.setText(list.get(position).getName());
 //        StickerList stickerList = list.get(position);
 //        if (stickerList.isClearSticker()) {
 //            holder.image.setImageResource(R.mipmap.sticker_clear);

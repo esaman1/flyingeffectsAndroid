@@ -5,10 +5,17 @@ import com.flyingeffects.com.view.StickerView;
 
 import java.util.List;
 
+
+/**
+ * description ：动画，右到左动画
+ * creation date: 2020/5/25
+ * user : zhangtongju
+ */
+
 public class ItemRightToLeft {
 
     private static ItemRightToLeft thisModel;
-    AnimationLinearInterpolator animationLinearInterpolator;
+    private  AnimationLinearInterpolator animationLinearInterpolator;
     public static ItemRightToLeft getInstance() {
 
         if (thisModel == null) {
@@ -21,7 +28,6 @@ public class ItemRightToLeft {
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer, int delay) {
         StickerView sub1 = subLayer.get(0);
         StickerView sub2 = subLayer.get(1);
-
         float stickerViewWidth = mainStickerView.GetHelpBoxRectWidth();
         float totalWidth = mainStickerView.getMeasuredWidth() + stickerViewWidth;
         LogUtil.d("OOM", "totalWidth=" + totalWidth);
@@ -93,7 +99,10 @@ public class ItemRightToLeft {
 
 
     public void StopAnim(){
-        animationLinearInterpolator.endTimer();
+        if(animationLinearInterpolator!=null){
+            animationLinearInterpolator.endTimer();
+        }
+
     }
 
 }

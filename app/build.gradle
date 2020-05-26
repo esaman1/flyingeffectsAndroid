@@ -136,7 +136,7 @@ dependencies {
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
     //友盟统计
     implementation 'com.umeng.umsdk:analytics:8.1.6'
-    implementation
+    implementation 'com.umeng.umsdk:common:2.2.5'
     implementation 'com.umeng.umsdk:utdid:1.1.5.3'
 
     implementation 'com.umeng.umsdk:share-core:6.9.4'
