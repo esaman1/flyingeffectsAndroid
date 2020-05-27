@@ -161,7 +161,7 @@ public class CreationTemplateMvpModel {
         soundFolder = fileManager.getFileCachePath(context, "soundFolder");
         mImageCopyFolder = fileManager.getFileCachePath(context, "imageCopy");
 //        createVideoAnimModel = new CreateVideoAnimModel(drawPadView2);
-        animCollect=new AnimCollect();
+        animCollect = new AnimCollect();
         listAllAnima = animCollect.getAnimList();
 //        animContainer = new AnimContainer(0, 0, 0, 0, null, null);
 
@@ -301,71 +301,7 @@ public class CreationTemplateMvpModel {
         View viewForChooseAnim = LayoutInflater.from(context).inflate(R.layout.view_create_template_anim, viewPager, false);
         GridView gridViewAnim = viewForChooseAnim.findViewById(R.id.gridView_anim);
         gridViewAnim.setOnItemClickListener((adapterView, view, i, l) -> {
-
-            //删除动画贴纸
-            if (nowChooseAnimList != null && nowChooseAnimList.size() > 0) {
-                for (StickerView stickerView : nowChooseAnimList
-                ) {
-                    deleteStickView(stickerView);
-                }
-            }
-
-
-            //当前选中的贴纸
-            int nowChooseStickerPosition = viewLayerRelativeLayout.getChildCount() - 1;
-            //选择的动画类型
-            AnimType animType = listAllAnima.get(i).getAnimType();
-            //重新得到所有的贴纸列表
-            for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
-                StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(y);
-                listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
-            }
-
-
-            //得到目标贴纸,永远都是最顶上一个
-            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(nowChooseStickerPosition);
-            startAnimModel = new StartAnimModel(stickerView, nowChooseAnimList,animCollect);
-            startAnimModel.ToEnd();
-            if (i == 0) {
-                //贴纸还原,显示到之前的位置
-                ToastUtil.showToast("清理全部贴纸");
-            } else {
-
-                final boolean[] isIntoDragMove = {false};
-                stickerView.setOnItemDragListener(new StickerItemOnDragListener() {
-                    @Override
-                    public void stickerDragMove() {
-                        isIntoDragMove[0] = true;
-                        startAnimModel.ToEnd();
-                        for (StickerView subStickerView : nowChooseAnimList
-                        ) {
-                            deleteStickView(subStickerView);
-                        }
-                    }
-
-                    @Override
-                    public void stickerDragUp() {
-                        if (isIntoDragMove[0]) {
-                            for (int x = 1; x <= animCollect.getAnimNeedSubLayerCount(listAllAnima.get(i).getAnimType()); x++) {
-                                //通过动画属性得到需要分身的数量，然后复制出贴纸在数组里面nowChooseAnimList，最后需要删除
-                                copyGif(stickerView.getResPath(), stickerView.getResPath(), stickerView.getComeFrom(), stickerView, stickerView.getOriginalPath(), true);
-                            }
-                            new Handler().postDelayed(() -> {
-                                startAnimModel.ToStart(animType);
-                            }, 1000);
-                        }
-                        isIntoDragMove[0] = false;
-                    }
-                });
-
-                for (int x = 1; x <= animCollect.getAnimNeedSubLayerCount(listAllAnima.get(i).getAnimType()); x++) {
-                    //通过动画属性得到需要分身的数量，然后复制出贴纸在数组里面nowChooseAnimList，最后需要删除
-                    copyGif(stickerView.getResPath(), stickerView.getResPath(), stickerView.getComeFrom(), stickerView, stickerView.getOriginalPath(), true);
-                }
-                new Handler().postDelayed(() -> startAnimModel.ToStart(animType), 1000);
-            }
-
-
+            startPlayAnim(i);
         });
         TemplateGridViewAnimAdapter gridAdapter = new TemplateGridViewAnimAdapter(listAllAnima, context);
         gridViewAnim.setAdapter(gridAdapter);
@@ -388,10 +324,50 @@ public class CreationTemplateMvpModel {
 
             }
         });
-
-
     }
 
+
+    private void startPlayAnim(int position){
+        //删除动画贴纸
+        if (nowChooseAnimList != null && nowChooseAnimList.size() > 0) {
+            for (StickerView stickerView : nowChooseAnimList
+            ) {
+                deleteStickView(stickerView);
+            }
+        }
+        if(nowChooseAnimList!=null){
+            nowChooseAnimList.clear();
+        }
+        //当前选中的贴纸
+        int nowChooseStickerPosition = viewLayerRelativeLayout.getChildCount() - 1;
+        //选择的动画类型
+        AnimType animType = listAllAnima.get(position).getAnimType();
+        //重新得到所有的贴纸列表
+        listAllSticker.clear();
+        for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
+            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(y);
+            listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
+        }
+        //得到目标贴纸,永远都是最顶上一个
+        StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(nowChooseStickerPosition);
+
+        if (position == 0) {
+            //贴纸还原,显示到之前的位置
+            ToastUtil.showToast("清理全部动画");
+            for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
+                ((StickerView) viewLayerRelativeLayout.getChildAt(y)).setChooseAnimId(AnimType.NULL);
+            }
+        } else {
+            for (int x = 1; x <= animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType()); x++) {
+                //通过动画属性得到需要分身的数量，然后复制出贴纸在数组里面nowChooseAnimList，最后需要删除
+                copyGif(stickerView.getResPath(), stickerView.getResPath(), stickerView.getComeFrom(), stickerView, stickerView.getOriginalPath(), true);
+            }
+            startAnimModel = new StartAnimModel(stickerView, nowChooseAnimList, animCollect);
+            startAnimModel.ToEnd();
+            new Handler().postDelayed(() -> startAnimModel.ToStart(animType), 1000);
+            stickerView.setChooseAnimId(animType);
+        }
+    }
 
     private void finishData() {
         smartRefreshLayout.finishRefresh();
@@ -565,7 +541,7 @@ public class CreationTemplateMvpModel {
      */
 
     int stickerViewID;
-
+    private boolean isIntoDragMove=false;
     private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim) {
         closeAllAnim();
         StickerView stickView = new StickerView(context);
@@ -686,6 +662,30 @@ public class CreationTemplateMvpModel {
                 }
                 viewLayerRelativeLayout.addView(stickView);
                 stickView.start();
+                //停止全部动画
+                if(startAnimModel!=null){
+                    startAnimModel.ToEnd();
+                }
+            }
+        });
+
+        stickView.setOnItemDragListener(new StickerItemOnDragListener() {
+            @Override
+            public void stickerDragMove() {
+                isIntoDragMove = true;
+                for (StickerView subStickerView : nowChooseAnimList
+                ) {
+                    deleteStickView(subStickerView);
+                }
+            }
+
+            @Override
+            public void stickerDragUp() {
+                if (isIntoDragMove&&stickView.getChooseAnimId()!=null&&stickView.getChooseAnimId()!=AnimType.NULL) {
+                    //模拟动画按钮的点击事件
+                    startPlayAnim(animCollect.getAnimid(stickView.getChooseAnimId()));
+                }
+                isIntoDragMove = false;
             }
         });
         stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));

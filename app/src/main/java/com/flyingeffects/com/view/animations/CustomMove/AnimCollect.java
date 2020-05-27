@@ -21,7 +21,17 @@ public  class AnimCollect {
 
 
 
-
+    public int getAnimid(AnimType type) {
+        switch (type) {
+            case EIGHTBORTHER:
+                return 2;
+            case LEFTTORIGHT:
+                return 1;
+            case NULL:
+                return 0;
+        }
+        return 0;
+    }
 
 
 

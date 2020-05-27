@@ -53,6 +53,7 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.TickerAnimated;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
+import com.flyingeffects.com.view.animations.CustomMove.AnimType;
 import com.flyingeffects.com.view.lansongCommendView.RectUtil;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnDragListener;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
@@ -78,6 +79,18 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private RotationGestureDetector mRotationDetector;
     private boolean isFromStickerAnim = false;
 
+    public AnimType getChooseAnimId() {
+        return ChooseAnimId;
+    }
+
+    public void setChooseAnimId(AnimType chooseAnimId) {
+        ChooseAnimId = chooseAnimId;
+    }
+
+    /**
+     * 当前贴纸选择的动画
+     */
+    public AnimType ChooseAnimId;
 
     /**
      * 当前素材是否是视频
@@ -1629,28 +1642,24 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-
-
-
-    public void toTranMoveX( float needToX) {
+    public void toTranMoveX(float needToX) {
         center.set(needToX, mHelpBoxRect.centerY());
         invalidate();
         lastX = needToX;
     }
 
-    public void toTranMoveY( float needToY) {
-        center.set(mHelpBoxRect.centerX(),needToY);
+    public void toTranMoveY(float needToY) {
+        center.set(mHelpBoxRect.centerX(), needToY);
         invalidate();
         lastY = needToY;
     }
 
-    public void toTranMoveXY( float needToX,float needToY) {
-        center.set(needToX,needToY);
+    public void toTranMoveXY(float needToX, float needToY) {
+        center.set(needToX, needToY);
         invalidate();
         lastY = needToY;
         lastX = needToX;
     }
-
 
 
     public void toScale(Float percent, float lastScale, boolean isDone) {
@@ -1695,12 +1704,12 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         float helpBoxHeight = mHelpBoxRect.height();
         float diameter = helpBoxHeight / 3 * 2;
         mAnimPath = new Path();
-        mAnimPath.moveTo(mHelpBoxRect.centerX(),mHelpBoxRect.centerY()-diameter*2);
-        mAnimPath.rQuadTo(-diameter*2, diameter, 0,diameter*2);
-        mAnimPath.rQuadTo(diameter*2, diameter,0, diameter*2);
+        mAnimPath.moveTo(mHelpBoxRect.centerX(), mHelpBoxRect.centerY() - diameter * 2);
+        mAnimPath.rQuadTo(-diameter * 2, diameter, 0, diameter * 2);
+        mAnimPath.rQuadTo(diameter * 2, diameter, 0, diameter * 2);
 
-        mAnimPath.rQuadTo(-diameter*2, -diameter,0, -diameter*2);
-        mAnimPath.rQuadTo(diameter*2, -diameter,0, -diameter*2);
+        mAnimPath.rQuadTo(-diameter * 2, -diameter, 0, -diameter * 2);
+        mAnimPath.rQuadTo(diameter * 2, -diameter, 0, -diameter * 2);
 //        mAnimPath.addCircle(mHelpBoxRect.centerX(), mHelpBoxRect.centerY() - diameter, diameter, Path.Direction.CCW);
 //        mAnimPath.addCircle(mHelpBoxRect.centerX(), mHelpBoxRect.centerY() + diameter, diameter, Path.Direction.CCW);
         mPathMeasure = new PathMeasure();
@@ -1712,6 +1721,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public PathMeasure getAnimPathMeasure() {
         return mPathMeasure;
     }
+
 
 
 }
