@@ -1359,18 +1359,56 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     public void showAllAnim(boolean isShow) {
-
-        if (listForStickerView != null && listForStickerView.size() > 0) {
-            for (AnimStickerModel stickerModel : listForStickerView
+        //删除动画贴纸
+        if (nowChooseAnimList != null && nowChooseAnimList.size() > 0) {
+            for (StickerView stickerView : nowChooseAnimList
             ) {
+                deleteStickView(stickerView);
+            }
+        }
+        if (nowChooseAnimList != null) {
+            nowChooseAnimList.clear();
+        }
+        stopAllAnim();
+        if (listForStickerView != null && listForStickerView.size() > 0) {
+
+            for(int i=0;i<listForStickerView.size();i++){
+                AnimStickerModel stickerModel =listForStickerView.get(i);
                 StickerView stickerView = stickerModel.getStickerView();
                 if (stickerView != null && stickerView.getChooseAnimId() != AnimType.NULL) {
                     if (isShow) {
-                        int type = animCollect.getAnimid(stickerView.getChooseAnimId());
-                        startPlayAnim(type, stickerView);
+                        if(stickerView.getChooseAnimId()!=null){
+                            int type = animCollect.getAnimid(stickerView.getChooseAnimId());
+                            startPlayAnim(type, stickerView);
+                        }
                     }
                 }
+
             }
+
+
+//            for (AnimStickerModel stickerModel : listForStickerView
+//            ) {
+//                StickerView stickerView = stickerModel.getStickerView();
+//                if (stickerView != null && stickerView.getChooseAnimId() != AnimType.NULL) {
+//                    if (isShow) {
+//                        int type = animCollect.getAnimid(stickerView.getChooseAnimId());
+//                        startPlayAnim(type, stickerView);
+//                    }
+//                }
+//            }
+        }
+    }
+
+
+    /**
+     * description ：暂停全部动画
+     * creation date: 2020/5/27
+     * user : zhangtongju
+     */
+    private void stopAllAnim(){
+        if (startAnimModel != null) {
+            startAnimModel.ToEnd();
         }
     }
 
