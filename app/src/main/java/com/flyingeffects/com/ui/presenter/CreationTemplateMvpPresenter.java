@@ -50,6 +50,10 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.showGifAnim(isShow);
     }
 
+    public void showAllAnim(boolean isSHow){
+        creationTemplatemodel.showAllAnim(isSHow);
+    }
+
     public void chooseAnim(int pageNum){
         creationTemplatemodel.chooseAnim(pageNum);
     }

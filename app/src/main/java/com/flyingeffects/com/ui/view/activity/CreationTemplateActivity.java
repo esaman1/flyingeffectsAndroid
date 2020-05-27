@@ -368,6 +368,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         isPlaying = true;
                         startTimer();
                         presenter.showGifAnim(true);
+                        presenter.showAllAnim(true);
                     }
                 }
 

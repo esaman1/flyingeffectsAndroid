@@ -105,6 +105,7 @@ public class CreationTemplateMvpModel {
     private List<View> listForInitBottom = new ArrayList<>();
     private String mVideoPath;
     private ViewLayerRelativeLayout viewLayerRelativeLayout;
+
     private ArrayList<AnimStickerModel> listForStickerView = new ArrayList<>();
     private boolean isDestroy = false;
     private VideoInfo videoInfo;
@@ -301,7 +302,7 @@ public class CreationTemplateMvpModel {
         View viewForChooseAnim = LayoutInflater.from(context).inflate(R.layout.view_create_template_anim, viewPager, false);
         GridView gridViewAnim = viewForChooseAnim.findViewById(R.id.gridView_anim);
         gridViewAnim.setOnItemClickListener((adapterView, view, i, l) -> {
-            startPlayAnim(i);
+            startPlayAnim(i, null);
         });
         TemplateGridViewAnimAdapter gridAdapter = new TemplateGridViewAnimAdapter(listAllAnima, context);
         gridViewAnim.setAdapter(gridAdapter);
@@ -327,7 +328,14 @@ public class CreationTemplateMvpModel {
     }
 
 
-    private void startPlayAnim(int position){
+    /**
+     * description ：开始播放动画 ，如果来自预览，那么stickver
+     * creation date: 2020/5/27
+     * position 动画的类型  targetStickerView  目标贴纸，如果为null ,那么目标贴纸为最上层的那个，这里的多久就是针对设置当个动画，如果不为null ,
+     * 那么动画就是针对预览页面，某个贴纸设置动画
+     * user : zhangtongju
+     */
+    private void startPlayAnim(int position, StickerView targetStickerView) {
         //删除动画贴纸
         if (nowChooseAnimList != null && nowChooseAnimList.size() > 0) {
             for (StickerView stickerView : nowChooseAnimList
@@ -335,7 +343,7 @@ public class CreationTemplateMvpModel {
                 deleteStickView(stickerView);
             }
         }
-        if(nowChooseAnimList!=null){
+        if (nowChooseAnimList != null) {
             nowChooseAnimList.clear();
         }
         //当前选中的贴纸
@@ -349,7 +357,10 @@ public class CreationTemplateMvpModel {
             listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
         }
         //得到目标贴纸,永远都是最顶上一个
-        StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(nowChooseStickerPosition);
+        if (targetStickerView == null) {
+            targetStickerView = (StickerView) viewLayerRelativeLayout.getChildAt(nowChooseStickerPosition);
+        }
+
 
         if (position == 0) {
             //贴纸还原,显示到之前的位置
@@ -361,12 +372,12 @@ public class CreationTemplateMvpModel {
         } else {
             for (int x = 1; x <= animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType()); x++) {
                 //通过动画属性得到需要分身的数量，然后复制出贴纸在数组里面nowChooseAnimList，最后需要删除
-                copyGif(stickerView.getResPath(), stickerView.getResPath(), stickerView.getComeFrom(), stickerView, stickerView.getOriginalPath(), true);
+                copyGif(targetStickerView.getResPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true);
             }
-            startAnimModel = new StartAnimModel(stickerView, nowChooseAnimList, animCollect);
+            startAnimModel = new StartAnimModel(targetStickerView, nowChooseAnimList, animCollect);
             startAnimModel.ToEnd();
             new Handler().postDelayed(() -> startAnimModel.ToStart(animType), 1000);
-            stickerView.setChooseAnimId(animType);
+            targetStickerView.setChooseAnimId(animType);
         }
     }
 
@@ -542,7 +553,8 @@ public class CreationTemplateMvpModel {
      */
 
     int stickerViewID;
-    private boolean isIntoDragMove=false;
+    private boolean isIntoDragMove = false;
+
     private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim) {
         closeAllAnim();
         StickerView stickView = new StickerView(context);
@@ -664,7 +676,7 @@ public class CreationTemplateMvpModel {
                 viewLayerRelativeLayout.addView(stickView);
                 stickView.start();
                 //停止全部动画
-                if(startAnimModel!=null){
+                if (startAnimModel != null) {
                     startAnimModel.ToEnd();
                 }
             }
@@ -682,9 +694,9 @@ public class CreationTemplateMvpModel {
 
             @Override
             public void stickerDragUp() {
-                if (isIntoDragMove&&stickView.getChooseAnimId()!=null&&stickView.getChooseAnimId()!=AnimType.NULL) {
+                if (isIntoDragMove && stickView.getChooseAnimId() != null && stickView.getChooseAnimId() != AnimType.NULL) {
                     //模拟动画按钮的点击事件
-                    startPlayAnim(animCollect.getAnimid(stickView.getChooseAnimId()));
+                    startPlayAnim(animCollect.getAnimid(stickView.getChooseAnimId()), null);
                 }
                 isIntoDragMove = false;
             }
@@ -1339,6 +1351,30 @@ public class CreationTemplateMvpModel {
             }
         }
     };
+
+
+    /**
+     * description ：显示全部动画，在预览的时候
+     * creation date: 2020/5/27
+     * user : zhangtongju
+     */
+    public void showAllAnim(boolean isShow) {
+
+        if (listForStickerView != null && listForStickerView.size() > 0) {
+            for (AnimStickerModel stickerModel : listForStickerView
+            ) {
+                StickerView stickerView = stickerModel.getStickerView();
+                if (stickerView != null && stickerView.getChooseAnimId() != AnimType.NULL) {
+                    if (isShow) {
+                        int type = animCollect.getAnimid(stickerView.getChooseAnimId());
+                        startPlayAnim(type, stickerView);
+                    }
+                }
+            }
+        }
+    }
+
+
 
 
 }
