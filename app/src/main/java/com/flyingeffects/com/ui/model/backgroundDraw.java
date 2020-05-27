@@ -17,6 +17,7 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.FilterUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.lansongCommendView.StickerItem;
+import com.lansosdk.LanSongFilter.LanSongBlackMaskBlendFilter;
 import com.lansosdk.LanSongFilter.LanSongMaskBlendFilter;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
@@ -233,7 +234,7 @@ public class backgroundDraw {
             float percentY = stickerItem.getTranslationy();
             LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
             mvLayer.setPosition(mvLayer.getPositionX(), mvLayer.getPadHeight() * percentY);
-
+            mvLayer.switchFilterTo(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class,stickerItem.getMaskBitmap()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -346,7 +347,7 @@ public class backgroundDraw {
         LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
         //   float posY = (bpLayer.getPadHeight() + bpLayer.getLayerHeight()) * percentY - bpLayer.getLayerHeight() / 2.0f;
         bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight() * percentY);
-
+        bpLayer.switchFilterTo(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class, stickerItem.getMaskBitmap()));
         preTime = stickerItem.getDuration() * 1000 / (float) getMattingList.size();
         LogUtil.d("OOM3", "贴纸的时长为" + stickerItem.getDuration());
         LogUtil.d("OOM3", "贴纸的数量为时长为" + (float) getMattingList.size());
