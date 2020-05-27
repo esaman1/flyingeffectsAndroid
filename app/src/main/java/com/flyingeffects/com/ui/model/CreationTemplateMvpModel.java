@@ -357,6 +357,7 @@ public class CreationTemplateMvpModel {
             for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
                 ((StickerView) viewLayerRelativeLayout.getChildAt(y)).setChooseAnimId(AnimType.NULL);
             }
+            startAnimModel.ToEnd();
         } else {
             for (int x = 1; x <= animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType()); x++) {
                 //通过动画属性得到需要分身的数量，然后复制出贴纸在数组里面nowChooseAnimList，最后需要删除
