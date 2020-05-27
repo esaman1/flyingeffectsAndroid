@@ -19,12 +19,12 @@ public class ItemRightToLeft extends baseAnimModel {
 
 
 
-    public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer, int delay) {
+    public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
         this.mainStickerView = mainStickerView;
+        LogUtil.d("StartAnimModel", "subLayer大小為=" + subLayer.size());
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
         StickerView sub1 = subLayer.get(0);
         StickerView sub2 = subLayer.get(1);
-
         //(mainStickerView.getmHelpBoxRectW())  解决方法效果很突兀的情况
         float totalWidth = mainStickerView.getMeasuredWidth()+(mainStickerView.getmHelpBoxRectW());
         LogUtil.d("OOM", "totalWidth=" + totalWidth);
@@ -45,6 +45,7 @@ public class ItemRightToLeft extends baseAnimModel {
                 } else {
                     //  第一个子view大约位置一半位置,显示在中间位置
                     if (sub1 != null) {
+                        LogUtil.d("StartAnimModel", "sub1 != null="+"subId="+sub1.getId() );
                         float translationToX;
                         if (needProgress < 0.66) {
                             translationToX = (float) (needProgress + 0.33);

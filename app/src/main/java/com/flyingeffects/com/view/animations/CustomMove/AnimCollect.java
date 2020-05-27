@@ -17,10 +17,15 @@ import static com.flyingeffects.com.view.animations.CustomMove.AnimType.LEFTTORI
  */
 public  class AnimCollect {
 
-    baseAnimModel animModel;
+  private  baseAnimModel animModel;
 
 
 
+  /**
+   * description ：获得动画对应的id
+   * creation date: 2020/5/27
+   * user : zhangtongju
+   */
     public int getAnimid(AnimType type) {
         switch (type) {
             case EIGHTBORTHER:
@@ -35,6 +40,11 @@ public  class AnimCollect {
 
 
 
+    /**
+     * description ：获得动画需要的分身数量
+     * creation date: 2020/5/27
+     * user : zhangtongju
+     */
     public int getAnimNeedSubLayerCount(AnimType type) {
         switch (type) {
             case EIGHTBORTHER:
@@ -46,6 +56,12 @@ public  class AnimCollect {
     }
 
 
+
+    /**
+     * description ：开启全部动画
+     * creation date: 2020/5/27
+     * user : zhangtongju
+     */
     public void startAnimForChooseAnim(AnimType type, StickerView mainStickerView, List<StickerView> subLayer) {
 
         switch (type) {
@@ -57,12 +73,16 @@ public  class AnimCollect {
             //左进右出
             case LEFTTORIGHT:
                 animModel=new ItemRightToLeft();
-                ((ItemRightToLeft)animModel).toChangeStickerView(mainStickerView, subLayer,0);
+                ((ItemRightToLeft)animModel).toChangeStickerView(mainStickerView, subLayer);
                 break;
         }
 
     }
 
+
+    /**
+     *停止全部动画
+     */
     public void stopAnim(){
         if(animModel!=null){
             animModel.StopAnim();
@@ -72,17 +92,19 @@ public  class AnimCollect {
 
 
 
+
+    /**
+     * description ：得到全部动画
+     * creation date: 2020/5/27
+     * user : zhangtongju
+     */
+
     public ArrayList<StickerAnim> getAnimList() {
-
-
-
-
         ArrayList<StickerAnim> list = new ArrayList<>();
         StickerAnim delected = new StickerAnim();
         delected.setName("删除动画");
         delected.setAnimType(LEFTTORIGHT);
         list.add(delected);
-
         StickerAnim stickerAnim = new StickerAnim();
         stickerAnim.setName("左到右");
         stickerAnim.setAnimType(LEFTTORIGHT);

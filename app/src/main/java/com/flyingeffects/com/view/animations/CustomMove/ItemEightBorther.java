@@ -23,6 +23,8 @@ public class ItemEightBorther extends baseAnimModel{
 
 
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
+//        LogUtil.d("StartAnimModel", "subLayer大小為=" + subLayer.size());
+
         this.mainStickerView=mainStickerView;
         setOriginal(mainStickerView.getCenterX(),mainStickerView.getCenterY());
         mainStickerView.drawAnimPath();
