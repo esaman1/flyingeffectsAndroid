@@ -149,7 +149,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
         templateName = getIntent().getStringExtra("templateName");
         isFrom = getIntent().getIntExtra("isFrom", 0);
         picout = getIntent().getIntExtra("picout", 0);
-        videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
+        videoInfo = getVideoInfo.getInstance().getRingDuring(mContext,videoPath);
         mEndDuration = (int) (needDuration * 1000);
         tv_duration.setText("模板时长 " + needDuration + "s");
         if (picout == 0) {

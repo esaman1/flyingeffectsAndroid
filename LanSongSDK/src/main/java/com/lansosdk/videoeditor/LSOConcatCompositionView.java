@@ -23,7 +23,6 @@ import com.lansosdk.box.LSOGifAsset;
 import com.lansosdk.box.LSOGifLayer;
 import com.lansosdk.box.LSOLayer;
 import com.lansosdk.box.LSOLog;
-import com.lansosdk.box.LSOMVAsset;
 import com.lansosdk.box.LSOVideoAsset;
 import com.lansosdk.box.LSOConcatCompositionRender;
 import com.lansosdk.box.OnLanSongSDKAddVideoProgressListener;
@@ -32,6 +31,7 @@ import com.lansosdk.box.OnLanSongSDKExportCompletedListener;
 import com.lansosdk.box.OnLanSongSDKExportProgressListener;
 import com.lansosdk.box.OnLanSongSDKPlayCompletedListener;
 import com.lansosdk.box.OnLanSongSDKPlayProgressListener;
+import com.lansosdk.box.OnLanSongSDKTimeChangedListener;
 
 import java.util.Arrays;
 import java.util.List;
@@ -49,6 +49,10 @@ public class LSOConcatCompositionView extends FrameLayout {
     protected float padBGAlpha =1.0f;
 
     private TextureRenderView textureRenderView;
+
+    public LSOLayerTouchView touchView;
+
+
     private SurfaceTexture mSurfaceTexture = null;
     private onViewAvailable mViewAvailable = null;
     private boolean isLayoutOk=false;
@@ -95,6 +99,24 @@ public class LSOConcatCompositionView extends FrameLayout {
         renderUIView.setLayoutParams(lp);
         addView(renderUIView);
         textureRenderView.setVideoRotation(0);
+
+
+        //---------
+        touchView=new LSOLayerTouchView(getContext());
+        LayoutParams lp2 = new LayoutParams(LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT, Gravity.CENTER);
+        touchView.setLayoutParams(lp2);
+        addView(touchView);
+
+    }
+    private void updateTouchViewSize(){
+        LayoutParams params=(LayoutParams)touchView.getLayoutParams();
+        params.width= viewWidth;
+        params.height= viewHeight;
+        touchView.setLayoutParams(params);
+//        touchView.setBackgroundColor(Color.RED);
+
+        touchView.setVideoCompositionView(this);
     }
     /**
      *当前View有效的时候, 回调监听;
@@ -104,13 +126,13 @@ public class LSOConcatCompositionView extends FrameLayout {
         if (mSurfaceTexture != null) {
             if(viewHeight >0 && viewWidth >0 && compWidth>0 && compHeight>0){
 
-                float acpect = (float) compWidth / (float) compHeight;
-                float padAcpect = (float) viewWidth / (float) viewHeight;
+                float wantRadio = (float) compWidth / (float) compHeight;
+                float viewRadio = (float) viewWidth / (float) viewHeight;
 
-                if (acpect == padAcpect) { // 如果比例已经相等,不需要再调整,则直接显示.
+                if (wantRadio == viewRadio) { // 如果比例已经相等,不需要再调整,则直接显示.
                     isLayoutOk=true;
                     mViewAvailable.viewAvailable(this);
-                } else if (Math.abs(acpect - padAcpect) * 1000 < 16.0f) {
+                } else if (Math.abs(wantRadio - viewRadio) * 1000 < 16.0f) {
                     isLayoutOk=true;
                     mViewAvailable.viewAvailable(this);
                 }else{
@@ -166,7 +188,7 @@ public class LSOConcatCompositionView extends FrameLayout {
         }
     }
 
-    private OnCompositionSizeRatioListener sizeChangedListener;
+    private OnCompositionSizeReadyListener sizeChangedListener;
 
     private int compWidth,compHeight;
 
@@ -178,32 +200,29 @@ public class LSOConcatCompositionView extends FrameLayout {
      * @param height
      * @param listener
      */
-    public void setCompositionSizeAsync(int width, int height, OnCompositionSizeRatioListener listener) {
+    public void setCompositionSizeAsync(int width, int height, OnCompositionSizeReadyListener listener) {
 
 //        这里有设置的容器尺寸, 和实际显示的尺寸;
         requestLayoutCount=0;
         compWidth=width;
         compHeight=height;
-
+        sizeChangedListener = listener;
         if (width != 0 && height != 0) {
             if(viewWidth ==0 || viewHeight ==0){  //直接重新布局UI
                 textureRenderView.setVideoSize(width, height);
                 textureRenderView.setVideoSampleAspectRatio(1, 1);
-                sizeChangedListener = listener;
                 requestLayoutPreview();
             }else{
                 float setRatio = (float) width / (float) height;
                 float setViewRatio = (float) viewWidth / (float) viewHeight;
 
                 if (setRatio == setViewRatio) { // 如果比例已经相等,不需要再调整,则直接显示.
-                    if (listener != null) {
-                        isLayoutOk=true;
-                        listener.onSizeChanged(width, height);
-                    }
+                    isLayoutOk=true;
+                    sendCompositionSizeListener();
                 } else if (Math.abs(setRatio - setViewRatio) * 1000 < 16.0f) {
                     if (listener != null) {
                         isLayoutOk=true;
-                        listener.onSizeChanged(width, height);
+                        sendCompositionSizeListener();
                     }
                 } else if (textureRenderView != null) {
                     textureRenderView.setVideoSize(width, height);
@@ -212,6 +231,13 @@ public class LSOConcatCompositionView extends FrameLayout {
                 }
                 requestLayoutPreview();
             }
+        }
+    }
+    private void sendCompositionSizeListener(){
+        updateTouchViewSize();
+        if(sizeChangedListener!=null){
+            sizeChangedListener.onSizeReady();
+            sizeChangedListener=null;
         }
     }
 
@@ -225,18 +251,14 @@ public class LSOConcatCompositionView extends FrameLayout {
 
         if (desireRatio == padRatio) { // 如果比例已经相等,不需要再调整,则直接显示.
             isLayoutOk=true;
-            if (sizeChangedListener != null) {
-                sizeChangedListener.onSizeChanged(viewWidth, viewHeight);
-                sizeChangedListener =null;
-            }else if(mViewAvailable!=null){
+            sendCompositionSizeListener();
+            if(mViewAvailable!=null){
                 mViewAvailable.viewAvailable(this);
             }
         } else if (Math.abs(desireRatio - padRatio) * 1000 < 16.0f) {
             isLayoutOk=true;
-            if (sizeChangedListener != null) {
-                sizeChangedListener.onSizeChanged(viewWidth, viewHeight);
-                sizeChangedListener =null;
-            }else if(mViewAvailable!=null){
+            sendCompositionSizeListener();
+            if(mViewAvailable!=null){
                 mViewAvailable.viewAvailable(this);
             }
         }else{
@@ -251,9 +273,8 @@ public class LSOConcatCompositionView extends FrameLayout {
         requestLayoutCount++;
         if(requestLayoutCount>3){
             LSOLog.e("LSOConcatCompositionView layout view error.  return  callback");
-            if(sizeChangedListener!=null){
-                sizeChangedListener.onSizeChanged(viewWidth, viewHeight);
-            }else if(mViewAvailable!=null){
+            sendCompositionSizeListener();
+            if(mViewAvailable!=null){
                 mViewAvailable.viewAvailable(this);
             }
         }else{
@@ -276,24 +297,34 @@ public class LSOConcatCompositionView extends FrameLayout {
     //---------------------------------------------容器代码--------------------------------------------------------
 
     /**
-     * 增加 拼接图层, 异步增加,增加过程中,内部会处理
-     *
-     * 处理进度以setOnAddVideoProgressListener的监听返回给您.
-     * 增加时, 会暂停当前合成的执行;
-     * @param assets 多个视频资源
+     *   增加 拼接图层, 异步增加,增加过程中,内部会处理
+     *   增加时, 会暂停当前合成的执行;
+     * @param assets 当前资源里数组, 支持图片和视频.
+     * @param listener 异步增加好后的回调, 里面的List Layer是当前 List<LSOAsset>对应生成的图层对象
+     * @return
      */
     public boolean addConcatLayerListAsync(List<LSOAsset> assets, OnLanSongSDKAddVideoProgressListener listener){
         createRender();
         if (renderer != null && setup()) {
-            return renderer.addConcatLayerListAsync(assets,listener);
+            userVideoProgressListener=listener;
+            return renderer.addConcatLayerListAsync(assets, bodyVideoProgressListener);
         }else{
             return false;
         }
     }
+
+    /**
+     *  增加 拼接图层, 异步增加,增加过程中,内部会处理
+     *   增加时, 会暂停当前合成的执行;
+     * @param asset 当前的资源, 支持视频和图片
+     * @param listener 异步增加好后的回调, 里面的List Layer是当前 LSOAsset对应生成的图层对象
+     * @return
+     */
     public boolean addConcatLayerAsync(LSOAsset asset,OnLanSongSDKAddVideoProgressListener listener){
         createRender();
         if (renderer != null && setup()) {
-            return renderer.addConcatLayerListAsync(Arrays.asList(asset),listener);
+            userVideoProgressListener=listener;
+            return renderer.addConcatLayerListAsync(Arrays.asList(asset), bodyVideoProgressListener);
         }else{
             return false;
         }
@@ -307,12 +338,38 @@ public class LSOConcatCompositionView extends FrameLayout {
      */
     public boolean insertConcatLayerListAsync(List<LSOAsset> videoArray,long atCompUs,OnLanSongSDKAddVideoProgressListener listener1) {
         if (renderer != null) {
-            return renderer.insertConcatLayerListAsync(videoArray,atCompUs,listener1);
+            userVideoProgressListener=listener1;
+            return renderer.insertConcatLayerListAsync(videoArray,atCompUs, bodyVideoProgressListener);
         }else{
             return false;
         }
     }
+    private OnLanSongSDKAddVideoProgressListener bodyVideoProgressListener =new OnLanSongSDKAddVideoProgressListener() {
+        @Override
+        public void onAddVideoProgress(int percent, int numberIndex, int totalNumber) {
+            if(userVideoProgressListener !=null){
+                userVideoProgressListener.onAddVideoProgress(percent,numberIndex,totalNumber);
+            }
+        }
 
+        @Override
+        public void onAddVideoCompleted(List layers) {
+
+            //LSTODO增加的图片和视频暂时不支持旋转移动缩放;
+//            List<LSOLayer> layerList=layers;
+//            for (LSOLayer layer: layerList){
+//                addToTouchView(layer);
+//            }
+
+
+            if(userVideoProgressListener!=null){
+                userVideoProgressListener.onAddVideoCompleted(layers);
+            }
+
+        }
+    };
+
+    private OnLanSongSDKAddVideoProgressListener userVideoProgressListener =null;
     /**
      * 替换拼接图层;
      * @param asset 资源
@@ -322,7 +379,8 @@ public class LSOConcatCompositionView extends FrameLayout {
      */
     public boolean replaceConcatLayerListAsync(LSOAsset asset, LSOLayer replaceLayer,OnLanSongSDKAddVideoProgressListener listener) {
         if (renderer != null) {
-            return renderer.replaceConcatLayerListAsync(asset,replaceLayer,listener);
+            userVideoProgressListener=listener;
+            return renderer.replaceConcatLayerListAsync(asset,replaceLayer, bodyVideoProgressListener);
         }else{
             return false;
         }
@@ -352,7 +410,8 @@ public class LSOConcatCompositionView extends FrameLayout {
                                       OnLanSongSDKAddVideoProgressListener listener1){
         createRender();
         if (renderer != null && setup() && videoAsset!=null) {
-            return renderer.addVideoLayerAsync(videoAsset,atCompUs,listener1);
+            userVideoProgressListener=listener1;
+            return renderer.addVideoLayerAsync(videoAsset,atCompUs, bodyVideoProgressListener);
         }else{
             return false;
         }
@@ -366,7 +425,9 @@ public class LSOConcatCompositionView extends FrameLayout {
     public LSOBitmapLayer addBitmapLayer(Bitmap bitmap) {
         createRender();
         if (renderer != null && setup()) {
-            return renderer.addBitmapLayer(bitmap,0);
+            LSOBitmapLayer layer= renderer.addBitmapLayer(bitmap,0);
+            addToTouchView(layer);
+            return layer;
         }else{
             return null;
         }
@@ -375,7 +436,9 @@ public class LSOConcatCompositionView extends FrameLayout {
     public LSOBitmapLayer addBitmapLayer(LSOBitmapAsset asset) {
         createRender();
         if (renderer != null && setup()) {
-            return renderer.addBitmapLayer(asset,0);
+            LSOBitmapLayer layer= renderer.addBitmapLayer(asset,0);
+            addToTouchView(layer);
+            return layer;
         }else{
             return null;
         }
@@ -390,7 +453,9 @@ public class LSOConcatCompositionView extends FrameLayout {
     public LSOBitmapLayer addBitmapLayer(Bitmap bitmap, long atCompUs) {
         createRender();
         if (renderer != null && setup()) {
-            return renderer.addBitmapLayer(bitmap,atCompUs);
+            LSOBitmapLayer layer= renderer.addBitmapLayer(bitmap,atCompUs);
+            addToTouchView(layer);
+            return layer;
         }else{
             return null;
         }
@@ -405,7 +470,10 @@ public class LSOConcatCompositionView extends FrameLayout {
     public LSOBitmapLayer addBitmapLayer(LSOBitmapAsset asset, long atCompUs) {
         createRender();
         if (renderer != null && setup()) {
-            return renderer.addBitmapLayer(asset,atCompUs);
+            LSOBitmapLayer layer= renderer.addBitmapLayer(asset,atCompUs);
+            addToTouchView(layer);
+            return layer;
+
         }else{
             return null;
         }
@@ -418,7 +486,9 @@ public class LSOConcatCompositionView extends FrameLayout {
     public LSOGifLayer addGifLayer(LSOGifAsset asset) {
         createRender();
         if (asset!=null && renderer != null && setup()) {
-            return renderer.addGifLayer(asset,0);
+            LSOGifLayer layer= renderer.addGifLayer(asset,0);
+            addToTouchView(layer);
+            return layer;
         }else{
             return null;
         }
@@ -432,7 +502,9 @@ public class LSOConcatCompositionView extends FrameLayout {
     public LSOGifLayer addGifLayer(LSOGifAsset asset, long atCompUs) {
         createRender();
         if (renderer != null && setup()) {
-            return renderer.addGifLayer(asset,atCompUs);
+            LSOGifLayer layer= renderer.addGifLayer(asset,atCompUs);
+            addToTouchView(layer);
+            return layer;
         }else{
             return null;
         }
@@ -448,7 +520,9 @@ public class LSOConcatCompositionView extends FrameLayout {
     public LSOBitmapListLayer addBitmapListLayerFromPaths(List<String> list, long frameInterval, long atCompUs) {
         createRender();
         if (renderer != null && setup()) {
-            return renderer.addBitmapListLayerFromPaths(list,frameInterval,atCompUs);
+            LSOBitmapListLayer bitmapListLayer= renderer.addBitmapListLayerFromPaths(list,frameInterval,atCompUs);
+            addToTouchView(bitmapListLayer);
+            return bitmapListLayer;
         }else{
             return null;
         }
@@ -463,27 +537,15 @@ public class LSOConcatCompositionView extends FrameLayout {
     public LSOBitmapListLayer addBitmapArrayLayerFromBitmaps(List<Bitmap> list, long frameInterval, long atCompUs) {
         createRender();
         if (renderer != null && setup()) {
-            return renderer.addBitmapListLayerFromBitmaps(list,frameInterval,atCompUs);
+            LSOBitmapListLayer bitmapListLayer= renderer.addBitmapListLayerFromBitmaps(list,frameInterval,atCompUs);
+            addToTouchView(bitmapListLayer);
+            return bitmapListLayer;
         }else{
             return null;
         }
     }
 
-    /**
-     * 增加一个mv图层;
-     * 增加后, 默认循环播放;
-     * @param asset mv的资源;
-     * @return
-     */
-    public boolean addMVLayerAsync(LSOMVAsset asset,long atCompUs,
-                                   OnLanSongSDKAddVideoProgressListener listener1){
-        createRender();
-        if (renderer != null && setup() && asset!=null) {
-            return renderer.addMVLayerAsync(asset,atCompUs,listener1);
-        }else{
-            return false;
-        }
-    }
+
     /**
      * 增加声音图层;
      * @param path 声音的完整路径;
@@ -506,6 +568,7 @@ public class LSOConcatCompositionView extends FrameLayout {
     public void removeLayer(LSOLayer layer){
         if(renderer!=null){
             renderer.removeLayer(layer);
+            removeFromTouchView(layer);
         }
     }
     /**
@@ -514,10 +577,11 @@ public class LSOConcatCompositionView extends FrameLayout {
     public void removeAllLayers() {
         if(renderer!=null){
             renderer.removeAllLayers();
+            if(touchView!=null){
+                touchView.clear();
+            }
         }
     }
-
-
     /**
      * 删除声音图层
      * @param layer
@@ -647,8 +711,8 @@ public class LSOConcatCompositionView extends FrameLayout {
     }
 
     /**
-     * 获取当前合成容器中的所有图层;
-     * @return 图层list
+     * 获取当前合成容器中的所有拼接图层;
+     * @return 图层list 拼接图层;
      */
     public List<LSOLayer> getConcatLayers(){
         if(renderer!=null){
@@ -662,6 +726,7 @@ public class LSOConcatCompositionView extends FrameLayout {
      * 播放进度回调
      * 监听中的两个参数是: onLanSongSDKExportProgress(long ptsUs, int percent);
      * 分别对应 当前处理的时间戳 和百分比;
+     * 在seek或pause的时候,此监听不调用;
      * @param listener
      */
     public void setOnLanSongSDKPlayProgressListener(OnLanSongSDKPlayProgressListener listener) {
@@ -669,6 +734,12 @@ public class LSOConcatCompositionView extends FrameLayout {
         if(renderer!=null){
             renderer.setOnLanSongSDKPlayProgressListener(listener);
         }
+    }
+
+
+    public void setOnLanSongSDKTimeChangedListener(OnLanSongSDKTimeChangedListener listener){
+        createRender();
+        timeChangedListener=listener;
     }
 
     /**
@@ -710,16 +781,15 @@ public class LSOConcatCompositionView extends FrameLayout {
             renderer.setOnLanSongSDKExportCompletedListener(listener);
         }
     }
+    private OnLanSongSDKErrorListener bodyErrorListener;
+    private OnLanSongSDKErrorListener userErrorListener;
     /**
      * 错误监听
      */
     public void setOnLanSongSDKErrorListener(OnLanSongSDKErrorListener listener){
         createRender();
-        if(renderer!=null){
-            renderer.setOnLanSongSDKErrorListener(listener);
-        }
+        userErrorListener=listener;
     }
-
     /**
      * 开始预览
      */
@@ -785,10 +855,16 @@ public class LSOConcatCompositionView extends FrameLayout {
         if(renderer!=null){
             renderer.startPreview(false);
         }
+
+        if(touchView!=null){
+            touchView.disappearIconBorder();
+        }
+
     }
 
     /**
      * 获取当前总的合成时间
+     * 也是所有拼接图层的时间;
      * @return
      */
     public long getDurationUs(){
@@ -827,17 +903,6 @@ public class LSOConcatCompositionView extends FrameLayout {
         }
     }
     /**
-     * 释放
-     * 如果已经收到完成监听, 则不需要调用;
-     */
-    public void release(){
-        if(renderer!=null){
-            renderer.release();
-            renderer=null;
-        }
-    }
-
-    /**
      * 设置帧率
      * [不建议使用]
      * @param frameRate
@@ -861,26 +926,78 @@ public class LSOConcatCompositionView extends FrameLayout {
     //内部使用;
     private void createRender(){
         if(renderer==null){
+            setUpSuccess=false;
             renderer =new LSOConcatCompositionRender(getContext());
             renderer.setCompositionBackGroundColor(padBGRed,padBGGreen,padBGBlur,padBGAlpha);
+            renderer.setOnLanSongSDKErrorListener(new OnLanSongSDKErrorListener() {
+                @Override
+                public void onLanSongSDKError(int errorCode) {
+                    setUpSuccess=false;
+                    if(userErrorListener!=null){
+                        userErrorListener.onLanSongSDKError(errorCode);
+                    }
+                }
+            });
         }
     }
 
+    private OnLanSongSDKTimeChangedListener timeChangedListener=null;
+
+    private void addToTouchView(LSOLayer layer){
+        if(touchView!=null && layer!=null){
+            touchView.addLayer(layer);
+        }
+    }
+
+    private void removeFromTouchView(LSOLayer layer){
+        if(touchView!=null && layer!=null){
+            touchView.removeLayer(layer);
+        }
+    }
+    private boolean setUpSuccess=false;
+
     //内部使用;
     private boolean setup(){
-        if(renderer!=null){
+        if(renderer!=null && !setUpSuccess){
             if(!renderer.isRunning() && mSurfaceTexture!=null) {
                 renderer.updateCompositionSize(compWidth, compHeight);
                 renderer.setSurface(new Surface(mSurfaceTexture), viewWidth, viewHeight);
-                boolean setUpSuccess = renderer.setup();
-                LSOLog.d("LSOConcatCompositionView setup.ret:" + setUpSuccess + " comp size:" + compWidth + " x " + compHeight + " view size :" + viewWidth + " x " + viewHeight);
+
+                renderer.setOnLanSongSDKTimeChangedListener(new OnLanSongSDKTimeChangedListener() {
+                    @Override
+                    public void onLanSongSDKTimeChanged(long ptsUs, int percent) {
+
+                        if(touchView!=null){
+                            touchView.updateLayerStatus();
+                        }
+
+                        if(timeChangedListener!=null){
+                            timeChangedListener.onLanSongSDKTimeChanged(ptsUs,percent);
+                        }
+                    }
+                });
+
+                setUpSuccess= renderer.setup();
+                LSOLog.d("LSOConcatCompositionView setup.ret:" + setUpSuccess +
+                        " comp size:" + compWidth + " x " + compHeight + " view size :" + viewWidth + " x " + viewHeight);
                 return setUpSuccess;
             }else{
                 return renderer.isRunning();
             }
         }else{
-            return  false;
+            return  setUpSuccess;
         }
+    }
+    /**
+     * 释放
+     * 如果已经收到完成监听, 则不需要调用;
+     */
+    public void release(){
+        if(renderer!=null){
+            renderer.release();
+            renderer=null;
+        }
+        setUpSuccess=false;
     }
 
 }

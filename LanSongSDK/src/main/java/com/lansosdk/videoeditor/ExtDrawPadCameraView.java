@@ -11,85 +11,277 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
-import android.view.TextureView.SurfaceTextureListener;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import com.lansosdk.LanSongFilter.LanSongFilter;
 import com.lansosdk.box.AudioLine;
 import com.lansosdk.box.BitmapLayer;
-import com.lansosdk.box.CanvasLayer;
-import com.lansosdk.box.DataLayer;
 import com.lansosdk.box.ExtCameraLayer;
 import com.lansosdk.box.ExtDrawPadCameraRunnable;
 import com.lansosdk.box.GifLayer;
 import com.lansosdk.box.LSOLog;
 import com.lansosdk.box.LSOMVAsset2;
 import com.lansosdk.box.Layer;
-import com.lansosdk.box.MVLayer;
 import com.lansosdk.box.MVLayer2;
 import com.lansosdk.box.MicLine;
 import com.lansosdk.box.VideoLayer;
 import com.lansosdk.box.ViewLayer;
-import com.lansosdk.box.YUVLayer;
 import com.lansosdk.box.onDrawPadCompletedListener;
 import com.lansosdk.box.onDrawPadErrorListener;
 import com.lansosdk.box.onDrawPadOutFrameListener;
 import com.lansosdk.box.onDrawPadProgressListener;
 import com.lansosdk.box.onDrawPadRecordCompletedListener;
 import com.lansosdk.box.onDrawPadRunTimeListener;
-import com.lansosdk.box.onDrawPadSizeChangedListener;
 import com.lansosdk.box.onDrawPadSnapShotListener;
 import com.lansosdk.box.onDrawPadThreadProgressListener;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+
 public class ExtDrawPadCameraView extends FrameLayout {
-
-
 
     private ExtDrawPadCameraRunnable renderer;
 
 
-    /**
-     * 把画面的宽度等于父view的宽度, 高度按照4:3的形式显示.
-     */
-    static final int AR_4_3_FIT_PARENT = 5;
-    private static final boolean VERBOSE = false;
-    private static boolean isCameraOpened = false;
-    private int mVideoRotationDegree;
-    private TextureRenderView mTextureRenderView;
 
+    protected float padBGRed =0.0f;
+    protected float padBGGreen =0.0f;
+    protected float padBGBlur =0.0f;
+    protected float padBGAlpha =1.0f;
+
+    private TextureRenderView textureRenderView;
     private SurfaceTexture mSurfaceTexture = null;
+    private onViewAvailable mViewAvailable = null;
+    private boolean isLayoutOk=false;
+    // ----------------------------------------------
+    public ExtDrawPadCameraView(Context context) {
+        super(context);
+        initVideoView(context);
+    }
+
+    public ExtDrawPadCameraView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initVideoView(context);
+    }
+
+    public ExtDrawPadCameraView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        initVideoView(context);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public ExtDrawPadCameraView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        initVideoView(context);
+    }
+
+    private void initVideoView(Context context) {
+        setTextureView();
+        setFocusable(true);
+        setFocusableInTouchMode(true);
+        requestFocus();
+    }
+
+    private int viewWidth,viewHeight;
+
+    private void setTextureView() {
+        textureRenderView = new TextureRenderView(getContext());
+        textureRenderView.setSurfaceTextureListener(new SurfaceCallback());
+
+        textureRenderView.setDispalyRatio(0);
+
+        View renderUIView = textureRenderView.getView();
+        LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT, Gravity.CENTER);
+        renderUIView.setLayoutParams(lp);
+        addView(renderUIView);
+        textureRenderView.setVideoRotation(0);
+    }
+    /**
+     *当前View有效的时候, 回调监听;
+     */
+    public void setOnViewAvailable(onViewAvailable listener) {
+        mViewAvailable = listener;
+        if (mSurfaceTexture != null) {
+            if(viewHeight >0 && viewWidth >0 && compWidth>0 && compHeight>0){
+
+                float acpect = (float) compWidth / (float) compHeight;
+                float padAcpect = (float) viewWidth / (float) viewHeight;
+
+                if (acpect == padAcpect) { // 如果比例已经相等,不需要再调整,则直接显示.
+                    isLayoutOk=true;
+                    mViewAvailable.viewAvailable(this);
+                } else if (Math.abs(acpect - padAcpect) * 1000 < 16.0f) {
+                    isLayoutOk=true;
+                    mViewAvailable.viewAvailable(this);
+                }else{
+                    textureRenderView.setVideoSize(compWidth, compHeight);
+                    textureRenderView.setVideoSampleAspectRatio(1, 1);
+                    LSOLog.d("setOnViewAvailable layout again...");
+                    requestLayoutPreview();
+                }
+            }
+        }
+    }
+
+    public Surface getSurface(){
+        if(mSurfaceTexture!=null){
+            return  new Surface(mSurfaceTexture);
+        }
+        return null;
+    }
+    public interface onViewAvailable {
+        void viewAvailable(ExtDrawPadCameraView v);
+    }
+
+    private class SurfaceCallback implements TextureView.SurfaceTextureListener {
+
+        @Override
+        public void onSurfaceTextureAvailable(SurfaceTexture surface,
+                                              int width, int height) {
+            mSurfaceTexture = surface;
+            viewWidth=width;
+            viewHeight=height;
+            checkLayoutSize();
+        }
+
+        @Override
+        public void onSurfaceTextureSizeChanged(SurfaceTexture surface,
+                                                int width, int height) {
+            mSurfaceTexture = surface;
+            viewWidth=width;
+            viewHeight=height;
+            checkLayoutSize();
+        }
+
+        @Override
+        public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+            mSurfaceTexture = null;
+            isLayoutOk=false;
+            return false;
+        }
+
+        @Override
+        public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+        }
+    }
+
+    private OnCompositionSizeRatioListener sizeChangedListener;
+
+    private int compWidth,compHeight;
+
+
+    /**
+     * 设置容器的大小, 在设置后, 我们会根据这个大小来调整 这个类的大小.
+     * 从而让画面不变形;
+     * @param width
+     * @param height
+     * @param listener
+     */
+    public void setDrawPadSizeAsync(int width, int height, OnCompositionSizeRatioListener listener) {
+
+//        这里有设置的容器尺寸, 和实际显示的尺寸;
+        requestLayoutCount=0;
+        compWidth=width;
+        compHeight=height;
+
+        if (width != 0 && height != 0) {
+            if(viewWidth ==0 || viewHeight ==0){  //直接重新布局UI
+                textureRenderView.setVideoSize(width, height);
+                textureRenderView.setVideoSampleAspectRatio(1, 1);
+                sizeChangedListener = listener;
+                requestLayoutPreview();
+            }else{
+                float setRatio = (float) width / (float) height;
+                float setViewRatio = (float) viewWidth / (float) viewHeight;
+
+                if (setRatio == setViewRatio) { // 如果比例已经相等,不需要再调整,则直接显示.
+                    if (listener != null) {
+                        isLayoutOk=true;
+                        listener.onSizeChanged(width, height);
+                    }
+                } else if (Math.abs(setRatio - setViewRatio) * 1000 < 16.0f) {
+                    if (listener != null) {
+                        isLayoutOk=true;
+                        listener.onSizeChanged(width, height);
+                    }
+                } else if (textureRenderView != null) {
+                    textureRenderView.setVideoSize(width, height);
+                    textureRenderView.setVideoSampleAspectRatio(1, 1);
+                    sizeChangedListener = listener;
+                }
+                requestLayoutPreview();
+            }
+        }
+    }
+
+    private int requestLayoutCount=0;
+    /**
+     * 检查得到的大小, 如果和view成比例,则直接回调; 如果不成比例,则重新布局;
+     */
+    private void checkLayoutSize(){
+        float desireRatio = (float) compWidth / (float) compHeight;
+        float padRatio = (float) viewWidth / (float) viewHeight;
+
+        if (desireRatio == padRatio) { // 如果比例已经相等,不需要再调整,则直接显示.
+            isLayoutOk=true;
+            if (sizeChangedListener != null) {
+                sizeChangedListener.onSizeChanged(viewWidth, viewHeight);
+                sizeChangedListener =null;
+            }else if(mViewAvailable!=null){
+                mViewAvailable.viewAvailable(this);
+            }
+        } else if (Math.abs(desireRatio - padRatio) * 1000 < 16.0f) {
+            isLayoutOk=true;
+            if (sizeChangedListener != null) {
+                sizeChangedListener.onSizeChanged(viewWidth, viewHeight);
+                sizeChangedListener =null;
+            }else if(mViewAvailable!=null){
+                mViewAvailable.viewAvailable(this);
+            }
+        }else{
+            textureRenderView.setVideoSize(compWidth, compHeight);
+            textureRenderView.setVideoSampleAspectRatio(1, 1);
+            LSOLog.d("checkLayoutSize no  right, layout again...");
+            requestLayoutPreview();
+        }
+    }
+    private void requestLayoutPreview()
+    {
+        requestLayoutCount++;
+        if(requestLayoutCount>3){
+            LSOLog.e("LSOConcatCompositionView layout view error.  return  callback");
+            if(sizeChangedListener!=null){
+                sizeChangedListener.onSizeChanged(viewWidth, viewHeight);
+            }else if(mViewAvailable!=null){
+                mViewAvailable.viewAvailable(this);
+            }
+        }else{
+            requestLayout();
+        }
+    }
+
+    /**
+     * 获得当前合成容器的宽度
+     */
+    public int getCompWidth() {
+        return compWidth;
+    }
+    /**
+     * 获得当前合成容器的高度
+     */
+    public int getCompHeight() {
+        return compHeight;
+    }
+    //---------------------------------------------容器代码--------------------------------------------------------
+    private int padWidth, padHeight;
+    private boolean isFrontCam = false;
+    private LanSongFilter initFilter = null;
     private int encWidth, encHeight, encFrameRate;
     private int encBitRate = 0;
-    /**
-     * 经过宽度对齐到手机的边缘后, 缩放后的宽高,作为drawpad(容器)的宽高.
-     */
-    private int padWidth, padHeight;
-    /**
-     * 摄像头是否是前置摄像头
-     */
-    private boolean isFrontCam = false;
-    /**
-     * 初始化CameraLayer的时候, 是否需要设置滤镜. 当然您也可以在后面实时切换为别的滤镜.
-     */
-    private LanSongFilter initFilter = null;
-    private float encodeSpeed = 1.0f;
-    // private FocusImageView focusView;
-    // /**
-    // * 把外界的用来聚焦的动画
-    // * @param view
-    // */
-    // public void setFocusView(FocusImageView view)
-    // {
-    // focusView=view;
-    // }
     private String encodeOutput = null; // 编码输出路径
-    private onViewAvailable mViewAvailable = null;
-    private onDrawPadSizeChangedListener mSizeChangedCB = null;
     private onDrawPadRunTimeListener drawpadRunTimeListener = null;
-    // ----------------------------
     private onDrawPadProgressListener drawpadProgressListener = null;
     private onDrawPadRecordCompletedListener drawPadRecordCompletedListener=null;
     private onDrawPadThreadProgressListener drawPadThreadProgressListener = null;
@@ -103,128 +295,6 @@ public class ExtDrawPadCameraView extends FrameLayout {
     private onDrawPadErrorListener drawPadErrorListener = null;
     private ExtCameraLayer extCameraLayer = null;
     private boolean isEditModeVideo = false;
-    /**
-     * 是否也录制mic的声音.
-     */
-    private boolean isRecordMic = false;
-    private boolean isPauseRefresh = false;
-    private boolean isPauseRecord = false;
-    private boolean isRecordExtPcm = false; // 是否使用外面的pcm输入.
-    private int pcmSampleRate = 44100;
-    private int pcmBitRate = 64000;
-    private int pcmChannels = 2; // 音频格式. 音频默认是双通道.
-    private String recordExtMp3 = null;
-    private long recordOffsetUs = 0;
-    private AtomicBoolean isStoping = new AtomicBoolean(false);
-    /**
-     * 放大缩小画面
-     */
-    private boolean isZoomEvent = false;
-    private float pointering; // 两个手指按下.
-    private doFousEventListener mDoFocusListener;
-    // ----------------------------------------------
-    private boolean isCheckBitRate = true;
-    private boolean isCheckPadSize = true;
-    private boolean isEnableTouch = true;
-    public ExtDrawPadCameraView(Context context) {
-        super(context);
-        initVideoView(context);
-    }
-    public ExtDrawPadCameraView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        initVideoView(context);
-    }
-    public ExtDrawPadCameraView(Context context, AttributeSet attrs,
-                                int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        initVideoView(context);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public ExtDrawPadCameraView(Context context, AttributeSet attrs,
-                                int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        initVideoView(context);
-    }
-
-    private void initVideoView(Context context) {
-        setTextureView();
-
-        setFocusable(true);
-        setFocusableInTouchMode(true);
-        requestFocus();
-    }
-
-    private void setTextureView() {
-        mTextureRenderView = new TextureRenderView(getContext());
-        mTextureRenderView.setSurfaceTextureListener(new SurfaceCallback());
-
-        mTextureRenderView.setDispalyRatio(0);
-
-        View renderUIView = mTextureRenderView.getView();
-        LayoutParams lp = new LayoutParams(
-                LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT, Gravity.CENTER);
-        renderUIView.setLayoutParams(lp);
-        addView(renderUIView);
-        mTextureRenderView.setVideoRotation(mVideoRotationDegree);
-
-        mTextureRenderView.setOnTouchListener(new OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return onTouchEvent(event);
-            }
-        });
-    }
-
-    /**
-     * 获取当前View的 宽度
-     *
-     * @return
-     */
-    public int getViewWidth() {
-        return padWidth;
-    }
-
-    /**
-     * 获得当前View的高度.
-     *
-     * @return
-     */
-    public int getViewHeight() {
-        return padHeight;
-    }
-
-    public int getDrawPadWidth() {
-        return padWidth;
-    }
-
-    /**
-     * 获得当前View的高度.
-     *
-     * @return
-     */
-    public int getDrawPadHeight() {
-        return padHeight;
-    }
-
-    /**
-     * 此回调仅仅是作为演示: 当跳入到别的Activity后的返回时,会再次预览当前画面的功能.
-     * 你完全可以重新按照你的界面需求来修改这个DrawPadView类.
-     */
-    public void setOnViewAvailable(onViewAvailable listener) {
-        mViewAvailable = listener; 
-        if(mSurfaceTexture!=null){
-            mViewAvailable.viewAvailable(this);
-        }
-    }
-
-    @Deprecated
-    public void setCameraParam(boolean front, LanSongFilter filter,boolean beauful) {
-        isFrontCam = front;
-        initFilter = filter;
-    }
 
     /**
      * 设置摄像头图层的餐宿, 是否前置, 是否设置滤镜,如不设置滤镜,填入null
@@ -235,35 +305,10 @@ public class ExtDrawPadCameraView extends FrameLayout {
         isFrontCam = front;
         initFilter = filter;
     }
-    /**
-     * 调整在录制时的速度, 比如你想预览的时候是正常的, 录制好后, 一部分要快进或慢放,则可以在这里设置 支持在任意时刻变速;
-     * 甚至你可以设置一个按钮, 长按下的时候, 加快或放慢, 松开时正常. 当前暂时不支持音频, 只是视频的加减速, 请注意!!!
-     * <p>
-     * 1,如果不录制外部音频(麦克风), 则速度建议; 建议5个等级: 0.25f,0.5f,1.0f,1.5f,2.0f; 其中 0.25是放慢2倍;
-     * 0.5是放慢一倍; 1.0是采用和预览同样的速度; 2.0是加快1倍.
-     * <p>
-     * 2,如果录制外部音频(麦克风),则速度范围是0.5--2.0; 0.5是放慢一倍, 1.0是原速; 2.0是放大一倍;
-     * <p>
-     * 3,如果录制mp3,则只是调整视频画面的速度, mp3在录制完成后生成的文件速度不变.
-     *
-     * @param speed 速度系数,
-     */
-    public void adjustEncodeSpeed(float speed) {
-        if (renderer != null) {
-            renderer.adjustEncodeSpeed(speed);
-        }
-        encodeSpeed = speed;
-    }
 
     /**
      * 设置录制视频的宽高, 建议和预览的宽高成比例, 比如预览的全屏是16:9则设置的编码宽度和高度也要16:9;
      * 如果是18:9,则这里的encW:encH也要18:9; 从而保证录制后的视频不变形;
-     *
-     * @param encW    录制宽度
-     * @param encH    录制高度
-     * @param encBr   录制bitrate,
-     * @param encFr   录制帧率
-     * @param outPath 录制 的保存路径. 注意:这个路径在分段录制功能时无效.即调用 {@link #segmentStart()}时无效
      */
     public void setRealEncodeEnable(int encW, int encH, int encBr, int encFr,
                                     String outPath) {
@@ -276,9 +321,6 @@ public class ExtDrawPadCameraView extends FrameLayout {
         } else {
             LSOLog.e(  "enable real encode is error");
         }
-    }
-    public void setExtCameraLayer(ExtCameraLayer layer){
-        extCameraLayer=layer;
     }
 
     public void setRealEncodeEnable(int encW, int encH, int encFr,
@@ -294,61 +336,7 @@ public class ExtDrawPadCameraView extends FrameLayout {
         }
     }
 
-    /**
-     * 设置当前DrawPad的宽度和高度,并把宽度自动缩放到父view的宽度,然后等比例调整高度.
-     * <p>
-     * 如果在父view中已经预设好了希望的宽高,则可以不调用这个方法,直接
-     * 可以通过 {@link #getViewHeight()} 和 {@link #getViewWidth()}来得到当前view的宽度和高度.
-     * <p>
-     * <p>
-     * 注意: 这里的宽度和高度,会根据手机屏幕的宽度来做调整,默认是宽度对齐到手机的左右两边, 然后调整高度,
-     * 把调整后的高度作为DrawPad渲染线程的真正宽度和高度. 注意: 此方法需要在
-     * 前调用. 比如设置的宽度和高度是480,480,
-     * 而父view的宽度是等于手机分辨率是1080x1920,则DrawPad默认对齐到手机宽度1080,然后把高度也按照比例缩放到1080.
-     *
-     * @param width  DrawPad宽度
-     * @param height DrawPad高度
-     * @param cb     设置好后的回调, 注意:如果预设值的宽度和高度经过调整后
-     *               已经和父view的宽度和高度一致,则不会触发此回调(当然如果已经是希望的宽高,您也不需要调用此方法).
-     */
-    public void setDrawPadSize(int width, int height,
-                               onDrawPadSizeChangedListener cb) {
 
-        if (width != 0 && height != 0 && cb != null) {
-
-            if(padWidth==0 || padHeight==0){  //直接重新布局UI
-                mTextureRenderView.setVideoSize(width, height);
-                mTextureRenderView.setVideoSampleAspectRatio(1, 1);
-                mSizeChangedCB = cb;
-                requestLayout();
-            }else{
-                float setAcpect = (float) width / (float) height;
-                float setViewacpect = (float) padWidth / (float) padHeight;
-
-                if (setAcpect == setViewacpect) { // 如果比例已经相等,不需要再调整,则直接显示.
-                    if (cb != null) {
-                        cb.onSizeChanged(width, height);
-                    }
-                } else if (Math.abs(setAcpect - setViewacpect) * 1000 < 16.0f) {
-                    if (cb != null) {
-                        cb.onSizeChanged(width, height);
-                    }
-                } else if (mTextureRenderView != null) {
-                    mTextureRenderView.setVideoSize(width, height);
-                    mTextureRenderView.setVideoSampleAspectRatio(1, 1);
-                    mSizeChangedCB = cb;
-                }
-                requestLayout();
-            }
-        }
-    }
-    /**
-     * 当前drawpad容器运行了多长时间, 仅供参考使用. 没有特别的意义. 内部每渲染一帧, 则会回调这里.
-     * 仅仅作为drawpad容器运行时间的参考, 如果你要看当前视频图层的运行时间,则应设置图层的监听,而不是容器运行时间的监听, 可以通过
-     * {@link #resetDrawPadRunTime(long)} 来复位这个时间.
-     *
-     * @param li
-     */
     public void setOnDrawPadRunTimeListener(onDrawPadRunTimeListener li) {
         if (renderer != null) {
             renderer.setDrawPadRunTimeListener(li);
@@ -507,14 +495,14 @@ public class ExtDrawPadCameraView extends FrameLayout {
     /**
      * 建立一个容器,
      *
-     * 容器的大小是您设置的DrawPad的size(如果是全屏,则是布局的大小)
-     *
-     * 建立后, 里面自动增加Camera图层, 您需要startPreview则开始预览;
      *
      * @return
      */
-    public boolean setupDrawpad() {
+    public boolean setupDrawPad() {
         if (renderer == null) {
+            padWidth=viewWidth;
+            padHeight=viewHeight;
+
             pauseRecord();
             pausePreview();
             return startDrawPad(true);
@@ -522,16 +510,20 @@ public class ExtDrawPadCameraView extends FrameLayout {
             return false;
         }
     }
-
     /**
-     * [不好理解, 不再使用] 开始DrawPad的渲染线程, 阻塞执行, 直到DrawPad真正开始执行后才退出当前方法.
-     * <p>
-     * 可以先通过 {@link #setDrawPadSize(int, int, onDrawPadSizeChangedListener)}
-     * 来设置宽高,然后在回调中执行此方法. 如果您已经在xml中固定了view的宽高,则可以直接调用这里, 无需再设置DrawPadSize
-     *
-     * @return
+     * 是否也录制mic的声音.
      */
-    @Deprecated
+    private boolean isRecordMic = false;
+    private boolean isPauseRefresh = false;
+    private boolean isPauseRecord = false;
+    private boolean isRecordExtPcm = false; // 是否使用外面的pcm输入.
+    private int pcmSampleRate = 44100;
+    private int pcmBitRate = 64000;
+    private int pcmChannels = 2; // 音频格式. 音频默认是双通道.
+    private String recordExtMp3 = null;
+    private long recordOffsetUs = 0;
+    private static boolean isCameraOpened = false;
+    private AtomicBoolean stopping = new AtomicBoolean(false);
     public boolean startDrawPad() {
         return startDrawPad(isPauseRecord);
     }
@@ -555,14 +547,12 @@ public class ExtDrawPadCameraView extends FrameLayout {
 
             DisplayMetrics dm = getResources().getDisplayMetrics();
 
-            if (dm != null && padWidth == dm.widthPixels
-                    && padHeight == dm.heightPixels) {
+            if (dm != null && padWidth == dm.widthPixels && padHeight == dm.heightPixels) {
                 renderer.setFullScreen(true);
             }
 
             if (renderer != null) {
-                renderer.setDisplaySurface(mTextureRenderView, new Surface(
-                        mSurfaceTexture));
+                renderer.setDisplaySurface(textureRenderView, new Surface(mSurfaceTexture));
 
                 if (isCheckPadSize) {
                     encWidth = LanSongUtil.make16Multi(encWidth);
@@ -606,7 +596,7 @@ public class ExtDrawPadCameraView extends FrameLayout {
                 if (isPauseRefresh) {
                     renderer.pauseRefreshDrawPad();
                 }
-                renderer.adjustEncodeSpeed(encodeSpeed);
+                renderer.adjustEncodeSpeed(1.0f);
 
                 LSOLog.i(  "starting run drawpad  thread...");
                 ret = renderer.startDrawPad();
@@ -614,14 +604,9 @@ public class ExtDrawPadCameraView extends FrameLayout {
                 isCameraOpened = ret;
                 if (!ret) { // 用中文注释.
                     LSOLog.e( "开启 drawPad 失败, 或许是您之前的DrawPad没有Stop, 或者传递进去的surface对象已经被系统Destory!!,"
-                                    + "请检测您 的代码或直接拷贝我们的代码过去,在我们代码基础上修改参数;\n");
+                            + "请检测您 的代码或直接拷贝我们的代码过去,在我们代码基础上修改参数;\n");
                 } else {
-
-//                    if(slideFilterArray!=null){
-//                        aeRenderer.getCameraLayer().setSlideFilterArray(slideFilterArray);
-//                    }
-
-                    renderer.setDisplaySurface(mTextureRenderView, new Surface(
+                    renderer.setDisplaySurface(textureRenderView, new Surface(
                             mSurfaceTexture));
                 }
             }
@@ -644,9 +629,6 @@ public class ExtDrawPadCameraView extends FrameLayout {
 
     /**
      * 暂停预览
-     * <p>
-     * 不可用来暂停后跳入到别的Activity中. 如果您要跳入到别的Activity, 则应该这里 {@link #stopDrawPad()}
-     * 在回到当前Activity的时候, 调用 {@link #setupDrawpad()}
      */
     public void pausePreview() {
         if (renderer != null) {
@@ -659,7 +641,7 @@ public class ExtDrawPadCameraView extends FrameLayout {
      * 恢复预览
      * <p>
      * 不可用来暂停后跳入到别的Activity中. 如果您要跳入到别的Activity, 则应该这里 {@link #stopDrawPad()}
-     * 在回到当前Activity的时候, 调用 {@link #setupDrawpad()}
+     * 在回到当前Activity的时候,
      */
     public void resumePreview() {
         if (renderer != null) {
@@ -681,8 +663,6 @@ public class ExtDrawPadCameraView extends FrameLayout {
 
     /**
      * 暂停录制 此方法仅仅在内部设置一个暂停/恢复录制的标志位;
-     * <p>
-     * 一般用在开始录制后的暂停; 不可用来暂停后跳入到别的Activity中.
      */
     public void pauseRecord() {
         if (renderer != null) {
@@ -931,71 +911,18 @@ public class ExtDrawPadCameraView extends FrameLayout {
      * 停止DrawPad的渲染线程. 此方法执行后, DrawPad会释放内部所有Layer对象,您外界拿到的各种图层对象将无法再使用.
      */
     public void stopDrawPad() {
-        if (!isStoping.get()) {
-            isStoping.set(true);
+        if (!stopping.get()) {
+            stopping.set(true);
 
             if (renderer != null) {
                 renderer.release();
                 renderer = null;
             }
 
-            isStoping.set(false);
+            stopping.set(false);
             isCameraOpened = false;
         }
     }
-
-    @Deprecated
-    public String stopDrawPad2() {
-        String ret = null;
-        if (renderer != null) {
-            renderer.release();
-            ret = renderer.getMusicRecordPath();
-            renderer = null;
-        }
-        isCameraOpened = false;
-        return ret;
-    }
-
-    /**
-     * 作用同 {@link #setDrawPadSize(int, int, onDrawPadSizeChangedListener)},
-     * 只是有采样宽高比, 如用我们的VideoPlayer则使用此方法, 建议用
-     * {@link #setDrawPadSize(int, int, onDrawPadSizeChangedListener)}
-     *
-     * @param width
-     * @param height
-     * @param sarnum 如mediaplayer设置后,可以为1,
-     * @param sarden 如mediaplayer设置后,可以为1,
-     * @param cb
-     */
-    public void setDrawPadSize(int width, int height, int sarnum, int sarden,
-                               onDrawPadSizeChangedListener cb) {
-        if (width != 0 && height != 0) {
-            if (mTextureRenderView != null) {
-                mTextureRenderView.setVideoSize(width, height);
-                mTextureRenderView.setVideoSampleAspectRatio(sarnum, sarden);
-            }
-            mSizeChangedCB = cb;
-            requestLayout();
-        }
-    }
-
-    /**
-     * 直接设置容器的宽高, 不让他自动缩放.
-     * <p>
-     * 要在容器开始前调用.
-     *
-     * @param width
-     * @param height
-     */
-    public void setDrawpadSizeDirect(int width, int height) {
-        padWidth = width;
-        padHeight = height;
-        if (renderer != null) {
-            LSOLog.e(
-                    "aeRenderer maybe is running. your setting is not available!!");
-        }
-    }
-
     /**
      * 把当前图层放到最里层, 里面有 一个handler-loop机制, 将会在下一次刷新后执行.
      *
@@ -1023,7 +950,6 @@ public class ExtDrawPadCameraView extends FrameLayout {
      * @param layer
      * @param position
      */
-    @Deprecated
     public void changeLayerLayPosition(Layer layer, int position) {
         if (renderer != null) {
             renderer.changeLayerLayPosition(layer, position);
@@ -1165,7 +1091,16 @@ public class ExtDrawPadCameraView extends FrameLayout {
             return null;
         }
     }
-
+    /**
+     * 放大缩小画面
+     */
+    private boolean isZoomEvent = false;
+    private float pointering; // 两个手指按下.
+    private doFousEventListener mDoFocusListener;
+    // ----------------------------------------------
+    private boolean isCheckBitRate = true;
+    private boolean isCheckPadSize = true;
+    private boolean isEnableTouch = true;
 
     /**
      * 从渲染线程列表中移除并销毁这个Layer; 注意:此方法一定在 startDrawPad之后,在stopDrawPad之前调用.
@@ -1288,82 +1223,9 @@ public class ExtDrawPadCameraView extends FrameLayout {
         isEnableTouch = enable;
     }
 
-    public interface onViewAvailable {
-        void viewAvailable(ExtDrawPadCameraView v);
-    }
 
     public interface doFousEventListener {
         void onFocus(int x, int y);
-    }
-
-    private class SurfaceCallback implements SurfaceTextureListener {
-
-        /**
-         * Invoked when a {@link TextureView}'s SurfaceTexture is ready for use.
-         * 当画面呈现出来的时候, 会调用这个回调.
-         * <p>
-         * 当Activity跳入到别的界面后,这时会调用
-         * {@link #onSurfaceTextureDestroyed(SurfaceTexture)} 销毁这个Texture,
-         * 如果您想在再次返回到当前Activity时,再次显示预览画面, 可以在这个方法里重新设置一遍DrawPad,并再次startDrawPad
-         * <p>
-         * 有些手机在从当前Activity进入另一个activity,再次返回时, 不会调用这里,比如魅族MX5.
-         */
-
-        @Override
-        public void onSurfaceTextureAvailable(SurfaceTexture surface,
-                                              int width, int height) {
-
-            mSurfaceTexture = surface;
-            padHeight = height;
-            padWidth = width;
-            if (mViewAvailable != null) {
-                mViewAvailable.viewAvailable(ExtDrawPadCameraView.this);
-            }
-        }
-
-        /**
-         * Invoked when the {@link SurfaceTexture}'s buffers size changed.
-         * 当创建的TextureView的大小改变后, 会调用回调.
-         * <p>
-         * 当您本来设置的大小是480x480,而DrawPad会自动的缩放到父view的宽度时,会调用这个回调,提示大小已经改变,
-         * 这时您可以开始startDrawPad 如果你设置的大小更好等于当前Texture的大小,则不会调用这个, 详细的注释见
-         */
-        @Override
-        public void onSurfaceTextureSizeChanged(SurfaceTexture surface,
-                                                int width, int height) {
-            mSurfaceTexture = surface;
-            padHeight = height;
-            padWidth = width;
-
-            if (mSizeChangedCB != null) {
-                mSizeChangedCB.onSizeChanged(width, height);
-            }
-        }
-
-        /**
-         * Invoked when the specified {@link SurfaceTexture} is about to be
-         * destroyed.
-         * <p>
-         * 当您跳入到别的Activity的时候, 会调用这个,销毁当前Texture;
-         */
-        @Override
-        public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-            mSurfaceTexture = null;
-            padHeight = 0;
-            padWidth = 0;
-            stopDrawPad(); // 可以在这里增加以下. 这样当Texture销毁的时候, 停止DrawPad
-            return false;
-        }
-
-        /**
-         * Invoked when the specified {@link SurfaceTexture} is updated through
-         * {@link SurfaceTexture#updateTexImage()}.
-         * <p>
-         * 每帧如果更新了, 则会调用这个!!!!
-         */
-        @Override
-        public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-        }
     }
 
 

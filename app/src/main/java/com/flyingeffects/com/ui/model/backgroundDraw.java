@@ -17,7 +17,6 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.FilterUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.lansongCommendView.StickerItem;
-import com.lansosdk.LanSongFilter.LanSongBlackMaskBlendFilter;
 import com.lansosdk.LanSongFilter.LanSongMaskBlendFilter;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
@@ -234,7 +233,7 @@ public class backgroundDraw {
             float percentY = stickerItem.getTranslationy();
             LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
             mvLayer.setPosition(mvLayer.getPositionX(), mvLayer.getPadHeight() * percentY);
-            mvLayer.switchFilterTo(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class,stickerItem.getMaskBitmap()));
+            mvLayer.switchFilterTo(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class, stickerItem.getMaskBitmap()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -273,7 +272,7 @@ public class backgroundDraw {
 //        float posY = (mvLayer.getPadHeight() + mvLayer.getLayerHeight()) * percentY - mvLayer.getLayerHeight() / 2.0f;
 //        mvLayer.setPosition(mvLayer.getPositionX(), posY);
         mvLayer.setPosition(mvLayer.getPositionX(), mvLayer.getPadHeight() * percentY);
-
+        mvLayer.switchFilterTo(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class, stickerItem.getMaskBitmap()));
     }
 
 

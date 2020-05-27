@@ -26,7 +26,6 @@ import com.lansosdk.LanSongFilter.LanSong3x3TextureSamplingFilter;
 import com.lansosdk.LanSongFilter.LanSongAddBlendFilter;
 import com.lansosdk.LanSongFilter.LanSongAlphaBlendFilter;
 import com.lansosdk.LanSongFilter.LanSongBeautyAdvanceFilter;
-import com.lansosdk.LanSongFilter.LanSongBlackMaskBlendFilter;
 import com.lansosdk.LanSongFilter.LanSongBlurFilter;
 import com.lansosdk.LanSongFilter.LanSongBrightnessFilter;
 import com.lansosdk.LanSongFilter.LanSongBulgeDistortionFilter;
@@ -144,7 +143,6 @@ public class FilterLibrary {
         filterList.addFilter("16If1977", FilterType.IF1977);
         filterList.addFilter("17LORDKELVIN", FilterType.LORDKELVIN);
 
-        filterList.addFilter("黑色抠图", FilterType.LanSongBLACKMASK);
         filterList.addFilter("区域透明", FilterType.LanSongMASK);
 
         filterList.addFilter("负片", FilterType.INVERT);
@@ -304,8 +302,6 @@ public class FilterLibrary {
                 centerPoint.y = 0.5f;
                 return new LanSongVignetteFilter(centerPoint, new float[]{0.0f,
                         0.0f, 0.0f}, 0.3f, 0.75f);
-            case LanSongBLACKMASK:
-                return createBlendFilter(context, LanSongBlackMaskBlendFilter.class);
             case LanSongMASK:
                 /**
                  * 这个滤镜的效果是: 把输入源的某区域 处理成透明.
@@ -474,7 +470,7 @@ public class FilterLibrary {
     }
 
     public enum FilterType {
-        NONE, BEAUTIFUL, BEAUTIFUL2, LanSongBLACKMASK, LanSongMASK, LanSongBLUR,GaussionBLUR, CONTRAST, GRAYSCALE, SEPIA,
+        NONE, BEAUTIFUL, BEAUTIFUL2, LanSongMASK, LanSongBLUR,GaussionBLUR, CONTRAST, GRAYSCALE, SEPIA,
         POSTERIZE, GAMMA, BRIGHTNESS, INVERT, HUE, PIXELATION, SATURATION, EXPOSURE, HIGHLIGHT_SHADOW, MONOCHROME,
         OPACITY, RGB, WHITE_BALANCE, VIGNETTE,
         BLEND_COLOR_BURN, BLEND_COLOR_DODGE, BLEND_DARKEN, BLEND_DIFFERENCE,

@@ -86,7 +86,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     @Override
     protected void initView() {
         imagePath = getIntent().getStringExtra("path");
-        VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
+        VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(mContext, imagePath);
         timeUtils = new timeUtils();
         tv_end_time.setText(timeUtils.timeParse(videoInfo.getDuration()));
         exoPlayer = ExoPlayerFactory.newSimpleInstance(CreationTemplatePreviewActivity.this);
@@ -123,9 +123,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     protected void initAction() {
 
     }
-
-
-
 
 
     private void seekTo(long to) {
@@ -194,23 +191,22 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
         switch (v.getId()) {
             case R.id.tv_back:
                 if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(this, "7_return" );
-                }else{
-                    statisticsEventAffair.getInstance().setFlag(this, "8_return" );
+                    statisticsEventAffair.getInstance().setFlag(this, "7_return");
+                } else {
+                    statisticsEventAffair.getInstance().setFlag(this, "8_return");
                 }
 
-                statisticsEventAffair.getInstance().setFlag(this, "7_return" );
+                statisticsEventAffair.getInstance().setFlag(this, "7_return");
                 CreationTemplatePreviewActivity.this.finish();
                 break;
 
             case R.id.tv_save:
 
                 if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(this, "7_save" );
-                }else{
-                    statisticsEventAffair.getInstance().setFlag(this, "8_save" );
+                    statisticsEventAffair.getInstance().setFlag(this, "7_save");
+                } else {
+                    statisticsEventAffair.getInstance().setFlag(this, "8_save");
                 }
-
 
 
                 saveToAlbum(imagePath);

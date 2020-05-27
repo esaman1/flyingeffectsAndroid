@@ -290,7 +290,7 @@ public class AECompositionView extends FrameLayout {
     public int getDrawPadHeight() {
         return drawPadHeight;
     }
-    //------------------------------------------Ae的代码-----------------------------------------------------------
+   //------------------------------------------Ae的代码-----------------------------------------------------------
     /**
      * 增加第1层
      * 视频图层; 没有则设置为nil
@@ -467,7 +467,7 @@ public class AECompositionView extends FrameLayout {
     public void setPreviewLooping(boolean is){
         createRender();
         if(renderer !=null) {
-            renderer.setPreviewLooping(is);
+           renderer.setPreviewLooping(is);
         }
     }
 
@@ -1032,7 +1032,7 @@ public class AECompositionView extends FrameLayout {
      */
     public void release(){
         if(renderer!=null){
-            renderer.release();
+           renderer.release();
             renderer=null;
         }
         isStarted=false;

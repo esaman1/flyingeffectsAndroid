@@ -41,10 +41,6 @@ public class MediaInfo {
     public final String fileName; // 视频的文件名, 路径的最后一个/后的字符串.
     public final String fileSuffix; // 文件的后缀名.
     public final long fileLength; // 文件的总大小, 单位字节;
-    /**
-     * 视频的编码宽度
-     * 不建议使用
-     */
     public int vWidth;
 
     /**

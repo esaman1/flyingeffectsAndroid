@@ -143,7 +143,7 @@ public class CreationTemplateMvpModel {
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
         vibrator = (Vibrator) context.getSystemService(Service.VIBRATOR_SERVICE);
         if (!TextUtils.isEmpty(mVideoPath)) {
-            videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
+            videoInfo = getVideoInfo.getInstance().getRingDuring(context,mVideoPath);
         }
         FileManager fileManager = new FileManager();
         mGifFolder = fileManager.getFileCachePath(context, "gifFolder");
@@ -166,7 +166,7 @@ public class CreationTemplateMvpModel {
     public void setmVideoPath(String mVideoPath) {
         if (!TextUtils.isEmpty(mVideoPath)) {
             this.mVideoPath = mVideoPath;
-            videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
+            videoInfo = getVideoInfo.getInstance().getRingDuring(context,mVideoPath);
         } else {
             this.mVideoPath = null;
             videoInfo = null;
@@ -783,7 +783,7 @@ public class CreationTemplateMvpModel {
                 StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
                 if (!TextUtils.isEmpty(stickerView.getOriginalPath())) {
                     if (albumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath()))) {
-                        VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
+                        VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(context,stickerView.getOriginalPath());
                         LogUtil.d("OOM", "materialVideoInfo.getDuration()=" + materialVideoInfo.getDuration());
                         perSticker.add(materialVideoInfo.getDuration());
                     }
@@ -793,7 +793,7 @@ public class CreationTemplateMvpModel {
             //只有第一次初始化的时候，可能为0.因为viewLayerRelativeLayout还没加载进入数据，所有就需要手动加上
             if (!TextUtils.isEmpty(originalPath)) {
                 if (albumType.isVideo(GetPathType.getInstance().getPathType(originalPath))) {
-                    VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(originalPath);
+                    VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(context,originalPath);
                     LogUtil.d("OOM", "materialVideoInfo.getDuration()=" + materialVideoInfo.getDuration());
                     perSticker.add(materialVideoInfo.getDuration());
                 }
@@ -956,13 +956,13 @@ public class CreationTemplateMvpModel {
                     if (isMatting) {
                         stickerData.setPath(stickerView.getClipPath());
                         stickerData.setOriginalPath(stickerView.getOriginalPath());
-                        VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
+                        VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(context,stickerView.getOriginalPath());
                         stickerData.setDuration(materialVideoInfo.getDuration());
 
                     } else { //这里也会出现蓝松一样的，相同地址只有一个图层
                         stickerData.setPath(stickerView.getOriginalPath());
                         stickerData.setOriginalPath(stickerView.getOriginalPath());
-                        VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
+                        VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(context,stickerView.getOriginalPath());
                         int materialDuration = materialVideoInfo.getDuration();
                         int needDuration = 0;
                         if (videoInfo != null) {

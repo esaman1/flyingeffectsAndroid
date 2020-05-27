@@ -9,16 +9,18 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.view.MotionEvent;
 
 import com.lansosdk.box.LSOLayer;
-import com.lansosdk.box.LSOLog;
 
 
 /**
+ *
  */
 public class LSOLayerTouch {
-    private static final float MIN_SCALE = 0.15f;
+    public static final float VOID_VALUE = -999f;
 
+    private static final float MIN_SCALE = 0.15f;
 
     private static final int HELP_BOX_PAD = 25;
 
@@ -64,7 +66,7 @@ public class LSOLayerTouch {
 
     public LSOLayerTouch(Context context) {
 
-        helpBoxPaint.setColor(Color.BLACK);
+        helpBoxPaint.setColor(Color.RED);
         helpBoxPaint.setStyle(Style.STROKE);
         helpBoxPaint.setAntiAlias(true);
         helpBoxPaint.setStrokeWidth(4);
@@ -88,33 +90,30 @@ public class LSOLayerTouch {
         }// end if
     }
 
-    public void init(LSOLayer layer, LSOConcatCompositionView compView) {
+    public LSOLayer getLayer(){
+        return layer;
+    }
+    public void init(LSOLayer layer, LSOConcatCompositionView lsoVideoCompositionView) {
 
         if(layer!=null && layer.getLayerWidth() >0 && layer.getLayerHeight()>0){
             this.layer=layer;
-
-
             //得到缩放后的宽高;
             int width=(int)layer.getLayerWidth();
             int height=(int)layer.getLayerHeight();
 
             this.srcRect = new Rect(0, 0, width, height);
 
-            int bitWidth = Math.min(width, compView.getWidth() >> 1);
+            int bitWidth = Math.min(width, lsoVideoCompositionView.getWidth() >> 1);
             int bitHeight = (int) bitWidth * height / width;
             layer.setScaledValue(bitWidth,bitHeight);
 
-            int left = (compView.getWidth() >> 1) - (bitWidth >> 1);
-            int top = (compView.getHeight() >> 1) - (bitHeight >> 1);
+            int left = (lsoVideoCompositionView.getWidth() >> 1) - (bitWidth >> 1);
+            int top = (lsoVideoCompositionView.getHeight() >> 1) - (bitHeight >> 1);
             this.dstRect = new RectF(left, top, left + bitWidth, top + bitHeight);
 
-            // 记录原始宽度
-            initWidth = this.dstRect.width();
-
+            initWidth = this.dstRect.width();// 记录原始宽度
             this.drawHelpTool = true;
-
-            //记录原始矩形
-            this.helpBox = new RectF(this.dstRect);
+            this.helpBox = new RectF(this.dstRect);//记录原始矩形
             this.dstRect_one = new RectF(this.dstRect);
 
             updateHelpBoxRect();
@@ -139,10 +138,6 @@ public class LSOLayerTouch {
 
     }
 
-    public LSOLayer getLayer(){
-        return layer;
-    }
-
     private void updateHelpBoxRect() {
         //每次减25
         this.helpBox.left -= HELP_BOX_PAD;
@@ -157,6 +152,7 @@ public class LSOLayerTouch {
      * @param dx
      * @param dy
      */
+
     public void updatePos(final float dx, final float dy,float widthRatio,float heightRatio) {
 
         dstRect.offset(dx, dy);
@@ -172,6 +168,7 @@ public class LSOLayerTouch {
         if(layer!=null){
             float centerX =  dstRect.centerX()/widthRatio;
             float centerY =  dstRect.centerY()/heightRatio;
+
             layer.setPosition(centerX,centerY);
         }
     }
@@ -199,7 +196,7 @@ public class LSOLayerTouch {
         float x_one = detectRotateRect_one.centerX();
         float y_one = detectRotateRect_one.centerY();
         //和中心点的距离
-        float xa_one = y_one - c_x;
+        float xa_one = x_one - c_x;
         float ya_one = y_one - c_y;
         float oneLen = (float) Math.sqrt(ya_one * ya_one + xa_one * xa_one);
         //旋转按钮的中心坐标
@@ -222,9 +219,7 @@ public class LSOLayerTouch {
         float srcLen = (float) Math.sqrt(xa * xa + ya * ya);
         float curLen = (float) Math.sqrt(xb * xb + yb * yb);
 
-
-        //当前值和第一次的缩放比
-        float scale_one = curLen / oneLen;
+        float scale_one = curLen / oneLen;//当前值和第一次的缩放比------------------------------------
 //        layer.setScale(scale_one);
 
 
@@ -234,6 +229,10 @@ public class LSOLayerTouch {
         if (newWidth / initWidth < MIN_SCALE) {// 最小缩放值检测
             return;
         }
+
+        // this.matrix.postRotate(5, this.dstRect.centerX(),
+        // this.dstRect.centerY());
+
         scaleRect(this.dstRect, scale);// 缩放目标矩形
 
         // 重新计算工具箱坐标
@@ -263,10 +262,7 @@ public class LSOLayerTouch {
         int flag = calMatrix > 0 ? 1 : -1;
         angle = flag * angle;
 
-        //相对原本位置的角度-------------------------------------------------
-        roatetAngle += angle;
-
-
+        roatetAngle += angle;//相对原本位置的角度-------------------------------------------------
 
         if(layer!=null){
             layer.setRotation(roatetAngle);
@@ -281,7 +277,6 @@ public class LSOLayerTouch {
                 this.dstRect.centerY(), roatetAngle);
         rotateRect(this.detectDeleteRect, this.dstRect.centerX(),
                 this.dstRect.centerY(), roatetAngle);
-
     }
 
     public void draw(Canvas canvas) {
@@ -296,8 +291,8 @@ public class LSOLayerTouch {
             top 长方形顶的Y坐标
             right 长方形右侧的X坐标
             bottom 长方形底的Y坐标*/
-            canvas.drawRoundRect(helpBox, 10, 10, helpBoxPaint);
 
+            canvas.drawRoundRect(helpBox, 10, 10, helpBoxPaint);
 
             // 绘制工具按钮
             canvas.drawBitmap(deleteBit, helpToolsRect, deleteRect, null);
@@ -405,4 +400,76 @@ public class LSOLayerTouch {
 
         srcRect.set(left, top, right, bottom);
     }
+
+
+    // 取得两指间距
+    public float getSpacing(MotionEvent event){
+        //通过三角函数得到两点间的距离
+        if (event.getPointerCount()==2){
+
+            float x = event.getX(0) - event.getX(1);
+            float y = event.getY(0) - event.getY(1);
+            return (float) Math.sqrt(x * x + y * y);
+        }
+        return VOID_VALUE;
+    }
+
+    // 取旋转角度
+    public float getDegree(MotionEvent event) {
+        //得到两个手指间的旋转角度
+        if (event.getPointerCount()==2){
+            double delta_x = event.getX(0) - event.getX(1);
+            double delta_y = event.getY(0) - event.getY(1);
+            double radians = Math.atan2(delta_y, delta_x);
+            return (float) Math.toDegrees(radians);
+        }
+        return  VOID_VALUE;
+    }
+
+    public void doublePointScaleAndRotate(float scale , float degrees){
+
+
+        //用中心点矩阵的真实高度去*缩放比
+        float newWidth = dstRect.width() * scale;
+        if (newWidth / initWidth < MIN_SCALE) {// 最小缩放值检测
+            return;
+        }
+        scaleRect(this.dstRect, scale);// 缩放目标矩形
+
+        helpBox.set(dstRect);
+
+        // 重新计算工具箱坐标
+        updateHelpBoxRect();// 重新计算
+
+
+        roatetAngle += degrees;//相对原本位置的角度-------------------------------------------------
+
+        if(layer!=null){
+            layer.setRotation(roatetAngle);
+            float width= helpBox.width() ;
+            float height=helpBox.height();
+            layer.setScaledValue(width,height);
+        }
+
+
+        //移动按钮
+        rotateRect.offsetTo(helpBox.right - BUTTON_WIDTH, helpBox.bottom
+                - BUTTON_WIDTH);
+        deleteRect.offsetTo(helpBox.left - BUTTON_WIDTH, helpBox.top
+                - BUTTON_WIDTH);
+
+        detectRotateRect.offsetTo(helpBox.right - BUTTON_WIDTH, helpBox.bottom
+                - BUTTON_WIDTH);
+        detectDeleteRect.offsetTo(helpBox.left - BUTTON_WIDTH, helpBox.top
+                - BUTTON_WIDTH);
+
+
+        //两个按钮区域
+        rotateRect(this.detectRotateRect, this.dstRect.centerX(),
+                this.dstRect.centerY(), roatetAngle);
+        rotateRect(this.detectDeleteRect, this.dstRect.centerX(),
+                this.dstRect.centerY(), roatetAngle);
+
+    }
+
 }// end class
