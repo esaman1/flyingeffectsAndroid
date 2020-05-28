@@ -19,7 +19,7 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
 
     public CreationTemplateMvpPresenter(Context context, CreationTemplateMvpView mvp_view, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath, DrawPadView2 drawPadView2) {
         this.creationTemplatemvpView = mvp_view;
-        creationTemplatemodel = new CreationTemplateMvpModel(context, this,mVideoPath,viewLayerRelativeLayout,originalPath,drawPadView2);
+        creationTemplatemodel = new CreationTemplateMvpModel(context, this,mVideoPath,viewLayerRelativeLayout,originalPath);
     }
 
     public void setmVideoPath(String path){

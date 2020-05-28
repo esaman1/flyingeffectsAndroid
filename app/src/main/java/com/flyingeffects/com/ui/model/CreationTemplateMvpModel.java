@@ -147,13 +147,13 @@ public class CreationTemplateMvpModel {
     private HashMap<Integer, ArrayList<StickerView>> allChooseSubLayerAnimList = new HashMap<>();
     private AnimCollect animCollect;
 
-    public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath, DrawPadView2 drawPadView2) {
+    public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath) {
         this.context = context;
         this.callback = callback;
         this.originalPath = originalPath;
         this.mVideoPath = mVideoPath;
         dialog = new WaitingDialogProgressNowAnim(context);
-        this.viewLayerRelativeLayout = viewLayerRelativeLayout;
+        this.viewLayerRelativeLayout = viewLayerRelativeLayout;dai
         vibrator = (Vibrator) context.getSystemService(Service.VIBRATOR_SERVICE);
         if (!TextUtils.isEmpty(mVideoPath)) {
             videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
@@ -1103,7 +1103,7 @@ public class CreationTemplateMvpModel {
                         }
                     }
                 }
-            });
+            },animCollect);
 
 
             for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {

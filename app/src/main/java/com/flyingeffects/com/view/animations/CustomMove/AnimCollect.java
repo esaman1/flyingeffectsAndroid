@@ -2,7 +2,10 @@ package com.flyingeffects.com.view.animations.CustomMove;
 
 
 import com.flyingeffects.com.enity.StickerAnim;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.StickerView;
+import com.lansosdk.box.Layer;
+import com.lansosdk.box.SubLayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,27 +60,68 @@ public  class AnimCollect {
 
 
 
+
+    /**
+     * description ：获得动画时长
+     * creation date: 2020/5/27
+     * user : zhangtongju
+     */
+    public int getAnimNeedSubLayerTime(AnimType type) {
+        switch (type) {
+            case EIGHTBORTHER:
+                return 10000;
+            case LEFTTORIGHT:
+                return 3000;
+        }
+        return 0;
+    }
+
+
+
     /**
      * description ：开启全部动画
      * creation date: 2020/5/27
      * user : zhangtongju
      */
     public void startAnimForChooseAnim(AnimType type, StickerView mainStickerView, List<StickerView> subLayer) {
-
         switch (type) {
             //8个动画飞天效果
             case EIGHTBORTHER:
+                LogUtil.d("LEFTTORIGHT","EIGHTBORTHER-subLayer大小为"+subLayer.size());
                 animModel=new ItemEightBorther();
                 ((ItemEightBorther)animModel).toChangeStickerView(mainStickerView, subLayer);
                 break;
             //左进右出
             case LEFTTORIGHT:
                 animModel=new ItemRightToLeft();
+                LogUtil.d("LEFTTORIGHT","LEFTTORIGHT-subLayer大小为"+subLayer.size());
                 ((ItemRightToLeft)animModel).toChangeStickerView(mainStickerView, subLayer);
                 break;
         }
-
     }
+
+
+
+    /**
+     * description ：开启全部动画
+     * creation date: 2020/5/27
+     * user : zhangtongju
+     */
+    public void startAnimForChooseAnim(AnimType type, Layer mainStickerView,ArrayList<SubLayer> listForSubLayer,LayerAnimCallback callback,long percentage) {
+        switch (type) {
+            //8个动画飞天效果
+            case EIGHTBORTHER:
+                animModel=new ItemEightBorther();
+                ((ItemEightBorther)animModel).toChangeSubLayer(mainStickerView, listForSubLayer,callback,percentage);
+                break;
+//            //左进右出
+//            case LEFTTORIGHT:
+//                animModel=new ItemRightToLeft();
+//                ((ItemRightToLeft)animModel).toChangeSubLayer(mainStickerView, listForSubLayer);
+//                break;
+        }
+    }
+
 
 
     /**

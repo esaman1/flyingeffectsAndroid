@@ -21,13 +21,12 @@ public class ItemRightToLeft extends baseAnimModel {
 
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
         this.mainStickerView = mainStickerView;
-        LogUtil.d("StartAnimModel", "subLayer大小為=" + subLayer.size());
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
         StickerView sub1 = subLayer.get(0);
+        LogUtil.d("OOM","第一个贴纸的图片地址为"+sub1.getOriginalPath());
         StickerView sub2 = subLayer.get(1);
         //(mainStickerView.getmHelpBoxRectW())  解决方法效果很突兀的情况
         float totalWidth = mainStickerView.getMeasuredWidth()+(mainStickerView.getmHelpBoxRectW());
-        LogUtil.d("OOM", "totalWidth=" + totalWidth);
         float mScale = mainStickerView.GetHelpBoxRectScale();
         //view 右边的位置
         float stickerViewPosition = mainStickerView.GetHelpBoxRectRight();
@@ -45,7 +44,6 @@ public class ItemRightToLeft extends baseAnimModel {
                 } else {
                     //  第一个子view大约位置一半位置,显示在中间位置
                     if (sub1 != null) {
-                        LogUtil.d("StartAnimModel", "sub1 != null="+"subId="+sub1.getId() );
                         float translationToX;
                         if (needProgress < 0.66) {
                             translationToX = (float) (needProgress + 0.33);
@@ -55,7 +53,6 @@ public class ItemRightToLeft extends baseAnimModel {
                             translationToX = (float) (needProgress - 0.66);
                             sub1.toTranMoveX(translationToX * totalWidth);
                         }
-                        LogUtil.d("OOM", "needToX=" + translationToX * totalWidth);
                      sub1.toScale(1 - translationToX, mScale, isDone);
                     }
 
@@ -69,7 +66,6 @@ public class ItemRightToLeft extends baseAnimModel {
                             translationToX = (float) (needProgress - 0.33);
                             sub2.toTranMoveX(translationToX * totalWidth);
                         }
-                        LogUtil.d("OOM", "translationToX2=" + translationToX);
                         sub2.toScale(1 - translationToX, mScale, isDone);
                     }
 
@@ -82,7 +78,6 @@ public class ItemRightToLeft extends baseAnimModel {
                         translationToX = (float) (needProgress - (1 - 0.99));
                         mainStickerView.toTranMoveX(translationToX * totalWidth);
                     }
-                    LogUtil.d("OOM", "needToX=" + translationToX * totalWidth);
                 mainStickerView.toScale(1 - translationToX, mScale, isDone);
 
 

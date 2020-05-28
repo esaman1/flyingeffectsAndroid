@@ -1507,6 +1507,15 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     }
 
+
+    public float getMBoxCenterX() {
+        return mHelpBoxRect.centerX();
+    }
+
+    public float getMBoxCenterY() {
+        return mHelpBoxRect.centerY();
+    }
+
     public float getCenterY() {
         float yy = (mHelpBoxRect.bottom - mHelpBoxRect.top) / 2;
         return mHelpBoxRect.bottom - yy + 30;
@@ -1666,9 +1675,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         if (isDone) {
             mScale = lastScale;
         } else {
-            LogUtil.d("toScale", "mScale1111=" + mScale);
+//            LogUtil.d("toScale", "mScale1111=" + mScale);
             mScale = lastScale + percent * lastScale;
-            LogUtil.d("toScale", "mScale2222=" + mScale);
+//            LogUtil.d("toScale", "mScale2222=" + mScale);
         }
 
     }
@@ -1696,6 +1705,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      * creation date: 2020/5/25
      * user : zhangtongju
      */
+
+
+
+
+
 
     Path mAnimPath;
     PathMeasure mPathMeasure;

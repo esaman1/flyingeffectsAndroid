@@ -1,5 +1,7 @@
 package com.flyingeffects.com.enity;
 
+import com.flyingeffects.com.view.animations.CustomMove.AnimType;
+
 import java.io.Serializable;
 
 
@@ -107,5 +109,18 @@ public class AllStickerData implements Serializable {
     }
 
     private int BoxH;
+
+    public AnimType getChooseAnimId() {
+        return ChooseAnimId;
+    }
+
+    public void setChooseAnimId(AnimType chooseAnimId) {
+        ChooseAnimId = chooseAnimId;
+    }
+
+    /**
+     * 是否选择了动画，动画id值
+     */
+    private AnimType ChooseAnimId;
 
 }

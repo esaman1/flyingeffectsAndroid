@@ -8,8 +8,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-
-
 /**
  * description ：匀速插值器，返回当前时间的点
  * creation date: 2020/5/21
@@ -25,8 +23,7 @@ public class AnimationLinearInterpolator {
     private Timer timer;
     private TimerTask task;
     private GetProgressCallback callback;
-    private  int nowDuration;
-
+    private int nowDuration;
 
 
     /**
@@ -35,9 +32,9 @@ public class AnimationLinearInterpolator {
      * param : totalDuration 插值器时长 nowDuration 当前时长  GetProgressCallback 返回阶段值
      * user : zhangtongju
      */
-    public AnimationLinearInterpolator(int totalDuration ,GetProgressCallback callback) {
+    public AnimationLinearInterpolator(int totalDuration, GetProgressCallback callback) {
         this.totalDuration = totalDuration;
-        this.callback=callback;
+        this.callback = callback;
     }
 
 
@@ -46,18 +43,23 @@ public class AnimationLinearInterpolator {
      * creation date: 2020/5/21
      * user : zhangtongju
      */
-    public void StopAnimation(){
+    public void StopAnimation() {
         endTimer();
     }
 
-    public void PlayAnimation(int delay){
+    public void PlayAnimation(int delay) {
         endTimer();
         startTimer(delay);
     }
 
-    public void PlayAnimation(){
+    public void PlayAnimation() {
         endTimer();
         startTimer(0);
+    }
+
+
+    public void PlayAnimationNoTimer(float percentage) {
+        callback.progress(getNowInterpolatorProgress(percentage), isDone);
     }
 
 
@@ -71,7 +73,7 @@ public class AnimationLinearInterpolator {
      * 关闭timer 和task
      */
     public void endTimer() {
-        isPlaying=false;
+        isPlaying = false;
         destroyTimer();
     }
 
@@ -94,18 +96,17 @@ public class AnimationLinearInterpolator {
     }
 
 
-
-
     /**
      * description ：20帧
      * creation date: 2020/5/21
      * user : zhangtongju
      */
-    private boolean  isDone;
+    private boolean isDone;
+
     private void startTimer(int delay) {
-        isDone=false;
-        if(!isPlaying){
-            isPlaying=true;
+        isDone = false;
+        if (!isPlaying) {
+            isPlaying = true;
             if (timer != null) {
                 timer.purge();
                 timer.cancel();
@@ -119,15 +120,15 @@ public class AnimationLinearInterpolator {
             task = new TimerTask() {
                 @Override
                 public void run() {
-                    if(nowDuration>=totalDuration){
-                        nowDuration=0;
+                    if (nowDuration >= totalDuration) {
+                        nowDuration = 0;
                     }
-                    nowDuration+=10;
-                    LogUtil.d("xxx2","nowDuration="+nowDuration);
-                    float nowFloatTime=nowDuration/(float)totalDuration;
-                    LogUtil.d("xxx2","nowFloatTime="+nowFloatTime);
-                    float progress=getNowInterpolatorProgress(nowFloatTime);
-                    callback.progress(progress,isDone);
+                    nowDuration += 10;
+                    LogUtil.d("xxx2", "nowDuration=" + nowDuration);
+                    float nowFloatTime = nowDuration / (float) totalDuration;
+                    LogUtil.d("xxx2", "nowFloatTime=" + nowFloatTime);
+                    float progress = getNowInterpolatorProgress(nowFloatTime);
+                    callback.progress(progress, isDone);
 
                 }
             };
@@ -136,18 +137,14 @@ public class AnimationLinearInterpolator {
     }
 
 
-
-
     /**
      * description ：获得当前进度
      * creation date: 2020/5/21
      * user : zhangtongju
      */
-    public interface  GetProgressCallback{
-        void progress(float progress,boolean isDown);
+    public interface GetProgressCallback {
+        void progress(float progress, boolean isDown);
     }
-
-
 
 
 }

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.support.v4.util.SparseArrayCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -15,20 +16,23 @@ import com.flyingeffects.com.enity.AllStickerData;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.view.lansongCommendView.StickerItem;
+import com.flyingeffects.com.view.animations.CustomMove.AnimCollect;
+import com.flyingeffects.com.view.animations.CustomMove.AnimType;
+import com.flyingeffects.com.view.animations.CustomMove.LayerAnimCallback;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
 import com.lansosdk.box.GifLayer;
-import com.lansosdk.box.LSOBitmapAsset;
 import com.lansosdk.box.LSOScaleType;
 import com.lansosdk.box.LSOVideoOption;
+import com.lansosdk.box.Layer;
+import com.lansosdk.box.SubLayer;
 import com.lansosdk.box.VideoFrameLayer;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.shixing.sxve.ui.albumType;
-import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,13 +56,24 @@ public class backgroundDraw {
     private int intoCanvesCount;
     private String ExtractFramegFolder;
 
-    private boolean noVideo=false;
+    private boolean noVideo = false;
     /**
      * 视频图层声音
      */
     private String videoVoice;
     private String imagePath;
 
+    /**
+     * 收集有动画的图层
+     */
+    private ArrayList<hasAnimLayer> hasAnimLayerList = new ArrayList<>();
+
+    /**
+     * 总时间,微秒 1=1000=1000*1000
+     */
+    private long totleRenderTime;
+
+    private AnimCollect animCollect;
 
     /**
      * description ：后台绘制，如果videoVoice不为null,那么需要把主视频图层的声音替换为用户选择的背景声音
@@ -66,11 +81,12 @@ public class backgroundDraw {
      * creation date: 2020/4/23
      * user : zhangtongju
      */
-    public backgroundDraw(Context context, String videoPath, String videoVoice, String imagePath, saveCallback callback) {
+    public backgroundDraw(Context context, String videoPath, String videoVoice, String imagePath, saveCallback callback, AnimCollect animCollect) {
         this.context = context;
         this.videoPath = videoPath;
         this.videoVoice = videoVoice;
         this.imagePath = imagePath;
+        this.animCollect = animCollect;
         this.callback = callback;
 //        waitingProgress = new WaitingDialog_progress(context);
         if (!TextUtils.isEmpty(videoPath)) {
@@ -94,16 +110,13 @@ public class backgroundDraw {
             }
         }
         //如果还是0,说明全是图片，就修改为10
-        if(duration==0){
-            noVideo=true;
-            duration=10000;
+        if (duration == 0) {
+            noVideo = true;
+            duration = 10000;
         }
         LogUtil.d("OOM2", "进入到了最后渲染");
 //        waitingProgress.openProgressDialog();
-
-
-
-
+        totleRenderTime = duration * 1000;
         try {
             execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, (long) (duration * 1000));
             execute.setFrameRate(FRAME_RATE);
@@ -115,20 +128,20 @@ public class backgroundDraw {
             });
             execute.setOnLanSongSDKProgressListener((l, i) -> {
 
-                if(noVideo){
+                if (noVideo) {
                     callback.saveSuccessPath("", i);
-                }else{
+                } else {
                     float f_progress = (i / (float) 100) * 5;
                     int progress;
-                    if(isMatting){
+                    if (isMatting) {
                         progress = (int) (95 + f_progress);
-                    }else{
+                    } else {
                         progress = (int) (5 + f_progress);
                     }
-                    LogUtil.d("OOM2", "progress="+progress );
+                    LogUtil.d("OOM2", "progress=" + progress);
                     callback.saveSuccessPath("", progress);
                 }
-                LogUtil.d("OOM2", "saveSuccessPath" );
+                LogUtil.d("OOM2", "saveSuccessPath");
 //                waitingProgress.setProgress(i + "%");
 //                waitingProgress.setProgress("正在保存中" + i + "%\n" +
 //                        "请勿离开页面");
@@ -150,24 +163,29 @@ public class backgroundDraw {
                     execute.setBackgroundColor(Color.parseColor("#1FA400"));
                 }
             }
-            for (int i = 0; i < list.size(); i++) {
-                AllStickerData item = list.get(i);
-                String pathType = GetPathTypeModel.getInstance().getMediaType(item.getPath());
-                if (albumType.isVideo(pathType)) {
-                    if (isMatting) {
-                        intoCanvesCount++;
-                        addCanversLayer(item, intoCanvesCount);
-                    } else {
-                        addVideoLayer(item);
-                    }
-                } else {
-                    if (item.getPath().endsWith(".gif")) {
-                        addGifLayer(item);
-                    } else {
-                        addBitmapLayer(item);
-                    }
-                }
-            }
+
+
+            addMainCanversLayer(list, isMatting);
+
+
+//            for (int i = 0; i < list.size(); i++) {
+//                AllStickerData item = list.get(i);
+//                String pathType = GetPathTypeModel.getInstance().getMediaType(item.getPath());
+//                if (albumType.isVideo(pathType)) {
+//                    if (isMatting) {
+//                        intoCanvesCount++;
+//                        addCanversLayer(item, intoCanvesCount);
+//                    } else {
+//                        addVideoLayer(item);
+//                    }
+//                } else {
+//                    if (item.getPath().endsWith(".gif")) {
+//                        addGifLayer(item);
+//                    } else {
+//                        addBitmapLayer(item);
+//                    }
+//                }
+//            }
 
             if (!TextUtils.isEmpty(videoVoice)) {
                 //如果有videoVoice 字段，那么需要设置在对应的主图层上面去
@@ -209,28 +227,36 @@ public class backgroundDraw {
         try {
             option = new LSOVideoOption(stickerItem.getPath());
             option.setAudioMute();
-            VideoFrameLayer mvLayer = execute.addVideoLayer(option);
+            VideoFrameLayer videoLayer = execute.addVideoLayer(option);
+
             //默认gif 的缩放位置是gif 宽度最大
-            float layerScale = DRAWPADWIDTH / (float) mvLayer.getLayerWidth();
+            float layerScale = DRAWPADWIDTH / (float) videoLayer.getLayerWidth();
             LogUtil.d("OOM", "图层的缩放为" + layerScale + "");
             float stickerScale = stickerItem.getScale();
             LogUtil.d("OOM", "gif+图层的缩放为" + layerScale * stickerScale + "");
-            mvLayer.setScale(layerScale * stickerScale);
-            LogUtil.d("OOM", "mvLayerW=" + mvLayer.getLayerWidth() + "");
-            LogUtil.d("OOM", "mvLayerpadW=" + mvLayer.getPadWidth() + "");
+            videoLayer.setScale(layerScale * stickerScale);
+            LogUtil.d("OOM", "mvLayerW=" + videoLayer.getLayerWidth() + "");
+            LogUtil.d("OOM", "mvLayerpadW=" + videoLayer.getPadWidth() + "");
             int rotate = (int) stickerItem.getRotation();
             if (rotate < 0) {
                 rotate = 360 + rotate;
             }
             LogUtil.d("OOM", "rotate=" + rotate);
-            mvLayer.setRotate(rotate);
+            videoLayer.setRotate(rotate);
             LogUtil.d("OOM", "Scale=" + stickerItem.getScale() + "");
             //蓝松这边规定，0.5就是刚刚居中的位置
             float percentX = stickerItem.getTranslationX();
-            mvLayer.setPosition(mvLayer.getPadWidth() * percentX, mvLayer.getPositionY());
+            videoLayer.setPosition(videoLayer.getPadWidth() * percentX, videoLayer.getPositionY());
             float percentY = stickerItem.getTranslationy();
             LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
-            mvLayer.setPosition(mvLayer.getPositionX(), mvLayer.getPadHeight() * percentY);
+            videoLayer.setPosition(videoLayer.getPositionX(), videoLayer.getPadHeight() * percentY);
+
+//            if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
+//                hasAnimLayer animLayer = new hasAnimLayer(stickerItem.getChooseAnimId(), videoLayer);
+//                int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
+//                hasAnimLayerList.add(animLayer);
+//
+//            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -244,32 +270,34 @@ public class backgroundDraw {
      * 增加一个MV图层.
      */
     private void addGifLayer(AllStickerData stickerItem) {
-        GifLayer mvLayer = execute.addGifLayer(stickerItem.getPath());
+        GifLayer gifLayer = execute.addGifLayer(stickerItem.getPath());
         //默认gif 的缩放位置是gif 宽度最大
-        float layerScale = DRAWPADWIDTH / (float) mvLayer.getLayerWidth();
+        float layerScale = DRAWPADWIDTH / (float) gifLayer.getLayerWidth();
         LogUtil.d("OOM", "图层的缩放为" + layerScale + "");
         float stickerScale = stickerItem.getScale();
         LogUtil.d("OOM", "gif+图层的缩放为" + layerScale * stickerScale + "");
-        mvLayer.setScale(layerScale * stickerScale);
-        LogUtil.d("OOM", "mvLayerW=" + mvLayer.getLayerWidth() + "");
-        LogUtil.d("OOM", "mvLayerpadW=" + mvLayer.getPadWidth() + "");
+        gifLayer.setScale(layerScale * stickerScale);
+        LogUtil.d("OOM", "mvLayerW=" + gifLayer.getLayerWidth() + "");
+        LogUtil.d("OOM", "mvLayerpadW=" + gifLayer.getPadWidth() + "");
         int rotate = (int) stickerItem.getRotation();
         if (rotate < 0) {
             rotate = 360 + rotate;
         }
         LogUtil.d("OOM", "rotate=" + rotate);
-        mvLayer.setRotate(rotate);
+        gifLayer.setRotate(rotate);
         LogUtil.d("OOM", "Scale=" + stickerItem.getScale() + "");
         //蓝松这边规定，0.5就是刚刚居中的位置
         float percentX = stickerItem.getTranslationX();
 //        float posX = (mvLayer.getPadWidth() + mvLayer.getLayerWidth()) * percentX - mvLayer.getLayerWidth() / 2.0f;
-        mvLayer.setPosition(mvLayer.getPadWidth() * percentX, mvLayer.getPositionY());
+        gifLayer.setPosition(gifLayer.getPadWidth() * percentX, gifLayer.getPositionY());
 
         float percentY = stickerItem.getTranslationy();
         LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
 //        float posY = (mvLayer.getPadHeight() + mvLayer.getLayerHeight()) * percentY - mvLayer.getLayerHeight() / 2.0f;
 //        mvLayer.setPosition(mvLayer.getPositionX(), posY);
-        mvLayer.setPosition(mvLayer.getPositionX(), mvLayer.getPadHeight() * percentY);
+        gifLayer.setPosition(gifLayer.getPositionX(), gifLayer.getPadHeight() * percentY);
+
+
 
     }
 
@@ -307,6 +335,23 @@ public class backgroundDraw {
         //   float posY = (bpLayer.getPadHeight() + bpLayer.getLayerHeight()) * percentY - bpLayer.getLayerHeight() / 2.0f;
         bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight() * percentY);
 
+
+        if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
+            int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
+            addBitmapSubLayer(needSublayer, bpLayer, stickerItem.getChooseAnimId());
+        }
+
+    }
+
+
+    private void addBitmapSubLayer(int needSublayer, BitmapLayer layer, AnimType ChooseAnimId) {
+        ArrayList<SubLayer> listForSubLayer = new ArrayList<>();
+        for (int i = 0; i < needSublayer; i++) {
+            SubLayer subLayer = layer.addSubLayerUseMainFilter(true);
+            listForSubLayer.add(subLayer);
+        }
+        hasAnimLayer animLayer = new hasAnimLayer(ChooseAnimId, layer, listForSubLayer);
+        hasAnimLayerList.add(animLayer);
     }
 
 
@@ -347,9 +392,9 @@ public class backgroundDraw {
         bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight() * percentY);
 
         preTime = stickerItem.getDuration() * 1000 / (float) getMattingList.size();
-        LogUtil.d("OOM3","贴纸的时长为"+stickerItem.getDuration() );
-        LogUtil.d("OOM3","贴纸的数量为时长为"+(float) getMattingList.size() );
-        LogUtil.d("OOM3","preTime="+preTime );
+        LogUtil.d("OOM3", "贴纸的时长为" + stickerItem.getDuration());
+        LogUtil.d("OOM3", "贴纸的数量为时长为" + (float) getMattingList.size());
+        LogUtil.d("OOM3", "preTime=" + preTime);
 
         nowProgressTime[0] = preTime;
         CanvasLayer canvasLayer = execute.addCanvasLayer();
@@ -366,6 +411,69 @@ public class backgroundDraw {
                     LogUtil.d("OOM", "隐藏当前图层");
                     bpLayer.switchBitmap(Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888));
                     bpLayer.setVisibility(View.GONE);
+                }
+            }
+        });
+
+    }
+
+
+    /**
+     * description ：主计时器
+     * creation date: 2020/5/28
+     *
+     * @param list      贴纸数据列表
+     * @param isMatting 是否抠图
+     *                  user : zhangtongju
+     */
+    private void addMainCanversLayer(ArrayList<AllStickerData> list, boolean isMatting) {
+        for (int i = 0; i < list.size(); i++) {
+            AllStickerData item = list.get(i);
+            String pathType = GetPathTypeModel.getInstance().getMediaType(item.getPath());
+            if (albumType.isVideo(pathType)) {
+                if (isMatting) {
+                    intoCanvesCount++;
+                    addCanversLayer(item, intoCanvesCount);
+                } else {
+                    addVideoLayer(item);
+                }
+            } else {
+                if (item.getPath().endsWith(".gif")) {
+                    addGifLayer(item);
+                } else {
+                    addBitmapLayer(item);
+                }
+            }
+        }
+
+
+        CanvasLayer canvasLayer = execute.addCanvasLayer();
+        //思路是记录有动画的layer ，然后动态设置动画
+        canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
+            for (int i = 0; i < hasAnimLayerList.size(); i++) {
+                hasAnimLayer animLayer = hasAnimLayerList.get(i);
+                Layer layer = animLayer.getLayer();
+                ArrayList<SubLayer> listForSubLayer = animLayer.getSublayerList();
+                for (int x = 0; x < listForSubLayer.size(); x++) {
+                    animCollect.startAnimForChooseAnim(animLayer.ChooseAnimId, layer, listForSubLayer, new LayerAnimCallback() {
+                        @Override
+                        public void translationalXY(float x, float y) {
+
+                        }
+
+                        @Override
+                        public void rotate(float angle) {
+
+                        }
+
+                        @Override
+                        public void scale(float size) {
+
+                        }
+                    },1000);
+
+
+
                 }
             }
         });
@@ -391,5 +499,56 @@ public class backgroundDraw {
         mediaPlayer.release();
         return duration;
     }
+
+
+    class hasAnimLayer implements Serializable {
+
+
+        /**
+         * ChooseAnimId 动画类型  ，Layer 当前图层  sublayerList 子视图集合
+         */
+        public hasAnimLayer(AnimType ChooseAnimId, Layer layer, ArrayList<SubLayer> sublayerList) {
+            this.layer = layer;
+            this.ChooseAnimId = ChooseAnimId;
+            this.sublayerList = sublayerList;
+        }
+
+
+        public AnimType getChooseAnimId() {
+            return ChooseAnimId;
+        }
+
+        public void setChooseAnimId(AnimType chooseAnimId) {
+            ChooseAnimId = chooseAnimId;
+        }
+
+        public Layer getLayer() {
+            return layer;
+        }
+
+        public void setLayer(Layer layer) {
+            this.layer = layer;
+        }
+
+        /**
+         * 是否选择了动画，动画id值
+         */
+        private AnimType ChooseAnimId;
+
+
+        private Layer layer;
+
+        public ArrayList<SubLayer> getSublayerList() {
+            return sublayerList;
+        }
+
+        public void setSublayerList(ArrayList<SubLayer> sublayerList) {
+            this.sublayerList = sublayerList;
+        }
+
+        private ArrayList<SubLayer> sublayerList;
+
+    }
+
 
 }

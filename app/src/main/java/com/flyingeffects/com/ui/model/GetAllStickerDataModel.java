@@ -29,6 +29,7 @@ public class GetAllStickerDataModel {
         stickerData.setBoxH((int) stickerView.getmHelpBoxRectH());
         stickerData.setBoxW((int) stickerView.getmHelpBoxRectW());
         stickerData.setScale(stickerView.getScale());
+        stickerData.setChooseAnimId(stickerView.getChooseAnimId());
         stickerData.setTranslationX(stickerView.getTranslationX());
         stickerData.setTranslationy(stickerView.getTranslationY());
         if (!TextUtils.isEmpty(stickerView.getOriginalPath())) {
