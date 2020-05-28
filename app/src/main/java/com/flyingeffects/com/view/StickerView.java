@@ -1512,6 +1512,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         return mHelpBoxRect.centerX();
     }
 
+
+
     public float getMBoxCenterY() {
         return mHelpBoxRect.centerY();
     }
@@ -1648,6 +1650,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     public float GetHelpBoxRectRight() {
         return mHelpBoxRect.right;
+    }
+
+    public float GetHelpBoxRectBottom() {
+        return mHelpBoxRect.bottom;
     }
 
 

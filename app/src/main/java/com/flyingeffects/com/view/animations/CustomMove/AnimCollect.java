@@ -97,6 +97,21 @@ public  class AnimCollect {
                 LogUtil.d("LEFTTORIGHT","LEFTTORIGHT-subLayer大小为"+subLayer.size());
                 ((ItemRightToLeft)animModel).toChangeStickerView(mainStickerView, subLayer);
                 break;
+
+            case BOTTOMTOCENTER:
+                animModel=new ItemBottomToCenter();
+                LogUtil.d("LEFTTORIGHT","LEFTTORIGHT-subLayer大小为"+subLayer.size());
+                ((ItemBottomToCenter)animModel).toChangeStickerView(mainStickerView, subLayer);
+                break;
+
+
+
+            case SWINGUPANDDOWN:
+                animModel=new SwingUpAndDownToCenter();
+                LogUtil.d("LEFTTORIGHT","LEFTTORIGHT-subLayer大小为"+subLayer.size());
+                ((SwingUpAndDownToCenter)animModel).toChangeStickerView(mainStickerView, subLayer);
+                break;
+
         }
     }
 
@@ -147,16 +162,27 @@ public  class AnimCollect {
         ArrayList<StickerAnim> list = new ArrayList<>();
         StickerAnim delected = new StickerAnim();
         delected.setName("删除动画");
-        delected.setAnimType(LEFTTORIGHT);
+        delected.setAnimType(AnimType.LEFTTORIGHT);
         list.add(delected);
         StickerAnim stickerAnim = new StickerAnim();
         stickerAnim.setName("左到右");
-        stickerAnim.setAnimType(LEFTTORIGHT);
+        stickerAnim.setAnimType(AnimType.LEFTTORIGHT);
         list.add(stickerAnim);
         StickerAnim stickerAnim2 = new StickerAnim();
         stickerAnim2.setName("8兄弟");
-        stickerAnim2.setAnimType(EIGHTBORTHER);
+        stickerAnim2.setAnimType(AnimType.EIGHTBORTHER);
         list.add(stickerAnim2);
+
+        StickerAnim stickerAnim3 = new StickerAnim();
+        stickerAnim3.setName("右去上");
+        stickerAnim3.setAnimType(AnimType.BOTTOMTOCENTER);
+        list.add(stickerAnim3);
+
+        StickerAnim stickerAnim4 = new StickerAnim();
+        stickerAnim4.setName("上下摇摆");
+        stickerAnim4.setAnimType(AnimType.SWINGUPANDDOWN);
+        list.add(stickerAnim4);
+
         return list;
     }
 

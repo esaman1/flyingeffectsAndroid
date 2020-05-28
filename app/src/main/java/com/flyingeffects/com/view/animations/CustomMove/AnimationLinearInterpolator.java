@@ -1,5 +1,6 @@
 package com.flyingeffects.com.view.animations.CustomMove;
 
+import android.view.animation.CycleInterpolator;
 import android.view.animation.LinearInterpolator;
 
 import com.flyingeffects.com.utils.LogUtil;
@@ -25,6 +26,11 @@ public class AnimationLinearInterpolator {
     private GetProgressCallback callback;
     private int nowDuration;
 
+    /**
+     *差值类型  0表示匀速， 1 表示正弦函数
+     */
+    private int interpolatorType=0;
+
 
     /**
      * description ：初始化
@@ -36,6 +42,13 @@ public class AnimationLinearInterpolator {
         this.totalDuration = totalDuration;
         this.callback = callback;
     }
+
+    public void setInterpolatorType(int interpolatorType){
+        this.interpolatorType=interpolatorType;
+    }
+
+
+
 
 
     /**
@@ -59,14 +72,36 @@ public class AnimationLinearInterpolator {
 
 
     public void PlayAnimationNoTimer(float percentage) {
-        callback.progress(getNowInterpolatorProgress(percentage), isDone);
+        if(interpolatorType==0){
+            callback.progress(getNowInterpolatorProgress(percentage), isDone);
+        }else{
+            callback.progress(getNowCycleInterpolatorProgress(percentage), isDone);
+        }
+
     }
 
 
+    /**
+     * 匀速运动
+     */
     public float getNowInterpolatorProgress(float progress) {
         LinearInterpolator linearInterpolator = new LinearInterpolator();
         return linearInterpolator.getInterpolation(progress);
     }
+
+
+    /**
+     * description ：正弦函数
+     * creation date: 2020/5/28
+     * user : zhangtongju
+     */
+
+    public float getNowCycleInterpolatorProgress(float progress) {
+        CycleInterpolator cycleInterpolator = new CycleInterpolator(1);
+        return cycleInterpolator.getInterpolation(progress);
+    }
+
+
 
 
     /**
@@ -127,7 +162,12 @@ public class AnimationLinearInterpolator {
                     LogUtil.d("xxx2", "nowDuration=" + nowDuration);
                     float nowFloatTime = nowDuration / (float) totalDuration;
                     LogUtil.d("xxx2", "nowFloatTime=" + nowFloatTime);
-                    float progress = getNowInterpolatorProgress(nowFloatTime);
+                    float progress;
+                    if(interpolatorType==0){
+                        progress= getNowInterpolatorProgress(nowFloatTime);
+                    }else{
+                        progress= getNowCycleInterpolatorProgress(nowFloatTime);
+                    }
                     callback.progress(progress, isDone);
 
                 }

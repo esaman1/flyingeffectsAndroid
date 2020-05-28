@@ -8,5 +8,6 @@ public enum AnimType {
     NULL,
     LEFTTORIGHT,
     EIGHTBORTHER,
-
+    BOTTOMTOCENTER,
+    SWINGUPANDDOWN
 }

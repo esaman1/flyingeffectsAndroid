@@ -153,7 +153,7 @@ public class CreationTemplateMvpModel {
         this.originalPath = originalPath;
         this.mVideoPath = mVideoPath;
         dialog = new WaitingDialogProgressNowAnim(context);
-        this.viewLayerRelativeLayout = viewLayerRelativeLayout;dai
+        this.viewLayerRelativeLayout = viewLayerRelativeLayout;
         vibrator = (Vibrator) context.getSystemService(Service.VIBRATOR_SERVICE);
         if (!TextUtils.isEmpty(mVideoPath)) {
             videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
