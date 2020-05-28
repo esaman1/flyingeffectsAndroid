@@ -93,7 +93,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(R.style.AppTheme);
+
         lifecycleSubject.onNext(ActivityLifeCycleEvent.CREATE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

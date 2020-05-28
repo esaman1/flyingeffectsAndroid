@@ -71,7 +71,9 @@ public class WelcomeActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-
+        //由于 启动时设置了 R.style.launcher 的windowBackground属性
+        //在进入主页后,把窗口背景清理掉
+        setTheme(R.style.AppTheme);
         //解决广告bug ,点击图标后广告爆款广告不弹出来
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, //去掉状态栏
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
