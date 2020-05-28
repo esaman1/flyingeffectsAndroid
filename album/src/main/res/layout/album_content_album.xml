@@ -15,7 +15,7 @@
     limitations under the License.
 -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         style="@style/Album.WrapContent.WidthMatchParent"
         android:layout_below="@id/app_bar_layout" />
@@ -26,7 +26,7 @@
         android:layout_centerVertical="true"
         android:background="@color/albumSheetBottom">
 
-        <android.support.v7.widget.AppCompatButton
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_switch_dir"
             style="@style/Album.TextButton.WrapContent.SheetBottom"
             android:layout_alignParentLeft="true"
@@ -39,7 +39,7 @@
 
 
 
-        <android.support.v7.widget.AppCompatButton
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_preview"
             style="@style/Album.TextButton.WrapContent.SheetBottom"
             android:layout_alignParentEnd="true"

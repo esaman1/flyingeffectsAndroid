@@ -1,7 +1,7 @@
 package com.flyingeffects.com.ui.model;
 
 import android.content.Context;
-import android.support.design.widget.BottomSheetDialog;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -11,9 +11,7 @@ import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.ui.interfaces.model.FagBjMvpCallback;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.orhanobut.hawk.Hawk;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 

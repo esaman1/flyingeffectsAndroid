@@ -16,8 +16,8 @@
 package com.yanzhenjie.album.app.album.data;
 
 import android.media.MediaPlayer;
-import android.support.annotation.NonNull;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
 import android.text.TextUtils;
 
 import com.yanzhenjie.album.AlbumFile;

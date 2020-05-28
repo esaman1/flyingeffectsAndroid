@@ -3,7 +3,7 @@ package com.shixing.sxve.ui.model;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.WorkerThread;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;

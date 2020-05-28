@@ -6,9 +6,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import android.view.KeyEvent;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
 import com.bigkoo.convenientbanner.utils.ScreenUtil;
@@ -25,7 +29,6 @@ import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.PermissionUtil;
-import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.nineton.ntadsdk.NTAdSDK;
 import com.nineton.ntadsdk.itr.SplashAdCallBack;
@@ -48,7 +51,7 @@ public class WelcomeActivity extends BaseActivity {
     private final int PERMISSION_REQUEST_CODE = 1024;
     private static final int RESULT_CODE = 3;
     @BindView(R.id.rl_ad_container)
-    RelativeLayout rlAdContainer;
+    FrameLayout rlAdContainer;
 
     private NTSkipView tvSkip;
 
@@ -83,17 +86,16 @@ public class WelcomeActivity extends BaseActivity {
             return;
         }
         tvSkip = findViewById(R.id.tv_skip);
-        rlAdContainer = findViewById(R.id.rl_ad_container);
 //        if (!fromBackstage) {
-            //记录是不是新用户
-            if (BaseConstans.isFirstOpenApp()) {
-                BaseConstans.setFirstOpenApp(System.currentTimeMillis()); //记录第一次打开app的时间
-                BaseConstans.setOpenAppNum(1); //打开app的次数为1
-            } else {
-                int openAppNum = BaseConstans.getOpenAppNum();
-                openAppNum++;
-                BaseConstans.setOpenAppNum(openAppNum); //打开app的次数为1
-            }
+        //记录是不是新用户
+        if (BaseConstans.isFirstOpenApp()) {
+            BaseConstans.setFirstOpenApp(System.currentTimeMillis()); //记录第一次打开app的时间
+            BaseConstans.setOpenAppNum(1); //打开app的次数为1
+        } else {
+            int openAppNum = BaseConstans.getOpenAppNum();
+            openAppNum++;
+            BaseConstans.setOpenAppNum(openAppNum); //打开app的次数为1
+        }
 //        }
         gotoPrivacyPolicyActivity();
     }
@@ -118,7 +120,7 @@ public class WelcomeActivity extends BaseActivity {
 
         // 权限都已经有了，那么直接调用SDK
         if (lackedPermission.size() == 0) {
-            if (!fromBackstage||BaseConstans.getIsNewUser()) {
+            if (!fromBackstage || BaseConstans.getIsNewUser()) {
                 requestConfig();
                 requestConfigForTemplateList();
             }
@@ -179,9 +181,9 @@ public class WelcomeActivity extends BaseActivity {
                 checkPermission();
             } else {
                 hasPermission = true;
-               if (!fromBackstage||BaseConstans.getIsNewUser()) {
+                if (!fromBackstage || BaseConstans.getIsNewUser()) {
                     requestConfig();
-              }
+                }
                 LogUtil.d("oom", "BaseConstans.getHasAdvertising()=" + BaseConstans.getHasAdvertising());
                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                     showSplashAd();
@@ -194,8 +196,8 @@ public class WelcomeActivity extends BaseActivity {
                 finish();
                 overridePendingTransition(R.anim.nt_ad_fade_in, R.anim.nt_ad_fade_out);
             }
-        },    BaseConstans.getKaiPingADTimeOut());
-        LogUtil.d("oom","开屏广告的时长为"+BaseConstans.getKaiPingADTimeOut());
+        }, BaseConstans.getKaiPingADTimeOut());
+        LogUtil.d("oom", "开屏广告的时长为" + BaseConstans.getKaiPingADTimeOut());
 
     }
 
@@ -379,15 +381,15 @@ public class WelcomeActivity extends BaseActivity {
                                 LogUtil.d("OOM", "当前为lao用户");
                                 BaseConstans.setIsNewUser(false);
                             }
-                        }else if(id==25){
+                        } else if (id == 25) {
                             //启动APP多少秒后显示插屏广告
                             int second = Integer.parseInt(config.getValue());
                             BaseConstans.setInterstitial(second);
-                        }else if(id==26){
+                        } else if (id == 26) {
                             //开屏广告延迟时间
                             int second = Integer.parseInt(config.getValue());
                             BaseConstans.setKaiPingADTimeOut(second);
-                        }else if(id==27){
+                        } else if (id == 27) {
                             //上传的时候
                             int second = Integer.parseInt(config.getValue());
                             BaseConstans.setMaxuploadTime(second);
@@ -426,7 +428,7 @@ public class WelcomeActivity extends BaseActivity {
 
 
     private void AuditModeConfig(String str) {
-        LogUtil.d("AuditModeConfig","AuditModeConfig="+str);
+        LogUtil.d("AuditModeConfig", "AuditModeConfig=" + str);
         JSONArray jsonArray;
         try {
             jsonArray = new JSONArray(str);
@@ -457,10 +459,6 @@ public class WelcomeActivity extends BaseActivity {
         }
 
     }
-
-
-
-
 
 
 }

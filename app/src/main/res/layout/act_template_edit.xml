@@ -180,7 +180,7 @@
 
 
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:visibility="gone"
@@ -195,7 +195,7 @@
             android:orientation="vertical"
             android:visibility="gone">
 
-            <android.support.v4.view.ViewPager
+            <androidx.viewpager.widget.ViewPager
                 android:id="@+id/template_viewPager"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"

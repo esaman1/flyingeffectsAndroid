@@ -3,14 +3,12 @@ package com.shixing.sxve.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.MediaController;
-import android.widget.SeekBar;
 import android.widget.VideoView;
 
 import com.shixing.sxve.R;
-import com.shixing.sxvideoengine.SXPlayerSurfaceView;
 
 public class VideoPlayActivity extends AppCompatActivity {
 

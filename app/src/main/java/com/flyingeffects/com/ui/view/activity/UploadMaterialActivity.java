@@ -3,7 +3,7 @@ package com.flyingeffects.com.ui.view.activity;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.os.Handler;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;

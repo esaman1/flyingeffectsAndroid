@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.multidex.MultiDex;
-import android.support.multidex.MultiDexApplication;
+import androidx.multidex.MultiDex;
+import androidx.multidex.MultiDexApplication;
 
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
 import com.flyingeffects.com.R;
@@ -19,7 +19,6 @@ import com.flyingeffects.com.utils.DateUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.lansosdk.box.OnLanSongLogOutListener;
 import com.lansosdk.videoeditor.LanSoEditor;
-import com.nineton.ntadsdk.BuildConfig;
 import com.nineton.ntadsdk.NTAdConfig;
 import com.nineton.ntadsdk.NTAdSDK;
 import com.orhanobut.hawk.Hawk;

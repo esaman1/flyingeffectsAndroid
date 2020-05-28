@@ -73,14 +73,13 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:name,android:icon">
 
-
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />  <!--兼容9.0  使用http时奔溃，android p要求全部走https ，解决瑰珀sdk奔溃问题-->
 
 
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="com.flyingeffects.com.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
