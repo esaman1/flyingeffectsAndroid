@@ -60,7 +60,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     @BindView(R.id.seekBar)
     SeekBar seekBar;
 
-
     @BindView(R.id.tv_end_time)
     TextView tv_end_time;
 
@@ -157,7 +156,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
         }
     }
 
-
     /**
      * description ：通知相册更新
      * date: ：2019/8/16 14:24
@@ -185,7 +183,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
         }
     }
 
-
     @OnClick({R.id.tv_back, R.id.tv_save, R.id.iv_play})
     public void onClick(View v) {
         switch (v.getId()) {
@@ -211,7 +208,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
 
                 saveToAlbum(imagePath);
 
-
                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                     AdManager.getInstance().showCpAd(CreationTemplatePreviewActivity.this, AdConfigs.AD_SCREEN_FOR_keep);
                 }
@@ -228,7 +224,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
                     showIsPlay(true);
                 }
                 break;
-
         }
         super.onClick(v);
     }

@@ -238,7 +238,7 @@ public class WelcomeActivity extends BaseActivity {
      */
     private void showSplashAd() {
         statisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request");
-        NTAdSDK.getInstance().showSplashAd(this, rlAdContainer, tvSkip, ScreenUtil.dip2px(this, 110), AdConfigs.AD_SPLASH, new SplashAdCallBack() {
+        NTAdSDK.getInstance().showSplashAd(this, rlAdContainer, tvSkip, ScreenUtil.dip2px(this, 0), AdConfigs.AD_SPLASH, new SplashAdCallBack() {
             @Override
             public void onAdSuccess() {
                 isShow = true;

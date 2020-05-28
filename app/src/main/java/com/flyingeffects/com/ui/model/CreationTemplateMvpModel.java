@@ -911,6 +911,8 @@ public class CreationTemplateMvpModel {
             listAllSticker.clear();
             cutSuccessNum = 0;
             cutVideoPathList.clear();
+
+
             backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, new backgroundDraw.saveCallback() {
                 @Override
                 public void saveSuccessPath(String path, int progress) {
@@ -995,6 +997,7 @@ public class CreationTemplateMvpModel {
                     cutVideoPathList.add(new videoType(listAllSticker.get(i).getOriginalPath(), i, listAllSticker.get(i).getDuration()));
                 }
             }
+            LogUtil.d("gifDebug","1111");
             if (cutVideoPathList.size() == 0) {
                 dialog.openProgressDialog();
                 //都不是视频的情况下，就直接渲染

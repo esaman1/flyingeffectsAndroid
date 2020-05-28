@@ -17,16 +17,16 @@
         android:layout_marginBottom="30dp"
         android:textColor="@color/white"/>
 
-<!--    <com.mooc.ppjoke.view.RecordView -->
-<!--        xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--        android:id="@+id/record_view"-->
-<!--        android:layout_width="100dp"-->
-<!--        android:layout_height="100dp"-->
-<!--        android:layout_gravity="bottom|center_horizontal"-->
-<!--        android:layout_marginBottom="@dimen/dp_60"-->
-<!--        app:duration="10"-->
-<!--        app:fill_color="@color/white"-->
-<!--        app:progress_color="@color/"-->
-<!--        app:progress_width="@dimen/dp_4"-->
-<!--        app:radius="@dimen/dp_40"/>-->
+    <com.mooc.ppjoke.view.RecordView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/record_view"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="@dimen/dp_60"
+        app:duration="10"
+        app:fill_color="@color/capture_btn_blue"
+        app:progress_color="@color/white"
+        app:progress_width="@dimen/dp_4"
+        app:radius="@dimen/dp_40"/>
 </FrameLayout>

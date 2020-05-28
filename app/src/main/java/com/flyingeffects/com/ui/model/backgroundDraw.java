@@ -95,6 +95,8 @@ public class backgroundDraw {
                 }
             }
         }
+
+        LogUtil.d("gifDebug","2222");
         //如果还是0,说明全是图片，就修改为10
         if (duration == 0) {
             noVideo = true;
@@ -175,15 +177,14 @@ public class backgroundDraw {
                 //如果有videoVoice 字段，那么需要设置在对应的主图层上面去
                 execute.addAudioLayer(videoVoice, false);
             }
+            LogUtil.d("gifDebug","3333");
             execute.start();
         } catch (Exception e) {
             callback.saveSuccessPath("", 10000);
             LogUtil.d("OOM", e.getMessage());
             e.printStackTrace();
         }
-
     }
-
 
     private void setMainLayer() {
 
@@ -309,7 +310,6 @@ public class backgroundDraw {
         bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight() * percentY);
         bpLayer.switchFilterTo(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class, stickerItem.getMaskBitmap()));
     }
-
 
     private void addCanversLayer(AllStickerData stickerItem, int i) {
         int[] nowChooseImageIndex = {0};

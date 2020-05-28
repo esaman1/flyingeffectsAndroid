@@ -21,6 +21,7 @@
     <color name="video_detail_black">#828A9A</color>
     <color name="home_item_select">#009cFF</color>
     <color name="white">#FFFFFF</color>
+    <color name="capture_btn_blue">#5496FF</color>
     <color name="baseBackground">#FBFBFB</color>
     <color name="cityBaseColor">#F0F4FD</color>
     <color name="shadow_color">#FF000000</color>
