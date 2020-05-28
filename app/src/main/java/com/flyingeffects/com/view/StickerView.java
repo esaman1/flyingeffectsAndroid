@@ -354,7 +354,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
         int graLine = (int) (h - h * percent);
 
-        LinearGradient gradient = new LinearGradient(w, graLine, w, graLine + 50,
+        LinearGradient gradient = new LinearGradient(w, graLine, w, graLine + 20,
                 Color.parseColor("#ffffff"), Color.TRANSPARENT, Shader.TileMode.CLAMP);
         //p.setColor(Color.TRANSPARENT);
         p.setShader(gradient);
@@ -713,6 +713,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         if (currentDrawable != null) {
             // drawGuideLine(canvas);
             RectF rectF = new RectF(0, 0, currentDrawable.getIntrinsicWidth(), currentDrawable.getIntrinsicHeight());//behavior.onProgress(canvas, center, mScale, 1f, mRotateAngle, listener.getTextCurrent(), listener.getTextDuration());
+
             rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY());
 
 //            canvas.save();
