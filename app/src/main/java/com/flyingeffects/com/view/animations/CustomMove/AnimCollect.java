@@ -69,7 +69,7 @@ public  class AnimCollect {
     public int getAnimNeedSubLayerTime(AnimType type) {
         switch (type) {
             case EIGHTBORTHER:
-                return 10000;
+                return 1000;
             case LEFTTORIGHT:
                 return 3000;
             case BOTTOMTOCENTER:

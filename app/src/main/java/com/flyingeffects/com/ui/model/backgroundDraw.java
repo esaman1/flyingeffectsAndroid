@@ -457,13 +457,24 @@ public class backgroundDraw {
             for (int i = 0; i < hasAnimLayerList.size(); i++) {
                 hasAnimLayer animLayer = hasAnimLayerList.get(i);
                 float needDurationTime=animCollect.getAnimNeedSubLayerTime(animLayer.ChooseAnimId);
+
+                LogUtil.d("OOM","当前的需要的时间"+needDurationTime*1000);
+                LogUtil.d("OOM","当前的时间"+currentTime);
                 float xx=currentTime%(needDurationTime*1000);
+                LogUtil.d("OOM","当前的余值为"+xx);
+                float xxx=xx/(needDurationTime*1000);
+                LogUtil.d("OOM","当前的百分比为"+xxx);
+
                 Layer layer = animLayer.getLayer();
                 ArrayList<SubLayer> listForSubLayer = animLayer.getSublayerList();
                 for (int x = 0; x < listForSubLayer.size(); x++) {
                     animCollect.startAnimForChooseAnim(animLayer.ChooseAnimId, layer, listForSubLayer, new LayerAnimCallback() {
                         @Override
                         public void translationalXY(float x, float y) {
+
+                            LogUtil.d("translationalXY","xxx="+x+"YYY="+y);
+                            layer.setPosition(x, y);
+
 
                         }
 
@@ -476,7 +487,7 @@ public class backgroundDraw {
                         public void scale(float size) {
 
                         }
-                    },1000);
+                    },xxx);
 
 
 

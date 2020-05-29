@@ -319,6 +319,11 @@ public class CreationTemplateMvpModel {
 
             @Override
             public void onPageSelected(int position) {
+
+
+
+
+
             }
 
             @Override

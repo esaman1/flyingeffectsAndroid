@@ -69,9 +69,9 @@ public class ItemEightBorther extends baseAnimModel{
         //第一个参数为总时长
         animationLinearInterpolator = new AnimationLinearInterpolator(10000, (progress, isDone) -> {
 //            //主图层应该走的位置
-//            float nowDistance = totalDistancePathMeasure * progress;
-//            mPathMeasure.getPosTan(nowDistance, pos, tan);
-//            callback.translationalXY(pos[0], pos[1]);
+            float nowDistance = totalDistancePathMeasure * progress;
+            mPathMeasure.getPosTan(nowDistance, pos, tan);
+            callback.translationalXY(pos[0], pos[1]);
 //            for (int i=0;i<listForSubLayer.size();i++){
 //                SubLayer sub=listForSubLayer.get(i);
 //                if(sub!=null){
