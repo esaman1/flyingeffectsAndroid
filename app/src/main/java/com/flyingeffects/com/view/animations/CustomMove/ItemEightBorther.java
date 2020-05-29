@@ -62,7 +62,7 @@ public class ItemEightBorther extends baseAnimModel{
     public void toChangeSubLayer(Layer mainStickerView, ArrayList<SubLayer> listForSubLayer,LayerAnimCallback callback,float percentage) {
         float[] pos = new float[2];
         float[] tan = new float[2];
-        PathMeasure mPathMeasure =   setPathMeasure(mainStickerView.getLayerHeight(),mainStickerView.getPositionY(),mainStickerView.getPositionY());
+        PathMeasure mPathMeasure =   setPathMeasure(mainStickerView.getLayerHeight(),mainStickerView.getPositionX(),mainStickerView.getPositionY());
         //总长度
         float totalDistancePathMeasure = mPathMeasure.getLength();
         float perDistance = totalDistancePathMeasure / (float) 12;

@@ -153,6 +153,7 @@ public class backgroundDraw {
                 execute.release();
                 Log.d("OOM", "exportPath=" + exportPath);
             });
+            //设置背景
             if (!TextUtils.isEmpty(videoPath)) {
                 setMainLayer();
             } else {
