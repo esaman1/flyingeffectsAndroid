@@ -72,6 +72,9 @@ public  class AnimCollect {
                 return 10000;
             case LEFTTORIGHT:
                 return 3000;
+            case BOTTOMTOCENTER:
+            case SWINGUPANDDOWN:
+                return 2000;
         }
         return 0;
     }
@@ -122,7 +125,7 @@ public  class AnimCollect {
      * creation date: 2020/5/27
      * user : zhangtongju
      */
-    public void startAnimForChooseAnim(AnimType type, Layer mainStickerView,ArrayList<SubLayer> listForSubLayer,LayerAnimCallback callback,long percentage) {
+    public void startAnimForChooseAnim(AnimType type, Layer mainStickerView,ArrayList<SubLayer> listForSubLayer,LayerAnimCallback callback,float percentage) {
         switch (type) {
             //8个动画飞天效果
             case EIGHTBORTHER:

@@ -336,6 +336,7 @@ public class backgroundDraw {
         bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight() * percentY);
 
 
+        //todo 测试
         if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
             int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
             addBitmapSubLayer(needSublayer, bpLayer, stickerItem.getChooseAnimId());
@@ -345,7 +346,10 @@ public class backgroundDraw {
 
 
     private void addBitmapSubLayer(int needSublayer, BitmapLayer layer, AnimType ChooseAnimId) {
-        ArrayList<SubLayer> listForSubLayer = new ArrayList<>();
+        ArrayList<SubLayer> listForSubLayer = new ArrayList<>();{
+            SubLayer subLayer = layer.addSubLayerUseMainFilter(true);
+            listForSubLayer.add(subLayer);
+        }
         for (int i = 0; i < needSublayer; i++) {
             SubLayer subLayer = layer.addSubLayerUseMainFilter(true);
             listForSubLayer.add(subLayer);
@@ -452,6 +456,8 @@ public class backgroundDraw {
         canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
             for (int i = 0; i < hasAnimLayerList.size(); i++) {
                 hasAnimLayer animLayer = hasAnimLayerList.get(i);
+                float needDurationTime=animCollect.getAnimNeedSubLayerTime(animLayer.ChooseAnimId);
+                float xx=currentTime%(needDurationTime*1000);
                 Layer layer = animLayer.getLayer();
                 ArrayList<SubLayer> listForSubLayer = animLayer.getSublayerList();
                 for (int x = 0; x < listForSubLayer.size(); x++) {
