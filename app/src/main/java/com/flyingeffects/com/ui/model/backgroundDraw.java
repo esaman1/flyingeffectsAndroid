@@ -348,14 +348,12 @@ public class backgroundDraw {
 
 
     private void addBitmapSubLayer(int needSublayer, BitmapLayer layer, AnimType ChooseAnimId) {
-        ArrayList<SubLayer> listForSubLayer = new ArrayList<>();{
-            SubLayer subLayer = layer.addSubLayerUseMainFilter(true);
-            listForSubLayer.add(subLayer);
-        }
-        for (int i = 0; i < needSublayer; i++) {
-            SubLayer subLayer = layer.addSubLayerUseMainFilter(true);
-            listForSubLayer.add(subLayer);
-        }
+        ArrayList<SubLayer> listForSubLayer = new ArrayList<>();
+
+//        for (int i = 0; i < needSublayer; i++) {
+//            SubLayer subLayer = layer.addSubLayerUseMainFilter(true);
+//            listForSubLayer.add(subLayer);
+//        }
         hasAnimLayer animLayer = new hasAnimLayer(ChooseAnimId, layer, listForSubLayer);
         hasAnimLayerList.add(animLayer);
     }
@@ -474,7 +472,7 @@ public class backgroundDraw {
                         @Override
                         public void translationalXY(float x, float y) {
 
-                            LogUtil.d("translationalXY","xxx="+x+"YYY="+y);
+//                            LogUtil.d("translationalXY","xxx="+x+"YYY="+y);
 //                            layer.setPosition(layer.getPadWidth()*x, layer.getPadHeight() * y);
 //                            float percentY = stickerItem.getTranslationy();
 //                            LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);

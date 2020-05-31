@@ -94,6 +94,7 @@ public class ItemEightBorther extends baseAnimModel {
 
         });
         animationLinearInterpolator.PlayAnimationNoTimer(percentage);
+        LogUtil.d("translationalXY","当前的事件为percentage="+percentage);
     }
 
 
