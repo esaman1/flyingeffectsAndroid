@@ -473,10 +473,15 @@ public class backgroundDraw {
                     animCollect.startAnimForChooseAnim(animLayer.ChooseAnimId, layer, listForSubLayer, new LayerAnimCallback() {
                         @Override
                         public void translationalXY(float x, float y) {
+
                             LogUtil.d("translationalXY","xxx="+x+"YYY="+y);
-                            layer.setPosition(layer.getPadWidth()*x, layer.getPadHeight() * y);
-//                            layer.setPosition(layer.getPositionX(), layer.getPadHeight() * y);
-//                            layer.setPosition(layer.getPadWidth()* x, layer.getPositionY());
+//                            layer.setPosition(layer.getPadWidth()*x, layer.getPadHeight() * y);
+//                            float percentY = stickerItem.getTranslationy();
+//                            LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
+//                            //   float posY = (bpLayer.getPadHeight() + bpLayer.getLayerHeight()) * percentY - bpLayer.getLayerHeight() / 2.0f;
+                            layer.setPosition(layer.getPositionX(), layer.getPadHeight() * y);
+                            layer.setPosition(layer.getPadWidth()* x, layer.getPositionY());
+
                         }
 
                         @Override
