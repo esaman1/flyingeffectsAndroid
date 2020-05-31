@@ -1079,6 +1079,9 @@ public class CreationTemplateMvpModel {
 
     public void toSaveVideo(String imageBjPath) {
 
+        deleteSubLayerSticker();
+        stopAllAnim();
+
         if (!isIntoSaveVideo) {
             isIntoSaveVideo = true;
             listAllSticker.clear();

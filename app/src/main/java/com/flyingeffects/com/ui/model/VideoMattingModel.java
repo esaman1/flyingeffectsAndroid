@@ -163,8 +163,10 @@ public class VideoMattingModel {
                 handler.sendEmptyMessage(1);
             });
             LogUtil.d("OOM", frameCount + "帧");
+            //这里是为了合成原视频
             String fileName = faceFolder + File.separator + frameCount + ".png";
             BitmapManager.getInstance().saveBitmapToPath(bmp, fileName);
+            //去一帧一帧的抠图，被sdk 提取到了主线程操作
             downImageForBitmap(bmp, frameCount);
         });
         frameCount = 0;

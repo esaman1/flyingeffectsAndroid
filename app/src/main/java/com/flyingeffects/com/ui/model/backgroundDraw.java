@@ -27,6 +27,7 @@ import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.box.Layer;
 import com.lansosdk.box.SubLayer;
 import com.lansosdk.box.VideoFrameLayer;
+import com.lansosdk.box.X;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.shixing.sxve.ui.albumType;
 
@@ -468,15 +469,14 @@ public class backgroundDraw {
 
                 Layer layer = animLayer.getLayer();
                 ArrayList<SubLayer> listForSubLayer = animLayer.getSublayerList();
-                for (int x = 0; x < listForSubLayer.size(); x++) {
+//                for (int x = 0; x < listForSubLayer.size(); x++) {
                     animCollect.startAnimForChooseAnim(animLayer.ChooseAnimId, layer, listForSubLayer, new LayerAnimCallback() {
                         @Override
                         public void translationalXY(float x, float y) {
-
                             LogUtil.d("translationalXY","xxx="+x+"YYY="+y);
-                            layer.setPosition(x, y);
-
-
+                            layer.setPosition(layer.getPadWidth()*x, layer.getPadHeight() * y);
+//                            layer.setPosition(layer.getPositionX(), layer.getPadHeight() * y);
+//                            layer.setPosition(layer.getPadWidth()* x, layer.getPositionY());
                         }
 
                         @Override
@@ -492,7 +492,7 @@ public class backgroundDraw {
 
 
 
-                }
+//                }
             }
         });
 

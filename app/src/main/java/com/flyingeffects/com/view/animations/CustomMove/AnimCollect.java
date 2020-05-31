@@ -129,8 +129,13 @@ public  class AnimCollect {
         switch (type) {
             //8个动画飞天效果
             case EIGHTBORTHER:
-                animModel=new ItemEightBorther();
-                ((ItemEightBorther)animModel).toChangeSubLayer(mainStickerView, listForSubLayer,callback,percentage);
+                if (animModel!=null){
+                    ((ItemEightBorther)animModel).getLansongTranslation(callback,percentage);
+                }else{
+                    animModel=new ItemEightBorther();
+                    ((ItemEightBorther)animModel).toChangeSubLayer(mainStickerView, listForSubLayer,callback,percentage);
+                }
+
                 break;
 //            //左进右出
 //            case LEFTTORIGHT:
@@ -148,6 +153,7 @@ public  class AnimCollect {
     public void stopAnim(){
         if(animModel!=null){
             animModel.StopAnim();
+            animModel=null;
         }
     }
 
