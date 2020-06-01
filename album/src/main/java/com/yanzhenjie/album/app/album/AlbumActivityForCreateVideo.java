@@ -499,6 +499,11 @@ public class AlbumActivityForCreateVideo extends BaseActivity implements
     }
 
     @Override
+    public void toCapturePage() {
+
+    }
+
+    @Override
     public void onPreviewComplete() {
         callbackResult();
     }

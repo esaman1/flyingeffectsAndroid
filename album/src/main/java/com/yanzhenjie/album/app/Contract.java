@@ -65,6 +65,8 @@ public final class Contract {
          */
         void tryPreviewChecked();
 
+
+        void toCapturePage();
         /**
          * Complete.
          */

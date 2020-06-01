@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -42,7 +43,14 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.lansosdk.LanSongFilter.LanSongMaskBlendFilter;
+import com.lansosdk.box.GifLayer;
+import com.lansosdk.box.OnLanSongSDKCompletedListener;
+import com.lansosdk.box.OnLanSongSDKErrorListener;
+import com.lansosdk.box.OnLanSongSDKProgressListener;
 import com.lansosdk.box.ViewLayerRelativeLayout;
+import com.lansosdk.videoeditor.DrawPadAllExecute2;
+import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.albumType;
 import com.suke.widget.SwitchButton;
 
@@ -186,7 +194,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if (TextUtils.isEmpty(videoPath)) {
             return;
         }
-
 
         exoPlayer = ExoPlayerFactory.newSimpleInstance(CreationTemplateActivity.this);
         playerView.setPlayer(exoPlayer);
@@ -413,12 +420,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 break;
-
             default:
                 break;
         }
     }
-
 
     private void intoVideoCropActivity(String path) {
         Intent intent = new Intent(CreationTemplateActivity.this, VideoCropActivity.class);

@@ -381,7 +381,6 @@ public class UpdateApkActivity extends Activity implements OnClickListener {
         }else{
             dialog.setCanceledOnTouchOutside(true);
         }
-
         dialog.show();
         dialog.setOnCancelListener(dialogInterface -> UpdateApkActivity.this.finish());
     }

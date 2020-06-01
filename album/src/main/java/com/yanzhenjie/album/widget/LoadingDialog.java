@@ -73,5 +73,4 @@ public class LoadingDialog extends Dialog {
     public void setMessage(String message) {
         mTvMessage.setText(message);
     }
-
 }

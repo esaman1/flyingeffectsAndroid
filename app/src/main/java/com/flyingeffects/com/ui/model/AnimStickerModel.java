@@ -30,7 +30,6 @@ public class AnimStickerModel {
     }
 
 
-
     public StickerView getStickerView(){
         return  stickerView;
     }

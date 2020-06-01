@@ -18,16 +18,9 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
-import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
-import com.flyingeffects.com.ui.model.VideoMattingModel;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.yanzhenjie.album.AlbumFile;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.OnClick;
 
@@ -128,6 +121,8 @@ public class AboutActivity extends BaseActivity {
         }
 
     }
+
+
 
     private void showDialog() {
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(

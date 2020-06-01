@@ -100,7 +100,6 @@ public class LSOConcatCompositionView extends FrameLayout {
         addView(renderUIView);
         textureRenderView.setVideoRotation(0);
 
-
         //---------
         touchView=new LSOLayerTouchView(getContext());
         LayoutParams lp2 = new LayoutParams(LayoutParams.WRAP_CONTENT,
@@ -622,7 +621,7 @@ public class LSOConcatCompositionView extends FrameLayout {
         padBGGreen=(float)green/255f;
         padBGBlur=(float)blue/255f;
         if(renderer!=null){
-            renderer.setCompositionBackGroundColor(padBGRed,padBGGreen,padBGBlur,1.0f);
+            renderer.setBackGroundColor(padBGRed,padBGGreen,padBGBlur,1.0f);
         }
     }
 
@@ -928,7 +927,7 @@ public class LSOConcatCompositionView extends FrameLayout {
         if(renderer==null){
             setUpSuccess=false;
             renderer =new LSOConcatCompositionRender(getContext());
-            renderer.setCompositionBackGroundColor(padBGRed,padBGGreen,padBGBlur,padBGAlpha);
+            renderer.setBackGroundColor(padBGRed,padBGGreen,padBGBlur,padBGAlpha);
             renderer.setOnLanSongSDKErrorListener(new OnLanSongSDKErrorListener() {
                 @Override
                 public void onLanSongSDKError(int errorCode) {

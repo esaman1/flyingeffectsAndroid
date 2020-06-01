@@ -46,10 +46,6 @@ public class AlbumManager {
 //                        return attributes.equals("image/gif")||attributes.equals("image/svg+xml")||attributes.equals("image/x-icon");
 
                         return  filterAlbum(attributes);
-
-
-
-
                     }
                 })
                 .afterFilterVisibility(false)
@@ -202,8 +198,6 @@ public class AlbumManager {
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     public static void chooseVideo(Activity act, int selectNum, int tag, AlbumChooseCallback callback,String material_info) {
-
-
         Album.video(act) // Video selection.
                 .multipleChoice()
                 .camera(false)
@@ -295,7 +289,6 @@ public class AlbumManager {
 
         }
         return false;
-
     }
 
 }

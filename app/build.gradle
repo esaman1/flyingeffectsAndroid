@@ -20,10 +20,6 @@ android {
     aaptOptions.useNewCruncher = false
     compileSdkVersion 28
 
-
-
-
-
     defaultConfig {
         applicationId "com.flyingeffects.com"
         multiDexEnabled true  //分包支持
@@ -35,7 +31,7 @@ android {
         manifestPlaceholders = [UMENG_CHANNEL_VALUE: "umeng"]//添加一个默认渠道号  2018-6-19
         flavorDimensions "versionCode" //版本名后面添加一句话，意思就是flavor dimension 它的维度就是该版本号，这样维度就是都是统一的了
         ndk {
-            abiFilters "armeabi-v7a"
+            abiFilters 'armeabi-v7a'
         }
 
         //极光推送配置 ，通过自动配置
@@ -142,9 +138,9 @@ dependencies {
     implementation 'com.umeng.umsdk:share-core:6.9.4'
     implementation 'com.umeng.umsdk:share-wx:6.9.4'
     //exo视频播放器
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.9.5'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.10.8'
 //    implementation 'com.google.android.exoplayer:exoplayer-dash:2.6.1'
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.9.5'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.10.8'
     //极光
     implementation 'cn.jiguang.sdk:jpush:3.5.8'
     implementation 'cn.jiguang.sdk:jcore:2.2.8'
@@ -185,14 +181,7 @@ dependencies {
     //和glide 搭配的高斯
     implementation 'jp.wasabeef:glide-transformations:2.0.1'
 
-    //camera
-    api 'androidx.camera:camera-core:1.0.0-alpha04'
-    api 'androidx.camera:camera-camera2:1.0.0-alpha04'
-    api 'androidx.camera:camera-view:1.0.0-alpha01'
-    api 'androidx.camera:camera-extensions:1.0.0-alpha01'
 
-    //gesture imageview
-    api 'com.github.chrisbanes:PhotoView:2.3.0@aar'
 
 }
 
