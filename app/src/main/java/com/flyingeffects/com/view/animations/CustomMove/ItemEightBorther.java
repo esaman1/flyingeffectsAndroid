@@ -21,21 +21,19 @@ import java.util.List;
 
 public class ItemEightBorther extends baseAnimModel {
 
-    private AnimationLinearInterpolator animationLinearInterpolator;
     private StickerView mainStickerView;
 
 
-    public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
+    void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
         this.mainStickerView = mainStickerView;
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
         float[] pos = new float[2];
         float[] tan = new float[2];
         PathMeasure mPathMeasure = setPathMeasure(mainStickerView.getmHelpBoxRectH(), mainStickerView.getMBoxCenterX(), mainStickerView.getMBoxCenterY());
-        //总长度
         float totalDistancePathMeasure = mPathMeasure.getLength();
         float perDistance = totalDistancePathMeasure / (float) 12;
         //第一个参数为总时长
-        animationLinearInterpolator = new AnimationLinearInterpolator(10000, (progress, isDone) -> {
+        AnimationLinearInterpolator animationLinearInterpolator = new AnimationLinearInterpolator(10000, (progress, isDone) -> {
             //主图层应该走的位置
             float nowDistance = totalDistancePathMeasure * progress;
             mPathMeasure.getPosTan(nowDistance, pos, tan);
@@ -51,8 +49,6 @@ public class ItemEightBorther extends baseAnimModel {
                     sub.toTranMoveXY(pos[0], pos[1]);
                 }
             }
-
-
         });
         animationLinearInterpolator.PlayAnimation();
     }
@@ -64,62 +60,25 @@ public class ItemEightBorther extends baseAnimModel {
     private float[] LanSongTan;
     private Layer mainLayer;
     private float perDistance;
-    private ArrayList<TransplationPos>listForTranslaptionPosition=new ArrayList<>();
-    public void toChangeSubLayer(Layer mainStickerView, ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
+    private ArrayList<TransplationPos> listForTranslaptionPosition = new ArrayList<>();
+
+    void toChangeSubLayer(Layer mainStickerView, ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
         LanSongPos = new float[2];
         LanSongTan = new float[2];
         listForTranslaptionPosition.clear();
         this.mainLayer = mainStickerView;
         LansongPathMeasure = setPathMeasure(mainStickerView.getScaleHeight(), mainStickerView.getPositionX(), mainStickerView.getPositionY());
-
-        LogUtil.d("toChangeSubLayer","mainStickerView.getScaleHeight()="+mainStickerView.getScaleHeight()+"mainStickerView.getPositionX()="+mainStickerView.getPositionX()+"mainStickerView.getPositionY()="+mainStickerView.getPositionY());
-
-
         //总长度
         lansongTotalDistancePathMeasure = LansongPathMeasure.getLength();
         perDistance = lansongTotalDistancePathMeasure / (float) 12;
-        //第一个参数为总时长
-        animationLinearInterpolator = new AnimationLinearInterpolator(10000, (progress, isDone) -> {
-//            //主图层应该走的位置
-            float nowDistance = lansongTotalDistancePathMeasure * progress;
-            LansongPathMeasure.getPosTan(nowDistance, LanSongPos, LanSongTan);
-            //这里获得的时一个具体的值，而蓝松sdk 这边需要的时一个0-1之间的值，及0.5 表示居中
-            float translateionalX = LanSongPos[0] / mainStickerView.getPadWidth();
-            float translateionalY = LanSongPos[1] / mainStickerView.getPadHeight();
-
-            TransplationPos transplationPos=new TransplationPos();
-            transplationPos.setToX(translateionalX);
-            transplationPos.setToY(translateionalY);
-            listForTranslaptionPosition.add(transplationPos);
-            for (int i=0;i<listForSubLayer.size();i++){
-                SubLayer sub=listForSubLayer.get(i);
-                if(sub!=null){
-                    float needDistance = perDistance*i + nowDistance;
-                    if (needDistance > lansongTotalDistancePathMeasure) {
-                        needDistance = needDistance - lansongTotalDistancePathMeasure;
-                    }
-                    LansongPathMeasure.getPosTan(needDistance, LanSongPos,LanSongTan);
-                    TransplationPos newTransplationPos=new TransplationPos();
-                    newTransplationPos.setToX(LanSongPos[0] / mainStickerView.getPadWidth());
-                    newTransplationPos.setToY(LanSongPos[1] / mainStickerView.getPadHeight());
-                    listForTranslaptionPosition.add(newTransplationPos);
-
-                }
-            }
-
-
-            callback.translationalXY(listForTranslaptionPosition);
-
-
-        });
-        animationLinearInterpolator.PlayAnimationNoTimer(percentage);
+        getLansongTranslation(callback, percentage, listForSubLayer);
         LogUtil.d("translationalXY", "当前的事件为percentage=" + percentage);
     }
 
 
-    public void getLansongTranslation(LayerAnimCallback callback, float percentage,ArrayList<SubLayer> listForSubLayer) {
+    void getLansongTranslation(LayerAnimCallback callback, float percentage, ArrayList<SubLayer> listForSubLayer) {
         listForTranslaptionPosition.clear();
-        animationLinearInterpolator = new AnimationLinearInterpolator(10000, (progress, isDone) -> {
+        AnimationLinearInterpolator animationLinearInterpolator = new AnimationLinearInterpolator(10000, (progress, isDone) -> {
             //主图层应该走的位置
             if (LansongPathMeasure != null) {
                 float nowDistance = lansongTotalDistancePathMeasure * progress;
@@ -127,19 +86,19 @@ public class ItemEightBorther extends baseAnimModel {
                 //这里获得的时一个具体的值，而蓝松sdk 这边需要的时一个0-1之间的值，及0.5 表示居中
                 float translateionalX = LanSongPos[0] / mainLayer.getPadWidth();
                 float translateionalY = LanSongPos[1] / mainLayer.getPadHeight();
-                TransplationPos transplationPos=new TransplationPos();
+                TransplationPos transplationPos = new TransplationPos();
                 transplationPos.setToX(translateionalX);
                 transplationPos.setToY(translateionalY);
                 listForTranslaptionPosition.add(transplationPos);
-                for (int i=0;i<listForSubLayer.size();i++){
-                    SubLayer sub=listForSubLayer.get(i);
-                    if(sub!=null){
-                        float needDistance = perDistance*i + nowDistance;
+                for (int i = 0; i < listForSubLayer.size(); i++) {
+                    SubLayer sub = listForSubLayer.get(i);
+                    if (sub != null) {
+                        float needDistance = perDistance * i + nowDistance;
                         if (needDistance > lansongTotalDistancePathMeasure) {
                             needDistance = needDistance - lansongTotalDistancePathMeasure;
                         }
-                        LansongPathMeasure.getPosTan(needDistance, LanSongPos,LanSongTan);
-                        TransplationPos newTransplationPos=new TransplationPos();
+                        LansongPathMeasure.getPosTan(needDistance, LanSongPos, LanSongTan);
+                        TransplationPos newTransplationPos = new TransplationPos();
                         newTransplationPos.setToX(LanSongPos[0] / mainLayer.getPadWidth());
                         newTransplationPos.setToY(LanSongPos[1] / mainLayer.getPadHeight());
                         listForTranslaptionPosition.add(newTransplationPos);
@@ -166,7 +125,7 @@ public class ItemEightBorther extends baseAnimModel {
      * creation date: 2020/5/28
      * user : zhangtongju
      */
-    public PathMeasure setPathMeasure(float layerH, float layerCenterX, float layerCenterY) {
+    private PathMeasure setPathMeasure(float layerH, float layerCenterX, float layerCenterY) {
         float diameter = layerH / 3 * 2;
         Path mAnimPath = new Path();
         mAnimPath.moveTo(layerCenterX, layerCenterY - diameter * 2);

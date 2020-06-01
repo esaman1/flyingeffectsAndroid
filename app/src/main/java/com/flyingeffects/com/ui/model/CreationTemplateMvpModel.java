@@ -66,9 +66,9 @@ import com.flyingeffects.com.view.lansongCommendView.StickerItemOnDragListener;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.ViewLayerRelativeLayout;
-import com.lansosdk.videoeditor.DrawPadView2;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxve.ui.adapter.TimelineAdapter;
+
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
@@ -359,8 +359,6 @@ public class CreationTemplateMvpModel {
         if (targetStickerView == null) {
             targetStickerView = (StickerView) viewLayerRelativeLayout.getChildAt(nowChooseStickerPosition);
         }
-
-
         if (position == 0) {
             //贴纸还原,显示到之前的位置
             ToastUtil.showToast("清理全部动画");
@@ -369,8 +367,6 @@ public class CreationTemplateMvpModel {
             }
             stopAllAnim();
         } else {
-
-
             for (int x = 1; x <= animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType()); x++) {
                 //通过动画属性得到需要分身的数量，然后复制出贴纸在数组里面nowChooseSubLayerAnimList，最后需要删除
                 LogUtil.d("startPlayAnim", "当前动画复制的主id为" + targetStickerView.getId());
@@ -389,12 +385,9 @@ public class CreationTemplateMvpModel {
 
 
     private void delayedToStartAnim(StartAnimModel startAnimModel, AnimType animType, StickerView finalTargetStickerView, final int position) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                LogUtil.d("OOM","delayedToStartAnim+position="+position);
-                startAnimModel.ToStart(animType, finalTargetStickerView, allChooseSubLayerAnimList.get(position));
-            }
+        new Handler().postDelayed(() -> {
+            LogUtil.d("OOM","delayedToStartAnim+position="+position);
+            startAnimModel.ToStart(animType, finalTargetStickerView, allChooseSubLayerAnimList.get(position));
         }, 1000);
     }
 
@@ -577,7 +570,6 @@ public class CreationTemplateMvpModel {
     /**
      * description ：添加一个新的sticker ,
      * creation date: 2020/3/23
-     *
      * @param path         资源地址
      * @param hasReplace   是有有替换功能，目前替换功能只针对用户从相册里面选择的，
      * @param isFirstAdd    第一个贴纸

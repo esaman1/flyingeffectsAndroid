@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.MediaPlayer;
-import android.support.v4.util.SparseArrayCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -28,8 +27,6 @@ import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.box.Layer;
 import com.lansosdk.box.SubLayer;
 import com.lansosdk.box.VideoFrameLayer;
-import com.lansosdk.box.VideoLayer;
-import com.lansosdk.box.X;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.shixing.sxve.ui.albumType;
 
