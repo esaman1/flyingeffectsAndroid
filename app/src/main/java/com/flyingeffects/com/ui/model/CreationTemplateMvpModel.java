@@ -68,7 +68,6 @@ import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxve.ui.adapter.TimelineAdapter;
-
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
@@ -84,7 +83,6 @@ import java.util.UUID;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -98,7 +96,6 @@ import static com.flyingeffects.com.manager.FileManager.saveBitmapToPath;
  * user : zhangtongju
  */
 public class CreationTemplateMvpModel {
-    //    private AnimContainer animContainer;
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private CreationTemplateMvpCallback callback;
     private Context context;
@@ -115,11 +112,11 @@ public class CreationTemplateMvpModel {
     private String mImageCopyFolder;
     private boolean isCheckedMatting = true;
     private HorizontalListView hListView;
-    //需要裁剪视频的集合
+    /**
+     * 需要裁剪视频的集合
+     */
     private ArrayList<videoType> cutVideoPathList = new ArrayList<>();
     private backgroundDraw backgroundDraw;
-    //    WaitingDialogProgressNowAnim progressNowAnim;
-//    WatingDialogProgressForTime progressNowAnim;
     private WaitingDialogProgressNowAnim dialog;
     private ArrayList<AllStickerData> listAllSticker = new ArrayList<>();
     /**
@@ -162,10 +159,8 @@ public class CreationTemplateMvpModel {
         mGifFolder = fileManager.getFileCachePath(context, "gifFolder");
         soundFolder = fileManager.getFileCachePath(context, "soundFolder");
         mImageCopyFolder = fileManager.getFileCachePath(context, "imageCopy");
-//        createVideoAnimModel = new CreateVideoAnimModel(drawPadView2);
         animCollect = new AnimCollect();
         listAllAnima = animCollect.getAnimList();
-//        animContainer = new AnimContainer(0, 0, 0, 0, null, null);
 
     }
 
@@ -189,7 +184,6 @@ public class CreationTemplateMvpModel {
             this.mVideoPath = null;
             videoInfo = null;
         }
-
     }
 
 
@@ -254,7 +248,6 @@ public class CreationTemplateMvpModel {
     private SmartRefreshLayout smartRefreshLayout;
     private boolean isRefresh = true;
     private ViewPager viewPager;
-//    private StartAnimModel startAnimModel;
 
     public void initBottomLayout(ViewPager viewPager) {
         this.viewPager = viewPager;
@@ -298,8 +291,6 @@ public class CreationTemplateMvpModel {
         });
         gridAdapter = new TemplateGridViewAdapter(listForSticker, context);
         gridView.setAdapter(gridAdapter);
-
-
         View viewForChooseAnim = LayoutInflater.from(context).inflate(R.layout.view_create_template_anim, viewPager, false);
         GridView gridViewAnim = viewForChooseAnim.findViewById(R.id.gridView_anim);
         gridViewAnim.setOnItemClickListener((adapterView, view, i, l) -> {
@@ -319,9 +310,6 @@ public class CreationTemplateMvpModel {
 
             @Override
             public void onPageSelected(int position) {
-
-
-
 
 
             }
@@ -387,8 +375,10 @@ public class CreationTemplateMvpModel {
 
     private void delayedToStartAnim(StartAnimModel startAnimModel, AnimType animType, StickerView finalTargetStickerView, final int position) {
         new Handler().postDelayed(() -> {
-            LogUtil.d("OOM","delayedToStartAnim+position="+position);
-            startAnimModel.ToStart(animType, finalTargetStickerView, allChooseSubLayerAnimList.get(position));
+            LogUtil.d("OOM", "delayedToStartAnim+position=" + position);
+            if (allChooseSubLayerAnimList != null) {
+                startAnimModel.ToStart(animType, finalTargetStickerView, allChooseSubLayerAnimList.get(position));
+            }
         }, 1000);
     }
 
@@ -463,13 +453,13 @@ public class CreationTemplateMvpModel {
     private void downSticker(String path, String imageId, int position) {
         WaitingDialog.openPragressDialog(context);
         if (path.endsWith(".gif")) {
-            String finalPath = path;
-            String format = finalPath.substring(finalPath.length() - 4);
+//            String finalPath = path;
+            String format = path.substring(path.length() - 4);
             String fileName = mGifFolder + File.separator + imageId + format;
             File file = new File(fileName);
             if (file.exists()) {
                 //如果已经下载了，就用已经下载的，但是如果已经展示了，就不能复用，需要类似于复制功能，只针对gif
-                if (nowStickerHasChoosse(imageId, path)) {
+                if (nowStickerHasChoose(imageId, path)) {
                     String copyName = mGifFolder + File.separator + System.currentTimeMillis() + format;
                     copyGif(fileName, copyName, false, null, fileName, false);
                     WaitingDialog.closePragressDialog();
@@ -485,7 +475,7 @@ public class CreationTemplateMvpModel {
                 File file1 = null;
                 try {
                     file1 = Glide.with(context)
-                            .load(finalPath)
+                            .load(path)
                             .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                             .get();
                 } catch (Exception e) {
@@ -522,20 +512,14 @@ public class CreationTemplateMvpModel {
                 try {
                     originalBitmap = futureTarget.get();
                     Bitmap finalOriginalBitmap = originalBitmap;
-                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
-                        @Override
-                        public void call(Integer integer) {
-                            WaitingDialog.closePragressDialog();
-                            String aa = path.substring(path.length() - 4);
-                            String copyName = mGifFolder + File.separator + System.currentTimeMillis() + aa;
-                            saveBitmapToPath(finalOriginalBitmap, copyName, new FileManager.saveBitmapState() {
-                                @Override
-                                public void succeed(boolean isSucceed) {
-                                    modificationSingleItem(position);
-                                    addSticker(copyName, false, false, false, null, false, null, false);
-                                }
-                            });
-                        }
+                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+                        WaitingDialog.closePragressDialog();
+                        String aa = path.substring(path.length() - 4);
+                        String copyName = mGifFolder + File.separator + System.currentTimeMillis() + aa;
+                        saveBitmapToPath(finalOriginalBitmap, copyName, isSucceed -> {
+                            modificationSingleItem(position);
+                            addSticker(copyName, false, false, false, null, false, null, false);
+                        });
                     });
                 } catch (Exception e) {
                     LogUtil.d("oom", e.getMessage());
@@ -549,7 +533,7 @@ public class CreationTemplateMvpModel {
     /**
      * 当前的item 是否已经被选中上了预览页面
      */
-    private boolean nowStickerHasChoosse(String id, String imagePath) {
+    private boolean nowStickerHasChoose(String id, String imagePath) {
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             String path = stickerView.getResPath();
@@ -571,6 +555,7 @@ public class CreationTemplateMvpModel {
     /**
      * description ：添加一个新的sticker ,
      * creation date: 2020/3/23
+     *
      * @param path         资源地址
      * @param hasReplace   是有有替换功能，目前替换功能只针对用户从相册里面选择的，
      * @param isFirstAdd    第一个贴纸
@@ -581,7 +566,7 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
 
-    int stickerViewID;
+    private int stickerViewID;
     private boolean isIntoDragMove = false;
 
     private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim) {
@@ -903,7 +888,7 @@ public class CreationTemplateMvpModel {
         stopAllAnim();
     }
 
-    private TimelineAdapter mTimelineAdapter;
+//    private TimelineAdapter mTimelineAdapter;
     private int mScrollX;
     private LinearLayoutManager linearLayoutManager;
 
@@ -970,7 +955,6 @@ public class CreationTemplateMvpModel {
 
 
     private int mTotalWidth;
-    float allDistance;
 
     private void initSingleThumbSize(int width, int height, float duration, float mTemplateDuration, String mVideoPath) {
         // 需要截取的listWidth宽度
@@ -1021,7 +1005,7 @@ public class CreationTemplateMvpModel {
 //        this.list_thumb = list_thumb;
         linearLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         list_thumb.setLayoutManager(linearLayoutManager);
-        mTimelineAdapter = new TimelineAdapter();
+        TimelineAdapter  mTimelineAdapter = new TimelineAdapter();
         mTimelineAdapter.marginRight(screenWidth / 2);
         list_thumb.setAdapter(mTimelineAdapter);
         list_thumb.setHasFixedSize(true);
@@ -1086,7 +1070,7 @@ public class CreationTemplateMvpModel {
                         }
                     }
                 }
-            },animCollect);
+            }, animCollect);
 
 
             for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
@@ -1208,8 +1192,6 @@ public class CreationTemplateMvpModel {
 
             @Override
             protected void _onNext(ArrayList<StickerList> list) {
-
-
                 finishData();
                 if (isRefresh) {
                     listForSticker.clear();
@@ -1304,7 +1286,7 @@ public class CreationTemplateMvpModel {
 
     class videoType {
 
-        public videoType(String path, int position, long duration) {
+        videoType(String path, int position, long duration) {
             this.path = path;
             this.duration = duration;
             this.position = position;
