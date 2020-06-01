@@ -457,13 +457,14 @@ public class backgroundDraw {
             for (int i = 0; i < hasAnimLayerList.size(); i++) {
                 hasAnimLayer animLayer = hasAnimLayerList.get(i);
                 float needDurationTime=animCollect.getAnimNeedSubLayerTime(animLayer.ChooseAnimId);
-
-                LogUtil.d("OOM","当前的需要的时间"+needDurationTime*1000);
+                float needDt=needDurationTime*1000;
+                LogUtil.d("OOM","当前的需要的时间"+needDt);
                 LogUtil.d("OOM","当前的时间"+currentTime);
-                float xx=currentTime%(needDurationTime*1000);
-                LogUtil.d("OOM","当前的余值为"+xx);
-                float xxx=xx/(needDurationTime*1000);
-                LogUtil.d("OOM","当前的百分比为"+xxx);
+                //取余
+                float remainder=currentTime%(needDt);
+                LogUtil.d("OOM","当前的余值为"+remainder);
+                float percentage=remainder/(needDt);
+                LogUtil.d("OOM","当前的百分比为"+percentage);
 
                 Layer layer = animLayer.getLayer();
                 ArrayList<SubLayer> listForSubLayer = animLayer.getSublayerList();
@@ -471,15 +472,8 @@ public class backgroundDraw {
                     animCollect.startAnimForChooseAnim(animLayer.ChooseAnimId, layer, listForSubLayer, new LayerAnimCallback() {
                         @Override
                         public void translationalXY(float x, float y) {
-
-//                            LogUtil.d("translationalXY","xxx="+x+"YYY="+y);
-//                            layer.setPosition(layer.getPadWidth()*x, layer.getPadHeight() * y);
-//                            float percentY = stickerItem.getTranslationy();
-//                            LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
-//                            //   float posY = (bpLayer.getPadHeight() + bpLayer.getLayerHeight()) * percentY - bpLayer.getLayerHeight() / 2.0f;
                             layer.setPosition(layer.getPositionX(), layer.getPadHeight() * y);
                             layer.setPosition(layer.getPadWidth()* x, layer.getPositionY());
-
                         }
 
                         @Override
@@ -491,10 +485,7 @@ public class backgroundDraw {
                         public void scale(float size) {
 
                         }
-                    },xxx);
-
-
-
+                    },percentage);
 //                }
             }
         });
