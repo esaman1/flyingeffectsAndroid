@@ -28,6 +28,7 @@ import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.box.Layer;
 import com.lansosdk.box.SubLayer;
 import com.lansosdk.box.VideoFrameLayer;
+import com.lansosdk.box.VideoLayer;
 import com.lansosdk.box.X;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.shixing.sxve.ui.albumType;
@@ -254,12 +255,12 @@ public class backgroundDraw {
             LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
             videoLayer.setPosition(videoLayer.getPositionX(), videoLayer.getPadHeight() * percentY);
 
-//            if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
-//                hasAnimLayer animLayer = new hasAnimLayer(stickerItem.getChooseAnimId(), videoLayer);
-//                int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
-//                hasAnimLayerList.add(animLayer);
-//
-//            }
+            //todo 测试
+            if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
+                int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
+                addVideoSubLayer(needSublayer, videoLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale);
+            }
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -311,7 +312,6 @@ public class backgroundDraw {
         LogUtil.d("OOM", "addBitmapLayer");
         Bitmap bp = BitmapFactory.decodeFile(stickerItem.getPath());
         BitmapLayer bpLayer = execute.addBitmapLayer(bp);
-
         float layerScale = DRAWPADWIDTH / (float) bpLayer.getLayerWidth();
         LogUtil.d("OOM", "图层的缩放为" + layerScale + "");
         float stickerScale = stickerItem.getScale();
@@ -341,12 +341,12 @@ public class backgroundDraw {
         //todo 测试
         if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
             int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
-            addBitmapSubLayer(needSublayer, bpLayer, stickerItem.getChooseAnimId(),rotate,layerScale * stickerScale);
+            addBitmapSubLayer(needSublayer, bpLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale);
         }
     }
 
 
-    private void addBitmapSubLayer(int needSublayer, BitmapLayer layer, AnimType ChooseAnimId,float rotate,float stickerScale ) {
+    private void addBitmapSubLayer(int needSublayer, BitmapLayer layer, AnimType ChooseAnimId, float rotate, float stickerScale) {
         ArrayList<SubLayer> listForSubLayer = new ArrayList<>();
         for (int i = 0; i < needSublayer; i++) {
             SubLayer subLayer = layer.addSubLayerUseMainFilter(true);
@@ -357,6 +357,46 @@ public class backgroundDraw {
         hasAnimLayer animLayer = new hasAnimLayer(ChooseAnimId, layer, listForSubLayer);
         hasAnimLayerList.add(animLayer);
     }
+
+
+    private ArrayList<SubLayer> listForMattingSubLayer = new ArrayList<>();
+
+    private void addMattingBitmapSubLayer(int needSublayer, BitmapLayer layer, AnimType ChooseAnimId, float rotate, float stickerScale) {
+        listForMattingSubLayer.clear();
+        for (int i = 0; i < needSublayer; i++) {
+            SubLayer subLayer = layer.addSubLayerUseMainFilter(true);
+            subLayer.setScale(stickerScale);
+            subLayer.setRotate(rotate);
+            listForMattingSubLayer.add(subLayer);
+        }
+
+    }
+
+
+    private void addVideoSubLayer(int needSublayer, VideoFrameLayer layer, AnimType ChooseAnimId, float rotate, float stickerScale) {
+        ArrayList<SubLayer> listForSubLayer = new ArrayList<>();
+        for (int i = 0; i < needSublayer; i++) {
+            SubLayer subLayer = layer.addSubLayerUseMainFilter(true);
+            subLayer.setScale(stickerScale);
+            subLayer.setRotate(rotate);
+            listForSubLayer.add(subLayer);
+        }
+        hasAnimLayer animLayer = new hasAnimLayer(ChooseAnimId, layer, listForSubLayer);
+        hasAnimLayerList.add(animLayer);
+    }
+
+
+//    private void addGifSubLayer(int needSublayer, GifLayer layer, AnimType ChooseAnimId,float rotate,float stickerScale ) {
+//        ArrayList<SubLayer> listForSubLayer = new ArrayList<>();
+//        for (int i = 0; i < needSublayer; i++) {
+//            SubLayer subLayer = layer.adds
+//            subLayer.setScale(stickerScale);
+//            subLayer.setRotate(rotate);
+//            listForSubLayer.add(subLayer);
+//        }
+//        hasAnimLayer animLayer = new hasAnimLayer(ChooseAnimId, layer, listForSubLayer);
+//        hasAnimLayerList.add(animLayer);
+//    }
 
 
     private void addCanversLayer(AllStickerData stickerItem, int i) {
@@ -400,9 +440,21 @@ public class backgroundDraw {
         LogUtil.d("OOM3", "贴纸的数量为时长为" + (float) getMattingList.size());
         LogUtil.d("OOM3", "preTime=" + preTime);
 
+
+        //todo 测试
+        if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
+            int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
+            addMattingBitmapSubLayer(needSublayer, bpLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale);
+        }
+
         nowProgressTime[0] = preTime;
         CanvasLayer canvasLayer = execute.addCanvasLayer();
+        float needDurationTime = animCollect.getAnimNeedSubLayerTime(stickerItem.getChooseAnimId());
+        float needDt = needDurationTime * 1000;
+
         canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
+            float remainder = currentTime % (needDt);
+            float percentage = remainder / (needDt);
             if (currentTime > nowProgressTime[0]) {
                 //需要切换新的图了
                 nowChooseImageIndex[0]++;
@@ -417,6 +469,36 @@ public class backgroundDraw {
                     bpLayer.setVisibility(View.GONE);
                 }
             }
+
+
+            if (listForMattingSubLayer != null && listForMattingSubLayer.size() > 0) {
+                animCollect.startAnimForChooseAnim(stickerItem.getChooseAnimId(), bpLayer, listForMattingSubLayer, new LayerAnimCallback() {
+                    @Override
+                    public void translationalXY(ArrayList<TransplationPos> listForTranslaptionPosition) {
+                        TransplationPos transplationPos = listForTranslaptionPosition.get(0);
+                        bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight() * transplationPos.getToY());
+                        bpLayer.setPosition(bpLayer.getPadWidth() * transplationPos.getToX(), bpLayer.getPositionY());
+                        for (int i = 1; i <= listForMattingSubLayer.size(); i++) {
+                            TransplationPos subTransplationPos = listForTranslaptionPosition.get(i);
+                            SubLayer subLayer = listForMattingSubLayer.get(i - 1);
+                            subLayer.setPosition(subLayer.getPositionX(), subLayer.getPadHeight() * subTransplationPos.getToY());
+                            subLayer.setPosition(subLayer.getPadWidth() * subTransplationPos.getToX(), subLayer.getPositionY());
+                        }
+                    }
+
+                    @Override
+                    public void rotate(float angle) {
+
+                    }
+
+                    @Override
+                    public void scale(float size) {
+
+                    }
+                }, percentage);
+            }
+
+
         });
 
     }
@@ -450,45 +532,46 @@ public class backgroundDraw {
             }
         }
 
-
-        CanvasLayer canvasLayer = execute.addCanvasLayer();
-        //思路是记录有动画的layer ，然后动态设置动画
-        canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
-            for (int i = 0; i < hasAnimLayerList.size(); i++) {
-                hasAnimLayer animLayer = hasAnimLayerList.get(i);
-                float needDurationTime = animCollect.getAnimNeedSubLayerTime(animLayer.ChooseAnimId);
-                float needDt = needDurationTime * 1000;
-                float remainder = currentTime % (needDt);
-                float percentage = remainder / (needDt);
-                Layer layer = animLayer.getLayer();
-                ArrayList<SubLayer> listForSubLayer = animLayer.getSublayerList();
-                animCollect.startAnimForChooseAnim(animLayer.ChooseAnimId, layer, listForSubLayer, new LayerAnimCallback() {
-                    @Override
-                    public void translationalXY(ArrayList<TransplationPos> listForTranslaptionPosition) {
-                        TransplationPos transplationPos = listForTranslaptionPosition.get(0);
-                        layer.setPosition(layer.getPositionX(), layer.getPadHeight() * transplationPos.getToY());
-                        layer.setPosition(layer.getPadWidth() * transplationPos.getToX(), layer.getPositionY());
-                        for (int i = 1; i <=listForSubLayer.size(); i++) {
+        if (hasAnimLayerList != null && hasAnimLayerList.size() > 0) {
+            //这里是不包括给视频抠像的，如果视频抠像，那么需要单独的动画
+            CanvasLayer canvasLayer = execute.addCanvasLayer();
+            //思路是记录有动画的layer ，然后动态设置动画
+            canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
+                for (int i = 0; i < hasAnimLayerList.size(); i++) {
+                    hasAnimLayer animLayer = hasAnimLayerList.get(i);
+                    float needDurationTime = animCollect.getAnimNeedSubLayerTime(animLayer.ChooseAnimId);
+                    float needDt = needDurationTime * 1000;
+                    float remainder = currentTime % (needDt);
+                    float percentage = remainder / (needDt);
+                    Layer layer = animLayer.getLayer();
+                    ArrayList<SubLayer> listForSubLayer = animLayer.getSublayerList();
+                    animCollect.startAnimForChooseAnim(animLayer.ChooseAnimId, layer, listForSubLayer, new LayerAnimCallback() {
+                        @Override
+                        public void translationalXY(ArrayList<TransplationPos> listForTranslaptionPosition) {
+                            TransplationPos transplationPos = listForTranslaptionPosition.get(0);
+                            layer.setPosition(layer.getPositionX(), layer.getPadHeight() * transplationPos.getToY());
+                            layer.setPosition(layer.getPadWidth() * transplationPos.getToX(), layer.getPositionY());
+                            for (int i = 1; i <= listForSubLayer.size(); i++) {
                                 TransplationPos subTransplationPos = listForTranslaptionPosition.get(i);
-                                SubLayer subLayer = listForSubLayer.get(i-1);
+                                SubLayer subLayer = listForSubLayer.get(i - 1);
                                 subLayer.setPosition(subLayer.getPositionX(), subLayer.getPadHeight() * subTransplationPos.getToY());
                                 subLayer.setPosition(subLayer.getPadWidth() * subTransplationPos.getToX(), subLayer.getPositionY());
                             }
-                    }
+                        }
 
-                    @Override
-                    public void rotate(float angle) {
+                        @Override
+                        public void rotate(float angle) {
 
-                    }
+                        }
 
-                    @Override
-                    public void scale(float size) {
+                        @Override
+                        public void scale(float size) {
 
-                    }
-                }, percentage);
-            }
-        });
-
+                        }
+                    }, percentage);
+                }
+            });
+        }
     }
 
 
