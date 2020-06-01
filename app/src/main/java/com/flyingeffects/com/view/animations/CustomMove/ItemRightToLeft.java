@@ -35,7 +35,7 @@ public class ItemRightToLeft extends baseAnimModel {
         //view 右边位置的比例
         float percent = stickerViewPosition / totalWidth;
         //第一个参数为总时长
-        AnimationLinearInterpolator animationLinearInterpolator = new AnimationLinearInterpolator(3000, (progress, isDone) -> {
+         animationLinearInterpolator = new AnimationLinearInterpolator(3000, (progress, isDone) -> {
             //拟定倒叙
             float needProgress = 1 - progress;
             if (isDone) {

@@ -21,7 +21,7 @@ import static com.flyingeffects.com.view.animations.CustomMove.AnimType.LEFTTORI
 public class AnimCollect {
 
     private baseAnimModel animModel;
-
+    private ArrayList<baseAnimModel> listForBaseAnimMode = new ArrayList<>();
 
     /**
      * description ：获得动画对应的id
@@ -86,27 +86,31 @@ public class AnimCollect {
             //8个动画飞天效果
             case EIGHTBORTHER:
                 LogUtil.d("LEFTTORIGHT", "EIGHTBORTHER-subLayer大小为" + subLayer.size());
-                animModel = new ItemEightBorther();
-                ((ItemEightBorther) animModel).toChangeStickerView(mainStickerView, subLayer);
+                ItemEightBorther itemEightBorther = new ItemEightBorther();
+                itemEightBorther.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(itemEightBorther);
                 break;
             //左进右出
             case LEFTTORIGHT:
-                animModel = new ItemRightToLeft();
+                ItemRightToLeft itemRightToLeft = new ItemRightToLeft();
                 LogUtil.d("LEFTTORIGHT", "LEFTTORIGHT-subLayer大小为" + subLayer.size());
-                ((ItemRightToLeft) animModel).toChangeStickerView(mainStickerView, subLayer);
+                itemRightToLeft.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(itemRightToLeft);
                 break;
 
             case BOTTOMTOCENTER:
-                animModel = new ItemBottomToCenter();
+                ItemBottomToCenter itemBottomToCenter = new ItemBottomToCenter();
                 LogUtil.d("LEFTTORIGHT", "LEFTTORIGHT-subLayer大小为" + subLayer.size());
-                ((ItemBottomToCenter) animModel).toChangeStickerView(mainStickerView, subLayer);
+                itemBottomToCenter.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(itemBottomToCenter);
                 break;
 
 
             case SWINGUPANDDOWN:
-                animModel = new SwingUpAndDownToCenter();
+                SwingUpAndDownToCenter swingUpAndDownToCenter = new SwingUpAndDownToCenter();
                 LogUtil.d("LEFTTORIGHT", "LEFTTORIGHT-subLayer大小为" + subLayer.size());
-                ((SwingUpAndDownToCenter) animModel).toChangeStickerView(mainStickerView, subLayer);
+                swingUpAndDownToCenter.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(swingUpAndDownToCenter);
                 break;
 
         }
@@ -114,7 +118,7 @@ public class AnimCollect {
 
 
     /**
-     * description ：开启全部动画
+     * description ：后台开启全部动画
      * creation date: 2020/5/27
      * user : zhangtongju
      */
@@ -146,10 +150,18 @@ public class AnimCollect {
      * 停止全部动画
      */
     public void stopAnim() {
-        if (animModel != null) {
-            animModel.StopAnim();
-            animModel = null;
+
+        if (listForBaseAnimMode != null && listForBaseAnimMode.size() > 0) {
+            for (baseAnimModel animModel : listForBaseAnimMode
+            ) {
+                if (animModel != null) {
+                    animModel.StopAnim();
+                    animModel = null;
+                }
+            }
+            listForBaseAnimMode.clear();
         }
+
     }
 
 
