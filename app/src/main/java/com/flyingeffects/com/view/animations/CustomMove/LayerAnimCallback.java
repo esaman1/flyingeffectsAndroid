@@ -7,9 +7,10 @@ import java.util.ArrayList;
 public interface LayerAnimCallback {
 
     void translationalXY(ArrayList<TransplationPos> listForTranslaptionPosition);
-    void rotate(float angle);
 
-    void scale(float size);
+    void rotate(ArrayList<Float> angle);
+
+    void scale(ArrayList<Float> scale);
 
 
 

@@ -18,17 +18,16 @@ import static com.flyingeffects.com.view.animations.CustomMove.AnimType.LEFTTORI
  * creation date: 2020/5/25
  * user : zhangtongju
  */
-public  class AnimCollect {
+public class AnimCollect {
 
-  private  baseAnimModel animModel;
+    private baseAnimModel animModel;
 
 
-
-  /**
-   * description ：获得动画对应的id
-   * creation date: 2020/5/27
-   * user : zhangtongju
-   */
+    /**
+     * description ：获得动画对应的id
+     * creation date: 2020/5/27
+     * user : zhangtongju
+     */
     public int getAnimid(AnimType type) {
         switch (type) {
             case EIGHTBORTHER:
@@ -40,7 +39,6 @@ public  class AnimCollect {
         }
         return 0;
     }
-
 
 
     /**
@@ -57,8 +55,6 @@ public  class AnimCollect {
         }
         return 0;
     }
-
-
 
 
     /**
@@ -80,7 +76,6 @@ public  class AnimCollect {
     }
 
 
-
     /**
      * description ：开启全部动画
      * creation date: 2020/5/27
@@ -90,34 +85,32 @@ public  class AnimCollect {
         switch (type) {
             //8个动画飞天效果
             case EIGHTBORTHER:
-                LogUtil.d("LEFTTORIGHT","EIGHTBORTHER-subLayer大小为"+subLayer.size());
-                animModel=new ItemEightBorther();
-                ((ItemEightBorther)animModel).toChangeStickerView(mainStickerView, subLayer);
+                LogUtil.d("LEFTTORIGHT", "EIGHTBORTHER-subLayer大小为" + subLayer.size());
+                animModel = new ItemEightBorther();
+                ((ItemEightBorther) animModel).toChangeStickerView(mainStickerView, subLayer);
                 break;
             //左进右出
             case LEFTTORIGHT:
-                animModel=new ItemRightToLeft();
-                LogUtil.d("LEFTTORIGHT","LEFTTORIGHT-subLayer大小为"+subLayer.size());
-                ((ItemRightToLeft)animModel).toChangeStickerView(mainStickerView, subLayer);
+                animModel = new ItemRightToLeft();
+                LogUtil.d("LEFTTORIGHT", "LEFTTORIGHT-subLayer大小为" + subLayer.size());
+                ((ItemRightToLeft) animModel).toChangeStickerView(mainStickerView, subLayer);
                 break;
 
             case BOTTOMTOCENTER:
-                animModel=new ItemBottomToCenter();
-                LogUtil.d("LEFTTORIGHT","LEFTTORIGHT-subLayer大小为"+subLayer.size());
-                ((ItemBottomToCenter)animModel).toChangeStickerView(mainStickerView, subLayer);
+                animModel = new ItemBottomToCenter();
+                LogUtil.d("LEFTTORIGHT", "LEFTTORIGHT-subLayer大小为" + subLayer.size());
+                ((ItemBottomToCenter) animModel).toChangeStickerView(mainStickerView, subLayer);
                 break;
 
 
-
             case SWINGUPANDDOWN:
-                animModel=new SwingUpAndDownToCenter();
-                LogUtil.d("LEFTTORIGHT","LEFTTORIGHT-subLayer大小为"+subLayer.size());
-                ((SwingUpAndDownToCenter)animModel).toChangeStickerView(mainStickerView, subLayer);
+                animModel = new SwingUpAndDownToCenter();
+                LogUtil.d("LEFTTORIGHT", "LEFTTORIGHT-subLayer大小为" + subLayer.size());
+                ((SwingUpAndDownToCenter) animModel).toChangeStickerView(mainStickerView, subLayer);
                 break;
 
         }
     }
-
 
 
     /**
@@ -125,40 +118,43 @@ public  class AnimCollect {
      * creation date: 2020/5/27
      * user : zhangtongju
      */
-    public void startAnimForChooseAnim(AnimType type, Layer mainStickerView,ArrayList<SubLayer> listForSubLayer,LayerAnimCallback callback,float percentage) {
+    public void startAnimForChooseAnim(AnimType type, Layer mainStickerView, ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
         switch (type) {
             //8个动画飞天效果
             case EIGHTBORTHER:
-                if (animModel!=null){
-                    ((ItemEightBorther)animModel).getLansongTranslation(callback,percentage,listForSubLayer);
-                }else{
-                    animModel=new ItemEightBorther();
-                    ((ItemEightBorther)animModel).toChangeSubLayer(mainStickerView, listForSubLayer,callback,percentage);
+                if (animModel != null) {
+                    ((ItemEightBorther) animModel).getLansongTranslation(callback, percentage, listForSubLayer);
+                } else {
+                    animModel = new ItemEightBorther();
+                    ((ItemEightBorther) animModel).toChangeSubLayer(mainStickerView, listForSubLayer, callback, percentage);
                 }
-
                 break;
 //            //左进右出
-//            case LEFTTORIGHT:
-//                animModel=new ItemRightToLeft();
-//                ((ItemRightToLeft)animModel).toChangeSubLayer(mainStickerView, listForSubLayer);
-//                break;
+            case LEFTTORIGHT:
+                if (animModel != null) {
+                    ((ItemRightToLeft) animModel).toChangeSubLayer(callback, percentage);
+                } else {
+                    animModel = new ItemRightToLeft();
+                    ((ItemRightToLeft) animModel).getSubLayerData(mainStickerView, callback, percentage);
+                }
+                break;
+
+
+
+
         }
     }
-
 
 
     /**
-     *停止全部动画
+     * 停止全部动画
      */
-    public void stopAnim(){
-        if(animModel!=null){
+    public void stopAnim() {
+        if (animModel != null) {
             animModel.StopAnim();
-            animModel=null;
+            animModel = null;
         }
     }
-
-
-
 
 
     /**
