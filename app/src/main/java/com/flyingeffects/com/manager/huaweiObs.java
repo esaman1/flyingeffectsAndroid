@@ -27,7 +27,6 @@ public class huaweiObs {
     public void uploadFileToHawei(String filePath,String fileName,Callback callback ) {
         LogUtil.d("PutObject","filePath="+filePath+"fileName="+fileName);
         // 您的工程中可以只保留一个全局的ObsClient实例
-// ObsClient是线程安全的，可在并发场景下使用
         ObsClient obsClient = null;
         try {
             String endPoint = "obs.cn-south-1.myhuaweicloud.com";//obs.cn-south-1.myhuaweicloud.com
@@ -35,13 +34,9 @@ public class huaweiObs {
             String sk = "H5aoz2anEATMJcS3kEW1UTewn0emQn89DKIshBUo";
             // 创建ObsClient实例
             obsClient = new ObsClient(ak, sk, endPoint);
+
             // 调用接口进行操作，例如上传对象，其中localfile为待上传的本地文件路径，需要指定到具体的文件名
             HeaderResponse response = obsClient.putObject("feishan", fileName, new File(filePath));
-
-
-
-
-
 
             callback.isSuccess(response.toString());
 
