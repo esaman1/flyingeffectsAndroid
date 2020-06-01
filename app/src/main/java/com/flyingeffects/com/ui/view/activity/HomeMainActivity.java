@@ -9,12 +9,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -48,6 +51,7 @@ import com.flyingeffects.com.ui.view.fragment.frag_search;
 import com.flyingeffects.com.ui.view.fragment.frag_user_center;
 import com.flyingeffects.com.utils.AssetsUtils;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.NoDoubleClickListener;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
@@ -76,11 +80,13 @@ import static com.flyingeffects.com.constans.BaseConstans.getChannel;
  * @author zhang
  */
 public class HomeMainActivity extends FragmentActivity {
-    private ImageView[] iV_menu = new ImageView[4];
+    private ImageView[] mIvMenu = new ImageView[4];
+    private ImageView[] mIvMenuBack = new ImageView[4];
     private TextView[] tv_main = new TextView[4];
     private LinearLayout[] lin_menu = new LinearLayout[4];
-    private int[] lin_Id = {R.id.ll_menu_0, R.id.ll_menu_1, R.id.ll_menu_2, R.id.ll_menu_3};
-    private int[] img_Id = {R.id.iV_menu_0, R.id.iV_menu_1, R.id.iV_menu_2, R.id.iV_menu_3};
+    //private int[] lin_Id = {R.id.ll_menu_0, R.id.ll_menu_1, R.id.ll_menu_2, R.id.ll_menu_3};
+    private int[] img_Id = {R.id.iv_menu_0, R.id.iv_menu_1, R.id.iv_menu_2, R.id.iv_menu_3};
+    private int[] mImBackId = {R.id.iv_back_menu_0, R.id.iv_back_menu_1, R.id.iv_back_menu_2, R.id.iv_back_menu_3};
     public HomeMainActivity ThisMain;
     private int[] tv_main_button = {R.id.tv_main_0, R.id.tv_main_1, R.id.tv_main_2, R.id.tv_main_3};
     private int[] selectIconArr = {R.mipmap.home_bj, R.mipmap.moban, R.mipmap.chazhao, R.mipmap.wode};
@@ -123,14 +129,13 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-
     /**
      * description ：请求插屏广告
      * creation date: 2020/4/24
      * user : zhangtongju
      */
-    private void   requestCPad(){
-        int second=BaseConstans.getInterstitial();
+    private void requestCPad() {
+        int second = BaseConstans.getInterstitial();
         startTimer(second);
     }
 
@@ -148,11 +153,11 @@ public class HomeMainActivity extends FragmentActivity {
         task = new TimerTask() {
             @Override
             public void run() {
-                AdManager.getInstance().showCpAd(HomeMainActivity.this,AdConfigs.AD_SCREEN);
+                AdManager.getInstance().showCpAd(HomeMainActivity.this, AdConfigs.AD_SCREEN);
                 destroyTimer();
             }
         };
-        timer.schedule(task, second*1000, second*1000);
+        timer.schedule(task, second * 1000, second * 1000);
     }
 
     /**
@@ -173,11 +178,7 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-
-
-
-
-    private void  initTiktok(){
+    private void initTiktok() {
 
         /* 初始化开始 */
         // appid和渠道，appid须保证与广告后台申请记录一致，渠道可自定义，如有多个马甲包建议设置渠道号唯一标识一个马甲包。
@@ -290,8 +291,8 @@ public class HomeMainActivity extends FragmentActivity {
             }
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-        }catch (Exception e){
-            LogUtil.d("OOM","锤子手机这里会闪退");
+        } catch (Exception e) {
+            LogUtil.d("OOM", "锤子手机这里会闪退");
         }
 
     }
@@ -313,11 +314,13 @@ public class HomeMainActivity extends FragmentActivity {
 
 
     public void initView() {
-        for (int i = 0; i < iV_menu.length; i++) {
-            iV_menu[i] = findViewById(img_Id[i]);
+        for (int i = 0; i < mIvMenu.length; i++) {
+            mIvMenu[i] = findViewById(img_Id[i]);
+            mIvMenuBack[i] = findViewById(mImBackId[i]);
             tv_main[i] = findViewById(tv_main_button[i]);
-            lin_menu[i] = findViewById(lin_Id[i]);
-            lin_menu[i].setOnClickListener(listener);
+            //lin_menu[i] = findViewById(lin_Id[i]);
+            mIvMenu[i].setOnClickListener(listener);
+            mIvMenuBack[i].setOnClickListener(listener);
         }
         whichMenuSelect(1);
     }
@@ -357,26 +360,31 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-    private OnClickListener listener = v -> {
-        switch (v.getId()) {
-            case R.id.ll_menu_0:
-                whichMenuSelect(0);
-                statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "5_bj");
-                break;
-            case R.id.ll_menu_1:
-                whichMenuSelect(1);
-                break;
-            case R.id.ll_menu_2:
-                whichMenuSelect(2);
-                break;
-            case R.id.ll_menu_3:
-                statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "3_mine");
-                whichMenuSelect(3);
-                break;
-
-            default:
-                break;
-
+    private NoDoubleClickListener listener = new NoDoubleClickListener() {
+        @Override
+        public void onNoDoubleClick(View v) {
+            switch (v.getId()) {
+                case R.id.iv_menu_0:
+                case R.id.iv_back_menu_0:
+                    whichMenuSelect(0);
+                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "5_bj");
+                    break;
+                case R.id.iv_menu_1:
+                case R.id.iv_back_menu_1:
+                    whichMenuSelect(1);
+                    break;
+                case R.id.iv_menu_2:
+                case R.id.iv_back_menu_2:
+                    whichMenuSelect(2);
+                    break;
+                case R.id.iv_menu_3:
+                case R.id.iv_back_menu_3:
+                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "3_mine");
+                    whichMenuSelect(3);
+                    break;
+                default:
+                    break;
+            }
         }
     };
 
@@ -390,11 +398,11 @@ public class HomeMainActivity extends FragmentActivity {
      * 时间：2018/6/6
      **/
     private void changeBottomTab() {
-        for (int i = 0; i < lin_Id.length; i++) {
-            iV_menu[i].setImageResource(unSelectIconArr[i]);
+        for (int i = 0; i < img_Id.length; i++) {
+            mIvMenu[i].setImageResource(unSelectIconArr[i]);
             tv_main[i].setTextColor(getResources().getColor(R.color.home_navigation_dark_gray));
         }
-        iV_menu[LastWhichMenu].setImageResource(selectIconArr[LastWhichMenu]);
+        mIvMenu[LastWhichMenu].setImageResource(selectIconArr[LastWhichMenu]);
         tv_main[LastWhichMenu].setTextColor(getResources().getColor(R.color.home_base_blue_color));
     }
 
@@ -438,7 +446,7 @@ public class HomeMainActivity extends FragmentActivity {
                         menu0F = new frag_Bj();
                     }
                     if (!menu0F.isAdded() && !menu0F.isVisible() && !menu0F.isRemoving()) {
-                        fragmentTransaction.replace(R.id.rL_show, menu0F, menu0F.getClass().getName()).commitAllowingStateLoss();
+                        fragmentTransaction.replace(R.id.fl_show, menu0F, menu0F.getClass().getName()).commitAllowingStateLoss();
                     }
                     break;
                 }
@@ -448,7 +456,7 @@ public class HomeMainActivity extends FragmentActivity {
                         menu1F = new FragForTemplate();
                     }
                     if (!menu1F.isAdded() && !menu1F.isVisible() && !menu1F.isRemoving()) {
-                        fragmentTransaction.replace(R.id.rL_show, menu1F, menu1F.getClass().getName()).commitAllowingStateLoss();
+                        fragmentTransaction.replace(R.id.fl_show, menu1F, menu1F.getClass().getName()).commitAllowingStateLoss();
                     }
                     break;
                 }
@@ -456,14 +464,14 @@ public class HomeMainActivity extends FragmentActivity {
                     if (menu2F == null) {
                         menu2F = new frag_search();
                     }
-                    fragmentTransaction.replace(R.id.rL_show, menu2F, menu2F.getClass().getName()).commitAllowingStateLoss();
+                    fragmentTransaction.replace(R.id.fl_show, menu2F, menu2F.getClass().getName()).commitAllowingStateLoss();
                     break;
                 }
                 case 3: {
                     if (menu3F == null) {
                         menu3F = new frag_user_center();
                     }
-                    fragmentTransaction.replace(R.id.rL_show, menu3F, menu3F.getClass().getName()).commitAllowingStateLoss();
+                    fragmentTransaction.replace(R.id.fl_show, menu3F, menu3F.getClass().getName()).commitAllowingStateLoss();
                     break;
                 }
                 default:
@@ -543,12 +551,11 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-
     /**
      * 检查推广配置是否ok
      */
-    private void checkConfig(){
-        if(BaseConstans.configList==null) {
+    private void checkConfig() {
+        if (BaseConstans.configList == null) {
             BaseConstans.configList = new ConfigForTemplateList();
             BaseConstans.configList.setContent("已为您复制微信号");
             BaseConstans.configList.setType(1);

@@ -93,7 +93,9 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        //由于 启动时设置了 R.style.launcher 的windowBackground属性
+        //在进入主页后,把窗口背景清理掉
+        setTheme(R.style.AppTheme);
         lifecycleSubject.onNext(ActivityLifeCycleEvent.CREATE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

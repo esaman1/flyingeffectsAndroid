@@ -98,6 +98,7 @@
     <!--sign out-->
     <color name="color_sign_out_font">#686868</color>
     <color name="color_sign_out_make_sure_font">#333333</color>
+    <color name="color_main_menu_back">#101010</color>
 
 
 </resources>
