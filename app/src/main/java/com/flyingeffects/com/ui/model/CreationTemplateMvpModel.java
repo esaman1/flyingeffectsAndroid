@@ -741,7 +741,6 @@ public class CreationTemplateMvpModel {
                 stickView.setNowMaterialIsVideo(false);
             }
         }
-
         if (isFirstAdd) {
             stickView.setFirstAddSticker(true);
             if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
@@ -765,8 +764,6 @@ public class CreationTemplateMvpModel {
         if (hasReplace) {
             stickView.setLeftBottomBitmap(context.getDrawable(R.mipmap.sticker_change));
         }
-
-
         if (isCopy && copyStickerView != null) {
             //来做复制或者来自联系点击下面的item
             StickerView.isFromCopy fromCopy = new StickerView.isFromCopy();
@@ -779,8 +776,6 @@ public class CreationTemplateMvpModel {
                 fromCopy.setTranX(copyStickerView.getCenterX());
                 fromCopy.setTranY(copyStickerView.getCenterY());
             }
-
-
             stickView.setImageRes(path, false, fromCopy);
             stickView.showFrame();
         } else {
@@ -796,20 +791,14 @@ public class CreationTemplateMvpModel {
                 }
             }, 500);
         }
-
-
         if (isFromAubum && isCopy && isCheckedMatting) {
-
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     stickView.changeImage(path, false);
                 }
             }, 500);
-
         }
-
-
         listForStickerView.add(animStickerModel);
         if (stickView.getParent() != null) {
             ViewGroup vp = (ViewGroup) stickView.getParent();
@@ -818,12 +807,9 @@ public class CreationTemplateMvpModel {
             }
         }
         viewLayerRelativeLayout.addView(stickView);
-
         if (isFirstAdd) {
             callback.isFirstAddSuccess();
         }
-
-
         if (isFromShowAnim) {
             stickView.setIsfromAnim(true);
             nowChooseSubLayerAnimList.add(stickView);
@@ -846,17 +832,13 @@ public class CreationTemplateMvpModel {
 
 
     private void delectedListForSticker(int id) {
-
         for (int i = 0; i < listForStickerView.size(); i++) {
-
             AnimStickerModel model = listForStickerView.get(i);
             StickerView stackView = model.getStickerView();
             if (stackView.getId() == id) {
                 listForStickerView.remove(i);
             }
         }
-
-
     }
 
 
