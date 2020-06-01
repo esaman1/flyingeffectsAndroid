@@ -130,7 +130,7 @@ public  class AnimCollect {
             //8个动画飞天效果
             case EIGHTBORTHER:
                 if (animModel!=null){
-                    ((ItemEightBorther)animModel).getLansongTranslation(callback,percentage);
+                    ((ItemEightBorther)animModel).getLansongTranslation(callback,percentage,listForSubLayer);
                 }else{
                     animModel=new ItemEightBorther();
                     ((ItemEightBorther)animModel).toChangeSubLayer(mainStickerView, listForSubLayer,callback,percentage);

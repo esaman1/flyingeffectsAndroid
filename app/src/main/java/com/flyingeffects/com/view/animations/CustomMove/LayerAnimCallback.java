@@ -1,12 +1,17 @@
 package com.flyingeffects.com.view.animations.CustomMove;
 
+import com.flyingeffects.com.enity.TransplationPos;
+
+import java.util.ArrayList;
+
 public interface LayerAnimCallback {
 
-    void translationalXY(float x, float y);
-
+    void translationalXY(ArrayList<TransplationPos> listForTranslaptionPosition);
     void rotate(float angle);
 
     void scale(float size);
+
+
 
 
 }

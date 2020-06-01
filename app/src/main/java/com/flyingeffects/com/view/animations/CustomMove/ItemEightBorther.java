@@ -3,6 +3,7 @@ package com.flyingeffects.com.view.animations.CustomMove;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 
+import com.flyingeffects.com.enity.TransplationPos;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.box.Layer;
@@ -62,14 +63,17 @@ public class ItemEightBorther extends baseAnimModel {
     private float[] LanSongPos;
     private float[] LanSongTan;
     private Layer mainLayer;
-
+    private float perDistance;
+    private ArrayList<TransplationPos>listForTranslaptionPosition=new ArrayList<>();
     public void toChangeSubLayer(Layer mainStickerView, ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
         LanSongPos = new float[2];
         LanSongTan = new float[2];
+        listForTranslaptionPosition.clear();
         this.mainLayer = mainStickerView;
         LansongPathMeasure = setPathMeasure(mainStickerView.getScaleHeight(), mainStickerView.getPositionX(), mainStickerView.getPositionY());
         //总长度
         lansongTotalDistancePathMeasure = LansongPathMeasure.getLength();
+        perDistance = lansongTotalDistancePathMeasure / (float) 12;
         //第一个参数为总时长
         animationLinearInterpolator = new AnimationLinearInterpolator(10000, (progress, isDone) -> {
 //            //主图层应该走的位置
@@ -78,27 +82,39 @@ public class ItemEightBorther extends baseAnimModel {
             //这里获得的时一个具体的值，而蓝松sdk 这边需要的时一个0-1之间的值，及0.5 表示居中
             float translateionalX = LanSongPos[0] / mainStickerView.getPadWidth();
             float translateionalY = LanSongPos[1] / mainStickerView.getPadHeight();
-           callback.translationalXY(translateionalX, translateionalY );
-//            for (int i=0;i<listForSubLayer.size();i++){
-//                SubLayer sub=listForSubLayer.get(i);
-//                if(sub!=null){
-//                    float needDistance = perDistance*i + nowDistance;
-//                    if (needDistance > totalDistancePathMeasure) {
-//                        needDistance = needDistance - totalDistancePathMeasure;
-//                    }
-//                    mPathMeasure.getPosTan(needDistance, pos, tan);
-//                    sub.toTranMoveXY(pos[0], pos[1]);
-//                }
-//            }
+
+            TransplationPos transplationPos=new TransplationPos();
+            transplationPos.setToX(translateionalX);
+            transplationPos.setToY(translateionalY);
+            listForTranslaptionPosition.add(transplationPos);
+            for (int i=0;i<listForSubLayer.size();i++){
+                SubLayer sub=listForSubLayer.get(i);
+                if(sub!=null){
+                    float needDistance = perDistance*i + nowDistance;
+                    if (needDistance > lansongTotalDistancePathMeasure) {
+                        needDistance = needDistance - lansongTotalDistancePathMeasure;
+                    }
+                    LansongPathMeasure.getPosTan(needDistance, LanSongPos,LanSongTan);
+                    TransplationPos newTransplationPos=new TransplationPos();
+                    newTransplationPos.setToX(LanSongPos[0] / mainStickerView.getPadWidth());
+                    newTransplationPos.setToY(LanSongPos[1] / mainStickerView.getPadHeight());
+                    listForTranslaptionPosition.add(newTransplationPos);
+
+                }
+            }
+
+
+            callback.translationalXY(listForTranslaptionPosition);
 
 
         });
         animationLinearInterpolator.PlayAnimationNoTimer(percentage);
-        LogUtil.d("translationalXY","当前的事件为percentage="+percentage);
+        LogUtil.d("translationalXY", "当前的事件为percentage=" + percentage);
     }
 
 
-    public void getLansongTranslation(LayerAnimCallback callback, float percentage) {
+    public void getLansongTranslation(LayerAnimCallback callback, float percentage,ArrayList<SubLayer> listForSubLayer) {
+        listForTranslaptionPosition.clear();
         animationLinearInterpolator = new AnimationLinearInterpolator(10000, (progress, isDone) -> {
             //主图层应该走的位置
             if (LansongPathMeasure != null) {
@@ -107,21 +123,26 @@ public class ItemEightBorther extends baseAnimModel {
                 //这里获得的时一个具体的值，而蓝松sdk 这边需要的时一个0-1之间的值，及0.5 表示居中
                 float translateionalX = LanSongPos[0] / mainLayer.getPadWidth();
                 float translateionalY = LanSongPos[1] / mainLayer.getPadHeight();
-                callback.translationalXY(translateionalX, translateionalY);
-//            for (int i=0;i<listForSubLayer.size();i++){
-//                SubLayer sub=listForSubLayer.get(i);
-//                if(sub!=null){
-//                    float needDistance = perDistance*i + nowDistance;
-//                    if (needDistance > totalDistancePathMeasure) {
-//                        needDistance = needDistance - totalDistancePathMeasure;
-//                    }
-//                    mPathMeasure.getPosTan(needDistance, pos, tan);
-//                    sub.toTranMoveXY(pos[0], pos[1]);
-//                }
-//            }
+                TransplationPos transplationPos=new TransplationPos();
+                transplationPos.setToX(translateionalX);
+                transplationPos.setToY(translateionalY);
+                listForTranslaptionPosition.add(transplationPos);
+                for (int i=0;i<listForSubLayer.size();i++){
+                    SubLayer sub=listForSubLayer.get(i);
+                    if(sub!=null){
+                        float needDistance = perDistance*i + nowDistance;
+                        if (needDistance > lansongTotalDistancePathMeasure) {
+                            needDistance = needDistance - lansongTotalDistancePathMeasure;
+                        }
+                        LansongPathMeasure.getPosTan(needDistance, LanSongPos,LanSongTan);
+                        TransplationPos newTransplationPos=new TransplationPos();
+                        newTransplationPos.setToX(LanSongPos[0] / mainLayer.getPadWidth());
+                        newTransplationPos.setToY(LanSongPos[1] / mainLayer.getPadHeight());
+                        listForTranslaptionPosition.add(newTransplationPos);
+                    }
+                }
+                callback.translationalXY(listForTranslaptionPosition);
             }
-
-
         });
         animationLinearInterpolator.PlayAnimationNoTimer(percentage);
     }

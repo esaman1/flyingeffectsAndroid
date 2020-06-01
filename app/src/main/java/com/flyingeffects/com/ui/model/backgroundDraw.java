@@ -13,6 +13,7 @@ import android.view.View;
 
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.enity.AllStickerData;
+import com.flyingeffects.com.enity.TransplationPos;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.LogUtil;
@@ -300,7 +301,6 @@ public class backgroundDraw {
         gifLayer.setPosition(gifLayer.getPositionX(), gifLayer.getPadHeight() * percentY);
 
 
-
     }
 
 
@@ -343,17 +343,15 @@ public class backgroundDraw {
             int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
             addBitmapSubLayer(needSublayer, bpLayer, stickerItem.getChooseAnimId());
         }
-
     }
 
 
     private void addBitmapSubLayer(int needSublayer, BitmapLayer layer, AnimType ChooseAnimId) {
         ArrayList<SubLayer> listForSubLayer = new ArrayList<>();
-
-//        for (int i = 0; i < needSublayer; i++) {
-//            SubLayer subLayer = layer.addSubLayerUseMainFilter(true);
-//            listForSubLayer.add(subLayer);
-//        }
+        for (int i = 0; i < needSublayer; i++) {
+            SubLayer subLayer = layer.addSubLayerUseMainFilter(true);
+            listForSubLayer.add(subLayer);
+        }
         hasAnimLayer animLayer = new hasAnimLayer(ChooseAnimId, layer, listForSubLayer);
         hasAnimLayerList.add(animLayer);
     }
@@ -456,37 +454,39 @@ public class backgroundDraw {
         canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
             for (int i = 0; i < hasAnimLayerList.size(); i++) {
                 hasAnimLayer animLayer = hasAnimLayerList.get(i);
-                float needDurationTime=animCollect.getAnimNeedSubLayerTime(animLayer.ChooseAnimId);
-                float needDt=needDurationTime*1000;
-                LogUtil.d("OOM","当前的需要的时间"+needDt);
-                LogUtil.d("OOM","当前的时间"+currentTime);
-                //取余
-                float remainder=currentTime%(needDt);
-                LogUtil.d("OOM","当前的余值为"+remainder);
-                float percentage=remainder/(needDt);
-                LogUtil.d("OOM","当前的百分比为"+percentage);
-
+                float needDurationTime = animCollect.getAnimNeedSubLayerTime(animLayer.ChooseAnimId);
+                float needDt = needDurationTime * 1000;
+                float remainder = currentTime % (needDt);
+                float percentage = remainder / (needDt);
                 Layer layer = animLayer.getLayer();
                 ArrayList<SubLayer> listForSubLayer = animLayer.getSublayerList();
-//                for (int x = 0; x < listForSubLayer.size(); x++) {
-                    animCollect.startAnimForChooseAnim(animLayer.ChooseAnimId, layer, listForSubLayer, new LayerAnimCallback() {
-                        @Override
-                        public void translationalXY(float x, float y) {
-                            layer.setPosition(layer.getPositionX(), layer.getPadHeight() * y);
-                            layer.setPosition(layer.getPadWidth()* x, layer.getPositionY());
+                animCollect.startAnimForChooseAnim(animLayer.ChooseAnimId, layer, listForSubLayer, new LayerAnimCallback() {
+                    @Override
+                    public void translationalXY(ArrayList<TransplationPos> listForTranslaptionPosition) {
+                        for (int i = 0; i < listForTranslaptionPosition.size(); i++) {
+                            if (i == 0) {
+                                TransplationPos transplationPos = listForTranslaptionPosition.get(i);
+                                layer.setPosition(layer.getPositionX(), layer.getPadHeight() * transplationPos.getToY());
+                                layer.setPosition(layer.getPadWidth() * transplationPos.getToX(), layer.getPositionY());
+                            } else {
+                                TransplationPos transplationPos = listForTranslaptionPosition.get(i - 1);
+                                SubLayer subLayer = listForSubLayer.get(i - 1);
+                                subLayer.setPosition(subLayer.getPositionX(), subLayer.getPadHeight() * transplationPos.getToY());
+                                subLayer.setPosition(layer.getPadWidth() * transplationPos.getToX(), layer.getPositionY());
+                            }
                         }
+                    }
 
-                        @Override
-                        public void rotate(float angle) {
+                    @Override
+                    public void rotate(float angle) {
 
-                        }
+                    }
 
-                        @Override
-                        public void scale(float size) {
+                    @Override
+                    public void scale(float size) {
 
-                        }
-                    },percentage);
-//                }
+                    }
+                }, percentage);
             }
         });
 
