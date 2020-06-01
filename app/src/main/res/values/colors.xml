@@ -92,9 +92,12 @@
 
     <!--F4F4F4 -->
     <color name="me_view_line">#F4F4F4</color>
-
-
-
+    <!--about us-->
+    <color name="font_color_about_us">#D5D5D5</color>
+    <color name="color_about_us_line">#232323</color>
+    <!--sign out-->
+    <color name="color_sign_out_font">#686868</color>
+    <color name="color_sign_out_make_sure_font">#333333</color>
 
 
 </resources>
