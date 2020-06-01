@@ -138,10 +138,6 @@ public class AnimCollect {
                     ((ItemRightToLeft) animModel).getSubLayerData(mainStickerView, callback, percentage);
                 }
                 break;
-
-
-
-
         }
     }
 

@@ -345,6 +345,7 @@ public class CreationTemplateMvpModel {
      */
     private void startPlayAnim(int position, StickerView targetStickerView) {
         deleteSubLayerSticker();
+        stopAllAnim();
         //当前选中的贴纸
         int nowChooseStickerPosition = viewLayerRelativeLayout.getChildCount() - 1;
         //选择的动画类型
