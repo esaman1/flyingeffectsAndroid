@@ -30,13 +30,13 @@ public class huaweiObs {
 // ObsClient是线程安全的，可在并发场景下使用
         ObsClient obsClient = null;
         try {
-            String endPoint = "obs.cn-south-1.myhuaweicloud.com";
-            String ak = "TNE4QLBWCKNT8EOKDVX8";
-            String sk = "swy5ml0mP5S7HIHydGuEVdD0pwqDcJi1PxN4aZai";
+            String endPoint = "obs.cn-south-1.myhuaweicloud.com";//obs.cn-south-1.myhuaweicloud.com
+            String ak = "'UZUZ5AUXKOWSLRYF6A4E"; //UZUZ5AUXKOWSLRYF6A4E
+            String sk = "H5aoz2anEATMJcS3kEW1UTewn0emQn89DKIshBUo";
             // 创建ObsClient实例
             obsClient = new ObsClient(ak, sk, endPoint);
             // 调用接口进行操作，例如上传对象，其中localfile为待上传的本地文件路径，需要指定到具体的文件名
-            HeaderResponse response = obsClient.putObject("flying", fileName, new File(filePath));
+            HeaderResponse response = obsClient.putObject("feishan", fileName, new File(filePath));
 
 
 

@@ -494,26 +494,27 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
             //视频
             LogUtil.d("OOM", "nowTime=" + nowTime);
             String path="media/android/video/" + nowTime + "/" + System.currentTimeMillis() + type;
-            huaweiVideoPath="http://cdn.flying.nineton.cn/"+path;
+            huaweiVideoPath="http://cdn.flying.flyingeffect.com/"+path;
             return path;
         }else if(position == 1){
             //头像
             LogUtil.d("OOM", "nowTime=" + nowTime);
             String path="media/android/image/" + nowTime + "/" + System.currentTimeMillis() + type;
-            huaweiImagePath="http://cdn.flying.nineton.cn/"+path;
+            huaweiImagePath="http://cdn.flying.flyingeffect.com/"+path;
             return path;
         }else if(position==2){
             //音频地址
             LogUtil.d("OOM", "nowTime=" + nowTime);
             String path="media/android/sound/" + nowTime + "/" + System.currentTimeMillis() + type;
-            huaweiSound="http://cdn.flying.nineton.cn/"+path;
+            huaweiSound="http://cdn.flying.flyingeffect.com/"+path;
             return path;
 
         }else {
+
             //封面
             LogUtil.d("OOM", "nowTime=" + nowTime);
             String path= "media/android/cover/" + nowTime + "/" + System.currentTimeMillis() + type;
-            coverImagePath="http://cdn.flying.nineton.cn/"+path;
+            coverImagePath="http://cdn.flying.flyingeffect.com/"+path;
             return path;
         }
     }
