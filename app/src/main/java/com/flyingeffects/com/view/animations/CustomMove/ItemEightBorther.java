@@ -71,6 +71,10 @@ public class ItemEightBorther extends baseAnimModel {
         listForTranslaptionPosition.clear();
         this.mainLayer = mainStickerView;
         LansongPathMeasure = setPathMeasure(mainStickerView.getScaleHeight(), mainStickerView.getPositionX(), mainStickerView.getPositionY());
+
+        LogUtil.d("toChangeSubLayer","mainStickerView.getScaleHeight()="+mainStickerView.getScaleHeight()+"mainStickerView.getPositionX()="+mainStickerView.getPositionX()+"mainStickerView.getPositionY()="+mainStickerView.getPositionY());
+
+
         //总长度
         lansongTotalDistancePathMeasure = LansongPathMeasure.getLength();
         perDistance = lansongTotalDistancePathMeasure / (float) 12;

@@ -341,15 +341,17 @@ public class backgroundDraw {
         //todo 测试
         if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
             int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
-            addBitmapSubLayer(needSublayer, bpLayer, stickerItem.getChooseAnimId());
+            addBitmapSubLayer(needSublayer, bpLayer, stickerItem.getChooseAnimId(),rotate,layerScale * stickerScale);
         }
     }
 
 
-    private void addBitmapSubLayer(int needSublayer, BitmapLayer layer, AnimType ChooseAnimId) {
+    private void addBitmapSubLayer(int needSublayer, BitmapLayer layer, AnimType ChooseAnimId,float rotate,float stickerScale ) {
         ArrayList<SubLayer> listForSubLayer = new ArrayList<>();
         for (int i = 0; i < needSublayer; i++) {
             SubLayer subLayer = layer.addSubLayerUseMainFilter(true);
+            subLayer.setScale(stickerScale);
+            subLayer.setRotate(rotate);
             listForSubLayer.add(subLayer);
         }
         hasAnimLayer animLayer = new hasAnimLayer(ChooseAnimId, layer, listForSubLayer);
@@ -463,18 +465,15 @@ public class backgroundDraw {
                 animCollect.startAnimForChooseAnim(animLayer.ChooseAnimId, layer, listForSubLayer, new LayerAnimCallback() {
                     @Override
                     public void translationalXY(ArrayList<TransplationPos> listForTranslaptionPosition) {
-                        for (int i = 0; i < listForTranslaptionPosition.size(); i++) {
-                            if (i == 0) {
-                                TransplationPos transplationPos = listForTranslaptionPosition.get(i);
-                                layer.setPosition(layer.getPositionX(), layer.getPadHeight() * transplationPos.getToY());
-                                layer.setPosition(layer.getPadWidth() * transplationPos.getToX(), layer.getPositionY());
-                            } else {
-                                TransplationPos transplationPos = listForTranslaptionPosition.get(i - 1);
-                                SubLayer subLayer = listForSubLayer.get(i - 1);
-                                subLayer.setPosition(subLayer.getPositionX(), subLayer.getPadHeight() * transplationPos.getToY());
-                                subLayer.setPosition(layer.getPadWidth() * transplationPos.getToX(), layer.getPositionY());
+                        TransplationPos transplationPos = listForTranslaptionPosition.get(0);
+                        layer.setPosition(layer.getPositionX(), layer.getPadHeight() * transplationPos.getToY());
+                        layer.setPosition(layer.getPadWidth() * transplationPos.getToX(), layer.getPositionY());
+                        for (int i = 1; i <=listForSubLayer.size(); i++) {
+                                TransplationPos subTransplationPos = listForTranslaptionPosition.get(i);
+                                SubLayer subLayer = listForSubLayer.get(i-1);
+                                subLayer.setPosition(subLayer.getPositionX(), subLayer.getPadHeight() * subTransplationPos.getToY());
+                                subLayer.setPosition(subLayer.getPadWidth() * subTransplationPos.getToX(), subLayer.getPositionY());
                             }
-                        }
                     }
 
                     @Override
