@@ -66,7 +66,6 @@ import com.flyingeffects.com.view.animations.CustomMove.StartAnimModel;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnDragListener;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.glidebitmappool.GlideBitmapPool;
-import com.lansosdk.box.SubLayer;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxve.ui.adapter.TimelineAdapter;

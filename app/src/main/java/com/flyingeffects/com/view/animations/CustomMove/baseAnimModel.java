@@ -7,6 +7,7 @@ public abstract class baseAnimModel {
     private float originalX;
     private float originalY;
     private float scale;
+    private float rotate;
     public AnimationLinearInterpolator animationLinearInterpolator;
     public void setOriginal(float originalX,float originalY) {
         this.originalY = originalY;
@@ -15,6 +16,10 @@ public abstract class baseAnimModel {
 
     public void setScale(float scale){
         this.scale=scale;
+    }
+
+    public void setRotate(float rotate){
+        this.rotate=rotate;
     }
 
 

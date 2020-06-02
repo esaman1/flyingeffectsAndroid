@@ -1657,6 +1657,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
+    public void toRotate(float rotate) {
+        mRotateAngle=rotate;
+        invalidate();
+    }
+
     public void toTranMoveX(float needToX) {
         center.set(needToX, mHelpBoxRect.centerY());
         invalidate();

@@ -70,7 +70,11 @@ public class AnimCollect {
                 return 3000;
             case BOTTOMTOCENTER:
             case SWINGUPANDDOWN:
+
                 return 2000;
+            case ROATION:
+                return  4000;
+
         }
         return 0;
     }
@@ -111,6 +115,16 @@ public class AnimCollect {
                 LogUtil.d("LEFTTORIGHT", "LEFTTORIGHT-subLayer大小为" + subLayer.size());
                 swingUpAndDownToCenter.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(swingUpAndDownToCenter);
+                break;
+
+            case ROATION:
+
+                Rotate rotate = new Rotate();
+                LogUtil.d("LEFTTORIGHT", "LEFTTORIGHT-subLayer大小为" + subLayer.size());
+                rotate.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(rotate);
+
+
                 break;
 
         }
@@ -195,6 +209,12 @@ public class AnimCollect {
         stickerAnim4.setName("上下摇摆");
         stickerAnim4.setAnimType(AnimType.SWINGUPANDDOWN);
         list.add(stickerAnim4);
+
+
+        StickerAnim stickerAnim5 = new StickerAnim();
+        stickerAnim5.setName("旋转动画");
+        stickerAnim5.setAnimType(AnimType.ROATION);
+        list.add(stickerAnim5);
 
         return list;
     }
