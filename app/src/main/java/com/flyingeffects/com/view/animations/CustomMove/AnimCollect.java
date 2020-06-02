@@ -10,9 +10,6 @@ import com.lansosdk.box.SubLayer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.flyingeffects.com.view.animations.CustomMove.AnimType.EIGHTBORTHER;
-import static com.flyingeffects.com.view.animations.CustomMove.AnimType.LEFTTORIGHT;
-
 /**
  * description ：全部动画集合
  * creation date: 2020/5/25
@@ -51,6 +48,7 @@ public class AnimCollect {
             case EIGHTBORTHER:
                 return 12;
             case LEFTTORIGHT:
+            case SUPERSTAR:
                 return 2;
             case BOTTOMTOUP:
             case LEFTANDRIGHTDISSMISS:
@@ -79,6 +77,8 @@ public class AnimCollect {
             case ROATION:
             case  BOTTOMTOUP:
                 return  4000;
+            case SUPERSTAR:
+                return  2000;
 
         }
         return 0;
@@ -142,6 +142,11 @@ public class AnimCollect {
 
                 break;
 
+            case SUPERSTAR:
+                ItemCloned itemCloned =new ItemCloned();
+                itemCloned.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(itemCloned);
+                break;
         }
     }
 
@@ -242,6 +247,12 @@ public class AnimCollect {
         stickerAnim7.setName("左右消失");
         stickerAnim7.setAnimType(AnimType.LEFTANDRIGHTDISSMISS);
         list.add(stickerAnim7);
+
+
+        StickerAnim stickerAnim8= new StickerAnim();
+        stickerAnim8.setName("超级分身");
+        stickerAnim8.setAnimType(AnimType.SUPERSTAR);
+        list.add(stickerAnim8);
 
         return list;
     }
