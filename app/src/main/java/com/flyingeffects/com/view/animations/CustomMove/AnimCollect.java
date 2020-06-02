@@ -185,6 +185,14 @@ public class AnimCollect {
      */
     public void stopAnim() {
 
+
+        //这里针对保存的时候
+        if(animModel!=null){
+            animModel.StopAnim();
+            animModel=null;
+        }
+
+        //这里针对预览页面
         if (listForBaseAnimMode != null && listForBaseAnimMode.size() > 0) {
             for (baseAnimModel animModel : listForBaseAnimMode
             ) {
