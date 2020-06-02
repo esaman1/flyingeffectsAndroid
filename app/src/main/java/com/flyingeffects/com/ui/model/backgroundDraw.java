@@ -536,6 +536,7 @@ public class backgroundDraw {
                                 layer.setPosition(layer.getPositionX(), layer.getPadHeight() * transplationPos.getToY());
                             }
                             if (transplationPos.getToX() != 0) {
+                                LogUtil.d("translationalXY", "xx=" + transplationPos.getToX());
                                 layer.setPosition(layer.getPadWidth() * transplationPos.getToX(), layer.getPositionY());
                             }
                             for (int i = 1; i <= listForSubLayer.size(); i++) {

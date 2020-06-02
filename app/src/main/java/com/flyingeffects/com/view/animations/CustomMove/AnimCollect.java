@@ -217,9 +217,12 @@ public class AnimCollect {
                 break;
 
             case LEFTANDRIGHTDISSMISS:
-//                ItemLeftAndRightDissmiss itemLeftAndRightDissmiss = new ItemLeftAndRightDissmiss();
-//                itemLeftAndRightDissmiss.toChangeStickerView(mainStickerView, subLayer);
-//                listForBaseAnimMode.add(itemLeftAndRightDissmiss);
+                if (animModel != null) {
+                    ((ItemLeftAndRightDissmiss) animModel).toChangeSubLayer(callback, percentage);
+                } else {
+                    animModel = new ItemLeftAndRightDissmiss();
+                    ((ItemLeftAndRightDissmiss) animModel).initToChangeSubLayer(mainStickerView, callback, percentage);
+                }
 
                 break;
 
