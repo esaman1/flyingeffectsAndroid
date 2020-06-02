@@ -20,7 +20,6 @@ public class ItemBottomToTop extends baseAnimModel {
 
     private StickerView mainStickerView;
     private ArrayList<TransplationPos> listForTranslaptionPosition = new ArrayList<>();
-    private ArrayList<Float> listForScale = new ArrayList<>();
 
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
         this.mainStickerView = mainStickerView;
@@ -62,52 +61,40 @@ public class ItemBottomToTop extends baseAnimModel {
     }
 
 
-    void getSubLayerData(Layer mainStickerView, LayerAnimCallback callback, float percentage) {
+    void initSubLayerData(Layer mainStickerView, LayerAnimCallback callback, float percentage) {
         toChangeSubLayer(callback, percentage);
     }
 
 
     void toChangeSubLayer(LayerAnimCallback callback, float percentage) {
         listForTranslaptionPosition.clear();
-        listForScale.clear();
         AnimationLinearInterpolator animationLinearInterpolator = new AnimationLinearInterpolator(3000, (progress, isDone) -> {
-            float translationToX;
             float needProgress = 1 - progress;
+            //  第一个子view大约位置一半位置,显示在中间位置
+            float translationToY;
             TransplationPos transplationPos = new TransplationPos();
-            transplationPos.setToY(0);
+            transplationPos.setToX((float) 0.15);
             if (needProgress < 0.66) {
-                translationToX = (float) (needProgress + 0.33);
+                translationToY = (float) (needProgress + 0.33);
+                transplationPos.setToY(translationToY);
+
             } else {
-                translationToX = (float) (needProgress - 0.66);
+                translationToY = (float) (needProgress - 0.66);
+                transplationPos.setToY(translationToY);
             }
-            transplationPos.setToX(translationToX);
+
             listForTranslaptionPosition.add(transplationPos);
-            listForScale.add(1 - translationToX);
             TransplationPos transplationPos2 = new TransplationPos();
-            transplationPos2.setToY(0);
+            transplationPos2.setToX((float) 0.66);
             if (needProgress < 0.33) {
-                translationToX = (float) (needProgress + 0.66);
+                translationToY = (float) (needProgress + 0.66);
+                transplationPos2.setToY(translationToY);
             } else {
-                translationToX = (float) (needProgress - 0.33);
+                translationToY = (float) (needProgress - 0.33);
+                transplationPos2.setToY(translationToY);
             }
-            listForScale.add(1 - translationToX);
-            transplationPos2.setToX(translationToX);
             listForTranslaptionPosition.add(transplationPos2);
-
-            TransplationPos transplationPos3 = new TransplationPos();
-            transplationPos3.setToY(0);
-            if (needProgress < (1 - 0.99)) {
-                translationToX = (float) (needProgress + 0.01);
-            } else {
-                translationToX = (float) (needProgress - (1 - 0.99));
-            }
-            listForScale.add(1 - translationToX);
-            transplationPos3.setToX(translationToX);
-            listForTranslaptionPosition.add(transplationPos3);
             callback.translationalXY(listForTranslaptionPosition);
-            callback.scale(listForScale);
-
-
         });
         animationLinearInterpolator.PlayAnimationNoTimer(percentage);
     }

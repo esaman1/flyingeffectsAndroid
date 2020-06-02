@@ -208,9 +208,12 @@ public class AnimCollect {
 
 
             case BOTTOMTOUP:
-//                ItemBottomToTop itemBottomToTop = new ItemBottomToTop();
-//                itemBottomToTop.toChangeStickerView(mainStickerView, subLayer);
-//                listForBaseAnimMode.add(itemBottomToTop);
+                if (animModel != null) {
+                    ((ItemBottomToTop) animModel).toChangeSubLayer(callback, percentage);
+                } else {
+                    animModel = new ItemBottomToTop();
+                    ((ItemBottomToTop) animModel).initSubLayerData(mainStickerView, callback, percentage);
+                }
                 break;
 
             case LEFTANDRIGHTDISSMISS:
