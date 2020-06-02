@@ -331,7 +331,7 @@ public class backgroundDraw {
             subLayer.setRotate(rotate);
             listForSubLayer.add(subLayer);
         }
-        hasAnimLayer animLayer = new hasAnimLayer(ChooseAnimId, layer, listForSubLayer,stickerScale);
+        hasAnimLayer animLayer = new hasAnimLayer(ChooseAnimId, layer, listForSubLayer, stickerScale);
         hasAnimLayerList.add(animLayer);
     }
 
@@ -358,12 +358,12 @@ public class backgroundDraw {
             subLayer.setRotate(rotate);
             listForSubLayer.add(subLayer);
         }
-        hasAnimLayer animLayer = new hasAnimLayer(ChooseAnimId, layer, listForSubLayer,stickerScale);
+        hasAnimLayer animLayer = new hasAnimLayer(ChooseAnimId, layer, listForSubLayer, stickerScale);
         hasAnimLayerList.add(animLayer);
     }
 
 
-    private void addGifSubLayer(int needSublayer, GifLayer layer, AnimType ChooseAnimId,float rotate,float stickerScale ) {
+    private void addGifSubLayer(int needSublayer, GifLayer layer, AnimType ChooseAnimId, float rotate, float stickerScale) {
         ArrayList<SubLayer> listForSubLayer = new ArrayList<>();
         for (int i = 0; i < needSublayer; i++) {
             SubLayer subLayer = layer.addSubLayer();
@@ -371,7 +371,7 @@ public class backgroundDraw {
             subLayer.setRotate(rotate);
             listForSubLayer.add(subLayer);
         }
-        hasAnimLayer animLayer = new hasAnimLayer(ChooseAnimId, layer, listForSubLayer,stickerScale);
+        hasAnimLayer animLayer = new hasAnimLayer(ChooseAnimId, layer, listForSubLayer, stickerScale);
         hasAnimLayerList.add(animLayer);
     }
 
@@ -470,11 +470,11 @@ public class backgroundDraw {
 
                     @Override
                     public void scale(ArrayList<Float> angle) {
-                        float nowScale=layerScale * stickerScale;
-                        bpLayer.setScale(nowScale+nowScale*angle.get(0));
+                        float nowScale = layerScale * stickerScale;
+                        bpLayer.setScale(nowScale + nowScale * angle.get(0));
                         for (int i = 1; i <= listForMattingSubLayer.size(); i++) {
                             SubLayer subLayer = listForMattingSubLayer.get(i - 1);
-                            subLayer.setScale(nowScale+nowScale*angle.get(i));
+                            subLayer.setScale(nowScale + nowScale * angle.get(i));
                         }
                     }
                 }, percentage);
@@ -531,37 +531,43 @@ public class backgroundDraw {
                         @Override
                         public void translationalXY(ArrayList<TransplationPos> listForTranslaptionPosition) {
                             TransplationPos transplationPos = listForTranslaptionPosition.get(0);
-                            if( transplationPos.getToY()!=0){
-                                LogUtil.d("translationalXY","yy="+transplationPos.getToY());
+                            if (transplationPos.getToY() != 0) {
+                                LogUtil.d("translationalXY", "yy=" + transplationPos.getToY());
                                 layer.setPosition(layer.getPositionX(), layer.getPadHeight() * transplationPos.getToY());
                             }
-                            if( transplationPos.getToX()!=0){
+                            if (transplationPos.getToX() != 0) {
                                 layer.setPosition(layer.getPadWidth() * transplationPos.getToX(), layer.getPositionY());
                             }
                             for (int i = 1; i <= listForSubLayer.size(); i++) {
                                 TransplationPos subTransplationPos = listForTranslaptionPosition.get(i);
                                 SubLayer subLayer = listForSubLayer.get(i - 1);
-                                if( subTransplationPos.getToY()!=0){
+                                if (subTransplationPos.getToY() != 0) {
                                     subLayer.setPosition(subLayer.getPositionX(), subLayer.getPadHeight() * subTransplationPos.getToY());
                                 }
-                                if( subTransplationPos.getToX()!=0){
+                                if (subTransplationPos.getToX() != 0) {
                                     subLayer.setPosition(subLayer.getPadWidth() * subTransplationPos.getToX(), subLayer.getPositionY());
                                 }
                             }
                         }
 
                         @Override
-                        public void rotate(ArrayList<Float> angle) {
-
+                        public void rotate(ArrayList<Float> angleList) {
+                            float angle = angleList.get(0);
+                            layer.setRotate(angle);
+                            for (int i = 1; i <= listForSubLayer.size(); i++) {
+                                float angleItem = angleList.get(i);
+                                SubLayer subLayer = listForSubLayer.get(i - 1);
+                                subLayer.setRotate(angleItem);
+                            }
                         }
 
                         @Override
                         public void scale(ArrayList<Float> angle) {
-                            float nowScale=animLayer.getScale();
-                            layer.setScale(nowScale+nowScale*angle.get(0));
+                            float nowScale = animLayer.getScale();
+                            layer.setScale(nowScale + nowScale * angle.get(0));
                             for (int i = 1; i <= listForSubLayer.size(); i++) {
                                 SubLayer subLayer = listForSubLayer.get(i - 1);
-                                subLayer.setScale(nowScale+nowScale*angle.get(i));
+                                subLayer.setScale(nowScale + nowScale * angle.get(i));
                             }
                         }
                     }, percentage);
@@ -597,11 +603,11 @@ public class backgroundDraw {
         /**
          * ChooseAnimId 动画类型  ，Layer 当前图层  sublayerList 子视图集合
          */
-        public hasAnimLayer(AnimType ChooseAnimId, Layer layer, ArrayList<SubLayer> sublayerList,float scale) {
+        public hasAnimLayer(AnimType ChooseAnimId, Layer layer, ArrayList<SubLayer> sublayerList, float scale) {
             this.layer = layer;
             this.ChooseAnimId = ChooseAnimId;
             this.sublayerList = sublayerList;
-            this.scale=scale;
+            this.scale = scale;
         }
 
         public float getScale() {

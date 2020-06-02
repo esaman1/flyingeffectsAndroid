@@ -197,9 +197,13 @@ public class AnimCollect {
                 break;
 
             case ROATION:
-//                Rotate rotate = new Rotate();
-//                rotate.toChangeStickerView(mainStickerView, subLayer);
-//                listForBaseAnimMode.add(rotate);
+
+                if (animModel != null) {
+                    ((Rotate) animModel).toChangeSubLayer(callback, percentage);
+                } else {
+                    animModel = new Rotate();
+                    ((Rotate) animModel).initToChangeSubLayer(mainStickerView, callback, percentage);
+                }
                 break;
 
 
