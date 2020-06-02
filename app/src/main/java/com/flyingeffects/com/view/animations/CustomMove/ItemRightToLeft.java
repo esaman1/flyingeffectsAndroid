@@ -24,9 +24,13 @@ public class ItemRightToLeft extends baseAnimModel {
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
         this.mainStickerView = mainStickerView;
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
+
+
+        LogUtil.d("toChangeStickerView", "subLayer子图层大小为" + subLayer.size());
         StickerView sub1 = subLayer.get(0);
-        LogUtil.d("OOM", "第一个贴纸的图片地址为" + sub1.getOriginalPath());
+        LogUtil.d("toChangeStickerView", "第一个贴纸的图片地址为" + sub1.getOriginalPath());
         StickerView sub2 = subLayer.get(1);
+        LogUtil.d("toChangeStickerView", "第一个贴纸的图片地址为" + sub2.getOriginalPath());
         //(mainStickerView.getmHelpBoxRectW())  解决方法效果很突兀的情况
         float totalWidth = mainStickerView.getMeasuredWidth() + (mainStickerView.getmHelpBoxRectW());
         float mScale = mainStickerView.GetHelpBoxRectScale();
@@ -54,7 +58,8 @@ public class ItemRightToLeft extends baseAnimModel {
                 }
                 sub1.toScale(1 - translationToX, mScale, isDone);
 
-                if (sub2 != null) {
+                LogUtil.d("toChangeStickerView", "第一个贴纸移动为" + translationToX * totalWidth);
+
                     if (needProgress < 0.33) {
                         translationToX = (float) (needProgress + 0.66);
                         sub2.toTranMoveX(translationToX * totalWidth);
@@ -64,7 +69,10 @@ public class ItemRightToLeft extends baseAnimModel {
                         sub2.toTranMoveX(translationToX * totalWidth);
                     }
                     sub2.toScale(1 - translationToX, mScale, isDone);
-                }
+
+                LogUtil.d("toChangeStickerView", "第二个贴纸移动为" + translationToX * totalWidth);
+
+
                 if (needProgress < (1 - 0.99)) {
                     translationToX = (float) (needProgress + 0.01);
                     mainStickerView.toTranMoveX(translationToX * totalWidth);

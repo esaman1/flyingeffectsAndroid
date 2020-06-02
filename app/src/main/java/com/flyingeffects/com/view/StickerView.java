@@ -210,7 +210,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private int originalBitmapHeight;
 
     /**
-     * 是否来自动画子view
+     * 当前是否是子动画view
      */
     private boolean isFromAnim = false;
 
