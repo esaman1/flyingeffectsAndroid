@@ -10,5 +10,6 @@ public enum AnimType {
     EIGHTBORTHER,
     BOTTOMTOCENTER,
     SWINGUPANDDOWN,
-    ROATION
+    ROATION,
+    BOTTOMTOUP
 }

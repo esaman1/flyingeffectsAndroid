@@ -52,6 +52,8 @@ public class AnimCollect {
                 return 12;
             case LEFTTORIGHT:
                 return 2;
+            case BOTTOMTOUP:
+                return 1;
         }
         return 0;
     }
@@ -73,6 +75,7 @@ public class AnimCollect {
 
                 return 2000;
             case ROATION:
+            case  BOTTOMTOUP:
                 return  4000;
 
         }
@@ -118,13 +121,17 @@ public class AnimCollect {
                 break;
 
             case ROATION:
-
                 Rotate rotate = new Rotate();
-                LogUtil.d("LEFTTORIGHT", "LEFTTORIGHT-subLayer大小为" + subLayer.size());
                 rotate.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(rotate);
+                break;
 
 
+            case BOTTOMTOUP:
+                ItemBottomToTop itemBottomToTop = new ItemBottomToTop();
+                LogUtil.d("LEFTTORIGHT", "LEFTTORIGHT-subLayer大小为" + subLayer.size());
+                itemBottomToTop.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(itemBottomToTop);
                 break;
 
         }
@@ -216,6 +223,11 @@ public class AnimCollect {
         stickerAnim5.setAnimType(AnimType.ROATION);
         list.add(stickerAnim5);
 
+
+        StickerAnim stickerAnim6 = new StickerAnim();
+        stickerAnim6.setName("底部到頂部");
+        stickerAnim6.setAnimType(AnimType.BOTTOMTOUP);
+        list.add(stickerAnim6);
         return list;
     }
 
