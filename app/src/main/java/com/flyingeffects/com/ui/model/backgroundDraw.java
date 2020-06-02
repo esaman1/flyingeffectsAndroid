@@ -297,7 +297,10 @@ public class backgroundDraw {
 //        float posY = (mvLayer.getPadHeight() + mvLayer.getLayerHeight()) * percentY - mvLayer.getLayerHeight() / 2.0f;
 //        mvLayer.setPosition(mvLayer.getPositionX(), posY);
         gifLayer.setPosition(gifLayer.getPositionX(), gifLayer.getPadHeight() * percentY);
-
+        if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
+            int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
+            addGifSubLayer(needSublayer, gifLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale);
+        }
 
     }
 
@@ -335,7 +338,6 @@ public class backgroundDraw {
         bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight() * percentY);
 
 
-        //todo 测试
         if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
             int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
             addBitmapSubLayer(needSublayer, bpLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale);
@@ -383,17 +385,17 @@ public class backgroundDraw {
     }
 
 
-//    private void addGifSubLayer(int needSublayer, GifLayer layer, AnimType ChooseAnimId,float rotate,float stickerScale ) {
-//        ArrayList<SubLayer> listForSubLayer = new ArrayList<>();
-//        for (int i = 0; i < needSublayer; i++) {
-//            SubLayer subLayer = layer.adds
-//            subLayer.setScale(stickerScale);
-//            subLayer.setRotate(rotate);
-//            listForSubLayer.add(subLayer);
-//        }
-//        hasAnimLayer animLayer = new hasAnimLayer(ChooseAnimId, layer, listForSubLayer);
-//        hasAnimLayerList.add(animLayer);
-//    }
+    private void addGifSubLayer(int needSublayer, GifLayer layer, AnimType ChooseAnimId,float rotate,float stickerScale ) {
+        ArrayList<SubLayer> listForSubLayer = new ArrayList<>();
+        for (int i = 0; i < needSublayer; i++) {
+            SubLayer subLayer = layer.addSubLayer();
+            subLayer.setScale(stickerScale);
+            subLayer.setRotate(rotate);
+            listForSubLayer.add(subLayer);
+        }
+        hasAnimLayer animLayer = new hasAnimLayer(ChooseAnimId, layer, listForSubLayer,stickerScale);
+        hasAnimLayerList.add(animLayer);
+    }
 
 
     private void addCanversLayer(AllStickerData stickerItem, int i) {

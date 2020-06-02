@@ -43,6 +43,9 @@ public class LanSoEditor {
             setTempFileDir(context.getFilesDir() + "/lansongBox/");
         }
 
+
+
+
         LSOLog.init();
         LanSoEditorBox.deleteDefaultDirFiles();
         LanSongFileUtil.deleteDefaultDir();
@@ -112,6 +115,10 @@ public class LanSoEditor {
             printSDKVersion();
         }
         LSOLog.setLogOutListener(listener);
+    }
+
+    public static void setForceLSOLayerHWCompress(boolean is){
+        LanSoEditorBox.setForceHWCompress(is);
     }
 
     /**

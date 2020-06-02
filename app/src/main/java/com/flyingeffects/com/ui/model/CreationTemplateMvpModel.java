@@ -337,9 +337,6 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     private synchronized void startPlayAnim(int position, StickerView targetStickerView, int intoPosition, boolean isFromPreview) {
-
-
-
         if (!isFromPreview) {
             deleteSubLayerSticker();
         }
