@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -424,14 +425,26 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
             case R.id.tv_anim:
                 presenter.chooseAnim(1);
+                setTextColor(1);
                 break;
             case R.id.tv_tiezhi:
                 presenter.chooseAnim(0);
+                setTextColor(0);
                 break;
 
             default:
                 break;
         }
+    }
+
+
+    private int[] lin_Id = {R.id.tv_tiezhi, R.id.tv_anim};
+    private void setTextColor(int chooseItem){
+        for (int i = 0; i < lin_Id.length; i++) {
+            ((TextView)findViewById(lin_Id[i])).setTextColor(getResources().getColor(R.color.white));
+        }
+        ((TextView)findViewById(lin_Id[chooseItem])).setTextColor(Color.parseColor("#5496FF"));
+
     }
 
 

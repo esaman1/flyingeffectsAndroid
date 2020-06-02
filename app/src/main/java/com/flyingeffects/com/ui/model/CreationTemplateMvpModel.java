@@ -296,7 +296,9 @@ public class CreationTemplateMvpModel {
         View viewForChooseAnim = LayoutInflater.from(context).inflate(R.layout.view_create_template_anim, viewPager, false);
         GridView gridViewAnim = viewForChooseAnim.findViewById(R.id.gridView_anim);
         gridViewAnim.setOnItemClickListener((adapterView, view, i, l) -> {
-            startPlayAnim(i, null, 0, false);
+            if(!DoubleClick.getInstance().isFastZDYDoubleClick(500)){
+                startPlayAnim(i, null, 0, false);
+            }
         });
         TemplateGridViewAnimAdapter gridAdapter = new TemplateGridViewAnimAdapter(listAllAnima, context);
         gridViewAnim.setAdapter(gridAdapter);
@@ -331,10 +333,13 @@ public class CreationTemplateMvpModel {
      * @param position          动画的类型
      * @param targetStickerView 目标贴纸，如果为null ,那么目标贴纸为最上层的那个，这里的多久就是针对设置当个动画，如果不为null ,
      *                          那么动画就是针对预览页面，某个贴纸设置动画
-     * @isFromPreview 是否来自播放预览
+     * @param isFromPreview 是否来自播放预览
      * user : zhangtongju
      */
     private synchronized void startPlayAnim(int position, StickerView targetStickerView, int intoPosition, boolean isFromPreview) {
+
+
+
         if (!isFromPreview) {
             deleteSubLayerSticker();
         }
