@@ -297,7 +297,7 @@ public class CreationTemplateMvpModel {
         View viewForChooseAnim = LayoutInflater.from(context).inflate(R.layout.view_create_template_anim, viewPager, false);
         GridView gridViewAnim = viewForChooseAnim.findViewById(R.id.gridView_anim);
         gridViewAnim.setOnItemClickListener((adapterView, view, i, l) -> {
-            startPlayAnim(i, null, 0,false);
+            startPlayAnim(i, null, 0, false);
         });
         TemplateGridViewAnimAdapter gridAdapter = new TemplateGridViewAnimAdapter(listAllAnima, context);
         gridViewAnim.setAdapter(gridAdapter);
@@ -403,15 +403,17 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     private void deleteSubLayerSticker() {
-        //删除动画贴纸
-        if (nowChooseSubLayerAnimList != null && nowChooseSubLayerAnimList.size() > 0) {
-            for (StickerView stickerView : nowChooseSubLayerAnimList
-            ) {
-                deleteStickView(stickerView);
+        if (sublayerListForBitmapLayer != null && sublayerListForBitmapLayer.size() > 0) {
+            for (int i = 0; i < sublayerListForBitmapLayer.size(); i++) {
+                ArrayList<StickerView> nowChooseSubLayerAnimList = sublayerListForBitmapLayer.get(i);
+                //删除动画贴纸
+                if (nowChooseSubLayerAnimList != null && nowChooseSubLayerAnimList.size() > 0) {
+                    for (StickerView stickerView : nowChooseSubLayerAnimList
+                    ) {
+                        deleteStickView(stickerView);
+                    }
+                }
             }
-        }
-        if (nowChooseSubLayerAnimList != null) {
-            nowChooseSubLayerAnimList.clear();
         }
     }
 
@@ -722,7 +724,7 @@ public class CreationTemplateMvpModel {
             public void stickerDragUp() {
                 if (isIntoDragMove && stickView.getChooseAnimId() != null && stickView.getChooseAnimId() != AnimType.NULL) {
                     //模拟动画按钮的点击事件
-                    startPlayAnim(animCollect.getAnimid(stickView.getChooseAnimId()), null, 0,false);
+                    startPlayAnim(animCollect.getAnimid(stickView.getChooseAnimId()), null, 0, false);
                 }
                 isIntoDragMove = false;
             }
