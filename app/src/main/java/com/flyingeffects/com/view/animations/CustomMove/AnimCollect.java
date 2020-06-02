@@ -167,7 +167,7 @@ public class AnimCollect {
                     ((ItemEightBorther) animModel).toChangeSubLayer(mainStickerView, listForSubLayer, callback, percentage);
                 }
                 break;
-//            //左进右出
+           //左进右出
             case LEFTTORIGHT:
                 if (animModel != null) {
                     ((ItemRightToLeft) animModel).toChangeSubLayer(callback, percentage);
@@ -176,6 +176,51 @@ public class AnimCollect {
                     ((ItemRightToLeft) animModel).getSubLayerData(mainStickerView, callback, percentage);
                 }
                 break;
+            //底部居中位置
+            case BOTTOMTOCENTER:
+                if (animModel != null) {
+                    ((ItemBottomToCenter) animModel).toChangeSubLayer(callback, percentage);
+                } else {
+                    animModel = new ItemBottomToCenter();
+                    ((ItemBottomToCenter) animModel).initToChangeSubLayer(mainStickerView, callback, percentage);
+                }
+                break;
+
+
+            case SWINGUPANDDOWN:
+//                SwingUpAndDownToCenter swingUpAndDownToCenter = new SwingUpAndDownToCenter();
+//                LogUtil.d("LEFTTORIGHT", "LEFTTORIGHT-subLayer大小为" + subLayer.size());
+//                swingUpAndDownToCenter.toChangeStickerView(mainStickerView, subLayer);
+//                listForBaseAnimMode.add(swingUpAndDownToCenter);
+                break;
+
+            case ROATION:
+//                Rotate rotate = new Rotate();
+//                rotate.toChangeStickerView(mainStickerView, subLayer);
+//                listForBaseAnimMode.add(rotate);
+                break;
+
+
+            case BOTTOMTOUP:
+//                ItemBottomToTop itemBottomToTop = new ItemBottomToTop();
+//                itemBottomToTop.toChangeStickerView(mainStickerView, subLayer);
+//                listForBaseAnimMode.add(itemBottomToTop);
+                break;
+
+            case LEFTANDRIGHTDISSMISS:
+//                ItemLeftAndRightDissmiss itemLeftAndRightDissmiss = new ItemLeftAndRightDissmiss();
+//                itemLeftAndRightDissmiss.toChangeStickerView(mainStickerView, subLayer);
+//                listForBaseAnimMode.add(itemLeftAndRightDissmiss);
+
+                break;
+
+            case SUPERSTAR:
+//                ItemCloned itemCloned =new ItemCloned();
+//                itemCloned.toChangeStickerView(mainStickerView, subLayer);
+//                listForBaseAnimMode.add(itemCloned);
+
+
+
         }
     }
 

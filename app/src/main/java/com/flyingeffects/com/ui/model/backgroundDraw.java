@@ -165,29 +165,7 @@ public class backgroundDraw {
                 }
             }
 
-
             addMainCanversLayer(list, isMatting);
-
-
-//            for (int i = 0; i < list.size(); i++) {
-//                AllStickerData item = list.get(i);
-//                String pathType = GetPathTypeModel.getInstance().getMediaType(item.getPath());
-//                if (albumType.isVideo(pathType)) {
-//                    if (isMatting) {
-//                        intoCanvesCount++;
-//                        addCanversLayer(item, intoCanvesCount);
-//                    } else {
-//                        addVideoLayer(item);
-//                    }
-//                } else {
-//                    if (item.getPath().endsWith(".gif")) {
-//                        addGifLayer(item);
-//                    } else {
-//                        addBitmapLayer(item);
-//                    }
-//                }
-//            }
-
             if (!TextUtils.isEmpty(videoVoice)) {
                 //如果有videoVoice 字段，那么需要设置在对应的主图层上面去
                 execute.addAudioLayer(videoVoice, false);
@@ -554,6 +532,7 @@ public class backgroundDraw {
                         public void translationalXY(ArrayList<TransplationPos> listForTranslaptionPosition) {
                             TransplationPos transplationPos = listForTranslaptionPosition.get(0);
                             if( transplationPos.getToY()!=0){
+                                LogUtil.d("translationalXY","yy="+transplationPos.getToY());
                                 layer.setPosition(layer.getPositionX(), layer.getPadHeight() * transplationPos.getToY());
                             }
                             if( transplationPos.getToX()!=0){
