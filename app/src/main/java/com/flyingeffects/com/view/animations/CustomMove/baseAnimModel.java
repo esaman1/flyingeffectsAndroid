@@ -6,10 +6,15 @@ public abstract class baseAnimModel {
 
     private float originalX;
     private float originalY;
+    private float scale;
     public AnimationLinearInterpolator animationLinearInterpolator;
     public void setOriginal(float originalX,float originalY) {
         this.originalY = originalY;
         this.originalX = originalX;
+    }
+
+    public void setScale(float scale){
+        this.scale=scale;
     }
 
 
@@ -26,6 +31,9 @@ public abstract class baseAnimModel {
     public void resetAnimState(StickerView mainStickerView){
         if(mainStickerView!=null){
             mainStickerView.toTranMoveXY(originalX,originalY);
+            if(scale!=0){
+                mainStickerView.setScale(scale);
+            }
         }
     }
 

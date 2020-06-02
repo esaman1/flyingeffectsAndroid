@@ -24,8 +24,7 @@ public class ItemRightToLeft extends baseAnimModel {
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
         this.mainStickerView = mainStickerView;
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
-
-
+        setScale(mainStickerView.getScale());
         LogUtil.d("toChangeStickerView", "subLayer子图层大小为" + subLayer.size());
         StickerView sub1 = subLayer.get(0);
         LogUtil.d("toChangeStickerView", "第一个贴纸的图片地址为" + sub1.getOriginalPath());

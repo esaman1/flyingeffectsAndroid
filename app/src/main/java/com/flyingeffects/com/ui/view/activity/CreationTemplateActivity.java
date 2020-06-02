@@ -43,7 +43,6 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.lansosdk.box.ViewLayerRelativeLayout;
-import com.lansosdk.videoeditor.DrawPadView;
 import com.lansosdk.videoeditor.DrawPadView2;
 import com.shixing.sxve.ui.albumType;
 import com.suke.widget.SwitchButton;
