@@ -188,10 +188,12 @@ public class AnimCollect {
 
 
             case SWINGUPANDDOWN:
-//                SwingUpAndDownToCenter swingUpAndDownToCenter = new SwingUpAndDownToCenter();
-//                LogUtil.d("LEFTTORIGHT", "LEFTTORIGHT-subLayer大小为" + subLayer.size());
-//                swingUpAndDownToCenter.toChangeStickerView(mainStickerView, subLayer);
-//                listForBaseAnimMode.add(swingUpAndDownToCenter);
+                if (animModel != null) {
+                    ((SwingUpAndDownToCenter) animModel).toChangeSubLayer(callback, percentage);
+                } else {
+                    animModel = new SwingUpAndDownToCenter();
+                    ((SwingUpAndDownToCenter) animModel).initToChangeSubLayer(mainStickerView, callback, percentage);
+                }
                 break;
 
             case ROATION:
