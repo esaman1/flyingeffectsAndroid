@@ -35,11 +35,6 @@
             android:drawableRight="@drawable/album_abc_spinner_white" />
 
 
-
-
-
-
-        <androidx.appcompat.widget.AppCompatButton
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_preview"
             style="@style/Album.TextButton.WrapContent.SheetBottom"

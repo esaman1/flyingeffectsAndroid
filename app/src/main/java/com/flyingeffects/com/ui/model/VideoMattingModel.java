@@ -83,7 +83,7 @@ public class VideoMattingModel {
         this.callback = callback;
         this.videoPath = videoPath;
         this.context = context;
-        videoInfo = getVideoInfo.getInstance().getRingDuring(context,videoPath);
+        videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
         FileManager fileManager = new FileManager();
         faceFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceFolder");
         faceMattingFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceMattingFolder");

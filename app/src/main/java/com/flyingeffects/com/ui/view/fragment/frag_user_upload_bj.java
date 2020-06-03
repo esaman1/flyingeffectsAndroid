@@ -31,7 +31,6 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.yanzhenjie.album.app.camera.CaptureActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;

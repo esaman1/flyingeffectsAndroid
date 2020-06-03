@@ -56,7 +56,7 @@ public class VideoManage {
     public VideoInfo getVideoInfo(Context context,String path){
         VideoInfo videoInfo = null;
         if (!TextUtils.isEmpty(path)) {
-            videoInfo  = getVideoInfo.getInstance().getRingDuring(context,path);
+            videoInfo  = getVideoInfo.getInstance().getRingDuring(path);
         }
         return videoInfo;
 

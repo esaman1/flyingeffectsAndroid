@@ -917,15 +917,20 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         // 是否向下传递事件标志 true为消耗
         super.onTouchEvent(event);
         if (!isFromAnim) {
+            int pointerCount = event.getPointerCount();
+            LogUtil.d("event", "pointerCount =" + pointerCount);
             int action = event.getAction();
             float x = event.getX();
             float y = event.getY();
-            switch (action) {
+
+
+            switch (action & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN:
+                    LogUtil.d("event", "ACTION_DOWN");
                     if (callback != null) {
                         callback.stickerMove();
                     }
-                    mCurrentMode = adjustMode(x, y);
+                    mCurrentMode = adjustMode(x, y, pointerCount, false);
                     if (mCurrentMode == IDLE_MODE) {
                         return false;
                     } else if (mCurrentMode == LEFT_TOP_MODE) {
@@ -962,629 +967,676 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     }
                     handler.removeMessages(DISMISS_FRAME);
                     break;
+                case MotionEvent.ACTION_POINTER_DOWN:
+                    //float startRotation = getRotation(event);
+                    mCurrentMode = adjustMode(x, y, pointerCount, false);
+                    dx0 = event.getX(1) - event.getX(0);
+                    dy0 = event.getY(1) - event.getY(0);
+                    LogUtil.d("event", "ACTION_POINTER_DOWN pointerCount =" + pointerCount);
+                    break;
+                case MotionEvent.ACTION_POINTER_UP:
+                    pointerCount = 1;
+                    mCurrentMode = adjustMode(x, y, pointerCount, true);
+                    LogUtil.d("event", "ACTION_POINTER_UP pointerCount =" + pointerCount);
+                    break;
                 case MotionEvent.ACTION_MOVE:
-                    if (dragCallback != null) {
-                        dragCallback.stickerDragMove();
-                    }
+                    LogUtil.d("event", "ACTION_MOVE");
                     if (UiStep.isFromDownBj) {
                         statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_drag");
                     } else {
                         statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_drag");
                     }
-        int pointerCount = event.getPointerCount();
-        LogUtil.d("event", "pointerCount =" + pointerCount);
-        int action = event.getAction();
-        float x = event.getX();
-        float y = event.getY();
 
-        switch (action & MotionEvent.ACTION_MASK) {
-            case MotionEvent.ACTION_DOWN:
-                LogUtil.d("event", "ACTION_DOWN");
-                if (callback != null) {
-                    callback.stickerMove();
-                }
-                mCurrentMode = adjustMode(x, y, pointerCount, false);
-                if (mCurrentMode == IDLE_MODE) {
-                    return false;
-                } else if (mCurrentMode == LEFT_TOP_MODE) {
-                    if (this.isRunning) {
-                        stop();
+                    if (mCurrentMode == IDLE_MODE) {
+                        return false;
                     }
-                    callback.stickerOnclick(LEFT_TOP_MODE);
-                    return true;
-                } else if (mCurrentMode == RIGHT_TOP_MODE) {
-                    callback.stickerOnclick(RIGHT_TOP_MODE);
-                    return true;
-                } else if (mCurrentMode == LEFT_BOTTOM_MODE) {
-                    callback.stickerOnclick(LEFT_BOTTOM_MODE);
-                    return true;
-                } else if (mCurrentMode == RIGHT_CENTER_MODE) {
-                    callback.stickerOnclick(RIGHT_CENTER_MODE);
-                    return true;
-                } else if (mCurrentMode == RIGHT_BOTTOM_MODE) {
-                    if (UiStep.isFromDownBj) {
-                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), " 5_mb_bj_Spin");
-                    } else {
-                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), " 6_customize_bj_Spin");
-                    }
-                }
-                lastX = x;
-                lastY = y;
-                guideLineShowOntouch = true;
-                if (tickerListener != null) {
-                    tickerListener.onActionStart(this, mCurrentMode, mScale, mRotateAngle, center);
-                }
-                if (!frameShow) {
-                    frameShow = true;
-                    invalidate();
-                }
-                handler.removeMessages(DISMISS_FRAME);
-                break;
-            case MotionEvent.ACTION_POINTER_DOWN:
-                //float startRotation = getRotation(event);
-                mCurrentMode = adjustMode(x, y, pointerCount, false);
-                dx0 = event.getX(1) - event.getX(0);
-                dy0 = event.getY(1) - event.getY(0);
-                LogUtil.d("event", "ACTION_POINTER_DOWN pointerCount =" + pointerCount);
-                break;
-            case MotionEvent.ACTION_POINTER_UP:
-                pointerCount = 1;
-                mCurrentMode = adjustMode(x, y, pointerCount, true);
-                LogUtil.d("event", "ACTION_POINTER_UP pointerCount =" + pointerCount);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                LogUtil.d("event", "ACTION_MOVE");
-                if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_drag");
-                } else {
-                    statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_drag");
-                }
 
-                if (mCurrentMode == IDLE_MODE) {
-                    return false;
-                }
+                    if (mCurrentMode == MOVE_MODE) {
+                        // 移动贴图
+                        float dx = x - lastX;
+                        float dy = y - lastY;
 
-                if (mCurrentMode == MOVE_MODE) {
-                    // 移动贴图
-                    float dx = x - lastX;
-                    float dy = y - lastY;
+                        layoutX += dx;
+                        layoutY += dy;
+                        adjustCenter(dx, dy);
 
-                    layoutX += dx;
-                    layoutY += dy;
-                    adjustCenter(dx, dy);
+                        invalidate();
 
-                    invalidate();
-
-                    lastX = x;
-                    lastY = y;
-                    moveX = mHelpBoxRect.right;
-                    moveY = mHelpBoxRect.bottom;
+                        lastX = x;
+                        lastY = y;
+                        moveX = mHelpBoxRect.right;
+                        moveY = mHelpBoxRect.bottom;
 //                    LogUtil.d("OOM","x=PPP="+lastX/(float)getMeasuredWidth());
-                    LogUtil.d("OOM", "moveX" + moveX);
-                    LogUtil.d("OOM", "width" + getMeasuredWidth());
+                        LogUtil.d("OOM", "moveX" + moveX);
+                        LogUtil.d("OOM", "width" + getMeasuredWidth());
 
-                    float xx = mHelpBoxRect.width();
-                    float xx2 = xx / 2;
-                    LogUtil.d("OOM", "xx2 ==" + xx2);
-                    float aaaa = moveX - xx2;
-                    LogUtil.d("OOM", "aaaa ==" + aaaa);
-                    float bbb = aaaa / getMeasuredWidth();
-                    LogUtil.d("OOM", "P=" + bbb);
+                        float xx = mHelpBoxRect.width();
+                        float xx2 = xx / 2;
+                        LogUtil.d("OOM", "xx2 ==" + xx2);
+                        float aaaa = moveX - xx2;
+                        LogUtil.d("OOM", "aaaa ==" + aaaa);
+                        float bbb = aaaa / getMeasuredWidth();
+                        LogUtil.d("OOM", "P=" + bbb);
 
 
-                    float xx1 = mHelpBoxRect.height();
-                    float xx21 = xx1 / 2;
-                    float aaaa1 = moveY - xx21;
-                    float bbb1 = aaaa1 / getMeasuredHeight();
-                    LogUtil.d("OOM", "P=" + bbb1);
-                } else if (mCurrentMode == rotateLocation) {
-                    // 旋转 缩放文字操作
-                    float dx = x - lastX;
-                    float dy = y - lastY;
-                    updateRotateAndScale(dx, dy);
+                        float xx1 = mHelpBoxRect.height();
+                        float xx21 = xx1 / 2;
+                        float aaaa1 = moveY - xx21;
+                        float bbb1 = aaaa1 / getMeasuredHeight();
+                        LogUtil.d("OOM", "P=" + bbb1);
+                    } else if (mCurrentMode == rotateLocation) {
+                        // 旋转 缩放文字操作
+                        float dx = x - lastX;
+                        float dy = y - lastY;
+                        updateRotateAndScale(dx, dy);
+                        invalidate();
+                        lastX = x;
+                        lastY = y;
+                    } else if (mCurrentMode == RIGHT_MODE) {
+                        LogUtil.d("event", "RIGHT_MODE");
+                        float dx = x - lastX;
+                        float dy = y - lastY;
+                        changeRightOffset(dx, dy);
+                        invalidate();
+                        lastX = x;
+                        lastY = y;
+                    } else if (mCurrentMode == NEW_POINTER_DOWN_MODE) {
+                        LogUtil.d("event", "NEW_POINTER_DOWN_MODE");
+                        float dx1 = event.getX(1) - event.getX(0);
+                        float dy1 = event.getY(1) - event.getY(0);
+                        updateRotateAndScalePointerDown(dx0, dy0, dx1, dy1);
+                        invalidate();
+                        dx0 = dx1;
+                        dy0 = dy1;
+                    }
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                case MotionEvent.ACTION_UP:
+                    LogUtil.d("event", "ACTION_CANCEL");
+                    if (mCurrentMode == IDLE_MODE) {
+                        return false;
+                    }
+                    handler.removeMessages(DISMISS_FRAME);
+                    handler.sendEmptyMessageDelayed(DISMISS_FRAME, AUTO_FADE_FRAME_TIMEOUT);
+                    guideLineShowOntouch = false;
                     invalidate();
-                    lastX = x;
-                    lastY = y;
-                } else if (mCurrentMode == RIGHT_MODE) {
-                    LogUtil.d("event", "RIGHT_MODE");
-                    float dx = x - lastX;
-                    float dy = y - lastY;
-                    changeRightOffset(dx, dy);
-                    invalidate();
-                    lastX = x;
-                    lastY = y;
-                } else if (mCurrentMode == NEW_POINTER_DOWN_MODE) {
-                    LogUtil.d("event", "NEW_POINTER_DOWN_MODE");
-                    float dx1 = event.getX(1) - event.getX(0);
-                    float dy1 = event.getY(1) - event.getY(0);
-                    updateRotateAndScalePointerDown(dx0, dy0, dx1, dy1);
-                    invalidate();
-                    dx0 = dx1;
-                    dy0 = dy1;
-                }
-                break;
-            case MotionEvent.ACTION_CANCEL:
-            case MotionEvent.ACTION_UP:
-                LogUtil.d("event", "ACTION_CANCEL");
-                if (mCurrentMode == IDLE_MODE) {
-                    return false;
-                }
-                handler.removeMessages(DISMISS_FRAME);
-                handler.sendEmptyMessageDelayed(DISMISS_FRAME, AUTO_FADE_FRAME_TIMEOUT);
-                guideLineShowOntouch = false;
-                invalidate();
-                if (tickerListener != null) {
-                    tickerListener.onActionEnd(this, mCurrentMode, mScale, mRotateAngle, center);
-                }
-                mCurrentMode = IDLE_MODE;
-                break;
-            default:
-                break;
-        }// end switch
+                    if (tickerListener != null) {
+                        tickerListener.onActionEnd(this, mCurrentMode, mScale, mRotateAngle, center);
+                    }
+                    mCurrentMode = IDLE_MODE;
+                    break;
+                default:
+                    break;
+
+            }// end switch
+            return true;
+        }
         return true;
     }
 
-    //右侧滑动
-    private void changeRightOffset(float dx, float dy) {
-        float sqrt = (float) Math.sqrt(dx * dx + dy * dy);
 
-        if (mRotateAngle >= 90 && mRotateAngle <= 270 && dy > 0) {
-            mRightOffset += sqrt;
-        } else if (mRotateAngle >= 90 && mRotateAngle <= 270 && dy < 0) {
-            mRightOffset -= sqrt;
-        } else if (dy < 0) {
-            mRightOffset += sqrt;
-        } else if (dy > 0) {
-            mRightOffset -= sqrt;
-        }
-        LogUtil.d("change", mRotateAngle + " mRotateAngle");
-        LogUtil.d("change", mRightOffsetPercent + " mRightOffset1");
-        if (mRightOffset < 0) {
-            mRightOffset = 0;
-        } else if (mRightOffset >= mHelpBoxRect.bottom - mHelpBoxRect.top - mRightLimited) {
-            mRightOffset = mHelpBoxRect.bottom - mHelpBoxRect.top - mRightLimited;
-        }
-        mRightOffsetPercent = mRightOffset / (mHelpBoxRect.bottom - mHelpBoxRect.top - mRightLimited);
-        LogUtil.d("change", mRightOffsetPercent + " mRightOffset2");
-        LogUtil.d("change", mHelpBoxRect.top + " top");
-        LogUtil.d("change", mHelpBoxRect.bottom + " bottom");
+            //右侧滑动
+            private void changeRightOffset ( float dx, float dy){
+                float sqrt = (float) Math.sqrt(dx * dx + dy * dy);
 
-    }
+                if (mRotateAngle >= 90 && mRotateAngle <= 270 && dy > 0) {
+                    mRightOffset += sqrt;
+                } else if (mRotateAngle >= 90 && mRotateAngle <= 270 && dy < 0) {
+                    mRightOffset -= sqrt;
+                } else if (dy < 0) {
+                    mRightOffset += sqrt;
+                } else if (dy > 0) {
+                    mRightOffset -= sqrt;
+                }
+                LogUtil.d("change", mRotateAngle + " mRotateAngle");
+                LogUtil.d("change", mRightOffsetPercent + " mRightOffset1");
+                if (mRightOffset < 0) {
+                    mRightOffset = 0;
+                } else if (mRightOffset >= mHelpBoxRect.bottom - mHelpBoxRect.top - mRightLimited) {
+                    mRightOffset = mHelpBoxRect.bottom - mHelpBoxRect.top - mRightLimited;
+                }
+                mRightOffsetPercent = mRightOffset / (mHelpBoxRect.bottom - mHelpBoxRect.top - mRightLimited);
+                LogUtil.d("change", mRightOffsetPercent + " mRightOffset2");
+                LogUtil.d("change", mHelpBoxRect.top + " top");
+                LogUtil.d("change", mHelpBoxRect.bottom + " bottom");
+
+            }
 
 
-    private void onclickDown() {
+            private void onclickDown () {
 
-    }
+            }
 
-    public boolean isIn(RectF source, float x, float y, float angle) {
-        RectF rectF = new RectF(source);
-        if (angle != 0) {
-            Matrix matrix = new Matrix();
-            //设置旋转角度时，一定要记得设置旋转的中心，该中心与绘图时的中心点是一致的。
-            matrix.setRotate(angle, rectF.centerX(), rectF.centerY());
-            matrix.mapRect(rectF);
-        }
-        if (rectF.contains(x, y)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+            public boolean isIn (RectF source,float x, float y, float angle){
+                RectF rectF = new RectF(source);
+                if (angle != 0) {
+                    Matrix matrix = new Matrix();
+                    //设置旋转角度时，一定要记得设置旋转的中心，该中心与绘图时的中心点是一致的。
+                    matrix.setRotate(angle, rectF.centerX(), rectF.centerY());
+                    matrix.mapRect(rectF);
+                }
+                if (rectF.contains(x, y)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
 
-    /**
-     * 消除左上角的删除按钮, 右下角的拖动图标, 和黑色的边框.
-     */
-    public void disappearIconBorder() {
-        invalidate();
-    }
+            /**
+             * 消除左上角的删除按钮, 右下角的拖动图标, 和黑色的边框.
+             */
+            public void disappearIconBorder () {
+                invalidate();
+            }
 
-    /**
-     * 旋转 缩放 更新
-     *
-     * @param dx X坐标距离
-     * @param dy Y坐标距离
-     */
-    public void updateRotateAndScale(final float dx, final float dy) {
-        float cx = mHelpBoxRect.centerX();
-        float cy = mHelpBoxRect.centerY();
+            /**
+             * 旋转 缩放 更新
+             *
+             * @param dx X坐标距离
+             * @param dy Y坐标距离
+             */
+            public void updateRotateAndScale ( final float dx, final float dy){
+                float cx = mHelpBoxRect.centerX();
+                float cy = mHelpBoxRect.centerY();
 
-        float x = rightBottomDstRect.centerX();
-        float y = rightBottomDstRect.centerY();
+                float x = rightBottomDstRect.centerX();
+                float y = rightBottomDstRect.centerY();
 
-        float nx = x + dx;
-        float ny = y + dy;
+                float nx = x + dx;
+                float ny = y + dy;
 
-        float xa = x - cx;
-        float ya = y - cy;
+                float xa = x - cx;
+                float ya = y - cy;
 
-        float xb = nx - cx;
-        float yb = ny - cy;
+                float xb = nx - cx;
+                float yb = ny - cy;
 
-        float srcLen = (float) Math.sqrt(xa * xa + ya * ya);
-        float curLen = (float) Math.sqrt(xb * xb + yb * yb);
-        // 计算缩放比
-        float scale = curLen / srcLen;
+                float srcLen = (float) Math.sqrt(xa * xa + ya * ya);
+                float curLen = (float) Math.sqrt(xb * xb + yb * yb);
+                // 计算缩放比
+                float scale = curLen / srcLen;
 
-        mScale *= scale;
+                mScale *= scale;
 
-        float newWidth = mHelpBoxRect.width() * mScale;
+                float newWidth = mHelpBoxRect.width() * mScale;
 
-        if (newWidth < 70) {
-            mScale /= scale;
-            return;
-        }
+                if (newWidth < 70) {
+                    mScale /= scale;
+                    return;
+                }
 
-        double cos = (xa * xb + ya * yb) / (srcLen * curLen);
-        if (cos > 1 || cos < -1) {
-            return;
-        }
-        float angle = (float) Math.toDegrees(Math.acos(cos));
-        // 行列式计算 确定转动方向
-        float calMatrix = xa * yb - xb * ya;
+                double cos = (xa * xb + ya * yb) / (srcLen * curLen);
+                if (cos > 1 || cos < -1) {
+                    return;
+                }
+                float angle = (float) Math.toDegrees(Math.acos(cos));
+                // 行列式计算 确定转动方向
+                float calMatrix = xa * yb - xb * ya;
 
-        int flag = calMatrix > 0 ? 1 : -1;
-        angle = flag * angle;
+                int flag = calMatrix > 0 ? 1 : -1;
+                angle = flag * angle;
 
-        mRotateAngle = adjustDegree(mRotateAngle, angle);//+= angle;
+                mRotateAngle = adjustDegree(mRotateAngle, angle);//+= angle;
 
 //        LogUtil.d("updateRotateAndScale", "mScale=" + mScale);
 //        LogUtil.d("updateRotateAndScale", "mRotateAngle=" + mRotateAngle);
 
-        moveX = mHelpBoxRect.right;
-        moveY = mHelpBoxRect.bottom;
-    }
-
-    /**
-     * 双指 旋转 缩放 更新
-     *
-     * @param dx0 初始x坐标差
-     * @param dy0 初始y坐标差
-     * @param dx1 第二次x坐标查
-     * @param dy1 第二次y坐标差
-     */
-    public void updateRotateAndScalePointerDown(final float dx0, final float dy0, final float dx1, final float dy1) {
-
-        float srcLen = (float) Math.sqrt(dx0 * dx0 + dy0 * dy0);
-        float curLen = (float) Math.sqrt(dx1 * dx1 + dy1 * dy1);
-        // 计算缩放比
-        float scale = curLen / srcLen;
-
-        mScale *= scale;
-
-        float newWidth = mHelpBoxRect.width() * mScale;
-
-        if (newWidth < 70) {
-            mScale /= scale;
-            return;
-        }
-
-        double cos = (dx0 * dx1 + dy0 * dy1) / (srcLen * curLen);
-        if (cos > 1 || cos < -1) {
-            return;
-        }
-        float angle = (float) Math.toDegrees(Math.acos(cos));
-        // 行列式计算 确定转动方向
-        float calMatrix = dx0 * dy1 - dx1 * dy0;
-
-        int flag = calMatrix > 0 ? 1 : -1;
-        angle = flag * angle;
-
-        mRotateAngle = adjustDegree(mRotateAngle, angle);//+= angle;
-
-        LogUtil.d("updateRotateAndScale", "mScale=" + mScale);
-        LogUtil.d("updateRotateAndScale", "mRotateAngle=" + mRotateAngle);
-
-        moveX = mHelpBoxRect.right;
-        moveY = mHelpBoxRect.bottom;
-    }
-
-    boolean degreeTurned = false;
-    float tempDegree = 0;
-
-    /**
-     * 辅助居中
-     *
-     * @param currentDegree
-     * @param newDegree
-     * @return
-     */
-    private float adjustDegree(float currentDegree, float newDegree) {
-        if (!enableAutoAdjustDegree) {
-            return currentDegree + newDegree;
-        }
-        tempDegree += newDegree;
-        int current = Math.round(currentDegree % 360);
-        if (current < 0) {
-            current = 360 + current;
-        }
-        if (!degreeTurned) {
-            if (newDegree > 0) {
-                if (current > 85 && current < 90) {
-                    current = 90;
-                    degreeTurned = true;
-                    tempDegree = 0f;
-                }
-                if (current > 355 && current < 360) {
-                    current = 0;
-                    degreeTurned = true;
-                    tempDegree = 0f;
-                }
-            } else {
-                if (current < 95 && current > 90) {
-                    current = 90;
-                    degreeTurned = true;
-                    tempDegree = 0f;
-                }
-                if (current > 0 && current < 5) {
-                    current = 0;
-                    degreeTurned = true;
-                    tempDegree = 0f;
-                }
-            }
-        }
-        if (degreeTurned) {
-            mHelpPaint.setColor(Color.RED);
-            if (Math.abs(tempDegree) <= 10f) {
-                return current;
-            } else {
-                tempDegree = 0;
-                degreeTurned = false;
-                return current + tempDegree;
+                moveX = mHelpBoxRect.right;
+                moveY = mHelpBoxRect.bottom;
             }
 
-        } else {
-            mHelpPaint.setColor(Color.WHITE);
-        }
-        return current + newDegree;
-    }
+            /**
+             * 双指 旋转 缩放 更新
+             *
+             * @param dx0 初始x坐标差
+             * @param dy0 初始y坐标差
+             * @param dx1 第二次x坐标查
+             * @param dy1 第二次y坐标差
+             */
+            public void updateRotateAndScalePointerDown ( final float dx0, final float dy0,
+            final float dx1, final float dy1){
 
-    float autoCenterRange = 30;
-    float autoCenterMoveX = 0;
-    float autoCenterMoveY = 0;
+                float srcLen = (float) Math.sqrt(dx0 * dx0 + dy0 * dy0);
+                float curLen = (float) Math.sqrt(dx1 * dx1 + dy1 * dy1);
+                // 计算缩放比
+                float scale = curLen / srcLen;
 
-    /**
-     * 辅助层中
-     *
-     * @param dx
-     * @param dy
-     */
-    private void adjustCenter(float dx, float dy) {
+                mScale *= scale;
 
-        if (!enableAutoAdjustCenter) {
-            center.offset(dx, dy);
-        } else {
-            //计算x軕
-            if (isInCenterX(center)) {
-                if (Math.abs(autoCenterMoveX) >= autoCenterRange) {
-                    center.offset(autoCenterMoveX, 0);
-                    Log.e("savion", "当前移动X距离已够:" + autoCenterMoveX + ",dx:" + dx);
-                    autoCenterMoveX = 0;
+                float newWidth = mHelpBoxRect.width() * mScale;
+
+                if (newWidth < 70) {
+                    mScale /= scale;
+                    return;
+                }
+
+                double cos = (dx0 * dx1 + dy0 * dy1) / (srcLen * curLen);
+                if (cos > 1 || cos < -1) {
+                    return;
+                }
+                float angle = (float) Math.toDegrees(Math.acos(cos));
+                // 行列式计算 确定转动方向
+                float calMatrix = dx0 * dy1 - dx1 * dy0;
+
+                int flag = calMatrix > 0 ? 1 : -1;
+                angle = flag * angle;
+
+                mRotateAngle = adjustDegree(mRotateAngle, angle);//+= angle;
+
+                LogUtil.d("updateRotateAndScale", "mScale=" + mScale);
+                LogUtil.d("updateRotateAndScale", "mRotateAngle=" + mRotateAngle);
+
+                moveX = mHelpBoxRect.right;
+                moveY = mHelpBoxRect.bottom;
+            }
+
+            boolean degreeTurned = false;
+            float tempDegree = 0;
+
+            /**
+             * 辅助居中
+             *
+             * @param currentDegree
+             * @param newDegree
+             * @return
+             */
+            private float adjustDegree ( float currentDegree, float newDegree){
+                if (!enableAutoAdjustDegree) {
+                    return currentDegree + newDegree;
+                }
+                tempDegree += newDegree;
+                int current = Math.round(currentDegree % 360);
+                if (current < 0) {
+                    current = 360 + current;
+                }
+                if (!degreeTurned) {
+                    if (newDegree > 0) {
+                        if (current > 85 && current < 90) {
+                            current = 90;
+                            degreeTurned = true;
+                            tempDegree = 0f;
+                        }
+                        if (current > 355 && current < 360) {
+                            current = 0;
+                            degreeTurned = true;
+                            tempDegree = 0f;
+                        }
+                    } else {
+                        if (current < 95 && current > 90) {
+                            current = 90;
+                            degreeTurned = true;
+                            tempDegree = 0f;
+                        }
+                        if (current > 0 && current < 5) {
+                            current = 0;
+                            degreeTurned = true;
+                            tempDegree = 0f;
+                        }
+                    }
+                }
+                if (degreeTurned) {
+                    mHelpPaint.setColor(Color.RED);
+                    if (Math.abs(tempDegree) <= 10f) {
+                        return current;
+                    } else {
+                        tempDegree = 0;
+                        degreeTurned = false;
+                        return current + tempDegree;
+                    }
+
                 } else {
-                    autoCenterMoveX += dx;
+                    mHelpPaint.setColor(Color.WHITE);
                 }
-            } else {
-                boolean xWillInCenter = Math.abs((center.x + dx) - getWidth() / 2f) < autoCenterRange;
-                if (xWillInCenter) {
-                    autoCenterMoveX = 0;
-                    center.set(getWidth() / 2f, center.y);
+                return current + newDegree;
+            }
+
+            float autoCenterRange = 30;
+            float autoCenterMoveX = 0;
+            float autoCenterMoveY = 0;
+
+            /**
+             * 辅助层中
+             *
+             * @param dx
+             * @param dy
+             */
+            private void adjustCenter ( float dx, float dy){
+
+                if (!enableAutoAdjustCenter) {
+                    center.offset(dx, dy);
                 } else {
-                    center.offset(dx, 0);
+                    //计算x軕
+                    if (isInCenterX(center)) {
+                        if (Math.abs(autoCenterMoveX) >= autoCenterRange) {
+                            center.offset(autoCenterMoveX, 0);
+                            Log.e("savion", "当前移动X距离已够:" + autoCenterMoveX + ",dx:" + dx);
+                            autoCenterMoveX = 0;
+                        } else {
+                            autoCenterMoveX += dx;
+                        }
+                    } else {
+                        boolean xWillInCenter = Math.abs((center.x + dx) - getWidth() / 2f) < autoCenterRange;
+                        if (xWillInCenter) {
+                            autoCenterMoveX = 0;
+                            center.set(getWidth() / 2f, center.y);
+                        } else {
+                            center.offset(dx, 0);
+                        }
+                    }
+                    //计算Y軕
+                    if (isInCenterY(center)) {
+                        if (Math.abs(autoCenterMoveY) >= autoCenterRange) {
+                            center.offset(0, autoCenterMoveY);
+                            Log.e("savion", "当前移动Y距离已够:" + autoCenterMoveY + ",dy:" + dy);
+                            autoCenterMoveY = 0;
+                        } else {
+                            Log.e("savion", "当前移动Y距离不够:" + autoCenterMoveY + ",dy:" + dy);
+                            autoCenterMoveY += dy;
+                        }
+                    } else {
+                        boolean yWillInCenter = Math.abs((center.y + dy) - getHeight() / 2f) < autoCenterRange;
+                        if (yWillInCenter) {
+                            autoCenterMoveY = 0;
+                            center.set(center.x, getHeight() / 2f);
+                        } else {
+                            center.offset(0, dy);
+                        }
+                    }
                 }
             }
-            //计算Y軕
-            if (isInCenterY(center)) {
-                if (Math.abs(autoCenterMoveY) >= autoCenterRange) {
-                    center.offset(0, autoCenterMoveY);
-                    Log.e("savion", "当前移动Y距离已够:" + autoCenterMoveY + ",dy:" + dy);
-                    autoCenterMoveY = 0;
-                } else {
-                    Log.e("savion", "当前移动Y距离不够:" + autoCenterMoveY + ",dy:" + dy);
-                    autoCenterMoveY += dy;
+
+            private boolean isInCenterX (PointF point){
+                if (point != null) {
+                    return Math.abs(point.x - getWidth() / 2f) < autoCenterRange;
                 }
-            } else {
-                boolean yWillInCenter = Math.abs((center.y + dy) - getHeight() / 2f) < autoCenterRange;
-                if (yWillInCenter) {
-                    autoCenterMoveY = 0;
-                    center.set(center.x, getHeight() / 2f);
-                } else {
-                    center.offset(0, dy);
+                return false;
+            }
+
+            private boolean isInCenterY (PointF point){
+                if (point != null) {
+                    return Math.abs(point.y - getHeight() / 2f) < autoCenterRange;
                 }
+                return false;
             }
-        }
-    }
 
-    private boolean isInCenterX(PointF point) {
-        if (point != null) {
-            return Math.abs(point.x - getWidth() / 2f) < autoCenterRange;
-        }
-        return false;
-    }
-
-    private boolean isInCenterY(PointF point) {
-        if (point != null) {
-            return Math.abs(point.y - getHeight() / 2f) < autoCenterRange;
-        }
-        return false;
-    }
-
-    public void resetView() {
-        layoutX = getMeasuredWidth() / 2;
-        layoutY = getMeasuredHeight() / 2;
-        center.set(layoutX, layoutY);
-        mRotateAngle = 0;
-        mScale = 1;
-    }
-
-    public void setCenter(float centerx, float centery) {
-        if (center == null) {
-            center = new PointF(centerx, centery);
-        } else {
-            center.set(centerx, centery);
-        }
-    }
-
-    public PointF getCenter() {
-        return center;
-    }
-
-    public void setScale(float scale) {
-        this.mScale = scale;
-    }
-
-
-    public void setRotate(float rotate) {
-        this.mRotateAngle = rotate;
-    }
-
-    public void setDegree(float degree) {
-        this.mRotateAngle = degree;
-    }
-
-    public float getScale() {
-        return mScale;
-    }
-
-
-    /**
-     * description ：得到的是一个比例
-     * creation date: 2020/6/3
-     * user : zhangtongju
-     */
-    public float getTranslationX() {
-        //获得整个绘制区域的宽
-        float HelpBoxRectWidth = mHelpBoxRect.width();
-        //应为蓝松是0.5表示居中，所以这里搞了个2
-        float centerLine = HelpBoxRectWidth / 2;
-
-        float centerPosition = mHelpBoxRect.right - centerLine;
-        return centerPosition / getMeasuredWidth();
-    }
-
-
-    public float getmHelpBoxRectW() {
-        return mHelpBoxRect.width();
-    }
-
-    public float getmHelpBoxRectH() {
-        return mHelpBoxRect.height();
-    }
-
-
-    public float getTranslationY() {
-        float HelpBoxRectWidth = mHelpBoxRect.height();
-        float centerLine = HelpBoxRectWidth / 2;
-        float centerPosition = mHelpBoxRect.bottom - centerLine;
-        return centerPosition / getMeasuredHeight();
-    }
-
-
-    public float getRotateAngle() {
-        return mRotateAngle;
-    }
-
-    public Bitmap getMaskBitmap() {
-        return mMaskBitmap;
-    }
-
-    public StickerTarger getTarger() {
-        if (targer == null) {
-            targer = new StickerTarger();
-        }
-        return targer;
-    }
-
-    StickerTarger targer = null;
-
-    class StickerTarger extends SimpleTarget<D> {
-        boolean autoRun = false;
-
-        public void setAutoRun(boolean autoRun) {
-            this.autoRun = autoRun;
-        }
-
-        @Override
-        public void onResourceReady(@NonNull D resource, @Nullable Transition<? super D> transition) {
-            Log.e("Sticker", "onResourceReady:" + resource.getIntrinsicWidth() + "==" + resource.getIntrinsicHeight());
-            currentDrawable = resource;
-            if (autoRun) {
-                start();
+            public void resetView () {
+                layoutX = getMeasuredWidth() / 2;
+                layoutY = getMeasuredHeight() / 2;
+                center.set(layoutX, layoutY);
+                mRotateAngle = 0;
+                mScale = 1;
             }
-            if (!isMatting) {
-                moveX = (getMeasuredWidth() + originalBitmapWidth) / 2;
-                moveY = (getMeasuredHeight() + originalBitmapHeight) / 2;
 
-                if (fromCopy != null) {
-                    setScale(fromCopy.getScale());
-                    setDegree(fromCopy.getDegree());
-                    setCenter(fromCopy.tranX, fromCopy.tranY);
+            public void setCenter ( float centerx, float centery){
+                if (center == null) {
+                    center = new PointF(centerx, centery);
                 } else {
-                    setScale(1f);
-                    setDegree(0f);
-                    setCenter(getWidth() / 2f, getHeight() / 2f);
+                    center.set(centerx, centery);
                 }
             }
-            invalidate();
-        }
-    }
 
-    public float getContentHeight() {
-        return contentHeight;
-    }
+            public PointF getCenter () {
+                return center;
+            }
 
-    public float getContentWidth() {
-        return contentWidth;
-    }
-
-    public boolean getComeFrom() {
-        return isFromAlbum;
-    }
-
-    public void setComeFromAlbum(boolean isFromAlbum) {
-        this.isFromAlbum = isFromAlbum;
-    }
-
-    public void setOriginalPath(String originalPath) {
-        this.originalPath = originalPath;
-    }
+            public void setScale ( float scale){
+                this.mScale = scale;
+            }
 
 
-    //贴纸里面获得源地址，切记，选择的gif 是没得这个功能的
-    public String getOriginalPath() {
-        return originalPath;
-    }
+            public void setRotate ( float rotate){
+                this.mRotateAngle = rotate;
+            }
 
-    public void setClipPath(String clipPath) {
-        this.clipPath = clipPath;
-    }
+            public void setDegree ( float degree){
+                this.mRotateAngle = degree;
+            }
 
-    public String getClipPath() {
-        return clipPath;
-    }
+            public float getScale () {
+                return mScale;
+            }
 
-    public String getResPath() {
-        return resPath;
-    }
 
-    private String resPath = null;
-    private float contentWidth;
-    private float contentHeight;
-    D currentDrawable = null;
-    final RequestOptions options = new RequestOptions().centerCrop();
+            /**
+             * description ：得到的是一个比例
+             * creation date: 2020/6/3
+             * user : zhangtongju
+             */
+            public float getTranslationX () {
+                //获得整个绘制区域的宽
+                float HelpBoxRectWidth = mHelpBoxRect.width();
+                //应为蓝松是0.5表示居中，所以这里搞了个2
+                float centerLine = HelpBoxRectWidth / 2;
 
-    public void setImageRes(final String path, final boolean autoRun, isFromCopy fromCopy) {
-        this.fromCopy = fromCopy;
-        if (!TextUtils.isEmpty(path)) {
-            stop();
-            this.resPath = path;
-            getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                float centerPosition = mHelpBoxRect.right - centerLine;
+                return centerPosition / getMeasuredWidth();
+            }
+
+
+            public float getmHelpBoxRectW () {
+                return mHelpBoxRect.width();
+            }
+
+            public float getmHelpBoxRectH () {
+                return mHelpBoxRect.height();
+            }
+
+
+            public float getTranslationY () {
+                float HelpBoxRectWidth = mHelpBoxRect.height();
+                float centerLine = HelpBoxRectWidth / 2;
+                float centerPosition = mHelpBoxRect.bottom - centerLine;
+                return centerPosition / getMeasuredHeight();
+            }
+
+
+            public float getRotateAngle () {
+                return mRotateAngle;
+            }
+
+            public Bitmap getMaskBitmap () {
+                return mMaskBitmap;
+            }
+
+            public StickerTarger getTarger () {
+                if (targer == null) {
+                    targer = new StickerTarger();
+                }
+                return targer;
+            }
+
+            StickerTarger targer = null;
+
+            class StickerTarger extends SimpleTarget<D> {
+                boolean autoRun = false;
+
+                public void setAutoRun(boolean autoRun) {
+                    this.autoRun = autoRun;
+                }
+
                 @Override
-                public void onGlobalLayout() {
-                    getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                public void onResourceReady(@NonNull D resource, @Nullable Transition<? super D> transition) {
+                    Log.e("Sticker", "onResourceReady:" + resource.getIntrinsicWidth() + "==" + resource.getIntrinsicHeight());
+                    currentDrawable = resource;
+                    if (autoRun) {
+                        start();
+                    }
+                    if (!isMatting) {
+                        moveX = (getMeasuredWidth() + originalBitmapWidth) / 2;
+                        moveY = (getMeasuredHeight() + originalBitmapHeight) / 2;
+
+                        if (fromCopy != null) {
+                            setScale(fromCopy.getScale());
+                            setDegree(fromCopy.getDegree());
+                            setCenter(fromCopy.tranX, fromCopy.tranY);
+                        } else {
+                            setScale(1f);
+                            setDegree(0f);
+                            setCenter(getWidth() / 2f, getHeight() / 2f);
+                        }
+                    }
+                    invalidate();
+                }
+            }
+
+            public float getContentHeight () {
+                return contentHeight;
+            }
+
+            public float getContentWidth () {
+                return contentWidth;
+            }
+
+            public boolean getComeFrom () {
+                return isFromAlbum;
+            }
+
+            public void setComeFromAlbum ( boolean isFromAlbum){
+                this.isFromAlbum = isFromAlbum;
+            }
+
+            public void setOriginalPath (String originalPath){
+                this.originalPath = originalPath;
+            }
+
+
+            //贴纸里面获得源地址，切记，选择的gif 是没得这个功能的
+            public String getOriginalPath () {
+                return originalPath;
+            }
+
+            public void setClipPath (String clipPath){
+                this.clipPath = clipPath;
+            }
+
+            public String getClipPath () {
+                return clipPath;
+            }
+
+            public String getResPath () {
+                return resPath;
+            }
+
+            private String resPath = null;
+            private float contentWidth;
+            private float contentHeight;
+            D currentDrawable = null;
+            final RequestOptions options = new RequestOptions().centerCrop();
+
+            public void setImageRes ( final String path, final boolean autoRun, isFromCopy fromCopy)
+            {
+                this.fromCopy = fromCopy;
+                if (!TextUtils.isEmpty(path)) {
+                    stop();
+                    this.resPath = path;
+                    getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            getTarger().setAutoRun(autoRun);
+                            contentWidth = getMeasuredWidth() / 2f;
+                            originalBitmapWidth = (int) contentWidth;
+                            originalBitmap = BitmapFactory.decodeFile(path);
+                            if (originalBitmap != null) {
+                                int bitmapW = originalBitmap.getWidth();
+                                int bitmapH = originalBitmap.getHeight();
+                                boolean direction = BitmapManager.getInstance().getOrientation(path);
+                                if (!direction) {
+                                    contentHeight = widthBigger ? contentWidth * (bitmapH / (float) bitmapW) : contentWidth * (bitmapW / (float) bitmapH);
+                                } else {
+                                    //正常模式
+                                    contentHeight = widthBigger ? contentWidth * (bitmapW / (float) bitmapH) : contentWidth * (bitmapH / (float) bitmapW);
+                                }
+                                originalBitmapHeight = (int) contentHeight;
+//                        LogUtil.d("OOM", "contentHeight=" + contentHeight);
+//                        LogUtil.d("OOM", "contentWidth=" + contentWidth);
+                            } else {
+                                contentHeight = getMeasuredHeight() / 2;
+                            }
+                            // contentHeight = (int) (getMinDisplayWidth() / 2f);
+                            RequestManager manager = Glide.with(getContext());
+                            RequestBuilder builder = null;
+                            if (path.endsWith(".gif")) {
+                                builder = manager.asGif();
+                            } else {
+                                builder = manager.asDrawable();
+                            }
+                            options.override((int) contentWidth, (int) contentHeight);
+                            builder.load(path)
+                                    .apply(options)
+                                    .into(getTarger());
+                            recyclerBitmap();
+                        }
+                    });
+                } else {
+                    //路径不存在
+                    Toast.makeText(getContext(), "文件不存在", Toast.LENGTH_LONG).show();
+                }
+            }
+
+
+            public static class isFromCopy {
+
+                public float getScale() {
+                    return scale;
+                }
+
+                public void setScale(float scale) {
+                    this.scale = scale;
+                }
+
+                float scale;
+
+                public float getDegree() {
+                    return degree;
+                }
+
+                public void setDegree(float degree) {
+                    this.degree = degree;
+                }
+
+                float degree;
+
+                float tranX;
+
+                public float getTranX() {
+                    return tranX;
+                }
+
+                public void setTranX(float tranX) {
+                    this.tranX = tranX;
+                }
+
+                public float getTranY() {
+                    return tranY;
+                }
+
+                public void setTranY(float tranY) {
+                    this.tranY = tranY;
+                }
+
+                float tranY;
+
+            }
+
+
+            /**
+             * 區別第一次設置素材，这里主要用于切换素材，切换素材后，需要重新计算
+             *
+             * @param path
+             * @param autoRun
+             */
+            public void changeImage ( final String path, final boolean autoRun){
+                if (!TextUtils.isEmpty(path)) {
+                    stop();
+                    this.resPath = path;
                     getTarger().setAutoRun(autoRun);
                     contentWidth = getMeasuredWidth() / 2f;
                     originalBitmapWidth = (int) contentWidth;
-                    originalBitmap = BitmapFactory.decodeFile(path);
-                    if (originalBitmap != null) {
+//            originalBitmap = BitmapFactory.decodeFile(path);
+                    GetVideoCover getVideoCover = new GetVideoCover(BaseApplication.getInstance());
+                    getVideoCover.getFileCoverForBitmap(path, cover -> {
+                        originalBitmap = cover;
                         int bitmapW = originalBitmap.getWidth();
                         int bitmapH = originalBitmap.getHeight();
                         boolean direction = BitmapManager.getInstance().getOrientation(path);
@@ -1595,107 +1647,34 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                             contentHeight = widthBigger ? contentWidth * (bitmapW / (float) bitmapH) : contentWidth * (bitmapH / (float) bitmapW);
                         }
                         originalBitmapHeight = (int) contentHeight;
-//                        LogUtil.d("OOM", "contentHeight=" + contentHeight);
-//                        LogUtil.d("OOM", "contentWidth=" + contentWidth);
-                    } else {
-                        contentHeight = getMeasuredHeight() / 2;
-                    }
-                    // contentHeight = (int) (getMinDisplayWidth() / 2f);
-                    RequestManager manager = Glide.with(getContext());
-                    RequestBuilder builder = null;
-                    if (path.endsWith(".gif")) {
-                        builder = manager.asGif();
-                    } else {
-                        builder = manager.asDrawable();
-                    }
-                    options.override((int) contentWidth, (int) contentHeight);
-                    builder.load(path)
-                            .apply(options)
-                            .into(getTarger());
-                    recyclerBitmap();
-                }
-            });
-        } else {
-            //路径不存在
-            Toast.makeText(getContext(), "文件不存在", Toast.LENGTH_LONG).show();
-        }
-    }
-
-
-    public static class isFromCopy {
-
-        public float getScale() {
-            return scale;
-        }
-
-        public void setScale(float scale) {
-            this.scale = scale;
-        }
-
-        float scale;
-
-        public float getDegree() {
-            return degree;
-        }
-
-        public void setDegree(float degree) {
-            this.degree = degree;
-        }
-
-        float degree;
-
-        float tranX;
-
-        public float getTranX() {
-            return tranX;
-        }
-
-        public void setTranX(float tranX) {
-            this.tranX = tranX;
-        }
-
-        public float getTranY() {
-            return tranY;
-        }
-
-        public void setTranY(float tranY) {
-            this.tranY = tranY;
-        }
-
-        float tranY;
-
-    }
-
-
-    /**
-     * 區別第一次設置素材，这里主要用于切换素材，切换素材后，需要重新计算
-     *
-     * @param path
-     * @param autoRun
-     */
-    public void changeImage(final String path, final boolean autoRun) {
-        if (!TextUtils.isEmpty(path)) {
-            stop();
-            this.resPath = path;
-            getTarger().setAutoRun(autoRun);
-            contentWidth = getMeasuredWidth() / 2f;
-            originalBitmapWidth = (int) contentWidth;
-//            originalBitmap = BitmapFactory.decodeFile(path);
-            GetVideoCover getVideoCover = new GetVideoCover(BaseApplication.getInstance());
-            getVideoCover.getFileCoverForBitmap(path, cover -> {
-                originalBitmap = cover;
-                int bitmapW = originalBitmap.getWidth();
-                int bitmapH = originalBitmap.getHeight();
-                boolean direction = BitmapManager.getInstance().getOrientation(path);
-                if (!direction) {
-                    contentHeight = widthBigger ? contentWidth * (bitmapH / (float) bitmapW) : contentWidth * (bitmapW / (float) bitmapH);
-                } else {
-                    //正常模式
-                    contentHeight = widthBigger ? contentWidth * (bitmapW / (float) bitmapH) : contentWidth * (bitmapH / (float) bitmapW);
-                }
-                originalBitmapHeight = (int) contentHeight;
 //                LogUtil.d("OOM", "contentHeight=" + contentHeight);
 //                LogUtil.d("OOM", "contentWidth=" + contentWidth);
+                        RequestManager manager = Glide.with(getContext());
+                        RequestBuilder builder = null;
+                        if (path.endsWith(".gif")) {
+                            builder = manager.asGif();
+                        } else {
+                            builder = manager.asDrawable();
+                        }
+                        options.override((int) contentWidth, (int) contentHeight);
+                        builder.load(path)
+                                .apply(options)
+                                .into(getTarger());
+                        recyclerBitmap();
+                    });
+
+                } else {
+                    //路径不存在
+//            Toast.makeText(getContext(), "文件不存在", Toast.LENGTH_LONG).show();
+                    LogUtil.d("OOM", "文件不存在");
+                }
+            }
+
+
+            boolean isMatting = false;
+
+            public void mattingChange (String path){
+                isMatting = true;
                 RequestManager manager = Glide.with(getContext());
                 RequestBuilder builder = null;
                 if (path.endsWith(".gif")) {
@@ -1703,305 +1682,280 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 } else {
                     builder = manager.asDrawable();
                 }
-                options.override((int) contentWidth, (int) contentHeight);
                 builder.load(path)
                         .apply(options)
                         .into(getTarger());
-                recyclerBitmap();
-            });
-
-        } else {
-            //路径不存在
-//            Toast.makeText(getContext(), "文件不存在", Toast.LENGTH_LONG).show();
-            LogUtil.d("OOM", "文件不存在");
-        }
-    }
+            }
 
 
-    boolean isMatting = false;
+            public static Uri getImageStreamFromExternal (String imageName){
 
-    public void mattingChange(String path) {
-        isMatting = true;
-        RequestManager manager = Glide.with(getContext());
-        RequestBuilder builder = null;
-        if (path.endsWith(".gif")) {
-            builder = manager.asGif();
-        } else {
-            builder = manager.asDrawable();
-        }
-        builder.load(path)
-                .apply(options)
-                .into(getTarger());
-    }
+                File file = new File(imageName);
+                Uri uri = null;
+                uri = Uri.fromFile(file);
 
+                return uri;
+            }
 
-    public static Uri getImageStreamFromExternal(String imageName) {
-
-        File file = new File(imageName);
-        Uri uri = null;
-        uri = Uri.fromFile(file);
-
-        return uri;
-    }
-
-    private void recyclerBitmap() {
-        if (originalBitmap != null && !originalBitmap.isRecycled()) {
-            originalBitmap.recycle();
-            originalBitmap = null;
-            LogUtil.d("OOM", "recycle=" + true);
-        }
-    }
+            private void recyclerBitmap () {
+                if (originalBitmap != null && !originalBitmap.isRecycled()) {
+                    originalBitmap.recycle();
+                    originalBitmap = null;
+                    LogUtil.d("OOM", "recycle=" + true);
+                }
+            }
 
 
-    private boolean widthBigger;
+            private boolean widthBigger;
 
-    private int getMinDisplayWidth() {
-        widthBigger = getMeasuredWidth() > getMeasuredHeight();
-        return Math.min(getMeasuredWidth(), getMeasuredHeight());
-    }
+            private int getMinDisplayWidth () {
+                widthBigger = getMeasuredWidth() > getMeasuredHeight();
+                return Math.min(getMeasuredWidth(), getMeasuredHeight());
+            }
 
-    private int getMaxDisplayHeight() {
-        return Math.max(getMeasuredWidth(), getMeasuredHeight());
-    }
+            private int getMaxDisplayHeight () {
+                return Math.max(getMeasuredWidth(), getMeasuredHeight());
+            }
 
 
-    public float getCenterX() {
+            public float getCenterX () {
 //        LogUtil.d("getCenterX", "getCenterX=" + mHelpBoxRect.right);
-        float xx = (mHelpBoxRect.right - mHelpBoxRect.left) / 2;
-        return mHelpBoxRect.right - xx + 30;
+                float xx = (mHelpBoxRect.right - mHelpBoxRect.left) / 2;
+                return mHelpBoxRect.right - xx + 30;
 
-    }
-
-
-    public float getMBoxCenterX() {
-        return mHelpBoxRect.centerX();
-    }
+            }
 
 
-    public float getMBoxCenterY() {
-        return mHelpBoxRect.centerY();
-    }
-
-    public float getCenterY() {
-        float yy = (mHelpBoxRect.bottom - mHelpBoxRect.top) / 2;
-        return mHelpBoxRect.bottom - yy + 30;
-    }
+            public float getMBoxCenterX () {
+                return mHelpBoxRect.centerX();
+            }
 
 
-    public void showFrame() {
-        handler.sendEmptyMessage(SHOW_FRAME);
-        handler.sendEmptyMessageDelayed(DISMISS_FRAME, AUTO_FADE_FRAME_TIMEOUT);
-    }
+            public float getMBoxCenterY () {
+                return mHelpBoxRect.centerY();
+            }
 
-    public void dismissFrame() {
-        if (frameShow) {
-            frameShow = false;
-            invalidate();
-        }
-    }
-
-    public boolean isFirstAddSticker() {
-        return isFirstAddSticker;
-    }
-
-    public void setFirstAddSticker(boolean firstAddSticker) {
-        isFirstAddSticker = firstAddSticker;
-    }
+            public float getCenterY () {
+                float yy = (mHelpBoxRect.bottom - mHelpBoxRect.top) / 2;
+                return mHelpBoxRect.bottom - yy + 30;
+            }
 
 
-    public boolean isOpenVoice() {
-        return isOpenVoice;
-    }
+            public void showFrame () {
+                handler.sendEmptyMessage(SHOW_FRAME);
+                handler.sendEmptyMessageDelayed(DISMISS_FRAME, AUTO_FADE_FRAME_TIMEOUT);
+            }
 
-    public void setOpenVoice(boolean openVoice) {
-        isOpenVoice = openVoice;
-    }
+            public void dismissFrame(){
+                if (frameShow) {
+                    frameShow = false;
+                    invalidate();
+                }
+            }
 
+            public boolean isFirstAddSticker () {
+                return isFirstAddSticker;
+            }
 
-    /**
-     * description ：手势开发
-     * creation date: 2020/4/24
-     * user : zhangtongju
-     */
-    private void setupGestureListeners() {
-        mGestureDetector = new GestureDetector(getContext(), new GestureListener());
-        mScaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
-        mRotationDetector = new RotationGestureDetector(new RotationListener());
-
-        try {
-            Field minSpan = mScaleDetector.getClass().getDeclaredField("mMinSpan");
-            minSpan.setAccessible(true);
-            minSpan.set(mScaleDetector, 20);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
+            public void setFirstAddSticker ( boolean firstAddSticker){
+                isFirstAddSticker = firstAddSticker;
+            }
 
 
-    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
-        @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
+            public boolean isOpenVoice () {
+                return isOpenVoice;
+            }
+
+            public void setOpenVoice ( boolean openVoice){
+                isOpenVoice = openVoice;
+            }
+
+
+            /**
+             * description ：手势开发
+             * creation date: 2020/4/24
+             * user : zhangtongju
+             */
+            private void setupGestureListeners () {
+                mGestureDetector = new GestureDetector(getContext(), new GestureListener());
+                mScaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
+                mRotationDetector = new RotationGestureDetector(new RotationListener());
+
+                try {
+                    Field minSpan = mScaleDetector.getClass().getDeclaredField("mMinSpan");
+                    minSpan.setAccessible(true);
+                    minSpan.set(mScaleDetector, 20);
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            private class GestureListener extends GestureDetector.SimpleOnGestureListener {
+                @Override
+                public boolean onSingleTapConfirmed(MotionEvent e) {
 //            mGroup.singleTap(new PointF(e.getX() / mOverallScale, e.getY() / mOverallScale));
-            return true;
-        }
+                    return true;
+                }
 
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
 //            isSliding = false;
-            return super.onSingleTapUp(e);
-        }
+                    return super.onSingleTapUp(e);
+                }
 
-        @Override
-        public boolean onDown(MotionEvent e) {
+                @Override
+                public boolean onDown(MotionEvent e) {
 //            isSliding = true;
 //            mGroup.down(new PointF(e.getX() / mOverallScale, e.getY() / mOverallScale));
-            return true;
-        }
+                    return true;
+                }
 
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+                @Override
+                public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 //            mGroup.scroll(distanceX / mOverallScale, distanceY / mOverallScale);
 
-            mCurrentMode = MOVE_MODE;
-            float dx = e1.getX() - lastX;
-            float dy = e1.getY() - lastY;
+                    mCurrentMode = MOVE_MODE;
+                    float dx = e1.getX() - lastX;
+                    float dy = e1.getY() - lastY;
 
-            layoutX += dx;
-            layoutY += dy;
-            adjustCenter(dx, dy);
+                    layoutX += dx;
+                    layoutY += dy;
+                    adjustCenter(dx, dy);
 
-            invalidate();
+                    invalidate();
 
-            return true;
-        }
+                    return true;
+                }
 
 
-    }
+            }
 
-    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
+            private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+                @Override
+                public boolean onScale(ScaleGestureDetector detector) {
 //            float deltaScale = detector.getScaleFactor();
 //            mGroup.scale(deltaScale, deltaScale, mMidPntX, mMidPntY);
-            return true;
-        }
-    }
+                    return true;
+                }
+            }
 
-    private class RotationListener extends RotationGestureDetector.SimpleOnRotationGestureListener {
-        @Override
-        public boolean onRotation(RotationGestureDetector detector) {
+            private class RotationListener extends RotationGestureDetector.SimpleOnRotationGestureListener {
+                @Override
+                public boolean onRotation(RotationGestureDetector detector) {
 //            mGroup.rotate(detector.getAngle(), mMidPntX, mMidPntY);
 
 
-            return true;
-        }
-    }
+                    return true;
+                }
+            }
 
 
-    //-------------------动画开始
+            //-------------------动画开始
 
 
-    public float GetHelpBoxRectScale() {
-        return mScale;
-    }
+            public float GetHelpBoxRectScale () {
+                return mScale;
+            }
 
-    public float GetHelpBoxRectWidth() {
-        return mHelpBoxRect.width();
-    }
+            public float GetHelpBoxRectWidth () {
+                return mHelpBoxRect.width();
+            }
 
-    public float GetHelpBoxRectRight() {
-        return mHelpBoxRect.right;
-    }
+            public float GetHelpBoxRectRight () {
+                return mHelpBoxRect.right;
+            }
 
-    public float GetHelpBoxRectBottom() {
-        return mHelpBoxRect.bottom;
-    }
+            public float GetHelpBoxRectBottom () {
+                return mHelpBoxRect.bottom;
+            }
 
 
-    public void toRotate(float rotate) {
-        mRotateAngle = rotate;
+            public void toRotate ( float rotate){
+                mRotateAngle = rotate;
 //        invalidate();
-    }
+            }
 
-    public void toTranMoveX(float needToX) {
-        center.set(needToX, mHelpBoxRect.centerY());
+            public void toTranMoveX ( float needToX){
+                center.set(needToX, mHelpBoxRect.centerY());
 //        invalidate();
-        lastX = needToX;
-    }
+                lastX = needToX;
+            }
 
-    public void toTranMoveY(float needToY) {
-        center.set(mHelpBoxRect.centerX(), needToY);
+            public void toTranMoveY ( float needToY){
+                center.set(mHelpBoxRect.centerX(), needToY);
 //        invalidate();
-        lastY = needToY;
-    }
+                lastY = needToY;
+            }
 
-    public void toTranMoveXY(float needToX, float needToY) {
-        center.set(needToX, needToY);
+            public void toTranMoveXY ( float needToX, float needToY){
+                center.set(needToX, needToY);
 //        invalidate();
-        lastY = needToY;
-        lastX = needToX;
-    }
+                lastY = needToY;
+                lastX = needToX;
+            }
 
 
-    public void toScale(Float percent, float lastScale, boolean isDone) {
-        if (isDone) {
-            mScale = lastScale;
-        } else {
-            mScale = lastScale + percent * lastScale;
-        }
-    }
+            public void toScale (Float percent,float lastScale, boolean isDone){
+                if (isDone) {
+                    mScale = lastScale;
+                } else {
+                    mScale = lastScale + percent * lastScale;
+                }
+            }
 
 
-    /**
-     * 是否来自动画页面
-     */
-    public void setIsfromAnim(boolean isFromAnim) {
-        this.isFromAnim = isFromAnim;
-    }
+            /**
+             * 是否来自动画页面
+             */
+            public void setIsfromAnim ( boolean isFromAnim){
+                this.isFromAnim = isFromAnim;
+            }
 
 
-    public void setIsFromStickerAnim(boolean isFromStickerAnim) {
-        this.isFromStickerAnim = isFromStickerAnim;
-    }
+            public void setIsFromStickerAnim ( boolean isFromStickerAnim){
+                this.isFromStickerAnim = isFromStickerAnim;
+            }
 
-    public boolean getIsFromStickerAnim() {
-        return isFromStickerAnim;
-    }
-
-
-    /**
-     * description ：绘制2个圆路径动画，通过贝塞尔画正余弦曲线
-     * creation date: 2020/5/25
-     * user : zhangtongju
-     */
+            public boolean getIsFromStickerAnim () {
+                return isFromStickerAnim;
+            }
 
 
-    Path mAnimPath;
-    PathMeasure mPathMeasure;
+            /**
+             * description ：绘制2个圆路径动画，通过贝塞尔画正余弦曲线
+             * creation date: 2020/5/25
+             * user : zhangtongju
+             */
 
-    public void drawAnimPath() {
-        float helpBoxHeight = mHelpBoxRect.height();
-        float diameter = helpBoxHeight / 3 * 2;
-        mAnimPath = new Path();
-        mAnimPath.moveTo(mHelpBoxRect.centerX(), mHelpBoxRect.centerY() - diameter * 2);
-        mAnimPath.rQuadTo(-diameter * 2, diameter, 0, diameter * 2);
-        mAnimPath.rQuadTo(diameter * 2, diameter, 0, diameter * 2);
 
-        mAnimPath.rQuadTo(-diameter * 2, -diameter, 0, -diameter * 2);
-        mAnimPath.rQuadTo(diameter * 2, -diameter, 0, -diameter * 2);
+            Path mAnimPath;
+            PathMeasure mPathMeasure;
+
+            public void drawAnimPath(){
+                float helpBoxHeight = mHelpBoxRect.height();
+                float diameter = helpBoxHeight / 3 * 2;
+                mAnimPath = new Path();
+                mAnimPath.moveTo(mHelpBoxRect.centerX(), mHelpBoxRect.centerY() - diameter * 2);
+                mAnimPath.rQuadTo(-diameter * 2, diameter, 0, diameter * 2);
+                mAnimPath.rQuadTo(diameter * 2, diameter, 0, diameter * 2);
+
+                mAnimPath.rQuadTo(-diameter * 2, -diameter, 0, -diameter * 2);
+                mAnimPath.rQuadTo(diameter * 2, -diameter, 0, -diameter * 2);
 //        mAnimPath.addCircle(mHelpBoxRect.centerX(), mHelpBoxRect.centerY() - diameter, diameter, Path.Direction.CCW);
 //        mAnimPath.addCircle(mHelpBoxRect.centerX(), mHelpBoxRect.centerY() + diameter, diameter, Path.Direction.CCW);
-        mPathMeasure = new PathMeasure();
-        mPathMeasure.setPath(mAnimPath, true);
+                mPathMeasure = new PathMeasure();
+                mPathMeasure.setPath(mAnimPath, true);
 //        LogUtil.d("OOM", " mPathMeasure.getLength()=" + mPathMeasure.getLength());
-    }
+            }
 
 
-    public PathMeasure getAnimPathMeasure() {
-        return mPathMeasure;
-    }
+            public PathMeasure getAnimPathMeasure(){
+                return mPathMeasure;
+            }
+
 
 
 }
