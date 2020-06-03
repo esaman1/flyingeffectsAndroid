@@ -105,10 +105,13 @@ public class AnimCollect {
      * user : zhangtongju
      */
     public void startAnimForChooseAnim(AnimType type, StickerView mainStickerView, List<StickerView> subLayer) {
+
+
+
+
         switch (type) {
             //8个动画飞天效果
             case EIGHTBORTHER:
-
                 ItemEightBorther itemEightBorther = new ItemEightBorther();
                 itemEightBorther.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(itemEightBorther);

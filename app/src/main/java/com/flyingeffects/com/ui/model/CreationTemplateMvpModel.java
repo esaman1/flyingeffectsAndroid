@@ -389,18 +389,44 @@ public class CreationTemplateMvpModel {
     }
 
 
-
-
     /**
      * description ：延迟开启动画，因为这里可能需要复制很多的子贴纸
      * creation date: 2020/6/3
      * user : zhangtongju
      */
     private void delayedToStartAnim(StartAnimModel startAnimModel, AnimType animType, StickerView finalTargetStickerView, final int position) {
+
+        new Handler().postDelayed(() -> {
+
+            //如果是gif 那么开启gif动画
+            ArrayList<StickerView> list = null;
+            finalTargetStickerView.start();
+            if (sublayerListForBitmapLayer != null) {
+                list = sublayerListForBitmapLayer.get(position);
+                if(list!=null){
+                    for (StickerView stickerView : list
+                    ) {
+                        stickerView.start();
+                    }
+                }
+            }
+
+            //启动动画
+            ArrayList<StickerView> finalList = list;
+            new Thread(() -> {
+                if (sublayerListForBitmapLayer != null) {
+                    startAnimModel.ToStart(animType, finalTargetStickerView, finalList);
+                } else {
+                    startAnimModel.ToStart(animType, finalTargetStickerView, null);
+                }
+            });
+        }, 1000);
+
+
         new Handler().postDelayed(() -> new Thread(() -> {
-            if(sublayerListForBitmapLayer!=null){
+            if (sublayerListForBitmapLayer != null) {
                 startAnimModel.ToStart(animType, finalTargetStickerView, sublayerListForBitmapLayer.get(position));
-            }else{
+            } else {
                 startAnimModel.ToStart(animType, finalTargetStickerView, null);
             }
         }).start(), 1000);
