@@ -227,9 +227,17 @@ public class AnimCollect {
                 break;
 
             case SUPERSTAR:
-//                ItemCloned itemCloned =new ItemCloned();
-//                itemCloned.toChangeStickerView(mainStickerView, subLayer);
-//                listForBaseAnimMode.add(itemCloned);
+
+                if (animModel != null) {
+                    ((ItemCloned) animModel).toChangeSubLayer(callback, percentage);
+                } else {
+                    animModel = new ItemCloned();
+                    ((ItemCloned) animModel).initToChangeSubLayer(mainStickerView, callback, percentage);
+                }
+
+
+
+
 
 
 

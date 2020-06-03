@@ -27,7 +27,7 @@ public class ItemCloned extends baseAnimModel {
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
         StickerView sub1 = subLayer.get(0);
         StickerView sub2 = subLayer.get(1);
-        float perWidth = mainStickerView.getmHelpBoxRectW()*2;
+        float perWidth = mainStickerView.getmHelpBoxRectW() * 2;
         //第一个参数为总时长
         animationLinearInterpolator = new AnimationLinearInterpolator(2000, (progress, isDone) -> {
             float translationToX = perWidth * progress;
@@ -37,57 +37,47 @@ public class ItemCloned extends baseAnimModel {
         animationLinearInterpolator.PlayAnimation();
     }
 
+    private float previewScaleWidth2;
+    private float centerX;
+    private float centerY;
+    private float paddingHeight;
 
-    void getSubLayerData(Layer mainStickerView, LayerAnimCallback callback, float percentage) {
+    private float paddingWidth;
+
+    public void initToChangeSubLayer(Layer mainLayer, LayerAnimCallback callback, float percentage) {
+        previewScaleWidth2 = mainLayer.getScaleHeight() * 2;
+        centerX = mainLayer.getPositionX();
+        centerY=mainLayer.getPositionY();
+        paddingHeight=mainLayer.getPadHeight();
+        paddingWidth=mainLayer.getPadWidth();
         toChangeSubLayer(callback, percentage);
     }
 
 
-    void toChangeSubLayer(LayerAnimCallback callback, float percentage) {
+    public void toChangeSubLayer(LayerAnimCallback callback, float percentage) {
         listForTranslaptionPosition.clear();
-        listForScale.clear();
-        AnimationLinearInterpolator animationLinearInterpolator = new AnimationLinearInterpolator(3000, (progress, isDone) -> {
-            float translationToX;
-            float needProgress = 1 - progress;
+        //第一个参数为总时长
+        AnimationLinearInterpolator animationLinearInterpolator = new AnimationLinearInterpolator(2000, (progress, isDone) -> {
+            float translationToX = previewScaleWidth2 * progress;
+
+            TransplationPos transplationPos0 = new TransplationPos();
+            transplationPos0.setToY(centerY/paddingHeight);
+            transplationPos0.setToX(centerX/paddingWidth);
+            listForTranslaptionPosition.add(transplationPos0);
+
             TransplationPos transplationPos = new TransplationPos();
-            transplationPos.setToY(0);
-            if (needProgress < 0.66) {
-                translationToX = (float) (needProgress + 0.33);
-            } else {
-                translationToX = (float) (needProgress - 0.66);
-            }
-            transplationPos.setToX(translationToX);
+            transplationPos.setToY(centerY/paddingHeight);
+            transplationPos.setToX((centerX - translationToX)/paddingWidth);
             listForTranslaptionPosition.add(transplationPos);
-            listForScale.add(1 - translationToX);
+
             TransplationPos transplationPos2 = new TransplationPos();
-            transplationPos2.setToY(0);
-            if (needProgress < 0.33) {
-                translationToX = (float) (needProgress + 0.66);
-            } else {
-                translationToX = (float) (needProgress - 0.33);
-            }
-            listForScale.add(1 - translationToX);
-            transplationPos2.setToX(translationToX);
+            transplationPos2.setToY(centerY/paddingHeight);
+            transplationPos2.setToX((centerX + translationToX)/paddingWidth);
             listForTranslaptionPosition.add(transplationPos2);
-
-            TransplationPos transplationPos3 = new TransplationPos();
-            transplationPos3.setToY(0);
-            if (needProgress < (1 - 0.99)) {
-                translationToX = (float) (needProgress + 0.01);
-            } else {
-                translationToX = (float) (needProgress - (1 - 0.99));
-            }
-            listForScale.add(1 - translationToX);
-            transplationPos3.setToX(translationToX);
-            listForTranslaptionPosition.add(transplationPos3);
             callback.translationalXY(listForTranslaptionPosition);
-            callback.scale(listForScale);
-
-
         });
         animationLinearInterpolator.PlayAnimationNoTimer(percentage);
     }
-
 
     public void StopAnim() {
         if (animationLinearInterpolator != null) {
