@@ -43,10 +43,12 @@ public class SwingUpAndDownToCenter extends baseAnimModel {
 
     private float previewSubPosition;
     private float previewSubPaddingHeight;
+    private float toX;
     public void initToChangeSubLayer(Layer mainLayer, LayerAnimCallback callback, float percentage){
         previewSubPosition= mainLayer.getPositionY();
         LogUtil.d("previewSubPosition","previewSubPosition="+previewSubPosition);
         previewSubPaddingHeight=mainLayer.getPadHeight();
+        toX=mainLayer.getPositionX()/mainLayer.getPadWidth();
         toChangeSubLayer(callback,percentage);
     }
 
@@ -60,6 +62,7 @@ public class SwingUpAndDownToCenter extends baseAnimModel {
                 float Y =previewSubPosition+ 50  * progress;
                 TransplationPos transplationPos = new TransplationPos();
                 transplationPos.setToY(Y/previewSubPaddingHeight);
+                transplationPos.setToX(toX);
                 ArrayList<TransplationPos> list = new ArrayList<>();
                 list.add(transplationPos);
                 callback.translationalXY(list);
