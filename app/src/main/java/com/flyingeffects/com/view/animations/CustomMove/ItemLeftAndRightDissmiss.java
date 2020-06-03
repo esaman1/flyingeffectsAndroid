@@ -41,12 +41,15 @@ public class ItemLeftAndRightDissmiss extends baseAnimModel {
 
     private float previewPaddingWidth;
     private float previewScaleWidth;
-    private float layerHeight;
+    private float toY;
 
     public void initToChangeSubLayer(Layer mainLayer, LayerAnimCallback callback, float percentage) {
         previewPaddingWidth = mainLayer.getPadWidth();
         previewScaleWidth = mainLayer.getScaleWidth();
-        layerHeight=mainLayer.getPositionY();
+        float  layerHeight=mainLayer.getPositionY();
+
+        float  paddingHeight=mainLayer.getPadHeight();
+        toY=layerHeight/paddingHeight;
         toChangeSubLayer(callback, percentage);
     }
 
@@ -60,11 +63,11 @@ public class ItemLeftAndRightDissmiss extends baseAnimModel {
                 //拟定倒叙
                 float X = previewScaleWidth * progress;
                 TransplationPos transplationPos = new TransplationPos();
-                transplationPos.setToY(0);
+                transplationPos.setToY(toY);
                 transplationPos.setToX(X/previewPaddingWidth);
                 listForTranslaptionPosition.add(transplationPos);
                 TransplationPos transplationPos2 = new TransplationPos();
-                transplationPos2.setToY(0);
+                transplationPos2.setToY(toY);
                 transplationPos2.setToX((previewPaddingWidth - X)/previewPaddingWidth);
                 listForTranslaptionPosition.add(transplationPos2);
                 callback.translationalXY(listForTranslaptionPosition);
