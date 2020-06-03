@@ -1,7 +1,7 @@
 package com.flyingeffects.com.http;
 
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.enity.HttpResult;

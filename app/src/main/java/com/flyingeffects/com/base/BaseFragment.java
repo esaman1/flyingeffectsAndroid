@@ -3,12 +3,14 @@ package com.flyingeffects.com.base;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.Fragment;
 
 import com.flyingeffects.com.ui.interfaces.PermissionListener;
 
@@ -24,7 +26,7 @@ import rx.subjects.PublishSubject;
  * on 2017/8/22.
  */
 
-public abstract class BaseFragment extends android.support.v4.app.Fragment implements IActivity {
+public abstract class BaseFragment extends Fragment implements IActivity {
     protected View contentView = null;
     protected Unbinder unbinder;
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();

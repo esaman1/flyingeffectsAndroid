@@ -5,18 +5,16 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
-import android.util.Base64;
+
+import androidx.core.app.ActivityCompat;
+
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -32,9 +30,6 @@ import android.widget.Toast;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseWebActivity;
 import com.shixing.sxve.ui.view.WaitingDialog;
-
-import java.io.File;
-import java.io.FileOutputStream;
 
 import butterknife.BindView;
 

@@ -1,7 +1,7 @@
 package com.flyingeffects.com.view;
 
 import android.content.Context;
-import android.support.v4.view.ViewPager;
+import androidx.viewpager.widget.ViewPager;
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
 

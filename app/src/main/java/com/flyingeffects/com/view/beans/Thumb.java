@@ -26,7 +26,7 @@ package com.flyingeffects.com.view.beans;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 
 import com.flyingeffects.com.R;

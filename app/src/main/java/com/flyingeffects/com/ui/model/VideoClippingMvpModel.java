@@ -2,9 +2,9 @@ package com.flyingeffects.com.ui.model;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.BottomSheetDialog;
-import android.support.design.widget.CoordinatorLayout;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
