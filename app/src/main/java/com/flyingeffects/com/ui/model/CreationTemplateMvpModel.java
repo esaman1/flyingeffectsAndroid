@@ -300,6 +300,7 @@ public class CreationTemplateMvpModel {
                 if (i == 0) {
                     startPlayAnim(i, true, null, 0, false);
                 } else {
+                    WaitingDialog.openPragressDialog(context);
                     startPlayAnim(i, false, null, 0, false);
                 }
             }
@@ -419,6 +420,8 @@ public class CreationTemplateMvpModel {
                 } else {
                     startAnimModel.ToStart(animType, finalTargetStickerView, null);
                 }
+
+
             });
         }, 1000);
 
@@ -429,6 +432,7 @@ public class CreationTemplateMvpModel {
             } else {
                 startAnimModel.ToStart(animType, finalTargetStickerView, null);
             }
+            WaitingDialog.closePragressDialog();
         }).start(), 1000);
     }
 
