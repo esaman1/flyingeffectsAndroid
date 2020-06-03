@@ -418,7 +418,7 @@ public class backgroundDraw {
         LogUtil.d("OOM3", "preTime=" + preTime);
 
 
-        //todo 测试
+
         if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
             int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
             addMattingBitmapSubLayer(needSublayer, bpLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale);
@@ -448,23 +448,33 @@ public class backgroundDraw {
             }
 
 
-            if (listForMattingSubLayer != null && listForMattingSubLayer.size() > 0) {
                 animCollect.startAnimForChooseAnim(stickerItem.getChooseAnimId(), bpLayer, listForMattingSubLayer, new LayerAnimCallback() {
                     @Override
                     public void translationalXY(ArrayList<TransplationPos> listForTranslaptionPosition) {
                         TransplationPos transplationPos = listForTranslaptionPosition.get(0);
                         bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight() * transplationPos.getToY());
                         bpLayer.setPosition(bpLayer.getPadWidth() * transplationPos.getToX(), bpLayer.getPositionY());
-                        for (int i = 1; i <= listForMattingSubLayer.size(); i++) {
-                            TransplationPos subTransplationPos = listForTranslaptionPosition.get(i);
-                            SubLayer subLayer = listForMattingSubLayer.get(i - 1);
-                            subLayer.setPosition(subLayer.getPositionX(), subLayer.getPadHeight() * subTransplationPos.getToY());
-                            subLayer.setPosition(subLayer.getPadWidth() * subTransplationPos.getToX(), subLayer.getPositionY());
+                        if(listForMattingSubLayer!=null&&listForMattingSubLayer.size()>0){
+                            for (int i = 1; i <= listForMattingSubLayer.size(); i++) {
+                                TransplationPos subTransplationPos = listForTranslaptionPosition.get(i);
+                                SubLayer subLayer = listForMattingSubLayer.get(i - 1);
+                                subLayer.setPosition(subLayer.getPositionX(), subLayer.getPadHeight() * subTransplationPos.getToY());
+                                subLayer.setPosition(subLayer.getPadWidth() * subTransplationPos.getToX(), subLayer.getPositionY());
+                            }
                         }
+
                     }
 
                     @Override
                     public void rotate(ArrayList<Float> angle) {
+                        float needrotate =angle.get(0);
+                        bpLayer.setRotate(needrotate);
+                        if(listForMattingSubLayer!=null&&listForMattingSubLayer.size()>0){
+                            for (int i = 1; i <= listForMattingSubLayer.size(); i++) {
+                                SubLayer subLayer = listForMattingSubLayer.get(i - 1);
+                                subLayer.setScale(angle.get(i));
+                            }
+                        }
 
                     }
 
@@ -472,13 +482,14 @@ public class backgroundDraw {
                     public void scale(ArrayList<Float> angle) {
                         float nowScale = layerScale * stickerScale;
                         bpLayer.setScale(nowScale + nowScale * angle.get(0));
-                        for (int i = 1; i <= listForMattingSubLayer.size(); i++) {
-                            SubLayer subLayer = listForMattingSubLayer.get(i - 1);
-                            subLayer.setScale(nowScale + nowScale * angle.get(i));
+                        if(listForMattingSubLayer!=null&&listForMattingSubLayer.size()>0){
+                            for (int i = 1; i <= listForMattingSubLayer.size(); i++) {
+                                SubLayer subLayer = listForMattingSubLayer.get(i - 1);
+                                subLayer.setScale(nowScale + nowScale * angle.get(i));
+                            }
                         }
                     }
                 }, percentage);
-            }
 
 
         });

@@ -24,4 +24,14 @@ public class StickerAnim implements Serializable {
     }
 
     private AnimType animType;
+
+    public int getIcon() {
+        return icon;
+    }
+
+    public void setIcon(int icon) {
+        this.icon = icon;
+    }
+
+    private int icon;
 }

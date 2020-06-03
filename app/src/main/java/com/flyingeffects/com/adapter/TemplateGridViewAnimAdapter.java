@@ -9,11 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.StickerAnim;
-import com.flyingeffects.com.enity.StickerList;
-import com.flyingeffects.com.manager.GlideRoundTransform;
 
 import java.util.List;
 
@@ -26,13 +23,10 @@ public class TemplateGridViewAnimAdapter extends BaseAdapter {
 
     private List<StickerAnim> list;
     private Context context;
-//    private String mGifFolder;
 
     public TemplateGridViewAnimAdapter(List<StickerAnim> list, Context context) {
         this.list = list;
         this.context = context;
-//        FileManager fileManager = new FileManager();
-//        mGifFolder = fileManager.getFileCachePath(context, "gifFolder");
     }
 
     @Override
@@ -63,18 +57,12 @@ public class TemplateGridViewAnimAdapter extends BaseAdapter {
             holder = (ViewHold) view.getTag();
         }
 
+        if(position==0){
+            Glide.with(context).load(R.mipmap.sticker_clear).into( holder.image);
+        }else{
+            Glide.with(context).load(list.get(position).getIcon()).into( holder.image);
+        }
         holder.tv_name.setText(list.get(position).getName());
-//        StickerList stickerList = list.get(position);
-//        if (stickerList.isClearSticker()) {
-//            holder.image.setImageResource(R.mipmap.sticker_clear);
-//            holder.tv_name.setText("默认");
-//        } else {
-//            Glide.with(context)
-//                    .load(list.get(position).getThumbnailimage())
-//                    .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 3)))
-//                    .into(holder.image);
-//            holder.tv_name.setText(list.get(position).getTitle());
-//        }
         return view;
     }
 
