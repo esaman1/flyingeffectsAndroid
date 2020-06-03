@@ -1,250 +1,260 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:background="@color/home_base_balk_color"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/home_base_balk_color">
 
+    <include
+        layout="@layout/view_top" />
 
-    <include layout="@layout/view_top"/>
-
-
-    <LinearLayout
-        android:id="@+id/ll_contact_us"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/tv_contact_us"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:layout_marginTop="18dp"
-        android:orientation="horizontal">
+        android:paddingStart="@dimen/dp_21"
+        android:paddingTop="@dimen/dp_20"
+        android:paddingEnd="@dimen/dp_16"
+        android:paddingBottom="@dimen/dp_18"
+        android:text="评价我们"
+        android:textColor="@color/font_color_about_us"
+        android:textSize="@dimen/sp_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/view_top_line" />
 
-        <TextView
-            android:id="@+id/tv_contact_us"
-            android:layout_width="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="评价我们"
-            android:textColor="#D5D5D5"
-            android:textSize="@dimen/sp_16"
-           />
-
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/dp_14"
-            android:contentDescription="@string/app_name"
-            android:src="@mipmap/right_more" />
-
-    </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:background="#232323"
-        android:layout_marginTop="18dp"
-        android:layout_marginBottom="18dp"
-        android:layout_height="@dimen/dp_0_5"/>
-
-
-    <LinearLayout
-        android:id="@+id/ll_relation_us"
-        android:layout_width="match_parent"
+    <ImageView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_marginEnd="@dimen/dp_14"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/right_more"
+        app:layout_constraintBottom_toBottomOf="@id/tv_contact_us"
+        app:layout_constraintEnd_toEndOf="@id/tv_contact_us"
+        app:layout_constraintTop_toTopOf="@id/tv_contact_us" />
 
-        <TextView
-            android:id="@+id/tv_relation_us"
-            android:layout_width="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="联系我们"
-            android:textColor="#D5D5D5"
-            android:textSize="@dimen/sp_16"
-            />
-
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/dp_14"
-            android:contentDescription="@string/app_name"
-            android:src="@mipmap/right_more" />
-
-    </LinearLayout>
     <View
-        android:layout_width="match_parent"
-        android:background="#232323"
-        android:layout_marginTop="18dp"
-        android:layout_marginBottom="18dp"
-        android:layout_height="@dimen/dp_0_5"/>
-    <LinearLayout
-        android:id="@+id/ll_privacy_policy"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp_0_5"
+        android:layout_marginStart="@dimen/dp_21"
+        android:background="@color/color_about_us_line"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_contact_us" />
+
+    <TextView
+        android:id="@+id/tv_relation_us"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:paddingStart="@dimen/dp_21"
+        android:paddingTop="@dimen/dp_20"
+        android:paddingEnd="@dimen/dp_16"
+        android:paddingBottom="@dimen/dp_18"
+        android:text="联系我们"
+        android:textColor="@color/font_color_about_us"
+        android:textSize="@dimen/sp_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_contact_us" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="隐私政策"
-            android:textColor="#D5D5D5"
-            android:textSize="@dimen/sp_16"
-            />
-
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/dp_14"
-            android:contentDescription="@string/app_name"
-            android:src="@mipmap/right_more" />
-
-    </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:background="#232323"
-        android:layout_marginTop="18dp"
-        android:layout_marginBottom="18dp"
-        android:layout_height="@dimen/dp_0_5"/>
-
-    <LinearLayout
-        android:id="@+id/ll_protocol"
-        android:layout_width="match_parent"
+    <ImageView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_marginEnd="@dimen/dp_14"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/right_more"
+        app:layout_constraintBottom_toBottomOf="@id/tv_relation_us"
+        app:layout_constraintEnd_toEndOf="@id/tv_relation_us"
+        app:layout_constraintTop_toTopOf="@id/tv_relation_us" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="用户协议"
-            android:textColor="#D5D5D5"
-            android:textSize="@dimen/sp_16"
-            />
-
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/dp_14"
-            android:contentDescription="@string/app_name"
-            android:src="@mipmap/right_more" />
-
-    </LinearLayout>
     <View
-        android:layout_width="match_parent"
-        android:background="#232323"
-        android:layout_marginTop="18dp"
-        android:layout_marginBottom="18dp"
-        android:layout_height="@dimen/dp_0_5"/>
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp_0_5"
+        android:layout_marginStart="@dimen/dp_21"
+        android:background="@color/color_about_us_line"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_relation_us" />
 
-    <LinearLayout
-        android:id="@+id/ll_clear_cache"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/tv_privacy_policy"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:paddingStart="@dimen/dp_21"
+        android:paddingTop="@dimen/dp_20"
+        android:paddingEnd="@dimen/dp_16"
+        android:paddingBottom="@dimen/dp_18"
+        android:text="隐私政策"
+        android:textColor="@color/font_color_about_us"
+        android:textSize="@dimen/sp_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_relation_us" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="清除缓存"
-            android:textColor="#D5D5D5"
-            android:textSize="@dimen/sp_16"
-            />
-
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/dp_14"
-            android:contentDescription="@string/app_name"
-            android:src="@mipmap/right_more" />
-
-    </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:background="#232323"
-        android:layout_marginTop="18dp"
-        android:layout_marginBottom="18dp"
-        android:layout_height="@dimen/dp_0_5"/>
-
-    <LinearLayout
-        android:id="@+id/ll_close_account"
-        android:layout_width="match_parent"
+    <ImageView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_marginEnd="@dimen/dp_14"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/right_more"
+        app:layout_constraintBottom_toBottomOf="@id/tv_privacy_policy"
+        app:layout_constraintEnd_toEndOf="@id/tv_privacy_policy"
+        app:layout_constraintTop_toTopOf="@id/tv_privacy_policy" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="注销账号"
-            android:textColor="#D5D5D5"
-            android:textSize="@dimen/sp_16"
-            />
-
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/dp_14"
-            android:contentDescription="@string/app_name"
-            android:src="@mipmap/right_more" />
-
-    </LinearLayout>
     <View
-        android:layout_width="match_parent"
-        android:background="#232323"
-        android:layout_marginTop="18dp"
-        android:layout_marginBottom="18dp"
-        android:layout_height="@dimen/dp_0_5"/>
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp_0_5"
+        android:layout_marginStart="@dimen/dp_21"
+        android:background="@color/color_about_us_line"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_privacy_policy" />
 
-    <LinearLayout
-        android:id="@+id/ll_test"
-        android:layout_width="match_parent"
+
+    <TextView
+        android:id="@+id/tv_protocol"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/dp_21"
+        android:paddingTop="@dimen/dp_20"
+        android:paddingEnd="@dimen/dp_16"
+        android:paddingBottom="@dimen/dp_18"
+        android:text="用户协议"
+        android:textColor="@color/font_color_about_us"
+        android:textSize="@dimen/sp_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_privacy_policy" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dp_14"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/right_more"
+        app:layout_constraintBottom_toBottomOf="@id/tv_protocol"
+        app:layout_constraintEnd_toEndOf="@id/tv_protocol"
+        app:layout_constraintTop_toTopOf="@id/tv_protocol" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp_0_5"
+        android:layout_marginStart="@dimen/dp_21"
+        android:background="@color/color_about_us_line"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_protocol" />
+
+    <TextView
+        android:id="@+id/tv_clear_cache"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/dp_21"
+        android:paddingTop="@dimen/dp_20"
+        android:paddingEnd="@dimen/dp_16"
+        android:paddingBottom="@dimen/dp_18"
+        android:text="清除缓存"
+        android:textColor="@color/font_color_about_us"
+        android:textSize="@dimen/sp_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_protocol" />
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dp_14"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/right_more"
+        app:layout_constraintBottom_toBottomOf="@id/tv_clear_cache"
+        app:layout_constraintEnd_toEndOf="@id/tv_clear_cache"
+        app:layout_constraintTop_toTopOf="@id/tv_clear_cache" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp_0_5"
+        android:layout_marginStart="@dimen/dp_21"
+        android:background="@color/color_about_us_line"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_clear_cache" />
+
+    <TextView
+        android:id="@+id/tv_close_account"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/dp_21"
+        android:paddingTop="@dimen/dp_20"
+        android:paddingEnd="@dimen/dp_16"
+        android:paddingBottom="@dimen/dp_18"
+        android:text="注销账号"
+        android:textColor="@color/font_color_about_us"
+        android:textSize="@dimen/sp_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_clear_cache" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dp_14"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/right_more"
+        app:layout_constraintBottom_toBottomOf="@id/tv_close_account"
+        app:layout_constraintEnd_toEndOf="@id/tv_close_account"
+        app:layout_constraintTop_toTopOf="@id/tv_close_account" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp_0_5"
+        android:layout_marginStart="@dimen/dp_21"
+        android:background="@color/color_about_us_line"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_close_account" />
+
+    <TextView
+        android:id="@+id/tv_test"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/dp_21"
+        android:paddingTop="@dimen/dp_20"
+        android:paddingEnd="@dimen/dp_16"
+        android:paddingBottom="@dimen/dp_18"
+        android:text="抠视频测试"
+        android:textColor="@color/font_color_about_us"
+        android:textSize="@dimen/sp_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_close_account" />
+
+    <ImageView
+        android:id="@+id/iv_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dp_14"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/right_more"
+        app:layout_constraintBottom_toBottomOf="@id/tv_test"
+        app:layout_constraintEnd_toEndOf="@id/tv_test"
+        app:layout_constraintTop_toTopOf="@id/tv_test" />
+
+    <View
+        android:id="@+id/v_test"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp_0_5"
+        android:layout_marginStart="@dimen/dp_21"
+        android:background="@color/color_about_us_line"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_test" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:visibility="gone"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        app:constraint_referenced_ids="tv_test,iv_test,v_test" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="抠视频测试"
-            android:textColor="#D5D5D5"
-            android:textSize="@dimen/sp_16"
-            />
-
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/dp_14"
-            android:contentDescription="@string/app_name"
-            android:src="@mipmap/right_more" />
-
-    </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:background="#232323"
-        android:layout_marginTop="18dp"
-        android:visibility="gone"
-        android:layout_marginBottom="18dp"
-        android:layout_height="@dimen/dp_0_5"/>
-
-
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

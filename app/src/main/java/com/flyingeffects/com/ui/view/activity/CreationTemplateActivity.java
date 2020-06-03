@@ -43,8 +43,14 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.lansosdk.LanSongFilter.LanSongMaskBlendFilter;
+import com.lansosdk.box.GifLayer;
+import com.lansosdk.box.OnLanSongSDKCompletedListener;
+import com.lansosdk.box.OnLanSongSDKErrorListener;
+import com.lansosdk.box.OnLanSongSDKProgressListener;
 import com.lansosdk.box.ViewLayerRelativeLayout;
-import com.lansosdk.videoeditor.DrawPadView2;
+import com.lansosdk.videoeditor.DrawPadAllExecute2;
+import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.albumType;
 import com.suke.widget.SwitchButton;
 
@@ -192,7 +198,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if (TextUtils.isEmpty(videoPath)) {
             return;
         }
-
 
         exoPlayer = ExoPlayerFactory.newSimpleInstance(CreationTemplateActivity.this);
         playerView.setPlayer(exoPlayer);

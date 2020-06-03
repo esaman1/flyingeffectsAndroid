@@ -21,8 +21,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.appcompat.widget.AppCompatImageView;
+
 //com.flyingeffects.com.view.lansongCommendView.ImageTouchView
-public class ImageTouchView extends ImageView {
+public class ImageTouchView extends AppCompatImageView {
     public Matrix matrix = new Matrix();
 
     Matrix savedMatrix = new Matrix();

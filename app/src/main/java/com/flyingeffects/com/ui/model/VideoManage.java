@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.model;
 
+import android.content.Context;
 import android.media.MediaMetadataRetriever;
 import android.text.TextUtils;
 
@@ -52,10 +53,10 @@ public class VideoManage {
 
 
 
-    public VideoInfo getVideoInfo(String path){
+    public VideoInfo getVideoInfo(Context context,String path){
         VideoInfo videoInfo = null;
         if (!TextUtils.isEmpty(path)) {
-            videoInfo  = getVideoInfo.getInstance().getRingDuring(path);
+            videoInfo  = getVideoInfo.getInstance().getRingDuring(context,path);
         }
         return videoInfo;
 

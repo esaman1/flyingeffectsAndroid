@@ -162,7 +162,6 @@ public class frag_search extends BaseFragment {
     public void onResume() {
         super.onResume();
         requestKeywordList();
-
     }
 
 
@@ -217,7 +216,6 @@ public class frag_search extends BaseFragment {
             ll_showResult.setVisibility(View.GONE);
             e.printStackTrace();
         }
-
     }
 
 

@@ -11,7 +11,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
@@ -382,7 +381,6 @@ public class UpdateApkActivity extends Activity implements OnClickListener {
         }else{
             dialog.setCanceledOnTouchOutside(true);
         }
-
         dialog.show();
         dialog.setOnCancelListener(dialogInterface -> UpdateApkActivity.this.finish());
     }

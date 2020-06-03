@@ -20,17 +20,12 @@ public class bg_itemMvpPresenter extends BasePresenter implements BgItemMvpCallb
         homeItemModel = new bgItemMvpModel(context, this,fromType);
     }
 
-
-
-
     public void requestData(String templateId, int num) {
         homeItemModel.requestData(templateId, num);
     }
     public void initSmartRefreshLayout(SmartRefreshLayout smartRefreshLayout) {
         homeItemModel.initSmartRefreshLayout(smartRefreshLayout);
     }
-
-
 
     @Override
     public void isOnRefresh() {

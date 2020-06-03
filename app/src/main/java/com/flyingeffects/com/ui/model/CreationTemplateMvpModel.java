@@ -129,7 +129,6 @@ public class CreationTemplateMvpModel {
      */
     private boolean isMatting = true;
 
-
     /**
      * 默认视频时长,如果没选择背景的时候会用到
      */
@@ -390,73 +389,6 @@ public class CreationTemplateMvpModel {
     }
 
 
-    /**
-     * description ：延迟开启动画，因为这里可能需要复制很多的子贴纸
-     * creation date: 2020/6/3
-     * user : zhangtongju
-     */
-    private void delayedToStartAnim(StartAnimModel startAnimModel, AnimType animType, StickerView finalTargetStickerView, final int position) {
-
-        new Handler().postDelayed(() -> {
-
-            //如果是gif 那么开启gif动画
-            ArrayList<StickerView> list = null;
-            finalTargetStickerView.start();
-            if (sublayerListForBitmapLayer != null) {
-                list = sublayerListForBitmapLayer.get(position);
-                if(list!=null){
-                    for (StickerView stickerView : list
-                    ) {
-                        stickerView.start();
-                    }
-                }
-            }
-
-            //启动动画
-            ArrayList<StickerView> finalList = list;
-            new Thread(() -> {
-                if (sublayerListForBitmapLayer != null) {
-                    startAnimModel.ToStart(animType, finalTargetStickerView, finalList);
-                } else {
-                    startAnimModel.ToStart(animType, finalTargetStickerView, null);
-                }
-
-
-            });
-        }, 1000);
-
-
-        new Handler().postDelayed(() -> new Thread(() -> {
-            if (sublayerListForBitmapLayer != null) {
-                startAnimModel.ToStart(animType, finalTargetStickerView, sublayerListForBitmapLayer.get(position));
-            } else {
-                startAnimModel.ToStart(animType, finalTargetStickerView, null);
-            }
-            WaitingDialog.closePragressDialog();
-        }).start(), 1000);
-    }
-
-
-    /**
-     * description ：删除动画的子贴纸
-     * creation date: 2020/5/27
-     * user : zhangtongju
-     */
-    private void deleteSubLayerSticker() {
-        if (sublayerListForBitmapLayer != null && sublayerListForBitmapLayer.size() > 0) {
-            for (int i = 0; i < sublayerListForBitmapLayer.size(); i++) {
-                ArrayList<StickerView> nowChooseSubLayerAnimList = sublayerListForBitmapLayer.get(i);
-                //删除动画贴纸
-                if (nowChooseSubLayerAnimList != null && nowChooseSubLayerAnimList.size() > 0) {
-                    for (StickerView stickerView : nowChooseSubLayerAnimList
-                    ) {
-                        deleteStickView(stickerView);
-                    }
-                }
-            }
-        }
-    }
-
     private void finishData() {
         smartRefreshLayout.finishRefresh();
         smartRefreshLayout.finishLoadMore();
@@ -598,7 +530,6 @@ public class CreationTemplateMvpModel {
                 if (path.equals(copyName)) {
                     return true;
                 }
-
             }
         }
 
@@ -716,7 +647,6 @@ public class CreationTemplateMvpModel {
                                 });
                                 manage.ToMatting(paths);
 
-
                                 if (stickView.isFirstAddSticker()) {
                                     if (stickView.isOpenVoice()) {
                                         stickView.setOpenVoice(false);
@@ -772,6 +702,8 @@ public class CreationTemplateMvpModel {
         stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
         stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
         stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
+        stickView.setRightBitmap(context.getDrawable(R.mipmap.sticker_updown));
+
         stickView.setIsFromStickerAnim(isFromShowAnim);
         stickView.setComeFromAlbum(isFromAubum);
         if (isFromAubum) {
@@ -885,7 +817,7 @@ public class CreationTemplateMvpModel {
 
 
     private void closeAllAnim() {
-        ArrayList<AllStickerData> list = new ArrayList<>();
+        //ArrayList<AllStickerData> list = new ArrayList<>();
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             stickerView.pause();

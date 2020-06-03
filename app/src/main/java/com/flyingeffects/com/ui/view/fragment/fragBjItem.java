@@ -125,9 +125,6 @@ public class fragBjItem extends BaseFragment   {
                     intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
                     startActivity(intent);
                 }
-
-
-
             }
         });
     }
@@ -148,7 +145,6 @@ public class fragBjItem extends BaseFragment   {
             requestFagData(false, false);
         });
     }
-
 
 
     //得到banner缓存数据
@@ -234,7 +230,6 @@ public class fragBjItem extends BaseFragment   {
         }else{
             lin_show_nodata.setVisibility(View.GONE);
         }
-
     }
 
     public void isShowData(ArrayList<new_fag_template_item> listData) {

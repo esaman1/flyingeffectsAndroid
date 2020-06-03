@@ -19,11 +19,9 @@ public class home_fagMvpPresenter extends BasePresenter implements home_fagMvpCa
         home_model = new home_fagMvpModel(context, this);
     }
 
-
     public void getFragmentList(){
         home_model.getFragmentList();
     }
-
 
     @Override
     public void setFragmentList(List<TemplateType> data) {

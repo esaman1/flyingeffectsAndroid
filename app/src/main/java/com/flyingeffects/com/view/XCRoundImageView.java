@@ -12,13 +12,15 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
+import androidx.appcompat.widget.AppCompatImageView;
+
 /**
  * 自定义的圆形ImageView，可以直接当组件在布局中使用。
  * @author caizhiming
  *
  */
 // com.mobile.CloudMovie.view.XCRoundImageView
-public class XCRoundImageView extends ImageView {
+public class XCRoundImageView extends AppCompatImageView {
 
     private Paint paint ;
 

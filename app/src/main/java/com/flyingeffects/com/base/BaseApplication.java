@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.multidex.MultiDex;
 import androidx.multidex.MultiDexApplication;
 
@@ -65,12 +66,10 @@ public class BaseApplication extends MultiDexApplication {
 //        keepCrash();
         initNTAdSDK();
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
-
-
     }
 
 
-    private  void initNTAdSDK(){
+    private void initNTAdSDK() {
         NTAdSDK.init(this
                 , new NTAdConfig.Builder()
                         .appName("飞闪")
@@ -81,9 +80,7 @@ public class BaseApplication extends MultiDexApplication {
                         .isDebug(true)
                         .build());
 
-        }
-
-
+    }
 
 
     /**
@@ -104,7 +101,7 @@ public class BaseApplication extends MultiDexApplication {
         LanSoEditor.setSDKLogOutListener(new OnLanSongLogOutListener() {
             @Override
             public void onLogOut(int i, String s) {
-                LogUtil.d("lansong","蓝松具体错误信息为"+s);
+                LogUtil.d("lansong", "蓝松具体错误信息为" + s);
             }
         });
     }
@@ -159,9 +156,6 @@ public class BaseApplication extends MultiDexApplication {
     }
 
 
-
-
-
     private long onStopTime;
     private int activityAount = 0;
     ActivityLifecycleCallbacks activityLifecycleCallbacks = new ActivityLifecycleCallbacks() {
@@ -181,7 +175,7 @@ public class BaseApplication extends MultiDexApplication {
                 isActive = true;
                 LogUtil.d("BASEACTIVITY2", "进入了前台");
                 intoKaiPing(System.currentTimeMillis() - onStopTime);
-              //  EventBus.getDefault().post(new isIntoBackground(false));  //消息通知
+                //  EventBus.getDefault().post(new isIntoBackground(false));  //消息通知
             }
 
         }
@@ -194,7 +188,7 @@ public class BaseApplication extends MultiDexApplication {
         public void onActivityStopped(Activity activity) {
             activityAount--;
             if (activityAount == 0) {
-               // EventBus.getDefault().post(new isIntoBackground(true));  //消息通知
+                // EventBus.getDefault().post(new isIntoBackground(true));  //消息通知
                 onStopTime = System.currentTimeMillis();
                 isActive = false;
                 LogUtil.d("BASEACTIVITY2", "进入了后台");
@@ -210,7 +204,6 @@ public class BaseApplication extends MultiDexApplication {
 
         }
     };
-
 
 
     /**

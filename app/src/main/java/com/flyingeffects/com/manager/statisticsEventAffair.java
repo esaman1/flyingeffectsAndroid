@@ -28,6 +28,4 @@ public class statisticsEventAffair {
         MobclickAgent.onEvent(context, tag);
     }
 
-
-
 }

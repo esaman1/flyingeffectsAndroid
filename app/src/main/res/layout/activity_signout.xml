@@ -1,125 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
-    android:layout_height="match_parent">
+    <include
+        layout="@layout/view_top" />
 
+    <ImageView
+        android:id="@+id/singout_symbol"
+        android:layout_width="@dimen/dp_23"
+        android:layout_height="@dimen/dp_23"
+        android:src="@mipmap/icon_signout_ex"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/view_top_line"
+        app:layout_constraintVertical_bias="0.1" />
 
-    <include layout="@layout/view_top" />
-
-
-    <LinearLayout
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:id="@+id/ll_signout_text"
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="50dp"
-        android:orientation="vertical">
+        android:layout_marginStart="@dimen/dp_10"
+        android:text="@string/string_cancel_user_after"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_20sp_size"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/singout_symbol"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/singout_symbol"
+        app:layout_constraintTop_toTopOf="@id/singout_symbol" />
 
-        <LinearLayout
-            android:id="@+id/ll_signout_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="@dimen/dp_23">
-
-            <ImageView
-                android:id="@+id/singout_symbol"
-                android:layout_width="@dimen/dp_23"
-                android:layout_height="@dimen/dp_23"
-                android:layout_gravity="center_vertical"
-                android:paddingRight="@dimen/dp_3"
-                android:src="@mipmap/icon_signout_ex" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="@string/string_cancel_user_after"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_20sp_size"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="@dimen/dp_30">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:paddingBottom="@dimen/dp_15"
-                android:text="@string/string_delete_user_after_one" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:paddingBottom="@dimen/dp_15"
-                android:text="@string/string_delete_user_after_two"
-                android:textColor="#686868"
-                android:textSize="13sp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:text="@string/string_delete_user_after_shree"
-                android:textColor="#686868"
-                android:textSize="13sp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="80dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:textColor="#686868"
-                android:textSize="13sp">
-
-                <CheckBox
-                    android:id="@+id/check_box"
-                    android:layout_width="@dimen/dp_16"
-                    android:layout_height="@dimen/dp_16"
-                    android:button="@null"
-                    android:focusable="true"
-                    android:paddingRight="@dimen/dp_10" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/string_delete_user_iknow"
-                    android:textColor="#333333"
-                    android:textSize="14sp" />
-            </LinearLayout>
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/tv_first"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:layout_alignParentBottom="true"
-        android:paddingBottom="@dimen/dp_20">
+        android:text="@string/string_delete_user_after_one"
+        android:textColor="@color/color_sign_out_font"
+        android:textSize="@dimen/sp_13"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/singout_symbol"
+        app:layout_constraintTop_toBottomOf="@id/singout_symbol"
+        app:layout_constraintVertical_bias="0.05" />
 
-        <TextView
-            android:id="@+id/bt_write_off"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_45"
-            android:layout_gravity="bottom"
-            android:background="@drawable/button_signout"
-            android:gravity="center"
-            android:text="@string/string_to_delete"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-    </LinearLayout>
-</RelativeLayout>
+    <TextView
+        android:id="@+id/tv_second"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/string_delete_user_after_two"
+        android:textColor="@color/color_sign_out_font"
+        android:textSize="@dimen/sp_13"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/tv_first"
+        app:layout_constraintTop_toBottomOf="@id/tv_first"
+        app:layout_constraintVertical_bias="0.02" />
+
+    <TextView
+        android:id="@+id/tv_third"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/string_delete_user_after_shree"
+        android:textColor="@color/color_sign_out_font"
+        android:textSize="@dimen/sp_13"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/tv_second"
+        app:layout_constraintTop_toBottomOf="@id/tv_second"
+        app:layout_constraintVertical_bias="0.02" />
+
+    <CheckBox
+        android:id="@+id/check_box"
+        android:layout_width="@dimen/dp_16"
+        android:layout_height="@dimen/dp_16"
+        android:button="@null"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/singout_symbol"
+        app:layout_constraintTop_toBottomOf="@id/tv_third"
+        app:layout_constraintVertical_bias="0.2" />
+
+    <TextView
+        android:id="@+id/tv_make_sure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_10"
+        android:text="@string/string_delete_user_iknow"
+        android:textColor="@color/color_sign_out_make_sure_font"
+        android:textSize="@dimen/sp_14"
+        app:layout_constraintBottom_toBottomOf="@id/check_box"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/check_box"
+        app:layout_constraintTop_toTopOf="@id/check_box" />
+
+    <TextView
+        android:id="@+id/bt_write_off"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp_45"
+        android:layout_marginStart="@dimen/dp_20"
+        android:layout_marginEnd="@dimen/dp_20"
+        android:layout_marginBottom="@dimen/dp_20"
+        android:background="@drawable/button_signout"
+        android:gravity="center"
+        android:text="@string/string_to_delete"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

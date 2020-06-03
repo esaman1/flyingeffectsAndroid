@@ -41,11 +41,9 @@ public interface ApiService {
     Observable<HttpResult<UserInfo>> userDefine(@FieldMap Map<String, String> params);
 
 
-
     @FormUrlEncoded
     @POST("/api/template/allconfig")
     Observable<HttpResult<List<Config>>> configList(@FieldMap Map<String, String> params);
-
 
 
     @FormUrlEncoded
@@ -57,11 +55,14 @@ public interface ApiService {
     Observable<HttpResult<List<new_fag_template_item>>> collectionList(@FieldMap Map<String, String> params);
 
 
+    @FormUrlEncoded
+    @POST("/api/media/deleteTemplate")
+    Observable<HttpResult<Object>> deleteBackground(@FieldMap Map<String, String> params);
+
 
     @FormUrlEncoded
     @POST("/api/media/uploadList")
     Observable<HttpResult<List<new_fag_template_item>>> uploadList(@FieldMap Map<String, String> params);
-
 
 
     @FormUrlEncoded
@@ -74,19 +75,14 @@ public interface ApiService {
     Observable<HttpResult<Object>> toLoadTemplate(@FieldMap Map<String, String> params);
 
 
-
-
     @FormUrlEncoded
     @POST("/api/template/keywordList")
     Observable<HttpResult<List<Object>>> keywordList(@FieldMap Map<String, String> params);
 
 
-
-
     @FormUrlEncoded
     @POST("/api/template/newCollection")
     Observable<HttpResult<Object>> newCollection(@FieldMap Map<String, String> params);
-
 
 
     @FormUrlEncoded
@@ -99,8 +95,6 @@ public interface ApiService {
     Observable<HttpResult<Object>> toSms(@FieldMap Map<String, String> params);
 
 
-
-
     @FormUrlEncoded
     @POST("/api/template/saveTemplate")
     Observable<HttpResult<Object>> saveTemplate(@FieldMap Map<String, String> params);
@@ -108,8 +102,6 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/user/getUserInfo")
     Observable<HttpResult<UserInfo>> getUserInfo(@FieldMap Map<String, String> params);
-
-
 
 
     //上传素材
@@ -121,8 +113,6 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/v1.record/ossgetpolicy")
     Observable<HttpResult<Object>> getOOS(@FieldMap Map<String, String> params);
-
-
 
 
     //模板类型
@@ -150,15 +140,6 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/version/versionCheck")
     Observable<HttpResult<checkVersion>> checkUpdate(@FieldMap Map<String, String> params);
-
-
-
-
-
-
-
-
-
 
 
 }

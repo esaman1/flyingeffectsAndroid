@@ -1,8 +1,17 @@
 package com.flyingeffects.com.ui.view.fragment;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
+import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -22,6 +31,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.yanzhenjie.album.app.camera.CaptureActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,10 +42,11 @@ import rx.Observable;
 
 
 /***
- * 我的收藏
+ * 我上传的背景
  */
 
 public class frag_user_upload_bj extends BaseFragment {
+    private static final String TAG = "frag_user_upload_bj";
     private boolean isRefresh = true;
 
     private Upload_bj_list_adapter adapter;
@@ -47,6 +58,8 @@ public class frag_user_upload_bj extends BaseFragment {
 
     @BindView(R.id.recyclerView_collect)
     RecyclerView recyclerView;
+
+    private Context mContext;
 
     /**
      * 1 是模板，2是背景 3是我上传的背景
@@ -67,6 +80,11 @@ public class frag_user_upload_bj extends BaseFragment {
         return R.layout.frg_user_upload;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mContext = getActivity();
+    }
 
     @Override
     protected void initView() {
@@ -92,11 +110,12 @@ public class frag_user_upload_bj extends BaseFragment {
             @Override
             protected void _onError(String message) {
                 finishData();
+                Log.e(TAG, "_onError: " + message);
             }
 
             @Override
             protected void _onNext(List<new_fag_template_item> data) {
-                LogUtil.d("OOM", StringUtil.beanToJSONString(data));
+                LogUtil.d(TAG, StringUtil.beanToJSONString(data));
                 finishData();
                 if (isRefresh) {
                     listData.clear();
@@ -158,15 +177,12 @@ public class frag_user_upload_bj extends BaseFragment {
             selectPage = 1;
             smartRefreshLayout.setEnableLoadMore(true);
             requestUploadBjList(false);
-        }else{
+        } else {
             tv_hint.setVisibility(View.VISIBLE);
             tv_hint.setText("请先登录");
             allData.clear();
             adapter.notifyDataSetChanged();
-
         }
-
-
         super.onResume();
     }
 
@@ -178,19 +194,27 @@ public class frag_user_upload_bj extends BaseFragment {
 
 
     private void initRecycler() {
-        adapter = new Upload_bj_list_adapter(R.layout.list_upload_bj_item, allData, getActivity());
+        adapter = new Upload_bj_list_adapter(R.layout.list_upload_bj_item, allData, getActivity(), (id) -> {
+            new AlertDialog.Builder(mContext)
+                    .setMessage("确定要删除这个背景吗？")
+                    .setNegativeButton("取消", (dialog, which) -> dialog.dismiss())
+                    .setPositiveButton("确定", (dialog, which) -> {
+                        requestDelete(id);
+                    }).create().show();
+        });
         layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
+
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
                 Intent intent = new Intent(getActivity(), PreviewActivity.class);
                 intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
-                if(allData.get(position).getTest()!=0){
+                if (allData.get(position).getTest() != 0) {
                     intent.putExtra("readOnly", true);
-                }else{
+                } else {
                     intent.putExtra("readOnly", false);
                 }
                 intent.putExtra("fromToMineCollect", true);
@@ -201,7 +225,37 @@ public class frag_user_upload_bj extends BaseFragment {
         });
     }
 
+    private void requestDelete(String id) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("id", id);
+        Observable ob = Api.getDefault().deleteBackground(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(getActivity()) {
+            @Override
+            protected void _onNext(Object o) {
+                LogUtil.d(TAG, "requestDelete: " + o);
+                //todo object为空，要解决返回信息的处理问题
+                isRefresh = true;
+                selectPage = 1;
+                requestUploadBjList(false);
+            }
 
+            @Override
+            protected void _onError(String message) {
+                Log.e(TAG, "requestDelete_onError: " + message);
+                finishData();
+            }
+
+//            @Override
+//            protected void _onNext(List<new_fag_template_item> data) {
+//
+//                isRefresh = true;
+//                selectPage = 1;
+//                requestUploadBjList(false);
+//            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+
+
+    }
 
 
 //    @Subscribe
@@ -242,12 +296,6 @@ public class frag_user_upload_bj extends BaseFragment {
 //            }
 //        })).start();
 //    }
-
-
-
-
-
-
 
 }
 

@@ -81,6 +81,7 @@
         <attr name="sv_left_bottom_drawable" format="reference" />
         <attr name="sv_right_top_drawable" format="reference" />
         <attr name="sv_right_bottom_drawable" format="reference" />
+        <attr name="sv_right_drawable" format="reference" />
         <attr name="sv_frame_color" format="color" />
         <attr name="sv_frame_width" format="dimension" />
         <!--控制按钮位置-->
@@ -101,6 +102,7 @@
         <!--是否允许辅助居中-->
         <attr name="sv_auto_center" format="boolean" />
     </declare-styleable>
+
 
 
 </resources>

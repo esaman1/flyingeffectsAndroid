@@ -25,6 +25,11 @@
 
     </style>
 
+    <style name="launcher" parent="AppTheme">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@drawable/splash</item>
+    </style>
+
     <style name="TransparentTheme" parent="android:style/Theme.Dialog">
         <item name="android:background">@android:color/transparent</item>
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -40,11 +45,6 @@
 <!--        <item name="vertical_Space">20dp</item>-->
 <!--        <item name="isFull">false</item>-->
     </style>
-
-
-
-
-
 
     <!--黑色透明主题-->
     <style name="radiobutton" >

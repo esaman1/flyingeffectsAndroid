@@ -15,10 +15,13 @@ import com.flyingeffects.com.enity.AllStickerData;
 import com.flyingeffects.com.enity.TransplationPos;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.utils.FilterUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.animations.CustomMove.AnimCollect;
 import com.flyingeffects.com.view.animations.CustomMove.AnimType;
 import com.flyingeffects.com.view.animations.CustomMove.LayerAnimCallback;
+import com.flyingeffects.com.view.lansongCommendView.StickerItem;
+import com.lansosdk.LanSongFilter.LanSongMaskBlendFilter;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
 import com.lansosdk.box.GifLayer;
@@ -120,6 +123,7 @@ public class backgroundDraw {
         try {
             execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, (long) (duration * 1000));
             execute.setFrameRate(FRAME_RATE);
+
             LogUtil.d("OOM2", "时长为" + FRAME_RATE);
             execute.setEncodeBitrate(5 * 1024 * 1024);
             execute.setOnLanSongSDKErrorListener(message -> {
@@ -229,12 +233,13 @@ public class backgroundDraw {
             float percentY = stickerItem.getTranslationy();
             LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
             videoLayer.setPosition(videoLayer.getPositionX(), videoLayer.getPadHeight() * percentY);
-
+            videoLayer.switchFilterTo(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class, stickerItem.getMaskBitmap()));
             //todo 测试
             if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
                 int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
                 addVideoSubLayer(needSublayer, videoLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale);
             }
+
 
 
         } catch (Exception e) {
@@ -275,6 +280,7 @@ public class backgroundDraw {
 //        float posY = (mvLayer.getPadHeight() + mvLayer.getLayerHeight()) * percentY - mvLayer.getLayerHeight() / 2.0f;
 //        mvLayer.setPosition(mvLayer.getPositionX(), posY);
         gifLayer.setPosition(gifLayer.getPositionX(), gifLayer.getPadHeight() * percentY);
+        gifLayer.switchFilterTo(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class, stickerItem.getMaskBitmap()));
         if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
             int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
             addGifSubLayer(needSublayer, gifLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale);
@@ -314,7 +320,7 @@ public class backgroundDraw {
         LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
         //   float posY = (bpLayer.getPadHeight() + bpLayer.getLayerHeight()) * percentY - bpLayer.getLayerHeight() / 2.0f;
         bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight() * percentY);
-
+        bpLayer.switchFilterTo(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class, stickerItem.getMaskBitmap()));
 
         if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
             int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
@@ -411,7 +417,7 @@ public class backgroundDraw {
         LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
         //   float posY = (bpLayer.getPadHeight() + bpLayer.getLayerHeight()) * percentY - bpLayer.getLayerHeight() / 2.0f;
         bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight() * percentY);
-
+        bpLayer.switchFilterTo(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class, stickerItem.getMaskBitmap()));
         preTime = stickerItem.getDuration() * 1000 / (float) getMattingList.size();
         LogUtil.d("OOM3", "贴纸的时长为" + stickerItem.getDuration());
         LogUtil.d("OOM3", "贴纸的数量为时长为" + (float) getMattingList.size());

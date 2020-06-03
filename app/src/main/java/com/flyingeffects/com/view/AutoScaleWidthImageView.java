@@ -5,10 +5,12 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
+import androidx.appcompat.widget.AppCompatImageView;
+
 /**
  * 宽度自适应ImageView，宽度始终充满显示区域，高度成比例缩放
  */
-public class AutoScaleWidthImageView extends ImageView {
+public class AutoScaleWidthImageView extends AppCompatImageView {
 
     public AutoScaleWidthImageView(Context context, AttributeSet attrs) {
         super(context, attrs);

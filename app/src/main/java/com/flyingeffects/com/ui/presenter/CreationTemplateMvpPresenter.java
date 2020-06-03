@@ -40,11 +40,9 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.scrollToPosition(position);
     }
 
-
     public void addNewSticker(String path,String originalPath){
         creationTemplatemodel.addNewSticker(path,originalPath);
     }
-
 
     public void showGifAnim(boolean isShow){
         creationTemplatemodel.showGifAnim(isShow);

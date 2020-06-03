@@ -18,16 +18,9 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
-import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
-import com.flyingeffects.com.ui.model.VideoMattingModel;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.yanzhenjie.album.AlbumFile;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.OnClick;
 
@@ -45,13 +38,11 @@ public class AboutActivity extends BaseActivity {
     @Override
     protected void initView() {
         ((TextView) findViewById(R.id.tv_top_title)).setText("关于");
-
     }
 
     @Override
     protected void initAction() {
     }
-
 
     @Override
     protected void onResume() {
@@ -65,10 +56,10 @@ public class AboutActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.ll_test,R.id.tv_top_submit, R.id.iv_top_back, R.id.ll_close_account, R.id.ll_contact_us, R.id.ll_relation_us, R.id.ll_privacy_policy, R.id.ll_protocol, R.id.ll_clear_cache})
+    @OnClick({R.id.tv_test,R.id.tv_top_submit, R.id.iv_top_back, R.id.tv_close_account, R.id.tv_contact_us, R.id.tv_relation_us, R.id.tv_privacy_policy, R.id.tv_protocol, R.id.tv_clear_cache})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.ll_close_account:
+            case R.id.tv_close_account:
                 if (!BaseConstans.hasLogin()) {
                     ToastUtil.showToast(getString(R.string.have_not_login));
                 } else {
@@ -78,30 +69,29 @@ public class AboutActivity extends BaseActivity {
             case R.id.iv_top_back:
                 this.finish();
                 break;
-            case R.id.ll_contact_us:
+            case R.id.tv_contact_us:
                 statisticsEventAffair.getInstance().setFlag(this, "3_Evaluation");
                 reception();
                 break;
-            case R.id.ll_relation_us:
+            case R.id.tv_relation_us:
                 statisticsEventAffair.getInstance().setFlag(this, "3_contact");
 
                 contactUs();
                 break;
             //隐私政策
-            case R.id.ll_privacy_policy:
+            case R.id.tv_privacy_policy:
                 Intent intentPrivacy = new Intent(this, webViewActivity.class);
                 intentPrivacy.putExtra("webUrl", BaseConstans.PRIVACYPOLICY);
                 startActivity(intentPrivacy);
 
                 break;
             //用户协议
-            case R.id.ll_protocol:
+            case R.id.tv_protocol:
                 Intent intentProtocol = new Intent(this, webViewActivity.class);
                 intentProtocol.putExtra("webUrl", BaseConstans.PROTOCOL);
                 startActivity(intentProtocol);
-
                 break;
-            case R.id.ll_clear_cache:
+            case R.id.tv_clear_cache:
                 //清除外部cache下的内容
                 DataCleanManager.cleanExternalCache();
                 //清理内部cache
@@ -116,8 +106,7 @@ public class AboutActivity extends BaseActivity {
                 showDialog();
                 break;
 
-
-            case R.id.ll_test:
+            case R.id.tv_test:
                 //抠图测试
 //                AlbumManager.chooseVideo(this, 1, 1, (tag, paths, isCancel, albumFileList) -> {
 //                    VideoMattingModel videoMattingModel=new VideoMattingModel(paths.get(0),AboutActivity.this);
@@ -132,6 +121,8 @@ public class AboutActivity extends BaseActivity {
         }
 
     }
+
+
 
     private void showDialog() {
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(

@@ -5,9 +5,12 @@ import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.utils.LogUtil;
+import com.yanzhenjie.album.Action;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.AlbumFile;
 import com.yanzhenjie.album.Filter;
@@ -46,10 +49,6 @@ public class AlbumManager {
 //                        return attributes.equals("image/gif")||attributes.equals("image/svg+xml")||attributes.equals("image/x-icon");
 
                         return  filterAlbum(attributes);
-
-
-
-
                     }
                 })
                 .afterFilterVisibility(false)
@@ -202,8 +201,6 @@ public class AlbumManager {
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     public static void chooseVideo(Activity act, int selectNum, int tag, AlbumChooseCallback callback,String material_info) {
-
-
         Album.video(act) // Video selection.
                 .multipleChoice()
                 .camera(false)
@@ -295,7 +292,6 @@ public class AlbumManager {
 
         }
         return false;
-
     }
 
 }

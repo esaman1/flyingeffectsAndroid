@@ -19,11 +19,13 @@ import android.app.Activity;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -67,20 +69,22 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
 
     private Button mBtnPreview;
     private Button mBtnSwitchFolder;
+    private Button mBtnCapture;
 
     private LinearLayout mLayoutLoading;
     private ColorProgressBar mProgressBar;
     private DragSelectTouchListener touchListener;
 
-    public AlbumView(Activity activity, Contract.AlbumPresenter presenter,String material_info) {
+    public AlbumView(Activity activity, Contract.AlbumPresenter presenter, String material_info) {
         super(activity, presenter);
         this.mActivity = activity;
         this.mToolbar = activity.findViewById(R.id.toolbar);
         this.mRecyclerView = activity.findViewById(R.id.recycler_view);
-        this.tv_show_alert=activity.findViewById(R.id.tv_show_alert);
+        this.tv_show_alert = activity.findViewById(R.id.tv_show_alert);
         this.tv_show_alert.setText(material_info);
         this.mBtnSwitchFolder = activity.findViewById(R.id.btn_switch_dir);
         this.mBtnPreview = activity.findViewById(R.id.btn_preview);
+        this.mBtnCapture = activity.findViewById(R.id.btn_capture);
 
         this.mLayoutLoading = activity.findViewById(R.id.layout_loading);
         this.mProgressBar = activity.findViewById(R.id.progress_bar);
@@ -88,6 +92,7 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
         this.mToolbar.setOnClickListener(new DoubleClickWrapper(this));
         this.mBtnSwitchFolder.setOnClickListener(this);
         this.mBtnPreview.setOnClickListener(this);
+        this.mBtnCapture.setOnClickListener(this);
     }
 
     @Override
@@ -96,13 +101,14 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
         mCompleteMenu = menu.findItem(R.id.album_menu_finish);
     }
 
-    private boolean singleCompletion=false;
+    private boolean singleCompletion = false;
+
     @Override
     protected void onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.album_menu_finish) {
-            if(!isFastDoubleClick()&&!singleCompletion){
-                singleCompletion=true;
+            if (!isFastDoubleClick() && !singleCompletion) {
+                singleCompletion = true;
 //                long xx=item.get
                 getPresenter().complete();
             }
@@ -110,15 +116,12 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
     }
 
 
-
-
-
-
     private long lastClickTime;
+
     public boolean isFastDoubleClick() {
         long time = System.currentTimeMillis();
         long timeD = time - lastClickTime;
-        Log.i("timeD","timeD="+timeD);
+        Log.i("timeD", "timeD=" + timeD);
         if (0 < timeD && timeD < 3000) {
             return true;
         }
@@ -157,7 +160,7 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
 
         Configuration config = mActivity.getResources().getConfiguration();
         mLayoutManager = new GridLayoutManager(getContext(), column, getOrientation(config), false);
-        mRecyclerView.setLayoutManager(mLayoutManager  );
+        mRecyclerView.setLayoutManager(mLayoutManager);
         int dividerSize = getResources().getDimensionPixelSize(R.dimen.album_dp_4);
         mRecyclerView.addItemDecoration(new Api21ItemDivider(Color.TRANSPARENT, dividerSize, dividerSize));
         mAdapter = new AlbumAdapter(getContext(), hasCamera, choiceMode, widget.getMediaItemCheckSelector());
@@ -166,14 +169,14 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
         mAdapter.setLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Log.d("album","长点击");
+                Log.d("album", "长点击");
                 int position = mRecyclerView.getChildAdapterPosition(v);
 //                mAdapter.setSelected(position, true);
-                View view = mLayoutManager.findViewByPosition(position);	//2为recyclerView中item位置，
-                AppCompatCheckBox box=view.findViewById(R.id.check_box);
-                if(!box.isChecked()){
+                View view = mLayoutManager.findViewByPosition(position);    //2为recyclerView中item位置，
+                AppCompatCheckBox box = view.findViewById(R.id.check_box);
+                if (!box.isChecked()) {
                     box.setChecked(true);
-                }else{
+                } else {
                     box.setChecked(false);
                 }
                 getPresenter().tryCheckItem(box, position);
@@ -181,7 +184,6 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
                 return true;
             }
         });
-
 
 
         mAdapter.setAddClickListener(new OnItemClickListener() {
@@ -228,11 +230,11 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
     private void dataSelect(int start, int end) {
         for (int i = start; i <= end; i++) {
             View view = mLayoutManager.findViewByPosition(i);
-            if(view!=null){
-                AppCompatCheckBox box=view.findViewById(R.id.check_box);
-                if(box.isChecked()){
+            if (view != null) {
+                AppCompatCheckBox box = view.findViewById(R.id.check_box);
+                if (box.isChecked()) {
                     box.setChecked(false);
-                }else{
+                } else {
                     box.setChecked(true);
                 }
                 getPresenter().tryCheckItem(box, i);
@@ -244,11 +246,11 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
     private void dataUnSelect(int start, int end) {
         for (int i = start; i <= end; i++) {
             View view = mLayoutManager.findViewByPosition(i);
-            if(view!=null){
-                AppCompatCheckBox box=view.findViewById(R.id.check_box);
-                if(!box.isChecked()){
+            if (view != null) {
+                AppCompatCheckBox box = view.findViewById(R.id.check_box);
+                if (!box.isChecked()) {
                     box.setChecked(true);
-                }else{
+                } else {
                     box.setChecked(false);
                 }
                 getPresenter().tryCheckItem(box, i);
@@ -293,8 +295,8 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
     @Override
     public void bindAlbumFolder(AlbumFolder albumFolder) {
         mBtnSwitchFolder.setText(albumFolder.getName());
-        ArrayList<AlbumFile>list=albumFolder.getAlbumFiles();
-        if(list!=null&&list.size()>0){
+        ArrayList<AlbumFile> list = albumFolder.getAlbumFiles();
+        if (list != null && list.size() > 0) {
             mAdapter.setAlbumFiles(list);
             mAdapter.notifyDataSetChanged();
             mRecyclerView.scrollToPosition(0);
@@ -323,7 +325,7 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
 
     @Override
     public void setSingleCompletion(boolean singleCompletion) {
-        this.singleCompletion=singleCompletion;
+        this.singleCompletion = singleCompletion;
     }
 
     @Override
@@ -334,6 +336,8 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
             getPresenter().clickFolderSwitch();
         } else if (v == mBtnPreview) {
             getPresenter().tryPreviewChecked();
+        }else if (v==mBtnCapture){
+            getPresenter().toCapturePage();
         }
     }
 }

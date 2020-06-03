@@ -509,6 +509,14 @@ public class AlbumActivity extends BaseActivity implements
         }
     }
 
+
+    @Override
+    public void toCapturePage(){
+        //todo 点击拍摄按钮
+
+
+    }
+
     @Override
     public void onPreviewComplete() {
         callbackResult();
@@ -641,8 +649,6 @@ public class AlbumActivity extends BaseActivity implements
             mLoadingDialog.show();
         }
     }
-
-
 
     /**
      * Dismiss loading dialog.

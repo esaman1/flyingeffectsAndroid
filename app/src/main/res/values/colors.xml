@@ -21,6 +21,7 @@
     <color name="video_detail_black">#828A9A</color>
     <color name="home_item_select">#009cFF</color>
     <color name="white">#FFFFFF</color>
+    <color name="capture_btn_blue">#5496FF</color>
     <color name="baseBackground">#FBFBFB</color>
     <color name="cityBaseColor">#F0F4FD</color>
     <color name="shadow_color">#FF000000</color>
@@ -91,9 +92,13 @@
 
     <!--F4F4F4 -->
     <color name="me_view_line">#F4F4F4</color>
-
-
-
+    <!--about us-->
+    <color name="font_color_about_us">#D5D5D5</color>
+    <color name="color_about_us_line">#232323</color>
+    <!--sign out-->
+    <color name="color_sign_out_font">#686868</color>
+    <color name="color_sign_out_make_sure_font">#333333</color>
+    <color name="color_main_menu_back">#101010</color>
 
 
 </resources>

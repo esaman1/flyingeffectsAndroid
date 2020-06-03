@@ -40,6 +40,7 @@
 
 
         <androidx.appcompat.widget.AppCompatButton
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_preview"
             style="@style/Album.TextButton.WrapContent.SheetBottom"
             android:layout_alignParentEnd="true"
@@ -47,6 +48,11 @@
             android:drawableLeft="@drawable/album_ic_eye_white"
             android:drawableStart="@drawable/album_ic_eye_white" />
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_capture"
+            style="@style/Album.TextButton.WrapContent.SheetBottom"
+            android:layout_toStartOf="@id/btn_preview"
+            android:text="拍摄" />
 
         <TextView
             android:layout_toRightOf="@+id/btn_switch_dir"
@@ -56,12 +62,7 @@
             android:gravity="center_vertical"
             android:textColor="#ffffff"
             android:textSize="@dimen/album_sp_14"
-            android:id="@+id/tv_show_alert"
-            />
-
-
-
-
+            android:id="@+id/tv_show_alert" />
 
     </RelativeLayout>
 

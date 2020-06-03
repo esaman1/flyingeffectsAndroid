@@ -234,12 +234,10 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                             Intent intent = new Intent(getActivity(), VideoCropActivity.class);
                             intent.putExtra("videoPath", paths.get(0));
                             intent.putExtra("comeFrom","");
-
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
                         } else {
                             compressImage(paths.get(0));
-
                         }
                     }
                 }

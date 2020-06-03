@@ -65,6 +65,13 @@
     <string name="template_edit">编辑</string>
     <string name="template_bj">背景</string>
     <string name="template_music">音乐</string>
+    <string name="capture_permission_no">拒绝</string>
+    <string name="capture_permission_message">拍摄视频需要摄像权限，如需使用相关功能，请选择同意</string>
+    <string name="capture_permission_ok">同意</string>
+    <string name="text_background">背景</string>
+    <string name="text_mould">模板</string>
+    <string name="text_search">搜索</string>
+    <string name="text_mine">我的</string>
 
 
 </resources>
