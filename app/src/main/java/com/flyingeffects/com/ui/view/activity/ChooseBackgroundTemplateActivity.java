@@ -41,14 +41,11 @@ import rx.Observable;
  */
 
 public class ChooseBackgroundTemplateActivity extends BaseActivity {
-
-
     @BindView(R.id.viewpager_bj)
     ViewPager viewpager;
 
     @BindView(R.id.tl_tabs)
     SlidingTabLayout tabLayout;
-
 
     private new_fag_template_item templateItem;
 

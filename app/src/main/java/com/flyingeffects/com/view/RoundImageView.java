@@ -14,13 +14,15 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
+import androidx.appcompat.widget.AppCompatImageView;
+
 
 /**
  * Created by leo 圆形2
  * on 17/3/14.
  */
 //com.mobile.myzx.view.RoundImageView
-public class RoundImageView extends ImageView {
+public class RoundImageView extends AppCompatImageView {
     private Paint paint;
 
     public RoundImageView(Context context) {

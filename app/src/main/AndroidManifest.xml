@@ -171,16 +171,6 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.view.activity.CaptureActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".ui.view.activity.CapturePreviewActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
-
-        <activity
             android:name="com.flyingeffects.com.ui.view.activity.AboutActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />

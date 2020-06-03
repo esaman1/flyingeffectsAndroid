@@ -354,7 +354,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
         int graLine = (int) (h - h * percent);
 
-        LinearGradient gradient = new LinearGradient(w, graLine, w, graLine + 20,
+        LinearGradient gradient = new LinearGradient(w, graLine, w, graLine + 40,
                 Color.parseColor("#ffffff"), Color.TRANSPARENT, Shader.TileMode.CLAMP);
         //p.setColor(Color.TRANSPARENT);
         p.setShader(gradient);
