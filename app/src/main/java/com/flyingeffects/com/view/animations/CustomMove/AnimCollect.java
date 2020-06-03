@@ -3,7 +3,6 @@ package com.flyingeffects.com.view.animations.CustomMove;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.StickerAnim;
-import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.box.Layer;
 import com.lansosdk.box.SubLayer;
@@ -18,7 +17,18 @@ import java.util.List;
  */
 public class AnimCollect {
 
-    private baseAnimModel animModel;
+
+
+
+    private ItemEightBorther itemEightBorther;
+    private ItemRightToLeft rightToLeft;
+    private ItemBottomToCenter itemBottomToCenter;
+    private SwingUpAndDownToCenter swingUpAndDownToCenter;
+    private Rotate rotate;
+    private ItemBottomToTop itemBottomToTop;
+    private ItemLeftAndRightDissmiss itemLeftAndRightDissmiss;
+    private ItemCloned itemCloned;
+    private ArrayList<baseAnimModel> listForKeepBaseAnimMode = new ArrayList<>();
     private ArrayList<baseAnimModel> listForBaseAnimMode = new ArrayList<>();
 
     /**
@@ -90,10 +100,10 @@ public class AnimCollect {
 
                 return 2000;
             case ROATION:
-            case  BOTTOMTOUP:
-                return  4000;
+            case BOTTOMTOUP:
+                return 4000;
             case SUPERSTAR:
-                return  2000;
+                return 2000;
 
         }
         return 0;
@@ -106,8 +116,6 @@ public class AnimCollect {
      * user : zhangtongju
      */
     public void startAnimForChooseAnim(AnimType type, StickerView mainStickerView, List<StickerView> subLayer) {
-
-
 
 
         switch (type) {
@@ -154,11 +162,10 @@ public class AnimCollect {
                 ItemLeftAndRightDissmiss itemLeftAndRightDissmiss = new ItemLeftAndRightDissmiss();
                 itemLeftAndRightDissmiss.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(itemLeftAndRightDissmiss);
-
                 break;
 
             case SUPERSTAR:
-                ItemCloned itemCloned =new ItemCloned();
+                ItemCloned itemCloned = new ItemCloned();
                 itemCloned.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(itemCloned);
                 break;
@@ -175,87 +182,87 @@ public class AnimCollect {
         switch (type) {
             //8个动画飞天效果
             case EIGHTBORTHER:
-                if (animModel != null) {
-                    ((ItemEightBorther) animModel).getLansongTranslation(callback, percentage, listForSubLayer);
+                if (itemEightBorther != null) {
+                    itemEightBorther.getLansongTranslation(callback, percentage, listForSubLayer);
                 } else {
-                    animModel = new ItemEightBorther();
-                    ((ItemEightBorther) animModel).toChangeSubLayer(mainStickerView, listForSubLayer, callback, percentage);
+                    itemEightBorther = new ItemEightBorther();
+                    itemEightBorther.toChangeSubLayer(mainStickerView, listForSubLayer, callback, percentage);
+                    listForKeepBaseAnimMode.add(itemEightBorther);
                 }
                 break;
-           //左进右出
+            //左进右出
             case LEFTTORIGHT:
-                if (animModel != null) {
-                    ((ItemRightToLeft) animModel).toChangeSubLayer(callback, percentage);
+                if (rightToLeft != null) {
+                    (rightToLeft).toChangeSubLayer(callback, percentage);
                 } else {
-                    animModel = new ItemRightToLeft();
-                    ((ItemRightToLeft) animModel).getSubLayerData(mainStickerView, callback, percentage);
+                    rightToLeft = new ItemRightToLeft();
+                    (rightToLeft).getSubLayerData(mainStickerView, callback, percentage);
+                    listForKeepBaseAnimMode.add(rightToLeft);
                 }
                 break;
+
             //底部居中位置
             case BOTTOMTOCENTER:
-                if (animModel != null) {
-                    ((ItemBottomToCenter) animModel).toChangeSubLayer(callback, percentage);
+                if (itemBottomToCenter != null) {
+                    (itemBottomToCenter).toChangeSubLayer(callback, percentage);
                 } else {
-                    animModel = new ItemBottomToCenter();
-                    ((ItemBottomToCenter) animModel).initToChangeSubLayer(mainStickerView, callback, percentage);
+                    itemBottomToCenter = new ItemBottomToCenter();
+                    (itemBottomToCenter).initToChangeSubLayer(mainStickerView, callback, percentage);
+                    listForKeepBaseAnimMode.add(itemBottomToCenter);
                 }
                 break;
 
 
             case SWINGUPANDDOWN:
-                if (animModel != null) {
-                    ((SwingUpAndDownToCenter) animModel).toChangeSubLayer(callback, percentage);
+                if (swingUpAndDownToCenter != null) {
+                    (swingUpAndDownToCenter).toChangeSubLayer(callback, percentage);
                 } else {
-                    animModel = new SwingUpAndDownToCenter();
-                    ((SwingUpAndDownToCenter) animModel).initToChangeSubLayer(mainStickerView, callback, percentage);
+                    swingUpAndDownToCenter = new SwingUpAndDownToCenter();
+                    (swingUpAndDownToCenter).initToChangeSubLayer(mainStickerView, callback, percentage);
+                    listForKeepBaseAnimMode.add(swingUpAndDownToCenter);
                 }
                 break;
 
             case ROATION:
-
-                if (animModel != null) {
-                    ((Rotate) animModel).toChangeSubLayer(callback, percentage);
+                if (rotate != null) {
+                    (rotate).toChangeSubLayer(callback, percentage);
                 } else {
-                    animModel = new Rotate();
-                    ((Rotate) animModel).initToChangeSubLayer(mainStickerView, callback, percentage);
+                    rotate = new Rotate();
+                    (rotate).initToChangeSubLayer(mainStickerView, callback, percentage);
+                    listForKeepBaseAnimMode.add(rotate);
                 }
                 break;
 
 
             case BOTTOMTOUP:
-                if (animModel != null) {
-                    ((ItemBottomToTop) animModel).toChangeSubLayer(callback, percentage);
+                if (itemBottomToTop != null) {
+                    (itemBottomToTop).toChangeSubLayer(callback, percentage);
                 } else {
-                    animModel = new ItemBottomToTop();
-                    ((ItemBottomToTop) animModel).initSubLayerData(mainStickerView, callback, percentage);
+                    itemBottomToTop = new ItemBottomToTop();
+                    (itemBottomToTop).initSubLayerData(mainStickerView, callback, percentage);
+                    listForKeepBaseAnimMode.add(itemBottomToTop);
                 }
                 break;
 
             case LEFTANDRIGHTDISSMISS:
-                if (animModel != null) {
-                    ((ItemLeftAndRightDissmiss) animModel).toChangeSubLayer(callback, percentage);
+                if (itemLeftAndRightDissmiss != null) {
+                    (itemLeftAndRightDissmiss).toChangeSubLayer(callback, percentage);
                 } else {
-                    animModel = new ItemLeftAndRightDissmiss();
-                    ((ItemLeftAndRightDissmiss) animModel).initToChangeSubLayer(mainStickerView, callback, percentage);
+                    itemLeftAndRightDissmiss = new ItemLeftAndRightDissmiss();
+                    (itemLeftAndRightDissmiss).initToChangeSubLayer(mainStickerView, callback, percentage);
+                    listForKeepBaseAnimMode.add(itemLeftAndRightDissmiss);
                 }
 
                 break;
 
             case SUPERSTAR:
-
-                if (animModel != null) {
-                    ((ItemCloned) animModel).toChangeSubLayer(callback, percentage);
+                if (itemCloned != null) {
+                    (itemCloned).toChangeSubLayer(callback, percentage);
                 } else {
-                    animModel = new ItemCloned();
-                    ((ItemCloned) animModel).initToChangeSubLayer(mainStickerView, callback, percentage);
+                    itemCloned = new ItemCloned();
+                    (itemCloned).initToChangeSubLayer(mainStickerView, callback, percentage);
+                    listForKeepBaseAnimMode.add(itemCloned);
                 }
-
-
-
-
-
-
-
         }
     }
 
@@ -266,11 +273,18 @@ public class AnimCollect {
     public void stopAnim() {
 
 
-        //这里针对保存的时候
-        if(animModel!=null){
-            animModel.StopAnim();
-            animModel=null;
+        //这里针对保存页面
+        if (listForKeepBaseAnimMode != null && listForKeepBaseAnimMode.size() > 0) {
+            for (baseAnimModel animModel : listForKeepBaseAnimMode
+            ) {
+                if (animModel != null) {
+                    animModel.StopAnim();
+                    animModel = null;
+                }
+            }
+            listForKeepBaseAnimMode.clear();
         }
+
 
         //这里针对预览页面
         if (listForBaseAnimMode != null && listForBaseAnimMode.size() > 0) {
@@ -337,14 +351,14 @@ public class AnimCollect {
         list.add(stickerAnim6);
 
 
-        StickerAnim stickerAnim7= new StickerAnim();
+        StickerAnim stickerAnim7 = new StickerAnim();
         stickerAnim7.setName("左右分身");
         stickerAnim7.setIcon(R.mipmap.anim_zyfs);
         stickerAnim7.setAnimType(AnimType.LEFTANDRIGHTDISSMISS);
         list.add(stickerAnim7);
 
 
-        StickerAnim stickerAnim8= new StickerAnim();
+        StickerAnim stickerAnim8 = new StickerAnim();
         stickerAnim8.setName("一变三");
         stickerAnim8.setIcon(R.mipmap.anim_ybs);
         stickerAnim8.setAnimType(AnimType.SUPERSTAR);
