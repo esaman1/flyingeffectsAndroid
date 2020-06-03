@@ -27,10 +27,24 @@ public class AnimCollect {
      */
     public int getAnimid(AnimType type) {
         switch (type) {
-            case EIGHTBORTHER:
-                return 2;
             case LEFTTORIGHT:
                 return 1;
+            case EIGHTBORTHER:
+                return 2;
+            case BOTTOMTOCENTER:
+                return 3;
+            case SWINGUPANDDOWN:
+                return 4;
+            case ROATION:
+                return 5;
+            case BOTTOMTOUP:
+                return 6;
+            case LEFTANDRIGHTDISSMISS:
+                return 7;
+            case SUPERSTAR:
+                return 8;
+
+
             case NULL:
                 return 0;
         }
@@ -94,7 +108,7 @@ public class AnimCollect {
         switch (type) {
             //8个动画飞天效果
             case EIGHTBORTHER:
-                LogUtil.d("LEFTTORIGHT", "EIGHTBORTHER-subLayer大小为" + subLayer.size());
+
                 ItemEightBorther itemEightBorther = new ItemEightBorther();
                 itemEightBorther.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(itemEightBorther);
@@ -102,14 +116,12 @@ public class AnimCollect {
             //左进右出
             case LEFTTORIGHT:
                 ItemRightToLeft itemRightToLeft = new ItemRightToLeft();
-                LogUtil.d("LEFTTORIGHT", "LEFTTORIGHT-subLayer大小为" + subLayer.size());
                 itemRightToLeft.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(itemRightToLeft);
                 break;
 
             case BOTTOMTOCENTER:
                 ItemBottomToCenter itemBottomToCenter = new ItemBottomToCenter();
-                LogUtil.d("LEFTTORIGHT", "LEFTTORIGHT-subLayer大小为" + subLayer.size());
                 itemBottomToCenter.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(itemBottomToCenter);
                 break;
@@ -117,7 +129,6 @@ public class AnimCollect {
 
             case SWINGUPANDDOWN:
                 SwingUpAndDownToCenter swingUpAndDownToCenter = new SwingUpAndDownToCenter();
-                LogUtil.d("LEFTTORIGHT", "LEFTTORIGHT-subLayer大小为" + subLayer.size());
                 swingUpAndDownToCenter.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(swingUpAndDownToCenter);
                 break;

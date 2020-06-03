@@ -1,7 +1,6 @@
 package com.flyingeffects.com.view.animations.CustomMove;
 
 import com.flyingeffects.com.enity.TransplationPos;
-import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.box.Layer;
 
@@ -17,7 +16,6 @@ import java.util.List;
 
 public class ItemRightToLeft extends baseAnimModel {
 
-
     private StickerView mainStickerView;
     private ArrayList<TransplationPos> listForTranslaptionPosition = new ArrayList<>();
     private ArrayList<Float> listForScale = new ArrayList<>();
@@ -26,12 +24,8 @@ public class ItemRightToLeft extends baseAnimModel {
         this.mainStickerView = mainStickerView;
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
         setScale(mainStickerView.getScale());
-        LogUtil.d("toChangeStickerView", "subLayer子图层大小为" + subLayer.size());
         StickerView sub1 = subLayer.get(0);
-        LogUtil.d("toChangeStickerView", "第一个贴纸的图片地址为" + sub1.getOriginalPath());
         StickerView sub2 = subLayer.get(1);
-        LogUtil.d("toChangeStickerView", "第一个贴纸的图片地址为" + sub2.getOriginalPath());
-        //(mainStickerView.getmHelpBoxRectW())  解决方法效果很突兀的情况
         float totalWidth = mainStickerView.getMeasuredWidth() + (mainStickerView.getmHelpBoxRectW());
         float mScale = mainStickerView.GetHelpBoxRectScale();
         //view 右边的位置
@@ -58,7 +52,6 @@ public class ItemRightToLeft extends baseAnimModel {
                 }
                 sub1.toScale(1 - translationToX, mScale, isDone);
 
-                LogUtil.d("toChangeStickerView", "第一个贴纸移动为" + translationToX * totalWidth);
 
                 if (needProgress < 0.33) {
                     translationToX = (float) (needProgress + 0.66);
@@ -70,7 +63,6 @@ public class ItemRightToLeft extends baseAnimModel {
                 }
                 sub2.toScale(1 - translationToX, mScale, isDone);
 
-                LogUtil.d("toChangeStickerView", "第二个贴纸移动为" + translationToX * totalWidth);
 
 
                 if (needProgress < (1 - 0.99)) {

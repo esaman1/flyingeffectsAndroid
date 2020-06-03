@@ -33,7 +33,7 @@ public class ItemEightBorther extends baseAnimModel {
         float totalDistancePathMeasure = mPathMeasure.getLength();
         float perDistance = totalDistancePathMeasure / (float) 12;
         //第一个参数为总时长
-         animationLinearInterpolator = new AnimationLinearInterpolator(10000, (progress, isDone) -> {
+        animationLinearInterpolator = new AnimationLinearInterpolator(10000, (progress, isDone) -> {
             //主图层应该走的位置
             float nowDistance = totalDistancePathMeasure * progress;
             mPathMeasure.getPosTan(nowDistance, pos, tan);

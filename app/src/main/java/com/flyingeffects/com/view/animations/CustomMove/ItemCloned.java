@@ -20,7 +20,6 @@ public class ItemCloned extends baseAnimModel {
 
     private StickerView mainStickerView;
     private ArrayList<TransplationPos> listForTranslaptionPosition = new ArrayList<>();
-    private ArrayList<Float> listForScale = new ArrayList<>();
 
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
         this.mainStickerView = mainStickerView;

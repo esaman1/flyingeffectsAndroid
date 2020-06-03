@@ -600,6 +600,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        LogUtil.d("oom","-----------------------ondraw------------------------------");
         drawContent(canvas);
     }
 
@@ -713,8 +714,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                         mHelpBoxRect.top - offsetValue);
 
                 float center = (mHelpBoxRect.bottom - mHelpBoxRect.top) / (float) 2;
-                LogUtil.d("center", "center=" + center);
-                LogUtil.d("center", "mHelpBoxRect.top=" + mHelpBoxRect.top);
+//                LogUtil.d("center", "center=" + center);
+//                LogUtil.d("center", "mHelpBoxRect.top=" + mHelpBoxRect.top);
                 rightCenterDstRect.offsetTo(mHelpBoxRect.right - offsetValue,
                         mHelpBoxRect.top + center - offsetValue);
 
@@ -764,7 +765,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 if (NowMaterialIsVideo) {
                     //动态设置文字大小
                     int desiredTextSize = (int) (40 * (rightBottomDstRect.left - leftBottomDstRect.right) / bounds.width());
-                    LogUtil.d("OOM", "desiredTextSize=" + desiredTextSize);
+//                    LogUtil.d("OOM", "desiredTextSize=" + desiredTextSize);
                     whitePaint.setTextAlign(Paint.Align.CENTER);
                     whitePaint.setTextSize(desiredTextSize);
                     Path circlePath = new Path();
@@ -892,12 +893,12 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                         adjustCenter(dx, dy);
                         invalidate();
                         lastX = x;
-                        LogUtil.d("toTranMove2", "Old-----lastX=" + lastX);
+//                        LogUtil.d("toTranMove2", "Old-----lastX=" + lastX);
                         lastY = y;
                         moveX = mHelpBoxRect.right;
                         moveY = mHelpBoxRect.bottom;
-                        LogUtil.d("OOM", "moveX" + moveX);
-                        LogUtil.d("OOM", "width" + getMeasuredWidth());
+//                        LogUtil.d("OOM", "moveX" + moveX);
+//                        LogUtil.d("OOM", "width" + getMeasuredWidth());
 
                     } else if (mCurrentMode == rotateLocation) {
                         // 旋转 缩放文字操作
@@ -1016,8 +1017,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
         mRotateAngle = adjustDegree(mRotateAngle, angle);//+= angle;
 
-        LogUtil.d("updateRotateAndScale", "mScale=" + mScale);
-        LogUtil.d("updateRotateAndScale", "mRotateAngle=" + mRotateAngle);
+//        LogUtil.d("updateRotateAndScale", "mScale=" + mScale);
+//        LogUtil.d("updateRotateAndScale", "mRotateAngle=" + mRotateAngle);
 
         moveX = mHelpBoxRect.right;
         moveY = mHelpBoxRect.bottom;
@@ -1330,8 +1331,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                             contentHeight = widthBigger ? contentWidth * (bitmapW / (float) bitmapH) : contentWidth * (bitmapH / (float) bitmapW);
                         }
                         originalBitmapHeight = (int) contentHeight;
-                        LogUtil.d("OOM", "contentHeight=" + contentHeight);
-                        LogUtil.d("OOM", "contentWidth=" + contentWidth);
+//                        LogUtil.d("OOM", "contentHeight=" + contentHeight);
+//                        LogUtil.d("OOM", "contentWidth=" + contentWidth);
                     } else {
                         contentHeight = getMeasuredHeight() / 2;
                     }
@@ -1429,8 +1430,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     contentHeight = widthBigger ? contentWidth * (bitmapW / (float) bitmapH) : contentWidth * (bitmapH / (float) bitmapW);
                 }
                 originalBitmapHeight = (int) contentHeight;
-                LogUtil.d("OOM", "contentHeight=" + contentHeight);
-                LogUtil.d("OOM", "contentWidth=" + contentWidth);
+//                LogUtil.d("OOM", "contentHeight=" + contentHeight);
+//                LogUtil.d("OOM", "contentWidth=" + contentWidth);
                 RequestManager manager = Glide.with(getContext());
                 RequestBuilder builder = null;
                 if (path.endsWith(".gif")) {
@@ -1501,7 +1502,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
 
     public float getCenterX() {
-        LogUtil.d("getCenterX", "getCenterX=" + mHelpBoxRect.right);
+//        LogUtil.d("getCenterX", "getCenterX=" + mHelpBoxRect.right);
         float xx = (mHelpBoxRect.right - mHelpBoxRect.left) / 2;
         return mHelpBoxRect.right - xx + 30;
 
@@ -1659,24 +1660,24 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     public void toRotate(float rotate) {
         mRotateAngle=rotate;
-        invalidate();
+//        invalidate();
     }
 
     public void toTranMoveX(float needToX) {
         center.set(needToX, mHelpBoxRect.centerY());
-        invalidate();
+//        invalidate();
         lastX = needToX;
     }
 
     public void toTranMoveY(float needToY) {
         center.set(mHelpBoxRect.centerX(), needToY);
-        invalidate();
+//        invalidate();
         lastY = needToY;
     }
 
     public void toTranMoveXY(float needToX, float needToY) {
         center.set(needToX, needToY);
-        invalidate();
+//        invalidate();
         lastY = needToY;
         lastX = needToX;
     }
@@ -1739,7 +1740,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 //        mAnimPath.addCircle(mHelpBoxRect.centerX(), mHelpBoxRect.centerY() + diameter, diameter, Path.Direction.CCW);
         mPathMeasure = new PathMeasure();
         mPathMeasure.setPath(mAnimPath, true);
-        LogUtil.d("OOM", " mPathMeasure.getLength()=" + mPathMeasure.getLength());
+//        LogUtil.d("OOM", " mPathMeasure.getLength()=" + mPathMeasure.getLength());
     }
 
 

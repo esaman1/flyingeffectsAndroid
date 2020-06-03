@@ -158,10 +158,10 @@ public class AnimationLinearInterpolator {
                     if (nowDuration >= totalDuration) {
                         nowDuration = 0;
                     }
-                    nowDuration += 10;
-                    LogUtil.d("xxx2", "nowDuration=" + nowDuration);
+                    nowDuration += 5;
+//                    LogUtil.d("xxx2", "nowDuration=" + nowDuration);
                     float nowFloatTime = nowDuration / (float) totalDuration;
-                    LogUtil.d("xxx2", "nowFloatTime=" + nowFloatTime);
+//                    LogUtil.d("xxx2", "nowFloatTime=" + nowFloatTime);
                     float progress;
                     if(interpolatorType==0){
                         progress= getNowInterpolatorProgress(nowFloatTime);
@@ -172,7 +172,7 @@ public class AnimationLinearInterpolator {
 
                 }
             };
-            timer.schedule(task, delay, 10);
+            timer.schedule(task, delay, 5);
         }
     }
 

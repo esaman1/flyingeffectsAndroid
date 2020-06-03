@@ -296,8 +296,12 @@ public class CreationTemplateMvpModel {
         View viewForChooseAnim = LayoutInflater.from(context).inflate(R.layout.view_create_template_anim, viewPager, false);
         GridView gridViewAnim = viewForChooseAnim.findViewById(R.id.gridView_anim);
         gridViewAnim.setOnItemClickListener((adapterView, view, i, l) -> {
-            if(!DoubleClick.getInstance().isFastZDYDoubleClick(500)){
-                startPlayAnim(i, null, 0, false);
+            if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
+                if (i == 0) {
+                    startPlayAnim(i, true, null, 0, false);
+                } else {
+                    startPlayAnim(i, false, null, 0, false);
+                }
             }
         });
         TemplateGridViewAnimAdapter gridAdapter = new TemplateGridViewAnimAdapter(listAllAnima, context);
@@ -333,10 +337,10 @@ public class CreationTemplateMvpModel {
      * @param position          动画的类型
      * @param targetStickerView 目标贴纸，如果为null ,那么目标贴纸为最上层的那个，这里的多久就是针对设置当个动画，如果不为null ,
      *                          那么动画就是针对预览页面，某个贴纸设置动画
-     * @param isFromPreview 是否来自播放预览
-     * user : zhangtongju
+     * @param isFromPreview     是否来自播放预览
+     *                          user : zhangtongju
      */
-    private synchronized void startPlayAnim(int position, StickerView targetStickerView, int intoPosition, boolean isFromPreview) {
+    private synchronized void startPlayAnim(int position, boolean isClearAllAnim, StickerView targetStickerView, int intoPosition, boolean isFromPreview) {
         if (!isFromPreview) {
             deleteSubLayerSticker();
         }
@@ -356,7 +360,7 @@ public class CreationTemplateMvpModel {
         if (targetStickerView == null) {
             targetStickerView = (StickerView) viewLayerRelativeLayout.getChildAt(nowChooseStickerPosition);
         }
-        if (position == 0) {
+        if (isClearAllAnim) {
             //贴纸还原,显示到之前的位置
             ToastUtil.showToast("清理全部动画");
             for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
@@ -385,16 +389,21 @@ public class CreationTemplateMvpModel {
     }
 
 
+
+
+    /**
+     * description ：延迟开启动画，因为这里可能需要复制很多的子贴纸
+     * creation date: 2020/6/3
+     * user : zhangtongju
+     */
     private void delayedToStartAnim(StartAnimModel startAnimModel, AnimType animType, StickerView finalTargetStickerView, final int position) {
-        new Handler().postDelayed(() -> {
-            LogUtil.d("OOM", "delayedToStartAnim" + position);
-            if (sublayerListForBitmapLayer != null && sublayerListForBitmapLayer.size() > 0) {
-                if (sublayerListForBitmapLayer.size() > position) {
-                    LogUtil.d("OOM", "delayedToStartAnim" + sublayerListForBitmapLayer.get(position).size());
-                    startAnimModel.ToStart(animType, finalTargetStickerView, sublayerListForBitmapLayer.get(position));
-                }
+        new Handler().postDelayed(() -> new Thread(() -> {
+            if(sublayerListForBitmapLayer!=null){
+                startAnimModel.ToStart(animType, finalTargetStickerView, sublayerListForBitmapLayer.get(position));
+            }else{
+                startAnimModel.ToStart(animType, finalTargetStickerView, null);
             }
-        }, 1000);
+        }).start(), 1000);
     }
 
 
@@ -725,7 +734,7 @@ public class CreationTemplateMvpModel {
             public void stickerDragUp() {
                 if (isIntoDragMove && stickView.getChooseAnimId() != null && stickView.getChooseAnimId() != AnimType.NULL) {
                     //模拟动画按钮的点击事件
-                    startPlayAnim(animCollect.getAnimid(stickView.getChooseAnimId()), null, 0, false);
+                    startPlayAnim(animCollect.getAnimid(stickView.getChooseAnimId()), false, null, 0, false);
                 }
                 isIntoDragMove = false;
             }
@@ -1368,23 +1377,27 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     public void showAllAnim(boolean isShow) {
+
         //删除动画贴纸
         deleteSubLayerSticker();
         stopAllAnim();
-        if (listForStickerModel != null && listForStickerModel.size() > 0) {
-            for (int i = 0; i < listForStickerModel.size(); i++) {
-                AnimStickerModel stickerModel = listForStickerModel.get(i);
-                StickerView stickerView = stickerModel.getStickerView();
-                if (stickerView != null && stickerView.getChooseAnimId() != AnimType.NULL) {
-                    if (isShow) {
+        if (isShow) {
+//            WaitingDialog.openPragressDialog(context);
+            if (listForStickerModel != null && listForStickerModel.size() > 0) {
+                for (int i = 0; i < listForStickerModel.size(); i++) {
+                    AnimStickerModel stickerModel = listForStickerModel.get(i);
+                    StickerView stickerView = stickerModel.getStickerView();
+                    if (stickerView != null && stickerView.getChooseAnimId() != AnimType.NULL) {
                         if (stickerView.getChooseAnimId() != null) {
                             int type = animCollect.getAnimid(stickerView.getChooseAnimId());
-                            startPlayAnim(type, stickerView, i, true);
+                            startPlayAnim(type, false, stickerView, i, true);
                         }
                     }
                 }
             }
         }
+
+
     }
 
 
