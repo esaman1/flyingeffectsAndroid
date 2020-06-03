@@ -1089,76 +1089,80 @@ public class CreationTemplateMvpModel {
     private boolean isIntoSaveVideo = false;
 
     public void toSaveVideo(String imageBjPath) {
-
-        deleteSubLayerSticker();
         stopAllAnim();
-
-        if (!isIntoSaveVideo) {
-            isIntoSaveVideo = true;
-            listAllSticker.clear();
-            cutSuccessNum = 0;
-            cutVideoPathList.clear();
-            backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, new backgroundDraw.saveCallback() {
-                @Override
-                public void saveSuccessPath(String path, int progress) {
-                    if (!isDestroy) {
-                        if (!TextUtils.isEmpty(path)) {
-                            dialog.closePragressDialog();
-                            //成功后的回调
-                            Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                            intent.putExtra("path", path);
-                            context.startActivity(intent);
-                            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> isIntoSaveVideo = false, 500));
-                        } else {
-                            if (progress == 10000) {
-                                isIntoSaveVideo = false;
-                                //渲染失败
-                                dialog.closePragressDialog();
-                            } else {
-                                dialogProgress = progress;
-                                handler.sendEmptyMessage(1);
+        deleteSubLayerSticker();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!isIntoSaveVideo) {
+                    isIntoSaveVideo = true;
+                    listAllSticker.clear();
+                    cutSuccessNum = 0;
+                    cutVideoPathList.clear();
+                    backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, new backgroundDraw.saveCallback() {
+                        @Override
+                        public void saveSuccessPath(String path, int progress) {
+                            if (!isDestroy) {
+                                if (!TextUtils.isEmpty(path)) {
+                                    dialog.closePragressDialog();
+                                    //成功后的回调
+                                    Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                    intent.putExtra("path", path);
+                                    context.startActivity(intent);
+                                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> isIntoSaveVideo = false, 500));
+                                } else {
+                                    if (progress == 10000) {
+                                        isIntoSaveVideo = false;
+                                        //渲染失败
+                                        dialog.closePragressDialog();
+                                    } else {
+                                        dialogProgress = progress;
+                                        handler.sendEmptyMessage(1);
+                                    }
+                                }
                             }
+                        }
+                    }, animCollect);
+
+
+                    for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
+                        StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
+                        listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
+                    }
+
+                    if (listAllSticker.size() == 0) {
+                        isIntoSaveVideo = false;
+                        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().post(() -> Toast.makeText(context, "你未选择素材", Toast.LENGTH_SHORT).show()));
+                        return;
+                    }
+
+                    for (int i = 0; i < listAllSticker.size(); i++) {
+                        if (defaultVideoDuration < listAllSticker.get(i).getDuration()) {
+                            defaultVideoDuration = (int) listAllSticker.get(i).getDuration();
+                        }
+                        if (listAllSticker.get(i).isVideo()) {
+                            cutVideoPathList.add(new videoType(listAllSticker.get(i).getOriginalPath(), i, listAllSticker.get(i).getDuration()));
+                        }
+                    }
+                    if (cutVideoPathList.size() == 0) {
+                        dialog.openProgressDialog();
+                        //都不是视频的情况下，就直接渲染
+                        backgroundDraw.toSaveVideo(listAllSticker, isMatting);
+                    } else {
+                        dialog.openProgressDialog();
+                        cutList.clear();
+                        if (videoInfo != null) {
+                            cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration());
+                        } else {
+                            //没选择背景默认裁剪10秒
+                            cutVideo(cutVideoPathList.get(0), defaultVideoDuration, cutVideoPathList.get(0).getDuration());
                         }
                     }
                 }
-            }, animCollect);
-
-
-            for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
-                StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
-                listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
             }
+        },200);
 
-            if (listAllSticker.size() == 0) {
-                isIntoSaveVideo = false;
-                Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().post(() -> Toast.makeText(context, "你未选择素材", Toast.LENGTH_SHORT).show()));
-                return;
-            }
-
-            for (int i = 0; i < listAllSticker.size(); i++) {
-                if (defaultVideoDuration < listAllSticker.get(i).getDuration()) {
-                    defaultVideoDuration = (int) listAllSticker.get(i).getDuration();
-                }
-                if (listAllSticker.get(i).isVideo()) {
-                    cutVideoPathList.add(new videoType(listAllSticker.get(i).getOriginalPath(), i, listAllSticker.get(i).getDuration()));
-                }
-            }
-            if (cutVideoPathList.size() == 0) {
-                dialog.openProgressDialog();
-                //都不是视频的情况下，就直接渲染
-                backgroundDraw.toSaveVideo(listAllSticker, isMatting);
-            } else {
-                dialog.openProgressDialog();
-                cutList.clear();
-                if (videoInfo != null) {
-                    cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration());
-                } else {
-                    //没选择背景默认裁剪10秒
-                    cutVideo(cutVideoPathList.get(0), defaultVideoDuration, cutVideoPathList.get(0).getDuration());
-                }
-            }
-        }
 
 
     }

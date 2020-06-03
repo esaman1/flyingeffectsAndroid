@@ -1,5 +1,6 @@
 package com.flyingeffects.com.view.animations.CustomMove;
 
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.StickerView;
 
 public abstract class baseAnimModel {
@@ -39,6 +40,9 @@ public abstract class baseAnimModel {
             if(scale!=0){
                 mainStickerView.setScale(scale);
             }
+//            if(rotate!=0){
+//                mainStickerView.setRotate(rotate);
+//            }
         }
     }
 

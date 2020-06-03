@@ -600,7 +600,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        LogUtil.d("oom","-----------------------ondraw------------------------------");
+        LogUtil.d("oom", "-----------------------ondraw------------------------------");
         drawContent(canvas);
     }
 
@@ -1180,6 +1180,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         this.mScale = scale;
     }
 
+
+    public void setRotate(float rotate) {
+        this.mRotateAngle = rotate;
+    }
+
     public void setDegree(float degree) {
         this.mRotateAngle = degree;
     }
@@ -1189,6 +1194,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
+    /**
+     * description ：得到的是一个比例
+     * creation date: 2020/6/3
+     * user : zhangtongju
+     */
     public float getTranslationX() {
         //获得整个绘制区域的宽
         float HelpBoxRectWidth = mHelpBoxRect.width();
@@ -1514,7 +1524,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-
     public float getMBoxCenterY() {
         return mHelpBoxRect.centerY();
     }
@@ -1659,7 +1668,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
 
     public void toRotate(float rotate) {
-        mRotateAngle=rotate;
+        mRotateAngle = rotate;
 //        invalidate();
     }
 
@@ -1692,9 +1701,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-
-
-
     /**
      * 是否来自动画页面
      */
@@ -1717,10 +1723,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      * creation date: 2020/5/25
      * user : zhangtongju
      */
-
-
-
-
 
 
     Path mAnimPath;
@@ -1747,7 +1749,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public PathMeasure getAnimPathMeasure() {
         return mPathMeasure;
     }
-
 
 
 }
