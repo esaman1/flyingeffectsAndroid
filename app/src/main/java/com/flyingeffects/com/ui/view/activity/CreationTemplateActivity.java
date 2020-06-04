@@ -152,17 +152,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 背景音乐播放器
      */
     private MediaPlayer bgmPlayer;
-
-
     /**
      * 默认抠图开关
      */
     private boolean isNeedCut;
 
-
     @BindView(R.id.DrawPad_view)
     DrawPadView2 drawPadView;
-
 
     @Override
     protected int getLayoutId() {
@@ -193,7 +189,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
         presenter.requestStickersList();
     }
-
 
     private void initExo(String videoPath) {
         if (TextUtils.isEmpty(videoPath)) {
