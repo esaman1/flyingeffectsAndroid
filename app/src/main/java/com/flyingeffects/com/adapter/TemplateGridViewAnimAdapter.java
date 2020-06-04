@@ -52,6 +52,7 @@ public class TemplateGridViewAnimAdapter extends BaseAdapter {
             view = LayoutInflater.from(context).inflate(R.layout.item_template_anim, parent, false);
             holder.image = view.findViewById(R.id.iv_icon);
             holder.tv_name = view.findViewById(R.id.tv_name);
+            holder.tv_checked=view.findViewById(R.id.tv_checked);
             view.setTag(holder);
         } else {
             holder = (ViewHold) view.getTag();
@@ -63,6 +64,13 @@ public class TemplateGridViewAnimAdapter extends BaseAdapter {
             Glide.with(context).load(list.get(position).getIcon()).into( holder.image);
         }
         holder.tv_name.setText(list.get(position).getName());
+
+        if (list.get(position).isChecked() ) {
+            holder.tv_checked.setVisibility(View.VISIBLE);
+        } else {
+            holder.tv_checked.setVisibility(View.GONE);
+        }
+
         return view;
     }
 
@@ -70,6 +78,7 @@ public class TemplateGridViewAnimAdapter extends BaseAdapter {
     class ViewHold {
         ImageView image;
         TextView tv_name;
+        TextView tv_checked;
     }
 
 

@@ -249,6 +249,7 @@ public class CreationTemplateMvpModel {
 
 
     private TemplateGridViewAdapter gridAdapter;
+    TemplateGridViewAnimAdapter templateGridViewAnimAdapter;
     private List<StickerList> listForSticker = new ArrayList<>();
     private int selectPage = 1;
     private int perPageCount = 20;
@@ -303,6 +304,7 @@ public class CreationTemplateMvpModel {
         GridView gridViewAnim = viewForChooseAnim.findViewById(R.id.gridView_anim);
         gridViewAnim.setOnItemClickListener((adapterView, view, i, l) -> {
             if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
+                modificationSingleAnimItemIsChecked(i);
                 if (i == 0) {
                     startPlayAnim(i, true, null, 0, false);
                 } else {
@@ -311,8 +313,8 @@ public class CreationTemplateMvpModel {
                 }
             }
         });
-        TemplateGridViewAnimAdapter gridAdapter = new TemplateGridViewAnimAdapter(listAllAnima, context);
-        gridViewAnim.setAdapter(gridAdapter);
+        templateGridViewAnimAdapter = new TemplateGridViewAnimAdapter(listAllAnima, context);
+        gridViewAnim.setAdapter(templateGridViewAnimAdapter);
         listForInitBottom.add(templateThumbView);
         listForInitBottom.add(viewForChooseAnim);
         TemplateViewPager adapter = new TemplateViewPager(listForInitBottom);
@@ -1320,6 +1322,19 @@ public class CreationTemplateMvpModel {
         item1.setChecked(true);
         listForSticker.set(position, item1);//修改对应的元素
         gridAdapter.notifyDataSetChanged();
+    }
+
+
+
+    private void modificationSingleAnimItemIsChecked(int position) {
+        for (StickerAnim item : listAllAnima
+        ) {
+            item.setChecked(false);
+        }
+        StickerAnim item1 = listAllAnima.get(position);
+        item1.setChecked(true);
+        listAllAnima.set(position, item1);//修改对应的元素
+        templateGridViewAnimAdapter.notifyDataSetChanged();
     }
 
 
