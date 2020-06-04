@@ -27,6 +27,20 @@ public abstract class baseAnimModel {
     public  abstract void StopAnim();
 
 
+    public int getLayerId() {
+        return LayerId;
+    }
+
+    public void setLayerId(int layerId) {
+        LayerId = layerId;
+    }
+
+    /**
+     * 用来记录id
+     */
+    public int LayerId;
+
+
 
 
     /**

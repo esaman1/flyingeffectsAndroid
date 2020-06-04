@@ -205,13 +205,13 @@ public class backgroundDraw {
         }
     }
 
-    public void addVideoLayer(AllStickerData stickerItem) {
+    public void addVideoLayer(AllStickerData stickerItem,int i) {
         LSOVideoOption option = null;
         try {
             option = new LSOVideoOption(stickerItem.getPath());
             option.setAudioMute();
             VideoFrameLayer videoLayer = execute.addVideoLayer(option);
-
+            videoLayer.setId(i);
             //默认gif 的缩放位置是gif 宽度最大
             float layerScale = DRAWPADWIDTH / (float) videoLayer.getLayerWidth();
             LogUtil.d("OOM", "图层的缩放为" + layerScale + "");
@@ -253,8 +253,9 @@ public class backgroundDraw {
     /**
      * 增加一个MV图层.
      */
-    private void addGifLayer(AllStickerData stickerItem) {
+    private void addGifLayer(AllStickerData stickerItem,int id) {
         GifLayer gifLayer = execute.addGifLayer(stickerItem.getPath());
+        gifLayer.setId(id);
         //默认gif 的缩放位置是gif 宽度最大
         float layerScale = DRAWPADWIDTH / (float) gifLayer.getLayerWidth();
         LogUtil.d("OOM", "图层的缩放为" + layerScale + "");
@@ -292,10 +293,11 @@ public class backgroundDraw {
     /**
      * 增加一个图片图层.
      */
-    private void addBitmapLayer(AllStickerData stickerItem) {
+    private void addBitmapLayer(AllStickerData stickerItem,int id) {
         LogUtil.d("OOM", "addBitmapLayer");
         Bitmap bp = BitmapFactory.decodeFile(stickerItem.getPath());
         BitmapLayer bpLayer = execute.addBitmapLayer(bp);
+        bpLayer .setId(id);
         float layerScale = DRAWPADWIDTH / (float) bpLayer.getLayerWidth();
         LogUtil.d("OOM", "图层的缩放为" + layerScale + "");
         float stickerScale = stickerItem.getScale();
@@ -419,17 +421,10 @@ public class backgroundDraw {
         bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight() * percentY);
         bpLayer.switchFilterTo(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class, stickerItem.getMaskBitmap()));
         preTime = stickerItem.getDuration() * 1000 / (float) getMattingList.size();
-        LogUtil.d("OOM3", "贴纸的时长为" + stickerItem.getDuration());
-        LogUtil.d("OOM3", "贴纸的数量为时长为" + (float) getMattingList.size());
-        LogUtil.d("OOM3", "preTime=" + preTime);
-
-
-
         if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
             int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
             addMattingBitmapSubLayer(needSublayer, bpLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale);
         }
-
         nowProgressTime[0] = preTime;
         CanvasLayer canvasLayer = execute.addCanvasLayer();
         float needDurationTime = animCollect.getAnimNeedSubLayerTime(stickerItem.getChooseAnimId());
@@ -520,13 +515,13 @@ public class backgroundDraw {
                     intoCanvesCount++;
                     addCanversLayer(item, intoCanvesCount);
                 } else {
-                    addVideoLayer(item);
+                    addVideoLayer(item,i);
                 }
             } else {
                 if (item.getPath().endsWith(".gif")) {
-                    addGifLayer(item);
+                    addGifLayer(item,i);
                 } else {
-                    addBitmapLayer(item);
+                    addBitmapLayer(item,i);
                 }
             }
         }

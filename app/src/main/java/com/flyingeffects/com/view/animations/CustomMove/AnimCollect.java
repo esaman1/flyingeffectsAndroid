@@ -18,12 +18,10 @@ import java.util.List;
 public class AnimCollect {
 
 
-
-
     private ItemEightBorther itemEightBorther;
     private ItemRightToLeft rightToLeft;
     private ItemBottomToCenter itemBottomToCenter;
-    private SwingUpAndDownToCenter swingUpAndDownToCenter;
+    //    private SwingUpAndDownToCenter swingUpAndDownToCenter;
     private Rotate rotate;
     private ItemBottomToTop itemBottomToTop;
     private ItemLeftAndRightDissmiss itemLeftAndRightDissmiss;
@@ -179,9 +177,22 @@ public class AnimCollect {
      * user : zhangtongju
      */
     public void startAnimForChooseAnim(AnimType type, Layer mainStickerView, ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
+       int  nowMainLayerId;
         switch (type) {
             //8个动画飞天效果
             case EIGHTBORTHER:
+
+
+                nowMainLayerId = mainStickerView.getId();
+                ItemEightBorther itemEightBorther = null;
+                for (baseAnimModel model : listForKeepBaseAnimMode
+                ) {
+                    if (model.LayerId == nowMainLayerId) {
+                        itemEightBorther = (ItemEightBorther) model;
+                        break;
+                    }
+                }
+
                 if (itemEightBorther != null) {
                     itemEightBorther.getLansongTranslation(callback, percentage, listForSubLayer);
                 } else {
@@ -192,6 +203,19 @@ public class AnimCollect {
                 break;
             //左进右出
             case LEFTTORIGHT:
+
+
+                nowMainLayerId = mainStickerView.getId();
+                ItemRightToLeft rightToLeft = null;
+                for (baseAnimModel model : listForKeepBaseAnimMode
+                ) {
+                    if (model.LayerId == nowMainLayerId) {
+                        rightToLeft = (ItemRightToLeft) model;
+                        break;
+                    }
+                }
+
+
                 if (rightToLeft != null) {
                     (rightToLeft).toChangeSubLayer(callback, percentage);
                 } else {
@@ -203,6 +227,20 @@ public class AnimCollect {
 
             //底部居中位置
             case BOTTOMTOCENTER:
+
+                nowMainLayerId = mainStickerView.getId();
+                ItemBottomToCenter itemBottomToCenter = null;
+                for (baseAnimModel model : listForKeepBaseAnimMode
+                ) {
+                    if (model.LayerId == nowMainLayerId) {
+                        itemBottomToCenter = (ItemBottomToCenter) model;
+                        break;
+                    }
+                }
+
+
+
+
                 if (itemBottomToCenter != null) {
                     (itemBottomToCenter).toChangeSubLayer(callback, percentage);
                 } else {
@@ -214,6 +252,15 @@ public class AnimCollect {
 
 
             case SWINGUPANDDOWN:
+                int id = mainStickerView.getId();
+                SwingUpAndDownToCenter swingUpAndDownToCenter = null;
+                for (baseAnimModel model : listForKeepBaseAnimMode
+                ) {
+                    if (model.LayerId == id) {
+                         swingUpAndDownToCenter = (SwingUpAndDownToCenter) model;
+                         break;
+                    }
+                }
                 if (swingUpAndDownToCenter != null) {
                     (swingUpAndDownToCenter).toChangeSubLayer(callback, percentage);
                 } else {
@@ -224,6 +271,21 @@ public class AnimCollect {
                 break;
 
             case ROATION:
+
+
+                nowMainLayerId = mainStickerView.getId();
+                Rotate rotate = null;
+                for (baseAnimModel model : listForKeepBaseAnimMode
+                ) {
+                    if (model.LayerId == nowMainLayerId) {
+                        rotate = (Rotate) model;
+                        break;
+                    }
+                }
+
+
+
+
                 if (rotate != null) {
                     (rotate).toChangeSubLayer(callback, percentage);
                 } else {
@@ -235,6 +297,19 @@ public class AnimCollect {
 
 
             case BOTTOMTOUP:
+
+
+                nowMainLayerId = mainStickerView.getId();
+                ItemBottomToTop itemBottomToTop = null;
+                for (baseAnimModel model : listForKeepBaseAnimMode
+                ) {
+                    if (model.LayerId == nowMainLayerId) {
+                        itemBottomToTop = (ItemBottomToTop) model;
+                        break;
+                    }
+                }
+
+
                 if (itemBottomToTop != null) {
                     (itemBottomToTop).toChangeSubLayer(callback, percentage);
                 } else {
@@ -245,6 +320,18 @@ public class AnimCollect {
                 break;
 
             case LEFTANDRIGHTDISSMISS:
+
+                nowMainLayerId = mainStickerView.getId();
+                ItemLeftAndRightDissmiss itemLeftAndRightDissmiss = null;
+                for (baseAnimModel model : listForKeepBaseAnimMode
+                ) {
+                    if (model.LayerId == nowMainLayerId) {
+                        itemLeftAndRightDissmiss = (ItemLeftAndRightDissmiss) model;
+                        break;
+                    }
+                }
+
+
                 if (itemLeftAndRightDissmiss != null) {
                     (itemLeftAndRightDissmiss).toChangeSubLayer(callback, percentage);
                 } else {
@@ -256,6 +343,17 @@ public class AnimCollect {
                 break;
 
             case SUPERSTAR:
+
+                nowMainLayerId = mainStickerView.getId();
+                ItemCloned itemCloned = null;
+                for (baseAnimModel model : listForKeepBaseAnimMode
+                ) {
+                    if (model.LayerId == nowMainLayerId) {
+                        itemCloned = (ItemCloned) model;
+                        break;
+                    }
+                }
+
                 if (itemCloned != null) {
                     (itemCloned).toChangeSubLayer(callback, percentage);
                 } else {
