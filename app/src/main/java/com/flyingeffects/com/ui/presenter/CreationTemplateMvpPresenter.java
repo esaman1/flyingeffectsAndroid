@@ -98,6 +98,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
     @Override
+    public void animIsComplate() {
+        creationTemplatemvpView.animIsComplate();
+    }
+
+    @Override
     public void getVideoDuration(int duration,int thumbCount) {
         creationTemplatemvpView.getVideoDuration(duration,thumbCount);
     }

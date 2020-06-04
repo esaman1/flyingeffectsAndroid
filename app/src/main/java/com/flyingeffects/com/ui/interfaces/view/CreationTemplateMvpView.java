@@ -25,5 +25,7 @@ public interface CreationTemplateMvpView {
 
     void showCreateTemplateAnim(boolean isShow);
 
+    void animIsComplate();
+
 //    void showRenderVideoTime(int duration);
 }

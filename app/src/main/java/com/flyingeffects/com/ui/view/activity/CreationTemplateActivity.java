@@ -6,7 +6,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.viewpager.widget.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
@@ -43,16 +44,10 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.lansosdk.LanSongFilter.LanSongMaskBlendFilter;
-import com.lansosdk.box.GifLayer;
-import com.lansosdk.box.OnLanSongSDKCompletedListener;
-import com.lansosdk.box.OnLanSongSDKErrorListener;
-import com.lansosdk.box.OnLanSongSDKProgressListener;
 import com.lansosdk.box.ViewLayerRelativeLayout;
-import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.lansosdk.videoeditor.DrawPadView2;
-import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.albumType;
+import com.shixing.sxve.ui.view.WaitingDialog;
 import com.suke.widget.SwitchButton;
 
 import java.io.File;
@@ -66,6 +61,7 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 /**
  * description ：用户创作页面,里面主要用了langSong 的工具类，对视频进行贴纸的功能
@@ -334,42 +330,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         nowStateIsPlaying(false);
                         presenter.showAllAnim(false);
                     } else {
-                        nowStateIsPlaying(true);
-                        if (!TextUtils.isEmpty(videoPath)) {
-                            if (isPlayComplate) {
-                                videoPlay();
-                                isIntoPause = false;
-                            } else {
-                                if (isInitVideoLayer) {
-                                    if (!isIntoPause) {
-                                        videoPlay();
-                                    } else {
-                                        videoPlay();
-                                        isIntoPause = false;
-                                        isInitVideoLayer = true;
-                                    }
-                                } else {
-                                    isIntoPause = false;
-                                    isInitVideoLayer = true;
-                                    videoPlay();
-                                }
-                            }
-                        } else {
-                            //如果有背景还是播放背景音乐
-                            if (!TextUtils.isEmpty(bgmPath)) {
-                                if (bgmPlayer != null) {
-                                    //继续播放
-                                    bgmPlayer.start();
-                                } else {
-                                    seekTo(0);
-                                    playBGMMusic();
-                                }
-                            }
-                        }
-                        isPlaying = true;
-                        startTimer();
-                        presenter.showGifAnim(true);
-                        presenter.showAllAnim(true);
+                        WaitingDialog.openPragressDialog(this);
+                        new Thread(() -> presenter.showAllAnim(true)).start();
+
                     }
                 }
 
@@ -662,6 +625,56 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         } else {
             viewLayerRelativeLayout.setVisibility(View.VISIBLE);
         }
+    }
+
+
+
+    /**
+     * description ：动画初始化完成，接下来就开始预览
+     * creation date: 2020/6/4
+     * user : zhangtongju
+     */
+    @Override
+    public void animIsComplate() {
+        WaitingDialog.closePragressDialog();
+        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+            nowStateIsPlaying(true);
+            if (!TextUtils.isEmpty(videoPath)) {
+                if (isPlayComplate) {
+                    videoPlay();
+                    isIntoPause = false;
+                } else {
+                    if (isInitVideoLayer) {
+                        if (!isIntoPause) {
+                            videoPlay();
+                        } else {
+                            videoPlay();
+                            isIntoPause = false;
+                            isInitVideoLayer = true;
+                        }
+                    } else {
+                        isIntoPause = false;
+                        isInitVideoLayer = true;
+                        videoPlay();
+                    }
+                }
+            } else {
+                //如果有背景还是播放背景音乐
+                if (!TextUtils.isEmpty(bgmPath)) {
+                    if (bgmPlayer != null) {
+                        //继续播放
+                        bgmPlayer.start();
+                    } else {
+                        seekTo(0);
+                        playBGMMusic();
+                    }
+                }
+            }
+            isPlaying = true;
+            startTimer();
+            presenter.showGifAnim(true);
+        });
+
     }
 
 
