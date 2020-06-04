@@ -38,6 +38,7 @@ public class Rotate extends baseAnimModel {
     private float previewSubPaddingHeight;
     public void initToChangeSubLayer(Layer mainLayer, LayerAnimCallback callback, float percentage){
         previewSubPosition= mainLayer.getPositionY();
+
         LogUtil.d("previewSubPosition","previewSubPosition="+previewSubPosition);
         previewSubPaddingHeight=mainLayer.getPadHeight();
         toChangeSubLayer(callback,percentage);

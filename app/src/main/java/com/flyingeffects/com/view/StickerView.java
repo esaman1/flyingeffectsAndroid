@@ -921,12 +921,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         super.onTouchEvent(event);
         if (!isFromAnim) {
             int pointerCount = event.getPointerCount();
-            LogUtil.d("event", "pointerCount =" + pointerCount);
             int action = event.getAction();
             float x = event.getX();
             float y = event.getY();
-
-
+            LogUtil.d("event", "x =" + x);
+            LogUtil.d("event", "y =" + y);
             switch (action & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN:
                     LogUtil.d("event", "ACTION_DOWN");
@@ -1873,6 +1872,13 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     public float GetHelpBoxRectRight() {
         return mHelpBoxRect.right;
+    }
+
+    public float GetHelpBoxRectCenterX() {
+        return mHelpBoxRect.centerX();
+    }
+    public float GetHelpBoxRectLeftX() {
+        return mHelpBoxRect.left;
     }
 
     public float GetHelpBoxRectBottom() {
