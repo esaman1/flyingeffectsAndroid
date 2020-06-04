@@ -1,13 +1,27 @@
 package com.flyingeffects.com.ui.model;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.view.ContextThemeWrapper;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
+import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.UserInfo;
@@ -16,14 +30,19 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.AdConfigs;
+import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
+import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
 import com.flyingeffects.com.ui.interfaces.model.PreviewMvpCallback;
+import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateActivity;
+import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
 import com.flyingeffects.com.utils.StringUtil;
@@ -31,7 +50,10 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.glidebitmappool.GlideBitmapPool;
 import com.glidebitmappool.internal.BitmapPool;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.megvii.segjni.SegJni;
+import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,7 +88,8 @@ public class PreviewMvpModel {
     }
 
 
-    public void DownVideo(String path, String imagePath, String id) {
+    public void DownVideo(String path, String imagePath, String id,boolean keepAlbum) {
+
         String videoName = mVideoFolder + File.separator + id + "synthetic.mp4";
         File File = new File(videoName);
         if (File.exists()) {
@@ -86,7 +109,17 @@ public class PreviewMvpModel {
 
                         @Override
                         public void isSuccess(boolean isSuccess, String path1) {
-                            callback.downVideoSuccess(path1, imagePath);
+                            if(!keepAlbum){
+                                callback.downVideoSuccess(path1, imagePath);
+                            }else{
+                                WaitingDialog.closePragressDialog();
+                                saveToAlbum(path1);
+                                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                                    AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_DOWNLOAD);
+                                }
+
+                            }
+
                         }
                     });
                 }
@@ -95,6 +128,85 @@ public class PreviewMvpModel {
         });
 
     }
+
+
+
+
+        private void saveToAlbum(String path) {
+            String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
+            try {
+                FileUtil.copyFile(new File(path), albumPath);
+                albumBroadcast(albumPath);
+                showKeepSuccessDialog(albumPath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    /**
+     * description ：通知相册更新
+     * date: ：2019/8/16 14:24
+     * author: 张同举 @邮箱 jutongzhang@sina.com
+     */
+    private void albumBroadcast(String outputFile) {
+        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        intent.setData(Uri.fromFile(new File(outputFile)));
+        context.sendBroadcast(intent);
+    }
+
+
+    private void showKeepSuccessDialog(String path) {
+        if (!DoubleClick.getInstance().isFastDoubleClick()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder( //去除黑边
+                    new ContextThemeWrapper(context, R.style.Theme_Transparent));
+            builder.setTitle(R.string.notification);
+            builder.setMessage("已为你保存到相册,多多分享给友友\n" + "【" + path + context.getString(R.string.folder) + "】"
+            );
+            builder.setNegativeButton(context.getString(R.string.got_it), (dialog, which) -> dialog.dismiss());
+            builder.setCancelable(true);
+            Dialog dialog = builder.show();
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+        }
+    }
+
+
+    public void showBottomSheetDialog(String path,String imagePath,String id){
+        BottomSheetDialog   bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
+        View view = LayoutInflater.from(context).inflate(R.layout.preview_bottom_sheet_dialog, null);
+        bottomSheetDialog.setContentView(view);
+
+       ImageView iv_download = view.findViewById(R.id.iv_download);
+        iv_download.setOnClickListener(view12 -> {
+            WaitingDialog.openPragressDialog(context,"飞闪极速下载中");
+            DownVideo(path,imagePath,id,true);
+        });
+
+        TextView tv_cancle=view.findViewById(R.id.tv_cancle);
+        tv_cancle.setOnClickListener(view1 -> bottomSheetDialog.dismiss());
+
+        bottomSheetDialog.setCancelable(true);
+        bottomSheetDialog.setCanceledOnTouchOutside(true);
+        bottomSheetDialog.setOnDismissListener(dialog -> {
+
+        });
+        bottomSheetDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+            }
+        });
+        View parent = (View) view.getParent();     //处理高度显示完全  https://www.jianshu.com/p/38af0cf77352
+        parent.setBackgroundResource(android.R.color.transparent);
+        BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);
+        view.measure(0, 0);
+        behavior.setPeekHeight(view.getMeasuredHeight());
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) parent.getLayoutParams();
+        params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+        parent.setLayoutParams(params);
+        bottomSheetDialog.show();
+    }
+
 
 
 

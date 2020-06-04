@@ -146,6 +146,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         boolean readOnly=getIntent().getBooleanExtra("readOnly",false);
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
             tv_make.setText("使用背景");
+            findViewById(R.id.iv_download_bj).setVisibility(View.VISIBLE);
+        }
+        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+            findViewById(R.id.iv_download_bj).setVisibility(View.VISIBLE);
         }
         fromToMineCollect = getIntent().getBooleanExtra("fromToMineCollect", false);
         defaultnum = templateItem.getDefaultnum();
@@ -190,7 +194,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     }
 
 
-    @OnClick({R.id.iv_zan, R.id.tv_make, R.id.iv_video_play, R.id.iv_top_back, R.id.iv_click})
+    @OnClick({R.id.iv_zan, R.id.tv_make, R.id.iv_video_play, R.id.iv_top_back, R.id.iv_click,R.id.iv_download_bj})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_zan:
@@ -219,6 +223,12 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
             case R.id.iv_top_back:
                 PreviewActivity.this.finish();
+                break;
+
+            case R.id.iv_download_bj:
+                //下载背景
+            Presenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId());
+
                 break;
 
             case R.id.iv_video_play:

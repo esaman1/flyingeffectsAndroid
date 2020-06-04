@@ -94,8 +94,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:text="花泽类"
+                android:layout_weight="1"
                 android:textColor="@color/white"
                 android:textSize="15sp" />
+
+
+
+            <ImageView
+                android:id="@+id/iv_download_bj"
+                android:layout_width="wrap_content"
+                android:src="@mipmap/down_bj"
+                android:visibility="invisible"
+                android:layout_marginRight="20dp"
+                android:layout_height="wrap_content"/>
+
 
         </LinearLayout>
 
