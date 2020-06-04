@@ -1,6 +1,8 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.os.Handler;
 import androidx.annotation.Nullable;
@@ -27,6 +29,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AlbumManager;
+import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressImgManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
@@ -61,6 +64,8 @@ import butterknife.OnClick;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+
+import static android.media.MediaMetadataRetriever.OPTION_PREVIOUS_SYNC;
 
 /**
  * description ：上傳背景頁面
@@ -189,18 +194,23 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
                         if(!isCancel){
                             Glide.with(UploadMaterialActivity.this).load(paths.get(0)).into(add_head);
-                            CompressImgManage compressImgManage=new CompressImgManage(UploadMaterialActivity.this, new CompressImgManage.compressCallback() {
-                                @Override
-                                public void isSuccess(boolean b, String filePath) {
-                                    LogUtil.d("OOM","当前压缩情况为"+b+"压缩之后的地址为"+filePath);
-                                    if(b){
-                                        imageHeadPath=filePath;
-                                    }else{
-                                        imageHeadPath = paths.get(0);
-                                    }
-                                }
-                            });
-                            compressImgManage.toCompressImg(paths);
+
+                            imageHeadPath = huaweiFolder + File.separator + "head.png";
+                            //等到封面地址
+                            getHeadForPathToCompress(paths.get(0),imageHeadPath);
+
+//                            CompressImgManage compressImgManage=new CompressImgManage(UploadMaterialActivity.this, new CompressImgManage.compressCallback() {
+//                                @Override
+//                                public void isSuccess(boolean b, String filePath) {
+//                                    LogUtil.d("OOM","当前压缩情况为"+b+"压缩之后的地址为"+filePath);
+//                                    if(b){
+//                                        imageHeadPath=filePath;
+//                                    }else{
+//                                        imageHeadPath = paths.get(0);
+//                                    }
+//                                }
+//                            });
+//                            compressImgManage.toCompressImg(paths);
                         }
                     }
                 }, "");
@@ -210,6 +220,15 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
             default:
                 break;
         }
+    }
+
+
+
+
+    public void getHeadForPathToCompress(String path, String fileName) {
+        Bitmap bp = BitmapFactory.decodeFile(path);
+        bp = StringUtil.zoomImg(bp, 45, 80);
+        BitmapManager.getInstance().saveBitmapToPath(bp, fileName);
     }
 
 

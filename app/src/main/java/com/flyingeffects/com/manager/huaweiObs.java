@@ -6,6 +6,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.obs.services.ObsClient;
 import com.obs.services.exception.ObsException;
 import com.obs.services.model.HeaderResponse;
+import com.obs.services.model.ObjectMetadata;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,13 +31,14 @@ public class huaweiObs {
         ObsClient obsClient = null;
         try {
             String endPoint = "obs.cn-south-1.myhuaweicloud.com";//obs.cn-south-1.myhuaweicloud.com
-            String ak = "'UZUZ5AUXKOWSLRYF6A4E"; //UZUZ5AUXKOWSLRYF6A4E
+            String ak = "UZUZ5AUXKOWSLRYF6A4E"; //UZUZ5AUXKOWSLRYF6A4E
             String sk = "H5aoz2anEATMJcS3kEW1UTewn0emQn89DKIshBUo";
             // 创建ObsClient实例
             obsClient = new ObsClient(ak, sk, endPoint);
-
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType("video/mp4");
             // 调用接口进行操作，例如上传对象，其中localfile为待上传的本地文件路径，需要指定到具体的文件名
-            HeaderResponse response = obsClient.putObject("feishan", fileName, new File(filePath));
+            HeaderResponse response = obsClient.putObject("feishan", fileName, new File(filePath),metadata);
 
             callback.isSuccess(response.toString());
 
