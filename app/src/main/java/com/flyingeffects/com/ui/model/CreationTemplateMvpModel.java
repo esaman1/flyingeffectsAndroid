@@ -747,7 +747,6 @@ public class CreationTemplateMvpModel {
                 //停止全部动画
                 stopAllAnim();
                 closeAllAnim();
-                destroyTimer();
                 if (stickView.getParent() != null) {
                     ViewGroup vp = (ViewGroup) stickView.getParent();
                     if (vp != null) {
@@ -764,7 +763,7 @@ public class CreationTemplateMvpModel {
             @Override
             public void stickerDragMove() {
                 isIntoDragMove = true;
-                destroyTimer();
+
                 stopAllAnim();
             }
 
@@ -1486,6 +1485,7 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     private void stopAllAnim() {
+        destroyTimer();
         if (animCollect != null) {
             animCollect.stopAnim();
         }
