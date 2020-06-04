@@ -445,7 +445,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             isRunning = false;
         }
         targer = null;
-        Runtime.getRuntime().gc();
+//        Runtime.getRuntime().gc();
     }
 
     private boolean isRunning = false;

@@ -81,7 +81,7 @@ public class ItemRightToLeft extends baseAnimModel {
 
     private float toY;
     void getSubLayerData(Layer mainStickerView, LayerAnimCallback callback, float percentage) {
-        toY=mainStickerView.getPositionY();
+        toY=mainStickerView.getPositionY()/mainStickerView.getPadHeight();
         toChangeSubLayer(callback, percentage);
     }
 

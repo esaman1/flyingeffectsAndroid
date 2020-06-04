@@ -895,6 +895,7 @@ public class CreationTemplateMvpModel {
             AnimStickerModel model = listForStickerModel.get(i);
             StickerView stackView = model.getStickerView();
             if (stackView.getId() == id) {
+                stackView.stop();
                 listForStickerModel.remove(i);
             }
         }
