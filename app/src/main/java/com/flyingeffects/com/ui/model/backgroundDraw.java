@@ -374,7 +374,7 @@ public class backgroundDraw {
     private void addGifSubLayer(int needSublayer, GifLayer layer, AnimType ChooseAnimId, float rotate, float stickerScale) {
         ArrayList<SubLayer> listForSubLayer = new ArrayList<>();
         for (int i = 0; i < needSublayer; i++) {
-            SubLayer subLayer = layer.addSubLayer();
+            SubLayer subLayer = layer.addSubLayerUseMainFilter(true);
             subLayer.setScale(stickerScale);
             subLayer.setRotate(rotate);
             listForSubLayer.add(subLayer);
