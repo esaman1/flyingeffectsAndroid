@@ -18,8 +18,24 @@
             android:id="@+id/iv_click"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+
             android:contentDescription="@string/app_name" />
     </com.flyingeffects.com.view.EmptyControlVideo>
+
+
+
+    <ImageView
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/down_bj"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/iv_zan"
+        android:id="@+id/iv_download_bj"
+        android:layout_marginEnd="20dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/iv_zan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
 
     <ImageView
         android:id="@+id/iv_show_cover"
