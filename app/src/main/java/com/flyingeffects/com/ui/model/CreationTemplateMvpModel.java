@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
+import androidx.collection.SparseArrayCompat;
 import androidx.viewpager.widget.ViewPager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +28,7 @@ import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateGridViewAdapter;
+import com.flyingeffects.com.adapter.TemplateGridViewAnimAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.adapter.listViewForVideoThumbAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
@@ -37,6 +39,7 @@ import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.AllStickerData;
+import com.flyingeffects.com.enity.StickerAnim;
 import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.http.Api;
@@ -57,6 +60,10 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.HorizontalListView;
 import com.flyingeffects.com.view.StickerView;
+import com.flyingeffects.com.view.animations.CustomMove.AnimCollect;
+import com.flyingeffects.com.view.animations.CustomMove.AnimType;
+import com.flyingeffects.com.view.animations.CustomMove.StartAnimModel;
+import com.flyingeffects.com.view.lansongCommendView.StickerItemOnDragListener;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.ViewLayerRelativeLayout;
@@ -77,7 +84,6 @@ import java.util.UUID;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -97,9 +103,9 @@ public class CreationTemplateMvpModel {
     private List<View> listForInitBottom = new ArrayList<>();
     private String mVideoPath;
     private ViewLayerRelativeLayout viewLayerRelativeLayout;
-    private ArrayList<AnimStickerModel> listForStickerView = new ArrayList<>();
+
+    private ArrayList<AnimStickerModel> listForStickerModel = new ArrayList<>();
     private boolean isDestroy = false;
-    private RecyclerView list_thumb;
     private VideoInfo videoInfo;
     private String mGifFolder;
     private String soundFolder;
@@ -107,11 +113,11 @@ public class CreationTemplateMvpModel {
     private String mImageCopyFolder;
     private boolean isCheckedMatting = true;
     private HorizontalListView hListView;
-    //需要裁剪视频的集合
+    /**
+     * 需要裁剪视频的集合
+     */
     private ArrayList<videoType> cutVideoPathList = new ArrayList<>();
     private backgroundDraw backgroundDraw;
-    //    WaitingDialogProgressNowAnim progressNowAnim;
-//    WatingDialogProgressForTime progressNowAnim;
     private WaitingDialogProgressNowAnim dialog;
     private ArrayList<AllStickerData> listAllSticker = new ArrayList<>();
     /**
@@ -133,6 +139,12 @@ public class CreationTemplateMvpModel {
      */
     private String originalPath;
 
+    private ArrayList<StickerAnim> listAllAnima;
+    private ArrayList<StickerView> nowChooseSubLayerAnimList = new ArrayList<>();
+    private SparseArrayCompat<ArrayList<StickerView>> sublayerListForBitmapLayer = new SparseArrayCompat<>();
+
+    private AnimCollect animCollect;
+
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath) {
         this.context = context;
         this.callback = callback;
@@ -142,12 +154,15 @@ public class CreationTemplateMvpModel {
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
         vibrator = (Vibrator) context.getSystemService(Service.VIBRATOR_SERVICE);
         if (!TextUtils.isEmpty(mVideoPath)) {
-            videoInfo = getVideoInfo.getInstance().getRingDuring(context,mVideoPath);
+            videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
         }
         FileManager fileManager = new FileManager();
         mGifFolder = fileManager.getFileCachePath(context, "gifFolder");
         soundFolder = fileManager.getFileCachePath(context, "soundFolder");
         mImageCopyFolder = fileManager.getFileCachePath(context, "imageCopy");
+        animCollect = new AnimCollect();
+        listAllAnima = animCollect.getAnimList();
+
     }
 
 
@@ -165,12 +180,11 @@ public class CreationTemplateMvpModel {
     public void setmVideoPath(String mVideoPath) {
         if (!TextUtils.isEmpty(mVideoPath)) {
             this.mVideoPath = mVideoPath;
-            videoInfo = getVideoInfo.getInstance().getRingDuring(context,mVideoPath);
+            videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
         } else {
             this.mVideoPath = null;
             videoInfo = null;
         }
-
     }
 
 
@@ -180,13 +194,13 @@ public class CreationTemplateMvpModel {
     }
 
     public void initStickerView(String imagePath, String originalPath) {
-        new Handler().postDelayed(() -> addSticker(imagePath, true, true, true, originalPath, false, null), 500);
+        new Handler().postDelayed(() -> addSticker(imagePath, true, true, true, originalPath, false, null, false), 500);
     }
 
 
     public void showGifAnim(boolean isShow) {
-        if (listForStickerView != null && listForStickerView.size() > 0) {
-            for (AnimStickerModel stickerModel : listForStickerView
+        if (listForStickerModel != null && listForStickerModel.size() > 0) {
+            for (AnimStickerModel stickerModel : listForStickerModel
             ) {
                 StickerView stickerView = stickerModel.getStickerView();
                 if (stickerView != null) {
@@ -198,6 +212,11 @@ public class CreationTemplateMvpModel {
                 }
             }
         }
+    }
+
+
+    public void chooseAnim(int pageNum) {
+        viewPager.setCurrentItem(pageNum);
     }
 
 
@@ -229,8 +248,10 @@ public class CreationTemplateMvpModel {
     private int perPageCount = 20;
     private SmartRefreshLayout smartRefreshLayout;
     private boolean isRefresh = true;
+    private ViewPager viewPager;
 
     public void initBottomLayout(ViewPager viewPager) {
+        this.viewPager = viewPager;
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager, false);
         smartRefreshLayout = templateThumbView.findViewById(R.id.smart_refresh_layout);
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
@@ -271,7 +292,22 @@ public class CreationTemplateMvpModel {
         });
         gridAdapter = new TemplateGridViewAdapter(listForSticker, context);
         gridView.setAdapter(gridAdapter);
+        View viewForChooseAnim = LayoutInflater.from(context).inflate(R.layout.view_create_template_anim, viewPager, false);
+        GridView gridViewAnim = viewForChooseAnim.findViewById(R.id.gridView_anim);
+        gridViewAnim.setOnItemClickListener((adapterView, view, i, l) -> {
+            if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
+                if (i == 0) {
+                    startPlayAnim(i, true, null, 0, false);
+                } else {
+                    WaitingDialog.openPragressDialog(context);
+                    startPlayAnim(i, false, null, 0, false);
+                }
+            }
+        });
+        TemplateGridViewAnimAdapter gridAdapter = new TemplateGridViewAnimAdapter(listAllAnima, context);
+        gridViewAnim.setAdapter(gridAdapter);
         listForInitBottom.add(templateThumbView);
+        listForInitBottom.add(viewForChooseAnim);
         TemplateViewPager adapter = new TemplateViewPager(listForInitBottom);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -282,6 +318,8 @@ public class CreationTemplateMvpModel {
 
             @Override
             public void onPageSelected(int position) {
+
+
             }
 
             @Override
@@ -289,9 +327,134 @@ public class CreationTemplateMvpModel {
 
             }
         });
+    }
+
+
+    /**
+     * description ：开始播放动画 ，如果来自预览，那么stickver
+     * creation date: 2020/5/27
+     *
+     * @param position          动画的类型
+     * @param targetStickerView 目标贴纸，如果为null ,那么目标贴纸为最上层的那个，这里的多久就是针对设置当个动画，如果不为null ,
+     *                          那么动画就是针对预览页面，某个贴纸设置动画
+     * @param isFromPreview     是否来自播放预览
+     *                          user : zhangtongju
+     */
+    private synchronized void startPlayAnim(int position, boolean isClearAllAnim, StickerView targetStickerView, int intoPosition, boolean isFromPreview) {
+        if (!isFromPreview) {
+            deleteSubLayerSticker();
+        }
+        stopAllAnim();
+        nowChooseSubLayerAnimList.clear();
+        //当前选中的贴纸
+        int nowChooseStickerPosition = viewLayerRelativeLayout.getChildCount() - 1;
+        //选择的动画类型
+        AnimType animType = listAllAnima.get(position).getAnimType();
+        //重新得到所有的贴纸列表
+        listAllSticker.clear();
+        for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
+            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(y);
+            listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
+        }
+        //得到目标贴纸,永远都是最顶上一个,如果有目标贴纸，就用目标贴纸
+        if (targetStickerView == null) {
+            targetStickerView = (StickerView) viewLayerRelativeLayout.getChildAt(nowChooseStickerPosition);
+        }
+        if (isClearAllAnim) {
+            //贴纸还原,显示到之前的位置
+            ToastUtil.showToast("清理全部动画");
+            for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
+                ((StickerView) viewLayerRelativeLayout.getChildAt(y)).setChooseAnimId(AnimType.NULL);
+            }
+            deleteSubLayerSticker();
+            stopAllAnim();
+        } else {
+            for (int x = 1; x <= animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType()); x++) {
+                //通过动画属性得到需要分身的数量，然后复制出贴纸在数组里面nowChooseSubLayerAnimList，最后需要删除
+                LogUtil.d("startPlayAnim", "当前动画复制的主id为" + targetStickerView.getId());
+                copyGif(targetStickerView.getResPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true);
+                if (x == animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType())) {
+                    ArrayList<StickerView> list = new ArrayList<>();
+                    list.addAll(nowChooseSubLayerAnimList);
+                    sublayerListForBitmapLayer.put(intoPosition, list);
+                }
+            }
+            StartAnimModel startAnimModel = new StartAnimModel(animCollect);
+            stopAllAnim();
+            StickerView finalTargetStickerView = targetStickerView;
+            targetStickerView.setChooseAnimId(animType);
+            delayedToStartAnim(startAnimModel, animType, finalTargetStickerView, intoPosition);
+        }
 
     }
 
+
+    /**
+     * description ：延迟开启动画，因为这里可能需要复制很多的子贴纸
+     * creation date: 2020/6/3
+     * user : zhangtongju
+     */
+    private void delayedToStartAnim(StartAnimModel startAnimModel, AnimType animType, StickerView finalTargetStickerView, final int position) {
+
+        new Handler().postDelayed(() -> {
+
+            //如果是gif 那么开启gif动画
+            ArrayList<StickerView> list = null;
+            finalTargetStickerView.start();
+            if (sublayerListForBitmapLayer != null) {
+                list = sublayerListForBitmapLayer.get(position);
+                if(list!=null){
+                    for (StickerView stickerView : list
+                    ) {
+                        stickerView.start();
+                    }
+                }
+            }
+
+            //启动动画
+            ArrayList<StickerView> finalList = list;
+            new Thread(() -> {
+                if (sublayerListForBitmapLayer != null) {
+                    startAnimModel.ToStart(animType, finalTargetStickerView, finalList);
+                } else {
+                    startAnimModel.ToStart(animType, finalTargetStickerView, null);
+                }
+
+
+            });
+        }, 1000);
+
+
+        new Handler().postDelayed(() -> new Thread(() -> {
+            if (sublayerListForBitmapLayer != null) {
+                startAnimModel.ToStart(animType, finalTargetStickerView, sublayerListForBitmapLayer.get(position));
+            } else {
+                startAnimModel.ToStart(animType, finalTargetStickerView, null);
+            }
+            WaitingDialog.closePragressDialog();
+        }).start(), 1000);
+    }
+
+
+    /**
+     * description ：删除动画的子贴纸
+     * creation date: 2020/5/27
+     * user : zhangtongju
+     */
+    private void deleteSubLayerSticker() {
+        if (sublayerListForBitmapLayer != null && sublayerListForBitmapLayer.size() > 0) {
+            for (int i = 0; i < sublayerListForBitmapLayer.size(); i++) {
+                ArrayList<StickerView> nowChooseSubLayerAnimList = sublayerListForBitmapLayer.get(i);
+                //删除动画贴纸
+                if (nowChooseSubLayerAnimList != null && nowChooseSubLayerAnimList.size() > 0) {
+                    for (StickerView stickerView : nowChooseSubLayerAnimList
+                    ) {
+                        deleteStickView(stickerView);
+                    }
+                }
+            }
+        }
+    }
 
     private void finishData() {
         smartRefreshLayout.finishRefresh();
@@ -299,8 +462,8 @@ public class CreationTemplateMvpModel {
     }
 
     private void deleteAllSticker() {
-        if (listForStickerView != null && listForStickerView.size() > 0) {
-            for (AnimStickerModel stickerModel : listForStickerView
+        if (listForStickerModel != null && listForStickerModel.size() > 0) {
+            for (AnimStickerModel stickerModel : listForStickerModel
             ) {
                 StickerView stickerView = stickerModel.getStickerView();
                 if (stickerView != null && !stickerView.getComeFrom()) {
@@ -319,8 +482,8 @@ public class CreationTemplateMvpModel {
      */
     private void MattingChange(boolean isMatting) {
         this.isMatting = isMatting;
-        if (listForStickerView != null && listForStickerView.size() > 0) {
-            for (AnimStickerModel stickerModel : listForStickerView
+        if (listForStickerModel != null && listForStickerModel.size() > 0) {
+            for (AnimStickerModel stickerModel : listForStickerModel
             ) {
                 StickerView stickerView = stickerModel.getStickerView();
                 if (stickerView != null && stickerView.getComeFrom()) {
@@ -345,19 +508,19 @@ public class CreationTemplateMvpModel {
     private void downSticker(String path, String imageId, int position) {
         WaitingDialog.openPragressDialog(context);
         if (path.endsWith(".gif")) {
-            String finalPath = path;
-            String format = finalPath.substring(finalPath.length() - 4);
+//            String finalPath = path;
+            String format = path.substring(path.length() - 4);
             String fileName = mGifFolder + File.separator + imageId + format;
             File file = new File(fileName);
             if (file.exists()) {
                 //如果已经下载了，就用已经下载的，但是如果已经展示了，就不能复用，需要类似于复制功能，只针对gif
-                if (nowStickerHasChoosse(imageId, path)) {
+                if (nowStickerHasChoose(imageId, path)) {
                     String copyName = mGifFolder + File.separator + System.currentTimeMillis() + format;
-                    copyGif(fileName, copyName, false, null, fileName);
+                    copyGif(fileName, copyName, false, null, fileName, false);
                     WaitingDialog.closePragressDialog();
                     return;
                 } else {
-                    addSticker(fileName, false, false, false, null, false, null);
+                    addSticker(fileName, false, false, false, null, false, null, false);
                     WaitingDialog.closePragressDialog();
                     return;
                 }
@@ -367,7 +530,7 @@ public class CreationTemplateMvpModel {
                 File file1 = null;
                 try {
                     file1 = Glide.with(context)
-                            .load(finalPath)
+                            .load(path)
                             .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                             .get();
                 } catch (Exception e) {
@@ -378,7 +541,7 @@ public class CreationTemplateMvpModel {
                 try {
                     if (path1 != null) {
                         FileUtil.copyFile(path1, fileName);
-                        addSticker(fileName, false, false, false, null, false, null);
+                        addSticker(fileName, false, false, false, null, false, null, false);
                         WaitingDialog.closePragressDialog();
                         modificationSingleItem(position);
                     } else {
@@ -394,7 +557,6 @@ public class CreationTemplateMvpModel {
 
         } else {
             new Thread(() -> {
-
                 Bitmap originalBitmap = null;
                 FutureTarget<Bitmap> futureTarget =
                         Glide.with(BaseApplication.getInstance())
@@ -404,20 +566,14 @@ public class CreationTemplateMvpModel {
                 try {
                     originalBitmap = futureTarget.get();
                     Bitmap finalOriginalBitmap = originalBitmap;
-                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
-                        @Override
-                        public void call(Integer integer) {
-                            WaitingDialog.closePragressDialog();
-                            String aa = path.substring(path.length() - 4);
-                            String copyName = mGifFolder + File.separator + System.currentTimeMillis() + aa;
-                            saveBitmapToPath(finalOriginalBitmap, copyName, new FileManager.saveBitmapState() {
-                                @Override
-                                public void succeed(boolean isSucceed) {
-                                    modificationSingleItem(position);
-                                    addSticker(copyName, false, false, false, null, false, null);
-                                }
-                            });
-                        }
+                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+                        WaitingDialog.closePragressDialog();
+                        String aa = path.substring(path.length() - 4);
+                        String copyName = mGifFolder + File.separator + System.currentTimeMillis() + aa;
+                        saveBitmapToPath(finalOriginalBitmap, copyName, isSucceed -> {
+                            modificationSingleItem(position);
+                            addSticker(copyName, false, false, false, null, false, null, false);
+                        });
                     });
                 } catch (Exception e) {
                     LogUtil.d("oom", e.getMessage());
@@ -427,10 +583,11 @@ public class CreationTemplateMvpModel {
         }
     }
 
+
     /**
      * 当前的item 是否已经被选中上了预览页面
      */
-    private boolean nowStickerHasChoosse(String id, String imagePath) {
+    private boolean nowStickerHasChoose(String id, String imagePath) {
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             String path = stickerView.getResPath();
@@ -458,34 +615,27 @@ public class CreationTemplateMvpModel {
      * @param isFromAubum  是否来自于相册选择的素材，而不是自己点击下载的，
      * @param originalPath 如果是相册选择的，没抠图的的地址，
      * @param isCopy       是否来自复制功能
+     * @param isFromShowAnim   是否来自分身动画，如果是的话，不纳入最后的渲染
      * user : zhangtongju
      */
 
-    int stickerViewID;
+    private int stickerViewID;
+    private boolean isIntoDragMove = false;
 
-    private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView) {
+    private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim) {
         closeAllAnim();
         StickerView stickView = new StickerView(context);
-
         stickerViewID++;
         stickView.setId(stickerViewID);
         stickView.setOnitemClickListener(new StickerItemOnitemclick() {
             @Override
             public void stickerOnclick(int type) {
                 if (type == StickerView.LEFT_TOP_MODE) {//刪除
-                    viewLayerRelativeLayout.removeView(stickView);
-                    int nowId = stickView.getId();
-                    if (stickView.isFirstAddSticker()) {
-                        if (stickView.isOpenVoice()) {
-                            stickView.setOpenVoice(false);
-                            callback.getBgmPath("");
-                        }
-                    }
-                    delectedListForSticker(nowId);
+                    deleteStickView(stickView);
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     stickView.dismissFrame();
                     //copy
-                    copyGif(stickView.getResPath(), path, stickView.getComeFrom(), stickView, stickView.getOriginalPath());
+                    copyGif(stickView.getResPath(), path, stickView.getComeFrom(), stickView, stickView.getOriginalPath(), false);
                     if (!TextUtils.isEmpty(stickView.getOriginalPath())) {
                         if (albumType.isVideo(GetPathType.getInstance().getMediaType(stickView.getOriginalPath()))) {
                             if (UiStep.isFromDownBj) {
@@ -591,6 +741,29 @@ public class CreationTemplateMvpModel {
                 }
                 viewLayerRelativeLayout.addView(stickView);
                 stickView.start();
+                //停止全部动画
+                stopAllAnim();
+            }
+        });
+
+        stickView.setOnItemDragListener(new StickerItemOnDragListener() {
+            @Override
+            public void stickerDragMove() {
+                isIntoDragMove = true;
+                for (StickerView subStickerView : nowChooseSubLayerAnimList
+                ) {
+                    deleteStickView(subStickerView);
+                }
+                stopAllAnim();
+            }
+
+            @Override
+            public void stickerDragUp() {
+                if (isIntoDragMove && stickView.getChooseAnimId() != null && stickView.getChooseAnimId() != AnimType.NULL) {
+                    //模拟动画按钮的点击事件
+                    startPlayAnim(animCollect.getAnimid(stickView.getChooseAnimId()), false, null, 0, false);
+                }
+                isIntoDragMove = false;
             }
         });
         stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
@@ -598,6 +771,7 @@ public class CreationTemplateMvpModel {
         stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
         stickView.setRightBitmap(context.getDrawable(R.mipmap.sticker_updown));
 
+        stickView.setIsFromStickerAnim(isFromShowAnim);
         stickView.setComeFromAlbum(isFromAubum);
         if (isFromAubum) {
             stickView.setClipPath(path);
@@ -608,7 +782,6 @@ public class CreationTemplateMvpModel {
                 stickView.setNowMaterialIsVideo(false);
             }
         }
-
         if (isFirstAdd) {
             stickView.setFirstAddSticker(true);
             if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
@@ -632,15 +805,18 @@ public class CreationTemplateMvpModel {
         if (hasReplace) {
             stickView.setLeftBottomBitmap(context.getDrawable(R.mipmap.sticker_change));
         }
-
-
         if (isCopy && copyStickerView != null) {
             //来做复制或者来自联系点击下面的item
             StickerView.isFromCopy fromCopy = new StickerView.isFromCopy();
             fromCopy.setScale(copyStickerView.getScale());
             fromCopy.setDegree(copyStickerView.getRotateAngle());
-            fromCopy.setTranX(copyStickerView.getCenterX());
-            fromCopy.setTranY(copyStickerView.getCenterY());
+            if (isFromShowAnim) {
+                fromCopy.setTranX(copyStickerView.getCenterX() - 30);
+                fromCopy.setTranY(copyStickerView.getCenterY() - 30);
+            } else {
+                fromCopy.setTranX(copyStickerView.getCenterX());
+                fromCopy.setTranY(copyStickerView.getCenterY());
+            }
             stickView.setImageRes(path, false, fromCopy);
             stickView.showFrame();
         } else {
@@ -656,21 +832,15 @@ public class CreationTemplateMvpModel {
                 }
             }, 500);
         }
-
-
         if (isFromAubum && isCopy && isCheckedMatting) {
-
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     stickView.changeImage(path, false);
                 }
             }, 500);
-
         }
-
-
-        listForStickerView.add(animStickerModel);
+        listForStickerModel.add(animStickerModel);
         if (stickView.getParent() != null) {
             ViewGroup vp = (ViewGroup) stickView.getParent();
             if (vp != null) {
@@ -678,27 +848,38 @@ public class CreationTemplateMvpModel {
             }
         }
         viewLayerRelativeLayout.addView(stickView);
-
         if (isFirstAdd) {
             callback.isFirstAddSuccess();
         }
-
+        if (isFromShowAnim) {
+            stickView.setIsfromAnim(true);
+            nowChooseSubLayerAnimList.add(stickView);
+        }
 
     }
 
 
-    private void delectedListForSticker(int id) {
-
-        for (int i = 0; i < listForStickerView.size(); i++) {
-
-            AnimStickerModel model = listForStickerView.get(i);
-            StickerView stackView = model.getStickerView();
-            if (stackView.getId() == id) {
-                listForStickerView.remove(i);
+    private void deleteStickView(StickerView stickView) {
+        viewLayerRelativeLayout.removeView(stickView);
+        int nowId = stickView.getId();
+        if (stickView.isFirstAddSticker()) {
+            if (stickView.isOpenVoice()) {
+                stickView.setOpenVoice(false);
+                callback.getBgmPath("");
             }
         }
+        deletedListForSticker(nowId);
+    }
 
 
+    private void deletedListForSticker(int id) {
+        for (int i = 0; i < listForStickerModel.size(); i++) {
+            AnimStickerModel model = listForStickerModel.get(i);
+            StickerView stackView = model.getStickerView();
+            if (stackView.getId() == id) {
+                listForStickerModel.remove(i);
+            }
+        }
     }
 
 
@@ -711,7 +892,13 @@ public class CreationTemplateMvpModel {
     }
 
 
-    private void copyGif(String getResPath, String path, boolean isFromAubum, StickerView stickerView, String OriginalPath) {
+    /**
+     * description ：复制一个gif出来
+     * creation date: 2020/5/22
+     * param :  getResPath 图片地址，path  isFromAubum 是否来自相册 stickerView 原贴纸 OriginalPath 原图地址 isFromShowAnim 是否是因为来自动画分身
+     * user : zhangtongju
+     */
+    private void copyGif(String getResPath, String path, boolean isFromAubum, StickerView stickerView, String OriginalPath, boolean isFromShowAnim) {
         try {
             String copyName = null;
             if (getResPath.endsWith(".gif")) {
@@ -725,7 +912,7 @@ public class CreationTemplateMvpModel {
                 FileUtil.copyFile(new File(getResPath), copyName, new FileUtil.copySucceed() {
                     @Override
                     public void isSucceed() {
-                        addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView);
+                        addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim);
                     }
                 });
             } else {
@@ -740,7 +927,7 @@ public class CreationTemplateMvpModel {
                 FileUtil.copyFile(new File(path), copyName, new FileUtil.copySucceed() {
                     @Override
                     public void isSucceed() {
-                        addSticker(finalCopyName1, false, true, isFromAubum, OriginalPath, true, stickerView);
+                        addSticker(finalCopyName1, false, true, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim);
                     }
                 });
             }
@@ -753,9 +940,10 @@ public class CreationTemplateMvpModel {
 
     public void onDestroy() {
         isDestroy = true;
+        stopAllAnim();
     }
 
-    private TimelineAdapter mTimelineAdapter;
+    //    private TimelineAdapter mTimelineAdapter;
     private int mScrollX;
     private LinearLayoutManager linearLayoutManager;
 
@@ -782,7 +970,7 @@ public class CreationTemplateMvpModel {
                 StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
                 if (!TextUtils.isEmpty(stickerView.getOriginalPath())) {
                     if (albumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath()))) {
-                        VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(context,stickerView.getOriginalPath());
+                        VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
                         LogUtil.d("OOM", "materialVideoInfo.getDuration()=" + materialVideoInfo.getDuration());
                         perSticker.add(materialVideoInfo.getDuration());
                     }
@@ -792,7 +980,7 @@ public class CreationTemplateMvpModel {
             //只有第一次初始化的时候，可能为0.因为viewLayerRelativeLayout还没加载进入数据，所有就需要手动加上
             if (!TextUtils.isEmpty(originalPath)) {
                 if (albumType.isVideo(GetPathType.getInstance().getPathType(originalPath))) {
-                    VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(context,originalPath);
+                    VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(originalPath);
                     LogUtil.d("OOM", "materialVideoInfo.getDuration()=" + materialVideoInfo.getDuration());
                     perSticker.add(materialVideoInfo.getDuration());
                 }
@@ -822,7 +1010,6 @@ public class CreationTemplateMvpModel {
 
 
     private int mTotalWidth;
-    float allDistance;
 
     private void initSingleThumbSize(int width, int height, float duration, float mTemplateDuration, String mVideoPath) {
         // 需要截取的listWidth宽度
@@ -870,10 +1057,10 @@ public class CreationTemplateMvpModel {
         int screenWidth = screenUtil.getScreenWidth((Activity) context);
         int dp40 = screenUtil.dip2px(context, 40);
         list_thumb.setPadding(screenWidth / 2 - dp40, 0, 0, 0);
-        this.list_thumb = list_thumb;
+//        this.list_thumb = list_thumb;
         linearLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         list_thumb.setLayoutManager(linearLayoutManager);
-        mTimelineAdapter = new TimelineAdapter();
+        TimelineAdapter mTimelineAdapter = new TimelineAdapter();
         mTimelineAdapter.marginRight(screenWidth / 2);
         list_thumb.setAdapter(mTimelineAdapter);
         list_thumb.setHasFixedSize(true);
@@ -905,114 +1092,80 @@ public class CreationTemplateMvpModel {
     private boolean isIntoSaveVideo = false;
 
     public void toSaveVideo(String imageBjPath) {
-
-        if (!isIntoSaveVideo) {
-            isIntoSaveVideo = true;
-            listAllSticker.clear();
-            cutSuccessNum = 0;
-            cutVideoPathList.clear();
-
-
-            backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, new backgroundDraw.saveCallback() {
-                @Override
-                public void saveSuccessPath(String path, int progress) {
-                    if (!isDestroy) {
-                        if (!TextUtils.isEmpty(path)) {
-                            dialog.closePragressDialog();
-                            //成功后的回调
-                            Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                            intent.putExtra("path", path);
-                            context.startActivity(intent);
-                            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> isIntoSaveVideo = false, 500));
-                        } else {
-                            if (progress == 10000) {
-                                isIntoSaveVideo = false;
-                                //渲染失败
-                                dialog.closePragressDialog();
-                            } else {
-                                dialogProgress = progress;
-                                handler.sendEmptyMessage(1);
+        stopAllAnim();
+        deleteSubLayerSticker();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!isIntoSaveVideo) {
+                    isIntoSaveVideo = true;
+                    listAllSticker.clear();
+                    cutSuccessNum = 0;
+                    cutVideoPathList.clear();
+                    backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, new backgroundDraw.saveCallback() {
+                        @Override
+                        public void saveSuccessPath(String path, int progress) {
+                            if (!isDestroy) {
+                                if (!TextUtils.isEmpty(path)) {
+                                    dialog.closePragressDialog();
+                                    //成功后的回调
+                                    Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                    intent.putExtra("path", path);
+                                    context.startActivity(intent);
+                                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> isIntoSaveVideo = false, 500));
+                                } else {
+                                    if (progress == 10000) {
+                                        isIntoSaveVideo = false;
+                                        //渲染失败
+                                        dialog.closePragressDialog();
+                                    } else {
+                                        dialogProgress = progress;
+                                        handler.sendEmptyMessage(1);
+                                    }
+                                }
                             }
                         }
+                    }, animCollect);
+
+
+                    for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
+                        StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
+                        listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
                     }
-                }
-            });
 
+                    if (listAllSticker.size() == 0) {
+                        isIntoSaveVideo = false;
+                        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().post(() -> Toast.makeText(context, "你未选择素材", Toast.LENGTH_SHORT).show()));
+                        return;
+                    }
 
-            for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
-                StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
-                AllStickerData stickerData = new AllStickerData();
-                stickerData.setRotation(stickerView.getRotateAngle());
-                stickerData.setScale(stickerView.getScale());
-                stickerData.setTranslationX(stickerView.getTranslationX());
-                stickerData.setTranslationy(stickerView.getTranslationY());
-                stickerData.setMaskBitmap(stickerView.getMaskBitmap());
-                if (!TextUtils.isEmpty(stickerView.getOriginalPath())) {
-                    String pathType = GetPathTypeModel.getInstance().getMediaType(stickerView.getOriginalPath());
-                    stickerData.setVideo(albumType.isVideo(pathType));
-                }
-                if (stickerView.getComeFrom()) {
-                    //来自相册，不是gif
-                    if (isMatting) {
-                        stickerData.setPath(stickerView.getClipPath());
-                        stickerData.setOriginalPath(stickerView.getOriginalPath());
-                        VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(context,stickerView.getOriginalPath());
-                        stickerData.setDuration(materialVideoInfo.getDuration());
-
-                    } else { //这里也会出现蓝松一样的，相同地址只有一个图层
-                        stickerData.setPath(stickerView.getOriginalPath());
-                        stickerData.setOriginalPath(stickerView.getOriginalPath());
-                        VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(context,stickerView.getOriginalPath());
-                        int materialDuration = materialVideoInfo.getDuration();
-                        int needDuration = 0;
+                    for (int i = 0; i < listAllSticker.size(); i++) {
+                        if (defaultVideoDuration < listAllSticker.get(i).getDuration()) {
+                            defaultVideoDuration = (int) listAllSticker.get(i).getDuration();
+                        }
+                        if (listAllSticker.get(i).isVideo()) {
+                            cutVideoPathList.add(new videoType(listAllSticker.get(i).getOriginalPath(), i, listAllSticker.get(i).getDuration()));
+                        }
+                    }
+                    if (cutVideoPathList.size() == 0) {
+                        dialog.openProgressDialog();
+                        //都不是视频的情况下，就直接渲染
+                        backgroundDraw.toSaveVideo(listAllSticker, isMatting);
+                    } else {
+                        dialog.openProgressDialog();
+                        cutList.clear();
                         if (videoInfo != null) {
-                            if (videoInfo.getDuration() < materialDuration) {
-                                needDuration = videoInfo.getDuration();
-                            } else {
-                                needDuration = materialDuration;
-                            }
+                            cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration());
                         } else {
-                            needDuration = materialDuration;
+                            //没选择背景默认裁剪10秒
+                            cutVideo(cutVideoPathList.get(0), defaultVideoDuration, cutVideoPathList.get(0).getDuration());
                         }
-                        stickerData.setDuration(needDuration);
                     }
-                } else {
-                    stickerData.setPath(stickerView.getResPath());
                 }
-                listAllSticker.add(stickerData);
             }
+        },200);
 
-            if (listAllSticker.size() == 0) {
-                isIntoSaveVideo = false;
-                Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().post(() -> Toast.makeText(context, "你未选择素材", Toast.LENGTH_SHORT).show()));
-                return;
-            }
-
-            for (int i = 0; i < listAllSticker.size(); i++) {
-                if (defaultVideoDuration < listAllSticker.get(i).getDuration()) {
-                    defaultVideoDuration = (int) listAllSticker.get(i).getDuration();
-                }
-                if (listAllSticker.get(i).isVideo()) {
-                    cutVideoPathList.add(new videoType(listAllSticker.get(i).getOriginalPath(), i, listAllSticker.get(i).getDuration()));
-                }
-            }
-            LogUtil.d("gifDebug","1111");
-            if (cutVideoPathList.size() == 0) {
-                dialog.openProgressDialog();
-                //都不是视频的情况下，就直接渲染
-                backgroundDraw.toSaveVideo(listAllSticker, isMatting);
-            } else {
-                dialog.openProgressDialog();
-                cutList.clear();
-                if (videoInfo != null) {
-                    cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration());
-                } else {
-                    //没选择背景默认裁剪10秒
-                    cutVideo(cutVideoPathList.get(0), defaultVideoDuration, cutVideoPathList.get(0).getDuration());
-                }
-            }
-        }
 
 
     }
@@ -1098,8 +1251,6 @@ public class CreationTemplateMvpModel {
 
             @Override
             protected void _onNext(ArrayList<StickerList> list) {
-
-
                 finishData();
                 if (isRefresh) {
                     listForSticker.clear();
@@ -1164,7 +1315,7 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     public void addNewSticker(String path, String originalPath) {
-        Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> addSticker(path1, false, true, true, originalPath, false, null));
+        Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> addSticker(path1, false, true, true, originalPath, false, null, false));
     }
 
 
@@ -1194,7 +1345,7 @@ public class CreationTemplateMvpModel {
 
     class videoType {
 
-        public videoType(String path, int position, long duration) {
+        videoType(String path, int position, long duration) {
             this.path = path;
             this.duration = duration;
             this.position = position;
@@ -1251,6 +1402,49 @@ public class CreationTemplateMvpModel {
             }
         }
     };
+
+
+    /**
+     * description ：显示全部动画，在预览的时候
+     * creation date: 2020/5/27
+     * user : zhangtongju
+     */
+    public void showAllAnim(boolean isShow) {
+
+        //删除动画贴纸
+        deleteSubLayerSticker();
+        stopAllAnim();
+        if (isShow) {
+//            WaitingDialog.openPragressDialog(context);
+            if (listForStickerModel != null && listForStickerModel.size() > 0) {
+                for (int i = 0; i < listForStickerModel.size(); i++) {
+                    AnimStickerModel stickerModel = listForStickerModel.get(i);
+                    StickerView stickerView = stickerModel.getStickerView();
+                    if (stickerView != null && stickerView.getChooseAnimId() != AnimType.NULL) {
+                        if (stickerView.getChooseAnimId() != null) {
+                            int type = animCollect.getAnimid(stickerView.getChooseAnimId());
+                            startPlayAnim(type, false, stickerView, i, true);
+                        }
+                    }
+                }
+            }
+        }
+
+
+    }
+
+
+    /**
+     * description ：暂停全部动画
+     * creation date: 2020/5/27
+     * user : zhangtongju
+     */
+    private void stopAllAnim() {
+        if (animCollect != null) {
+            animCollect.stopAnim();
+        }
+
+    }
 
 
 }

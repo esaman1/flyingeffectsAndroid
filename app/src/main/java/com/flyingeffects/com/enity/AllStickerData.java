@@ -1,9 +1,10 @@
 package com.flyingeffects.com.enity;
 
+import com.flyingeffects.com.view.animations.CustomMove.AnimType;
+
 import android.graphics.Bitmap;
 
 import java.io.Serializable;
-
 
 
 public class AllStickerData implements Serializable {
@@ -30,13 +31,12 @@ public class AllStickerData implements Serializable {
 
     //因为默认gif是宽的一半
     public float getScale() {
-        return scale/2;
+        return scale / 2;
     }
 
     public void setScale(float scale) {
         this.scale = scale;
     }
-
 
 
     private float scale;
@@ -88,7 +88,7 @@ public class AllStickerData implements Serializable {
         isVideo = video;
     }
 
-    private boolean isVideo=false;
+    private boolean isVideo = false;
 
 
     public long getDuration() {
@@ -100,5 +100,39 @@ public class AllStickerData implements Serializable {
     }
 
     private long duration;
+
+
+    private int BoxW;
+
+    public int getBoxW() {
+        return BoxW;
+    }
+
+    public void setBoxW(int boxW) {
+        BoxW = boxW;
+    }
+
+    public int getBoxH() {
+        return BoxH;
+    }
+
+    public void setBoxH(int boxH) {
+        BoxH = boxH;
+    }
+
+    private int BoxH;
+
+    public AnimType getChooseAnimId() {
+        return ChooseAnimId;
+    }
+
+    public void setChooseAnimId(AnimType chooseAnimId) {
+        ChooseAnimId = chooseAnimId;
+    }
+
+    /**
+     * 是否选择了动画，动画id值
+     */
+    private AnimType ChooseAnimId;
 
 }

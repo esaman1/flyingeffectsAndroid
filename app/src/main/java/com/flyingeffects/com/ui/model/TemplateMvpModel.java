@@ -62,6 +62,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.UUID;
 
 import de.greenrobot.event.EventBus;
@@ -104,7 +105,7 @@ public class TemplateMvpModel {
     public void StatisticsToSave(String templateId) {
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", templateId);
-        params.put("action_type", 2+"");
+        params.put("action_type", 2 + "");
         // 启动时间
         Observable ob = Api.getDefault().saveTemplate(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
@@ -249,8 +250,12 @@ public class TemplateMvpModel {
             SXTemplateRender sxTemplateRender;
             outputPathForVideoSaveToPhoto = SaveAlbumPathModel.getInstance().getKeepOutput();
             sxTemplateRender = new SXTemplateRender(template, mAudio1Path, outputPathForVideoSaveToPhoto);
-            sxTemplateRender.setBitrateFactor(2f);
-            sxTemplateRender.setIFrameInterval(2);
+//            test()
+//            sxTemplateRender.setBitrateFactor();
+//            sxTemplateRender.setBitrateFactor(2f);
+//            sxTemplateRender.setIFrameInterval(2);
+//            int bitrate = (int) (mTemplateModel.templateSize[0] * mTemplateModel.templateSize[1] * mTemplateModel.fps - test());
+//            sxTemplateRender.setBitrate(bitrate);
             sxTemplateRender.start();
             LogUtil.d("OOM", "开始合成");
             sxTemplateRender.setRenderListener(new SXRenderListener() {
@@ -284,6 +289,13 @@ public class TemplateMvpModel {
 
     }
 
+
+    private int test() {
+        Random r = new Random();
+        int ran1 = r.nextInt(2000);
+        LogUtil.d("OOM", "ran1=" + ran1);
+        return ran1;
+    }
 
     public String[] getRealTimePreview() {
         return mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));

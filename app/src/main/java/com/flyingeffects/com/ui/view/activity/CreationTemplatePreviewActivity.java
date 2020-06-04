@@ -85,7 +85,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     @Override
     protected void initView() {
         imagePath = getIntent().getStringExtra("path");
-        VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(mContext, imagePath);
+        VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
         timeUtils = new timeUtils();
         tv_end_time.setText(timeUtils.timeParse(videoInfo.getDuration()));
         exoPlayer = ExoPlayerFactory.newSimpleInstance(CreationTemplatePreviewActivity.this);

@@ -77,7 +77,7 @@ public class PreviewMvpModel {
             DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> Observable.just(videoName).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                 @Override
                 public void call(String s1) {
-                    VideoInfo info= getVideoInfo.getInstance().getRingDuring(context,s1);
+                    VideoInfo info= getVideoInfo.getInstance().getRingDuring(s1);
                     videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, info.getDuration(),videoName ,0, new videoCutDurationForVideoOneDo.isSuccess() {
                         @Override
                         public void progresss(int progress) {

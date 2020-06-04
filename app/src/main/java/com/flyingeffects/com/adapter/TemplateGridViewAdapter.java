@@ -17,7 +17,7 @@ import com.flyingeffects.com.manager.GlideRoundTransform;
 import java.util.List;
 
 /**
- * user :TongJu  ;描述：社区item
+ * user :TongJu  ;描述：贴纸item
  * 时间：2018/5/3
  **/
 public class TemplateGridViewAdapter extends BaseAdapter {

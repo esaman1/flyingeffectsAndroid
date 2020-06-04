@@ -50,6 +50,7 @@ import com.lansosdk.box.OnLanSongSDKErrorListener;
 import com.lansosdk.box.OnLanSongSDKProgressListener;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
+import com.lansosdk.videoeditor.DrawPadView2;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.albumType;
 import com.suke.widget.SwitchButton;
@@ -158,6 +159,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     private boolean isNeedCut;
 
+
+    @BindView(R.id.DrawPad_view)
+    DrawPadView2 drawPadView;
+
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_creation_template_edit;
@@ -178,7 +184,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             isNeedCut = bundle.getBoolean("isNeedCut");
             title = bundle.getString("bjTemplateTitle");
         }
-        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout, originalPath);
+        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout, originalPath, null);
         if (!TextUtils.isEmpty(videoPath)) {
             //有视频的时候，初始化视频值
             initExo(videoPath);
@@ -187,7 +193,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
         presenter.requestStickersList();
     }
-
 
 
     private void initExo(String videoPath) {
@@ -232,6 +237,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         videoPause();
         seekTo(0);
         nowStateIsPlaying(false);
+        presenter.showAllAnim(false);
     }
 
 
@@ -297,7 +303,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker, R.id.iv_top_back, R.id.tv_background})
+    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker, R.id.iv_top_back, R.id.tv_background, R.id.tv_anim, R.id.tv_tiezhi})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
@@ -314,7 +320,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
                 if (UiStep.isFromDownBj) {
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Preview");
-                }else{
+                } else {
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
                 }
 
@@ -331,6 +337,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         presenter.showGifAnim(false);
                         isPlaying = false;
                         nowStateIsPlaying(false);
+                        presenter.showAllAnim(false);
                     } else {
                         nowStateIsPlaying(true);
                         if (!TextUtils.isEmpty(videoPath)) {
@@ -367,6 +374,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         isPlaying = true;
                         startTimer();
                         presenter.showGifAnim(true);
+                        presenter.showAllAnim(true);
                     }
                 }
 
@@ -377,7 +385,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 break;
 
             case R.id.iv_add_sticker:
-                if(!DoubleClick.getInstance().isFastZDYDoubleClick(1000)){
+                if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
                     if (isPlaying) {
                         videoToPause();
                         isPlaying = false;
@@ -399,9 +407,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                             //如果是选择的视频，就需要得到封面，然后设置在matting里面去，然后吧原图设置为视频地址
                             String path = paths.get(0);
                             String pathType = GetPathTypeModel.getInstance().getMediaType(path);
-                            if (albumType.isImage(pathType))
-                            {
-                                statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_SelectImage" );
+                            if (albumType.isImage(pathType)) {
+                                statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_SelectImage");
                                 CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this, "", tailorPaths -> {
                                     presenter.addNewSticker(tailorPaths.get(0), paths.get(0));
                                 });
@@ -409,7 +416,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                             } else {
                                 //贴纸选择的视频
                                 intoVideoCropActivity(paths.get(0));
-                                statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Selectvideo\n" );
+                                statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Selectvideo\n");
                             }
                         }
                     }, "");
@@ -420,10 +427,32 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 break;
+
+            case R.id.tv_anim:
+                presenter.chooseAnim(1);
+                setTextColor(1);
+                break;
+            case R.id.tv_tiezhi:
+                presenter.chooseAnim(0);
+                setTextColor(0);
+                break;
+
             default:
                 break;
         }
     }
+
+
+    private int[] lin_Id = {R.id.tv_tiezhi, R.id.tv_anim};
+
+    private void setTextColor(int chooseItem) {
+        for (int i = 0; i < lin_Id.length; i++) {
+            ((TextView) findViewById(lin_Id[i])).setTextColor(getResources().getColor(R.color.white));
+        }
+        ((TextView) findViewById(lin_Id[chooseItem])).setTextColor(Color.parseColor("#5496FF"));
+
+    }
+
 
     private void intoVideoCropActivity(String path) {
         Intent intent = new Intent(CreationTemplateActivity.this, VideoCropActivity.class);
@@ -472,14 +501,24 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if (!TextUtils.isEmpty(videoPath)) {
             hListView.post(() -> presenter.initVideoProgressView(hListView));
         }
+
+        ViewGroup.LayoutParams RelativeLayoutParams2 = drawPadView.getLayoutParams();
+        drawPadView.post(() -> {
+            int oriHeight = drawPadView.getHeight();
+            RelativeLayoutParams2.width = Math.round(1f * oriHeight * oriRatio);
+            RelativeLayoutParams2.height = oriHeight;
+            drawPadView.setLayoutParams(RelativeLayoutParams2);
+        });
+
     }
 
 
-    boolean isInitImageBj=false;
+    boolean isInitImageBj = false;
+
     private void showGreenBj() {
         ll_green_background.setVisibility(View.VISIBLE);
         iv_green_background.setVisibility(View.VISIBLE);
-        if(!isInitImageBj){
+        if (!isInitImageBj) {
             float oriRatio = 9f / 16f;
             //保证获得mContainer大小不为0
             LinearLayout.LayoutParams RelativeLayoutParams = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
@@ -490,7 +529,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 RelativeLayoutParams.height = oriHeight;
                 iv_green_background.setLayoutParams(RelativeLayoutParams);
             });
-            isInitImageBj=true;
+            isInitImageBj = true;
         }
         hListView.post(() -> presenter.initVideoProgressView(hListView));
     }
@@ -575,7 +614,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void getBgmPath(String path) {
         this.bgmPath = path;
-        LogUtil.d("OOM","getBgmPath="+path);
+        LogUtil.d("OOM", "getBgmPath=" + path);
         if (isPlaying) {
             if (!TextUtils.isEmpty(path)) {
                 if (exoPlayer != null) {
@@ -583,9 +622,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 }
                 playBGMMusic();
                 if (bgmPlayer != null) {
-                    if(exoPlayer!=null){
+                    if (exoPlayer != null) {
                         bgmPlayer.seekTo((int) getCurrentPos());
-                    }else{
+                    } else {
                         bgmPlayer.seekTo(totalPlayTime);
                     }
                 }
@@ -621,6 +660,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }, 1500);
     }
 
+    @Override
+    public void showCreateTemplateAnim(boolean isShow) {
+        if (isShow) {
+            viewLayerRelativeLayout.setVisibility(View.GONE);
+        } else {
+            viewLayerRelativeLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
 
     private Timer timer;
     private TimerTask task;
@@ -628,9 +676,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private long nowTime = 5;
     //自己计算的播放时间
     private int totalPlayTime;
-
     private void startTimer() {
-        totalPlayTime=0;
+        totalPlayTime = 0;
         int screenWidth = screenUtil.getScreenWidth(this);
         //真实长度
         listWidth = (screenWidth - screenUtil.dip2px(this, 43)) * 2;
@@ -647,23 +694,21 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         task = new TimerTask() {
             @Override
             public void run() {
-                totalPlayTime=totalPlayTime+5;
+                totalPlayTime = totalPlayTime + 5;
                 Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
                     if (!TextUtils.isEmpty(videoPath)) {
                         int nowDuration = (int) getCurrentPos();
                         float percent = nowDuration / (float) allVideoDuration;
-                        LogUtil.d("OOM", "比例=" + percent);
                         int widthX = (int) (percent * listWidth);
-                        LogUtil.d("OOM", "width=" + widthX);
                         hListView.scrollTo(widthX);
+                        LogUtil.d("OOM", "percent=" + percent);
                     } else {
                         //没有选择背景
                         nowTime = nowTime + 5;
-                        LogUtil.d("OOM", "nowTime=" + nowTime);
                         float percent = nowTime / (float) 10000;
-                        LogUtil.d("OOM", "比例=" + percent);
                         int widthX = (int) (percent * listWidth);
                         hListView.scrollTo(widthX);
+                        LogUtil.d("OOM", "percent=" + percent);
                         if (percent >= 1) {
                             nowTime = 5;
                             isPlayComplate = true;
@@ -671,6 +716,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                             isPlaying = false;
                             presenter.showGifAnim(false);
                             nowStateIsPlaying(false);
+                            presenter.showAllAnim(false);
                         }
                     }
                 });
@@ -731,7 +777,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 videoPath = "";
                 showGreenBj();
                 imageBjPath = event.getPath();
-              new Handler().postDelayed(() -> Glide.with(CreationTemplateActivity.this).load(s).into(iv_green_background),500);
+                new Handler().postDelayed(() -> Glide.with(CreationTemplateActivity.this).load(s).into(iv_green_background), 500);
 
             } else {
                 LogUtil.d("OOM", "重新选择了视频背景,地址为" + event.getPath());

@@ -41,6 +41,19 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.ArrayRes;
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.GenericLifecycleObserver;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+
+import com.google.android.material.snackbar.Snackbar;
 import com.yanzhenjie.album.R;
 
 /**
@@ -78,18 +91,15 @@ public abstract class BaseView<Presenter extends BasePresenter> {
             }
         });
 
-        getPresenter().getLifecycle().addObserver(new GenericLifecycleObserver() {
-            @Override
-            public void onStateChanged(LifecycleOwner source, Lifecycle.Event event) {
-                if (event == Lifecycle.Event.ON_RESUME) {
-                    resume();
-                } else if (event == Lifecycle.Event.ON_PAUSE) {
-                    pause();
-                } else if (event == Lifecycle.Event.ON_STOP) {
-                    stop();
-                } else if (event == Lifecycle.Event.ON_DESTROY) {
-                    destroy();
-                }
+        getPresenter().getLifecycle().addObserver((GenericLifecycleObserver) (source1, event) -> {
+            if (event == Lifecycle.Event.ON_RESUME) {
+                resume();
+            } else if (event == Lifecycle.Event.ON_PAUSE) {
+                pause();
+            } else if (event == Lifecycle.Event.ON_STOP) {
+                stop();
+            } else if (event == Lifecycle.Event.ON_DESTROY) {
+                destroy();
             }
         });
     }

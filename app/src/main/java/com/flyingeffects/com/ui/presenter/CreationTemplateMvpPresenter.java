@@ -11,12 +11,13 @@ import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.model.CreationTemplateMvpModel;
 import com.flyingeffects.com.view.HorizontalListView;
 import com.lansosdk.box.ViewLayerRelativeLayout;
+import com.lansosdk.videoeditor.DrawPadView2;
 
 public class CreationTemplateMvpPresenter extends BasePresenter implements CreationTemplateMvpCallback {
     private CreationTemplateMvpView creationTemplatemvpView;
     private CreationTemplateMvpModel creationTemplatemodel;
 
-    public CreationTemplateMvpPresenter(Context context, CreationTemplateMvpView mvp_view,String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout,String originalPath) {
+    public CreationTemplateMvpPresenter(Context context, CreationTemplateMvpView mvp_view, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath, DrawPadView2 drawPadView2) {
         this.creationTemplatemvpView = mvp_view;
         creationTemplatemodel = new CreationTemplateMvpModel(context, this,mVideoPath,viewLayerRelativeLayout,originalPath);
     }
@@ -47,6 +48,15 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.showGifAnim(isShow);
     }
 
+    public void showAllAnim(boolean isSHow){
+        creationTemplatemodel.showAllAnim(isSHow);
+    }
+
+    public void chooseAnim(int pageNum){
+        creationTemplatemodel.chooseAnim(pageNum);
+    }
+
+
     public void initBottomLayout(ViewPager viewPager){
         creationTemplatemodel.initBottomLayout(viewPager);
     }
@@ -70,6 +80,7 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     public void onDestroy(){
         creationTemplatemodel.onDestroy();
     }
+
 
     @Override
     public void ItemClickForStickView(AnimStickerModel stickView) {
@@ -119,6 +130,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     @Override
     public void isFirstAddSuccess() {
         creationTemplatemvpView.isFirstAddSuccess();
+    }
+
+    @Override
+    public void showCreateTemplateAnim(boolean isShow) {
+        creationTemplatemvpView.showCreateTemplateAnim(isShow);
     }
 
 

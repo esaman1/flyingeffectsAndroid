@@ -25,5 +25,7 @@ public interface CreationTemplateMvpCallback {
 
     void isFirstAddSuccess();
 
+    void showCreateTemplateAnim(boolean isShow);
+
 
 }

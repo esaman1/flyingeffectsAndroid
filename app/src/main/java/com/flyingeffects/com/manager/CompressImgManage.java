@@ -32,7 +32,8 @@ public class CompressImgManage {
 
     public void toCompressImg(List<String> paths) {
         Luban.with(context)
-                .load(paths)                                   // 传人要压缩的图片列表
+                .load(paths)
+                // 传人要压缩的图片列表
 //                    .ignoreBy(100)                                  // 忽略不压缩图片的大小
                 .setTargetDir(mCatchFolder)                        // 设置压缩后文件存储位置
                 .setCompressListener(new OnCompressListener() { //设置回调
