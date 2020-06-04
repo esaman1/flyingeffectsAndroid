@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -143,7 +144,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         EventBus.getDefault().register(this);
         templateItem = (new_fag_template_item) getIntent().getSerializableExtra("person");
         fromTo = getIntent().getStringExtra("fromTo");
-        boolean readOnly=getIntent().getBooleanExtra("readOnly",false);
+        boolean readOnly = getIntent().getBooleanExtra("readOnly", false);
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
             tv_make.setText("使用背景");
         }
@@ -171,9 +172,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 .into(iv_writer);
         tv_writer_name.setText(templateItem.getAuth());
         tv_title.setText(templateItem.getRemark());
+        Log.d("initView: ", "time = " + templateItem.getCreate_time());
         tv_describe.setText("友友们    " + "上传" + templateItem.getDefaultnum() + "个素材即可制作");
 
-        if(readOnly){
+        if (readOnly) {
             tv_make.setVisibility(View.GONE);
             iv_zan.setVisibility(View.GONE);
         }
@@ -267,9 +269,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     }
 
 
-
-    private void toClosePragressDialog(){
-        if(!ondestroy){
+    private void toClosePragressDialog() {
+        if (!ondestroy) {
             WaitingDialog.closePragressDialog();
         }
     }
@@ -301,6 +302,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     }
 
     String alert = "飞闪极速抠图中...";
+
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel && !ondestroy) {
@@ -309,17 +311,17 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 //                intoTemplateActivity(paths, TemplateFilePath);
 //                originalImagePath = null;
 //            } else {//需要抠图
-            if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)){
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
                 //背景模板文案
-                alert="正在生成中~";
-            }else{
+                alert = "正在生成中~";
+            } else {
                 //一键模板不抠图的情况下
-                if (is_picout == 0){
-                    alert="正在生成中~";
+                if (is_picout == 0) {
+                    alert = "正在生成中~";
                 }
             }
             new Handler().postDelayed(() -> {
-                if(!ondestroy){
+                if (!ondestroy) {
                     WaitingDialog.openPragressDialog(PreviewActivity.this, alert);
                 }
             }, 200);
@@ -330,8 +332,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 String pathType = GetPathTypeModel.getInstance().getMediaType(path);
                 if (albumType.isImage(pathType)) {
 
-                    if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)){
-                        statisticsEventAffair.getInstance().setFlag(this, "8_SelectImage" );
+                    if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                        statisticsEventAffair.getInstance().setFlag(this, "8_SelectImage");
                     }
                     if (templateItem.getIs_anime() != 1) {
                         compressImage(paths, templateItem.getId());
@@ -341,7 +343,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                     }
                 } else {
                     if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                        statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo" );
+                        statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
                         Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId());
                     } else {
                         toClosePragressDialog();
@@ -512,8 +514,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void hasLogin(boolean hasLogin) {
         if (!TextUtils.isEmpty(templateItem.getType()) && templateItem.getType().equals("1")) {
             Intent intent = new Intent(PreviewActivity.this, AdHintActivity.class);
-            intent.putExtra("from",fromTo);
-            intent.putExtra("templateTitle",templateItem.getTitle());
+            intent.putExtra("from", fromTo);
+            intent.putExtra("templateTitle", templateItem.getTitle());
             startActivity(intent);
         } else {
             hasLoginToNext();
@@ -523,13 +525,13 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     private void hasLoginToNext() {
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-            LogUtil.d("OOM","来自背景");
+            LogUtil.d("OOM", "来自背景");
             //来做背景页面
             AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
         } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
             //来自下载背景，就是用户重新选择背景页面
             new Handler().postDelayed(() -> {
-                if(!ondestroy){
+                if (!ondestroy) {
                     String alert = "飞闪极速下载中...";
                     WaitingDialog.openPragressDialog(PreviewActivity.this, alert);
                     Presenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId());
@@ -537,7 +539,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             }, 200);
 
         } else {
-            LogUtil.d("OOM","来自其他");
+            LogUtil.d("OOM", "来自其他");
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMSEARCH)) {
                 statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "4_search_make", templateItem.getTitle());
             }
@@ -558,7 +560,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void downVideoSuccess(String videoPath, String imagePath) {
-        LogUtil.d("OOM","downVideoSuccess");
+        LogUtil.d("OOM", "downVideoSuccess");
         toClosePragressDialog();
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
             EventBus.getDefault().post(new DownVideoPath(videoPath));
@@ -653,10 +655,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             bundle.putStringArrayList("paths", paths);
             bundle.putInt("isPicNum", defaultnum);
             bundle.putString("fromTo", fromTo);
-            bundle.putString("primitivePath",event.getPrimitivePath());
+            bundle.putString("primitivePath", event.getPrimitivePath());
             bundle.putInt("is_anime", templateItem.getIs_anime());
             bundle.putString("templateName", templateItem.getTitle());
-            intent.putExtra("person",templateItem);//直接存入被序列化的对象实例
+            intent.putExtra("person", templateItem);//直接存入被序列化的对象实例
             bundle.putString("templateId", templateItem.getId());
             bundle.putString("videoTime", templateItem.getVideotime());
             bundle.putStringArrayList("originalPath", (ArrayList<String>) originalImagePath);
@@ -698,7 +700,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
                 @Override
                 public void onVideoAdError(String s) {
-                    LogUtil.d("OOM", "onVideoAdError"+s);
+                    LogUtil.d("OOM", "onVideoAdError" + s);
                 }
 
                 @Override
@@ -721,7 +723,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                     LogUtil.d("OOM", "onVideoAdClicked");
                 }
             });
-        }else{
+        } else {
             hasLoginToNext();
         }
 

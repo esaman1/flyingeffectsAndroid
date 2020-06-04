@@ -6,10 +6,8 @@
         </shape>
     </item>
 
-    <item
-        android:width="@dimen/dp_192"
-        android:height="@dimen/dp_54"
-        android:gravity="center">
-        <bitmap android:src="@mipmap/home_ad_logo"/>
+    <item>
+        <bitmap android:src="@mipmap/welcome" />
     </item>
+
 </layer-list>

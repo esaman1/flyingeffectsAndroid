@@ -196,7 +196,6 @@ public class WelcomeActivity extends BaseActivity {
             }
         }, BaseConstans.getKaiPingADTimeOut());
         LogUtil.d("oom", "开屏广告的时长为" + BaseConstans.getKaiPingADTimeOut());
-
     }
 
 

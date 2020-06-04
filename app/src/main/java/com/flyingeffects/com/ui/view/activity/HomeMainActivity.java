@@ -103,6 +103,7 @@ public class HomeMainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
+        setTheme(R.style.AppTheme);
         //禁止休眠
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
