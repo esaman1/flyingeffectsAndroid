@@ -4,7 +4,6 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
-import android.view.View;
 
 import com.flyco.tablayout.SlidingTabLayout;
 import com.flyingeffects.com.R;
@@ -40,7 +39,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
     @Override
     protected int getContentLayout() {
-        return R.layout.fag_0;
+        return R.layout.fragment_template;
     }
 
 
@@ -51,7 +50,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
     @Override
     protected void initAction() {
-        findViewById(R.id.iv_back).setVisibility(View.GONE);
+        //findViewById(R.id.iv_back).setVisibility(View.GONE);
     }
 
     @Override
@@ -82,7 +81,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                     bundle.putSerializable("num", i);
                     bundle.putSerializable("from", 0);
                     titles[i] = data.get(i).getName();
-                    home_item_fag fragment = new home_item_fag();
+                    HomeItemFragment fragment = new HomeItemFragment();
                     fragment.setArguments(bundle);
                     list.add(fragment);
                 }
@@ -110,8 +109,6 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
             }
         }
     }
-
-
 
 }
 

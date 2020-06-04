@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.multidex.MultiDex;
 import androidx.multidex.MultiDexApplication;
 
+
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -53,6 +54,7 @@ public class BaseApplication extends MultiDexApplication {
         super.onCreate();
         baseApp = this;
         MultiDex.install(this); //分包支持
+        //initBaiduAnalysis();
         initLansong();
         Hawk.init(this).build();
         //registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
@@ -66,6 +68,12 @@ public class BaseApplication extends MultiDexApplication {
 //        keepCrash();
         initNTAdSDK();
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
+    }
+
+    private void initBaiduAnalysis() {
+        // 通过该接口可以控制隐私权限策略的数据采集，true表示可以采集，false表示不可以采集，请在Application里优先调用
+        // 建议有用户隐私策略弹窗的App，用户未同意前设置false,同意之后设置true
+        //StatService.setAuthorizedState(this,false);
     }
 
 
@@ -94,7 +102,6 @@ public class BaseApplication extends MultiDexApplication {
             LogUtil.d("OOM", "初始化： code==" + code + "   result==" + result);
         });
     }
-
 
     private void initLansong() {
         LanSoEditor.initSDK(getApplicationContext(), "jiu_LanSongSDK_android5.key");

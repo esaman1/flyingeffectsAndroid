@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+//apply plugin: 'mtj-circle-plugin'
 
 android {
 
@@ -76,6 +77,15 @@ android {
         targetCompatibility = '1.8'
     }
     buildToolsVersion = '29.0.3'
+
+//    MtjCirclePluginConfig {
+//        // 设置appkey
+//        appkey = '1b676630a0'
+//        // 设置debug 开关，如果需要查看日志则打开开关，为避免影响性能建议上线前关闭（设置为false）
+//        debug = false
+//        // 默认启动此插件，如果开发者不需要可以禁用（设置为false）
+//        enabled = true
+//    }
 }
 
 dependencies {

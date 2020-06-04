@@ -27,7 +27,7 @@ import java.util.List;
 import butterknife.BindView;
 
 
-public class home_item_fag extends BaseFragment implements HomeItemMvpView, View.OnClickListener {
+public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, View.OnClickListener {
 
     private home_fag_itemMvpPresenter Presenter;
     @BindView(R.id.RecyclerView)
