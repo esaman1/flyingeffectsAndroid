@@ -732,6 +732,8 @@ public class CreationTemplateMvpModel {
 
             @Override
             public void stickerMove() {
+                //停止全部动画
+                stopAllAnim();
                 closeAllAnim();
                 if (stickView.getParent() != null) {
                     ViewGroup vp = (ViewGroup) stickView.getParent();
@@ -741,8 +743,7 @@ public class CreationTemplateMvpModel {
                 }
                 viewLayerRelativeLayout.addView(stickView);
                 stickView.start();
-                //停止全部动画
-                stopAllAnim();
+
             }
         });
 
