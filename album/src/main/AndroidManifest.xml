@@ -87,5 +87,4 @@
                 android:resource="@xml/album_camera_provider" />
         </provider>
     </application>
-
 </manifest>
