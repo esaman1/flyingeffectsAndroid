@@ -432,7 +432,18 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         videoPlayer.setUp(path, true, "");
         videoPlayer.startPlayLogic();
         videoPlayer.setGSYVideoProgressListener((progress, secProgress, currentPosition, duration) -> seekBar.setProgress(progress));
-        videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> showPreview(false, true)));
+//        videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> ));
+        videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(new VideoPlayerCallbackForTemplate.videoPlayerStopListener() {
+            @Override
+            public void isStop(boolean isSuccess) {
+                showPreview(false, true);
+            }
+
+            @Override
+            public void onPrepared(boolean onPrepared) {
+            }
+        }));
+
         showPreview(true, true);
     }
 

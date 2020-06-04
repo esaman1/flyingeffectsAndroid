@@ -138,13 +138,18 @@
                     android:scrollHorizontally="true"
                     android:singleLine="true"
                     android:textColor="@color/white"
-                    android:textSize="15sp" />
+                    android:textSize="16sp" />
 
 
                 <com.flyingeffects.com.view.MarqueTextView
                     android:id="@+id/tv_describe"
                     android:layout_width="wrap_content"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/preview_video_time_bj"
                     android:layout_marginTop="10dp"
                     android:ellipsize="marquee"
                     android:focusable="true"
@@ -154,7 +159,7 @@
                     android:singleLine="true"
                     android:text="花泽类"
                     android:textColor="@color/white"
-                    android:textSize="15sp" />
+                    android:textSize="11sp" />
 
             </LinearLayout>
 

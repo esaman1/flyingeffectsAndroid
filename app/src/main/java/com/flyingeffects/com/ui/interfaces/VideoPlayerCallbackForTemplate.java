@@ -19,7 +19,7 @@ public class VideoPlayerCallbackForTemplate implements VideoAllCallBack {
 
     @Override
     public void onPrepared(String url, Object... objects) {
-
+        callback.onPrepared(true);
     }
 
     @Override
@@ -124,6 +124,7 @@ public class VideoPlayerCallbackForTemplate implements VideoAllCallBack {
 
    public  interface videoPlayerStopListener{
         void isStop(boolean isSuccess);
+       void onPrepared(boolean onPrepared);
 
     }
 }
