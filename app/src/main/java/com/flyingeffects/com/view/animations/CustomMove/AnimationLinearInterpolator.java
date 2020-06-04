@@ -169,9 +169,7 @@ public class AnimationLinearInterpolator {
                         }
                     }
                     nowDuration += 5;
-//                    LogUtil.d("xxx2", "nowDuration=" + nowDuration);
                     float nowFloatTime = nowDuration / (float) totalDuration;
-//                    LogUtil.d("xxx2", "nowFloatTime=" + nowFloatTime);
                     float progress;
                     if(interpolatorType==0){
                         progress= getNowInterpolatorProgress(nowFloatTime);
