@@ -32,4 +32,8 @@
 
     <color name="albumSheetBottom">#992B2B2B</color>
     <color name="albumSheetLayer">#EE2B2B2B</color>
+
+    <color name="albumColorWhite">#FFFFFF</color>
+    <color name="albumColorBlack">#000000</color>
+    <color name="albumColorBlue">#5496FF</color>
 </resources>

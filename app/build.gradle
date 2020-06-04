@@ -31,7 +31,8 @@ android {
         manifestPlaceholders = [UMENG_CHANNEL_VALUE: "umeng"]//添加一个默认渠道号  2018-6-19
         flavorDimensions "versionCode" //版本名后面添加一句话，意思就是flavor dimension 它的维度就是该版本号，这样维度就是都是统一的了
         ndk {
-            abiFilters 'armeabi-v7a'
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+            //abiFilters 'armeabi-v7a'
         }
 
         //极光推送配置 ，通过自动配置
@@ -41,7 +42,6 @@ android {
                 JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
         ]
     }
-
 
     buildTypes {
         debug {
@@ -75,10 +75,9 @@ android {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
-    buildToolsVersion = '28.0.3'
-
-
+    buildToolsVersion = '29.0.3'
 }
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
@@ -109,7 +108,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.6.0'
     implementation 'com.squareup.okio:okio:1.7.0'
     implementation 'com.github.bumptech.glide:glide:4.7.1'
-//    compile 'jp.wasabeef:glide-transformations:2.0.1'
+    //和glide 搭配的高斯
+    implementation 'jp.wasabeef:glide-transformations:2.0.1'
 
     //水平进度条
     implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
@@ -145,14 +145,16 @@ dependencies {
     implementation 'cn.jiguang.sdk:jpush:3.5.8'
     implementation 'cn.jiguang.sdk:jcore:2.2.8'
     implementation 'org.jetbrains:annotations:15.0'
-    //中台
-    implementation files('libs/NTAnalytics1.0.5.jar')
+    // 华为os
+    implementation 'com.huawei.storage:esdk-obs-android:3.1.3'
+    implementation 'com.amitshekhar.android:glide-bitmap-pool:0.0.1'
 
+    //中台
+    //implementation files('libs/NTAnalytics1.0.5.jar')
     implementation project(':sxve')
     implementation project(':album')
     implementation project(':LanSongSDK')
-    implementation 'com.amitshekhar.android:glide-bitmap-pool:0.0.1'
-    api files('libs/shanyan_sdk_v2.3.1.3.aar')
+
     implementation project(path: ':segjni')
 
     //mp4 声音和视频分离
@@ -166,23 +168,12 @@ dependencies {
     implementation(name: 'Baidu_MobAds_SDK-release_v5.85', ext: 'aar')
     // 穿山甲
     implementation(name: 'open_ad_sdk_v2.8.0.3', ext: 'aar')
-
     //oppo
     implementation(name: 'mobad_normal_pub_333_2019_11_11', ext: 'aar')
-
-
-
     // 抖音1
     implementation(name: 'RangersAppLog-Lite-cn-3.3.12', ext: 'aar')
-
-    // 华为os
-    implementation 'com.huawei.storage:esdk-obs-android:3.1.3'
-
-    //和glide 搭配的高斯
-    implementation 'jp.wasabeef:glide-transformations:2.0.1'
-
-
-
+    //闪验
+    api files('libs/shanyan_sdk_v2.3.1.3.aar')
 }
 
 

@@ -20,9 +20,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
+
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,6 +43,7 @@ import com.yanzhenjie.album.app.album.data.MediaReader;
 import com.yanzhenjie.album.app.album.data.PathConversion;
 import com.yanzhenjie.album.app.album.data.PathConvertTask;
 import com.yanzhenjie.album.app.album.data.ThumbnailBuildTask;
+import com.yanzhenjie.album.app.camera.CaptureActivity;
 import com.yanzhenjie.album.impl.OnItemClickListener;
 import com.yanzhenjie.album.mvp.BaseActivity;
 import com.yanzhenjie.album.util.AlbumUtils;
@@ -106,7 +109,7 @@ public class AlbumActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         initializeArgument();
         setContentView(createView());
-        mView = new AlbumView(this, this,material_info);
+        mView = new AlbumView(this, this, material_info);
         mView.setupViews(mWidget, mColumnCount, mHasCamera, mChoiceMode);
         mView.setTitle(mWidget.getTitle());
         mView.setCompleteDisplay(false);
@@ -122,14 +125,14 @@ public class AlbumActivity extends BaseActivity implements
         mFunction = argument.getInt(Album.KEY_INPUT_FUNCTION);
         mChoiceMode = argument.getInt(Album.KEY_INPUT_CHOICE_MODE);
         mColumnCount = argument.getInt(Album.KEY_INPUT_COLUMN_COUNT);
-        mMineVideoTime= argument.getLong(Album.VIDEOTIME);
+        mMineVideoTime = argument.getLong(Album.VIDEOTIME);
         mHasCamera = argument.getBoolean(Album.KEY_INPUT_ALLOW_CAMERA);
         mLimitCount = argument.getInt(Album.KEY_INPUT_LIMIT_COUNT);
         mQuality = argument.getInt(Album.KEY_INPUT_CAMERA_QUALITY);
-        videoTimeFlite=argument.getInt(Album.VIDEOTIME);
+        videoTimeFlite = argument.getInt(Album.VIDEOTIME);
         mLimitDuration = argument.getLong(Album.KEY_INPUT_CAMERA_DURATION);
         mLimitBytes = argument.getLong(Album.KEY_INPUT_CAMERA_BYTES);
-        material_info=argument.getString(Album.KEY_INPUT_MATERIALINFO);
+        material_info = argument.getString(Album.KEY_INPUT_MATERIALINFO);
         mFilterVisibility = argument.getBoolean(Album.KEY_INPUT_FILTER_VISIBILITY);
     }
 
@@ -140,7 +143,7 @@ public class AlbumActivity extends BaseActivity implements
      */
     private int createView() {
 
-        if(mWidget!=null){
+        if (mWidget != null) {
             switch (mWidget.getUiStyle()) {
                 case Widget.STYLE_DARK: {
                     return R.layout.album_activity_album_dark;
@@ -152,7 +155,7 @@ public class AlbumActivity extends BaseActivity implements
                     throw new AssertionError("This should not be the case.");
                 }
             }
-        }else{
+        } else {
             return R.layout.album_activity_album_light;
         }
 
@@ -223,6 +226,7 @@ public class AlbumActivity extends BaseActivity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode,resultCode,data);
         switch (requestCode) {
             case CODE_ACTIVITY_NULL: {
                 if (resultCode == RESULT_OK) {
@@ -498,7 +502,7 @@ public class AlbumActivity extends BaseActivity implements
 
     @Override
     public void tryPreviewChecked() {
-        if (mCheckedList!=null&&mCheckedList.size() > 0) {
+        if (mCheckedList != null && mCheckedList.size() > 0) {
             GalleryActivity.sAlbumFiles = new ArrayList<>(mCheckedList);
             GalleryActivity.sCheckedCount = mCheckedList.size();
             GalleryActivity.sCurrentPosition = 0;
@@ -511,10 +515,10 @@ public class AlbumActivity extends BaseActivity implements
 
 
     @Override
-    public void toCapturePage(){
+    public void toCapturePage() {
         //todo 点击拍摄按钮
-
-
+        Intent intent = new Intent(this, CaptureActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -578,15 +582,15 @@ public class AlbumActivity extends BaseActivity implements
      * 如果传了最低要求视频时长且只选了一个视频的时候，当选择视频时长小于规定时长时需要给出提示
      */
     private void callbackResult() {
-        long chooseDuration=mCheckedList.get(0).getDuration();
-        if(mMineVideoTime!=0&&mCheckedList.get(0).getMediaType()==AlbumFile.TYPE_VIDEO&&mCheckedList.size()==1){
-            if(chooseDuration<mMineVideoTime){
+        long chooseDuration = mCheckedList.get(0).getDuration();
+        if (mMineVideoTime != 0 && mCheckedList.get(0).getMediaType() == AlbumFile.TYPE_VIDEO && mCheckedList.size() == 1) {
+            if (chooseDuration < mMineVideoTime) {
                 showDialog();
-            }else{
+            } else {
                 ThumbnailBuildTask task = new ThumbnailBuildTask(this, mCheckedList, this);
                 task.execute();
             }
-        }else{
+        } else {
             ThumbnailBuildTask task = new ThumbnailBuildTask(this, mCheckedList, this);
             task.execute();
         }
@@ -594,18 +598,17 @@ public class AlbumActivity extends BaseActivity implements
     }
 
 
-
     public void showDialog() {
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(AlbumActivity.this);
         builder.setTitle("提示");
-        int needTime= (int) (mMineVideoTime/(float)1000);
-        builder.setMessage("此模板上传"+needTime+"秒视频最佳\n" +
+        int needTime = (int) (mMineVideoTime / (float) 1000);
+        builder.setMessage("此模板上传" + needTime + "秒视频最佳\n" +
                 "不然画面会少一些哟");
         builder.setNegativeButton("取消", (dialog, which) -> {
             mView.setSingleCompletion(false);
             dialog.dismiss();
         });
-        builder.setPositiveButton("确定",(dialog, which) -> {
+        builder.setPositiveButton("确定", (dialog, which) -> {
             ThumbnailBuildTask task = new ThumbnailBuildTask(this, mCheckedList, this);
             task.execute();
             dialog.dismiss();
@@ -645,7 +648,7 @@ public class AlbumActivity extends BaseActivity implements
             mLoadingDialog = new LoadingDialog(this);
             mLoadingDialog.setupViews(mWidget);
         }
-        if (!mLoadingDialog.isShowing()&&!isOnDestroy) {
+        if (!mLoadingDialog.isShowing() && !isOnDestroy) {
             mLoadingDialog.show();
         }
     }
@@ -660,10 +663,11 @@ public class AlbumActivity extends BaseActivity implements
     }
 
 
-    private boolean isOnDestroy=false;
+    private boolean isOnDestroy = false;
+
     @Override
     protected void onDestroy() {
-        isOnDestroy=true;
+        isOnDestroy = true;
         super.onDestroy();
     }
 
