@@ -39,6 +39,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.flyingeffects.com.view.animations.CustomMove.AnimType.BOTTOMTOCENTER2;
+
 /**
  * 蓝松后台绘制方法
  */
@@ -534,9 +536,20 @@ public class backgroundDraw {
                 for (int i = 0; i < hasAnimLayerList.size(); i++) {
                     hasAnimLayer animLayer = hasAnimLayerList.get(i);
                     float needDurationTime = animCollect.getAnimNeedSubLayerTime(animLayer.ChooseAnimId);
-                    float needDt = needDurationTime * 1000;
-                    float remainder = currentTime % (needDt);
-                    float percentage = remainder / (needDt);
+                    float percentage ;
+                    if(animLayer.ChooseAnimId==AnimType.BOTTOMTOCENTER2){
+                        float needDt = needDurationTime * 1000;
+                       if(currentTime>needDt){
+                           percentage=1;
+                       }else{
+                           percentage  = currentTime / (needDt);
+                       }
+                    }else{
+                        //循环
+                        float needDt = needDurationTime * 1000;
+                        float remainder = currentTime % (needDt);
+                        percentage  = remainder / (needDt);
+                    }
                     Layer layer = animLayer.getLayer();
                     ArrayList<SubLayer> listForSubLayer = animLayer.getSublayerList();
                     animCollect.startAnimForChooseAnim(animLayer.ChooseAnimId, layer, listForSubLayer, new LayerAnimCallback() {

@@ -71,13 +71,18 @@ public class AnimationLinearInterpolator {
     }
 
 
+
+      private  boolean isCirculation=true;
+    public void SetCirculation(boolean isCirculation){
+        this.isCirculation=isCirculation;
+    }
+
     public void PlayAnimationNoTimer(float percentage) {
         if(interpolatorType==0){
             callback.progress(getNowInterpolatorProgress(percentage), isDone);
         }else{
             callback.progress(getNowCycleInterpolatorProgress(percentage), isDone);
         }
-
     }
 
 
@@ -156,7 +161,12 @@ public class AnimationLinearInterpolator {
                 @Override
                 public void run() {
                     if (nowDuration >= totalDuration) {
-                        nowDuration = 0;
+                        if(!isCirculation){
+                            StopAnimation();
+                            callback.progress(1, isDone);
+                        }else{
+                            nowDuration = 0;
+                        }
                     }
                     nowDuration += 5;
 //                    LogUtil.d("xxx2", "nowDuration=" + nowDuration);

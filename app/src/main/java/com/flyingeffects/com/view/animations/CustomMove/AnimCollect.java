@@ -18,14 +18,6 @@ import java.util.List;
 public class AnimCollect {
 
 
-    private ItemEightBorther itemEightBorther;
-    private ItemRightToLeft rightToLeft;
-    private ItemBottomToCenter itemBottomToCenter;
-    //    private SwingUpAndDownToCenter swingUpAndDownToCenter;
-    private Rotate rotate;
-    private ItemBottomToTop itemBottomToTop;
-    private ItemLeftAndRightDissmiss itemLeftAndRightDissmiss;
-    private ItemCloned itemCloned;
     private ArrayList<baseAnimModel> listForKeepBaseAnimMode = new ArrayList<>();
     private ArrayList<baseAnimModel> listForBaseAnimMode = new ArrayList<>();
 
@@ -52,6 +44,8 @@ public class AnimCollect {
                 return 7;
             case SUPERSTAR:
                 return 8;
+            case BOTTOMTOCENTER2:
+                return 9;
 
 
             case NULL:
@@ -93,6 +87,7 @@ public class AnimCollect {
             case LEFTTORIGHT:
                 return 3000;
             case BOTTOMTOCENTER:
+            case BOTTOMTOCENTER2:
             case SWINGUPANDDOWN:
             case LEFTANDRIGHTDISSMISS:
 
@@ -167,6 +162,13 @@ public class AnimCollect {
                 itemCloned.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(itemCloned);
                 break;
+
+
+            case BOTTOMTOCENTER2:
+                ItemBottomToCenter2 itemBottomToCenter2 = new ItemBottomToCenter2();
+                itemBottomToCenter2.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(itemBottomToCenter2);
+                break;
         }
     }
 
@@ -239,8 +241,6 @@ public class AnimCollect {
                         break;
                     }
                 }
-
-
 
 
                 if (itemBottomToCenter != null) {
@@ -369,6 +369,28 @@ public class AnimCollect {
                     (itemCloned).initToChangeSubLayer(mainStickerView, callback, percentage);
                     listForKeepBaseAnimMode.add(itemCloned);
                 }
+                break;
+
+            //底部居中位置
+            case BOTTOMTOCENTER2:
+                nowMainLayerId = mainStickerView.getId();
+                ItemBottomToCenter2 itemBottomToCenter2 = null;
+                for (baseAnimModel model : listForKeepBaseAnimMode
+                ) {
+                    if (model.getLayerId()== nowMainLayerId) {
+                        itemBottomToCenter2 = (ItemBottomToCenter2) model;
+                        break;
+                    }
+                }
+                if (itemBottomToCenter2 != null) {
+                    (itemBottomToCenter2).toChangeSubLayer(callback, percentage);
+                } else {
+                    itemBottomToCenter2 = new ItemBottomToCenter2();
+                    itemBottomToCenter2.setLayerId(mainStickerView.getId());
+                    itemBottomToCenter2.initToChangeSubLayer(mainStickerView, callback, percentage);
+                    listForKeepBaseAnimMode.add(itemBottomToCenter2);
+                }
+                break;
         }
     }
 
@@ -469,6 +491,13 @@ public class AnimCollect {
         stickerAnim8.setIcon(R.mipmap.anim_ybs);
         stickerAnim8.setAnimType(AnimType.SUPERSTAR);
         list.add(stickerAnim8);
+
+
+        StickerAnim stickerAnim9 = new StickerAnim();
+        stickerAnim9.setName("下往上停");
+        stickerAnim9.setIcon(R.mipmap.anim_cxws);
+        stickerAnim9.setAnimType(AnimType.BOTTOMTOCENTER2);
+        list.add(stickerAnim9);
 
         return list;
     }
