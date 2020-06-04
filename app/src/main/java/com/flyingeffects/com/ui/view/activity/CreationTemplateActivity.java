@@ -344,6 +344,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
             case R.id.iv_add_sticker:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
+                    presenter.showAllAnim(false);
                     if (isPlaying) {
                         videoToPause();
                         isPlaying = false;

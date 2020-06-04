@@ -90,6 +90,7 @@ public class AnimationLinearInterpolator {
      * 匀速运动
      */
     public float getNowInterpolatorProgress(float progress) {
+        LogUtil.d("InterpolatorProgress","当前动画没消失匀速运动");
         LinearInterpolator linearInterpolator = new LinearInterpolator();
         return linearInterpolator.getInterpolation(progress);
     }
@@ -102,6 +103,7 @@ public class AnimationLinearInterpolator {
      */
 
     public float getNowCycleInterpolatorProgress(float progress) {
+        LogUtil.d("InterpolatorProgress","当前动画没消失正玄函数");
         CycleInterpolator cycleInterpolator = new CycleInterpolator(1);
         return cycleInterpolator.getInterpolation(progress);
     }

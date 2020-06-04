@@ -220,6 +220,7 @@ public class CreationTemplateMvpModel {
 
     public void chooseAnim(int pageNum) {
         viewPager.setCurrentItem(pageNum);
+        showAllAnim(false);
     }
 
 
@@ -272,6 +273,7 @@ public class CreationTemplateMvpModel {
         GridView gridView = templateThumbView.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view, i, l) -> {
             if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
+                showAllAnim(false);
                 callback.needPauseVideo();
                 modificationSingleItemIsChecked(i);
                 if (i == 0) {
@@ -400,6 +402,8 @@ public class CreationTemplateMvpModel {
     }
 
 
+
+
     /**
      * description ：延迟开启动画，因为这里可能需要复制很多的子贴纸
      * creation date: 2020/6/3
@@ -438,7 +442,7 @@ public class CreationTemplateMvpModel {
             if (previewCount == hasAnimCount) {
                 callback.animIsComplate();
             }
-            if(!isFromPreview){
+            if (!isFromPreview) {
                 WaitingDialog.closePragressDialog();
             }
 
