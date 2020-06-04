@@ -980,7 +980,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     LogUtil.d("event", "ACTION_POINTER_UP pointerCount =" + pointerCount);
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    LogUtil.d("event", "ACTION_MOVE");
+                    if (dragCallback != null) {
+                        dragCallback.stickerDragMove();
+                    }
                     if (UiStep.isFromDownBj) {
                         statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_drag");
                     } else {
@@ -993,6 +995,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
                     if (mCurrentMode == MOVE_MODE) {
                         // 移动贴图
+                        mCurrentMode = MOVE_MODE;
                         float dx = x - lastX;
                         float dy = y - lastY;
 
@@ -1026,6 +1029,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                         LogUtil.d("OOM", "P=" + bbb1);
                     } else if (mCurrentMode == rotateLocation) {
                         // 旋转 缩放文字操作
+                        mCurrentMode = rotateLocation;
                         float dx = x - lastX;
                         float dy = y - lastY;
                         updateRotateAndScale(dx, dy);
@@ -1052,6 +1056,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     break;
                 case MotionEvent.ACTION_CANCEL:
                 case MotionEvent.ACTION_UP:
+                    if (dragCallback != null) {
+                        dragCallback.stickerDragUp();
+                    }
                     LogUtil.d("event", "ACTION_CANCEL");
                     if (mCurrentMode == IDLE_MODE) {
                         return false;
@@ -1071,7 +1078,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             }// end switch
             return true;
         }
-        return true;
+        return false;
     }
 
 
