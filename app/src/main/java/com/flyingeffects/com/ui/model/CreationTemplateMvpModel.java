@@ -426,15 +426,6 @@ public class CreationTemplateMvpModel {
                     }
                 }
             }
-//            //启动动画
-//            ArrayList<StickerView> finalList = list;
-//            new Thread(() -> {
-//                if (sublayerListForBitmapLayer != null) {
-//                    startAnimModel.ToStart(animType, finalTargetStickerView, finalList);
-//                } else {
-//                    startAnimModel.ToStart(animType, finalTargetStickerView, null);
-//                }
-//            });
             if (sublayerListForBitmapLayer != null) {
                 previewCount++;
                 startAnimModel.ToStart(animType, finalTargetStickerView, sublayerListForBitmapLayer.get(position));
