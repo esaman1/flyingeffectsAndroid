@@ -46,6 +46,7 @@
             android:id="@+id/btn_capture"
             style="@style/Album.TextButton.WrapContent.SheetBottom"
             android:layout_toStartOf="@id/btn_preview"
+            android:visibility="invisible"
             android:text="拍摄" />
 
         <TextView
@@ -79,6 +80,5 @@
             android:text="@string/album_loading"
             android:textColor="@color/albumFontHint"
             android:textSize="@dimen/album_sp_16" />
-
     </LinearLayout>
 </merge>

@@ -1,4 +1,4 @@
-package com.flyingeffects.com.view;
+package com.yanzhenjie.album.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -8,14 +8,16 @@ import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 
-import com.flyingeffects.com.R;
-import com.flyingeffects.com.utils.PxUtils;
+import androidx.annotation.Nullable;
+
+import com.yanzhenjie.album.R;
+import com.yanzhenjie.album.util.PxUtils;
+
 
 public class RecordView extends View implements View.OnClickListener, View.OnLongClickListener {
 
@@ -47,12 +49,12 @@ public class RecordView extends View implements View.OnClickListener, View.OnLon
 
     public RecordView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RecordView, defStyleAttr, defStyleRes);
-        radius = typedArray.getDimensionPixelOffset(R.styleable.RecordView_record_radius, 0);
-        progressWidth = typedArray.getDimensionPixelOffset(R.styleable.RecordView_progress_width, PxUtils.dp2px(context,3));
-        progressColor = typedArray.getColor(R.styleable.RecordView_progress_color, Color.RED);
-        fillColor = typedArray.getColor(R.styleable.RecordView_fill_color, Color.WHITE);
-        maxDuration = typedArray.getInteger(R.styleable.RecordView_duration, 10);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.AlbumRecordView, defStyleAttr, defStyleRes);
+        radius = typedArray.getDimensionPixelOffset(R.styleable.AlbumRecordView_album_record_radius, 0);
+        progressWidth = typedArray.getDimensionPixelOffset(R.styleable.AlbumRecordView_album_progress_width, PxUtils.dp2px(context,3));
+        progressColor = typedArray.getColor(R.styleable.AlbumRecordView_album_progress_color, Color.RED);
+        fillColor = typedArray.getColor(R.styleable.AlbumRecordView_album_fill_color, Color.WHITE);
+        maxDuration = typedArray.getInteger(R.styleable.AlbumRecordView_album_duration, 10);
         setMaxDuration(maxDuration);
         typedArray.recycle();
 
@@ -99,7 +101,6 @@ public class RecordView extends View implements View.OnClickListener, View.OnLon
                 return false;
             }
         });
-
         setOnClickListener(this);
         setOnLongClickListener(this);
     }

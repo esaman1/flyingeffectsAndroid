@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AlbumRecordView">
+        <attr name="album_progress_color" format="color"/>
+        <attr name="album_progress_width" format="dimension"/>
+        <attr name="album_fill_color" format="color"/>
+        <attr name="album_record_radius" format="dimension"/>
+        <attr name="album_duration" format="integer"/>
+    </declare-styleable>
+</resources>

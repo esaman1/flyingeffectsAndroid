@@ -17,10 +17,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.yanzhenjie.album">
 
-<!--    <uses-permission android:name="android.permission.CAMERA" />-->
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-<!--    <uses-permission android:name="android.permission.RECORD_AUDIO" />-->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application>
         <activity
@@ -35,10 +35,6 @@
             android:name=".app.album.AlbumActivityForCreateVideo"
             android:theme="@style/Album.Theme.TransparentThemeForVideo"
             android:windowSoftInputMode="stateAlwaysHidden|stateHidden" />
-
-
-
-
 
         <activity
             android:name=".app.album.GalleryActivity"
@@ -66,6 +62,16 @@
 
         <activity
             android:name=".app.camera.CameraActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/Album.Theme.Activity.Transparent"
+            android:windowSoftInputMode="stateAlwaysHidden|stateHidden" />
+
+        <activity
+            android:name=".app.camera.CaptureActivity"
+            android:hardwareAccelerated="true" />
+
+        <activity
+            android:name=".app.camera.CapturePreviewActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@style/Album.Theme.Activity.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden|stateHidden" />

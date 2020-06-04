@@ -10,7 +10,9 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.EditText;
 
-public class CounterEditText extends EditText {
+import androidx.appcompat.widget.AppCompatEditText;
+
+public class CounterEditText extends AppCompatEditText {
     private static final String TAG = "CountEditText";
     private Paint countPaint;
     private String countStr = "50/50";

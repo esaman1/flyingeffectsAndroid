@@ -1,4 +1,4 @@
-package com.flyingeffects.com.ui.view.activity;
+package com.yanzhenjie.album.app.camera;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,8 +12,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 
+
 import com.bumptech.glide.Glide;
-import com.flyingeffects.com.R;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -27,6 +27,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.FileDataSource;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.button.MaterialButton;
+import com.yanzhenjie.album.R;
 
 import java.io.File;
 
@@ -38,7 +39,7 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
     public static final int REQ_PREVIEW = 1000;
     private SimpleExoPlayer player;
 
-    private MaterialButton mActionOk;
+    private Button mActionOk;
     private AppCompatImageView mActionClose;
     private PlayerView mPlayerView;
     private PhotoView mPhotoView;
@@ -56,7 +57,7 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_capture_preview);
+        setContentView(R.layout.album_activity_capture_preview);
         String previewUrl = getIntent().getStringExtra(KEY_PREVIEW_URL);
         boolean isVideo = getIntent().getBooleanExtra(KEY_PREVIEW_VIDEO, false);
         String btnText = getIntent().getStringExtra(KEY_PREVIEW_BTNTEXT);

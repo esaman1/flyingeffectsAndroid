@@ -33,7 +33,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:visibility="gone"
-        android:src="@drawable/photoalbustoguide"
+        android:src="@drawable/album_photoalbustoguide"
         android:layout_height="match_parent"/>
 
 </RelativeLayout>

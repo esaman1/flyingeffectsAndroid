@@ -75,10 +75,9 @@ android {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
-    buildToolsVersion = '28.0.3'
-
-
+    buildToolsVersion = '29.0.3'
 }
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
@@ -180,8 +179,6 @@ dependencies {
 
     //和glide 搭配的高斯
     implementation 'jp.wasabeef:glide-transformations:2.0.1'
-
-
 
 }
 

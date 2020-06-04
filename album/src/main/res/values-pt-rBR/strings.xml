@@ -78,4 +78,8 @@
 
     <string name="album_item_unavailable">Não disponível</string>
     <string name="album_take_file_unavailable">Arquivo indisponível, por favor tente novamente.</string>
+
+    <string name="album_capture_permission_no">拒绝</string>
+    <string name="album_capture_permission_message">拍摄视频需要摄像权限，如需使用相关功能，请选择同意</string>
+    <string name="album_capture_permission_ok">同意</string>
 </resources>
