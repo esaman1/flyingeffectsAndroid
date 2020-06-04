@@ -79,7 +79,9 @@ public class ItemRightToLeft extends baseAnimModel {
     }
 
 
+    private float toY;
     void getSubLayerData(Layer mainStickerView, LayerAnimCallback callback, float percentage) {
+        toY=mainStickerView.getPositionY();
         toChangeSubLayer(callback, percentage);
     }
 
@@ -91,7 +93,7 @@ public class ItemRightToLeft extends baseAnimModel {
             float translationToX;
             float needProgress = 1 - progress;
             TransplationPos transplationPos = new TransplationPos();
-            transplationPos.setToY(0);
+            transplationPos.setToY(toY);
             if (needProgress < 0.66) {
                 translationToX = (float) (needProgress + 0.33);
             } else {
@@ -101,7 +103,7 @@ public class ItemRightToLeft extends baseAnimModel {
             listForTranslaptionPosition.add(transplationPos);
             listForScale.add(1 - translationToX);
             TransplationPos transplationPos2 = new TransplationPos();
-            transplationPos2.setToY(0);
+            transplationPos2.setToY(toY);
             if (needProgress < 0.33) {
                 translationToX = (float) (needProgress + 0.66);
             } else {
@@ -112,7 +114,7 @@ public class ItemRightToLeft extends baseAnimModel {
             listForTranslaptionPosition.add(transplationPos2);
 
             TransplationPos transplationPos3 = new TransplationPos();
-            transplationPos3.setToY(0);
+            transplationPos3.setToY(toY);
             if (needProgress < (1 - 0.99)) {
                 translationToX = (float) (needProgress + 0.01);
             } else {
