@@ -332,7 +332,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     } else {
                         WaitingDialog.openPragressDialog(this);
                         new Thread(() -> presenter.showAllAnim(true)).start();
-
                     }
                 }
 

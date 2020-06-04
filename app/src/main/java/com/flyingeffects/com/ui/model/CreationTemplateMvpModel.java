@@ -82,6 +82,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 import rx.Observable;
@@ -752,6 +754,7 @@ public class CreationTemplateMvpModel {
                 //停止全部动画
                 stopAllAnim();
                 closeAllAnim();
+                destroyTimer();
                 if (stickView.getParent() != null) {
                     ViewGroup vp = (ViewGroup) stickView.getParent();
                     if (vp != null) {
@@ -768,18 +771,14 @@ public class CreationTemplateMvpModel {
             @Override
             public void stickerDragMove() {
                 isIntoDragMove = true;
-                for (StickerView subStickerView : nowChooseSubLayerAnimList
-                ) {
-                    deleteStickView(subStickerView);
-                }
+                destroyTimer();
                 stopAllAnim();
             }
 
             @Override
             public void stickerDragUp() {
                 if (isIntoDragMove && stickView.getChooseAnimId() != null && stickView.getChooseAnimId() != AnimType.NULL) {
-                    //模拟动画按钮的点击事件
-                    startPlayAnim(animCollect.getAnimid(stickView.getChooseAnimId()), false, null, 0, false);
+                    startTimer(stickView);
                 }
                 isIntoDragMove = false;
             }
@@ -875,6 +874,12 @@ public class CreationTemplateMvpModel {
         }
 
     }
+
+
+
+
+
+
 
 
     private void deleteStickView(StickerView stickView) {
@@ -1479,6 +1484,61 @@ public class CreationTemplateMvpModel {
             animCollect.stopAnim();
         }
 
+    }
+
+
+
+
+
+    private Timer timer;
+    private TimerTask task;
+    private  int totalPlayTime;
+    private void startTimer(StickerView stickView) {
+        totalPlayTime=0;
+        if (timer != null) {
+            timer.purge();
+            timer.cancel();
+            timer = null;
+        }
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+        timer = new Timer();
+        task = new TimerTask() {
+            @Override
+            public void run() {
+                totalPlayTime = totalPlayTime + 500;
+                if(totalPlayTime==2000){
+                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+                        @Override
+                        public void call(Integer integer) {
+                            destroyTimer();
+                            startPlayAnim(animCollect.getAnimid(stickView.getChooseAnimId()), false, null, 0, false);
+                        }
+                    });
+
+                }
+            }
+        };
+        timer.schedule(task, 0, 500);
+    }
+
+    /**
+     * user :TongJu  ; email:jutongzhang@sina.com
+     * time：2018/10/15
+     * describe:严防内存泄露
+     **/
+    private void destroyTimer() {
+        if (timer != null) {
+            timer.purge();
+            timer.cancel();
+            timer = null;
+        }
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
     }
 
 
