@@ -15,6 +15,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -176,7 +177,7 @@ public class PreviewMvpModel {
         View view = LayoutInflater.from(context).inflate(R.layout.preview_bottom_sheet_dialog, null);
         bottomSheetDialog.setContentView(view);
 
-       ImageView iv_download = view.findViewById(R.id.iv_download);
+       LinearLayout iv_download = view.findViewById(R.id.ll_download);
         iv_download.setOnClickListener(view12 -> {
             WaitingDialog.openPragressDialog(context,"飞闪极速下载中");
             DownVideo(path,imagePath,id,true);
