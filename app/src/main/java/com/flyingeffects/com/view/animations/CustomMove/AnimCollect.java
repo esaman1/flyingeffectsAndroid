@@ -29,23 +29,23 @@ public class AnimCollect {
     public int getAnimid(AnimType type) {
         switch (type) {
             case LEFTTORIGHT:
-                return 1;
-            case EIGHTBORTHER:
-                return 2;
-            case BOTTOMTOCENTER:
-                return 3;
-            case SWINGUPANDDOWN:
-                return 4;
-            case ROATION:
-                return 5;
-            case BOTTOMTOUP:
                 return 6;
-            case LEFTANDRIGHTDISSMISS:
-                return 7;
-            case SUPERSTAR:
-                return 8;
-            case BOTTOMTOCENTER2:
+            case EIGHTBORTHER:
                 return 9;
+            case BOTTOMTOCENTER:
+                return 4;
+            case SWINGUPANDDOWN:
+                return 2;
+            case ROATION:
+                return 8;
+            case BOTTOMTOUP:
+                return 5;
+            case LEFTANDRIGHTDISSMISS:
+                return 3;
+            case SUPERSTAR:
+                return 7;
+            case BOTTOMTOCENTER2:
+                return 1;
 
 
             case NULL:
@@ -437,22 +437,12 @@ public class AnimCollect {
         delected.setName("删除动画");
         delected.setAnimType(AnimType.LEFTTORIGHT);
         list.add(delected);
-        StickerAnim stickerAnim = new StickerAnim();
-        stickerAnim.setName("左分身");
-        stickerAnim.setIcon(R.mipmap.anim_zdy);
-        stickerAnim.setAnimType(AnimType.LEFTTORIGHT);
-        list.add(stickerAnim);
-        StickerAnim stickerAnim2 = new StickerAnim();
-        stickerAnim2.setName("多人旋转");
-        stickerAnim2.setIcon(R.mipmap.anim_drxz);
-        stickerAnim2.setAnimType(AnimType.EIGHTBORTHER);
-        list.add(stickerAnim2);
 
-        StickerAnim stickerAnim3 = new StickerAnim();
-        stickerAnim3.setName("从下往上");
-        stickerAnim3.setIcon(R.mipmap.anim_cxws);
-        stickerAnim3.setAnimType(AnimType.BOTTOMTOCENTER);
-        list.add(stickerAnim3);
+        StickerAnim stickerAnim9 = new StickerAnim();
+        stickerAnim9.setName("下往上停");
+        stickerAnim9.setIcon(R.mipmap.anim_cxws);
+        stickerAnim9.setAnimType(AnimType.BOTTOMTOCENTER2);
+        list.add(stickerAnim9);
 
         StickerAnim stickerAnim4 = new StickerAnim();
         stickerAnim4.setName("上下抖动");
@@ -461,12 +451,17 @@ public class AnimCollect {
         list.add(stickerAnim4);
 
 
-        StickerAnim stickerAnim5 = new StickerAnim();
-        stickerAnim5.setName("圆心旋转");
-        stickerAnim5.setIcon(R.mipmap.anim_yxxx);
-        stickerAnim5.setAnimType(AnimType.ROATION);
-        list.add(stickerAnim5);
+        StickerAnim stickerAnim7 = new StickerAnim();
+        stickerAnim7.setName("左右分身");
+        stickerAnim7.setIcon(R.mipmap.anim_zyfs);
+        stickerAnim7.setAnimType(AnimType.LEFTANDRIGHTDISSMISS);
+        list.add(stickerAnim7);
 
+        StickerAnim stickerAnim3 = new StickerAnim();
+        stickerAnim3.setName("从下往上");
+        stickerAnim3.setIcon(R.mipmap.anim_cxws);
+        stickerAnim3.setAnimType(AnimType.BOTTOMTOCENTER);
+        list.add(stickerAnim3);
 
         StickerAnim stickerAnim6 = new StickerAnim();
         stickerAnim6.setName("飞天分身");
@@ -474,12 +469,11 @@ public class AnimCollect {
         stickerAnim6.setAnimType(AnimType.BOTTOMTOUP);
         list.add(stickerAnim6);
 
-
-        StickerAnim stickerAnim7 = new StickerAnim();
-        stickerAnim7.setName("左右分身");
-        stickerAnim7.setIcon(R.mipmap.anim_zyfs);
-        stickerAnim7.setAnimType(AnimType.LEFTANDRIGHTDISSMISS);
-        list.add(stickerAnim7);
+        StickerAnim stickerAnim = new StickerAnim();
+        stickerAnim.setName("左分身");
+        stickerAnim.setIcon(R.mipmap.anim_zdy);
+        stickerAnim.setAnimType(AnimType.LEFTTORIGHT);
+        list.add(stickerAnim);
 
 
         StickerAnim stickerAnim8 = new StickerAnim();
@@ -489,11 +483,29 @@ public class AnimCollect {
         list.add(stickerAnim8);
 
 
-        StickerAnim stickerAnim9 = new StickerAnim();
-        stickerAnim9.setName("下往上停");
-        stickerAnim9.setIcon(R.mipmap.anim_cxws);
-        stickerAnim9.setAnimType(AnimType.BOTTOMTOCENTER2);
-        list.add(stickerAnim9);
+
+
+        StickerAnim stickerAnim5 = new StickerAnim();
+        stickerAnim5.setName("圆心旋转");
+        stickerAnim5.setIcon(R.mipmap.anim_yxxx);
+        stickerAnim5.setAnimType(AnimType.ROATION);
+        list.add(stickerAnim5);
+
+
+        StickerAnim stickerAnim2 = new StickerAnim();
+        stickerAnim2.setName("多人旋转");
+        stickerAnim2.setIcon(R.mipmap.anim_drxz);
+        stickerAnim2.setAnimType(AnimType.EIGHTBORTHER);
+        list.add(stickerAnim2);
+
+
+
+
+
+
+
+
+
 
         return list;
     }
