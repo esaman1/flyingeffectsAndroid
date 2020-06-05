@@ -26,7 +26,8 @@ public class ItemRightToLeft extends baseAnimModel {
         setScale(mainStickerView.getScale());
         StickerView sub1 = subLayer.get(0);
         StickerView sub2 = subLayer.get(1);
-        float totalWidth = mainStickerView.getMeasuredWidth() + (mainStickerView.getmHelpBoxRectW());
+        float totalWidth = mainStickerView.getMeasuredWidth() + (mainStickerView.getmHelpBoxRectW()*2);
+        float haltfWidth=mainStickerView.getmHelpBoxRectW();
         float mScale = mainStickerView.GetHelpBoxRectScale();
         //view 右边的位置
         float stickerViewPosition = mainStickerView.GetHelpBoxRectRight();
@@ -44,22 +45,22 @@ public class ItemRightToLeft extends baseAnimModel {
                 float translationToX;
                 if (needProgress < 0.66) {
                     translationToX = (float) (needProgress + 0.33);
-                    sub1.toTranMoveXY(translationToX * totalWidth,mainStickerView.getMBoxCenterY());
+                    sub1.toTranMoveXY(translationToX * totalWidth-haltfWidth,mainStickerView.getMBoxCenterY());
 
                 } else {
                     translationToX = (float) (needProgress - 0.66);
-                    sub1.toTranMoveXY(translationToX * totalWidth,mainStickerView.getMBoxCenterY());
+                    sub1.toTranMoveXY(translationToX * totalWidth-haltfWidth,mainStickerView.getMBoxCenterY());
                 }
                 sub1.toScale(1 - translationToX, mScale, isDone);
 
 
                 if (needProgress < 0.33) {
                     translationToX = (float) (needProgress + 0.66);
-                    sub2.toTranMoveXY(translationToX * totalWidth,mainStickerView.getMBoxCenterY());
+                    sub2.toTranMoveXY(translationToX * totalWidth-haltfWidth,mainStickerView.getMBoxCenterY());
 
                 } else {
                     translationToX = (float) (needProgress - 0.33);
-                    sub2.toTranMoveXY(translationToX * totalWidth,mainStickerView.getMBoxCenterY());
+                    sub2.toTranMoveXY(translationToX * totalWidth-haltfWidth,mainStickerView.getMBoxCenterY());
                 }
                 sub2.toScale(1 - translationToX, mScale, isDone);
 
@@ -67,10 +68,10 @@ public class ItemRightToLeft extends baseAnimModel {
 
                 if (needProgress < (1 - 0.99)) {
                     translationToX = (float) (needProgress + 0.01);
-                    mainStickerView.toTranMoveXY(translationToX * totalWidth,mainStickerView.getMBoxCenterY());
+                    mainStickerView.toTranMoveXY(translationToX * totalWidth-haltfWidth,mainStickerView.getMBoxCenterY());
                 } else {
                     translationToX = (float) (needProgress - (1 - 0.99));
-                    mainStickerView.toTranMoveXY(translationToX * totalWidth,mainStickerView.getMBoxCenterY());
+                    mainStickerView.toTranMoveXY(translationToX * totalWidth-haltfWidth,mainStickerView.getMBoxCenterY());
                 }
                 mainStickerView.toScale(1 - translationToX, mScale, isDone);
             }
@@ -80,9 +81,15 @@ public class ItemRightToLeft extends baseAnimModel {
 
 
     private float toY;
-    void getSubLayerData(Layer mainStickerView, LayerAnimCallback callback, float percentage) {
-        toY=mainStickerView.getPositionY()/mainStickerView.getPadHeight();
+    private float halfWidth;
+    private float totalWidth;
+    private float paddingWidth;
+    void getSubLayerData(Layer mainLayer, LayerAnimCallback callback, float percentage) {
+        toY=mainLayer.getPositionY()/mainLayer.getPadHeight();
         toChangeSubLayer(callback, percentage);
+        halfWidth=mainLayer.getScaleWidth();
+        paddingWidth=mainLayer.getPadWidth();
+        totalWidth=paddingWidth+halfWidth*2;
     }
 
 
@@ -91,37 +98,45 @@ public class ItemRightToLeft extends baseAnimModel {
         listForScale.clear();
         AnimationLinearInterpolator animationLinearInterpolator = new AnimationLinearInterpolator(3000, (progress, isDone) -> {
             float translationToX;
+            float toX;
             float needProgress = 1 - progress;
             TransplationPos transplationPos = new TransplationPos();
             transplationPos.setToY(toY);
             if (needProgress < 0.66) {
                 translationToX = (float) (needProgress + 0.33);
+                toX=totalWidth*translationToX-halfWidth;
+
             } else {
                 translationToX = (float) (needProgress - 0.66);
+                toX=totalWidth*translationToX-halfWidth;
             }
-            transplationPos.setToX(translationToX);
+            transplationPos.setToX(toX/paddingWidth);
             listForTranslaptionPosition.add(transplationPos);
             listForScale.add(1 - translationToX);
             TransplationPos transplationPos2 = new TransplationPos();
             transplationPos2.setToY(toY);
             if (needProgress < 0.33) {
                 translationToX = (float) (needProgress + 0.66);
+                toX=totalWidth*translationToX-halfWidth;
             } else {
                 translationToX = (float) (needProgress - 0.33);
+                toX=totalWidth*translationToX-halfWidth;
             }
             listForScale.add(1 - translationToX);
-            transplationPos2.setToX(translationToX);
+            transplationPos2.setToX(toX/paddingWidth);
             listForTranslaptionPosition.add(transplationPos2);
 
             TransplationPos transplationPos3 = new TransplationPos();
             transplationPos3.setToY(toY);
             if (needProgress < (1 - 0.99)) {
                 translationToX = (float) (needProgress + 0.01);
+                toX=totalWidth*translationToX-halfWidth;
             } else {
                 translationToX = (float) (needProgress - (1 - 0.99));
+                toX=totalWidth*translationToX-halfWidth;
             }
             listForScale.add(1 - translationToX);
-            transplationPos3.setToX(translationToX);
+            transplationPos3.setToX(toX/paddingWidth);
             listForTranslaptionPosition.add(transplationPos3);
             callback.translationalXY(listForTranslaptionPosition);
             callback.scale(listForScale);

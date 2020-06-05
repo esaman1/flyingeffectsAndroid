@@ -39,21 +39,21 @@ public class ItemBottomToTop extends baseAnimModel {
             float needProgress = 1 - progress;
             //  第一个子view大约位置一半位置,显示在中间位置
             float translationToY;
-            if (needProgress < 0.67) {
-                translationToY = (float) (needProgress + 0.33);
+            if (needProgress < 0.8) {
+                translationToY = (float) (needProgress + 0.2);
                 sub1.toTranMoveXY((float) (0.25 * totalWidth), totalHeight * translationToY - halftHeifht);
 
             } else {
-                translationToY = (float) (needProgress - 0.67);
+                translationToY = (float) (needProgress - 0.8);
                 sub1.toTranMoveXY((float) (0.25 * totalWidth), totalHeight * translationToY - halftHeifht);
             }
 
-            if (needProgress < 0.33) {
-                translationToY = (float) (needProgress + 0.67);
+            if (needProgress < 0.4) {
+                translationToY = (float) (needProgress + 0.6);
                 mainStickerView.toTranMoveXY((float) (0.75 * totalWidth), totalHeight * translationToY - halftHeifht);
 
             } else {
-                translationToY = (float) (needProgress - 0.33);
+                translationToY = (float) (needProgress - 0.4);
                 mainStickerView.toTranMoveXY((float) (0.75 * totalWidth), totalHeight * translationToY - halftHeifht);
             }
 
@@ -82,12 +82,12 @@ public class ItemBottomToTop extends baseAnimModel {
             float translationToY;
             TransplationPos transplationPos = new TransplationPos();
             transplationPos.setToX((float) 0.25);
-            if (needProgress < 0.67) {
-                translationToY = (float) (needProgress + 0.33);
+            if (needProgress < 0.8) {
+                translationToY = (float) (needProgress + 0.2);
                 float toY = paddingAllHeight * translationToY - halfHeight;
                 transplationPos.setToY(toY / paddingHeight);
             } else {
-                translationToY = (float) (needProgress - 0.67);
+                translationToY = (float) (needProgress - 0.8);
                 float toY = paddingAllHeight * translationToY - halfHeight;
                 transplationPos.setToY(toY / paddingHeight);
             }
@@ -95,12 +95,12 @@ public class ItemBottomToTop extends baseAnimModel {
             listForTranslaptionPosition.add(transplationPos);
             TransplationPos transplationPos2 = new TransplationPos();
             transplationPos2.setToX((float) 0.75);
-            if (needProgress < 0.33) {
-                translationToY = (float) (needProgress + 0.67);
+            if (needProgress < 0.4) {
+                translationToY = (float) (needProgress + 0.6);
                 float toY = paddingAllHeight * translationToY - halfHeight;
                 transplationPos2.setToY(toY / paddingHeight);
             } else {
-                translationToY = (float) (needProgress - 0.33);
+                translationToY = (float) (needProgress - 0.4);
                 float toY = paddingAllHeight * translationToY - halfHeight;
                 transplationPos2.setToY(toY / paddingHeight);
             }
