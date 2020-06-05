@@ -47,7 +47,8 @@ public class AnimCollect {
             case BOTTOMTOCENTER2:
                 return 1;
 
-
+            case SUPERSTAR2:
+                return 10;
             case NULL:
                 return 0;
         }
@@ -66,6 +67,7 @@ public class AnimCollect {
                 return 12;
             case LEFTTORIGHT:
             case SUPERSTAR:
+            case SUPERSTAR2:
                 return 2;
             case BOTTOMTOUP:
             case LEFTANDRIGHTDISSMISS:
@@ -95,6 +97,7 @@ public class AnimCollect {
             case BOTTOMTOUP:
                 return 4000;
             case SUPERSTAR:
+            case SUPERSTAR2:
                 return 2000;
 
         }
@@ -167,6 +170,12 @@ public class AnimCollect {
                 ItemBottomToCenter2 itemBottomToCenter2 = new ItemBottomToCenter2();
                 itemBottomToCenter2.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(itemBottomToCenter2);
+                break;
+
+            case SUPERSTAR2:
+                ItemCloned2 itemCloned2 = new ItemCloned2();
+                itemCloned2.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(itemCloned2);
                 break;
         }
     }
@@ -366,6 +375,27 @@ public class AnimCollect {
                 }
                 break;
 
+            case SUPERSTAR2:
+                nowMainLayerId = mainStickerView.getId();
+                ItemCloned2 itemCloned2 = null;
+                for (baseAnimModel model : listForKeepBaseAnimMode
+                ) {
+                    if (model.getLayerId() == nowMainLayerId) {
+                        itemCloned2 = (ItemCloned2) model;
+                        break;
+                    }
+                }
+
+                if (itemCloned2 != null) {
+                    (itemCloned2).toChangeSubLayer(callback, percentage);
+                } else {
+                    itemCloned2 = new ItemCloned2();
+                    itemCloned2.setLayerId(mainStickerView.getId());
+                    (itemCloned2).initToChangeSubLayer(mainStickerView, callback, percentage);
+                    listForKeepBaseAnimMode.add(itemCloned2);
+                }
+                break;
+
             //底部居中位置
             case BOTTOMTOCENTER2:
                 nowMainLayerId = mainStickerView.getId();
@@ -498,7 +528,11 @@ public class AnimCollect {
         list.add(stickerAnim2);
 
 
-
+        StickerAnim stickerAnim10 = new StickerAnim();
+        stickerAnim10.setName("一变三停");
+        stickerAnim10.setIcon(R.mipmap.anim_ybs);
+        stickerAnim10.setAnimType(AnimType.SUPERSTAR2);
+        list.add(stickerAnim10);
 
 
 
