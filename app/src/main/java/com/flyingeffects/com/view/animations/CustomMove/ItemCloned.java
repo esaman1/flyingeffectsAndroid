@@ -26,7 +26,7 @@ public class ItemCloned extends baseAnimModel {
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
         StickerView sub1 = subLayer.get(0);
         StickerView sub2 = subLayer.get(1);
-        float perWidth = mainStickerView.getmHelpBoxRectW() * 2;
+        float perWidth = mainStickerView.getmHelpBoxRectW() ;
         //第一个参数为总时长
         animationLinearInterpolator = new AnimationLinearInterpolator(2000, (progress, isDone) -> {
             float translationToX = perWidth * progress;
@@ -44,7 +44,7 @@ public class ItemCloned extends baseAnimModel {
     private float paddingWidth;
 
     public void initToChangeSubLayer(Layer mainLayer, LayerAnimCallback callback, float percentage) {
-        previewScaleWidth2 = mainLayer.getScaleHeight() * 2;
+        previewScaleWidth2 = mainLayer.getScaleWidth();
         centerX = mainLayer.getPositionX();
         centerY=mainLayer.getPositionY();
         paddingHeight=mainLayer.getPadHeight();
