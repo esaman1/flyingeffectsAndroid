@@ -1,6 +1,7 @@
 package com.flyingeffects.com.view.animations.CustomMove;
 
 import com.flyingeffects.com.enity.TransplationPos;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.box.Layer;
 
@@ -33,8 +34,10 @@ public class ItemBottomToCenter extends baseAnimModel {
             @Override
             public void progress(float progress, boolean isDone) {
                 float needProgress = 1 - progress;
+                LogUtil.d("ItemBottomToCenter","needProgress="+needProgress);
                 //拟定倒叙
                 float Y = stickerViewPosition + Difference * needProgress;
+                LogUtil.d("ItemBottomToCenter","Y="+Y);
                 mainStickerView.toTranMoveY(Y);
             }
         });
@@ -43,9 +46,11 @@ public class ItemBottomToCenter extends baseAnimModel {
 
    private float previewSubPosition;
     private float previewSubPaddingHeight;
+    private float toX;
     public void initToChangeSubLayer(Layer mainLayer, LayerAnimCallback callback, float percentage) {
         previewSubPosition= mainLayer.getPositionY();
         previewSubPaddingHeight=mainLayer.getPadHeight();
+        toX=mainLayer.getPositionX()/mainLayer.getPadWidth();
         toChangeSubLayer(callback,percentage);
     }
 
@@ -57,8 +62,10 @@ public class ItemBottomToCenter extends baseAnimModel {
             public void progress(float progress, boolean isDone) {
                 float needProgress = 1 - progress;
                 float Y = (previewSubPosition + previewSubPaddingHeight * needProgress)/previewSubPaddingHeight;
+
                 TransplationPos transplationPos = new TransplationPos();
                 transplationPos.setToY(Y);
+                transplationPos.setToX(toX);
                 ArrayList<TransplationPos> list = new ArrayList<>();
                 list.add(transplationPos);
                 callback.translationalXY(list);
