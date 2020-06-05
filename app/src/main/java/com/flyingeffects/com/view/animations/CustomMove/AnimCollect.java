@@ -22,7 +22,7 @@ public class AnimCollect {
     private ArrayList<baseAnimModel> listForBaseAnimMode = new ArrayList<>();
 
     /**
-     * description ：获得动画对应的id
+     * description ：获得动画对应的id,来自按钮的顺序
      * creation date: 2020/5/27
      * user : zhangtongju
      */
@@ -85,12 +85,11 @@ public class AnimCollect {
             case EIGHTBORTHER:
                 return 10000;
             case LEFTTORIGHT:
+            case LEFTANDRIGHTDISSMISS:
                 return 3000;
             case BOTTOMTOCENTER:
             case BOTTOMTOCENTER2:
             case SWINGUPANDDOWN:
-            case LEFTANDRIGHTDISSMISS:
-
                 return 2000;
             case ROATION:
             case BOTTOMTOUP:

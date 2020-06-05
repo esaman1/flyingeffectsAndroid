@@ -28,7 +28,6 @@ public class ItemBottomToCenter extends baseAnimModel {
         float stickerViewH = mainStickerView.getmHelpBoxRectH();
         //view 右边位置的比例
         float Difference = totalHeight - stickerViewH;
-
         //第一个参数为总时长
         animationLinearInterpolator = new AnimationLinearInterpolator(2000, new AnimationLinearInterpolator.GetProgressCallback() {
             @Override

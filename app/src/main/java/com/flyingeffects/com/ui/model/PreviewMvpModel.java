@@ -3,7 +3,6 @@ package com.flyingeffects.com.ui.model;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
@@ -14,7 +13,6 @@ import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -41,20 +39,16 @@ import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
 import com.flyingeffects.com.ui.interfaces.model.PreviewMvpCallback;
-import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
-import com.flyingeffects.com.ui.view.activity.TemplateActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.glidebitmappool.GlideBitmapPool;
-import com.glidebitmappool.internal.BitmapPool;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.view.WaitingDialog;
+import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
 import java.io.IOException;
@@ -106,10 +100,16 @@ public class PreviewMvpModel {
                         @Override
                         public void progresss(int progress) {
                             LogUtil.d("oom","下载时候后重新裁剪进度为="+progress);
+                            if(downProgressDialog!=null){
+                                downProgressDialog.setProgress("下载进度为"+progress+"%");
+                            }
                         }
 
                         @Override
                         public void isSuccess(boolean isSuccess, String path1) {
+                            if(downProgressDialog!=null){
+                                downProgressDialog.closePragressDialog();
+                            }
                             if(!keepAlbum){
                                 callback.downVideoSuccess(path1, imagePath);
                             }else{
@@ -171,32 +171,22 @@ public class PreviewMvpModel {
         }
     }
 
-
+    private WaitingDialog_progress downProgressDialog;
     public void showBottomSheetDialog(String path,String imagePath,String id){
         BottomSheetDialog   bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
         View view = LayoutInflater.from(context).inflate(R.layout.preview_bottom_sheet_dialog, null);
         bottomSheetDialog.setContentView(view);
-
        LinearLayout iv_download = view.findViewById(R.id.ll_download);
         iv_download.setOnClickListener(view12 -> {
-            WaitingDialog.openPragressDialog(context,"飞闪极速下载中");
+            downProgressDialog=new WaitingDialog_progress(context);
+            downProgressDialog.openProgressDialog();
             DownVideo(path,imagePath,id,true);
         });
 
         TextView tv_cancle=view.findViewById(R.id.tv_cancle);
         tv_cancle.setOnClickListener(view1 -> bottomSheetDialog.dismiss());
-
         bottomSheetDialog.setCancelable(true);
         bottomSheetDialog.setCanceledOnTouchOutside(true);
-        bottomSheetDialog.setOnDismissListener(dialog -> {
-
-        });
-        bottomSheetDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-
-            }
-        });
         View parent = (View) view.getParent();     //处理高度显示完全  https://www.jianshu.com/p/38af0cf77352
         parent.setBackgroundResource(android.R.color.transparent);
         BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);

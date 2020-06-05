@@ -747,6 +747,7 @@ public class CreationTemplateMvpModel {
                 //停止全部动画
                 stopAllAnim();
                 closeAllAnim();
+                deleteSubLayerSticker();
                 if (stickView.getParent() != null) {
                     ViewGroup vp = (ViewGroup) stickView.getParent();
                     if (vp != null) {
@@ -763,7 +764,6 @@ public class CreationTemplateMvpModel {
             @Override
             public void stickerDragMove() {
                 isIntoDragMove = true;
-
                 stopAllAnim();
             }
 
