@@ -744,6 +744,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 关闭timer 和task
      */
     private void endTimer() {
+        LogUtil.d("playBGMMusic","pauseBgmMusic---------------endTimer---------------");
         destroyTimer();
         if (bgmPlayer != null) {
             bgmPlayer.stop();
@@ -822,6 +823,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
     private void playBGMMusic() {
+        LogUtil.d("playBGMMusic","playBGMMusic");
         bgmPlayer = new MediaPlayer();
         try {
             bgmPlayer.setDataSource(bgmPath);
@@ -834,6 +836,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
     private void pauseBgmMusic() {
+        LogUtil.d("playBGMMusic","pauseBgmMusic------------------------------");
         if (bgmPlayer != null) {
             bgmPlayer.pause();
         }

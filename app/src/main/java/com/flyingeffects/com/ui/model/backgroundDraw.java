@@ -384,7 +384,7 @@ public class backgroundDraw {
         hasAnimLayerList.add(animLayer);
     }
 
-
+    float needDt = 0;
     private void addCanversLayer(AllStickerData stickerItem, int i) {
         int[] nowChooseImageIndex = {0};
         //当前进度时间
@@ -422,27 +422,81 @@ public class backgroundDraw {
         bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight() * percentY);
         bpLayer.switchFilterTo(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class, stickerItem.getMaskBitmap()));
         preTime = stickerItem.getDuration() * 1000 / (float) getMattingList.size();
+
         if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
             int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
             addMattingBitmapSubLayer(needSublayer, bpLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale);
+            nowProgressTime[0] = preTime;
+            float needDurationTime = animCollect.getAnimNeedSubLayerTime(stickerItem.getChooseAnimId());
+            needDt  = needDurationTime * 1000;
         }
-        nowProgressTime[0] = preTime;
         CanvasLayer canvasLayer = execute.addCanvasLayer();
-        float needDurationTime = animCollect.getAnimNeedSubLayerTime(stickerItem.getChooseAnimId());
-        float needDt = needDurationTime * 1000;
         canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
-            float percentage;
-            if (stickerItem.getChooseAnimId() == AnimType.BOTTOMTOCENTER2 || stickerItem.getChooseAnimId() == AnimType.SUPERSTAR2) {
-                if (currentTime > needDt) {
-                    percentage = 1;
-                } else {
-                    percentage = currentTime / (needDt);
-                }
-            } else {
-                //循环
-                float remainder = currentTime % (needDt);
-                percentage = remainder / (needDt);
-            }
+                    if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
+                        float percentage;
+                        if (stickerItem.getChooseAnimId() == AnimType.BOTTOMTOCENTER2 || stickerItem.getChooseAnimId() == AnimType.SUPERSTAR2) {
+                            if (currentTime > needDt) {
+                                percentage = 1;
+                            } else {
+                                percentage = currentTime / (needDt);
+                            }
+                        } else {
+                            //循环
+                            float remainder = currentTime % (needDt);
+                            percentage = remainder / (needDt);
+                        }
+
+                        animCollect.startAnimForChooseAnim(stickerItem.getChooseAnimId(), bpLayer, listForMattingSubLayer, new LayerAnimCallback() {
+                            @Override
+                            public void translationalXY(ArrayList<TransplationPos> listForTranslaptionPosition) {
+                                TransplationPos transplationPos = listForTranslaptionPosition.get(0);
+                                if (transplationPos.getToY() != 0) {
+                                    LogUtil.d("translationalXY", "yy=" + transplationPos.getToY());
+                                    bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight() * transplationPos.getToY());
+                                }
+                                if (transplationPos.getToX() != 0) {
+                                    LogUtil.d("translationalXY", "xx=" + transplationPos.getToX());
+                                    bpLayer.setPosition(bpLayer.getPadWidth() * transplationPos.getToX(), bpLayer.getPositionY());
+                                }
+                                if (listForMattingSubLayer != null && listForMattingSubLayer.size() > 0) {
+                                    for (int i = 1; i <= listForMattingSubLayer.size(); i++) {
+                                        TransplationPos subTransplationPos = listForTranslaptionPosition.get(i);
+                                        SubLayer subLayer = listForMattingSubLayer.get(i - 1);
+                                        subLayer.setPosition(subLayer.getPositionX(), subLayer.getPadHeight() * subTransplationPos.getToY());
+                                        subLayer.setPosition(subLayer.getPadWidth() * subTransplationPos.getToX(), subLayer.getPositionY());
+                                    }
+                                }
+
+                            }
+
+                            @Override
+                            public void rotate(ArrayList<Float> angle) {
+                                float needrotate = angle.get(0);
+                                bpLayer.setRotate(needrotate);
+                                if (listForMattingSubLayer != null && listForMattingSubLayer.size() > 0) {
+                                    for (int i = 1; i <= listForMattingSubLayer.size(); i++) {
+                                        SubLayer subLayer = listForMattingSubLayer.get(i - 1);
+                                        subLayer.setScale(angle.get(i));
+                                    }
+                                }
+
+                            }
+
+                            @Override
+                            public void scale(ArrayList<Float> angle) {
+                                float nowScale = layerScale * stickerScale;
+                                bpLayer.setScale(nowScale + nowScale * angle.get(0));
+                                if (listForMattingSubLayer != null && listForMattingSubLayer.size() > 0) {
+                                    for (int i = 1; i <= listForMattingSubLayer.size(); i++) {
+                                        SubLayer subLayer = listForMattingSubLayer.get(i - 1);
+                                        subLayer.setScale(nowScale + nowScale * angle.get(i));
+                                    }
+                                }
+                            }
+                        }, percentage);
+
+                    }
+
             if (currentTime > nowProgressTime[0]) {
                 //需要切换新的图了
                 nowChooseImageIndex[0]++;
@@ -459,54 +513,7 @@ public class backgroundDraw {
             }
 
 
-            animCollect.startAnimForChooseAnim(stickerItem.getChooseAnimId(), bpLayer, listForMattingSubLayer, new LayerAnimCallback() {
-                @Override
-                public void translationalXY(ArrayList<TransplationPos> listForTranslaptionPosition) {
-                    TransplationPos transplationPos = listForTranslaptionPosition.get(0);
-                    if (transplationPos.getToY() != 0) {
-                        LogUtil.d("translationalXY", "yy=" + transplationPos.getToY());
-                        bpLayer.setPosition(bpLayer.getPositionX(), bpLayer.getPadHeight() * transplationPos.getToY());
-                    }
-                    if (transplationPos.getToX() != 0) {
-                        LogUtil.d("translationalXY", "xx=" + transplationPos.getToX());
-                        bpLayer.setPosition(bpLayer.getPadWidth() * transplationPos.getToX(), bpLayer.getPositionY());
-                    }
-                    if (listForMattingSubLayer != null && listForMattingSubLayer.size() > 0) {
-                        for (int i = 1; i <= listForMattingSubLayer.size(); i++) {
-                            TransplationPos subTransplationPos = listForTranslaptionPosition.get(i);
-                            SubLayer subLayer = listForMattingSubLayer.get(i - 1);
-                            subLayer.setPosition(subLayer.getPositionX(), subLayer.getPadHeight() * subTransplationPos.getToY());
-                            subLayer.setPosition(subLayer.getPadWidth() * subTransplationPos.getToX(), subLayer.getPositionY());
-                        }
-                    }
 
-                }
-
-                @Override
-                public void rotate(ArrayList<Float> angle) {
-                    float needrotate = angle.get(0);
-                    bpLayer.setRotate(needrotate);
-                    if (listForMattingSubLayer != null && listForMattingSubLayer.size() > 0) {
-                        for (int i = 1; i <= listForMattingSubLayer.size(); i++) {
-                            SubLayer subLayer = listForMattingSubLayer.get(i - 1);
-                            subLayer.setScale(angle.get(i));
-                        }
-                    }
-
-                }
-
-                @Override
-                public void scale(ArrayList<Float> angle) {
-                    float nowScale = layerScale * stickerScale;
-                    bpLayer.setScale(nowScale + nowScale * angle.get(0));
-                    if (listForMattingSubLayer != null && listForMattingSubLayer.size() > 0) {
-                        for (int i = 1; i <= listForMattingSubLayer.size(); i++) {
-                            SubLayer subLayer = listForMattingSubLayer.get(i - 1);
-                            subLayer.setScale(nowScale + nowScale * angle.get(i));
-                        }
-                    }
-                }
-            }, percentage);
 
 
         });
