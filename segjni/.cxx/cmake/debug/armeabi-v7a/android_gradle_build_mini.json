@@ -1,26 +1,23 @@
 {
   "buildFiles": [
-    "E:\\faceProject\\thread\\segment-demo-bigmodel-multiThread\\segjni\\src\\main\\cpp\\CMakeLists.txt"
+    "E:\\Sdk\\ndk\\21.0.6113669\\build\\cmake\\platforms.cmake",
+    "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "E:\\Sdk\\ndk\\21.0.6113669\\build\\cmake\\android.toolchain.cmake"
   ],
   "cleanCommands": [
-    "E:\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build E:\\faceProject\\thread\\segment-demo-bigmodel-multiThread\\segjni\\.cxx\\cmake\\debug\\armeabi-v7a --target clean"
+    "E:\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"D:\\githubSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\debug\\armeabi-v7a\" clean"
   ],
+  "buildTargetsCommand": "E:\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe  -C \"D:\\githubSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\debug\\armeabi-v7a\" {LIST_OF_TARGETS_TO_BUILD}",
   "libraries": {
-    "megviisegsdk-Debug-armeabi-v7a": {
-      "artifactName": "megviisegsdk",
-      "abi": "armeabi-v7a",
-      "output": "E:\\faceProject\\thread\\segment-demo-bigmodel-multiThread\\segjni\\src\\main\\cpp\\..\\jniLibs\\armeabi-v7a\\libmegsegment.so"
-    },
-    "face_new-Debug-armeabi-v7a": {
-      "artifactName": "face_new",
-      "abi": "armeabi-v7a",
-      "output": "E:\\faceProject\\thread\\segment-demo-bigmodel-multiThread\\segjni\\src\\main\\cpp\\..\\jniLibs\\armeabi-v7a\\libmegface-new.so"
-    },
     "MegviiSegJni-Debug-armeabi-v7a": {
       "artifactName": "MegviiSegJni",
-      "buildCommand": "E:\\Sdk\\cmake\\3.6.4111459\\bin\\cmake.exe --build E:\\faceProject\\thread\\segment-demo-bigmodel-multiThread\\segjni\\.cxx\\cmake\\debug\\armeabi-v7a --target MegviiSegJni",
+      "buildCommand": "E:\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"D:\\githubSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\debug\\armeabi-v7a\" MegviiSegJni",
       "abi": "armeabi-v7a",
-      "output": "E:\\faceProject\\thread\\segment-demo-bigmodel-multiThread\\segjni\\src\\main\\jniLibs\\armeabi-v7a\\libMegviiSegJni.so"
+      "output": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\jniLibs\\armeabi-v7a\\libMegviiSegJni.so",
+      "runtimeFiles": [
+        "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\..\\jniLibs\\armeabi-v7a\\libmegsegment.so",
+        "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\..\\jniLibs\\armeabi-v7a\\libmegface-new.so"
+      ]
     }
   }
 }

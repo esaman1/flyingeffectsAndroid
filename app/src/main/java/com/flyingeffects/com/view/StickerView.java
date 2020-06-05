@@ -1727,9 +1727,27 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public float getCenterX() {
 //        LogUtil.d("getCenterX", "getCenterX=" + mHelpBoxRect.right);
         float xx = (mHelpBoxRect.right - mHelpBoxRect.left) / 2;
+        return mHelpBoxRect.right - xx ;
+
+    }
+
+    public float getCenterXAdd30() {
+//        LogUtil.d("getCenterX", "getCenterX=" + mHelpBoxRect.right);
+        float xx = (mHelpBoxRect.right - mHelpBoxRect.left) / 2;
         return mHelpBoxRect.right - xx + 30;
 
     }
+
+    public float getCenterY() {
+        float yy = (mHelpBoxRect.bottom - mHelpBoxRect.top) / 2;
+        return mHelpBoxRect.bottom - yy ;
+    }
+
+    public float getCenterYAdd30() {
+        float yy = (mHelpBoxRect.bottom - mHelpBoxRect.top) / 2;
+        return mHelpBoxRect.bottom - yy + 30;
+    }
+
 
 
     public float getMBoxCenterX() {
@@ -1741,10 +1759,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         return mHelpBoxRect.centerY();
     }
 
-    public float getCenterY() {
-        float yy = (mHelpBoxRect.bottom - mHelpBoxRect.top) / 2;
-        return mHelpBoxRect.bottom - yy + 30;
-    }
+
 
 
     public void showFrame() {

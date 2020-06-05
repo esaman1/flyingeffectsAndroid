@@ -820,11 +820,11 @@ public class CreationTemplateMvpModel {
             fromCopy.setScale(copyStickerView.getScale());
             fromCopy.setDegree(copyStickerView.getRotateAngle());
             if (isFromShowAnim) {
-                fromCopy.setTranX(copyStickerView.getCenterX() - 30);
-                fromCopy.setTranY(copyStickerView.getCenterY() - 30);
+                fromCopy.setTranX(copyStickerView.getCenterX() );
+                fromCopy.setTranY(copyStickerView.getCenterY() );
             } else {
-                fromCopy.setTranX(copyStickerView.getCenterX());
-                fromCopy.setTranY(copyStickerView.getCenterY());
+                fromCopy.setTranX(copyStickerView.getCenterXAdd30());
+                fromCopy.setTranY(copyStickerView.getCenterYAdd30());
             }
             stickView.setImageRes(path, false, fromCopy);
             stickView.showFrame();

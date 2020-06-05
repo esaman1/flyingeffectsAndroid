@@ -14,6 +14,7 @@ public abstract class baseAnimModel {
     public void setOriginal(float originalX, float originalY) {
         this.originalY = originalY;
         this.originalX = originalX;
+        LogUtil.d("setOriginal","originalX="+originalX+"originalY="+originalY);
     }
 
     public void setScale(float scale) {
@@ -49,6 +50,7 @@ public abstract class baseAnimModel {
      */
     public void resetAnimState(StickerView mainStickerView) {
         if (mainStickerView != null) {
+            LogUtil.d("setOriginal","resetAnimState----------originalX="+originalX+"originalY="+originalY);
             mainStickerView.toTranMoveXY(originalX, originalY);
             if (scale != 0) {
                 mainStickerView.setScale(scale);
