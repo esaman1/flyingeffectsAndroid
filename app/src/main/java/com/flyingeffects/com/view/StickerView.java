@@ -1441,6 +1441,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         return mRotateAngle;
     }
 
+    public float getRightOffsetPercent(){
+        return  mRightOffsetPercent;
+    }
+
     public Bitmap getMaskBitmap() {
         return mMaskBitmap;
     }
@@ -1476,6 +1480,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     setScale(fromCopy.getScale());
                     setDegree(fromCopy.getDegree());
                     setCenter(fromCopy.tranX, fromCopy.tranY);
+                    mRightOffsetPercent=fromCopy.getRightOffsetPercent();
                 } else {
                     setScale(1f);
                     setDegree(0f);
@@ -1604,6 +1609,16 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         float degree;
 
         float tranX;
+
+        public float getRightOffsetPercent() {
+            return RightOffsetPercent;
+        }
+
+        public void setRightOffsetPercent(float rightOffsetPercent) {
+            RightOffsetPercent = rightOffsetPercent;
+        }
+
+        float RightOffsetPercent;
 
         public float getTranX() {
             return tranX;

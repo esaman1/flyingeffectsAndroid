@@ -819,6 +819,7 @@ public class CreationTemplateMvpModel {
             StickerView.isFromCopy fromCopy = new StickerView.isFromCopy();
             fromCopy.setScale(copyStickerView.getScale());
             fromCopy.setDegree(copyStickerView.getRotateAngle());
+            fromCopy.setRightOffsetPercent(copyStickerView.getRightOffsetPercent());
             if (isFromShowAnim) {
                 fromCopy.setTranX(copyStickerView.getCenterX() );
                 fromCopy.setTranY(copyStickerView.getCenterY() );
