@@ -38,6 +38,7 @@ import com.flyingeffects.com.view.RoundImageView;
 import com.flyingeffects.com.view.VideoFrameRecycler;
 import com.lansosdk.videoeditor.DrawPadView2;
 import com.lansosdk.videoeditor.MediaInfo;
+import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -274,19 +275,23 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
 
     @Override
     public void finishCrop(String videoPath) {
+
         LogUtil.d("OOM","finishCrop"+"isFrom="+isFrom);
         //自定义只能够选择素材
         GetVideoCover getVideoCover=new GetVideoCover(this);
         getVideoCover.getCover(videoPath, path -> Observable.just(path).subscribeOn(AndroidSchedulers.mainThread()).subscribe(cover -> {
             if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEO)){
+                Presenter.hasFinishCrop();
                 EventBus.getDefault().post(new CreateCutCallback(cover,videoPath,isNeedCut));
             }else if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORUSER)){
+                Presenter.hasFinishCrop();
                 EventBus.getDefault().post(new DownVideoPath(videoPath));
             }else if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)){
+                Presenter.hasFinishCrop();
                 EventBus.getDefault().post(new ChooseVideoAddSticker(videoPath));
             }
-
             else{
+                Presenter.hasFinishCrop();
                 Intent intent = new Intent(VideoCropActivity.this, CreationTemplateActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("paths", cover);
