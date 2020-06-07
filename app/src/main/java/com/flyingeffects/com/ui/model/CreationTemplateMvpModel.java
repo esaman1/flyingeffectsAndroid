@@ -944,7 +944,7 @@ public class CreationTemplateMvpModel {
                 FileUtil.copyFile(new File(path), copyName, new FileUtil.copySucceed() {
                     @Override
                     public void isSucceed() {
-                        addSticker(finalCopyName1, false, true, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim);
+                        addSticker(finalCopyName1, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim);
                     }
                 });
             }
