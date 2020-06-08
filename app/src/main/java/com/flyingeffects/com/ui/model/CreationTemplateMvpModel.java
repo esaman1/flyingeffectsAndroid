@@ -354,23 +354,25 @@ public class CreationTemplateMvpModel {
     private synchronized void startPlayAnim(int position, boolean isClearAllAnim, StickerView targetStickerView, int intoPosition, boolean isFromPreview) {
         if (!isFromPreview) {
             deleteSubLayerSticker();
+            stopAllAnim();
+            //重新得到所有的贴纸列表
+            listAllSticker.clear();
+            for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
+                StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(y);
+                listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
+            }
         }
-        stopAllAnim();
+
         nowChooseSubLayerAnimList.clear();
-        //当前选中的贴纸
-        int nowChooseStickerPosition = viewLayerRelativeLayout.getChildCount() - 1;
         //选择的动画类型
         AnimType animType = listAllAnima.get(position).getAnimType();
-        //重新得到所有的贴纸列表
-        listAllSticker.clear();
-        for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
-            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(y);
-            listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
-        }
         //得到目标贴纸,永远都是最顶上一个,如果有目标贴纸，就用目标贴纸
         if (targetStickerView == null) {
+            //当前选中的贴纸
+            int nowChooseStickerPosition = viewLayerRelativeLayout.getChildCount() - 1;
             targetStickerView = (StickerView) viewLayerRelativeLayout.getChildAt(nowChooseStickerPosition);
         }
+
         if (isClearAllAnim) {
             //贴纸还原,显示到之前的位置
             ToastUtil.showToast("清理全部动画");
@@ -380,32 +382,24 @@ public class CreationTemplateMvpModel {
             deleteSubLayerSticker();
             stopAllAnim();
         } else {
-            StickerView finalTargetStickerView1 = targetStickerView;
-            StickerView finalTargetStickerView2 = targetStickerView;
-            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                for (int x = 1; x <= animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType()); x++) {
-                    //通过动画属性得到需要分身的数量，然后复制出贴纸在数组里面nowChooseSubLayerAnimList，最后需要删除
-                    LogUtil.d("startPlayAnim", "当前动画复制的主id为" + finalTargetStickerView1.getId());
-                    copyGif(finalTargetStickerView1.getResPath(), finalTargetStickerView1.getResPath(), finalTargetStickerView1.getComeFrom(), finalTargetStickerView1, finalTargetStickerView2.getOriginalPath(), true);
-                    if (x == animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType())) {
-                        ArrayList<StickerView> list = new ArrayList<>();
-                        list.addAll(nowChooseSubLayerAnimList);
-                        sublayerListForBitmapLayer.put(intoPosition, list);
-                    }
+            for (int x = 1; x <= animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType()); x++) {
+                //通过动画属性得到需要分身的数量，然后复制出贴纸在数组里面nowChooseSubLayerAnimList，最后需要删除
+                LogUtil.d("startPlayAnim", "当前动画复制的主id为" + targetStickerView.getId());
+                copyGif(targetStickerView.getResPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true);
+                if (x == animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType())) {
+                    ArrayList<StickerView> list = new ArrayList<>();
+                    list.addAll(nowChooseSubLayerAnimList);
+                    sublayerListForBitmapLayer.put(intoPosition, list);
                 }
-                StartAnimModel startAnimModel = new StartAnimModel(animCollect);
-                stopAllAnim();
-                StickerView finalTargetStickerView = finalTargetStickerView1;
-                finalTargetStickerView1.setChooseAnimId(animType);
-                delayedToStartAnim(startAnimModel, animType, finalTargetStickerView, intoPosition, isFromPreview);
-            });
+            }
+            StartAnimModel startAnimModel = new StartAnimModel(animCollect);
+            targetStickerView.setChooseAnimId(animType);
+            delayedToStartAnim(startAnimModel, animType, targetStickerView, intoPosition, isFromPreview);
 
 
         }
 
     }
-
-
 
 
     /**
@@ -465,6 +459,7 @@ public class CreationTemplateMvpModel {
                     }
                 }
             }
+            sublayerListForBitmapLayer.clear();
         }
     }
 
@@ -821,8 +816,8 @@ public class CreationTemplateMvpModel {
             fromCopy.setDegree(copyStickerView.getRotateAngle());
             fromCopy.setRightOffsetPercent(copyStickerView.getRightOffsetPercent());
             if (isFromShowAnim) {
-                fromCopy.setTranX(copyStickerView.getCenterX() );
-                fromCopy.setTranY(copyStickerView.getCenterY() );
+                fromCopy.setTranX(copyStickerView.getCenterX());
+                fromCopy.setTranY(copyStickerView.getCenterY());
             } else {
                 fromCopy.setTranX(copyStickerView.getCenterXAdd30());
                 fromCopy.setTranY(copyStickerView.getCenterYAdd30());
@@ -867,12 +862,6 @@ public class CreationTemplateMvpModel {
         }
 
     }
-
-
-
-
-
-
 
 
     private void deleteStickView(StickerView stickView) {
@@ -1325,7 +1314,6 @@ public class CreationTemplateMvpModel {
     }
 
 
-
     private void modificationSingleAnimItemIsChecked(int position) {
         for (StickerAnim item : listAllAnima
         ) {
@@ -1450,31 +1438,35 @@ public class CreationTemplateMvpModel {
         Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
             deleteSubLayerSticker();
             stopAllAnim();
-        });
-
-        if (isShow) {
-//            WaitingDialog.openPragressDialog(context);
-            if (listForStickerModel != null && listForStickerModel.size() > 0) {
-                for (int i = 0; i < listForStickerModel.size(); i++) {
-                    AnimStickerModel stickerModel = listForStickerModel.get(i);
-                    StickerView stickerView = stickerModel.getStickerView();
-                    if (stickerView != null && stickerView.getChooseAnimId() != AnimType.NULL) {
-                        if (stickerView.getChooseAnimId() != null) {
-                            hasAnimCount++;
-                            hasAnim = true;
-                            int type = animCollect.getAnimid(stickerView.getChooseAnimId());
-                            startPlayAnim(type, false, stickerView, i, true);
+            //重新得到所有的贴纸列表
+            listAllSticker.clear();
+            for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
+                StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(y);
+                listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
+            }
+            if (isShow) {
+                if (listForStickerModel != null && listForStickerModel.size() > 0) {
+                    for (int i = 0; i < listForStickerModel.size(); i++) {
+                        AnimStickerModel stickerModel = listForStickerModel.get(i);
+                        StickerView stickerView = stickerModel.getStickerView();
+                        if (stickerView != null && stickerView.getChooseAnimId() != AnimType.NULL) {
+                            if (stickerView.getChooseAnimId() != null) {
+                                hasAnimCount++;
+                                hasAnim = true;
+                                int type = animCollect.getAnimid(stickerView.getChooseAnimId());
+                                startPlayAnim(type, false, stickerView, i, true);
+                            }
                         }
-                    }
-                    if (i == listForStickerModel.size() - 1) {
-                        //最后一个的情况
-                        if (!hasAnim) {
-                            callback.animIsComplate();
+                        if (i == listForStickerModel.size() - 1) {
+                            //最后一个的情况
+                            if (!hasAnim) {
+                                callback.animIsComplate();
+                            }
                         }
                     }
                 }
             }
-        }
+        });
 
 
     }
@@ -1494,14 +1486,12 @@ public class CreationTemplateMvpModel {
     }
 
 
-
-
-
     private Timer timer;
     private TimerTask task;
-    private  int totalPlayTime;
+    private int totalPlayTime;
+
     private void startTimer(StickerView stickView) {
-        totalPlayTime=0;
+        totalPlayTime = 0;
         if (timer != null) {
             timer.purge();
             timer.cancel();
@@ -1516,7 +1506,7 @@ public class CreationTemplateMvpModel {
             @Override
             public void run() {
                 totalPlayTime = totalPlayTime + 500;
-                if(totalPlayTime==2000){
+                if (totalPlayTime == 2000) {
                     Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
                         @Override
                         public void call(Integer integer) {
