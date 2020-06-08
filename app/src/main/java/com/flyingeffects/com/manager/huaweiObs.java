@@ -2,11 +2,13 @@ package com.flyingeffects.com.manager;
 
 import android.util.Log;
 
+import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.utils.LogUtil;
 import com.obs.services.ObsClient;
 import com.obs.services.exception.ObsException;
 import com.obs.services.model.HeaderResponse;
 import com.obs.services.model.ObjectMetadata;
+import com.shixing.sxve.ui.albumType;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,9 +26,8 @@ public class huaweiObs {
     }
 
 
-
-    public void uploadFileToHawei(String filePath,String fileName,Callback callback ) {
-        LogUtil.d("PutObject","filePath="+filePath+"fileName="+fileName);
+    public void uploadFileToHawei(String filePath, String fileName, Callback callback) {
+        LogUtil.d("PutObject", "filePath=" + filePath + "fileName=" + fileName);
         // 您的工程中可以只保留一个全局的ObsClient实例
         ObsClient obsClient = null;
         try {
@@ -35,11 +36,15 @@ public class huaweiObs {
             String sk = "H5aoz2anEATMJcS3kEW1UTewn0emQn89DKIshBUo";
             // 创建ObsClient实例
             obsClient = new ObsClient(ak, sk, endPoint);
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType("video/mp4");
-            // 调用接口进行操作，例如上传对象，其中localfile为待上传的本地文件路径，需要指定到具体的文件名
-            HeaderResponse response = obsClient.putObject("feishan", fileName, new File(filePath),metadata);
-
+            HeaderResponse response;
+            if (albumType.isVideo(GetPathType.getInstance().getPathType(filePath))) {
+                ObjectMetadata metadata = new ObjectMetadata();
+                metadata.setContentType("video/mp4");
+                // 调用接口进行操作，例如上传对象，其中localfile为待上传的本地文件路径，需要指定到具体的文件名
+                response = obsClient.putObject("feishan", fileName, new File(filePath), metadata);
+            } else {
+                response = obsClient.putObject("feishan", fileName, new File(filePath));
+            }
             callback.isSuccess(response.toString());
 
         } catch (ObsException e) {
@@ -62,17 +67,9 @@ public class huaweiObs {
     }
 
 
-  public  interface  Callback{
+    public interface Callback {
         void isSuccess(String str);
     }
-
-
-
-
-
-
-
-
 
 
 }

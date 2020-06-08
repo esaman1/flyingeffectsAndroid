@@ -226,8 +226,9 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
 
 
     public void getHeadForPathToCompress(String path, String fileName) {
-        Bitmap bp = BitmapFactory.decodeFile(path);
-        bp = StringUtil.zoomImg(bp, 45, 80);
+//        Bitmap bp = BitmapFactory.decodeFile(path);
+        Bitmap bp=BitmapManager.getInstance().getOrientationBitmap(path);
+        bp = StringUtil.zoomImg(bp, 180, 320);
         BitmapManager.getInstance().saveBitmapToPath(bp, fileName);
     }
 
