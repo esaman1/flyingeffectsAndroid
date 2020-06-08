@@ -178,7 +178,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
             @Override
             public void onPrepared(boolean onPrepared) {
-                tv_describe.setText("时长"+ timeUtils.timeParse(videoPlayer.getDuration()) + "上传        " + templateItem.getDefaultnum() + "个素材即可制作");
+                tv_describe.setText("时长"+ timeUtils.timeParse(videoPlayer.getDuration()) + "        上传" + templateItem.getDefaultnum() + "个素材即可制作");
             }
         }));
 

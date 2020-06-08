@@ -1670,7 +1670,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 originalBitmapHeight = (int) contentHeight;
 //                LogUtil.d("OOM", "contentHeight=" + contentHeight);
 //                LogUtil.d("OOM", "contentWidth=" + contentWidth);
-                RequestManager manager = Glide.with(getContext());
+                RequestManager manager = Glide.with(BaseApplication.getInstance());
                 RequestBuilder builder = null;
                 if (path.endsWith(".gif")) {
                     builder = manager.asGif();
@@ -1696,7 +1696,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     public void mattingChange(String path) {
         isMatting = true;
-        RequestManager manager = Glide.with(getContext());
+        RequestManager manager = Glide.with(BaseApplication.getInstance());
         RequestBuilder builder = null;
         if (path.endsWith(".gif")) {
             builder = manager.asGif();
