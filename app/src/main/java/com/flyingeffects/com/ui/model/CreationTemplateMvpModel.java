@@ -222,7 +222,7 @@ public class CreationTemplateMvpModel {
 
     public void chooseAnim(int pageNum) {
         viewPager.setCurrentItem(pageNum);
-        showAllAnim(false);
+     //   showAllAnim(false);
     }
 
 
@@ -742,13 +742,14 @@ public class CreationTemplateMvpModel {
                 //停止全部动画
                 stopAllAnim();
                 closeAllAnim();
-                deleteSubLayerSticker();
+                new Handler().postDelayed(() -> deleteSubLayerSticker(),500);
                 if (stickView.getParent() != null) {
                     ViewGroup vp = (ViewGroup) stickView.getParent();
                     if (vp != null) {
                         vp.removeView(stickView);
                     }
                 }
+                callback.needPauseVideo();
                 viewLayerRelativeLayout.addView(stickView);
                 stickView.start();
 

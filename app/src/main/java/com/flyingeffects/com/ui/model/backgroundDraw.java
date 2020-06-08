@@ -236,7 +236,6 @@ public class backgroundDraw {
             LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
             videoLayer.setPosition(videoLayer.getPositionX(), videoLayer.getPadHeight() * percentY);
             videoLayer.switchFilterTo(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class, stickerItem.getMaskBitmap()));
-            //todo 测试
             if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
                 int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
                 addVideoSubLayer(needSublayer, videoLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale);
