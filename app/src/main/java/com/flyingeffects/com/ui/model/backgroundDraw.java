@@ -398,6 +398,8 @@ public class backgroundDraw {
         Bitmap bp = BitmapFactory.decodeFile(getMattingList.get(0).getPath());
         LogUtil.d("OOM", "图片宽为" + bp.getWidth());
         BitmapLayer bpLayer = execute.addBitmapLayer(bp);
+        bpLayer.setId(100+i);
+
         float layerScale = DRAWPADWIDTH / (float) bpLayer.getLayerWidth();
         LogUtil.d("OOM", "图层的缩放为" + layerScale + "");
         float stickerScale = stickerItem.getScale();
