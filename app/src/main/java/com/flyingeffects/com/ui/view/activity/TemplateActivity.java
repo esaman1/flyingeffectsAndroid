@@ -1163,21 +1163,30 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     //这里需要重新设置底部图，但是glide 视频路径相同。所以glide 不会刷新
                     presenter.getButtomIcon(event.getMattingPath());
                     switch_button.setChecked(false);
+                    changeMaterialMusic(event.getMattingPath());
 
                 } else {
                     //用户选择了抠图但是没有切换抠图
                     ChangeMaterialCallbackForVideo(null, event.getOriginalPath(), false);
                     //这里需要重新设置底部图，但是glide 视频路径相同。所以glide 不会刷新
                     presenter.getButtomIcon(event.getOriginalPath());
+                    changeMaterialMusic(event.getOriginalPath());
                 }
             } else {
                 //用户选择了抠图
                 ChangeMaterialCallbackForVideo(event.getOriginalPath(), event.getMattingPath(), true);
                 presenter.getButtomIcon(event.getOriginalPath());
+                changeMaterialMusic(event.getMattingPath());
             }
         }
         templateThumbForMusic.findViewById(R.id.ll_0).setVisibility(View.VISIBLE);
         primitivePath = event.getPrimitivePath();
+    }
+
+    private void changeMaterialMusic(String musicPath){
+        if(nowChooseMusic==1){
+            presenter.getBjMusic(musicPath);
+        }
     }
 
 
