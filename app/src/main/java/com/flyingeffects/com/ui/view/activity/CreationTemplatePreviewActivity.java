@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageView;
@@ -77,6 +78,8 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     private timeUtils timeUtils;
     private MediaSource mediaSource;
 
+    private boolean isIntoPause = false;
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_creation_template_preview;
@@ -120,7 +123,8 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
-
+        exoPlayer.prepare(mediaSource, true, false);
+        showIsPlay(true);
     }
 
 
@@ -232,8 +236,21 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        exoPlayer.prepare(mediaSource, true, false);
-        showIsPlay(true);
+        if (isIntoPause) {
+            exoPlayer.prepare(mediaSource, true, false);
+            showIsPlay(true);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    showIsPlay(false);
+                    videoPause();
+                    destroyTimer();
+                }
+            }, 200);
+
+            isIntoPause = false;
+        }
+
     }
 
     private void videoOnResume() {
@@ -347,6 +364,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        isIntoPause = true;
         if (isPlaying()) {
             showIsPlay(false);
             videoPause();
