@@ -190,4 +190,10 @@
         <item name="android:textColor">@color/albumFontLight</item>
     </style>
 
+    <declare-styleable name="AlbumFocusImageView">
+        <attr name="album_focus_focusing_id" format="integer" />
+        <attr name="album_focus_success_id" format="integer" />
+        <attr name="album_focus_fail_id" format="integer" />
+    </declare-styleable>
+
 </resources>

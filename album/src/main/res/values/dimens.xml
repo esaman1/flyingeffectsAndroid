@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
     Copyright 2017 Yan Zhenjie.
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,15 +26,21 @@
     <dimen name="album_dp_5">5dp</dimen>
     <dimen name="album_dp_6">6dp</dimen>
     <dimen name="album_dp_10">10dp</dimen>
+    <dimen name="album_dp_12">12dp</dimen>
+    <dimen name="album_dp_14">14dp</dimen>
     <dimen name="album_dp_15">15dp</dimen>
     <dimen name="album_dp_16">16dp</dimen>
     <dimen name="album_dp_20">20dp</dimen>
+    <dimen name="album_dp_26">26dp</dimen>
     <dimen name="album_dp_30">30dp</dimen>
+    <dimen name="album_dp_31">31dp</dimen>
+    <dimen name="album_dp_32">32dp</dimen>
     <dimen name="album_dp_35">35dp</dimen>
     <dimen name="album_dp_40">35dp</dimen>
     <dimen name="album_dp_45">45dp</dimen>
     <dimen name="album_dp_50">50dp</dimen>
     <dimen name="album_dp_60">60dp</dimen>
+    <dimen name="album_dp_64">64dp</dimen>
     <dimen name="album_dp_80">80dp</dimen>
     <dimen name="album_dp_100">100dp</dimen>
     <dimen name="album_dp_200">200dp</dimen>

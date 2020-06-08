@@ -2,6 +2,8 @@ package com.yanzhenjie.album.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -18,7 +20,10 @@ import androidx.annotation.Nullable;
 import com.yanzhenjie.album.R;
 import com.yanzhenjie.album.util.PxUtils;
 
-
+/**
+ * 自定义拍摄按钮
+ * @author sjq
+ */
 public class RecordView extends View implements View.OnClickListener, View.OnLongClickListener {
 
     private static final int PROGRESS_INTERVAL = 100;
@@ -33,6 +38,7 @@ public class RecordView extends View implements View.OnClickListener, View.OnLon
     private int progressValue;
     private boolean isRecording;
     private long startRecordTime;
+//    private Bitmap mIconCapture;
     private onRecordListener mListener;
 
     public RecordView(Context context) {
@@ -55,6 +61,8 @@ public class RecordView extends View implements View.OnClickListener, View.OnLon
         progressColor = typedArray.getColor(R.styleable.AlbumRecordView_album_progress_color, Color.RED);
         fillColor = typedArray.getColor(R.styleable.AlbumRecordView_album_fill_color, Color.WHITE);
         maxDuration = typedArray.getInteger(R.styleable.AlbumRecordView_album_duration, 10);
+//        mIconCapture = BitmapFactory.decodeResource(getResources(),
+//                typedArray.getResourceId(typedArray.getIndex(3), 0));
         setMaxDuration(maxDuration);
         typedArray.recycle();
 

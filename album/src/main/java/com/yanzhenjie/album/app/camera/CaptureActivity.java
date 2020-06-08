@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,24 +24,35 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.camera.core.AspectRatio;
 import androidx.camera.core.Camera;
+import androidx.camera.core.CameraControl;
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraInfoUnavailableException;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.CameraX;
+import androidx.camera.core.FocusMeteringAction;
+import androidx.camera.core.FocusMeteringResult;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.MeteringPoint;
+import androidx.camera.core.MeteringPointFactory;
 import androidx.camera.core.Preview;
+import androidx.camera.core.SurfaceOrientedMeteringPointFactory;
 import androidx.camera.core.VideoCapture;
+import androidx.camera.core.ZoomState;
 import androidx.camera.core.impl.VideoCaptureConfig;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LiveData;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.yanzhenjie.album.R;
+import com.yanzhenjie.album.widget.CameraXPreview;
 import com.yanzhenjie.album.widget.RecordView;
 
 import java.io.File;
@@ -51,8 +63,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
-public class CaptureActivity extends AppCompatActivity {
+public class CaptureActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "CaptureActivity";
 
     public static final String RESULT_FILE_PATH = "file_path";
@@ -63,25 +76,35 @@ public class CaptureActivity extends AppCompatActivity {
     private static final String[] PERMISSIONS = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO};
     private static final int PERMISSION_CODE = 1000;
 
-
     private ArrayList<String> deniedPermission = new ArrayList<>();
     private CameraSelector mCameraSelector;
     private int rotation = Surface.ROTATION_0;
     private Size resolution = new Size(1280, 720);
+
+    private AppCompatImageView mIvFlip;
+    private CameraXPreview mViewFinder;
+    private RecordView mRecordView;
+    private AppCompatImageView mIvBack;
+    private AppCompatImageView mIvSwitchTimer;
+    private AppCompatTextView mTvTitle;
+    private AppCompatTextView mTvCaptureTime;
+
     private Preview preview;
-    private PreviewView mViewFinder;
     private ImageCapture mImageCapture;
     private VideoCapture mVideoCapture;
     private boolean takingPicture = true;
     private String outputFilePath;
     private ExecutorService mCameraExecutor;
-
-    private RecordView mRecordView;
     private ProcessCameraProvider mCameraProvider;
     private ListenableFuture<ProcessCameraProvider> mCameraProviderFuture;
     private Camera mCamera;
 
     private Context mContext;
+    private int mCameraSelectorInt = CameraSelector.LENS_FACING_BACK;
+    private int mAspectRatioInt = AspectRatio.RATIO_16_9;
+    private CameraInfo mCameraInfo;
+    private CameraControl mCameraControl;
+
 
     public static void startActivityForResult(Activity activity) {
         Intent intent = new Intent(activity, CaptureActivity.class);
@@ -95,8 +118,10 @@ public class CaptureActivity extends AppCompatActivity {
         mContext = CaptureActivity.this;
         ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_CODE);
         setContentView(R.layout.album_activity_capture);
-        mRecordView = findViewById(R.id.record_view);
-        mViewFinder = findViewById(R.id.view_finder);
+
+        initView();
+        setOnclickListener();
+
         // Initialize our background executor
         mCameraExecutor = Executors.newSingleThreadExecutor();
 
@@ -146,6 +171,21 @@ public class CaptureActivity extends AppCompatActivity {
                 mVideoCapture.stopRecording();
             }
         });
+    }
+
+    private void setOnclickListener() {
+        mIvFlip.setOnClickListener(this);
+
+    }
+
+    private void initView() {
+        mRecordView = findViewById(R.id.record_view);
+        mViewFinder = findViewById(R.id.view_finder);
+        mIvFlip = findViewById(R.id.iv_flip);
+        mIvBack = findViewById(R.id.iv_back);
+        mIvSwitchTimer = findViewById(R.id.iv_switch_timer);
+        mTvTitle = findViewById(R.id.tv_model_title);
+        mTvCaptureTime = findViewById(R.id.tv_capture_time);
     }
 
     private void showErrorToast(@NonNull String message) {
@@ -229,13 +269,62 @@ public class CaptureActivity extends AppCompatActivity {
         }, ContextCompat.getMainExecutor(this));
     }
 
+    private void initUseCase() {
+        //初始化用例，将三个用例封装为不同的方法
+        //initImageCapture();
+        initVideoCapture();
+        initPreview();
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void initVideoCapture() {
+        mVideoCapture = new VideoCaptureConfig.Builder()
+                .setCameraSelector(mCameraSelector)
+                .setTargetAspectRatio(mAspectRatioInt)
+                .setTargetRotation(rotation)
+                //.setTargetResolution(resolution)
+                //视频帧率
+                .setVideoFrameRate(25)
+                //bit率
+                .setBitRate(3 * 1024 * 1024).build();
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void initPreview() {
+//        mPreview = new Preview.Builder()
+//                .setTargetAspectRatio(mAspectRatioInt)
+//                .build();
+        preview = new Preview.Builder()
+                .setCameraSelector(mCameraSelector) //前后摄像头
+                .setTargetAspectRatio(mAspectRatioInt) //宽高比
+                .setTargetRotation(rotation) //旋转角度
+                .build();
+    }
+
+    private void initImageCapture() {
+        // 构建图像捕获用例
+        mImageCapture = new ImageCapture.Builder()
+                .setFlashMode(ImageCapture.FLASH_MODE_AUTO)
+                //.setTargetAspectRatio(mAspectRatioInt)
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
+                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+                .setTargetRotation(rotation)
+                .build();
+    }
+
+    /**
+     * 选择摄像头
+     */
+    private void initCameraSelector() {
+        mCameraSelector = new CameraSelector.Builder()
+                .requireLensFacing(mCameraSelectorInt)
+                .build();
+    }
+
     @SuppressLint("RestrictedApi")
     private void bindPreview() {
         CameraX.unbindAll();
-        mCameraSelector = new CameraSelector.Builder()
-                .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-                .build();
-
+        initCameraSelector();
         //查询一下当前要使用的设备摄像头(比如后置摄像头)是否存在
         boolean hasAvailableCameraId = false;
         hasAvailableCameraId = CameraX.hasCamera(mCameraSelector);
@@ -245,43 +334,7 @@ public class CaptureActivity extends AppCompatActivity {
             finish();
             return;
         }
-
-        //查询一下是否存在可用的cameraId.形式如：后置："0"，前置："1"
-        Set<String> cameraIdForLensFacing = null;
-        try {
-            cameraIdForLensFacing = CameraX.getCameraFactory().getAvailableCameraIds();
-        } catch (CameraInfoUnavailableException e) {
-            e.printStackTrace();
-        }
-        if (cameraIdForLensFacing == null) {
-            showErrorToast("无可用的设备cameraId!,请检查设备的相机是否被占用");
-            finish();
-            return;
-        }
-
-        preview = new Preview.Builder()
-                .setCameraSelector(mCameraSelector) //前后摄像头
-                .setTargetAspectRatio(AspectRatio.RATIO_16_9) //宽高比
-                .setTargetRotation(rotation) //旋转角度
-                //.setTargetResolution(resolution) //分辨率
-                .build();
-
-        mImageCapture = new ImageCapture.Builder()
-                .setCameraSelector(mCameraSelector)
-                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
-                .setTargetRotation(rotation)
-                //.setTargetResolution(resolution)
-                .build();
-
-        mVideoCapture = new VideoCaptureConfig.Builder()
-                .setCameraSelector(mCameraSelector)
-                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
-                .setTargetRotation(rotation)
-                //.setTargetResolution(resolution)
-                //视频帧率
-                .setVideoFrameRate(25)
-                //bit率
-                .setBitRate(3 * 1024 * 1024).build();
+        initUseCase();
         bindProvider();
     }
 
@@ -290,17 +343,114 @@ public class CaptureActivity extends AppCompatActivity {
 
         Log.d(TAG, "bindPreview: takingPicture" + takingPicture);
 
-        mCamera = mCameraProvider.bindToLifecycle(this, mCameraSelector, mImageCapture, mVideoCapture, preview);
-
+        mCamera = mCameraProvider.bindToLifecycle(this, mCameraSelector, mVideoCapture, preview);
+        mCameraInfo = mCamera.getCameraInfo();
+        mCameraControl = mCamera.getCameraControl();
         preview.setSurfaceProvider(mViewFinder.createSurfaceProvider());
+        initCameraListener();
     }
+
 
     @SuppressLint("RestrictedApi")
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         CameraX.unbindAll();
         // Shut down our background executor
         mCameraExecutor.shutdown();
-        super.onDestroy();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.iv_flip) {
+            switchCameraSelector();
+        }
+    }
+
+    /**
+     * 切换前后摄像头
+     */
+    private void switchCameraSelector() {
+        switch (mCameraSelectorInt) {
+            case CameraSelector.LENS_FACING_BACK:
+                mCameraSelectorInt = CameraSelector.LENS_FACING_FRONT;
+                break;
+            case CameraSelector.LENS_FACING_FRONT:
+                mCameraSelectorInt = CameraSelector.LENS_FACING_BACK;
+                break;
+        }
+        bindCameraX();
+    }
+
+    /**
+     * 预览控件的监听
+     */
+    private void initCameraListener() {
+        LiveData<ZoomState> zoomState = mCameraInfo.getZoomState();
+        float maxZoomRatio = zoomState.getValue().getMaxZoomRatio();
+        float minZoomRatio = zoomState.getValue().getMinZoomRatio();
+        Log.d(TAG, "initCameraListener: maxZoomRatio = " + maxZoomRatio);
+        Log.d(TAG, "initCameraListener: minZoomRatio = " + minZoomRatio);
+        mViewFinder.setCustomTouchListener(new CameraXPreview.CustomTouchListener() {
+            @Override
+            public void zoom() {
+                //放大
+                float zoomRatio = zoomState.getValue().getZoomRatio();
+                if (zoomRatio < maxZoomRatio) {
+                    mCameraControl.setZoomRatio((float) (zoomRatio + 0.1));
+                }
+            }
+
+            @Override
+            public void ZoomOut() {
+                //缩小
+                float zoomRatio = zoomState.getValue().getZoomRatio();
+                if (zoomRatio > minZoomRatio) {
+                    mCameraControl.setZoomRatio((float) (zoomRatio - 0.1));
+                }
+            }
+
+            @Override
+            public void click(float x, float y) {
+                // TODO 对焦
+                MeteringPointFactory factory = new SurfaceOrientedMeteringPointFactory(1.0f, 1.0f);
+                MeteringPoint point = factory.createPoint(x, y);
+                FocusMeteringAction action = new FocusMeteringAction.Builder(point, FocusMeteringAction.FLAG_AF)
+                        // auto calling cancelFocusAndMetering in 3 seconds
+                        .setAutoCancelDuration(3, TimeUnit.SECONDS)
+                        .build();
+
+                //focusView.startFocus(new Point((int) x, (int) y));
+                ListenableFuture future = mCameraControl.startFocusAndMetering(action);
+                future.addListener(() -> {
+                    try {
+                        FocusMeteringResult result = (FocusMeteringResult) future.get();
+                        if (result.isFocusSuccessful()) {
+                            //mBinding.focusView.onFocusSuccess();
+                        } else {
+                            //mBinding.focusView.onFocusFailed();
+                        }
+                    } catch (Exception e) {
+
+                    }
+                }, mCameraExecutor);
+            }
+
+            @Override
+            public void doubleClick(float x, float y) {
+                // 双击放大缩小
+                float zoomRatio = zoomState.getValue().getZoomRatio();
+                if (zoomRatio > minZoomRatio) {
+                    mCameraControl.setLinearZoom(0f);
+                } else {
+                    mCameraControl.setLinearZoom(0.5f);
+                }
+            }
+
+            @Override
+            public void longClick(float x, float y) {
+
+            }
+        });
     }
 }

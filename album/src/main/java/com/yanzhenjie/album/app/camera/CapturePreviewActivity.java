@@ -39,10 +39,11 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
     public static final int REQ_PREVIEW = 1000;
     private SimpleExoPlayer player;
 
-    private Button mActionOk;
-    private AppCompatImageView mActionClose;
+    private AppCompatImageView mIvOk;
+    private AppCompatImageView mIvClose;
     private PlayerView mPlayerView;
     private PhotoView mPhotoView;
+    private AppCompatImageView mIvCancel;
 
 
     public static void startActivityForResult(Activity activity, String previewUrl, boolean isVideo, String btnText) {
@@ -62,20 +63,20 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
         boolean isVideo = getIntent().getBooleanExtra(KEY_PREVIEW_VIDEO, false);
         String btnText = getIntent().getStringExtra(KEY_PREVIEW_BTNTEXT);
 
-        mActionOk = findViewById(R.id.action_ok);
-        mActionClose = findViewById(R.id.action_close);
+        mIvOk = findViewById(R.id.iv_ok);
+        mIvClose = findViewById(R.id.iv_close);
         mPlayerView = findViewById(R.id.player_view);
         mPhotoView = findViewById(R.id.photo_view);
+        mIvCancel = findViewById(R.id.iv_cancel);
 
         if (TextUtils.isEmpty(btnText)) {
-            mActionOk.setVisibility(View.GONE);
+            mIvOk.setVisibility(View.GONE);
         } else {
-            mActionOk.setVisibility(View.VISIBLE);
-            mActionOk.setText(btnText);
-            mActionOk.setOnClickListener(this);
+            mIvOk.setVisibility(View.VISIBLE);
+            mIvOk.setOnClickListener(this);
         }
 
-        mActionClose.setOnClickListener(this);
+        mIvClose.setOnClickListener(this);
 
         if (isVideo) {
             previewVideo(previewUrl);
@@ -143,10 +144,13 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.action_close) {
+        int id = v.getId();
+        if (id == R.id.iv_close) {
             finish();
-        } else if (v.getId() == R.id.action_ok) {
+        } else if (id == R.id.iv_ok) {
             setResult(RESULT_OK, new Intent());
+            finish();
+        } else if (id == R.id.iv_cancel) {
             finish();
         }
     }

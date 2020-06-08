@@ -121,7 +121,6 @@ public class BaseApplication extends MultiDexApplication {
         if (ChannelUtil.getChannel(BaseApplication.getInstance()).equals("test")) {
             CrashHandler.getInstance().init(this);
         }
-
     }
 
 
@@ -162,7 +161,6 @@ public class BaseApplication extends MultiDexApplication {
         LogUtil.d("OOM", "isValid=" + isValid);
     }
 
-
     private long onStopTime;
     private int activityAount = 0;
     ActivityLifecycleCallbacks activityLifecycleCallbacks = new ActivityLifecycleCallbacks() {
@@ -184,7 +182,6 @@ public class BaseApplication extends MultiDexApplication {
                 intoKaiPing(System.currentTimeMillis() - onStopTime);
                 //  EventBus.getDefault().post(new isIntoBackground(false));  //消息通知
             }
-
         }
 
         @Override
@@ -204,6 +201,7 @@ public class BaseApplication extends MultiDexApplication {
 
         @Override
         public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
         }
 
         @Override

@@ -1,50 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/albumColorBlack"
-    android:orientation="vertical">
+    android:background="@color/albumColorBlack">
 
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/player_view"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:visibility="gone"
         app:buffered_color="@color/albumColorWhite"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:resize_mode="fixed_width"
         app:show_buffering="when_playing"
         app:surface_type="texture_view"
-        app:use_controller="false"/>
+        app:use_controller="false" />
 
     <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/photo_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_gravity="center"
         android:layout_marginTop="90dp"
         android:layout_marginBottom="@dimen/album_dp_60"
         android:scaleType="fitCenter"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/action_close"
-        android:layout_width="20dp"
-        android:layout_height="@dimen/album_dp_20"
-        android:layout_marginStart="@dimen/album_dp_16"
-        android:layout_marginTop="@dimen/album_dp_16"
-        app:srcCompat="@drawable/album_ic_back_white"
-        app:tint="@color/albumColorWhite"/>
+        android:id="@+id/iv_close"
+        android:layout_width="@dimen/album_dp_32"
+        android:layout_height="@dimen/album_dp_32"
+        android:layout_marginStart="@dimen/album_dp_14"
+        android:layout_marginTop="@dimen/album_dp_26"
+        android:src="@drawable/album_ic_back_white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"  />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/action_ok"
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_model_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|top"
-        android:layout_marginTop="@dimen/album_dp_16"
-        android:layout_marginRight="@dimen/album_dp_16"
-        android:gravity="center"
-        android:text="预览完成"/>
+        android:layout_marginTop="@dimen/album_dp_31"
+        android:shadowColor="@color/album_title_shadow"
+        android:shadowDx="0.5"
+        android:shadowDy="2.0"
+        android:shadowRadius="3.0"
+        android:textColor="@color/albumColorWhite"
+        android:textSize="@dimen/album_sp_16"
+        app:layout_constraintBottom_toBottomOf="@id/iv_close"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/iv_close" />
 
-</FrameLayout>
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_play"
+        android:layout_width="@dimen/album_dp_64"
+        android:layout_height="@dimen/album_dp_64"
+        android:padding="@dimen/album_dp_16"
+        android:src="@drawable/album_icon_play"
+        android:background="@drawable/album_shape_play_back"
+        android:layout_marginBottom="@dimen/album_dp_60"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/album_icon_capture_make_sure"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/iv_play"
+        app:layout_constraintTop_toTopOf="@id/iv_play"
+        app:layout_constraintHorizontal_bias="0.45"
+        app:layout_constraintStart_toEndOf="@id/iv_play"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/album_icon_cancel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/iv_play"
+        app:layout_constraintTop_toTopOf="@id/iv_play"
+        app:layout_constraintHorizontal_bias="0.55"
+        app:layout_constraintEnd_toStartOf="@id/iv_play"/>
+
+    <TextView
+        android:id="@+id/tv_play_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/album_shape_time_back"
+        android:paddingStart="@dimen/album_dp_12"
+        android:paddingTop="@dimen/album_dp_2"
+        android:paddingEnd="@dimen/album_dp_12"
+        android:paddingBottom="@dimen/album_dp_2"
+        android:text="123456"
+        android:textColor="@color/albumColorWhite"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/iv_play"
+        app:layout_constraintStart_toStartOf="@id/iv_play"
+        app:layout_constraintTop_toBottomOf="@id/iv_play"
+        app:layout_constraintVertical_bias="0.26" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
