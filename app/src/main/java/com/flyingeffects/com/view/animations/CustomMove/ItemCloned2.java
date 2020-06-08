@@ -19,11 +19,11 @@ public class ItemCloned2 extends baseAnimModel {
 
     private StickerView mainStickerView;
     private ArrayList<TransplationPos> listForTranslaptionPosition = new ArrayList<>();
-
+    StickerView sub1 = null;
+    StickerView sub2=null;
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
         this.mainStickerView = mainStickerView;
-        StickerView sub1 = null;
-        StickerView sub2=null;
+
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
         if(subLayer!=null&&subLayer.size()==2){
             sub1= subLayer.get(0);
@@ -32,15 +32,14 @@ public class ItemCloned2 extends baseAnimModel {
 
         float perWidth = mainStickerView.getmHelpBoxRectW() ;
         //第一个参数为总时长
-        StickerView finalSub = sub1;
-        StickerView finalSub1 = sub2;
+
         animationLinearInterpolator = new AnimationLinearInterpolator(2000, (progress, isDone) -> {
             float translationToX = perWidth * progress;
-            if(finalSub !=null){
-                finalSub.toTranMoveXY(mainStickerView.getMBoxCenterX() - translationToX, mainStickerView.getMBoxCenterY());
+            if(sub1 !=null){
+                sub1.toTranMoveXY(mainStickerView.getMBoxCenterX() - translationToX, mainStickerView.getMBoxCenterY());
             }
-            if(finalSub1 !=null){
-                finalSub1.toTranMoveXY(mainStickerView.getMBoxCenterX() + translationToX, mainStickerView.getMBoxCenterY());
+            if(sub2 !=null){
+                sub2.toTranMoveXY(mainStickerView.getMBoxCenterX() + translationToX, mainStickerView.getMBoxCenterY());
             }
         });
         animationLinearInterpolator.SetCirculation(false);

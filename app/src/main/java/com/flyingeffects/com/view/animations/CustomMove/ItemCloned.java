@@ -20,12 +20,17 @@ public class ItemCloned extends baseAnimModel {
 
     private StickerView mainStickerView;
     private ArrayList<TransplationPos> listForTranslaptionPosition = new ArrayList<>();
-
+    StickerView sub1;
+    StickerView sub2;
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
         this.mainStickerView = mainStickerView;
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
-        StickerView sub1 = subLayer.get(0);
-        StickerView sub2 = subLayer.get(1);
+
+        if(subLayer!=null&&subLayer.size()==2){
+            sub1  = subLayer.get(0);
+            sub2 = subLayer.get(1);
+        }
+
         float perWidth = mainStickerView.getmHelpBoxRectW() ;
         //第一个参数为总时长
         animationLinearInterpolator = new AnimationLinearInterpolator(2000, (progress, isDone) -> {

@@ -1655,35 +1655,39 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             contentWidth = getMeasuredWidth() / 2f;
             originalBitmapWidth = (int) contentWidth;
 //            originalBitmap = BitmapFactory.decodeFile(path);
-            GetVideoCover getVideoCover = new GetVideoCover(BaseApplication.getInstance());
-            getVideoCover.getFileCoverForBitmap(path, cover -> {
-                originalBitmap = cover;
-                int bitmapW = originalBitmap.getWidth();
-                int bitmapH = originalBitmap.getHeight();
-                boolean direction = BitmapManager.getInstance().getOrientation(path);
-                if (!direction) {
-                    contentHeight = widthBigger ? contentWidth * (bitmapH / (float) bitmapW) : contentWidth * (bitmapW / (float) bitmapH);
-                } else {
-                    //正常模式
-                    contentHeight = widthBigger ? contentWidth * (bitmapW / (float) bitmapH) : contentWidth * (bitmapH / (float) bitmapW);
-                }
-                originalBitmapHeight = (int) contentHeight;
+            if(BaseApplication.getInstance()!=null){
+                GetVideoCover getVideoCover = new GetVideoCover(BaseApplication.getInstance());
+                getVideoCover.getFileCoverForBitmap(path, cover -> {
+                    originalBitmap = cover;
+                    int bitmapW = originalBitmap.getWidth();
+                    int bitmapH = originalBitmap.getHeight();
+                    boolean direction = BitmapManager.getInstance().getOrientation(path);
+                    if (!direction) {
+                        contentHeight = widthBigger ? contentWidth * (bitmapH / (float) bitmapW) : contentWidth * (bitmapW / (float) bitmapH);
+                    } else {
+                        //正常模式
+                        contentHeight = widthBigger ? contentWidth * (bitmapW / (float) bitmapH) : contentWidth * (bitmapH / (float) bitmapW);
+                    }
+                    originalBitmapHeight = (int) contentHeight;
 //                LogUtil.d("OOM", "contentHeight=" + contentHeight);
 //                LogUtil.d("OOM", "contentWidth=" + contentWidth);
-                RequestManager manager = Glide.with(BaseApplication.getInstance());
-                RequestBuilder builder = null;
-                if (path.endsWith(".gif")) {
-                    builder = manager.asGif();
-                } else {
-                    builder = manager.asDrawable();
-                }
-                options.override((int) contentWidth, (int) contentHeight);
-                builder.load(path)
-                        .apply(options)
-                        .into(getTarger());
-                recyclerBitmap();
-            });
+                    if(BaseApplication.getInstance()!=null){
+                        RequestManager manager = Glide.with(BaseApplication.getInstance());
+                        RequestBuilder builder = null;
+                        if (path.endsWith(".gif")) {
+                            builder = manager.asGif();
+                        } else {
+                            builder = manager.asDrawable();
+                        }
+                        options.override((int) contentWidth, (int) contentHeight);
+                        builder.load(path)
+                                .apply(options)
+                                .into(getTarger());
+                        recyclerBitmap();
+                    }
 
+                });
+            }
         } else {
             //路径不存在
 //            Toast.makeText(getContext(), "文件不存在", Toast.LENGTH_LONG).show();

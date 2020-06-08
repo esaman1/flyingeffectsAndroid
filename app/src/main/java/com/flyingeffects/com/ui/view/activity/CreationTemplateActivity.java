@@ -319,7 +319,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 break;
 
             case R.id.ll_play:
-                if (!DoubleClick.getInstance().isFastDoubleClick()) {
+                if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
                     if (isPlaying) {
                         pauseBgmMusic();
                         isIntoPause = false;
