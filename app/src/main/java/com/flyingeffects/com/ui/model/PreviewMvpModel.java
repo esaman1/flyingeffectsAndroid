@@ -88,7 +88,18 @@ public class PreviewMvpModel {
         String videoName = mVideoFolder + File.separator + id + "synthetic.mp4";
         File File = new File(videoName);
         if (File.exists()) {
-            callback.downVideoSuccess(videoName, imagePath);
+            if(downProgressDialog!=null){
+                downProgressDialog.closePragressDialog();
+            }
+            if(!keepAlbum){
+                callback.downVideoSuccess(videoName, imagePath);
+            }else{
+                WaitingDialog.closePragressDialog();
+                saveToAlbum(videoName);
+                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                    AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_DOWNLOAD);
+                }
+            }
             return;
         }
         Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
@@ -112,7 +123,9 @@ public class PreviewMvpModel {
                             }
                             if(!keepAlbum){
                                 callback.downVideoSuccess(path1, imagePath);
+
                             }else{
+
                                 WaitingDialog.closePragressDialog();
                                 saveToAlbum(path1);
                                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
@@ -172,8 +185,9 @@ public class PreviewMvpModel {
     }
 
     private WaitingDialog_progress downProgressDialog;
+    private BottomSheetDialog   bottomSheetDialog;
     public void showBottomSheetDialog(String path,String imagePath,String id){
-        BottomSheetDialog   bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
+        bottomSheetDialog  = new BottomSheetDialog(context, R.style.gaussianDialog);
         View view = LayoutInflater.from(context).inflate(R.layout.preview_bottom_sheet_dialog, null);
         bottomSheetDialog.setContentView(view);
        LinearLayout iv_download = view.findViewById(R.id.ll_download);
@@ -181,6 +195,7 @@ public class PreviewMvpModel {
             downProgressDialog=new WaitingDialog_progress(context);
             downProgressDialog.openProgressDialog();
             DownVideo(path,imagePath,id,true);
+            dismissDialog();
         });
 
         TextView tv_cancle=view.findViewById(R.id.tv_cancle);
@@ -196,6 +211,18 @@ public class PreviewMvpModel {
         params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
         parent.setLayoutParams(params);
         bottomSheetDialog.show();
+    }
+
+
+    private void dismissDialog() {
+        try {
+            if (bottomSheetDialog != null && bottomSheetDialog.isShowing()) {
+                bottomSheetDialog.dismiss();
+                bottomSheetDialog = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

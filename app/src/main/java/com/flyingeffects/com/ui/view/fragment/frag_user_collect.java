@@ -147,15 +147,29 @@ public class frag_user_collect extends BaseFragment {
 
     public void initSmartRefreshLayout() {
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
-            isRefresh = true;
-            refreshLayout.setEnableLoadMore(true);
-            selectPage = 1;
-            requestCollectionList(false);
+            if (BaseConstans.hasLogin()) {
+                isRefresh = true;
+                refreshLayout.setEnableLoadMore(true);
+                selectPage = 1;
+                requestCollectionList(false);
+            }else{
+                finishData();
+                ToastUtil.showToast("请先登录");
+            }
         });
         smartRefreshLayout.setOnLoadMoreListener(refresh -> {
-            isRefresh = false;
-            selectPage++;
-            requestCollectionList(false);
+
+
+            if (BaseConstans.hasLogin()) {
+                isRefresh = false;
+                selectPage++;
+                requestCollectionList(false);
+            }else{
+                finishData();
+                ToastUtil.showToast("请先登录");
+            }
+
+
         });
     }
 
