@@ -23,16 +23,23 @@ public class ItemLeftAndRightDissmiss extends baseAnimModel {
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
         this.mainStickerView = mainStickerView;
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
-        StickerView sub1 = subLayer.get(0);
+        StickerView sub1 = null;
+        if(subLayer!=null&&subLayer.size()>0){
+            sub1 = subLayer.get(0);
+        }
         float boxRectW = mainStickerView.getmHelpBoxRectW();
         float totalWidth = mainStickerView.getMeasuredWidth();
         //第一个参数为总时长
+        StickerView finalSub = sub1;
         animationLinearInterpolator = new AnimationLinearInterpolator(3000, (progress, isDone) -> {
             LogUtil.d("animationLinearInterpolator", "progress=" + progress);
             //拟定倒叙
             float X = boxRectW * progress;
             mainStickerView.toTranMoveXY(X, mainStickerView.getMBoxCenterY());
-            sub1.toTranMoveXY(totalWidth - X, mainStickerView.getMBoxCenterY());
+            if(finalSub !=null){
+                finalSub.toTranMoveXY(totalWidth - X, mainStickerView.getMBoxCenterY());
+            }
+
         });
         animationLinearInterpolator.setInterpolatorType(1);
         animationLinearInterpolator.PlayAnimation();

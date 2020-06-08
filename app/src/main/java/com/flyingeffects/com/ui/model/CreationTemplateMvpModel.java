@@ -1464,6 +1464,8 @@ public class CreationTemplateMvpModel {
                             }
                         }
                     }
+                }else{
+                    callback.animIsComplate();
                 }
             }
         });
