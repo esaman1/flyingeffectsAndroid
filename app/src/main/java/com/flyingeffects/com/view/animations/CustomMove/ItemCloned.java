@@ -38,7 +38,7 @@ public class ItemCloned extends baseAnimModel {
             if(sub1!=null){
                 sub1.toTranMoveXY(mainStickerView.getMBoxCenterX() - translationToX, mainStickerView.getMBoxCenterY());
             }
-            if(sub1!=null){
+            if(sub2!=null){
                 sub2.toTranMoveXY(mainStickerView.getMBoxCenterX() + translationToX, mainStickerView.getMBoxCenterY());
             }
 
