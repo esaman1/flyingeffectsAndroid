@@ -29,6 +29,7 @@ public class ItemBottomToTop extends baseAnimModel {
         float totalWidth = mainStickerView.getMeasuredWidth();
         float totalHeight = mainStickerView.getMeasuredHeight() + (mainStickerView.getmHelpBoxRectH());
         float halftHeifht = mainStickerView.getmHelpBoxRectH() / 2;
+        float nowYP=mainStickerView.getCenterY()/totalHeight;
         //view 右边的位置
         float stickerViewPosition = mainStickerView.GetHelpBoxRectRight();
         //view 右边位置的比例
@@ -39,6 +40,7 @@ public class ItemBottomToTop extends baseAnimModel {
             float needProgress = 1 - progress;
             //  第一个子view大约位置一半位置,显示在中间位置
             float translationToY;
+            float text = (float) Math.abs(0.8-nowYP);
             if (needProgress < 0.8) {
                 translationToY = (float) (needProgress + 0.2);
                 sub1.toTranMoveXY((float) (0.25 * totalWidth), totalHeight * translationToY - halftHeifht);
@@ -58,6 +60,7 @@ public class ItemBottomToTop extends baseAnimModel {
             }
 
         });
+        animationLinearInterpolator.setNowDuration((int) (nowYP*4000));
         animationLinearInterpolator.PlayAnimation();
     }
 
@@ -65,12 +68,14 @@ public class ItemBottomToTop extends baseAnimModel {
     float halfHeight;
     float paddingAllHeight;
     float paddingHeight;
-
+    float nowPositionY;
     void initSubLayerData(Layer mainLayer, LayerAnimCallback callback, float percentage) {
-        toChangeSubLayer(callback, percentage);
         halfHeight = mainLayer.getScaleHeight() / 2;
         paddingHeight = mainLayer.getPadHeight();
         paddingAllHeight = mainLayer.getPadHeight() + mainLayer.getScaleHeight();
+        nowPositionY  =mainLayer.getPositionY()/paddingAllHeight;
+        toChangeSubLayer(callback, percentage);
+
     }
 
 
@@ -107,7 +112,12 @@ public class ItemBottomToTop extends baseAnimModel {
             listForTranslaptionPosition.add(transplationPos2);
             callback.translationalXY(listForTranslaptionPosition);
         });
-        animationLinearInterpolator.PlayAnimationNoTimer(percentage);
+
+        float needPrecentage=percentage+nowPositionY;
+        if(needPrecentage>1){
+            needPrecentage=needPrecentage-1;
+        }
+        animationLinearInterpolator.PlayAnimationNoTimer(needPrecentage);
     }
 
 

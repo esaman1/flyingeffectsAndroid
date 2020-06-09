@@ -71,6 +71,10 @@ public class AnimationLinearInterpolator {
     }
 
 
+    public void setNowDuration(int duration) {
+      this.nowDuration=duration;
+    }
+
 
       private  boolean isCirculation=true;
     public void SetCirculation(boolean isCirculation){

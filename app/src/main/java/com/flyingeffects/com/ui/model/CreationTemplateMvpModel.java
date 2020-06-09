@@ -281,6 +281,9 @@ public class CreationTemplateMvpModel {
                 modificationSingleItemIsChecked(i);
                 if (i == 0) {
                     //删除选择的帖子
+                    stopAllAnim();
+                    closeAllAnim();
+                    new Handler().postDelayed(() -> deleteSubLayerSticker(),500);
                     deleteAllSticker();
                     if (UiStep.isFromDownBj) {
                         statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Stickeroff");
@@ -353,8 +356,8 @@ public class CreationTemplateMvpModel {
 
     private synchronized void startPlayAnim(int position, boolean isClearAllAnim, StickerView targetStickerView, int intoPosition, boolean isFromPreview) {
         if (!isFromPreview) {
-            deleteSubLayerSticker();
             stopAllAnim();
+            deleteSubLayerSticker();
             //重新得到所有的贴纸列表
             listAllSticker.clear();
             for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
@@ -468,6 +471,12 @@ public class CreationTemplateMvpModel {
         smartRefreshLayout.finishLoadMore();
     }
 
+
+    /**
+     * description ：删除帖子
+     * creation date: 2020/6/8
+     * user : zhangtongju
+     */
     private void deleteAllSticker() {
         if (listForStickerModel != null && listForStickerModel.size() > 0) {
             for (AnimStickerModel stickerModel : listForStickerModel
@@ -479,6 +488,8 @@ public class CreationTemplateMvpModel {
                 }
             }
         }
+
+
     }
 
 
