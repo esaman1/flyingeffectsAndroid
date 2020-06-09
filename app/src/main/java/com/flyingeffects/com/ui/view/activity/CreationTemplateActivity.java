@@ -153,8 +153,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     private boolean isNeedCut;
 
-    @BindView(R.id.DrawPad_view)
-    DrawPadView2 drawPadView;
+//    @BindView(R.id.DrawPad_view)
+//    DrawPadView2 drawPadView;
 
     @Override
     protected int getLayoutId() {
@@ -460,13 +460,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             hListView.post(() -> presenter.initVideoProgressView(hListView));
         }
 
-        ViewGroup.LayoutParams RelativeLayoutParams2 = drawPadView.getLayoutParams();
-        drawPadView.post(() -> {
-            int oriHeight = drawPadView.getHeight();
-            RelativeLayoutParams2.width = Math.round(1f * oriHeight * oriRatio);
-            RelativeLayoutParams2.height = oriHeight;
-            drawPadView.setLayoutParams(RelativeLayoutParams2);
-        });
+//        ViewGroup.LayoutParams RelativeLayoutParams2 = drawPadView.getLayoutParams();
+//        drawPadView.post(() -> {
+//            int oriHeight = drawPadView.getHeight();
+//            RelativeLayoutParams2.width = Math.round(1f * oriHeight * oriRatio);
+//            RelativeLayoutParams2.height = oriHeight;
+//            drawPadView.setLayoutParams(RelativeLayoutParams2);
+//        });
 
     }
 
@@ -703,31 +703,41 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             @Override
             public void run() {
                 totalPlayTime = totalPlayTime + 5;
-                Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                    if (!TextUtils.isEmpty(videoPath)) {
-                        int nowDuration = (int) getCurrentPos();
-                        float percent = nowDuration / (float) allVideoDuration;
-                        int widthX = (int) (percent * listWidth);
-                        hListView.scrollTo(widthX);
-                        LogUtil.d("OOM", "percent=" + percent);
-                    } else {
-                        //没有选择背景
-                        nowTime = nowTime + 5;
-                        float percent = nowTime / (float) 10000;
-                        int widthX = (int) (percent * listWidth);
-                        hListView.scrollTo(widthX);
-                        LogUtil.d("OOM", "percent=" + percent);
-                        if (percent >= 1) {
-                            nowTime = 5;
-                            isPlayComplate = true;
-                            endTimer();
-                            isPlaying = false;
-                            presenter.showGifAnim(false);
-                            nowStateIsPlaying(false);
-                            presenter.showAllAnim(false);
+//                Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!TextUtils.isEmpty(videoPath)) {
+                            int nowDuration = (int) getCurrentPos();
+                            float percent = nowDuration / (float) allVideoDuration;
+                            int widthX = (int) (percent * listWidth);
+                            hListView.scrollTo(widthX);
+                            LogUtil.d("OOM", "percent=" + percent);
+                        } else {
+                            //没有选择背景
+                            nowTime = nowTime + 5;
+                            float percent = nowTime / (float) 10000;
+                            int widthX = (int) (percent * listWidth);
+                            hListView.scrollTo(widthX);
+                            LogUtil.d("OOM", "percent=" + percent);
+                            if (percent >= 1) {
+                                nowTime = 5;
+                                isPlayComplate = true;
+                                endTimer();
+                                isPlaying = false;
+                                presenter.showGifAnim(false);
+                                nowStateIsPlaying(false);
+                                presenter.showAllAnim(false);
+                            }
                         }
                     }
                 });
+
+
+
+//                });
             }
         };
         timer.schedule(task, 0, 5);

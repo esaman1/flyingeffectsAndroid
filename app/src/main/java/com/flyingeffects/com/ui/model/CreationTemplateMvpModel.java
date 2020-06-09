@@ -307,6 +307,7 @@ public class CreationTemplateMvpModel {
         gridViewAnim.setOnItemClickListener((adapterView, view, i, l) -> {
             if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
                 modificationSingleAnimItemIsChecked(i);
+                callback.needPauseVideo();
                 if (i == 0) {
                     startPlayAnim(i, true, null, 0, false);
                 } else {
