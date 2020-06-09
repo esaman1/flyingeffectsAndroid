@@ -222,7 +222,7 @@ public class CreationTemplateMvpModel {
 
     public void chooseAnim(int pageNum) {
         viewPager.setCurrentItem(pageNum);
-     //   showAllAnim(false);
+        //   showAllAnim(false);
     }
 
 
@@ -283,7 +283,6 @@ public class CreationTemplateMvpModel {
                     //删除选择的帖子
                     stopAllAnim();
                     closeAllAnim();
-                    new Handler().postDelayed(() -> deleteSubLayerSticker(),500);
                     deleteAllSticker();
                     if (UiStep.isFromDownBj) {
                         statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Stickeroff");
@@ -473,22 +472,26 @@ public class CreationTemplateMvpModel {
 
 
     /**
-     * description ：删除帖子
+     * description ：删除帖子(包括动画贴纸)
      * creation date: 2020/6/8
      * user : zhangtongju
      */
+    private ArrayList<StickerView> needDeleteList = new ArrayList<>();
     private void deleteAllSticker() {
+        needDeleteList.clear();
         if (listForStickerModel != null && listForStickerModel.size() > 0) {
-            for (AnimStickerModel stickerModel : listForStickerModel
-            ) {
-                StickerView stickerView = stickerModel.getStickerView();
-                if (stickerView != null && !stickerView.getComeFrom()) {
-                    stickerView.stop();
-                    viewLayerRelativeLayout.removeView(stickerView);
+            for (int i = 0; i < listForStickerModel.size(); i++) {
+                StickerView stickerView = listForStickerModel.get(i).getStickerView();
+                if (stickerView != null) {
+                    needDeleteList.add(stickerView);
                 }
             }
         }
 
+        for (StickerView stickerView : needDeleteList
+        ) {
+            deleteStickView(stickerView);
+        }
 
     }
 
@@ -753,7 +756,7 @@ public class CreationTemplateMvpModel {
                 //停止全部动画
                 stopAllAnim();
                 closeAllAnim();
-                new Handler().postDelayed(() -> deleteSubLayerSticker(),500);
+                new Handler().postDelayed(() -> deleteSubLayerSticker(), 500);
                 if (stickView.getParent() != null) {
                     ViewGroup vp = (ViewGroup) stickView.getParent();
                     if (vp != null) {
@@ -1476,7 +1479,7 @@ public class CreationTemplateMvpModel {
                             }
                         }
                     }
-                }else{
+                } else {
                     callback.animIsComplate();
                 }
             }
