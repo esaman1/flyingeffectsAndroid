@@ -20,11 +20,15 @@ public class ItemBottomToTop extends baseAnimModel {
 
     private StickerView mainStickerView;
     private ArrayList<TransplationPos> listForTranslaptionPosition = new ArrayList<>();
+    StickerView sub1;
 
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
         this.mainStickerView = mainStickerView;
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
-        StickerView sub1 = subLayer.get(0);
+        if(subLayer!=null&&subLayer.size()>0){
+            sub1 = subLayer.get(0);
+        }
+
         //(mainStickerView.getmHelpBoxRectW())  解决方法效果很突兀的情况
         float totalWidth = mainStickerView.getMeasuredWidth();
         float totalHeight = mainStickerView.getMeasuredHeight() + (mainStickerView.getmHelpBoxRectH());
@@ -41,15 +45,16 @@ public class ItemBottomToTop extends baseAnimModel {
             //  第一个子view大约位置一半位置,显示在中间位置
             float translationToY;
             float text = (float) Math.abs(0.8-nowYP);
-            if (needProgress < 0.8) {
-                translationToY = (float) (needProgress + 0.2);
-                sub1.toTranMoveXY((float) (0.25 * totalWidth), totalHeight * translationToY - halftHeifht);
+            if(sub1!=null){
+                if (needProgress < 0.8) {
+                    translationToY = (float) (needProgress + 0.2);
+                    sub1.toTranMoveXY((float) (0.25 * totalWidth), totalHeight * translationToY - halftHeifht);
 
-            } else {
-                translationToY = (float) (needProgress - 0.8);
-                sub1.toTranMoveXY((float) (0.25 * totalWidth), totalHeight * translationToY - halftHeifht);
+                } else {
+                    translationToY = (float) (needProgress - 0.8);
+                    sub1.toTranMoveXY((float) (0.25 * totalWidth), totalHeight * translationToY - halftHeifht);
+                }
             }
-
             if (needProgress < 0.4) {
                 translationToY = (float) (needProgress + 0.6);
                 mainStickerView.toTranMoveXY((float) (0.75 * totalWidth), totalHeight * translationToY - halftHeifht);

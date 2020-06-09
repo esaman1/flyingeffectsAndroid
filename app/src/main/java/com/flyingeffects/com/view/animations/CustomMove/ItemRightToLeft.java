@@ -19,13 +19,19 @@ public class ItemRightToLeft extends baseAnimModel {
     private StickerView mainStickerView;
     private ArrayList<TransplationPos> listForTranslaptionPosition = new ArrayList<>();
     private ArrayList<Float> listForScale = new ArrayList<>();
+    StickerView sub1;
+    StickerView sub2;
 
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
         this.mainStickerView = mainStickerView;
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
         setScale(mainStickerView.getScale());
-        StickerView sub1 = subLayer.get(0);
-        StickerView sub2 = subLayer.get(1);
+        if(subLayer!=null){
+            sub1  = subLayer.get(0);
+            sub2  = subLayer.get(1);
+        }
+
+
         float totalWidth = mainStickerView.getMeasuredWidth() + (mainStickerView.getmHelpBoxRectW()*2);
         float haltfWidth=mainStickerView.getmHelpBoxRectW();
         float mScale = mainStickerView.GetHelpBoxRectScale();
@@ -42,27 +48,37 @@ public class ItemRightToLeft extends baseAnimModel {
                 mainStickerView.toTranMoveX(percent * totalWidth);
             } else {
                 //  第一个子view大约位置一半位置,显示在中间位置
+
                 float translationToX;
-                if (needProgress < 0.66) {
-                    translationToX = (float) (needProgress + 0.33);
-                    sub1.toTranMoveXY(translationToX * totalWidth-haltfWidth,mainStickerView.getMBoxCenterY());
 
-                } else {
-                    translationToX = (float) (needProgress - 0.66);
-                    sub1.toTranMoveXY(translationToX * totalWidth-haltfWidth,mainStickerView.getMBoxCenterY());
+                if(sub1!=null){
+                    if (needProgress < 0.66) {
+                        translationToX = (float) (needProgress + 0.33);
+                        sub1.toTranMoveXY(translationToX * totalWidth-haltfWidth,mainStickerView.getMBoxCenterY());
+
+                    } else {
+                        translationToX = (float) (needProgress - 0.66);
+                        sub1.toTranMoveXY(translationToX * totalWidth-haltfWidth,mainStickerView.getMBoxCenterY());
+                    }
+                    sub1.toScale(1 - translationToX, mScale, isDone);
                 }
-                sub1.toScale(1 - translationToX, mScale, isDone);
 
 
-                if (needProgress < 0.33) {
-                    translationToX = (float) (needProgress + 0.66);
-                    sub2.toTranMoveXY(translationToX * totalWidth-haltfWidth,mainStickerView.getMBoxCenterY());
 
-                } else {
-                    translationToX = (float) (needProgress - 0.33);
-                    sub2.toTranMoveXY(translationToX * totalWidth-haltfWidth,mainStickerView.getMBoxCenterY());
+
+                if(sub2!=null){
+                    if (needProgress < 0.33) {
+                        translationToX = (float) (needProgress + 0.66);
+                        sub2.toTranMoveXY(translationToX * totalWidth-haltfWidth,mainStickerView.getMBoxCenterY());
+
+                    } else {
+                        translationToX = (float) (needProgress - 0.33);
+                        sub2.toTranMoveXY(translationToX * totalWidth-haltfWidth,mainStickerView.getMBoxCenterY());
+                    }
+                    sub2.toScale(1 - translationToX, mScale, isDone);
                 }
-                sub2.toScale(1 - translationToX, mScale, isDone);
+
+
 
 
 

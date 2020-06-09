@@ -35,8 +35,14 @@ public class ItemCloned extends baseAnimModel {
         //第一个参数为总时长
         animationLinearInterpolator = new AnimationLinearInterpolator(2000, (progress, isDone) -> {
             float translationToX = perWidth * progress;
-            sub1.toTranMoveXY(mainStickerView.getMBoxCenterX() - translationToX, mainStickerView.getMBoxCenterY());
-            sub2.toTranMoveXY(mainStickerView.getMBoxCenterX() + translationToX, mainStickerView.getMBoxCenterY());
+            if(sub1!=null){
+                sub1.toTranMoveXY(mainStickerView.getMBoxCenterX() - translationToX, mainStickerView.getMBoxCenterY());
+            }
+            if(sub1!=null){
+                sub2.toTranMoveXY(mainStickerView.getMBoxCenterX() + translationToX, mainStickerView.getMBoxCenterY());
+            }
+
+
         });
         animationLinearInterpolator.PlayAnimation();
     }

@@ -483,7 +483,7 @@ public class CreationTemplateMvpModel {
         if (listForStickerModel != null && listForStickerModel.size() > 0) {
             for (int i = 0; i < listForStickerModel.size(); i++) {
                 StickerView stickerView = listForStickerModel.get(i).getStickerView();
-                if (stickerView != null) {
+                if (stickerView != null&& !stickerView.getComeFrom()) {
                     needDeleteList.add(stickerView);
                 }
             }
