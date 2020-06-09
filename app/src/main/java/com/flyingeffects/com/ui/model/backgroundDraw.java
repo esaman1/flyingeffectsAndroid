@@ -344,9 +344,9 @@ public class backgroundDraw {
     }
 
 
-    private ArrayList<SubLayer> listForMattingSubLayer = new ArrayList<>();
+//    private ArrayList<SubLayer> listForMattingSubLayer = new ArrayList<>();
 
-    private void addMattingBitmapSubLayer(int needSublayer, BitmapLayer layer, AnimType ChooseAnimId, float rotate, float stickerScale) {
+    private void addMattingBitmapSubLayer(int needSublayer, BitmapLayer layer, AnimType ChooseAnimId, float rotate, float stickerScale, ArrayList<SubLayer> listForMattingSubLayer) {
         listForMattingSubLayer.clear();
         for (int i = 0; i < needSublayer; i++) {
             SubLayer subLayer = layer.addSubLayerUseMainFilter(true);
@@ -383,8 +383,10 @@ public class backgroundDraw {
         hasAnimLayerList.add(animLayer);
     }
 
-    float needDt = 0;
+
     private void addCanversLayer(AllStickerData stickerItem, int i) {
+        ArrayList<SubLayer> listForMattingSubLayer = new ArrayList<>();
+        float needDt = 0;
         int[] nowChooseImageIndex = {0};
         //当前进度时间
         float[] nowProgressTime = {0};
@@ -426,25 +428,26 @@ public class backgroundDraw {
 
         if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
             int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
-            addMattingBitmapSubLayer(needSublayer, bpLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale);
+            addMattingBitmapSubLayer(needSublayer, bpLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale,listForMattingSubLayer);
             nowProgressTime[0] = preTime;
             float needDurationTime = animCollect.getAnimNeedSubLayerTime(stickerItem.getChooseAnimId());
             needDt  = needDurationTime * 1000;
         }
         CanvasLayer canvasLayer = execute.addCanvasLayer();
+        float finalNeedDt = needDt;
         canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
                     if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
                         float percentage;
                         if (stickerItem.getChooseAnimId() == AnimType.BOTTOMTOCENTER2 || stickerItem.getChooseAnimId() == AnimType.SUPERSTAR2) {
-                            if (currentTime > needDt) {
+                            if (currentTime > finalNeedDt) {
                                 percentage = 1;
                             } else {
-                                percentage = currentTime / (needDt);
+                                percentage = currentTime / (finalNeedDt);
                             }
                         } else {
                             //循环
-                            float remainder = currentTime % (needDt);
-                            percentage = remainder / (needDt);
+                            float remainder = currentTime % (finalNeedDt);
+                            percentage = remainder / (finalNeedDt);
                         }
 
                         animCollect.startAnimForChooseAnim(stickerItem.getChooseAnimId(), bpLayer, listForMattingSubLayer, new LayerAnimCallback() {
@@ -459,7 +462,7 @@ public class backgroundDraw {
                                     LogUtil.d("translationalXY", "xx=" + transplationPos.getToX());
                                     bpLayer.setPosition(bpLayer.getPadWidth() * transplationPos.getToX(), bpLayer.getPositionY());
                                 }
-                                if (listForMattingSubLayer != null && listForMattingSubLayer.size() > 0) {
+                                if ( listForMattingSubLayer.size() > 0) {
                                     for (int i = 1; i <= listForMattingSubLayer.size(); i++) {
                                         TransplationPos subTransplationPos = listForTranslaptionPosition.get(i);
                                         SubLayer subLayer = listForMattingSubLayer.get(i - 1);

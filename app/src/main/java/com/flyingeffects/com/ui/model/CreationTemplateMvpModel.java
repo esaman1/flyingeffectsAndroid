@@ -353,7 +353,7 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     private int previewCount;
-
+    private int sublayerListPosition;
     private synchronized void startPlayAnim(int position, boolean isClearAllAnim, StickerView targetStickerView, int intoPosition, boolean isFromPreview) {
         if (!isFromPreview) {
             stopAllAnim();
@@ -392,13 +392,15 @@ public class CreationTemplateMvpModel {
                 if (x == animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType())) {
                     ArrayList<StickerView> list = new ArrayList<>();
                     list.addAll(nowChooseSubLayerAnimList);
-                    sublayerListForBitmapLayer.put(intoPosition, list);
+                    sublayerListForBitmapLayer.put(sublayerListPosition, list);
                 }
             }
             StartAnimModel startAnimModel = new StartAnimModel(animCollect);
             targetStickerView.setChooseAnimId(animType);
-            delayedToStartAnim(startAnimModel, animType, targetStickerView, intoPosition, isFromPreview);
-
+            delayedToStartAnim(startAnimModel, animType, targetStickerView, sublayerListPosition, isFromPreview);
+            if(isFromPreview){
+                sublayerListPosition++;
+            }
 
         }
 
@@ -452,7 +454,13 @@ public class CreationTemplateMvpModel {
      */
     private void deleteSubLayerSticker() {
         if (sublayerListForBitmapLayer != null && sublayerListForBitmapLayer.size() > 0) {
+
+
+
+
             for (int i = 0; i < sublayerListForBitmapLayer.size(); i++) {
+
+
                 ArrayList<StickerView> nowChooseSubLayerAnimList = sublayerListForBitmapLayer.get(i);
                 //删除动画贴纸
                 if (nowChooseSubLayerAnimList != null && nowChooseSubLayerAnimList.size() > 0) {
@@ -887,6 +895,7 @@ public class CreationTemplateMvpModel {
             if (stickView.isOpenVoice()) {
                 stickView.setOpenVoice(false);
                 callback.getBgmPath("");
+                videoVoicePath="";
             }
         }
         deletedListForSticker(nowId);
@@ -1370,6 +1379,7 @@ public class CreationTemplateMvpModel {
                 } else {
                     LogUtil.d("OOM2", "分离出来的因为地址为null" + outputPath);
                     callback.getBgmPath("");
+                    videoVoicePath="";
                 }
             });
         }).start();
@@ -1447,6 +1457,7 @@ public class CreationTemplateMvpModel {
 
     public void showAllAnim(boolean isShow) {
         previewCount = 0;
+        sublayerListPosition=0;
         hasAnim = false;
         hasAnimCount = 0;
         //删除动画贴纸
