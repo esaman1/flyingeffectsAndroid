@@ -460,7 +460,9 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             this.TemplateFilePath = TemplateFilePath;
             if (!TextUtils.isEmpty(templateItem.getVideotime()) && !templateItem.getVideotime().equals("0")) {
                 float videoTime = Float.parseFloat(templateItem.getVideotime());
-                AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "", (long) (videoTime * 1000));
+                String title = templateItem.getTitle();
+                Log.d("PreviewActivity", "getTemplateFileSuccess: " + templateItem.getTitle());
+                AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "", (long) (videoTime * 1000),templateItem.getTitle());
             } else {
                 AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");
             }
@@ -577,7 +579,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
 
-
                 } else {
                     intoCreationTemplateActivity(imagePath, videoPath, originalImagePath.get(0), true);
                 }
@@ -678,7 +679,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void onEventMainThread(CreateCutCallback event) {
         LogUtil.d("OOM", "event.getCoverPath()=" + event.getCoverPath() + "createDownVideoPath=" + createDownVideoPath + "createDownVideoPath=" + createDownVideoPath + "event.isNeedCut()=" + event.isNeedCut());
         intoCreationTemplateActivity(event.getCoverPath(), createDownVideoPath, event.getOriginalPath(), event.isNeedCut());
-
     }
 
 

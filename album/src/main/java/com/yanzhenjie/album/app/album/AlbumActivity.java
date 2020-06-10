@@ -20,15 +20,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.PopupMenu;
-
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.PopupMenu;
 
 import com.yanzhenjie.album.Action;
 import com.yanzhenjie.album.Album;
@@ -103,6 +102,8 @@ public class AlbumActivity extends BaseActivity implements
     private LoadingDialog mLoadingDialog;
 
     private MediaReadTask mMediaReadTask;
+    private String mTitle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +135,7 @@ public class AlbumActivity extends BaseActivity implements
         mLimitBytes = argument.getLong(Album.KEY_INPUT_CAMERA_BYTES);
         material_info = argument.getString(Album.KEY_INPUT_MATERIALINFO);
         mFilterVisibility = argument.getBoolean(Album.KEY_INPUT_FILTER_VISIBILITY);
+        mTitle = argument.getString(Album.MODEL_TITLE);
     }
 
     /**
@@ -226,7 +228,7 @@ public class AlbumActivity extends BaseActivity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
+        super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case CODE_ACTIVITY_NULL: {
                 if (resultCode == RESULT_OK) {
@@ -517,7 +519,11 @@ public class AlbumActivity extends BaseActivity implements
     @Override
     public void toCapturePage() {
         //todo 点击拍摄按钮
+        Bundle captureBundle = new Bundle();
+        captureBundle.putLong(Album.VIDEOTIME, mMineVideoTime);
+        captureBundle.putString(Album.MODEL_TITLE, mTitle);
         Intent intent = new Intent(this, CaptureActivity.class);
+        intent.putExtras(captureBundle);
         startActivity(intent);
     }
 

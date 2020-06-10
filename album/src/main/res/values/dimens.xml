@@ -18,6 +18,8 @@
     <dimen name="album_sp_16">16sp</dimen>
     <dimen name="album_sp_18">18sp</dimen>
     <dimen name="album_sp_20">20sp</dimen>
+    <dimen name="album_sp_50">50sp</dimen>
+    <dimen name="album_sp_100">100sp</dimen>
 
     <dimen name="album_dp_0">0dp</dimen>
     <dimen name="album_dp_1">1dp</dimen>

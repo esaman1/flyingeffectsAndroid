@@ -3,22 +3,16 @@ package com.flyingeffects.com.manager;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.view.View;
-
-import androidx.annotation.NonNull;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.utils.LogUtil;
-import com.yanzhenjie.album.Action;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.AlbumFile;
 import com.yanzhenjie.album.Filter;
 import com.yanzhenjie.album.api.widget.Widget;
-import com.yanzhenjie.filterSupportMedia;
 
 import java.util.ArrayList;
-import java.util.IllegalFormatCodePointException;
 import java.util.List;
 
 public class AlbumManager {
@@ -142,6 +136,75 @@ public class AlbumManager {
                         callback.resultFilePath(tag, new ArrayList<>(), true, new ArrayList<>()))
                 .start();
     }
+
+    /**
+     * description ：选择视频和图片,过滤视频 拍摄专用，为了避免和其他页面冲突
+     * date: ：2019/5/29 10:41
+     * author: 张同举 @邮箱 jutongzhang@sina.com
+     */
+    public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String material_info,long duration,String title) {
+        Album.album(context)
+                .multipleChoice()
+                .columnCount(3)
+                .selectCount(selectNum)
+                .camera(false)
+                .material_info(material_info)
+                .setMineVideoTime(duration)
+                .setModelTitle(title)
+                .filterSize(new Filter<Long>() {
+                    @Override
+                    public boolean filter(Long attributes) {
+                        return attributes<20000;
+                    }
+                })
+                .filterMimeType(new Filter<String>() {
+                    @Override
+                    public boolean filter(String attributes) {
+//                        return attributes.equals("image/gif")||attributes.equals("image/svg+xml")||attributes.equals("image/x-icon")||attributes.equals("video/x-ms-wmv");
+                        return  filterAlbum(attributes);
+                    }
+                })
+                .afterFilterVisibility(false)
+
+                .cameraVideoQuality(1)
+                .cameraVideoLimitDuration(Integer.MAX_VALUE)
+                .cameraVideoLimitBytes(Integer.MAX_VALUE)
+                .widget(
+                        Widget.newLightBuilder(context)
+                                .title(R.string.better_to_choose_all)
+                                .statusBarColor(Color.WHITE)
+                                .toolBarColor(Color.WHITE)
+                                .mediaItemCheckSelector(Color.WHITE, Color.parseColor("#FEE131"))
+                                .bucketItemCheckSelector(Color.WHITE, Color.parseColor("#FEE131"))
+                                .buttonStyle(
+                                        Widget.ButtonStyle.newLightBuilder(context)
+                                                .setButtonSelector(Color.WHITE, Color.WHITE)
+                                                .build()
+                                )
+                                .build()
+                )
+                .onResult(result -> {
+                    List<String> paths = new ArrayList<>();
+                    for (AlbumFile albumFile : result
+                    ) {
+                        paths.add(albumFile.getPath());
+                    }
+                    callback.resultFilePath(tag, paths, false, result);
+                })
+                .onCancel(result ->
+                        callback.resultFilePath(tag, new ArrayList<>(), true, new ArrayList<>()))
+                .start();
+    }
+
+
+
+
+
+
+
+
+
+
     /**
      * description ：只选择图片
      * date: ：2019/5/29 10:41

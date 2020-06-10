@@ -7,15 +7,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.util.Size;
-import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.widget.Toast;
@@ -30,13 +33,11 @@ import androidx.camera.core.AspectRatio;
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraControl;
 import androidx.camera.core.CameraInfo;
-import androidx.camera.core.CameraInfoUnavailableException;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.CameraX;
 import androidx.camera.core.FocusMeteringAction;
 import androidx.camera.core.FocusMeteringResult;
 import androidx.camera.core.ImageCapture;
-import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.MeteringPoint;
 import androidx.camera.core.MeteringPointFactory;
 import androidx.camera.core.Preview;
@@ -45,22 +46,20 @@ import androidx.camera.core.VideoCapture;
 import androidx.camera.core.ZoomState;
 import androidx.camera.core.impl.VideoCaptureConfig;
 import androidx.camera.lifecycle.ProcessCameraProvider;
-import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.R;
+import com.yanzhenjie.album.widget.AlbumFocusImageView;
 import com.yanzhenjie.album.widget.CameraXPreview;
 import com.yanzhenjie.album.widget.RecordView;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -88,11 +87,13 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     private AppCompatImageView mIvSwitchTimer;
     private AppCompatTextView mTvTitle;
     private AppCompatTextView mTvCaptureTime;
+    private AppCompatTextView mTvTimer;
+    private AlbumFocusImageView mIvFocus;
 
     private Preview preview;
     private ImageCapture mImageCapture;
     private VideoCapture mVideoCapture;
-    private boolean takingPicture = true;
+    private boolean takingPicture = false;
     private String outputFilePath;
     private ExecutorService mCameraExecutor;
     private ProcessCameraProvider mCameraProvider;
@@ -104,7 +105,20 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     private int mAspectRatioInt = AspectRatio.RATIO_16_9;
     private CameraInfo mCameraInfo;
     private CameraControl mCameraControl;
+    //录像中的判断
+    private boolean mRecording = false;
+    //当前时长
+    private int mRecordingTime = 0;
+    //录像总时长
+    private int mTotalRecordingTime = 0;
+    //计时器相关
+    private boolean mIsThreeSecondTimer = true;
+    private boolean mIsCountingDown = false;
+    private int mTime;
 
+    private final Handler mHandler = new Handler();
+    private final Handler mRecordingHandler = new Handler();
+    private String mTitle;
 
     public static void startActivityForResult(Activity activity) {
         Intent intent = new Intent(activity, CaptureActivity.class);
@@ -118,64 +132,110 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         mContext = CaptureActivity.this;
         ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_CODE);
         setContentView(R.layout.album_activity_capture);
-
+        getBundle();
         initView();
         setOnclickListener();
 
         // Initialize our background executor
         mCameraExecutor = Executors.newSingleThreadExecutor();
-
+        mRecordView.setMaxDuration(mTotalRecordingTime);
         mRecordView.setOnRecordListener(new RecordView.onRecordListener() {
             @Override
             public void onClick() {
-                takingPicture = true;
-                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), System.currentTimeMillis() + ".jpeg");
-
-                ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(file)
-                        .build();
-
-                mImageCapture.takePicture(outputFileOptions, mCameraExecutor, new ImageCapture.OnImageSavedCallback() {
-                    @Override
-                    public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
-                        onFileSaved(file);
+                //takingPicture = true;
+                if (!mRecording) {
+                    if (!mIsCountingDown) {
+                        initTimerAndVideoCapture();
                     }
-
-                    @Override
-                    public void onError(@NonNull ImageCaptureException exception) {
-                        showErrorToast(Objects.requireNonNull(exception.getMessage()));
-                        Log.e(TAG, "Photo capture failed: " + exception.getMessage(), exception);
-                    }
-                });
+                } else {
+                    stopRecord();
+                }
             }
 
-
             @Override
-            public void onLongClick() {
-                takingPicture = false;
-                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), System.currentTimeMillis() + ".mp4");
-                mVideoCapture.startRecording(file, mCameraExecutor, new VideoCapture.OnVideoSavedCallback() {
-                    @Override
-                    public void onVideoSaved(@NonNull File file) {
-                        onFileSaved(file);
-                    }
-
-                    @Override
-                    public void onError(int videoCaptureError, @NonNull String message, @Nullable Throwable cause) {
-                        showErrorToast(message);
-                    }
-                });
+            public void onRecording(int progress) {
+                setProgressText(progress);
             }
 
             @Override
             public void onFinish() {
-                mVideoCapture.stopRecording();
+                stopRecord();
             }
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //从预览页回来的话就把时间归0
+        setProgressText(0);
+    }
+
+
+    @SuppressLint("RestrictedApi")
+    private void stopRecord() {
+        mRecording = false;
+        mVideoCapture.stopRecording();
+        mRecordView.stopRecord();
+    }
+
+    private void getBundle() {
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        if (bundle != null) {
+            long total = bundle.getLong(Album.VIDEOTIME);
+            mTotalRecordingTime = (int) (total / 1000);
+            mTitle = bundle.getString(Album.MODEL_TITLE);
+        }
+        Log.d(TAG, "getBundle: videoTime = " + mTotalRecordingTime);
+    }
+
+    //计时器 倒计时后开始录制
+    private void initTimerAndVideoCapture() {
+        mTime = mIsThreeSecondTimer ? 3 : 7;
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                String time = mTime + "";
+                mTvTimer.setText(time);
+                if (mTime > 0) {
+                    mTvTimer.setVisibility(View.VISIBLE);
+                    mIsCountingDown = true;
+                    mTime -= 1;
+                    mHandler.postDelayed(this, 1000);
+                } else {
+                    mIsCountingDown = false;
+                    mTvTimer.setVisibility(View.GONE);
+                    RecordingStart();
+                }
+            }
+        }, 0);
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void RecordingStart() {
+        //开始录像
+        takingPicture = false;
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), System.currentTimeMillis() + ".mp4");
+        mRecording = true;
+        mVideoCapture.startRecording(file, mCameraExecutor, new VideoCapture.OnVideoSavedCallback() {
+            @Override
+            public void onVideoSaved(@NonNull File file) {
+                onFileSaved(file);
+            }
+
+            @Override
+            public void onError(int videoCaptureError, @NonNull String message, @Nullable Throwable cause) {
+                showErrorToast(message);
+            }
+        });
+        mRecordView.startRecord();
+    }
+
     private void setOnclickListener() {
         mIvFlip.setOnClickListener(this);
-
+        mIvSwitchTimer.setOnClickListener(this);
+        mIvBack.setOnClickListener(this);
     }
 
     private void initView() {
@@ -184,8 +244,15 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         mIvFlip = findViewById(R.id.iv_flip);
         mIvBack = findViewById(R.id.iv_back);
         mIvSwitchTimer = findViewById(R.id.iv_switch_timer);
+
         mTvTitle = findViewById(R.id.tv_model_title);
+        mTvTitle.setText(String.format("模板：%s", mTitle));
+
         mTvCaptureTime = findViewById(R.id.tv_capture_time);
+
+        mTvCaptureTime.setText(String.format(getString(R.string.album_record_time), mRecordingTime, mTotalRecordingTime));
+        mTvTimer = findViewById(R.id.tv_timer);
+        mIvFocus = findViewById(R.id.iv_focus);
     }
 
     private void showErrorToast(@NonNull String message) {
@@ -215,7 +282,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         outputFilePath = file.getAbsolutePath();
         String mimeType = takingPicture ? "image/jpeg" : "video/mp4";
         MediaScannerConnection.scanFile(this, new String[]{outputFilePath}, new String[]{mimeType}, null);
-        CapturePreviewActivity.startActivityForResult(this, outputFilePath, !takingPicture, "完成");
+        CapturePreviewActivity.startActivityForResult(this, outputFilePath, !takingPicture);
     }
 
     @Override
@@ -291,24 +358,10 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
 
     @SuppressLint("RestrictedApi")
     private void initPreview() {
-//        mPreview = new Preview.Builder()
-//                .setTargetAspectRatio(mAspectRatioInt)
-//                .build();
         preview = new Preview.Builder()
                 .setCameraSelector(mCameraSelector) //前后摄像头
                 .setTargetAspectRatio(mAspectRatioInt) //宽高比
                 .setTargetRotation(rotation) //旋转角度
-                .build();
-    }
-
-    private void initImageCapture() {
-        // 构建图像捕获用例
-        mImageCapture = new ImageCapture.Builder()
-                .setFlashMode(ImageCapture.FLASH_MODE_AUTO)
-                //.setTargetAspectRatio(mAspectRatioInt)
-                .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
-                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
-                .setTargetRotation(rotation)
                 .build();
     }
 
@@ -351,19 +404,48 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
-    @SuppressLint("RestrictedApi")
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        CameraX.unbindAll();
-        // Shut down our background executor
-        mCameraExecutor.shutdown();
-    }
-
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.iv_flip) {
             switchCameraSelector();
+        } else if (v.getId() == R.id.iv_switch_timer) {
+            switchTimer();
+        } else if (v.getId() == R.id.iv_back) {
+            finish();
+        }
+    }
+
+    //设置倒计时的文字
+    private void setProgressText(int progress) {
+        String progressStr = progress + " / " + mTotalRecordingTime;
+        SpannableStringBuilder spannable = new SpannableStringBuilder(progressStr);
+        if (progress >= 0 && progress < 10) {
+            spannable.setSpan(new ForegroundColorSpan(Color.parseColor("#5496FF")), 0, 1,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        } else if (progress >= 10 && progress < 100) {
+            spannable.setSpan(new ForegroundColorSpan(Color.parseColor("#5496FF")), 0, 2,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        } else {
+            spannable.setSpan(new ForegroundColorSpan(Color.parseColor("#5496FF")), 0, 3,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        mTvCaptureTime.setText(spannable);
+    }
+
+    /**
+     * 切换定时器
+     */
+    private void switchTimer() {
+        if (mIsThreeSecondTimer) {
+            Log.d(TAG, "switchTimer: " + mIsThreeSecondTimer);
+            mIsThreeSecondTimer = false;
+            mIvSwitchTimer.setImageResource(R.drawable.album_icon_timer_7);
+            showErrorToast("倒计时7秒钟");
+        } else {
+            Log.d(TAG, "switchTimer: " + mIsThreeSecondTimer);
+            mIsThreeSecondTimer = true;
+            mIvSwitchTimer.setImageResource(R.drawable.album_icon_timer_3);
+            showErrorToast("倒计时3秒钟");
         }
     }
 
@@ -420,15 +502,15 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                         .setAutoCancelDuration(3, TimeUnit.SECONDS)
                         .build();
 
-                //focusView.startFocus(new Point((int) x, (int) y));
+                mIvFocus.startFocus(new Point((int) x, (int) y));
                 ListenableFuture future = mCameraControl.startFocusAndMetering(action);
                 future.addListener(() -> {
                     try {
                         FocusMeteringResult result = (FocusMeteringResult) future.get();
                         if (result.isFocusSuccessful()) {
-                            //mBinding.focusView.onFocusSuccess();
+                            mIvFocus.onFocusSuccess();
                         } else {
-                            //mBinding.focusView.onFocusFailed();
+                            mIvFocus.onFocusFailed();
                         }
                     } catch (Exception e) {
 
@@ -452,5 +534,27 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
 
             }
         });
+    }
+
+    @SuppressLint("RestrictedApi")
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CameraX.unbindAll();
+        // Shut down our background executor
+        mCameraExecutor.shutdown();
+    }
+
+
+    //本项目暂时用不到
+    private void initImageCapture() {
+        // 构建图像捕获用例
+        mImageCapture = new ImageCapture.Builder()
+                .setFlashMode(ImageCapture.FLASH_MODE_AUTO)
+                //.setTargetAspectRatio(mAspectRatioInt)
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
+                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+                .setTargetRotation(rotation)
+                .build();
     }
 }

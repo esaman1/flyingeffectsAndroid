@@ -29,9 +29,11 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <include layout="@layout/album_content_album"/>
+
     <ImageView
         android:layout_width="match_parent"
         android:visibility="gone"
         android:src="@drawable/album_photoalbustoguide"
         android:layout_height="match_parent"/>
+
 </RelativeLayout>

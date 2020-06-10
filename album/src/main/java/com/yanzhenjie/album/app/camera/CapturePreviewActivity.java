@@ -4,14 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
-
 
 import com.bumptech.glide.Glide;
 import com.github.chrisbanes.photoview.PhotoView;
@@ -26,7 +23,6 @@ import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.FileDataSource;
 import com.google.android.exoplayer2.util.Util;
-import com.google.android.material.button.MaterialButton;
 import com.yanzhenjie.album.R;
 
 import java.io.File;
@@ -44,13 +40,15 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
     private PlayerView mPlayerView;
     private PhotoView mPhotoView;
     private AppCompatImageView mIvCancel;
+    private AppCompatImageView mIvPlay;
+    //正在播放
+    private boolean mPlaying = false;
 
 
-    public static void startActivityForResult(Activity activity, String previewUrl, boolean isVideo, String btnText) {
+    public static void startActivityForResult(Activity activity, String previewUrl, boolean isVideo) {
         Intent intent = new Intent(activity, CapturePreviewActivity.class);
         intent.putExtra(KEY_PREVIEW_URL, previewUrl);
         intent.putExtra(KEY_PREVIEW_VIDEO, isVideo);
-        intent.putExtra(KEY_PREVIEW_BTNTEXT, btnText);
         activity.startActivityForResult(intent, REQ_PREVIEW);
         activity.overridePendingTransition(0, 0);
     }
@@ -61,28 +59,31 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
         setContentView(R.layout.album_activity_capture_preview);
         String previewUrl = getIntent().getStringExtra(KEY_PREVIEW_URL);
         boolean isVideo = getIntent().getBooleanExtra(KEY_PREVIEW_VIDEO, false);
-        String btnText = getIntent().getStringExtra(KEY_PREVIEW_BTNTEXT);
+        initView();
+        setOnClickListener();
 
-        mIvOk = findViewById(R.id.iv_ok);
-        mIvClose = findViewById(R.id.iv_close);
-        mPlayerView = findViewById(R.id.player_view);
-        mPhotoView = findViewById(R.id.photo_view);
-        mIvCancel = findViewById(R.id.iv_cancel);
-
-        if (TextUtils.isEmpty(btnText)) {
-            mIvOk.setVisibility(View.GONE);
-        } else {
-            mIvOk.setVisibility(View.VISIBLE);
-            mIvOk.setOnClickListener(this);
-        }
-
-        mIvClose.setOnClickListener(this);
 
         if (isVideo) {
             previewVideo(previewUrl);
         } else {
             previewImage(previewUrl);
         }
+    }
+
+    private void setOnClickListener() {
+        mIvOk.setOnClickListener(this);
+        mIvClose.setOnClickListener(this);
+        mIvPlay.setOnClickListener(this);
+        mIvCancel.setOnClickListener(this);
+    }
+
+    private void initView() {
+        mIvOk = findViewById(R.id.iv_ok);
+        mIvClose = findViewById(R.id.iv_close);
+        mPlayerView = findViewById(R.id.player_view);
+        mPhotoView = findViewById(R.id.photo_view);
+        mIvCancel = findViewById(R.id.iv_cancel);
+        mIvPlay = findViewById(R.id.iv_play);
     }
 
     private void previewImage(String previewUrl) {
@@ -111,6 +112,7 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
         ProgressiveMediaSource.Factory factory = new ProgressiveMediaSource.Factory(new DefaultDataSourceFactory(this, Util.getUserAgent(this, getPackageName())));
         ProgressiveMediaSource mediaSource = factory.createMediaSource(uri);
         player.prepare(mediaSource);
+        mPlaying = true;
         player.setPlayWhenReady(true);
         mPlayerView.setPlayer(player);
     }
@@ -120,6 +122,7 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
     protected void onPause() {
         super.onPause();
         if (player != null) {
+            mPlaying = false;
             player.setPlayWhenReady(false);
         }
     }
@@ -128,6 +131,7 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
     protected void onResume() {
         super.onResume();
         if (player != null) {
+            mPlaying = true;
             player.setPlayWhenReady(true);
         }
     }
@@ -136,6 +140,7 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
     protected void onDestroy() {
         super.onDestroy();
         if (player != null) {
+            mPlaying = false;
             player.setPlayWhenReady(false);
             player.stop(true);
             player.release();
@@ -152,7 +157,20 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
             finish();
         } else if (id == R.id.iv_cancel) {
             finish();
+        } else if (id == R.id.iv_play) {
+            switchPlayBtn();
         }
     }
 
+    private void switchPlayBtn() {
+        if (mPlaying) {
+            mPlaying = false;
+            player.setPlayWhenReady(false);
+            mIvPlay.setImageResource(R.drawable.album_icon_play);
+        } else {
+            mPlaying = true;
+            player.setPlayWhenReady(true);
+            mIvPlay.setImageResource(R.drawable.album_icon_pause);
+        }
+    }
 }

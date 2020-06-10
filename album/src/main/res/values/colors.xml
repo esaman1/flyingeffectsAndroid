@@ -36,5 +36,8 @@
     <color name="albumColorWhite">#FFFFFF</color>
     <color name="albumColorBlack">#000000</color>
     <color name="albumColorBlue">#5496FF</color>
+    <color name="albumColorTrack">#80FFFFFF</color>
     <color name="album_title_shadow">#80000000</color>
+    <color name="album_timer_color">#ABAAAA</color>
+
 </resources>

@@ -18,8 +18,9 @@ package com.yanzhenjie.album;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
-import androidx.annotation.IntDef;
 import android.util.Log;
+
+import androidx.annotation.IntDef;
 
 import com.yanzhenjie.album.api.AlbumMultipleWrapper;
 import com.yanzhenjie.album.api.AlbumSingleWrapper;
@@ -58,7 +59,7 @@ public final class Album {
     public static final int FUNCTION_CHOICE_VIDEO = 1;
     public static final int FUNCTION_CHOICE_ALBUM = 2;
 
-    public static final String  VIDEOTIME = "VIDEOTIME";
+    public static final String VIDEOTIME = "VIDEOTIME";
     public static final int FUNCTION_CAMERA_IMAGE = 0;
     public static final int FUNCTION_CAMERA_VIDEO = 1;
 
@@ -69,9 +70,12 @@ public final class Album {
     public static final String KEY_INPUT_ALLOW_CAMERA = "KEY_INPUT_ALLOW_CAMERA";
     public static final String KEY_INPUT_LIMIT_COUNT = "KEY_INPUT_LIMIT_COUNT";
     public static final String KEY_INPUT_MATERIALINFO = "KEY_INPUT_MATERIALINFO";
+    public static final String MODEL_TITLE = "KEY_MODEL_TITLE";
+
     // Gallery.
     public static final String KEY_INPUT_CURRENT_POSITION = "KEY_INPUT_CURRENT_POSITION";
     public static final String KEY_INPUT_GALLERY_CHECKABLE = "KEY_INPUT_GALLERY_CHECKABLE";
+
 
     // Camera.
     public static final String KEY_INPUT_FILE_PATH = "KEY_INPUT_FILE_PATH";
@@ -81,6 +85,7 @@ public final class Album {
 
     // Filter.
     public static final String KEY_INPUT_FILTER_VISIBILITY = "KEY_INPUT_FILTER_VISIBILITY";
+
 
     @IntDef({FUNCTION_CHOICE_IMAGE, FUNCTION_CHOICE_VIDEO, FUNCTION_CHOICE_ALBUM})
     @Retention(RetentionPolicy.SOURCE)
@@ -106,7 +111,8 @@ public final class Album {
      */
     public static void initialize(AlbumConfig albumConfig) {
         if (sAlbumConfig == null) sAlbumConfig = albumConfig;
-        else Log.w("Album", new IllegalStateException("Illegal operation, only allowed to configure once."));
+        else
+            Log.w("Album", new IllegalStateException("Illegal operation, only allowed to configure once."));
     }
 
     /**

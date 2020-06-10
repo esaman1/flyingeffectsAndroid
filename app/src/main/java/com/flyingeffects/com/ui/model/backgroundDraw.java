@@ -20,7 +20,6 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.animations.CustomMove.AnimCollect;
 import com.flyingeffects.com.view.animations.CustomMove.AnimType;
 import com.flyingeffects.com.view.animations.CustomMove.LayerAnimCallback;
-import com.flyingeffects.com.view.lansongCommendView.StickerItem;
 import com.lansosdk.LanSongFilter.LanSongMaskBlendFilter;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
@@ -481,7 +480,6 @@ public class backgroundDraw {
                                 subLayer.setScale(angle.get(i));
                             }
                         }
-
                     }
 
                     @Override
@@ -496,7 +494,6 @@ public class backgroundDraw {
                         }
                     }
                 }, percentage);
-
 
         });
 
