@@ -358,6 +358,7 @@ public class CreationTemplateMvpModel {
         if (!isFromPreview) {
             stopAllAnim();
             deleteSubLayerSticker();
+            sublayerListPosition=0;
             //重新得到所有的贴纸列表
             listAllSticker.clear();
             for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
@@ -365,7 +366,8 @@ public class CreationTemplateMvpModel {
                 listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
             }
         }
-
+        LogUtil.d("OOM", "sublayerListPosition" + sublayerListPosition);
+        LogUtil.d("OOM", "sublayerListPosition" + "isFromPreview"+isFromPreview);
         nowChooseSubLayerAnimList.clear();
         //选择的动画类型
         AnimType animType = listAllAnima.get(position).getAnimType();
@@ -391,6 +393,7 @@ public class CreationTemplateMvpModel {
                 copyGif(targetStickerView.getResPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true);
                 if (x == animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType())) {
                     ArrayList<StickerView> list = new ArrayList<>();
+                    LogUtil.d("OOM", "sublayerListPosition" + sublayerListPosition);
                     list.addAll(nowChooseSubLayerAnimList);
                     sublayerListForBitmapLayer.put(sublayerListPosition, list);
                 }
@@ -454,13 +457,7 @@ public class CreationTemplateMvpModel {
      */
     private void deleteSubLayerSticker() {
         if (sublayerListForBitmapLayer != null && sublayerListForBitmapLayer.size() > 0) {
-
-
-
-
             for (int i = 0; i < sublayerListForBitmapLayer.size(); i++) {
-
-
                 ArrayList<StickerView> nowChooseSubLayerAnimList = sublayerListForBitmapLayer.get(i);
                 //删除动画贴纸
                 if (nowChooseSubLayerAnimList != null && nowChooseSubLayerAnimList.size() > 0) {
