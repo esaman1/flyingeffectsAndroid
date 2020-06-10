@@ -305,7 +305,8 @@ public class CreationTemplateMvpModel {
         View viewForChooseAnim = LayoutInflater.from(context).inflate(R.layout.view_create_template_anim, viewPager, false);
         GridView gridViewAnim = viewForChooseAnim.findViewById(R.id.gridView_anim);
         gridViewAnim.setOnItemClickListener((adapterView, view, i, l) -> {
-            if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
+            if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
+                LogUtil.d("OOM","111111111111111111");
                 modificationSingleAnimItemIsChecked(i);
                 callback.needPauseVideo();
                 if (i == 0) {
@@ -446,9 +447,7 @@ public class CreationTemplateMvpModel {
             if (!isFromPreview) {
                 WaitingDialog.closePragressDialog();
             }
-
-
-        }, 1000);
+        }, 1500);
 
 
     }
@@ -459,7 +458,7 @@ public class CreationTemplateMvpModel {
      * creation date: 2020/5/27
      * user : zhangtongju
      */
-    private void deleteSubLayerSticker() {
+    private synchronized void deleteSubLayerSticker() {
         if (sublayerListForBitmapLayer != null && sublayerListForBitmapLayer.size() > 0) {
             for (int i = 0; i < sublayerListForBitmapLayer.size(); i++) {
                 ArrayList<StickerView> nowChooseSubLayerAnimList = sublayerListForBitmapLayer.get(i);
@@ -768,7 +767,7 @@ public class CreationTemplateMvpModel {
                 //停止全部动画
                 stopAllAnim();
                 closeAllAnim();
-                new Handler().postDelayed(() -> deleteSubLayerSticker(), 500);
+                new Handler().postDelayed(() -> deleteSubLayerSticker(), 200);
                 if (stickView.getParent() != null) {
                     ViewGroup vp = (ViewGroup) stickView.getParent();
                     if (vp != null) {
@@ -1509,12 +1508,12 @@ public class CreationTemplateMvpModel {
      * creation date: 2020/5/27
      * user : zhangtongju
      */
-    private void stopAllAnim() {
-        destroyTimer();
+    private synchronized void stopAllAnim() {
+
         if (animCollect != null) {
             animCollect.stopAnim();
         }
-
+        destroyTimer();
     }
 
 

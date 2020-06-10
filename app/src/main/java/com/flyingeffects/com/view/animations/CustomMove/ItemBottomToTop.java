@@ -129,6 +129,7 @@ public class ItemBottomToTop extends baseAnimModel {
     public void StopAnim() {
         if (animationLinearInterpolator != null) {
             animationLinearInterpolator.endTimer();
+            animationLinearInterpolator=null;
             resetAnimState(mainStickerView);
         }
 
