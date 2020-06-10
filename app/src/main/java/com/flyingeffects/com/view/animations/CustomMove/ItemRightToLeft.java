@@ -26,7 +26,8 @@ public class ItemRightToLeft extends baseAnimModel {
         this.mainStickerView = mainStickerView;
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
         setScale(mainStickerView.getScale());
-        if(subLayer!=null){
+        setRotate(mainStickerView.getRotateAngle());
+        if(subLayer!=null&&subLayer.size()==2){
             sub1  = subLayer.get(0);
             sub2  = subLayer.get(1);
         }

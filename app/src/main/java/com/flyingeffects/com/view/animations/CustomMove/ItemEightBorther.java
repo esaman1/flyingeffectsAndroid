@@ -26,6 +26,7 @@ public class ItemEightBorther extends baseAnimModel {
 
     void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
         this.mainStickerView = mainStickerView;
+        setRotate(mainStickerView.getRotateAngle());
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
         float[] pos = new float[2];
         float[] tan = new float[2];

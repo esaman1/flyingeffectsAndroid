@@ -31,6 +31,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
+    public void intoOnPause(){
+        creationTemplatemodel.intoOnPause();
+    }
+
+
     public void GetVideoCover(String path){
         creationTemplatemodel.GetVideoCover(path);
     }

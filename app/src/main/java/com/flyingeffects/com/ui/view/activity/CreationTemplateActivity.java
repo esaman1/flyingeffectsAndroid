@@ -497,6 +497,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     protected void onPause() {
         videoToPause();
         isIntoPause = true;
+        presenter.intoOnPause();
         super.onPause();
     }
 

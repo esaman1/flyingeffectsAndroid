@@ -23,7 +23,7 @@ public class ItemCloned2 extends baseAnimModel {
     StickerView sub2=null;
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
         this.mainStickerView = mainStickerView;
-
+        setRotate(mainStickerView.getRotateAngle());
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
         if(subLayer!=null&&subLayer.size()==2){
             sub1= subLayer.get(0);

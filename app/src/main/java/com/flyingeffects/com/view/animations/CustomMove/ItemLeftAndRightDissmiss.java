@@ -23,6 +23,7 @@ public class ItemLeftAndRightDissmiss extends baseAnimModel {
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
         this.mainStickerView = mainStickerView;
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
+        setRotate(mainStickerView.getRotateAngle());
         StickerView sub1 = null;
         if(subLayer!=null&&subLayer.size()>0){
             sub1 = subLayer.get(0);

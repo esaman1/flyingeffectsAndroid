@@ -24,6 +24,7 @@ public class ItemBottomToCenter extends baseAnimModel {
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
         this.mainStickerView = mainStickerView;
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
+        setRotate(mainStickerView.getRotateAngle());
         float totalHeight = mainStickerView.getMeasuredHeight() + (mainStickerView.getmHelpBoxRectH());
         float stickerViewPosition = mainStickerView.getMBoxCenterY();
         float stickerViewH = mainStickerView.getmHelpBoxRectH();

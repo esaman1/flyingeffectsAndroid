@@ -24,6 +24,7 @@ public class SwingUpAndDownToCenter extends baseAnimModel {
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
         this.mainStickerView = mainStickerView;
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
+        setRotate(mainStickerView.getRotateAngle());
         float stickerViewPosition = mainStickerView.getMBoxCenterY();
         //第一个参数为总时长
         animationLinearInterpolator = new AnimationLinearInterpolator(2000, new AnimationLinearInterpolator.GetProgressCallback() {

@@ -198,6 +198,13 @@ public class CreationTemplateMvpModel {
         MattingChange(isChecked);
     }
 
+    public void intoOnPause(){
+        stopAllAnim();
+        closeAllAnim();
+        deleteSubLayerSticker();
+//        new Handler().postDelayed(() -> deleteSubLayerSticker(), 200);
+    }
+
     public void initStickerView(String imagePath, String originalPath) {
         new Handler().postDelayed(() -> addSticker(imagePath, true, true, true, originalPath, false, null, false), 500);
     }
@@ -767,7 +774,8 @@ public class CreationTemplateMvpModel {
                 //停止全部动画
                 stopAllAnim();
                 closeAllAnim();
-                new Handler().postDelayed(() -> deleteSubLayerSticker(), 200);
+                deleteSubLayerSticker();
+//                new Handler().postDelayed(() -> deleteSubLayerSticker(), 200);
                 if (stickView.getParent() != null) {
                     ViewGroup vp = (ViewGroup) stickView.getParent();
                     if (vp != null) {
@@ -1370,7 +1378,7 @@ public class CreationTemplateMvpModel {
      */
     private void getVideoVoice(String videoPath, String outputPath) {
         WaitingDialog.openPragressDialog(context);
-        new Thread(() -> {
+//        new Thread(() -> {
             mediaManager manager = new mediaManager(context);
             manager.splitMp4(videoPath, new File(outputPath), (isSuccess, putPath) -> {
                 WaitingDialog.closePragressDialog();
@@ -1384,7 +1392,7 @@ public class CreationTemplateMvpModel {
                     videoVoicePath = "";
                 }
             });
-        }).start();
+//        }).start();
     }
 
 
