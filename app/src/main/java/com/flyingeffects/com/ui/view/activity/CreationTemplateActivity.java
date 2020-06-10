@@ -186,6 +186,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         presenter.requestStickersList();
     }
 
+    private MediaSource mediaSource;
     private void initExo(String videoPath) {
         if (TextUtils.isEmpty(videoPath)) {
             return;
@@ -212,7 +213,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 }
             }
         });
-        MediaSource mediaSource = new ExtractorMediaSource.Factory(
+        mediaSource = new ExtractorMediaSource.Factory(
                 new DefaultDataSourceFactory(CreationTemplateActivity.this, "exoplayer-codelab")).
                 createMediaSource(Uri.fromFile(new File(videoPath)));
 
@@ -268,6 +269,17 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     protected void onResume() {
         super.onResume();
+        if (isIntoPause&&exoPlayer!=null) {
+            exoPlayer.prepare(mediaSource, true, false);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    videoPause();
+                    destroyTimer();
+                }
+            }, 200);
+            isIntoPause = false;
+        }
     }
 
     @Override
