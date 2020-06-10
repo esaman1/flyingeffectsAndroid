@@ -354,11 +354,12 @@ public class CreationTemplateMvpModel {
      */
     private int previewCount;
     private int sublayerListPosition;
+
     private synchronized void startPlayAnim(int position, boolean isClearAllAnim, StickerView targetStickerView, int intoPosition, boolean isFromPreview) {
         if (!isFromPreview) {
             stopAllAnim();
             deleteSubLayerSticker();
-            sublayerListPosition=0;
+            sublayerListPosition = 0;
             //重新得到所有的贴纸列表
             listAllSticker.clear();
             for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
@@ -366,8 +367,6 @@ public class CreationTemplateMvpModel {
                 listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
             }
         }
-        LogUtil.d("OOM", "sublayerListPosition" + sublayerListPosition);
-        LogUtil.d("OOM", "sublayerListPosition" + "isFromPreview"+isFromPreview);
         nowChooseSubLayerAnimList.clear();
         //选择的动画类型
         AnimType animType = listAllAnima.get(position).getAnimType();
@@ -390,7 +389,12 @@ public class CreationTemplateMvpModel {
             for (int x = 1; x <= animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType()); x++) {
                 //通过动画属性得到需要分身的数量，然后复制出贴纸在数组里面nowChooseSubLayerAnimList，最后需要删除
                 LogUtil.d("startPlayAnim", "当前动画复制的主id为" + targetStickerView.getId());
-                copyGif(targetStickerView.getResPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true);
+                if (!TextUtils.isEmpty(targetStickerView.getClipPath())) {
+                    //gif 贴纸，没得抠图
+                    copyGif(targetStickerView.getClipPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true);
+                } else {
+                    copyGif(targetStickerView.getResPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true);
+                }
                 if (x == animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType())) {
                     ArrayList<StickerView> list = new ArrayList<>();
                     LogUtil.d("OOM", "sublayerListPosition" + sublayerListPosition);
@@ -401,7 +405,7 @@ public class CreationTemplateMvpModel {
             StartAnimModel startAnimModel = new StartAnimModel(animCollect);
             targetStickerView.setChooseAnimId(animType);
             delayedToStartAnim(startAnimModel, animType, targetStickerView, sublayerListPosition, isFromPreview);
-            if(isFromPreview){
+            if (isFromPreview) {
                 sublayerListPosition++;
             }
 
@@ -483,12 +487,13 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     private ArrayList<StickerView> needDeleteList = new ArrayList<>();
+
     private void deleteAllSticker() {
         needDeleteList.clear();
         if (listForStickerModel != null && listForStickerModel.size() > 0) {
             for (int i = 0; i < listForStickerModel.size(); i++) {
                 StickerView stickerView = listForStickerModel.get(i).getStickerView();
-                if (stickerView != null&& !stickerView.getComeFrom()) {
+                if (stickerView != null && !stickerView.getComeFrom()) {
                     needDeleteList.add(stickerView);
                 }
             }
@@ -515,6 +520,7 @@ public class CreationTemplateMvpModel {
                 StickerView stickerView = stickerModel.getStickerView();
                 if (stickerView != null && stickerView.getComeFrom()) {
                     if (isMatting) {
+                        LogUtil.d("OOM", "当前裁剪的地址为" + stickerView.getClipPath());
                         stickerView.mattingChange(stickerView.getClipPath());
                     } else {
                         stickerView.mattingChange(stickerView.getOriginalPath());
@@ -892,7 +898,7 @@ public class CreationTemplateMvpModel {
             if (stickView.isOpenVoice()) {
                 stickView.setOpenVoice(false);
                 callback.getBgmPath("");
-                videoVoicePath="";
+                videoVoicePath = "";
             }
         }
         deletedListForSticker(nowId);
@@ -955,7 +961,7 @@ public class CreationTemplateMvpModel {
                 FileUtil.copyFile(new File(path), copyName, new FileUtil.copySucceed() {
                     @Override
                     public void isSucceed() {
-                        addSticker(finalCopyName1, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim);
+                        addSticker(getResPath, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim);
                     }
                 });
             }
@@ -1376,7 +1382,7 @@ public class CreationTemplateMvpModel {
                 } else {
                     LogUtil.d("OOM2", "分离出来的因为地址为null" + outputPath);
                     callback.getBgmPath("");
-                    videoVoicePath="";
+                    videoVoicePath = "";
                 }
             });
         }).start();
@@ -1454,7 +1460,7 @@ public class CreationTemplateMvpModel {
 
     public void showAllAnim(boolean isShow) {
         previewCount = 0;
-        sublayerListPosition=0;
+        sublayerListPosition = 0;
         hasAnim = false;
         hasAnimCount = 0;
         //删除动画贴纸
