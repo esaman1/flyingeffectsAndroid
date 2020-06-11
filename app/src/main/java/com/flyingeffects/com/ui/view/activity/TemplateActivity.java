@@ -981,7 +981,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         }
 
         template.setReplaceableFilePaths(mSources);
-
         template.enableSourcePrepare();
         new Thread() {
             @Override
