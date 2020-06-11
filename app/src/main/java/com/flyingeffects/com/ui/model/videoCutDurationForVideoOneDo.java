@@ -102,11 +102,6 @@ public class videoCutDurationForVideoOneDo {
 
     public void CutVideoForDrawPadAllExecute2(Context context, float duration, String path, long startDurtion, isSuccess callback) {
         try {
-
-
-
-
-
             execute = new DrawPadAllExecute2(context, 720, 1280, (long) (duration * 1000));
             execute.setFrameRate(20);
             execute.setEncodeBitrate(5 * 1024 * 1024);

@@ -196,6 +196,9 @@ public class CreationTemplateMvpModel {
     public void CheckedChanged(boolean isChecked) {
         this.isCheckedMatting = isChecked;
         MattingChange(isChecked);
+        stopAllAnim();
+        deleteSubLayerSticker();
+        callback.needPauseVideo();
     }
 
     public void intoOnPause(){
@@ -394,29 +397,32 @@ public class CreationTemplateMvpModel {
             deleteSubLayerSticker();
             stopAllAnim();
         } else {
-            for (int x = 1; x <= animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType()); x++) {
-                //通过动画属性得到需要分身的数量，然后复制出贴纸在数组里面nowChooseSubLayerAnimList，最后需要删除
-                LogUtil.d("startPlayAnim", "当前动画复制的主id为" + targetStickerView.getId());
-                if (!TextUtils.isEmpty(targetStickerView.getClipPath())) {
-                    //gif 贴纸，没得抠图
-                    copyGif(targetStickerView.getClipPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true);
-                } else {
-                    copyGif(targetStickerView.getResPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true);
+            if(animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType())>0){
+                for (int x = 1; x <= animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType()); x++) {
+                    //通过动画属性得到需要分身的数量，然后复制出贴纸在数组里面nowChooseSubLayerAnimList，最后需要删除
+                    LogUtil.d("startPlayAnim", "当前动画复制的主id为" + targetStickerView.getId());
+                    if (!TextUtils.isEmpty(targetStickerView.getClipPath())) {
+                        //gif 贴纸，没得抠图
+                        copyGif(targetStickerView.getClipPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true);
+                    } else {
+                        copyGif(targetStickerView.getResPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true);
+                    }
+                    if (x == animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType())) {
+                        ArrayList<StickerView> list = new ArrayList<>();
+                        LogUtil.d("OOM", "sublayerListPosition" + sublayerListPosition);
+                        list.addAll(nowChooseSubLayerAnimList);
+                        sublayerListForBitmapLayer.put(sublayerListPosition, list);
+                        StartAnimModel startAnimModel = new StartAnimModel(animCollect);
+                        targetStickerView.setChooseAnimId(animType);
+                        delayedToStartAnim(startAnimModel, animType, targetStickerView, sublayerListPosition, isFromPreview);
+                        sublayerListPosition++;
+                    }
                 }
-                if (x == animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType())) {
-                    ArrayList<StickerView> list = new ArrayList<>();
-                    LogUtil.d("OOM", "sublayerListPosition" + sublayerListPosition);
-                    list.addAll(nowChooseSubLayerAnimList);
-                    sublayerListForBitmapLayer.put(sublayerListPosition, list);
-                }
+            }else{
+                StartAnimModel startAnimModel = new StartAnimModel(animCollect);
+                targetStickerView.setChooseAnimId(animType);
+                delayedToStartAnim(startAnimModel, animType, targetStickerView, sublayerListPosition, isFromPreview);
             }
-            StartAnimModel startAnimModel = new StartAnimModel(animCollect);
-            targetStickerView.setChooseAnimId(animType);
-            delayedToStartAnim(startAnimModel, animType, targetStickerView, sublayerListPosition, isFromPreview);
-            if (isFromPreview) {
-                sublayerListPosition++;
-            }
-
         }
 
     }
