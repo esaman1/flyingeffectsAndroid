@@ -1,6 +1,9 @@
 package com.flyingeffects.com.ui.model;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.view.View;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
@@ -10,6 +13,7 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.lansosdk.box.CanvasLayer;
 import com.lansosdk.box.LSOScaleType;
 import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.box.OnLanSongSDKCompletedListener;
@@ -17,6 +21,7 @@ import com.lansosdk.box.OnLanSongSDKErrorListener;
 import com.lansosdk.box.OnLanSongSDKProgressListener;
 import com.lansosdk.box.VideoFrameLayer;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
+import com.lansosdk.videoeditor.MediaInfo;
 import com.lansosdk.videoeditor.VideoOneDo2;
 
 import java.io.File;
@@ -102,6 +107,8 @@ public class videoCutDurationForVideoOneDo {
 
     public void CutVideoForDrawPadAllExecute2(Context context, float duration, String path, long startDurtion, isSuccess callback) {
         try {
+            VideoInfo   videoInfo = getVideoInfo.getInstance().getRingDuring(path);
+            long allDuration=videoInfo.getDuration();
             execute = new DrawPadAllExecute2(context, 720, 1280, (long) (duration * 1000));
             execute.setFrameRate(20);
             execute.setEncodeBitrate(5 * 1024 * 1024);
@@ -145,12 +152,32 @@ public class videoCutDurationForVideoOneDo {
                         LSOVideoOption option = new LSOVideoOption(path);
                         long startDuration = startDurtion * 1000;
                         long durationUs = (long) (duration * 1000);
-                        option.setCutDurationUs(startDuration, durationUs + startDuration);
-                        VideoFrameLayer videoLayer = execute.addVideoLayer(option);
-                        videoLayer.setScaleType(LSOScaleType.VIDEO_SCALE_TYPE);
+                        long endDuration=durationUs + startDuration;
+                        option.setCutDurationUs(startDuration, endDuration);
+                        final VideoFrameLayer[] videoLayer = {execute.addVideoLayer(option)};
+                        videoLayer[0].setScaleType(LSOScaleType.VIDEO_SCALE_TYPE);
+                        CanvasLayer canvasLayer = execute.addCanvasLayer();
+                        canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
+                            if (currentTime >allDuration*1000) {
+                                LogUtil.d("OOM","隐藏当前图层"+"endDuration="+endDuration+"currentTime="+currentTime);
+                                //需要切换新的图了
+                                if(videoLayer[0] !=null){
+                                    execute.removeLayer(videoLayer[0]);
+                                    videoLayer[0].setVisibility(View.GONE);
+                                    videoLayer[0] =null;
+                                }
+
+                            }
+                        });
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
+
+
+
+
+
 
                     if (execute.start()) {
                         subscriber.onNext(0);

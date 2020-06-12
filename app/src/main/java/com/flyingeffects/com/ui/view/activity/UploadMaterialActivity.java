@@ -194,7 +194,6 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
                         if(!isCancel){
                             Glide.with(UploadMaterialActivity.this).load(paths.get(0)).into(add_head);
-
                             imageHeadPath = huaweiFolder + File.separator + "head.png";
                             //等到封面地址
                             getHeadForPathToCompress(paths.get(0),imageHeadPath);
@@ -226,9 +225,12 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
 
 
     public void getHeadForPathToCompress(String path, String fileName) {
-//        Bitmap bp = BitmapFactory.decodeFile(path);
         Bitmap bp=BitmapManager.getInstance().getOrientationBitmap(path);
-        bp = StringUtil.zoomImg(bp, 180, 320);
+        if(bp.getWidth()>bp.getHeight()){
+            bp = StringUtil.zoomImg(bp, 320, 180);
+        }else{
+            bp = StringUtil.zoomImg(bp, 180, 320);
+        }
         BitmapManager.getInstance().saveBitmapToPath(bp, fileName);
     }
 

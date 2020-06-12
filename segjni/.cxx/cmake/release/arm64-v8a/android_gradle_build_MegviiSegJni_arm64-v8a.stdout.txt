@@ -1,2 +1,0 @@
-ninja: Entering directory `D:\githubSpace\flyingeffectsAndroid\segjni\.cxx\cmake\release\arm64-v8a'
-ninja: no work to do.
