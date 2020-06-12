@@ -331,7 +331,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         outputFilePath = file.getAbsolutePath();
         String mimeType = takingPicture ? "image/jpeg" : "video/mp4";
         MediaScannerConnection.scanFile(this, new String[]{outputFilePath}, new String[]{mimeType}, null);
-        CapturePreviewActivity.startActivityForResult(this, outputFilePath, !takingPicture);
+        CapturePreviewActivity.startActivityForResult(this, outputFilePath, !takingPicture,mTitle);
     }
 
     @Override

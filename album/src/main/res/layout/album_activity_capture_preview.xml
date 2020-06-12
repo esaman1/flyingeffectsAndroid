@@ -52,16 +52,16 @@
         android:id="@+id/tv_model_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/album_dp_31"
         android:shadowColor="@color/album_title_shadow"
         android:shadowDx="0.5"
         android:shadowDy="2.0"
         android:shadowRadius="3.0"
         android:textColor="@color/albumColorWhite"
         android:textSize="@dimen/album_sp_16"
+        app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintBottom_toBottomOf="@id/iv_close"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_close"
         app:layout_constraintTop_toTopOf="@id/iv_close" />
 
     <androidx.appcompat.widget.AppCompatImageView

@@ -9,6 +9,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
 
 import com.bumptech.glide.Glide;
 import com.github.chrisbanes.photoview.PhotoView;
@@ -32,6 +33,7 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
 
     public static final String KEY_PREVIEW_URL = "preview_url";
     public static final String KEY_PREVIEW_VIDEO = "preview_video";
+    public static final String KEY_PREVIEW_TITLE = "preview_title";
     public static final int REQ_PREVIEW = 1000;
     private SimpleExoPlayer player;
 
@@ -44,12 +46,15 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
     //正在播放
     private boolean mPlaying = false;
     private String mPreviewUrl;
+    private String mTitle;
+    private AppCompatTextView mTvTitle;
 
 
-    public static void startActivityForResult(Activity activity, String previewUrl, boolean isVideo) {
+    public static void startActivityForResult(Activity activity, String previewUrl, boolean isVideo,String title) {
         Intent intent = new Intent(activity, CapturePreviewActivity.class);
         intent.putExtra(KEY_PREVIEW_URL, previewUrl);
         intent.putExtra(KEY_PREVIEW_VIDEO, isVideo);
+        intent.putExtra(KEY_PREVIEW_TITLE,title);
         activity.startActivityForResult(intent, REQ_PREVIEW);
         activity.overridePendingTransition(0, 0);
     }
@@ -59,6 +64,7 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.album_activity_capture_preview);
         mPreviewUrl = getIntent().getStringExtra(KEY_PREVIEW_URL);
+        mTitle = getIntent().getStringExtra(KEY_PREVIEW_TITLE);
         boolean isVideo = getIntent().getBooleanExtra(KEY_PREVIEW_VIDEO, false);
         initView();
         setOnClickListener();
@@ -84,6 +90,8 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
         mPhotoView = findViewById(R.id.photo_view);
         mIvCancel = findViewById(R.id.iv_cancel);
         mIvPlay = findViewById(R.id.iv_play);
+        mTvTitle = findViewById(R.id.tv_model_title);
+        mTvTitle.setText(String.format("模板：%s", mTitle));
     }
 
     private void previewImage(String previewUrl) {
