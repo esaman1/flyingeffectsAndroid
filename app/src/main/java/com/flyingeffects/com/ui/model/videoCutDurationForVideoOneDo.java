@@ -128,6 +128,7 @@ public class videoCutDurationForVideoOneDo {
                     return;
                 }
                 File video = new File(exportPath);
+                LogUtil.d("OOM","exportPath="+exportPath);
                 if (video.exists()) {
                     try {
                         String savePath = cacheCutVideoPath + "/" + System.currentTimeMillis() + ".mp4";
@@ -135,6 +136,7 @@ public class videoCutDurationForVideoOneDo {
                         if (file.exists()) {
                             file.delete();
                         }
+                        LogUtil.d("OOM","OOM="+savePath);
                         FileUtil.copyFile(video, savePath);
                         callback.isSuccess(true, savePath);
                     } catch (IOException e) {
