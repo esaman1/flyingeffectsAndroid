@@ -180,6 +180,12 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
+    private void setOnclickListener() {
+        mIvFlip.setOnClickListener(this);
+        mIvSwitchTimer.setOnClickListener(this);
+        mIvBack.setOnClickListener(this);
+    }
+
     private void initExoPlayer() {
         player = ExoPlayerFactory.newSimpleInstance(this, new DefaultRenderersFactory(this), new DefaultTrackSelector(), new DefaultLoadControl());
         Uri uri = null;
@@ -208,15 +214,6 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         setProgressText(0);
     }
 
-
-    @SuppressLint("RestrictedApi")
-    private void stopRecord() {
-        player.setPlayWhenReady(false);
-        player.stop(true);
-        mRecording = false;
-        mVideoCapture.stopRecording();
-        mRecordView.stopRecord();
-    }
 
     private void getBundle() {
         Intent intent = getIntent();
@@ -258,6 +255,8 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     private void RecordingStart() {
         player.prepare(mediaSource);
         player.setPlayWhenReady(true);
+        mIvFlip.setVisibility(View.INVISIBLE);
+        mIvSwitchTimer.setVisibility(View.INVISIBLE);
         //开始录像
         takingPicture = false;
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), System.currentTimeMillis() + ".mp4");
@@ -276,10 +275,16 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         mRecordView.startRecord();
     }
 
-    private void setOnclickListener() {
-        mIvFlip.setOnClickListener(this);
-        mIvSwitchTimer.setOnClickListener(this);
-        mIvBack.setOnClickListener(this);
+
+    @SuppressLint("RestrictedApi")
+    private void stopRecord() {
+        mIvFlip.setVisibility(View.VISIBLE);
+        mIvSwitchTimer.setVisibility(View.VISIBLE);
+        player.setPlayWhenReady(false);
+        player.stop(true);
+        mRecording = false;
+        mVideoCapture.stopRecording();
+        mRecordView.stopRecord();
     }
 
     private void initView() {
@@ -588,6 +593,19 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                 mIvFocus.onFocusFailed();
             }
         }, mCameraExecutor);
+    }
+
+    @Override
+    public void onBackPressed() {
+        //倒计时关闭页面会导致崩溃
+        if (!mIsCountingDown) {
+            //如果在录制中，点击返回优先把录制停下来
+            if (mRecording) {
+                stopRecord();
+            } else {
+                super.onBackPressed();
+            }
+        }
     }
 
     @SuppressLint("RestrictedApi")

@@ -179,7 +179,6 @@ public class backgroundDraw {
             LogUtil.d("OOM", e.getMessage());
             e.printStackTrace();
         }
-
     }
 
 
@@ -238,12 +237,9 @@ public class backgroundDraw {
                 addVideoSubLayer(needSublayer, videoLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale);
             }
 
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
 

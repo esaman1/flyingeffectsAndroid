@@ -63,7 +63,6 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
         initView();
         setOnClickListener();
 
-
         if (isVideo) {
             previewVideo(mPreviewUrl);
         } else {
@@ -115,6 +114,8 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
         player.prepare(mediaSource);
         mPlaying = true;
         player.setPlayWhenReady(true);
+        //循环模式：单一资源无限循环
+        player.setRepeatMode(Player.REPEAT_MODE_ONE);
         mPlayerView.setPlayer(player);
 
         player.addListener(new Player.EventListener() {
@@ -128,7 +129,6 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
                 }
             }
         });
-
     }
 
     @Override
@@ -178,7 +178,7 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
     private void capturePreviewCancel() {
         File file = new File(mPreviewUrl);
         boolean isDelete = file.delete();
-        if (isDelete){
+        if (isDelete) {
             // 最后通知图库更新
             sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + file)));
         }

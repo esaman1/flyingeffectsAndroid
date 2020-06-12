@@ -19,13 +19,6 @@ import android.app.Activity;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-
-import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +27,12 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.yanzhenjie.album.AlbumFile;
 import com.yanzhenjie.album.AlbumFolder;
@@ -264,6 +263,16 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
         mLayoutLoading.setVisibility(display ? View.VISIBLE : View.GONE);
     }
 
+
+    @Override
+    public void setShowCapture(boolean showCapture){
+        if (showCapture) {
+            this.mBtnCapture.setVisibility(View.VISIBLE);
+        } else {
+            this.mBtnCapture.setVisibility(View.INVISIBLE);
+        }
+    }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         int position = mLayoutManager.findFirstVisibleItemPosition();
@@ -336,7 +345,7 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
             getPresenter().clickFolderSwitch();
         } else if (v == mBtnPreview) {
             getPresenter().tryPreviewChecked();
-        }else if (v==mBtnCapture){
+        } else if (v == mBtnCapture) {
             getPresenter().toCapturePage();
         }
     }

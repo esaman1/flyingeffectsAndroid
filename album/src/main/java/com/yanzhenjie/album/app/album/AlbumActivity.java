@@ -108,6 +108,7 @@ public class AlbumActivity extends BaseActivity implements
     private MediaReadTask mMediaReadTask;
     private String mTitle;
     private String mMusicPath;
+    private boolean showCapture = false;
 
 
     @Override
@@ -120,7 +121,7 @@ public class AlbumActivity extends BaseActivity implements
         mView.setTitle(mWidget.getTitle());
         mView.setCompleteDisplay(false);
         mView.setLoadingDisplay(true);
-
+        mView.setShowCapture(showCapture);
         requestPermission(PERMISSION_STORAGE, CODE_PERMISSION_STORAGE);
     }
 
@@ -141,6 +142,8 @@ public class AlbumActivity extends BaseActivity implements
         material_info = argument.getString(Album.KEY_INPUT_MATERIALINFO);
         mFilterVisibility = argument.getBoolean(Album.KEY_INPUT_FILTER_VISIBILITY);
         mTitle = argument.getString(Album.MODEL_TITLE);
+        //如果传进来的标题为空，就认为不是从模板页面过来的
+        showCapture = !TextUtils.isEmpty(mTitle);
         mMusicPath = argument.getString(Album.MUSIC_PATH);
     }
 
@@ -543,7 +546,7 @@ public class AlbumActivity extends BaseActivity implements
         Bundle captureBundle = new Bundle();
         captureBundle.putLong(Album.VIDEOTIME, mMineVideoTime);
         captureBundle.putString(Album.MODEL_TITLE, mTitle);
-        captureBundle.putString(Album.MUSIC_PATH,mMusicPath);
+        captureBundle.putString(Album.MUSIC_PATH, mMusicPath);
         Intent intent = new Intent(this, CaptureActivity.class);
         intent.putExtras(captureBundle);
         startActivityForResult(intent, CODE_TO_CAPTURE);

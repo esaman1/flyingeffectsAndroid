@@ -99,6 +99,13 @@ public final class Contract {
         public abstract void setLoadingDisplay(boolean display);
 
         /**
+         * 控制拍摄按钮的显示
+         *
+         * @param showCapture true 显示拍摄按钮
+         */
+        public abstract void setShowCapture(boolean showCapture);
+
+        /**
          * Should be re-layout.
          *
          * @param newConfig config.
