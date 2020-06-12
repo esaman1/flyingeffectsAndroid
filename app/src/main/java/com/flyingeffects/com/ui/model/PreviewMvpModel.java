@@ -5,8 +5,8 @@ import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 
-import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -23,15 +23,11 @@ import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
 import com.flyingeffects.com.ui.interfaces.model.PreviewMvpCallback;
-import com.flyingeffects.com.ui.view.activity.TemplateActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.glidebitmappool.GlideBitmapPool;
-import com.glidebitmappool.internal.BitmapPool;
-import com.megvii.segjni.SegJni;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,11 +73,11 @@ public class PreviewMvpModel {
             DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> Observable.just(videoName).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                 @Override
                 public void call(String s1) {
-                    VideoInfo info= getVideoInfo.getInstance().getRingDuring(s1);
-                    videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, info.getDuration(),videoName ,0, new videoCutDurationForVideoOneDo.isSuccess() {
+                    VideoInfo info = getVideoInfo.getInstance().getRingDuring(s1);
+                    videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, info.getDuration(), videoName, 0, new videoCutDurationForVideoOneDo.isSuccess() {
                         @Override
                         public void progresss(int progress) {
-                            LogUtil.d("oom","下载时候后重新裁剪进度为="+progress);
+                            LogUtil.d("oom", "下载时候后重新裁剪进度为=" + progress);
                         }
 
                         @Override
@@ -97,14 +93,6 @@ public class PreviewMvpModel {
     }
 
 
-
-
-
-
-
-
-
-
     /**
      * description ：得到视频的封面
      * creation date: 2020/4/20
@@ -117,9 +105,9 @@ public class PreviewMvpModel {
         String fileName = mVideoFolder + File.separator + UUID.randomUUID() + ".png";
         BitmapManager.getInstance().saveBitmapToPath(mBitmap, fileName, isSuccess -> {
             CompressionCuttingManage manage = new CompressionCuttingManage(context, "", false, tailorPaths -> {
-                callback.getVideoCover(tailorPaths.get(0),originalPath,videoPath);
+                callback.getVideoCover(tailorPaths.get(0), originalPath, videoPath);
             });
-            List mattingPath=new ArrayList();
+            List mattingPath = new ArrayList();
             mattingPath.add(fileName);
             manage.ToMatting(mattingPath);
             GlideBitmapPool.putBitmap(mBitmap);
@@ -217,6 +205,7 @@ public class PreviewMvpModel {
     private void readyDown(String zipPid, String downZipUrl) {
         LogUtil.d("onVideoAdError", "getPermission");
         mFolder = context.getExternalFilesDir("dynamic/" + zipPid);
+
         if (mFolder != null) {
             String folderPath = mFolder.getParent();
             if (!isDownZipUrl) {
@@ -226,7 +215,8 @@ public class PreviewMvpModel {
                     mProgress = 0;
                     showMakeProgress();
                 } else {
-                    intoTemplateActivity(mFolder.getPath());
+                    Log.d("path111", "readyDown: " + mFolder.getPath());
+                    intoTemplateActivity(mFolder.getPath() + "/");
                 }
             } else {
                 ToastUtil.showToast("下载中，请稍后再试");
@@ -262,6 +252,7 @@ public class PreviewMvpModel {
                                         if (file.exists()) { //删除压缩包
                                             file.delete();
                                         }
+                                        Log.d("path111", "run: " + path1);
 //                                        videoPause();
                                         mProgress = 100;
                                         showMakeProgress();

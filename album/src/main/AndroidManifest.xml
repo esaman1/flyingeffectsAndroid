@@ -65,16 +65,15 @@
 
         <activity
             android:name=".app.camera.CaptureActivity"
-            android:configChanges="orientation|screenSize"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:hardwareAccelerated="true"
-            android:theme="@style/Album.Theme.Activity.Transparent"
-            android:windowSoftInputMode="stateAlwaysHidden|stateHidden" />
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".app.camera.CapturePreviewActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/Album.Theme.Activity.Transparent"
-            android:windowSoftInputMode="stateAlwaysHidden|stateHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden|stateHidden"
+            android:screenOrientation="portrait"/>
 
         <provider
             android:name=".provider.CameraFileProvider"

@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -50,6 +51,16 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.upstream.DataSpec;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.FileDataSource;
+import com.google.android.exoplayer2.util.Util;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.R;
@@ -101,7 +112,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     private Camera mCamera;
 
     private Context mContext;
-    private int mCameraSelectorInt = CameraSelector.LENS_FACING_BACK;
+    private int mCameraSelectorInt = CameraSelector.LENS_FACING_FRONT;
     private int mAspectRatioInt = AspectRatio.RATIO_16_9;
     private CameraInfo mCameraInfo;
     private CameraControl mCameraControl;
@@ -119,6 +130,10 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     private final Handler mHandler = new Handler();
     private final Handler mRecordingHandler = new Handler();
     private String mTitle;
+    private String mMusicPath;
+
+    private SimpleExoPlayer player;
+    private ProgressiveMediaSource mediaSource;
 
     public static void startActivityForResult(Activity activity) {
         Intent intent = new Intent(activity, CaptureActivity.class);
@@ -135,6 +150,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         getBundle();
         initView();
         setOnclickListener();
+        initExoPlayer();
 
         // Initialize our background executor
         mCameraExecutor = Executors.newSingleThreadExecutor();
@@ -164,6 +180,27 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
+    private void initExoPlayer() {
+        player = ExoPlayerFactory.newSimpleInstance(this, new DefaultRenderersFactory(this), new DefaultTrackSelector(), new DefaultLoadControl());
+        Uri uri = null;
+        File file = new File(mMusicPath);
+        if (file.exists()) {
+            DataSpec dataSpec = new DataSpec(Uri.fromFile(file));
+            FileDataSource fileDataSource = new FileDataSource();
+            try {
+                fileDataSource.open(dataSpec);
+                uri = fileDataSource.getUri();
+            } catch (FileDataSource.FileDataSourceException e) {
+                e.printStackTrace();
+            }
+        } else {
+            uri = Uri.parse(mMusicPath);
+        }
+        ProgressiveMediaSource.Factory factory = new ProgressiveMediaSource.Factory(new DefaultDataSourceFactory(this, Util.getUserAgent(this, getPackageName())));
+        mediaSource = factory.createMediaSource(uri);
+        player.prepare(mediaSource);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -174,6 +211,8 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
 
     @SuppressLint("RestrictedApi")
     private void stopRecord() {
+        player.setPlayWhenReady(false);
+        player.stop(true);
         mRecording = false;
         mVideoCapture.stopRecording();
         mRecordView.stopRecord();
@@ -186,7 +225,10 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             long total = bundle.getLong(Album.VIDEOTIME);
             mTotalRecordingTime = (int) (total / 1000);
             mTitle = bundle.getString(Album.MODEL_TITLE);
+            mMusicPath = bundle.getString(Album.MUSIC_PATH);
+            mMusicPath = mMusicPath + "bj.mp3";
         }
+        Log.d(TAG, "getBundle: mMusicPath = " + mMusicPath);
         Log.d(TAG, "getBundle: videoTime = " + mTotalRecordingTime);
     }
 
@@ -214,6 +256,8 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
 
     @SuppressLint("RestrictedApi")
     private void RecordingStart() {
+        player.prepare(mediaSource);
+        player.setPlayWhenReady(true);
         //开始录像
         takingPicture = false;
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), System.currentTimeMillis() + ".mp4");
@@ -332,6 +376,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             } catch (ExecutionException | InterruptedException e) {
                 // No errors need to be handled for this Future.
                 // This should never be reached.
+                Log.e(TAG, "bindCameraX: ", e);
             }
         }, ContextCompat.getMainExecutor(this));
     }
@@ -403,7 +448,6 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         initCameraListener();
     }
 
-
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.iv_flip) {
@@ -417,16 +461,16 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
 
     //设置倒计时的文字
     private void setProgressText(int progress) {
-        String progressStr = progress + " / " + mTotalRecordingTime;
+        String progressStr = progress + "s / " + mTotalRecordingTime + "s";
         SpannableStringBuilder spannable = new SpannableStringBuilder(progressStr);
         if (progress >= 0 && progress < 10) {
-            spannable.setSpan(new ForegroundColorSpan(Color.parseColor("#5496FF")), 0, 1,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        } else if (progress >= 10 && progress < 100) {
             spannable.setSpan(new ForegroundColorSpan(Color.parseColor("#5496FF")), 0, 2,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        } else {
+        } else if (progress >= 10 && progress < 100) {
             spannable.setSpan(new ForegroundColorSpan(Color.parseColor("#5496FF")), 0, 3,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        } else {
+            spannable.setSpan(new ForegroundColorSpan(Color.parseColor("#5496FF")), 0, 4,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         mTvCaptureTime.setText(spannable);
@@ -440,12 +484,10 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             Log.d(TAG, "switchTimer: " + mIsThreeSecondTimer);
             mIsThreeSecondTimer = false;
             mIvSwitchTimer.setImageResource(R.drawable.album_icon_timer_7);
-            showErrorToast("倒计时7秒钟");
         } else {
             Log.d(TAG, "switchTimer: " + mIsThreeSecondTimer);
             mIsThreeSecondTimer = true;
             mIvSwitchTimer.setImageResource(R.drawable.album_icon_timer_3);
-            showErrorToast("倒计时3秒钟");
         }
     }
 
@@ -494,28 +536,10 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void click(float x, float y) {
-                // TODO 对焦
-                MeteringPointFactory factory = new SurfaceOrientedMeteringPointFactory(1.0f, 1.0f);
-                MeteringPoint point = factory.createPoint(x, y);
-                FocusMeteringAction action = new FocusMeteringAction.Builder(point, FocusMeteringAction.FLAG_AF)
-                        // auto calling cancelFocusAndMetering in 3 seconds
-                        .setAutoCancelDuration(3, TimeUnit.SECONDS)
-                        .build();
-
-                mIvFocus.startFocus(new Point((int) x, (int) y));
-                ListenableFuture future = mCameraControl.startFocusAndMetering(action);
-                future.addListener(() -> {
-                    try {
-                        FocusMeteringResult result = (FocusMeteringResult) future.get();
-                        if (result.isFocusSuccessful()) {
-                            mIvFocus.onFocusSuccess();
-                        } else {
-                            mIvFocus.onFocusFailed();
-                        }
-                    } catch (Exception e) {
-
-                    }
-                }, mCameraExecutor);
+                //由于前置摄像头基本不具备对焦功能，故设定只有后置摄像头才对焦
+                if (mCameraSelectorInt == CameraSelector.LENS_FACING_BACK) {
+                    startFocus(x, y);
+                }
             }
 
             @Override
@@ -536,6 +560,36 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
+    /**
+     * 点击屏幕进行自动对焦
+     *
+     * @param x
+     * @param y
+     */
+    private void startFocus(float x, float y) {
+        MeteringPointFactory factory = new SurfaceOrientedMeteringPointFactory(1.0f, 1.0f);
+        MeteringPoint point = factory.createPoint(x, y);
+        FocusMeteringAction action = new FocusMeteringAction.Builder(point, FocusMeteringAction.FLAG_AF)
+                // auto calling cancelFocusAndMetering in 3 seconds
+                .setAutoCancelDuration(3, TimeUnit.SECONDS)
+                .build();
+        mIvFocus.startFocus(new Point((int) x, (int) y));
+        ListenableFuture future = mCameraControl.startFocusAndMetering(action);
+        future.addListener(() -> {
+            try {
+                FocusMeteringResult result = (FocusMeteringResult) future.get();
+                if (result.isFocusSuccessful()) {
+                    mIvFocus.onFocusSuccess();
+                } else {
+                    mIvFocus.onFocusFailed();
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "click: " + e.getMessage(), e);
+                mIvFocus.onFocusFailed();
+            }
+        }, mCameraExecutor);
+    }
+
     @SuppressLint("RestrictedApi")
     @Override
     protected void onDestroy() {
@@ -543,6 +597,11 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         CameraX.unbindAll();
         // Shut down our background executor
         mCameraExecutor.shutdown();
+        if (player != null) {
+            player.setPlayWhenReady(false);
+            player.stop(true);
+            player.release();
+        }
     }
 
 

@@ -29,6 +29,7 @@ public abstract class BasicChoiceWrapper<Returner extends BasicChoiceWrapper, Re
     int mColumnCount = 2;
     long videoTime;
     String mTitle;
+    String mMusicPath;
     String material_info;
     boolean isFromCreateVideo=false;
     Filter<Long> mSizeFilter;
@@ -70,6 +71,10 @@ public abstract class BasicChoiceWrapper<Returner extends BasicChoiceWrapper, Re
         return (Returner) this;
     }
 
+    public Returner setMusicPath( String musicPath) {
+        this.mMusicPath = musicPath;
+        return (Returner) this;
+    }
 
     public Returner material_info( String material_info) {
         this.material_info = material_info;

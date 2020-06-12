@@ -65,6 +65,8 @@ import rx.functions.Action1;
  * 开始制作
  */
 public class PreviewActivity extends BaseActivity implements AlbumChooseCallback, PreviewMvpView {
+    private static final String TAG = "PreviewActivity";
+
     private boolean ondestroy;
 
     @BindView(R.id.video_player)
@@ -458,11 +460,12 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         if (!ondestroy) {
             //file 文件下载成功
             this.TemplateFilePath = TemplateFilePath;
+            Log.d("PreviewActivity", "getTemplateFileSuccess: TemplateFilePath = " + TemplateFilePath);
             if (!TextUtils.isEmpty(templateItem.getVideotime()) && !templateItem.getVideotime().equals("0")) {
                 float videoTime = Float.parseFloat(templateItem.getVideotime());
                 String title = templateItem.getTitle();
                 Log.d("PreviewActivity", "getTemplateFileSuccess: " + templateItem.getTitle());
-                AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "", (long) (videoTime * 1000),templateItem.getTitle());
+                AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "", (long) (videoTime * 1000), title, TemplateFilePath);
             } else {
                 AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");
             }

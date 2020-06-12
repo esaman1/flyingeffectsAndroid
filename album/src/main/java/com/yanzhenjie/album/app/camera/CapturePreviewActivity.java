@@ -15,6 +15,7 @@ import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -31,7 +32,6 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
 
     public static final String KEY_PREVIEW_URL = "preview_url";
     public static final String KEY_PREVIEW_VIDEO = "preview_video";
-    public static final String KEY_PREVIEW_BTNTEXT = "preview_btntext";
     public static final int REQ_PREVIEW = 1000;
     private SimpleExoPlayer player;
 
@@ -43,6 +43,7 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
     private AppCompatImageView mIvPlay;
     //正在播放
     private boolean mPlaying = false;
+    private String mPreviewUrl;
 
 
     public static void startActivityForResult(Activity activity, String previewUrl, boolean isVideo) {
@@ -57,16 +58,16 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.album_activity_capture_preview);
-        String previewUrl = getIntent().getStringExtra(KEY_PREVIEW_URL);
+        mPreviewUrl = getIntent().getStringExtra(KEY_PREVIEW_URL);
         boolean isVideo = getIntent().getBooleanExtra(KEY_PREVIEW_VIDEO, false);
         initView();
         setOnClickListener();
 
 
         if (isVideo) {
-            previewVideo(previewUrl);
+            previewVideo(mPreviewUrl);
         } else {
-            previewImage(previewUrl);
+            previewImage(mPreviewUrl);
         }
     }
 
@@ -115,8 +116,20 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
         mPlaying = true;
         player.setPlayWhenReady(true);
         mPlayerView.setPlayer(player);
-    }
 
+        player.addListener(new Player.EventListener() {
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                mPlaying = playWhenReady;
+                if (playWhenReady) {
+                    mIvPlay.setImageResource(R.drawable.album_icon_pause);
+                } else {
+                    mIvPlay.setImageResource(R.drawable.album_icon_play);
+                }
+            }
+        });
+
+    }
 
     @Override
     protected void onPause() {
@@ -151,15 +164,30 @@ public class CapturePreviewActivity extends AppCompatActivity implements View.On
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.iv_close) {
-            finish();
+            capturePreviewCancel();
         } else if (id == R.id.iv_ok) {
             setResult(RESULT_OK, new Intent());
             finish();
         } else if (id == R.id.iv_cancel) {
-            finish();
+            capturePreviewCancel();
         } else if (id == R.id.iv_play) {
             switchPlayBtn();
         }
+    }
+
+    private void capturePreviewCancel() {
+        File file = new File(mPreviewUrl);
+        boolean isDelete = file.delete();
+        if (isDelete){
+            // 最后通知图库更新
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + file)));
+        }
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        capturePreviewCancel();
     }
 
     private void switchPlayBtn() {

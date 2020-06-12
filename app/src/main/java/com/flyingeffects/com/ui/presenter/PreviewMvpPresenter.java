@@ -3,7 +3,6 @@ package com.flyingeffects.com.ui.presenter;
 import android.content.Context;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
-import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.ui.interfaces.model.PreviewMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.PreviewMvpView;
@@ -12,6 +11,7 @@ import com.flyingeffects.com.ui.model.PreviewMvpModel;
 import java.util.List;
 
 public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCallback {
+    private static final String TAG = "PreviewMvpPresenter";
     private PreviewMvpView PreviewView;
     private PreviewMvpModel PreviewModel;
 
@@ -75,7 +75,6 @@ public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCall
     @Override
     public void getTemplateLInfo(new_fag_template_item item) {
         PreviewView.getTemplateLInfo(item);
-
     }
 
     @Override

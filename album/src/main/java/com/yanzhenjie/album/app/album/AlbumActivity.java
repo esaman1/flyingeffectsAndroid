@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -63,9 +64,12 @@ public class AlbumActivity extends BaseActivity implements
         GalleryActivity.Callback,
         PathConvertTask.Callback,
         ThumbnailBuildTask.Callback {
+    private static final String TAG = "AlbumActivity";
 
     private static final int CODE_ACTIVITY_NULL = 1;
     private static final int CODE_PERMISSION_STORAGE = 1;
+    private static final int CODE_TO_CAPTURE = 2;
+
 
     public static Filter<Long> sSizeFilter;
     public static Filter<String> sMimeFilter;
@@ -103,6 +107,7 @@ public class AlbumActivity extends BaseActivity implements
 
     private MediaReadTask mMediaReadTask;
     private String mTitle;
+    private String mMusicPath;
 
 
     @Override
@@ -136,6 +141,7 @@ public class AlbumActivity extends BaseActivity implements
         material_info = argument.getString(Album.KEY_INPUT_MATERIALINFO);
         mFilterVisibility = argument.getBoolean(Album.KEY_INPUT_FILTER_VISIBILITY);
         mTitle = argument.getString(Album.MODEL_TITLE);
+        mMusicPath = argument.getString(Album.MUSIC_PATH);
     }
 
     /**
@@ -240,6 +246,20 @@ public class AlbumActivity extends BaseActivity implements
                 }
                 break;
             }
+            case CODE_TO_CAPTURE:
+                if (resultCode == RESULT_OK) {
+                    //todo 接受从拍摄页面返回的视频文件url
+                    //从拍摄页面返回的视频地址
+                    String captureUrl = data.getStringExtra(CaptureActivity.RESULT_FILE_PATH);
+                    AlbumFile albumFile = new AlbumFile();
+                    albumFile.setPath(captureUrl);
+                    ArrayList<AlbumFile> albumFileList = new ArrayList<>();
+                    albumFileList.add(albumFile);
+                    Log.d(TAG, "onActivityResult: " + captureUrl);
+                    if (sResult != null) sResult.onAction(albumFileList);
+                    finish();
+                }
+                break;
         }
     }
 
@@ -358,6 +378,7 @@ public class AlbumActivity extends BaseActivity implements
                 .onResult(mCameraAction)
                 .start();
     }
+
 
     private Action<String> mCameraAction = new Action<String>() {
         @Override
@@ -518,13 +539,14 @@ public class AlbumActivity extends BaseActivity implements
 
     @Override
     public void toCapturePage() {
-        //todo 点击拍摄按钮
+        //点击拍摄按钮
         Bundle captureBundle = new Bundle();
         captureBundle.putLong(Album.VIDEOTIME, mMineVideoTime);
         captureBundle.putString(Album.MODEL_TITLE, mTitle);
+        captureBundle.putString(Album.MUSIC_PATH,mMusicPath);
         Intent intent = new Intent(this, CaptureActivity.class);
         intent.putExtras(captureBundle);
-        startActivity(intent);
+        startActivityForResult(intent, CODE_TO_CAPTURE);
     }
 
     @Override
@@ -600,7 +622,6 @@ public class AlbumActivity extends BaseActivity implements
             ThumbnailBuildTask task = new ThumbnailBuildTask(this, mCheckedList, this);
             task.execute();
         }
-
     }
 
 

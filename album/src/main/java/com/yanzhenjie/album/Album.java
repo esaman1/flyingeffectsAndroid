@@ -71,6 +71,7 @@ public final class Album {
     public static final String KEY_INPUT_LIMIT_COUNT = "KEY_INPUT_LIMIT_COUNT";
     public static final String KEY_INPUT_MATERIALINFO = "KEY_INPUT_MATERIALINFO";
     public static final String MODEL_TITLE = "KEY_MODEL_TITLE";
+    public static final String MUSIC_PATH = "KEY_MUSIC_PATH";
 
     // Gallery.
     public static final String KEY_INPUT_CURRENT_POSITION = "KEY_INPUT_CURRENT_POSITION";
@@ -85,6 +86,7 @@ public final class Album {
 
     // Filter.
     public static final String KEY_INPUT_FILTER_VISIBILITY = "KEY_INPUT_FILTER_VISIBILITY";
+
 
 
     @IntDef({FUNCTION_CHOICE_IMAGE, FUNCTION_CHOICE_VIDEO, FUNCTION_CHOICE_ALBUM})

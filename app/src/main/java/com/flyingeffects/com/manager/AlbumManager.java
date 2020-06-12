@@ -137,12 +137,14 @@ public class AlbumManager {
                 .start();
     }
 
+
+
     /**
      * description ：选择视频和图片,过滤视频 拍摄专用，为了避免和其他页面冲突
      * date: ：2019/5/29 10:41
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
-    public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String material_info,long duration,String title) {
+    public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String material_info,long duration,String title,String musicFolder) {
         Album.album(context)
                 .multipleChoice()
                 .columnCount(3)
@@ -151,6 +153,7 @@ public class AlbumManager {
                 .material_info(material_info)
                 .setMineVideoTime(duration)
                 .setModelTitle(title)
+                .setMusicPath(musicFolder)
                 .filterSize(new Filter<Long>() {
                     @Override
                     public boolean filter(Long attributes) {
