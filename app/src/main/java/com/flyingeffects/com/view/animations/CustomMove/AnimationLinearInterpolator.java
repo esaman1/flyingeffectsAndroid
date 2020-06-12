@@ -71,13 +71,22 @@ public class AnimationLinearInterpolator {
     }
 
 
+    public void setNowDuration(int duration) {
+      this.nowDuration=duration;
+    }
+
+
+      private  boolean isCirculation=true;
+    public void SetCirculation(boolean isCirculation){
+        this.isCirculation=isCirculation;
+    }
+
     public void PlayAnimationNoTimer(float percentage) {
         if(interpolatorType==0){
             callback.progress(getNowInterpolatorProgress(percentage), isDone);
         }else{
             callback.progress(getNowCycleInterpolatorProgress(percentage), isDone);
         }
-
     }
 
 
@@ -85,6 +94,7 @@ public class AnimationLinearInterpolator {
      * 匀速运动
      */
     public float getNowInterpolatorProgress(float progress) {
+        LogUtil.d("InterpolatorProgress","当前动画没消失匀速运动");
         LinearInterpolator linearInterpolator = new LinearInterpolator();
         return linearInterpolator.getInterpolation(progress);
     }
@@ -97,6 +107,7 @@ public class AnimationLinearInterpolator {
      */
 
     public float getNowCycleInterpolatorProgress(float progress) {
+        LogUtil.d("InterpolatorProgress","当前动画没消失正玄函数");
         CycleInterpolator cycleInterpolator = new CycleInterpolator(1);
         return cycleInterpolator.getInterpolation(progress);
     }
@@ -156,12 +167,15 @@ public class AnimationLinearInterpolator {
                 @Override
                 public void run() {
                     if (nowDuration >= totalDuration) {
-                        nowDuration = 0;
+                        if(!isCirculation){
+                            StopAnimation();
+                            callback.progress(1, isDone);
+                        }else{
+                            nowDuration = 0;
+                        }
                     }
                     nowDuration += 5;
-//                    LogUtil.d("xxx2", "nowDuration=" + nowDuration);
                     float nowFloatTime = nowDuration / (float) totalDuration;
-//                    LogUtil.d("xxx2", "nowFloatTime=" + nowFloatTime);
                     float progress;
                     if(interpolatorType==0){
                         progress= getNowInterpolatorProgress(nowFloatTime);

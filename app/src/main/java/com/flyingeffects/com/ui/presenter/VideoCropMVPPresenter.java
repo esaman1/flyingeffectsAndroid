@@ -22,6 +22,10 @@ public class VideoCropMVPPresenter extends BasePresenter implements VideoCropMVP
         model.initDrawpad(drawPadView2,path);
     }
 
+    public  void hasFinishCrop(){
+        model.hasFinishCrop();
+    }
+
     public void changeVideoZoom(int progress){
         model.changeVideoZoom(progress);
     }

@@ -120,6 +120,13 @@ public class VideoCropMVPModel {
         }
     }
 
+
+    public void hasFinishCrop(){
+        if(!isOnDestroy){
+            toCloseDialog();
+        }
+    }
+
     //每100毫秒更新一次进度指针
     private static final int updateCursorIntervalMs = 100;
     private float curOffset = 1;
@@ -674,12 +681,11 @@ public class VideoCropMVPModel {
                 File video = new File(path);
                 if (video.exists()) {
                     if (!isOnDestroy) {
-                        toCloseDialog();
                         String tempPath = getTempVideoPath(mContext) + video.getName();
                         try {
                             FileUtil.copyFile(video, tempPath);
-                            callback.finishCrop(tempPath);
 
+                            callback.finishCrop(tempPath);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

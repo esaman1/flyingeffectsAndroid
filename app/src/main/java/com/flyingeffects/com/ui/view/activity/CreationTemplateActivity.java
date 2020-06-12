@@ -6,7 +6,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.viewpager.widget.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
@@ -43,16 +44,10 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.lansosdk.LanSongFilter.LanSongMaskBlendFilter;
-import com.lansosdk.box.GifLayer;
-import com.lansosdk.box.OnLanSongSDKCompletedListener;
-import com.lansosdk.box.OnLanSongSDKErrorListener;
-import com.lansosdk.box.OnLanSongSDKProgressListener;
 import com.lansosdk.box.ViewLayerRelativeLayout;
-import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.lansosdk.videoeditor.DrawPadView2;
-import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.albumType;
+import com.shixing.sxve.ui.view.WaitingDialog;
 import com.suke.widget.SwitchButton;
 
 import java.io.File;
@@ -66,6 +61,7 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 /**
  * description ：用户创作页面,里面主要用了langSong 的工具类，对视频进行贴纸的功能
@@ -157,8 +153,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     private boolean isNeedCut;
 
-    @BindView(R.id.DrawPad_view)
-    DrawPadView2 drawPadView;
+//    @BindView(R.id.DrawPad_view)
+//    DrawPadView2 drawPadView;
 
     @Override
     protected int getLayoutId() {
@@ -190,6 +186,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         presenter.requestStickersList();
     }
 
+    private MediaSource mediaSource;
     private void initExo(String videoPath) {
         if (TextUtils.isEmpty(videoPath)) {
             return;
@@ -216,7 +213,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 }
             }
         });
-        MediaSource mediaSource = new ExtractorMediaSource.Factory(
+        mediaSource = new ExtractorMediaSource.Factory(
                 new DefaultDataSourceFactory(CreationTemplateActivity.this, "exoplayer-codelab")).
                 createMediaSource(Uri.fromFile(new File(videoPath)));
 
@@ -272,6 +269,17 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     protected void onResume() {
         super.onResume();
+        if (isIntoPause&&exoPlayer!=null) {
+            exoPlayer.prepare(mediaSource, true, false);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    videoPause();
+                    destroyTimer();
+                }
+            }, 200);
+            isIntoPause = false;
+        }
     }
 
     @Override
@@ -323,7 +331,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 break;
 
             case R.id.ll_play:
-                if (!DoubleClick.getInstance().isFastDoubleClick()) {
+                if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
                     if (isPlaying) {
                         pauseBgmMusic();
                         isIntoPause = false;
@@ -334,42 +342,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         nowStateIsPlaying(false);
                         presenter.showAllAnim(false);
                     } else {
-                        nowStateIsPlaying(true);
-                        if (!TextUtils.isEmpty(videoPath)) {
-                            if (isPlayComplate) {
-                                videoPlay();
-                                isIntoPause = false;
-                            } else {
-                                if (isInitVideoLayer) {
-                                    if (!isIntoPause) {
-                                        videoPlay();
-                                    } else {
-                                        videoPlay();
-                                        isIntoPause = false;
-                                        isInitVideoLayer = true;
-                                    }
-                                } else {
-                                    isIntoPause = false;
-                                    isInitVideoLayer = true;
-                                    videoPlay();
-                                }
-                            }
-                        } else {
-                            //如果有背景还是播放背景音乐
-                            if (!TextUtils.isEmpty(bgmPath)) {
-                                if (bgmPlayer != null) {
-                                    //继续播放
-                                    bgmPlayer.start();
-                                } else {
-                                    seekTo(0);
-                                    playBGMMusic();
-                                }
-                            }
-                        }
-                        isPlaying = true;
-                        startTimer();
-                        presenter.showGifAnim(true);
-                        presenter.showAllAnim(true);
+                        WaitingDialog.openPragressDialog(this);
+                        new Thread(() -> presenter.showAllAnim(true)).start();
                     }
                 }
 
@@ -381,6 +355,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
             case R.id.iv_add_sticker:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
+                    presenter.showAllAnim(false);
                     if (isPlaying) {
                         videoToPause();
                         isPlaying = false;
@@ -497,13 +472,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             hListView.post(() -> presenter.initVideoProgressView(hListView));
         }
 
-        ViewGroup.LayoutParams RelativeLayoutParams2 = drawPadView.getLayoutParams();
-        drawPadView.post(() -> {
-            int oriHeight = drawPadView.getHeight();
-            RelativeLayoutParams2.width = Math.round(1f * oriHeight * oriRatio);
-            RelativeLayoutParams2.height = oriHeight;
-            drawPadView.setLayoutParams(RelativeLayoutParams2);
-        });
+//        ViewGroup.LayoutParams RelativeLayoutParams2 = drawPadView.getLayoutParams();
+//        drawPadView.post(() -> {
+//            int oriHeight = drawPadView.getHeight();
+//            RelativeLayoutParams2.width = Math.round(1f * oriHeight * oriRatio);
+//            RelativeLayoutParams2.height = oriHeight;
+//            drawPadView.setLayoutParams(RelativeLayoutParams2);
+//        });
 
     }
 
@@ -534,6 +509,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     protected void onPause() {
         videoToPause();
         isIntoPause = true;
+        presenter.intoOnPause();
         super.onPause();
     }
 
@@ -665,6 +641,56 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
+
+    /**
+     * description ：动画初始化完成，接下来就开始预览
+     * creation date: 2020/6/4
+     * user : zhangtongju
+     */
+    @Override
+    public void animIsComplate() {
+        WaitingDialog.closePragressDialog();
+        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+            nowStateIsPlaying(true);
+            if (!TextUtils.isEmpty(videoPath)) {
+                if (isPlayComplate) {
+                    videoPlay();
+                    isIntoPause = false;
+                } else {
+                    if (isInitVideoLayer) {
+                        if (!isIntoPause) {
+                            videoPlay();
+                        } else {
+                            videoPlay();
+                            isIntoPause = false;
+                            isInitVideoLayer = true;
+                        }
+                    } else {
+                        isIntoPause = false;
+                        isInitVideoLayer = true;
+                        videoPlay();
+                    }
+                }
+            } else {
+                //如果有背景还是播放背景音乐
+                if (!TextUtils.isEmpty(bgmPath)) {
+                    if (bgmPlayer != null) {
+                        //继续播放
+                        bgmPlayer.start();
+                    } else {
+                        seekTo(0);
+                        playBGMMusic();
+                    }
+                }
+            }
+            isPlaying = true;
+            startTimer();
+            presenter.showGifAnim(true);
+        });
+
+    }
+
+
     private Timer timer;
     private TimerTask task;
     private int listWidth;
@@ -690,31 +716,41 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             @Override
             public void run() {
                 totalPlayTime = totalPlayTime + 5;
-                Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                    if (!TextUtils.isEmpty(videoPath)) {
-                        int nowDuration = (int) getCurrentPos();
-                        float percent = nowDuration / (float) allVideoDuration;
-                        int widthX = (int) (percent * listWidth);
-                        hListView.scrollTo(widthX);
-                        LogUtil.d("OOM", "percent=" + percent);
-                    } else {
-                        //没有选择背景
-                        nowTime = nowTime + 5;
-                        float percent = nowTime / (float) 10000;
-                        int widthX = (int) (percent * listWidth);
-                        hListView.scrollTo(widthX);
-                        LogUtil.d("OOM", "percent=" + percent);
-                        if (percent >= 1) {
-                            nowTime = 5;
-                            isPlayComplate = true;
-                            endTimer();
-                            isPlaying = false;
-                            presenter.showGifAnim(false);
-                            nowStateIsPlaying(false);
-                            presenter.showAllAnim(false);
+//                Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!TextUtils.isEmpty(videoPath)) {
+                            int nowDuration = (int) getCurrentPos();
+                            float percent = nowDuration / (float) allVideoDuration;
+                            int widthX = (int) (percent * listWidth);
+                            hListView.scrollTo(widthX);
+                            LogUtil.d("OOM", "percent=" + percent);
+                        } else {
+                            //没有选择背景
+                            nowTime = nowTime + 5;
+                            float percent = nowTime / (float) 10000;
+                            int widthX = (int) (percent * listWidth);
+                            hListView.scrollTo(widthX);
+                            LogUtil.d("OOM", "percent=" + percent);
+                            if (percent >= 1) {
+                                nowTime = 5;
+                                isPlayComplate = true;
+                                endTimer();
+                                isPlaying = false;
+                                presenter.showGifAnim(false);
+                                nowStateIsPlaying(false);
+                                presenter.showAllAnim(false);
+                            }
                         }
                     }
                 });
+
+
+
+//                });
             }
         };
         timer.schedule(task, 0, 5);
@@ -731,6 +767,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 关闭timer 和task
      */
     private void endTimer() {
+        LogUtil.d("playBGMMusic","pauseBgmMusic---------------endTimer---------------");
         destroyTimer();
         if (bgmPlayer != null) {
             bgmPlayer.stop();
@@ -809,6 +846,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
     private void playBGMMusic() {
+        LogUtil.d("playBGMMusic","playBGMMusic");
         bgmPlayer = new MediaPlayer();
         try {
             bgmPlayer.setDataSource(bgmPath);
@@ -821,6 +859,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
     private void pauseBgmMusic() {
+        LogUtil.d("playBGMMusic","pauseBgmMusic------------------------------");
         if (bgmPlayer != null) {
             bgmPlayer.pause();
         }

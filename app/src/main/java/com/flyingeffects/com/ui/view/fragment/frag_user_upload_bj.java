@@ -151,15 +151,25 @@ public class frag_user_upload_bj extends BaseFragment {
 
     public void initSmartRefreshLayout() {
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
-            isRefresh = true;
-            refreshLayout.setEnableLoadMore(true);
-            selectPage = 1;
-            requestUploadBjList(false);
+            if (BaseConstans.hasLogin()) {
+                isRefresh = true;
+                refreshLayout.setEnableLoadMore(true);
+                selectPage = 1;
+                requestUploadBjList(false);
+            }else{
+                finishData();
+                ToastUtil.showToast("请先登录");
+            }
         });
         smartRefreshLayout.setOnLoadMoreListener(refresh -> {
-            isRefresh = false;
-            selectPage++;
-            requestUploadBjList(false);
+            if (BaseConstans.hasLogin()) {
+                isRefresh = false;
+                selectPage++;
+                requestUploadBjList(false);
+            }else{
+                finishData();
+                ToastUtil.showToast("请先登录");
+            }
         });
     }
 

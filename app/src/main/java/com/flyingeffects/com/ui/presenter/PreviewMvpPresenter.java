@@ -20,8 +20,12 @@ public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCall
         PreviewModel = new PreviewMvpModel(context, this);
     }
 
+    public void showBottomSheetDialog(String path,String imagePath,String id){
+        PreviewModel.showBottomSheetDialog(path,imagePath,id);
+    }
+
     public void DownVideo(String path,String imagePath,String id){
-        PreviewModel.DownVideo(path,imagePath,id);
+        PreviewModel.DownVideo(path,imagePath,id,false);
     }
 
     public void GetVideoCover(String imagePath,String videoPath){

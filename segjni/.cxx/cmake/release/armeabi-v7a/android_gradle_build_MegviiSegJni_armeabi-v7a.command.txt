@@ -1,0 +1,7 @@
+Executable : E:\Sdk\cmake\3.10.2.4988404\bin\ninja.exe
+arguments : 
+-C
+D:\githubSpace\flyingeffectsAndroid\segjni\.cxx\cmake\release\armeabi-v7a
+MegviiSegJni
+jvmArgs : 
+

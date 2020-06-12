@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.util.TimeUtils;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
@@ -37,6 +39,7 @@ import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.PreviewMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MarqueTextView;
 import com.flyingeffects.com.view.MattingVideoEnity;
@@ -149,6 +152,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         boolean readOnly = getIntent().getBooleanExtra("readOnly", false);
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
             tv_make.setText("使用背景");
+            findViewById(R.id.iv_download_bj).setVisibility(View.VISIBLE);
+        }
+        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+            findViewById(R.id.iv_download_bj).setVisibility(View.VISIBLE);
         }
         fromToMineCollect = getIntent().getBooleanExtra("fromToMineCollect", false);
         defaultnum = templateItem.getDefaultnum();
@@ -164,18 +171,26 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         videoPlayer.startPlayLogic();
         GSYVideoType.setShowType(GSYVideoType.SCREEN_TYPE_FULL);
 //        videoPlayer.startWindowFullscreen(PreviewActivity.this,true,true);
-        videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> {
-            VideoPlaybackCompleted(true, true);
-            isPlayComplate = true;
+        videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(new VideoPlayerCallbackForTemplate.videoPlayerStopListener() {
+            @Override
+            public void isStop(boolean isSuccess) {
+                VideoPlaybackCompleted(true, true);
+                isPlayComplate = true;
+            }
+
+            @Override
+            public void onPrepared(boolean onPrepared) {
+                tv_describe.setText("时长"+ timeUtils.timeParse(videoPlayer.getDuration()) + "        上传" + templateItem.getDefaultnum() + "个素材即可制作");
+            }
         }));
+
+
         Glide.with(this)
                 .load(templateItem.getAuth_image())
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(iv_writer);
         tv_writer_name.setText(templateItem.getAuth());
         tv_title.setText(templateItem.getRemark());
-        Log.d("initView: ", "time = " + templateItem.getCreate_time());
-        tv_describe.setText("友友们    " + "上传" + templateItem.getDefaultnum() + "个素材即可制作");
 
         if (readOnly) {
             tv_make.setVisibility(View.GONE);
@@ -194,7 +209,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     }
 
 
-    @OnClick({R.id.iv_zan, R.id.tv_make, R.id.iv_video_play, R.id.iv_top_back, R.id.iv_click})
+    @OnClick({R.id.iv_zan, R.id.tv_make, R.id.iv_video_play, R.id.iv_top_back, R.id.iv_click,R.id.iv_download_bj})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_zan:
@@ -223,6 +238,12 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
             case R.id.iv_top_back:
                 PreviewActivity.this.finish();
+                break;
+
+            case R.id.iv_download_bj:
+                //下载背景
+            Presenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId());
+
                 break;
 
             case R.id.iv_video_play:

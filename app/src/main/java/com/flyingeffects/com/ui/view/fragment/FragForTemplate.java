@@ -1,6 +1,8 @@
 package com.flyingeffects.com.ui.view.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
@@ -13,6 +15,7 @@ import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.home_fagMvpView;
 import com.flyingeffects.com.ui.presenter.home_fagMvpPresenter;
+import com.flyingeffects.com.utils.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
     ViewPager viewpager;
 
     private List<TemplateType> data;
+    FragmentManager manager;
 
 
     @Override
@@ -55,25 +59,34 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
     @Override
     protected void initData() {
-
+        manager = getChildFragmentManager();
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
-        if(data==null||data.size()==0){
+        if (data == null || data.size() == 0) {
             Presenter.getFragmentList();
+        } else {
+            if(viewpager!=null&&tabLayout!=null){
+                viewpager.setCurrentItem(0);
+                tabLayout.setCurrentTab(0);
+            }
+            setFragmentList(data);
         }
     }
+
 
     @Override
     public void setFragmentList(List<TemplateType> data) {
         if (getActivity() != null) {
             if (data != null && data.size() > 0) {
-                this.data=data;
+                this.data = data;
                 ArrayList<Fragment> list = new ArrayList<>();
-                FragmentManager manager = getFragmentManager();
+                if (manager == null) {
+                    manager = getFragmentManager();
+                }
                 String[] titles = new String[data.size()];
                 for (int i = 0; i < data.size(); i++) {
                     Bundle bundle = new Bundle();
@@ -106,8 +119,11 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                     }
                 });
                 tabLayout.setViewPager(viewpager, titles);
+
+
             }
         }
+
     }
 
 }

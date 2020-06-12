@@ -31,6 +31,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
+    public void intoOnPause(){
+        creationTemplatemodel.intoOnPause();
+    }
+
+
     public void GetVideoCover(String path){
         creationTemplatemodel.GetVideoCover(path);
     }
@@ -95,6 +100,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     @Override
     public void setgsyVideoProgress(int progress) {
         creationTemplatemvpView.setgsyVideoProgress(progress);
+    }
+
+    @Override
+    public void animIsComplate() {
+        creationTemplatemvpView.animIsComplate();
     }
 
     @Override

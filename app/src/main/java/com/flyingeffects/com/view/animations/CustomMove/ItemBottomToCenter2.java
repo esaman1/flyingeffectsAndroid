@@ -15,7 +15,7 @@ import java.util.List;
  * user : zhangtongju
  */
 
-public class ItemBottomToCenter extends baseAnimModel {
+public class ItemBottomToCenter2 extends baseAnimModel {
 
 
     private StickerView mainStickerView;
@@ -30,18 +30,20 @@ public class ItemBottomToCenter extends baseAnimModel {
         float stickerViewH = mainStickerView.getmHelpBoxRectH();
         //view 右边位置的比例
         float Difference = totalHeight - stickerViewH;
+
         //第一个参数为总时长
         animationLinearInterpolator = new AnimationLinearInterpolator(2000, new AnimationLinearInterpolator.GetProgressCallback() {
             @Override
             public void progress(float progress, boolean isDone) {
                 float needProgress = 1 - progress;
-                LogUtil.d("ItemBottomToCenter","needProgress="+needProgress);
                 //拟定倒叙
                 float Y = stickerViewPosition + Difference * needProgress;
+                LogUtil.d("ItemBottomToCenter","needProgress="+needProgress);
                 LogUtil.d("ItemBottomToCenter","Y="+Y);
                 mainStickerView.toTranMoveY(Y);
             }
         });
+        animationLinearInterpolator.SetCirculation(false);
         animationLinearInterpolator.PlayAnimation();
     }
 
@@ -63,15 +65,18 @@ public class ItemBottomToCenter extends baseAnimModel {
             public void progress(float progress, boolean isDone) {
                 float needProgress = 1 - progress;
                 float Y = (previewSubPosition + previewSubPaddingHeight * needProgress)/previewSubPaddingHeight;
-
                 TransplationPos transplationPos = new TransplationPos();
                 transplationPos.setToY(Y);
                 transplationPos.setToX(toX);
+                LogUtil.d("ItemBottomToCenter","needProgress="+needProgress);
+                LogUtil.d("ItemBottomToCenter","Y="+Y);
                 ArrayList<TransplationPos> list = new ArrayList<>();
                 list.add(transplationPos);
                 callback.translationalXY(list);
             }
         });
+        animationLinearInterpolator.SetCirculation(false);
+
         animationLinearInterpolator.PlayAnimationNoTimer(percentage);
     }
 

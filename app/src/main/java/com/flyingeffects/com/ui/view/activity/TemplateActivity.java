@@ -128,7 +128,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private List<String> originalPath;
     private String templateFilePath;
 
+
+
+
+
     /**
+     *
+     *
      * 底部按钮数量
      */
     private int bottomButtonCount;
@@ -432,7 +438,18 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         videoPlayer.setUp(path, true, "");
         videoPlayer.startPlayLogic();
         videoPlayer.setGSYVideoProgressListener((progress, secProgress, currentPosition, duration) -> seekBar.setProgress(progress));
-        videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> showPreview(false, true)));
+//        videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(isSuccess -> ));
+        videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(new VideoPlayerCallbackForTemplate.videoPlayerStopListener() {
+            @Override
+            public void isStop(boolean isSuccess) {
+                showPreview(false, true);
+            }
+
+            @Override
+            public void onPrepared(boolean onPrepared) {
+            }
+        }));
+
         showPreview(true, true);
     }
 
@@ -970,7 +987,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         }
 
         template.setReplaceableFilePaths(mSources);
-
         template.enableSourcePrepare();
         new Thread() {
             @Override
@@ -1152,21 +1168,30 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     //这里需要重新设置底部图，但是glide 视频路径相同。所以glide 不会刷新
                     presenter.getButtomIcon(event.getMattingPath());
                     switch_button.setChecked(false);
+                    changeMaterialMusic(event.getMattingPath());
 
                 } else {
                     //用户选择了抠图但是没有切换抠图
                     ChangeMaterialCallbackForVideo(null, event.getOriginalPath(), false);
                     //这里需要重新设置底部图，但是glide 视频路径相同。所以glide 不会刷新
                     presenter.getButtomIcon(event.getOriginalPath());
+                    changeMaterialMusic(event.getOriginalPath());
                 }
             } else {
                 //用户选择了抠图
                 ChangeMaterialCallbackForVideo(event.getOriginalPath(), event.getMattingPath(), true);
                 presenter.getButtomIcon(event.getOriginalPath());
+                changeMaterialMusic(event.getMattingPath());
             }
         }
         templateThumbForMusic.findViewById(R.id.ll_0).setVisibility(View.VISIBLE);
         primitivePath = event.getPrimitivePath();
+    }
+
+    private void changeMaterialMusic(String musicPath){
+        if(nowChooseMusic==1){
+            presenter.getBjMusic(musicPath);
+        }
     }
 
 

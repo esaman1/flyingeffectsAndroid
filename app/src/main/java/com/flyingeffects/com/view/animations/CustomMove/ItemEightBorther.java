@@ -26,6 +26,7 @@ public class ItemEightBorther extends baseAnimModel {
 
     void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
         this.mainStickerView = mainStickerView;
+        setRotate(mainStickerView.getRotateAngle());
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
         float[] pos = new float[2];
         float[] tan = new float[2];
@@ -38,15 +39,17 @@ public class ItemEightBorther extends baseAnimModel {
             float nowDistance = totalDistancePathMeasure * progress;
             mPathMeasure.getPosTan(nowDistance, pos, tan);
             mainStickerView.toTranMoveXY(pos[0], pos[1]);
-            for (int i = 0; i < subLayer.size(); i++) {
-                StickerView sub = subLayer.get(i);
-                if (sub != null) {
-                    float needDistance = perDistance * i + nowDistance;
-                    if (needDistance > totalDistancePathMeasure) {
-                        needDistance = needDistance - totalDistancePathMeasure;
+            if(subLayer!=null){
+                for (int i = 0; i < subLayer.size(); i++) {
+                    StickerView sub = subLayer.get(i);
+                    if (sub != null) {
+                        float needDistance = perDistance * i + nowDistance;
+                        if (needDistance > totalDistancePathMeasure) {
+                            needDistance = needDistance - totalDistancePathMeasure;
+                        }
+                        mPathMeasure.getPosTan(needDistance, pos, tan);
+                        sub.toTranMoveXY(pos[0], pos[1]);
                     }
-                    mPathMeasure.getPosTan(needDistance, pos, tan);
-                    sub.toTranMoveXY(pos[0], pos[1]);
                 }
             }
         });

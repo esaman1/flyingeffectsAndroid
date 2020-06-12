@@ -123,7 +123,7 @@ public class videoAddCover {
         MediaMetadataRetriever mmr = new MediaMetadataRetriever();
         mmr.setDataSource(path);
         Bitmap bp = mmr.getFrameAtTime(0, OPTION_PREVIOUS_SYNC);
-        bp = StringUtil.zoomImg(bp, 360, 640);
+        bp = StringUtil.zoomImg(bp, 180, 320);
         BitmapManager.getInstance().saveBitmapToPath(bp, fileName);
     }
 
