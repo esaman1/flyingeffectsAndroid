@@ -1,16 +1,23 @@
-Executable : E:\Sdk\cmake\3.6.4111459\bin\cmake.exe
+Executable : D:\SDK\cmake\3.10.2.4988404\bin\cmake.exe
 arguments : 
--HE:\faceProject\thread\segment-demo-bigmodel-multiThread\segjni\src\main\cpp
--BE:\faceProject\thread\segment-demo-bigmodel-multiThread\segjni\.cxx\cmake\debug\arm64-v8a
--DANDROID_ABI=arm64-v8a
--DANDROID_PLATFORM=android-16
--DCMAKE_LIBRARY_OUTPUT_DIRECTORY=E:\faceProject\thread\segment-demo-bigmodel-multiThread\segjni\build\intermediates\cmake\debug\obj\arm64-v8a
+-HD:\WorkSpace\flyingeffectsAndroid\segjni\src\main\cpp
+-DCMAKE_FIND_ROOT_PATH=D:\WorkSpace\flyingeffectsAndroid\segjni\.cxx\cmake\debug\prefab\arm64-v8a\prefab
 -DCMAKE_BUILD_TYPE=Debug
--DANDROID_NDK=E:\Sdk\ndk\21.0.6113669
--DCMAKE_TOOLCHAIN_FILE=E:\Sdk\ndk\21.0.6113669\build\cmake\android.toolchain.cmake
--DCMAKE_MAKE_PROGRAM=E:\Sdk\cmake\3.6.4111459\bin\ninja.exe
--GAndroid Gradle - Ninja
+-DCMAKE_TOOLCHAIN_FILE=D:\SDK\ndk\21.0.6113669\build\cmake\android.toolchain.cmake
+-DANDROID_ABI=arm64-v8a
+-DANDROID_NDK=D:\SDK\ndk\21.0.6113669
+-DANDROID_PLATFORM=android-21
+-DCMAKE_ANDROID_ARCH_ABI=arm64-v8a
+-DCMAKE_ANDROID_NDK=D:\SDK\ndk\21.0.6113669
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=D:\WorkSpace\flyingeffectsAndroid\segjni\build\intermediates\cmake\debug\obj\arm64-v8a
+-DCMAKE_MAKE_PROGRAM=D:\SDK\cmake\3.10.2.4988404\bin\ninja.exe
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_SYSTEM_VERSION=21
 -DANDROID_ARM_NEON=TRUE
 -DANDROID_STL=c++_static
+-BD:\WorkSpace\flyingeffectsAndroid\segjni\.cxx\cmake\debug\arm64-v8a
+-GNinja
 jvmArgs : 
 
+Build command args:

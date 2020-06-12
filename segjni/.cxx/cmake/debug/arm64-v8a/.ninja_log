@@ -1,3 +1,6 @@
 # ninja log v5
-5	3494	0	CMakeFiles/MegviiSegJni.dir/megvii_seg_jni_new.cpp.o	a279514bb0c753a1
-3495	3654	0	E:/faceProject/thread/segment-demo-bigmodel-multiThread/segjni/src/main/jniLibs/arm64-v8a/libMegviiSegJni.so	ca26351b1e18caa3
+0	1402	613026316	CMakeFiles/MegviiSegJni.dir/megvii_seg_jni_new.cpp.o	bcfa1ee3afa8030b
+1403	1524	613026317	D:/WorkSpace/flyingeffectsAndroid/segjni/src/main/jniLibs/arm64-v8a/libMegviiSegJni.so	3ca97db987a3dad1
+0	8	0	clean	4892ed8d8ea29cbc
+23	4560	613389268	CMakeFiles/MegviiSegJni.dir/megvii_seg_jni_new.cpp.o	bcfa1ee3afa8030b
+4560	5001	613389269	D:/WorkSpace/flyingeffectsAndroid/segjni/src/main/jniLibs/arm64-v8a/libMegviiSegJni.so	3ca97db987a3dad1
