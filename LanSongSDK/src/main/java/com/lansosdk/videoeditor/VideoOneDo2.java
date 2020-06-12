@@ -642,7 +642,7 @@ public class VideoOneDo2 {
  VideoOneDo2 videoOneDo2 = null;
  private void testVideoOneDo() throws Exception {
 
- videoOneDo2 = new VideoOneDo2(getApplicationContext(), SDCARD.file("d1.mp4"));
+ videoOneDo2 = new VideoOneDo2(getApplicationContext(), SDCARD.file("dy_xialu2.mp4"));
 
  //裁剪时长
  videoOneDo2.setCutDuration(2 * 1000 * 1000, 10 * 1000 * 1000);

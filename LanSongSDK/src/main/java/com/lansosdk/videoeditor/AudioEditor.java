@@ -8,12 +8,11 @@ import java.util.Locale;
 
 import static com.lansosdk.videoeditor.LanSongFileUtil.fileExist;
 
+
 /**
- * 音频编辑类.
- *
- *
- * 使用方法和VideoEditor一样;
+ * 已废弃
  */
+@Deprecated
 public class AudioEditor {
     private VideoEditor editor;
     // ffmpeg -f s16le -ar 44100 -ac 2 -i hongdou_44100_2.pcm -f s16le -ar 48000

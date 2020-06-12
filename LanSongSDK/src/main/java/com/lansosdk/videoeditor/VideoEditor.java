@@ -26,23 +26,6 @@ import java.util.Locale;
 import static com.lansosdk.videoeditor.LanSongFileUtil.fileExist;
 
 
-/**
- *
- * 所有的execute开头的方法都是阻塞执行, 即耗时严重, 即只有执行完当前executeXXX的功能,才执行下一行语句;
- * 所有的execute开头的方法都是阻塞执行, 即耗时严重, 即只有执行完当前executeXXX的功能,才执行下一行语句;
- * 所有的execute开头的方法都是阻塞执行, 即耗时严重, 即只有执行完当前executeXXX的功能,才执行下一行语句;
- *
- * 简单的调用方法:
- *  //step1. 放在主线程中执行;
- * VideoEditor videoEditor=new VideoEditor();
- * videoEditor.setOnProgressListener(xxx)进度;
- *
- * //step2.
- * 然后在AsyncTask或Thread中执行如下;
- * videoEditor.executeXXXXX();
- *
- *
- */
 public class VideoEditor {
 
     public static final String version="VideoEditor";
@@ -100,9 +83,9 @@ public class VideoEditor {
     public static final int VIDEO_EDITOR_EXECUTE_FAILED = -101;  //文件不存在。
 
 
-    private final int VIDEOEDITOR_HANDLER_PROGRESS = 203;
-    private final int VIDEOEDITOR_HANDLER_COMPLETED = 204;
-    private final int VIDEOEDITOR_HANDLER_ENCODERCHANGE = 205;
+    private final int VIDEO_EDITOR_HANDLER_PROGRESS = 203;
+    private final int VIDEO_EDITOR_HANDLER_COMPLETED = 204;
+    private final int VIDEO_EDITOR_HANDLER_ENCODERCHANGE = 205;
 
 
     private static LanSongLogCollector lanSongLogCollector =null;
@@ -138,6 +121,7 @@ public class VideoEditor {
             return null;
         }
     }
+
     /**
      * 构造方法.
      * 如果您想扩展ffmpeg的命令, 可以继承这个类,
@@ -199,10 +183,10 @@ public class VideoEditor {
                 return;
             }
             switch (msg.what) {
-                case VIDEOEDITOR_HANDLER_PROGRESS:
+                case VIDEO_EDITOR_HANDLER_PROGRESS:
                     videoEditor.doOnProgressListener(msg.arg1);
                     break;
-                case VIDEOEDITOR_HANDLER_ENCODERCHANGE:
+                case VIDEO_EDITOR_HANDLER_ENCODERCHANGE:
                     videoEditor.doEncoderChangedListener(true);  //暂停只要改变,就变成软编码;
                     break;
                 default:
@@ -210,9 +194,6 @@ public class VideoEditor {
             }
         }
     }
-
-
-
     /**
      * 异步线程执行的代码.
      */
@@ -233,7 +214,7 @@ public class VideoEditor {
     private void postEventFromNative(int what, int arg1, int arg2) {
         LSOLog.i("postEvent from native  is:" + what);
         if (mEventHandler != null) {
-            Message msg = mEventHandler.obtainMessage(VIDEOEDITOR_HANDLER_PROGRESS);
+            Message msg = mEventHandler.obtainMessage(VIDEO_EDITOR_HANDLER_PROGRESS);
             msg.arg1 = what;
             mEventHandler.sendMessage(msg);
         }
@@ -241,7 +222,7 @@ public class VideoEditor {
     protected void sendEncoderEnchange()
     {
         if (mEventHandler != null) {
-            Message msg = mEventHandler.obtainMessage(VIDEOEDITOR_HANDLER_ENCODERCHANGE);
+            Message msg = mEventHandler.obtainMessage(VIDEO_EDITOR_HANDLER_ENCODERCHANGE);
             mEventHandler.sendMessage(msg);
         }
     }
@@ -504,61 +485,9 @@ public class VideoEditor {
             return null;
         }
     }
-    /**
-     * 两个音频文件延迟混合, 即把第二个音频延迟多长时间后, 与第一个音频混合.
-     * 混合后的编码为aac格式的音频文件.
-     * 注意,如果两个音频的时长不同, 以第一个音频的音频为准. 如需修改可联系我们或查询ffmpeg命令即可.
-     *
-     * @param audioPath1
-     * @param audioPath2
-     * @param leftDelayMS  第二个音频的左声道 相对 于第一个音频的延迟时间
-     * @param rightDelayMS 第二个音频的右声道 相对 于第一个音频的延迟时间
-     * @return
-     */
-    public String executeAudioDelayMix(String audioPath1, String audioPath2, int leftDelayMS, int rightDelayMS) {
-        List<String> cmdList = new ArrayList<String>();
-        String overlayXY = String.format(Locale.getDefault(), "[1:a]adelay=%d|%d[delaya1]; " +
-                "[0:a][delaya1]amix=inputs=2:duration=first:dropout_transition=2", leftDelayMS, rightDelayMS);
 
 
-        String dstPath=LanSongFileUtil.createM4AFileInBox();
-        cmdList.add("-i");
-        cmdList.add(audioPath1);
-
-        cmdList.add("-i");
-        cmdList.add(audioPath2);
-
-        cmdList.add("-filter_complex");
-        cmdList.add(overlayXY);
-
-        cmdList.add("-acodec");
-        cmdList.add("libfaac");
-
-        cmdList.add("-y");
-        cmdList.add(dstPath);
-        String[] command = new String[cmdList.size()];
-        for (int i = 0; i < cmdList.size(); i++) {
-            command[i] = (String) cmdList.get(i);
-        }
-        int ret= executeVideoEditor(command);
-        if(ret==0){
-            return dstPath;
-        }else{
-            LanSongFileUtil.deleteFile(dstPath);
-            return null;
-        }
-    }
-
-    /**
-     * 两个音频文件混合.
-     * 混合后的文件压缩格式是aac格式, 故需要您dstPath的后缀是aac或m4a.
-     *
-     * @param audioPath1 主音频的完整路径
-     * @param audioPath2 次音频的完整路径
-     * @param value1     主音频的音量, 浮点类型, 大于1.0为放大音量, 小于1.0是减低音量.比如设置0.5则降低一倍.
-     * @param value2     次音频的音量, 浮点类型.
-     * @return 输出保存的完整路径. m4a格式.
-     */
+    @Deprecated
     public String executeAudioVolumeMix(String audioPath1, String audioPath2, float value1, float value2) {
         List<String> cmdList = new ArrayList<String>();
 
@@ -630,10 +559,10 @@ public class VideoEditor {
 
                 return executeAutoSwitch(cmdList);
             }
-
         }
         return null;
     }
+
     public String executeGIF2MP4(String srcPath) {
         if (fileExist(srcPath)) {
             MediaInfo info = new MediaInfo(srcPath);

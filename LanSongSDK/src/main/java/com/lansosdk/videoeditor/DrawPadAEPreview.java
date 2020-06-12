@@ -369,7 +369,7 @@ public class DrawPadAEPreview extends FrameLayout {
         if (renderer != null && !renderer.isRunning()) {
             AudioLayer layer= renderer.addAudioLayer(srcPath);
             if(layer==null){
-                LSOLog.e("DrawPadAEPreview addAudioLayer error. path:"+srcPath);
+                LSOLog.e("DrawPadAEPreview addAudioLayer error. videoPath:"+srcPath);
             }
             return layer;
         } else {
@@ -388,7 +388,7 @@ public class DrawPadAEPreview extends FrameLayout {
             if(layer!=null){
                 layer.setLooping(loop);
             }else{
-                LSOLog.e("DrawPadAEPreview addAudioLayer error. path:"+srcPath);
+                LSOLog.e("DrawPadAEPreview addAudioLayer error. videoPath:"+srcPath);
             }
             return layer;
         } else {
@@ -410,7 +410,7 @@ public class DrawPadAEPreview extends FrameLayout {
         if (renderer != null && !renderer.isRunning()) {
             AudioLayer layer=  renderer.addAudioLayer(srcPath, 0,startFromPadTime, -1);
             if(layer==null){
-                LSOLog.e("DrawPadAEPreview addAudioLayer error. path:"+srcPath);
+                LSOLog.e("DrawPadAEPreview addAudioLayer error. videoPath:"+srcPath);
             }
             return layer;
         } else {
@@ -436,7 +436,7 @@ public class DrawPadAEPreview extends FrameLayout {
         if (renderer != null && !renderer.isRunning()) {
             AudioLayer layer=  renderer.addAudioLayer(srcPath,0, startFromPadUs, durationUs);
             if(layer==null){
-                LSOLog.e("DrawPadAEPreview addAudioLayer error. path:"+srcPath);
+                LSOLog.e("DrawPadAEPreview addAudioLayer error. videoPath:"+srcPath);
             }
             return layer;
         } else {
@@ -459,7 +459,7 @@ public class DrawPadAEPreview extends FrameLayout {
         if (renderer != null && !renderer.isRunning()) {
             AudioLayer layer=renderer.addAudioLayer(srcPath, startFromPadUs,startAudioTimeUs, endAudioTimeUs);
             if(layer==null){
-                LSOLog.e("DrawPadAEPreview addAudioLayer error. path:"+srcPath);
+                LSOLog.e("DrawPadAEPreview addAudioLayer error. videoPath:"+srcPath);
             }
             return layer;
         } else {

@@ -34,7 +34,6 @@ public class AudioPadExecute {
             render=new AudioPadRunnable(ctx,input);
         }
     }
-
     /**
      * 构造方法
      *
@@ -47,8 +46,6 @@ public class AudioPadExecute {
             render=new AudioPadRunnable(ctx,input,isMute);
         }
     }
-
-
     /**
      * 构造方法
      * 先设置一段时长 单位微秒( 1秒=1000*1000微秒);
@@ -264,7 +261,7 @@ public class AudioPadExecute {
      AudioLayer audioLayer;
 
      private void testFile3() throws  Exception{
-     AudioPadExecute execute = new AudioPadExecute(getApplicationContext(), "/sdcard/d1.mp4");
+     AudioPadExecute execute = new AudioPadExecute(getApplicationContext(), "/sdcard/dy_xialu2.mp4");
      //增加一个音频
      audioLayer = execute.addAudioLayer("/sdcard/hongdou10s.mp3", 0, 0, -1);
      if (audioLayer != null) {
@@ -281,8 +278,8 @@ public class AudioPadExecute {
     });
      execute.setOnAudioPadCompletedListener(new OnAudioPadExecuteCompletedListener() {
     @Override
-    public void onCompleted(String path) {
-         MediaInfo.checkFile(path);
+    public void onCompleted(String videoPath) {
+         MediaInfo.checkFile(videoPath);
     }
     });
      execute.start();
@@ -326,9 +323,9 @@ public class AudioPadExecute {
 
      execute.setOnAudioPadCompletedListener(new OnAudioPadExecuteCompletedListener() {
     @Override
-    public void onCompleted(String path) {
+    public void onCompleted(String videoPath) {
 
-    MediaInfo.checkFile(path);
+    MediaInfo.checkFile(videoPath);
     }
     });
 

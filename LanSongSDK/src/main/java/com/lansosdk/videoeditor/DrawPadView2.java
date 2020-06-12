@@ -13,11 +13,12 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.lansosdk.LanSongFilter.LanSongFilter;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
 import com.lansosdk.box.DataLayer;
 import com.lansosdk.box.DrawPadUpdateMode;
-import com.lansosdk.box.DrawPadViewRender2;
+import com.lansosdk.box.DrawPadViewRunnable2;
 import com.lansosdk.box.GifLayer;
 import com.lansosdk.box.LSOLog;
 import com.lansosdk.box.Layer;
@@ -26,7 +27,6 @@ import com.lansosdk.box.TextureLayer;
 import com.lansosdk.box.TwoVideoLayer;
 import com.lansosdk.box.VideoLayer;
 import com.lansosdk.box.ViewLayer;
-import com.lansosdk.box.YUVLayer;
 import com.lansosdk.box.onDrawPadCompletedListener;
 import com.lansosdk.box.onDrawPadErrorListener;
 import com.lansosdk.box.onDrawPadOutFrameListener;
@@ -35,9 +35,6 @@ import com.lansosdk.box.onDrawPadRunTimeListener;
 import com.lansosdk.box.onDrawPadSizeChangedListener;
 import com.lansosdk.box.onDrawPadSnapShotListener;
 import com.lansosdk.box.onDrawPadThreadProgressListener;
-
-import com.lansosdk.LanSongFilter.LanSongFilter;
-
 
 
 public class DrawPadView2 extends FrameLayout {
@@ -63,7 +60,7 @@ public class DrawPadView2 extends FrameLayout {
     private static final String TAG = "LanSongSDK";
     private static final boolean VERBOSE = false;
     private TextureRenderView mTextureRenderView;
-    private DrawPadViewRender2 renderer;
+    private DrawPadViewRunnable2 renderer;
     private SurfaceTexture mSurfaceTexture = null;
     private boolean isUseMainPts = false;
     private int encWidth, encHeight, encFrameRate;
@@ -109,7 +106,7 @@ public class DrawPadView2 extends FrameLayout {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public DrawPadView2(Context context, AttributeSet attrs, int defStyleAttr,
-                       int defStyleRes) {
+                        int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         initVideoView(context);
     }
@@ -243,7 +240,7 @@ public class DrawPadView2 extends FrameLayout {
      * @param height DrawPad高度
      * @param cb     UI线程调整好后 返回的回调;
      */
-    public void setDrawPadSize(int width, int height,onDrawPadSizeChangedListener cb) {
+    public void setDrawPadSize(int width, int height, onDrawPadSizeChangedListener cb) {
 
         isDrawPadSizeChanged=true;
         if (width != 0 && height != 0 && cb != null) {
@@ -550,7 +547,7 @@ public class DrawPadView2 extends FrameLayout {
         }
         if (mSurfaceTexture != null && renderer == null && drawPadWidth > 0
                 && drawPadHeight > 0) {
-            renderer = new DrawPadViewRender2(getContext(), drawPadWidth,drawPadHeight);
+            renderer = new DrawPadViewRunnable2(getContext(), drawPadWidth,drawPadHeight);
             if (renderer != null) {
                 renderer.setUseMainVideoPts(isUseMainPts);
                 renderer.setDisplaySurface(new Surface(mSurfaceTexture));
@@ -896,25 +893,6 @@ public class DrawPadView2 extends FrameLayout {
     public CanvasLayer addCanvasLayer() {
         if (renderer != null)
             return renderer.addCanvasLayer();
-        else {
-            Log.e(TAG, "addCanvasLayer error render is not avalid");
-            return null;
-        }
-    }
-
-    /**
-     * 增加一个yuv图层, 让您可以把YUV数据输入进来,当前仅支持NV21的格式
-     * <p>
-     * yuv数据,可以是别家SDK处理后的结果, 或Camera的onPreviewFrame回调的数据,
-     * 或您本地的视频数据.也可以是您本地的视频数据.
-     *
-     * @param width
-     * @param height
-     * @return
-     */
-    public YUVLayer addYUVLayer(int width, int height) {
-        if (renderer != null)
-            return renderer.addYUVLayer(width, height);
         else {
             Log.e(TAG, "addCanvasLayer error render is not avalid");
             return null;

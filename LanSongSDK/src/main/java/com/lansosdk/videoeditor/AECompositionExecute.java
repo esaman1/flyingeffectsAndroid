@@ -149,7 +149,7 @@ public class AECompositionExecute {
             aemvLayer = drawPadRenderer.addMVLayer(colorPath, maskPath);
         }
         if(aemvLayer==null){
-            LSOLog.e("AERenderExecute addMVLayer error color path:"+colorPath+ " mask path:"+maskPath);
+            LSOLog.e("AERenderExecute addMVLayer error color videoPath:"+colorPath+ " mask videoPath:"+maskPath);
         }
         return aemvLayer;
     }
@@ -186,7 +186,7 @@ public class AECompositionExecute {
             aemvLayer = drawPadRenderer.addMVLayer(colorPath, maskPath);
         }
         if(aemvLayer==null){
-            LSOLog.e("AERenderExecute addMVLayer error color path:"+colorPath+ " mask path:"+maskPath);
+            LSOLog.e("AERenderExecute addMVLayer error color videoPath:"+colorPath+ " mask videoPath:"+maskPath);
         }
         return aemvLayer;
     }

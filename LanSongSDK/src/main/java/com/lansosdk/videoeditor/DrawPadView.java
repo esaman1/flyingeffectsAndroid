@@ -19,23 +19,24 @@ import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
 import com.lansosdk.box.DataLayer;
 import com.lansosdk.box.DrawPadUpdateMode;
-import com.lansosdk.box.DrawPadViewRender;
+import com.lansosdk.box.DrawPadViewRunnable;
 import com.lansosdk.box.GifLayer;
 import com.lansosdk.box.LSOAECompositionLayer;
 import com.lansosdk.box.LSOAeCompositionAsset;
 import com.lansosdk.box.LSOLog;
 import com.lansosdk.box.LSOMVAsset;
+import com.lansosdk.box.LSOMVAsset2;
 import com.lansosdk.box.LSOPhotoAlbumAsset;
 import com.lansosdk.box.LSOPhotoAlbumLayer;
 import com.lansosdk.box.Layer;
 import com.lansosdk.box.MVLayer;
+import com.lansosdk.box.MVLayer2;
 import com.lansosdk.box.SubLayer;
 import com.lansosdk.box.TextureLayer;
 import com.lansosdk.box.TwoVideoLayer;
 import com.lansosdk.box.VideoLayer;
 import com.lansosdk.box.VideoLayer2;
 import com.lansosdk.box.ViewLayer;
-import com.lansosdk.box.YUVLayer;
 import com.lansosdk.box.onDrawPadCompletedListener;
 import com.lansosdk.box.onDrawPadErrorListener;
 import com.lansosdk.box.onDrawPadOutFrameListener;
@@ -50,7 +51,7 @@ public class DrawPadView extends FrameLayout {
     static final int AR_ASPECT_FIT_PARENT = 0; // without clip
     private static final boolean VERBOSE = false;
     private TextureRenderView mTextureRenderView;
-    private DrawPadViewRender renderer;
+    private DrawPadViewRunnable renderer;
     protected float padBGRed =0.0f;
     protected float padBGGreen =0.0f;
     protected float padBGBlur =0.0f;
@@ -505,7 +506,7 @@ public class DrawPadView extends FrameLayout {
         }
 
         if (mSurfaceTexture != null && drawPadWidth > 0 && drawPadHeight > 0) {
-            renderer = new DrawPadViewRender(getContext(), drawPadWidth,drawPadHeight);
+            renderer = new DrawPadViewRunnable(getContext(), drawPadWidth,drawPadHeight);
                 renderer.setUseMainVideoPts(isUseMainPts);
                 // 因为要预览,这里设置显示的Surface,当然如果您有特殊情况需求,也可以不用设置,但displayersurface和EncoderEnable要设置一个,DrawPadRender才可以工作.
                 renderer.setDisplaySurface(new Surface(mSurfaceTexture));
@@ -1214,7 +1215,14 @@ public class DrawPadView extends FrameLayout {
             return null;
         }
     }
-
+    public MVLayer2 addMVLayer2(LSOMVAsset2 asset) throws Exception{
+        if (renderer != null && asset!=null)
+            return renderer.addMVLayer2(asset);
+        else {
+            LSOLog.e("addMVLayer error render is not avalid");
+            return null;
+        }
+    }
     /**
      * 获得一个 ViewLayer,您可以在获取后,仿照我们的例子,来为视频增加各种UI空间. 注意:此方法一定在
      * startDrawPad之后,在stopDrawPad之前调用.
@@ -1244,24 +1252,6 @@ public class DrawPadView extends FrameLayout {
         }
     }
 
-    /**
-     * 增加一个yuv图层, 让您可以把YUV数据输入进来,当前仅支持NV21的格式
-     * <p>
-     * yuv数据,可以是别家SDK处理后的结果, 或Camera的onPreviewFrame回调的数据,
-     * 或您本地的视频数据.也可以是您本地的视频数据.
-     *
-     * @param width
-     * @param height
-     * @return
-     */
-    public YUVLayer addYUVLayer(int width, int height) {
-        if (renderer != null)
-            return renderer.addYUVLayer(width, height);
-        else {
-            LSOLog.e( "addCanvasLayer error render is not avalid");
-            return null;
-        }
-    }
 
     /**
      * 从渲染线程列表中移除并销毁这个Layer; 注意:此方法一定在 startDrawPad之后,在stopDrawPad之前调用.

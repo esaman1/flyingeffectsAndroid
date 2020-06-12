@@ -7,6 +7,7 @@ import android.graphics.SurfaceTexture;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -30,7 +31,6 @@ import com.lansosdk.box.MVLayer2;
 import com.lansosdk.box.MicLine;
 import com.lansosdk.box.VideoLayer;
 import com.lansosdk.box.ViewLayer;
-import com.lansosdk.box.YUVLayer;
 import com.lansosdk.box.onDrawPadCompletedListener;
 import com.lansosdk.box.onDrawPadErrorListener;
 import com.lansosdk.box.onDrawPadOutFrameListener;
@@ -1162,25 +1162,6 @@ public class DrawPadCameraView extends FrameLayout {
     // ------------------------------------
 
     /**
-     * 增加一个yuv图层, 让您可以把YUV数据输入进来,当前仅支持NV21的格式
-     * <p>
-     * yuv数据,可以是别家SDK处理后的结果, 或Camera的onPreviewFrame回调的数据,
-     * 或您本地的视频数据.也可以是您本地的视频数据.
-     *
-     * @param width
-     * @param height
-     * @return
-     */
-    public YUVLayer addYUVLayer(int width, int height) {
-        if (renderer != null)
-            return renderer.addYUVLayer(width, height);
-        else {
-            LSOLog.e( "addYUVLayer error render is null");
-            return null;
-        }
-    }
-
-    /**
      * 从渲染线程列表中移除并销毁这个Layer; 注意:此方法一定在 startDrawPad之后,在stopDrawPad之前调用.
      */
     public void removeLayer(Layer layer) {
@@ -1244,6 +1225,7 @@ public class DrawPadCameraView extends FrameLayout {
                         }
                     }
                 }
+
                 else if(getCameraLayer().isSlideFilterEnable() ){
 
 

@@ -11,10 +11,10 @@ public class A0Version {
     /**¡
      * 底层so库的版本号
      */
-    public final  static  String NATIVE_SO_VERSION="3.8.0";
+    public final  static  String NATIVE_SO_VERSION="4.1.0";
 
     /**
      * jar的版本号.
      */
-    public final  static  String  JAVA_JAR_VERSION= "20200216_debug_for_mc_v1";
+    public final  static  String  JAVA_JAR_VERSION= "20200610_release_v1";
 }

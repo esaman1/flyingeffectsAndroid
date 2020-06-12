@@ -32,7 +32,6 @@ import com.lansosdk.box.OnLanSongSDKProgressListener;
 import com.lansosdk.box.OnLanSongSDKThreadProgressListener;
 import com.lansosdk.box.SubLayer;
 import com.lansosdk.box.VideoFrameLayer;
-import com.lansosdk.box.YUVLayer;
 
 import java.util.List;
 import java.util.Map;
@@ -571,10 +570,12 @@ public class DrawPadAllExecute2 {
     }
 
     /**
-     * 增加canvas图层
+     * 已经废弃, 请不要使用;
      * @return
      */
+    @Deprecated
     public CanvasLayer addCanvasLayer() {
+        LSOLog.e("addCanvasLayer 已经废弃, 请不要使用. 请用addBitmapListLayer");
         if (commonRunnable != null && setup()) {
             return commonRunnable.addCanvasLayer();
         }else  if (pixelRunnable != null && setup()) {
@@ -583,26 +584,6 @@ public class DrawPadAllExecute2 {
             return null;
         }
     }
-
-    /**
-     * 增加yuv图层
-     * 当前仅支持NV12格式
-     * @param width 宽度
-     * @param height 高度
-     * @param startTimeUs 从容器的什么时间开始增加
-     * @param endTimeUs 在容器的什么时间消失, 如果到文件尾,请输入Long.MAX_VALUE
-     * @return
-     */
-    public YUVLayer addYUVLayer(int width, int height,long startTimeUs,long endTimeUs) {
-        if (commonRunnable != null && setup()) {
-            return commonRunnable.addYUVLayer(width,height,startTimeUs,endTimeUs);
-        }else if (pixelRunnable != null && setup()) {
-            return pixelRunnable.addYUVLayer(width,height,startTimeUs,endTimeUs);
-        }else {
-            return null;
-        }
-    }
-
 
     /**
      * 增加子图层. 子图层是通过父类图层createSubLayer得到的.
@@ -666,7 +647,6 @@ public class DrawPadAllExecute2 {
      compositionAsset.addSecondLayer(drawable);
      compositionAsset.addThirdLayer(colorPath,maskPath);
      compositionAsset.startAeRender();
-
      * @param asset Ae合成资源;
      * @return
      */
@@ -705,9 +685,6 @@ public class DrawPadAllExecute2 {
      bitmaps: 多张图片列表.
      jsonPath: 用AE导出的json动画;
      LSOPhotoAlbumAsset(List<Bitmap> bitmaps, String jsonPath) throws Exception
-
-
-
      用AE制作动画的规则:
      1. 不能使用预合成,
      2. 每个图层对应一张图片, 不能一张图片应用到多个图层;
@@ -988,6 +965,7 @@ public class DrawPadAllExecute2 {
             pixelRunnable.setOnLanSongSDKCompletedListener(listener);
         }
     }
+
     /**
      * 错误回调
      * @param listener
@@ -1048,14 +1026,12 @@ public class DrawPadAllExecute2 {
             commonRunnable.cancel();
             commonRunnable.release();
             commonRunnable =null;
-            success =false;
         }else if(pixelRunnable !=null){
             pixelRunnable.cancel();
             pixelRunnable.release();
             pixelRunnable =null;
-            success =false;
         }
-
+        success =false;
     }
     /**
      * 释放;
@@ -1133,7 +1109,6 @@ public class DrawPadAllExecute2 {
      layer3.setPosition(LSOLayerPosition.RIGHT_TOP);
 
 
-
      layer1.setMaskBitmapWithRecycle(BitmapFactory.decodeResource(getResources(),R.drawable.ls_logo),true);
      allExecute.play();
 
@@ -1173,41 +1148,41 @@ public class DrawPadAllExecute2 {
 
      private void imgToVideo() {
      try {
-     DrawPadAllExecute2 allExecute2 = new DrawPadAllExecute2(getApplicationContext(), 720, 1280, 10*1000*1000);
-     allExecute2.setFrameRate(29);
-     Bitmap bgBitmap = Bitmap.createBitmap(720, 1280,Bitmap.Config.ARGB_8888);
-     bgBitmap.eraseColor(Color.parseColor("#009900"));
-     allExecute2.addBitmapLayer(bgBitmap);
+         DrawPadAllExecute2 allExecute2 = new DrawPadAllExecute2(getApplicationContext(), 720, 1280, 10*1000*1000);
+         allExecute2.setFrameRate(29);
+         Bitmap bgBitmap = Bitmap.createBitmap(720, 1280,Bitmap.Config.ARGB_8888);
+         bgBitmap.eraseColor(Color.parseColor("#009900"));
+         allExecute2.addBitmapLayer(bgBitmap);
 
 
-     List<String> path2 = new ArrayList<>();
-     for (int i = 1; i < 307; i++) {
-     String path ="/sdcard/TmpVideoMattingImg/"+ i + ".png";
-     path2.add(path);
-     }
+         List<String> path2 = new ArrayList<>();
+         for (int i = 1; i < 307; i++) {
+         String videoPath ="/sdcard/TmpVideoMattingImg/"+ i + ".png";
+         path2.add(videoPath);
+         }
 
-     allExecute2.addBitmapListLayer(path2, (int) 29);
-
-
-     allExecute2.setOnLanSongSDKProgressListener(new OnLanSongSDKProgressListener() {
-    @Override
-    public void onLanSongSDKProgress(long ptsUs, int percent) {
-    LSOLog.e("blackVideo7------>" + percent);
-    }
-    });
-     allExecute2.setOnLanSongSDKCompletedListener(new OnLanSongSDKCompletedListener() {
-    @Override
-    public void onLanSongSDKCompleted(String dstVideo) {
-
-    MediaInfo.checkFile(dstVideo);
-    }
-    });
-     allExecute2.start();
+         allExecute2.addBitmapListLayer(path2, (int) 29);
 
 
-     } catch (Exception e) {
-     e.printStackTrace();
-     }
+         allExecute2.setOnLanSongSDKProgressListener(new OnLanSongSDKProgressListener() {
+        @Override
+        public void onLanSongSDKProgress(long ptsUs, int percent) {
+        LSOLog.e("blackVideo7------>" + percent);
+        }
+        });
+         allExecute2.setOnLanSongSDKCompletedListener(new OnLanSongSDKCompletedListener() {
+        @Override
+        public void onLanSongSDKCompleted(String dstVideo) {
+
+        MediaInfo.checkFile(dstVideo);
+        }
+        });
+         allExecute2.start();
+
+
+         } catch (Exception e) {
+         e.printStackTrace();
+         }
      }
      */
 }

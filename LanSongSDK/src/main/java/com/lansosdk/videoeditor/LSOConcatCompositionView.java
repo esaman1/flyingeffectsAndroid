@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.SurfaceTexture;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -32,6 +33,7 @@ import com.lansosdk.box.OnLanSongSDKExportProgressListener;
 import com.lansosdk.box.OnLanSongSDKPlayCompletedListener;
 import com.lansosdk.box.OnLanSongSDKPlayProgressListener;
 import com.lansosdk.box.OnLanSongSDKTimeChangedListener;
+import com.lansosdk.box.OnLanSongSDKUserSelectedLayerListener;
 
 import java.util.Arrays;
 import java.util.List;
@@ -187,16 +189,16 @@ public class LSOConcatCompositionView extends FrameLayout {
 
 
     /**
-     * 设置容器的大小, 在设置后, 我们会根据这个大小来调整 这个类的大小.
-     * 从而让画面不变形;
+     * 设置容器的宽度和高度;
      *
-     * @param width
-     * @param height
-     * @param listener
+     * 在设置后, 我们会根据这个大小来调整 这个类的大小, 从而让画面不变形;
+     *
+     * @param width 合成容器的宽度
+     * @param height 合成容器的高度
+     * @param listener 自适应屏幕后的回调
      */
     public void setCompositionSizeAsync(int width, int height, OnCompositionSizeReadyListener listener) {
 
-//        这里有设置的容器尺寸, 和实际显示的尺寸;
         if (width * height > 1088 * 1920) {
             LSOLog.e("setCompositionSizeAsync error. max is1080P. 容器的分辨率当前不支持大于1080P.(输入的视频可以大于,但生成的视频不能大于1080P)");
             return;
@@ -237,11 +239,6 @@ public class LSOConcatCompositionView extends FrameLayout {
         }
     }
 
-    //LSTODO 检查用户设置的合成大小, 不让客户随意设置宽高;
-//    private float[] compSize={544f/960f,720f/1280f,1088/1920f,}
-//    private boolean checkCompsize(int userWidth,int userHeight){
-//        if(userHeight)
-//    }
     private void sendCompositionSizeListener() {
         if (sizeChangedListener != null) {
             sizeChangedListener.onSizeReady();
@@ -307,18 +304,7 @@ public class LSOConcatCompositionView extends FrameLayout {
 
 
     //-------------------旋转移动缩放------------------------
-    private final int MOVE_TYPE_NONE = 0;
-    private final int MOVE_TYPE_MOVE = 1;
-    private final int MOVE_TYPE_SCALE = 2;
-
-
-
-    // 移动过程中临时变量
-
-    private int moveType = MOVE_TYPE_NONE;
-
     public boolean onTextureViewTouchEvent(MotionEvent event) {
-
         if(renderer!=null){
             renderer.onTextureViewTouchEvent(event);
         }
@@ -336,13 +322,10 @@ public class LSOConcatCompositionView extends FrameLayout {
      * @param listener 异步增加好后的回调, 里面的List Layer是当前 List<LSOAsset>对应生成的图层对象
      * @return
      */
-    public boolean addConcatLayerListAsync(List<LSOAsset> assets, OnLanSongSDKAddVideoProgressListener listener) {
+    public void addConcatLayerListAsync(List<LSOAsset> assets, OnLanSongSDKAddVideoProgressListener listener) {
         createRender();
         if (renderer != null && setup()) {
-            userVideoProgressListener = listener;
-            return renderer.addConcatLayerListAsync(assets, bodyVideoProgressListener);
-        } else {
-            return false;
+            renderer.addConcatLayerListAsync(assets, listener);
         }
     }
 
@@ -354,59 +337,28 @@ public class LSOConcatCompositionView extends FrameLayout {
      * @param listener 异步增加好后的回调, 里面的List Layer是当前 LSOAsset对应生成的图层对象
      * @return
      */
-    public boolean addConcatLayerAsync(LSOAsset asset, OnLanSongSDKAddVideoProgressListener listener) {
+    public void addConcatLayerAsync(LSOAsset asset, OnLanSongSDKAddVideoProgressListener listener) {
         createRender();
         if (renderer != null && setup()) {
-            userVideoProgressListener = listener;
-            return renderer.addConcatLayerListAsync(Arrays.asList(asset), bodyVideoProgressListener);
-        } else {
-            return false;
+            renderer.addConcatLayerListAsync(Arrays.asList(asset), listener);
         }
     }
 
     /**
      * 插入拼接图层;
      *
-     * @param videoArray
+     * @param assetArray
      * @param atCompUs
      * @param listener1
      * @return
      */
-    public boolean insertConcatLayerListAsync(List<LSOAsset> videoArray, long atCompUs, OnLanSongSDKAddVideoProgressListener listener1) {
+    public void insertConcatLayerListAsync(List<LSOAsset> assetArray, long atCompUs, OnLanSongSDKAddVideoProgressListener listener1) {
         if (renderer != null) {
-            userVideoProgressListener = listener1;
-            return renderer.insertConcatLayerListAsync(videoArray, atCompUs, bodyVideoProgressListener);
-        } else {
-            return false;
+            renderer.insertConcatLayerListAsync(assetArray, atCompUs, listener1);
         }
     }
 
-    private OnLanSongSDKAddVideoProgressListener bodyVideoProgressListener = new OnLanSongSDKAddVideoProgressListener() {
-        @Override
-        public void onAddVideoProgress(int percent, int numberIndex, int totalNumber) {
-            if (userVideoProgressListener != null) {
-                userVideoProgressListener.onAddVideoProgress(percent, numberIndex, totalNumber);
-            }
-        }
 
-        @Override
-        public void onAddVideoCompleted(List layers) {
-
-            //LSTODO增加的图片和视频暂时不支持旋转移动缩放;
-//            List<LSOLayer> layerList=layers;
-//            for (LSOLayer layer: layerList){
-//                addToTouchView(layer);
-//            }
-
-
-            if (userVideoProgressListener != null) {
-                userVideoProgressListener.onAddVideoCompleted(layers);
-            }
-
-        }
-    };
-
-    private OnLanSongSDKAddVideoProgressListener userVideoProgressListener = null;
 
     /**
      * 替换拼接图层;
@@ -416,12 +368,9 @@ public class LSOConcatCompositionView extends FrameLayout {
      * @param listener     异步替换;
      * @return
      */
-    public boolean replaceConcatLayerListAsync(LSOAsset asset, LSOLayer replaceLayer, OnLanSongSDKAddVideoProgressListener listener) {
+    public void replaceConcatLayerListAsync(LSOAsset asset, LSOLayer replaceLayer, OnLanSongSDKAddVideoProgressListener listener) {
         if (renderer != null) {
-            userVideoProgressListener = listener;
-            return renderer.replaceConcatLayerListAsync(asset, replaceLayer, bodyVideoProgressListener);
-        } else {
-            return false;
+            renderer.replaceConcatLayerListAsync(asset, replaceLayer, listener);
         }
     }
 
@@ -448,14 +397,11 @@ public class LSOConcatCompositionView extends FrameLayout {
      *
      * @param videoAsset 多个视频资源的数组
      */
-    public boolean addVideoLayerAsync(LSOVideoAsset videoAsset, long atCompUs,
+    public void addVideoLayerAsync(LSOVideoAsset videoAsset, long atCompUs,
                                       OnLanSongSDKAddVideoProgressListener listener1) {
         createRender();
         if (renderer != null && setup() && videoAsset != null) {
-            userVideoProgressListener = listener1;
-            return renderer.addVideoLayerAsync(videoAsset, atCompUs, bodyVideoProgressListener);
-        } else {
-            return false;
+            renderer.addVideoLayerAsync(videoAsset, atCompUs, listener1);
         }
     }
 
@@ -514,7 +460,6 @@ public class LSOConcatCompositionView extends FrameLayout {
         if (renderer != null && setup()) {
             LSOBitmapLayer layer = renderer.addBitmapLayer(asset, atCompUs);
             return layer;
-
         } else {
             return null;
         }
@@ -617,11 +562,12 @@ public class LSOConcatCompositionView extends FrameLayout {
     }
 
     /**
-     * 删除所有的图层;
+     * 删除所有的叠加图层.
+     * 叠加图层有:图片图层, gif图层, 图片序列图层等;
      */
-    public void removeAllLayers() {
+    public void removeAllOverlayLayers() {
         if (renderer != null) {
-            renderer.removeAllLayers();
+            renderer.removeAllOverlayLayers();
         }
     }
 
@@ -671,7 +617,6 @@ public class LSOConcatCompositionView extends FrameLayout {
             renderer.setBackGroundColor(padBGRed, padBGGreen, padBGBlur, 1.0f);
         }
     }
-
     /**
      * 把一张图片作为背景;
      *
@@ -840,16 +785,44 @@ public class LSOConcatCompositionView extends FrameLayout {
             renderer.setOnLanSongSDKExportCompletedListener(listener);
         }
     }
+    /**
+     * 容器中图层有点击事件, 当选中后, 可以移动旋转缩放;
+     * 这里监听是哪个图层被点击了, 或全部取消;
+     * @param listener
+     */
+    public void setOnLanSongSDKUserSelectedLayerListener(OnLanSongSDKUserSelectedLayerListener listener){
+        createRender();
+        if(renderer!=null){
+            renderer.setOnLanSongSDKUserSelectedLayerListener(listener);
+        }
+    }
 
-    private OnLanSongSDKErrorListener bodyErrorListener;
+    /**
+     * 当用户通过时间轴选中一个图层后, 可通过这里设置, 让内部有选中状态;
+     * @param layer 图层选中;
+     */
+    public void setSelectLayer(LSOLayer layer){
+        if(renderer!=null){
+            renderer.setSelectLayer(layer);
+        }
+    }
+    /**
+     * 设置所有的图层禁止/启动 touch事件
+     * @param is 是否禁止/ 开启
+     */
+    public void setAllLayerTouchEnable(boolean is){
+        if(renderer!=null){
+            renderer.setAllLayerTouchEnable(is);
+        }
+    }
+
     private OnLanSongSDKErrorListener userErrorListener;
-
     /**
      * 错误监听
      */
     public void setOnLanSongSDKErrorListener(OnLanSongSDKErrorListener listener) {
         createRender();
-        userErrorListener = listener;
+        userErrorListener=listener;
     }
 
     /**
@@ -883,14 +856,46 @@ public class LSOConcatCompositionView extends FrameLayout {
 
     /**
      * 开始导出.
+     *
      * 可设置导出分辨率.
      *
-     * @param width
-     * @param height
+     * 如果导出分辨率和容器分辨率不成比例, 则画面会变形;
+     *
+     * @param width 导出分辨率宽度
+     * @param height 导出分辨率 高度;
      */
     public void startExport(int width, int height) {
         if (renderer != null) {
-            renderer.startExport(width, height);
+            float ratio = (float) width / (float) height;
+            float compRatio = (float) compWidth / (float) compHeight;
+
+            if (Math.abs(ratio - compRatio) > 0.01f) {
+                LSOLog.e("导出分辨率和容器的分辨率不成比例, 可能导出的会变形, 请注意!!");
+            }
+            int width2=width;
+            int height2=height;
+
+            if(width2*height2<320*320){
+                width2=270;
+                height2=480;
+                LSOLog.e("设置错误, 这里错误的认为导出为竖形");
+            }
+
+            if(width%16!=0 || height %16 !=0) {
+                width2 = make16Multi(width);
+                height2 =make16Multi(height);
+            }
+            renderer.startExport(width2, height2);
+        }
+    }
+    public static int make16Multi(int value) {
+        if (value < 16) {
+            return value;
+        } else {
+            value += 8;
+            int val2 = value / 16;
+            val2 *= 16;
+            return val2;
         }
     }
 
@@ -904,7 +909,6 @@ public class LSOConcatCompositionView extends FrameLayout {
             renderer.seekToTimeUs(timeUs);
         }
     }
-
     /**
      * 暂停
      */
