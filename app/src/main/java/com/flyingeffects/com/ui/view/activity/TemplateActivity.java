@@ -128,7 +128,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private List<String> originalPath;
     private String templateFilePath;
 
+
+
+
+
     /**
+     *
+     *
      * 底部按钮数量
      */
     private int bottomButtonCount;
