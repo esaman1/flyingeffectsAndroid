@@ -27,6 +27,8 @@ import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
 import com.lansosdk.box.ExtractVideoFrame;
 import com.lansosdk.box.LSOBitmapAsset;
+import com.lansosdk.box.LSOVideoOption;
+import com.lansosdk.box.VideoFrameLayer;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.megvii.segjni.SegJni;
@@ -339,6 +341,69 @@ public class VideoMattingModel {
             callback.isSuccess(false, "","");
         }
     }
+
+
+
+
+
+
+
+
+    private void test( ){
+        long AllTime = videoInfo.getDuration() * 1000;
+        DrawPadAllExecute2 execute = null;
+        try {
+            execute = new DrawPadAllExecute2(BaseApplication.getInstance(), DRAWPADWIDTH, DRAWPADHEIGHT, AllTime);
+            execute.setFrameRate(FRAME_RATE);
+            execute.setEncodeBitrate(5 * 1024 * 1024);
+            execute.setOnLanSongSDKErrorListener(message -> LogUtil.d("OOM", "错误信息为" + message));
+            execute.setOnLanSongSDKProgressListener((l, i) -> {
+                float f_progress = (i / (float) 100) * 5;
+                progress = (int) (90 + f_progress);
+                handler.sendEmptyMessage(1);
+            });
+            DrawPadAllExecute2 finalExecute = execute;
+            execute.setOnLanSongSDKCompletedListener(exportPath -> {
+                finalExecute.removeAllLayer();
+                finalExecute.release();
+                LogUtil.d("OOM", "合成原图成功");
+                String albumPath = cacheCutVideoPath + "/noMatting.mp4";
+                File file = new File(albumPath);
+                if (file.exists()) {
+                    boolean isDeleted = file.delete();
+                    LogUtil.d("OOM", "" + isDeleted);
+                }
+                try {
+                    FileUtil.copyFile(new File(exportPath), albumPath);
+                    Observable.just(0).subscribeOn(Schedulers.io()).subscribe(integer -> addFrameCompoundVideo());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+            LSOVideoOption  option = null;
+            try {
+                option = new LSOVideoOption(videoPath);
+                option.setAudioMute();
+                execute.addVideoLayer(option);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            execute.start();
+
+       } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+
+
+
+    }
+
+
+
+
 
     private MattingImage mattingImage = new MattingImage();
 
