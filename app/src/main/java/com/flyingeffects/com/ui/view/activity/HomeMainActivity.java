@@ -460,6 +460,7 @@ public class HomeMainActivity extends FragmentActivity {
                     if (menu1F == null) {
                         menu1F = new FragForTemplate();
                     }
+
                     if (!menu1F.isAdded() && !menu1F.isVisible() && !menu1F.isRemoving()) {
                         fragmentTransaction.replace(R.id.fl_show, menu1F, menu1F.getClass().getName()).commitAllowingStateLoss();
                     }

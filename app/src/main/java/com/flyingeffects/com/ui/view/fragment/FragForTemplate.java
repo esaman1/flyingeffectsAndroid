@@ -40,6 +40,8 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
     private List<TemplateType> data;
     FragmentManager manager;
 
+    private int nowChooseIndex;
+
 
     @Override
     protected int getContentLayout() {
@@ -69,11 +71,12 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
         if (data == null || data.size() == 0) {
             Presenter.getFragmentList();
         } else {
-            if(viewpager!=null&&tabLayout!=null){
-                viewpager.setCurrentItem(0);
-                tabLayout.setCurrentTab(0);
-            }
+
             setFragmentList(data);
+            if(viewpager!=null&&tabLayout!=null){
+                viewpager.setCurrentItem(nowChooseIndex);
+                tabLayout.setCurrentTab(nowChooseIndex);
+            }
         }
     }
 
@@ -108,6 +111,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
                     @Override
                     public void onPageSelected(int i) {
+                        nowChooseIndex=i;
                         if (i <= data.size() - 1) {
                             statisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
                         }

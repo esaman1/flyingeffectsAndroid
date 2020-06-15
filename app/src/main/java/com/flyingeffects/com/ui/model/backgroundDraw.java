@@ -195,7 +195,7 @@ public class backgroundDraw {
 //            VideoFrameLayer bgLayer=execute.addVideoLayer(option,0, Long.MAX_VALUE, true, true);
 //            bgLayer.setScaledToPadSize();
             option = new LSOVideoOption(videoPath);
-
+            option.setLooping(true);
             if (!TextUtils.isEmpty(videoVoice)) {
                 option.setAudioMute();
             }

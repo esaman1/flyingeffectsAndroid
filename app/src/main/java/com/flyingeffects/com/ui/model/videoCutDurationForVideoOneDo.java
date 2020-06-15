@@ -156,8 +156,9 @@ public class videoCutDurationForVideoOneDo {
                         long durationUs = (long) (duration * 1000);
                         long endDuration=durationUs + startDuration;
                         option.setCutDurationUs(startDuration, endDuration);
-                        final VideoFrameLayer[] videoLayer = {execute.addVideoLayer(option)};
-                        videoLayer[0].setScaleType(LSOScaleType.VIDEO_SCALE_TYPE);
+                        final VideoFrameLayer videoLayer = execute.addVideoLayer(option);
+                        videoLayer.setScaleType(LSOScaleType.VIDEO_SCALE_TYPE);
+
 //                        CanvasLayer canvasLayer = execute.addCanvasLayer();
 //                        canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
 //                            if (currentTime >allDuration*1000) {

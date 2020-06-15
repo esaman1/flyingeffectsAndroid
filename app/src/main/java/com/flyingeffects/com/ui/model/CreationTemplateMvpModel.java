@@ -388,42 +388,51 @@ public class CreationTemplateMvpModel {
             targetStickerView = (StickerView) viewLayerRelativeLayout.getChildAt(nowChooseStickerPosition);
         }
 
-        if (isClearAllAnim) {
-            //贴纸还原,显示到之前的位置
-            ToastUtil.showToast("清理全部动画");
-            for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
-                ((StickerView) viewLayerRelativeLayout.getChildAt(y)).setChooseAnimId(AnimType.NULL);
-            }
-            deleteSubLayerSticker();
-            stopAllAnim();
-        } else {
-            if(animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType())>0){
-                for (int x = 1; x <= animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType()); x++) {
-                    //通过动画属性得到需要分身的数量，然后复制出贴纸在数组里面nowChooseSubLayerAnimList，最后需要删除
-                    LogUtil.d("startPlayAnim", "当前动画复制的主id为" + targetStickerView.getId());
-                    if (!TextUtils.isEmpty(targetStickerView.getClipPath())) {
-                        //gif 贴纸，没得抠图
-                        copyGif(targetStickerView.getClipPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true);
-                    } else {
-                        copyGif(targetStickerView.getResPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true);
+        if(targetStickerView!=null){
+            if (isClearAllAnim) {
+                //贴纸还原,显示到之前的位置
+                ToastUtil.showToast("清理全部动画");
+                for (int y = 0; y < viewLayerRelativeLayout.getChildCount(); y++) {
+                    ((StickerView) viewLayerRelativeLayout.getChildAt(y)).setChooseAnimId(AnimType.NULL);
+                }
+                deleteSubLayerSticker();
+                stopAllAnim();
+            } else {
+                if(animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType())>0){
+                    for (int x = 1; x <= animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType()); x++) {
+                        //通过动画属性得到需要分身的数量，然后复制出贴纸在数组里面nowChooseSubLayerAnimList，最后需要删除
+                        LogUtil.d("startPlayAnim", "当前动画复制的主id为" + targetStickerView.getId());
+                        if (!TextUtils.isEmpty(targetStickerView.getClipPath())) {
+                            //gif 贴纸，没得抠图
+                            copyGif(targetStickerView.getClipPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true);
+                        } else {
+                            copyGif(targetStickerView.getResPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true);
+                        }
+                        if (x == animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType())) {
+                            ArrayList<StickerView> list = new ArrayList<>();
+                            LogUtil.d("OOM", "sublayerListPosition" + sublayerListPosition);
+                            list.addAll(nowChooseSubLayerAnimList);
+                            sublayerListForBitmapLayer.put(sublayerListPosition, list);
+                            StartAnimModel startAnimModel = new StartAnimModel(animCollect);
+                            targetStickerView.setChooseAnimId(animType);
+                            delayedToStartAnim(startAnimModel, animType, targetStickerView, sublayerListPosition, isFromPreview);
+                            sublayerListPosition++;
+                        }
                     }
-                    if (x == animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType())) {
-                        ArrayList<StickerView> list = new ArrayList<>();
-                        LogUtil.d("OOM", "sublayerListPosition" + sublayerListPosition);
-                        list.addAll(nowChooseSubLayerAnimList);
-                        sublayerListForBitmapLayer.put(sublayerListPosition, list);
+                }else{
                         StartAnimModel startAnimModel = new StartAnimModel(animCollect);
                         targetStickerView.setChooseAnimId(animType);
                         delayedToStartAnim(startAnimModel, animType, targetStickerView, sublayerListPosition, isFromPreview);
-                        sublayerListPosition++;
-                    }
                 }
-            }else{
-                StartAnimModel startAnimModel = new StartAnimModel(animCollect);
-                targetStickerView.setChooseAnimId(animType);
-                delayedToStartAnim(startAnimModel, animType, targetStickerView, sublayerListPosition, isFromPreview);
+            }
+        }else{
+            if (!isFromPreview) {
+                WaitingDialog.closePragressDialog();
             }
         }
+
+
+
 
     }
 

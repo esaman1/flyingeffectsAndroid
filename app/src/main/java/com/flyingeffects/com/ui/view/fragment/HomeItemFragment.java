@@ -2,8 +2,10 @@ package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -19,6 +21,7 @@ import com.flyingeffects.com.ui.presenter.home_fag_itemMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.NetworkUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -66,11 +69,11 @@ public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, V
         initRecycler();
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
 
-//        if(getActivity()!=null){
-//            if(NetworkUtils.isNetworkAvailable(getActivity())){
-//                Presenter.requestData(templateId, actTag);
-//            }
-//        }
+        if (getActivity() != null) {
+            if (NetworkUtils.isNetworkAvailable(getActivity())) {
+                Presenter.requestData(templateId, actTag);
+            }
+        }
     }
 
 
@@ -114,8 +117,15 @@ public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, V
     public void onResume() {
         super.onResume();
         if (getActivity() != null) {
-            Presenter.requestData(templateId, actTag);
+            if (allData == null||allData.size()==0) {
+                LogUtil.d("OOM","allData==null");
+                Presenter.requestData(templateId, actTag);
+            }else{
+                LogUtil.d("OOM","allData!=null");
+            }
         }
+
+
     }
 
 
