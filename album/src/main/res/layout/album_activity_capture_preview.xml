@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/albumColorBlack">
@@ -100,7 +101,7 @@
         app:layout_constraintHorizontal_bias="0.55"
         app:layout_constraintEnd_toStartOf="@id/iv_play"/>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_play_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -109,7 +110,7 @@
         android:paddingTop="@dimen/album_dp_2"
         android:paddingEnd="@dimen/album_dp_12"
         android:paddingBottom="@dimen/album_dp_2"
-        android:text="123456"
+        tools:text="123456"
         android:textColor="@color/albumColorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/iv_play"

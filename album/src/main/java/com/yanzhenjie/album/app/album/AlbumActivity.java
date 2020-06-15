@@ -251,7 +251,6 @@ public class AlbumActivity extends BaseActivity implements
             }
             case CODE_TO_CAPTURE:
                 if (resultCode == RESULT_OK) {
-                    //todo 接受从拍摄页面返回的视频文件url
                     //从拍摄页面返回的视频地址
                     String captureUrl = data.getStringExtra(CaptureActivity.RESULT_FILE_PATH);
                     AlbumFile albumFile = new AlbumFile();

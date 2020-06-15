@@ -75,6 +75,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 拍摄页面
+ *
+ * @author shijiaqi
+ * 2020.6.15
+ */
 public class CaptureActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "CaptureActivity";
 
@@ -119,7 +125,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     //录像中的判断
     private boolean mRecording = false;
     //当前时长
-    private int mRecordingTime = 0;
+    private float mRecordingTime = 0;
     //录像总时长
     private int mTotalRecordingTime = 0;
     //计时器相关
@@ -128,7 +134,6 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     private int mTime;
 
     private final Handler mHandler = new Handler();
-    private final Handler mRecordingHandler = new Handler();
     private String mTitle;
     private String mMusicPath;
 
@@ -169,8 +174,9 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             }
 
             @Override
-            public void onRecording(int progress) {
-                setProgressText(progress);
+            public void onRecording(float progress) {
+                mRecordingTime = progress;
+                setProgressText(mRecordingTime);
             }
 
             @Override
@@ -211,16 +217,17 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     protected void onResume() {
         super.onResume();
         //从预览页回来的话就把时间归0
-        setProgressText(0);
+        mRecordingTime = 0;
+        setProgressText(mRecordingTime);
     }
-
 
     private void getBundle() {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         if (bundle != null) {
             long total = bundle.getLong(Album.VIDEOTIME);
-            mTotalRecordingTime = (int) (total / 1000);
+            Log.d(TAG, "getBundle:  total = " + total);
+            mTotalRecordingTime = (int) ((total + 500) / 1000);
             mTitle = bundle.getString(Album.MODEL_TITLE);
             mMusicPath = bundle.getString(Album.MUSIC_PATH);
             mMusicPath = mMusicPath + "bj.mp3";
@@ -299,7 +306,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
 
         mTvCaptureTime = findViewById(R.id.tv_capture_time);
 
-        mTvCaptureTime.setText(String.format(getString(R.string.album_record_time), mRecordingTime, mTotalRecordingTime));
+        mTvCaptureTime.setText(String.format(getString(R.string.album_record_time), 0, mTotalRecordingTime));
         mTvTimer = findViewById(R.id.tv_timer);
         mIvFocus = findViewById(R.id.iv_focus);
     }
@@ -331,7 +338,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         outputFilePath = file.getAbsolutePath();
         String mimeType = takingPicture ? "image/jpeg" : "video/mp4";
         MediaScannerConnection.scanFile(this, new String[]{outputFilePath}, new String[]{mimeType}, null);
-        CapturePreviewActivity.startActivityForResult(this, outputFilePath, !takingPicture,mTitle);
+        CapturePreviewActivity.startActivityForResult(this, outputFilePath, mMusicPath, !takingPicture, mTitle, mRecordingTime);
     }
 
     @Override
@@ -465,13 +472,14 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     //设置倒计时的文字
-    private void setProgressText(int progress) {
-        String progressStr = progress + "s / " + mTotalRecordingTime + "s";
+    private void setProgressText(float progress) {
+        int prgressInt = (int) (progress + 0.5);
+        String progressStr = prgressInt + "s / " + mTotalRecordingTime + "s";
         SpannableStringBuilder spannable = new SpannableStringBuilder(progressStr);
-        if (progress >= 0 && progress < 10) {
+        if (prgressInt >= 0 && prgressInt < 10) {
             spannable.setSpan(new ForegroundColorSpan(Color.parseColor("#5496FF")), 0, 2,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        } else if (progress >= 10 && progress < 100) {
+        } else if (prgressInt >= 10 && prgressInt < 100) {
             spannable.setSpan(new ForegroundColorSpan(Color.parseColor("#5496FF")), 0, 3,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         } else {

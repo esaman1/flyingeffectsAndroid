@@ -25,7 +25,7 @@ import com.yanzhenjie.album.util.PxUtils;
  */
 public class RecordView extends View implements View.OnClickListener {
 
-    private static final int PROGRESS_INTERVAL = 1000;
+    private static final int PROGRESS_INTERVAL = 200;
 
     private Paint fillPaint;
     private Paint progressPaint;
@@ -38,7 +38,7 @@ public class RecordView extends View implements View.OnClickListener {
     private final int progressColor;
     private final int progressTrackColor;
     private int fillColor;
-    private int progressValue;
+    private float progressValue = 0f;
     private boolean isRecording;
     private Bitmap mIconCapture;
     private onRecordListener mListener;
@@ -74,7 +74,7 @@ public class RecordView extends View implements View.OnClickListener {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                progressValue++;
+                progressValue = progressValue + 0.2f;
                 postInvalidate();
                 if (progressValue <= progressMaxValue) {
                     sendEmptyMessageDelayed(0, PROGRESS_INTERVAL);
@@ -141,7 +141,7 @@ public class RecordView extends View implements View.OnClickListener {
     }
 
     public void setMaxDuration(int maxDuration) {
-        this.progressMaxValue = maxDuration * 1000 / PROGRESS_INTERVAL;
+        this.progressMaxValue = maxDuration;
     }
 
     public void setOnRecordListener(onRecordListener listener) {
@@ -170,7 +170,7 @@ public class RecordView extends View implements View.OnClickListener {
     public interface onRecordListener {
         void onClick();
 
-        void onRecording(int progress);
+        void onRecording(float progress);
 
         void onFinish();
     }
