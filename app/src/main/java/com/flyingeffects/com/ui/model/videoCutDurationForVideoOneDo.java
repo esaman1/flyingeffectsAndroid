@@ -158,19 +158,19 @@ public class videoCutDurationForVideoOneDo {
                         option.setCutDurationUs(startDuration, endDuration);
                         final VideoFrameLayer[] videoLayer = {execute.addVideoLayer(option)};
                         videoLayer[0].setScaleType(LSOScaleType.VIDEO_SCALE_TYPE);
-                        CanvasLayer canvasLayer = execute.addCanvasLayer();
-                        canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
-                            if (currentTime >allDuration*1000) {
-                                LogUtil.d("OOM","隐藏当前图层"+"endDuration="+endDuration+"currentTime="+currentTime);
-                                //需要切换新的图了
-                                if(videoLayer[0] !=null){
-                                    execute.removeLayer(videoLayer[0]);
-                                    videoLayer[0].setVisibility(View.GONE);
-                                    videoLayer[0] =null;
-                                }
-
-                            }
-                        });
+//                        CanvasLayer canvasLayer = execute.addCanvasLayer();
+//                        canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
+//                            if (currentTime >allDuration*1000) {
+//                                LogUtil.d("OOM","隐藏当前图层"+"endDuration="+endDuration+"currentTime="+currentTime);
+//                                //需要切换新的图了
+//                                if(videoLayer[0] !=null){
+//                                    execute.removeLayer(videoLayer[0]);
+//                                    videoLayer[0].setVisibility(View.GONE);
+//                                    videoLayer[0] =null;
+//                                }
+//
+//                            }
+//                        });
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
