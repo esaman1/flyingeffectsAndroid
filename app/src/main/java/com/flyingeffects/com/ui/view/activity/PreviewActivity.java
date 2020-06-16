@@ -152,9 +152,14 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
             tv_make.setText("使用背景");
             findViewById(R.id.iv_download_bj).setVisibility(View.VISIBLE);
         }
-        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-            findViewById(R.id.iv_download_bj).setVisibility(View.VISIBLE);
+        if (!TextUtils.isEmpty(fromTo) ) {
+            if( fromTo.equals(FromToTemplate.ISFROMBJ)||fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)){
+                findViewById(R.id.iv_download_bj).setVisibility(View.VISIBLE);
+            }
         }
+
+
+
         fromToMineCollect = getIntent().getBooleanExtra("fromToMineCollect", false);
         defaultnum = templateItem.getDefaultnum();
         is_picout = templateItem.getIs_picout();
@@ -232,9 +237,11 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 break;
             case R.id.tv_make:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(3000)) {
-                    if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                        statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "5_bj_Make", templateItem.getTitle());
-                        UiStep.isFromDownBj = true;
+                    if (!TextUtils.isEmpty(fromTo) ) {
+                        if(fromTo.equals(FromToTemplate.ISFROMBJ)||fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)){
+                            statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "5_bj_Make", templateItem.getTitle());
+                            UiStep.isFromDownBj = true;
+                        }
                     }
 
                     if (BaseConstans.hasLogin()) {
@@ -379,7 +386,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                     if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
                         statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
                         Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId());
-                    } else {
+                    } else if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)){
+                        statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
+                        Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId());
+                    }else {
                         toClosePragressDialog();
                         String videoTime = templateItem.getVideotime();
                         if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
@@ -406,6 +416,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         CompressionCuttingManage manage = new CompressionCuttingManage(PreviewActivity.this, templateId, hasCache, tailorPaths -> {
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
                 Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId());
+            }else if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)){
+                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId());
             } else {
                 toClosePragressDialog();
                 intoTemplateActivity(tailorPaths, TemplateFilePath);
@@ -420,7 +432,9 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         CompressionCuttingManage manage = new CompressionCuttingManage(PreviewActivity.this, templateId, hasCache, tailorPaths -> {
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
                 Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId());
-            } else {
+            } else if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)){
+                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId());
+            }else {
                 toClosePragressDialog();
                 intoTemplateActivity(tailorPaths, TemplateFilePath);
             }
@@ -459,6 +473,8 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     public void getCompressImgList(List<String> imgList) {
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+            Presenter.DownVideo(templateItem.getVidoefile(), imgList.get(0), templateItem.getId());
+        }else if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)){
             Presenter.DownVideo(templateItem.getVidoefile(), imgList.get(0), templateItem.getId());
         } else {
             toClosePragressDialog();
@@ -559,6 +575,10 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     private void hasLoginToNext() {
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+            LogUtil.d("OOM", "来自背景");
+            //来做背景页面
+            AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
+        }else if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)){
             LogUtil.d("OOM", "来自背景");
             //来做背景页面
             AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
