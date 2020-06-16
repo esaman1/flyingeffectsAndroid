@@ -10,6 +10,8 @@ public class new_fag_template_item implements Serializable {
         return id;
     }
 
+
+
     public void setId(String id) {
         this.id = id;
     }
@@ -175,6 +177,19 @@ public class new_fag_template_item implements Serializable {
     private String preview;
     private String reading;
     private String reading2;
+
+    public int getTemplate_id() {
+        return template_id;
+    }
+
+    public void setTemplate_id(int template_id) {
+        this.template_id = template_id;
+    }
+
+    /**
+     * 我的页面收藏id
+     */
+    private int template_id;
 
     public String getVideotime() {
         return videotime;

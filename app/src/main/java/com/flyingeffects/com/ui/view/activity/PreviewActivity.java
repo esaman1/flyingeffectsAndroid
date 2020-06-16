@@ -159,7 +159,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         defaultnum = templateItem.getDefaultnum();
         is_picout = templateItem.getIs_picout();
         nowCollectType = templateItem.getIs_collection();
-        if (nowCollectType == 1 || fromToMineCollect) {
+        if (nowCollectType == 1 ) {
             nowCollectType = 1;
             iv_zan.setImageResource(R.mipmap.zan_selected);
         }
@@ -211,10 +211,14 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_zan:
-                if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
-                    Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), 1 + "");
-                } else {
-                    Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), 2 + "");
+                if(fromToMineCollect){
+                    Presenter.collectTemplate(templateItem.getTemplate_id()+"", templateItem.getTitle(), 1 + "");
+                }else{
+                    if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
+                        Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), 1 + "");
+                    } else {
+                        Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), 2 + "");
+                    }
                 }
                 break;
             case R.id.tv_make:

@@ -267,6 +267,7 @@ public class PreviewMvpModel {
             @Override
             protected void _onError(String message) {
 //                ToastUtil.showToast(message);
+                LogUtil.d("OOM","requestTemplateDetail-error="+message);
             }
 
             @Override

@@ -71,7 +71,6 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
         if (data == null || data.size() == 0) {
             Presenter.getFragmentList();
         } else {
-
             setFragmentList(data);
             if(viewpager!=null&&tabLayout!=null){
                 viewpager.setCurrentItem(nowChooseIndex);
