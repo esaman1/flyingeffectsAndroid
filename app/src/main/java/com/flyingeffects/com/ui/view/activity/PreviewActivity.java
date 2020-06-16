@@ -212,7 +212,16 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         switch (view.getId()) {
             case R.id.iv_zan:
                 if(fromToMineCollect){
-                    Presenter.collectTemplate(templateItem.getTemplate_id()+"", templateItem.getTitle(), 1 + "");
+                    //模板收藏
+                    if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
+                        Presenter.collectTemplate(templateItem.getId()+"", templateItem.getTitle(), 1 + "");
+                    }else if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)){
+                        //我上传的背景
+                        Presenter.collectTemplate(templateItem.getTemplate_id()+"", templateItem.getTitle(), 2 + "");
+                    }else{
+                        //背景 收藏
+                        Presenter.collectTemplate(templateItem.getId()+"", templateItem.getTitle(), 2 + "");
+                    }
                 }else{
                     if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
                         Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), 1 + "");

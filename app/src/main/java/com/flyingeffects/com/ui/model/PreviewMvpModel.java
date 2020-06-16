@@ -9,6 +9,7 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -317,7 +318,8 @@ public class PreviewMvpModel {
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
             @Override
             protected void _onError(String message) {
-//                ToastUtil.showToast(message);
+                ToastUtil.showToast(message);
+//                LogUtil.d("");
             }
 
             @Override

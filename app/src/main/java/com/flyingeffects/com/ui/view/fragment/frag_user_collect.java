@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -203,7 +204,14 @@ public class frag_user_collect extends BaseFragment {
 
 
     private void initRecycler() {
-        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), 2);
+        int fromType;
+        //0 模板  1 背景 2 搜索/我的收藏 3 表示背景模板下载
+        if(!TextUtils.isEmpty(template_type)&&template_type.equals("2")){
+            fromType=1;
+        }else{
+            fromType=2;
+        }
+        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), fromType);
         layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -219,11 +227,12 @@ public class frag_user_collect extends BaseFragment {
                 }else{
                     if (template_type != null && template_type.equals("1")) {
                         intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
-                    } else {
+                    } else if(template_type != null && template_type.equals("2")) {
                         intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+                    }else{
+                        intent.putExtra("fromTo", FromToTemplate.ISFROMUPDATEBJ);
                     }
                 }
-
                 intent.putExtra("fromToMineCollect", true);
                 intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
                 startActivity(intent);
