@@ -41,7 +41,7 @@ public class AdHintActivity extends Activity {
         from = getIntent().getStringExtra("from");
         if(!TextUtils.isEmpty(from) && from.equals("isFormPreviewVideo")){
             tv_content_1.setText("「看完后就能一键保存视频」");
-            iv_btn.setImageResource(R.mipmap.ad_alert_bt);//ad_alert_bt_save
+            iv_btn.setImageResource(R.mipmap.ad_alert_bt_keep);//ad_alert_bt_save
         }else{
             tv_content_1.setText("「看完后就能制作飞闪视频」");
             iv_btn.setImageResource(R.mipmap.ad_alert_bt);
