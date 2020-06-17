@@ -562,9 +562,9 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void hasLogin(boolean hasLogin) {
-        if (!TextUtils.isEmpty(templateItem.getType()) && templateItem.getType().equals("1")) {
+        if (!TextUtils.isEmpty(templateItem.getType()) && templateItem.getType().equals("1")&&BaseConstans.getIncentiveVideo()) {
             Intent intent = new Intent(PreviewActivity.this, AdHintActivity.class);
-            intent.putExtra("from", fromTo);
+            intent.putExtra("from", "PreviewActivity");
             intent.putExtra("templateTitle", templateItem.getTitle());
             startActivity(intent);
         } else {
@@ -743,43 +743,47 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
      */
     @Subscribe
     public void onEventMainThread(showAdCallback event) {
-//            //需要激励视频
-        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-            VideoAdManager videoAdManager = new VideoAdManager();
-            videoAdManager.showVideoAd(this, AdConfigs.AD_stimulate_video, new VideoAdCallBack() {
-                @Override
-                public void onVideoAdSuccess() {
-                    LogUtil.d("OOM", "onVideoAdSuccess");
-                }
+        if(event!=null&&event.getIsFrom().equals("PreviewActivity")){
+            //需要激励视频
+            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                VideoAdManager videoAdManager = new VideoAdManager();
+                videoAdManager.showVideoAd(this, AdConfigs.AD_stimulate_video, new VideoAdCallBack() {
+                    @Override
+                    public void onVideoAdSuccess() {
+                        LogUtil.d("OOM", "onVideoAdSuccess");
+                    }
 
-                @Override
-                public void onVideoAdError(String s) {
-                    LogUtil.d("OOM", "onVideoAdError" + s);
-                }
+                    @Override
+                    public void onVideoAdError(String s) {
+                        LogUtil.d("OOM", "onVideoAdError" + s);
+                    }
 
-                @Override
-                public void onVideoAdClose() {
-                    LogUtil.d("OOM", "onVideoAdClose");
-                    hasLoginToNext();
-                }
+                    @Override
+                    public void onVideoAdClose() {
+                        LogUtil.d("OOM", "onVideoAdClose");
+                        hasLoginToNext();
+                    }
 
-                @Override
-                public void onVideoAdSkip() {
-                    LogUtil.d("OOM", "onVideoAdSkip");
-                }
+                    @Override
+                    public void onVideoAdSkip() {
+                        LogUtil.d("OOM", "onVideoAdSkip");
+                    }
 
-                @Override
-                public void onVideoAdComplete() {
-                }
+                    @Override
+                    public void onVideoAdComplete() {
+                    }
 
-                @Override
-                public void onVideoAdClicked() {
-                    LogUtil.d("OOM", "onVideoAdClicked");
-                }
-            });
-        } else {
-            hasLoginToNext();
+                    @Override
+                    public void onVideoAdClicked() {
+                        LogUtil.d("OOM", "onVideoAdClicked");
+                    }
+                });
+            } else {
+                hasLoginToNext();
+            }
         }
+
+
 
     }
 

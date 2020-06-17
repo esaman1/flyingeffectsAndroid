@@ -215,7 +215,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
                 break;
 
             case R.id.tv_save:
-
                 if (UiStep.isFromDownBj) {
                     statisticsEventAffair.getInstance().setFlag(this, "7_save");
                 } else {
@@ -223,7 +222,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
                 }
 
 
-                if (BaseConstans.isTitokChannel) {
+                if (BaseConstans.isTitokChannel&&BaseConstans.getIncentiveVideo()) {
                     Intent intent = new Intent(CreationTemplatePreviewActivity.this, AdHintActivity.class);
                     intent.putExtra("from", "isFormPreviewVideo");
                     intent.putExtra("templateTitle", "");

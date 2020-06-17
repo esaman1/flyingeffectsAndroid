@@ -306,7 +306,6 @@ public class TemplateMvpModel {
     private void renderFinish(boolean isSucceed, boolean isPreview, String outputPath) {
         LogUtil.d("OOM", "onFinish,success?=" + isSucceed + "MSG=" + isSucceed);
         WaitingDialog.closePragressDialog();
-
         if (isPreview) {
             callback.toPreview(outputPath);
         } else {
@@ -317,7 +316,6 @@ public class TemplateMvpModel {
                     intent.putExtra("templateTitle", "");
                     context.startActivity(intent);
                 }else{
-
                     albumBroadcast(outputPath);
                     showDialog(outputPath);
                     if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
