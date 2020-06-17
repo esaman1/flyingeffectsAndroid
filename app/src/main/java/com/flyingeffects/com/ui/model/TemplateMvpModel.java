@@ -37,6 +37,7 @@ import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
+import com.flyingeffects.com.ui.view.activity.AdHintActivity;
 import com.flyingeffects.com.ui.view.activity.ChooseBackgroundTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
 import com.flyingeffects.com.utils.LogUtil;
@@ -310,16 +311,33 @@ public class TemplateMvpModel {
             callback.toPreview(outputPath);
         } else {
             if (isSucceed && !isOnDestroy) {
-                albumBroadcast(outputPath);
-                showDialog(outputPath);
+                if(BaseConstans.isTitokChannel&&BaseConstans.getIncentiveVideo()){
+                    Intent intent = new Intent(context, AdHintActivity.class);
+                    intent.putExtra("from", "isFormPreviewVideo");
+                    intent.putExtra("templateTitle", "");
+                    context.startActivity(intent);
+                }else{
 
-                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-                    AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
+                    albumBroadcast(outputPath);
+                    showDialog(outputPath);
+                    if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                        AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
+                    }
                 }
-
-
             }
         }
+    }
+
+
+    public void alertAlbumUpdate(boolean isSuccess){
+        if(!isSuccess){
+            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
+            }
+        }
+        albumBroadcast(outputPathForVideoSaveToPhoto);
+        showDialog(outputPathForVideoSaveToPhoto);
+
     }
 
     /**

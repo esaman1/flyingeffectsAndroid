@@ -45,7 +45,9 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
         home_model.getButtomIcon(path);
     }
 
-
+    public void alertAlbumUpdate(boolean isSuccess){
+        home_model.alertAlbumUpdate(isSuccess);
+    }
 
 
     public void onDestroy(){

@@ -5,12 +5,15 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 
+import butterknife.BindView;
 import de.greenrobot.event.EventBus;
 
 
@@ -22,15 +25,28 @@ import de.greenrobot.event.EventBus;
 public class AdHintActivity extends Activity {
 
     String title;
-    String from ;
+    String from;
+
+    TextView tv_content_1;
+    ImageView iv_btn;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_ad_hint);
         findViewById(R.id.tv_cancle).setOnClickListener(listenner);
+        iv_btn=findViewById(R.id.iv_btn);
+        tv_content_1=findViewById(R.id.tv_content_1);
         findViewById(R.id.tv_watch_ad).setOnClickListener(listenner);
-        from=getIntent().getStringExtra("from");
-        title=getIntent().getStringExtra("templateTitle");
+        from = getIntent().getStringExtra("from");
+        if(!TextUtils.isEmpty(from) && from.equals("isFormPreviewVideo")){
+            tv_content_1.setText("「看完后就能一键保存视频」");
+            iv_btn.setImageResource(R.mipmap.ad_alert_bt);//ad_alert_bt_save
+        }else{
+            tv_content_1.setText("「看完后就能制作飞闪视频」");
+            iv_btn.setImageResource(R.mipmap.ad_alert_bt);
+        }
+        title = getIntent().getStringExtra("templateTitle");
     }
 
 
@@ -39,21 +55,21 @@ public class AdHintActivity extends Activity {
             case R.id.tv_cancle:
                 //取消
                 AdHintActivity.this.finish();
-                if(!TextUtils.isEmpty(from)&&from.equals(FromToTemplate.ISFROMTEMPLATE)){
-                    statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "mb_ad_cancel",title);
-                }else{
-                    statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "bj_ad_cancel",title);
+                if (!TextUtils.isEmpty(from) && from.equals(FromToTemplate.ISFROMTEMPLATE)) {
+                    statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "mb_ad_cancel", title);
+                } else {
+                    statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "bj_ad_cancel", title);
                 }
                 break;
 
             case R.id.tv_watch_ad:
                 //观看广告
-                if(!TextUtils.isEmpty(from)&&from.equals(FromToTemplate.ISFROMTEMPLATE)){
-                    statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "mb_ad_open",title);
-                }else{
-                    statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "bj_ad_open",title);
+                if (!TextUtils.isEmpty(from) && from.equals(FromToTemplate.ISFROMTEMPLATE)) {
+                    statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "mb_ad_open", title);
+                } else {
+                    statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "bj_ad_open", title);
                 }
-                EventBus.getDefault().post(new showAdCallback());
+                EventBus.getDefault().post(new showAdCallback(from));
                 AdHintActivity.this.finish();
                 break;
 

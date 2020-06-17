@@ -218,6 +218,27 @@ public class BaseConstans {
 
 
 
+    /**
+     * description :保存的时候是否显示激励视频
+     * creation date: 2020/6/11
+     * user : zhangtongju
+     */
+    public static void setIncentiveVideo(boolean isShowIncentiveVideo) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putBoolean("IncentiveVideo", isShowIncentiveVideo);
+    }
+
+    /**
+     * description :得到保存的时候是弹出激励视频还是弹出，true 为激励视频
+     * creation date: 2020/6/11
+     * user : zhangtongju
+     */
+    public static boolean getIncentiveVideo() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getBoolean("IncentiveVideo",true);
+    }
+
+
     public static boolean getIsNewUser() {
         if(isTitokChannel){
             return false;

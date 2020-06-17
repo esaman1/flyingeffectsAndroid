@@ -29,6 +29,7 @@ import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.PermissionUtil;
+import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.nineton.ntadsdk.NTAdSDK;
 import com.nineton.ntadsdk.itr.SplashAdCallBack;
@@ -344,12 +345,14 @@ public class WelcomeActivity extends BaseActivity {
             @Override
             protected void _onNext(List<Config> data) {
 
-//
-//                for(int i=0;i<data.size();i++){
-//                    String tet= StringUtil.beanToJSONString(data.get(i));
-//                    LogUtil.d("_onNext","i-"+i+"Config="+tet);
-//                }
+                StringBuilder sb=new StringBuilder();
 
+                for(int i=0;i<data.size();i++){
+                    String tet= StringUtil.beanToJSONString(data.get(i));
+                    sb.append(tet);
+                    LogUtil.d("_onNext","i-"+i+"Config="+tet);
+                }
+                LogUtil.d("_onNext","str="+sb.toString());
 
                 if (data != null && data.size() > 0) {
                     for (int i = 0; i < data.size(); i++) {
@@ -448,6 +451,9 @@ public class WelcomeActivity extends BaseActivity {
                         } else {
                             BaseConstans.setHasAdvertising(0);
                         }
+
+                        boolean video_ad_open = obArray.getBoolean("video_ad_open");
+                        BaseConstans.setIncentiveVideo(video_ad_open);
                     }
                 }
             }

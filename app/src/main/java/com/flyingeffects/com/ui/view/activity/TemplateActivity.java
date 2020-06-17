@@ -34,10 +34,13 @@ import com.flyingeffects.com.adapter.TemplateThumbAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.GetPathType;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.TabEntity;
 import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.showAdCallback;
+import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.AnimForViewShowAndHide;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
@@ -56,6 +59,8 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MattingVideoEnity;
+import com.nineton.ntadsdk.itr.VideoAdCallBack;
+import com.nineton.ntadsdk.manager.VideoAdManager;
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.SxveConstans;
 import com.shixing.sxve.ui.albumType;
@@ -1409,5 +1414,46 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         });
     }
 
+
+    @Subscribe
+    public void onEventMainThread(showAdCallback event) {
+        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+            VideoAdManager videoAdManager = new VideoAdManager();
+            videoAdManager.showVideoAd(this, AdConfigs.AD_save_video, new VideoAdCallBack() {
+                @Override
+                public void onVideoAdSuccess() {
+                    LogUtil.d("OOM", "onVideoAdSuccess");
+                }
+
+                @Override
+                public void onVideoAdError(String s) {
+                    LogUtil.d("OOM", "onVideoAdError"+s);
+                    presenter.alertAlbumUpdate(false);
+                }
+
+                @Override
+                public void onVideoAdClose() {
+                    presenter.alertAlbumUpdate(true);
+                }
+
+                @Override
+                public void onVideoAdSkip() {
+                    LogUtil.d("OOM", "onVideoAdSkip");
+                }
+
+                @Override
+                public void onVideoAdComplete() {
+                }
+
+                @Override
+                public void onVideoAdClicked() {
+                    LogUtil.d("OOM", "onVideoAdClicked");
+                }
+            });
+        }
+
+
+
+    }
 
 }

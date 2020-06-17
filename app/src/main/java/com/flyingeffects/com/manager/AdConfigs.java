@@ -36,6 +36,8 @@ public class AdConfigs {
 //
 //    // 激励视频
     public static final String AD_stimulate_video = "371";
+    // 保存激励视频
+    public static final String AD_save_video = "414";
 //
 //    // 激励视频背景
 //    public static final String AD_stimulate_video_bj = "281";

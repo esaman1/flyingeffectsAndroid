@@ -18,6 +18,7 @@ import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -32,7 +33,8 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.umeng.analytics.MobclickAgent;
+import com.nineton.ntadsdk.itr.VideoAdCallBack;
+import com.nineton.ntadsdk.manager.VideoAdManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,6 +43,8 @@ import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -60,6 +64,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
 
     @BindView(R.id.seekBar)
     SeekBar seekBar;
+
 
     @BindView(R.id.tv_end_time)
     TextView tv_end_time;
@@ -87,6 +92,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         imagePath = getIntent().getStringExtra("path");
         VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
         timeUtils = new timeUtils();
@@ -149,12 +155,19 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     }
 
 
-    private void saveToAlbum(String path) {
+    private void saveToAlbum(String path,boolean isAdSuccess) {
         String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
         try {
             FileUtil.copyFile(new File(path), albumPath);
             albumBroadcast(albumPath);
             showKeepSuccessDialog(albumPath);
+            if(!isAdSuccess){
+                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                    AdManager.getInstance().showCpAd(CreationTemplatePreviewActivity.this, AdConfigs.AD_SCREEN_FOR_keep);
+                }
+            }
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -210,11 +223,18 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
                 }
 
 
-                saveToAlbum(imagePath);
-
-                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-                    AdManager.getInstance().showCpAd(CreationTemplatePreviewActivity.this, AdConfigs.AD_SCREEN_FOR_keep);
+                if (BaseConstans.isTitokChannel) {
+                    Intent intent = new Intent(CreationTemplatePreviewActivity.this, AdHintActivity.class);
+                    intent.putExtra("from", "isFormPreviewVideo");
+                    intent.putExtra("templateTitle", "");
+                    startActivity(intent);
+                } else {
+                    saveToAlbum(imagePath,true);
+                    if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                        AdManager.getInstance().showCpAd(CreationTemplatePreviewActivity.this, AdConfigs.AD_SCREEN_FOR_keep);
+                    }
                 }
+
 
                 break;
 
@@ -341,6 +361,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
         super.onDestroy();
         videoStop();
         destroyTimer();
+        EventBus.getDefault().unregister(this);
     }
 
     /**
@@ -371,4 +392,49 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
             destroyTimer();
         }
     }
+
+
+
+    @Subscribe
+    public void onEventMainThread(showAdCallback event) {
+        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+            VideoAdManager videoAdManager = new VideoAdManager();
+            videoAdManager.showVideoAd(this, AdConfigs.AD_save_video, new VideoAdCallBack() {
+                @Override
+                public void onVideoAdSuccess() {
+                    LogUtil.d("OOM", "onVideoAdSuccess");
+                }
+
+                @Override
+                public void onVideoAdError(String s) {
+                    LogUtil.d("OOM", "onVideoAdError"+s);
+                    saveToAlbum(imagePath,false);
+                }
+
+                @Override
+                public void onVideoAdClose() {
+                    saveToAlbum(imagePath,true);
+                }
+
+                @Override
+                public void onVideoAdSkip() {
+                    LogUtil.d("OOM", "onVideoAdSkip");
+                }
+
+                @Override
+                public void onVideoAdComplete() {
+                }
+
+                @Override
+                public void onVideoAdClicked() {
+                    LogUtil.d("OOM", "onVideoAdClicked");
+                }
+            });
+        }
+
+
+
+    }
+
+
 }

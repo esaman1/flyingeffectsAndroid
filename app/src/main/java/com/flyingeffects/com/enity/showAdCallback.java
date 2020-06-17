@@ -1,9 +1,21 @@
 package com.flyingeffects.com.enity;
 
-public class showAdCallback {
+import java.io.Serializable;
+
+public class showAdCallback implements Serializable {
+
+    public String getIsFrom() {
+        return isFrom;
+    }
+
+    public void setIsFrom(String isFrom) {
+        this.isFrom = isFrom;
+    }
+
+    String isFrom;
 
 
-    public void showAdCallback() {
-
+    public  showAdCallback(String isFrom) {
+        this.isFrom=isFrom;
     }
 }
