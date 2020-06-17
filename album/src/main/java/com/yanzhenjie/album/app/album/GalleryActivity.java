@@ -137,11 +137,8 @@ public class GalleryActivity extends BaseActivity implements Contract.GalleryPre
                     sCheckedCount++;
                 }
             }
-
             setCheckedCount();
         }
-
-
     }
 
     @Override

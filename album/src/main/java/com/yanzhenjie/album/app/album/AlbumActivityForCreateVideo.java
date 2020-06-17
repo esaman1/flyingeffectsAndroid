@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 
+import com.google.android.material.tabs.TabLayout;
 import com.yanzhenjie.album.Action;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.AlbumFile;
@@ -205,8 +206,7 @@ public class AlbumActivityForCreateVideo extends BaseActivity implements
         } else {
             showFolderAlbumFiles(0);
             int count = mCheckedList.size();
-            mView.setCheckedCount(count);
-            mView.setSubTitle(count + "/" + mLimitCount);
+            mView.setCheckedCountAndTotal(count,mLimitCount);
         }
     }
 
@@ -395,8 +395,7 @@ public class AlbumActivityForCreateVideo extends BaseActivity implements
 
         mCheckedList.add(albumFile);
         int count = mCheckedList.size();
-        mView.setCheckedCount(count);
-        mView.setSubTitle(count + "/" + mLimitCount);
+        mView.setCheckedCountAndTotal(count,mLimitCount);
 
         switch (mChoiceMode) {
             case Album.MODE_SINGLE: {
@@ -452,8 +451,7 @@ public class AlbumActivityForCreateVideo extends BaseActivity implements
 
     private void setCheckedCount() {
         int count = mCheckedList.size();
-        mView.setCheckedCount(count);
-        mView.setSubTitle(count + "/" + mLimitCount);
+        mView.setCheckedCountAndTotal(count,mLimitCount);
     }
 
     @Override
@@ -549,6 +547,16 @@ public class AlbumActivityForCreateVideo extends BaseActivity implements
         } else {
             callbackResult();
         }
+    }
+
+    @Override
+    public void reLoadAlbumData(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void finishActivity() {
+
     }
 
     @Override

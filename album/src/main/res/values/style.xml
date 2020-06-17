@@ -111,6 +111,7 @@
         <item name="android:theme">@style/Album.Theme.Toolbar.Dark</item>
         <item name="titleTextColor">@color/albumFontLight</item>
         <item name="subtitleTextColor">@color/albumFontLight</item>
+
     </style>
 
     <style name="Album.Toolbar.Light">
@@ -183,12 +184,16 @@
     </style>
 
     <style name="Album.TextButton.WrapContent.SheetBottom">
-        <item name="android:layout_centerVertical">true</item>
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">1</item>
         <item name="android:maxWidth">@dimen/album_dp_200</item>
-        <item name="android:textColor">@color/albumFontLight</item>
+        <item name="android:textColor">@color/albumColorWhite</item>
     </style>
+
+    <style name="AlbumTabLayout">
+        <item name="android:textSize">18sp</item>
+    </style>
+
 
 
 </resources>

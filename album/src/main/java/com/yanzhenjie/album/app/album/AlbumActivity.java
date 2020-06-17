@@ -30,6 +30,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 
+import com.google.android.material.tabs.TabLayout;
 import com.yanzhenjie.album.Action;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.AlbumFile;
@@ -109,7 +110,7 @@ public class AlbumActivity extends BaseActivity implements
     private String mTitle;
     private String mMusicPath;
     private boolean showCapture = false;
-
+    private String[] mTabStr = new String[]{"全部", "图片", "视频"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,10 +119,11 @@ public class AlbumActivity extends BaseActivity implements
         setContentView(createView());
         mView = new AlbumView(this, this, material_info);
         mView.setupViews(mWidget, mColumnCount, mHasCamera, mChoiceMode);
-        mView.setTitle(mWidget.getTitle());
+        mView.setTitle("");//相册UI更改，title不需要了
         mView.setCompleteDisplay(false);
         mView.setLoadingDisplay(true);
         mView.setShowCapture(showCapture);
+        mView.setTab(mTabStr);
         requestPermission(PERMISSION_STORAGE, CODE_PERMISSION_STORAGE);
     }
 
@@ -230,8 +232,7 @@ public class AlbumActivity extends BaseActivity implements
         } else {
             showFolderAlbumFiles(0);
             int count = mCheckedList.size();
-            mView.setCheckedCount(count);
-            mView.setSubTitle(count + "/" + mLimitCount);
+            mView.setCheckedCountAndTotal(count,mLimitCount);
         }
     }
 
@@ -434,8 +435,7 @@ public class AlbumActivity extends BaseActivity implements
 
         mCheckedList.add(albumFile);
         int count = mCheckedList.size();
-        mView.setCheckedCount(count);
-        mView.setSubTitle(count + "/" + mLimitCount);
+        mView.setCheckedCountAndTotal(count,mLimitCount);
 
         switch (mChoiceMode) {
             case Album.MODE_SINGLE: {
@@ -491,8 +491,7 @@ public class AlbumActivity extends BaseActivity implements
 
     private void setCheckedCount() {
         int count = mCheckedList.size();
-        mView.setCheckedCount(count);
-        mView.setSubTitle(count + "/" + mLimitCount);
+        mView.setCheckedCountAndTotal(count,mLimitCount);
     }
 
     @Override
@@ -602,6 +601,24 @@ public class AlbumActivity extends BaseActivity implements
     }
 
     @Override
+    public void reLoadAlbumData(TabLayout.Tab tab) {
+        Log.d(TAG, "reLoadAlbumData: " + tab.getPosition());
+        //todo 这个方法还有优化空间
+        switch (tab.getPosition()) {
+            case 0:
+                mFunction = Album.FUNCTION_CHOICE_ALBUM;
+                break;
+            case 1:
+                mFunction = Album.FUNCTION_CHOICE_IMAGE;
+                break;
+            case 2:
+                mFunction = Album.FUNCTION_CHOICE_VIDEO;
+                break;
+        }
+        requestPermission(PERMISSION_STORAGE, CODE_PERMISSION_STORAGE);
+    }
+
+    @Override
     public void onBackPressed() {
         if (mMediaReadTask != null) mMediaReadTask.cancel(true);
         callbackCancel();
@@ -691,6 +708,10 @@ public class AlbumActivity extends BaseActivity implements
         }
     }
 
+    @Override
+    public void finishActivity() {
+        finish();
+    }
 
     private boolean isOnDestroy = false;
 

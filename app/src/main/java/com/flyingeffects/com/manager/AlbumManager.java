@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 
+import androidx.core.content.ContextCompat;
+
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.utils.LogUtil;
@@ -50,14 +52,14 @@ public class AlbumManager {
                 .cameraVideoLimitDuration(Integer.MAX_VALUE)
                 .cameraVideoLimitBytes(Integer.MAX_VALUE)
                 .widget(
-                        Widget.newLightBuilder(context)
+                        Widget.newDarkBuilder(context)
                                 .title(R.string.better_to_choose_all)
-                                .statusBarColor(Color.WHITE)
-                                .toolBarColor(Color.WHITE)
+                                .statusBarColor(ContextCompat.getColor(context, com.yanzhenjie.album.R.color.albumColorTabBlack))
+                                .toolBarColor(ContextCompat.getColor(context, com.yanzhenjie.album.R.color.albumColorTabBlack))
                                 .mediaItemCheckSelector(Color.WHITE, Color.parseColor("#FEE131"))
                                 .bucketItemCheckSelector(Color.WHITE, Color.parseColor("#FEE131"))
                                 .buttonStyle(
-                                        Widget.ButtonStyle.newLightBuilder(context)
+                                        Widget.ButtonStyle.newDarkBuilder(context)
                                                 .setButtonSelector(Color.WHITE, Color.WHITE)
                                                 .build()
                                 )
@@ -111,14 +113,14 @@ public class AlbumManager {
                 .cameraVideoLimitDuration(Integer.MAX_VALUE)
                 .cameraVideoLimitBytes(Integer.MAX_VALUE)
                 .widget(
-                        Widget.newLightBuilder(context)
+                        Widget.newDarkBuilder(context)
                                 .title(R.string.better_to_choose_all)
-                                .statusBarColor(Color.WHITE)
-                                .toolBarColor(Color.WHITE)
+                                .statusBarColor(ContextCompat.getColor(context, com.yanzhenjie.album.R.color.albumColorTabBlack))
+                                .toolBarColor(ContextCompat.getColor(context, com.yanzhenjie.album.R.color.albumColorTabBlack))
                                 .mediaItemCheckSelector(Color.WHITE, Color.parseColor("#FEE131"))
                                 .bucketItemCheckSelector(Color.WHITE, Color.parseColor("#FEE131"))
                                 .buttonStyle(
-                                        Widget.ButtonStyle.newLightBuilder(context)
+                                        Widget.ButtonStyle.newDarkBuilder(context)
                                                 .setButtonSelector(Color.WHITE, Color.WHITE)
                                                 .build()
                                 )
@@ -173,14 +175,14 @@ public class AlbumManager {
                 .cameraVideoLimitDuration(Integer.MAX_VALUE)
                 .cameraVideoLimitBytes(Integer.MAX_VALUE)
                 .widget(
-                        Widget.newLightBuilder(context)
+                        Widget.newDarkBuilder(context)
                                 .title(R.string.better_to_choose_all)
-                                .statusBarColor(Color.WHITE)
-                                .toolBarColor(Color.WHITE)
+                                .statusBarColor(ContextCompat.getColor(context, com.yanzhenjie.album.R.color.albumColorTabBlack))
+                                .toolBarColor(ContextCompat.getColor(context, com.yanzhenjie.album.R.color.albumColorTabBlack))
                                 .mediaItemCheckSelector(Color.WHITE, Color.parseColor("#FEE131"))
                                 .bucketItemCheckSelector(Color.WHITE, Color.parseColor("#FEE131"))
                                 .buttonStyle(
-                                        Widget.ButtonStyle.newLightBuilder(context)
+                                        Widget.ButtonStyle.newDarkBuilder(context)
                                                 .setButtonSelector(Color.WHITE, Color.WHITE)
                                                 .build()
                                 )
@@ -235,14 +237,14 @@ public class AlbumManager {
                 .afterFilterVisibility(false)
                 .selectCount(selectNum)
                 .widget(
-                        Widget.newLightBuilder(context)
+                        Widget.newDarkBuilder(context)
                                 .title(R.string.better_to_choose_all)
-                                .statusBarColor(Color.WHITE)
-                                .toolBarColor(Color.WHITE)
+                                .statusBarColor(ContextCompat.getColor(context, com.yanzhenjie.album.R.color.albumColorTabBlack))
+                                .toolBarColor(ContextCompat.getColor(context, com.yanzhenjie.album.R.color.albumColorTabBlack))
                                 .mediaItemCheckSelector(Color.WHITE, Color.parseColor("#FEE131"))
                                 .bucketItemCheckSelector(Color.WHITE, Color.parseColor("#FEE131"))
                                 .buttonStyle(
-                                        Widget.ButtonStyle.newLightBuilder(context)
+                                        Widget.ButtonStyle.newDarkBuilder(context)
                                                 .setButtonSelector(Color.WHITE, Color.WHITE)
                                                 .build()
                                 )
@@ -287,22 +289,21 @@ public class AlbumManager {
                 })
                 .afterFilterVisibility(false)
                 .widget(
-                        Widget.newLightBuilder(act)
+                        Widget.newDarkBuilder(act)
                                 .title(R.string.better_to_choose_all)
-                                .statusBarColor(Color.WHITE)
-                                .toolBarColor(Color.WHITE)
+                                .statusBarColor(ContextCompat.getColor(act, com.yanzhenjie.album.R.color.albumColorTabBlack))
+                                .toolBarColor(ContextCompat.getColor(act, com.yanzhenjie.album.R.color.albumColorTabBlack))
                                 .mediaItemCheckSelector(Color.WHITE, Color.parseColor("#FEE131"))
                                 .bucketItemCheckSelector(Color.WHITE, Color.parseColor("#FEE131"))
                                 .buttonStyle(
-                                        Widget.ButtonStyle.newLightBuilder(act)
+                                        Widget.ButtonStyle.newDarkBuilder(act)
                                                 .setButtonSelector(Color.WHITE, Color.WHITE)
                                                 .build()
                                 )
                                 .build())
                 .onResult(result -> {
                     List<String> paths = new ArrayList<>();
-                    for (AlbumFile albumFile : result
-                    ) {
+                    for (AlbumFile albumFile : result) {
                         paths.add(albumFile.getPath());
                     }
                     callback.resultFilePath(tag, paths, false, result);
