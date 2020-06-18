@@ -401,11 +401,13 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
             videoAdManager.showVideoAd(this, AdConfigs.AD_save_video, new VideoAdCallBack() {
                 @Override
                 public void onVideoAdSuccess() {
+                    statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "video_ad_alert_request_sucess");
                     LogUtil.d("OOM", "onVideoAdSuccess");
                 }
 
                 @Override
                 public void onVideoAdError(String s) {
+                    statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "video_ad_alert_request_fail");
                     LogUtil.d("OOM", "onVideoAdError"+s);
                     saveToAlbum(imagePath,false);
                 }

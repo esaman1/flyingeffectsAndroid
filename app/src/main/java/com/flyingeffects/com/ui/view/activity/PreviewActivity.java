@@ -750,11 +750,13 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                 videoAdManager.showVideoAd(this, AdConfigs.AD_stimulate_video, new VideoAdCallBack() {
                     @Override
                     public void onVideoAdSuccess() {
+                        statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "video_ad_alert_request_sucess");
                         LogUtil.d("OOM", "onVideoAdSuccess");
                     }
 
                     @Override
                     public void onVideoAdError(String s) {
+                        statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "video_ad_alert_request_fail");
                         LogUtil.d("OOM", "onVideoAdError" + s);
                     }
 
