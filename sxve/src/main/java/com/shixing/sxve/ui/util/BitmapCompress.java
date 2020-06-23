@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 
@@ -99,4 +101,36 @@ public class BitmapCompress {
         // 得到新的图片
         return  Bitmap.createBitmap(bm, 0, 0, width, height, matrix, true);
     }
+
+
+    public static  Bitmap compressBitmap(Bitmap bitmap, long sizeLimit) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        int quality = 100;
+
+
+//        // 循环判断压缩后图片是否超过限制大小
+//        while(baos.toByteArray().length / 1024 > sizeLimit) {
+//            // 清空baos
+//            baos.reset();
+//            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+//            quality -= 10;
+//        }
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+        Bitmap newBitmap = BitmapFactory.decodeStream(new ByteArrayInputStream(baos.toByteArray()), null, null);
+
+        return newBitmap;
+    }
+
+
+    public Bitmap  compressQuality(Bitmap bm) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+        byte[] bytes = bos.toByteArray();
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+    }
+
+
+
+
+
 }

@@ -1,5 +1,7 @@
 package com.flyingeffects.com.constans;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
 import com.flyingeffects.com.base.BaseApplication;
@@ -24,10 +26,10 @@ public class BaseConstans {
     //当前抠图是用sdk 还是用服务器
     public static final boolean UserFaceSdk=true;
     public static final boolean isTitokChannel=true;
-    public static final int  THREADCOUNT=4;
+    public static final int  THREADCOUNT=8;
     public static String titok;
     public static String kuaishou;
-    public static final boolean PRODUCTION = true;
+    public static final boolean PRODUCTION = false;
     private static String channel = "";
     private static String versionCode = "";
     private static String uuid = "";
@@ -323,6 +325,14 @@ public class BaseConstans {
     }
 
 
-
+    public static  int getAppVersion() {
+        try {
+            PackageInfo info = BaseApplication.getInstance().getPackageManager().getPackageInfo( BaseApplication.getInstance().getPackageName(), 0);
+            return info.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return 1;
+    }
 
 }

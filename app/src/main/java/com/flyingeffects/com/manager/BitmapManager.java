@@ -86,7 +86,7 @@ public class BitmapManager {
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, out);
             out.flush();
             out.close();
         } catch (FileNotFoundException e) {
@@ -105,6 +105,12 @@ public class BitmapManager {
 
         return bitmap;
     }
+
+
+
+
+
+
 
 
     public Bitmap saveBitmapToPath(Bitmap bitmap, String path, saveToFileCallback callback) {
@@ -143,6 +149,45 @@ public class BitmapManager {
 
         return bitmap;
     }
+
+
+    public Bitmap saveBitmapToPathForJpg(Bitmap bitmap, String path, saveToFileCallback callback) {
+        if (!path.endsWith(".png") && !path.endsWith(".PNG")) {
+            throw new IllegalArgumentException();
+        }
+
+        File file = new File(path);
+        if (file.exists()) {
+            file.delete();
+        }
+
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, out);
+            out.flush();
+            out.close();
+            callback.isSuccess(true);
+        } catch (FileNotFoundException e) {
+            callback.isSuccess(false);
+            e.printStackTrace();
+        } catch (IOException e) {
+            callback.isSuccess(false);
+            e.printStackTrace();
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+
+                }
+            }
+        }
+
+        return bitmap;
+    }
+
 
 
     public interface saveToFileCallback {

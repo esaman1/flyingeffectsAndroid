@@ -1,2 +1,3 @@
 ninja: Entering directory `D:\githubSpace\flyingeffectsAndroid\segjni\.cxx\cmake\release\arm64-v8a'
-ninja: no work to do.
+[1/2] Building CXX object CMakeFiles/MegviiSegJni.dir/megvii_seg_jni_new.cpp.o
+[2/2] Linking CXX shared library D:\githubSpace\flyingeffectsAndroid\segjni\src\main\jniLibs\arm64-v8a\libMegviiSegJni.so
