@@ -163,7 +163,7 @@ dependencies {
     implementation project(':sxve')
     implementation project(':album')
     implementation project(':LanSongSDK')
-
+    implementation project(':DownAndUpLibrary')
     implementation project(path: ':segjni')
 
     //mp4 声音和视频分离

@@ -1,2 +1,2 @@
-include ':library'
+include ':DownAndUpLibrary'
 include ':app', ':sxve', ':album', ':LanSongSDK', ':segjni'
