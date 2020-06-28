@@ -30,6 +30,7 @@ import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.StimulateControlManage;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
@@ -562,6 +563,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
 
     @Override
     public void hasLogin(boolean hasLogin) {
+        StimulateControlManage.getInstance().InitRefreshStimulate();
         if (!TextUtils.isEmpty(templateItem.getType()) && templateItem.getType().equals("1")&&BaseConstans.getIncentiveVideo()) {
             Intent intent = new Intent(PreviewActivity.this, AdHintActivity.class);
             intent.putExtra("from", "PreviewActivity");
@@ -758,6 +760,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                     public void onVideoAdError(String s) {
                         statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "video_ad_alert_request_fail");
                         LogUtil.d("OOM", "onVideoAdError" + s);
+                        hasLoginToNext();
                     }
 
                     @Override

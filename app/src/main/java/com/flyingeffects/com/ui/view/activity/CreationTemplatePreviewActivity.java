@@ -22,6 +22,7 @@ import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.StimulateControlManage;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -221,7 +222,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
                     statisticsEventAffair.getInstance().setFlag(this, "8_save");
                 }
 
-
+                StimulateControlManage.getInstance().InitRefreshStimulate();
                 if (BaseConstans.isTitokChannel&&BaseConstans.getIncentiveVideo()) {
                     Intent intent = new Intent(CreationTemplatePreviewActivity.this, AdHintActivity.class);
                     intent.putExtra("from", "isFormPreviewVideo");

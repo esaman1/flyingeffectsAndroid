@@ -35,6 +35,7 @@ import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.StimulateControlManage;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.AdHintActivity;
@@ -305,6 +306,7 @@ public class TemplateMvpModel {
 
     private void renderFinish(boolean isSucceed, boolean isPreview, String outputPath) {
         LogUtil.d("OOM", "onFinish,success?=" + isSucceed + "MSG=" + isSucceed);
+        StimulateControlManage.getInstance().InitRefreshStimulate();
         WaitingDialog.closePragressDialog();
         if (isPreview) {
             callback.toPreview(outputPath);

@@ -34,6 +34,7 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.nineton.ntadsdk.NTAdSDK;
 import com.nineton.ntadsdk.itr.SplashAdCallBack;
 import com.nineton.ntadsdk.view.NTSkipView;
+import com.orhanobut.hawk.Hawk;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -429,6 +430,7 @@ public class WelcomeActivity extends BaseActivity {
 
     private void AuditModeConfig(String str) {
         LogUtil.d("AuditModeConfig", "AuditModeConfig=" + str);
+        Hawk.put("AuditModeConfig",str);
         JSONArray jsonArray;
         try {
             jsonArray = new JSONArray(str);

@@ -43,6 +43,7 @@ import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.VideoUtils;
 import com.flyingeffects.com.view.MyVideoView;
+import com.orhanobut.hawk.Hawk;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.umeng.socialize.UMAuthListener;
 import com.umeng.socialize.UMShareAPI;
@@ -427,6 +428,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
             @Override
             protected void _onNext(UserInfo data) {
+                Hawk.put("UserInfo",data);
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "requestLogin=" + str);
                 BaseConstans.SetUserToken(data.getToken());
