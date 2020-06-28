@@ -8,8 +8,6 @@ import android.os.Handler;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
@@ -23,9 +21,14 @@ import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.ui.interfaces.view.CreationTemplatePreviewMvpView;
+import com.flyingeffects.com.ui.presenter.CreationTemplatePreviewPresenter;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.timeUtils;
+import com.flyingeffects.com.view.RangeSeekBarView;
+import com.flyingeffects.com.view.RoundImageView;
+import com.flyingeffects.com.view.VideoFrameRecycler;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -54,7 +57,7 @@ import rx.android.schedulers.AndroidSchedulers;
  * creation date: 2020/4/20
  * user : zhangtongju
  */
-public class CreationTemplatePreviewActivity extends BaseActivity {
+public class CreationTemplatePreviewActivity extends BaseActivity implements CreationTemplatePreviewMvpView {
 
 
     private SimpleExoPlayer exoPlayer;
@@ -62,28 +65,39 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     @BindView(R.id.exo_player)
     PlayerView playerView;
 
-    @BindView(R.id.seekBar)
-    SeekBar seekBar;
+//    @BindView(R.id.seekBar)
+//    SeekBar seekBar;
 
-
-    @BindView(R.id.tv_end_time)
-    TextView tv_end_time;
+//
+//    @BindView(R.id.tv_end_time)
+//    TextView tv_end_time;
 
     private String imagePath;
     private long mEndDuration;
 
 //    private VideoInfo videoInfo;
 
-    @BindView(R.id.tv_start_time)
-    TextView tv_start_time;
+//    @BindView(R.id.tv_start_time)
+//    TextView tv_start_time;
 
-    @BindView(R.id.iv_play)
-    ImageView iv_play;
+//    @BindView(R.id.iv_play)
+//    ImageView iv_play;
 
     private timeUtils timeUtils;
     private MediaSource mediaSource;
 
     private boolean isIntoPause = false;
+
+    private CreationTemplatePreviewPresenter Presenter;
+
+    @BindView(R.id.timeLineBar)
+    RangeSeekBarView mRangeSeekBarView;
+
+    @BindView(R.id.timeLineView)
+    VideoFrameRecycler mTimeLineView;
+
+    @BindView(R.id.videocrop_cursor)
+    RoundImageView progressCursor;
 
     @Override
     protected int getLayoutId() {
@@ -94,9 +108,10 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     protected void initView() {
         EventBus.getDefault().register(this);
         imagePath = getIntent().getStringExtra("path");
+        Presenter=new CreationTemplatePreviewPresenter(this,this,imagePath);
         VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
         timeUtils = new timeUtils();
-        tv_end_time.setText(timeUtils.timeParse(videoInfo.getDuration()));
+//        tv_end_time.setText(timeUtils.timeParse(videoInfo.getDuration()));
         exoPlayer = ExoPlayerFactory.newSimpleInstance(CreationTemplatePreviewActivity.this);
         playerView.setPlayer(exoPlayer);
         //不使用控制器
@@ -109,6 +124,10 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
                     case Player.STATE_READY:
                         mEndDuration = exoPlayer.getContentDuration();
                         videoPlay();
+                        Presenter.setUpTrimmer(mRangeSeekBarView, mTimeLineView, progressCursor,exoPlayer.getDuration());
+
+                        Presenter.initTimer();
+
                         break;
                     case Player.STATE_ENDED:
                         seekTo(0);
@@ -130,7 +149,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     @Override
     protected void initAction() {
         exoPlayer.prepare(mediaSource, true, false);
-        showIsPlay(true);
+//        showIsPlay(true);
     }
 
 
@@ -200,7 +219,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.tv_back, R.id.tv_save, R.id.iv_play})
+    @OnClick({R.id.tv_back, R.id.tv_save})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_back:
@@ -237,16 +256,16 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
 
                 break;
 
-            case R.id.iv_play:
-                if (isPlaying()) {
-                    showIsPlay(false);
-                    videoPause();
-                    destroyTimer();
-                } else {
-                    videoOnResume();
-                    showIsPlay(true);
-                }
-                break;
+//            case R.id.iv_play:
+//                if (isPlaying()) {
+//                    showIsPlay(false);
+//                    videoPause();
+//                    destroyTimer();
+//                } else {
+//                    videoOnResume();
+//                    showIsPlay(true);
+//                }
+//                break;
         }
         super.onClick(v);
     }
@@ -257,11 +276,11 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
         super.onResume();
         if (isIntoPause) {
             exoPlayer.prepare(mediaSource, true, false);
-            showIsPlay(true);
+//            showIsPlay(true);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    showIsPlay(false);
+//                    showIsPlay(false);
                     videoPause();
                     destroyTimer();
                 }
@@ -289,13 +308,13 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     }
 
 
-    public void showIsPlay(boolean isPlay) {
-        if (isPlay) {
-            iv_play.setImageResource(R.mipmap.pause);
-        } else {
-            iv_play.setImageResource(R.mipmap.iv_play);
-        }
-    }
+//    public void showIsPlay(boolean isPlay) {
+//        if (isPlay) {
+//            iv_play.setImageResource(R.mipmap.pause);
+//        } else {
+//            iv_play.setImageResource(R.mipmap.iv_play);
+//        }
+//    }
 
 
     /**
@@ -346,8 +365,8 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
                     float progress = getCurrentPos() / (float) mEndDuration;
                     int realPosition = (int) (progress * 100);
                     timeUtils = new timeUtils();
-                    tv_start_time.setText(timeUtils.timeParse(getCurrentPos()));
-                    seekBar.setProgress(realPosition);
+//                    tv_start_time.setText(timeUtils.timeParse(getCurrentPos()));
+//                    seekBar.setProgress(realPosition);
                 });
             }
         };
@@ -386,7 +405,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
         super.onPause();
         isIntoPause = true;
         if (isPlaying()) {
-            showIsPlay(false);
+//            showIsPlay(false);
             videoPause();
             destroyTimer();
         }
@@ -438,4 +457,17 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
     }
 
 
+
+
+    /**
+     * description ：更新底部游标
+     * creation date: 2020/6/28
+     * user : zhangtongju
+     */
+    @Override
+    public void updateCursor(float currentX) {
+        this.runOnUiThread(() -> {
+            progressCursor.setTranslationX(currentX);
+        });
+    }
 }
