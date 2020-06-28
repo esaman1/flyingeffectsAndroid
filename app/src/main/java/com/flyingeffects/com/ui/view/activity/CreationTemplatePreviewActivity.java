@@ -99,6 +99,8 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     @BindView(R.id.videocrop_cursor)
     RoundImageView progressCursor;
 
+    boolean isIntoInitTrimmer=false;
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_creation_template_preview;
@@ -124,8 +126,10 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                     case Player.STATE_READY:
                         mEndDuration = exoPlayer.getContentDuration();
                         videoPlay();
-                        Presenter.setUpTrimmer(mRangeSeekBarView, mTimeLineView, progressCursor,exoPlayer.getDuration());
-
+                        if(!isIntoInitTrimmer){
+                            Presenter.setUpTrimmer(mRangeSeekBarView, mTimeLineView, progressCursor,exoPlayer.getDuration());
+                            isIntoInitTrimmer=true;
+                        }
                         Presenter.initTimer();
 
                         break;
