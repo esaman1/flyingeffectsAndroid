@@ -19,4 +19,6 @@ public interface CreationTemplatePreviewMvpCallback {
 
     void getRealCutTime(float RealCutTime);
 
+    void seekToPosition(long position);
+
 }

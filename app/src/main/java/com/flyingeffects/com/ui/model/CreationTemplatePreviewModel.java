@@ -301,12 +301,14 @@ public class CreationTemplatePreviewModel {
     private void seekTo(long to) {
         try {
 //            player.seekTo((int) to);
-//            updateCursor(true);
-//            initTimer(updateCursorIntervalMs);
-//            callback.showCursor();
+            updateCursor(true);
+            initTimer(updateCursorIntervalMs);
+            callback.showCursor();
 //            if (!player.isPlaying()) {
 //                player.start();
 //            }
+
+            callback.seekToPosition(to);
 
         } catch (NullPointerException | IllegalStateException e) {
             LogUtil.d("OOM", e.getMessage());

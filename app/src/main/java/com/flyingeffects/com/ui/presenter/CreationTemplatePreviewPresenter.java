@@ -69,4 +69,9 @@ public class CreationTemplatePreviewPresenter extends BasePresenter implements C
     public void getRealCutTime(float RealCutTime) {
 
     }
+
+    @Override
+    public void seekToPosition(long position) {
+        CreationTemplatePreviewmvpView.seekToPosition(position);
+    }
 }

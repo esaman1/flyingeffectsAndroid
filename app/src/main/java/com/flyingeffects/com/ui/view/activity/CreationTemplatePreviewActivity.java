@@ -470,4 +470,9 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
             progressCursor.setTranslationX(currentX);
         });
     }
+
+    @Override
+    public void seekToPosition(long position) {
+        exoPlayer.seekTo(position);
+    }
 }
