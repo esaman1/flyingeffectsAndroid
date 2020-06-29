@@ -223,7 +223,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
                 }
 
                 StimulateControlManage.getInstance().InitRefreshStimulate();
-                if (BaseConstans.getIncentiveVideo()) {
+                if (BaseConstans.getHasAdvertising() == 1 &&BaseConstans.getIncentiveVideo()) {
                     Intent intent = new Intent(CreationTemplatePreviewActivity.this, AdHintActivity.class);
                     intent.putExtra("from", "isFormPreviewVideo");
                     intent.putExtra("templateTitle", "");
@@ -432,6 +432,8 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
                     LogUtil.d("OOM", "onVideoAdClicked");
                 }
             });
+        }else{
+            saveToAlbum(imagePath,true);
         }
 
 

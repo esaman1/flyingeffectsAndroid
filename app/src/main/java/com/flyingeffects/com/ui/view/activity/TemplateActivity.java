@@ -1450,6 +1450,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     LogUtil.d("OOM", "onVideoAdClicked");
                 }
             });
+        }else{
+            presenter.alertAlbumUpdate(true);
         }
 
 

@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.UserInfo;
+import com.flyingeffects.com.utils.LogUtil;
 import com.orhanobut.hawk.Hawk;
 
 import org.json.JSONArray;
@@ -45,6 +46,7 @@ public class StimulateControlManage {
                                     BaseConstans.setHasAdvertising(0);
                                 }
                                 boolean video_ad_open = obArray.getBoolean("video_ad_open");
+                                LogUtil.d("OOM","当前需要激励视频"+video_ad_open);
                                 BaseConstans.setIncentiveVideo(video_ad_open);
                             }
                         }
