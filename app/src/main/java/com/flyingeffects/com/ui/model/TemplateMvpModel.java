@@ -312,7 +312,7 @@ public class TemplateMvpModel {
             callback.toPreview(outputPath);
         } else {
             if (isSucceed && !isOnDestroy) {
-                if(BaseConstans.isTitokChannel&&BaseConstans.getIncentiveVideo()){
+                if(BaseConstans.getIncentiveVideo()){
                     Intent intent = new Intent(context, AdHintActivity.class);
                     intent.putExtra("from", "isFormPreviewVideo");
                     intent.putExtra("templateTitle", "");

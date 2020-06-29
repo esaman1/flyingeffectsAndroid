@@ -23,7 +23,7 @@ public class BaseConstans {
     public static final String UMENGAPPID = "5e5c68a2570df3d6930002b4";
     //当前抠图是用sdk 还是用服务器
     public static final boolean UserFaceSdk=true;
-    public static final boolean isTitokChannel=true;
+//    public static final boolean isTitokChannel=true;
     public static final int  THREADCOUNT=4;
     public static String titok;
     public static String kuaishou;
@@ -197,9 +197,9 @@ public class BaseConstans {
 
 
     public static int getHasAdvertising() {
-        if(isTitokChannel){
-            return 1;
-        }else{
+//        if(isTitokChannel){
+//            return 1;
+//        }else{
             if (hasAdvertising == 0) {
                 SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
                 hasAdvertising = spUtil.getInt("AdvertisingNum", 0);
@@ -207,7 +207,7 @@ public class BaseConstans {
             } else {
                 return hasAdvertising;
             }
-        }
+//        }
     }
 
     public static void setHasAdvertising(int num) {
@@ -240,16 +240,16 @@ public class BaseConstans {
 
 
     public static boolean getIsNewUser() {
-        if(isTitokChannel){
-            return false;
-        }else{
+//        if(isTitokChannel){
+//            return false;
+//        }else{
             if (!isNewUserForAdvertising) {
                 SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
                 isNewUserForAdvertising = spUtil.getBoolean("isNewUserForAdvertising", false);
                 return isNewUserForAdvertising;
             }
             return true;
-        }
+//        }
 
     }
 
