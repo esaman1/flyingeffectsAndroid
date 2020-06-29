@@ -564,7 +564,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     public void hasLogin(boolean hasLogin) {
         StimulateControlManage.getInstance().InitRefreshStimulate();
-        if (!TextUtils.isEmpty(templateItem.getType()) && templateItem.getType().equals("1")&&BaseConstans.getIncentiveVideo()) {
+        if (!TextUtils.isEmpty(templateItem.getType()) && templateItem.getType().equals("1")&&BaseConstans.getIncentiveVideo()&& !BaseConstans.getIsNewUser()) {
             Intent intent = new Intent(PreviewActivity.this, AdHintActivity.class);
             intent.putExtra("from", "PreviewActivity");
             intent.putExtra("templateTitle", templateItem.getTitle());

@@ -223,7 +223,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity {
                 }
 
                 StimulateControlManage.getInstance().InitRefreshStimulate();
-                if (BaseConstans.getHasAdvertising() == 1 &&BaseConstans.getIncentiveVideo()) {
+                if (BaseConstans.getHasAdvertising() == 1 &&BaseConstans.getIncentiveVideo()&& !BaseConstans.getIsNewUser()) {
                     Intent intent = new Intent(CreationTemplatePreviewActivity.this, AdHintActivity.class);
                     intent.putExtra("from", "isFormPreviewVideo");
                     intent.putExtra("templateTitle", "");
