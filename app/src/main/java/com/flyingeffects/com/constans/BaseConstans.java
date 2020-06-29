@@ -260,6 +260,20 @@ public class BaseConstans {
     }
 
 
+    public static boolean getNextIsNewUser() {
+            SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+            isNewUserForAdvertising = spUtil.getBoolean("isNewNextUserForAdvertising", false);
+            return isNewUserForAdvertising;
+
+    }
+
+    public static void setNextNewUser(boolean newUser) {
+        isNewUserForAdvertising = newUser;
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putBoolean("isNewNextUserForAdvertising", newUser);
+    }
+
+
 
     public static void setKaiPingADTimeOut(int time) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
