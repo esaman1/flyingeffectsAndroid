@@ -11,11 +11,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.VideoTimelineAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplatePreviewMvpCallback;
+import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.RoundImageView;
@@ -23,8 +27,10 @@ import com.flyingeffects.com.view.VideoFrameRecycler;
 import com.flyingeffects.com.view.beans.Thumb;
 import com.flyingeffects.com.view.interfaces.OnProgressVideoListener;
 import com.flyingeffects.com.view.interfaces.OnRangeSeekBarListener;
+import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -60,11 +66,14 @@ public class CreationTemplatePreviewModel {
     //每100毫秒更新一次进度指针
     private static final int updateCursorIntervalMs = 100;
     private float videoRatio = 1;
+    private int realityDuration;
 
-    public CreationTemplatePreviewModel(Context context, CreationTemplatePreviewMvpCallback callback,String videoPath) {
+    public CreationTemplatePreviewModel(Context context, CreationTemplatePreviewMvpCallback callback, String videoPath) {
         this.mContext = context;
         this.callback = callback;
-        this.videoPath=videoPath;
+        this.videoPath = videoPath;
+        VideoInfo videoInfo = VideoManage.getInstance().getVideoInfo(context, videoPath);
+        realityDuration = videoInfo.getDuration();
     }
 
     public long getDuration() {
@@ -74,12 +83,11 @@ public class CreationTemplatePreviewModel {
     private float currentCursorStart = 0;
 
 
-
     private long duration;
 
     public void initTrimmer(RangeSeekBarView mRangeSeekBarView, VideoFrameRecycler mTimeLineView, RoundImageView progressCursor, long duration) {
         this.cursor = progressCursor;
-        this.duration=duration;
+        this.duration = duration;
         this.mRangeSeekBarView = mRangeSeekBarView;
         canScroll = getDuration() > VideoTimelineAdapter.FULL_SCROLL_DURATION;
         RecyclerView.LayoutManager layoutManager =
@@ -156,12 +164,12 @@ public class CreationTemplatePreviewModel {
     }
 
 
-
-    public void ToInitTimer(){
+    public void ToInitTimer() {
         initTimer(updateCursorIntervalMs);
     }
 
     private Subscription timer;
+
     private void initTimer(long period) {
         destroyTimer();
         timer = Observable.interval(period, TimeUnit.MILLISECONDS)
@@ -178,7 +186,6 @@ public class CreationTemplatePreviewModel {
 
                 });
     }
-
 
 
     private void updateCursor(boolean isSeek) {
@@ -315,5 +322,45 @@ public class CreationTemplatePreviewModel {
         }
     }
 
+
+    /**
+     * description ：保存在本地，如果用戶沒有裁剪，那么就不需要重新裁剪，否则就重新裁剪过
+     * creation date: 2020/6/28
+     * user : zhangtongju
+     */
+    public void toSaveVideo(boolean hasShowStimulateAd) {
+        long cropDurationMs = (long) (getDuration() * (cropEndRatio - cropStartRatio));
+        if (cropDurationMs == realityDuration) {
+            //不需要裁剪
+            callback.isSaveToAlbum(videoPath, hasShowStimulateAd);
+        } else {
+            WaitingDialog_progress dialog = new WaitingDialog_progress(mContext);
+            dialog.openProgressDialog();
+            //需要裁剪
+            videoCutDurationForVideoOneDo.getInstance().startCutDurtion(videoPath, Math.round(cropStartRatio * realityDuration), Math.round(cropEndRatio * realityDuration), new videoCutDurationForVideoOneDo.isSuccess() {
+                @Override
+                public void progresss(int progress) {
+                    if (progress > 100) {
+                        progress = 100;
+                    }
+                    dialog.setProgress(progress + "%");
+                }
+
+                @Override
+                public void isSuccess(boolean isSuccess, String path) {
+                    if (path == null) {
+                        ToastUtil.showToast(mContext.getString(R.string.render_error));
+                        return;
+                    }
+                    dialog.closePragressDialog();
+                    callback.isSaveToAlbum(path, hasShowStimulateAd);
+                    LogUtil.d("OOM", "裁剪后导出的地址为111" + path);
+
+
+                }
+            });
+        }
+
+    }
 
 }

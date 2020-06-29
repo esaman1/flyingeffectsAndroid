@@ -21,6 +21,11 @@ public class CreationTemplatePreviewPresenter extends BasePresenter implements C
         CreationTemplatePreviewModel = new CreationTemplatePreviewModel(context, this,videoPath);
     }
 
+    public void toSaveVideo(boolean hasShowStimulateAd){
+        CreationTemplatePreviewModel.toSaveVideo(hasShowStimulateAd);
+
+    }
+
 
     public void setUpTrimmer(RangeSeekBarView mRangeSeekBarView, VideoFrameRecycler mTimeLineView, RoundImageView progressCursor,long duration){
         CreationTemplatePreviewModel.initTrimmer(mRangeSeekBarView,mTimeLineView,progressCursor,duration);
@@ -73,5 +78,10 @@ public class CreationTemplatePreviewPresenter extends BasePresenter implements C
     @Override
     public void seekToPosition(long position) {
         CreationTemplatePreviewmvpView.seekToPosition(position);
+    }
+
+    @Override
+    public void isSaveToAlbum(String path,boolean isAdSuccess) {
+        CreationTemplatePreviewmvpView.isSaveToAlbum(path, isAdSuccess);
     }
 }

@@ -81,6 +81,7 @@ public class videoCutDurationForVideoOneDo {
 
             videoOneDo.start();
         } catch (Exception e) {
+            LogUtil.d("OOM","e="+e.getMessage());
             e.printStackTrace();
             callback.isSuccess(false, "");
         }

@@ -59,29 +59,14 @@ import rx.android.schedulers.AndroidSchedulers;
  */
 public class CreationTemplatePreviewActivity extends BaseActivity implements CreationTemplatePreviewMvpView {
 
-
     private SimpleExoPlayer exoPlayer;
 
     @BindView(R.id.exo_player)
     PlayerView playerView;
 
-//    @BindView(R.id.seekBar)
-//    SeekBar seekBar;
-
-//
-//    @BindView(R.id.tv_end_time)
-//    TextView tv_end_time;
 
     private String imagePath;
     private long mEndDuration;
-
-//    private VideoInfo videoInfo;
-
-//    @BindView(R.id.tv_start_time)
-//    TextView tv_start_time;
-
-//    @BindView(R.id.iv_play)
-//    ImageView iv_play;
 
     private timeUtils timeUtils;
     private MediaSource mediaSource;
@@ -99,7 +84,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     @BindView(R.id.videocrop_cursor)
     RoundImageView progressCursor;
 
-    boolean isIntoInitTrimmer=false;
+    boolean isIntoInitTrimmer = false;
 
     @Override
     protected int getLayoutId() {
@@ -110,7 +95,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     protected void initView() {
         EventBus.getDefault().register(this);
         imagePath = getIntent().getStringExtra("path");
-        Presenter=new CreationTemplatePreviewPresenter(this,this,imagePath);
+        Presenter = new CreationTemplatePreviewPresenter(this, this, imagePath);
         VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
         timeUtils = new timeUtils();
 //        tv_end_time.setText(timeUtils.timeParse(videoInfo.getDuration()));
@@ -126,9 +111,9 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                     case Player.STATE_READY:
                         mEndDuration = exoPlayer.getContentDuration();
                         videoPlay();
-                        if(!isIntoInitTrimmer){
-                            Presenter.setUpTrimmer(mRangeSeekBarView, mTimeLineView, progressCursor,exoPlayer.getDuration());
-                            isIntoInitTrimmer=true;
+                        if (!isIntoInitTrimmer) {
+                            Presenter.setUpTrimmer(mRangeSeekBarView, mTimeLineView, progressCursor, exoPlayer.getDuration());
+                            isIntoInitTrimmer = true;
                         }
                         Presenter.initTimer();
 
@@ -178,19 +163,23 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     }
 
 
-    private void saveToAlbum(String path,boolean isAdSuccess) {
+
+    /**
+     * description ：保存在相册，如果isAdSuccess等于false 那么就显示激励视频
+     * creation date: 2020/6/28
+     * user : zhangtongju
+     */
+    private void saveToAlbum(String path, boolean hasShowStimulateAd) {
         String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
         try {
             FileUtil.copyFile(new File(path), albumPath);
             albumBroadcast(albumPath);
             showKeepSuccessDialog(albumPath);
-            if(!isAdSuccess){
+            if (!hasShowStimulateAd) {
                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                     AdManager.getInstance().showCpAd(CreationTemplatePreviewActivity.this, AdConfigs.AD_SCREEN_FOR_keep);
                 }
             }
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -245,16 +234,17 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                 }
 
 
-                if (BaseConstans.isTitokChannel&&BaseConstans.getIncentiveVideo()) {
+                if (BaseConstans.isTitokChannel && BaseConstans.getIncentiveVideo()) {
                     Intent intent = new Intent(CreationTemplatePreviewActivity.this, AdHintActivity.class);
                     intent.putExtra("from", "isFormPreviewVideo");
                     intent.putExtra("templateTitle", "");
                     startActivity(intent);
                 } else {
-                    saveToAlbum(imagePath,true);
-                    if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-                        AdManager.getInstance().showCpAd(CreationTemplatePreviewActivity.this, AdConfigs.AD_SCREEN_FOR_keep);
-                    }
+
+                    videoPause();
+                    Presenter.toSaveVideo(false);
+
+
                 }
 
 
@@ -416,7 +406,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     }
 
 
-
     @Subscribe
     public void onEventMainThread(showAdCallback event) {
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
@@ -431,13 +420,15 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                 @Override
                 public void onVideoAdError(String s) {
                     statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "video_ad_alert_request_fail");
-                    LogUtil.d("OOM", "onVideoAdError"+s);
-                    saveToAlbum(imagePath,false);
+                    LogUtil.d("OOM", "onVideoAdError" + s);
+                    videoPause();
+                    Presenter.toSaveVideo(false);
                 }
 
                 @Override
                 public void onVideoAdClose() {
-                    saveToAlbum(imagePath,true);
+                    videoPause();
+                    Presenter.toSaveVideo(true);
                 }
 
                 @Override
@@ -457,10 +448,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         }
 
 
-
     }
-
-
 
 
     /**
@@ -478,5 +466,11 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     @Override
     public void seekToPosition(long position) {
         exoPlayer.seekTo(position);
+    }
+
+    @Override
+    public void isSaveToAlbum(String path,boolean isAdSuccess) {
+        saveToAlbum(path, isAdSuccess);
+
     }
 }

@@ -21,4 +21,6 @@ public interface CreationTemplatePreviewMvpCallback {
 
     void seekToPosition(long position);
 
+    void isSaveToAlbum(String path,boolean isAdSuccess);
+
 }
