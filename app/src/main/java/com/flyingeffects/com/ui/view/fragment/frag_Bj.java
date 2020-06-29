@@ -24,6 +24,7 @@ import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.FagBjMvpView;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.FagBjMvpPresenter;
+import com.flyingeffects.com.ui.view.activity.BackgroundSearchActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
@@ -194,7 +195,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     }
 
 
-    @OnClick({R.id.iv_add, R.id.iv_cover, R.id.Toolbar})
+    @OnClick({R.id.iv_add, R.id.iv_cover, R.id.Toolbar,R.id.relative_top})
     public void onClick(View view) {
 
 
@@ -214,6 +215,14 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
             case R.id.iv_cover:
                 toAddSticker();
                 statisticsEventAffair.getInstance().setFlag(getActivity(), "7_background");
+                break;
+
+            case R.id.relative_top:
+                //搜索栏目
+                Intent intent = new Intent(getActivity(), BackgroundSearchActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+
                 break;
 
             default:

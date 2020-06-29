@@ -142,7 +142,10 @@
             android:name="com.flyingeffects.com.ui.view.activity.CreationTemplateActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name="com.flyingeffects.com.ui.view.activity.BackgroundSearchActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.LoginActivity"

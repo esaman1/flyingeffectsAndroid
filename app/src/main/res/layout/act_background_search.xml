@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/home_base_balk_color">
+
+    <RelativeLayout
+        android:id="@+id/relative_top"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginStart="15dp"
+        android:background="@drawable/strok_search"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="15dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/ed_search"
+            android:singleLine="true"
+            android:inputType="text"
+            android:maxLines="1"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:imeOptions="actionSearch"
+            android:hint="请输入模板关键字"
+            android:background="@null"
+            android:paddingStart="40dp"
+            android:textColor="@color/white"
+            android:textColorHint="#515151" />
+
+        <ImageView
+            android:layout_width="21dp"
+            android:layout_marginStart="15dp"
+            android:layout_height="21dp"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/search" />
+
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/iv_delete"
+            android:contentDescription="@string/app_name"
+            android:padding="5dp"
+            android:layout_width="30dp"
+            android:layout_marginEnd="15dp"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/serach_delete" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_below="@+id/relative_top"
+        android:layout_width="match_parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_youyou"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="17dp"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            android:layout_height="wrap_content"
+            android:textColor="#D5D5D5"
+            android:text="友友推荐" />
+
+
+        <com.flyingeffects.com.view.WarpLinearLayout
+            android:id="@+id/AutoNewLineLayout"
+            app:grivate="left"
+            app:isFull="false"
+            app:horizontal_Space="10dp"
+            app:vertical_Space="10dp"
+            android:layout_marginTop="14dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+
+
+
+    <LinearLayout
+        android:id="@+id/ll_showResult"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:background="@color/home_base_balk_color"
+        android:visibility="gone"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_marginTop="17dp"
+            android:textSize="16sp"
+            android:layout_height="wrap_content"
+            android:textColor="#D5D5D5"
+            android:text="搜索结果" />
+
+<!--        <com.scwang.smartrefresh.layout.SmartRefreshLayout-->
+<!--            android:id="@+id/smart_refresh_layout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:focusableInTouchMode="true"-->
+<!--            android:splitMotionEvents="false">-->
+<!--            <androidx.recyclerview.widget.RecyclerView-->
+<!--                android:id="@+id/recyclerView"-->
+<!--                android:paddingLeft="@dimen/dp_2_5"-->
+<!--                android:layout_marginTop="17dp"-->
+<!--                android:paddingBottom="@dimen/dp_10"-->
+<!--                android:paddingEnd="@dimen/dp_2_5"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:background="@color/home_base_balk_color"-->
+<!--                android:overScrollMode="ifContentScrolls" />-->
+
+
+<!--            <com.scwang.smartrefresh.layout.footer.ClassicsFooter-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="@dimen/dp_40"-->
+<!--                app:srlAccentColor="@color/white"-->
+<!--                app:srlClassicsSpinnerStyle="Translate"-->
+<!--                app:srlDrawableArrowSize="20dp"-->
+<!--                app:srlDrawableMarginRight="20dp"-->
+<!--                app:srlDrawableProgress="@mipmap/mall_shuaxin"-->
+<!--                app:srlDrawableProgressSize="20dp"-->
+<!--                app:srlDrawableSize="20dp"-->
+<!--                app:srlFinishDuration="500"-->
+<!--                app:srlPrimaryColor="@color/black"-->
+<!--                app:srlTextSizeTitle="16sp" />-->
+<!--        </com.scwang.smartrefresh.layout.SmartRefreshLayout>-->
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/home_base_balk_color">
+
+            <LinearLayout
+                android:id="@+id/ll_add_child"
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+
+
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+          />
+
+
+    </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+</RelativeLayout>

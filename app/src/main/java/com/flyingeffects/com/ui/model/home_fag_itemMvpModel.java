@@ -105,8 +105,8 @@ public class home_fag_itemMvpModel {
 
             @Override
             protected void _onNext(List<new_fag_template_item> data) {
-//                String str= StringUtil.beanToJSONString(data);
-//                LogUtil.d("OOM","_onNext="+str);
+                String str= StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM","_onNext="+str);
                 finishData();
                 if (isRefresh) {
                     listData.clear();
