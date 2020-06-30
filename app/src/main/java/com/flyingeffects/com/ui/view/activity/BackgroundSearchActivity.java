@@ -8,13 +8,11 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -37,7 +35,6 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.fragment.fragBjSearch;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
-import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.WarpLinearLayout;
 
 import org.json.JSONArray;
@@ -62,7 +59,6 @@ public class BackgroundSearchActivity extends BaseActivity {
     EditText ed_text;
 
 
-
     @BindView(R.id.iv_delete)
     ImageView iv_delete;
 
@@ -82,7 +78,6 @@ public class BackgroundSearchActivity extends BaseActivity {
 
     @BindView(R.id.horizontal_scrollView)
     HorizontalScrollView horizontalScrollView;
-
 
 
     private ArrayList<Fragment> list = new ArrayList<>();
@@ -107,9 +102,8 @@ public class BackgroundSearchActivity extends BaseActivity {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
                 nowShowText = ed_text.getText().toString().trim();
                 if (!nowShowText.equals("")) {
-//                    ll_showResult.setVisibility(View.VISIBLE);
-                    setResultMargin();
                     EventBus.getDefault().post(new SendSearchText(nowShowText));
+                    hideResultView(false);
                 }
                 return true;
             }
@@ -130,7 +124,7 @@ public class BackgroundSearchActivity extends BaseActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() == 0) {
-//                    ll_showResult.setVisibility(View.GONE);
+                    hideResultView(false);
                     iv_delete.setVisibility(View.GONE);
                 } else {
                     iv_delete.setVisibility(View.VISIBLE);
@@ -139,16 +133,20 @@ public class BackgroundSearchActivity extends BaseActivity {
         });
         iv_delete.setOnClickListener(view -> {
             ed_text.setText("");
-//            ll_showResult.setVisibility(View.GONE);
         });
-
-//        viewPager.setVisibility(View.GONE);
-//        horizontalScrollView.setVisibility(View.GONE);
+        hideResultView(true);
     }
 
 
-
-
+    private void hideResultView(boolean isHide) {
+        if(isHide){
+            viewPager.setVisibility(View.INVISIBLE);
+            horizontalScrollView.setVisibility(View.GONE);
+        }else{
+            viewPager.setVisibility(View.VISIBLE);
+            horizontalScrollView.setVisibility(View.VISIBLE);
+        }
+    }
 
 
     @Override
@@ -192,8 +190,8 @@ public class BackgroundSearchActivity extends BaseActivity {
                         statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "4_recommend", listSearchKey.get(finalI).getName());
                         nowShowText = listSearchKey.get(finalI).getName();
                         ed_text.setText(nowShowText);
-//                        ll_showResult.setVisibility(View.VISIBLE);
-                        setResultMargin();
+                        hideResultView(false);
+//                        setResultMargin();
                         EventBus.getDefault().post(new SendSearchText(nowShowText));
                     }
                 }
@@ -210,36 +208,13 @@ public class BackgroundSearchActivity extends BaseActivity {
 
 
     /**
-     * description ：显示区域位置设置
-     * creation date: 2020/6/30
-     * user : zhangtongju
-     */
-    private void setResultMargin() {
-        try {
-            int tv_height = tv_youyou.getHeight() + ListForTv.get(0).getHeight() * 2;
-            int marginTop = tv_height + screenUtil.dip2px(BackgroundSearchActivity.this, 116);
-            int dp20 = screenUtil.dip2px(BackgroundSearchActivity.this, 20);
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            layoutParams.setMargins(dp20, marginTop, dp20, 0);//4个参数按顺序分别是左上右下
-//            ll_showResult.setLayoutParams(layoutParams);
-        } catch (Exception e) {
-//            ll_showResult.setVisibility(View.GONE);
-            e.printStackTrace();
-        }
-    }
-
-
-
-
-
-    /**
      * 请求友友推荐
      */
     private void requestKeywordList() {
         listSearchKey.clear();
         HashMap<String, String> params = new HashMap<>();
         //2 表示背景
-        params.put("template_type", "2");
+//        params.put("template_type", "2");
         // 启动时间
         Observable ob = Api.getDefault().keywordList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(BackgroundSearchActivity.this) {
@@ -272,9 +247,6 @@ public class BackgroundSearchActivity extends BaseActivity {
     }
 
 
-
-
-
     private void showHeadTitle() {
         String[] titles = {"背景", "模板"};
         for (int i = 0; i < titles.length; i++) {
@@ -292,14 +264,14 @@ public class BackgroundSearchActivity extends BaseActivity {
     }
 
 
-    private void setViewpager(){
+    private void setViewpager() {
         Bundle bundle = new Bundle();
-        bundle.putSerializable("from",0);
+        bundle.putSerializable("from", 0);
         fragBjSearch fragment = new fragBjSearch();
         fragment.setArguments(bundle);
         list.add(fragment);
         Bundle bundle2 = new Bundle();
-        bundle2.putSerializable("from",1);
+        bundle2.putSerializable("from", 1);
         fragBjSearch fragment2 = new fragBjSearch();
         fragment2.setArguments(bundle2);
         list.add(fragment2);
@@ -324,7 +296,6 @@ public class BackgroundSearchActivity extends BaseActivity {
         });
         new Handler().postDelayed(() -> showWitchBtn(0), 500);
     }
-
 
 
     private void showWitchBtn(int showWitch) {
