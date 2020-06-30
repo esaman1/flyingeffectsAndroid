@@ -66,6 +66,11 @@ public class BackgroundSearchActivity extends BaseActivity {
     @BindView(R.id.tv_youyou)
     TextView tv_youyou;
 
+
+    @BindView(R.id.ll_add_child)
+    LinearLayout ll_add_child;
+
+
 //    @BindView(R.id.smart_refresh_layout)
 //    SmartRefreshLayout smartRefreshLayout;
 
