@@ -55,6 +55,8 @@ public class fragBjSearch extends BaseFragment {
     private int selectPage = 1;
     //默认值肯定为""
     private String serachText;
+    //0 表示搜索出来背景页面 1表示搜索内容为模板页面
+    private int isFrom;
 
 
     @Override
@@ -67,7 +69,7 @@ public class fragBjSearch extends BaseFragment {
         EventBus.getDefault().register(this);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            serachText = bundle.getString("serachText");
+            isFrom = bundle.getInt("from");
         }
         initRecycler();
         initSmartRefreshLayout();
@@ -160,6 +162,11 @@ public class fragBjSearch extends BaseFragment {
         params.put("search", serachText);
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
+        if(isFrom==0){
+            params.put("template_type", "2");
+        }else{
+            params.put("template_type", "1");
+        }
         Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override

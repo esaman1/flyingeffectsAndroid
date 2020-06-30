@@ -77,6 +77,9 @@ public class BackgroundSearchActivity extends BaseActivity {
     @BindView(R.id.viewpager)
     ViewPager viewPager;
 
+    @BindView(R.id.ll_show_commend)
+    LinearLayout ll_show_commend;
+
     private ArrayList<Fragment> list = new ArrayList<>();
     private ArrayList<TextView> listTv = new ArrayList<>();
     private ArrayList<View> listView = new ArrayList<>();
@@ -100,6 +103,7 @@ public class BackgroundSearchActivity extends BaseActivity {
                 nowShowText = ed_text.getText().toString().trim();
                 if (!nowShowText.equals("")) {
                     ll_showResult.setVisibility(View.VISIBLE);
+                    ll_show_commend.setVisibility(View.GONE);
                     setResultMargin();
                     EventBus.getDefault().post(new SendSearchText(nowShowText));
                 }
@@ -123,6 +127,7 @@ public class BackgroundSearchActivity extends BaseActivity {
             public void afterTextChanged(Editable s) {
                 if (s.length() == 0) {
                     ll_showResult.setVisibility(View.GONE);
+                    ll_show_commend.setVisibility(View.VISIBLE);
                     iv_delete.setVisibility(View.GONE);
                 } else {
                     iv_delete.setVisibility(View.VISIBLE);
@@ -132,6 +137,7 @@ public class BackgroundSearchActivity extends BaseActivity {
         iv_delete.setOnClickListener(view -> {
             ed_text.setText("");
             ll_showResult.setVisibility(View.GONE);
+            ll_show_commend.setVisibility(View.VISIBLE);
         });
     }
 
@@ -177,7 +183,9 @@ public class BackgroundSearchActivity extends BaseActivity {
                         nowShowText = listSearchKey.get(finalI).getName();
                         ed_text.setText(nowShowText);
                         ll_showResult.setVisibility(View.VISIBLE);
+                        ll_show_commend.setVisibility(View.GONE);
                         setResultMargin();
+                        EventBus.getDefault().post(new SendSearchText(nowShowText));
                     }
                 }
             });
@@ -207,6 +215,7 @@ public class BackgroundSearchActivity extends BaseActivity {
             ll_showResult.setLayoutParams(layoutParams);
         } catch (Exception e) {
             ll_showResult.setVisibility(View.GONE);
+            ll_show_commend.setVisibility(View.VISIBLE);
             e.printStackTrace();
         }
     }
@@ -270,17 +279,22 @@ public class BackgroundSearchActivity extends BaseActivity {
             listTv.add(tv);
             listView.add(view_line);
             ll_add_child.addView(view);
-            setViewpager("");
+            setViewpager();
         }
     }
 
 
-    private void setViewpager(String serachText){
+    private void setViewpager(){
         Bundle bundle = new Bundle();
-        bundle.putSerializable("serachText",serachText);
+        bundle.putSerializable("from",0);
         fragBjSearch fragment = new fragBjSearch();
         fragment.setArguments(bundle);
         list.add(fragment);
+        Bundle bundle2 = new Bundle();
+        bundle2.putSerializable("from",1);
+        fragBjSearch fragment2 = new fragBjSearch();
+        fragment2.setArguments(bundle2);
+        list.add(fragment2);
         FragmentManager manager = getSupportFragmentManager();
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
         viewPager.setAdapter(adapter);
