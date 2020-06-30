@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.view.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -18,6 +19,8 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.ui.model.FromToTemplate;
+import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -51,11 +54,10 @@ public class fragBjSearch extends BaseFragment {
     @BindView(R.id.lin_show_nodata_bj)
     LinearLayout lin_show_nodata;
     private boolean isRefresh = true;
-    private ArrayList<new_fag_template_item> listData = new ArrayList<>();
     private int selectPage = 1;
     //默认值肯定为""
-    private String serachText;
-    //0 表示搜索出来背景页面 1表示搜索内容为模板页面
+    private String searchText;
+    //0 表示搜索出来模板 1表示搜索内容为背景
     private int isFrom;
 
 
@@ -87,13 +89,23 @@ public class fragBjSearch extends BaseFragment {
 
 
     private void initRecycler() {
-        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), 1);
+        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), isFrom);
         StaggeredGridLayoutManager layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
+            Intent intent = new Intent(getActivity(), PreviewActivity.class);
+            if (isFrom == 0) {
+                //模板页面
+                intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
+            } else {
+                //背景页面
+                intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+            }
+            intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
+            startActivity(intent);
         });
     }
 
@@ -159,13 +171,13 @@ public class fragBjSearch extends BaseFragment {
 
     private void requestFagData(boolean isShowDialog) {
         HashMap<String, String> params = new HashMap<>();
-        params.put("search", serachText);
+        params.put("search", searchText);
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
-        if(isFrom==0){
-            params.put("template_type", "2");
-        }else{
+        if (isFrom == 0) {
             params.put("template_type", "1");
+        } else {
+            params.put("template_type", "2");
         }
         Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
@@ -183,7 +195,7 @@ public class fragBjSearch extends BaseFragment {
                 }
                 if (isRefresh && data.size() == 0) {
                     ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none", serachText);
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none", searchText);
                 }
                 if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
                     ToastUtil.showToast(getResources().getString(R.string.no_more_data));
@@ -201,8 +213,8 @@ public class fragBjSearch extends BaseFragment {
     @Subscribe
     public void onEventMainThread(SendSearchText event) {
         //搜索了内容
-        serachText= event.getText();
-        isRefresh=true;
+        searchText = event.getText();
+        isRefresh = true;
         selectPage = 1;
         requestFagData(true);
     }

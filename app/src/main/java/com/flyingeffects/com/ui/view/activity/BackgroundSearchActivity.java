@@ -266,12 +266,12 @@ public class BackgroundSearchActivity extends BaseActivity {
 
     private void setViewpager() {
         Bundle bundle = new Bundle();
-        bundle.putSerializable("from", 0);
+        bundle.putSerializable("from", 1);
         fragBjSearch fragment = new fragBjSearch();
         fragment.setArguments(bundle);
         list.add(fragment);
         Bundle bundle2 = new Bundle();
-        bundle2.putSerializable("from", 1);
+        bundle2.putSerializable("from", 0);
         fragBjSearch fragment2 = new fragBjSearch();
         fragment2.setArguments(bundle2);
         list.add(fragment2);
