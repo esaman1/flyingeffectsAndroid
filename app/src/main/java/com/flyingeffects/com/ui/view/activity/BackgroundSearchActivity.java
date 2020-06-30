@@ -1,34 +1,39 @@
 package com.flyingeffects.com.ui.view.activity;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
+
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.adapter.main_recycler_adapter;
+import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.SearchKeyWord;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.SendSearchText;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.ColorCorrectionManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.ui.view.fragment.fragBjSearch;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.screenUtil;
@@ -40,9 +45,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import butterknife.BindView;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 public class BackgroundSearchActivity extends BaseActivity {
@@ -51,8 +56,6 @@ public class BackgroundSearchActivity extends BaseActivity {
     @BindView(R.id.AutoNewLineLayout)
     WarpLinearLayout autoNewLineLayout;
 
-//    @BindView(R.id.recyclerView)
-//    RecyclerView recyclerView;
 
     @BindView(R.id.ed_search)
     EditText ed_text;
@@ -71,14 +74,16 @@ public class BackgroundSearchActivity extends BaseActivity {
     LinearLayout ll_add_child;
 
 
-//    @BindView(R.id.smart_refresh_layout)
-//    SmartRefreshLayout smartRefreshLayout;
+    @BindView(R.id.viewpager)
+    ViewPager viewPager;
 
-    private List<new_fag_template_item> allData = new ArrayList<>();
-    private main_recycler_adapter adapter;
+    private ArrayList<Fragment> list = new ArrayList<>();
+    private ArrayList<TextView> listTv = new ArrayList<>();
+    private ArrayList<View> listView = new ArrayList<>();
+
+
     private ArrayList<SearchKeyWord> listSearchKey = new ArrayList<>();
     private ArrayList<TextView> ListForTv = new ArrayList<>();
-    private int perPageCount = 10;
     private String nowShowText;
 
 
@@ -89,18 +94,14 @@ public class BackgroundSearchActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-
-//        ed_text.setOnClickListener(view -> statisticsEventAffair.getInstance().setFlag(getActivity(), "4_click"));
         //键盘的搜索按钮
         ed_text.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
                 nowShowText = ed_text.getText().toString().trim();
                 if (!nowShowText.equals("")) {
-//                    selectPage=1;
-                    statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "4_search", nowShowText);
-//                    requestFagData(nowShowText, true);
                     ll_showResult.setVisibility(View.VISIBLE);
                     setResultMargin();
+                    EventBus.getDefault().post(new SendSearchText(nowShowText));
                 }
                 return true;
             }
@@ -126,23 +127,25 @@ public class BackgroundSearchActivity extends BaseActivity {
                 } else {
                     iv_delete.setVisibility(View.VISIBLE);
                 }
-//                ed_text.setSelection(s.length());
             }
         });
         iv_delete.setOnClickListener(view -> {
             ed_text.setText("");
             ll_showResult.setVisibility(View.GONE);
         });
-        //   showSoftInputFromWindow(ed_text);
     }
 
 
     @Override
-    protected void initAction() {
-//        initRecycler();
-//        initSmartRefreshLayout();
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
+    @Override
+    protected void initAction() {
+        showHeadTilte();
+    }
 
 
     @Override
@@ -169,15 +172,13 @@ public class BackgroundSearchActivity extends BaseActivity {
             int finalI = i;
             tv.setOnClickListener(view -> {
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                        if (listSearchKey.size() >= finalI + 1) {
-//                            selectPage=1;
-                            statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "4_recommend", listSearchKey.get(finalI).getName());
-                            nowShowText = listSearchKey.get(finalI).getName();
-                            ed_text.setText(nowShowText);
-//                            requestFagData(nowShowText, true);
-                            ll_showResult.setVisibility(View.VISIBLE);
-                            setResultMargin();
-                        }
+                    if (listSearchKey.size() >= finalI + 1) {
+                        statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "4_recommend", listSearchKey.get(finalI).getName());
+                        nowShowText = listSearchKey.get(finalI).getName();
+                        ed_text.setText(nowShowText);
+                        ll_showResult.setVisibility(View.VISIBLE);
+                        setResultMargin();
+                    }
                 }
             });
             GradientDrawable view_ground = (GradientDrawable) tv.getBackground(); //获取控件的背
@@ -189,6 +190,13 @@ public class BackgroundSearchActivity extends BaseActivity {
     }
 
 
+
+
+    /**
+     * description ：显示区域位置设置
+     * creation date: 2020/6/30
+     * user : zhangtongju
+     */
     private void setResultMargin() {
         try {
             int tv_height = tv_youyou.getHeight() + ListForTv.get(0).getHeight() * 2;
@@ -204,42 +212,6 @@ public class BackgroundSearchActivity extends BaseActivity {
     }
 
 
-//    private void initRecycler() {
-//        adapter = new main_recycler_adapter(R.layout.list_main_item, allData,BackgroundSearchActivity.this, 2);
-//        StaggeredGridLayoutManager layoutManager =
-//                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-//        recyclerView.setLayoutManager(layoutManager);
-//        recyclerView.setHasFixedSize(true);
-//        recyclerView.setAdapter(adapter);
-//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//                ed_text.clearFocus();
-//            }
-//        });
-//
-//        adapter.setOnItemClickListener((adapter, view, position) -> {
-//            if (!DoubleClick.getInstance().isFastDoubleClick()) {
-//                statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "4_search_click", allData.get(position).getTitle());
-//                Intent intent = new Intent(BackgroundSearchActivity.this, PreviewActivity.class);
-//                intent.putExtra("fromTo", FromToTemplate.ISFROMSEARCH);
-//                intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
-//                startActivity(intent);
-//            }
-//        });
-//    }
-
-    public void showSoftInputFromWindow(EditText editText) {
-        editText.setFocusable(true);
-        editText.setFocusableInTouchMode(true);
-        editText.requestFocus();
-        InputMethodManager inputManager =
-                (InputMethodManager) editText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputManager.showSoftInput(editText, 0);
-    }
-
-
 
 
 
@@ -250,7 +222,7 @@ public class BackgroundSearchActivity extends BaseActivity {
         listSearchKey.clear();
         HashMap<String, String> params = new HashMap<>();
         //2 表示背景
-        params.put("template_type","2");
+        params.put("template_type", "2");
         // 启动时间
         Observable ob = Api.getDefault().keywordList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(BackgroundSearchActivity.this) {
@@ -283,67 +255,70 @@ public class BackgroundSearchActivity extends BaseActivity {
     }
 
 
-//    private void requestFagData(String name, boolean isShowDialog) {
-//        HashMap<String, String> params = new HashMap<>();
-//        params.put("search", name);
-//        params.put("page", selectPage + "");
-//        params.put("pageSize", perPageCount + "");
-//        Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
-//        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
-//            @Override
-//            protected void _onError(String message) {
-//                finishData();
-//                ToastUtil.showToast(message);
-//            }
-//
-//            @Override
-//            protected void _onNext(List<new_fag_template_item> data) {
-//                finishData();
-//                if (isRefresh) {
-//                    allData.clear();
-//                }
-//
-//                if (isRefresh && data.size() == 0) {
-//                    ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
-//                    statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "4_search_none", name);
-//                }
-//                if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
-//                    ToastUtil.showToast(getResources().getString(R.string.no_more_data));
-//                }
-//                if (data.size() < perPageCount) {
-//                    smartRefreshLayout.setEnableLoadMore(false);
-//                }
-//                allData.addAll(data);
-//                adapter.notifyDataSetChanged();
-//
-//
-//            }
-//        }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
-//    }
-//
-//    private void finishData() {
-//        smartRefreshLayout.finishRefresh();
-//        smartRefreshLayout.finishLoadMore();
-//    }
-//
-//
-//    private int selectPage = 1;
-//    private boolean isRefresh = true;
-//
-//    public void initSmartRefreshLayout() {
-//        smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
-////            isOnRefresh();
-//            isRefresh = true;
-//            refreshLayout.setEnableLoadMore(true);
-//            selectPage = 1;
-//            requestFagData(nowShowText, true);
-//        });
-//        smartRefreshLayout.setOnLoadMoreListener(refresh -> {
-////            isOnLoadMore();
-//            isRefresh = false;
-//            selectPage++;
-//            requestFagData(nowShowText, false);
-//        });
-//    }
+
+
+
+    private void showHeadTilte() {
+        String[] titles = {"背景", "模板"};
+        for (int i = 0; i < titles.length; i++) {
+            View view = LayoutInflater.from(this).inflate(R.layout.view_bj_head, null);
+            TextView tv = view.findViewById(R.id.tv_name_bj_head);
+            View view_line = view.findViewById(R.id.view_line_head);
+            tv.setText(titles[i]);
+            tv.setId(i);
+            tv.setOnClickListener(v -> showWitchBtn(v.getId()));
+            listTv.add(tv);
+            listView.add(view_line);
+            ll_add_child.addView(view);
+            setViewpager("");
+        }
+    }
+
+
+    private void setViewpager(String serachText){
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("serachText",serachText);
+        fragBjSearch fragment = new fragBjSearch();
+        fragment.setArguments(bundle);
+        list.add(fragment);
+        FragmentManager manager = getSupportFragmentManager();
+        home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                showWitchBtn(i);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
+        new Handler().postDelayed(() -> showWitchBtn(0), 500);
+    }
+
+
+
+    private void showWitchBtn(int showWitch) {
+        for (int i = 0; i < listTv.size(); i++) {
+            TextView tv = listTv.get(i);
+            View view = listView.get(i);
+            if (i == showWitch) {
+                tv.setTextSize(21);
+                view.setVisibility(View.VISIBLE);
+            } else {
+                tv.setTextSize(17);
+                view.setVisibility(View.INVISIBLE);
+            }
+        }
+        viewPager.setCurrentItem(showWitch);
+    }
+
 
 }
