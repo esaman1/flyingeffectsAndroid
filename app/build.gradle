@@ -32,8 +32,7 @@ android {
         manifestPlaceholders = [UMENG_CHANNEL_VALUE: "umeng"]//添加一个默认渠道号  2018-6-19
         flavorDimensions "versionCode" //版本名后面添加一句话，意思就是flavor dimension 它的维度就是该版本号，这样维度就是都是统一的了
         ndk {
-
-
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
         }
 
         //极光推送配置 ，通过自动配置
@@ -183,7 +182,7 @@ dependencies {
     // 抖音1
     implementation(name: 'RangersAppLog-Lite-cn-3.3.12', ext: 'aar')
     //闪验
-    api files('libs/shanyan_sdk_v2.3.1.3.aar')
+    api files('libs/shanyan_sdk_v2.3.1.5.aar')
 }
 
 
