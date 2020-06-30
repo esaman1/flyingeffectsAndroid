@@ -5,138 +5,147 @@
     android:layout_height="match_parent"
     android:background="@color/home_base_balk_color">
 
+
     <RelativeLayout
         android:id="@+id/relative_top"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_marginStart="15dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="15dp"
         android:background="@drawable/strok_search"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="15dp"
         android:orientation="horizontal">
 
         <EditText
             android:id="@+id/ed_search"
-            android:singleLine="true"
-            android:inputType="text"
-            android:maxLines="1"
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:imeOptions="actionSearch"
-            android:hint="请输入模板关键字"
             android:background="@null"
+            android:hint="请输入模板关键字"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:maxLines="1"
             android:paddingStart="40dp"
+            android:singleLine="true"
             android:textColor="@color/white"
             android:textColorHint="#515151" />
 
         <ImageView
             android:layout_width="21dp"
-            android:layout_marginStart="15dp"
             android:layout_height="21dp"
             android:layout_centerVertical="true"
+            android:layout_marginStart="15dp"
             android:src="@mipmap/search" />
 
         <ImageView
-            android:visibility="gone"
             android:id="@+id/iv_delete"
-            android:contentDescription="@string/app_name"
-            android:padding="5dp"
             android:layout_width="30dp"
-            android:layout_marginEnd="15dp"
             android:layout_height="30dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:src="@mipmap/serach_delete" />
+            android:layout_marginEnd="15dp"
+            android:contentDescription="@string/app_name"
+            android:padding="5dp"
+            android:src="@mipmap/serach_delete"
+            android:visibility="gone" />
 
     </RelativeLayout>
 
-    <LinearLayout
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_below="@+id/relative_top"
-        android:layout_width="match_parent"
-        android:layout_marginStart="20dp"
-        android:id="@+id/ll_show_commend"
-        android:layout_marginEnd="20dp"
-        android:orientation="vertical"
-        android:layout_height="match_parent">
+        android:background="@color/home_base_balk_color">
 
-        <TextView
-            android:id="@+id/tv_youyou"
-            android:layout_width="wrap_content"
-            android:layout_marginTop="17dp"
-            android:textSize="16sp"
-            android:gravity="center_vertical"
-            android:layout_height="wrap_content"
-            android:textColor="#D5D5D5"
-            android:text="友友推荐" />
-
-
-        <com.flyingeffects.com.view.WarpLinearLayout
-            android:id="@+id/AutoNewLineLayout"
-            app:grivate="left"
-            app:isFull="false"
-            app:horizontal_Space="10dp"
-            app:vertical_Space="10dp"
-            android:layout_marginTop="14dp"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/collapsingToolbarLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/home_base_balk_color"
+                android:fitsSystemWindows="true"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+
+
+                <Toolbar
+                    android:id="@+id/Toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:layout_collapseMode="pin">
+
+                    <LinearLayout
+                        android:id="@+id/ll_show_commend"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/relative_top"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_youyou"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="17dp"
+                            android:gravity="center_vertical"
+                            android:text="友友推荐"
+                            android:textColor="#D5D5D5"
+                            android:textSize="16sp" />
+
+
+                        <com.flyingeffects.com.view.WarpLinearLayout
+                            android:id="@+id/AutoNewLineLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="14dp"
+                            app:grivate="left"
+                            app:horizontal_Space="10dp"
+                            app:isFull="false"
+                            app:vertical_Space="10dp" />
+                    </LinearLayout>
+
+                </Toolbar>
+
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
 
 
 
 
-    <LinearLayout
-        android:id="@+id/ll_showResult"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:background="@color/home_base_balk_color"
-        android:visibility="gone"
-        android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_marginTop="17dp"
-            android:textSize="16sp"
-            android:layout_height="wrap_content"
-            android:textColor="#D5D5D5"
-            android:text="搜索结果" />
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@color/home_base_balk_color">
 
-
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@color/home_base_balk_color">
-
-            <LinearLayout
-                android:id="@+id/ll_add_child"
-                android:layout_width="wrap_content"
-                android:layout_height="80dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal" />
-        </HorizontalScrollView>
+                <LinearLayout
+                    android:id="@+id/ll_add_child"
+                    android:layout_width="wrap_content"
+                    android:layout_height="80dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
 
 
-
+        </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-          />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-
-    </LinearLayout>
-
-
-
-
-
-
-
-
-
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
 </RelativeLayout>

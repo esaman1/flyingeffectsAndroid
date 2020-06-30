@@ -60,8 +60,8 @@ public class BackgroundSearchActivity extends BaseActivity {
     @BindView(R.id.ed_search)
     EditText ed_text;
 
-    @BindView(R.id.ll_showResult)
-    LinearLayout ll_showResult;
+//    @BindView(R.id.ll_showResult)
+//    LinearLayout ll_showResult;
 
     @BindView(R.id.iv_delete)
     ImageView iv_delete;
@@ -102,8 +102,7 @@ public class BackgroundSearchActivity extends BaseActivity {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
                 nowShowText = ed_text.getText().toString().trim();
                 if (!nowShowText.equals("")) {
-                    ll_showResult.setVisibility(View.VISIBLE);
-                    ll_show_commend.setVisibility(View.GONE);
+//                    ll_showResult.setVisibility(View.VISIBLE);
                     setResultMargin();
                     EventBus.getDefault().post(new SendSearchText(nowShowText));
                 }
@@ -126,8 +125,7 @@ public class BackgroundSearchActivity extends BaseActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() == 0) {
-                    ll_showResult.setVisibility(View.GONE);
-                    ll_show_commend.setVisibility(View.VISIBLE);
+//                    ll_showResult.setVisibility(View.GONE);
                     iv_delete.setVisibility(View.GONE);
                 } else {
                     iv_delete.setVisibility(View.VISIBLE);
@@ -136,8 +134,7 @@ public class BackgroundSearchActivity extends BaseActivity {
         });
         iv_delete.setOnClickListener(view -> {
             ed_text.setText("");
-            ll_showResult.setVisibility(View.GONE);
-            ll_show_commend.setVisibility(View.VISIBLE);
+//            ll_showResult.setVisibility(View.GONE);
         });
     }
 
@@ -182,8 +179,7 @@ public class BackgroundSearchActivity extends BaseActivity {
                         statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "4_recommend", listSearchKey.get(finalI).getName());
                         nowShowText = listSearchKey.get(finalI).getName();
                         ed_text.setText(nowShowText);
-                        ll_showResult.setVisibility(View.VISIBLE);
-                        ll_show_commend.setVisibility(View.GONE);
+//                        ll_showResult.setVisibility(View.VISIBLE);
                         setResultMargin();
                         EventBus.getDefault().post(new SendSearchText(nowShowText));
                     }
@@ -212,10 +208,9 @@ public class BackgroundSearchActivity extends BaseActivity {
             int dp20 = screenUtil.dip2px(BackgroundSearchActivity.this, 20);
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             layoutParams.setMargins(dp20, marginTop, dp20, 0);//4个参数按顺序分别是左上右下
-            ll_showResult.setLayoutParams(layoutParams);
+//            ll_showResult.setLayoutParams(layoutParams);
         } catch (Exception e) {
-            ll_showResult.setVisibility(View.GONE);
-            ll_show_commend.setVisibility(View.VISIBLE);
+//            ll_showResult.setVisibility(View.GONE);
             e.printStackTrace();
         }
     }
