@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -60,8 +61,7 @@ public class BackgroundSearchActivity extends BaseActivity {
     @BindView(R.id.ed_search)
     EditText ed_text;
 
-//    @BindView(R.id.ll_showResult)
-//    LinearLayout ll_showResult;
+
 
     @BindView(R.id.iv_delete)
     ImageView iv_delete;
@@ -79,6 +79,11 @@ public class BackgroundSearchActivity extends BaseActivity {
 
     @BindView(R.id.ll_show_commend)
     LinearLayout ll_show_commend;
+
+    @BindView(R.id.horizontal_scrollView)
+    HorizontalScrollView horizontalScrollView;
+
+
 
     private ArrayList<Fragment> list = new ArrayList<>();
     private ArrayList<TextView> listTv = new ArrayList<>();
@@ -136,18 +141,26 @@ public class BackgroundSearchActivity extends BaseActivity {
             ed_text.setText("");
 //            ll_showResult.setVisibility(View.GONE);
         });
+
+//        viewPager.setVisibility(View.GONE);
+//        horizontalScrollView.setVisibility(View.GONE);
     }
+
+
+
+
 
 
     @Override
     public void onDestroy() {
+
         super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
 
     @Override
     protected void initAction() {
-        showHeadTilte();
+        showHeadTitle();
     }
 
 
@@ -262,7 +275,7 @@ public class BackgroundSearchActivity extends BaseActivity {
 
 
 
-    private void showHeadTilte() {
+    private void showHeadTitle() {
         String[] titles = {"背景", "模板"};
         for (int i = 0; i < titles.length; i++) {
             View view = LayoutInflater.from(this).inflate(R.layout.view_bj_head, null);

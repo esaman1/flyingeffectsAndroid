@@ -172,7 +172,7 @@ public class fragBjSearch extends BaseFragment {
             @Override
             protected void _onError(String message) {
                 finishData();
-                ToastUtil.showToast(message);
+//                ToastUtil.showToast(message);
             }
 
             @Override
