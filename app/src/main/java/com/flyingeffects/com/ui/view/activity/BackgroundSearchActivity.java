@@ -73,8 +73,6 @@ public class BackgroundSearchActivity extends BaseActivity {
     @BindView(R.id.viewpager)
     ViewPager viewPager;
 
-    @BindView(R.id.ll_show_commend)
-    LinearLayout ll_show_commend;
 
     @BindView(R.id.horizontal_scrollView)
     HorizontalScrollView horizontalScrollView;
@@ -86,7 +84,6 @@ public class BackgroundSearchActivity extends BaseActivity {
 
 
     private ArrayList<SearchKeyWord> listSearchKey = new ArrayList<>();
-    private ArrayList<TextView> ListForTv = new ArrayList<>();
     private String nowShowText;
 
 
@@ -176,7 +173,6 @@ public class BackgroundSearchActivity extends BaseActivity {
 
 
     private void setKeyWordList(ArrayList<SearchKeyWord> listSearchKey) {
-        ListForTv.clear();
         autoNewLineLayout.removeAllViews();
         for (int i = 0; i < listSearchKey.size(); i++) {
             String nowChooseColor = ColorCorrectionManager.getInstance().getChooseColor(i);
@@ -199,7 +195,6 @@ public class BackgroundSearchActivity extends BaseActivity {
             GradientDrawable view_ground = (GradientDrawable) tv.getBackground(); //获取控件的背
             view_ground.setStroke(2, Color.parseColor(nowChooseColor));
             autoNewLineLayout.addView(tv);
-            ListForTv.add(tv);
         }
 
     }

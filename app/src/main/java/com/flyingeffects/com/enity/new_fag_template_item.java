@@ -158,6 +158,16 @@ public class new_fag_template_item implements Serializable {
     private String title;
     private String image;
     private String vidoefile;
+
+    public String getMinapp_share_title() {
+        return minapp_share_title;
+    }
+
+    public void setMinapp_share_title(String minapp_share_title) {
+        this.minapp_share_title = minapp_share_title;
+    }
+
+    private String minapp_share_title;
     private String temcategory_id;
     /**
      * 1需要激励视频，0 不需要激励视频

@@ -1,46 +1,40 @@
 package com.flyingeffects.com.ui.view.fragment;
 
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
+
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.adapter.main_recycler_adapter;
+import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.SearchKeyWord;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.SendSearchText;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.ColorCorrectionManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
-import com.flyingeffects.com.ui.model.FromToTemplate;
-import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
-import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.WarpLinearLayout;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,9 +42,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import butterknife.BindView;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 
@@ -65,14 +59,10 @@ public class frag_search extends BaseFragment {
     @BindView(R.id.AutoNewLineLayout)
     WarpLinearLayout autoNewLineLayout;
 
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
 
     @BindView(R.id.ed_search)
     EditText ed_text;
 
-    @BindView(R.id.ll_showResult)
-    LinearLayout ll_showResult;
 
     @BindView(R.id.iv_delete)
     ImageView iv_delete;
@@ -80,15 +70,23 @@ public class frag_search extends BaseFragment {
     @BindView(R.id.tv_youyou)
     TextView tv_youyou;
 
-    @BindView(R.id.smart_refresh_layout)
-    SmartRefreshLayout smartRefreshLayout;
 
-    private List<new_fag_template_item> allData = new ArrayList<>();
-    private main_recycler_adapter adapter;
+    @BindView(R.id.ll_add_child)
+    LinearLayout ll_add_child;
+
+
+    @BindView(R.id.viewpager)
+    ViewPager viewPager;
+
+    @BindView(R.id.horizontal_scrollView)
+    HorizontalScrollView horizontalScrollView;
+    private ArrayList<Fragment> list = new ArrayList<>();
+    private ArrayList<TextView> listTv = new ArrayList<>();
+    private ArrayList<View> listView = new ArrayList<>();
     private ArrayList<SearchKeyWord> listSearchKey = new ArrayList<>();
-    private ArrayList<TextView> ListForTv = new ArrayList<>();
-    private int perPageCount = 10;
     private String nowShowText;
+    private FragmentManager manager;
+
 
     @Override
     protected int getContentLayout() {
@@ -98,18 +96,14 @@ public class frag_search extends BaseFragment {
 
     @Override
     protected void initView() {
-
-//        ed_text.setOnClickListener(view -> statisticsEventAffair.getInstance().setFlag(getActivity(), "4_click"));
         //键盘的搜索按钮
         ed_text.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
                 nowShowText = ed_text.getText().toString().trim();
                 if (!nowShowText.equals("")) {
-                    selectPage=1;
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search", nowShowText);
-                    requestFagData(nowShowText, true);
-                    ll_showResult.setVisibility(View.VISIBLE);
-                    setResultMargin();
+                    hideResultView(false);
+                    EventBus.getDefault().post(new SendSearchText(nowShowText));
+
                 }
                 return true;
             }
@@ -130,21 +124,36 @@ public class frag_search extends BaseFragment {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() == 0) {
-                    ll_showResult.setVisibility(View.GONE);
+                    hideResultView(false);
                     iv_delete.setVisibility(View.GONE);
                 } else {
                     iv_delete.setVisibility(View.VISIBLE);
                 }
-//                ed_text.setSelection(s.length());
             }
         });
         iv_delete.setOnClickListener(view -> {
             ed_text.setText("");
-            ll_showResult.setVisibility(View.GONE);
         });
-        //   showSoftInputFromWindow(ed_text);
+        hideResultView(true);
     }
 
+
+    private void hideResultView(boolean isHide) {
+        if (isHide) {
+            viewPager.setVisibility(View.INVISIBLE);
+            horizontalScrollView.setVisibility(View.GONE);
+        } else {
+            viewPager.setVisibility(View.VISIBLE);
+            horizontalScrollView.setVisibility(View.VISIBLE);
+        }
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 
     @Override
     protected void initAction() {
@@ -153,8 +162,6 @@ public class frag_search extends BaseFragment {
 
     @Override
     protected void initData() {
-        initRecycler();
-        initSmartRefreshLayout();
     }
 
 
@@ -162,6 +169,11 @@ public class frag_search extends BaseFragment {
     public void onResume() {
         super.onResume();
         requestKeywordList();
+        hideResultView(true);
+        list.clear();
+        listTv.clear();
+        listView.clear();
+        showHeadTitle();
     }
 
 
@@ -172,7 +184,6 @@ public class frag_search extends BaseFragment {
 
 
     private void setKeyWordList(ArrayList<SearchKeyWord> listSearchKey) {
-        ListForTv.clear();
         autoNewLineLayout.removeAllViews();
         for (int i = 0; i < listSearchKey.size(); i++) {
             String nowChooseColor = ColorCorrectionManager.getInstance().getChooseColor(i);
@@ -182,76 +193,21 @@ public class frag_search extends BaseFragment {
             int finalI = i;
             tv.setOnClickListener(view -> {
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                    if (getActivity() != null) {
-                        if (listSearchKey.size() >= finalI + 1) {
-                            selectPage=1;
-                            statisticsEventAffair.getInstance().setFlag(getActivity(), "4_recommend", listSearchKey.get(finalI).getName());
-                            nowShowText = listSearchKey.get(finalI).getName();
-                            ed_text.setText(nowShowText);
-                            requestFagData(nowShowText, true);
-                            ll_showResult.setVisibility(View.VISIBLE);
-                            setResultMargin();
-                        }
+                    if (listSearchKey.size() >= finalI + 1) {
+                        statisticsEventAffair.getInstance().setFlag(getActivity(), "4_recommend", listSearchKey.get(finalI).getName());
+                        nowShowText = listSearchKey.get(finalI).getName();
+                        ed_text.setText(nowShowText);
+                        hideResultView(false);
+//                        setResultMargin();
+                        EventBus.getDefault().post(new SendSearchText(nowShowText));
                     }
                 }
             });
             GradientDrawable view_ground = (GradientDrawable) tv.getBackground(); //获取控件的背
             view_ground.setStroke(2, Color.parseColor(nowChooseColor));
             autoNewLineLayout.addView(tv);
-            ListForTv.add(tv);
         }
 
-    }
-
-
-    private void setResultMargin() {
-        try {
-            int tv_height = tv_youyou.getHeight() + ListForTv.get(0).getHeight() * 2;
-            int marginTop = tv_height + screenUtil.dip2px(getActivity(), 116);
-            int dp20 = screenUtil.dip2px(getActivity(), 20);
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            layoutParams.setMargins(dp20, marginTop, dp20, 0);//4个参数按顺序分别是左上右下
-            ll_showResult.setLayoutParams(layoutParams);
-        } catch (Exception e) {
-            ll_showResult.setVisibility(View.GONE);
-            e.printStackTrace();
-        }
-    }
-
-
-    private void initRecycler() {
-        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), 2);
-        StaggeredGridLayoutManager layoutManager =
-                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(adapter);
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                ed_text.clearFocus();
-            }
-        });
-
-        adapter.setOnItemClickListener((adapter, view, position) -> {
-            if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_click", allData.get(position).getTitle());
-                Intent intent = new Intent(getActivity(), PreviewActivity.class);
-                intent.putExtra("fromTo", FromToTemplate.ISFROMSEARCH);
-                intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
-                startActivity(intent);
-            }
-        });
-    }
-
-    public void showSoftInputFromWindow(EditText editText) {
-        editText.setFocusable(true);
-        editText.setFocusableInTouchMode(true);
-        editText.requestFocus();
-        InputMethodManager inputManager =
-                (InputMethodManager) editText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputManager.showSoftInput(editText, 0);
     }
 
 
@@ -261,7 +217,6 @@ public class frag_search extends BaseFragment {
     private void requestKeywordList() {
         listSearchKey.clear();
         HashMap<String, String> params = new HashMap<>();
-        // 启动时间
         Observable ob = Api.getDefault().keywordList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(getActivity()) {
             @Override
@@ -293,67 +248,73 @@ public class frag_search extends BaseFragment {
     }
 
 
-    private void requestFagData(String name, boolean isShowDialog) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("search", name);
-        params.put("page", selectPage + "");
-        params.put("pageSize", perPageCount + "");
-        Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
+    private void showHeadTitle() {
+        ll_add_child.removeAllViews();
+        String[] titles = {"模板", "背景"};
+        for (int i = 0; i < titles.length; i++) {
+            View view = LayoutInflater.from(getActivity()).inflate(R.layout.view_bj_head, null);
+            TextView tv = view.findViewById(R.id.tv_name_bj_head);
+            View view_line = view.findViewById(R.id.view_line_head);
+            tv.setText(titles[i]);
+            tv.setId(i);
+            tv.setOnClickListener(v -> showWitchBtn(v.getId()));
+            listTv.add(tv);
+            listView.add(view_line);
+            ll_add_child.addView(view);
+            setViewpager();
+        }
+    }
+
+    private void setViewpager() {
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("from", 0);
+        fragBjSearch fragment = new fragBjSearch();
+        fragment.setArguments(bundle);
+        list.add(fragment);
+        Bundle bundle2 = new Bundle();
+        bundle2.putSerializable("from", 1);
+        fragBjSearch fragment2 = new fragBjSearch();
+        fragment2.setArguments(bundle2);
+        list.add(fragment2);
+        if (manager == null) {
+            manager = getChildFragmentManager();
+        }
+        home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            protected void _onError(String message) {
-                finishData();
-                ToastUtil.showToast(message);
+            public void onPageScrolled(int i, float v, int i1) {
+
             }
 
             @Override
-            protected void _onNext(List<new_fag_template_item> data) {
-                finishData();
-                if (isRefresh) {
-                    allData.clear();
-                }
+            public void onPageSelected(int i) {
+                showWitchBtn(i);
+            }
 
-                if (isRefresh && data.size() == 0) {
-                    ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none", name);
-                }
-                if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
-                    ToastUtil.showToast(getResources().getString(R.string.no_more_data));
-                }
-                if (data.size() < perPageCount) {
-                    smartRefreshLayout.setEnableLoadMore(false);
-                }
-                allData.addAll(data);
-                adapter.notifyDataSetChanged();
-
+            @Override
+            public void onPageScrollStateChanged(int i) {
 
             }
-        }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
-    }
-
-    private void finishData() {
-        smartRefreshLayout.finishRefresh();
-        smartRefreshLayout.finishLoadMore();
+        });
+        new Handler().postDelayed(() -> showWitchBtn(0), 500);
     }
 
 
-    private int selectPage = 1;
-    private boolean isRefresh = true;
-
-    public void initSmartRefreshLayout() {
-        smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
-//            isOnRefresh();
-            isRefresh = true;
-            refreshLayout.setEnableLoadMore(true);
-            selectPage = 1;
-            requestFagData(nowShowText, true);
-        });
-        smartRefreshLayout.setOnLoadMoreListener(refresh -> {
-//            isOnLoadMore();
-            isRefresh = false;
-            selectPage++;
-            requestFagData(nowShowText, false);
-        });
+    private void showWitchBtn(int showWitch) {
+        for (int i = 0; i < listTv.size(); i++) {
+            TextView tv = listTv.get(i);
+            View view = listView.get(i);
+            if (i == showWitch) {
+                tv.setTextSize(21);
+                view.setVisibility(View.VISIBLE);
+            } else {
+                tv.setTextSize(17);
+                view.setVisibility(View.INVISIBLE);
+            }
+        }
+        viewPager.setCurrentItem(showWitch);
     }
 
 

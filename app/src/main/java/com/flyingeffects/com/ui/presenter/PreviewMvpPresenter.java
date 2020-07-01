@@ -15,9 +15,9 @@ public class PreviewMvpPresenter extends BasePresenter implements PreviewMvpCall
     private PreviewMvpView PreviewView;
     private PreviewMvpModel PreviewModel;
 
-    public PreviewMvpPresenter(Context context, PreviewMvpView mvp_view) {
+    public PreviewMvpPresenter(Context context, PreviewMvpView mvp_view,new_fag_template_item new_fag_template_item) {
         this.PreviewView = mvp_view;
-        PreviewModel = new PreviewMvpModel(context, this);
+        PreviewModel = new PreviewMvpModel(context, this,new_fag_template_item);
     }
 
     public void showBottomSheetDialog(String path,String imagePath,String id){

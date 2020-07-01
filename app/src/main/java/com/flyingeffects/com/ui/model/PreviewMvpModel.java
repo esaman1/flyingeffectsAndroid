@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.model;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -16,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
@@ -40,6 +42,8 @@ import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
 import com.flyingeffects.com.ui.interfaces.model.PreviewMvpCallback;
+import com.flyingeffects.com.ui.view.activity.PreviewActivity;
+import com.flyingeffects.com.ui.view.activity.ReportActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
@@ -50,6 +54,12 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.media.UMMin;
+import com.umeng.socialize.media.UMWeb;
 
 import java.io.File;
 import java.io.IOException;
@@ -71,11 +81,14 @@ public class PreviewMvpModel {
     private Context context;
     private String mVideoFolder;
     private FileManager fileManager;
+    private new_fag_template_item fag_template_item;
 
-    public PreviewMvpModel(Context context, PreviewMvpCallback callback) {
+    public PreviewMvpModel(Context context, PreviewMvpCallback callback, new_fag_template_item fag_template_item) {
         this.context = context;
         this.callback = callback;
         fileManager = new FileManager();
+        this.fag_template_item = fag_template_item;
+
         mVideoFolder = fileManager.getFileCachePath(context, "downVideo");
     }
 
@@ -84,17 +97,17 @@ public class PreviewMvpModel {
     }
 
 
-    public void DownVideo(String path, String imagePath, String id,boolean keepAlbum) {
+    public void DownVideo(String path, String imagePath, String id, boolean keepAlbum) {
 
         String videoName = mVideoFolder + File.separator + id + "synthetic.mp4";
         File File = new File(videoName);
         if (File.exists()) {
-            if(downProgressDialog!=null){
+            if (downProgressDialog != null) {
                 downProgressDialog.closePragressDialog();
             }
-            if(!keepAlbum){
+            if (!keepAlbum) {
                 callback.downVideoSuccess(videoName, imagePath);
-            }else{
+            } else {
                 WaitingDialog.closePragressDialog();
                 saveToAlbum(videoName);
                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
@@ -107,25 +120,25 @@ public class PreviewMvpModel {
             DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> Observable.just(videoName).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                 @Override
                 public void call(String s1) {
-                    VideoInfo info= getVideoInfo.getInstance().getRingDuring(s1);
-                    videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, info.getDuration(),videoName ,0, new videoCutDurationForVideoOneDo.isSuccess() {
+                    VideoInfo info = getVideoInfo.getInstance().getRingDuring(s1);
+                    videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, info.getDuration(), videoName, 0, new videoCutDurationForVideoOneDo.isSuccess() {
                         @Override
                         public void progresss(int progress) {
-                            LogUtil.d("oom","下载时候后重新裁剪进度为="+progress);
-                            if(downProgressDialog!=null){
-                                downProgressDialog.setProgress("下载进度为"+progress+"%");
+                            LogUtil.d("oom", "下载时候后重新裁剪进度为=" + progress);
+                            if (downProgressDialog != null) {
+                                downProgressDialog.setProgress("下载进度为" + progress + "%");
                             }
                         }
 
                         @Override
                         public void isSuccess(boolean isSuccess, String path1) {
-                            if(downProgressDialog!=null){
+                            if (downProgressDialog != null) {
                                 downProgressDialog.closePragressDialog();
                             }
-                            if(!keepAlbum){
+                            if (!keepAlbum) {
                                 callback.downVideoSuccess(path1, imagePath);
 
-                            }else{
+                            } else {
 
                                 WaitingDialog.closePragressDialog();
                                 saveToAlbum(path1);
@@ -145,18 +158,16 @@ public class PreviewMvpModel {
     }
 
 
-
-
-        private void saveToAlbum(String path) {
-            String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
-            try {
-                FileUtil.copyFile(new File(path), albumPath);
-                albumBroadcast(albumPath);
-                showKeepSuccessDialog(albumPath);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    private void saveToAlbum(String path) {
+        String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
+        try {
+            FileUtil.copyFile(new File(path), albumPath);
+            albumBroadcast(albumPath);
+            showKeepSuccessDialog(albumPath);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
 
     /**
      * description ：通知相册更新
@@ -186,20 +197,56 @@ public class PreviewMvpModel {
     }
 
     private WaitingDialog_progress downProgressDialog;
-    private BottomSheetDialog   bottomSheetDialog;
-    public void showBottomSheetDialog(String path,String imagePath,String id){
-        bottomSheetDialog  = new BottomSheetDialog(context, R.style.gaussianDialog);
+    private BottomSheetDialog bottomSheetDialog;
+
+    public void showBottomSheetDialog(String path, String imagePath, String id) {
+        bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
         View view = LayoutInflater.from(context).inflate(R.layout.preview_bottom_sheet_dialog, null);
         bottomSheetDialog.setContentView(view);
-       LinearLayout iv_download = view.findViewById(R.id.ll_download);
+        LinearLayout iv_download = view.findViewById(R.id.ll_download);
         iv_download.setOnClickListener(view12 -> {
-            downProgressDialog=new WaitingDialog_progress(context);
+            downProgressDialog = new WaitingDialog_progress(context);
             downProgressDialog.openProgressDialog();
-            DownVideo(path,imagePath,id,true);
+            DownVideo(path, imagePath, id, true);
             dismissDialog();
         });
+        LinearLayout ll_friend_circle = view.findViewById(R.id.ll_friend_circle);
+        ll_friend_circle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UMImage image = new UMImage(context, fag_template_item.getImage());//分享图标
+                UMWeb web = new UMWeb(getShareWeiXinCircleText(fag_template_item.getId())); //切记切记 这里分享的链接必须是http开头
+                web.setTitle(fag_template_item.getTitle());//标题
+                web.setThumb(image);  //缩略图
+                new ShareAction((Activity) context).setPlatform(SHARE_MEDIA.WEIXIN_CIRCLE)
+                        .withMedia(web)
+                        .setCallback(shareListener)
+                        .share();
+            }
+        });
 
-        TextView tv_cancle=view.findViewById(R.id.tv_cancle);
+
+        //分享小程序飞给好友
+        LinearLayout ll_share_wx = view.findViewById(R.id.ll_share_wx);
+        ll_share_wx.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                shareToApplet();
+            }
+        });
+
+        LinearLayout ll_report = view.findViewById(R.id.ll_report);
+        ll_report.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, ReportActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                context.startActivity(intent);
+            }
+        });
+
+
+        TextView tv_cancle = view.findViewById(R.id.tv_cancle);
         tv_cancle.setOnClickListener(view1 -> bottomSheetDialog.dismiss());
         bottomSheetDialog.setCancelable(true);
         bottomSheetDialog.setCanceledOnTouchOutside(true);
@@ -215,6 +262,45 @@ public class PreviewMvpModel {
     }
 
 
+    /**
+     * description ：分享到小程序
+     * creation date: 2020/7/1
+     * user : zhangtongju
+     */
+    private void shareToApplet() {
+        UMImage image = new UMImage(context, fag_template_item.getImage());//分享图标
+        String url = "pages/detail/detail?id=" + fag_template_item.getId();
+        LogUtil.d("OOM", "小程序的地址为" + url);
+        UMMin umMin = new
+                UMMin(url);
+        umMin.setThumb(image);
+        umMin.setUserName("gh_4161ca2837f7");
+        umMin.setTitle(fag_template_item.getTitle());
+        new ShareAction((Activity) context)
+                .withMedia(umMin)
+                .setPlatform(SHARE_MEDIA.WEIXIN)
+                .setCallback(shareListener).share();
+
+    }
+
+
+    /**
+     * description ：
+     * creation date: 2020/7/1
+     * user : zhangtongju
+     */
+    private String getShareWeiXinCircleText(String id) {
+        String str = "http://www.flyingeffect.com/index/index/share?id=" + id + "&";
+        HashMap params = BaseConstans.getRequestHead(new HashMap<>());
+        String str_params = params.toString();
+        str_params = str_params.replace("{", "");
+        str_params = str_params.replace("}", "");
+        str_params = str_params.replaceAll(",", "&");
+        str_params = str_params.trim();
+        return str + str_params;
+    }
+
+
     private void dismissDialog() {
         try {
             if (bottomSheetDialog != null && bottomSheetDialog.isShowing()) {
@@ -227,13 +313,43 @@ public class PreviewMvpModel {
     }
 
 
+    private UMShareListener shareListener = new UMShareListener() {
+        /**
+         * @descrption 分享开始的回调
+         * @param platform 平台类型
+         */
+        @Override
+        public void onStart(SHARE_MEDIA platform) {
+        }
 
+        /**
+         * @descrption 分享成功的回调
+         * @param platform 平台类型
+         */
+        @Override
+        public void onResult(SHARE_MEDIA platform) {
+            ToastUtil.showToast("success");
+        }
 
+        /**
+         * @descrption 分享失败的回调
+         * @param platform 平台类型
+         * @param t 错误原因
+         */
+        @Override
+        public void onError(SHARE_MEDIA platform, Throwable t) {
+            Toast.makeText(context, "失败" + t.getMessage(), Toast.LENGTH_LONG).show();
+        }
 
-
-
-
-
+        /**
+         * @descrption 分享取消的回调
+         * @param platform 平台类型
+         */
+        @Override
+        public void onCancel(SHARE_MEDIA platform) {
+            Toast.makeText(context, "取消了", Toast.LENGTH_LONG).show();
+        }
+    };
 
 
     /**
@@ -248,9 +364,9 @@ public class PreviewMvpModel {
         String fileName = mVideoFolder + File.separator + UUID.randomUUID() + ".png";
         BitmapManager.getInstance().saveBitmapToPath(mBitmap, fileName, isSuccess -> {
             CompressionCuttingManage manage = new CompressionCuttingManage(context, "", false, tailorPaths -> {
-                callback.getVideoCover(tailorPaths.get(0),originalPath,videoPath);
+                callback.getVideoCover(tailorPaths.get(0), originalPath, videoPath);
             });
-            List mattingPath=new ArrayList();
+            List mattingPath = new ArrayList();
             mattingPath.add(fileName);
             manage.ToMatting(mattingPath);
             GlideBitmapPool.putBitmap(mBitmap);
@@ -268,7 +384,7 @@ public class PreviewMvpModel {
             @Override
             protected void _onError(String message) {
 //                ToastUtil.showToast(message);
-                LogUtil.d("OOM","requestTemplateDetail-error="+message);
+                LogUtil.d("OOM", "requestTemplateDetail-error=" + message);
             }
 
             @Override

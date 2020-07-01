@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:gravity="center"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_marginEnd="22dp"
+        android:background="@drawable/strok_all_write_full_corner"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_height="20dp"
+                android:src="@mipmap/indifferent" />
+
+            <TextView
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:layout_width="wrap_content"
+                android:layout_marginStart="11dp"
+                android:layout_height="wrap_content"
+                android:text="不感兴趣" />
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_height="20dp"
+                android:src="@mipmap/uncomfortable" />
+
+            <TextView
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:layout_width="wrap_content"
+                android:layout_marginStart="11dp"
+                android:layout_height="wrap_content"
+                android:text="内容令人不适" />
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_height="20dp"
+                android:src="@mipmap/no_more" />
+
+            <TextView
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:layout_width="wrap_content"
+                android:layout_marginStart="11dp"
+                android:layout_height="wrap_content"
+                android:text="减少类似模板" />
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_height="20dp"
+                android:src="@mipmap/to_report" />
+
+            <TextView
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:layout_width="wrap_content"
+                android:layout_marginStart="11dp"
+                android:layout_height="wrap_content"
+                android:text="作品举报" />
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>
