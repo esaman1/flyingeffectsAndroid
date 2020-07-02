@@ -124,7 +124,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         //需要得到之前allData 已经滑到的页数和分类的类别以及是模板页面或者背景页面等
         int nowSelectPage = getIntent().getIntExtra("nowSelectPage", 1);
         nowCollectType = templateItem.getIs_collection();
-        Presenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, fromTo, templateId);
+        Presenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, fromTo, templateId,fromToMineCollect);
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
         adapter = new Preview_up_and_down_adapter(R.layout.list_preview_up_down_item, allData, PreviewUpAndDownActivity.this, readOnly);
         adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {

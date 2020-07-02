@@ -57,26 +57,28 @@ public class PreviewUpAndDownMvpModel {
     private int selectPage = 1;
     private String mVideoFolder;
     private int perPageCount = 10;
-    private  SmartRefreshLayout smartRefreshLayout;
+    private SmartRefreshLayout smartRefreshLayout;
     private List<new_fag_template_item> allData;
     private String fromTo;
     private String templateId;
+    private boolean fromToMineCollect;
 
 
-    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback,List<new_fag_template_item> allData,int nowSelectPage,String fromTo,String templateId) {
+    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage, String fromTo, String templateId, boolean fromToMineCollect) {
         this.context = context;
-        this.selectPage=nowSelectPage;
+        this.selectPage = nowSelectPage;
         this.callback = callback;
         FileManager fileManager = new FileManager();
         mVideoFolder = fileManager.getFileCachePath(context, "downVideo");
-        this.allData=allData;
-        this.fromTo=fromTo;
-        this.templateId=templateId;
+        this.allData = allData;
+        this.fromTo = fromTo;
+        this.templateId = templateId;
+        this.fromToMineCollect = fromToMineCollect;
     }
 
 
-    public void initSmartRefreshLayout(SmartRefreshLayout smartRefreshLayout){
-        this.smartRefreshLayout=smartRefreshLayout;
+    public void initSmartRefreshLayout(SmartRefreshLayout smartRefreshLayout) {
+        this.smartRefreshLayout = smartRefreshLayout;
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
             isOnRefresh();
             isRefresh = true;
@@ -95,15 +97,15 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-
-
     /**
      * description ：
      * creation date: 2020/3/11
      * param : template_type  1是模板 2是背景
      * user : zhangtongju
      */
+
     private void requestFagData() {
+        Observable ob;
         HashMap<String, String> params = new HashMap<>();
         LogUtil.d("templateId", "templateId=" + templateId);
         params.put("category_id", templateId);
@@ -112,9 +114,15 @@ public class PreviewUpAndDownMvpModel {
         } else {
             params.put("template_type", "2");
         }
+
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
-        Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
+        if (fromToMineCollect) {
+            params.put("token", BaseConstans.GetUserToken());
+            ob = Api.getDefault().collectionList(BaseConstans.getRequestHead(params));
+        } else {
+            ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
+        }
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
             @Override
             protected void _onError(String message) {
@@ -149,17 +157,12 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-
-
-
-
     public void isOnLoadMore() {
 
     }
 
     public void isOnRefresh() {
     }
-
 
 
     /**
@@ -194,7 +197,6 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-
     public void requestUserInfo() {
         HashMap<String, String> params = new HashMap<>();
         params.put("token", BaseConstans.GetUserToken());
@@ -216,6 +218,7 @@ public class PreviewUpAndDownMvpModel {
 
 
     private WaitingDialog_progress downProgressDialog;
+
     public void DownVideo(String path, String imagePath, String id, boolean keepAlbum) {
 
         String videoName = mVideoFolder + File.separator + id + "synthetic.mp4";
@@ -277,7 +280,6 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-
     private void saveToAlbum(String path) {
         String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
         try {
@@ -318,7 +320,6 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-
     public void prepareDownZip(String url, String zipPid) {
         if (NetworkUtils.isNetworkAvailable(context)) {
             readyDown(zipPid, url);
@@ -354,7 +355,6 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-
     private void showMakeProgress() {
         callback.showDownProgress(mProgress);
     }
@@ -363,7 +363,6 @@ public class PreviewUpAndDownMvpModel {
     private void intoTemplateActivity(String filePath) {
         callback.getTemplateFileSuccess(filePath);
     }
-
 
 
     private void downZip(String loadUrl, String path) {
