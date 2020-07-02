@@ -2,8 +2,10 @@ package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -39,16 +41,15 @@ import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 
-
 /**
  * description ：背景页面，背景栏目下面模板列表，
  * creation date: 2020/4/20
  * param :
  * user : zhangtongju
  */
-public class fragBjItem extends BaseFragment   {
+public class fragBjItem extends BaseFragment {
 
-    private int perPageCount=10;
+    private int perPageCount = 10;
     @BindView(R.id.RecyclerView)
     RecyclerView recyclerView;
     private main_recycler_adapter adapter;
@@ -83,17 +84,17 @@ public class fragBjItem extends BaseFragment   {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             templateId = bundle.getString("id");
-            fromType=bundle.getInt("from");
-            cover=bundle.getString("cover");
+            fromType = bundle.getInt("from");
+            cover = bundle.getString("cover");
         }
         initRecycler();
         initSmartRefreshLayout();
-        LogUtil.d("OOM","fromType="+fromType);
+        LogUtil.d("OOM", "fromType=" + fromType);
     }
 
     @Override
     protected void initAction() {
-        requestFagData(true,true);
+        requestFagData(true, true);
     }
 
     @Override
@@ -102,19 +103,18 @@ public class fragBjItem extends BaseFragment   {
     }
 
 
-
     private void initRecycler() {
-        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(),fromType);
-        StaggeredGridLayoutManager   layoutManager =
+        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), fromType);
+        StaggeredGridLayoutManager layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-            if(!DoubleClick.getInstance().isFastDoubleClick()){
-                if(!TextUtils.isEmpty(cover)&&position==0){
+            if (!DoubleClick.getInstance().isFastDoubleClick()) {
+                if (!TextUtils.isEmpty(cover) && position == 0) {
                     EventBus.getDefault().post(new DownVideoPath(""));
-                }else{
+                } else {
 //                    statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
 ////                    Intent intent =new Intent(getActivity(), PreviewActivity.class);
 ////                    if(fromType==0){
@@ -128,10 +128,17 @@ public class fragBjItem extends BaseFragment   {
 ////                    startActivity(intent);
 
                     //test
-                    Intent intent=new Intent(getActivity(), PreviewUpAndDownActivity.class);
-                    ListForUpAndDown listForUpAndDown=new ListForUpAndDown(allData);
-                    intent.putExtra("person",listForUpAndDown);//直接存入被序列化的对象实例
-                    intent.putExtra("position",position);
+                    Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
+                    ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
+                    intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
+                    intent.putExtra("position", position);
+                    if (fromType == 0) {
+                        intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
+                    } else if (fromType == 3) {
+                        intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
+                    } else {
+                        intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+                    }
                     startActivity(intent);
                 }
             }
@@ -157,15 +164,15 @@ public class fragBjItem extends BaseFragment   {
 
 
     //得到banner缓存数据
-    public  void requestData() {
-        List<new_fag_template_item> data= Hawk.get("fagBjItem", new ArrayList<>());
+    public void requestData() {
+        List<new_fag_template_item> data = Hawk.get("fagBjItem", new ArrayList<>());
         if (data != null) {
             listData.clear();
             listData.addAll(data);
             isShowData(listData);
-            requestFagData(false,true); //首页杂数据
+            requestFagData(false, true); //首页杂数据
         } else {
-            requestFagData(true,true); //首页杂数据
+            requestFagData(true, true); //首页杂数据
         }
     }
 
@@ -195,17 +202,17 @@ public class fragBjItem extends BaseFragment   {
                 finishData();
                 if (isRefresh) {
                     listData.clear();
-                    if(!TextUtils.isEmpty(cover)){
-                        new_fag_template_item item=new new_fag_template_item();
+                    if (!TextUtils.isEmpty(cover)) {
+                        new_fag_template_item item = new new_fag_template_item();
                         item.setImage(cover);
                         item.setTitle("默认背景");
                         listData.add(item);
                     }
                 }
                 if (isRefresh && data.size() == 0) {
-                  showNoData(true);
+                    showNoData(true);
                 } else {
-                  showNoData(false);
+                    showNoData(false);
                 }
 
                 if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
@@ -234,9 +241,9 @@ public class fragBjItem extends BaseFragment   {
     }
 
     public void showNoData(boolean isShowNoData) {
-        if(isShowNoData){
+        if (isShowNoData) {
             lin_show_nodata.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             lin_show_nodata.setVisibility(View.GONE);
         }
     }

@@ -8,6 +8,9 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
@@ -42,11 +45,13 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     private boolean isPlayComplete = false;
     private int nowPreviewPosition;
     private AlphaAnimation hideAnim;
+    private boolean readOnly;
 
-    public Preview_up_and_down_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context) {
+    public Preview_up_and_down_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, boolean readOnly) {
         super(layoutResId, allData);
         this.context = context;
         this.allData = allData;
+        this.readOnly = readOnly;
     }
 
 
@@ -56,19 +61,41 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         videoPlayer = helper.getView(R.id.video_item_player);
         tv_make = helper.getView(R.id.tv_make);
         iv_zan = helper.getView(R.id.iv_zan);
+        helper.addOnClickListener(R.id.iv_zan);
+        helper.addOnClickListener(R.id.tv_make);
         iv_writer = helper.getView(R.id.iv_writer);
         iv_video_play = helper.getView(R.id.iv_video_play);
         tv_writer_name = helper.getView(R.id.tv_writer_name);
         tv_title = helper.getView(R.id.tv_title);
         tv_describe = helper.getView(R.id.tv_describe);
         iv_show_cover = helper.getView(R.id.iv_show_cover);
-        initVideoPlayer(item,offset);
+        initVideoPlayer(item, offset);
         if (nowPreviewPosition == offset) {
-
-
             videoPlayer.startPlayLogic();
         }
+        if (readOnly) {
+            tv_make.setVisibility(View.GONE);
+            iv_zan.setVisibility(View.GONE);
+        } else {
+            tv_make.setVisibility(View.VISIBLE);
+            iv_zan.setVisibility(View.VISIBLE);
+        }
+        Glide.with(context)
+                .load(item.getAuth_image())
+                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                .into(iv_writer);
+        tv_writer_name.setText(item.getAuth());
+        tv_title.setText(item.getRemark());
+
+        if (item.getIs_collection() == 1) {
+            iv_zan.setImageResource(R.mipmap.zan_selected);
+        } else {
+            iv_zan.setImageResource(R.mipmap.zan);
+        }
+
     }
+
+
 
 
 
@@ -80,8 +107,8 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
      * creation date: 2020/7/2
      * user : zhangtongju
      */
-    private void initVideoPlayer(new_fag_template_item item,int offset){
-        videoPlayer.loadCoverImage(item.getImage(), R.mipmap.ic_launcher);
+    private void initVideoPlayer(new_fag_template_item item, int offset) {
+        videoPlayer.loadCoverImage(item.getImage(), R.mipmap.black_lucency);
         videoPlayer.setUpLazy(item.getVidoefile(), true, null, null, "这是title");
         videoPlayer.setPlayPosition(offset);
         videoPlayer.getTitleTextView().setVisibility(View.GONE);
@@ -104,9 +131,6 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     }
 
 
-
-
-
     /**
      * description ：当前正在预览的位置
      * creation date: 2020/7/1
@@ -118,9 +142,16 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
 
 
 
+    public void pauseVideo(){
+        videoPlayer.onVideoPause();
+    }
 
-    public void onDestroy(){
-           videoPlayer.release();
+
+
+
+
+    public void onDestroy() {
+        videoPlayer.release();
     }
 
 

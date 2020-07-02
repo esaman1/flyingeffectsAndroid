@@ -12,13 +12,15 @@ public interface PreviewMvpCallback {
 
    void getTemplateFileSuccess(String filePath);
 
+   void downVideoSuccess(String path,String imagePath);
+
    void collectionResult();
 
    void getTemplateLInfo(new_fag_template_item item);
 
    void hasLogin(boolean hasLogin);
 
-   void downVideoSuccess(String path,String imagePath);
+
 
    void getVideoCover(String filePath,String originalPath,String videoPath);
 

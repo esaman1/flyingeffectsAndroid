@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.main_recycler_adapter;
 import com.flyingeffects.com.base.BaseFragment;
+import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
@@ -19,6 +20,7 @@ import com.flyingeffects.com.ui.interfaces.view.HomeItemMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.presenter.home_fag_itemMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
+import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
@@ -87,7 +89,22 @@ public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, V
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
                 statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
-                Intent intent = new Intent(getActivity(), PreviewActivity.class);
+//                Intent intent = new Intent(getActivity(), PreviewActivity.class);
+//                if (fromType == 0) {
+//                    intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
+//                } else if (fromType == 1) {
+//                    intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+//                } else if (fromType == 3) {
+//                    intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
+//                }
+//                intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
+//                startActivity(intent);
+
+
+                Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
+                ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
+                intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
+                intent.putExtra("position", position);
                 if (fromType == 0) {
                     intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
                 } else if (fromType == 1) {
@@ -95,8 +112,8 @@ public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, V
                 } else if (fromType == 3) {
                     intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
                 }
-                intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
                 startActivity(intent);
+
             }
         });
     }
@@ -117,11 +134,11 @@ public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, V
     public void onResume() {
         super.onResume();
         if (getActivity() != null) {
-            if (allData == null||allData.size()==0) {
-                LogUtil.d("OOM","allData==null");
+            if (allData == null || allData.size() == 0) {
+                LogUtil.d("OOM", "allData==null");
                 Presenter.requestData(templateId, actTag);
-            }else{
-                LogUtil.d("OOM","allData!=null");
+            } else {
+                LogUtil.d("OOM", "allData!=null");
             }
         }
 
