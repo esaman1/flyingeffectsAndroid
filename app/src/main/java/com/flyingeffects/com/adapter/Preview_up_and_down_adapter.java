@@ -12,6 +12,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
+import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.MarqueTextView;
 import com.flyingeffects.com.view.SampleCoverVideo;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
@@ -60,6 +62,25 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         tv_title = helper.getView(R.id.tv_title);
         tv_describe = helper.getView(R.id.tv_describe);
         iv_show_cover = helper.getView(R.id.iv_show_cover);
+        initVideoPlayer(item,offset);
+        if (nowPreviewPosition == offset) {
+
+
+            videoPlayer.startPlayLogic();
+        }
+    }
+
+
+
+
+
+
+    /**
+     * description ：初始化视频播放器，针对列表
+     * creation date: 2020/7/2
+     * user : zhangtongju
+     */
+    private void initVideoPlayer(new_fag_template_item item,int offset){
         videoPlayer.loadCoverImage(item.getImage(), R.mipmap.ic_launcher);
         videoPlayer.setUpLazy(item.getVidoefile(), true, null, null, "这是title");
         videoPlayer.setPlayPosition(offset);
@@ -68,11 +89,18 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         videoPlayer.setIsTouchWigetFull(false);
         //设置全屏按键功能
         videoPlayer.getFullscreenButton().setVisibility(View.GONE);
+        videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(new VideoPlayerCallbackForTemplate.videoPlayerStopListener() {
+            @Override
+            public void isStop(boolean isSuccess) {
+            }
+
+            @Override
+            public void onPrepared(boolean onPrepared) {
+                tv_describe.setText("时长" + timeUtils.timeParse(videoPlayer.getDuration()) + "        上传" + item.getDefaultnum() + "个素材即可制作");
+            }
+        }));
         GSYVideoType.setShowType(GSYVideoType.SCREEN_TYPE_FULL);
         videoPlayer.setLooping(true);
-        if (nowPreviewPosition == offset) {
-            videoPlayer.startPlayLogic();
-        }
     }
 
 
@@ -86,7 +114,6 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
      */
     public void NowPreviewChooseItem(int nowPreviewPosition) {
         this.nowPreviewPosition = nowPreviewPosition;
-
     }
 
 
@@ -94,7 +121,6 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
 
     public void onDestroy(){
            videoPlayer.release();
-
     }
 
 
