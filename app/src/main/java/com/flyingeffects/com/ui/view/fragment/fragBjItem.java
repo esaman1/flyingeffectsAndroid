@@ -139,6 +139,9 @@ public class fragBjItem extends BaseFragment {
                     } else {
                         intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
                     }
+                    intent.putExtra("nowSelectPage",selectPage);
+                    intent.putExtra("templateId",templateId);
+
                     startActivity(intent);
                 }
             }

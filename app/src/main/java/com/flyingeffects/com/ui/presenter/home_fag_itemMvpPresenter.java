@@ -21,6 +21,10 @@ public class home_fag_itemMvpPresenter extends BasePresenter implements homeItem
     }
 
 
+    public int getselectPage(){
+        return  homeItemModel.getselectPage();
+    }
+
 
 
     public void requestData(String templateId, int num) {

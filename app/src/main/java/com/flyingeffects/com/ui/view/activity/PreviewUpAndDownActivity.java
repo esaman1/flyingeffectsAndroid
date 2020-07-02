@@ -120,9 +120,11 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         readOnly = getIntent().getBooleanExtra("readOnly", false);
         fromToMineCollect = getIntent().getBooleanExtra("fromToMineCollect", false);
         fromTo = getIntent().getStringExtra("fromTo");
-
+        String templateId = getIntent().getStringExtra("templateId");
+        //需要得到之前allData 已经滑到的页数和分类的类别以及是模板页面或者背景页面等
+        int nowSelectPage = getIntent().getIntExtra("nowSelectPage", 1);
         nowCollectType = templateItem.getIs_collection();
-        Presenter = new PreviewUpAndDownMvpPresenter(this, this);
+        Presenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, fromTo, templateId);
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
         adapter = new Preview_up_and_down_adapter(R.layout.list_preview_up_down_item, allData, PreviewUpAndDownActivity.this, readOnly);
         adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
@@ -362,6 +364,18 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");
             }
         }
+    }
+
+
+    /**
+     * description ：上啦加载下拉刷新更新后的数据
+     * creation date: 2020/7/2
+     * user : zhangtongju
+     */
+    @Override
+    public void showNewData(List<new_fag_template_item> allData) {
+        this.allData = allData;
+        adapter.notifyDataSetChanged();
     }
 
 

@@ -3,18 +3,21 @@ package com.flyingeffects.com.ui.presenter;
 import android.content.Context;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
+import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.PreviewUpAndDownMvpView;
 import com.flyingeffects.com.ui.model.PreviewUpAndDownMvpModel;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
+import java.util.List;
+
 public class PreviewUpAndDownMvpPresenter extends BasePresenter implements PreviewUpAndDownMvpCallback {
     private PreviewUpAndDownMvpView previewUpAndDownMvpView;
     private PreviewUpAndDownMvpModel previewUpAndDownMvpModel;
 
-    public PreviewUpAndDownMvpPresenter(Context context, PreviewUpAndDownMvpView mvp_view) {
+    public PreviewUpAndDownMvpPresenter(Context context, PreviewUpAndDownMvpView mvp_view, List<new_fag_template_item> allData,int nowSelectPage,String fromTo,String templateId) {
         this.previewUpAndDownMvpView = mvp_view;
-        previewUpAndDownMvpModel = new PreviewUpAndDownMvpModel(context, this);
+        previewUpAndDownMvpModel = new PreviewUpAndDownMvpModel(context, this,allData,nowSelectPage,fromTo,templateId);
     }
 
 
@@ -63,6 +66,11 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
     @Override
     public void showDownProgress(int progress) {
         previewUpAndDownMvpView.showDownProgress(progress);
+    }
+
+    @Override
+    public void showNewData(List<new_fag_template_item> allData) {
+        previewUpAndDownMvpView.showNewData(allData);
     }
 
     public void requestUserInfo(){

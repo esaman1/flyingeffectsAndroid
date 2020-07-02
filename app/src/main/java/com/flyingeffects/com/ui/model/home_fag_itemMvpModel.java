@@ -46,6 +46,11 @@ public class home_fag_itemMvpModel {
     }
 
 
+    public int  getselectPage(){
+        return selectPage;
+    }
+
+
 
     public void requestData(String templateId, int num) {
         this.templateId = templateId;

@@ -104,7 +104,10 @@ public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, V
                 Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
                 ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
                 intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
+                intent.putExtra("templateId", templateId);//直接存入被序列化的对象实例
                 intent.putExtra("position", position);
+                int selectPage=Presenter.getselectPage();
+                intent.putExtra("nowSelectPage",selectPage);
                 if (fromType == 0) {
                     intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
                 } else if (fromType == 1) {

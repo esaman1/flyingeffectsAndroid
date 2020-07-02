@@ -3,17 +3,11 @@ package com.flyingeffects.com.ui.model;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
@@ -22,6 +16,7 @@ import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -33,14 +28,11 @@ import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
-import com.flyingeffects.com.ui.interfaces.model.VideoClippingMvpCallback;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
@@ -48,6 +40,7 @@ import com.shixing.sxve.ui.view.WaitingDialog_progress;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -63,30 +56,101 @@ public class PreviewUpAndDownMvpModel {
     private boolean isRefresh = true;
     private int selectPage = 1;
     private String mVideoFolder;
+    private int perPageCount = 10;
+    private  SmartRefreshLayout smartRefreshLayout;
+    private List<new_fag_template_item> allData;
+    private String fromTo;
+    private String templateId;
 
-    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback) {
+
+    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback,List<new_fag_template_item> allData,int nowSelectPage,String fromTo,String templateId) {
         this.context = context;
+        this.selectPage=nowSelectPage;
         this.callback = callback;
         FileManager fileManager = new FileManager();
         mVideoFolder = fileManager.getFileCachePath(context, "downVideo");
+        this.allData=allData;
+        this.fromTo=fromTo;
+        this.templateId=templateId;
     }
 
 
     public void initSmartRefreshLayout(SmartRefreshLayout smartRefreshLayout){
+        this.smartRefreshLayout=smartRefreshLayout;
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
             isOnRefresh();
             isRefresh = true;
             refreshLayout.setEnableLoadMore(true);
             selectPage = 1;
 //            requestFagData(false, true);
+            requestFagData();
         });
         smartRefreshLayout.setOnLoadMoreListener(refresh -> {
             isOnLoadMore();
             isRefresh = false;
             selectPage++;
 //            requestFagData(false, false);
+            requestFagData();
         });
     }
+
+
+
+
+    /**
+     * description ：
+     * creation date: 2020/3/11
+     * param : template_type  1是模板 2是背景
+     * user : zhangtongju
+     */
+    private void requestFagData() {
+        HashMap<String, String> params = new HashMap<>();
+        LogUtil.d("templateId", "templateId=" + templateId);
+        params.put("category_id", templateId);
+        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
+            params.put("template_type", "1");
+        } else {
+            params.put("template_type", "2");
+        }
+        params.put("page", selectPage + "");
+        params.put("pageSize", perPageCount + "");
+        Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
+            @Override
+            protected void _onError(String message) {
+                finishData();
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(List<new_fag_template_item> data) {
+                finishData();
+                if (isRefresh) {
+                    allData.clear();
+                }
+
+                if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
+                    ToastUtil.showToast(context.getResources().getString(R.string.no_more_data));
+                }
+                if (data.size() < perPageCount) {
+                    smartRefreshLayout.setEnableLoadMore(false);
+                }
+                allData.addAll(data);
+                callback.showNewData(allData);
+//                isShowData(listData);
+            }
+        }, "fagBjItem", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+
+    private void finishData() {
+        smartRefreshLayout.finishRefresh();
+        smartRefreshLayout.finishLoadMore();
+    }
+
+
+
+
 
 
     public void isOnLoadMore() {
