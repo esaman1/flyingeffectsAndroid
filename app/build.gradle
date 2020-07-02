@@ -163,7 +163,7 @@ dependencies {
     implementation project(':sxve')
     implementation project(':album')
     implementation project(':LanSongSDK')
-    implementation project(':DownAndUpLibrary')
+//    implementation project(':DownAndUpLibrary')
     implementation project(path: ':segjni')
 
     //mp4 声音和视频分离
@@ -185,6 +185,8 @@ dependencies {
     api files('libs/shanyan_sdk_v2.3.1.3.aar')
     //disklrucache
     implementation 'com.jakewharton:disklrucache:2.0.2'
+
+    implementation 'androidx.viewpager2:viewpager2:1.0.0-beta02'
 
 
 }

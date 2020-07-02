@@ -14,6 +14,7 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.DownVideoPath;
+import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -22,6 +23,7 @@ import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
+import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -113,16 +115,23 @@ public class fragBjItem extends BaseFragment   {
                 if(!TextUtils.isEmpty(cover)&&position==0){
                     EventBus.getDefault().post(new DownVideoPath(""));
                 }else{
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
-                    Intent intent =new Intent(getActivity(), PreviewActivity.class);
-                    if(fromType==0){
-                        intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
-                    }else if(fromType==3){
-                        intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
-                    }else{
-                        intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
-                    }
-                    intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
+//                    statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
+////                    Intent intent =new Intent(getActivity(), PreviewActivity.class);
+////                    if(fromType==0){
+////                        intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
+////                    }else if(fromType==3){
+////                        intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
+////                    }else{
+////                        intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+////                    }
+////                    intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
+////                    startActivity(intent);
+
+                    //test
+                    Intent intent=new Intent(getActivity(), PreviewUpAndDownActivity.class);
+                    ListForUpAndDown listForUpAndDown=new ListForUpAndDown(allData);
+                    intent.putExtra("person",listForUpAndDown);//直接存入被序列化的对象实例
+                    intent.putExtra("position",position);
                     startActivity(intent);
                 }
             }
