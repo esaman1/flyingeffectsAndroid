@@ -28,6 +28,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.bytedance.applog.AppLog;
 import com.bytedance.applog.InitConfig;
 import com.bytedance.applog.util.UriConfig;
+import com.bytedance.sdk.openadsdk.TTAdManager;
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
 import com.chuanglan.shanyan_sdk.listener.GetPhoneInfoListener;
 import com.flyingeffects.com.R;
@@ -44,6 +45,7 @@ import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.SPHelper;
+import com.flyingeffects.com.manager.TTAdManagerHolder;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
 import com.flyingeffects.com.ui.view.fragment.frag_Bj;
@@ -128,9 +130,21 @@ public class HomeMainActivity extends FragmentActivity {
             requestCPad();
         }
 
+//        initCsj();
+
+
+    }
 
 
 
+    /**
+     * description ：初始化穿山甲，主要用户全屏广告（视频上滑下滑的预览页面）
+     * creation date: 2020/7/3
+     * user : zhangtongju
+     */
+    private void initCsj(){
+        TTAdManager ttAdManager = TTAdManagerHolder.get();
+        ttAdManager.requestPermissionIfNecessary(this);
     }
 
 

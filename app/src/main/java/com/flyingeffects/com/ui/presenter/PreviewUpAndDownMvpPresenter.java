@@ -33,6 +33,10 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
         previewUpAndDownMvpModel.initSmartRefreshLayout(smartRefreshLayout);
     }
 
+    public void requestAD(){
+        previewUpAndDownMvpModel.requestAD();
+    }
+
 
     public void collectTemplate(String templateId,String title,String template_type){
         previewUpAndDownMvpModel.collectTemplate(templateId, title,template_type);

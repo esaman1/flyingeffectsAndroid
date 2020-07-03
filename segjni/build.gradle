@@ -1,13 +1,13 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '29.0.3'
+    compileSdkVersion 25
+    buildToolsVersion '28.0.1'
 
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 28
+        minSdkVersion 15
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         externalNativeBuild {
@@ -16,7 +16,7 @@ android {
                 arguments "-DANDROID_ARM_NEON=TRUE", "-DANDROID_STL=c++_static"
             }
         }
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
 
@@ -38,20 +38,26 @@ android {
         }
     }
     packagingOptions {
-        pickFirst 'lib/arm64-v8a/libMegviiSegJni.so'
-        pickFirst 'lib/armeabi-v7a/libMegviiSegJni.so'
         pickFirst 'lib/arm64-v8a/libmegsegment.so'
         pickFirst 'lib/armeabi-v7a/libmegsegment.so'
-        pickFirst 'lib/arm64-v8a/libmegface-new.so'
-        pickFirst 'lib/armeabi-v7a/libmegface-new.so'
+
+        pickFirst 'lib/arm64-v8a/libmegface_full.so'
+        pickFirst 'lib/armeabi-v7a/libmegface_full.so'
+
+        pickFirst 'lib/arm64-v8a/libMegviiSegJni.so'
+//        pickFirst 'lib/armeabi-v7a/libMegviiSegJni.so'
+
     }
+    ndkVersion '21.0.6113669'
+
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('androidx.test.espresso:espresso-core:3.1.0', {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    testImplementation 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    testCompile 'junit:junit:4.12'
+
 }

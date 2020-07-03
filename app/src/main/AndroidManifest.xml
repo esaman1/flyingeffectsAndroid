@@ -349,7 +349,17 @@
                 <category android:name="com.flyingeffects.com" />
             </intent-filter>
         </receiver>
+
+
+
+
+
     </application>
+
+
+
+
+
 
 
 </manifest>

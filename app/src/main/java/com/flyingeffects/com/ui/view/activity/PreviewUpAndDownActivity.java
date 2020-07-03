@@ -126,6 +126,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         nowCollectType = templateItem.getIs_collection();
         Presenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, fromTo, templateId,fromToMineCollect);
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
+        //Presenter.requestAD();
         adapter = new Preview_up_and_down_adapter(R.layout.list_preview_up_down_item, allData, PreviewUpAndDownActivity.this, readOnly);
         adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override

@@ -26,7 +26,7 @@ public class BaseConstans {
     //当前抠图是用sdk 还是用服务器
     public static final boolean UserFaceSdk=true;
     public static final boolean isTitokChannel=true;
-    public static final int  THREADCOUNT=8;
+    public static final int  THREADCOUNT=1;
     public static String titok;
     public static String kuaishou;
     public static final boolean PRODUCTION = false;

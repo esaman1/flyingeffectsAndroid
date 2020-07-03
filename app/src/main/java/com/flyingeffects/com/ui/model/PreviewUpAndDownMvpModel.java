@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.model;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -9,6 +10,10 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 
+import com.bytedance.sdk.openadsdk.AdSlot;
+import com.bytedance.sdk.openadsdk.TTAdManager;
+import com.bytedance.sdk.openadsdk.TTAdNative;
+import com.bytedance.sdk.openadsdk.TTFeedAd;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
@@ -26,6 +31,7 @@ import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.TTAdManagerHolder;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
 import com.flyingeffects.com.utils.FileUtil;
@@ -62,7 +68,7 @@ public class PreviewUpAndDownMvpModel {
     private String fromTo;
     private String templateId;
     private boolean fromToMineCollect;
-
+    private TTAdNative mTTAdNative;
 
     public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage, String fromTo, String templateId, boolean fromToMineCollect) {
         this.context = context;
@@ -74,6 +80,11 @@ public class PreviewUpAndDownMvpModel {
         this.fromTo = fromTo;
         this.templateId = templateId;
         this.fromToMineCollect = fromToMineCollect;
+//        TTAdManager ttAdManager = TTAdManagerHolder.get();
+//        //step2:创建TTAdNative对象,用于调用广告请求接口
+//        mTTAdNative = ttAdManager.createAdNative(context);
+//        //step3:(可选，强烈建议在合适的时机调用):申请部分权限，如read_phone_state,防止获取不了imei时候，下载类广告没有填充的问题。
+//        TTAdManagerHolder.get().requestPermissionIfNecessary(context);
     }
 
 
@@ -96,6 +107,57 @@ public class PreviewUpAndDownMvpModel {
         });
     }
 
+
+
+
+
+    public void requestAD(){
+        //step4:创建feed广告请求类型参数AdSlot,具体参数含义参考文档
+        AdSlot adSlot = new AdSlot.Builder()
+                .setCodeId("945274799")
+                .setSupportDeepLink(true)
+                .setImageAcceptedSize(640, 320)
+                .setAdCount(1) //请求广告数量为1到3条
+                .build();
+        //step5:请求广告，调用feed广告异步请求接口，加载到广告后，拿到广告素材自定义渲染
+        mTTAdNative.loadFeedAd(adSlot, new TTAdNative.FeedAdListener() {
+            @Override
+            public void onError(int code, String message) {
+                LogUtil.d("OOM","loadFeedAd+code="+code+";message="+message);
+//                if (mListView != null) {
+//                    mListView.setLoadingFinish();
+//                }
+//                TToast.show(FeedListActivity.this, message);
+            }
+
+            @Override
+            public void onFeedAdLoad(List<TTFeedAd> ads) {
+//                if (mListView != null) {
+//                    mListView.setLoadingFinish();
+//                }
+
+                if (ads == null || ads.isEmpty()) {
+//                    TToast.show(FeedListActivity.this, "on FeedAdLoaded: ad is null!");
+                    LogUtil.d("OOM","on FeedAdLoaded: ad is null!");
+                    return;
+                }
+
+
+//                for (int i = 0; i < LIST_ITEM_COUNT; i++) {
+//                    mData.add(null);
+//                }
+
+//                int count = mData.size();
+//                for (TTFeedAd ad : ads) {
+//                    ad.setActivityForDownloadApp((Activity) context);
+//                    int random = (int) (Math.random() * LIST_ITEM_COUNT) + count - LIST_ITEM_COUNT;
+//                    mData.set(random, ad);
+//                }
+//
+//                myAdapter.notifyDataSetChanged();
+            }
+        });
+    }
 
     /**
      * description ：

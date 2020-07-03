@@ -14,6 +14,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.MediaLoader;
+import com.flyingeffects.com.manager.TTAdManagerHolder;
 import com.flyingeffects.com.ui.view.activity.WelcomeActivity;
 import com.flyingeffects.com.utils.ChannelUtil;
 import com.flyingeffects.com.utils.CrashHandler;
@@ -68,6 +69,7 @@ public class BaseApplication extends MultiDexApplication {
 //        keepCrash();
         initNTAdSDK();
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
+        TTAdManagerHolder.init(this);
     }
 
     private void initBaiduAnalysis() {
