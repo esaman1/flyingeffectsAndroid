@@ -118,7 +118,7 @@ public class HomeMainActivity extends FragmentActivity {
         clearAllData();
         initView();
         copyFile("default_bj.png");
-        SegJni.nativeCreateSegHandler(HomeMainActivity.this, ConUtil.getFileContent(HomeMainActivity.this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
+
         GlideBitmapPool.initialize(10 * 1024 * 1024); // 10mb max memory size
         checkUpdate();
         checkConfig();
@@ -131,7 +131,7 @@ public class HomeMainActivity extends FragmentActivity {
         }
 
 //        initCsj();
-
+        new Thread(() -> SegJni.nativeCreateSegHandler(HomeMainActivity.this, ConUtil.getFileContent(HomeMainActivity.this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT)).start();
 
     }
 

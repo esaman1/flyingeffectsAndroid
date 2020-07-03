@@ -30,6 +30,7 @@ import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.PreviewUpAndDownMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.view.MattingVideoEnity;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
@@ -109,6 +110,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         ListForUpAndDown listForUpAndDown = (ListForUpAndDown) getIntent().getSerializableExtra("person");
         allData = listForUpAndDown.getAllData();
         ondestroy = false;
@@ -225,6 +227,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         ondestroy = true;
         GSYVideoManager.releaseAllVideos();
         if (adapter != null) {
@@ -589,6 +592,44 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         LogUtil.d("OOM", "event.getCoverPath()=" + event.getCoverPath() + "createDownVideoPath=" + createDownVideoPath + "createDownVideoPath=" + createDownVideoPath + "event.isNeedCut()=" + event.isNeedCut());
         intoCreationTemplateActivity(event.getCoverPath(), createDownVideoPath, event.getOriginalPath(), event.isNeedCut());
 
+    }
+
+    /**
+     * description ：裁剪页面裁剪成功后返回的数据,针对跳转到一键模板
+     * creation date: 2020/4/13
+     * user : zhangtongju
+     */
+    @Subscribe
+    public void onEventMainThread(MattingVideoEnity event) {
+        if (event.getTag() == 0) {
+            originalImagePath.clear();
+            ArrayList<String> paths = new ArrayList<>();
+            paths.add(event.getMattingPath());
+            Intent intent = new Intent(this, TemplateActivity.class);
+            Bundle bundle = new Bundle();
+            //用户没选择抠图
+            if (event.getOriginalPath() != null) {
+                originalImagePath.add(event.getOriginalPath());
+                bundle.putInt("picout", 1);
+            } else {
+                originalImagePath = null;
+                bundle.putInt("picout", 0);
+            }
+            bundle.putStringArrayList("paths", paths);
+            bundle.putInt("isPicNum", defaultnum);
+            bundle.putString("fromTo", fromTo);
+            bundle.putString("primitivePath", event.getPrimitivePath());
+            bundle.putInt("is_anime", templateItem.getIs_anime());
+            bundle.putString("templateName", templateItem.getTitle());
+            intent.putExtra("person", templateItem);//直接存入被序列化的对象实例
+            bundle.putString("templateId", templateItem.getId());
+            bundle.putString("videoTime", templateItem.getVideotime());
+            bundle.putStringArrayList("originalPath", (ArrayList<String>) originalImagePath);
+            bundle.putString("templateFilePath", TemplateFilePath);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("Message", bundle);
+            startActivity(intent);
+        }
     }
 
     private void intoCreationTemplateActivity(String imagePath, String videoPath, String originalPath, boolean isNeedCut) {
