@@ -390,6 +390,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
 
+    /**
+     * 这里逻辑优化下,背景页面是选择图片后在去下载背景，现在修改为先下载视频，下载完成后在打开相册选择图片
+     */
     private void hasLoginToNext() {
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
             LogUtil.d("OOM", "来自背景");
@@ -399,7 +402,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             LogUtil.d("OOM", "来自背景");
             //来做背景页面
             AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
-        } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
+        }
+
+        else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
             //来自下载背景，就是用户重新选择背景页面
             new Handler().postDelayed(() -> {
                 if (!ondestroy) {

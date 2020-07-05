@@ -311,6 +311,9 @@ public class PreviewUpAndDownMvpModel {
                             LogUtil.d("oom", "下载时候后重新裁剪进度为=" + progress);
                             if (downProgressDialog != null) {
                                 downProgressDialog.setProgress("下载进度为" + progress + "%");
+                            }else{
+                                downProgressDialog=new WaitingDialog_progress(context);
+                                downProgressDialog.openProgressDialog();
                             }
                         }
 
