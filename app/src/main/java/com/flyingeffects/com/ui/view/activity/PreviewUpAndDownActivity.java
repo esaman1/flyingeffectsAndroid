@@ -538,6 +538,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
 
+    /***
+     * 这里的逻辑是选择图片后抠图后再去的下载视频
+     * @param templateId
+     */
     private void compressImage(List<String> paths, String templateId) {
 
         boolean hasCache = templateItem.getIs_anime() != 1;

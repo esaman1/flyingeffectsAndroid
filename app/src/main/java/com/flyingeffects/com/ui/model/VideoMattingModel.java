@@ -171,7 +171,7 @@ public class VideoMattingModel {
             LogUtil.d("OOM", frameCount + "帧");
             //这里是为了合成原视频
             String fileName = faceFolder + File.separator + frameCount + ".png";
-            BitmapManager.getInstance().saveBitmapToPath(bmp, fileName);
+            BitmapManager.getInstance().saveBitmapToPathForJpg(bmp, fileName);
 //            helper.putBitmap(frameCount+"",bmp);
 //            helper.put(frameCount+"png",bmp);
             //去一帧一帧的抠图，被sdk 提取到了主线程操作
