@@ -37,7 +37,7 @@
   },
   {
     "level": "INFO",
-    "message": "- command changed from previous, will remove stale json folder",
+    "message": "- force flag, will remove stale json folder",
     "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
     "tag": "release|armeabi-v7a"
   },

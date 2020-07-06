@@ -130,7 +130,7 @@ public class HomeMainActivity extends FragmentActivity {
             requestCPad();
         }
 
-//        initCsj();
+      //  initCsj();
         new Thread(() -> SegJni.nativeCreateSegHandler(HomeMainActivity.this, ConUtil.getFileContent(HomeMainActivity.this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT)).start();
 
     }
@@ -143,8 +143,7 @@ public class HomeMainActivity extends FragmentActivity {
      * user : zhangtongju
      */
     private void initCsj(){
-        TTAdManager ttAdManager = TTAdManagerHolder.get();
-        ttAdManager.requestPermissionIfNecessary(this);
+        TTAdManagerHolder.init(this);
     }
 
 

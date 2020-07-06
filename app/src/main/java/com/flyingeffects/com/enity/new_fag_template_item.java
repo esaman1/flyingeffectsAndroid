@@ -1,5 +1,7 @@
 package com.flyingeffects.com.enity;
 
+import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
+
 import java.io.Serializable;
 
 public class new_fag_template_item implements Serializable {
@@ -274,6 +276,20 @@ public class new_fag_template_item implements Serializable {
 
     //1 表示是漫画，0 表示是普通类
     private int is_anime = 0;
+
+    public TTNativeExpressAd getAd() {
+        return ad;
+    }
+
+    public void setAd(TTNativeExpressAd ad) {
+        this.ad = ad;
+    }
+
+
+    /**
+     * 信息流广告
+     */
+    public TTNativeExpressAd ad;
 
 
 }

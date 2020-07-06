@@ -9,6 +9,8 @@ import android.view.View;
 
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.bytedance.sdk.openadsdk.TTFeedAd;
+import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.Preview_up_and_down_adapter;
@@ -40,6 +42,7 @@ import com.yanzhenjie.album.AlbumFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -126,8 +129,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         //需要得到之前allData 已经滑到的页数和分类的类别以及是模板页面或者背景页面等
         int nowSelectPage = getIntent().getIntExtra("nowSelectPage", 1);
         nowCollectType = templateItem.getIs_collection();
-        Presenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, fromTo, templateId,fromToMineCollect);
+        Presenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, fromTo, templateId, fromToMineCollect);
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
+
         //Presenter.requestAD();
         adapter = new Preview_up_and_down_adapter(R.layout.list_preview_up_down_item, allData, PreviewUpAndDownActivity.this, readOnly);
         adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
@@ -175,6 +179,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         if (nowCollectType == 1) {
             setIsCollect(true);
         }
+        Presenter.requestAd();
     }
 
 
@@ -328,7 +333,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
 
-
                 } else {
                     intoCreationTemplateActivity(imagePath, videoPath, originalImagePath.get(0), true);
                 }
@@ -383,6 +387,30 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
 
+    /**
+     * description ：返回广告申请结果
+     * creation date: 2020/7/6
+     * user : zhangtongju
+     */
+    List<TTNativeExpressAd> ads = new ArrayList<>();
+
+    @Override
+    public void resultAd(List<TTNativeExpressAd> ads) {
+        ads.addAll(ads);
+        int minNum = BaseConstans.getFeedShowPosition(false);
+        int MaxNum = BaseConstans.getFeedShowPosition(true);
+        Random r = new Random();
+        int random = (r.nextInt(MaxNum) + minNum);
+        LogUtil.d("OOM","random="+random);
+         if(allData!=null&&allData.size()>random){
+             new_fag_template_item item=new new_fag_template_item();
+             item.setAd(ads.get(0));
+             allData.add(random,item);
+             adapter.notifyDataSetChanged();
+         }
+    }
+
+
     private void toClosePragressDialog() {
         if (!ondestroy) {
             WaitingDialog.closePragressDialog();
@@ -402,9 +430,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             LogUtil.d("OOM", "来自背景");
             //来做背景页面
             AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
-        }
-
-        else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
+        } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
             //来自下载背景，就是用户重新选择背景页面
             new Handler().postDelayed(() -> {
                 if (!ondestroy) {

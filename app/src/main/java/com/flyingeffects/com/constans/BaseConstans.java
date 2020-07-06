@@ -24,9 +24,9 @@ import java.util.HashMap;
 public class BaseConstans {
     public static final String UMENGAPPID = "5e5c68a2570df3d6930002b4";
     //当前抠图是用sdk 还是用服务器
-    public static final boolean UserFaceSdk=true;
-    public static final boolean isTitokChannel=true;
-    public static final int  THREADCOUNT=1;
+    public static final boolean UserFaceSdk = true;
+    public static final boolean isTitokChannel = true;
+    public static final int THREADCOUNT = 1;
     public static String titok;
     public static String kuaishou;
     public static final boolean PRODUCTION = false;
@@ -87,14 +87,13 @@ public class BaseConstans {
     }
 
 
-    public static void SetUserId(String id,String userName,String headUrl) {
+    public static void SetUserId(String id, String userName, String headUrl) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putString("userId", id);
         spUtil.putString("userName", userName);
         spUtil.putString("headUrl", headUrl);
 
     }
-
 
 
     public static String NickName() {
@@ -109,11 +108,9 @@ public class BaseConstans {
     }
 
 
-
     public static boolean hasLogin() {
         return GetUserToken() != null && !GetUserToken().equals("");
     }
-
 
 
     static String GetUserUuid() {
@@ -171,7 +168,6 @@ public class BaseConstans {
     }
 
 
-
     public static String getService_wxi() {
         if (!TextUtils.isEmpty(service_wxi)) {
             return service_wxi;
@@ -197,11 +193,10 @@ public class BaseConstans {
     }
 
 
-
     public static int getHasAdvertising() {
-        if(isTitokChannel){
+        if (isTitokChannel) {
             return 1;
-        }else{
+        } else {
             if (hasAdvertising == 0) {
                 SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
                 hasAdvertising = spUtil.getInt("AdvertisingNum", 0);
@@ -217,7 +212,6 @@ public class BaseConstans {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putInt("AdvertisingNum", num);
     }
-
 
 
     /**
@@ -237,14 +231,14 @@ public class BaseConstans {
      */
     public static boolean getIncentiveVideo() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
-        return spUtil.getBoolean("IncentiveVideo",true);
+        return spUtil.getBoolean("IncentiveVideo", true);
     }
 
 
     public static boolean getIsNewUser() {
-        if(isTitokChannel){
+        if (isTitokChannel) {
             return false;
-        }else{
+        } else {
             if (!isNewUserForAdvertising) {
                 SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
                 isNewUserForAdvertising = spUtil.getBoolean("isNewUserForAdvertising", false);
@@ -262,12 +256,10 @@ public class BaseConstans {
     }
 
 
-
     public static void setKaiPingADTimeOut(int time) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putInt("KaiPingADTimeOut", time);
     }
-
 
 
     public static void setMaxuploadTime(int time) {
@@ -278,12 +270,12 @@ public class BaseConstans {
 
     public static int getMaxuploadTime() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
-        return spUtil.getInt("setMaxuploadTime",60);
+        return spUtil.getInt("setMaxuploadTime", 60);
     }
 
     public static int getKaiPingADTimeOut() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
-        return spUtil.getInt("KaiPingADTimeOut",5000);
+        return spUtil.getInt("KaiPingADTimeOut", 5000);
     }
 
 
@@ -325,14 +317,44 @@ public class BaseConstans {
     }
 
 
-    public static  int getAppVersion() {
+    public static int getAppVersion() {
         try {
-            PackageInfo info = BaseApplication.getInstance().getPackageManager().getPackageInfo( BaseApplication.getInstance().getPackageName(), 0);
+            PackageInfo info = BaseApplication.getInstance().getPackageManager().getPackageInfo(BaseApplication.getInstance().getPackageName(), 0);
             return info.versionCode;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
         return 1;
+    }
+
+
+    /**
+     * description ：设置抖音列表，上限和下限
+     * creation date: 2020/7/6
+     * user : zhangtongju
+     */
+    public static void setFeedShowPositionNum(String str) {
+        String[] data = str.split(",");
+        String minNum = data[0];
+        String MaxNum = data[1];
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putInt("feedMaxNum", Integer.parseInt(MaxNum));
+        spUtil.putInt("feedMinNum", Integer.parseInt(minNum));
+    }
+
+
+    /**
+     * description ：获得仿抖音页面随机数的最小值和最大值
+     * creation date: 2020/7/6
+     * user : zhangtongju
+     */
+    public static int getFeedShowPosition(boolean isMaxNum) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        if (isMaxNum) {
+            return spUtil.getInt("feedMaxNum", 15);
+        } else {
+            return spUtil.getInt("feedMinNum", 5);
+        }
     }
 
 }

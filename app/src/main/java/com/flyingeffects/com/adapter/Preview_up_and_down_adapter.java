@@ -2,7 +2,8 @@ package com.flyingeffects.com.adapter;
 
 import android.content.Context;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,6 +12,7 @@ import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
+import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
@@ -36,21 +38,23 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     private TextView tv_make;
     private ImageView iv_zan;
     private ImageView iv_writer;
-    private ImageView iv_video_play;
+//    private ImageView iv_video_play;
     private TextView tv_writer_name;
     private TextView tv_title;
     private MarqueTextView tv_describe;
     private ImageView iv_show_cover;
-    private List<new_fag_template_item> allData;
-    private boolean isPlayComplete = false;
+//    private List<new_fag_template_item> allData;
+//    private boolean isPlayComplete = false;
     private int nowPreviewPosition;
-    private AlphaAnimation hideAnim;
+//    private AlphaAnimation hideAnim;
     private boolean readOnly;
+    public TTNativeExpressAd ad;
+    private FrameLayout video_layout;
 
     public Preview_up_and_down_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, boolean readOnly) {
         super(layoutResId, allData);
         this.context = context;
-        this.allData = allData;
+//        this.allData = allData;
         this.readOnly = readOnly;
     }
 
@@ -58,48 +62,80 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     @Override
     protected void convert(final BaseViewHolder helper, final new_fag_template_item item) {
         int offset = helper.getLayoutPosition();
+        ad = item.getAd();
+        video_layout=helper.getView(R.id.video_layout);
         videoPlayer = helper.getView(R.id.video_item_player);
         tv_make = helper.getView(R.id.tv_make);
         iv_zan = helper.getView(R.id.iv_zan);
-        helper.addOnClickListener(R.id.iv_zan);
-        helper.addOnClickListener(R.id.tv_make);
         iv_writer = helper.getView(R.id.iv_writer);
-        iv_video_play = helper.getView(R.id.iv_video_play);
+//        iv_video_play = helper.getView(R.id.iv_video_play);
         tv_writer_name = helper.getView(R.id.tv_writer_name);
         tv_title = helper.getView(R.id.tv_title);
         tv_describe = helper.getView(R.id.tv_describe);
-        iv_show_cover = helper.getView(R.id.iv_show_cover);
-        initVideoPlayer(item, offset);
-        if (nowPreviewPosition == offset) {
-            videoPlayer.startPlayLogic();
-        }
-        if (readOnly) {
-            tv_make.setVisibility(View.GONE);
-            iv_zan.setVisibility(View.GONE);
-        } else {
+//        iv_show_cover = helper.getView(R.id.iv_show_cover);
+        if (ad == null) {
+            //无广告的情况
+            video_layout.setVisibility(View.GONE);
+            videoPlayer.setVisibility(View.VISIBLE);
             tv_make.setVisibility(View.VISIBLE);
             iv_zan.setVisibility(View.VISIBLE);
-        }
-        Glide.with(context)
-                .load(item.getAuth_image())
-                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                .into(iv_writer);
-        tv_writer_name.setText(item.getAuth());
-        tv_title.setText(item.getRemark());
+            iv_writer.setVisibility(View.VISIBLE);
+//            iv_video_play.setVisibility(View.VISIBLE);
+            tv_writer_name.setVisibility(View.VISIBLE);
+            tv_title.setVisibility(View.VISIBLE);
+            tv_describe.setVisibility(View.VISIBLE);
+//            iv_show_cover.setVisibility(View.VISIBLE);
+            helper.addOnClickListener(R.id.iv_zan);
+            helper.addOnClickListener(R.id.tv_make);
+            initVideoPlayer(item, offset);
+            if (nowPreviewPosition == offset) {
+                videoPlayer.startPlayLogic();
+            }
+            if (readOnly) {
+                tv_make.setVisibility(View.GONE);
+                iv_zan.setVisibility(View.GONE);
+            } else {
+                tv_make.setVisibility(View.VISIBLE);
+                iv_zan.setVisibility(View.VISIBLE);
+            }
+            Glide.with(context)
+                    .load(item.getAuth_image())
+                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                    .into(iv_writer);
+            tv_writer_name.setText(item.getAuth());
+            tv_title.setText(item.getRemark());
 
-        if (item.getIs_collection() == 1) {
-            iv_zan.setImageResource(R.mipmap.zan_selected);
+            if (item.getIs_collection() == 1) {
+                iv_zan.setImageResource(R.mipmap.zan_selected);
+            } else {
+                iv_zan.setImageResource(R.mipmap.zan);
+            }
         } else {
-            iv_zan.setImageResource(R.mipmap.zan);
+            //有广告的情况下，显示广告页面
+            video_layout.setVisibility(View.VISIBLE);
+            videoPlayer.setVisibility(View.GONE);
+            tv_make.setVisibility(View.GONE);
+            iv_zan.setVisibility(View.GONE);
+            iv_writer.setVisibility(View.GONE);
+//            iv_video_play.setVisibility(View.GONE);
+            tv_writer_name.setVisibility(View.GONE);
+            tv_title.setVisibility(View.GONE);
+            tv_describe.setVisibility(View.GONE);
+//            iv_show_cover.setVisibility(View.GONE);
+            TTNativeExpressAd ttNativeExpressAd=item.getAd();
+
+            View view=ttNativeExpressAd.getExpressAdView();
+            if(view.getParent()!=null){
+                ViewGroup vp= (ViewGroup) view.getParent();
+                vp.removeAllViews();
+            }
+
+
+            video_layout.addView(ttNativeExpressAd.getExpressAdView());
         }
+
 
     }
-
-
-
-
-
-
 
 
     /**
@@ -141,13 +177,9 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     }
 
 
-
-    public void pauseVideo(){
+    public void pauseVideo() {
         videoPlayer.onVideoPause();
     }
-
-
-
 
 
     public void onDestroy() {

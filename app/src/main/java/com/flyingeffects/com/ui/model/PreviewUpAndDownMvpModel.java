@@ -5,15 +5,20 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
+import android.view.View;
 
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdManager;
 import com.bytedance.sdk.openadsdk.TTAdNative;
+import com.bytedance.sdk.openadsdk.TTDrawFeedAd;
 import com.bytedance.sdk.openadsdk.TTFeedAd;
+import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
@@ -39,6 +44,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.utils.screenUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
@@ -80,11 +86,9 @@ public class PreviewUpAndDownMvpModel {
         this.fromTo = fromTo;
         this.templateId = templateId;
         this.fromToMineCollect = fromToMineCollect;
-//        TTAdManager ttAdManager = TTAdManagerHolder.get();
-//        //step2:创建TTAdNative对象,用于调用广告请求接口
-//        mTTAdNative = ttAdManager.createAdNative(context);
-//        //step3:(可选，强烈建议在合适的时机调用):申请部分权限，如read_phone_state,防止获取不了imei时候，下载类广告没有填充的问题。
-//        TTAdManagerHolder.get().requestPermissionIfNecessary(context);
+        mTTAdNative = TTAdManagerHolder.get().createAdNative(context);
+        //在合适的时机申请权限，如read_phone_state,防止获取不了imei时候，下载类广告没有填充的问题
+        TTAdManagerHolder.get().requestPermissionIfNecessary(context);
     }
 
 
@@ -110,54 +114,160 @@ public class PreviewUpAndDownMvpModel {
 
 
 
-
-    public void requestAD(){
-        //step4:创建feed广告请求类型参数AdSlot,具体参数含义参考文档
+    public void requestAD() {
+        //step3:创建广告请求参数AdSlot,具体参数含义参考文档
+        float expressViewWidth = screenUtil.getScreenWidth((Activity) context);
+        float expressViewHeight = screenUtil.getScreenHeight((Activity) context);
         AdSlot adSlot = new AdSlot.Builder()
-                .setCodeId("945274799")
+                .setCodeId(AdConfigs.POST_ID_CSJ_Feed)
                 .setSupportDeepLink(true)
-                .setImageAcceptedSize(640, 320)
+                .setExpressViewAcceptedSize(expressViewWidth, expressViewHeight) //期望模板广告view的size,单位dp
                 .setAdCount(1) //请求广告数量为1到3条
                 .build();
-        //step5:请求广告，调用feed广告异步请求接口，加载到广告后，拿到广告素材自定义渲染
-        mTTAdNative.loadFeedAd(adSlot, new TTAdNative.FeedAdListener() {
+        //step4:请求广告,对请求回调的广告作渲染处理
+        mTTAdNative.loadExpressDrawFeedAd(adSlot, new TTAdNative.NativeExpressAdListener() {
             @Override
             public void onError(int code, String message) {
+//                Log.d(TAG, message);
+//                showToast(message);
                 LogUtil.d("OOM","loadFeedAd+code="+code+";message="+message);
-//                if (mListView != null) {
-//                    mListView.setLoadingFinish();
-//                }
-//                TToast.show(FeedListActivity.this, message);
             }
 
             @Override
-            public void onFeedAdLoad(List<TTFeedAd> ads) {
-//                if (mListView != null) {
-//                    mListView.setLoadingFinish();
-//                }
-
+            public void onNativeExpressAdLoad(List<TTNativeExpressAd> ads) {
                 if (ads == null || ads.isEmpty()) {
-//                    TToast.show(FeedListActivity.this, "on FeedAdLoaded: ad is null!");
                     LogUtil.d("OOM","on FeedAdLoaded: ad is null!");
                     return;
                 }
 
-
-//                for (int i = 0; i < LIST_ITEM_COUNT; i++) {
-//                    mData.add(null);
+                LogUtil.d("OOM","success"+ads.size());
+//                for (int i = 0; i < 5; i++) {
+//                    int random = (int) (Math.random() * 100);
+//                    int index = random % videos.length;
+//                    datas.add(new Item(TYPE_COMMON_ITEM, null, videos[index], imgs[index]));
 //                }
+                for (final TTNativeExpressAd ad : ads) {
+                    //点击监听器必须在getAdView之前调
+                    ad.setVideoAdListener(new TTNativeExpressAd.ExpressVideoAdListener() {
+                        @Override
+                        public void onVideoLoad() {
 
-//                int count = mData.size();
-//                for (TTFeedAd ad : ads) {
-//                    ad.setActivityForDownloadApp((Activity) context);
-//                    int random = (int) (Math.random() * LIST_ITEM_COUNT) + count - LIST_ITEM_COUNT;
-//                    mData.set(random, ad);
-//                }
-//
-//                myAdapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onVideoError(int errorCode, int extraCode) {
+
+                        }
+
+                        @Override
+                        public void onVideoAdStartPlay() {
+
+                        }
+
+                        @Override
+                        public void onVideoAdPaused() {
+
+                        }
+
+                        @Override
+                        public void onVideoAdContinuePlay() {
+
+                        }
+
+                        @Override
+                        public void onProgressUpdate(long current, long duration) {
+
+                        }
+
+                        @Override
+                        public void onVideoAdComplete() {
+
+                        }
+
+                        @Override
+                        public void onClickRetry() {
+//                            TToast.show(DrawNativeExpressVideoActivity.this, " onClickRetry !");
+                            Log.d("drawss", "onClickRetry!");
+                        }
+                    });
+                    ad.setCanInterruptVideoPlay(true);
+                    ad.setExpressInteractionListener(new TTNativeExpressAd.ExpressAdInteractionListener() {
+                        @Override
+                        public void onAdClicked(View view, int type) {
+
+                        }
+
+                        @Override
+                        public void onAdShow(View view, int type) {
+
+                        }
+
+                        @Override
+                        public void onRenderFail(View view, String msg, int code) {
+
+                        }
+
+                        @Override
+                        public void onRenderSuccess(View view, float width, float height) {
+//                            TToast.show(DrawNativeExpressVideoActivity.this, "渲染成功");
+//                            int random = (int) (Math.random() * 100);
+//                            int index = random % videos.length;
+//                            if (index == 0){
+//                                index++;
+//                            }
+//                            datas.add(index, new Item(TYPE_AD_ITEM, ad, -1, -1));
+//                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
+                    ad.render();
+                }
+
+                callback.resultAd(ads);
             }
         });
     }
+
+
+
+//    public void requestAD(){
+//        //step4:创建feed广告请求类型参数AdSlot,具体参数含义参考文档
+//        AdSlot adSlot = new AdSlot.Builder()
+//                .setCodeId("945179587")
+//                .setSupportDeepLink(true)
+//                .setImageAcceptedSize(1080, 1920)
+//                .setAdCount(1) //请求广告数量为1到3条
+//                .build();
+//        //step5:请求广告，调用feed广告异步请求接口，加载到广告后，拿到广告素材自定义渲染
+//        mTTAdNative.loadFeedAd(adSlot, new TTAdNative.FeedAdListener() {
+//            @Override
+//            public void onError(int code, String message) {
+//                LogUtil.d("OOM","loadFeedAd+code="+code+";message="+message);
+//            }
+//
+//            @Override
+//            public void onFeedAdLoad(List<TTFeedAd> ads) {
+//
+//                if (ads == null || ads.isEmpty()) {
+//                    LogUtil.d("OOM","on FeedAdLoaded: ad is null!");
+//                    return;
+//                }
+//
+//
+////                for (int i = 0; i < LIST_ITEM_COUNT; i++) {
+////                    mData.add(null);
+////                }
+//
+////                int count = mData.size();
+////                for (TTFeedAd ad : ads) {
+////                    ad.setActivityForDownloadApp((Activity) context);
+////                    int random = (int) (Math.random() * LIST_ITEM_COUNT) + count - LIST_ITEM_COUNT;
+////                    mData.set(random, ad);
+////                }
+////                myAdapter.notifyDataSetChanged();
+//                callback.resultAd(ads);
+//            }
+//        });
+//    }
 
     /**
      * description ：

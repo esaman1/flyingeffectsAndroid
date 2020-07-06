@@ -393,7 +393,12 @@ public class WelcomeActivity extends BaseActivity {
                             //上传的时候
                             int second = Integer.parseInt(config.getValue());
                             BaseConstans.setMaxuploadTime(second);
+                        }else if(id==33){
+                            //feed 自渲染信息流 上线和下限
+                            String second = config.getValue();
+                            BaseConstans.setFeedShowPositionNum(second);
                         }
+
                     }
                 }
             }

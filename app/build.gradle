@@ -176,7 +176,7 @@ dependencies {
     // 百度联盟
     implementation(name: 'Baidu_MobAds_SDK-release_v5.85', ext: 'aar')
     // 穿山甲
-    implementation(name: 'open_ad_sdk_v2.8.0.3', ext: 'aar')
+    implementation(name: 'open_ad_sdk', ext: 'aar')
     //oppo
     implementation(name: 'mobad_normal_pub_333_2019_11_11', ext: 'aar')
     // 抖音1

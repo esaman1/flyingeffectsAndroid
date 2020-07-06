@@ -57,4 +57,8 @@ public class AdConfigs {
     public static String POST_ID_CSJ = "887315852";
 
 
+    //穿山甲信息流id
+    public static String POST_ID_CSJ_Feed = "945274799";
+
+
 }
