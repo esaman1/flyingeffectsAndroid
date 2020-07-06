@@ -177,6 +177,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 adapter.notifyItemChanged(position);
                 nowChoosePosition = position;
                 refeshData();
+                LogUtil.d("OOM","当前="+position+"randomPosition="+randomPosition);
                 if(randomPosition==position&&randomPosition!=0){
                     //如果已经看了广告，则在请求下一条广告
                     Presenter.requestAD();
