@@ -34,6 +34,7 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.nineton.ntadsdk.NTAdSDK;
 import com.nineton.ntadsdk.itr.SplashAdCallBack;
 import com.nineton.ntadsdk.view.NTSkipView;
+import com.orhanobut.hawk.Hawk;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -94,8 +95,10 @@ public class WelcomeActivity extends BaseActivity {
             int openAppNum = BaseConstans.getOpenAppNum();
             openAppNum++;
             BaseConstans.setOpenAppNum(openAppNum); //打开app的次数为1
+            LogUtil.d("OOM","openAppNum="+openAppNum);
         }
 //        }
+
         gotoPrivacyPolicyActivity();
     }
 
@@ -119,15 +122,15 @@ public class WelcomeActivity extends BaseActivity {
 
         // 权限都已经有了，那么直接调用SDK
         if (lackedPermission.size() == 0) {
-            if (!fromBackstage || BaseConstans.getIsNewUser()) {
+            if (!fromBackstage || BaseConstans.getNextIsNewUser()) {
                 requestConfig();
                 requestConfigForTemplateList();
             }
             hasPermission = true;
 
-            LogUtil.d("oom", "BaseConstans.getHasAdvertising()=" + BaseConstans.getHasAdvertising());
+            LogUtil.d("oom", "BaseConstans.getNextIsNewUser()=" + BaseConstans.getNextIsNewUser());
 
-            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getNextIsNewUser()) {
                 showSplashAd();
             }
         } else {
@@ -180,11 +183,11 @@ public class WelcomeActivity extends BaseActivity {
                 checkPermission();
             } else {
                 hasPermission = true;
-                if (!fromBackstage || BaseConstans.getIsNewUser()) {
+                if (!fromBackstage || BaseConstans.getNextIsNewUser()) {
                     requestConfig();
                 }
                 LogUtil.d("oom", "BaseConstans.getHasAdvertising()=" + BaseConstans.getHasAdvertising());
-                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getNextIsNewUser()) {
                     showSplashAd();
                 }
             }
@@ -354,7 +357,7 @@ public class WelcomeActivity extends BaseActivity {
                 }
                 LogUtil.d("_onNext","str="+sb.toString());
 
-                if (data != null && data.size() > 0) {
+                if (data.size() > 0) {
                     for (int i = 0; i < data.size(); i++) {
                         Config config = data.get(i);
                         int id = config.getId();
@@ -369,16 +372,17 @@ public class WelcomeActivity extends BaseActivity {
                             //获得热更新时长
                             String outTime = config.getValue();
                             BaseConstans.showAgainKaipingAd = Integer.parseInt(outTime);
-                        } else if (id == 24) {  //todo 暂时没用
+                        } else if (id == 24) {
                             //首次安装前几次无广告
                             int newUserIsVip = Integer.parseInt(config.getValue());
-
-                            LogUtil.d("OOM", "BaseConstans.getOpenAppNum() newUserIsVip?" + BaseConstans.getOpenAppNum() + "newUserIsVip=" + newUserIsVip);
-                            if (BaseConstans.getOpenAppNum() <= newUserIsVip) { //新用户没广告
-                                LogUtil.d("OOM", "当前为新用户");
+                           if(BaseConstans.getOpenAppNum() <newUserIsVip-1){
+                               BaseConstans.setNextNewUser(true);
+                           }else{
+                               BaseConstans.setNextNewUser(false);
+                           }
+                            if (BaseConstans.getOpenAppNum() < newUserIsVip) { //新用户没广告
                                 BaseConstans.setIsNewUser(true);
                             } else {
-                                LogUtil.d("OOM", "当前为lao用户");
                                 BaseConstans.setIsNewUser(false);
                             }
                         } else if (id == 25) {
@@ -434,6 +438,7 @@ public class WelcomeActivity extends BaseActivity {
 
     private void AuditModeConfig(String str) {
         LogUtil.d("AuditModeConfig", "AuditModeConfig=" + str);
+        Hawk.put("AuditModeConfig",str);
         JSONArray jsonArray;
         try {
             jsonArray = new JSONArray(str);

@@ -11,6 +11,18 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -25,6 +37,9 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.bytedance.applog.AppLog;
 import com.bytedance.applog.InitConfig;
 import com.bytedance.applog.util.UriConfig;
@@ -36,6 +51,7 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
+import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.checkVersion;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -129,6 +145,11 @@ public class HomeMainActivity extends FragmentActivity {
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             requestCPad();
         }
+        if (BaseConstans.hasLogin()) {
+            requestUserInfo();
+        }
+
+    }
 
       //  initCsj();
         new Thread(() -> SegJni.nativeCreateSegHandler(HomeMainActivity.this, ConUtil.getFileContent(HomeMainActivity.this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT)).start();
@@ -144,6 +165,22 @@ public class HomeMainActivity extends FragmentActivity {
      */
     private void initCsj(){
         TTAdManagerHolder.init(this);
+
+    private void requestUserInfo() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("token", BaseConstans.GetUserToken());
+        // 启动时间
+        Observable ob = Api.getDefault().getUserInfo(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(this) {
+            @Override
+            protected void _onError(String message) {
+            }
+
+            @Override
+            protected void _onNext(UserInfo data) {
+                Hawk.put("UserInfo", data);
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
 
@@ -604,5 +641,6 @@ public class HomeMainActivity extends FragmentActivity {
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
+
 
 }

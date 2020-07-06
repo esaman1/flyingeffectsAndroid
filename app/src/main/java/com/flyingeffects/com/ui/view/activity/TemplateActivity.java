@@ -138,8 +138,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     /**
-     *
-     *
      * 底部按钮数量
      */
     private int bottomButtonCount;
@@ -1452,6 +1450,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     LogUtil.d("OOM", "onVideoAdClicked");
                 }
             });
+        }else{
+            presenter.alertAlbumUpdate(true);
         }
 
 

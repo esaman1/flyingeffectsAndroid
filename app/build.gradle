@@ -182,7 +182,8 @@ dependencies {
     // 抖音1
     implementation(name: 'RangersAppLog-Lite-cn-3.3.12', ext: 'aar')
     //闪验
-    api files('libs/shanyan_sdk_v2.3.1.3.aar')
+    api files('libs/shanyan_sdk_v2.3.1.5.aar')
+
     //disklrucache
     implementation 'com.jakewharton:disklrucache:2.0.2'
     //仿抖音sdk 需要的

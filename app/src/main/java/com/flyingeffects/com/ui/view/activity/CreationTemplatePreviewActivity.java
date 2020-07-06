@@ -20,6 +20,7 @@ import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.StimulateControlManage;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplatePreviewMvpView;
 import com.flyingeffects.com.ui.presenter.CreationTemplatePreviewPresenter;
@@ -233,8 +234,8 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                     statisticsEventAffair.getInstance().setFlag(this, "8_save");
                 }
 
-
-                if (BaseConstans.isTitokChannel && BaseConstans.getIncentiveVideo()) {
+                StimulateControlManage.getInstance().InitRefreshStimulate();
+                if (BaseConstans.getHasAdvertising() == 1 &&BaseConstans.getIncentiveVideo()&& !BaseConstans.getIsNewUser()) {
                     Intent intent = new Intent(CreationTemplatePreviewActivity.this, AdHintActivity.class);
                     intent.putExtra("from", "isFormPreviewVideo");
                     intent.putExtra("templateTitle", "");
@@ -445,6 +446,8 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                     LogUtil.d("OOM", "onVideoAdClicked");
                 }
             });
+        }else{
+            saveToAlbum(imagePath,true);
         }
 
 

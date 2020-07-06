@@ -41,9 +41,12 @@ import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.PreviewMvpCallback;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.ui.view.activity.ReportActivity;
+import com.flyingeffects.com.ui.view.activity.AdHintActivity;
+import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
@@ -205,7 +208,8 @@ public class PreviewMvpModel {
         bottomSheetDialog.setContentView(view);
         LinearLayout iv_download = view.findViewById(R.id.ll_download);
         iv_download.setOnClickListener(view12 -> {
-            downProgressDialog = new WaitingDialog_progress(context);
+            statisticsEventAffair.getInstance().setFlag(context, "save_back_template");
+            downProgressDialog=new WaitingDialog_progress(context);
             downProgressDialog.openProgressDialog();
             DownVideo(path, imagePath, id, true);
             dismissDialog();

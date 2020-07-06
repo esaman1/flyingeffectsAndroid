@@ -55,16 +55,13 @@ public class AdHintActivity extends Activity {
         switch (view.getId()) {
             case R.id.tv_cancle:
                 //取消
-
                 if (!TextUtils.isEmpty(from) && from.equals(FromToTemplate.ISFROMTEMPLATE)) {
                     statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "mb_ad_cancel", title);
                 } else {
                     statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "bj_ad_cancel", title);
                 }
-                statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "video_ad_alert_click_cancel", title);
-
+                statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "video_ad_alert_click_cancel");
                 AdHintActivity.this.finish();
-
                 break;
 
             case R.id.tv_watch_ad:
@@ -74,7 +71,7 @@ public class AdHintActivity extends Activity {
                 } else {
                     statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "bj_ad_open", title);
                 }
-                statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "video_ad_alert_click_confirm", title);
+                statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "video_ad_alert_click_confirm");
                 EventBus.getDefault().post(new showAdCallback(from));
                 AdHintActivity.this.finish();
                 break;

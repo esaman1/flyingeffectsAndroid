@@ -26,6 +26,7 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.activity.AboutActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
+import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -178,6 +179,7 @@ public class frag_user_center extends BaseFragment {
 
                 @Override
                 protected void _onNext(UserInfo data) {
+                    Hawk.put("UserInfo",data);
                     if (getActivity() != null) {
                         tv_id.setText("飞友号：" + data.getId());
                         if(!TextUtils.isEmpty(data.getNickname())){
