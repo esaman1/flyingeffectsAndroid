@@ -4,25 +4,11 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -37,13 +23,9 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.bumptech.glide.request.RequestOptions;
 import com.bytedance.applog.AppLog;
 import com.bytedance.applog.InitConfig;
 import com.bytedance.applog.util.UriConfig;
-import com.bytedance.sdk.openadsdk.TTAdManager;
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
 import com.chuanglan.shanyan_sdk.listener.GetPhoneInfoListener;
 import com.flyingeffects.com.R;
@@ -61,7 +43,6 @@ import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.SPHelper;
-import com.flyingeffects.com.manager.TTAdManagerHolder;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
 import com.flyingeffects.com.ui.view.fragment.frag_Bj;
@@ -102,8 +83,6 @@ public class HomeMainActivity extends FragmentActivity {
     private ImageView[] mIvMenu = new ImageView[4];
     private ImageView[] mIvMenuBack = new ImageView[4];
     private TextView[] tv_main = new TextView[4];
-    private LinearLayout[] lin_menu = new LinearLayout[4];
-    //private int[] lin_Id = {R.id.ll_menu_0, R.id.ll_menu_1, R.id.ll_menu_2, R.id.ll_menu_3};
     private int[] img_Id = {R.id.iv_menu_0, R.id.iv_menu_1, R.id.iv_menu_2, R.id.iv_menu_3};
     private int[] mImBackId = {R.id.iv_back_menu_0, R.id.iv_back_menu_1, R.id.iv_back_menu_2, R.id.iv_back_menu_3};
     public HomeMainActivity ThisMain;
@@ -134,13 +113,11 @@ public class HomeMainActivity extends FragmentActivity {
         clearAllData();
         initView();
         copyFile("default_bj.png");
-
         GlideBitmapPool.initialize(10 * 1024 * 1024); // 10mb max memory size
         checkUpdate();
         checkConfig();
         getUserPhoneInfo();
         getPushPermission();
-
         initTiktok();
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             requestCPad();
@@ -148,23 +125,13 @@ public class HomeMainActivity extends FragmentActivity {
         if (BaseConstans.hasLogin()) {
             requestUserInfo();
         }
-
-    }
-
-      //  initCsj();
         new Thread(() -> SegJni.nativeCreateSegHandler(HomeMainActivity.this, ConUtil.getFileContent(HomeMainActivity.this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT)).start();
-
     }
 
 
 
-    /**
-     * description ：初始化穿山甲，主要用户全屏广告（视频上滑下滑的预览页面）
-     * creation date: 2020/7/3
-     * user : zhangtongju
-     */
-    private void initCsj(){
-        TTAdManagerHolder.init(this);
+
+
 
     private void requestUserInfo() {
         HashMap<String, String> params = new HashMap<>();
@@ -234,26 +201,11 @@ public class HomeMainActivity extends FragmentActivity {
 
 
     private void initTiktok() {
-
-        /* 初始化开始 */
-        // appid和渠道，appid须保证与广告后台申请记录一致，渠道可自定义，如有多个马甲包建议设置渠道号唯一标识一个马甲包。
         final InitConfig config = new InitConfig("181569", getChannel());
-         /*
-         域名默认国内: DEFAULT, 新加坡:SINGAPORE, 美东:AMERICA
-         注意：国内外不同vendor服务注册的did不一样。由DEFAULT切换到SINGAPORE或者AMERICA，会发生变化，
-         切回来也会发生变化。因此vendor的切换一定要慎重，随意切换导致用户新增和统计的问题，需要自行评估。
-         */
-
         config.setUriConfig(UriConfig.DEFAULT);
-//        //配置心跳，游戏模式
-//        config.setEnablePlay(true);
         // 是否在控制台输出日志，可用于观察用户行为日志上报情况，建议仅在调试时使用，release版本请设置为false ！
         AppLog.setEnableLog(false);
         AppLog.init(this, config);
-//        /* 初始化结束 */
-//        GameReportHelper.onEventRegister("wechat",true);
-//        GameReportHelper.onEventPurchase("gift","flower", "008",1,
-//                "wechat","¥", true, 1);
     }
 
 
