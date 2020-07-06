@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -483,7 +484,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     }
 
 
-    @Override
     public void showDownProgress(int progress) {
         Observable.just(progress).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
             @Override
