@@ -111,6 +111,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
                 iv_zan.setImageResource(R.mipmap.zan);
             }
         } else {
+            pauseVideo();
             //有广告的情况下，显示广告页面
             video_layout.setVisibility(View.VISIBLE);
             videoPlayer.setVisibility(View.GONE);

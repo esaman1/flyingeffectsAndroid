@@ -9,7 +9,6 @@ import android.view.View;
 
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.bytedance.sdk.openadsdk.TTFeedAd;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyingeffects.com.R;
@@ -106,6 +105,16 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     private WaitingDialog_progress waitingDialog_progress;
 
+    //是否需要插入广告
+    private  boolean isNeedAddaD=false;
+
+    //随机插入位置
+    private int randomPosition;
+
+    //上次插入的位置
+    private int lastRandomPosition;
+
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_preview_up_and_down;
@@ -168,6 +177,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 adapter.notifyItemChanged(position);
                 nowChoosePosition = position;
                 refeshData();
+                if(randomPosition==position&&randomPosition!=0){
+                    //如果已经看了广告，则在请求下一条广告
+                    Presenter.requestAD();
+//                    adapter.pauseVideo();
+                    LogUtil.d("OOM","当前为广告,位置="+position);
+                }
             }
 
             @Override
@@ -179,7 +194,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         if (nowCollectType == 1) {
             setIsCollect(true);
         }
-        Presenter.requestAd();
+        Presenter.requestAD();
     }
 
 
@@ -383,6 +398,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void showNewData(List<new_fag_template_item> allData) {
         this.allData = allData;
+        //如果当前页面需要广告，则插入广告
+        if(isNeedAddaD&&allData!=null&&allData.size()>randomPosition){
+            isNeedAddaD=false;
+            new_fag_template_item item=new new_fag_template_item();
+            item.setAd(ad);
+            allData.add(randomPosition,item);
+        }
         adapter.notifyDataSetChanged();
     }
 
@@ -392,22 +414,31 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * creation date: 2020/7/6
      * user : zhangtongju
      */
-    List<TTNativeExpressAd> ads = new ArrayList<>();
+
+  private   TTNativeExpressAd ad;
 
     @Override
     public void resultAd(List<TTNativeExpressAd> ads) {
-        ads.addAll(ads);
+        ad=ads.get(0);
         int minNum = BaseConstans.getFeedShowPosition(false);
         int MaxNum = BaseConstans.getFeedShowPosition(true);
-        Random r = new Random();
-        int random = (r.nextInt(MaxNum) + minNum);
-        LogUtil.d("OOM","random="+random);
-         if(allData!=null&&allData.size()>random){
+        LogUtil.d("OOM","minNum="+minNum+"MaxNum="+MaxNum);
+        Random random = new Random();
+        randomPosition = random.nextInt(MaxNum)%(MaxNum-minNum+1) + minNum;
+        LogUtil.d("OOM","random="+randomPosition);
+        randomPosition=lastRandomPosition+randomPosition;
+        LogUtil.d("OOM","needRandom="+randomPosition);
+         if(allData!=null&&allData.size()>randomPosition){
+             isNeedAddaD=false;
              new_fag_template_item item=new new_fag_template_item();
-             item.setAd(ads.get(0));
-             allData.add(random,item);
+             item.setAd(ad);
+             allData.add(randomPosition,item);
              adapter.notifyDataSetChanged();
+         }else {
+             //在第二页了
+             isNeedAddaD=true;
          }
+         lastRandomPosition=randomPosition;
     }
 
 

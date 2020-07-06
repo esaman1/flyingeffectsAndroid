@@ -49,9 +49,7 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
     }
 
 
-    public void requestAd(){
-        previewUpAndDownMvpModel.requestAD();
-    }
+
 
     @Override
     public void collectionResult() {
