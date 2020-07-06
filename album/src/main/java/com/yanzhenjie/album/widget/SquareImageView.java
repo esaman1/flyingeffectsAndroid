@@ -17,8 +17,9 @@ package com.yanzhenjie.album.widget;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
+
+import androidx.annotation.Nullable;
 
 /**
  * Created by YanZhenjie on 2018/4/19.

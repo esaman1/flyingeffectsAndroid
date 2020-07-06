@@ -12,6 +12,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
+
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseFragment;
@@ -48,7 +52,6 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     @BindView(R.id.viewpager)
     ViewPager viewPager;
 
-
     @BindView(R.id.ll_add_child)
     LinearLayout ll_add_child;
 
@@ -63,22 +66,20 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
         return R.layout.fag_bj;
     }
 
-
     @Override
     protected void initView() {
         presenter = new FagBjMvpPresenter(getActivity(), this);
         presenter.requestData();
     }
 
-
     @Override
     protected void initAction() {
-
 
     }
 
     @Override
     protected void initData() {
+
     }
 
 
@@ -187,7 +188,6 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
         viewPager.setCurrentItem(showWitch);
     }
 
-
     private void setViewWidth(View mView, int width) {
         LinearLayout.LayoutParams Params = (LinearLayout.LayoutParams) mView.getLayoutParams();
         Params.width = width;
@@ -197,11 +197,8 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
 
     @OnClick({R.id.iv_add, R.id.iv_cover, R.id.Toolbar,R.id.relative_top})
     public void onClick(View view) {
-
-
         switch (view.getId()) {
             case R.id.iv_add:
-
             case R.id.Toolbar:
                 if (BaseConstans.hasLogin()) {
                     toAddSticker();
@@ -211,7 +208,6 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                     startActivity(intent);
                 }
                 break;
-
             case R.id.iv_cover:
                 toAddSticker();
                 statisticsEventAffair.getInstance().setFlag(getActivity(), "7_background");

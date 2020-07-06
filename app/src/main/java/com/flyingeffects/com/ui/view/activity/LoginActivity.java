@@ -84,7 +84,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     TextView tv_xy;
     @BindView(R.id.relative_normal)
     RelativeLayout relative_normal;
-//    private boolean isOpenAuth = false;
+    //    private boolean isOpenAuth = false;
     MyVideoView videoView;
 //    private static final String WEIXIN = "wx";
 //    private static final String QQ = "qq";
@@ -97,7 +97,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
 
     //当前页面类型 0是老板ui ,1 是新版ui
-    private int nowPageType=1;
+    private int nowPageType = 1;
 
     @Override
     protected int getLayoutId() {
@@ -105,12 +105,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
+    boolean isOnDestroy = false;
 
-    boolean isOnDestroy=false;
     @Override
     public void onDestroy() {
         super.onDestroy();
-        isOnDestroy=true;
+        isOnDestroy = true;
         if (null != shanyan_login_relative) {
             shanyan_login_relative.removeAllViews();
         }
@@ -124,7 +124,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
-    private void dissMissShanYanUi(){
+    private void dissMissShanYanUi() {
         OneKeyLoginManager.getInstance().finishAuthActivity();
         OneKeyLoginManager.getInstance().removeAllListener();
     }
@@ -142,7 +142,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 shanyan_login_relative.addView(videoView, 0, mLayoutParams);
                 VideoUtils.startBgVideo(videoView, getApplicationContext(), "android.resource://" + LoginActivity.this.getPackageName() + "/" + R.raw.login_video);
             } else {
-                nowPageType=0;
+                nowPageType = 0;
                 //拉起授权页失败
                 Log.e("VVV", "拉起授权页失败： _code==" + code + "   _result==" + result);
                 relative_normal.setVisibility(View.VISIBLE);
@@ -157,8 +157,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             } else if (1000 == code) {
                 Log.e("VVV", "用户点击登录获取token成功： _code==" + code + "   _result==" + result);
                 try {
-                    JSONObject ob=new JSONObject(result);
-                    requestLoginForSdk("4",ob.getString("token"),"","","","",false);
+                    JSONObject ob = new JSONObject(result);
+                    requestLoginForSdk("4", ob.getString("token"), "", "", "", "", false);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -228,7 +228,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             }
         });
 
-
     }
 
 
@@ -246,7 +245,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     protected void onRestart() {
         super.onRestart();
-        if(  nowPageType==1){
+        if (nowPageType == 1) {
             VideoUtils.startBgVideo(videoView, getApplicationContext(), "android.resource://" + this.getPackageName() + "/" + R.raw.login_video);
         }
     }
@@ -254,14 +253,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     protected void onResume() {
         super.onResume();
-        if(  nowPageType==1){
+        if (nowPageType == 1) {
             AbScreenUtils.hideBottomUIMenu(this);
         }
     }
 
     @Override
     protected void initView() {
-        isOnDestroy=false;
+        isOnDestroy = false;
         EventBus.getDefault().register(this);
         WaitingDialog.openPragressDialog(this);
         OneKeyLoginManager.getInstance().setLoadingVisibility(false);
@@ -328,11 +327,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             return;
         }
         requestLogin(editTextUsername.getText().toString().trim(), editTextPassword.getText().toString().trim());
-
     }
 
 
-    @OnClick({R.id.tv_login, R.id.iv_close,R.id.ll_weixin})
+    @OnClick({R.id.tv_login, R.id.iv_close, R.id.ll_weixin})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_login:
@@ -352,19 +350,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 break;
 
             case R.id.ll_weixin:
-                if(!isWeixinAvilible(this)){
+                if (!isWeixinAvilible(this)) {
                     ToastUtil.showToast("您还未安装微信");
-                }else {
-                    if(!DoubleClick.getInstance().isFastZDYDoubleClick(2000)){
+                } else {
+                    if (!DoubleClick.getInstance().isFastZDYDoubleClick(2000)) {
                         wxLogin();
                     }
-
                 }
                 break;
             default:
                 break;
         }
-
     }
 
 
@@ -380,7 +376,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }
 
         requestSms(editTextUsername.getText().toString().trim());
-
     }
 
 
@@ -406,13 +401,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
 
-
     private void changeFocus() {
         editTextPassword.requestFocus();
         editTextPassword.setFocusable(true);
         editTextPassword.setFocusableInTouchMode(true);
     }
-
 
     private void requestLogin(String editTextUsername, String password) {
         HashMap<String, String> params = new HashMap<>();
@@ -432,14 +425,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "requestLogin=" + str);
                 BaseConstans.SetUserToken(data.getToken());
-                BaseConstans.SetUserId(data.getId(),data.getNickname(),data.getPhotourl());
+                BaseConstans.SetUserId(data.getId(), data.getNickname(), data.getPhotourl());
                 LoginActivity.this.finish();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
-
-
-
 
 
     /**
@@ -448,8 +438,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      * param :type|1=微信2=qq3=苹果4=闪验
      * user : zhangtongju
      */
-    private void requestLoginForSdk(String type,String flash_token,String nickname,String photourl,String openid,String unionid, boolean isShowDialog) {
-        if(!DoubleClick.getInstance().isFastDoubleClick()){
+    private void requestLoginForSdk(String type, String flash_token, String nickname, String photourl, String openid, String unionid, boolean isShowDialog) {
+        if (!DoubleClick.getInstance().isFastDoubleClick()) {
             HashMap<String, String> params = new HashMap<>();
             params.put("type", type);
             params.put("flash_token", flash_token);
@@ -462,7 +452,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(LoginActivity.this) {
                 @Override
                 protected void _onError(String message) {
-                    if(!isOnDestroy){
+                    if (!isOnDestroy) {
                         WaitingDialog.closePragressDialog();
                         ToastUtil.showToast(message);
                         dissMissShanYanUi();
@@ -473,11 +463,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
                 @Override
                 protected void _onNext(UserInfo data) {
-                    if(!isOnDestroy){
+                    if (!isOnDestroy) {
                         String str = StringUtil.beanToJSONString(data);
                         LogUtil.d("OOM", "setToken=" + data.getToken());
                         BaseConstans.SetUserToken(data.getToken());
-                        BaseConstans.SetUserId(data.getId(),data.getNickname(),data.getPhotourl());
+                        BaseConstans.SetUserId(data.getId(), data.getNickname(), data.getPhotourl());
                         dissMissShanYanUi();
                         WaitingDialog.closePragressDialog();
                         LoginActivity.this.finish();
@@ -487,10 +477,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
         }
 
-
     }
-
-
 
 
     private Timer timer;
@@ -564,13 +551,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
-
-    public void wxLogin(){
+    public void wxLogin() {
         UMShareAPI.get(LoginActivity.this).getPlatformInfo(LoginActivity.this, SHARE_MEDIA.WEIXIN, authListener);
     }
-
-
-
 
     UMAuthListener authListener = new UMAuthListener() {
         /**
@@ -579,7 +562,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
          */
         @Override
         public void onStart(SHARE_MEDIA platform) {
-        LogUtil.d("OOM","onstart");
+            LogUtil.d("OOM", "onstart");
         }
 
         /**
@@ -590,7 +573,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
          */
         @Override
         public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data) {
-            if (data != null&&!isOnDestroy) {
+            if (data != null && !isOnDestroy) {
                 Bundle bundle = new Bundle();
                 String name = data.get("name");
                 String iconUrl = data.get("iconurl");
@@ -598,10 +581,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 bundle.putSerializable("iconUrl", iconUrl);
 
                 WaitingDialog.openPragressDialog(LoginActivity.this);
-                requestLoginForSdk("1","",name,iconUrl,data.get("openid"),data.get("unionid"),false);
+                requestLoginForSdk("1", "", name, iconUrl, data.get("openid"), data.get("unionid"), false);
             }
         }
-
 
 
         /**
@@ -612,7 +594,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
          */
         @Override
         public void onError(SHARE_MEDIA platform, int action, Throwable t) {
-            LogUtil.d("OOM","onError"+t.getMessage());
+            LogUtil.d("OOM", "onError" + t.getMessage());
             ToastUtil.showToast(getString(R.string.login_fail));
             clearUmData();
         }
@@ -637,11 +619,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Subscribe
     public void onEventMainThread(WxLogin event) {
-        if(event.getTag().equals("wxLogin")){
-            if(!isWeixinAvilible(this)){
+        if (event.getTag().equals("wxLogin")) {
+            if (!isWeixinAvilible(this)) {
                 ToastUtil.showToast("您还未安装微信");
-            }else{
-                if(!DoubleClick.getInstance().isFastZDYDoubleClick(2000)){
+            } else {
+                if (!DoubleClick.getInstance().isFastZDYDoubleClick(2000)) {
                     wxLogin();
                 }
             }
@@ -651,14 +633,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
-
     /**
      * description ： 是否安装了微信
      * creation date: 2020/4/9
      * param :
      * user : zhangtongju
      */
-    public  boolean isWeixinAvilible(Context context) {
+    public boolean isWeixinAvilible(Context context) {
         final PackageManager packageManager = context.getPackageManager();// 获取packagemanager
         List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);// 获取所有已安装程序的包信息
         if (pinfo != null) {

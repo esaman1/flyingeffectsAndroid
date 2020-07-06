@@ -20,6 +20,7 @@ import android.content.res.Configuration;
 import android.view.View;
 import android.widget.CompoundButton;
 
+import com.google.android.material.tabs.TabLayout;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.AlbumFolder;
 import com.yanzhenjie.album.api.widget.Widget;
@@ -71,7 +72,15 @@ public final class Contract {
          * Complete.
          */
         void complete();
+        /**
+         * 重新加载recyclerView的数据
+         */
+        void reLoadAlbumData(TabLayout.Tab tab);
 
+        /**
+         * 关闭相册
+         */
+        void finishActivity();
     }
 
     public static abstract class AlbumView extends BaseView<AlbumPresenter> {
@@ -97,6 +106,20 @@ public final class Contract {
          * @param display true is displayed, otherwise it is not displayed.
          */
         public abstract void setLoadingDisplay(boolean display);
+
+        /**
+         * 控制拍摄按钮的显示
+         *
+         * @param showCapture true 显示拍摄按钮
+         */
+        public abstract void setShowCapture(boolean showCapture);
+
+        /**
+         * 初始化tab
+         *
+         * @param tabStr tab按钮数组
+         */
+        public abstract void setTab(String[] tabStr);
 
         /**
          * Should be re-layout.
@@ -137,12 +160,15 @@ public final class Contract {
          * Set checked count.
          *
          * @param count the number of items checked.
+         * @param total the number of items.
          */
-        public abstract void setCheckedCount(int count);
+        public abstract void setCheckedCountAndTotal(int count,int total);
 
         public abstract boolean isSingleCompletion();
 
         public abstract void setSingleCompletion(boolean singleCompletion);
+
+
     }
 
     public interface NullPresenter extends BasePresenter {

@@ -4,8 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,12 +38,13 @@ public class VideoTimelineAdapter extends RecyclerView.Adapter<VideoTimelineAdap
     private LayoutInflater inflater;
     private Context context;
     private ArrayList<VideoTrimmerFrameBean> mFrameList = null;
-    private int itemWidth=0;
+    private int itemWidth = 0;
+
     public VideoTimelineAdapter(Context context, Uri uri, VideoFrameListener listener) {
         this.context = context;
         this.inflater = LayoutInflater.from(context);
-        this.mVideoUri=uri;
-        this.listener=listener;
+        this.mVideoUri = uri;
+        this.listener = listener;
     }
 
     @NonNull
@@ -82,6 +85,7 @@ public class VideoTimelineAdapter extends RecyclerView.Adapter<VideoTimelineAdap
             ButterKnife.bind(this, itemView);
         }
     }
+
     public void clear() {
         if (mFrameList != null) {
             mFrameList.clear();
@@ -94,17 +98,19 @@ public class VideoTimelineAdapter extends RecyclerView.Adapter<VideoTimelineAdap
             mFrameList.clear();
         }
     }
-    public static final int FULL_SCROLL_DURATION=180*1000;
-    private static final int FULL_SCROLL_FRAMES=8;
-    public void getFrames(final int viewWidth, final int viewHeight, boolean canScroll){
+
+    public static final int FULL_SCROLL_DURATION = 180 * 1000;
+    private static final int FULL_SCROLL_FRAMES = 8;
+
+    public void getFrames(final int viewWidth, final int viewHeight, boolean canScroll) {
 
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        Subscriber<VideoTrimmerFrameBean> beanRetriever=new Subscriber<VideoTrimmerFrameBean>() {
+        Subscriber<VideoTrimmerFrameBean> beanRetriever = new Subscriber<VideoTrimmerFrameBean>() {
             @Override
             public void onCompleted() {
                 notifyDataSetChanged();
-                if (listener!=null){
-                        listener.onFrameReady();
+                if (listener != null) {
+                    listener.onFrameReady();
                 }
                 this.unsubscribe();
             }
@@ -117,7 +123,7 @@ public class VideoTimelineAdapter extends RecyclerView.Adapter<VideoTimelineAdap
 
             @Override
             public void onNext(VideoTrimmerFrameBean frameBean) {
-                if (frameBean.getFramePath()!=null){
+                if (frameBean.getFramePath() != null) {
                     mFrameList.add(frameBean);
                 }
             }
@@ -126,7 +132,7 @@ public class VideoTimelineAdapter extends RecyclerView.Adapter<VideoTimelineAdap
             if (mVideoUri == null) {
                 subscriber.onError(new FileNotFoundException());
             }
-            mFrameList=new ArrayList<>();
+            mFrameList = new ArrayList<>();
             retriever.setDataSource(context, mVideoUri);
             // Retrieve media data
             long videoLengthInMs = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
@@ -179,11 +185,15 @@ public class VideoTimelineAdapter extends RecyclerView.Adapter<VideoTimelineAdap
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(beanRetriever);
 
     }
+
     private Uri mVideoUri;
+
     public void setVideo(@NonNull Uri data) {
         mVideoUri = data;
     }
+
     private VideoFrameListener listener;
+
     public interface VideoFrameListener {
         void onFrameReady();
     }

@@ -20,16 +20,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 
-import android.text.TextUtils;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.CompoundButton;
-
+import com.google.android.material.tabs.TabLayout;
 import com.yanzhenjie.album.Action;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.AlbumFile;
@@ -64,9 +65,12 @@ public class AlbumActivity extends BaseActivity implements
         GalleryActivity.Callback,
         PathConvertTask.Callback,
         ThumbnailBuildTask.Callback {
+    private static final String TAG = "AlbumActivity";
 
     private static final int CODE_ACTIVITY_NULL = 1;
     private static final int CODE_PERMISSION_STORAGE = 1;
+    private static final int CODE_TO_CAPTURE = 2;
+
 
     public static Filter<Long> sSizeFilter;
     public static Filter<String> sMimeFilter;
@@ -103,6 +107,10 @@ public class AlbumActivity extends BaseActivity implements
     private LoadingDialog mLoadingDialog;
 
     private MediaReadTask mMediaReadTask;
+    private String mTitle;
+    private String mMusicPath;
+    private boolean showCapture = false;
+    private String[] mTabStr = new String[]{"全部", "图片", "视频"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,10 +119,11 @@ public class AlbumActivity extends BaseActivity implements
         setContentView(createView());
         mView = new AlbumView(this, this, material_info);
         mView.setupViews(mWidget, mColumnCount, mHasCamera, mChoiceMode);
-        mView.setTitle(mWidget.getTitle());
+        mView.setTitle("");//相册UI更改，title不需要了
         mView.setCompleteDisplay(false);
         mView.setLoadingDisplay(true);
-
+        mView.setShowCapture(showCapture);
+        mView.setTab(mTabStr);
         requestPermission(PERMISSION_STORAGE, CODE_PERMISSION_STORAGE);
     }
 
@@ -134,6 +143,10 @@ public class AlbumActivity extends BaseActivity implements
         mLimitBytes = argument.getLong(Album.KEY_INPUT_CAMERA_BYTES);
         material_info = argument.getString(Album.KEY_INPUT_MATERIALINFO);
         mFilterVisibility = argument.getBoolean(Album.KEY_INPUT_FILTER_VISIBILITY);
+        mTitle = argument.getString(Album.MODEL_TITLE);
+        //如果传进来的标题为空，就认为不是从模板页面过来的
+        showCapture = !TextUtils.isEmpty(mTitle);
+        mMusicPath = argument.getString(Album.MUSIC_PATH);
     }
 
     /**
@@ -219,14 +232,13 @@ public class AlbumActivity extends BaseActivity implements
         } else {
             showFolderAlbumFiles(0);
             int count = mCheckedList.size();
-            mView.setCheckedCount(count);
-            mView.setSubTitle(count + "/" + mLimitCount);
+            mView.setCheckedCountAndTotal(count,mLimitCount);
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
+        super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case CODE_ACTIVITY_NULL: {
                 if (resultCode == RESULT_OK) {
@@ -238,6 +250,19 @@ public class AlbumActivity extends BaseActivity implements
                 }
                 break;
             }
+            case CODE_TO_CAPTURE:
+                if (resultCode == RESULT_OK) {
+                    //从拍摄页面返回的视频地址
+                    String captureUrl = data.getStringExtra(CaptureActivity.RESULT_FILE_PATH);
+                    AlbumFile albumFile = new AlbumFile();
+                    albumFile.setPath(captureUrl);
+                    ArrayList<AlbumFile> albumFileList = new ArrayList<>();
+                    albumFileList.add(albumFile);
+                    Log.d(TAG, "onActivityResult: " + captureUrl);
+                    if (sResult != null) sResult.onAction(albumFileList);
+                    finish();
+                }
+                break;
         }
     }
 
@@ -357,6 +382,7 @@ public class AlbumActivity extends BaseActivity implements
                 .start();
     }
 
+
     private Action<String> mCameraAction = new Action<String>() {
         @Override
         public void onAction(@NonNull String result) {
@@ -409,8 +435,7 @@ public class AlbumActivity extends BaseActivity implements
 
         mCheckedList.add(albumFile);
         int count = mCheckedList.size();
-        mView.setCheckedCount(count);
-        mView.setSubTitle(count + "/" + mLimitCount);
+        mView.setCheckedCountAndTotal(count,mLimitCount);
 
         switch (mChoiceMode) {
             case Album.MODE_SINGLE: {
@@ -466,8 +491,7 @@ public class AlbumActivity extends BaseActivity implements
 
     private void setCheckedCount() {
         int count = mCheckedList.size();
-        mView.setCheckedCount(count);
-        mView.setSubTitle(count + "/" + mLimitCount);
+        mView.setCheckedCountAndTotal(count,mLimitCount);
     }
 
     @Override
@@ -516,9 +540,14 @@ public class AlbumActivity extends BaseActivity implements
 
     @Override
     public void toCapturePage() {
-        //todo 点击拍摄按钮
+        //点击拍摄按钮
+        Bundle captureBundle = new Bundle();
+        captureBundle.putLong(Album.VIDEOTIME, mMineVideoTime);
+        captureBundle.putString(Album.MODEL_TITLE, mTitle);
+        captureBundle.putString(Album.MUSIC_PATH, mMusicPath);
         Intent intent = new Intent(this, CaptureActivity.class);
-        startActivity(intent);
+        intent.putExtras(captureBundle);
+        startActivityForResult(intent, CODE_TO_CAPTURE);
     }
 
     @Override
@@ -572,6 +601,24 @@ public class AlbumActivity extends BaseActivity implements
     }
 
     @Override
+    public void reLoadAlbumData(TabLayout.Tab tab) {
+        Log.d(TAG, "reLoadAlbumData: " + tab.getPosition());
+        //todo 这个方法还有优化空间
+        switch (tab.getPosition()) {
+            case 0:
+                mFunction = Album.FUNCTION_CHOICE_ALBUM;
+                break;
+            case 1:
+                mFunction = Album.FUNCTION_CHOICE_IMAGE;
+                break;
+            case 2:
+                mFunction = Album.FUNCTION_CHOICE_VIDEO;
+                break;
+        }
+        requestPermission(PERMISSION_STORAGE, CODE_PERMISSION_STORAGE);
+    }
+
+    @Override
     public void onBackPressed() {
         if (mMediaReadTask != null) mMediaReadTask.cancel(true);
         callbackCancel();
@@ -594,7 +641,6 @@ public class AlbumActivity extends BaseActivity implements
             ThumbnailBuildTask task = new ThumbnailBuildTask(this, mCheckedList, this);
             task.execute();
         }
-
     }
 
 
@@ -662,6 +708,10 @@ public class AlbumActivity extends BaseActivity implements
         }
     }
 
+    @Override
+    public void finishActivity() {
+        finish();
+    }
 
     private boolean isOnDestroy = false;
 

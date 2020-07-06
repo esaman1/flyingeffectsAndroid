@@ -20,7 +20,6 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.animations.CustomMove.AnimCollect;
 import com.flyingeffects.com.view.animations.CustomMove.AnimType;
 import com.flyingeffects.com.view.animations.CustomMove.LayerAnimCallback;
-import com.flyingeffects.com.view.lansongCommendView.StickerItem;
 import com.lansosdk.LanSongFilter.LanSongMaskBlendFilter;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
@@ -38,8 +37,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.flyingeffects.com.view.animations.CustomMove.AnimType.BOTTOMTOCENTER2;
 
 /**
  * 蓝松后台绘制方法
@@ -182,7 +179,6 @@ public class backgroundDraw {
             LogUtil.d("OOM", e.getMessage());
             e.printStackTrace();
         }
-
     }
 
 
@@ -241,12 +237,9 @@ public class backgroundDraw {
                 addVideoSubLayer(needSublayer, videoLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale);
             }
 
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
 

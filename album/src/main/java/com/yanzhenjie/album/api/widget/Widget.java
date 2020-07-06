@@ -45,7 +45,7 @@ public class Widget implements Parcelable {
     }
 
     /**
-     * Use when the status bar and the Toolbar are dark.
+     * Use when the status bar and the Toolbar are dark.  
      */
     public static Builder newDarkBuilder(Context context) {
         return new Builder(context, STYLE_DARK);

@@ -66,6 +66,8 @@ import rx.functions.Action1;
  * 开始制作
  */
 public class PreviewActivity extends BaseActivity implements AlbumChooseCallback, PreviewMvpView {
+    private static final String TAG = "PreviewActivity";
+
     private boolean ondestroy;
 
     @BindView(R.id.video_player)
@@ -95,13 +97,11 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @BindView(R.id.iv_show_cover)
     ImageView iv_show_cover;
 
-
     PreviewMvpPresenter Presenter;
 
     new_fag_template_item templateItem;
 
     private boolean fromToMineCollect;
-
 
     private List<String> originalImagePath = new ArrayList<>();
 
@@ -168,6 +168,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         }
         Presenter = new PreviewMvpPresenter(this, this,templateItem);
         Glide.with(this).load(templateItem.getImage()).into(iv_show_cover);
+
         videoPlayer.setUp(templateItem.getVidoefile(), true, "");
         videoPlayer.startPlayLogic();
         GSYVideoType.setShowType(GSYVideoType.SCREEN_TYPE_FULL);
@@ -469,7 +470,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         startActivity(intent);
     }
 
-
     @Override
     public void getCompressImgList(List<String> imgList) {
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
@@ -508,9 +508,12 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         if (!ondestroy) {
             //file 文件下载成功
             this.TemplateFilePath = TemplateFilePath;
+            Log.d("PreviewActivity", "getTemplateFileSuccess: TemplateFilePath = " + TemplateFilePath);
             if (!TextUtils.isEmpty(templateItem.getVideotime()) && !templateItem.getVideotime().equals("0")) {
                 float videoTime = Float.parseFloat(templateItem.getVideotime());
-                AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "", (long) (videoTime * 1000));
+                String title = templateItem.getTitle();
+                Log.d("PreviewActivity", "getTemplateFileSuccess: " + templateItem.getTitle());
+                AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "", (long) (videoTime * 1000), title, TemplateFilePath);
             } else {
                 AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");
             }
@@ -631,15 +634,11 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                     intent.putExtra("comeFrom", FromToTemplate.ISFROMEDOWNVIDEO);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
-
-
                 } else {
                     intoCreationTemplateActivity(imagePath, videoPath, originalImagePath.get(0), true);
                 }
             });
         }
-
-
     }
 
 
@@ -657,7 +656,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         setResult(Activity.RESULT_OK, intent);
     }
 
-
     /**
      * description ：获得视频第一针，这里用来背景模板页面，用户选择的是视频的情况,废弃
      * creation date: 2020/4/21
@@ -667,7 +665,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void getVideoCover(String filePath, String originalPath, String videoPath) {
 //        intoCreationTemplateActivity(filePath,videoPath,originalPath);
     }
-
 
     private void VideoPlaybackCompleted(boolean isComplete, Boolean isShowCover) {
         if (isComplete) {
@@ -733,7 +730,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void onEventMainThread(CreateCutCallback event) {
         LogUtil.d("OOM", "event.getCoverPath()=" + event.getCoverPath() + "createDownVideoPath=" + createDownVideoPath + "createDownVideoPath=" + createDownVideoPath + "event.isNeedCut()=" + event.isNeedCut());
         intoCreationTemplateActivity(event.getCoverPath(), createDownVideoPath, event.getOriginalPath(), event.isNeedCut());
-
     }
 
 

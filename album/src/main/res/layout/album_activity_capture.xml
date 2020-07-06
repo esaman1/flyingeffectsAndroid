@@ -1,34 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <androidx.camera.view.PreviewView
-        android:id="@+id/view_finder"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/capture_tips"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="30dp"
-        android:text="123456"
-        android:textColor="@color/albumColorWhite" />
+        <com.yanzhenjie.album.widget.CameraXPreview
+            android:id="@+id/view_finder"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <com.yanzhenjie.album.widget.RecordView
-        android:id="@+id/record_view"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="@dimen/album_dp_60"
-        app:album_duration="10"
-        app:album_fill_color="@color/albumColorBlue"
-        app:album_progress_color="@color/albumColorWhite"
-        app:album_progress_width="4dp"
-        app:album_record_radius="40dp" />
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_flip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/album_dp_26"
+            android:layout_marginEnd="@dimen/album_dp_6"
+            android:src="@drawable/album_icon_flip_lens"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_switch_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/album_dp_10"
+            android:src="@drawable/album_icon_timer_3"
+            app:layout_constraintBottom_toBottomOf="@id/iv_flip"
+            app:layout_constraintEnd_toStartOf="@id/iv_flip"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/iv_flip" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/album_ic_back_white"
+            app:layout_constraintBottom_toBottomOf="@id/iv_flip"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.05"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/iv_flip" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_model_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/album_dp_5"
+            android:layout_marginEnd="@dimen/album_dp_5"
+            android:ellipsize="end"
+            android:maxEms="12"
+            android:shadowColor="@color/album_title_shadow"
+            android:shadowDx="0.5"
+            android:shadowDy="2.0"
+            android:shadowRadius="3.0"
+            android:singleLine="true"
+            android:textColor="@color/albumColorWhite"
+            android:textSize="@dimen/album_sp_16"
+            app:layout_constraintBottom_toBottomOf="@id/iv_flip"
+            app:layout_constraintEnd_toStartOf="@id/iv_switch_timer"
+            app:layout_constraintHorizontal_bias="0.6"
+            app:layout_constraintStart_toEndOf="@id/iv_back"
+            app:layout_constraintTop_toTopOf="@id/iv_flip"
+            tools:text="dkdkdkdkdkdk" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/album_timer_color"
+            android:textSize="@dimen/album_sp_100"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.yanzhenjie.album.widget.RecordView
+            android:id="@+id/record_view"
+            android:layout_width="@dimen/album_dp_64"
+            android:layout_height="@dimen/album_dp_64"
+            android:layout_marginBottom="@dimen/album_dp_60"
+            app:album_fill_color="@color/albumColorBlue"
+            app:album_progress_color="@color/albumColorWhite"
+            app:album_progress_track_color="@color/albumColorTrack"
+            app:album_progress_width="@dimen/album_dp_2"
+            app:album_record_radius="@dimen/album_dp_30"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_capture_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/album_shape_time_back"
+            android:paddingStart="@dimen/album_dp_12"
+            android:paddingTop="@dimen/album_dp_2"
+            android:paddingEnd="@dimen/album_dp_12"
+            android:paddingBottom="@dimen/album_dp_2"
+            android:textColor="@color/albumColorWhite"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/record_view"
+            app:layout_constraintStart_toStartOf="@id/record_view"
+            app:layout_constraintTop_toBottomOf="@id/record_view"
+            app:layout_constraintVertical_bias="0.26"
+            tools:text="123456" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.yanzhenjie.album.widget.AlbumFocusImageView
+        android:id="@+id/iv_focus"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        app:album_focus_fail_id="@drawable/album_focus_focus_failed"
+        app:album_focus_focusing_id="@drawable/album_focus_focusing"
+        app:album_focus_success_id="@drawable/album_focus_focused" />
 </FrameLayout>

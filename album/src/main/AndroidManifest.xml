@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
     Copyright 2017 Yan Zhenjie.
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,8 +27,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/Album.Theme.Activity"
             android:windowSoftInputMode="stateAlwaysHidden|stateHidden" />
-
-
 
         <activity
             android:name=".app.album.AlbumActivityForCreateVideo"
@@ -68,13 +65,15 @@
 
         <activity
             android:name=".app.camera.CaptureActivity"
-            android:hardwareAccelerated="true" />
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:hardwareAccelerated="true"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".app.camera.CapturePreviewActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/Album.Theme.Activity.Transparent"
-            android:windowSoftInputMode="stateAlwaysHidden|stateHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden|stateHidden"
+            android:screenOrientation="portrait"/>
 
         <provider
             android:name=".provider.CameraFileProvider"

@@ -122,8 +122,6 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                     }
                 });
                 tabLayout.setViewPager(viewpager, titles);
-
-
             }
         }
 

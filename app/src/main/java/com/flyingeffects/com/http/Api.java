@@ -44,7 +44,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class Api {
-    public static ApiService SERVICE;
+    public static ApiService sService;
     private Context context;
     /**
      * 请求超时时间
@@ -52,7 +52,7 @@ public class Api {
     private static final int DEFAULT_TIMEOUT = 10000;
 
     public static ApiService getDefault() {
-        if (SERVICE == null) {
+        if (sService == null) {
 //            //手动创建一个OkHttpClient并设置超时时间
 //            OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
 //            httpClientBuilder.connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
@@ -142,7 +142,7 @@ public class Api {
 //end
 
 
-            SERVICE = new Retrofit.Builder()
+            sService = new Retrofit.Builder()
 //                    .client(httpClientBuilder.build())
                     .client(getUnsafeOkHttpClient())
                     .addConverterFactory(GsonConverterFactory.create())
@@ -151,7 +151,7 @@ public class Api {
                     .build().create(ApiService.class);
         }
 
-        return SERVICE;
+        return sService;
     }
 
 

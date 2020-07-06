@@ -301,7 +301,6 @@ public class UpdateApkActivity extends Activity implements OnClickListener {
         } else {
             ToastUtil.showToast("获取下载路径失败，请稍后重试");
         }
-
     }
 
 

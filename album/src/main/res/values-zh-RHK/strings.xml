@@ -70,4 +70,5 @@
 
     <string name="album_item_unavailable">不可用</string>
     <string name="album_take_file_unavailable">不可用的文件，請重試</string>
+    <string name="album_record_time">%d / %d</string>
 </resources>

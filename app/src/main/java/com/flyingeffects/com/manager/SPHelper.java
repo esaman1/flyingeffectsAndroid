@@ -1,5 +1,6 @@
 package com.flyingeffects.com.manager;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -12,8 +13,9 @@ public class SPHelper {
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
 
+    @SuppressLint("CommitPrefEdits")
     public SPHelper(Context context, String fileName) {
-        preferences = context.getSharedPreferences(fileName, context.MODE_PRIVATE);
+        preferences = context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
         editor = preferences.edit();
     }
 

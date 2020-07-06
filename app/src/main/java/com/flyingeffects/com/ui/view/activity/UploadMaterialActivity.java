@@ -158,7 +158,6 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
             imageHeadPath=BaseConstans.headUrl();
         }
 
-
     }
 
     @Override

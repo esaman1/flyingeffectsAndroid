@@ -1,66 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Copyright 2017 Yan Zhenjie.
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="@layout/album_activity_album_dark">
 
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
+    <View
+        android:id="@+id/v_top_back"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/album_dp_44"
+        android:background="@color/albumColorTabBlack"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"/>
 
-       http://www.apache.org/licenses/LICENSE-2.0
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_back"
+        android:layout_width="@dimen/album_dp_32"
+        android:layout_height="@dimen/album_dp_32"
+        android:src="@drawable/album_ic_back_white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/v_top_back"
+        app:layout_constraintHorizontal_bias="0"
+        android:layout_marginStart="@dimen/album_dp_16"/>
 
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
--->
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tl_index"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/album_dp_44"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/v_top_back"
+        app:tabIndicator="@drawable/album_shape_indicator"
+        app:tabIndicatorColor="@color/albumColorBlue"
+        app:tabIndicatorFullWidth="false"
+        app:tabIndicatorGravity="center"
+        app:tabIndicatorHeight="@dimen/album_dp_18"
+        app:tabSelectedTextColor="@color/albumColorWhite"
+        app:tabTextAppearance="@style/AlbumTabLayout"
+        app:tabTextColor="@color/albumColorTabText" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
-        style="@style/Album.WrapContent.WidthMatchParent"
-        android:layout_below="@id/app_bar_layout" />
-
-    <RelativeLayout
-        style="@style/Album.MatchParent.SheetBottom"
-        android:layout_alignParentBottom="true"
-        android:layout_centerVertical="true"
-        android:background="@color/albumSheetBottom">
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_switch_dir"
-            style="@style/Album.TextButton.WrapContent.SheetBottom"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:drawableEnd="@drawable/album_abc_spinner_white"
-            android:drawableRight="@drawable/album_abc_spinner_white" />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tl_index" />
 
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_preview"
-            style="@style/Album.TextButton.WrapContent.SheetBottom"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:drawableLeft="@drawable/album_ic_eye_white"
-            android:drawableStart="@drawable/album_ic_eye_white" />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_switch_dir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/album_sp_16"
+        android:layout_marginTop="@dimen/album_dp_11"
+        android:textColor="@color/albumColorWhite"
+        android:drawableEnd="@drawable/album_abc_spinner_white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0"/>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_capture"
-            style="@style/Album.TextButton.WrapContent.SheetBottom"
-            android:layout_toStartOf="@id/btn_preview"
-            android:visibility="invisible"
-            android:text="拍摄" />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/albumColorBlue"
+        android:textSize="@dimen/album_sp_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="0/1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintHorizontal_bias="1"
+        android:layout_marginTop="@dimen/album_dp_11"
+        android:layout_marginEnd="@dimen/album_dp_16" />
 
-        <TextView
-            android:layout_toRightOf="@+id/btn_switch_dir"
-            android:layout_width="match_parent"
-            android:layout_toLeftOf="@+id/btn_preview"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:textColor="#ffffff"
-            android:textSize="@dimen/album_sp_14"
-            android:id="@+id/tv_show_alert" />
+    <View
+        android:id="@+id/v_bottom_back"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/album_dp_49"
+        android:background="@color/albumColorTabBlack"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1"/>
 
-    </RelativeLayout>
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_capture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/album_shape_capture"
+        android:textSize="@dimen/album_sp_16"
+        android:textColor="@color/albumColorWhite"
+        app:layout_constraintTop_toTopOf="@id/v_bottom_back"
+        app:layout_constraintBottom_toBottomOf="@id/v_bottom_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingStart="@dimen/album_dp_12"
+        android:paddingEnd="@dimen/album_dp_12"
+        android:paddingTop="@dimen/album_dp_10"
+        android:paddingBottom="@dimen/album_dp_10"
+        android:text="跟着音乐拍摄" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/album_shape_next"
+        android:textSize="@dimen/album_sp_16"
+        android:textColor="@color/albumColorWhite"
+        app:layout_constraintTop_toTopOf="@id/v_bottom_back"
+        app:layout_constraintBottom_toBottomOf="@id/v_bottom_back"
+        app:layout_constraintStart_toEndOf="@id/tv_capture"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        android:layout_marginEnd="@dimen/album_dp_15"
+        android:paddingStart="@dimen/album_dp_20"
+        android:paddingEnd="@dimen/album_dp_20"
+        android:paddingTop="@dimen/album_dp_10"
+        android:paddingBottom="@dimen/album_dp_10"
+        android:text="下一步" />
+
+    <TextView
+        android:id="@+id/tv_show_alert"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:textColor="#ffffff"
+        android:visibility="gone"
+        android:textSize="@dimen/album_sp_14" />
+
 
     <LinearLayout
         android:id="@+id/layout_loading"
@@ -76,10 +156,19 @@
 
         <TextView
             style="@style/Album.WrapContent"
-            android:layout_marginLeft="@dimen/album_dp_20"
             android:layout_marginStart="@dimen/album_dp_20"
+            android:layout_marginLeft="@dimen/album_dp_20"
             android:text="@string/album_loading"
             android:textColor="@color/albumFontHint"
             android:textSize="@dimen/album_sp_16" />
+
     </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_preview"
+        style="@style/Album.TextButton.WrapContent.SheetBottom"
+        android:layout_alignParentEnd="true"
+        android:drawableStart="@drawable/album_ic_eye_white"
+        android:drawableLeft="@drawable/album_ic_eye_white"
+        android:visibility="gone" />
 </merge>

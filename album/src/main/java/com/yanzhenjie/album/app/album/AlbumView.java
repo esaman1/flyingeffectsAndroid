@@ -19,13 +19,6 @@ import android.app.Activity;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-
-import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,6 +28,15 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.tabs.TabLayout;
 import com.yanzhenjie.album.AlbumFile;
 import com.yanzhenjie.album.AlbumFolder;
 import com.yanzhenjie.album.R;
@@ -62,18 +64,22 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
     private MenuItem mCompleteMenu;
 
     private RecyclerView mRecyclerView;
-    private TextView btn_switch_dir;
     private GridLayoutManager mLayoutManager;
     private AlbumAdapter mAdapter;
     private TextView tv_show_alert;
 
     private Button mBtnPreview;
-    private Button mBtnSwitchFolder;
-    private Button mBtnCapture;
+    private AppCompatTextView mTvSwitchFolder;
+    private AppCompatTextView mTvCapture;
 
     private LinearLayout mLayoutLoading;
     private ColorProgressBar mProgressBar;
     private DragSelectTouchListener touchListener;
+
+    private TabLayout mTabLayout;
+    private AppCompatTextView mTvCount;
+    private AppCompatImageView mIvBack;
+    private AppCompatTextView mTvNext;
 
     public AlbumView(Activity activity, Contract.AlbumPresenter presenter, String material_info) {
         super(activity, presenter);
@@ -82,17 +88,39 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
         this.mRecyclerView = activity.findViewById(R.id.recycler_view);
         this.tv_show_alert = activity.findViewById(R.id.tv_show_alert);
         this.tv_show_alert.setText(material_info);
-        this.mBtnSwitchFolder = activity.findViewById(R.id.btn_switch_dir);
+        this.mTvSwitchFolder = activity.findViewById(R.id.tv_switch_dir);
         this.mBtnPreview = activity.findViewById(R.id.btn_preview);
-        this.mBtnCapture = activity.findViewById(R.id.btn_capture);
+        this.mTvCapture = activity.findViewById(R.id.tv_capture);
 
         this.mLayoutLoading = activity.findViewById(R.id.layout_loading);
         this.mProgressBar = activity.findViewById(R.id.progress_bar);
+        this.mTabLayout = activity.findViewById(R.id.tl_index);
+        this.mTvCount = activity.findViewById(R.id.tv_count);
+        this.mIvBack = activity.findViewById(R.id.iv_back);
+        this.mTvNext = activity.findViewById(R.id.tv_next);
 
         this.mToolbar.setOnClickListener(new DoubleClickWrapper(this));
-        this.mBtnSwitchFolder.setOnClickListener(this);
+        this.mTvSwitchFolder.setOnClickListener(this);
         this.mBtnPreview.setOnClickListener(this);
-        this.mBtnCapture.setOnClickListener(this);
+        this.mTvCapture.setOnClickListener(this);
+        this.mIvBack.setOnClickListener(this);
+        this.mTvNext.setOnClickListener(this);
+        this.mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                getPresenter().reLoadAlbumData(tab);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     @Override
@@ -164,7 +192,6 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
         int dividerSize = getResources().getDimensionPixelSize(R.dimen.album_dp_4);
         mRecyclerView.addItemDecoration(new Api21ItemDivider(Color.TRANSPARENT, dividerSize, dividerSize));
         mAdapter = new AlbumAdapter(getContext(), hasCamera, choiceMode, widget.getMediaItemCheckSelector());
-
 
         mAdapter.setLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -239,7 +266,6 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
                 }
                 getPresenter().tryCheckItem(box, i);
             }
-
         }
     }
 
@@ -263,6 +289,26 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
     public void setLoadingDisplay(boolean display) {
         mLayoutLoading.setVisibility(display ? View.VISIBLE : View.GONE);
     }
+
+
+    @Override
+    public void setShowCapture(boolean showCapture) {
+        if (showCapture) {
+            this.mTvCapture.setVisibility(View.VISIBLE);
+        } else {
+            this.mTvCapture.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public void setTab(String[] tabStr) {
+        if (tabStr.length > 0) {
+            for (String s : tabStr) {
+                mTabLayout.addTab(mTabLayout.newTab().setText(s));
+            }
+        }
+    }
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -290,11 +336,17 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
     @Override
     public void setCompleteDisplay(boolean display) {
         mCompleteMenu.setVisible(display);
+        if (display) {
+            mTvNext.setVisibility(View.VISIBLE);
+        } else {
+            mTvNext.setVisibility(View.INVISIBLE);
+        }
+
     }
 
     @Override
     public void bindAlbumFolder(AlbumFolder albumFolder) {
-        mBtnSwitchFolder.setText(albumFolder.getName());
+        mTvSwitchFolder.setText(albumFolder.getName());
         ArrayList<AlbumFile> list = albumFolder.getAlbumFiles();
         if (list != null && list.size() > 0) {
             mAdapter.setAlbumFiles(list);
@@ -314,9 +366,11 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
     }
 
     @Override
-    public void setCheckedCount(int count) {
+    public void setCheckedCountAndTotal(int count, int total) {
         mBtnPreview.setText(" (" + count + ")");
+        mTvCount.setText(String.format("已选择 %d/%d", count, total));
     }
+
 
     @Override
     public boolean isSingleCompletion() {
@@ -332,12 +386,16 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
     public void onClick(View v) {
         if (v == mToolbar) {
             mRecyclerView.smoothScrollToPosition(0);
-        } else if (v == mBtnSwitchFolder) {
+        } else if (v == mTvSwitchFolder) {
             getPresenter().clickFolderSwitch();
         } else if (v == mBtnPreview) {
             getPresenter().tryPreviewChecked();
-        }else if (v==mBtnCapture){
+        } else if (v == mTvCapture) {
             getPresenter().toCapturePage();
+        } else if (v == mIvBack) {
+            getPresenter().finishActivity();
+        } else if (v == mTvNext) {
+            getPresenter().complete();
         }
     }
 }

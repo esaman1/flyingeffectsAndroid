@@ -479,7 +479,8 @@ public class PreviewMvpModel {
                     mProgress = 0;
                     showMakeProgress();
                 } else {
-                    intoTemplateActivity(mFolder.getPath());
+                    Log.d("path111", "readyDown: " + mFolder.getPath());
+                    intoTemplateActivity(mFolder.getPath() + "/");
                 }
             } else {
                 ToastUtil.showToast("下载中，请稍后再试");
@@ -515,6 +516,7 @@ public class PreviewMvpModel {
                                         if (file.exists()) { //删除压缩包
                                             file.delete();
                                         }
+                                        Log.d("path111", "run: " + path1);
 //                                        videoPause();
                                         mProgress = 100;
                                         showMakeProgress();

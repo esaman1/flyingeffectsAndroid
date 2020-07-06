@@ -85,19 +85,9 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
 
-
-
     public void setLongClickListener(View.OnLongClickListener clickListener) {
         this.mlongClickListener = clickListener;
     }
-
-
-
-
-
-
-
-
 
     @Override
     public int getItemCount() {

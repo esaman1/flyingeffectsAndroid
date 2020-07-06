@@ -212,7 +212,6 @@ public class MediaReader {
                     }
                 }
 
-
             }
             cursor.close();
         }
