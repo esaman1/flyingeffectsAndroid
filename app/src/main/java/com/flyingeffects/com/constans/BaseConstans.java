@@ -90,7 +90,6 @@ public class BaseConstans {
         spUtil.putString("userId", id);
         spUtil.putString("userName", userName);
         spUtil.putString("headUrl", headUrl);
-
     }
 
 

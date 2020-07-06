@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 public class UserInfo implements Serializable {
 
-private String id;
-        private String token;
+    private String id;
+    private String token;
 
     public String getId() {
         return id;
@@ -240,31 +240,31 @@ private String id;
     }
 
     private String openid;
-        private String qq_openid;
-        private String ios_openid;
-        private String unionid;
-        private String email;
-        private String mobile;
-        private String nickname;
-        private String photourl;
-        private String is_vip;
-        private String vip_type;
-        private String vip_grade;
-        private String vip_end_time;
-        private String channel;
-        private String version;
-        private String platform;
-        private String imei;
-        private String idfa;
-        private String reg_ip;
-        private String last_login_ip;
-        private String last_login_time;
-        private String last_open_time;
-        private String modified;
-        private String remark;
-        private String create_time;
-        private String enabled;
-        private String is_test;
-        private String is_report;
-    
+    private String qq_openid;
+    private String ios_openid;
+    private String unionid;
+    private String email;
+    private String mobile;
+    private String nickname;
+    private String photourl;
+    private String is_vip;
+    private String vip_type;
+    private String vip_grade;
+    private String vip_end_time;
+    private String channel;
+    private String version;
+    private String platform;
+    private String imei;
+    private String idfa;
+    private String reg_ip;
+    private String last_login_ip;
+    private String last_login_time;
+    private String last_open_time;
+    private String modified;
+    private String remark;
+    private String create_time;
+    private String enabled;
+    private String is_test;
+    private String is_report;
+
 }

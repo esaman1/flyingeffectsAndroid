@@ -42,13 +42,4 @@ public class HttpResult<T> implements Serializable {
 
     private T data;
 
-
-
-
-
-
-
-
-
-
 }

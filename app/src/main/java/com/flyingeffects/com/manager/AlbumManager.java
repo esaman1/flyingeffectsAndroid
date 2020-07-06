@@ -35,16 +35,16 @@ public class AlbumManager {
                 .filterSize(new Filter<Long>() {
                     @Override
                     public boolean filter(Long attributes) {
-                        return attributes<20000;
+                        return attributes < 20000;
                     }
                 })
                 .filterMimeType(new Filter<String>() {
                     @Override
                     public boolean filter(String attributes) {
-                        LogUtil.d("filter2222222","attributes="+attributes);
+                        LogUtil.d("filter2222222", "attributes=" + attributes);
 //                        return attributes.equals("image/gif")||attributes.equals("image/svg+xml")||attributes.equals("image/x-icon");
 
-                        return  filterAlbum(attributes);
+                        return filterAlbum(attributes);
                     }
                 })
                 .afterFilterVisibility(false)
@@ -67,8 +67,7 @@ public class AlbumManager {
                 )
                 .onResult(result -> {
                     List<String> paths = new ArrayList<>();
-                    for (AlbumFile albumFile : result
-                    ) {
+                    for (AlbumFile albumFile : result) {
                         paths.add(albumFile.getPath());
                     }
                     callback.resultFilePath(tag, paths, false, result);
@@ -79,14 +78,12 @@ public class AlbumManager {
     }
 
 
-
-
     /**
      * description ：选择视频和图片,过滤视频
      * date: ：2019/5/29 10:41
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
-    public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String material_info,long duration) {
+    public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String material_info, long duration) {
         Album.album(context)
                 .multipleChoice()
                 .columnCount(3)
@@ -97,14 +94,14 @@ public class AlbumManager {
                 .filterSize(new Filter<Long>() {
                     @Override
                     public boolean filter(Long attributes) {
-                        return attributes<20000;
+                        return attributes < 20000;
                     }
                 })
                 .filterMimeType(new Filter<String>() {
                     @Override
                     public boolean filter(String attributes) {
 //                        return attributes.equals("image/gif")||attributes.equals("image/svg+xml")||attributes.equals("image/x-icon")||attributes.equals("video/x-ms-wmv");
-                        return  filterAlbum(attributes);
+                        return filterAlbum(attributes);
                     }
                 })
                 .afterFilterVisibility(false)
@@ -140,13 +137,12 @@ public class AlbumManager {
     }
 
 
-
     /**
      * description ：选择视频和图片,过滤视频 拍摄专用，为了避免和其他页面冲突
      * date: ：2019/5/29 10:41
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
-    public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String material_info,long duration,String title,String musicFolder) {
+    public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String material_info, long duration, String title, String musicFolder) {
         Album.album(context)
                 .multipleChoice()
                 .columnCount(3)
@@ -159,14 +155,14 @@ public class AlbumManager {
                 .filterSize(new Filter<Long>() {
                     @Override
                     public boolean filter(Long attributes) {
-                        return attributes<20000;
+                        return attributes < 20000;
                     }
                 })
                 .filterMimeType(new Filter<String>() {
                     @Override
                     public boolean filter(String attributes) {
 //                        return attributes.equals("image/gif")||attributes.equals("image/svg+xml")||attributes.equals("image/x-icon")||attributes.equals("video/x-ms-wmv");
-                        return  filterAlbum(attributes);
+                        return filterAlbum(attributes);
                     }
                 })
                 .afterFilterVisibility(false)
@@ -202,20 +198,12 @@ public class AlbumManager {
     }
 
 
-
-
-
-
-
-
-
-
     /**
      * description ：只选择图片
      * date: ：2019/5/29 10:41
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
-    public static void chooseImageAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback,String material_info) {
+    public static void chooseImageAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String material_info) {
 
         Album.image(context) // Image selection.
                 .multipleChoice()
@@ -225,13 +213,13 @@ public class AlbumManager {
                 .filterSize(new Filter<Long>() {
                     @Override
                     public boolean filter(Long attributes) {
-                        return attributes<20000;
+                        return attributes < 20000;
                     }
                 })
                 .filterMimeType(new Filter<String>() {
                     @Override
                     public boolean filter(String attributes) {
-                        return attributes.equals("image/gif")||attributes.equals("image/svg+xml")||attributes.equals("image/x-icon");
+                        return attributes.equals("image/gif") || attributes.equals("image/svg+xml") || attributes.equals("image/x-icon");
                     }
                 })
                 .afterFilterVisibility(false)
@@ -268,7 +256,7 @@ public class AlbumManager {
      * date: ：2019/5/29 10:41
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
-    public static void chooseVideo(Activity act, int selectNum, int tag, AlbumChooseCallback callback,String material_info) {
+    public static void chooseVideo(Activity act, int selectNum, int tag, AlbumChooseCallback callback, String material_info) {
         Album.video(act) // Video selection.
                 .multipleChoice()
                 .camera(false)
@@ -278,13 +266,13 @@ public class AlbumManager {
                 .filterSize(new Filter<Long>() {
                     @Override
                     public boolean filter(Long attributes) {
-                        return attributes<20000;
+                        return attributes < 20000;
                     }
                 })
                 .filterMimeType(new Filter<String>() {
                     @Override
                     public boolean filter(String attributes) {
-                        return  filterAlbum(attributes);
+                        return filterAlbum(attributes);
                     }
                 })
                 .afterFilterVisibility(false)
@@ -313,47 +301,40 @@ public class AlbumManager {
     }
 
 
-
-
-
-
-
     /**
      * description ： ChooseType  0 均可以选择  1：选择图片 2：选择视频
      * date: ：2019/6/14 10:25
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
-    public static void chooseWhichAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback,int ChooseType,String material_info){
-
+    public static void chooseWhichAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, int ChooseType, String material_info) {
 
 
         switch (ChooseType) {
             case 0:
-                AlbumManager.chooseAlbum(context, selectNum, tag, callback,material_info);
+                AlbumManager.chooseAlbum(context, selectNum, tag, callback, material_info);
                 break;
             case 1:
-                AlbumManager.chooseImageAlbum(context, selectNum, tag, callback,material_info);
+                AlbumManager.chooseImageAlbum(context, selectNum, tag, callback, material_info);
                 break;
             case 2:
-                AlbumManager.chooseAlbum((Activity) context, selectNum, tag, callback,material_info);
+                AlbumManager.chooseAlbum((Activity) context, selectNum, tag, callback, material_info);
                 break;
             case 3:
-                AlbumManager.chooseVideo((Activity) context, selectNum, tag, callback,material_info);
+                AlbumManager.chooseVideo((Activity) context, selectNum, tag, callback, material_info);
                 break;
         }
     }
 
 
+    private static boolean filterAlbum(String attributes) {
 
-    private static boolean filterAlbum(String attributes){
+        LogUtil.d("xxxx", "attributes=" + attributes);
+        String[] strList = {"image/gif", "image/svg+xml", "image/x-icon", "video/x-ms-wmv", "avi", "wmv", "WMV", "mov", "MOV", "mpg", "MPG", "3gp", "3GP", "lansongBox", "avi", "AVI", "gif", "mpeg", "svg+xml", "quicktime"};
+        for (String str : strList
+        ) {
 
-        LogUtil.d("xxxx","attributes="+attributes);
-        String []strList={"image/gif","image/svg+xml","image/x-icon","video/x-ms-wmv","avi","wmv","WMV","mov","MOV","mpg","MPG","3gp","3GP","lansongBox","avi","AVI","gif","mpeg","svg+xml","quicktime"};
-        for (String str:strList
-             ) {
-
-            if(attributes.contains(str)){
-                LogUtil.d("xxxx","过滤的值为="+attributes);
+            if (attributes.contains(str)) {
+                LogUtil.d("xxxx", "过滤的值为=" + attributes);
                 return true;
             }
 

@@ -43,9 +43,6 @@ public class FagBjMvpModel {
         requestMainData(true); //首页杂数据
     }
 
-
-
-
     private void requestMainData(boolean isShowDialog) {
         HashMap<String, String> params = new HashMap<>();
         Observable ob = Api.getDefault().getbackCategoryType(BaseConstans.getRequestHead(params));
@@ -57,9 +54,7 @@ public class FagBjMvpModel {
 
             @Override
             protected void _onNext(List<TemplateType> data) {
-
                 callback.setFragmentList(data);
-
             }
         }, "bjHeadData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, true, true, isShowDialog);
     }

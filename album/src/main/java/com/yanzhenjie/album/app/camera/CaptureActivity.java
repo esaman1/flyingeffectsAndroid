@@ -71,6 +71,7 @@ import com.yanzhenjie.album.widget.RecordView;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -112,7 +113,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     private VideoCapture mVideoCapture;
     private boolean takingPicture = false;
     private String outputFilePath;
-    private ExecutorService mCameraExecutor;
+    private Executor mCameraExecutor;
     private ProcessCameraProvider mCameraProvider;
     private ListenableFuture<ProcessCameraProvider> mCameraProviderFuture;
     private Camera mCamera;
@@ -158,7 +159,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         initExoPlayer();
 
         // Initialize our background executor
-        mCameraExecutor = Executors.newSingleThreadExecutor();
+        mCameraExecutor =  ContextCompat.getMainExecutor(this);
         mRecordView.setMaxDuration(mTotalRecordingTime);
         mRecordView.setOnRecordListener(new RecordView.onRecordListener() {
             @Override
@@ -390,7 +391,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                 // This should never be reached.
                 Log.e(TAG, "bindCameraX: ", e);
             }
-        }, ContextCompat.getMainExecutor(this));
+        },mCameraExecutor);
     }
 
     private void initUseCase() {
@@ -622,7 +623,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         super.onDestroy();
         CameraX.unbindAll();
         // Shut down our background executor
-        mCameraExecutor.shutdown();
+        //mCameraExecutor.shutdown();
         if (player != null) {
             player.setPlayWhenReady(false);
             player.stop(true);

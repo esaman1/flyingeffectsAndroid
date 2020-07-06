@@ -124,7 +124,6 @@ public class PreviewMvpModel {
                             }
                             if(!keepAlbum){
                                 callback.downVideoSuccess(path1, imagePath);
-
                             }else{
 
                                 WaitingDialog.closePragressDialog();
@@ -225,15 +224,6 @@ public class PreviewMvpModel {
             e.printStackTrace();
         }
     }
-
-
-
-
-
-
-
-
-
 
 
     /**

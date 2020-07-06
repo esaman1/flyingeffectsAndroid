@@ -130,7 +130,6 @@ public class BaseApplication extends MultiDexApplication {
     private void initZt() {
         NTAnalytics.setDebug(true);
         NTAnalytics.init(this, "87", "vQlTNPzHOzBYHzkg", ChannelUtil.getChannel(this));
-
     }
 
 

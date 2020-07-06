@@ -99,13 +99,11 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @BindView(R.id.iv_show_cover)
     ImageView iv_show_cover;
 
-
     PreviewMvpPresenter Presenter;
 
     new_fag_template_item templateItem;
 
     private boolean fromToMineCollect;
-
 
     private List<String> originalImagePath = new ArrayList<>();
 
@@ -167,6 +165,7 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         }
         Presenter = new PreviewMvpPresenter(this, this);
         Glide.with(this).load(templateItem.getImage()).into(iv_show_cover);
+
         videoPlayer.setUp(templateItem.getVidoefile(), true, "");
         videoPlayer.startPlayLogic();
         GSYVideoType.setShowType(GSYVideoType.SCREEN_TYPE_FULL);
@@ -444,7 +443,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         startActivity(intent);
     }
 
-
     @Override
     public void getCompressImgList(List<String> imgList) {
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
@@ -602,14 +600,11 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
                     intent.putExtra("comeFrom", FromToTemplate.ISFROMEDOWNVIDEO);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
-
                 } else {
                     intoCreationTemplateActivity(imagePath, videoPath, originalImagePath.get(0), true);
                 }
             });
         }
-
-
     }
 
 
@@ -627,7 +622,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
         setResult(Activity.RESULT_OK, intent);
     }
 
-
     /**
      * description ：获得视频第一针，这里用来背景模板页面，用户选择的是视频的情况,废弃
      * creation date: 2020/4/21
@@ -637,7 +631,6 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     public void getVideoCover(String filePath, String originalPath, String videoPath) {
 //        intoCreationTemplateActivity(filePath,videoPath,originalPath);
     }
-
 
     private void VideoPlaybackCompleted(boolean isComplete, Boolean isShowCover) {
         if (isComplete) {
