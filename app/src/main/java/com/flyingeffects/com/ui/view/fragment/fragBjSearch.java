@@ -22,6 +22,7 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -153,6 +154,13 @@ public class fragBjSearch extends BaseFragment {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LogUtil.d("OOM","onDestroy");
+        EventBus.getDefault().unregister(this);
+    }
+
     public void isShowData(ArrayList<new_fag_template_item> listData) {
         if (getActivity() != null) {
             allData.clear();
@@ -212,11 +220,16 @@ public class fragBjSearch extends BaseFragment {
 
     @Subscribe
     public void onEventMainThread(SendSearchText event) {
-        //搜索了内容
-        searchText = event.getText();
-        isRefresh = true;
-        selectPage = 1;
-        requestFagData(true);
+        if(getActivity()!=null){
+            //搜索了内容
+            searchText = event.getText();
+            isRefresh = true;
+            selectPage = 1;
+            requestFagData(true);
+        }else{
+            ToastUtil.showToast("目标页面已销毁");
+        }
+
     }
 
 

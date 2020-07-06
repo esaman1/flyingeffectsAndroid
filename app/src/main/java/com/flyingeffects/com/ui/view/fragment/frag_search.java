@@ -34,6 +34,7 @@ import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.WarpLinearLayout;
 
 import org.json.JSONArray;
@@ -80,7 +81,7 @@ public class frag_search extends BaseFragment {
 
     @BindView(R.id.horizontal_scrollView)
     HorizontalScrollView horizontalScrollView;
-    private ArrayList<Fragment> list = new ArrayList<>();
+
     private ArrayList<TextView> listTv = new ArrayList<>();
     private ArrayList<View> listView = new ArrayList<>();
     private ArrayList<SearchKeyWord> listSearchKey = new ArrayList<>();
@@ -170,7 +171,6 @@ public class frag_search extends BaseFragment {
         super.onResume();
         requestKeywordList();
         hideResultView(true);
-        list.clear();
         listTv.clear();
         listView.clear();
         showHeadTitle();
@@ -266,7 +266,7 @@ public class frag_search extends BaseFragment {
     }
 
     private void setViewpager() {
-
+        ArrayList<Fragment> list = new ArrayList<>();
         Bundle bundle = new Bundle();
         bundle.putSerializable("from", 0);
         fragBjSearch fragment = new fragBjSearch();
@@ -299,6 +299,7 @@ public class frag_search extends BaseFragment {
             }
         });
         new Handler().postDelayed(() -> showWitchBtn(0), 500);
+        ToastUtil.showToast("创建完成");
     }
 
 
@@ -316,6 +317,9 @@ public class frag_search extends BaseFragment {
         }
         viewPager.setCurrentItem(showWitch);
     }
+
+
+
 
 
 }
