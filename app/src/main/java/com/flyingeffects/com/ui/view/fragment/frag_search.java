@@ -170,7 +170,7 @@ public class frag_search extends BaseFragment {
     public void onResume() {
         super.onResume();
         requestKeywordList();
-        hideResultView(true);
+        hideResultView(false);
         listTv.clear();
         listView.clear();
         showHeadTitle();
@@ -277,10 +277,10 @@ public class frag_search extends BaseFragment {
         fragBjSearch fragment2 = new fragBjSearch();
         fragment2.setArguments(bundle2);
         list.add(fragment2);
-        if (manager == null) {
-            manager = getChildFragmentManager();
-        }
-        home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
+//        if (manager == null) {
+//            manager = getChildFragmentManager();
+//        }
+        home_vp_frg_adapter adapter = new home_vp_frg_adapter( getChildFragmentManager(), list);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
