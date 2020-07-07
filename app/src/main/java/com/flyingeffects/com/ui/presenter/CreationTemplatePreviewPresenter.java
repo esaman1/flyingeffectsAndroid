@@ -27,6 +27,11 @@ public class CreationTemplatePreviewPresenter extends BasePresenter implements C
     }
 
 
+    public void destroyTimer(){
+        CreationTemplatePreviewModel.destroyTimer();
+    };
+
+
     public void setUpTrimmer(RangeSeekBarView mRangeSeekBarView, VideoFrameRecycler mTimeLineView, RoundImageView progressCursor,long duration){
         CreationTemplatePreviewModel.initTrimmer(mRangeSeekBarView,mTimeLineView,progressCursor,duration);
     }

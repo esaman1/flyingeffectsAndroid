@@ -1,3 +1,3 @@
-D:/WorkSpace/flyingeffectsAndroid/segjni/.cxx/cmake/release/armeabi-v7a/CMakeFiles/MegviiSegJni.dir
-D:/WorkSpace/flyingeffectsAndroid/segjni/.cxx/cmake/release/armeabi-v7a/CMakeFiles/edit_cache.dir
-D:/WorkSpace/flyingeffectsAndroid/segjni/.cxx/cmake/release/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+D:/githubSpace/flyingeffectsAndroid/segjni/.cxx/cmake/release/armeabi-v7a/CMakeFiles/MegviiSegJni.dir
+D:/githubSpace/flyingeffectsAndroid/segjni/.cxx/cmake/release/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/githubSpace/flyingeffectsAndroid/segjni/.cxx/cmake/release/armeabi-v7a/CMakeFiles/rebuild_cache.dir

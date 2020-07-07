@@ -1,4 +1,4 @@
-# Install script for directory: D:/WorkSpace/flyingeffectsAndroid/segjni/src/main/cpp
+# Install script for directory: D:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "D:/WorkSpace/flyingeffectsAndroid/segjni/.cxx/cmake/debug/armeabi-v7a/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "D:/githubSpace/flyingeffectsAndroid/segjni/.cxx/cmake/debug/armeabi-v7a/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

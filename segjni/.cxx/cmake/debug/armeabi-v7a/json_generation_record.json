@@ -43,18 +43,6 @@
   },
   {
     "level": "INFO",
-    "message": "- a dependent build file changed",
-    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
-    "tag": "debug|armeabi-v7a"
-  },
-  {
-    "level": "INFO",
-    "message": "  - D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
-    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
-    "tag": "debug|armeabi-v7a"
-  },
-  {
-    "level": "INFO",
     "message": "removing stale contents from \u0027D:\\githubSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\debug\\armeabi-v7a\u0027",
     "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
     "tag": "debug|armeabi-v7a"

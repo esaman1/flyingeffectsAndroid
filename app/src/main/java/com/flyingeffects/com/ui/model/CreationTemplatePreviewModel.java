@@ -199,7 +199,7 @@ public class CreationTemplatePreviewModel {
         }
     }
 
-    private void destroyTimer() {
+    public void destroyTimer() {
         if (timer != null && !timer.isUnsubscribed()) {
             timer.unsubscribe();
             timer = null;
@@ -334,6 +334,7 @@ public class CreationTemplatePreviewModel {
             //不需要裁剪
             callback.isSaveToAlbum(videoPath, hasShowStimulateAd);
         } else {
+            realityDuration=realityDuration*1000;
             WaitingDialog_progress dialog = new WaitingDialog_progress(mContext);
             dialog.openProgressDialog();
             //需要裁剪

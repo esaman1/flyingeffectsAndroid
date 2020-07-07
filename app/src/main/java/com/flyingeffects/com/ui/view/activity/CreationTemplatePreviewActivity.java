@@ -243,6 +243,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                 } else {
 
                     videoPause();
+                    Presenter.destroyTimer();
                     Presenter.toSaveVideo(false);
 
 

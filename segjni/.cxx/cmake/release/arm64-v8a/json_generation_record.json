@@ -43,18 +43,6 @@
   },
   {
     "level": "INFO",
-    "message": "- a dependent build file changed",
-    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
-    "tag": "release|arm64-v8a"
-  },
-  {
-    "level": "INFO",
-    "message": "  - D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
-    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
-    "tag": "release|arm64-v8a"
-  },
-  {
-    "level": "INFO",
     "message": "removing stale contents from \u0027D:\\githubSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\release\\arm64-v8a\u0027",
     "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
     "tag": "release|arm64-v8a"
