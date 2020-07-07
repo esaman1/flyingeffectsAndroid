@@ -28,6 +28,11 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
     }
 
 
+    public void showBottomSheetDialog(String path,String imagePath,String id,new_fag_template_item templateItem){
+        previewUpAndDownMvpModel.showBottomSheetDialog(path,imagePath,id,templateItem);
+    }
+
+
 
 
 

@@ -328,7 +328,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
     }
     private VideoMattingModel videoMattingModel;
     private void gotoMattingVideo(String originalPath) {
-        SegJni.nativeCreateSegHandler(this, ConUtil.getFileContent(this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
+//        SegJni.nativeCreateSegHandler(this, ConUtil.getFileContent(this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
         Observable.just(originalPath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
             videoMattingModel  = new VideoMattingModel(originalPath, TemplateCutVideoActivity.this, (isSuccess, path,noMakingPath) -> {
                 EventBus.getDefault().post(new MattingVideoEnity(noMakingPath, path,originalPath, isFrom));

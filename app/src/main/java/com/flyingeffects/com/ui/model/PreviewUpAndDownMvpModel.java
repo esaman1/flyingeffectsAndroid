@@ -11,7 +11,14 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdManager;
@@ -38,16 +45,26 @@ import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.TTAdManagerHolder;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
+import com.flyingeffects.com.ui.view.activity.ReportActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.media.UMMin;
+import com.umeng.socialize.media.UMWeb;
 
 import java.io.File;
 import java.io.IOException;
@@ -112,7 +129,160 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
+    private WaitingDialog_progress downProgressDialog;
+    private BottomSheetDialog bottomSheetDialog;
 
+    public void showBottomSheetDialog(String path, String imagePath, String id,new_fag_template_item fag_template_item) {
+        bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
+        View view = LayoutInflater.from(context).inflate(R.layout.preview_bottom_sheet_dialog, null);
+        bottomSheetDialog.setContentView(view);
+        LinearLayout iv_download = view.findViewById(R.id.ll_download);
+        iv_download.setOnClickListener(view12 -> {
+            statisticsEventAffair.getInstance().setFlag(context, "save_back_template");
+            downProgressDialog=new WaitingDialog_progress(context);
+            downProgressDialog.openProgressDialog();
+            DownVideo(path, imagePath, id, true);
+            dismissDialog();
+        });
+        LinearLayout ll_friend_circle = view.findViewById(R.id.ll_friend_circle);
+        ll_friend_circle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UMImage image = new UMImage(context, fag_template_item.getImage());//分享图标
+                UMWeb web = new UMWeb(getShareWeiXinCircleText(fag_template_item.getId())); //切记切记 这里分享的链接必须是http开头
+                web.setTitle(fag_template_item.getTitle());//标题
+                web.setThumb(image);  //缩略图
+                new ShareAction((Activity) context).setPlatform(SHARE_MEDIA.WEIXIN_CIRCLE)
+                        .withMedia(web)
+                        .setCallback(shareListener)
+                        .share();
+            }
+        });
+
+
+        //分享小程序飞给好友
+        LinearLayout ll_share_wx = view.findViewById(R.id.ll_share_wx);
+        ll_share_wx.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                shareToApplet(fag_template_item);
+            }
+        });
+
+        LinearLayout ll_report = view.findViewById(R.id.ll_report);
+        ll_report.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, ReportActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                context.startActivity(intent);
+            }
+        });
+
+
+        TextView tv_cancle = view.findViewById(R.id.tv_cancle);
+        tv_cancle.setOnClickListener(view1 -> bottomSheetDialog.dismiss());
+        bottomSheetDialog.setCancelable(true);
+        bottomSheetDialog.setCanceledOnTouchOutside(true);
+        View parent = (View) view.getParent();     //处理高度显示完全  https://www.jianshu.com/p/38af0cf77352
+        parent.setBackgroundResource(android.R.color.transparent);
+        BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);
+        view.measure(0, 0);
+        behavior.setPeekHeight(view.getMeasuredHeight());
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) parent.getLayoutParams();
+        params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+        parent.setLayoutParams(params);
+        bottomSheetDialog.show();
+    }
+
+
+    /**
+     * description ：分享到小程序
+     * creation date: 2020/7/1
+     * user : zhangtongju
+     */
+    private void shareToApplet(new_fag_template_item fag_template_item) {
+        UMImage image = new UMImage(context, fag_template_item.getImage());//分享图标
+        String url = "pages/detail/detail?id=" + fag_template_item.getId();
+        LogUtil.d("OOM", "小程序的地址为" + url);
+        UMMin umMin = new
+                UMMin(url);
+        umMin.setThumb(image);
+        umMin.setUserName("gh_4161ca2837f7");
+        umMin.setTitle(fag_template_item.getTitle());
+        new ShareAction((Activity) context)
+                .withMedia(umMin)
+                .setPlatform(SHARE_MEDIA.WEIXIN)
+                .setCallback(shareListener).share();
+
+    }
+
+
+    private UMShareListener shareListener = new UMShareListener() {
+        /**
+         * @descrption 分享开始的回调
+         * @param platform 平台类型
+         */
+        @Override
+        public void onStart(SHARE_MEDIA platform) {
+        }
+
+        /**
+         * @descrption 分享成功的回调
+         * @param platform 平台类型
+         */
+        @Override
+        public void onResult(SHARE_MEDIA platform) {
+            ToastUtil.showToast("success");
+        }
+
+        /**
+         * @descrption 分享失败的回调
+         * @param platform 平台类型
+         * @param t 错误原因
+         */
+        @Override
+        public void onError(SHARE_MEDIA platform, Throwable t) {
+            Toast.makeText(context, "失败" + t.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        /**
+         * @descrption 分享取消的回调
+         * @param platform 平台类型
+         */
+        @Override
+        public void onCancel(SHARE_MEDIA platform) {
+            Toast.makeText(context, "取消了", Toast.LENGTH_LONG).show();
+        }
+    };
+
+    /**
+     * description ：
+     * creation date: 2020/7/1
+     * user : zhangtongju
+     */
+    private String getShareWeiXinCircleText(String id) {
+        String str = "http://www.flyingeffect.com/index/index/share?id=" + id + "&";
+        HashMap params = BaseConstans.getRequestHead(new HashMap<>());
+        String str_params = params.toString();
+        str_params = str_params.replace("{", "");
+        str_params = str_params.replace("}", "");
+        str_params = str_params.replaceAll(",", "&");
+        str_params = str_params.trim();
+        return str + str_params;
+    }
+
+
+    private void dismissDialog() {
+        try {
+            if (bottomSheetDialog != null && bottomSheetDialog.isShowing()) {
+                bottomSheetDialog.dismiss();
+                bottomSheetDialog = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void requestAD() {
         //step3:创建广告请求参数AdSlot,具体参数含义参考文档
@@ -389,7 +559,6 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-    private WaitingDialog_progress downProgressDialog;
 
     public void DownVideo(String path, String imagePath, String id, boolean keepAlbum) {
 

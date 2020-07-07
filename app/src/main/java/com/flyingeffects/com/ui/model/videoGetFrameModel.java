@@ -74,7 +74,6 @@ public class videoGetFrameModel {
      */
     public void startExecute() {
         LogUtil.d("OOM", "要执行的次数为" + videoPath.size());
-        LogUtil.d("OOM", "nowExtractVideoNum=" + nowExtractVideoNum);
         if (videoPath.size() == nowExtractVideoNum) {
             //全部执行完成了
             LogUtil.d("OOM", "全部搞完");
@@ -90,7 +89,7 @@ public class videoGetFrameModel {
             downSuccessNum = 0;
             LogUtil.d("OOM", "开始取帧第" + nowExtractVideoNum + "个视频");
             nowExtractVideoNum++;
-            SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
+//            SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
             ToExtractFrame(videoPath.get(nowExtractVideoNum - 1), nowExtractVideoNum + "");
 
         }

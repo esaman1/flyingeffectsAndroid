@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="22dp"
+        android:id="@+id/ll_test"
         android:layout_marginEnd="22dp"
         android:background="@drawable/strok_all_write_full_corner"
         android:orientation="vertical">

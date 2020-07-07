@@ -1,6 +1,7 @@
 package com.flyingeffects.com.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -18,6 +19,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
+import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.MarqueTextView;
 import com.flyingeffects.com.view.SampleCoverVideo;
@@ -38,24 +40,26 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     private TextView tv_make;
     private ImageView iv_zan;
     private ImageView iv_writer;
-//    private ImageView iv_video_play;
+    //    private ImageView iv_video_play;
     private TextView tv_writer_name;
     private TextView tv_title;
     private MarqueTextView tv_describe;
     private ImageView iv_show_cover;
-//    private List<new_fag_template_item> allData;
+    //    private List<new_fag_template_item> allData;
 //    private boolean isPlayComplete = false;
     private int nowPreviewPosition;
-//    private AlphaAnimation hideAnim;
+    //    private AlphaAnimation hideAnim;
     private boolean readOnly;
     public TTNativeExpressAd ad;
     private FrameLayout video_layout;
+    private ImageView iv_download_bj;
+    private String fromTo;
 
-    public Preview_up_and_down_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, boolean readOnly) {
+    public Preview_up_and_down_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, boolean readOnly, String fromTo) {
         super(layoutResId, allData);
         this.context = context;
-//        this.allData = allData;
         this.readOnly = readOnly;
+        this.fromTo=fromTo;
     }
 
 
@@ -63,16 +67,31 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     protected void convert(final BaseViewHolder helper, final new_fag_template_item item) {
         int offset = helper.getLayoutPosition();
         ad = item.getAd();
-        video_layout=helper.getView(R.id.video_layout);
+        video_layout = helper.getView(R.id.video_layout);
         videoPlayer = helper.getView(R.id.video_item_player);
+        iv_download_bj = helper.getView(R.id.iv_download_bj);
         tv_make = helper.getView(R.id.tv_make);
         iv_zan = helper.getView(R.id.iv_zan);
         iv_writer = helper.getView(R.id.iv_writer);
-//        iv_video_play = helper.getView(R.id.iv_video_play);
         tv_writer_name = helper.getView(R.id.tv_writer_name);
         tv_title = helper.getView(R.id.tv_title);
         tv_describe = helper.getView(R.id.tv_describe);
-//        iv_show_cover = helper.getView(R.id.iv_show_cover);
+        helper.addOnClickListener(R.id.iv_download_bj);
+
+        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
+            tv_make.setText("使用背景");
+        } else {
+            tv_make.setText("马上制作");
+        }
+//        if (!TextUtils.isEmpty(fromTo)) {
+//            if (fromTo.equals(FromToTemplate.ISFROMBJ) || fromTo.equals(FromToTemplate.ISFROMUPDATEBJ) || fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
+//                iv_download_bj.setVisibility(View.VISIBLE);
+//            } else {
+//                iv_download_bj.setVisibility(View.GONE);
+//            }
+//        } else {
+//            iv_download_bj.setVisibility(View.GONE);
+//        }
         if (ad == null) {
             //无广告的情况
             video_layout.setVisibility(View.GONE);
@@ -80,11 +99,9 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             tv_make.setVisibility(View.VISIBLE);
             iv_zan.setVisibility(View.VISIBLE);
             iv_writer.setVisibility(View.VISIBLE);
-//            iv_video_play.setVisibility(View.VISIBLE);
             tv_writer_name.setVisibility(View.VISIBLE);
             tv_title.setVisibility(View.VISIBLE);
             tv_describe.setVisibility(View.VISIBLE);
-//            iv_show_cover.setVisibility(View.VISIBLE);
             helper.addOnClickListener(R.id.iv_zan);
             helper.addOnClickListener(R.id.tv_make);
             initVideoPlayer(item, offset);
@@ -118,20 +135,15 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             tv_make.setVisibility(View.GONE);
             iv_zan.setVisibility(View.GONE);
             iv_writer.setVisibility(View.GONE);
-//            iv_video_play.setVisibility(View.GONE);
             tv_writer_name.setVisibility(View.GONE);
             tv_title.setVisibility(View.GONE);
             tv_describe.setVisibility(View.GONE);
-//            iv_show_cover.setVisibility(View.GONE);
-            TTNativeExpressAd ttNativeExpressAd=item.getAd();
-
-            View view=ttNativeExpressAd.getExpressAdView();
-            if(view.getParent()!=null){
-                ViewGroup vp= (ViewGroup) view.getParent();
+            TTNativeExpressAd ttNativeExpressAd = item.getAd();
+            View view = ttNativeExpressAd.getExpressAdView();
+            if (view.getParent() != null) {
+                ViewGroup vp = (ViewGroup) view.getParent();
                 vp.removeAllViews();
             }
-
-
             video_layout.addView(ttNativeExpressAd.getExpressAdView());
         }
 

@@ -142,7 +142,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
 
         //Presenter.requestAD();
-        adapter = new Preview_up_and_down_adapter(R.layout.list_preview_up_down_item, allData, PreviewUpAndDownActivity.this, readOnly);
+        adapter = new Preview_up_and_down_adapter(R.layout.list_preview_up_down_item, allData, PreviewUpAndDownActivity.this, readOnly,fromTo);
         adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
@@ -156,6 +156,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         toClickMake();
 
 
+                        break;
+
+                    case R.id.iv_download_bj:
+                        Presenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId(),templateItem);
                         break;
                     default:
                         break;
@@ -205,8 +209,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * user : zhangtongju
      */
     private void refeshData() {
-        defaultnum = templateItem.getDefaultnum();
         templateItem = allData.get(nowChoosePosition);
+        defaultnum = templateItem.getDefaultnum();
         is_picout = templateItem.getIs_picout();
         nowCollectType = templateItem.getIs_collection();
     }
