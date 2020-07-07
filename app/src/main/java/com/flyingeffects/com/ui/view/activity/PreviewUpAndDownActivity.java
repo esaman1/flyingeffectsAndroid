@@ -2,14 +2,19 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.bumptech.glide.Glide;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyingeffects.com.R;
@@ -33,6 +38,8 @@ import com.flyingeffects.com.ui.presenter.PreviewUpAndDownMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.MattingVideoEnity;
+import com.github.penfeizhou.animation.apng.APNGDrawable;
+import com.github.penfeizhou.animation.loader.ResourceStreamLoader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
@@ -107,7 +114,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private WaitingDialog_progress waitingDialog_progress;
 
     //是否需要插入广告
-    private  boolean isNeedAddaD=false;
+    private boolean isNeedAddaD = false;
 
     //随机插入位置
     private int randomPosition;
@@ -117,7 +124,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
 
     @BindView(R.id.rela_parent_show_alert)
-     RelativeLayout rela_parent_show_alert;
+    LinearLayout rela_parent_show_alert;
+
+    @BindView(R.id.iv_guide)
+    ImageView iv_guide;
 
 
     @Override
@@ -147,7 +157,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
 
         //Presenter.requestAD();
-        adapter = new Preview_up_and_down_adapter(R.layout.list_preview_up_down_item, allData, PreviewUpAndDownActivity.this, readOnly,fromTo);
+        adapter = new Preview_up_and_down_adapter(R.layout.list_preview_up_down_item, allData, PreviewUpAndDownActivity.this, readOnly, fromTo);
         adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
@@ -164,7 +174,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         break;
 
                     case R.id.iv_download_bj:
-                        Presenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId(),templateItem);
+                        Presenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId(), templateItem);
                         break;
                     default:
                         break;
@@ -186,12 +196,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 adapter.notifyItemChanged(position);
                 nowChoosePosition = position;
                 refeshData();
-                LogUtil.d("OOM","当前="+position+"randomPosition="+randomPosition);
-                if(randomPosition==position&&randomPosition!=0){
+                LogUtil.d("OOM", "当前=" + position + "randomPosition=" + randomPosition);
+                if (randomPosition == position && randomPosition != 0) {
                     //如果已经看了广告，则在请求下一条广告
                     Presenter.requestAD();
 //                    adapter.pauseVideo();
-                    LogUtil.d("OOM","当前为广告,位置="+position);
+                    LogUtil.d("OOM", "当前为广告,位置=" + position);
                 }
             }
 
@@ -205,6 +215,26 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             setIsCollect(true);
         }
         Presenter.requestAD();
+
+
+        if (BaseConstans.isFirstUseDownAndUpAct()) {
+            rela_parent_show_alert.setVisibility(View.VISIBLE);
+            ResourceStreamLoader resourceLoader = new ResourceStreamLoader(this, R.mipmap.guide);
+            APNGDrawable apngDrawable = new APNGDrawable(resourceLoader);
+           iv_guide.setImageDrawable(apngDrawable);
+
+            rela_parent_show_alert.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    rela_parent_show_alert.setVisibility(View.GONE);
+                }
+            });
+            BaseConstans.setFirstUseDownAndUpAct();
+        } else {
+            rela_parent_show_alert.setVisibility(View.GONE);
+        }
+
+
     }
 
 
@@ -225,11 +255,14 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         new_fag_template_item item1 = allData.get(nowChoosePosition);
         if (isCollect) {
             item1.setIs_collection(1);
+            adapter.setIsCollect(true);
         } else {
             item1.setIs_collection(0);
+            adapter.setIsCollect(false);
         }
         allData.set(nowChoosePosition, item1);
-        adapter.notifyItemChanged(nowChoosePosition);
+//        adapter.setNeedKeepVideoState();
+//        adapter.notifyItemChanged(nowChoosePosition);
     }
 
 
@@ -259,10 +292,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         ondestroy = true;
-        GSYVideoManager.releaseAllVideos();
         if (adapter != null) {
             adapter.onDestroy();
         }
+        GSYVideoManager.releaseAllVideos();
     }
 
 
@@ -392,7 +425,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             this.TemplateFilePath = filePath;
             if (!TextUtils.isEmpty(templateItem.getVideotime()) && !templateItem.getVideotime().equals("0")) {
                 float videoTime = Float.parseFloat(templateItem.getVideotime());
-                AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "", (long) (videoTime * 1000),templateItem.getTitle(),TemplateFilePath);
+                AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "", (long) (videoTime * 1000), templateItem.getTitle(), TemplateFilePath);
             } else {
                 AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");
             }
@@ -409,11 +442,11 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void showNewData(List<new_fag_template_item> allData) {
         this.allData = allData;
         //如果当前页面需要广告，则插入广告
-        if(isNeedAddaD&&allData!=null&&allData.size()>randomPosition){
-            isNeedAddaD=false;
-            new_fag_template_item item=new new_fag_template_item();
+        if (isNeedAddaD && allData != null && allData.size() > randomPosition) {
+            isNeedAddaD = false;
+            new_fag_template_item item = new new_fag_template_item();
             item.setAd(ad);
-            allData.add(randomPosition,item);
+            allData.add(randomPosition, item);
         }
         adapter.notifyDataSetChanged();
     }
@@ -425,30 +458,30 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * user : zhangtongju
      */
 
-  private   TTNativeExpressAd ad;
+    private TTNativeExpressAd ad;
 
     @Override
     public void resultAd(List<TTNativeExpressAd> ads) {
-        ad=ads.get(0);
+        ad = ads.get(0);
         int minNum = BaseConstans.getFeedShowPosition(false);
         int MaxNum = BaseConstans.getFeedShowPosition(true);
-        LogUtil.d("OOM","minNum="+minNum+"MaxNum="+MaxNum);
+        LogUtil.d("OOM", "minNum=" + minNum + "MaxNum=" + MaxNum);
         Random random = new Random();
-        randomPosition = random.nextInt(MaxNum)%(MaxNum-minNum+1) + minNum;
-        LogUtil.d("OOM","random="+randomPosition);
-        randomPosition=lastRandomPosition+randomPosition;
-        LogUtil.d("OOM","needRandom="+randomPosition);
-         if(allData!=null&&allData.size()>randomPosition){
-             isNeedAddaD=false;
-             new_fag_template_item item=new new_fag_template_item();
-             item.setAd(ad);
-             allData.add(randomPosition,item);
-             adapter.notifyDataSetChanged();
-         }else {
-             //在第二页了
-             isNeedAddaD=true;
-         }
-         lastRandomPosition=randomPosition;
+        randomPosition = random.nextInt(MaxNum) % (MaxNum - minNum + 1) + minNum;
+        LogUtil.d("OOM", "random=" + randomPosition);
+        randomPosition = lastRandomPosition + randomPosition;
+        LogUtil.d("OOM", "needRandom=" + randomPosition);
+        if (allData != null && allData.size() > randomPosition) {
+            isNeedAddaD = false;
+            new_fag_template_item item = new new_fag_template_item();
+            item.setAd(ad);
+            allData.add(randomPosition, item);
+            adapter.notifyDataSetChanged();
+        } else {
+            //在第二页了
+            isNeedAddaD = true;
+        }
+        lastRandomPosition = randomPosition;
     }
 
 

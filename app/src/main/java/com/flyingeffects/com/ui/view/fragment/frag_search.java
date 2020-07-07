@@ -299,7 +299,6 @@ public class frag_search extends BaseFragment {
             }
         });
         new Handler().postDelayed(() -> showWitchBtn(0), 500);
-        ToastUtil.showToast("创建完成");
     }
 
 

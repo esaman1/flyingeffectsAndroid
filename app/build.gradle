@@ -190,6 +190,9 @@ dependencies {
     // 穿山甲sdk
 //    implementation(name: 'open_ad_sdk', ext: 'aar')
 
+    //兼容apng
+    implementation 'com.github.penfeizhou.android.animation:apng:2.0.0'
+
 
 }
 

@@ -1,6 +1,7 @@
 package com.flyingeffects.com.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,21 +78,11 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         tv_title = helper.getView(R.id.tv_title);
         tv_describe = helper.getView(R.id.tv_describe);
         helper.addOnClickListener(R.id.iv_download_bj);
-
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
             tv_make.setText("使用背景");
         } else {
             tv_make.setText("马上制作");
         }
-//        if (!TextUtils.isEmpty(fromTo)) {
-//            if (fromTo.equals(FromToTemplate.ISFROMBJ) || fromTo.equals(FromToTemplate.ISFROMUPDATEBJ) || fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
-//                iv_download_bj.setVisibility(View.VISIBLE);
-//            } else {
-//                iv_download_bj.setVisibility(View.GONE);
-//            }
-//        } else {
-//            iv_download_bj.setVisibility(View.GONE);
-//        }
         if (ad == null) {
             //无广告的情况
             video_layout.setVisibility(View.GONE);
@@ -104,7 +95,8 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             tv_describe.setVisibility(View.VISIBLE);
             helper.addOnClickListener(R.id.iv_zan);
             helper.addOnClickListener(R.id.tv_make);
-            initVideoPlayer(item, offset);
+                initVideoPlayer(item, offset);
+
             if (nowPreviewPosition == offset) {
                 videoPlayer.startPlayLogic();
             }
@@ -150,6 +142,19 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
 
     }
 
+    public void setIsCollect(boolean isCollect){
+        if(iv_zan!=null){
+            if (isCollect) {
+                iv_zan.setImageResource(R.mipmap.zan_selected);
+            } else {
+                iv_zan.setImageResource(R.mipmap.zan);
+            }
+        }
+
+    }
+
+
+
 
     /**
      * description ：初始化视频播放器，针对列表
@@ -157,12 +162,20 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
      * user : zhangtongju
      */
     private void initVideoPlayer(new_fag_template_item item, int offset) {
-        videoPlayer.loadCoverImage(item.getImage(), R.mipmap.black_lucency);
+        if(!TextUtils.isEmpty(item.getOriginfile())){
+            videoPlayer.loadCoverImage(item.getOriginfile(), R.mipmap.black_lucency);
+        }else{
+            videoPlayer.loadCoverImage(item.getImage(), R.mipmap.black_lucency);
+        }
+        videoPlayer.setAnimation(null);
+        videoPlayer.getStartButton().setVisibility(View.GONE);
         videoPlayer.setUpLazy(item.getVidoefile(), true, null, null, "这是title");
         videoPlayer.setPlayPosition(offset);
         videoPlayer.getTitleTextView().setVisibility(View.GONE);
         videoPlayer.getBackButton().setVisibility(View.GONE);
         videoPlayer.setIsTouchWigetFull(false);
+        videoPlayer.setIsTouchWiget(false);
+        videoPlayer.setNeedShowWifiTip(false);
         //设置全屏按键功能
         videoPlayer.getFullscreenButton().setVisibility(View.GONE);
         videoPlayer.setVideoAllCallBack(new VideoPlayerCallbackForTemplate(new VideoPlayerCallbackForTemplate.videoPlayerStopListener() {

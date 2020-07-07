@@ -291,5 +291,18 @@ public class new_fag_template_item implements Serializable {
      */
     public TTNativeExpressAd ad;
 
+    public String getOriginfile() {
+        return originfile;
+    }
+
+    public void setOriginfile(String originfile) {
+        this.originfile = originfile;
+    }
+
+    /**
+     * 一鍵模板的封面图
+     */
+    public String originfile;
+
 
 }
