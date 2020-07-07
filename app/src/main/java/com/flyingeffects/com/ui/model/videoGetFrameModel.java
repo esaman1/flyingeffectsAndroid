@@ -148,7 +148,7 @@ public class videoGetFrameModel {
                 LogUtil.d("OOM2", "frameCount的值为" + frameCount);
 //                    dialog.closePragressDialog();
                 SegJni.nativeReleaseImageBuffer();
-                SegJni.nativeReleaseSegHandler();
+//                SegJni.nativeReleaseSegHandler();
                 startExecute();
             });
             //设置处理进度监听.

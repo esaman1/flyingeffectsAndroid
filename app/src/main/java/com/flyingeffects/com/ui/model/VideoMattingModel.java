@@ -152,7 +152,7 @@ public class VideoMattingModel {
             }
             LogUtil.d("OOM2", "frameCount的值为" + frameCount);
             SegJni.nativeReleaseImageBuffer();
-            SegJni.nativeReleaseSegHandler();
+//            SegJni.nativeReleaseSegHandler();
             boolean isMainThread = ThreadJudgeManage.isMainThread();
             LogUtil.d("OOM", "当前线程运行在主线程吗？" + isMainThread);
             Observable.just(0).subscribeOn(Schedulers.io()).subscribe(integer -> addFrameCompoundVideoNoMatting());

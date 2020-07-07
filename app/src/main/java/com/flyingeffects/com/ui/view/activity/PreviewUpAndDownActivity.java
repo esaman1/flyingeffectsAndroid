@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -113,6 +114,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     //上次插入的位置
     private int lastRandomPosition;
+
+
+    @BindView(R.id.rela_parent_show_alert)
+     RelativeLayout rela_parent_show_alert;
 
 
     @Override

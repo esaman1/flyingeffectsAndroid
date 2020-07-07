@@ -301,7 +301,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             //不需要抠图就不需要扣第一帧页面
             if (originalPath != null && originalPath.size() != 0) {
                 handler.sendEmptyMessage(1);
-                presenter.getMattingVideoCover(originalPath.get(0));
+                new Thread(() -> presenter.getMattingVideoCover(originalPath.get(0))).start();
+
             }
         }
 

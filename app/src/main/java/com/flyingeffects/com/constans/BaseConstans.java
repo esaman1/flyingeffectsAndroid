@@ -299,6 +299,20 @@ public class BaseConstans {
         return spUtil.getBoolean("isFirstOpen", true);
     }
 
+
+
+    public static boolean isFirstUseDownAndUpAct() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getBoolean("isFirstUseDownAndUp", true);
+    }
+
+    public static void setFirstUseDownAndUpAct() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putBoolean("isFirstUseDownAndUp",false);
+    }
+
+
+
     public static void setFirstOpenApp(long time) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putBoolean("isFirstOpen", false);

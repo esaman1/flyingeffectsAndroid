@@ -153,15 +153,22 @@ public class TemplateMvpModel {
             String faceMattingFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "tailor");
             String savePath = faceMattingFolder + File.separator + UUID.randomUUID() + "cover.png";
             BitmapManager.getInstance().saveBitmapToPath(bp, savePath, isSuccess -> {
-//                SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
-                CompressionCuttingManage manage = new CompressionCuttingManage(context, "0", false, tailorPaths -> {
-                    Bitmap mattingMp = BitmapFactory.decodeFile(tailorPaths.get(0));
-                    mattingMp = test(mattingMp, bp.getWidth(), bp.getHeight());
-                    callback.showMattingVideoCover(mattingMp, tailorPaths.get(0));
-                });
-                List<String> list = new ArrayList<>();
-                list.add(savePath);
-                manage.ToMatting(list);
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                       SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
+                        CompressionCuttingManage manage = new CompressionCuttingManage(context, "0", false, tailorPaths -> {
+                            Bitmap mattingMp = BitmapFactory.decodeFile(tailorPaths.get(0));
+                            mattingMp = test(mattingMp, bp.getWidth(), bp.getHeight());
+                            callback.showMattingVideoCover(mattingMp, tailorPaths.get(0));
+                        });
+                        List<String> list = new ArrayList<>();
+                        list.add(savePath);
+                        manage.ToMatting(list);
+//                    }
+//                }).start();
+
+
             });
         }
     }
