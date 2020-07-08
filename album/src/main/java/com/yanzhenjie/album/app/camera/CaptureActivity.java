@@ -187,6 +187,9 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
+
+
+
     private void setOnclickListener() {
         mIvFlip.setOnClickListener(this);
         mIvSwitchTimer.setOnClickListener(this);
@@ -269,9 +272,11 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         takingPicture = false;
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), System.currentTimeMillis() + ".mp4");
         mRecording = true;
+        Log.d("OOM","开始录制");
         mVideoCapture.startRecording(file, mCameraExecutor, new VideoCapture.OnVideoSavedCallback() {
             @Override
             public void onVideoSaved(@NonNull File file) {
+                Log.d("OOM","录制完成");
                 onFileSaved(file);
             }
 
@@ -282,6 +287,10 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         });
         mRecordView.startRecord();
     }
+
+
+
+
 
 
     @SuppressLint("RestrictedApi")

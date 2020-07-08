@@ -45,7 +45,7 @@ android {
         pickFirst 'lib/armeabi-v7a/libmegface_full.so'
 
         pickFirst 'lib/arm64-v8a/libMegviiSegJni.so'
-//        pickFirst 'lib/armeabi-v7a/libMegviiSegJni.so'
+        pickFirst 'lib/armeabi-v7a/libMegviiSegJni.so'
 
     }
     ndkVersion '21.0.6113669'
