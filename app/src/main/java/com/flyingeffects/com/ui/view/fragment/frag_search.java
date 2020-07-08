@@ -170,7 +170,7 @@ public class frag_search extends BaseFragment {
     public void onResume() {
         super.onResume();
         requestKeywordList();
-        hideResultView(false);
+        hideResultView(true);
         listTv.clear();
         listView.clear();
         showHeadTitle();
