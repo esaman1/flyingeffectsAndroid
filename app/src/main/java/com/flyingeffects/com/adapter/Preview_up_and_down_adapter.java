@@ -77,6 +77,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         tv_writer_name = helper.getView(R.id.tv_writer_name);
         tv_title = helper.getView(R.id.tv_title);
         tv_describe = helper.getView(R.id.tv_describe);
+        tv_describe.setVisibility(View.GONE);
         helper.addOnClickListener(R.id.iv_download_bj);
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
             tv_make.setText("使用背景");
@@ -173,6 +174,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         videoPlayer.setPlayPosition(offset);
         videoPlayer.getTitleTextView().setVisibility(View.GONE);
         videoPlayer.setIsTouchWigetFull(false);
+        videoPlayer.getBackButton().setVisibility(View.GONE);
         videoPlayer.setIsTouchWiget(false);
         videoPlayer.setNeedShowWifiTip(false);
         //设置全屏按键功能
@@ -184,6 +186,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
 
             @Override
             public void onPrepared(boolean onPrepared) {
+                tv_describe.setVisibility(View.VISIBLE);
                 tv_describe.setText("时长" + timeUtils.timeParse(videoPlayer.getDuration()) + "        上传" + item.getDefaultnum() + "个素材即可制作");
             }
         }));

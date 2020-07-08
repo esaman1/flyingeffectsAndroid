@@ -120,26 +120,34 @@ public class PreviewUpAndDownMvpModel {
             requestFagData();
         });
         smartRefreshLayout.setOnLoadMoreListener(refresh -> {
-            isOnLoadMore();
-            isRefresh = false;
-            selectPage++;
-//            requestFagData(false, false);
-            requestFagData();
+//            isOnLoadMore();
+//            isRefresh = false;
+//            selectPage++;
+////            requestFagData(false, false);
+//            requestFagData();
         });
+    }
+
+
+    public void requestMoreData() {
+        isOnLoadMore();
+        isRefresh = false;
+        selectPage++;
+        requestFagData();
     }
 
 
     private WaitingDialog_progress downProgressDialog;
     private BottomSheetDialog bottomSheetDialog;
 
-    public void showBottomSheetDialog(String path, String imagePath, String id,new_fag_template_item fag_template_item) {
+    public void showBottomSheetDialog(String path, String imagePath, String id, new_fag_template_item fag_template_item) {
         bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
         View view = LayoutInflater.from(context).inflate(R.layout.preview_bottom_sheet_dialog, null);
         bottomSheetDialog.setContentView(view);
         LinearLayout iv_download = view.findViewById(R.id.ll_download);
         iv_download.setOnClickListener(view12 -> {
             statisticsEventAffair.getInstance().setFlag(context, "save_back_template");
-            downProgressDialog=new WaitingDialog_progress(context);
+            downProgressDialog = new WaitingDialog_progress(context);
             downProgressDialog.openProgressDialog();
             DownVideo(path, imagePath, id, true);
             dismissDialog();
@@ -209,7 +217,7 @@ public class PreviewUpAndDownMvpModel {
                 UMMin(url);
         umMin.setThumb(image);
         umMin.setUserName("gh_4161ca2837f7");
-        umMin.setTitle(BaseConstans.getminapp_share_title()+fag_template_item.getTitle());
+        umMin.setTitle(BaseConstans.getminapp_share_title() + fag_template_item.getTitle());
         new ShareAction((Activity) context)
                 .withMedia(umMin)
                 .setPlatform(SHARE_MEDIA.WEIXIN)
@@ -300,17 +308,17 @@ public class PreviewUpAndDownMvpModel {
             public void onError(int code, String message) {
 //                Log.d(TAG, message);
 //                showToast(message);
-                LogUtil.d("OOM","loadFeedAd+code="+code+";message="+message);
+                LogUtil.d("OOM", "loadFeedAd+code=" + code + ";message=" + message);
             }
 
             @Override
             public void onNativeExpressAdLoad(List<TTNativeExpressAd> ads) {
                 if (ads == null || ads.isEmpty()) {
-                    LogUtil.d("OOM","on FeedAdLoaded: ad is null!");
+                    LogUtil.d("OOM", "on FeedAdLoaded: ad is null!");
                     return;
                 }
 
-                LogUtil.d("OOM","success"+ads.size());
+                LogUtil.d("OOM", "success" + ads.size());
 //                for (int i = 0; i < 5; i++) {
 //                    int random = (int) (Math.random() * 100);
 //                    int index = random % videos.length;
@@ -396,7 +404,6 @@ public class PreviewUpAndDownMvpModel {
             }
         });
     }
-
 
 
 //    public void requestAD(){
@@ -559,7 +566,6 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-
     public void DownVideo(String path, String imagePath, String id, boolean keepAlbum) {
 
         String videoName = mVideoFolder + File.separator + id + "synthetic.mp4";
@@ -590,8 +596,8 @@ public class PreviewUpAndDownMvpModel {
                             LogUtil.d("oom", "下载时候后重新裁剪进度为=" + progress);
                             if (downProgressDialog != null) {
                                 downProgressDialog.setProgress("下载进度为" + progress + "%");
-                            }else{
-                                downProgressDialog=new WaitingDialog_progress(context);
+                            } else {
+                                downProgressDialog = new WaitingDialog_progress(context);
                                 downProgressDialog.openProgressDialog();
                             }
                         }

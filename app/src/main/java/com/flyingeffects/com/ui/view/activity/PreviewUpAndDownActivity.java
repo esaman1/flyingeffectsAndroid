@@ -129,6 +129,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @BindView(R.id.iv_guide)
     ImageView iv_guide;
 
+    //当前请求的广告数值
+    private int nowHasAdcount;
+
 
     @Override
     protected int getLayoutId() {
@@ -203,6 +206,14 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 //                    adapter.pauseVideo();
                     LogUtil.d("OOM", "当前为广告,位置=" + position);
                 }
+
+                int allDataCount = allData.size();
+                if (position == allDataCount - 3) {
+                    Presenter.requestMoreData();
+                    LogUtil.d("OOM", "请求更多数据");
+                }
+
+
             }
 
             @Override
@@ -221,7 +232,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             rela_parent_show_alert.setVisibility(View.VISIBLE);
             ResourceStreamLoader resourceLoader = new ResourceStreamLoader(this, R.mipmap.guide);
             APNGDrawable apngDrawable = new APNGDrawable(resourceLoader);
-           iv_guide.setImageDrawable(apngDrawable);
+            iv_guide.setImageDrawable(apngDrawable);
 
             rela_parent_show_alert.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -462,6 +473,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     @Override
     public void resultAd(List<TTNativeExpressAd> ads) {
+        nowHasAdcount++;
         ad = ads.get(0);
         int minNum = BaseConstans.getFeedShowPosition(false);
         int MaxNum = BaseConstans.getFeedShowPosition(true);
