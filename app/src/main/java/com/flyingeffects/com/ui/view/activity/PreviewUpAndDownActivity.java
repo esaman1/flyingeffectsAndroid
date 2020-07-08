@@ -593,6 +593,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             new Handler().postDelayed(() -> {
                 if (!ondestroy) {
                     WaitingDialog.openPragressDialog(PreviewUpAndDownActivity.this, alert);
+                    GSYVideoManager.onPause();
                 }
             }, 200);
             new Thread(() -> {

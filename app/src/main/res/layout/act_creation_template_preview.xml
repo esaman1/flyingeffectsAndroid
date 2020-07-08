@@ -17,19 +17,39 @@
         android:textSize="20sp" />
 
 
-    <com.google.android.exoplayer2.ui.PlayerView
-        android:id="@+id/exo_player"
+    <RelativeLayout
+        android:id="@+id/rela_parent_content"
         android:layout_width="match_parent"
-        android:layout_below="@+id/tv_title"
         android:layout_height="match_parent"
         android:layout_marginBottom="23dp"
         android:layout_marginStart="50dp"
-        android:layout_marginEnd="50dp"
-        android:layout_centerInParent="true"
         android:layout_above="@+id/ll_bottom"
-        android:background="#1D1D1D"
-        app:surface_type="texture_view"
-        app:use_controller="false" />
+        android:layout_centerInParent="true"
+        android:layout_marginEnd="50dp"
+        android:layout_below="@+id/tv_title">
+
+
+        <com.google.android.exoplayer2.ui.PlayerView
+            android:id="@+id/exo_player"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#1D1D1D"
+            app:surface_type="texture_view"
+            app:use_controller="false" />
+
+
+
+        <ImageView
+            android:id="@+id/iv_play"
+            android:layout_width="50dp"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            android:src="@mipmap/video_play"
+            android:layout_height="50dp"/>
+
+
+    </RelativeLayout>
+
 
 
     <LinearLayout

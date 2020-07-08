@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageView;
@@ -85,6 +86,9 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     @BindView(R.id.videocrop_cursor)
     RoundImageView progressCursor;
 
+    @BindView(R.id.iv_play)
+    ImageView iv_play;
+
     boolean isIntoInitTrimmer = false;
 
     @Override
@@ -154,15 +158,23 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
             LogUtil.d("video", "play");
             exoPlayer.setPlayWhenReady(true);
         }
-        startTimer();
+//        startTimer();
     }
 
     private void videoPause() {
         if (exoPlayer != null) {
             exoPlayer.stop();
         }
+        iv_play.setVisibility(View.VISIBLE);
+        hideCursor();
+        destroyTimer();
     }
 
+
+    public void hideCursor() {
+//        playIcon.setVisibility(View.VISIBLE);
+        progressCursor.setVisibility(View.INVISIBLE);
+    }
 
 
     /**
@@ -213,7 +225,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         }
     }
 
-    @OnClick({R.id.tv_back, R.id.tv_save})
+    @OnClick({R.id.tv_back, R.id.tv_save, R.id.rela_parent_content})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_back:
@@ -235,7 +247,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                 }
 
                 StimulateControlManage.getInstance().InitRefreshStimulate();
-                if (BaseConstans.getHasAdvertising() == 1 &&BaseConstans.getIncentiveVideo()&& !BaseConstans.getIsNewUser()) {
+                if (BaseConstans.getHasAdvertising() == 1 && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser()) {
                     Intent intent = new Intent(CreationTemplatePreviewActivity.this, AdHintActivity.class);
                     intent.putExtra("from", "isFormPreviewVideo");
                     intent.putExtra("templateTitle", "");
@@ -252,20 +264,37 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
                 break;
 
-//            case R.id.iv_play:
-//                if (isPlaying()) {
-//                    showIsPlay(false);
-//                    videoPause();
-//                    destroyTimer();
-//                } else {
-//                    videoOnResume();
-//                    showIsPlay(true);
-//                }
-//                break;
+
+            case R.id.rela_parent_content:
+                if (isPlaying()) {
+                    videoPause();
+                } else {
+                    videoResume();
+                }
+                break;
+
         }
         super.onClick(v);
     }
 
+
+    private void videoResume() {
+        try {
+            showCursor();
+          //  Presenter.initTimer();
+            iv_play.setVisibility(View.GONE);
+            if (exoPlayer != null) {
+                exoPlayer.prepare(mediaSource, false, false);
+            }
+
+        } catch (NullPointerException | IllegalStateException e) {
+            LogUtil.d("OOM", e.getMessage());
+        }
+    }
+
+    public void showCursor() {
+        progressCursor.setVisibility(View.VISIBLE);
+    }
 
     @Override
     protected void onResume() {
@@ -401,6 +430,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         super.onPause();
         isIntoPause = true;
         if (isPlaying()) {
+
 //            showIsPlay(false);
             videoPause();
             destroyTimer();
@@ -447,8 +477,8 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                     LogUtil.d("OOM", "onVideoAdClicked");
                 }
             });
-        }else{
-            saveToAlbum(imagePath,true);
+        } else {
+            saveToAlbum(imagePath, true);
         }
 
 
@@ -473,7 +503,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     }
 
     @Override
-    public void isSaveToAlbum(String path,boolean isAdSuccess) {
+    public void isSaveToAlbum(String path, boolean isAdSuccess) {
         saveToAlbum(path, isAdSuccess);
 
     }
