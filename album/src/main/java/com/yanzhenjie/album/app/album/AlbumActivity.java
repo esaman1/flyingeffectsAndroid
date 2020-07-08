@@ -111,6 +111,8 @@ public class AlbumActivity extends BaseActivity implements
     private String mMusicPath;
     private boolean showCapture = false;
     private String[] mTabStr = new String[]{"全部", "图片", "视频"};
+    private String[] mTabStr2 = new String[]{"图片"};
+    private String[] mTabStr3 = new String[]{"视频"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +125,20 @@ public class AlbumActivity extends BaseActivity implements
         mView.setCompleteDisplay(false);
         mView.setLoadingDisplay(true);
         mView.setShowCapture(showCapture);
-        mView.setTab(mTabStr);
+
+        switch (mFunction){
+            case Album.FUNCTION_CHOICE_IMAGE:
+                mView.setTab(mTabStr2);
+                break;
+            case Album.FUNCTION_CHOICE_VIDEO:
+                mView.setTab(mTabStr3);
+                break;
+            case Album.FUNCTION_CHOICE_ALBUM:
+                mView.setTab(mTabStr);
+                break;
+        }
+
+//        mView.setTab(mTabStr);
         requestPermission(PERMISSION_STORAGE, CODE_PERMISSION_STORAGE);
     }
 
@@ -604,14 +619,16 @@ public class AlbumActivity extends BaseActivity implements
     public void reLoadAlbumData(TabLayout.Tab tab) {
         Log.d(TAG, "reLoadAlbumData: " + tab.getPosition());
         //todo 这个方法还有优化空间
-        switch (tab.getPosition()) {
-            case 0:
+        String tabStr = tab.getText().toString();
+        Log.d(TAG, "reLoadAlbumData: " + tabStr);
+        switch (tabStr) {
+            case "全部":
                 mFunction = Album.FUNCTION_CHOICE_ALBUM;
                 break;
-            case 1:
+            case "图片":
                 mFunction = Album.FUNCTION_CHOICE_IMAGE;
                 break;
-            case 2:
+            case "视频":
                 mFunction = Album.FUNCTION_CHOICE_VIDEO;
                 break;
         }
