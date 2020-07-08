@@ -78,6 +78,10 @@ public class BackgroundSearchActivity extends BaseActivity {
     HorizontalScrollView horizontalScrollView;
 
 
+    @BindView(R.id.iv_back)
+    ImageView iv_back;
+
+
     private ArrayList<Fragment> list = new ArrayList<>();
     private ArrayList<TextView> listTv = new ArrayList<>();
     private ArrayList<View> listView = new ArrayList<>();
@@ -132,14 +136,20 @@ public class BackgroundSearchActivity extends BaseActivity {
             ed_text.setText("");
         });
         hideResultView(true);
+        iv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 
 
     private void hideResultView(boolean isHide) {
-        if(isHide){
+        if (isHide) {
             viewPager.setVisibility(View.INVISIBLE);
             horizontalScrollView.setVisibility(View.GONE);
-        }else{
+        } else {
             viewPager.setVisibility(View.VISIBLE);
             horizontalScrollView.setVisibility(View.VISIBLE);
         }
@@ -198,8 +208,6 @@ public class BackgroundSearchActivity extends BaseActivity {
         }
 
     }
-
-
 
 
     /**

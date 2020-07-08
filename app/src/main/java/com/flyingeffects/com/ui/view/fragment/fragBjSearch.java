@@ -13,6 +13,7 @@ import com.flyingeffects.com.adapter.main_recycler_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.SendSearchText;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
@@ -21,6 +22,7 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.PreviewActivity;
+import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -97,7 +99,24 @@ public class fragBjSearch extends BaseFragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-            Intent intent = new Intent(getActivity(), PreviewActivity.class);
+//            Intent intent = new Intent(getActivity(), PreviewActivity.class);
+//            if (isFrom == 0) {
+//                //模板页面
+//                intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
+//            } else {
+//                //背景页面
+//                intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+//            }
+//            intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
+//            startActivity(intent);
+
+
+            Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
+            ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
+            intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
+            intent.putExtra("templateId", "");//直接存入被序列化的对象实例
+            intent.putExtra("position", position);
+            intent.putExtra("nowSelectPage", selectPage);
             if (isFrom == 0) {
                 //模板页面
                 intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
@@ -105,8 +124,9 @@ public class fragBjSearch extends BaseFragment {
                 //背景页面
                 intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
             }
-            intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
             startActivity(intent);
+
+
         });
     }
 
@@ -157,7 +177,7 @@ public class fragBjSearch extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        LogUtil.d("OOM","onDestroy");
+        LogUtil.d("OOM", "onDestroy");
         EventBus.getDefault().unregister(this);
     }
 
@@ -220,13 +240,13 @@ public class fragBjSearch extends BaseFragment {
 
     @Subscribe
     public void onEventMainThread(SendSearchText event) {
-        if(getActivity()!=null){
+        if (getActivity() != null) {
             //搜索了内容
             searchText = event.getText();
             isRefresh = true;
             selectPage = 1;
             requestFagData(true);
-        }else{
+        } else {
             ToastUtil.showToast("目标页面已销毁");
         }
 
