@@ -1418,7 +1418,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public void onEventMainThread(showAdCallback event) {
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             VideoAdManager videoAdManager = new VideoAdManager();
-            videoAdManager.showVideoAd(this, AdConfigs.AD_save_video, new VideoAdCallBack() {
+            String adId;
+            if(BaseConstans.getOddNum()){
+                adId= AdConfigs.AD_save_video;
+            }else{
+                adId= AdConfigs.AD_save_video2;
+            }
+            videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
                 @Override
                 public void onVideoAdSuccess() {
                     statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "video_ad_alert_request_sucess");

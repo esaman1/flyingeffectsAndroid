@@ -320,6 +320,21 @@ public class BaseConstans {
         return spUtil.getBoolean("isFirstUseDownAndUp", true);
     }
 
+
+    public static void setOddNum() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        boolean oddNum=spUtil.getBoolean("oddNum",true);
+        spUtil.putBoolean("oddNum", !oddNum);
+    }
+
+    public static boolean getOddNum() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+       return spUtil.getBoolean("oddNum", true);
+    }
+
+
+
+
     public static void setFirstUseDownAndUpAct() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putBoolean("isFirstUseDownAndUp",false);
@@ -399,5 +414,10 @@ public class BaseConstans {
             return spUtil.getInt("feedMinNum", 5);
         }
     }
+
+
+
+
+
 
 }
