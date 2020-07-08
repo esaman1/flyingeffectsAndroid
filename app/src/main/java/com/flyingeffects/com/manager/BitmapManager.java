@@ -160,13 +160,10 @@ public class BitmapManager {
             out.flush();
             out.close();
             callback.isSuccess(true);
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             callback.isSuccess(false);
             e.printStackTrace();
-        } catch (IOException e) {
-            callback.isSuccess(false);
-            e.printStackTrace();
-        } finally {
+        }  finally {
             if (out != null) {
                 try {
                     out.close();

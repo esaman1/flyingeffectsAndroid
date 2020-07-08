@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.utils.ToastUtil;
 
 
 /**
@@ -29,6 +31,7 @@ public class ReportActivity extends Activity {
         ll_test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ToastUtil.showToast("提交成功");
                 finish();
             }
         });

@@ -294,6 +294,20 @@ public class BaseConstans {
     }
 
 
+
+    public static String getminapp_share_title() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getString("minapp_share_title","我也会了！用飞闪就能制作：");
+    }
+
+    public static void setminapp_share_title(String str) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+         spUtil.putString("minapp_share_title", str);
+    }
+
+
+
+
     public static boolean isFirstOpenApp() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getBoolean("isFirstOpen", true);

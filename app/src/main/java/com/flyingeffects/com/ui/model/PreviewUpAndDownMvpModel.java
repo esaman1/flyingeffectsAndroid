@@ -209,7 +209,7 @@ public class PreviewUpAndDownMvpModel {
                 UMMin(url);
         umMin.setThumb(image);
         umMin.setUserName("gh_4161ca2837f7");
-        umMin.setTitle(fag_template_item.getTitle());
+        umMin.setTitle(BaseConstans.getminapp_share_title()+fag_template_item.getTitle());
         new ShareAction((Activity) context)
                 .withMedia(umMin)
                 .setPlatform(SHARE_MEDIA.WEIXIN)
