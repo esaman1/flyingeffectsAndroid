@@ -48,6 +48,15 @@ public class StimulateControlManage {
                                 boolean video_ad_open = obArray.getBoolean("video_ad_open");
                                 LogUtil.d("OOM","当前需要激励视频"+video_ad_open);
                                 BaseConstans.setIncentiveVideo(video_ad_open);
+
+                                boolean save_video_ad = obArray.getBoolean("save_video_ad");
+                                LogUtil.d("OOM","当前保存需要激励视频"+save_video_ad);
+                                BaseConstans.setSave_video_ad(save_video_ad);
+
+
+
+
+
                             }
                         }
                     }

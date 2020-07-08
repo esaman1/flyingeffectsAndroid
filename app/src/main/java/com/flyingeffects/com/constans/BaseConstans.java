@@ -235,6 +235,22 @@ public class BaseConstans {
     }
 
 
+    /**
+     * description :保存的时候是否显示激励视频2,和IncentiveVideo 一起，只針對保存頁面
+     * creation date: 2020/6/11
+     * user : zhangtongju
+     */
+    public static void setSave_video_ad(boolean isShowIncentiveVideo) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putBoolean("save_video_ad", isShowIncentiveVideo);
+    }
+
+    public static boolean getSave_video_ad() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getBoolean("save_video_ad", true);
+    }
+
+
     public static boolean getIsNewUser() {
 //        if(isTitokChannel){
 //            return false;

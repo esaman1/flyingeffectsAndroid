@@ -469,6 +469,10 @@ public class WelcomeActivity extends BaseActivity {
 
                         boolean video_ad_open = obArray.getBoolean("video_ad_open");
                         BaseConstans.setIncentiveVideo(video_ad_open);
+
+
+                        boolean save_video_ad = obArray.getBoolean("save_video_ad");
+                        BaseConstans.setSave_video_ad(save_video_ad);
                     }
                 }
             }
