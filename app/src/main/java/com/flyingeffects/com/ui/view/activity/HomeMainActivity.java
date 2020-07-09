@@ -362,6 +362,7 @@ public class HomeMainActivity extends FragmentActivity {
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("ExtractFrame"));
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("DownVideo"));
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("toHawei"));
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("zdyVideoCut"));
         }
 
     }

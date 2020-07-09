@@ -73,9 +73,12 @@ public class MediaUiModel2 extends MediaUiModel {
     //最后渲染出来模板大小
     private Size temSize;
 
-    public MediaUiModel2(String folder, JSONObject ui, Bitmap bitmap, AssetDelegate delegate, Size size, Size temSize) throws JSONException {
+    private float fps;
+
+    public MediaUiModel2(String folder, JSONObject ui, Bitmap bitmap, AssetDelegate delegate, Size size, Size temSize,float fps) throws JSONException {
         super(folder, ui, delegate, size);
         mBitmap = bitmap;
+        this.fps=fps;
         this.temSize = temSize;
         int[] editSize = getIntArray(ui.getJSONArray("editSize"));
         mClipWidth = editSize[0];
@@ -251,10 +254,13 @@ public class MediaUiModel2 extends MediaUiModel {
                 Matrix matrix = new Matrix(mMatrix);
                 matrix.postConcat(mInverseMatrix);
                 SXCompositor sxCompositor = new SXCompositor(mVideoPath, path, matrix, !mMute);
+                Log.d("OOM","mVideoPath="+mVideoPath);
                 sxCompositor.setWidth(mClipWidth);
                 sxCompositor.setHeight(mClipHeight);
                 sxCompositor.setStartTime(mStartTime);
-                sxCompositor.setDuration(mDuration);
+                float test=mDuration/(float)fps;
+                Log.d("OOM","需要裁剪的时长为"+test);
+                sxCompositor.setDuration(test);
                 sxCompositor.setBitrateFactor(1f);
                 sxCompositor.setRenderListener(new SXRenderListener() {
                     @Override
@@ -277,7 +283,7 @@ public class MediaUiModel2 extends MediaUiModel {
                     }
                 });
 
-                Log.d("oom", "视频地址为" + mVideoPath);
+                Log.d("OOM", "视频地址为" + mVideoPath);
                 sxCompositor.run();
                 lastSavePath = path;
                 isVideoSlide = false;

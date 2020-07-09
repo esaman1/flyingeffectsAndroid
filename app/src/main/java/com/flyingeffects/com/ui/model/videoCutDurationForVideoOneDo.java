@@ -108,8 +108,8 @@ public class videoCutDurationForVideoOneDo {
 
     public void CutVideoForDrawPadAllExecute2(Context context, float duration, String path, long startDurtion, isSuccess callback) {
         try {
-            VideoInfo   videoInfo = getVideoInfo.getInstance().getRingDuring(path);
-            long allDuration=videoInfo.getDuration();
+//            VideoInfo   videoInfo = getVideoInfo.getInstance().getRingDuring(path);
+//            long allDuration=videoInfo.getDuration();
             execute = new DrawPadAllExecute2(context, 720, 1280, (long) (duration * 1000));
             execute.setFrameRate(20);
             execute.setEncodeBitrate(5 * 1024 * 1024);

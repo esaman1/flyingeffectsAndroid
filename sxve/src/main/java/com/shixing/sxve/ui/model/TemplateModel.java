@@ -79,12 +79,12 @@ public class TemplateModel {
                 //可以替换背景功能
                 if (!TextUtils.isEmpty(ui_extra) && ui_extra.equals("BG")) {
                     HasBj = true;
-                    bgModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor,null);
+                    bgModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor,null,fps);
                     int group = bgModel.ui.group;
                     if (groupSize < group)
                         groupSize = group; //得到最大的group 的值，group 就是位置，但这里最大值是没包括背景的
                 } else {
-                    AssetModel assetModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor,temSize);
+                    AssetModel assetModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor,temSize, fps);
                     mAssets.add(assetModel);
 
                     //单独针对mask 图层

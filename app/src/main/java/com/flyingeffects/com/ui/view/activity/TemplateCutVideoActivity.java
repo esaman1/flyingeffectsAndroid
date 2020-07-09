@@ -267,6 +267,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
                 if(!nowActivityIsDestroy){
                     progressNowAnim.openProgressDialog();
                 }
+                LogUtil.d("OOM","needDuration"+needDuration);
                 new Thread(() -> videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(TemplateCutVideoActivity.this, needDuration * 1000, videoPath, mStartDuration, new videoCutDurationForVideoOneDo.isSuccess() {
                     @Override
                     public void progresss(int progress) {
@@ -278,7 +279,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
                     @Override
                     public void isSuccess(boolean isSuccess, String path) {
-
+                LogUtil.d("OOM","裁剪的后地址为"+path);
                         if (isSuccess) {
                             if (v.getId() == R.id.tv_kt) {
                                 gotoMattingVideo(path);

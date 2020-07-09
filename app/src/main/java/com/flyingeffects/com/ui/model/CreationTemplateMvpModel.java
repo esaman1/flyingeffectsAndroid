@@ -616,7 +616,7 @@ public class CreationTemplateMvpModel {
                         Glide.with(BaseApplication.getInstance())
                                 .asBitmap()
                                 .load(path)
-                                .submit(720, 1280);
+                                .submit();
                 try {
                     originalBitmap = futureTarget.get();
                     Bitmap finalOriginalBitmap = originalBitmap;

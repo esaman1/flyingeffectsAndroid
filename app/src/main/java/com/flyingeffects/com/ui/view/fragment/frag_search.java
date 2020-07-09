@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.view.fragment;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -99,12 +101,13 @@ public class frag_search extends BaseFragment {
     protected void initView() {
         //键盘的搜索按钮
         ed_text.setOnEditorActionListener((v, actionId, event) -> {
+
+            LogUtil.d("OOM","setOnEditorActionListener");
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
                 nowShowText = ed_text.getText().toString().trim();
                 if (!nowShowText.equals("")) {
-                    hideResultView(false);
                     EventBus.getDefault().post(new SendSearchText(nowShowText));
-
+                    hideResultView(false);
                 }
                 return true;
             }
@@ -135,6 +138,8 @@ public class frag_search extends BaseFragment {
         iv_delete.setOnClickListener(view -> {
             ed_text.setText("");
         });
+
+
         hideResultView(true);
     }
 
@@ -169,6 +174,7 @@ public class frag_search extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        LogUtil.d("OOM","onResume");
         requestKeywordList();
         hideResultView(true);
         listTv.clear();

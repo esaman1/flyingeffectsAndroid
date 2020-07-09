@@ -59,6 +59,7 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MattingVideoEnity;
+import com.flyingeffects.com.view.NoSlidingViewPager;
 import com.nineton.ntadsdk.itr.VideoAdCallBack;
 import com.nineton.ntadsdk.manager.VideoAdManager;
 import com.shixing.sxve.ui.AssetDelegate;
@@ -230,7 +231,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     @BindView(R.id.template_viewPager)
-    ViewPager viewPager;
+    NoSlidingViewPager viewPager;
 
 
     @BindView(R.id.template_tablayout)

@@ -293,6 +293,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     protected void onResume() {
         super.onResume();
+        WaitingDialog.closePragressDialog();
         GSYVideoManager.onResume();
         isPause = false;
     }
@@ -624,6 +625,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         String videoTime = templateItem.getVideotime();
                         if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
                             float needVideoTime = Float.parseFloat(videoTime);
+                            LogUtil.d("OOM","needVideoTime="+needVideoTime);
                             Intent intoCutVideo = new Intent(PreviewUpAndDownActivity.this, TemplateCutVideoActivity.class);
                             intoCutVideo.putExtra("needCropDuration", needVideoTime);
                             intoCutVideo.putExtra("templateName", templateItem.getTitle());

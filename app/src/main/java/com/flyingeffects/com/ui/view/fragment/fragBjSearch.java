@@ -222,7 +222,7 @@ public class fragBjSearch extends BaseFragment {
                     allData.clear();
                 }
                 if (isRefresh && data.size() == 0) {
-                    ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
+                //    ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
                     statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none", searchText);
                 }
                 if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据

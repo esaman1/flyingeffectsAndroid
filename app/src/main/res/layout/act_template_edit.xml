@@ -195,7 +195,7 @@
             android:orientation="vertical"
             android:visibility="gone">
 
-            <androidx.viewpager.widget.ViewPager
+            <com.flyingeffects.com.view.NoSlidingViewPager
                 android:id="@+id/template_viewPager"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"

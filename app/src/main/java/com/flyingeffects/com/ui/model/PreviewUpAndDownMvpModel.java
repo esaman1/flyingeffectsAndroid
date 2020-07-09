@@ -211,7 +211,7 @@ public class PreviewUpAndDownMvpModel {
      */
     private void shareToApplet(new_fag_template_item fag_template_item) {
         UMImage image = new UMImage(context, fag_template_item.getImage());//分享图标
-        String url = "pages/detail/detail?id=" + fag_template_item.getId();
+        String url = "/pages/background/background?path=detail&from_path=app&id=" + fag_template_item.getId();
         LogUtil.d("OOM", "小程序的地址为" + url);
         UMMin umMin = new
                 UMMin(url);
@@ -241,7 +241,7 @@ public class PreviewUpAndDownMvpModel {
          */
         @Override
         public void onResult(SHARE_MEDIA platform) {
-            ToastUtil.showToast("success");
+            ToastUtil.showToast("分享成功");
         }
 
         /**
