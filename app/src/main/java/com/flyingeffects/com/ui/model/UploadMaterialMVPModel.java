@@ -637,6 +637,7 @@ public class UploadMaterialMVPModel {
         long cropDurationMs = (long) (getDuration() * (cropEndRatio - cropStartRatio));
         //裁剪时长限制
         if (cropDurationMs > maxCropDurationMs) {
+            dialog.closePragressDialog();
             ToastUtil.showToast("时长超过1分钟，请重新选择");
             return;
         } else if (cropDurationMs < minCropDurationMs) {
