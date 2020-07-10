@@ -259,7 +259,7 @@ public class MediaUiModel2 extends MediaUiModel {
                 sxCompositor.setHeight(mClipHeight);
                 sxCompositor.setStartTime(mStartTime);
                 float test=mDuration/(float)fps;
-                Log.d("OOM","需要裁剪的时长为"+test);
+                Log.d("OOM","需要裁剪的时长为"+test+1);
                 sxCompositor.setDuration(test);
                 sxCompositor.setBitrateFactor(1f);
                 sxCompositor.setRenderListener(new SXRenderListener() {

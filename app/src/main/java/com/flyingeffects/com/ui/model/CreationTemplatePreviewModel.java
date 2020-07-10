@@ -328,17 +328,18 @@ public class CreationTemplatePreviewModel {
      * creation date: 2020/6/28
      * user : zhangtongju
      */
+    float allDuration;
     public void toSaveVideo(boolean hasShowStimulateAd) {
         long cropDurationMs = (long) (getDuration() * (cropEndRatio - cropStartRatio));
         if (cropDurationMs == realityDuration) {
             //不需要裁剪
             callback.isSaveToAlbum(videoPath, hasShowStimulateAd);
         } else {
-            realityDuration=realityDuration*1000;
+            allDuration=realityDuration*1000;
             WaitingDialog_progress dialog = new WaitingDialog_progress(mContext);
             dialog.openProgressDialog();
             //需要裁剪
-            videoCutDurationForVideoOneDo.getInstance().startCutDurtion(videoPath, Math.round(cropStartRatio * realityDuration), Math.round(cropEndRatio * realityDuration), new videoCutDurationForVideoOneDo.isSuccess() {
+            videoCutDurationForVideoOneDo.getInstance().startCutDurtion(videoPath, Math.round(cropStartRatio * allDuration), Math.round(cropEndRatio * allDuration), new videoCutDurationForVideoOneDo.isSuccess() {
                 @Override
                 public void progresss(int progress) {
                     if (progress > 100) {
