@@ -582,6 +582,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @Override
     public void ChangeMaterialCallbackForVideo(String originalVideoPath, String path, boolean needMatting) {
         //可能之前没勾选抠图，所以originalPath 为null，这里需要null 判断
+        LogUtil.d("OOM","进度到了ChangeMaterialCallbackForVideo"+"needMatting="+needMatting);
         if (needMatting) {
             if (originalPath == null) {
                 originalPath = new ArrayList<>();
@@ -602,9 +603,19 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             if (originalPath != null && originalPath.size() != 0) {
                 presenter.getMattingVideoCover(originalPath.get(0));
                 mTemplateModel.cartoonPath = imgPath.get(0);  //设置灰度图
+//
+//                //todo  2020-7-10
+//                if(!switch_button.isChecked()){
+//                    new Handler().postDelayed(() -> switch_button.setChecked(true),500);
+//                }
+
+
             } else {
                 waitingDialogProgress.openProgressDialog();
             }
+
+
+
         } else {
             //不需要抠图
             originalPath = null;
@@ -1187,6 +1198,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 ChangeMaterialCallbackForVideo(event.getOriginalPath(), event.getMattingPath(), true);
                 presenter.getButtomIcon(event.getOriginalPath());
                 changeMaterialMusic(event.getMattingPath());
+//                if(!switch_button.isChecked()){
+//                    new Handler().postDelayed(() -> switch_button.setChecked(true),500);
+//                }
+//                LogUtil.d("OOM","重新选择了抠图");
             }
         }
         templateThumbForMusic.findViewById(R.id.ll_0).setVisibility(View.VISIBLE);
