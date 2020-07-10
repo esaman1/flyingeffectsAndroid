@@ -86,8 +86,8 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
     }
 
     @Override
-    public void showNewData(List<new_fag_template_item> allData) {
-        previewUpAndDownMvpView.showNewData(allData);
+    public void showNewData(List<new_fag_template_item> allData,boolean isRefresh) {
+        previewUpAndDownMvpView.showNewData(allData,isRefresh);
     }
 
     @Override

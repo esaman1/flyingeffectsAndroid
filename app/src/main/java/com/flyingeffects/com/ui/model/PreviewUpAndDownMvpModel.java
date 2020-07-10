@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -21,10 +20,7 @@ import android.widget.Toast;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.bytedance.sdk.openadsdk.AdSlot;
-import com.bytedance.sdk.openadsdk.TTAdManager;
 import com.bytedance.sdk.openadsdk.TTAdNative;
-import com.bytedance.sdk.openadsdk.TTDrawFeedAd;
-import com.bytedance.sdk.openadsdk.TTFeedAd;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
@@ -364,7 +360,6 @@ public class PreviewUpAndDownMvpModel {
 
                         @Override
                         public void onClickRetry() {
-//                            TToast.show(DrawNativeExpressVideoActivity.this, " onClickRetry !");
                             Log.d("drawss", "onClickRetry!");
                         }
                     });
@@ -387,14 +382,6 @@ public class PreviewUpAndDownMvpModel {
 
                         @Override
                         public void onRenderSuccess(View view, float width, float height) {
-//                            TToast.show(DrawNativeExpressVideoActivity.this, "渲染成功");
-//                            int random = (int) (Math.random() * 100);
-//                            int index = random % videos.length;
-//                            if (index == 0){
-//                                index++;
-//                            }
-//                            datas.add(index, new Item(TYPE_AD_ITEM, ad, -1, -1));
-//                            mAdapter.notifyDataSetChanged();
                         }
                     });
                     ad.render();
@@ -405,46 +392,6 @@ public class PreviewUpAndDownMvpModel {
         });
     }
 
-
-//    public void requestAD(){
-//        //step4:创建feed广告请求类型参数AdSlot,具体参数含义参考文档
-//        AdSlot adSlot = new AdSlot.Builder()
-//                .setCodeId("945179587")
-//                .setSupportDeepLink(true)
-//                .setImageAcceptedSize(1080, 1920)
-//                .setAdCount(1) //请求广告数量为1到3条
-//                .build();
-//        //step5:请求广告，调用feed广告异步请求接口，加载到广告后，拿到广告素材自定义渲染
-//        mTTAdNative.loadFeedAd(adSlot, new TTAdNative.FeedAdListener() {
-//            @Override
-//            public void onError(int code, String message) {
-//                LogUtil.d("OOM","loadFeedAd+code="+code+";message="+message);
-//            }
-//
-//            @Override
-//            public void onFeedAdLoad(List<TTFeedAd> ads) {
-//
-//                if (ads == null || ads.isEmpty()) {
-//                    LogUtil.d("OOM","on FeedAdLoaded: ad is null!");
-//                    return;
-//                }
-//
-//
-////                for (int i = 0; i < LIST_ITEM_COUNT; i++) {
-////                    mData.add(null);
-////                }
-//
-////                int count = mData.size();
-////                for (TTFeedAd ad : ads) {
-////                    ad.setActivityForDownloadApp((Activity) context);
-////                    int random = (int) (Math.random() * LIST_ITEM_COUNT) + count - LIST_ITEM_COUNT;
-////                    mData.set(random, ad);
-////                }
-////                myAdapter.notifyDataSetChanged();
-//                callback.resultAd(ads);
-//            }
-//        });
-//    }
 
     /**
      * description ：
@@ -463,7 +410,6 @@ public class PreviewUpAndDownMvpModel {
         } else {
             params.put("template_type", "2");
         }
-
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
         if (fromToMineCollect) {
@@ -493,8 +439,7 @@ public class PreviewUpAndDownMvpModel {
                     smartRefreshLayout.setEnableLoadMore(false);
                 }
                 allData.addAll(data);
-                callback.showNewData(allData);
-//                isShowData(listData);
+                callback.showNewData(allData,isRefresh);
             }
         }, "fagBjItem", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }

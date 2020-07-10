@@ -21,6 +21,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.model.FromToTemplate;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.MarqueTextView;
 import com.flyingeffects.com.view.SampleCoverVideo;
@@ -67,6 +68,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     @Override
     protected void convert(final BaseViewHolder helper, final new_fag_template_item item) {
         int offset = helper.getLayoutPosition();
+        LogUtil.d("OOM","更新了adapter，更新的位置为"+offset);
         ad = item.getAd();
         video_layout = helper.getView(R.id.video_layout);
         videoPlayer = helper.getView(R.id.video_item_player);

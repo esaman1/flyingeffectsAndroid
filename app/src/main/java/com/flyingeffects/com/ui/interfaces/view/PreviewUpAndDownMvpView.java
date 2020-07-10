@@ -17,7 +17,7 @@ public interface PreviewUpAndDownMvpView {
 
     void getTemplateFileSuccess(String filePath);
 
-    void showNewData(List<new_fag_template_item> allData);
+    void showNewData(List<new_fag_template_item> allData,boolean isRefresh);
 
     void resultAd(List<TTNativeExpressAd> ads);
 }
