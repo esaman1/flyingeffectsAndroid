@@ -237,7 +237,7 @@ public class PreviewUpAndDownMvpModel {
          */
         @Override
         public void onResult(SHARE_MEDIA platform) {
-            ToastUtil.showToast("分享成功");
+//            ToastUtil.showToast("分享成功");
         }
 
         /**

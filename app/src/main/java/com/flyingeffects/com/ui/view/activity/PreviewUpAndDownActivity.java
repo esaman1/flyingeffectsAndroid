@@ -199,23 +199,25 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                LogUtil.d("OOM", "当前位置为"+position);
-                adapter.NowPreviewChooseItem(position);
-                adapter.notifyItemChanged(position);
-                nowChoosePosition = position;
-                //判断当前滑动状态
-                nowSlideOrientationIsUp = nowChoosePosition < lastChoosePosition;
-                refeshData();
-                if (position >= insertMaxNum || position <= insertMinNum) {
-                    Presenter.requestAD();
-                    LogUtil.d("OOM", "开始请求广告position=" + position + "insertMaxNum=" + insertMaxNum + "insertMinNum=" + insertMinNum);
+                if(position!=-1){
+                    LogUtil.d("OOM", "当前位置为"+position);
+                    adapter.NowPreviewChooseItem(position);
+                    adapter.notifyItemChanged(position);
+                    nowChoosePosition = position;
+                    //判断当前滑动状态
+                    nowSlideOrientationIsUp = nowChoosePosition < lastChoosePosition;
+                    refeshData();
+                    if (position >= insertMaxNum || position <= insertMinNum) {
+                        Presenter.requestAD();
+                        LogUtil.d("OOM", "开始请求广告position=" + position + "insertMaxNum=" + insertMaxNum + "insertMinNum=" + insertMinNum);
+                    }
+                    int allDataCount = allData.size();
+                    if (position == allDataCount - 3) {
+                        LogUtil.d("OOM", "请求更多数据");
+                        Presenter.requestMoreData();
+                    }
+                    lastChoosePosition = position;
                 }
-                int allDataCount = allData.size();
-                if (position == allDataCount - 3) {
-                    Presenter.requestMoreData();
-                    LogUtil.d("OOM", "请求更多数据");
-                }
-                lastChoosePosition = position;
             }
 
             @Override
@@ -256,10 +258,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * user : zhangtongju
      */
     private void refeshData() {
-        templateItem = allData.get(nowChoosePosition);
-        defaultnum = templateItem.getDefaultnum();
-        is_picout = templateItem.getIs_picout();
-        nowCollectType = templateItem.getIs_collection();
+        if(nowChoosePosition>=0&&nowChoosePosition<allData.size()){
+            templateItem = allData.get(nowChoosePosition);
+            defaultnum = templateItem.getDefaultnum();
+            is_picout = templateItem.getIs_picout();
+            nowCollectType = templateItem.getIs_collection();
+        }
     }
 
 
@@ -450,8 +454,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      */
     @Override
     public void showNewData(List<new_fag_template_item> newAllData, boolean isRefresh) {
-        allData .clear();
-        allData.addAll(newAllData);
+//        allData .clear();
+//        allData.addAll(newAllData);
+        allData=newAllData;
         if (isRefresh) {
             isNeedAddaD = false;
             randomPosition = 0;
@@ -467,6 +472,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             }
         }
         adapter.notifyDataSetChanged();
+//        adapter.notifyItemChanged(randomPosition);
     }
 
 
@@ -491,14 +497,14 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         int MaxNum = BaseConstans.getFeedShowPosition(true);
         Random random = new Random();
         randomPosition = random.nextInt(MaxNum) % (MaxNum - minNum + 1) + minNum;
-//        LogUtil.d("OOM", "minNum=" + minNum + "MaxNum=" + MaxNum + "当前随机数=" + randomPosition);
+        LogUtil.d("OOM", "minNum=" + minNum + "MaxNum=" + MaxNum + "当前随机数=" + randomPosition);
         //需要判断是上滑还是下滑
         if (nowSlideOrientationIsUp) {
             //上滑的情况,要考虑数组改变的情况，比如，广告插入前面去了，那么当前的值应该也要做出改变，当前的位置应该+1
             randomPosition = insertMinNum - randomPosition;
             insertMinNum = randomPosition;
-//            LogUtil.d("OOM", "上滑的情况=" + randomPosition);
-//            LogUtil.d("OOM", "需要去的位置=" + randomPosition + "insertMinNum=" + insertMinNum + "当前随机数=" + randomPosition);
+            LogUtil.d("OOM", "上滑的情况=" + randomPosition);
+            LogUtil.d("OOM", "需要去的位置=" + randomPosition + "insertMinNum=" + insertMinNum + "当前随机数=" + randomPosition);
             if (randomPosition > 1) {
                 new_fag_template_item item = new new_fag_template_item();
                 item.setAd(ad);
@@ -524,7 +530,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 new_fag_template_item item = new new_fag_template_item();
                 item.setAd(ad);
                 allData.add(randomPosition, item);
-                adapter.notifyDataSetChanged();
+//                adapter.notifyItemChanged(randomPosition);
+//                adapter.notifyItemChanged(randomPosition+1);
+//                adapter.notifyDataSetChanged();
             } else {
                 //在第二页了
                 isNeedAddaD = true;
