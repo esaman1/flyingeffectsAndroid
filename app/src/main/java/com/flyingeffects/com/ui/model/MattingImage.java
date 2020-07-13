@@ -137,6 +137,28 @@ public class MattingImage {
     }
 
 
+
+    /**
+     * description ：爱字幕的单线抠图
+     * creation date: 2020/7/13
+     * user : zhangtongju
+     */
+    public static final Bitmap mattingSingleImg(Bitmap bitmap) {
+        int mBitmapW = bitmap.getWidth();
+        int mBitmapH = bitmap.getHeight();
+        SegJni.nativeCreateImageBuffer(mBitmapW, mBitmapH);
+
+        byte segs[] = new byte[mBitmapH * mBitmapW];
+        byte[] rgba = ConUtil.getPixelsRGBA(bitmap);
+
+        SegJni.nativeSegImage(rgba, mBitmapW, mBitmapH, segs, false);
+        SegJni.nativeReleaseImageBuffer();
+        return  SegResultHandleManage.setBitmapAlpha(bitmap, segs);
+    }
+
+
+
+
     public void mattingImageForMultipleForLucency(Bitmap OriginBitmap, int index, mattingStatus callback) {
         if (bpList.size() >= BaseConstans.THREADCOUNT) {
             bpList.remove(0);

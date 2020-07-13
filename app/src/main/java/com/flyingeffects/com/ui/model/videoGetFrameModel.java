@@ -139,16 +139,14 @@ public class videoGetFrameModel {
             //设置提取多少帧
             mExtractFrame.setExtractSomeFrame(allFrame);
             mExtractFrame.setOnExtractCompletedListener(v -> {
-                LogUtil.d("OOM2", "提取完成" + allFrame);
-                for (int i = 1; i < BaseConstans.THREADCOUNT; i++) {
-                    //最后需要补的帧
-                    frameCount++;
-                    downImageForBitmap(null, frameCount);
-                }
-                LogUtil.d("OOM2", "frameCount的值为" + frameCount);
-//                    dialog.closePragressDialog();
-                SegJni.nativeReleaseImageBuffer();
-//                SegJni.nativeReleaseSegHandler();
+//                LogUtil.d("OOM2", "提取完成" + allFrame);
+//                for (int i = 1; i < BaseConstans.THREADCOUNT; i++) {
+//                    //最后需要补的帧
+//                    frameCount++;
+//                    downImageForBitmap(null, frameCount);
+//                }
+//                LogUtil.d("OOM2", "frameCount的值为" + frameCount);
+//                SegJni.nativeReleaseImageBuffer();
                 startExecute();
             });
             //设置处理进度监听.
@@ -165,8 +163,10 @@ public class videoGetFrameModel {
 //                        progress = (int) ((frameCount / (float) allFrame) * 100);
 //                        handler.sendEmptyMessage(1);
 //                    });
-                LogUtil.d("OOM2", frameCount + "帧");
-                downImageForBitmap(bmp, frameCount);
+//                LogUtil.d("OOM2", frameCount + "帧");
+//                downImageForBitmap(bmp, frameCount);
+                String fileName = nowUseFile + File.separator + frameCount + ".png";
+                BitmapManager.getInstance().saveBitmapToPathForJpg(bmp, fileName);
             });
             frameCount = 0;
             //开始执行. 或者你可以从指定地方开始解码.mExtractFrame.start(10*1000*1000);则从视频的10秒处开始提取.

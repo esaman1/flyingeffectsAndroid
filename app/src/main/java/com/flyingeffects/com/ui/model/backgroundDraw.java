@@ -391,6 +391,7 @@ public class backgroundDraw {
         LogUtil.d("OOM", "第一张图片地址为" + getMattingList.get(0).getPath());
         Bitmap bp = BitmapFactory.decodeFile(getMattingList.get(0).getPath());
         LogUtil.d("OOM", "图片宽为" + bp.getWidth());
+        bp= MattingImage.mattingSingleImg(bp);
         BitmapLayer bpLayer = execute.addBitmapLayer(bp);
         bpLayer.setId(100+i);
 
@@ -501,6 +502,7 @@ public class backgroundDraw {
                     LogUtil.d("CanvasRunnable", "addCanvasRunnable=" + preTime + "currentTime=" + currentTime + "nowChooseImageIndex=" + nowChooseImageIndex);
                     nowProgressTime[0] = preTime + nowProgressTime[0];
                     Bitmap firstBitmap1 = BitmapFactory.decodeFile(getMattingList.get(nowChooseImageIndex[0]).getPath());
+                    firstBitmap1= MattingImage.mattingSingleImg(firstBitmap1);
                     bpLayer.switchBitmap(firstBitmap1);
                 } else {
                     LogUtil.d("OOM", "隐藏当前图层");
