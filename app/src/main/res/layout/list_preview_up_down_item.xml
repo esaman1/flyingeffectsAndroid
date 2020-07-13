@@ -91,12 +91,19 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.85" />
 
-    <TextView
+    <com.flyingeffects.com.view.MarqueTextView
         android:id="@+id/tv_writer_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:textColor="@color/white"
+        android:layout_marginEnd="50dp"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="@id/iv_writer"
         app:layout_constraintEnd_toEndOf="parent"
@@ -107,9 +114,8 @@
 
     <com.flyingeffects.com.view.MarqueTextView
         android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="130dp"
         android:layout_marginTop="@dimen/dp_10"
         android:ellipsize="marquee"
         android:focusable="true"

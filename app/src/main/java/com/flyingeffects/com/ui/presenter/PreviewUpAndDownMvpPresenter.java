@@ -37,6 +37,10 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
     }
 
 
+    public void requestTemplateDetail(String templateId){
+        previewUpAndDownMvpModel.requestTemplateDetail(templateId);
+    }
+
 
 
 
@@ -93,6 +97,11 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
     @Override
     public void resultAd(List<TTNativeExpressAd> ads) {
         previewUpAndDownMvpView.resultAd(ads);
+    }
+
+    @Override
+    public void getTemplateLInfo(new_fag_template_item data) {
+        previewUpAndDownMvpView.getTemplateLInfo(data);
     }
 
     public void requestUserInfo(){

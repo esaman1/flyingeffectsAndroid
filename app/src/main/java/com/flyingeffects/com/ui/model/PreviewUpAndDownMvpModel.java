@@ -133,6 +133,33 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
+    public void requestTemplateDetail(String templateId) {
+        if(!TextUtils.isEmpty(templateId)){
+            HashMap<String, String> params = new HashMap<>();
+            params.put("template_id", templateId);
+            // 启动时间
+            Observable ob = Api.getDefault().templateLInfo(BaseConstans.getRequestHead(params));
+            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<new_fag_template_item>(context) {
+                @Override
+                protected void _onError(String message) {
+//                ToastUtil.showToast(message);
+                    LogUtil.d("OOM", "requestTemplateDetail-error=" + message);
+                }
+
+                @Override
+                protected void _onNext(new_fag_template_item data) {
+
+                    callback.getTemplateLInfo(data);
+
+                }
+            }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+
+        }
+    }
+
+
+
+
     private WaitingDialog_progress downProgressDialog;
     private BottomSheetDialog bottomSheetDialog;
 
@@ -701,6 +728,8 @@ public class PreviewUpAndDownMvpModel {
                         isDownZipUrl = false;
                         Observable.just(e).subscribeOn(AndroidSchedulers.mainThread()).subscribe(e1 -> new Handler().post(() -> ToastUtil.showToast("下载异常，请重试")));
                         LogUtil.d("onVideoAdError", "Exception=" + e.getMessage());
+//                        ToastUtil.showToast(e.getMessage());
+                        Toast.makeText(context,e.getMessage(),Toast.LENGTH_LONG).show();
                     }
                     super.run();
                 }

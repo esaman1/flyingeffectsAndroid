@@ -24,4 +24,6 @@ public interface PreviewUpAndDownMvpCallback {
 
     void resultAd(List<TTNativeExpressAd> ads);
 
+    void getTemplateLInfo(new_fag_template_item data);
+
 }

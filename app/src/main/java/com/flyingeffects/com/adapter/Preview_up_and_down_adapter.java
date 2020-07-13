@@ -43,7 +43,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     private ImageView iv_zan;
     private ImageView iv_writer;
     //    private ImageView iv_video_play;
-    private TextView tv_writer_name;
+    private MarqueTextView tv_writer_name;
     private TextView tv_title;
     private MarqueTextView tv_describe;
     private ImageView iv_show_cover;

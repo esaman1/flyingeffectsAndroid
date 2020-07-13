@@ -199,8 +199,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                if(position!=-1){
-                    LogUtil.d("OOM", "当前位置为"+position);
+                if (position != -1) {
+                    LogUtil.d("OOM", "当前位置为" + position);
                     adapter.NowPreviewChooseItem(position);
                     adapter.notifyItemChanged(position);
                     nowChoosePosition = position;
@@ -217,6 +217,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         Presenter.requestMoreData();
                     }
                     lastChoosePosition = position;
+
+                    Presenter.requestTemplateDetail(templateItem.getId());
                 }
             }
 
@@ -258,7 +260,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * user : zhangtongju
      */
     private void refeshData() {
-        if(nowChoosePosition>=0&&nowChoosePosition<allData.size()){
+        if (nowChoosePosition >= 0 && nowChoosePosition < allData.size()) {
             templateItem = allData.get(nowChoosePosition);
             defaultnum = templateItem.getDefaultnum();
             is_picout = templateItem.getIs_picout();
@@ -456,7 +458,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void showNewData(List<new_fag_template_item> newAllData, boolean isRefresh) {
 //        allData .clear();
 //        allData.addAll(newAllData);
-        allData=newAllData;
+        allData = newAllData;
         if (isRefresh) {
             isNeedAddaD = false;
             randomPosition = 0;
@@ -511,7 +513,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 allData.add(randomPosition, item);
                 LogUtil.d("OOM", "广告插入的位置=" + randomPosition);
                 adapter.notifyItemChanged(randomPosition);
-                adapter.notifyItemChanged(randomPosition+1);
+                adapter.notifyItemChanged(randomPosition + 1);
             } else {
                 //否则永远都是第一个
                 new_fag_template_item item = new new_fag_template_item();
@@ -539,6 +541,22 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             }
         }
 
+
+    }
+
+
+    /**
+     * description ：刷新当前页面数据 ，主要用来显示收藏状态
+     * creation date: 2020/7/13
+     * user : zhangtongju
+     */
+
+    @Override
+    public void getTemplateLInfo(new_fag_template_item data) {
+        if(data!=null){
+            setIsCollect(data.getIs_collection() == 1);
+            LogUtil.d("OOM","重新刷新当前数据nowCollectType="+data.getIs_collection());
+        }
 
     }
 
