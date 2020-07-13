@@ -104,45 +104,14 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
         timeUtils = new timeUtils();
 //        tv_end_time.setText(timeUtils.timeParse(videoInfo.getDuration()));
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(CreationTemplatePreviewActivity.this);
-        playerView.setPlayer(exoPlayer);
-        //不使用控制器
-        playerView.setUseController(false);
-        exoPlayer.setRepeatMode(Player.REPEAT_MODE_OFF);
-        exoPlayer.addListener(new Player.EventListener() {
-            @Override
-            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                switch (playbackState) {
-                    case Player.STATE_READY:
-                        mEndDuration = exoPlayer.getContentDuration();
-                        videoPlay();
-                        if (!isIntoInitTrimmer) {
-                            Presenter.setUpTrimmer(mRangeSeekBarView, mTimeLineView, progressCursor, exoPlayer.getDuration());
-                            isIntoInitTrimmer = true;
-                        }
-                        Presenter.initTimer();
-
-                        break;
-                    case Player.STATE_ENDED:
-                        seekTo(0);
-                        break;
-                    case Player.STATE_BUFFERING:
-                    case Player.STATE_IDLE:
-                    default:
-                        break;
-                }
-            }
-        });
-        mediaSource = new ExtractorMediaSource.Factory(
-                new DefaultDataSourceFactory(CreationTemplatePreviewActivity.this, "exoplayer-codelab")).
-                createMediaSource(Uri.fromFile(new File(imagePath)));
 
 //        videoPause();
+        initExo();
     }
 
     @Override
     protected void initAction() {
-        exoPlayer.prepare(mediaSource, true, false);
+
 //        showIsPlay(true);
     }
 
@@ -247,7 +216,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                 }
 
                 StimulateControlManage.getInstance().InitRefreshStimulate();
-                if (BaseConstans.getHasAdvertising() == 1 && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser()&&BaseConstans.getSave_video_ad()) {
+                if (BaseConstans.getHasAdvertising() == 1 && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser() && BaseConstans.getSave_video_ad()) {
                     Intent intent = new Intent(CreationTemplatePreviewActivity.this, AdHintActivity.class);
                     intent.putExtra("from", "isFormPreviewVideo");
                     intent.putExtra("templateTitle", "");
@@ -281,7 +250,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     private void videoResume() {
         try {
             showCursor();
-          //  Presenter.initTimer();
+            //  Presenter.initTimer();
             iv_play.setVisibility(View.GONE);
             if (exoPlayer != null) {
                 exoPlayer.prepare(mediaSource, false, false);
@@ -300,21 +269,57 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     protected void onResume() {
         super.onResume();
         if (isIntoPause) {
-            exoPlayer.prepare(mediaSource, true, false);
-//            showIsPlay(true);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-//                    showIsPlay(false);
+            if (exoPlayer != null) {
+                if (isPlaying()) {
                     videoPause();
-                    destroyTimer();
+                } else {
+                    videoResume();
                 }
-            }, 200);
-
+            } else {
+                initExo();
+            }
             isIntoPause = false;
         }
 
     }
+
+
+    private void initExo() {
+        exoPlayer = ExoPlayerFactory.newSimpleInstance(CreationTemplatePreviewActivity.this);
+        playerView.setPlayer(exoPlayer);
+        //不使用控制器
+        playerView.setUseController(false);
+        exoPlayer.setRepeatMode(Player.REPEAT_MODE_OFF);
+        exoPlayer.addListener(new Player.EventListener() {
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                switch (playbackState) {
+                    case Player.STATE_READY:
+                        mEndDuration = exoPlayer.getContentDuration();
+                        videoPlay();
+                        if (!isIntoInitTrimmer) {
+                            Presenter.setUpTrimmer(mRangeSeekBarView, mTimeLineView, progressCursor, exoPlayer.getDuration());
+                            isIntoInitTrimmer = true;
+                        }
+                        Presenter.initTimer();
+
+                        break;
+                    case Player.STATE_ENDED:
+                        seekTo(0);
+                        break;
+                    case Player.STATE_BUFFERING:
+                    case Player.STATE_IDLE:
+                    default:
+                        break;
+                }
+            }
+        });
+        mediaSource = new ExtractorMediaSource.Factory(
+                new DefaultDataSourceFactory(CreationTemplatePreviewActivity.this, "exoplayer-codelab")).
+                createMediaSource(Uri.fromFile(new File(imagePath)));
+        exoPlayer.prepare(mediaSource, true, false);
+    }
+
 
     private void videoOnResume() {
         if (exoPlayer != null) {
@@ -444,10 +449,10 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
             VideoAdManager videoAdManager = new VideoAdManager();
 
             String adId;
-            if(BaseConstans.getOddNum()){
-                adId= AdConfigs.AD_save_video;
-            }else{
-                adId= AdConfigs.AD_save_video2;
+            if (BaseConstans.getOddNum()) {
+                adId = AdConfigs.AD_save_video;
+            } else {
+                adId = AdConfigs.AD_save_video2;
             }
 
             videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
