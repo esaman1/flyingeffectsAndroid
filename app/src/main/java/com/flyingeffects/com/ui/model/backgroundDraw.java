@@ -134,10 +134,15 @@ public class backgroundDraw {
                 if (noVideo) {
                     callback.saveSuccessPath("", i);
                 } else {
-                    float f_progress = (i / (float) 100) * 5;
+                    float f_progress;
+                    if(isMatting){
+                        f_progress = (i / (float) 100) * 70;
+                    }else{
+                        f_progress = (i / (float) 100) * 95;
+                    }
                     int progress;
                     if (isMatting) {
-                        progress = (int) (95 + f_progress);
+                        progress = (int) (30 + f_progress);
                     } else {
                         progress = (int) (5 + f_progress);
                     }

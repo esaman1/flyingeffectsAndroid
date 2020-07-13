@@ -63,7 +63,8 @@ public class videoGetFrameModel {
 //        dialog.openProgressDialog();
         nowExtractVideoNum = 0;
         allVideoPathCount = videoPath.size();
-        perAllTime = 95 / allVideoPathCount + 1;
+        //逻辑修改为 抠图为5-25
+        perAllTime = 25 / allVideoPathCount + 1;
     }
 
 
