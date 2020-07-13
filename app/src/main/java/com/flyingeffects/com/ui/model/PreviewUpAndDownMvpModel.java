@@ -729,7 +729,7 @@ public class PreviewUpAndDownMvpModel {
                         Observable.just(e).subscribeOn(AndroidSchedulers.mainThread()).subscribe(e1 -> new Handler().post(() -> ToastUtil.showToast("下载异常，请重试")));
                         LogUtil.d("onVideoAdError", "Exception=" + e.getMessage());
 //                        ToastUtil.showToast(e.getMessage());
-                        Toast.makeText(context,e.getMessage(),Toast.LENGTH_LONG).show();
+//                        Toast.makeText(context,e.getMessage(),Toast.LENGTH_LONG).show();
                     }
                     super.run();
                 }

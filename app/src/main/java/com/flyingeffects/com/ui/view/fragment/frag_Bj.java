@@ -62,6 +62,9 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     private static  ArrayList<TextView> listTv = new ArrayList<>();
     private static ArrayList<View> listView = new ArrayList<>();
 
+
+    private List<TemplateType> data;
+
     @Override
     protected int getContentLayout() {
         return R.layout.fag_bj;
@@ -87,7 +90,9 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     @Override
     public void onResume() {
         super.onResume();
-
+        if (data == null || data.size() == 0) {
+            presenter.requestData();
+        }
     }
 
 
@@ -101,6 +106,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     @Override
     public void setFragmentList(List<TemplateType> data) {
         if (getActivity() != null) {
+            this.data=data;
             if (data != null && data.size() > 0) {
                 ll_add_child.removeAllViews();
                 TemplateType templateType = new TemplateType();

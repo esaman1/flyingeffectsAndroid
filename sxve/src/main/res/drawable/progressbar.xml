@@ -8,14 +8,14 @@
     android:toDegrees="360"
     tools:ignore="ResourceName">
     <shape
-        android:innerRadius="7dp"
+        android:innerRadius="12dp"
         android:shape="ring"
-        android:thickness="5dp"
+        android:thickness="3dp"
         android:useLevel="false">
         <gradient
             android:centerY="0.50"
-            android:endColor="#5A8AE7"
-            android:startColor="#ffffff"
+            android:endColor="#000000"
+            android:startColor="#00000000"
             android:type="sweep"
             android:useLevel="false" />
     </shape>

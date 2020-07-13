@@ -429,7 +429,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 waitingDialog_progress.openProgressDialog();
                 isDownIng = true;
             }
-            Observable.just(progress).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> waitingDialog_progress.setProgress(progress + "%"));
+            Observable.just(progress).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer ->
+                waitingDialog_progress.setProgress(progress + "%"));
         }
 
     }
@@ -553,9 +554,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     @Override
     public void getTemplateLInfo(new_fag_template_item data) {
-        if(data!=null){
+        if (data != null) {
             setIsCollect(data.getIs_collection() == 1);
-            LogUtil.d("OOM","重新刷新当前数据nowCollectType="+data.getIs_collection());
+            LogUtil.d("OOM", "重新刷新当前数据nowCollectType=" + data.getIs_collection());
         }
 
     }
