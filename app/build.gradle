@@ -169,15 +169,15 @@ dependencies {
     implementation 'com.googlecode.mp4parser:isoparser:1.1.21'
 
     //开屏广告
-    implementation(name: 'GDTSDK.union.4.90.960', ext: 'aar')
+    implementation(name: 'GDTSDK.unionNormal.4.211.1081', ext: 'aar')
     // 广告sdk
-    implementation(name: 'NTADSDK-v2.3.0', ext: 'aar')
+    implementation(name: 'NTADSDK-v2.3.5', ext: 'aar')
     // 百度联盟
     implementation(name: 'Baidu_MobAds_SDK-release_v5.85', ext: 'aar')
     // 穿山甲
-    implementation(name: 'open_ad_sdk', ext: 'aar')
+    implementation(name: 'open_ad_sdk_v3.0.0.4', ext: 'aar')
     //oppo
-    implementation(name: 'mobad_normal_pub_333_2019_11_11', ext: 'aar')
+    implementation(name: 'mobad_normal_pub_354_2020_05_19', ext: 'aar')
     // 抖音1
     implementation(name: 'RangersAppLog-Lite-cn-3.3.12', ext: 'aar')
     //闪验

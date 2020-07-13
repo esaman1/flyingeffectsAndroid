@@ -18,6 +18,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
+import com.flyingeffects.com.adapter.home_vp_frg_adapter2;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.TemplateType;
@@ -58,8 +59,8 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     private FagBjMvpPresenter presenter;
     public final static int SELECTALBUM = 1;
 
-    private ArrayList<TextView> listTv = new ArrayList<>();
-    private ArrayList<View> listView = new ArrayList<>();
+    private static  ArrayList<TextView> listTv = new ArrayList<>();
+    private static ArrayList<View> listView = new ArrayList<>();
 
     @Override
     protected int getContentLayout() {
@@ -141,7 +142,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                         list.add(fragment);
                     }
                 }
-                home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
+                home_vp_frg_adapter2 adapter = new home_vp_frg_adapter2(manager, list);
                 viewPager.setAdapter(adapter);
                 viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
