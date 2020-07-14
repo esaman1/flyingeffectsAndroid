@@ -182,6 +182,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         break;
 
                     case R.id.iv_download_bj:
+                       statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "10_bj_arrow");
+
                         Presenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId(), templateItem);
                         break;
                     default:
@@ -559,7 +561,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         if (data != null) {
             setIsCollect(data.getIs_collection() == 1);
             nowCollectType = data.getIs_collection();
-            LogUtil.d("OOM", "重新刷新当前数据nowCollectType=" + data.getIs_collection());
+//            LogUtil.d("OOM", "重新刷新当前数据nowCollectType=" + data.getIs_collection());
         }
 
     }

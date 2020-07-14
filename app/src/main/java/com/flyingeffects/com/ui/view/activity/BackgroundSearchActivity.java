@@ -105,6 +105,7 @@ public class BackgroundSearchActivity extends BaseActivity {
                 nowShowText = ed_text.getText().toString().trim();
                 if (!nowShowText.equals("")) {
                     cancelFocus();
+                    statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "10_searchfor",nowShowText);
                     EventBus.getDefault().post(new SendSearchText(nowShowText));
                     hideResultView(false);
                 }
@@ -203,6 +204,7 @@ public class BackgroundSearchActivity extends BaseActivity {
                         hideResultView(false);
 //                        setResultMargin();
                         cancelFocus();
+                        statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "10_searchfor",nowShowText);
                         EventBus.getDefault().post(new SendSearchText(nowShowText));
 
                     }
