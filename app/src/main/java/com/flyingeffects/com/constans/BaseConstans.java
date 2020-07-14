@@ -35,6 +35,7 @@ public class BaseConstans {
     private static String uuid = "";
     public static final String PRIVACYPOLICY = "http://copy-book.oss-cn-hangzhou.aliyuncs.com/link/FeiShan/FS-PrivacyPolicy.html";
     public static String service_wxi;
+    public static boolean TemplateHasWatchingAd=false;
     public static ConfigForTemplateList configList;
     private static int hasAdvertising = 0;  //是否有广告，0表示没得，1表示有，全局控制
     public static int showAgainKaipingAd = 60; //退出后台后多少秒后会重新显示插屏

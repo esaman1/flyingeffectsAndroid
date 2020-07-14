@@ -1262,10 +1262,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         //如果不是背景模板，那么还是有音乐
                         lastChooseCommonTabLayout = 2;
                         viewPager.setCurrentItem(1);
+                        statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "11_yj_muscle");
+
                     }
                 } else if (position == 2) {
                     lastChooseCommonTabLayout = 2;
                     viewPager.setCurrentItem(1);
+                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "11_yj_muscle");
                 } else {
                     lastChooseCommonTabLayout = 0;
                     viewPager.setCurrentItem(0);
@@ -1330,6 +1333,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             switch (view.getId()) {
                 case R.id.ll_0:
                 case R.id.cb_0:
+
+
+
                     clearCheckBox();
                     cb_0.setChecked(true);
                     nowChooseMusic = 1;
@@ -1381,6 +1387,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     private void changeMusic(){
+        statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "11_yj_background");
         if (real_time_preview.getVisibility() == View.VISIBLE) {
             //预览暂停状态
             if (!isPlaying) {

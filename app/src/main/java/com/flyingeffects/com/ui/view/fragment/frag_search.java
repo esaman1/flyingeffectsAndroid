@@ -141,6 +141,7 @@ public class frag_search extends BaseFragment {
         });
         iv_delete.setOnClickListener(view -> {
             ed_text.setText("");
+            hideResultView(true);
         });
 
 

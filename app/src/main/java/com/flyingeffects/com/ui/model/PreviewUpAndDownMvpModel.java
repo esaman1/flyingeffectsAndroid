@@ -43,6 +43,7 @@ import com.flyingeffects.com.manager.TTAdManagerHolder;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
+import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.ui.view.activity.ReportActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -122,6 +123,8 @@ public class PreviewUpAndDownMvpModel {
 ////            requestFagData(false, false);
 //            requestFagData();
         });
+
+        smartRefreshLayout.setEnableLoadMore(false);
     }
 
 
@@ -169,6 +172,12 @@ public class PreviewUpAndDownMvpModel {
         bottomSheetDialog.setContentView(view);
         LinearLayout iv_download = view.findViewById(R.id.ll_download);
         iv_download.setOnClickListener(view12 -> {
+
+            if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)){
+                statisticsEventAffair.getInstance().setFlag(context, "11_yj_save1");
+            }else{
+                statisticsEventAffair.getInstance().setFlag(context, "10_bj_csave1");
+            }
             statisticsEventAffair.getInstance().setFlag(context, "save_back_template");
             downProgressDialog = new WaitingDialog_progress(context);
             downProgressDialog.openProgressDialog();
@@ -179,6 +188,13 @@ public class PreviewUpAndDownMvpModel {
         ll_friend_circle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)){
+                    statisticsEventAffair.getInstance().setFlag(context, "11_yjj_WeChat");
+                }else{
+                    statisticsEventAffair.getInstance().setFlag(context, "10_bj_WeChat");
+                }
+
                 UMImage image = new UMImage(context, fag_template_item.getImage());//分享图标
                 UMWeb web = new UMWeb(getShareWeiXinCircleText(fag_template_item.getId())); //切记切记 这里分享的链接必须是http开头
                 web.setTitle(fag_template_item.getTitle());//标题
@@ -196,6 +212,14 @@ public class PreviewUpAndDownMvpModel {
         ll_share_wx.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)){
+                    statisticsEventAffair.getInstance().setFlag(context, "11_yj_circle");
+                }else{
+                    statisticsEventAffair.getInstance().setFlag(context, "10_bj_circle");
+                }
+
+
                 shareToApplet(fag_template_item);
             }
         });
@@ -204,6 +228,14 @@ public class PreviewUpAndDownMvpModel {
         ll_report.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)){
+                    statisticsEventAffair.getInstance().setFlag(context, "11_yj_Report");
+                }else{
+                    statisticsEventAffair.getInstance().setFlag(context, "10_bj_Report");
+                }
+
+
                 Intent intent = new Intent(context, ReportActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 context.startActivity(intent);
@@ -212,7 +244,11 @@ public class PreviewUpAndDownMvpModel {
 
 
         TextView tv_cancle = view.findViewById(R.id.tv_cancle);
-        tv_cancle.setOnClickListener(view1 -> bottomSheetDialog.dismiss());
+        tv_cancle.setOnClickListener(view1 ->{ bottomSheetDialog.dismiss();
+
+
+
+        });
         bottomSheetDialog.setCancelable(true);
         bottomSheetDialog.setCanceledOnTouchOutside(true);
         View parent = (View) view.getParent();     //处理高度显示完全  https://www.jianshu.com/p/38af0cf77352
@@ -331,6 +367,7 @@ public class PreviewUpAndDownMvpModel {
             public void onError(int code, String message) {
 //                Log.d(TAG, message);
 //                showToast(message);
+                statisticsEventAffair.getInstance().setFlag(context, "draw_ad_request_error");
                 LogUtil.d("OOM", "loadFeedAd+code=" + code + ";message=" + message);
             }
 
@@ -340,6 +377,7 @@ public class PreviewUpAndDownMvpModel {
                     LogUtil.d("OOM", "on FeedAdLoaded: ad is null!");
                     return;
                 }
+                statisticsEventAffair.getInstance().setFlag(context, "draw_ad_request_success");
 
                 LogUtil.d("OOM", "success" + ads.size());
 //                for (int i = 0; i < 5; i++) {
@@ -352,7 +390,7 @@ public class PreviewUpAndDownMvpModel {
                     ad.setVideoAdListener(new TTNativeExpressAd.ExpressVideoAdListener() {
                         @Override
                         public void onVideoLoad() {
-
+                            statisticsEventAffair.getInstance().setFlag(context, "draw_ad_request_show");
                         }
 
                         @Override
@@ -449,7 +487,7 @@ public class PreviewUpAndDownMvpModel {
             @Override
             protected void _onError(String message) {
                 finishData();
-                ToastUtil.showToast(message);
+               // ToastUtil.showToast(message);
             }
 
             @Override

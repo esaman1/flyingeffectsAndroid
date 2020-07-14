@@ -55,6 +55,7 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
+import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -201,7 +202,7 @@ public class CreationTemplateMvpModel {
         callback.needPauseVideo();
     }
 
-    public void intoOnPause(){
+    public void intoOnPause() {
         stopAllAnim();
         closeAllAnim();
         deleteSubLayerSticker();
@@ -316,11 +317,12 @@ public class CreationTemplateMvpModel {
         GridView gridViewAnim = viewForChooseAnim.findViewById(R.id.gridView_anim);
         gridViewAnim.setOnItemClickListener((adapterView, view, i, l) -> {
             if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
-                LogUtil.d("OOM","111111111111111111");
+                LogUtil.d("OOM", "111111111111111111");
                 modificationSingleAnimItemIsChecked(i);
                 callback.needPauseVideo();
                 if (i == 0) {
                     startPlayAnim(i, true, null, 0, false);
+                    statisticsEventAffair.getInstance().setFlag(context, "9_Animation2");
                 } else {
                     WaitingDialog.openPragressDialog(context);
                     startPlayAnim(i, false, null, 0, false);
@@ -388,7 +390,7 @@ public class CreationTemplateMvpModel {
             targetStickerView = (StickerView) viewLayerRelativeLayout.getChildAt(nowChooseStickerPosition);
         }
 
-        if(targetStickerView!=null){
+        if (targetStickerView != null) {
             if (isClearAllAnim) {
                 //贴纸还原,显示到之前的位置
                 ToastUtil.showToast("清理全部动画");
@@ -398,7 +400,7 @@ public class CreationTemplateMvpModel {
                 deleteSubLayerSticker();
                 stopAllAnim();
             } else {
-                if(animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType())>0){
+                if (animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType()) > 0) {
                     for (int x = 1; x <= animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType()); x++) {
                         //通过动画属性得到需要分身的数量，然后复制出贴纸在数组里面nowChooseSubLayerAnimList，最后需要删除
                         LogUtil.d("startPlayAnim", "当前动画复制的主id为" + targetStickerView.getId());
@@ -419,19 +421,17 @@ public class CreationTemplateMvpModel {
                             sublayerListPosition++;
                         }
                     }
-                }else{
-                        StartAnimModel startAnimModel = new StartAnimModel(animCollect);
-                        targetStickerView.setChooseAnimId(animType);
-                        delayedToStartAnim(startAnimModel, animType, targetStickerView, sublayerListPosition, isFromPreview);
+                } else {
+                    StartAnimModel startAnimModel = new StartAnimModel(animCollect);
+                    targetStickerView.setChooseAnimId(animType);
+                    delayedToStartAnim(startAnimModel, animType, targetStickerView, sublayerListPosition, isFromPreview);
                 }
             }
-        }else{
+        } else {
             if (!isFromPreview) {
                 WaitingDialog.closePragressDialog();
             }
         }
-
-
 
 
     }
@@ -1256,6 +1256,7 @@ public class CreationTemplateMvpModel {
                 int position = videoType.getPosition();
                 cutList.add(path);
                 AllStickerData sticker = listAllSticker.get(position);
+                statisticsAnim();
                 sticker.setPath(path);
                 cutSuccessNum++;
                 if (cutSuccessNum == cutVideoPathList.size()) {
@@ -1289,6 +1290,25 @@ public class CreationTemplateMvpModel {
                 }
             }
         });
+    }
+
+
+    /**
+     * description ：统计贴纸动画
+     * creation date: 2020/7/14
+     * user : zhangtongju
+     */
+    private void statisticsAnim() {
+
+        for (AllStickerData data : listAllSticker
+        ) {
+            if (data.getChooseAnimId() != null && data.getChooseAnimId() != AnimType.NULL) {
+
+
+
+                statisticsEventAffair.getInstance().setFlag(context, "9_Animation",data.getChooseAnimId().name());
+            }
+        }
     }
 
 
@@ -1394,19 +1414,19 @@ public class CreationTemplateMvpModel {
     private void getVideoVoice(String videoPath, String outputPath) {
         WaitingDialog.openPragressDialog(context);
 //        new Thread(() -> {
-            mediaManager manager = new mediaManager(context);
-            manager.splitMp4(videoPath, new File(outputPath), (isSuccess, putPath) -> {
-                WaitingDialog.closePragressDialog();
-                if (isSuccess) {
-                    LogUtil.d("OOM2", "分离出来的因为地址为" + outputPath);
-                    videoVoicePath = outputPath + File.separator + "bgm.mp3";
-                    callback.getBgmPath(videoVoicePath);
-                } else {
-                    LogUtil.d("OOM2", "分离出来的因为地址为null" + outputPath);
-                    callback.getBgmPath("");
-                    videoVoicePath = "";
-                }
-            });
+        mediaManager manager = new mediaManager(context);
+        manager.splitMp4(videoPath, new File(outputPath), (isSuccess, putPath) -> {
+            WaitingDialog.closePragressDialog();
+            if (isSuccess) {
+                LogUtil.d("OOM2", "分离出来的因为地址为" + outputPath);
+                videoVoicePath = outputPath + File.separator + "bgm.mp3";
+                callback.getBgmPath(videoVoicePath);
+            } else {
+                LogUtil.d("OOM2", "分离出来的因为地址为null" + outputPath);
+                callback.getBgmPath("");
+                videoVoicePath = "";
+            }
+        });
 //        }).start();
     }
 

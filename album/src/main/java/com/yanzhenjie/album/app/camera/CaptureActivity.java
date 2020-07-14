@@ -230,7 +230,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             mTotalRecordingTime = (int) ((total + 500) / 1000);
             mTitle = bundle.getString(Album.MODEL_TITLE);
             mMusicPath = bundle.getString(Album.MUSIC_PATH);
-            mMusicPath = mMusicPath + "bj.mp3";
+            mMusicPath = mMusicPath + File.separator+"bj.mp3";
         }
         Log.d(TAG, "getBundle: mMusicPath = " + mMusicPath);
         Log.d(TAG, "getBundle: videoTime = " + mTotalRecordingTime);
