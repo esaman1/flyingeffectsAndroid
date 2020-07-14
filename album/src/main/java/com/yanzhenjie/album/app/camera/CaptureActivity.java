@@ -158,8 +158,6 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         setOnclickListener();
         initExoPlayer();
 
-        // Initialize our background executor
-        mCameraExecutor =  ContextCompat.getMainExecutor(this);
         mRecordView.setMaxDuration(mTotalRecordingTime);
         mRecordView.setOnRecordListener(new RecordView.onRecordListener() {
             @Override
@@ -186,8 +184,6 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
     }
-
-
 
 
     private void setOnclickListener() {
@@ -268,35 +264,32 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         player.setPlayWhenReady(true);
         mIvFlip.setVisibility(View.INVISIBLE);
         mIvSwitchTimer.setVisibility(View.INVISIBLE);
+        mIvBack.setVisibility(View.INVISIBLE);
         //开始录像
         takingPicture = false;
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), System.currentTimeMillis() + ".mp4");
         mRecording = true;
-        Log.d("OOM","开始录制");
+        Log.d("OOM", "开始录制");
         mVideoCapture.startRecording(file, mCameraExecutor, new VideoCapture.OnVideoSavedCallback() {
             @Override
             public void onVideoSaved(@NonNull File file) {
-                Log.d("OOM","录制完成");
+                Log.d("OOM", "录制完成");
                 onFileSaved(file);
             }
 
             @Override
             public void onError(int videoCaptureError, @NonNull String message, @Nullable Throwable cause) {
-                showErrorToast(message);
+                Log.e(TAG, "onError: int " + videoCaptureError + " message " + message, cause);
             }
         });
         mRecordView.startRecord();
     }
 
-
-
-
-
-
     @SuppressLint("RestrictedApi")
     private void stopRecord() {
         mIvFlip.setVisibility(View.VISIBLE);
         mIvSwitchTimer.setVisibility(View.VISIBLE);
+        mIvBack.setVisibility(View.VISIBLE);
         player.setPlayWhenReady(false);
         player.stop(true);
         mRecording = false;
@@ -341,6 +334,8 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             intent.putExtra(RESULT_FILE_TYPE, !takingPicture);
             setResult(RESULT_OK, intent);
             finish();
+        } else {
+            bindCameraX();//预览页取消回到这里，有些手机会出现画面卡住的现象，故重新加载
         }
     }
 
@@ -366,7 +361,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
 
             if (deniedPermission.isEmpty()) {
                 Log.d(TAG, "onRequestPermissionsResult: bindCameraX");
-                bindCameraX();
+                bindCameraX();//权限申请通过，绑定相机
             } else {
                 new AlertDialog.Builder(this)
                         .setMessage(getString(R.string.album_capture_permission_message))
@@ -390,22 +385,28 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
 
 
     private void bindCameraX() {
+        mCameraExecutor = ContextCompat.getMainExecutor(this);
+
         mCameraProviderFuture = ProcessCameraProvider.getInstance(this);
+
+        initUseCase();
+
         mCameraProviderFuture.addListener(() -> {
             try {
                 mCameraProvider = mCameraProviderFuture.get();
-                bindPreview();
+                bindProvider();
             } catch (ExecutionException | InterruptedException e) {
                 // No errors need to be handled for this Future.
                 // This should never be reached.
                 Log.e(TAG, "bindCameraX: ", e);
             }
-        },mCameraExecutor);
+        }, mCameraExecutor);
     }
 
     private void initUseCase() {
         //初始化用例，将三个用例封装为不同的方法
         //initImageCapture();
+        initCameraSelector();
         initVideoCapture();
         initPreview();
     }
@@ -415,7 +416,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         mVideoCapture = new VideoCaptureConfig.Builder()
                 .setCameraSelector(mCameraSelector)
                 .setTargetAspectRatio(mAspectRatioInt)
-                .setTargetRotation(rotation)
+                //.setTargetRotation(rotation)
                 //.setTargetResolution(resolution)
                 //视频帧率
                 .setVideoFrameRate(25)
@@ -426,9 +427,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     @SuppressLint("RestrictedApi")
     private void initPreview() {
         preview = new Preview.Builder()
-                .setCameraSelector(mCameraSelector) //前后摄像头
                 .setTargetAspectRatio(mAspectRatioInt) //宽高比
-                .setTargetRotation(rotation) //旋转角度
                 .build();
     }
 
@@ -439,23 +438,6 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         mCameraSelector = new CameraSelector.Builder()
                 .requireLensFacing(mCameraSelectorInt)
                 .build();
-    }
-
-    @SuppressLint("RestrictedApi")
-    private void bindPreview() {
-        CameraX.unbindAll();
-        initCameraSelector();
-        //查询一下当前要使用的设备摄像头(比如后置摄像头)是否存在
-        boolean hasAvailableCameraId = false;
-        hasAvailableCameraId = CameraX.hasCamera(mCameraSelector);
-
-        if (!hasAvailableCameraId) {
-            showErrorToast("无可用的设备cameraId!,请检查设备的相机是否被占用");
-            finish();
-            return;
-        }
-        initUseCase();
-        bindProvider();
     }
 
     private void bindProvider() {
@@ -526,7 +508,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                 mCameraSelectorInt = CameraSelector.LENS_FACING_BACK;
                 break;
         }
-        bindCameraX();
+        bindCameraX();//切换前后摄像头，需要重新绑定
     }
 
     /**
@@ -630,7 +612,6 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        CameraX.unbindAll();
         // Shut down our background executor
         //mCameraExecutor.shutdown();
         if (player != null) {
