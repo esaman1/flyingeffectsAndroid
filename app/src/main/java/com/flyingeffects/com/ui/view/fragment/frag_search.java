@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
@@ -35,6 +36,8 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.view.WarpLinearLayout;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -81,11 +84,14 @@ public class frag_search extends BaseFragment {
     @BindView(R.id.horizontal_scrollView)
     HorizontalScrollView horizontalScrollView;
 
+
+    @BindView(R.id.appbar)
+    AppBarLayout appbar;
+
     private ArrayList<TextView> listTv = new ArrayList<>();
     private ArrayList<View> listView = new ArrayList<>();
     private ArrayList<SearchKeyWord> listSearchKey = new ArrayList<>();
     private String nowShowText;
-    private FragmentManager manager;
 
 
     @Override
@@ -103,6 +109,7 @@ public class frag_search extends BaseFragment {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
                 nowShowText = ed_text.getText().toString().trim();
                 if (!nowShowText.equals("")) {
+                    cancelFocus();
                     EventBus.getDefault().post(new SendSearchText(nowShowText));
                     hideResultView(false);
                 }
@@ -177,7 +184,10 @@ public class frag_search extends BaseFragment {
         listTv.clear();
         listView.clear();
         showHeadTitle();
+        appbar.setExpanded(true);
     }
+
+
 
 
     @Override
@@ -201,8 +211,10 @@ public class frag_search extends BaseFragment {
                         nowShowText = listSearchKey.get(finalI).getName();
                         ed_text.setText(nowShowText);
                         hideResultView(false);
+                        cancelFocus();
 //                        setResultMargin();
                         EventBus.getDefault().post(new SendSearchText(nowShowText));
+
                     }
                 }
             });
@@ -280,9 +292,6 @@ public class frag_search extends BaseFragment {
         fragBjSearch fragment2 = new fragBjSearch();
         fragment2.setArguments(bundle2);
         list.add(fragment2);
-//        if (manager == null) {
-//            manager = getChildFragmentManager();
-//        }
         home_vp_frg_adapter adapter = new home_vp_frg_adapter( getChildFragmentManager(), list);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -320,6 +329,19 @@ public class frag_search extends BaseFragment {
         viewPager.setCurrentItem(showWitch);
     }
 
+
+
+    private void cancelFocus(){
+        LogUtil.d("OOM","ed_text.hasFocus()="+ed_text.hasFocus());
+        if(ed_text!=null&&ed_text.hasFocus()){
+
+            ed_text.setFocusable(true);
+            ed_text.setFocusableInTouchMode(true);
+            ed_text.requestFocus();
+            ed_text.clearFocus();//失去焦点
+        }
+
+    }
 
 
 

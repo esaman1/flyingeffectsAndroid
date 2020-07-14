@@ -459,9 +459,9 @@ public class PreviewUpAndDownMvpModel {
                     allData.clear();
                 }
 
-                if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
-                    ToastUtil.showToast(context.getResources().getString(R.string.no_more_data));
-                }
+//                if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
+//                    ToastUtil.showToast(context.getResources().getString(R.string.no_more_data));
+//                }
                 if (data.size() < perPageCount) {
                     smartRefreshLayout.setEnableLoadMore(false);
                 }

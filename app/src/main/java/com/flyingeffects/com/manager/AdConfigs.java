@@ -55,14 +55,19 @@ public class AdConfigs {
 //    public static final String APP_ID = "1110329151";
 //    public static  String POST_ID = "4010787590059280";
 
-    // 穿山甲媒体key
-    public static final String APP_ID_CSJ = "5059305";
+
     //  穿山甲广告位key
     public static String POST_ID_CSJ = "887315852";
 
 
     //穿山甲信息流id
     public static String POST_ID_CSJ_Feed = "945274799";
+
+    // 广点通
+    public static final String APP_ID_GDT = "1110329151";
+
+    // 穿山甲媒体key
+    public static final String APP_ID_CSJ = "5059305";
 
 
 }

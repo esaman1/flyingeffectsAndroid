@@ -116,7 +116,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                 listView.clear();
                 listTv.clear();
                 list.clear();
-                FragmentManager manager = getFragmentManager();
+//                FragmentManager manager = getFragmentManager();
                 String[] titles = new String[data.size()];
                 for (int i = 0; i < data.size(); i++) {
                     View view = LayoutInflater.from(getActivity()).inflate(R.layout.view_bj_head, null);
@@ -148,7 +148,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                         list.add(fragment);
                     }
                 }
-                home_vp_frg_adapter2 adapter = new home_vp_frg_adapter2(manager, list);
+                home_vp_frg_adapter2 adapter = new home_vp_frg_adapter2(getFragmentManager(), list);
                 viewPager.setAdapter(adapter);
                 viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override

@@ -53,6 +53,7 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 
 /**
@@ -556,6 +557,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void getTemplateLInfo(new_fag_template_item data) {
         if (data != null) {
             setIsCollect(data.getIs_collection() == 1);
+            nowCollectType = data.getIs_collection();
             LogUtil.d("OOM", "重新刷新当前数据nowCollectType=" + data.getIs_collection());
         }
 
@@ -583,14 +585,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
         } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
             //来自下载背景，就是用户重新选择背景页面
-            new Handler().postDelayed(() -> {
+            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> {
                 if (!ondestroy) {
                     String alert = "飞闪极速下载中...";
                     WaitingDialog.openPragressDialog(PreviewUpAndDownActivity.this, alert);
                     Presenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId());
                 }
-            }, 200);
-
+            }, 200));
         } else {
             LogUtil.d("OOM", "来自其他");
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMSEARCH)) {
@@ -655,12 +656,15 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     alert = "正在生成中~";
                 }
             }
+
             new Handler().postDelayed(() -> {
                 if (!ondestroy) {
                     WaitingDialog.openPragressDialog(PreviewUpAndDownActivity.this, alert);
                     GSYVideoManager.onPause();
                 }
             }, 200);
+
+
             new Thread(() -> {
                 originalImagePath = paths;
                 //如果是视频，就不抠图了

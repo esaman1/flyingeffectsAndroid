@@ -103,7 +103,9 @@ public class BackgroundSearchActivity extends BaseActivity {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
                 nowShowText = ed_text.getText().toString().trim();
                 if (!nowShowText.equals("")) {
+                    cancelFocus();
                     EventBus.getDefault().post(new SendSearchText(nowShowText));
+
                     hideResultView(false);
                 }
                 return true;
@@ -198,7 +200,9 @@ public class BackgroundSearchActivity extends BaseActivity {
                         ed_text.setText(nowShowText);
                         hideResultView(false);
 //                        setResultMargin();
+                        cancelFocus();
                         EventBus.getDefault().post(new SendSearchText(nowShowText));
+
                     }
                 }
             });
@@ -316,5 +320,12 @@ public class BackgroundSearchActivity extends BaseActivity {
         viewPager.setCurrentItem(showWitch);
     }
 
+
+    private void cancelFocus(){
+        ed_text.setFocusable(true);
+        ed_text.setFocusableInTouchMode(true);
+        ed_text.requestFocus();
+        ed_text.clearFocus();//失去焦点
+    }
 
 }
