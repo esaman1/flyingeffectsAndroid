@@ -67,7 +67,7 @@ public class BaseApplication extends MultiDexApplication {
         initZt();
         //闪验SDK初始化（建议放在Application的onCreate方法中执行）
         initShanyanSDK(this);
-        keepCrash();
+//        keepCrash();
         initNTAdSDK();
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
         TTAdManagerHolder.init(this);
@@ -88,7 +88,8 @@ public class BaseApplication extends MultiDexApplication {
                         .appId("61074cddf23c0a8dd2b7e00996057e78")
                         .appChannel(ChannelUtil.getChannel(this))
                         .TTAppKey(AdConfigs.APP_ID_CSJ)
-                        .isDebug(true)
+                        .GDTAppKey(AdConfigs.APP_ID_GDT)
+                        .isDebug(false)
                         .build());
 
     }
