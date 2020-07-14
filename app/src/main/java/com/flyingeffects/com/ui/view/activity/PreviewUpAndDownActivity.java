@@ -443,6 +443,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             this.TemplateFilePath = filePath;
             if (!TextUtils.isEmpty(templateItem.getVideotime()) && !templateItem.getVideotime().equals("0")) {
                 float videoTime = Float.parseFloat(templateItem.getVideotime());
+                LogUtil.d("OOM","bj.mp3="+TemplateFilePath);
                 AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "", (long) (videoTime * 1000), templateItem.getTitle(), TemplateFilePath);
             } else {
                 AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");

@@ -25,6 +25,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.MarqueTextView;
 import com.flyingeffects.com.view.SampleCoverVideo;
+import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 
 import java.util.List;
@@ -209,6 +210,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
 
     public void pauseVideo() {
         videoPlayer.onVideoPause();
+        GSYVideoManager.onPause();
     }
 
 

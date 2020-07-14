@@ -5,6 +5,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -105,7 +106,6 @@ public class BackgroundSearchActivity extends BaseActivity {
                 if (!nowShowText.equals("")) {
                     cancelFocus();
                     EventBus.getDefault().post(new SendSearchText(nowShowText));
-
                     hideResultView(false);
                 }
                 return true;
@@ -136,6 +136,7 @@ public class BackgroundSearchActivity extends BaseActivity {
         });
         iv_delete.setOnClickListener(view -> {
             ed_text.setText("");
+            hideResultView(true);
         });
         hideResultView(true);
         iv_back.setOnClickListener(new View.OnClickListener() {
@@ -168,13 +169,14 @@ public class BackgroundSearchActivity extends BaseActivity {
     @Override
     protected void initAction() {
         showHeadTitle();
+        requestKeywordList();
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
-        requestKeywordList();
+
     }
 
 
@@ -221,7 +223,7 @@ public class BackgroundSearchActivity extends BaseActivity {
         listSearchKey.clear();
         HashMap<String, String> params = new HashMap<>();
         //2 表示背景
-//        params.put("template_type", "2");
+        params.put("template_type", "2");
         // 启动时间
         Observable ob = Api.getDefault().keywordList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(BackgroundSearchActivity.this) {
@@ -272,6 +274,7 @@ public class BackgroundSearchActivity extends BaseActivity {
 
 
     private void setViewpager() {
+        list.clear();
         Bundle bundle = new Bundle();
         bundle.putSerializable("from", 1);
         fragBjSearch fragment = new fragBjSearch();
@@ -321,7 +324,7 @@ public class BackgroundSearchActivity extends BaseActivity {
     }
 
 
-    private void cancelFocus(){
+    private void cancelFocus() {
         ed_text.setFocusable(true);
         ed_text.setFocusableInTouchMode(true);
         ed_text.requestFocus();

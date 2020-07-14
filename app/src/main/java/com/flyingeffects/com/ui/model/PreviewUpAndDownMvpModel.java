@@ -122,6 +122,8 @@ public class PreviewUpAndDownMvpModel {
 ////            requestFagData(false, false);
 //            requestFagData();
         });
+
+        smartRefreshLayout.setEnableLoadMore(false);
     }
 
 
@@ -449,7 +451,7 @@ public class PreviewUpAndDownMvpModel {
             @Override
             protected void _onError(String message) {
                 finishData();
-                ToastUtil.showToast(message);
+               // ToastUtil.showToast(message);
             }
 
             @Override
