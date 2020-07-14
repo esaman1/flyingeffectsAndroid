@@ -22,6 +22,8 @@ import com.flyingeffects.com.enity.CreateCutCallback;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.showAdCallback;
+import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -36,6 +38,8 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.github.penfeizhou.animation.apng.APNGDrawable;
 import com.github.penfeizhou.animation.loader.ResourceStreamLoader;
+import com.nineton.ntadsdk.itr.VideoAdCallBack;
+import com.nineton.ntadsdk.manager.VideoAdManager;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
@@ -145,6 +149,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
+        BaseConstans.TemplateHasWatchingAd=false;
         ListForUpAndDown listForUpAndDown = (ListForUpAndDown) getIntent().getSerializableExtra("person");
         allData = listForUpAndDown.getAllData();
         ondestroy = false;
@@ -384,6 +389,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void hasLogin(boolean hasLogin) {
         if (!TextUtils.isEmpty(templateItem.getType()) && templateItem.getType().equals("1") && BaseConstans.getIncentiveVideo()) {
             Intent intent = new Intent(PreviewUpAndDownActivity.this, AdHintActivity.class);
+
             intent.putExtra("from", "PreviewActivity");
             intent.putExtra("templateTitle", templateItem.getTitle());
             startActivity(intent);
@@ -839,5 +845,61 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         intent.putExtra("Message", bundle);
         startActivity(intent);
         setResult(Activity.RESULT_OK, intent);
+    }
+
+
+    /**
+     * description ：激励视频回调
+     * creation date: 2020/4/13
+     * user : zhangtongju
+     */
+    @Subscribe
+    public void onEventMainThread(showAdCallback event) {
+        if (event != null && event.getIsFrom().equals("PreviewActivity")) {
+            //需要激励视频
+            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                VideoAdManager videoAdManager = new VideoAdManager();
+                videoAdManager.showVideoAd(this, AdConfigs.AD_stimulate_video, new VideoAdCallBack() {
+                    @Override
+                    public void onVideoAdSuccess() {
+                        statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_sucess");
+                        LogUtil.d("OOM", "onVideoAdSuccess");
+                    }
+
+                    @Override
+                    public void onVideoAdError(String s) {
+                        statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_fail");
+                        LogUtil.d("OOM", "onVideoAdError" + s);
+                        BaseConstans.TemplateHasWatchingAd=true;
+                        hasLoginToNext();
+                    }
+
+                    @Override
+                    public void onVideoAdClose() {
+                        LogUtil.d("OOM", "onVideoAdClose");
+                        BaseConstans.TemplateHasWatchingAd=true;
+                        hasLoginToNext();
+                    }
+
+                    @Override
+                    public void onVideoAdSkip() {
+                        LogUtil.d("OOM", "onVideoAdSkip");
+                    }
+
+                    @Override
+                    public void onVideoAdComplete() {
+                    }
+
+                    @Override
+                    public void onVideoAdClicked() {
+                        LogUtil.d("OOM", "onVideoAdClicked");
+                    }
+                });
+            } else {
+                hasLoginToNext();
+            }
+        }
+
+
     }
 }
