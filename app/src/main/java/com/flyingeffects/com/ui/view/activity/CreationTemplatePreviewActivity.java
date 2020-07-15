@@ -4,8 +4,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Handler;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,10 +11,8 @@ import android.widget.ImageView;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
-import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
-import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
@@ -27,7 +23,6 @@ import com.flyingeffects.com.ui.interfaces.view.CreationTemplatePreviewMvpView;
 import com.flyingeffects.com.ui.presenter.CreationTemplatePreviewPresenter;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.RoundImageView;
 import com.flyingeffects.com.view.VideoFrameRecycler;
@@ -43,15 +38,11 @@ import com.nineton.ntadsdk.manager.VideoAdManager;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 
 
 /**
@@ -68,9 +59,9 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
 
     private String imagePath;
-    private long mEndDuration;
+//    private long mEndDuration;
 
-    private timeUtils timeUtils;
+//    private timeUtils timeUtils;
     private MediaSource mediaSource;
 
     private boolean isIntoPause = false;
@@ -101,8 +92,8 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         EventBus.getDefault().register(this);
         imagePath = getIntent().getStringExtra("path");
         Presenter = new CreationTemplatePreviewPresenter(this, this, imagePath);
-        VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
-        timeUtils = new timeUtils();
+//        VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
+//        timeUtils = new timeUtils();
 //        tv_end_time.setText(timeUtils.timeParse(videoInfo.getDuration()));
 
 //        videoPause();
@@ -136,7 +127,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         }
         iv_play.setVisibility(View.VISIBLE);
         hideCursor();
-        destroyTimer();
+//        destroyTimer();
     }
 
 
@@ -295,7 +286,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 switch (playbackState) {
                     case Player.STATE_READY:
-                        mEndDuration = exoPlayer.getContentDuration();
+//                        mEndDuration = exoPlayer.getContentDuration();
                         videoPlay();
                         if (!isIntoInitTrimmer) {
                             Presenter.setUpTrimmer(mRangeSeekBarView, mTimeLineView, progressCursor, exoPlayer.getDuration());
@@ -352,63 +343,63 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
      * time：2018/10/15
      * describe:严防内存泄露
      **/
-    private void destroyTimer() {
-        if (timer != null) {
-            timer.purge();
-            timer.cancel();
-            timer = null;
-        }
-        if (task != null) {
-            task.cancel();
-            task = null;
-        }
-    }
+//    private void destroyTimer() {
+//        if (timer != null) {
+//            timer.purge();
+//            timer.cancel();
+//            timer = null;
+//        }
+//        if (task != null) {
+//            task.cancel();
+//            task = null;
+//        }
+//    }
 
-    private Timer timer;
-    private TimerTask task;
-
-    private void startTimer() {
-        if (timer != null) {
-            timer.purge();
-            timer.cancel();
-            timer = null;
-        }
-        if (task != null) {
-            task.cancel();
-            task = null;
-        }
-
-        timer = new Timer();
-        task = new TimerTask() {
-            @Override
-            public void run() {
-                Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                    if (exoPlayer != null) {
-                        exoPlayer.setPlayWhenReady(true);
-                        if (getCurrentPos() >= mEndDuration) {
-                            exoPlayer.seekTo(0);
-                        } else if (getCurrentPos() < 0) {
-                            exoPlayer.seekTo(0);
-                        }
-
-                    }
-                    float progress = getCurrentPos() / (float) mEndDuration;
-                    int realPosition = (int) (progress * 100);
-                    timeUtils = new timeUtils();
-//                    tv_start_time.setText(timeUtils.timeParse(getCurrentPos()));
-//                    seekBar.setProgress(realPosition);
-                });
-            }
-        };
-        timer.schedule(task, 0, 16);
-    }
+//    private Timer timer;
+//    private TimerTask task;
+//
+//    private void startTimer() {
+//        if (timer != null) {
+//            timer.purge();
+//            timer.cancel();
+//            timer = null;
+//        }
+//        if (task != null) {
+//            task.cancel();
+//            task = null;
+//        }
+//
+//        timer = new Timer();
+//        task = new TimerTask() {
+//            @Override
+//            public void run() {
+//                Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+//                    if (exoPlayer != null) {
+//                        exoPlayer.setPlayWhenReady(true);
+//                        if (getCurrentPos() >= mEndDuration) {
+//                            exoPlayer.seekTo(0);
+//                        } else if (getCurrentPos() < 0) {
+//                            exoPlayer.seekTo(0);
+//                        }
+//
+//                    }
+//                    float progress = getCurrentPos() / (float) mEndDuration;
+////                    int realPosition = (int) (progress * 100);
+////                    timeUtils = new timeUtils();
+////                    tv_start_time.setText(timeUtils.timeParse(getCurrentPos()));
+////                    seekBar.setProgress(realPosition);
+//                });
+//            }
+//        };
+//        timer.schedule(task, 0, 16);
+//    }
 
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         videoStop();
-        destroyTimer();
+//        destroyTimer();
         EventBus.getDefault().unregister(this);
     }
 
@@ -438,7 +429,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
 //            showIsPlay(false);
             videoPause();
-            destroyTimer();
+//            destroyTimer();
         }
     }
 
@@ -447,7 +438,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     public void onEventMainThread(showAdCallback event) {
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             videoPause();
-            destroyTimer();
+//            destroyTimer();
             VideoAdManager videoAdManager = new VideoAdManager();
             String adId;
             if (BaseConstans.getOddNum()) {
