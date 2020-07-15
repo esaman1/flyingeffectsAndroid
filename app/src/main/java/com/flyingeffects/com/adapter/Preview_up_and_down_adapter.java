@@ -198,6 +198,13 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     }
 
 
+
+
+    public float getVideoDuration(){
+        return  videoPlayer.getDuration();
+    }
+
+
     /**
      * description ：当前正在预览的位置
      * creation date: 2020/7/1

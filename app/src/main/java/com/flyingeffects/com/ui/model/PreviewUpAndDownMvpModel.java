@@ -197,7 +197,7 @@ public class PreviewUpAndDownMvpModel {
 
                 UMImage image = new UMImage(context, fag_template_item.getImage());//分享图标
                 UMWeb web = new UMWeb(getShareWeiXinCircleText(fag_template_item.getId())); //切记切记 这里分享的链接必须是http开头
-                web.setTitle(fag_template_item.getTitle());//标题
+                web.setTitle(BaseConstans.getminapp_share_title() + fag_template_item.getTitle());//标题
                 web.setThumb(image);  //缩略图
                 new ShareAction((Activity) context).setPlatform(SHARE_MEDIA.WEIXIN_CIRCLE)
                         .withMedia(web)
@@ -270,10 +270,11 @@ public class PreviewUpAndDownMvpModel {
      */
     private void shareToApplet(new_fag_template_item fag_template_item) {
         UMImage image = new UMImage(context, fag_template_item.getImage());//分享图标
-        String url = "/pages/background/background?path=detail&from_path=app&id=" + fag_template_item.getId();
+        String url = "pages/background/background?path=detail&from_path=app&id=" + fag_template_item.getId();
         LogUtil.d("OOM", "小程序的地址为" + url);
         UMMin umMin = new
                 UMMin(url);
+        umMin.setPath(url);
         umMin.setThumb(image);
         umMin.setUserName("gh_4161ca2837f7");
         umMin.setTitle(BaseConstans.getminapp_share_title() + fag_template_item.getTitle());

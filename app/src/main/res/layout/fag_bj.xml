@@ -95,7 +95,7 @@
                     android:layout_height="45dp"
                     android:background="@null"
                     android:gravity="center_vertical"
-                    android:text="友友推荐"
+                    android:text="输入你想要的背景关键词"
                     android:paddingStart="40dp"
                     android:textColor="#515151"
                     android:textColorHint="#515151" />

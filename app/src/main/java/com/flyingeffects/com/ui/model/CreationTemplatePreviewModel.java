@@ -342,7 +342,8 @@ public class CreationTemplatePreviewModel {
             WaitingDialog_progress dialog = new WaitingDialog_progress(mContext);
             dialog.openProgressDialog();
             //需要裁剪
-            videoCutDurationForVideoOneDo.getInstance().startCutDurtion(videoPath, Math.round(cropStartRatio * allDuration), Math.round(cropEndRatio * allDuration), new videoCutDurationForVideoOneDo.isSuccess() {
+
+            videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(mContext,(cropEndRatio-cropStartRatio)*allDuration/1000,videoPath, (long) (cropStartRatio*allDuration)/1000, new videoCutDurationForVideoOneDo.isSuccess() {
                 @Override
                 public void progresss(int progress) {
                     if (progress > 100) {
@@ -360,10 +361,32 @@ public class CreationTemplatePreviewModel {
                     dialog.closePragressDialog();
                     callback.isSaveToAlbum(path, hasShowStimulateAd);
                     LogUtil.d("OOM", "裁剪后导出的地址为111" + path);
-
-
                 }
             });
+
+
+//            videoCutDurationForVideoOneDo.getInstance().startCutDurtion(videoPath, Math.round(cropStartRatio * allDuration), Math.round(cropEndRatio * allDuration), new videoCutDurationForVideoOneDo.isSuccess() {
+//                @Override
+//                public void progresss(int progress) {
+//                    if (progress > 100) {
+//                        progress = 100;
+//                    }
+//                    dialog.setProgress(progress + "%");
+//                }
+//
+//                @Override
+//                public void isSuccess(boolean isSuccess, String path) {
+//                    if (path == null) {
+//                        ToastUtil.showToast(mContext.getString(R.string.render_error));
+//                        return;
+//                    }
+//                    dialog.closePragressDialog();
+//                    callback.isSaveToAlbum(path, hasShowStimulateAd);
+//                    LogUtil.d("OOM", "裁剪后导出的地址为111" + path);
+//
+//
+//                }
+//            });
         }
 
     }
