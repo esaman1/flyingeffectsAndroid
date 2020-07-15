@@ -24,11 +24,11 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     //camera
-    api 'androidx.camera:camera-core:1.0.0-beta04'
-    api 'androidx.camera:camera-camera2:1.0.0-beta04'
-    api 'androidx.camera:camera-view:1.0.0-alpha11'
-    api 'androidx.camera:camera-extensions:1.0.0-alpha11'
-    api 'androidx.camera:camera-lifecycle:1.0.0-beta04'
+    api 'androidx.camera:camera-core:1.0.0-beta06'
+    api 'androidx.camera:camera-camera2:1.0.0-beta06'
+    api 'androidx.camera:camera-view:1.0.0-alpha13'
+    api 'androidx.camera:camera-extensions:1.0.0-alpha13'
+    api 'androidx.camera:camera-lifecycle:1.0.0-beta06'
     //gesture imageview
     api 'com.github.chrisbanes:PhotoView:2.3.0@aar'
     //exo视频播放器

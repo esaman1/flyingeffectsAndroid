@@ -43,6 +43,7 @@ import androidx.camera.core.MeteringPoint;
 import androidx.camera.core.MeteringPointFactory;
 import androidx.camera.core.Preview;
 import androidx.camera.core.SurfaceOrientedMeteringPointFactory;
+import androidx.camera.core.UseCase;
 import androidx.camera.core.VideoCapture;
 import androidx.camera.core.ZoomState;
 import androidx.camera.core.impl.VideoCaptureConfig;
@@ -230,7 +231,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             mTotalRecordingTime = (int) ((total + 1000) / 1000);
             mTitle = bundle.getString(Album.MODEL_TITLE);
             mMusicPath = bundle.getString(Album.MUSIC_PATH);
-            mMusicPath = mMusicPath + File.separator+"bj.mp3";
+            mMusicPath = mMusicPath + File.separator + "bj.mp3";
         }
         Log.d(TAG, "getBundle: mMusicPath = " + mMusicPath);
         Log.d(TAG, "getBundle: videoTime = " + mTotalRecordingTime);
@@ -414,8 +415,19 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     @SuppressLint("RestrictedApi")
     private void initVideoCapture() {
         mVideoCapture = new VideoCaptureConfig.Builder()
-                .setCameraSelector(mCameraSelector)
+                //.setCameraSelector(mCameraSelector)
                 .setTargetAspectRatio(mAspectRatioInt)
+                .setUseCaseEventCallback(new UseCase.EventCallback() {
+                    @Override
+                    public void onBind(@NonNull String cameraId) {
+
+                    }
+
+                    @Override
+                    public void onUnbind() {
+
+                    }
+                })
                 //.setTargetRotation(rotation)
                 //.setTargetResolution(resolution)
                 //视频帧率
@@ -448,6 +460,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         mCamera = mCameraProvider.bindToLifecycle(this, mCameraSelector, mVideoCapture, preview);
         mCameraInfo = mCamera.getCameraInfo();
         mCameraControl = mCamera.getCameraControl();
+
         preview.setSurfaceProvider(mViewFinder.createSurfaceProvider());
         initCameraListener();
     }
@@ -459,7 +472,15 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         } else if (v.getId() == R.id.iv_switch_timer) {
             switchTimer();
         } else if (v.getId() == R.id.iv_back) {
-            finish();
+            //倒计时关闭页面会导致崩溃
+            if (!mIsCountingDown) {
+                //如果在录制中，点击返回优先把录制停下来
+                if (mRecording) {
+                    stopRecord();
+                } else {
+                    finish();
+                }
+            }
         }
     }
 
