@@ -21,7 +21,7 @@ set_target_properties(megviisegsdk PROPERTIES
 
 add_library(face_new SHARED IMPORTED )
 set_target_properties(face_new PROPERTIES
-        IMPORTED_LOCATION "${jnilibs}/${ANDROID_ABI}/libmegface_full.so")
+        IMPORTED_LOCATION "${jnilibs}/${ANDROID_ABI}/libmegface.so")
 
 #add_library(stl SHARED IMPORTED )
 #set_target_properties(stl PROPERTIES

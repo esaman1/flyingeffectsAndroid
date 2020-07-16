@@ -173,4 +173,9 @@ public class SegResultHandleManage {
         }
         return pixels;
     }
+
+
+
+
+
 }

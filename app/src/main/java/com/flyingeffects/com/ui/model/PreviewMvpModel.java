@@ -532,6 +532,7 @@ public class PreviewMvpModel {
                     } catch (Exception e) {
                         isDownZipUrl = false;
                         Observable.just(e).subscribeOn(AndroidSchedulers.mainThread()).subscribe(e1 -> new Handler().post(() -> ToastUtil.showToast("下载异常，请重试")));
+                        callback.showDownProgress(100);
                         LogUtil.d("onVideoAdError", "Exception=" + e.getMessage());
                     }
                     super.run();

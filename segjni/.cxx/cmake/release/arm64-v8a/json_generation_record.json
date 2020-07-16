@@ -31,7 +31,187 @@
   },
   {
     "level": "INFO",
-    "message": "JSON \u0027D:\\githubSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\release\\arm64-v8a\\android_gradle_build.json\u0027 was up-to-date",
+    "message": "rebuilding JSON D:\\githubSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\release\\arm64-v8a\\android_gradle_build.json due to:",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "- a dependent build file changed",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "  - D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "keeping json folder \u0027D:\\githubSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\release\\arm64-v8a\u0027 but regenerating project",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "executing cmake Executable : E:\\Sdk\\cmake\\3.10.2.4988404\\bin\\cmake.exe\narguments : \n-HD:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\n-DCMAKE_FIND_ROOT_PATH\u003dD:\\githubSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\release\\prefab\\arm64-v8a\\prefab\n-DCMAKE_BUILD_TYPE\u003dRelease\n-DCMAKE_TOOLCHAIN_FILE\u003dE:\\Sdk\\ndk\\21.0.6113669\\build\\cmake\\android.toolchain.cmake\n-DANDROID_ABI\u003darm64-v8a\n-DANDROID_NDK\u003dE:\\Sdk\\ndk\\21.0.6113669\n-DANDROID_PLATFORM\u003dandroid-16\n-DCMAKE_ANDROID_ARCH_ABI\u003darm64-v8a\n-DCMAKE_ANDROID_NDK\u003dE:\\Sdk\\ndk\\21.0.6113669\n-DCMAKE_EXPORT_COMPILE_COMMANDS\u003dON\n-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\u003dD:\\githubSpace\\flyingeffectsAndroid\\segjni\\build\\intermediates\\cmake\\release\\obj\\arm64-v8a\n-DCMAKE_MAKE_PROGRAM\u003dE:\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe\n-DCMAKE_SYSTEM_NAME\u003dAndroid\n-DCMAKE_SYSTEM_VERSION\u003d16\n-DANDROID_ARM_NEON\u003dTRUE\n-DANDROID_STL\u003dc++_static\n-BD:\\githubSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\release\\arm64-v8a\n-GNinja\njvmArgs : \n\n",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "\n",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "[\u003d\u003d \"CMake Server\" \u003d\u003d[\n",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"supportedProtocolVersions\":[{\"isExperimental\":true,\"major\":1,\"minor\":1}],\"type\":\"hello\"}\n",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "]\u003d\u003d \"CMake Server\" \u003d\u003d]\n",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\n  \"type\": \"handshake\",\n  \"cookie\": \"gradle-cmake-cookie\",\n  \"protocolVersion\": {\n    \"isExperimental\": true,\n    \"major\": 1,\n    \"minor\": 1\n  },\n  \"sourceDirectory\": \"D:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp\",\n  \"buildDirectory\": \"D:/githubSpace/flyingeffectsAndroid/segjni/.cxx/cmake/release/arm64-v8a\",\n  \"generator\": \"Ninja\"\n}\n",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"gradle-cmake-cookie\",\"inReplyTo\":\"handshake\",\"type\":\"reply\"}\n",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\n  \"type\": \"configure\",\n  \"cacheArguments\": [\n    \"\",\n    \"-DCMAKE_FIND_ROOT_PATH\\u003dD:\\\\githubSpace\\\\flyingeffectsAndroid\\\\segjni\\\\.cxx\\\\cmake\\\\release\\\\prefab\\\\arm64-v8a\\\\prefab\",\n    \"-DCMAKE_BUILD_TYPE\\u003dRelease\",\n    \"-DCMAKE_TOOLCHAIN_FILE\\u003dE:\\\\Sdk\\\\ndk\\\\21.0.6113669\\\\build\\\\cmake\\\\android.toolchain.cmake\",\n    \"-DANDROID_ABI\\u003darm64-v8a\",\n    \"-DANDROID_NDK\\u003dE:\\\\Sdk\\\\ndk\\\\21.0.6113669\",\n    \"-DANDROID_PLATFORM\\u003dandroid-16\",\n    \"-DCMAKE_ANDROID_ARCH_ABI\\u003darm64-v8a\",\n    \"-DCMAKE_ANDROID_NDK\\u003dE:\\\\Sdk\\\\ndk\\\\21.0.6113669\",\n    \"-DCMAKE_EXPORT_COMPILE_COMMANDS\\u003dON\",\n    \"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\\u003dD:\\\\githubSpace\\\\flyingeffectsAndroid\\\\segjni\\\\build\\\\intermediates\\\\cmake\\\\release\\\\obj\\\\arm64-v8a\",\n    \"-DCMAKE_MAKE_PROGRAM\\u003dE:\\\\Sdk\\\\cmake\\\\3.10.2.4988404\\\\bin\\\\ninja.exe\",\n    \"-DCMAKE_SYSTEM_NAME\\u003dAndroid\",\n    \"-DCMAKE_SYSTEM_VERSION\\u003d16\",\n    \"-DANDROID_ARM_NEON\\u003dTRUE\",\n    \"-DANDROID_STL\\u003dc++_static\"\n  ]\n}\n",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":1000,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Configuring done\",\"type\":\"message\"}\n",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "Configuring done",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"type\":\"reply\"}\n",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"type\":\"compute\"}\n",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"compute\",\"progressCurrent\":1000,\"progressMaximum\":1000,\"progressMessage\":\"Generating\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"compute\",\"message\":\"Generating done\",\"type\":\"message\"}\n",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "Generating done",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"compute\",\"type\":\"reply\"}\n",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"type\":\"cmakeInputs\"}\n",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"buildFiles\":[{\"isCMake\":true,\"isTemporary\":false,\"sources\":[\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeSystemSpecificInitialize.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Initialize.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeSystemSpecificInformation.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeGenericSystem.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Linux.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/UnixPaths.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCInformation.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeLanguageInformation.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-C.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/CMakeCommonCompilerMacros.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/GNU.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/CMakeCommonCompilerMacros.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Clang-C.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Clang.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCommonLanguageInclude.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCXXInformation.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeLanguageInformation.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-CXX.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Clang-CXX.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Clang.cmake\",\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCommonLanguageInclude.cmake\"]},{\"isCMake\":false,\"isTemporary\":false,\"sources\":[\"CMakeLists.txt\",\"E:/Sdk/ndk/21.0.6113669/build/cmake/android.toolchain.cmake\",\"E:/Sdk/ndk/21.0.6113669/build/cmake/platforms.cmake\"]},{\"isCMake\":false,\"isTemporary\":true,\"sources\":[\"../../../.cxx/cmake/release/arm64-v8a/CMakeFiles/3.10.2/CMakeSystem.cmake\",\"../../../.cxx/cmake/release/arm64-v8a/CMakeFiles/3.10.2/CMakeCCompiler.cmake\",\"../../../.cxx/cmake/release/arm64-v8a/CMakeFiles/3.10.2/CMakeCXXCompiler.cmake\"]}],\"cmakeRootDirectory\":\"E:/Sdk/cmake/3.10.2.4988404/share/cmake-3.10\",\"cookie\":\"\",\"inReplyTo\":\"cmakeInputs\",\"sourceDirectory\":\"D:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp\",\"type\":\"reply\"}\n",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"type\":\"codemodel\"}\n",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"configurations\":[{\"name\":\"Release\",\"projects\":[{\"buildDirectory\":\"D:/githubSpace/flyingeffectsAndroid/segjni/.cxx/cmake/release/arm64-v8a\",\"name\":\"Project\",\"sourceDirectory\":\"D:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp\",\"targets\":[{\"artifacts\":[\"D:/githubSpace/flyingeffectsAndroid/segjni/src/main/jniLibs/arm64-v8a/libMegviiSegJni.so\"],\"buildDirectory\":\"D:/githubSpace/flyingeffectsAndroid/segjni/.cxx/cmake/release/arm64-v8a\",\"fileGroups\":[{\"compileFlags\":\"-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE\u003d2 -Wformat -Werror\u003dformat-security   -O2 -DNDEBUG  -fPIC  \",\"defines\":[\"MegviiSegJni_EXPORTS\"],\"includePath\":[{\"path\":\"D:/githubSpace/flyingeffectsAndroid/segjni/.cxx/cmake/release/arm64-v8a\"},{\"path\":\"D:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp\"},{\"path\":\"D:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp/include\"}],\"isGenerated\":false,\"language\":\"CXX\",\"sources\":[\"megvii_seg_jni_new.cpp\"]}],\"fullName\":\"libMegviiSegJni.so\",\"linkFlags\":\"-Wl,--exclude-libs,libgcc_real.a -Wl,--exclude-libs,libatomic.a -static-libstdc++ -Wl,--build-id -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments\",\"linkLibraries\":\"D:\\\\githubSpace\\\\flyingeffectsAndroid\\\\segjni\\\\src\\\\main\\\\cpp\\\\..\\\\jniLibs\\\\arm64-v8a\\\\libmegface.so D:\\\\githubSpace\\\\flyingeffectsAndroid\\\\segjni\\\\src\\\\main\\\\cpp\\\\..\\\\jniLibs\\\\arm64-v8a\\\\libmegsegment.so -llog -lGLESv2 -lEGL -landroid -ljnigraphics -latomic -lm\",\"linkerLanguage\":\"CXX\",\"name\":\"MegviiSegJni\",\"sourceDirectory\":\"D:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp\",\"sysroot\":\"E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot\",\"type\":\"SHARED_LIBRARY\"}]}]}],\"cookie\":\"\",\"inReplyTo\":\"codemodel\",\"type\":\"reply\"}\n",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "done executing cmake",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "write build output D:\\githubSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\release\\arm64-v8a\\build_output.txt",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "deleted unexpected build output D:\\githubSpace\\flyingeffectsAndroid\\segjni\\build\\intermediates\\cmake\\release\\obj\\arm64-v8a\\libmegface_full.so in incremental regenerate",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "deleted unexpected build output D:\\githubSpace\\flyingeffectsAndroid\\segjni\\build\\intermediates\\cmake\\release\\obj\\arm64-v8a\\libmegsegment.so in incremental regenerate",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "deleted unexpected build output D:\\githubSpace\\flyingeffectsAndroid\\segjni\\build\\intermediates\\cmake\\release\\obj\\arm64-v8a\\libMegviiSegJni.so in incremental regenerate",
+    "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "write command file D:\\githubSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\release\\arm64-v8a\\build_command.txt",
     "file": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
     "tag": "release|arm64-v8a"
   },

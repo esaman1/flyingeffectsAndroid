@@ -57,8 +57,8 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
         previewUpAndDownMvpModel.collectTemplate(templateId, title,template_type);
     }
 
-    public void DownVideo(String path,String imagePath,String id){
-        previewUpAndDownMvpModel.DownVideo(path,imagePath,id,false);
+    public void DownVideo(String path,String imagePath,String id,boolean isFromAgainChooseBj){
+        previewUpAndDownMvpModel.DownVideo(path,imagePath,id,false,isFromAgainChooseBj);
     }
 
 

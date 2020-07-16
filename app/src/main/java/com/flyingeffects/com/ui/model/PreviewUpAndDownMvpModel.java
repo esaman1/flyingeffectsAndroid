@@ -181,7 +181,7 @@ public class PreviewUpAndDownMvpModel {
             statisticsEventAffair.getInstance().setFlag(context, "save_back_template");
             downProgressDialog = new WaitingDialog_progress(context);
             downProgressDialog.openProgressDialog();
-            DownVideo(path, imagePath, id, true);
+            DownVideo(path, imagePath, id, true,false);
             dismissDialog();
         });
         LinearLayout ll_friend_circle = view.findViewById(R.id.ll_friend_circle);
@@ -577,7 +577,7 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-    public void DownVideo(String path, String imagePath, String id, boolean keepAlbum) {
+    public void DownVideo(String path, String imagePath, String id, boolean keepAlbum,boolean isFromAgainChooseBj) {
 
         String videoName = mVideoFolder + File.separator + id + "synthetic.mp4";
         File File = new File(videoName);
@@ -606,7 +606,12 @@ public class PreviewUpAndDownMvpModel {
                         public void progresss(int progress) {
                             LogUtil.d("oom", "下载时候后重新裁剪进度为=" + progress);
                             if (downProgressDialog != null) {
-                                downProgressDialog.setProgress("下载进度为" + progress + "%");
+                                if(isFromAgainChooseBj){
+                                    downProgressDialog.setProgress("正在生成中" + progress + "%");
+                                }else{
+                                    downProgressDialog.setProgress("下载进度为" + progress + "%");
+                                }
+
                             } else {
                                 downProgressDialog = new WaitingDialog_progress(context);
                                 downProgressDialog.openProgressDialog();

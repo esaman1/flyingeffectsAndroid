@@ -171,7 +171,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         }else{
             videoPlayer.loadCoverImage(item.getImage(), R.mipmap.black_lucency);
         }
-        videoPlayer.setAnimation(null);
+//        videoPlayer.setAnimation(null);
         videoPlayer.getStartButton().setVisibility(View.GONE);
         videoPlayer.setUpLazy(item.getVidoefile(), true, null, null, "这是title");
         videoPlayer.setPlayPosition(offset);

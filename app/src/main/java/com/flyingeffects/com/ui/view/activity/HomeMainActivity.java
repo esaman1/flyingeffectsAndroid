@@ -49,6 +49,7 @@ import com.flyingeffects.com.ui.view.fragment.frag_Bj;
 import com.flyingeffects.com.ui.view.fragment.frag_search;
 import com.flyingeffects.com.ui.view.fragment.frag_user_center;
 import com.flyingeffects.com.utils.AssetsUtils;
+import com.flyingeffects.com.utils.DateUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NoDoubleClickListener;
 import com.flyingeffects.com.utils.StringUtil;
@@ -125,12 +126,12 @@ public class HomeMainActivity extends FragmentActivity {
         if (BaseConstans.hasLogin()) {
             requestUserInfo();
         }
+        Log.d("OOM", "aa=" + DateUtils.getCurrentTime_m(System.currentTimeMillis()));
+
         new Thread(() -> SegJni.nativeCreateSegHandler(HomeMainActivity.this, ConUtil.getFileContent(HomeMainActivity.this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT)).start();
+
+
     }
-
-
-
-
 
 
     private void requestUserInfo() {

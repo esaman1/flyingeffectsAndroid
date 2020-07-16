@@ -1,13 +1,17 @@
 package com.flyingeffects.com.ui.model;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 
+import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.SegResultHandleManage;
+import com.flyingeffects.com.ui.view.activity.HomeMainActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.util.PhotoBitmapUtils;
+import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.util.ArrayList;
 
@@ -18,7 +22,21 @@ public class MattingImage {
     private int mBitmapW;
     private Bitmap mOriginBitmap;
 
+
     public MattingImage() {
+    }
+
+
+    public static void createHandle(Context context) {
+        if (!BaseConstans.hasCreatingSegJni) {
+            WaitingDialog.openPragressDialog(context);
+            LogUtil.d("onVideoAdError", "创建中");
+            int aa = SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
+            LogUtil.d("onVideoAdError", "aa=" + aa);
+            BaseConstans.hasCreatingSegJni = true;
+            WaitingDialog.closePragressDialog();
+            LogUtil.d("onVideoAdError", "创建完成");
+        }
     }
 
 
@@ -76,14 +94,15 @@ public class MattingImage {
     }
 
 
-   private  byte TestSegs[];
+    private byte TestSegs[];
+
     public byte[] test(int index, int mBitmapW, int mBitmapH, byte[] rgba) {
         if (index == 0) {
             SegJni.nativeCreateImageBuffer(mBitmapW, mBitmapH);
             TestSegs = new byte[mBitmapH * mBitmapW];
         }
         SegJni.nativeSegImage(rgba, mBitmapW, mBitmapH, TestSegs, false);
-        return  TestSegs;
+        return TestSegs;
     }
 
 
@@ -137,7 +156,6 @@ public class MattingImage {
     }
 
 
-
     /**
      * description ：爱字幕的单线抠图
      * creation date: 2020/7/13
@@ -153,7 +171,7 @@ public class MattingImage {
 
         SegJni.nativeSegImage(rgba, mBitmapW, mBitmapH, segs, false);
         SegJni.nativeReleaseImageBuffer();
-        return  SegResultHandleManage.setBitmapAlpha(bitmap, segs);
+        return SegResultHandleManage.setBitmapAlpha(bitmap, segs);
     }
 
 

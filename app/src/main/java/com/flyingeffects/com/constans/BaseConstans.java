@@ -27,6 +27,7 @@ public class BaseConstans {
     public static final boolean UserFaceSdk=true;
 //    public static final boolean isTitokChannel=true;
     public static final int  THREADCOUNT=1;
+    public static boolean hasCreatingSegJni = false;
     public static String titok;
     public static String kuaishou;
     public static final boolean PRODUCTION = false;

@@ -32,6 +32,7 @@ import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.PreviewUpAndDownMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
+import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.ui.presenter.PreviewUpAndDownMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -207,6 +208,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
+//                GSYVideoManager.releaseAllVideos();
                 if (position != -1) {
                     LogUtil.d("OOM", "当前位置为" + position);
                     adapter.NowPreviewChooseItem(position);
@@ -429,7 +431,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     @Override
     public void showDownProgress(int progress) {
-        adapter.pauseVideo();
+//        adapter.pauseVideo();
         if (progress >= 100) {
             isDownIng = false;
             waitingDialog_progress.closePragressDialog();
@@ -602,9 +604,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             //来自下载背景，就是用户重新选择背景页面
             Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> {
                 if (!ondestroy) {
-                    String alert = "飞闪极速下载中...";
+                    String alert = "正在生成中...";
                     WaitingDialog.openPragressDialog(PreviewUpAndDownActivity.this, alert);
-                    Presenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId());
+                    Presenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId(),true);
                 }
             }, 200));
         } else {
@@ -656,7 +658,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
+
         if (!isCancel && !ondestroy) {
+            WaitingDialog.closePragressDialog();
+            LogUtil.d("onVideoAdError", "1111");
+
+//            MattingImage.createHandle(this);
+            LogUtil.d("onVideoAdError", "2222");
 //            //如果不需要抠图
 //            if (is_picout == 0) {
 //                intoTemplateActivity(paths, TemplateFilePath);
@@ -671,7 +679,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     alert = "正在生成中~";
                 }
             }
-
+            LogUtil.d("onVideoAdError", "3333");
             new Handler().postDelayed(() -> {
                 if (!ondestroy) {
                     WaitingDialog.openPragressDialog(PreviewUpAndDownActivity.this, alert);
@@ -699,10 +707,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 } else {
                     if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
                         statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
-                        Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId());
+                        Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId(),false);
                     } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
                         statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
-                        Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId());
+                        Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId(),false);
                     } else {
                         toClosePragressDialog();
                         String videoTime = templateItem.getVideotime();
@@ -729,9 +737,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         boolean hasCache = templateItem.getIs_anime() != 1;
         CompressionCuttingManage manage = new CompressionCuttingManage(PreviewUpAndDownActivity.this, templateId, hasCache, tailorPaths -> {
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId());
+                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId(),false);
             } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
-                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId());
+                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId(),false);
             } else {
                 toClosePragressDialog();
                 intoTemplateActivity(tailorPaths, TemplateFilePath);
@@ -750,9 +758,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         boolean hasCache = templateItem.getIs_anime() != 1;
         CompressionCuttingManage manage = new CompressionCuttingManage(PreviewUpAndDownActivity.this, templateId, hasCache, tailorPaths -> {
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId());
+                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId(),false);
             } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
-                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId());
+                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId(),false);
             } else {
                 toClosePragressDialog();
                 intoTemplateActivity(tailorPaths, TemplateFilePath);

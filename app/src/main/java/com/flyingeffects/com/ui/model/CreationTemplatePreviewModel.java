@@ -337,8 +337,8 @@ public class CreationTemplatePreviewModel {
             callback.isSaveToAlbum(videoPath, hasShowStimulateAd);
         } else {
             allDuration=realityDuration*1000;
-            float test=(cropEndRatio-cropStartRatio)*allDuration/(float)1000/(float)1000;
-            ToastUtil.showToast("裁剪时长为："+test);
+//            float test=(cropEndRatio-cropStartRatio)*allDuration/(float)1000/(float)1000;
+//            ToastUtil.showToast("裁剪时长为："+test);
             WaitingDialog_progress dialog = new WaitingDialog_progress(mContext);
             dialog.openProgressDialog();
             //需要裁剪
