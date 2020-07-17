@@ -175,6 +175,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         videoPlayer.getStartButton().setVisibility(View.GONE);
         videoPlayer.setUpLazy(item.getVidoefile(), true, null, null, "这是title");
         videoPlayer.setPlayPosition(offset);
+        videoPlayer.clearAnimation();
         videoPlayer.getTitleTextView().setVisibility(View.GONE);
         videoPlayer.setIsTouchWigetFull(false);
         videoPlayer.getBackButton().setVisibility(View.GONE);

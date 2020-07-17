@@ -260,7 +260,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             rela_parent_show_alert.setVisibility(View.GONE);
         }
 
-
     }
 
 
