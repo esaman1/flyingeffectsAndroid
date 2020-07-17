@@ -764,6 +764,7 @@ public class PreviewUpAndDownMvpModel {
                                 } catch (IOException e) {
                                     LogUtil.d("onVideoAdError", "Exception=" + e.getMessage());
                                     e.printStackTrace();
+
                                 }
                             }
                         });
@@ -772,6 +773,7 @@ public class PreviewUpAndDownMvpModel {
                         isDownZipUrl = false;
                         Observable.just(e).subscribeOn(AndroidSchedulers.mainThread()).subscribe(e1 -> new Handler().post(() -> ToastUtil.showToast("下载异常，请重试")));
                         LogUtil.d("onVideoAdError", "Exception=" + e.getMessage());
+                        callback.showDownProgress(100);
 //                        ToastUtil.showToast(e.getMessage());
 //                        Toast.makeText(context,e.getMessage(),Toast.LENGTH_LONG).show();
                     }

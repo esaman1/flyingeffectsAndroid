@@ -90,6 +90,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @BindView(R.id.iv_play)
     ImageView ivPlay;
 
+
     @BindView(R.id.switch_button)
     SwitchButton switchButton;
 

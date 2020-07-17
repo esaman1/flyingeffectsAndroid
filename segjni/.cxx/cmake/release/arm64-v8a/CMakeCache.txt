@@ -24,7 +24,7 @@ ANDROID_ARM_NEON:UNINITIALIZED=TRUE
 ANDROID_NDK:UNINITIALIZED=E:\Sdk\ndk\21.0.6113669
 
 //No help, variable specified on the command line.
-ANDROID_PLATFORM:UNINITIALIZED=android-16
+ANDROID_PLATFORM:UNINITIALIZED=android-21
 
 //No help, variable specified on the command line.
 ANDROID_STL:UNINITIALIZED=c++_static
@@ -208,10 +208,10 @@ CMAKE_STRIP:FILEPATH=E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x8
 CMAKE_SYSTEM_NAME:UNINITIALIZED=Android
 
 //No help, variable specified on the command line.
-CMAKE_SYSTEM_VERSION:UNINITIALIZED=16
+CMAKE_SYSTEM_VERSION:UNINITIALIZED=21
 
-//No help, variable specified on the command line.
-CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=E:\Sdk\ndk\21.0.6113669\build\cmake\android.toolchain.cmake
+//The CMake toolchain file
+CMAKE_TOOLCHAIN_FILE:FILEPATH=E:/Sdk/ndk/21.0.6113669/build/cmake/android.toolchain.cmake
 
 //If this value is on, makefiles will be generated without the
 // .SILENT directive, and all commands will be echoed to the console
@@ -226,7 +226,7 @@ EGL-lib:FILEPATH=E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64
 GLESv2-lib:FILEPATH=E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/aarch64-linux-android/21/libGLESv2.so
 
 //Dependencies for the target
-MegviiSegJni_LIB_DEPENDS:STATIC=general;face_new;general;megviisegsdk;general;E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/aarch64-linux-android/21/liblog.so;general;E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/aarch64-linux-android/21/libGLESv2.so;general;E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/aarch64-linux-android/21/libEGL.so;general;android;general;E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/aarch64-linux-android/21/libjnigraphics.so;
+MegviiSegJni_LIB_DEPENDS:STATIC=general;megviisegsdk;general;face_new;general;E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/aarch64-linux-android/21/liblog.so;general;E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/aarch64-linux-android/21/libGLESv2.so;general;E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/aarch64-linux-android/21/libEGL.so;general;android;general;E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/aarch64-linux-android/21/libjnigraphics.so;
 
 //Value Computed by CMake
 Project_BINARY_DIR:STATIC=D:/githubSpace/flyingeffectsAndroid/segjni/.cxx/cmake/release/arm64-v8a

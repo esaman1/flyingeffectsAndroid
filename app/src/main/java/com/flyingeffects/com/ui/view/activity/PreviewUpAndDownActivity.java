@@ -432,18 +432,21 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void showDownProgress(int progress) {
 //        adapter.pauseVideo();
-        if (progress >= 100) {
-            isDownIng = false;
-            waitingDialog_progress.closePragressDialog();
-        } else {
-            if (!isDownIng) {
-                waitingDialog_progress.openProgressDialog();
-                isDownIng = true;
+        Observable.just(progress).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer integer) {
+                if (integer >= 100) {
+                    isDownIng = false;
+                    waitingDialog_progress.closePragressDialog();
+                } else {
+                    if (!isDownIng) {
+                        waitingDialog_progress.openProgressDialog();
+                        isDownIng = true;
+                    }
+                    waitingDialog_progress.setProgress(integer + "%");
+                }
             }
-            Observable.just(progress).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer ->
-                waitingDialog_progress.setProgress(progress + "%"));
-        }
-
+        });
     }
 
     @Override

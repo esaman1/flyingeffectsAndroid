@@ -109,6 +109,7 @@ public class HomeMainActivity extends FragmentActivity {
         final ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.hide();
+
         }
         fragmentManager = getSupportFragmentManager();
         clearAllData();
@@ -128,7 +129,8 @@ public class HomeMainActivity extends FragmentActivity {
         }
         Log.d("OOM", "aa=" + DateUtils.getCurrentTime_m(System.currentTimeMillis()));
 
-        new Thread(() -> SegJni.nativeCreateSegHandler(HomeMainActivity.this, ConUtil.getFileContent(HomeMainActivity.this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT)).start();
+//        new Thread(() ->
+        SegJni.nativeCreateSegHandler(HomeMainActivity.this, ConUtil.getFileContent(HomeMainActivity.this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
 
 
     }

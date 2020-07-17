@@ -14,7 +14,10 @@
       "buildCommand": "E:\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"D:\\githubSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\release\\armeabi-v7a\" MegviiSegJni",
       "abi": "armeabi-v7a",
       "output": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\jniLibs\\armeabi-v7a\\libMegviiSegJni.so",
-      "runtimeFiles": []
+      "runtimeFiles": [
+        "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\..\\jniLibs\\armeabi-v7a\\libmegsegment.so",
+        "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\..\\jniLibs\\armeabi-v7a\\libmegface-new.so"
+      ]
     }
   }
 }
