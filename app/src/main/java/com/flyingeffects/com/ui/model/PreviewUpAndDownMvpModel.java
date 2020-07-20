@@ -41,6 +41,7 @@ import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.TTAdManagerHolder;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
+import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
@@ -89,6 +90,7 @@ public class PreviewUpAndDownMvpModel {
     private String templateId;
     private boolean fromToMineCollect;
     private TTAdNative mTTAdNative;
+    private String soundFolder;
 
     public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage, String fromTo, String templateId, boolean fromToMineCollect) {
         this.context = context;
@@ -103,6 +105,7 @@ public class PreviewUpAndDownMvpModel {
         mTTAdNative = TTAdManagerHolder.get().createAdNative(context);
         //在合适的时机申请权限，如read_phone_state,防止获取不了imei时候，下载类广告没有填充的问题
         TTAdManagerHolder.get().requestPermissionIfNecessary(context);
+        soundFolder = fileManager.getFileCachePath(context, "soundFolder");
     }
 
 
@@ -127,6 +130,21 @@ public class PreviewUpAndDownMvpModel {
         smartRefreshLayout.setEnableLoadMore(false);
     }
 
+
+    public void GetBackgroundMusic(String videoPath){
+        mediaManager manager = new mediaManager(context);
+        manager.splitMp4(videoPath, new File(soundFolder), new mediaManager.splitMp4Callback() {
+            @Override
+            public void splitSuccess(boolean isSuccess, String putPath) {
+                if(isSuccess){
+                    callback.returnSpliteMusic(putPath,videoPath);
+                }else{
+                    callback.returnSpliteMusic("",videoPath);
+                }
+
+            }
+        });
+    }
 
     public void requestMoreData() {
         isOnLoadMore();
@@ -578,7 +596,6 @@ public class PreviewUpAndDownMvpModel {
 
 
     public void DownVideo(String path, String imagePath, String id, boolean keepAlbum,boolean isFromAgainChooseBj) {
-
         String videoName = mVideoFolder + File.separator + id + "synthetic.mp4";
         File File = new File(videoName);
         if (File.exists()) {
@@ -596,6 +613,13 @@ public class PreviewUpAndDownMvpModel {
             }
             return;
         }
+
+        if (downProgressDialog == null) {
+            LogUtil.d("OOM","downProgressDialog != null");
+            downProgressDialog = new WaitingDialog_progress(context);
+            downProgressDialog.openProgressDialog();
+        }
+
         Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
             DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> Observable.just(videoName).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                 @Override
@@ -612,9 +636,6 @@ public class PreviewUpAndDownMvpModel {
                                     downProgressDialog.setProgress("下载进度为" + progress + "%");
                                 }
 
-                            } else {
-                                downProgressDialog = new WaitingDialog_progress(context);
-                                downProgressDialog.openProgressDialog();
                             }
                         }
 
@@ -622,6 +643,7 @@ public class PreviewUpAndDownMvpModel {
                         public void isSuccess(boolean isSuccess, String path1) {
                             if (downProgressDialog != null) {
                                 downProgressDialog.closePragressDialog();
+                                downProgressDialog=null;
                             }
                             if (!keepAlbum) {
                                 callback.downVideoSuccess(path1, imagePath);

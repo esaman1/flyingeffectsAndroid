@@ -20,5 +20,8 @@ public interface PreviewUpAndDownMvpView {
     void showNewData(List<new_fag_template_item> allData,boolean isRefresh);
 
     void resultAd(List<TTNativeExpressAd> ads);
+
     void getTemplateLInfo(new_fag_template_item data);
+
+    void  returnSpliteMusic(String path,String videoPath);
 }

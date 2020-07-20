@@ -104,6 +104,18 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
         previewUpAndDownMvpView.getTemplateLInfo(data);
     }
 
+    @Override
+    public void getSpliteMusic(String path) {
+        previewUpAndDownMvpModel.GetBackgroundMusic(path);
+    }
+
+    @Override
+    public void returnSpliteMusic(String path, String videoPath) {
+        previewUpAndDownMvpView.returnSpliteMusic(path,videoPath);
+    }
+
+
+
     public void requestUserInfo(){
         previewUpAndDownMvpModel.requestUserInfo();
     }

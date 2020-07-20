@@ -26,4 +26,7 @@ public interface PreviewUpAndDownMvpCallback {
 
     void getTemplateLInfo(new_fag_template_item data);
 
+    void getSpliteMusic(String path);
+    void returnSpliteMusic(String path,String videoPath);
+
 }

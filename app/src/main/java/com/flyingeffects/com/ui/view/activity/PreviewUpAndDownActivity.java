@@ -48,6 +48,7 @@ import com.shixing.sxve.ui.view.WaitingDialog_progress;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.yanzhenjie.album.AlbumFile;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -150,7 +151,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
-        BaseConstans.TemplateHasWatchingAd=false;
+        BaseConstans.TemplateHasWatchingAd = false;
         ListForUpAndDown listForUpAndDown = (ListForUpAndDown) getIntent().getSerializableExtra("person");
         allData = listForUpAndDown.getAllData();
         ondestroy = false;
@@ -188,7 +189,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         break;
 
                     case R.id.iv_download_bj:
-                       statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "10_bj_arrow");
+                        statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "10_bj_arrow");
 
                         Presenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId(), templateItem);
                         break;
@@ -390,7 +391,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void hasLogin(boolean hasLogin) {
         if (!TextUtils.isEmpty(templateItem.getType()) && templateItem.getType().equals("1") && BaseConstans.getIncentiveVideo()) {
             Intent intent = new Intent(PreviewUpAndDownActivity.this, AdHintActivity.class);
-
             intent.putExtra("from", "PreviewActivity");
             intent.putExtra("templateTitle", templateItem.getTitle());
             startActivity(intent);
@@ -407,20 +407,26 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             EventBus.getDefault().post(new DownVideoPath(videoPath));
             finish();
         } else {
-            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                if (originalImagePath.get(0).equals(imagePath)) {
-                    createDownVideoPath = videoPath;
-                    //源图地址和剪切之后的地址完全一样，那说明只有一个情况，就是当前选择的素材是视频的情况，那么需要去得到视频的第一针，然后传过去
-                    Intent intent = new Intent(PreviewUpAndDownActivity.this, VideoCropActivity.class);
-                    intent.putExtra("videoPath", imagePath);
-                    intent.putExtra("comeFrom", FromToTemplate.ISFROMEDOWNVIDEO);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
+            if (!TextUtils.isEmpty(imagePath)) {
+                Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+                    if (originalImagePath.get(0).equals(imagePath)) {
+                        createDownVideoPath = videoPath;
+                        //源图地址和剪切之后的地址完全一样，那说明只有一个情况，就是当前选择的素材是视频的情况，那么需要去得到视频的第一针，然后传过去
+                        Intent intent = new Intent(PreviewUpAndDownActivity.this, VideoCropActivity.class);
+                        intent.putExtra("videoPath", imagePath);
+                        intent.putExtra("comeFrom", FromToTemplate.ISFROMEDOWNVIDEO);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
 
-                } else {
-                    intoCreationTemplateActivity(imagePath, videoPath, originalImagePath.get(0), true);
-                }
-            });
+                    } else {
+                        intoCreationTemplateActivity(imagePath, videoPath, originalImagePath.get(0), true);
+                    }
+                });
+            } else {
+                Presenter.getSpliteMusic(videoPath);
+            }
+
+
         }
 
     }
@@ -455,8 +461,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             this.TemplateFilePath = filePath;
             if (!TextUtils.isEmpty(templateItem.getVideotime()) && !templateItem.getVideotime().equals("0")) {
                 float videoTime = Float.parseFloat(templateItem.getVideotime());
-                LogUtil.d("OOM","bj.mp3="+TemplateFilePath);
-                AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "", (long) (videoTime * 1000), templateItem.getTitle(), TemplateFilePath);
+                LogUtil.d("OOM", "bj.mp3=" + TemplateFilePath);
+                String bjMp3 = TemplateFilePath + File.separator + "bj.mp3";
+                AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "", (long) (videoTime * 1000), templateItem.getTitle(), bjMp3);
             } else {
                 AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");
             }
@@ -585,30 +592,51 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
 
     /**
+     * description ：得到了背景音乐
+     * creation date: 2020/7/20
+     * user : zhangtongju
+     */
+    private String videoPath;
+    @Override
+    public void returnSpliteMusic(String musicPath,String videoPath) {
+        this.videoPath=videoPath;
+        if(!TextUtils.isEmpty(musicPath)){
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                LogUtil.d("OOM", "来自背景");
+                //来做背景页面
+                AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "", (long) adapter.getVideoDuration(), templateItem.getTitle(), musicPath);
+            } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
+                LogUtil.d("OOM", "来自背景");
+                AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "", (long) adapter.getVideoDuration(), templateItem.getTitle(), musicPath);
+            }
+        }else{
+            AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
+        }
+
+    }
+
+
+    /**
      * 这里逻辑优化下,背景页面是选择图片后在去下载背景，现在修改为先下载视频，下载完成后在打开相册选择图片
      */
+
+
     private void hasLoginToNext() {
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
             LogUtil.d("OOM", "来自背景");
-            //来做背景页面
-            AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
-
-
-          //  AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "", (long) adapter.getVideoDuration(), templateItem.getTitle(), TemplateFilePath);
-
+            statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
+            Presenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId(), false);
         } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
             LogUtil.d("OOM", "来自背景");
-            //来做背景页面
-            AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
-//            AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "", (long) adapter.getVideoDuration(), templateItem.getTitle(), TemplateFilePath);
-
+            statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
+            Presenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId(), false);
         } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
             //来自下载背景，就是用户重新选择背景页面
             Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> {
                 if (!ondestroy) {
                     String alert = "正在生成中...";
                     WaitingDialog.openPragressDialog(PreviewUpAndDownActivity.this, alert);
-                    Presenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId(),true);
+                    Presenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId(), true);
                 }
             }, 200));
         } else {
@@ -637,6 +665,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
 
     private void toClickMake() {
+        adapter.pauseVideo();
         if (!DoubleClick.getInstance().isFastZDYDoubleClick(3000)) {
             if (!TextUtils.isEmpty(fromTo)) {
                 if (fromTo.equals(FromToTemplate.ISFROMBJ) || fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
@@ -660,18 +689,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-
         if (!isCancel && !ondestroy) {
             WaitingDialog.closePragressDialog();
-            LogUtil.d("onVideoAdError", "1111");
-
-//            MattingImage.createHandle(this);
-            LogUtil.d("onVideoAdError", "2222");
-//            //如果不需要抠图
-//            if (is_picout == 0) {
-//                intoTemplateActivity(paths, TemplateFilePath);
-//                originalImagePath = null;
-//            } else {//需要抠图
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
                 //背景模板文案
                 alert = "正在生成中~";
@@ -681,7 +700,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     alert = "正在生成中~";
                 }
             }
-            LogUtil.d("onVideoAdError", "3333");
             new Handler().postDelayed(() -> {
                 if (!ondestroy) {
                     WaitingDialog.openPragressDialog(PreviewUpAndDownActivity.this, alert);
@@ -689,14 +707,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 }
             }, 200);
 
-
             new Thread(() -> {
                 originalImagePath = paths;
                 //如果是视频，就不抠图了
                 String path = paths.get(0);
                 String pathType = GetPathTypeModel.getInstance().getMediaType(path);
                 if (albumType.isImage(pathType)) {
-
                     if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
                         statisticsEventAffair.getInstance().setFlag(this, "8_SelectImage");
                     }
@@ -707,13 +723,22 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         compressImageForServers(paths, templateItem.getId());
                     }
                 } else {
-                    if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                        statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
-                        Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId(),false);
-                    } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
-                        statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
-                        Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId(),false);
-                    } else {
+                    if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)||!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
+                        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+                            if (originalImagePath.get(0).equals(paths.get(0))) {
+                                createDownVideoPath = videoPath;
+                                //源图地址和剪切之后的地址完全一样，那说明只有一个情况，就是当前选择的素材是视频的情况，那么需要去得到视频的第一针，然后传过去
+                                Intent intent = new Intent(PreviewUpAndDownActivity.this, VideoCropActivity.class);
+                                intent.putExtra("videoPath", paths.get(0));
+                                intent.putExtra("comeFrom", FromToTemplate.ISFROMEDOWNVIDEO);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                            } else {
+                                intoCreationTemplateActivity(paths.get(0), videoPath, originalImagePath.get(0), true);
+                            }
+                        });
+                    }
+                    else {
                         toClosePragressDialog();
                         String videoTime = templateItem.getVideotime();
                         if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
@@ -739,9 +764,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         boolean hasCache = templateItem.getIs_anime() != 1;
         CompressionCuttingManage manage = new CompressionCuttingManage(PreviewUpAndDownActivity.this, templateId, hasCache, tailorPaths -> {
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId(),false);
+                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId(), false);
             } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
-                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId(),false);
+                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId(), false);
             } else {
                 toClosePragressDialog();
                 intoTemplateActivity(tailorPaths, TemplateFilePath);
@@ -760,9 +785,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         boolean hasCache = templateItem.getIs_anime() != 1;
         CompressionCuttingManage manage = new CompressionCuttingManage(PreviewUpAndDownActivity.this, templateId, hasCache, tailorPaths -> {
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId(),false);
+                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId(), false);
             } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
-                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId(),false);
+                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId(), false);
             } else {
                 toClosePragressDialog();
                 intoTemplateActivity(tailorPaths, TemplateFilePath);
@@ -886,14 +911,14 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     public void onVideoAdError(String s) {
                         statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_fail");
                         LogUtil.d("OOM", "onVideoAdError" + s);
-                        BaseConstans.TemplateHasWatchingAd=true;
+                        BaseConstans.TemplateHasWatchingAd = true;
                         hasLoginToNext();
                     }
 
                     @Override
                     public void onVideoAdClose() {
                         LogUtil.d("OOM", "onVideoAdClose");
-                        BaseConstans.TemplateHasWatchingAd=true;
+                        BaseConstans.TemplateHasWatchingAd = true;
                         hasLoginToNext();
                     }
 
