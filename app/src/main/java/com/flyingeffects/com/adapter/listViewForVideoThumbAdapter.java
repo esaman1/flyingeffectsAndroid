@@ -9,6 +9,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
 
 /**
@@ -65,22 +68,22 @@ public class listViewForVideoThumbAdapter extends BaseAdapter {
         } else {
             holder = (ViewHold) view.getTag();
         }
-//        RequestOptions options = RequestOptions.frameOf(mTimePositions[position]);
-//        RequestOptions cacheOptions = RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE);
-//
-//        if(mUri!=null){
-//            Glide.with(holder.image.getContext())
-//                    .load(mUri)
-//                    .apply(options)
-//                    .apply(cacheOptions)
-//                    .into(holder.image);
-//        }else{
-//            Glide.with(holder.image.getContext())
-//                    .load(R.mipmap.green)
-//                    .apply(options)
-//                    .apply(cacheOptions)
-//                    .into(holder.image);
-//        }
+        RequestOptions options = RequestOptions.frameOf(mTimePositions[position]);
+        RequestOptions cacheOptions = RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE);
+
+        if(mUri!=null){
+            Glide.with(holder.image.getContext())
+                    .load(mUri)
+                    .apply(options)
+                    .apply(cacheOptions)
+                    .into(holder.image);
+        }else{
+            Glide.with(holder.image.getContext())
+                    .load(R.mipmap.green)
+                    .apply(options)
+                    .apply(cacheOptions)
+                    .into(holder.image);
+        }
 
         if (position == mTimePositions.length - 1) {
             holder.view_right.setLayoutParams(new LinearLayout.LayoutParams(marginRight, 0));
