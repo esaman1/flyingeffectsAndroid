@@ -31,6 +31,7 @@ import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.PreviewUpAndDownMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
+import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.ui.presenter.PreviewUpAndDownMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -57,6 +58,7 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 
 /**
@@ -105,6 +107,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     private List<String> originalImagePath = new ArrayList<>();
 
+
     //下载视频成功后跳转到创作界面
     private String createDownVideoPath;
 
@@ -142,6 +145,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private TTNativeExpressAd ad;
 
 
+    private MattingImage mattingImage;
+
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_preview_up_and_down;
@@ -150,6 +156,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
+        mattingImage = new MattingImage();
         BaseConstans.TemplateHasWatchingAd = false;
         ListForUpAndDown listForUpAndDown = (ListForUpAndDown) getIntent().getSerializableExtra("person");
         allData = listForUpAndDown.getAllData();
@@ -424,9 +431,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
 
-
-
-
     /**
      * description ：一键模板文件下载成功，背景页面是下载视频，而一键模板是下载zip
      * creation date: 2020/7/20
@@ -476,9 +480,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
 
-
-
-
     /**
      * description ：第一次进入默认之后会下滑
      * creation date: 2020/7/10
@@ -503,15 +504,17 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 new_fag_template_item item = new new_fag_template_item();
                 item.setAd(ad);
                 allData.add(randomPosition, item);
+                adapter.notifyDataSetChanged();
                 LogUtil.d("OOM", "广告插入的位置=" + randomPosition);
-                adapter.notifyItemChanged(randomPosition);
-                adapter.notifyItemChanged(randomPosition + 1);
+                //因为提前插入的，所以需要加1
+                viewPage2.setCurrentItem(nowChoosePosition + 1, false);
             } else {
                 //否则永远都是第一个
                 new_fag_template_item item = new new_fag_template_item();
                 item.setAd(ad);
                 allData.add(0, item);
                 adapter.notifyDataSetChanged();
+                viewPage2.setCurrentItem(nowChoosePosition + 1, false);
                 LogUtil.d("OOM", "超过数据限制，第一个为广告");
             }
         } else {
@@ -563,16 +566,17 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * user : zhangtongju
      */
     private String videoPath;
+
     @Override
-    public void returnSpliteMusic(String musicPath,String videoPath) {
-        this.videoPath=videoPath;
-        if(!TextUtils.isEmpty(musicPath)){
+    public void returnSpliteMusic(String musicPath, String videoPath) {
+        this.videoPath = videoPath;
+        if (!TextUtils.isEmpty(musicPath)) {
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
                 AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "", (long) adapter.getVideoDuration(), templateItem.getTitle(), musicPath);
             } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
                 AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "", (long) adapter.getVideoDuration(), templateItem.getTitle(), musicPath);
             }
-        }else{
+        } else {
             AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
         }
     }
@@ -644,77 +648,90 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
 
-
-
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel && !ondestroy) {
-            WaitingDialog.closePragressDialog();
-            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                //背景模板文案
-                alert = "正在生成中~";
-            } else {
-                //一键模板不抠图的情况下
-                if (is_picout == 0) {
-                    alert = "正在生成中~";
-                }
-            }
-            new Handler().postDelayed(() -> {
-                if (!ondestroy) {
-                    WaitingDialog.openPragressDialog(PreviewUpAndDownActivity.this, alert);
-                    GSYVideoManager.onPause();
-                }
-            }, 200);
 
-            new Thread(() -> {
-                originalImagePath = paths;
-                //如果是视频，就不抠图了
-                String path = paths.get(0);
-                String pathType = GetPathTypeModel.getInstance().getMediaType(path);
-                if (albumType.isImage(pathType)) {
-                    if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                        statisticsEventAffair.getInstance().setFlag(this, "8_SelectImage");
-                    }
-                    if (templateItem.getIs_anime() != 1) {
-                        compressImage(paths, templateItem.getId());
-                    } else {
-                        //漫画需要去服务器请求
-                        compressImageForServers(paths, templateItem.getId());
-                    }
-                } else {
-                    if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)||!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
-                        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                            if (originalImagePath.get(0).equals(paths.get(0))) {
-                                createDownVideoPath = videoPath;
-                                //源图地址和剪切之后的地址完全一样，那说明只有一个情况，就是当前选择的素材是视频的情况，那么需要去得到视频的第一针，然后传过去
-                                Intent intent = new Intent(PreviewUpAndDownActivity.this, VideoCropActivity.class);
-                                intent.putExtra("videoPath", paths.get(0));
-                                intent.putExtra("comeFrom", FromToTemplate.ISFROMEDOWNVIDEO);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(intent);
-                            } else {
-                                intoCreationTemplateActivity(paths.get(0), videoPath, originalImagePath.get(0), true);
+            mattingImage.createHandle(PreviewUpAndDownActivity.this, new MattingImage.InitSegJniStateCallback() {
+                @Override
+                public void isDone(boolean isDone) {
+                    if (isDone) {
+                        Observable.just("tag").subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+                            @Override
+                            public void call(String str) {
+                                if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                                    //背景模板文案
+                                    alert = "正在生成中~";
+                                } else {
+                                    //一键模板不抠图的情况下
+                                    if (is_picout == 0) {
+                                        alert = "正在生成中~";
+                                    }
+                                }
+                                new Handler().postDelayed(() -> {
+                                    if (!ondestroy) {
+                                        WaitingDialog.openPragressDialog(PreviewUpAndDownActivity.this, alert);
+                                        GSYVideoManager.onPause();
+                                    }
+                                }, 200);
+
+                                new Thread(() -> {
+                                    originalImagePath = paths;
+                                    //如果是视频，就不抠图了
+                                    String path = paths.get(0);
+                                    String pathType = GetPathTypeModel.getInstance().getMediaType(path);
+                                    if (albumType.isImage(pathType)) {
+                                        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                                            statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "8_SelectImage");
+                                        }
+                                        if (templateItem.getIs_anime() != 1) {
+                                            compressImage(paths, templateItem.getId());
+                                        } else {
+                                            //漫画需要去服务器请求
+                                            compressImageForServers(paths, templateItem.getId());
+                                        }
+                                    } else {
+                                        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ) || !TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
+                                            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+                                                if (originalImagePath.get(0).equals(paths.get(0))) {
+                                                    createDownVideoPath = videoPath;
+                                                    //源图地址和剪切之后的地址完全一样，那说明只有一个情况，就是当前选择的素材是视频的情况，那么需要去得到视频的第一针，然后传过去
+                                                    Intent intent = new Intent(PreviewUpAndDownActivity.this, VideoCropActivity.class);
+                                                    intent.putExtra("videoPath", paths.get(0));
+                                                    intent.putExtra("comeFrom", FromToTemplate.ISFROMEDOWNVIDEO);
+                                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                    startActivity(intent);
+                                                } else {
+                                                    intoCreationTemplateActivity(paths.get(0), videoPath, originalImagePath.get(0), true);
+                                                }
+                                            });
+                                        } else {
+                                            toClosePragressDialog();
+                                            String videoTime = templateItem.getVideotime();
+                                            if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
+                                                float needVideoTime = Float.parseFloat(videoTime);
+                                                LogUtil.d("OOM", "needVideoTime=" + needVideoTime);
+                                                Intent intoCutVideo = new Intent(PreviewUpAndDownActivity.this, TemplateCutVideoActivity.class);
+                                                intoCutVideo.putExtra("needCropDuration", needVideoTime);
+                                                intoCutVideo.putExtra("templateName", templateItem.getTitle());
+                                                intoCutVideo.putExtra("videoPath", paths.get(0));
+                                                intoCutVideo.putExtra("picout", templateItem.getIs_picout());
+                                                startActivity(intoCutVideo);
+                                            } else {
+                                                intoTemplateActivity(paths, TemplateFilePath);
+                                            }
+                                        }
+                                    }
+                                }).start();
+
+
                             }
                         });
                     }
-                    else {
-                        toClosePragressDialog();
-                        String videoTime = templateItem.getVideotime();
-                        if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
-                            float needVideoTime = Float.parseFloat(videoTime);
-                            LogUtil.d("OOM", "needVideoTime=" + needVideoTime);
-                            Intent intoCutVideo = new Intent(PreviewUpAndDownActivity.this, TemplateCutVideoActivity.class);
-                            intoCutVideo.putExtra("needCropDuration", needVideoTime);
-                            intoCutVideo.putExtra("templateName", templateItem.getTitle());
-                            intoCutVideo.putExtra("videoPath", paths.get(0));
-                            intoCutVideo.putExtra("picout", templateItem.getIs_picout());
-                            startActivity(intoCutVideo);
-                        } else {
-                            intoTemplateActivity(paths, TemplateFilePath);
-                        }
-                    }
                 }
-            }).start();
+            });
+
+
         }
     }
 

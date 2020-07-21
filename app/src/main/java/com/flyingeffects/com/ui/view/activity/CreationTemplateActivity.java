@@ -508,12 +508,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         presenter.onDestroy();
         destroyTimer();
         videoStop();
-        EventBus.getDefault().unregister(this);
         if (bgmPlayer != null) {
             bgmPlayer.pause();
             bgmPlayer.release();
         }
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
+
     }
 
     @Override

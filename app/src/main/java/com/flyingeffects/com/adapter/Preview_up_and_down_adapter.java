@@ -100,7 +100,6 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             helper.addOnClickListener(R.id.iv_zan);
             helper.addOnClickListener(R.id.tv_make);
                 initVideoPlayer(item, offset);
-
             if (nowPreviewPosition == offset) {
                 videoPlayer.startPlayLogic();
             }

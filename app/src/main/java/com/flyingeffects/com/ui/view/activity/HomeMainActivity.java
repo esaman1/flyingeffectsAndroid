@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.util.TimeUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -55,6 +56,7 @@ import com.flyingeffects.com.utils.NoDoubleClickListener;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
+import com.flyingeffects.com.utils.timeUtils;
 import com.githang.statusbar.StatusBarCompat;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.videoeditor.LanSongFileUtil;
@@ -127,11 +129,15 @@ public class HomeMainActivity extends FragmentActivity {
         if (BaseConstans.hasLogin()) {
             requestUserInfo();
         }
-        Log.d("OOM", "aa=" + DateUtils.getCurrentTime_m(System.currentTimeMillis()));
 
-//        new Thread(() ->
-        SegJni.nativeCreateSegHandler(HomeMainActivity.this, ConUtil.getFileContent(HomeMainActivity.this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
-
+//        new Thread(new Runnable() {nativeCreateSegHandler
+//            @Override
+//            public void run() {
+//                LogUtil.d("OOM", "开始加载模型------------------------------------------- " + DateUtils.getCurrentTime_m(System.currentTimeMillis()));
+//                int aa = SegJni.nativeCreateSegHandler(HomeMainActivity.this, ConUtil.getFileContent(HomeMainActivity.this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
+//                LogUtil.d("OOM", "模型加载完成--------------------------------------------" + aa + DateUtils.getCurrentTime_m(System.currentTimeMillis()));
+//            }
+//        }).start();
 
     }
 

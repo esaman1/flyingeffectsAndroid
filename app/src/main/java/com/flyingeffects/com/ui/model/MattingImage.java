@@ -1,19 +1,27 @@
 package com.flyingeffects.com.ui.model;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Message;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.SegResultHandleManage;
 import com.flyingeffects.com.ui.view.activity.HomeMainActivity;
+import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
+import com.flyingeffects.com.utils.DateUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.util.PhotoBitmapUtils;
 import com.shixing.sxve.ui.view.WaitingDialog;
+import com.shuyu.gsyvideoplayer.GSYVideoManager;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MattingImage {
@@ -21,23 +29,92 @@ public class MattingImage {
     private int mBitmapH;
     private int mBitmapW;
     private Bitmap mOriginBitmap;
+    private InitSegJniStateCallback callback;
 
 
     public MattingImage() {
     }
 
 
-    public static void createHandle(Context context) {
+    public  void createHandle(Context context,InitSegJniStateCallback callback) {
         if (!BaseConstans.hasCreatingSegJni) {
-            WaitingDialog.openPragressDialog(context);
-            LogUtil.d("onVideoAdError", "创建中");
-            int aa = SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
-            LogUtil.d("onVideoAdError", "aa=" + aa);
-            BaseConstans.hasCreatingSegJni = true;
+            this.callback=callback;
+            new Handler().postDelayed(() -> {
+                    WaitingDialog.openPragressDialog(context, "正在上传中...");
+            }, 200);
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    startTimer();
+                    LogUtil.d("OOM", "开始加载模型------------------------------------------- " + DateUtils.getCurrentTime_m(System.currentTimeMillis()));
+                    int aa = SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
+                    LogUtil.d("OOM", "模型加载完成--------------------------------------------" + aa + DateUtils.getCurrentTime_m(System.currentTimeMillis()));
+                    BaseConstans.hasCreatingSegJni = true;
+                }
+            }).start();
             WaitingDialog.closePragressDialog();
-            LogUtil.d("onVideoAdError", "创建完成");
+        }else{
+            callback.isDone(true);
         }
     }
+
+
+
+    public interface  InitSegJniStateCallback{
+
+        void isDone(boolean isDone);
+    }
+
+
+
+    private Timer timer;
+    private TimerTask task;
+
+    /***
+     * 倒计时60s
+     */
+    private void startTimer() {
+        if (timer != null) {
+            timer.purge();
+            timer.cancel();
+            timer = null;
+        }
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+        timer = new Timer();
+        task = new TimerTask() {
+            public void run() {
+                if(BaseConstans.hasCreatingSegJni ){
+                    endTimer();
+                    callback.isDone(true);
+                }
+            }
+        };
+        timer.schedule(task, 0, 500);
+    }
+
+
+
+    /**
+     * 关闭timer 和task
+     */
+    private void endTimer() {
+        if (timer != null) {
+            timer.purge();
+            timer.cancel();
+            timer = null;
+        }
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+
+    }
+
+
 
 
     public void mattingImage(String path, mattingStatus callback) {
