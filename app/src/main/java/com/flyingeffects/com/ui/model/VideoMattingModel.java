@@ -92,9 +92,8 @@ public class VideoMattingModel {
         faceMattingFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceMattingFolder");
         cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
         LogUtil.d("OOM", "faceMattingFolder=" + faceMattingFolder);
-        dialog = new WaitingDialogProgressNowAnim(context);
-
         if (!nowActivityIsOnDestroy) {
+            dialog = new WaitingDialogProgressNowAnim(context);
             dialog.openProgressDialog();
         }
         helper = new LruCacheManage();

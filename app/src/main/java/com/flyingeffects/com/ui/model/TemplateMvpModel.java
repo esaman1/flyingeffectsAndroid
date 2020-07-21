@@ -360,7 +360,7 @@ public class TemplateMvpModel {
 
 
     private void showDialog(String path) {
-        if (!DoubleClick.getInstance().isFastDoubleClick()) {
+        if (!DoubleClick.getInstance().isFastDoubleClick()&&!isOnDestroy) {
             LogUtil.d("showDialog", "showDialog");
             AlertDialog.Builder builder = new AlertDialog.Builder(
                     //去除黑边

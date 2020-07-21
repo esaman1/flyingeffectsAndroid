@@ -2,6 +2,7 @@ package com.shixing.sxve.ui.view;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -30,13 +31,17 @@ public class WaitingDialogProgressNowAnim {
      */
     public void openProgressDialog(
     ) {
-        if (loadingDialog != null) {
-            loadingDialog.dismiss();
-            loadingDialog = null;
-        }
-        loadingDialog = createLoadingDialog(context);
-        if (loadingDialog != null) {
+        try {
+            if (loadingDialog != null) {
+                loadingDialog.dismiss();
+                loadingDialog = null;
+            }
+            loadingDialog = createLoadingDialog(context);
+            if (loadingDialog != null) {
                 loadingDialog.show();
+            }
+        } catch (Exception e) {
+            Log.d("oom", e.getMessage());
         }
     }
 
@@ -69,12 +74,12 @@ public class WaitingDialogProgressNowAnim {
         if (tv_progress != null) {
             tv_progress = null;
         }
-        if (loadingDialog != null ) {
-                loadingDialog.dismiss();
-                loadingDialog = null;
-            }
+        if (loadingDialog != null) {
+            loadingDialog.dismiss();
+            loadingDialog = null;
         }
-
     }
+
+}
 
 

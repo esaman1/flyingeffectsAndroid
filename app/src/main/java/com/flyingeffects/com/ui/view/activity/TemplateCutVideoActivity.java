@@ -3,25 +3,24 @@ package com.flyingeffects.com.ui.view.activity;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TimelineAdapterForCutVideo;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
-import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.ui.model.VideoMattingModel;
 import com.flyingeffects.com.ui.model.videoCutDurationForVideoOneDo;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.glidebitmappool.GlideBitmapPool;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -34,7 +33,6 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
 

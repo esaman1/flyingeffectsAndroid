@@ -45,7 +45,6 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.lansosdk.box.ViewLayerRelativeLayout;
-import com.lansosdk.videoeditor.DrawPadView2;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.suke.widget.SwitchButton;
@@ -61,7 +60,6 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 
 /**
  * description ：用户创作页面,里面主要用了langSong 的工具类，对视频进行贴纸的功能
@@ -154,8 +152,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     private boolean isNeedCut;
 
-//    @BindView(R.id.DrawPad_view)
-//    DrawPadView2 drawPadView;
 
     @Override
     protected int getLayoutId() {
@@ -473,13 +469,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             hListView.post(() -> presenter.initVideoProgressView(hListView));
         }
 
-//        ViewGroup.LayoutParams RelativeLayoutParams2 = drawPadView.getLayoutParams();
-//        drawPadView.post(() -> {
-//            int oriHeight = drawPadView.getHeight();
-//            RelativeLayoutParams2.width = Math.round(1f * oriHeight * oriRatio);
-//            RelativeLayoutParams2.height = oriHeight;
-//            drawPadView.setLayoutParams(RelativeLayoutParams2);
-//        });
 
     }
 
