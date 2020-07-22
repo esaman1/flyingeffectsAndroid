@@ -18,6 +18,7 @@ import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.model.FromToTemplate;
@@ -62,7 +63,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         super(layoutResId, allData);
         this.context = context;
         this.readOnly = readOnly;
-        this.fromTo=fromTo;
+        this.fromTo = fromTo;
     }
 
 
@@ -89,7 +90,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         }
         if (ad == null) {
             //无广告的情况
-            video_layout.setVisibility(View.GONE);
+
             videoPlayer.setVisibility(View.VISIBLE);
             tv_make.setVisibility(View.VISIBLE);
             iv_zan.setVisibility(View.VISIBLE);
@@ -99,7 +100,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             tv_describe.setVisibility(View.VISIBLE);
             helper.addOnClickListener(R.id.iv_zan);
             helper.addOnClickListener(R.id.tv_make);
-                initVideoPlayer(item, offset);
+            initVideoPlayer(item, offset);
             if (nowPreviewPosition == offset) {
                 videoPlayer.startPlayLogic();
             }
@@ -117,11 +118,15 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             tv_writer_name.setText(item.getAuth());
             tv_title.setText(item.getRemark());
 
-            if (item.getIs_collection() == 1) {
+            if (item.getIs_collection() == 1 && BaseConstans.hasLogin()) {
                 iv_zan.setImageResource(R.mipmap.zan_selected);
             } else {
                 iv_zan.setImageResource(R.mipmap.zan);
             }
+            if (video_layout.getChildCount() != 0) {
+                video_layout.removeAllViews();
+            }
+            video_layout.setVisibility(View.GONE);
         } else {
             pauseVideo();
             //有广告的情况下，显示广告页面
@@ -139,14 +144,14 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
                 ViewGroup vp = (ViewGroup) view.getParent();
                 vp.removeAllViews();
             }
-            video_layout.addView(ttNativeExpressAd.getExpressAdView());
+            video_layout.addView(view);
         }
 
 
     }
 
-    public void setIsCollect(boolean isCollect){
-        if(iv_zan!=null){
+    public void setIsCollect(boolean isCollect) {
+        if (iv_zan != null) {
             if (isCollect) {
                 iv_zan.setImageResource(R.mipmap.zan_selected);
             } else {
@@ -157,17 +162,15 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     }
 
 
-
-
     /**
      * description ：初始化视频播放器，针对列表
      * creation date: 2020/7/2
      * user : zhangtongju
      */
     private void initVideoPlayer(new_fag_template_item item, int offset) {
-        if(!TextUtils.isEmpty(item.getOriginfile())){
+        if (!TextUtils.isEmpty(item.getOriginfile())) {
             videoPlayer.loadCoverImage(item.getOriginfile(), R.mipmap.black_lucency);
-        }else{
+        } else {
             videoPlayer.loadCoverImage(item.getImage(), R.mipmap.black_lucency);
         }
 //        videoPlayer.setAnimation(null);
@@ -198,10 +201,8 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     }
 
 
-
-
-    public float getVideoDuration(){
-        return  videoPlayer.getDuration();
+    public float getVideoDuration() {
+        return videoPlayer.getDuration();
     }
 
 

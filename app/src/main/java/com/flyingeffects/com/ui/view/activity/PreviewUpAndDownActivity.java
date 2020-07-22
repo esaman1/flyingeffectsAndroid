@@ -167,6 +167,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         insertMaxNum = nowChoosePosition;
         insertMinNum = nowChoosePosition;
         templateItem = allData.get(nowChoosePosition);
+
         is_picout = templateItem.getIs_picout();
         defaultnum = templateItem.getDefaultnum();
         readOnly = getIntent().getBooleanExtra("readOnly", false);
@@ -178,11 +179,18 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         nowCollectType = templateItem.getIs_collection();
         Presenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, fromTo, templateId, fromToMineCollect);
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
+        if(nowChoosePosition>=allData.size()-2){
+            Presenter.requestMoreData();
+        }
         adapter = new Preview_up_and_down_adapter(R.layout.list_preview_up_down_item, allData, PreviewUpAndDownActivity.this, readOnly, fromTo);
         adapter.setOnItemChildClickListener((adapter, view, position) -> {
             switch (view.getId()) {
                 case R.id.iv_zan:
-                    onclickCollect();
+                    if (BaseConstans.hasLogin()) {
+                        onclickCollect();
+                    } else {
+                        goActivity(LoginActivity.class);
+                    }
                     break;
 
 
@@ -227,7 +235,11 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         Presenter.requestMoreData();
                     }
                     lastChoosePosition = position;
-                    Presenter.requestTemplateDetail(templateItem.getId());
+                    if (BaseConstans.hasLogin()) {
+                        //主要用于刷新当前页面
+                        Presenter.requestTemplateDetail(templateItem.getId());
+                    }
+
                 }
             }
 
@@ -237,7 +249,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             }
         });
         viewPage2.setCurrentItem(nowChoosePosition, false);
-        if (nowCollectType == 1) {
+        if (nowCollectType == 1 && BaseConstans.hasLogin()) {
             setIsCollect(true);
         }
         if (BaseConstans.isFirstUseDownAndUpAct()) {
@@ -279,6 +291,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             adapter.setIsCollect(false);
         }
         allData.set(nowChoosePosition, item1);
+        adapter.notifyItemChanged(nowChoosePosition);
     }
 
 
@@ -297,8 +310,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     protected void onResume() {
         super.onResume();
-        WaitingDialog.closePragressDialog();
         GSYVideoManager.onResume();
+        WaitingDialog.closePragressDialog();
     }
 
 
@@ -385,7 +398,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void downVideoSuccess(String videoPath, String imagePath) {
         LogUtil.d("OOM", "downVideoSuccess");
-        toClosePragressDialog();
+        toCloseProgressDialog();
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
             EventBus.getDefault().post(new DownVideoPath(videoPath));
             finish();
@@ -553,9 +566,14 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
 
-    private void toClosePragressDialog() {
+    private void toCloseProgressDialog() {
         if (!ondestroy) {
-            WaitingDialog.closePragressDialog();
+            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+                @Override
+                public void call(Integer integer) {
+                    new Handler().postDelayed(WaitingDialog::closePragressDialog, 200);
+                }
+            });
         }
     }
 
@@ -650,8 +668,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-        if (!isCancel && !ondestroy) {
-
+        if (!isCancel && !ondestroy && paths != null && paths.size() > 0) {
+            LogUtil.d("OOM", "pathsSize=" + paths.size());
             mattingImage.createHandle(PreviewUpAndDownActivity.this, new MattingImage.InitSegJniStateCallback() {
                 @Override
                 public void isDone(boolean isDone) {
@@ -681,6 +699,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                                     String path = paths.get(0);
                                     String pathType = GetPathTypeModel.getInstance().getMediaType(path);
                                     if (albumType.isImage(pathType)) {
+                                        //选择的时图片
                                         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
                                             statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "8_SelectImage");
                                         }
@@ -691,8 +710,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                                             compressImageForServers(paths, templateItem.getId());
                                         }
                                     } else {
+                                        //选择的时视频
                                         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ) || !TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
                                             Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+                                                toCloseProgressDialog();
                                                 if (originalImagePath.get(0).equals(paths.get(0))) {
                                                     createDownVideoPath = videoPath;
                                                     //源图地址和剪切之后的地址完全一样，那说明只有一个情况，就是当前选择的素材是视频的情况，那么需要去得到视频的第一针，然后传过去
@@ -706,7 +727,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                                                 }
                                             });
                                         } else {
-                                            toClosePragressDialog();
+                                            toCloseProgressDialog();
                                             String videoTime = templateItem.getVideotime();
                                             if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
                                                 float needVideoTime = Float.parseFloat(videoTime);
@@ -744,7 +765,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
                 Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId(), false);
             } else {
-                toClosePragressDialog();
+                toCloseProgressDialog();
                 intoTemplateActivity(tailorPaths, TemplateFilePath);
             }
         });
@@ -765,7 +786,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
                 Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId(), false);
             } else {
-                toClosePragressDialog();
+                toCloseProgressDialog();
                 intoTemplateActivity(tailorPaths, TemplateFilePath);
             }
         });
@@ -779,7 +800,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * user : zhangtongju
      */
     private void intoTemplateActivity(List<String> paths, String templateFilePath) {
-        toClosePragressDialog();
+        toCloseProgressDialog();
         Intent intent = new Intent(this, TemplateActivity.class);
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("paths", (ArrayList<String>) paths);

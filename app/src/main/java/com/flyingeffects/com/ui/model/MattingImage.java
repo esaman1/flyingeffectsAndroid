@@ -54,10 +54,12 @@ public class MattingImage {
                     int aa = SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
                     LogUtil.d("OOM", "模型加载完成--------------------------------------------" + aa + DateUtils.getCurrentTime_m(System.currentTimeMillis()));
                     BaseConstans.hasCreatingSegJni = true;
+                    WaitingDialog.closePragressDialog();
                 }
             }).start();
-            WaitingDialog.closePragressDialog();
+
         } else {
+            WaitingDialog.closePragressDialog();
             callback.isDone(true);
         }
     }
@@ -92,6 +94,7 @@ public class MattingImage {
                 if (BaseConstans.hasCreatingSegJni) {
                     updateDuration(nowNeedDuration * 500, context);
                     endTimer();
+                    WaitingDialog.closePragressDialog();
                     callback.isDone(true);
                 }else{
                     nowNeedDuration++;
