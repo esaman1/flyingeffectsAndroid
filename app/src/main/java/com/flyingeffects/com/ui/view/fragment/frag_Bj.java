@@ -3,9 +3,11 @@ package com.flyingeffects.com.ui.view.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
+
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +30,12 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.FagBjMvpView;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
+import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.ui.presenter.FagBjMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.BackgroundSearchActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
+import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.shixing.sxve.ui.albumType;
 import com.yanzhenjie.album.AlbumFile;
@@ -59,7 +63,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     private FagBjMvpPresenter presenter;
     public final static int SELECTALBUM = 1;
 
-    private static  ArrayList<TextView> listTv = new ArrayList<>();
+    private static ArrayList<TextView> listTv = new ArrayList<>();
     private static ArrayList<View> listView = new ArrayList<>();
 
 
@@ -106,7 +110,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     @Override
     public void setFragmentList(List<TemplateType> data) {
         if (getActivity() != null) {
-            this.data=data;
+            this.data = data;
             if (data != null && data.size() > 0) {
                 ll_add_child.removeAllViews();
                 TemplateType templateType = new TemplateType();
@@ -202,7 +206,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     }
 
 
-    @OnClick({R.id.iv_add, R.id.iv_cover, R.id.Toolbar,R.id.relative_top})
+    @OnClick({R.id.iv_add, R.id.iv_cover, R.id.Toolbar, R.id.relative_top})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_add:
@@ -234,26 +238,33 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     }
 
 
-    private void toAddSticker(){
+    private void toAddSticker() {
         statisticsEventAffair.getInstance().setFlag(getActivity(), "6_customize_bj");
         AlbumManager.chooseAlbum(getActivity(), 1, SELECTALBUM, new AlbumChooseCallback() {
             @Override
             public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
                 if (!isCancel) {
                     if (!TextUtils.isEmpty(paths.get(0))) {
-                        String pathType = GetPathTypeModel.getInstance().getMediaType(paths.get(0));
-                        if (albumType.isVideo(pathType)) {
-                            Intent intent = new Intent(getActivity(), VideoCropActivity.class);
-                            intent.putExtra("videoPath", paths.get(0));
-                            intent.putExtra("comeFrom","");
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
-                        } else {
-                            compressImage(paths.get(0));
-                        }
+                        MattingImage mattingImage = new MattingImage();
+                        mattingImage.createHandle(getActivity(), new MattingImage.InitSegJniStateCallback() {
+                            @Override
+                            public void isDone(boolean isDone) {
+                                if (isDone) {
+                                    String pathType = GetPathTypeModel.getInstance().getMediaType(paths.get(0));
+                                    if (albumType.isVideo(pathType)) {
+                                        Intent intent = new Intent(getActivity(), VideoCropActivity.class);
+                                        intent.putExtra("videoPath", paths.get(0));
+                                        intent.putExtra("comeFrom", "");
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(intent);
+                                    } else {
+                                        compressImage(paths.get(0));
+                                    }
+                                }
+                            }
+                        });
                     }
                 }
-
             }
         }, "");
     }
@@ -283,8 +294,6 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
         }
 
     }
-
-
 
 
 }

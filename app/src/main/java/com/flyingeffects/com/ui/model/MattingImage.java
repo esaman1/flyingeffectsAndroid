@@ -9,6 +9,7 @@ import android.os.Message;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.SegResultHandleManage;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.activity.HomeMainActivity;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.utils.DateUtils;
@@ -31,22 +32,24 @@ public class MattingImage {
     private Bitmap mOriginBitmap;
     private InitSegJniStateCallback callback;
 
+    private float nowNeedDuration;
 
     public MattingImage() {
     }
 
 
-    public  void createHandle(Context context,InitSegJniStateCallback callback) {
+    public void createHandle(Context context, InitSegJniStateCallback callback) {
         if (!BaseConstans.hasCreatingSegJni) {
-            this.callback=callback;
+            this.callback = callback;
             new Handler().postDelayed(() -> {
-                    WaitingDialog.openPragressDialog(context, "正在上传中...");
+                WaitingDialog.openPragressDialog(context, "正在上传中...");
             }, 200);
 
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    startTimer();
+                    nowNeedDuration = 1;
+                    startTimer(context);
                     LogUtil.d("OOM", "开始加载模型------------------------------------------- " + DateUtils.getCurrentTime_m(System.currentTimeMillis()));
                     int aa = SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
                     LogUtil.d("OOM", "模型加载完成--------------------------------------------" + aa + DateUtils.getCurrentTime_m(System.currentTimeMillis()));
@@ -54,18 +57,16 @@ public class MattingImage {
                 }
             }).start();
             WaitingDialog.closePragressDialog();
-        }else{
+        } else {
             callback.isDone(true);
         }
     }
 
 
-
-    public interface  InitSegJniStateCallback{
+    public interface InitSegJniStateCallback {
 
         void isDone(boolean isDone);
     }
-
 
 
     private Timer timer;
@@ -74,7 +75,8 @@ public class MattingImage {
     /***
      * 倒计时60s
      */
-    private void startTimer() {
+    private void startTimer(Context context) {
+
         if (timer != null) {
             timer.purge();
             timer.cancel();
@@ -87,15 +89,37 @@ public class MattingImage {
         timer = new Timer();
         task = new TimerTask() {
             public void run() {
-                if(BaseConstans.hasCreatingSegJni ){
+                if (BaseConstans.hasCreatingSegJni) {
+                    updateDuration(nowNeedDuration * 500, context);
                     endTimer();
                     callback.isDone(true);
+                }else{
+                    nowNeedDuration++;
                 }
             }
         };
         timer.schedule(task, 0, 500);
     }
 
+
+    private void updateDuration(float duration, Context context) {
+        LogUtil.d("OOM","initMattingDuration="+duration);
+        if (duration <= 10000) {
+            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于10秒");
+        } else if (duration <= 20000) {
+            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于20秒");
+        } else if (duration <= 30000) {
+            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于30秒");
+        } else if (duration <= 40000) {
+            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于40秒");
+        } else if (duration <= 50000) {
+            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于50秒");
+        } else if (duration <= 60000) {
+            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于60秒");
+        } else {
+            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "大于1分钟");
+        }
+    }
 
 
     /**
@@ -113,8 +137,6 @@ public class MattingImage {
         }
 
     }
-
-
 
 
     public void mattingImage(String path, mattingStatus callback) {
@@ -250,8 +272,6 @@ public class MattingImage {
         SegJni.nativeReleaseImageBuffer();
         return SegResultHandleManage.setBitmapAlpha(bitmap, segs);
     }
-
-
 
 
     public void mattingImageForMultipleForLucency(Bitmap OriginBitmap, int index, mattingStatus callback) {

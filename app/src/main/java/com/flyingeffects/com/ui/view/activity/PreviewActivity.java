@@ -35,6 +35,7 @@ import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.PreviewMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
+import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.ui.presenter.PreviewMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -349,65 +350,75 @@ public class PreviewActivity extends BaseActivity implements AlbumChooseCallback
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel && !ondestroy) {
+
+            MattingImage mattingImage = new MattingImage();
+            mattingImage.createHandle(PreviewActivity.this, new MattingImage.InitSegJniStateCallback() {
+                @Override
+                public void isDone(boolean isDone) {
+                    if (isDone) {
+
 //            //如果不需要抠图
 //            if (is_picout == 0) {
 //                intoTemplateActivity(paths, TemplateFilePath);
 //                originalImagePath = null;
 //            } else {//需要抠图
-            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                //背景模板文案
-                alert = "正在生成中~";
-            } else {
-                //一键模板不抠图的情况下
-                if (is_picout == 0) {
-                    alert = "正在生成中~";
-                }
-            }
-            new Handler().postDelayed(() -> {
-                if (!ondestroy) {
-                    WaitingDialog.openPragressDialog(PreviewActivity.this, alert);
-                }
-            }, 200);
-            new Thread(() -> {
-                originalImagePath = paths;
-                //如果是视频，就不抠图了
-                String path = paths.get(0);
-                String pathType = GetPathTypeModel.getInstance().getMediaType(path);
-                if (albumType.isImage(pathType)) {
-
-                    if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                        statisticsEventAffair.getInstance().setFlag(this, "8_SelectImage");
-                    }
-                    if (templateItem.getIs_anime() != 1) {
-                        compressImage(paths, templateItem.getId());
-                    } else {
-                        //漫画需要去服务器请求
-                        compressImageForServers(paths, templateItem.getId());
-                    }
-                } else {
-                    if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                        statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
-                        Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId());
-                    } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
-                        statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
-                        Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId());
-                    } else {
-                        toClosePragressDialog();
-                        String videoTime = templateItem.getVideotime();
-                        if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
-                            float needVideoTime = Float.parseFloat(videoTime);
-                            Intent intoCutVideo = new Intent(PreviewActivity.this, TemplateCutVideoActivity.class);
-                            intoCutVideo.putExtra("needCropDuration", needVideoTime);
-                            intoCutVideo.putExtra("templateName", templateItem.getTitle());
-                            intoCutVideo.putExtra("videoPath", paths.get(0));
-                            intoCutVideo.putExtra("picout", templateItem.getIs_picout());
-                            startActivity(intoCutVideo);
+                        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                            //背景模板文案
+                            alert = "正在生成中~";
                         } else {
-                            intoTemplateActivity(paths, TemplateFilePath);
+                            //一键模板不抠图的情况下
+                            if (is_picout == 0) {
+                                alert = "正在生成中~";
+                            }
                         }
+                        new Handler().postDelayed(() -> {
+                            if (!ondestroy) {
+                                WaitingDialog.openPragressDialog(PreviewActivity.this, alert);
+                            }
+                        }, 200);
+                        new Thread(() -> {
+                            originalImagePath = paths;
+                            //如果是视频，就不抠图了
+                            String path = paths.get(0);
+                            String pathType = GetPathTypeModel.getInstance().getMediaType(path);
+                            if (albumType.isImage(pathType)) {
+
+                                if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                                    statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "8_SelectImage");
+                                }
+                                if (templateItem.getIs_anime() != 1) {
+                                    compressImage(paths, templateItem.getId());
+                                } else {
+                                    //漫画需要去服务器请求
+                                    compressImageForServers(paths, templateItem.getId());
+                                }
+                            } else {
+                                if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+                                    statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "8_Selectvideo");
+                                    Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId());
+                                } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
+                                    statisticsEventAffair.getInstance().setFlag(PreviewActivity.this, "8_Selectvideo");
+                                    Presenter.DownVideo(templateItem.getVidoefile(), paths.get(0), templateItem.getId());
+                                } else {
+                                    toClosePragressDialog();
+                                    String videoTime = templateItem.getVideotime();
+                                    if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
+                                        float needVideoTime = Float.parseFloat(videoTime);
+                                        Intent intoCutVideo = new Intent(PreviewActivity.this, TemplateCutVideoActivity.class);
+                                        intoCutVideo.putExtra("needCropDuration", needVideoTime);
+                                        intoCutVideo.putExtra("templateName", templateItem.getTitle());
+                                        intoCutVideo.putExtra("videoPath", paths.get(0));
+                                        intoCutVideo.putExtra("picout", templateItem.getIs_picout());
+                                        startActivity(intoCutVideo);
+                                    } else {
+                                        intoTemplateActivity(paths, TemplateFilePath);
+                                    }
+                                }
+                            }
+                        }).start();
                     }
                 }
-            }).start();
+            });
         }
     }
 
