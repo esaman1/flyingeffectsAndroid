@@ -291,7 +291,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             adapter.setIsCollect(false);
         }
         allData.set(nowChoosePosition, item1);
-        adapter.notifyItemChanged(nowChoosePosition);
+//        adapter.notifyItemChanged(nowChoosePosition);
     }
 
 
@@ -305,12 +305,16 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     protected void onPause() {
         super.onPause();
         GSYVideoManager.onPause();
+        LogUtil.d("OOM","onPause");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        //出现bug 不能继续播放的问题
         GSYVideoManager.onResume();
+        adapter.startVideo();
+        LogUtil.d("OOM","onResume");
         WaitingDialog.closePragressDialog();
     }
 

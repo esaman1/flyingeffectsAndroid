@@ -222,6 +222,17 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     }
 
 
+
+
+    public void startVideo(){
+
+        if(videoPlayer!=null&&!videoPlayer.isInPlayingState()){
+            LogUtil.d("OOM","isInPlayingState!=null?"+videoPlayer.isInPlayingState());
+            videoPlayer.startPlayLogic();
+        }
+    }
+
+
     public void onDestroy() {
         videoPlayer.release();
     }
