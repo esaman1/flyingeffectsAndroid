@@ -3,6 +3,7 @@ package com.yanzhenjie.album.app.camera;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Notification;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -65,8 +66,10 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.R;
+import com.yanzhenjie.album.api.widget.Widget;
 import com.yanzhenjie.album.widget.AlbumFocusImageView;
 import com.yanzhenjie.album.widget.CameraXPreview;
+import com.yanzhenjie.album.widget.LoadingDialog;
 import com.yanzhenjie.album.widget.RecordView;
 
 import java.io.File;
@@ -76,6 +79,10 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import VideoHandle.EpEditor;
+import VideoHandle.EpVideo;
+import VideoHandle.OnEditorListener;
 
 /**
  * 拍摄页面
@@ -141,6 +148,10 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
 
     private SimpleExoPlayer player;
     private ProgressiveMediaSource mediaSource;
+
+    private LoadingDialog mLoadingDialog;
+
+    private  boolean isOnDestroy=false;
 
     public static void startActivityForResult(Activity activity) {
         Intent intent = new Intent(activity, CaptureActivity.class);
@@ -275,7 +286,8 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onVideoSaved(@NonNull File file) {
                 Log.d("OOM", "录制完成");
-                onFileSaved(file);
+//                onFileSaved(file);
+                mirrorFlip(file.getPath());
             }
 
             @Override
@@ -284,6 +296,41 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
         mRecordView.startRecord();
+    }
+
+
+
+
+    private void mirrorFlip(String path){
+        showLoadingDialog();
+        mLoadingDialog.setMessage("镜像处理中");
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), System.currentTimeMillis() + ".mp4");
+        EpVideo epVideo = new EpVideo(path);
+        //视频旋转180度，再镜像
+        epVideo.rotation(0, true);
+        EpEditor.exec(epVideo, new EpEditor.OutputOption(file.getPath()), new OnEditorListener() {
+            @Override
+            public void onSuccess() {
+                dismissLoadingDialog();
+                Log.e(TAG, "EpEditor onSuccess");
+                File fileOld=new File(path);
+                if(fileOld.exists()){
+                    fileOld.delete();
+                }
+                onFileSaved(file);
+            }
+
+            @Override
+            public void onFailure() {
+                Log.e(TAG, "EpEditor onFailure");
+            }
+
+            @Override
+            public void onProgress(float progress) {
+                Log.e(TAG, "EpEditor onProgress " + progress);
+//                mLoadingDialog.setMessage("镜像处理中"+progress+"%");
+            }
+        });
     }
 
     @SuppressLint("RestrictedApi")
@@ -618,6 +665,8 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+
+
     @SuppressLint("RestrictedApi")
     @Override
     protected void onDestroy() {
@@ -629,6 +678,8 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             player.stop(true);
             player.release();
         }
+
+        isOnDestroy=true;
     }
 
 
@@ -642,5 +693,32 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                 .setTargetAspectRatio(AspectRatio.RATIO_16_9)
                 .setTargetRotation(rotation)
                 .build();
+    }
+
+
+
+
+
+    /**
+     * Display loading dialog.
+     */
+    private void showLoadingDialog() {
+        if (mLoadingDialog == null) {
+            mLoadingDialog = new LoadingDialog(this);
+
+//            mLoadingDialog.setupViews(Widget.Builder);
+        }
+        if (!mLoadingDialog.isShowing() && !isOnDestroy) {
+            mLoadingDialog.show();
+        }
+    }
+
+    /**
+     * Dismiss loading dialog.
+     */
+    public void dismissLoadingDialog() {
+        if (mLoadingDialog != null && mLoadingDialog.isShowing()) {
+            mLoadingDialog.dismiss();
+        }
     }
 }
