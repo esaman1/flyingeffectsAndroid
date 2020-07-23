@@ -150,9 +150,16 @@ public class RecordView extends View implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if (mListener != null) {
-            mListener.onClick();
+        if (!isRecording) {
+            if (mListener != null) {
+                mListener.onClick();
+            }
+        } else {
+            if (progressValue >= 1 && mListener != null) {
+                mListener.onClick();
+            }
         }
+
     }
 
     public void startRecord() {

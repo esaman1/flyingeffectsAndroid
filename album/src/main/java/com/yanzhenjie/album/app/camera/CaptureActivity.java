@@ -36,7 +36,6 @@ import androidx.camera.core.Camera;
 import androidx.camera.core.CameraControl;
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
-import androidx.camera.core.CameraX;
 import androidx.camera.core.FocusMeteringAction;
 import androidx.camera.core.FocusMeteringResult;
 import androidx.camera.core.ImageCapture;
@@ -44,7 +43,6 @@ import androidx.camera.core.MeteringPoint;
 import androidx.camera.core.MeteringPointFactory;
 import androidx.camera.core.Preview;
 import androidx.camera.core.SurfaceOrientedMeteringPointFactory;
-import androidx.camera.core.UseCase;
 import androidx.camera.core.VideoCapture;
 import androidx.camera.core.ZoomState;
 import androidx.camera.core.impl.VideoCaptureConfig;
@@ -66,7 +64,6 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.R;
-import com.yanzhenjie.album.api.widget.Widget;
 import com.yanzhenjie.album.widget.AlbumFocusImageView;
 import com.yanzhenjie.album.widget.CameraXPreview;
 import com.yanzhenjie.album.widget.LoadingDialog;
@@ -76,8 +73,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import VideoHandle.EpEditor;
@@ -152,6 +147,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     private LoadingDialog mLoadingDialog;
 
     private boolean isOnDestroy = false;
+    private boolean canClickRecordBtn;
 
     public static void startActivityForResult(Activity activity) {
         Intent intent = new Intent(activity, CaptureActivity.class);
@@ -175,12 +171,14 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onClick() {
                 //takingPicture = true;
-                if (!mRecording) {
-                    if (!mIsCountingDown) {
-                        initTimerAndVideoCapture();
+                if (canClickRecordBtn) {
+                    if (!mRecording) {
+                        if (!mIsCountingDown) {
+                            initTimerAndVideoCapture();
+                        }
+                    } else {
+                        stopRecord();//第二次点击录制按键，结束录制
                     }
-                } else {
-                    stopRecord();//第二次点击录制按键，结束录制
                 }
             }
 
@@ -230,13 +228,13 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         super.onResume();
         //从预览页回来的话就把时间归0
         mRecordingTime = 0;
+        canClickRecordBtn = true;
         setProgressText(mRecordingTime);
     }
 
     @Override
     protected void onPause() {
         if (mRecording) {
-            mRecording = false;
             stopRecord();//onPause的时候停止录制
             try {
                 Thread.sleep(500);//在执行super前延时500ms，防止抛出新的异常
@@ -276,9 +274,9 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                     mTime -= 1;
                     mHandler.postDelayed(this, 1000);
                 } else {
-                    mIsCountingDown = false;
                     mTvTimer.setVisibility(View.GONE);
                     RecordingStart();
+                    mIsCountingDown = false;
                 }
             }
         }, 0);
@@ -309,6 +307,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onError(int videoCaptureError, @NonNull String message, @Nullable Throwable cause) {
+                canClickRecordBtn = true;
                 Log.e(TAG, "onError: int " + videoCaptureError + " message " + message, cause);
             }
         });
@@ -355,6 +354,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         player.setPlayWhenReady(false);
         player.stop(true);
         mRecording = false;
+        canClickRecordBtn = false;
         mVideoCapture.stopRecording();
         mRecordView.stopRecord();
     }
