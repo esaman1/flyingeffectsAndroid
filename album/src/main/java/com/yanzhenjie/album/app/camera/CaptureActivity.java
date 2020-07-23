@@ -417,18 +417,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         mVideoCapture = new VideoCaptureConfig.Builder()
                 //.setCameraSelector(mCameraSelector)
                 .setTargetAspectRatio(mAspectRatioInt)
-                .setUseCaseEventCallback(new UseCase.EventCallback() {
-                    @Override
-                    public void onBind(@NonNull String cameraId) {
-
-                    }
-
-                    @Override
-                    public void onUnbind() {
-
-                    }
-                })
-                //.setTargetRotation(rotation)
+                .setTargetRotation(rotation)
                 //.setTargetResolution(resolution)
                 //视频帧率
                 .setVideoFrameRate(20)

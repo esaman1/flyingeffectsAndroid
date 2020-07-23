@@ -134,7 +134,7 @@ public class fragBjItem extends BaseFragment {
                     intent.putExtra("position", position);
                     if (fromType == 0) {
                         intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
-                    } else if (fromType == 3) {
+                    } else if (fromType == 3) {//来自选择背景tab
                         intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
                     } else {
                         intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
@@ -192,6 +192,7 @@ public class fragBjItem extends BaseFragment {
         params.put("template_type", "2");
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
+
         Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override

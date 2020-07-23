@@ -31,7 +31,6 @@
         android:textColor="@color/white"
         android:textSize="10sp" />
 
-
     <TextView
         android:id="@+id/tv_checked"
         android:layout_width="match_parent"
@@ -40,6 +39,5 @@
         android:layout_centerInParent="true"
         android:background="@drawable/stroke_sticker_bj"
         android:visibility="gone" />
-
 
 </RelativeLayout>

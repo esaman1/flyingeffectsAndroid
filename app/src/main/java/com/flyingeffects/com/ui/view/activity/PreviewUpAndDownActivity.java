@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -473,6 +474,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         if (!ondestroy) {
             //file 文件下载成功
             this.TemplateFilePath = filePath;
+            Log.d(TAG, "getTemplateFileSuccess: TemplateFilePath = " + TemplateFilePath);
             if (!TextUtils.isEmpty(templateItem.getVideotime()) && !templateItem.getVideotime().equals("0")) {
                 float videoTime = Float.parseFloat(templateItem.getVideotime());
                 LogUtil.d("OOM", "bj.mp3=" + TemplateFilePath);

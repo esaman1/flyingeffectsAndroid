@@ -148,9 +148,7 @@ public class PreviewMvpModel {
                                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                                     AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_DOWNLOAD);
                                 }
-
                             }
-
                         }
                     });
                 }
@@ -209,7 +207,7 @@ public class PreviewMvpModel {
         LinearLayout iv_download = view.findViewById(R.id.ll_download);
         iv_download.setOnClickListener(view12 -> {
             statisticsEventAffair.getInstance().setFlag(context, "save_back_template");
-            downProgressDialog=new WaitingDialog_progress(context);
+            downProgressDialog = new WaitingDialog_progress(context);
             downProgressDialog.openProgressDialog();
             DownVideo(path, imagePath, id, true);
             dismissDialog();

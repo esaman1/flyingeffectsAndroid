@@ -91,7 +91,6 @@ public class BaseApplication extends MultiDexApplication {
                         .GDTAppKey(AdConfigs.APP_ID_GDT)
                         .isDebug(false)
                         .build());
-
     }
 
 
@@ -127,7 +126,6 @@ public class BaseApplication extends MultiDexApplication {
         }
     }
 
-
     /**
      * 中台
      */
@@ -141,7 +139,6 @@ public class BaseApplication extends MultiDexApplication {
         JPushInterface.setDebugMode(true);    // 设置开启日志,发布时请关闭日志
         JPushInterface.init(this);
     }
-
 
     private void initYouMeng() {
 //        MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_MANUAL);  //页面采集模式
@@ -233,7 +230,6 @@ public class BaseApplication extends MultiDexApplication {
         }
     }
 
-
     static {
         SmartRefreshLayout.setDefaultRefreshHeaderCreator((context, layout) -> {
 //            layout.setPrimaryColorsId(R.color.colorPrimary, android.R.color.white);
@@ -253,7 +249,6 @@ public class BaseApplication extends MultiDexApplication {
                 .build()
         );
     }
-
 
 }
 

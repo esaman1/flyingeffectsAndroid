@@ -191,7 +191,6 @@ dependencies {
     //兼容apng
     implementation 'com.github.penfeizhou.android.animation:apng:2.0.0'
 
-
 }
 
 
