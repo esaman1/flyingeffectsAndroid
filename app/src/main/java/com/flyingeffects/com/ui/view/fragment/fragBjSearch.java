@@ -219,6 +219,7 @@ public class fragBjSearch extends BaseFragment {
 
             @Override
             protected void _onNext(List<new_fag_template_item> data) {
+
                 finishData();
                 if (isRefresh) {
                     allData.clear();

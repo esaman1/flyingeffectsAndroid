@@ -151,7 +151,7 @@ public class frag_search extends BaseFragment {
 
     private void hideResultView(boolean isHide) {
         if (isHide) {
-            viewPager.setVisibility(View.INVISIBLE);
+            viewPager.setVisibility(View.GONE);
             horizontalScrollView.setVisibility(View.GONE);
         } else {
             viewPager.setVisibility(View.VISIBLE);

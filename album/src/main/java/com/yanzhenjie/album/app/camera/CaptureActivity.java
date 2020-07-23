@@ -431,7 +431,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                 //.setTargetRotation(rotation)
                 //.setTargetResolution(resolution)
                 //视频帧率
-                .setVideoFrameRate(25)
+                .setVideoFrameRate(20)
                 //bit率
                 .setBitRate(3 * 1024 * 1024).build();
     }
