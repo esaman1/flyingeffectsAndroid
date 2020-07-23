@@ -110,7 +110,7 @@ public class fragBjSearch extends BaseFragment {
 //            }
 //            intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
 //            startActivity(intent);
-            statisticsEventAffair.getInstance().setFlag(getActivity(), "11_yj_searchfor",allData.get(position).getTitle());
+            statisticsEventAffair.getInstance().setFlag(getActivity(), "11_yj_searchfor", allData.get(position).getTitle());
 
 
             Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
@@ -130,6 +130,21 @@ public class fragBjSearch extends BaseFragment {
 
 
         });
+    }
+
+
+    /** Fragment当前状态是否可见 */
+    protected boolean isVisible;
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if(getUserVisibleHint()) {
+            isVisible = true;
+        } else {
+            isVisible = false;
+        }
     }
 
 
@@ -225,8 +240,13 @@ public class fragBjSearch extends BaseFragment {
                     allData.clear();
                 }
                 if (isRefresh && data.size() == 0) {
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "10_Noresults",searchText);
-                    //    ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "10_Noresults", searchText);
+
+                    if(isVisible){
+                        ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
+                    }
+
+
                     statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none", searchText);
                 }
                 if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据

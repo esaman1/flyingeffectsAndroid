@@ -33,6 +33,7 @@ public class ChannelUtil {
                 if (entryName.contains(start_flag)) {
                     channel = entryName.replace(start_flag, "");
                     break;
+
                 }
             }
         } catch (IOException e) {
@@ -51,7 +52,7 @@ public class ChannelUtil {
 
 
         if (channel == null || channel.length() <= 0) {
-            channel = "test";
+            channel = "360";
         }
         return channel;
 //        return  "360";
