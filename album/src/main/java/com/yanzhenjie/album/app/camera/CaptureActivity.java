@@ -303,7 +303,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
 
     private void mirrorFlip(String path){
         showLoadingDialog();
-        mLoadingDialog.setMessage("镜像处理中");
+        mLoadingDialog.setMessage("加载中");
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), System.currentTimeMillis() + ".mp4");
         EpVideo epVideo = new EpVideo(path);
         //视频旋转180度，再镜像
