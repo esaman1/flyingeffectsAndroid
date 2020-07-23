@@ -180,6 +180,7 @@ public class frag_search extends BaseFragment {
     public void onResume() {
         super.onResume();
         LogUtil.d("OOM","onResume");
+        ed_text.setText("");
         requestKeywordList();
         hideResultView(true);
         listTv.clear();

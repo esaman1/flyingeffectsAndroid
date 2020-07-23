@@ -65,7 +65,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     private String imagePath;
 //    private long mEndDuration;
 
-//    private timeUtils timeUtils;
+    //    private timeUtils timeUtils;
     private MediaSource mediaSource;
 
     private boolean isIntoPause = false;
@@ -105,7 +105,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 //        tv_end_time.setText(timeUtils.timeParse(videoInfo.getDuration()));
 
 //        videoPause();
-        LogUtil.d("OOM","timeUtils.timeParse(videoInfo.getDuration())="+timeUtils.timeParse(videoInfo.getDuration()));
+        LogUtil.d("OOM", "timeUtils.timeParse(videoInfo.getDuration())=" + timeUtils.timeParse(videoInfo.getDuration()));
         tv_duration.setText(timeUtils.timeParse(videoInfo.getDuration()));
         initExo();
     }
@@ -217,7 +217,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                 }
 
                 StimulateControlManage.getInstance().InitRefreshStimulate();
-                if (BaseConstans.getHasAdvertising() == 1 && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser() && BaseConstans.getSave_video_ad()&&!BaseConstans.TemplateHasWatchingAd) {
+                if (BaseConstans.getHasAdvertising() == 1 && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser() && BaseConstans.getSave_video_ad() && !BaseConstans.TemplateHasWatchingAd) {
                     Intent intent = new Intent(CreationTemplatePreviewActivity.this, AdHintActivity.class);
                     intent.putExtra("from", "isFormPreviewVideo");
                     intent.putExtra("templateTitle", "");
@@ -403,8 +403,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 //        };
 //        timer.schedule(task, 0, 16);
 //    }
-
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -459,6 +457,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
             videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
                 @Override
                 public void onVideoAdSuccess() {
+                    onPause();
                     statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "video_ad_alert_request_sucess");
                     LogUtil.d("OOM", "onVideoAdSuccess");
                 }
@@ -512,10 +511,10 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     }
 
     @Override
-    public void seekToPosition(long position,float allDuration) {
-        LogUtil.d("OOM","allDuration="+allDuration);
+    public void seekToPosition(long position, float allDuration) {
+        LogUtil.d("OOM", "allDuration=" + allDuration);
         exoPlayer.seekTo(position);
-        if(allDuration!=0){
+        if (allDuration != 0) {
             tv_duration.setText(timeUtils.timeParse((long) allDuration));
         }
     }
