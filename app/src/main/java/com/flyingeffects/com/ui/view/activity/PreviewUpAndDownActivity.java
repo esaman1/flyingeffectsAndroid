@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,6 +27,7 @@ import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.StimulateControlManage;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.PreviewUpAndDownMvpView;
@@ -147,6 +149,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     private MattingImage mattingImage;
 
+    private boolean isIntoPause=false;
+
+    private boolean nowItemIsAd=false;
+
 
     @Override
     protected int getLayoutId() {
@@ -221,6 +227,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     LogUtil.d("OOM", "当前位置为" + position);
                     adapter.NowPreviewChooseItem(position);
                     adapter.notifyItemChanged(position);
+                    if(allData.get(position).getAd()!=null){
+                        nowItemIsAd=true;
+                    }else{
+                        nowItemIsAd=false;
+                    }
+
                     nowChoosePosition = position;
                     //判断当前滑动状态
                     nowSlideOrientationIsUp = nowChoosePosition < lastChoosePosition;
@@ -305,6 +317,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     protected void onPause() {
         super.onPause();
         GSYVideoManager.onPause();
+        isIntoPause=true;
         LogUtil.d("OOM","onPause");
     }
 
@@ -312,8 +325,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     protected void onResume() {
         super.onResume();
         //出现bug 不能继续播放的问题
-        GSYVideoManager.onResume();
-        adapter.startVideo();
+        if(!nowItemIsAd){
+            GSYVideoManager.onResume();
+        }
         LogUtil.d("OOM","onResume");
         WaitingDialog.closePragressDialog();
     }
@@ -389,6 +403,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     @Override
     public void hasLogin(boolean hasLogin) {
+        StimulateControlManage.getInstance().InitRefreshStimulate();
         if (!TextUtils.isEmpty(templateItem.getType()) && templateItem.getType().equals("1") && BaseConstans.getIncentiveVideo()) {
             Intent intent = new Intent(PreviewUpAndDownActivity.this, AdHintActivity.class);
             intent.putExtra("from", "PreviewActivity");
@@ -459,6 +474,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         if (!ondestroy) {
             //file 文件下载成功
             this.TemplateFilePath = filePath;
+            Log.d(TAG, "getTemplateFileSuccess: TemplateFilePath = " + TemplateFilePath);
             if (!TextUtils.isEmpty(templateItem.getVideotime()) && !templateItem.getVideotime().equals("0")) {
                 float videoTime = Float.parseFloat(templateItem.getVideotime());
                 LogUtil.d("OOM", "bj.mp3=" + TemplateFilePath);

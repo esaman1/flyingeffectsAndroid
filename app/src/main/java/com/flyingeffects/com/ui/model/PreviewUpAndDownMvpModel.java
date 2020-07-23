@@ -236,8 +236,6 @@ public class PreviewUpAndDownMvpModel {
                 }else{
                     statisticsEventAffair.getInstance().setFlag(context, "10_bj_circle");
                 }
-
-
                 shareToApplet(fag_template_item);
             }
         });
@@ -603,7 +601,7 @@ public class PreviewUpAndDownMvpModel {
                 downProgressDialog.closePragressDialog();
             }
             if (!keepAlbum) {
-                callback.downVideoSuccess(videoName, imagePath);
+                callback.downVideoSuccess(videoName, imagePath);//文件已存在，直接回传path
             } else {
                 WaitingDialog.closePragressDialog();
                 saveToAlbum(videoName);
@@ -646,18 +644,14 @@ public class PreviewUpAndDownMvpModel {
                                 downProgressDialog=null;
                             }
                             if (!keepAlbum) {
-                                callback.downVideoSuccess(path1, imagePath);
-
+                                callback.downVideoSuccess(path1, imagePath);//下载成功后的回调
                             } else {
-
                                 WaitingDialog.closePragressDialog();
                                 saveToAlbum(path1);
                                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                                     AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_DOWNLOAD);
                                 }
-
                             }
-
                         }
                     });
                 }

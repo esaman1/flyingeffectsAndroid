@@ -291,7 +291,6 @@
             android:exported="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
-
         <!--闪验登录 start-->
         <activity
             android:name="com.chuanglan.shanyan_sdk.view.CmccLoginActivity"

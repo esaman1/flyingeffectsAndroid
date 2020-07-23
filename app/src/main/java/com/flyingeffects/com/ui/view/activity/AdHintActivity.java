@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.showAdCallback;
+import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 
@@ -65,15 +66,20 @@ public class AdHintActivity extends Activity {
                 break;
 
             case R.id.tv_watch_ad:
-                //观看广告
-                if (!TextUtils.isEmpty(from) && from.equals(FromToTemplate.ISFROMTEMPLATE)) {
-                    statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "mb_ad_open", title);
-                } else {
-                    statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "bj_ad_open", title);
+
+                if(!DoubleClick.getInstance().isFastZDYDoubleClick(2000)){
+                    //观看广告
+                    if (!TextUtils.isEmpty(from) && from.equals(FromToTemplate.ISFROMTEMPLATE)) {
+                        statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "mb_ad_open", title);
+                    } else {
+                        statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "bj_ad_open", title);
+                    }
+                    statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "video_ad_alert_click_confirm");
+                    EventBus.getDefault().post(new showAdCallback(from));
+                    AdHintActivity.this.finish();
                 }
-                statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "video_ad_alert_click_confirm");
-                EventBus.getDefault().post(new showAdCallback(from));
-                AdHintActivity.this.finish();
+
+
                 break;
 
         }

@@ -23,10 +23,6 @@
     </com.flyingeffects.com.view.EmptyControlVideo>
 
 
-
-
-
-
     <ImageView
         android:id="@+id/iv_show_cover"
         android:layout_width="0dp"
@@ -41,17 +37,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
+        android:id="@+id/iv_download_bj"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="20dp"
         android:contentDescription="@string/app_name"
         android:src="@mipmap/down_bj"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/iv_zan"
-        android:id="@+id/iv_download_bj"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="28dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/iv_zan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        app:layout_constraintTop_toBottomOf="@+id/iv_zan" />
 
     <ImageView
         android:id="@+id/iv_video_play"
@@ -147,15 +143,15 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_8"
         android:layout_marginEnd="5dp"
+        android:background="@drawable/preview_video_time_bj"
         android:ellipsize="marquee"
         android:focusable="true"
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp"
-        android:paddingTop="3dp"
-        android:paddingBottom="3dp"
-        android:background="@drawable/preview_video_time_bj"
         android:focusableInTouchMode="true"
         android:marqueeRepeatLimit="marquee_forever"
+        android:paddingStart="5dp"
+        android:paddingTop="3dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="3dp"
         android:scrollHorizontally="true"
         android:singleLine="true"
         android:textColor="@color/white"

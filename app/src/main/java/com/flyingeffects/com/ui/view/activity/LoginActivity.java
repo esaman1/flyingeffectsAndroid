@@ -169,13 +169,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 //                    relative_normal.setVisibility(View.VISIBLE);
                 LoginActivity.this.finish();
             }
-            long startTime = System.currentTimeMillis();
-            startResultActivity(code, result, startTime);
         });
-    }
-
-
-    private void startResultActivity(int code, String result, long startTime) {
     }
 
     @Override
@@ -227,7 +221,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 tv_login.setEnabled(true);
             }
         });
-
     }
 
 
@@ -421,7 +414,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
             @Override
             protected void _onNext(UserInfo data) {
-                Hawk.put("UserInfo",data);
+                Hawk.put("UserInfo", data);
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "requestLogin=" + str);
                 BaseConstans.SetUserToken(data.getToken());
@@ -458,7 +451,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         dissMissShanYanUi();
                         LoginActivity.this.finish();
                     }
-
                 }
 
                 @Override
@@ -472,7 +464,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         WaitingDialog.closePragressDialog();
                         LoginActivity.this.finish();
                     }
-
                 }
             }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
         }
@@ -627,11 +618,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     wxLogin();
                 }
             }
-
         }
-
     }
-
 
     /**
      * description ： 是否安装了微信

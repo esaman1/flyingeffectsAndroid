@@ -40,7 +40,6 @@
             <enum name="round" value="2" />
         </attr>
         <attr name="radius" format="dimension" />
-
     </declare-styleable>
 
 
@@ -75,7 +74,6 @@
         <attr name="isFull" format="boolean"></attr>
     </declare-styleable>
 
-
     <declare-styleable name="StickerView">
         <attr name="sv_left_top_drawable" format="reference" />
         <attr name="sv_left_bottom_drawable" format="reference" />
@@ -102,7 +100,5 @@
         <!--是否允许辅助居中-->
         <attr name="sv_auto_center" format="boolean" />
     </declare-styleable>
-
-
 
 </resources>

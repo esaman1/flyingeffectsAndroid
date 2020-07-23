@@ -1334,14 +1334,12 @@ public class CreationTemplateMvpModel {
                     listForSticker.add(item1);
                 }
 
-
                 if (!isRefresh && list.size() < perPageCount) {  //因为可能默认只请求8条数据
                     ToastUtil.showToast(context.getResources().getString(R.string.no_more_data));
                 }
                 if (list.size() < perPageCount) {
                     smartRefreshLayout.setEnableLoadMore(false);
                 }
-
 
                 listForSticker.addAll(list);
                 modificationAllData(list);
