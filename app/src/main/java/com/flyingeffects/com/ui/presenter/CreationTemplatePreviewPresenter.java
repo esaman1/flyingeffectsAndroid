@@ -81,8 +81,8 @@ public class CreationTemplatePreviewPresenter extends BasePresenter implements C
     }
 
     @Override
-    public void seekToPosition(long position) {
-        CreationTemplatePreviewmvpView.seekToPosition(position);
+    public void seekToPosition(long position,float allDuration) {
+        CreationTemplatePreviewmvpView.seekToPosition(position,allDuration);
     }
 
     @Override

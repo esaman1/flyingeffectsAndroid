@@ -226,7 +226,7 @@ EGL-lib:FILEPATH=E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64
 GLESv2-lib:FILEPATH=E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/16/libGLESv2.so
 
 //Dependencies for the target
-MegviiSegJni_LIB_DEPENDS:STATIC=general;face_new;general;megviisegsdk;general;E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/16/liblog.so;general;E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/16/libGLESv2.so;general;E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/16/libEGL.so;general;android;general;E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/16/libjnigraphics.so;
+MegviiSegJni_LIB_DEPENDS:STATIC=general;megviisegsdk;general;face_new;general;E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/16/liblog.so;general;E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/16/libGLESv2.so;general;E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/16/libEGL.so;general;android;general;E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/16/libjnigraphics.so;
 
 //Value Computed by CMake
 Project_BINARY_DIR:STATIC=D:/githubSpace/flyingeffectsAndroid/segjni/.cxx/cmake/release/armeabi-v7a

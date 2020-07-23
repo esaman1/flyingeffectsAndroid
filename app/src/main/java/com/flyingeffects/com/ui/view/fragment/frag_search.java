@@ -208,14 +208,13 @@ public class frag_search extends BaseFragment {
             tv.setOnClickListener(view -> {
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
                     if (listSearchKey.size() >= finalI + 1) {
+                        hideResultView(false);
                         statisticsEventAffair.getInstance().setFlag(getActivity(), "4_recommend", listSearchKey.get(finalI).getName());
                         nowShowText = listSearchKey.get(finalI).getName();
                         ed_text.setText(nowShowText);
-                        hideResultView(false);
+                        new Handler().postDelayed(() -> EventBus.getDefault().post(new SendSearchText(nowShowText)),500);
                         cancelFocus();
 //                        setResultMargin();
-                        EventBus.getDefault().post(new SendSearchText(nowShowText));
-
                     }
                 }
             });

@@ -29,7 +29,8 @@
       "headers": [],
       "output": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\jniLibs\\arm64-v8a\\libMegviiSegJni.so",
       "runtimeFiles": [
-        "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\..\\jniLibs\\arm64-v8a\\libmegsegment.so"
+        "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\jniLibs\\arm64-v8a\\libmegsegment.so",
+        "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\jniLibs\\arm64-v8a\\libmegface.so"
       ]
     }
   },

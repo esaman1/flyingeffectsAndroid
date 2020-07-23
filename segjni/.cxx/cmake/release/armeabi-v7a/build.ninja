@@ -41,7 +41,7 @@ build CMakeFiles/MegviiSegJni.dir/megvii_seg_jni_new.cpp.o: CXX_COMPILER__Megvii
   DEFINES = -DMegviiSegJni_EXPORTS
   DEP_FILE = CMakeFiles\MegviiSegJni.dir\megvii_seg_jni_new.cpp.o.d
   FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -Oz -DNDEBUG  -fPIC
-  INCLUDES = -I. -ID:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp -ID:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp/include
+  INCLUDES = -I. -ID:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp -ID:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp/include -ID:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp/../../../../android_sdk/jni/src
   OBJECT_DIR = CMakeFiles\MegviiSegJni.dir
   OBJECT_FILE_DIR = CMakeFiles\MegviiSegJni.dir
 
@@ -52,10 +52,10 @@ build CMakeFiles/MegviiSegJni.dir/megvii_seg_jni_new.cpp.o: CXX_COMPILER__Megvii
 #############################################
 # Link the shared library D:\githubSpace\flyingeffectsAndroid\segjni\src\main\jniLibs\armeabi-v7a\libMegviiSegJni.so
 
-build D$:/githubSpace/flyingeffectsAndroid/segjni/src/main/jniLibs/armeabi-v7a/libMegviiSegJni.so: CXX_SHARED_LIBRARY_LINKER__MegviiSegJni CMakeFiles/MegviiSegJni.dir/megvii_seg_jni_new.cpp.o | D$:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp/../jniLibs/armeabi-v7a/libmegface.so D$:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp/../jniLibs/armeabi-v7a/libmegsegment.so E$:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/16/liblog.so E$:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/16/libGLESv2.so E$:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/16/libEGL.so E$:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/16/libjnigraphics.so
+build D$:/githubSpace/flyingeffectsAndroid/segjni/src/main/jniLibs/armeabi-v7a/libMegviiSegJni.so: CXX_SHARED_LIBRARY_LINKER__MegviiSegJni CMakeFiles/MegviiSegJni.dir/megvii_seg_jni_new.cpp.o | D$:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp/../jniLibs/armeabi-v7a/libmegsegment.so D$:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp/../jniLibs/armeabi-v7a/libmegface.so E$:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/16/liblog.so E$:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/16/libGLESv2.so E$:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/16/libEGL.so E$:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/16/libjnigraphics.so
   LANGUAGE_COMPILE_FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -Oz -DNDEBUG
   LINK_FLAGS = -Wl,--exclude-libs,libgcc_real.a -Wl,--exclude-libs,libatomic.a -static-libstdc++ -Wl,--build-id -Wl,--fatal-warnings -Wl,--exclude-libs,libunwind.a -Wl,--no-undefined -Qunused-arguments
-  LINK_LIBRARIES = D:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp/../jniLibs/armeabi-v7a/libmegface.so D:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp/../jniLibs/armeabi-v7a/libmegsegment.so -llog -lGLESv2 -lEGL -landroid -ljnigraphics -latomic -lm
+  LINK_LIBRARIES = D:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp/../jniLibs/armeabi-v7a/libmegsegment.so D:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp/../jniLibs/armeabi-v7a/libmegface.so -llog -lGLESv2 -lEGL -landroid -ljnigraphics -latomic -lm
   OBJECT_DIR = CMakeFiles\MegviiSegJni.dir
   POST_BUILD = cd .
   PRE_LINK = cd .

@@ -7,12 +7,15 @@ import android.net.Uri;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
+import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
+import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
@@ -23,6 +26,7 @@ import com.flyingeffects.com.ui.interfaces.view.CreationTemplatePreviewMvpView;
 import com.flyingeffects.com.ui.presenter.CreationTemplatePreviewPresenter;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.RoundImageView;
 import com.flyingeffects.com.view.VideoFrameRecycler;
@@ -80,6 +84,10 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     @BindView(R.id.iv_play)
     ImageView iv_play;
 
+
+    @BindView(R.id.tv_duration)
+    TextView tv_duration;
+
     boolean isIntoInitTrimmer = false;
 
     @Override
@@ -92,11 +100,13 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         EventBus.getDefault().register(this);
         imagePath = getIntent().getStringExtra("path");
         Presenter = new CreationTemplatePreviewPresenter(this, this, imagePath);
-//        VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
+        VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
 //        timeUtils = new timeUtils();
 //        tv_end_time.setText(timeUtils.timeParse(videoInfo.getDuration()));
 
 //        videoPause();
+        LogUtil.d("OOM","timeUtils.timeParse(videoInfo.getDuration())="+timeUtils.timeParse(videoInfo.getDuration()));
+        tv_duration.setText(timeUtils.timeParse(videoInfo.getDuration()));
         initExo();
     }
 
@@ -502,8 +512,12 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     }
 
     @Override
-    public void seekToPosition(long position) {
+    public void seekToPosition(long position,float allDuration) {
+        LogUtil.d("OOM","allDuration="+allDuration);
         exoPlayer.seekTo(position);
+        if(allDuration!=0){
+            tv_duration.setText(timeUtils.timeParse((long) allDuration));
+        }
     }
 
     @Override

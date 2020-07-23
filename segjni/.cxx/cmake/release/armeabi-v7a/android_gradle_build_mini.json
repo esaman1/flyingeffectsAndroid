@@ -15,8 +15,8 @@
       "abi": "armeabi-v7a",
       "output": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\jniLibs\\armeabi-v7a\\libMegviiSegJni.so",
       "runtimeFiles": [
-        "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\..\\jniLibs\\armeabi-v7a\\libmegface.so",
-        "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\..\\jniLibs\\armeabi-v7a\\libmegsegment.so"
+        "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\jniLibs\\armeabi-v7a\\libmegsegment.so",
+        "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\jniLibs\\armeabi-v7a\\libmegface.so"
       ]
     }
   }

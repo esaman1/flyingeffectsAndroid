@@ -19,7 +19,7 @@ public interface CreationTemplatePreviewMvpCallback {
 
     void getRealCutTime(float RealCutTime);
 
-    void seekToPosition(long position);
+    void seekToPosition(long position,float allDuration);
 
     void isSaveToAlbum(String path,boolean isAdSuccess);
 

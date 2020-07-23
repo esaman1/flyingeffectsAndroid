@@ -115,7 +115,8 @@ public class CreationTemplatePreviewModel {
                             LogUtil.d("scrollOffset", String.valueOf(recyclerView.computeHorizontalScrollOffset()));
                             LogUtil.d("cropStart", String.valueOf(cropStartPoint));
                             calculateCrop();
-                            seekTo(Math.round(getDuration() * getCropStartRatio()));
+                            float allDuration=Math.round(getDuration() * getCropEndRatio())-Math.round(getDuration() * getCropStartRatio());
+                            seekTo(Math.round(getDuration() * getCropStartRatio()),allDuration);
                         }
                     }
                 });
@@ -178,7 +179,8 @@ public class CreationTemplatePreviewModel {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(aLong -> {
                     if (cursor.getTranslationX() > mRangeSeekBarView.getThumbs().get(1).getPos()) {
-                        seekTo(Math.round(cropStartRatio * getDuration()));
+                        float allDuration=Math.round(getDuration() * getCropEndRatio())-Math.round(getDuration() * getCropStartRatio());
+                        seekTo(Math.round(cropStartRatio * getDuration()),allDuration);
                         LogUtil.d("autoSeek", cropEndRatio + "of duration");
                     } else {
                         updateCursor(false);
@@ -255,7 +257,8 @@ public class CreationTemplatePreviewModel {
             }
         }
         calculateCrop();
-        seekTo(Math.round(getDuration() * getCropStartRatio()));
+        float allDuration=Math.round(getDuration() * getCropEndRatio())-Math.round(getDuration() * getCropStartRatio());
+        seekTo(Math.round(getDuration() * getCropStartRatio()),allDuration);
     }
 
     private synchronized void onSeekThumbs(int index, float value) {
@@ -274,11 +277,12 @@ public class CreationTemplatePreviewModel {
         calculateCrop();
         switch (index) {
             case Thumb.LEFT: {
-                seekTo(Math.round(getDuration() * getCropStartRatio()));
+                float duration=Math.round(getDuration() * getCropEndRatio())-Math.round(getDuration() * getCropStartRatio());
+                seekTo(Math.round(getDuration() * getCropStartRatio()),duration);
                 break;
             }
             case Thumb.RIGHT: {
-                seekTo(Math.round(getDuration() * getCropEndRatio()));
+                seekTo(Math.round(getDuration() * getCropEndRatio()),duration);
                 break;
             }
         }
@@ -306,7 +310,7 @@ public class CreationTemplatePreviewModel {
      *
      * @param to
      */
-    private void seekTo(long to) {
+    private void seekTo(long to,float allDuration) {
         try {
 //            player.seekTo((int) to);
             updateCursor(true);
@@ -316,7 +320,7 @@ public class CreationTemplatePreviewModel {
 //                player.start();
 //            }
 
-            callback.seekToPosition(to);
+            callback.seekToPosition(to,allDuration);
 
         } catch (NullPointerException | IllegalStateException e) {
             LogUtil.d("OOM", e.getMessage());

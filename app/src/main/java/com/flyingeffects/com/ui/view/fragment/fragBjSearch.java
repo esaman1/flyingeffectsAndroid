@@ -245,6 +245,7 @@ public class fragBjSearch extends BaseFragment {
     @Subscribe
     public void onEventMainThread(SendSearchText event) {
         if (getActivity() != null) {
+            LogUtil.d("OOM", event.getText());
             //搜索了内容
             searchText = event.getText();
             isRefresh = true;
