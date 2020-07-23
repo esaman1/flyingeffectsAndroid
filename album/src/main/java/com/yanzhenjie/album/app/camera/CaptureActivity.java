@@ -84,6 +84,7 @@ import VideoHandle.EpEditor;
 import VideoHandle.EpVideo;
 import VideoHandle.OnEditorListener;
 
+
 /**
  * 拍摄页面
  *
@@ -122,7 +123,6 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     private boolean takingPicture = false;
     private String outputFilePath;
     private Executor mCameraExecutor;
-    private ProcessCameraProvider mCameraProvider;
     private ListenableFuture<ProcessCameraProvider> mCameraProviderFuture;
     private Camera mCamera;
 
@@ -151,7 +151,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
 
     private LoadingDialog mLoadingDialog;
 
-    private  boolean isOnDestroy=false;
+    private boolean isOnDestroy = false;
 
     public static void startActivityForResult(Activity activity) {
         Intent intent = new Intent(activity, CaptureActivity.class);
@@ -180,7 +180,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                         initTimerAndVideoCapture();
                     }
                 } else {
-                    stopRecord();
+                    stopRecord();//第二次点击录制按键，结束录制
                 }
             }
 
@@ -192,7 +192,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onFinish() {
-                stopRecord();
+                stopRecord();//时间结束
             }
         });
     }
@@ -231,6 +231,20 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         //从预览页回来的话就把时间归0
         mRecordingTime = 0;
         setProgressText(mRecordingTime);
+    }
+
+    @Override
+    protected void onPause() {
+        if (mRecording) {
+            mRecording = false;
+            stopRecord();//onPause的时候停止录制
+            try {
+                Thread.sleep(500);//在执行super前延时500ms，防止抛出新的异常
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        super.onPause();
     }
 
     private void getBundle() {
@@ -286,8 +300,11 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onVideoSaved(@NonNull File file) {
                 Log.d("OOM", "录制完成");
-//                onFileSaved(file);
-                mirrorFlip(file.getPath());
+                if (mCameraSelectorInt == CameraSelector.LENS_FACING_FRONT) {
+                    mirrorFlip(file.getPath());
+                } else {
+                    onFileSaved(file);
+                }
             }
 
             @Override
@@ -298,10 +315,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         mRecordView.startRecord();
     }
 
-
-
-
-    private void mirrorFlip(String path){
+    private void mirrorFlip(String path) {
         showLoadingDialog();
         mLoadingDialog.setMessage("加载中");
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), System.currentTimeMillis() + ".mp4");
@@ -313,8 +327,8 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             public void onSuccess() {
                 dismissLoadingDialog();
                 Log.e(TAG, "EpEditor onSuccess");
-                File fileOld=new File(path);
-                if(fileOld.exists()){
+                File fileOld = new File(path);
+                if (fileOld.exists()) {
                     fileOld.delete();
                 }
                 onFileSaved(file);
@@ -431,7 +445,9 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-
+    /**
+     * 初始化cameraX
+     */
     private void bindCameraX() {
         mCameraExecutor = ContextCompat.getMainExecutor(this);
 
@@ -441,8 +457,8 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
 
         mCameraProviderFuture.addListener(() -> {
             try {
-                mCameraProvider = mCameraProviderFuture.get();
-                bindProvider();
+                ProcessCameraProvider cameraProvider = mCameraProviderFuture.get();
+                bindProvider(cameraProvider);
             } catch (ExecutionException | InterruptedException e) {
                 // No errors need to be handled for this Future.
                 // This should never be reached.
@@ -488,12 +504,12 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                 .build();
     }
 
-    private void bindProvider() {
-        mCameraProvider.unbindAll();
+    private void bindProvider(ProcessCameraProvider cameraProvider) {
+        cameraProvider.unbindAll();
 
         Log.d(TAG, "bindPreview: takingPicture" + takingPicture);
 
-        mCamera = mCameraProvider.bindToLifecycle(this, mCameraSelector, mVideoCapture, preview);
+        mCamera = cameraProvider.bindToLifecycle(this, mCameraSelector, mVideoCapture, preview);
         mCameraInfo = mCamera.getCameraInfo();
         mCameraControl = mCamera.getCameraControl();
 
@@ -510,9 +526,8 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         } else if (v.getId() == R.id.iv_back) {
             //倒计时关闭页面会导致崩溃
             if (!mIsCountingDown) {
-                //如果在录制中，点击返回优先把录制停下来
                 if (mRecording) {
-                    stopRecord();
+                    stopRecord();//如果在录制中，点击返回优先把录制停下来
                 } else {
                     finish();
                 }
@@ -656,15 +671,13 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     public void onBackPressed() {
         //倒计时关闭页面会导致崩溃
         if (!mIsCountingDown) {
-            //如果在录制中，点击返回优先把录制停下来
             if (mRecording) {
-                stopRecord();
+                stopRecord();//如果在录制中，点击返回优先把录制停下来
             } else {
                 super.onBackPressed();
             }
         }
     }
-
 
 
     @SuppressLint("RestrictedApi")
@@ -679,7 +692,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             player.release();
         }
 
-        isOnDestroy=true;
+        isOnDestroy = true;
     }
 
 
@@ -694,9 +707,6 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                 .setTargetRotation(rotation)
                 .build();
     }
-
-
-
 
 
     /**
