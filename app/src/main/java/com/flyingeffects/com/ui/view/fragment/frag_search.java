@@ -134,6 +134,7 @@ public class frag_search extends BaseFragment {
                 if (s.length() == 0) {
                     hideResultView(false);
                     iv_delete.setVisibility(View.GONE);
+                    appbar.setExpanded(true);
                 } else {
                     iv_delete.setVisibility(View.VISIBLE);
                 }

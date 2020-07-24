@@ -323,6 +323,7 @@ public class CreationTemplateMvpModel {
                 if (i == 0) {
                     startPlayAnim(i, true, null, 0, false);
                     statisticsEventAffair.getInstance().setFlag(context, "9_Animation2");
+                    statisticsEventAffair.getInstance().setFlag(context, "9_Animation4");
                 } else {
                     WaitingDialog.openPragressDialog(context);
                     startPlayAnim(i, false, null, 0, false);
@@ -834,6 +835,9 @@ public class CreationTemplateMvpModel {
             } else {
                 stickView.setNowMaterialIsVideo(false);
             }
+            stickView.setIsmaterial(true);
+        }else{
+            stickView.setIsmaterial(false);
         }
         if (isFirstAdd) {
             stickView.setFirstAddSticker(true);
@@ -1304,9 +1308,12 @@ public class CreationTemplateMvpModel {
         ) {
             if (data.getChooseAnimId() != null && data.getChooseAnimId() != AnimType.NULL) {
 
+                if(data.isMaterial()){
+                    statisticsEventAffair.getInstance().setFlag(context, "9_Animation",data.getChooseAnimId().name());
+                }else{
+                    statisticsEventAffair.getInstance().setFlag(context, "9_Animation3",data.getChooseAnimId().name());
+                }
 
-
-                statisticsEventAffair.getInstance().setFlag(context, "9_Animation",data.getChooseAnimId().name());
             }
         }
     }

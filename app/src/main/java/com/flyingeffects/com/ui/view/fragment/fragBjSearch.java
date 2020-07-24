@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -139,9 +140,17 @@ public class fragBjSearch extends BaseFragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-
         if(getUserVisibleHint()) {
-            isVisible = true;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    isVisible = true;
+                    if(allData!=null&&allData.size()==0){
+                        ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
+                    }
+                }
+            },1000);
+
         } else {
             isVisible = false;
         }

@@ -37,6 +37,7 @@ import com.flyingeffects.com.ui.view.fragment.fragBjSearch;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.view.WarpLinearLayout;
+import com.google.android.material.appbar.AppBarLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -90,7 +91,8 @@ public class BackgroundSearchActivity extends BaseActivity {
 
     private ArrayList<SearchKeyWord> listSearchKey = new ArrayList<>();
     private String nowShowText;
-
+    @BindView(R.id.appbar)
+    AppBarLayout appbar;
 
     @Override
     protected int getLayoutId() {
@@ -130,6 +132,7 @@ public class BackgroundSearchActivity extends BaseActivity {
                 if (s.length() == 0) {
                     hideResultView(false);
                     iv_delete.setVisibility(View.GONE);
+                    appbar.setExpanded(true);
                 } else {
                     iv_delete.setVisibility(View.VISIBLE);
                 }
@@ -177,7 +180,6 @@ public class BackgroundSearchActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-
     }
 
 

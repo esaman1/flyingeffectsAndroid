@@ -9,6 +9,18 @@ import java.io.Serializable;
 
 public class AllStickerData implements Serializable {
 
+    public boolean isMaterial() {
+        return isMaterial;
+    }
+
+    public void setMaterial(boolean material) {
+        isMaterial = material;
+    }
+
+    //true 表示素材 false 表示贴纸
+    private boolean isMaterial=true;
+
+
     private float rotation;
 
     public Bitmap getMaskBitmap() {

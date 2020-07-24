@@ -1433,6 +1433,17 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
+    boolean isMaterial=true;
+    public void setIsmaterial(boolean isMaterial){
+        this.isMaterial=isMaterial;
+    }
+
+    public boolean getIsmaterial(){
+        return  isMaterial;
+    }
+
+
+
     public float getTranslationY() {
         float HelpBoxRectWidth = mHelpBoxRect.height();
         float centerLine = HelpBoxRectWidth / 2;

@@ -31,6 +31,7 @@ public class GetAllStickerDataModel {
         stickerData.setScale(stickerView.getScale());
         stickerData.setMaskBitmap(stickerView.getMaskBitmap());
         stickerData.setChooseAnimId(stickerView.getChooseAnimId());
+        stickerData.setMaterial(stickerView.getIsmaterial());
         stickerData.setTranslationX(stickerView.getTranslationX());
         stickerData.setTranslationy(stickerView.getTranslationY());
         if (!TextUtils.isEmpty(stickerView.getOriginalPath())) {
