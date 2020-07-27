@@ -134,15 +134,10 @@ public class backgroundDraw {
                 if (noVideo) {
                     callback.saveSuccessPath("", i);
                 } else {
-                    float f_progress;
-                    if(isMatting){
-                        f_progress = (i / (float) 100) * 70;
-                    }else{
-                        f_progress = (i / (float) 100) * 95;
-                    }
+                    float f_progress = (i / (float) 100) * 5;
                     int progress;
                     if (isMatting) {
-                        progress = (int) (30 + f_progress);
+                        progress = (int) (95 + f_progress);
                     } else {
                         progress = (int) (5 + f_progress);
                     }
@@ -396,7 +391,6 @@ public class backgroundDraw {
         LogUtil.d("OOM", "第一张图片地址为" + getMattingList.get(0).getPath());
         Bitmap bp = BitmapFactory.decodeFile(getMattingList.get(0).getPath());
         LogUtil.d("OOM", "图片宽为" + bp.getWidth());
-        bp= MattingImage.mattingSingleImg(bp);
         BitmapLayer bpLayer = execute.addBitmapLayer(bp);
         bpLayer.setId(100+i);
 
@@ -507,7 +501,6 @@ public class backgroundDraw {
                     LogUtil.d("CanvasRunnable", "addCanvasRunnable=" + preTime + "currentTime=" + currentTime + "nowChooseImageIndex=" + nowChooseImageIndex);
                     nowProgressTime[0] = preTime + nowProgressTime[0];
                     Bitmap firstBitmap1 = BitmapFactory.decodeFile(getMattingList.get(nowChooseImageIndex[0]).getPath());
-                    firstBitmap1= MattingImage.mattingSingleImg(firstBitmap1);
                     bpLayer.switchBitmap(firstBitmap1);
                 } else {
                     LogUtil.d("OOM", "隐藏当前图层");

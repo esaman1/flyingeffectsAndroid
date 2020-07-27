@@ -53,9 +53,6 @@ public class SegJni {
      */
     public static native int nativeBlendImage(Bitmap srcImg, byte[] alpha);
 
-
-    public static native int nativeBlendBackGroud(Bitmap fgImg, Bitmap bgImg, byte[] alpha);
-
     /**
      *
      * 创建图像缓存

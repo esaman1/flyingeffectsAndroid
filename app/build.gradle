@@ -26,8 +26,8 @@ android {
         multiDexEnabled true  //分包支持
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 14
-        versionName "2.7.0"
+        versionCode 15
+        versionName "2.8.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [UMENG_CHANNEL_VALUE: "umeng"]//添加一个默认渠道号  2018-6-19
         flavorDimensions "versionCode" //版本名后面添加一句话，意思就是flavor dimension 它的维度就是该版本号，这样维度就是都是统一的了
@@ -43,7 +43,7 @@ android {
         ]
     }
 
-    buildTypes {getAdType
+    buildTypes {
         debug {
             //是否混淆
             minifyEnabled false
@@ -76,14 +76,7 @@ android {
     }
     buildToolsVersion = '29.0.3'
 
-//    MtjCirclePluginConfig {
-//        // 设置appkey
-//        appkey = '1b676630a0'
-//        // 设置debug 开关，如果需要查看日志则打开开关，为避免影响性能建议上线前关闭（设置为false）
-//        debug = false
-//        // 默认启动此插件，如果开发者不需要可以禁用（设置为false）
-//        enabled = true
-//    }
+
 }
 
 dependencies {

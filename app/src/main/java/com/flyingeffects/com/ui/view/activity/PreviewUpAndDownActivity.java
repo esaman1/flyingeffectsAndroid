@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -37,9 +38,11 @@ import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.ui.presenter.PreviewUpAndDownMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.github.penfeizhou.animation.apng.APNGDrawable;
 import com.github.penfeizhou.animation.loader.ResourceStreamLoader;
+import com.megvii.segjni.SegJni;
 import com.nineton.ntadsdk.itr.VideoAdCallBack;
 import com.nineton.ntadsdk.manager.VideoAdManager;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -149,9 +152,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     private MattingImage mattingImage;
 
-    private boolean isIntoPause=false;
+    private boolean isIntoPause = false;
 
-    private boolean nowItemIsAd=false;
+    private boolean nowItemIsAd = false;
 
 
     @Override
@@ -185,7 +188,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         nowCollectType = templateItem.getIs_collection();
         Presenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, fromTo, templateId, fromToMineCollect);
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
-        if(nowChoosePosition>=allData.size()-2){
+        if (nowChoosePosition >= allData.size() - 2) {
             Presenter.requestMoreData();
         }
         adapter = new Preview_up_and_down_adapter(R.layout.list_preview_up_down_item, allData, PreviewUpAndDownActivity.this, readOnly, fromTo);
@@ -227,10 +230,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     LogUtil.d("OOM", "当前位置为" + position);
                     adapter.NowPreviewChooseItem(position);
                     adapter.notifyItemChanged(position);
-                    if(allData.get(position).getAd()!=null){
-                        nowItemIsAd=true;
-                    }else{
-                        nowItemIsAd=false;
+                    if (allData.get(position).getAd() != null) {
+                        nowItemIsAd = true;
+                    } else {
+                        nowItemIsAd = false;
                     }
 
                     nowChoosePosition = position;
@@ -317,18 +320,18 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     protected void onPause() {
         super.onPause();
         GSYVideoManager.onPause();
-        isIntoPause=true;
-        LogUtil.d("OOM","onPause");
+        isIntoPause = true;
+        LogUtil.d("OOM", "onPause");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         //出现bug 不能继续播放的问题
-        if(!nowItemIsAd){
+        if (!nowItemIsAd) {
             GSYVideoManager.onResume();
         }
-        LogUtil.d("OOM","onResume");
+        LogUtil.d("OOM", "onResume");
         WaitingDialog.closePragressDialog();
     }
 
@@ -689,6 +692,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel && !ondestroy && paths != null && paths.size() > 0) {
+            chooseAlbumStatistics(paths);
             LogUtil.d("OOM", "pathsSize=" + paths.size());
             mattingImage.createHandle(PreviewUpAndDownActivity.this, new MattingImage.InitSegJniStateCallback() {
                 @Override
@@ -777,6 +781,24 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
 
+    private void chooseAlbumStatistics(List<String> paths) {
+        if (paths != null && paths.size() > 0) {
+            for (String path : paths
+            ) {
+                if (albumType.isImage(GetPathTypeModel.getInstance().getMediaType(path))) {
+                    {
+                        statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "userChooseType","选择的是图片");
+                        LogUtil.d("OOM","当前选择的是图片");
+                    }
+                } else {
+                    statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "userChooseType","选择的是视频");
+                    LogUtil.d("OOM","当前选择的是视频");
+                }
+            }
+        }
+    }
+
+
     private void compressImageForServers(List<String> paths, String templateId) {
         boolean hasCache = templateItem.getIs_anime() != 1;
         CompressionCuttingManage manage = new CompressionCuttingManage(PreviewUpAndDownActivity.this, templateId, hasCache, tailorPaths -> {
@@ -798,7 +820,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * @param templateId id
      */
     private void compressImage(List<String> paths, String templateId) {
-
         boolean hasCache = templateItem.getIs_anime() != 1;
         CompressionCuttingManage manage = new CompressionCuttingManage(PreviewUpAndDownActivity.this, templateId, hasCache, tailorPaths -> {
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {

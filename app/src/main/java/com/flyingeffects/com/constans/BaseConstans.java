@@ -26,11 +26,11 @@ public class BaseConstans {
     //当前抠图是用sdk 还是用服务器
     public static final boolean UserFaceSdk=true;
 //    public static final boolean isTitokChannel=true;
-    public static final int  THREADCOUNT=1;
-    public static boolean hasCreatingSegJni = false;
+    public static final int  THREADCOUNT=4;
+    public static boolean hasCreatingSegJni = true;
     public static String titok;
     public static String kuaishou;
-    public static final boolean PRODUCTION = true;
+    public static final boolean PRODUCTION = false;
     private static String channel = "";
     private static String versionCode = "";
     private static String uuid = "";

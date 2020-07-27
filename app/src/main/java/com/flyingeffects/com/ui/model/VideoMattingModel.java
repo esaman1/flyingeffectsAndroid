@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
+import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -20,8 +21,10 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.LruCacheManage;
 import com.flyingeffects.com.manager.ThreadJudgeManage;
 import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.ui.view.activity.HomeMainActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.utils.timeUtils;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.BitmapLayer;
@@ -111,6 +114,7 @@ public class VideoMattingModel {
     private String templateName;
 
     public void ToExtractFrame(String templateName) {
+        SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
         this.templateName = templateName;
         nowCurtime = System.currentTimeMillis();
         MediaInfo mInfo = new MediaInfo(videoPath);
@@ -151,7 +155,7 @@ public class VideoMattingModel {
             }
             LogUtil.d("OOM2", "frameCount的值为" + frameCount);
             SegJni.nativeReleaseImageBuffer();
-//            SegJni.nativeReleaseSegHandler();
+            SegJni.nativeReleaseSegHandler();
             boolean isMainThread = ThreadJudgeManage.isMainThread();
             LogUtil.d("OOM", "当前线程运行在主线程吗？" + isMainThread);
             Observable.just(0).subscribeOn(Schedulers.io()).subscribe(integer -> addFrameCompoundVideoNoMatting());
@@ -221,7 +225,7 @@ public class VideoMattingModel {
                 try {
                     FileUtil.copyFile(new File(exportPath), albumPath);
 //                    test(cacheCutVideoPath + "/noMatting.mp4",albumPath);
-//                    DataCleanManager.deleteFilesByDirectory(context.getExternalFilesDir("faceMattingFolder"));
+                    DataCleanManager.deleteFilesByDirectory(context.getExternalFilesDir("faceMattingFolder"));
                     DataCleanManager.deleteFilesByDirectory(context.getExternalFilesDir("faceFolder"));
                     long time = System.currentTimeMillis() - nowCurtime;
                     String ss = timeUtils.timeParse(time);
@@ -399,12 +403,10 @@ public class VideoMattingModel {
 
     private MattingImage mattingImage = new MattingImage();
 
-    private int downSuccessNum;
 
     private void downImageForBitmap(Bitmap OriginBitmap, int frameCount) {
-        downSuccessNum++;
         String fileName = faceMattingFolder + File.separator + frameCount + ".png";
-        LogUtil.d("OOM", "正在抠图" + downSuccessNum);
+        LogUtil.d("OOM", "正在抠图" + frameCount);
         mattingImage.mattingImageForMultiple(OriginBitmap, frameCount, (isSuccess, bitmap) -> {
             if (isSuccess) {
                 BitmapManager.getInstance().saveBitmapToPathForJpg(bitmap, fileName, isSuccess1 -> GlideBitmapPool.putBitmap(
@@ -414,7 +416,7 @@ public class VideoMattingModel {
             }
         });
 
-        LogUtil.d("OOM", "allFrame-1=" + allFrame + "downSuccessNum=?" + downSuccessNum);
+        LogUtil.d("OOM", "allFrame-1=" + allFrame + "downSuccessNum=?" + frameCount);
     }
 
 

@@ -45,18 +45,18 @@ public class MattingImage {
                 WaitingDialog.openPragressDialog(context, "正在上传中...");
             }, 200);
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    nowNeedDuration = 1;
-                    startTimer(context);
-                    LogUtil.d("OOM", "开始加载模型------------------------------------------- " + DateUtils.getCurrentTime_m(System.currentTimeMillis()));
-                    int aa = SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
-                    LogUtil.d("OOM", "模型加载完成--------------------------------------------" + aa + DateUtils.getCurrentTime_m(System.currentTimeMillis()));
-                    BaseConstans.hasCreatingSegJni = true;
-                    WaitingDialog.closePragressDialog();
-                }
-            }).start();
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    nowNeedDuration = 1;
+//                    startTimer(context);
+//                    LogUtil.d("OOM", "开始加载模型------------------------------------------- " + DateUtils.getCurrentTime_m(System.currentTimeMillis()));
+//                    int aa = SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
+//                    LogUtil.d("OOM", "模型加载完成--------------------------------------------" + aa + DateUtils.getCurrentTime_m(System.currentTimeMillis()));
+//                    BaseConstans.hasCreatingSegJni = true;
+//                    WaitingDialog.closePragressDialog();
+//                }
+//            }).start();
 
         } else {
             WaitingDialog.closePragressDialog();
@@ -301,7 +301,7 @@ public class MattingImage {
         }
 
         if (index >= BaseConstans.THREADCOUNT - 1) {
-            if (imageByte != null) {
+            if (imageByte != null&&bpList.get(0)!=null) {
                 Bitmap newBitmap = SegResultHandleManage.setBitmapAlpha(bpList.get(0), imageByte);//setBlackWhite
                 LogUtil.d("mattingImage", "接收源图片地址" + bpList.get(0));
                 callback.isSuccess(true, newBitmap);

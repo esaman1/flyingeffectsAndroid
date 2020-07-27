@@ -84,7 +84,7 @@ public class CompressionCuttingManage {
 
     public void ToMatting(List<String> paths){
         if(BaseConstans.UserFaceSdk){
-//            SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
+           SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
             CompressImgForFace(paths);
         }else{
             CompressImgAndCache(paths);

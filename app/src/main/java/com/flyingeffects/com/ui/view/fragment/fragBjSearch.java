@@ -134,22 +134,24 @@ public class fragBjSearch extends BaseFragment {
     }
 
 
-    /** Fragment当前状态是否可见 */
+    /**
+     * Fragment当前状态是否可见
+     */
     protected boolean isVisible;
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(getUserVisibleHint()) {
+        if (getUserVisibleHint()) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     isVisible = true;
-                    if(allData!=null&&allData.size()==0){
+                    if (allData != null && allData.size() == 0) {
                         ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
                     }
                 }
-            },1000);
+            }, 1000);
 
         } else {
             isVisible = false;
@@ -251,12 +253,17 @@ public class fragBjSearch extends BaseFragment {
                 if (isRefresh && data.size() == 0) {
                     statisticsEventAffair.getInstance().setFlag(getActivity(), "10_Noresults", searchText);
 
-                    if(isVisible){
+                    if (isVisible) {
                         ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
                     }
 
-
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none", searchText);
+                    if (isVisible) {
+                        if (isFrom == 0) {
+                            statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none", searchText);
+                        } else {
+                            statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none_bj", searchText);
+                        }
+                    }
                 }
                 if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
                     ToastUtil.showToast(getResources().getString(R.string.no_more_data));
