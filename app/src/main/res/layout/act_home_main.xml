@@ -25,29 +25,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fl_show" />
 
-    <ImageView
-        android:id="@+id/iv_menu_0"
-        android:layout_width="20dp"
-        android:layout_height="23dp"
-        android:contentDescription="@string/text_background"
-        android:src="@mipmap/home_bj"
-        app:layout_constraintBottom_toTopOf="@id/tv_main_0"
-        app:layout_constraintEnd_toEndOf="@id/iv_back_menu_0"
-        app:layout_constraintStart_toStartOf="@id/iv_back_menu_0"
-        app:layout_constraintTop_toTopOf="@id/iv_back_menu_0"
-        app:layout_constraintVertical_chainStyle="packed" />
+<!--    <ImageView-->
+<!--        android:id="@+id/iv_menu_0"-->
+<!--        android:layout_width="20dp"-->
+<!--        android:layout_height="23dp"-->
+<!--        android:contentDescription="@string/text_background"-->
+<!--        android:src="@mipmap/home_bj"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/tv_main_0"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/iv_back_menu_0"-->
+<!--        app:layout_constraintStart_toStartOf="@id/iv_back_menu_0"-->
+<!--        app:layout_constraintTop_toTopOf="@id/iv_back_menu_0"-->
+<!--        app:layout_constraintVertical_chainStyle="packed" />-->
 
     <TextView
         android:id="@+id/tv_main_0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/text_background"
-        android:textColor="@color/home_base_blue_color"
-        android:textSize="@dimen/text_micro_size"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_16sp_size"
         app:layout_constraintBottom_toBottomOf="@id/iv_back_menu_0"
-        app:layout_constraintEnd_toEndOf="@id/iv_menu_0"
-        app:layout_constraintStart_toStartOf="@id/iv_menu_0"
-        app:layout_constraintTop_toBottomOf="@id/iv_menu_0"
+        app:layout_constraintEnd_toEndOf="@id/iv_back_menu_0"
+        app:layout_constraintStart_toStartOf="@id/iv_back_menu_0"
+        app:layout_constraintTop_toBottomOf="@id/fl_show"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <ImageView
@@ -61,17 +61,17 @@
         app:layout_constraintStart_toEndOf="@id/iv_back_menu_0"
         app:layout_constraintTop_toBottomOf="@id/fl_show" />
 
-    <ImageView
-        android:id="@+id/iv_menu_1"
-        android:layout_width="20dp"
-        android:layout_height="23dp"
-        android:contentDescription="@string/text_mould"
-        android:src="@mipmap/moban_unslect"
-        app:layout_constraintBottom_toTopOf="@id/tv_main_1"
-        app:layout_constraintEnd_toEndOf="@id/iv_back_menu_1"
-        app:layout_constraintStart_toStartOf="@id/iv_back_menu_1"
-        app:layout_constraintTop_toTopOf="@id/iv_back_menu_1"
-        app:layout_constraintVertical_chainStyle="packed" />
+<!--    <ImageView-->
+<!--        android:id="@+id/iv_menu_1"-->
+<!--        android:layout_width="20dp"-->
+<!--        android:layout_height="23dp"-->
+<!--        android:contentDescription="@string/text_mould"-->
+<!--        android:src="@mipmap/moban_unslect"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/tv_main_1"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/iv_back_menu_1"-->
+<!--        app:layout_constraintStart_toStartOf="@id/iv_back_menu_1"-->
+<!--        app:layout_constraintTop_toTopOf="@id/iv_back_menu_1"-->
+<!--        app:layout_constraintVertical_chainStyle="packed" />-->
 
     <TextView
         android:id="@+id/tv_main_1"
@@ -79,11 +79,11 @@
         android:layout_height="wrap_content"
         android:text="@string/text_mould"
         android:textColor="@color/home_navigation_dark_gray"
-        android:textSize="@dimen/text_micro_size"
+        android:textSize="@dimen/text_16sp_size"
         app:layout_constraintBottom_toBottomOf="@id/iv_back_menu_1"
-        app:layout_constraintEnd_toEndOf="@id/iv_menu_1"
-        app:layout_constraintStart_toStartOf="@id/iv_menu_1"
-        app:layout_constraintTop_toBottomOf="@id/iv_menu_1"
+        app:layout_constraintEnd_toEndOf="@id/iv_back_menu_1"
+        app:layout_constraintStart_toStartOf="@id/iv_back_menu_1"
+        app:layout_constraintTop_toBottomOf="@id/fl_show"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <ImageView
@@ -97,29 +97,29 @@
         app:layout_constraintStart_toEndOf="@id/iv_back_menu_1"
         app:layout_constraintTop_toBottomOf="@id/fl_show" />
 
-    <ImageView
-        android:id="@+id/iv_menu_2"
-        android:layout_width="20dp"
-        android:layout_height="23dp"
-        android:contentDescription="@string/text_search"
-        android:src="@mipmap/chazhao_unselect"
-        app:layout_constraintBottom_toTopOf="@id/tv_main_2"
-        app:layout_constraintEnd_toEndOf="@id/iv_back_menu_2"
-        app:layout_constraintStart_toStartOf="@id/iv_back_menu_2"
-        app:layout_constraintTop_toTopOf="@id/iv_back_menu_2"
-        app:layout_constraintVertical_chainStyle="packed" />
+<!--    <ImageView-->
+<!--        android:id="@+id/iv_menu_2"-->
+<!--        android:layout_width="20dp"-->
+<!--        android:layout_height="23dp"-->
+<!--        android:contentDescription="@string/text_search"-->
+<!--        android:src="@mipmap/chazhao_unselect"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/tv_main_2"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/iv_back_menu_2"-->
+<!--        app:layout_constraintStart_toStartOf="@id/iv_back_menu_2"-->
+<!--        app:layout_constraintTop_toTopOf="@id/iv_back_menu_2"-->
+<!--        app:layout_constraintVertical_chainStyle="packed" />-->
 
     <TextView
         android:id="@+id/tv_main_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_search"
+        android:text="@string/text_message"
         android:textColor="@color/home_navigation_dark_gray"
-        android:textSize="@dimen/text_micro_size"
+        android:textSize="@dimen/text_16sp_size"
         app:layout_constraintBottom_toBottomOf="@id/iv_back_menu_2"
-        app:layout_constraintEnd_toEndOf="@id/iv_menu_2"
-        app:layout_constraintStart_toStartOf="@id/iv_menu_2"
-        app:layout_constraintTop_toBottomOf="@id/iv_menu_2"
+        app:layout_constraintEnd_toEndOf="@id/iv_back_menu_2"
+        app:layout_constraintStart_toStartOf="@id/iv_back_menu_2"
+        app:layout_constraintTop_toBottomOf="@id/fl_show"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <ImageView
@@ -133,17 +133,17 @@
         app:layout_constraintStart_toEndOf="@id/iv_back_menu_2"
         app:layout_constraintTop_toBottomOf="@id/fl_show" />
 
-    <ImageView
-        android:id="@+id/iv_menu_3"
-        android:layout_width="20dp"
-        android:layout_height="23dp"
-        android:contentDescription="@string/text_mine"
-        android:src="@mipmap/wode_unselect"
-        app:layout_constraintBottom_toTopOf="@id/tv_main_3"
-        app:layout_constraintEnd_toEndOf="@id/iv_back_menu_3"
-        app:layout_constraintStart_toStartOf="@id/iv_back_menu_3"
-        app:layout_constraintTop_toTopOf="@id/iv_back_menu_3"
-        app:layout_constraintVertical_chainStyle="packed" />
+<!--    <ImageView-->
+<!--        android:id="@+id/iv_menu_3"-->
+<!--        android:layout_width="20dp"-->
+<!--        android:layout_height="23dp"-->
+<!--        android:contentDescription="@string/text_mine"-->
+<!--        android:src="@mipmap/wode_unselect"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/tv_main_3"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/iv_back_menu_3"-->
+<!--        app:layout_constraintStart_toStartOf="@id/iv_back_menu_3"-->
+<!--        app:layout_constraintTop_toTopOf="@id/iv_back_menu_3"-->
+<!--        app:layout_constraintVertical_chainStyle="packed" />-->
 
     <TextView
         android:id="@+id/tv_main_3"
@@ -151,11 +151,34 @@
         android:layout_height="wrap_content"
         android:text="@string/text_mine"
         android:textColor="@color/home_navigation_dark_gray"
-        android:textSize="@dimen/text_micro_size"
+        android:textSize="@dimen/text_16sp_size"
         app:layout_constraintBottom_toBottomOf="@id/iv_back_menu_3"
-        app:layout_constraintEnd_toEndOf="@id/iv_menu_3"
-        app:layout_constraintStart_toStartOf="@id/iv_menu_3"
-        app:layout_constraintTop_toBottomOf="@id/iv_menu_3"
+        app:layout_constraintEnd_toEndOf="@id/iv_back_menu_3"
+        app:layout_constraintStart_toStartOf="@id/iv_back_menu_3"
+        app:layout_constraintTop_toBottomOf="@id/fl_show"
         app:layout_constraintVertical_chainStyle="packed" />
+
+
+    <View
+        android:id="@+id/view_line"
+        android:background="#1D1D1D"
+        app:layout_constraintBottom_toBottomOf="@id/fl_show"
+        app:layout_constraintLeft_toRightOf="@+id/tv_main_2"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"/>
+
+    <TextView
+        android:layout_width="17dp"
+        android:id="@+id/message_count"
+        android:text="11"
+        app:layout_constraintLeft_toRightOf="@+id/tv_main_2"
+        app:layout_constraintTop_toBottomOf="@+id/view_line"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:textSize="11sp"
+        android:background="@drawable/home_strok_message_count"
+        android:layout_height="15dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

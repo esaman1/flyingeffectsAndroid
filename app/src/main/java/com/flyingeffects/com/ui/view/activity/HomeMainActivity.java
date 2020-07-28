@@ -47,6 +47,7 @@ import com.flyingeffects.com.manager.SPHelper;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
 import com.flyingeffects.com.ui.view.fragment.frag_Bj;
+import com.flyingeffects.com.ui.view.fragment.frag_message;
 import com.flyingeffects.com.ui.view.fragment.frag_search;
 import com.flyingeffects.com.ui.view.fragment.frag_user_center;
 import com.flyingeffects.com.utils.AssetsUtils;
@@ -83,10 +84,10 @@ import static com.flyingeffects.com.constans.BaseConstans.getChannel;
  * @author zhang
  */
 public class HomeMainActivity extends FragmentActivity {
-    private ImageView[] mIvMenu = new ImageView[4];
+//    private ImageView[] mIvMenu = new ImageView[4];
     private ImageView[] mIvMenuBack = new ImageView[4];
     private TextView[] tv_main = new TextView[4];
-    private int[] img_Id = {R.id.iv_menu_0, R.id.iv_menu_1, R.id.iv_menu_2, R.id.iv_menu_3};
+//    private int[] img_Id = {R.id.iv_menu_0, R.id.iv_menu_1, R.id.iv_menu_2, R.id.iv_menu_3};
     private int[] mImBackId = {R.id.iv_back_menu_0, R.id.iv_back_menu_1, R.id.iv_back_menu_2, R.id.iv_back_menu_3};
     public HomeMainActivity ThisMain;
     private int[] tv_main_button = {R.id.tv_main_0, R.id.tv_main_1, R.id.tv_main_2, R.id.tv_main_3};
@@ -321,12 +322,12 @@ public class HomeMainActivity extends FragmentActivity {
 
 
     public void initView() {
-        for (int i = 0; i < mIvMenu.length; i++) {
-            mIvMenu[i] = findViewById(img_Id[i]);
+        for (int i = 0; i < mIvMenuBack.length; i++) {
+//            mIvMenu[i] = findViewById(img_Id[i]);
             mIvMenuBack[i] = findViewById(mImBackId[i]);
             tv_main[i] = findViewById(tv_main_button[i]);
             //lin_menu[i] = findViewById(lin_Id[i]);
-            mIvMenu[i].setOnClickListener(listener);
+//            mIvMenu[i].setOnClickListener(listener);
             mIvMenuBack[i].setOnClickListener(listener);
         }
         whichMenuSelect(1);
@@ -372,20 +373,20 @@ public class HomeMainActivity extends FragmentActivity {
         @Override
         public void onNoDoubleClick(View v) {
             switch (v.getId()) {
-                case R.id.iv_menu_0:
+//                case R.id.iv_menu_0:
                 case R.id.iv_back_menu_0:
                     whichMenuSelect(0);
                     statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "5_bj");
                     break;
-                case R.id.iv_menu_1:
+//                case R.id.iv_menu_1:
                 case R.id.iv_back_menu_1:
                     whichMenuSelect(1);
                     break;
-                case R.id.iv_menu_2:
+//                case R.id.iv_menu_2:
                 case R.id.iv_back_menu_2:
                     whichMenuSelect(2);
                     break;
-                case R.id.iv_menu_3:
+//                case R.id.iv_menu_3:
                 case R.id.iv_back_menu_3:
                     statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "3_mine");
                     whichMenuSelect(3);
@@ -406,12 +407,12 @@ public class HomeMainActivity extends FragmentActivity {
      * 时间：2018/6/6
      **/
     private void changeBottomTab() {
-        for (int i = 0; i < img_Id.length; i++) {
-            mIvMenu[i].setImageResource(unSelectIconArr[i]);
+        for (int i = 0; i < mIvMenuBack.length; i++) {
+//            mIvMenu[i].setImageResource(unSelectIconArr[i]);
             tv_main[i].setTextColor(getResources().getColor(R.color.home_navigation_dark_gray));
         }
-        mIvMenu[LastWhichMenu].setImageResource(selectIconArr[LastWhichMenu]);
-        tv_main[LastWhichMenu].setTextColor(getResources().getColor(R.color.home_base_blue_color));
+//        mIvMenu[LastWhichMenu].setImageResource(selectIconArr[LastWhichMenu]);
+        tv_main[LastWhichMenu].setTextColor(getResources().getColor(R.color.white));
     }
 
     /**
@@ -439,7 +440,8 @@ public class HomeMainActivity extends FragmentActivity {
 
     private frag_Bj menu0F = null;
     private FragForTemplate menu1F = null;
-    private frag_search menu2F = null;
+    //    private frag_search menu2F = null;
+    private frag_message menu2F = null;
     private frag_user_center menu3F = null;
 
 
@@ -471,7 +473,7 @@ public class HomeMainActivity extends FragmentActivity {
                 }
                 case 2: {
                     if (menu2F == null) {
-                        menu2F = new frag_search();
+                        menu2F = new frag_message();
                     }
                     fragmentTransaction.replace(R.id.fl_show, menu2F, menu2F.getClass().getName()).commitAllowingStateLoss();
                     break;
