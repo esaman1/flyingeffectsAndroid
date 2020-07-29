@@ -166,9 +166,10 @@
         app:layout_constraintLeft_toRightOf="@+id/tv_main_2"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_width="match_parent"
-        android:layout_height="2dp"/>
+        android:layout_height="1dp"/>
 
     <TextView
+
         android:layout_width="17dp"
         android:id="@+id/message_count"
         android:text="11"

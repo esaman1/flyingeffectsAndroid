@@ -36,6 +36,7 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.checkVersion;
+import com.flyingeffects.com.enity.messageCount;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -98,6 +99,8 @@ public class HomeMainActivity extends FragmentActivity {
     private Timer timer;
     private TimerTask task;
 
+    private TextView message_count;
+
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
@@ -107,6 +110,7 @@ public class HomeMainActivity extends FragmentActivity {
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         setContentView(R.layout.act_home_main);
+        message_count=findViewById(R.id.message_count);
         StatusBarCompat.setStatusBarColor(this, Color.parseColor("#181818"));
         ThisMain = this;
         final ActionBar actionBar = getActionBar();
@@ -385,6 +389,7 @@ public class HomeMainActivity extends FragmentActivity {
 //                case R.id.iv_menu_2:
                 case R.id.iv_back_menu_2:
                     whichMenuSelect(2);
+                    requestMessageCount();
                     break;
 //                case R.id.iv_menu_3:
                 case R.id.iv_back_menu_3:
@@ -597,5 +602,35 @@ public class HomeMainActivity extends FragmentActivity {
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
+
+
+
+    /**
+     * description ：请求粉丝数，赞和评论数量
+     * creation date: 2020/7/29
+     * user : zhangtongju
+     */
+    private void requestMessageCount() {
+        HashMap<String, String> params = new HashMap<>();
+        Observable ob = Api.getDefault().getAllMessageNum(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<messageCount>(this) {
+            @Override
+            protected void _onError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(messageCount data) {
+                String allCount=data.getAll_num();
+                int intAllCount = Integer.parseInt(allCount);
+                if (intAllCount == 0) {
+                    message_count.setVisibility(View.GONE);
+                } else {
+                    message_count.setVisibility(View.VISIBLE);
+                    message_count.setText(intAllCount);
+                }
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
 
 }

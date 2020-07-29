@@ -25,7 +25,7 @@
                 android:layout_width="match_parent"
                 android:scaleType="centerCrop"
                 android:layout_height="match_parent"
-                android:src="@mipmap/ic_launcher" />
+               />
 
 
         </RelativeLayout>
@@ -34,7 +34,6 @@
         <ImageView
             android:id="@+id/iv_show_author"
             android:layout_marginStart="12dp"
-            android:src="@mipmap/ic_launcher"
             android:layout_marginTop="-16dp"
             android:layout_marginBottom="24dp"
             android:contentDescription="@string/app_name"

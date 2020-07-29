@@ -7,7 +7,9 @@ import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.checkVersion;
+import com.flyingeffects.com.enity.messageCount;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.systemessagelist;
 
 import java.util.List;
 import java.util.Map;
@@ -53,6 +55,18 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/template/collectionList")
     Observable<HttpResult<List<new_fag_template_item>>> collectionList(@FieldMap Map<String, String> params);
+
+
+    @FormUrlEncoded
+    @POST("/api/message/systemessagelist")
+    Observable<HttpResult<List<systemessagelist>>> systemessagelist(@FieldMap Map<String, String> params);
+
+
+
+//    @FormUrlEncoded
+//    @POST("/api/message/getUserinfo")
+//    Observable<HttpResult<List<systemessagelist>>> getUserinfo(@FieldMap Map<String, String> params);
+
 
 
     @FormUrlEncoded
@@ -102,6 +116,11 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/user/getUserInfo")
     Observable<HttpResult<UserInfo>> getUserInfo(@FieldMap Map<String, String> params);
+
+
+    @FormUrlEncoded
+    @POST("/api/message/allMessageNum")
+    Observable<HttpResult<messageCount>> getAllMessageNum(@FieldMap Map<String, String> params);
 
 
     //上传素材

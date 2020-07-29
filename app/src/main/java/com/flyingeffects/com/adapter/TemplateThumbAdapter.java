@@ -48,7 +48,7 @@ public class TemplateThumbAdapter extends BaseItemDraggableAdapter<TemplateThumb
                     .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 5)))
                     .into((ImageView) helper.getView(R.id.iv_show_un_select));
         } else {
-            iv_show_un_select.setImageResource(R.mipmap.ic_launcher);
+            iv_show_un_select.setImageResource(R.mipmap.logo);
         }
         if(item.getIsCheck()==0){
             rela_parent.setBackground(context.getDrawable(R.drawable.template_adapter_item_bj));
