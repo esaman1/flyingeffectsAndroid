@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.view.fragment;
 
+import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -7,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.adapter.Fans_adapter;
 import com.flyingeffects.com.adapter.System_message_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
@@ -16,6 +18,9 @@ import com.flyingeffects.com.enity.systemessagelist;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.ui.view.activity.FansActivity;
+import com.flyingeffects.com.ui.view.activity.LikeActivity;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 
 import java.util.HashMap;
@@ -162,17 +167,27 @@ public class frag_message extends BaseFragment {
     }
 
 
-    @OnClick({R.id.tv_follow, R.id.tv_zan, R.id.tv_comment_count})
+    @OnClick({R.id.iv_icon_fans, R.id.iv_icon_zan, R.id.iv_icon_comment})
     public void onClick(View view) {
         switch (view.getId()) {
 
-            case R.id.tv_follow:
+            case R.id.iv_icon_fans:
+                LogUtil.d("OOM","tv_follow");
+
+                Intent intentFan=new Intent(getActivity(),FansActivity.class);
+                startActivity(intentFan);
+
                 break;
 
-            case R.id.tv_zan:
+            case R.id.iv_icon_zan:
+                Intent intentZan=new Intent(getActivity(),LikeActivity.class);
+                startActivity(intentZan);
+
                 break;
 
-            case R.id.tv_comment_count:
+            case R.id.iv_icon_comment:
+                Intent intentComment=new Intent(getActivity(),LikeActivity.class);
+                startActivity(intentComment);
                 break;
 
             default:
