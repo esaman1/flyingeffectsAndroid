@@ -83,6 +83,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         tv_describe = helper.getView(R.id.tv_describe);
         tv_describe.setVisibility(View.GONE);
         helper.addOnClickListener(R.id.iv_download_bj);
+        helper.addOnClickListener(R.id.ll_comment);
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
             tv_make.setText("使用背景");
         } else {

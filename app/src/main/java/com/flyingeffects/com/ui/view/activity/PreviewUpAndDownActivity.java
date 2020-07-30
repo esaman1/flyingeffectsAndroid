@@ -211,6 +211,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "10_bj_arrow");
                     Presenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId(), templateItem);
                     break;
+
+
+                case R.id.ll_comment:
+                    Presenter.showCommentBottomSheetDialog();
+                    break;
+
                 default:
                     break;
             }

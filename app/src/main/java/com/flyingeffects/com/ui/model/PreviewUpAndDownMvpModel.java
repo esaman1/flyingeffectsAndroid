@@ -13,11 +13,13 @@ import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdNative;
@@ -800,6 +802,51 @@ public class PreviewUpAndDownMvpModel {
             ToastUtil.showToast("没有zip地址");
         }
     }
+
+
+
+
+
+    private BottomSheetDialog bottomSheetDialogForComment;
+
+
+
+
+
+    /**
+     * description ：
+     * creation date: 2020/7/30
+     * user : zhangtongju
+     */
+    public void showBottomSheetDialogForComment() {
+        bottomSheetDialogForComment = new BottomSheetDialog(context, R.style.gaussianDialog);
+        View view = LayoutInflater.from(context).inflate(R.layout.comment_bottom_sheet_doalog, null);
+        bottomSheetDialogForComment.setContentView(view);
+
+        ImageView iv_cancle = view.findViewById(R.id.iv_cancle);
+        iv_cancle.setOnClickListener(view1 ->{ bottomSheetDialog.dismiss();
+
+
+
+        });
+
+//        RecyclerView recyclerView=view.findViewById(R.id.recyclerView);
+//        recyclerView.setAdapter();
+
+        bottomSheetDialogForComment.setCancelable(true);
+        bottomSheetDialogForComment.setCanceledOnTouchOutside(true);
+        View parent = (View) view.getParent();     //处理高度显示完全  https://www.jianshu.com/p/38af0cf77352
+        parent.setBackgroundResource(android.R.color.transparent);
+        BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);
+        view.measure(0, 0);
+        behavior.setPeekHeight(view.getMeasuredHeight());
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) parent.getLayoutParams();
+        params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+        parent.setLayoutParams(params);
+        bottomSheetDialogForComment.show();
+    }
+
+
 
 
 }

@@ -32,6 +32,11 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
         previewUpAndDownMvpModel.showBottomSheetDialog(path,imagePath,id,templateItem);
     }
 
+
+    public void showCommentBottomSheetDialog(){
+        previewUpAndDownMvpModel.showBottomSheetDialogForComment();
+    }
+
     public void requestMoreData(){
         previewUpAndDownMvpModel.requestMoreData();
     }
@@ -119,6 +124,12 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
     public void requestUserInfo(){
         previewUpAndDownMvpModel.requestUserInfo();
     }
+
+
+
+
+
+
 
 
 }

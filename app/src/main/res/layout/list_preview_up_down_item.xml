@@ -8,8 +8,7 @@
     <com.flyingeffects.com.view.SampleCoverVideo
         android:id="@+id/video_item_player"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
+        android:layout_height="match_parent" />
 
 
     <ImageView
@@ -25,17 +24,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:contentDescription="@string/app_name"
-        android:src="@mipmap/down_bj"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/iv_zan"
-        android:id="@+id/iv_download_bj"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="28dp"
-        app:layout_constraintTop_toBottomOf="@+id/iv_zan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
 
     <ImageView
         android:id="@+id/iv_video_play"
@@ -52,13 +40,13 @@
     <ImageView
         android:id="@+id/iv_top_back"
         android:layout_width="wrap_content"
-        android:visibility="gone"
         android:layout_height="wrap_content"
         android:layout_marginStart="11dp"
         android:layout_marginTop="18dp"
         android:contentDescription="@string/app_name"
         android:padding="10dp"
         android:src="@mipmap/back"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
@@ -66,19 +54,104 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0" />
 
-    <ImageView
-        android:id="@+id/iv_zan"
-        android:layout_width="53dp"
-        android:layout_height="50dp"
-        android:contentDescription="@string/app_name"
-        android:padding="10dp"
-        android:src="@mipmap/zan"
+
+    <LinearLayout
+        android:id="@+id/ll_zan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.94"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.72" />
+        app:layout_constraintVertical_bias="0.55">
+
+        <ImageView
+            android:id="@+id/iv_zan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name"
+            android:padding="10dp"
+            android:src="@mipmap/zan" />
+
+        <TextView
+            android:id="@+id/tv_zan_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="123123"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ll_comment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="20dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_zan">
+
+        <ImageView
+            android:id="@+id/iv_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:src="@mipmap/iv_comment" />
+
+
+        <TextView
+            android:id="@+id/tv_comment_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="123123"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="28dp"
+        android:gravity="center"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintStart_toStartOf="@+id/ll_comment"
+        app:layout_constraintTop_toBottomOf="@+id/ll_comment"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_download_bj"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name"
+            android:src="@mipmap/down_bj"
+        />
+
+
+        <TextView
+            android:id="@+id/tv_download_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="123123"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+
+
+
 
     <ImageView
         android:id="@+id/iv_writer"
@@ -96,7 +169,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:textColor="@color/white"
         android:layout_marginEnd="50dp"
         android:ellipsize="marquee"
         android:focusable="true"
@@ -104,6 +176,7 @@
         android:marqueeRepeatLimit="marquee_forever"
         android:scrollHorizontally="true"
         android:singleLine="true"
+        android:textColor="@color/white"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="@id/iv_writer"
         app:layout_constraintEnd_toEndOf="parent"
@@ -135,18 +208,18 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_8"
         android:layout_marginEnd="5dp"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp"
-        android:paddingTop="3dp"
-        android:paddingBottom="3dp"
         android:background="@drawable/preview_video_time_bj"
+        android:ellipsize="end"
         android:focusableInTouchMode="true"
+        android:paddingStart="5dp"
+        android:paddingTop="3dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="3dp"
         android:scrollHorizontally="true"
-        android:visibility="gone"
+        android:singleLine="true"
         android:textColor="@color/white"
         android:textSize="@dimen/sp_11"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/tv_make"
         app:layout_constraintHorizontal_bias="0"
@@ -161,18 +234,18 @@
         android:layout_height="wrap_content"
         android:background="@drawable/tv_make"
         android:ellipsize="end"
-        android:singleLine="true"
         android:focusable="true"
         android:gravity="center"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:scrollHorizontally="true"
+        android:singleLine="true"
         android:text="马上制作"
         android:textColor="@color/white"
         android:textSize="17sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/tv_describe"
-        app:layout_constraintEnd_toEndOf="@id/iv_zan"
+        app:layout_constraintEnd_toEndOf="@id/ll_zan"
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -181,16 +254,10 @@
     <FrameLayout
         android:id="@+id/video_layout"
         android:layout_width="match_parent"
-        android:visibility="invisible"
         android:layout_height="match_parent"
         android:clickable="false"
         android:focusable="false"
-        />
-
-
-
-
-
+        android:visibility="invisible" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
