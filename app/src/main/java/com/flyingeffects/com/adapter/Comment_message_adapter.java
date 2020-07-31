@@ -2,6 +2,7 @@ package com.flyingeffects.com.adapter;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -34,10 +35,12 @@ public class Comment_message_adapter extends BaseItemDraggableAdapter<MessageEni
     private ListView listView;
     private Comment_message_item_adapter adapter;
     private LinearLayout ll_more_comment;
+    private CommentOnItemClick callback;
 
-    public Comment_message_adapter(int layoutResId, List<MessageEnity> data, Context context) {
+    public Comment_message_adapter(int layoutResId, List<MessageEnity> data, Context context,CommentOnItemClick callback) {
         super(layoutResId, data);
         this.context = context;
+        this.callback=callback;
     }
 
 
@@ -53,6 +56,12 @@ public class Comment_message_adapter extends BaseItemDraggableAdapter<MessageEni
         helper.setText(R.id.tv_user_id, item.getUser_id());
         helper.setText(R.id.tv_content, item.getContent());
         listView = helper.getView(R.id.listView);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                callback.clickPosition(i,item.getId());
+            }
+        });
         ll_more_comment=helper.getView(R.id.ll_more_comment);
 //        //显示第一个预览评论
         if (item.getReply() != null && item.getReply().size() > 0) {
@@ -67,6 +76,13 @@ public class Comment_message_adapter extends BaseItemDraggableAdapter<MessageEni
         }else{
             listView.setVisibility(View.GONE);
         }
+    }
+
+
+
+
+    public interface  CommentOnItemClick{
+        void clickPosition(int position,String message_id);
     }
 
 

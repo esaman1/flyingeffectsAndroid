@@ -14,6 +14,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -844,7 +845,7 @@ public class PreviewUpAndDownMvpModel {
             if (actionId == EditorInfo.IME_ACTION_SEND) { //键盘的搜索按钮
                 String reply = ed_search.getText().toString().trim();
                 if (!reply.equals("")) {
-                    replyMessage(reply, "1");
+                    replyMessage(reply, "1","0");
                     cancelFocus();
                 }
                 return true;
@@ -873,10 +874,12 @@ public class PreviewUpAndDownMvpModel {
      * creation date: 2020/7/30
      * user : zhangtongju
      */
-    private void replyMessage(String content, String type) {
+    private void replyMessage(String content, String type,String message_id) {
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", nowTemplateId);
         params.put("content", content);
+        params.put("message_id", message_id);
+
         params.put("type", type);
         // 启动时间
         Observable ob = Api.getDefault().addComment(BaseConstans.getRequestHead(params));
@@ -890,22 +893,41 @@ public class PreviewUpAndDownMvpModel {
             protected void _onNext(Object data) {
                 String aa = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", aa);
+                cancelFocus();
+                hideShowKeyboard();
                 requestComment();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
 
 
+
+
+
+    /**
+     * description ：显示或影藏键盘
+     * creation date: 2020/7/31
+     * user : zhangtongju
+     */
+    public void hideShowKeyboard() {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE); //得到InputMethodManager的实例
+        if (imm.isActive()) {//如果开启
+            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_NOT_ALWAYS);//关闭软键盘，开启方法相同，这个方法是切换开启与关闭状态的
+        }else{
+            ed_search.requestFocus();
+            imm.showSoftInput(ed_search, InputMethodManager.SHOW_IMPLICIT);
+        }
     }
 
 
     private void cancelFocus() {
         if (ed_search != null && ed_search.hasFocus()) {
+            ed_search.setText("");
             ed_search.setFocusable(true);
             ed_search.setFocusableInTouchMode(true);
             ed_search.requestFocus();
             ed_search.clearFocus();//失去焦点
         }
-
     }
 
 
@@ -927,12 +949,22 @@ public class PreviewUpAndDownMvpModel {
 
             @Override
             protected void _onNext(MessageData data) {
+                String str=StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM","requestComment="+str);
                 initRecyclerView(data);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
 
+
+
+    /**
+     * description ：
+     * creation date: 2020/7/31
+     * user : zhangtongju
+     */
+   private  String message_id;
     private void initRecyclerView(MessageData data) {
         if (data.getList() == null || data.getList().size() == 0) {
             no_comment.setVisibility(View.VISIBLE);
@@ -942,7 +974,13 @@ public class PreviewUpAndDownMvpModel {
                     new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
             recyclerViewComment.setLayoutManager(linearLayoutManager);
             recyclerViewComment.setHasFixedSize(true);
-            Comment_message_adapter adapter = new Comment_message_adapter(R.layout.item_comment_preview, data.getList(), context);
+            Comment_message_adapter adapter = new Comment_message_adapter(R.layout.item_comment_preview, data.getList(), context, new Comment_message_adapter.CommentOnItemClick() {
+                @Override
+                public void clickPosition(int position,String id) {
+                    hideShowKeyboard();
+                    message_id=id;
+                }
+            });
             recyclerViewComment.setAdapter(adapter);
         }
     }
