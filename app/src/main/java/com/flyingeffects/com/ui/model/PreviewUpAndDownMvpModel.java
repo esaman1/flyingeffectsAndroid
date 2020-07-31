@@ -13,25 +13,33 @@ import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.adapter.Comment_message_adapter;
+import com.flyingeffects.com.adapter.System_message_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.MessageEnity;
+import com.flyingeffects.com.enity.SendSearchText;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.systemessagelist;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -71,6 +79,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -93,6 +102,7 @@ public class PreviewUpAndDownMvpModel {
     private boolean fromToMineCollect;
     private TTAdNative mTTAdNative;
     private String soundFolder;
+    private String nowTemplateId;
 
     public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage, String fromTo, String templateId, boolean fromToMineCollect) {
         this.context = context;
@@ -102,6 +112,7 @@ public class PreviewUpAndDownMvpModel {
         mVideoFolder = fileManager.getFileCachePath(context, "downVideo");
         this.allData = allData;
         this.fromTo = fromTo;
+        nowTemplateId = templateId;
         this.templateId = templateId;
         this.fromToMineCollect = fromToMineCollect;
         mTTAdNative = TTAdManagerHolder.get().createAdNative(context);
@@ -133,15 +144,15 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-    public void GetBackgroundMusic(String videoPath){
+    public void GetBackgroundMusic(String videoPath) {
         mediaManager manager = new mediaManager(context);
         manager.splitMp4(videoPath, new File(soundFolder), new mediaManager.splitMp4Callback() {
             @Override
             public void splitSuccess(boolean isSuccess, String putPath) {
-                if(isSuccess){
-                    callback.returnSpliteMusic(putPath,videoPath);
-                }else{
-                    callback.returnSpliteMusic("",videoPath);
+                if (isSuccess) {
+                    callback.returnSpliteMusic(putPath, videoPath);
+                } else {
+                    callback.returnSpliteMusic("", videoPath);
                 }
 
             }
@@ -157,7 +168,8 @@ public class PreviewUpAndDownMvpModel {
 
 
     public void requestTemplateDetail(String templateId) {
-        if(!TextUtils.isEmpty(templateId)){
+        if (!TextUtils.isEmpty(templateId)) {
+            nowTemplateId = templateId;
             HashMap<String, String> params = new HashMap<>();
             params.put("template_id", templateId);
             // 启动时间
@@ -181,8 +193,6 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-
-
     private WaitingDialog_progress downProgressDialog;
     private BottomSheetDialog bottomSheetDialog;
 
@@ -193,15 +203,15 @@ public class PreviewUpAndDownMvpModel {
         LinearLayout iv_download = view.findViewById(R.id.ll_download);
         iv_download.setOnClickListener(view12 -> {
 
-            if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)){
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
                 statisticsEventAffair.getInstance().setFlag(context, "11_yj_save1");
-            }else{
+            } else {
                 statisticsEventAffair.getInstance().setFlag(context, "10_bj_csave1");
             }
             statisticsEventAffair.getInstance().setFlag(context, "save_back_template");
             downProgressDialog = new WaitingDialog_progress(context);
             downProgressDialog.openProgressDialog();
-            DownVideo(path, imagePath, id, true,false);
+            DownVideo(path, imagePath, id, true, false);
             dismissDialog();
         });
         LinearLayout ll_friend_circle = view.findViewById(R.id.ll_friend_circle);
@@ -209,9 +219,9 @@ public class PreviewUpAndDownMvpModel {
             @Override
             public void onClick(View view) {
 
-                if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)){
+                if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
                     statisticsEventAffair.getInstance().setFlag(context, "11_yjj_WeChat");
-                }else{
+                } else {
                     statisticsEventAffair.getInstance().setFlag(context, "10_bj_WeChat");
                 }
 
@@ -233,9 +243,9 @@ public class PreviewUpAndDownMvpModel {
             @Override
             public void onClick(View view) {
 
-                if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)){
+                if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
                     statisticsEventAffair.getInstance().setFlag(context, "11_yj_circle");
-                }else{
+                } else {
                     statisticsEventAffair.getInstance().setFlag(context, "10_bj_circle");
                 }
                 shareToApplet(fag_template_item);
@@ -247,9 +257,9 @@ public class PreviewUpAndDownMvpModel {
             @Override
             public void onClick(View view) {
 
-                if(!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)){
+                if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
                     statisticsEventAffair.getInstance().setFlag(context, "11_yj_Report");
-                }else{
+                } else {
                     statisticsEventAffair.getInstance().setFlag(context, "10_bj_Report");
                 }
 
@@ -262,8 +272,8 @@ public class PreviewUpAndDownMvpModel {
 
 
         TextView tv_cancle = view.findViewById(R.id.tv_cancle);
-        tv_cancle.setOnClickListener(view1 ->{ bottomSheetDialog.dismiss();
-
+        tv_cancle.setOnClickListener(view1 -> {
+            bottomSheetDialog.dismiss();
 
 
         });
@@ -506,7 +516,7 @@ public class PreviewUpAndDownMvpModel {
             @Override
             protected void _onError(String message) {
                 finishData();
-               // ToastUtil.showToast(message);
+                // ToastUtil.showToast(message);
             }
 
             @Override
@@ -523,7 +533,7 @@ public class PreviewUpAndDownMvpModel {
                     smartRefreshLayout.setEnableLoadMore(false);
                 }
                 allData.addAll(data);
-                callback.showNewData(allData,isRefresh);
+                callback.showNewData(allData, isRefresh);
             }
         }, "fagBjItem", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
@@ -595,7 +605,7 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-    public void DownVideo(String path, String imagePath, String id, boolean keepAlbum,boolean isFromAgainChooseBj) {
+    public void DownVideo(String path, String imagePath, String id, boolean keepAlbum, boolean isFromAgainChooseBj) {
         String videoName = mVideoFolder + File.separator + id + "synthetic.mp4";
         File File = new File(videoName);
         if (File.exists()) {
@@ -615,7 +625,7 @@ public class PreviewUpAndDownMvpModel {
         }
 
         if (downProgressDialog == null) {
-            LogUtil.d("OOM","downProgressDialog != null");
+            LogUtil.d("OOM", "downProgressDialog != null");
             downProgressDialog = new WaitingDialog_progress(context);
             downProgressDialog.openProgressDialog();
         }
@@ -630,9 +640,9 @@ public class PreviewUpAndDownMvpModel {
                         public void progresss(int progress) {
                             LogUtil.d("oom", "下载时候后重新裁剪进度为=" + progress);
                             if (downProgressDialog != null) {
-                                if(isFromAgainChooseBj){
+                                if (isFromAgainChooseBj) {
                                     downProgressDialog.setProgress("正在生成中" + progress + "%");
-                                }else{
+                                } else {
                                     downProgressDialog.setProgress("下载进度为" + progress + "%");
                                 }
 
@@ -643,7 +653,7 @@ public class PreviewUpAndDownMvpModel {
                         public void isSuccess(boolean isSuccess, String path1) {
                             if (downProgressDialog != null) {
                                 downProgressDialog.closePragressDialog();
-                                downProgressDialog=null;
+                                downProgressDialog = null;
                             }
                             if (!keepAlbum) {
                                 callback.downVideoSuccess(path1, imagePath);//下载成功后的回调
@@ -804,13 +814,7 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-
-
-
     private BottomSheetDialog bottomSheetDialogForComment;
-
-
-
 
 
     /**
@@ -818,20 +822,42 @@ public class PreviewUpAndDownMvpModel {
      * creation date: 2020/7/30
      * user : zhangtongju
      */
+    private EditText ed_search;
+    private    RecyclerView recyclerViewComment;
     public void showBottomSheetDialogForComment() {
+        requestComment();
         bottomSheetDialogForComment = new BottomSheetDialog(context, R.style.gaussianDialog);
         View view = LayoutInflater.from(context).inflate(R.layout.comment_bottom_sheet_doalog, null);
         bottomSheetDialogForComment.setContentView(view);
 
         ImageView iv_cancle = view.findViewById(R.id.iv_cancle);
-        iv_cancle.setOnClickListener(view1 ->{ bottomSheetDialog.dismiss();
-
+        iv_cancle.setOnClickListener(view1 -> {
+            bottomSheetDialog.dismiss();
 
 
         });
 
-//        RecyclerView recyclerView=view.findViewById(R.id.recyclerView);
-//        recyclerView.setAdapter();
+
+        recyclerViewComment =view.findViewById(R.id.recyclerView);
+
+
+        TextView no_comment = view.findViewById(R.id.no_comment);
+
+        ed_search = view.findViewById(R.id.ed_search);
+        ed_search.setOnEditorActionListener((v, actionId, event) -> {
+
+            LogUtil.d("OOM", "setOnEditorActionListener");
+            if (actionId == EditorInfo.IME_ACTION_DONE) { //键盘的搜索按钮
+                String reply = ed_search.getText().toString().trim();
+                if (!reply.equals("")) {
+                    replyMessage(reply, "1");
+                    cancelFocus();
+                }
+                return true;
+            }
+            return false;
+        });
+
 
         bottomSheetDialogForComment.setCancelable(true);
         bottomSheetDialogForComment.setCanceledOnTouchOutside(true);
@@ -847,6 +873,88 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
+    /**
+     * description ：回复消息
+     * type 1表示一级评论，2 表示二级回复
+     * creation date: 2020/7/30
+     * user : zhangtongju
+     */
+    private void replyMessage(String content, String type) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("template_id", nowTemplateId);
+        params.put("content", content);
+        params.put("type", type);
+
+        // 启动时间
+        Observable ob = Api.getDefault().addComment(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
+            @Override
+            protected void _onError(String message) {
+//                callback.hasLogin(false);
+
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(Object data) {
+                String aa = StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM", aa);
+
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+
+
+    }
+
+
+    private void cancelFocus() {
+        if (ed_search != null && ed_search.hasFocus()) {
+            ed_search.setFocusable(true);
+            ed_search.setFocusableInTouchMode(true);
+            ed_search.requestFocus();
+            ed_search.clearFocus();//失去焦点
+        }
+
+    }
+
+
+    /**
+     * description ：请求评论列表
+     * creation date: 2020/7/30
+     * user : zhangtongju
+     */
+    private void requestComment() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("template_id",nowTemplateId);
+        // 启动时间
+        Observable ob = Api.getDefault().templateComment(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<MessageEnity>>(context) {
+            @Override
+            protected void _onError(String message) {
+             ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(List<MessageEnity> data) {
+//                String aa = StringUtil.beanToJSONString(data);
+//                LogUtil.d("OOM", aa);
+
+
+                initRecyclerView(data);
+
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+
+    private void initRecyclerView(List<MessageEnity> data) {
+        LinearLayoutManager linearLayoutManager =
+                new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
+        recyclerViewComment.setLayoutManager(linearLayoutManager);
+        recyclerViewComment.setHasFixedSize(true);
+        Comment_message_adapter adapter = new Comment_message_adapter(R.layout.item_comment_preview, data, context);
+        recyclerViewComment.setAdapter(adapter);
+    }
 
 
 }

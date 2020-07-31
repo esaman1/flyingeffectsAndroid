@@ -23,8 +23,8 @@
 
         <ImageView
             android:id="@+id/iv_cancle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="12dp"
@@ -34,22 +34,50 @@
     </RelativeLayout>
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:minHeight="300dp"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:id="@+id/no_comment"
+            android:text="暂无评论"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:textColor="#A3A3A5"
+            android:layout_height="wrap_content"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+
+    </RelativeLayout>
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:gravity="center_vertical"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:background="#181818"
         android:orientation="horizontal">
 
         <EditText
+            android:id="@+id/ed_search"
             android:layout_width="wrap_content"
             android:hint="有爱评论，说点好听的~"
             android:textColorHint="#A3A3A5"
+            android:textSize="14sp"
+            android:imeOptions="actionDone"
+            android:textColor="@color/white"
+            android:inputType="text"
+            android:background="@null"
+            android:maxLines="1"
+            android:paddingStart="12dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
