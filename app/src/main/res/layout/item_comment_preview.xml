@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:orientation="vertical"
+    android:layout_height="match_parent"
     android:background="#181818"
-    android:layout_height="match_parent">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,6 +39,7 @@
                 android:textSize="12sp" />
 
             <TextView
+                android:id="@+id/tv_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
@@ -52,111 +53,55 @@
 
     </LinearLayout>
 
+    <ListView
+        android:id="@+id/listView"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!--展开回复-->
     <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/ll_more_comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:orientation="horizontal">
-
-
-        <ImageView
-            android:layout_width="34dp"
-            android:layout_height="34dp"
-            android:visibility="invisible"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            android:contentDescription="@string/app_name"
-            android:src="@mipmap/logo" />
-
-
-
-        <ImageView
-            android:layout_width="34dp"
-            android:layout_height="34dp"
-            android:layout_marginEnd="12dp"
-            android:contentDescription="@string/app_name"
-            android:src="@mipmap/logo" />
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="68dp"
-            android:background="#312C2B"
-            android:orientation="vertical"
-            android:padding="5dp">
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="用户13213"
-                android:textColor="#A3A3A5"
-                android:textSize="12sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:text="小白加油，教练为了你好，别委屈了。你是最棒的。"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp" />
-
-
-        </LinearLayout>
-
-
-    </LinearLayout>
-
-<!--展开回复-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
-        android:layout_marginBottom="15dp"
         android:layout_marginTop="15dp"
-        android:layout_height="wrap_content">
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="15dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_weight="1"
-            android:background="#4D4B4A"/>
+            android:background="#4D4B4A" />
 
 
         <TextView
             android:layout_width="wrap_content"
-            android:text="展开更多回复"
-            android:textColor="@color/white"
+            android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:layout_height="wrap_content"/>
+            android:text="展开更多回复"
+            android:textColor="@color/white" />
 
         <ImageView
-            android:src="@mipmap/down"
             android:layout_width="8dp"
+            android:layout_height="8dp"
             android:layout_marginStart="2dp"
             android:layout_marginEnd="2dp"
-            android:layout_height="8dp"/>
+            android:src="@mipmap/down" />
 
 
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_weight="1"
-            android:background="#4D4B4A"/>
+            android:background="#4D4B4A" />
 
 
     </LinearLayout>
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-
 
 
 </LinearLayout>

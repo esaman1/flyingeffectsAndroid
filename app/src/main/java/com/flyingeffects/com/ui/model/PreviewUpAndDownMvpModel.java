@@ -34,6 +34,7 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.MessageData;
 import com.flyingeffects.com.enity.MessageEnity;
 import com.flyingeffects.com.enity.SendSearchText;
 import com.flyingeffects.com.enity.UserInfo;
@@ -823,31 +824,24 @@ public class PreviewUpAndDownMvpModel {
      * user : zhangtongju
      */
     private EditText ed_search;
-    private    RecyclerView recyclerViewComment;
+    private RecyclerView recyclerViewComment;
+    private TextView no_comment;
+
     public void showBottomSheetDialogForComment() {
         requestComment();
         bottomSheetDialogForComment = new BottomSheetDialog(context, R.style.gaussianDialog);
         View view = LayoutInflater.from(context).inflate(R.layout.comment_bottom_sheet_doalog, null);
         bottomSheetDialogForComment.setContentView(view);
-
         ImageView iv_cancle = view.findViewById(R.id.iv_cancle);
         iv_cancle.setOnClickListener(view1 -> {
             bottomSheetDialog.dismiss();
-
-
         });
-
-
-        recyclerViewComment =view.findViewById(R.id.recyclerView);
-
-
-        TextView no_comment = view.findViewById(R.id.no_comment);
-
+        recyclerViewComment = view.findViewById(R.id.recyclerView);
+        no_comment = view.findViewById(R.id.no_comment);
         ed_search = view.findViewById(R.id.ed_search);
         ed_search.setOnEditorActionListener((v, actionId, event) -> {
-
             LogUtil.d("OOM", "setOnEditorActionListener");
-            if (actionId == EditorInfo.IME_ACTION_DONE) { //键盘的搜索按钮
+            if (actionId == EditorInfo.IME_ACTION_SEND) { //键盘的搜索按钮
                 String reply = ed_search.getText().toString().trim();
                 if (!reply.equals("")) {
                     replyMessage(reply, "1");
@@ -884,14 +878,11 @@ public class PreviewUpAndDownMvpModel {
         params.put("template_id", nowTemplateId);
         params.put("content", content);
         params.put("type", type);
-
         // 启动时间
         Observable ob = Api.getDefault().addComment(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
             @Override
             protected void _onError(String message) {
-//                callback.hasLogin(false);
-
                 ToastUtil.showToast(message);
             }
 
@@ -899,7 +890,7 @@ public class PreviewUpAndDownMvpModel {
             protected void _onNext(Object data) {
                 String aa = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", aa);
-
+                requestComment();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
 
@@ -925,36 +916,34 @@ public class PreviewUpAndDownMvpModel {
      */
     private void requestComment() {
         HashMap<String, String> params = new HashMap<>();
-        params.put("template_id",nowTemplateId);
+        params.put("template_id", nowTemplateId);
         // 启动时间
         Observable ob = Api.getDefault().templateComment(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<MessageEnity>>(context) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<MessageData>(context) {
             @Override
             protected void _onError(String message) {
-             ToastUtil.showToast(message);
+                ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(List<MessageEnity> data) {
-//                String aa = StringUtil.beanToJSONString(data);
-//                LogUtil.d("OOM", aa);
-
-
+            protected void _onNext(MessageData data) {
                 initRecyclerView(data);
-
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
 
-    private void initRecyclerView(List<MessageEnity> data) {
-        LinearLayoutManager linearLayoutManager =
-                new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
-        recyclerViewComment.setLayoutManager(linearLayoutManager);
-        recyclerViewComment.setHasFixedSize(true);
-        Comment_message_adapter adapter = new Comment_message_adapter(R.layout.item_comment_preview, data, context);
-        recyclerViewComment.setAdapter(adapter);
+    private void initRecyclerView(MessageData data) {
+        if (data.getList() == null || data.getList().size() == 0) {
+            no_comment.setVisibility(View.VISIBLE);
+        } else {
+            no_comment.setVisibility(View.GONE);
+            LinearLayoutManager linearLayoutManager =
+                    new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
+            recyclerViewComment.setLayoutManager(linearLayoutManager);
+            recyclerViewComment.setHasFixedSize(true);
+            Comment_message_adapter adapter = new Comment_message_adapter(R.layout.item_comment_preview, data.getList(), context);
+            recyclerViewComment.setAdapter(adapter);
+        }
     }
-
-
 }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 public class MessageEnity implements Serializable {
 
 
+    private String id;
 
     public String getId() {
         return id;
@@ -128,8 +129,6 @@ public class MessageEnity implements Serializable {
         this.reply = reply;
     }
 
-
-    private String id;
     private String user_id;
     private String create_time;
     private String status;
@@ -144,5 +143,8 @@ public class MessageEnity implements Serializable {
     private String nickname;
     private String photourl;
     private ArrayList<MessageReply> reply;
+
+
+
 
 }

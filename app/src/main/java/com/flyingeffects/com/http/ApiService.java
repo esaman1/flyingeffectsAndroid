@@ -3,6 +3,7 @@ package com.flyingeffects.com.http;
 import com.flyingeffects.com.enity.Config;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.enity.HttpResult;
+import com.flyingeffects.com.enity.MessageData;
 import com.flyingeffects.com.enity.MessageEnity;
 import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.enity.TemplateType;
@@ -120,8 +121,8 @@ public interface ApiService {
 
 
     @FormUrlEncoded
-    @POST("/api/message/templateComment")
-    Observable<HttpResult<List<MessageEnity>>> templateComment(@FieldMap Map<String, String> params);
+    @POST("/api/message/templateComment")  //List<MessageEnity>
+    Observable<HttpResult<MessageData>> templateComment(@FieldMap Map<String, String> params);
 
 
     @FormUrlEncoded
