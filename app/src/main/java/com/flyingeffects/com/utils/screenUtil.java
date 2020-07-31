@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.DisplayMetrics;
 
+import com.flyingeffects.com.base.BaseApplication;
+
 public class screenUtil {
 
 
@@ -59,5 +61,57 @@ public class screenUtil {
         int nowpadding = screenUtil.dip2px(context, padding);
         height = (width - nowpadding) * 9 / 16;
         return height;
+    }
+
+
+    /**
+     * description ：获得状态栏高度
+     * creation date: 2020/7/31
+     * user : zhangtongju
+     */
+    public static int getStatusBarHeight() {
+        int statusBarHeight = getStatusBarByResId();
+        if (statusBarHeight <= 0) {
+            statusBarHeight = getStatusBarByReflex();
+        }
+        return statusBarHeight;
+    }
+
+    /**
+     * 通过状态栏资源id来获取状态栏高度
+     *
+     * @return
+     */
+    private static int getStatusBarByResId() {
+        int height = 0;
+        //获取状态栏资源id
+        int resourceId = BaseApplication.getInstance().getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            try {
+                height = BaseApplication.getInstance().getResources().getDimensionPixelSize(resourceId);
+            } catch (Exception e) {
+            }
+        }
+        return height;
+    }
+
+
+    /**
+     * 通过反射获取状态栏高度
+     *
+     * @return
+     */
+    private static int getStatusBarByReflex() {
+        int statusBarHeight = 0;
+        try {
+            Class<?> clazz = Class.forName("com.android.internal.R$dimen");
+            Object object = clazz.newInstance();
+            int height = Integer.parseInt(clazz.getField("status_bar_height")
+                    .get(object).toString());
+            statusBarHeight = BaseApplication.getInstance().getResources().getDimensionPixelSize(height);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return statusBarHeight;
     }
 }

@@ -64,6 +64,7 @@ import com.flyingeffects.com.utils.NetworkUtils;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
+import com.flyingeffects.com.view.MyBottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -816,7 +817,7 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-    private BottomSheetDialog bottomSheetDialogForComment;
+    private MyBottomSheetDialog bottomSheetDialogForComment;
 
 
     /**
@@ -830,7 +831,7 @@ public class PreviewUpAndDownMvpModel {
 
     public void showBottomSheetDialogForComment() {
         requestComment();
-        bottomSheetDialogForComment = new BottomSheetDialog(context, R.style.gaussianDialog);
+        bottomSheetDialogForComment = new MyBottomSheetDialog(context, R.style.gaussianDialog);
         View view = LayoutInflater.from(context).inflate(R.layout.comment_bottom_sheet_doalog, null);
         bottomSheetDialogForComment.setContentView(view);
         ImageView iv_cancle = view.findViewById(R.id.iv_cancle);
