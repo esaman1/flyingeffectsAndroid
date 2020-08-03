@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.chad.library.adapter.base.BaseItemDraggableAdapter;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.MessageData;
@@ -28,7 +29,7 @@ import java.util.List;
  * time：2020/7/29
  * describe:消息页面
  **/
-public class Comment_message_adapter extends BaseItemDraggableAdapter<MessageEnity, BaseViewHolder> {
+public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, BaseViewHolder> {
 
     private Context context;
     public final static String TAG = "main_recycler_adapter";
@@ -53,6 +54,8 @@ public class Comment_message_adapter extends BaseItemDraggableAdapter<MessageEni
                 .load(item.getPhotourl())
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(iv_comment_head);
+
+//        helper.addOnLongClickListener(R.id.ll_parent);
         helper.setText(R.id.tv_user_id, item.getUser_id());
         helper.setText(R.id.tv_content, item.getContent());
         listView = helper.getView(R.id.listView);

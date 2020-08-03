@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,6 +21,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.Comment_message_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
@@ -45,7 +48,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
      */
     private int topOffset = 0;
     private BottomSheetBehavior<FrameLayout> behavior;
-    private RecyclerView recyclerViewComment ;
+    private RecyclerView recyclerViewComment;
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private EditText ed_search;
     private TextView no_comment;
@@ -63,11 +66,11 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.bottom_sheet_fragment, container, false);
-        recyclerViewComment=view.findViewById(R.id.recyclerView);
-        ed_search=view.findViewById(R.id.ed_search);
-        no_comment=view.findViewById(R.id.no_comment);
-        return  view;
+        View view = inflater.inflate(R.layout.bottom_sheet_fragment, container, false);
+        recyclerViewComment = view.findViewById(R.id.recyclerView);
+        ed_search = view.findViewById(R.id.ed_search);
+        no_comment = view.findViewById(R.id.no_comment);
+        return view;
 
     }
 
@@ -108,8 +111,8 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
 
             @Override
             protected void _onNext(MessageData data) {
-                String str= StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM","requestComment="+str);
+                String str = StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM", "requestComment=" + str);
                 initRecyclerView(data);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
@@ -121,7 +124,8 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
      * creation date: 2020/7/31
      * user : zhangtongju
      */
-    private  String message_id;
+    private String message_id;
+
     private void initRecyclerView(MessageData data) {
         if (data.getList() == null || data.getList().size() == 0) {
             no_comment.setVisibility(View.VISIBLE);
@@ -133,15 +137,21 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
             recyclerViewComment.setHasFixedSize(true);
             Comment_message_adapter adapter = new Comment_message_adapter(R.layout.item_comment_preview, data.getList(), getActivity(), new Comment_message_adapter.CommentOnItemClick() {
                 @Override
-                public void clickPosition(int position,String id) {
+                public void clickPosition(int position, String id) {
                     hideShowKeyboard();
-                    message_id=id;
+                    message_id = id;
                 }
+            });
+
+
+            adapter.setOnItemLongClickListener((adapter1, view, position) -> {
+                Intent MessageLongClickActivity = new Intent(getActivity(), MessageLongClickActivity.class);
+                startActivity(MessageLongClickActivity);
+                return false;
             });
             recyclerViewComment.setAdapter(adapter);
         }
     }
-
 
 
     /**
@@ -153,7 +163,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE); //得到InputMethodManager的实例
         if (imm.isActive()) {//如果开启
             imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_NOT_ALWAYS);//关闭软键盘，开启方法相同，这个方法是切换开启与关闭状态的
-        }else{
+        } else {
             ed_search.requestFocus();
             imm.showSoftInput(ed_search, InputMethodManager.SHOW_IMPLICIT);
         }
@@ -199,8 +209,8 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     }
 
 
-    public void setNowTemplateId(String nowTemplateId){
-        this.nowTemplateId=nowTemplateId;
+    public void setNowTemplateId(String nowTemplateId) {
+        this.nowTemplateId = nowTemplateId;
         requestComment();
     }
 

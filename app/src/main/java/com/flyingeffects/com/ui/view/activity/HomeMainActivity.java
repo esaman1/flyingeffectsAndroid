@@ -133,7 +133,9 @@ public class HomeMainActivity extends FragmentActivity {
         }
         if (BaseConstans.hasLogin()) {
             requestUserInfo();
+            requestMessageCount();
         }
+
         SegJni.nativeCreateSegHandler(HomeMainActivity.this, ConUtil.getFileContent(HomeMainActivity.this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
     }
 
@@ -389,7 +391,9 @@ public class HomeMainActivity extends FragmentActivity {
 //                case R.id.iv_menu_2:
                 case R.id.iv_back_menu_2:
                     whichMenuSelect(2);
-                    requestMessageCount();
+                    if(BaseConstans.hasLogin()){
+                        requestMessageCount();
+                    }
                     break;
 //                case R.id.iv_menu_3:
                 case R.id.iv_back_menu_3:

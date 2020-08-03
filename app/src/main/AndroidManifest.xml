@@ -117,6 +117,10 @@
             android:name="com.flyingeffects.com.ui.view.activity.ReportActivity"
             android:theme="@style/AllTransparentTheme" />
 
+        <activity
+            android:name="com.flyingeffects.com.ui.view.activity.MessageLongClickActivity"
+            android:theme="@style/AllTransparentTheme" />
+
 
 
 
