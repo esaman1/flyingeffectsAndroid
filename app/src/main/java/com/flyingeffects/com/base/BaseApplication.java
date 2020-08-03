@@ -159,7 +159,7 @@ public class BaseApplication extends MultiDexApplication {
         License l = License.init(licenseID);
 
         boolean isValid = l.isValid();
-        SXLog.showInLogcat();
+//        SXLog.showInLogcat();
         LogUtil.d("OOM", "isValid=" + isValid);
     }
 
