@@ -86,6 +86,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
             behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         }
 
+
     }
 
 
