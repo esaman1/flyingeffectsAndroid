@@ -1,3 +1,5 @@
 # ninja log v5
 1	586	617535837	CMakeFiles/MegviiSegJni.dir/megvii_seg_jni_new.cpp.o	84334a5c49708c70
 586	627	617535837	D:/githubSpace/flyingeffectsAndroid/segjni/src/main/jniLibs/arm64-v8a/libMegviiSegJni.so	284150c556278b86
+1	786	618124120	CMakeFiles/MegviiSegJni.dir/megvii_seg_jni_new.cpp.o	84334a5c49708c70
+786	841	618124120	D:/githubSpace/flyingeffectsAndroid/segjni/src/main/jniLibs/arm64-v8a/libMegviiSegJni.so	284150c556278b86
