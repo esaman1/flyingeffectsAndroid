@@ -58,7 +58,7 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
         Glide.with(context)
                 .load(item.getImage())
                 .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 5)))
-//                .apply(RequestOptions.placeholderOf(getDrawble(offset)))
+            .apply(RequestOptions.placeholderOf(R.mipmap.placeholder))
                 .into((ImageView) helper.getView(R.id.iv_cover));
         ImageView iv_show_author = helper.getView(R.id.iv_show_author);
 
