@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.bigkoo.convenientbanner.utils.ScreenUtil;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.Preview_up_and_down_adapter;
@@ -207,11 +208,18 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 case R.id.iv_download_bj:
                     statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "10_bj_arrow");
                     Presenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId(), templateItem);
+
+
                     break;
 
 
                 case R.id.ll_comment:
-                    Presenter.showCommentBottomSheetDialog();
+//                    Presenter.showCommentBottomSheetDialog();
+                    BaseFullBottomSheetFragment fullSheetDialogFragment = new BaseFullBottomSheetFragment();
+                    int height = ScreenUtil.getScreenHeight(this) / 3;
+                    fullSheetDialogFragment.setTopOffset(height);
+                    fullSheetDialogFragment.setNowTemplateId(templateId);
+                    fullSheetDialogFragment.show(getSupportFragmentManager(), "FullSheetDialogFragment");
                     break;
 
                 default:
@@ -790,12 +798,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             ) {
                 if (albumType.isImage(GetPathTypeModel.getInstance().getMediaType(path))) {
                     {
-                        statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "userChooseType","选择的是图片");
-                        LogUtil.d("OOM","当前选择的是图片");
+                        statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "userChooseType", "选择的是图片");
+                        LogUtil.d("OOM", "当前选择的是图片");
                     }
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "userChooseType","选择的是视频");
-                    LogUtil.d("OOM","当前选择的是视频");
+                    statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "userChooseType", "选择的是视频");
+                    LogUtil.d("OOM", "当前选择的是视频");
                 }
             }
         }

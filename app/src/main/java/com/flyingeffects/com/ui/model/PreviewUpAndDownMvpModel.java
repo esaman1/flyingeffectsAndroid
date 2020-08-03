@@ -56,6 +56,7 @@ import com.flyingeffects.com.manager.ZipFileHelperManager;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
+import com.flyingeffects.com.ui.view.activity.BaseFullBottomSheetFragment;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.ui.view.activity.ReportActivity;
 import com.flyingeffects.com.utils.FileUtil;
@@ -867,6 +868,8 @@ public class PreviewUpAndDownMvpModel {
         parent.setLayoutParams(params);
         bottomSheetDialogForComment.show();
     }
+
+
 
 
     /**
