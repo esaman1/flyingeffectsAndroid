@@ -919,6 +919,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 if (isPlaying) {
                     if (mPlayer != null) {
                         mPlayer.pause();
+
                         mPlayer = null;
                         ivPlayButton.setImageResource(R.mipmap.iv_play);
                         isPlaying = false;
@@ -966,7 +967,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         super.onDestroy();
         presenter.onDestroy();
         videoPlayer.release();
-        if (mPlayer != null) {
+        if(mPlayer!=null){
             mPlayer.stop();
         }
         EventBus.getDefault().unregister(this);
