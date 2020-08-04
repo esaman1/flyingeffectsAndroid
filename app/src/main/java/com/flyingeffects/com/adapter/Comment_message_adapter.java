@@ -44,6 +44,7 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
     protected void convert(final BaseViewHolder helper, final MessageEnity item) {
         int offset = helper.getLayoutPosition();
         ImageView iv_comment_head = helper.getView(R.id.iv_comment_head);
+        MyListView listView = helper.getView(R.id.listView);
         //主层用户头像
         Glide.with(context)
                 .load(item.getPhotourl())
@@ -66,7 +67,7 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
         }
 
         if (item.isOpenComment()) {
-            MyListView listView = helper.getView(R.id.listView);
+
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -80,6 +81,9 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
             } else {
                 ll_more_comment.setVisibility(View.GONE);
             }
+            listView.setVisibility(View.VISIBLE);
+        }else{
+            listView.setVisibility(View.GONE);
         }
     }
 

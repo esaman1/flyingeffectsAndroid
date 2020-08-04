@@ -323,8 +323,9 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         MessageEnity item2 = messageEnityList.get(lastOpenCommentPosition);
         item2.setOpenComment(false);
         messageEnityList.set(lastOpenCommentPosition, item2);
-        adapter.notifyItemChanged(position);
         adapter.notifyItemChanged(lastOpenCommentPosition);
+        adapter.notifyItemChanged(position);
+        lastOpenCommentPosition=position;
     }
 
 
