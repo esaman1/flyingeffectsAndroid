@@ -152,15 +152,10 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
             layoutParams.height = getHeight();
             behavior = BottomSheetBehavior.from(bottomSheet);
             // 初始为展开状态
-//            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+           behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         }
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            }
-        },1000);
+
 
     }
 

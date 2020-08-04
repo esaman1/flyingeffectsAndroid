@@ -160,6 +160,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         return R.layout.act_preview_up_and_down;
     }
 
+    private String templateId;
+
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
@@ -180,7 +182,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         readOnly = getIntent().getBooleanExtra("readOnly", false);
         fromToMineCollect = getIntent().getBooleanExtra("fromToMineCollect", false);
         fromTo = getIntent().getStringExtra("fromTo");
-        String templateId = getIntent().getStringExtra("templateId");
+        templateId= templateItem.getId()+"";
         //需要得到之前allData 已经滑到的页数和分类的类别以及是模板页面或者背景页面等
         int nowSelectPage = getIntent().getIntExtra("nowSelectPage", 1);
         nowCollectType = templateItem.getIs_collection();
@@ -300,6 +302,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private void refeshData() {
         if (nowChoosePosition >= 0 && nowChoosePosition < allData.size()) {
             templateItem = allData.get(nowChoosePosition);
+            templateId=templateItem.getId()+"";
             defaultnum = templateItem.getDefaultnum();
             is_picout = templateItem.getIs_picout();
             nowCollectType = templateItem.getIs_collection();

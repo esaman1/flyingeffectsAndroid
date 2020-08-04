@@ -305,6 +305,51 @@ public class new_fag_template_item implements Serializable {
     public String originfile;
 
 
+    public String getPraise() {
+        return praise;
+    }
+
+    public void setPraise(String praise) {
+        this.praise = praise;
+    }
+
+    public String getShare() {
+        return share;
+    }
+
+    public void setShare(String share) {
+        this.share = share;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getReport() {
+        return report;
+    }
+
+    public void setReport(String report) {
+        this.report = report;
+    }
+
+    //赞
+    public String praise;
+    //分享
+    public String share;
+    //评论
+    public String comment;
+
+    //举报
+    public String report;
+
+
+
+
 
 
 }

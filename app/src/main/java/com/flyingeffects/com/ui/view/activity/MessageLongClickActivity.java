@@ -26,7 +26,6 @@ public class MessageLongClickActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_message_long_click);
-        EventBus.getDefault().register(this);
         LinearLayout    ll_report=findViewById(R.id.ll_report);
         ll_report.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,6 +50,5 @@ public class MessageLongClickActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
     }
 }

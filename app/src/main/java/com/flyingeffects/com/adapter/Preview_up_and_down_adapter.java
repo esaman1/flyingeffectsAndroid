@@ -99,6 +99,9 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             tv_writer_name.setVisibility(View.VISIBLE);
             tv_title.setVisibility(View.VISIBLE);
             tv_describe.setVisibility(View.VISIBLE);
+            helper.setText(R.id.tv_zan_count,item.getPraise());
+            helper.setText(R.id.tv_comment_count,item.getComment());
+            helper.setText(R.id.tv_download_count,item.getShare());
             helper.addOnClickListener(R.id.iv_zan);
             helper.addOnClickListener(R.id.tv_make);
             initVideoPlayer(item, offset);
