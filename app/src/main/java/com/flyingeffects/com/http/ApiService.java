@@ -9,6 +9,7 @@ import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.checkVersion;
+import com.flyingeffects.com.enity.fansEnity;
 import com.flyingeffects.com.enity.messageCount;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.enity.systemessagelist;
@@ -135,6 +136,11 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/message/allMessageNum")
     Observable<HttpResult<messageCount>> getAllMessageNum(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST("/api/message/followList")
+    Observable<HttpResult<List<fansEnity>>> getFollowList(@FieldMap Map<String, String> params);
+
 
 
     //上传素材

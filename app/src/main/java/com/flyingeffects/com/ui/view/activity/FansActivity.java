@@ -8,13 +8,25 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.Fans_adapter;
 import com.flyingeffects.com.adapter.Like_adapter;
+import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.fansEnity;
+import com.flyingeffects.com.enity.messageCount;
 import com.flyingeffects.com.enity.systemessagelist;
+import com.flyingeffects.com.http.Api;
+import com.flyingeffects.com.http.HttpUtil;
+import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
+import com.flyingeffects.com.utils.ToastUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
+import rx.Observable;
 
 /**
  * description ：点赞页面
@@ -28,7 +40,8 @@ public class FansActivity extends BaseActivity {
     RecyclerView recyclerView;
 
     private Fans_adapter adapter;
-    private List<systemessagelist> systemessagelists=new ArrayList<>();
+
+    private List<fansEnity> fansList=new ArrayList<>();
 
     @Override
     protected int getLayoutId() {
@@ -37,32 +50,54 @@ public class FansActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        ((TextView) findViewById(R.id.tv_top_title)).setText("赞");
+        ((TextView) findViewById(R.id.tv_top_title)).setText("粉丝");
         findViewById(R.id.iv_top_back).setOnClickListener(this);
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        requestMessageCount();
+
+    }
+
+
+    /**
+     * description ：请求粉丝
+     * creation date: 2020/7/29
+     * user : zhangtongju
+     */
+    private void requestMessageCount() {
+        HashMap<String, String> params = new HashMap<>();
+        Observable ob = Api.getDefault().getFollowList(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<fansEnity>>(FansActivity.this) {
+            @Override
+            protected void _onError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(List<fansEnity> data) {
+            fansList=data;
+                ShowData();
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+
+
+
     @Override
     protected void initAction() {
-        systemessagelist AA=new  systemessagelist();
-        AA.setContent("1231312");
 
-        systemessagelist AA1=new  systemessagelist();
-        AA1.setContent("1231312");
+    }
 
 
-        systemessagelist AA2=new  systemessagelist();
-        AA2.setContent("1231312");
-
-        systemessagelist AA3=new  systemessagelist();
-        AA3.setContent("1231312");
+    private void ShowData(){
 
 
-        systemessagelists.add(AA);
-        systemessagelists.add(AA1);
-        systemessagelists.add(AA2);
-        systemessagelists.add(AA3);
-
-        adapter = new Fans_adapter(R.layout.list_fans_item, systemessagelists, this);
+        adapter = new Fans_adapter(R.layout.list_fans_item, fansList, this);
         LinearLayoutManager layoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
