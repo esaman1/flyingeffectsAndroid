@@ -2,14 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1C1C1C"
+    android:background="#181818"
     android:orientation="vertical">
 
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:gravity="center"
         android:paddingTop="10dp"
         android:paddingBottom="23dp"
@@ -23,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingBottom="16dp">
+        android:paddingBottom="15dp">
 
 
         <LinearLayout
@@ -172,6 +171,11 @@
 
     </LinearLayout>
 
+
+    <View android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/black"/>
 
     <com.baoyz.swipemenulistview.SwipeMenuListView
         android:id="@+id/swipeMenuListView"

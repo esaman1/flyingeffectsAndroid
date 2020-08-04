@@ -180,99 +180,54 @@ public class frag_message extends BaseFragment {
 
             @Override
             public void create(SwipeMenu menu) {
-                // create "open" item
                 SwipeMenuItem openItem = new SwipeMenuItem(
                         getActivity());
-                // set item background
                 openItem.setBackground(new ColorDrawable(Color.parseColor("#302F2F")));
-                // set item width
                 openItem.setWidth(dp2px(90));
-                // set item title
                 openItem.setTitle("标记未读");
-                // set item title fontsize
-
-
                 openItem.setTitleSize(14);
-                // set item title font color
                 openItem.setTitleColor(Color.WHITE);
-                // add to menu
                 menu.addMenuItem(openItem);
 
 
 
                 SwipeMenuItem openItem2 = new SwipeMenuItem(
                         getActivity());
-                // set item background
                 openItem2.setBackground(new ColorDrawable(Color.rgb(0xF9,
                         0x3F, 0x25)));
-                // set item width
                 openItem2.setWidth(dp2px(90));
-                // set item title
                 openItem2.setTitle("刪除");
-                // set item title fontsize
                 openItem2.setTitleSize(14);
-                // set item title font color
                 openItem2.setTitleColor(Color.WHITE);
-                // add to menu
                 menu.addMenuItem(openItem2);
 
-
-//                // create "delete" item
-//                SwipeMenuItem deleteItem = new SwipeMenuItem(
-//                        getContext());
-//                // set item background
-//                deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
-//                        0x3F, 0x25)));
-//                // set item width
-//                deleteItem.setWidth(dp2px(90));
-//                openItem.setTitleSize(18);
-//                // set item title font color
-//                openItem.setTitleColor(Color.WHITE);
-//                deleteItem.setTitle("删除");
-//                // set a icon
-////                deleteItem.setIcon(R.drawable.ic_delete);
-//                // add to menu
-//                menu.addMenuItem(deleteItem);
             }
         };
 
-// set creator
-        swipeMenuListView.setMenuCreator(creator);
+   //     swipeMenuListView.setMenuCreator(creator);
+
+        swipeMenuListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+                switch (index) {
+                    case 0:
+                        //标记未读
+
+
+                        break;
+                    case 1:
+                        //标记已读
+
+
+
+                        break;
+                }
+                return false;
+            }
+        });
         Frag_message_adapter adapter=new Frag_message_adapter(systemessagelists,getActivity());
         swipeMenuListView.setAdapter(adapter);
 
-//        LinearLayoutManager linearLayoutManager =
-//                new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-//        recyclerView.setLayoutManager(linearLayoutManager);
-//        recyclerView.setHasFixedSize(true);
-//        System_message_adapter adapter = new System_message_adapter(R.layout.item_system_message, systemessagelists, getActivity());
-//        ItemDragAndSwipeCallback itemDragAndSwipeCallback = new ItemDragAndSwipeCallback(adapter);
-//        ItemTouchHelper itemTouchHelper=new ItemTouchHelper(itemDragAndSwipeCallback);
-//        itemTouchHelper.onChildViewAttachedToWindow();
-//        itemTouchHelper.attachToRecyclerView(recyclerView);
-//        adapter.enableSwipeItem();
-//        adapter.setOnItemSwipeListener(new OnItemSwipeListener() {
-//            @Override
-//            public void onItemSwipeStart(RecyclerView.ViewHolder viewHolder, int i) {
-//
-//            }
-//
-//            @Override
-//            public void clearView(RecyclerView.ViewHolder viewHolder, int i) {
-//
-//            }
-//
-//            @Override
-//            public void onItemSwiped(RecyclerView.ViewHolder viewHolder, int i) {
-//
-//            }
-//
-//            @Override
-//            public void onItemSwipeMoving(Canvas canvas, RecyclerView.ViewHolder viewHolder, float v, float v1, boolean b) {
-//
-//            }
-//        });
-//        recyclerView.setAdapter(adapter);
     }
 
 
