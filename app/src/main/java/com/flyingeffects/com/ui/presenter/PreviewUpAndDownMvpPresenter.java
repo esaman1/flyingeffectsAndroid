@@ -34,7 +34,7 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
 
 
     public void showCommentBottomSheetDialog(){
-        previewUpAndDownMvpModel.showBottomSheetDialogForComment();
+      //  previewUpAndDownMvpModel.showBottomSheetDialogForComment();
     }
 
     public void requestMoreData(){

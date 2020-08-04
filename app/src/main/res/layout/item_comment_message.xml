@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-   android:orientation="vertical"
-    android:layout_height="match_parent">
-
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
 
     <LinearLayout
@@ -16,12 +15,11 @@
         <ImageView
             android:layout_width="34dp"
             android:layout_height="34dp"
-            android:visibility="invisible"
             android:layout_marginStart="12dp"
             android:layout_marginEnd="12dp"
             android:contentDescription="@string/app_name"
-            android:src="@mipmap/logo" />
-
+            android:src="@mipmap/logo"
+            android:visibility="invisible" />
 
 
         <ImageView
@@ -36,9 +34,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="68dp"
-            android:background="#312C2B"
+            android:background="@drawable/message_content_bk"
             android:orientation="vertical"
-            android:padding="5dp">
+            android:paddingStart="11dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="11dp"
+            android:paddingBottom="5dp">
 
 
             <TextView

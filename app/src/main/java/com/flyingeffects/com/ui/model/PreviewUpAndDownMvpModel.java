@@ -777,7 +777,6 @@ public class PreviewUpAndDownMvpModel {
                                 mProgress = progress;
                                 showMakeProgress();
                             } else {
-
                                 showMakeProgress();
                                 LogUtil.d("onVideoAdError", "下载完成");
                                 isDownZipUrl = false;
@@ -818,174 +817,174 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-    private MyBottomSheetDialog bottomSheetDialogForComment;
+//    private MyBottomSheetDialog bottomSheetDialogForComment;
 
 
-    /**
-     * description ：
-     * creation date: 2020/7/30
-     * user : zhangtongju
-     */
-    private EditText ed_search;
-    private RecyclerView recyclerViewComment;
-    private TextView no_comment;
-
-    public void showBottomSheetDialogForComment() {
-        requestComment();
-        bottomSheetDialogForComment = new MyBottomSheetDialog(context, R.style.gaussianDialog);
-        View view = LayoutInflater.from(context).inflate(R.layout.comment_bottom_sheet_doalog, null);
-        bottomSheetDialogForComment.setContentView(view);
-        ImageView iv_cancle = view.findViewById(R.id.iv_cancle);
-        iv_cancle.setOnClickListener(view1 -> {
-            bottomSheetDialog.dismiss();
-        });
-        recyclerViewComment = view.findViewById(R.id.recyclerView);
-        no_comment = view.findViewById(R.id.no_comment);
-        ed_search = view.findViewById(R.id.ed_search);
-        ed_search.setOnEditorActionListener((v, actionId, event) -> {
-            LogUtil.d("OOM", "setOnEditorActionListener");
-            if (actionId == EditorInfo.IME_ACTION_SEND) { //键盘的搜索按钮
-                String reply = ed_search.getText().toString().trim();
-                if (!reply.equals("")) {
-                    replyMessage(reply, "1","0");
-                    cancelFocus();
-                }
-                return true;
-            }
-            return false;
-        });
-
-
-        bottomSheetDialogForComment.setCancelable(true);
-        bottomSheetDialogForComment.setCanceledOnTouchOutside(true);
-        View parent = (View) view.getParent();     //处理高度显示完全  https://www.jianshu.com/p/38af0cf77352
-        parent.setBackgroundResource(android.R.color.transparent);
-        BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);
-        view.measure(0, 0);
-        behavior.setPeekHeight(view.getMeasuredHeight());
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) parent.getLayoutParams();
-        params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
-        parent.setLayoutParams(params);
-        bottomSheetDialogForComment.show();
-    }
-
-
-
-
-    /**
-     * description ：回复消息
-     * type 1表示一级评论，2 表示二级回复
-     * creation date: 2020/7/30
-     * user : zhangtongju
-     */
-    private void replyMessage(String content, String type,String message_id) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("template_id", nowTemplateId);
-        params.put("content", content);
-        params.put("message_id", message_id);
-
-        params.put("type", type);
-        // 启动时间
-        Observable ob = Api.getDefault().addComment(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
-            @Override
-            protected void _onError(String message) {
-                ToastUtil.showToast(message);
-            }
-
-            @Override
-            protected void _onNext(Object data) {
-                String aa = StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM", aa);
-                cancelFocus();
-                hideShowKeyboard();
-                requestComment();
-            }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
-    }
+//    /**
+//     * description ：
+//     * creation date: 2020/7/30
+//     * user : zhangtongju
+//     */
+//    private EditText ed_search;
+//    private RecyclerView recyclerViewComment;
+//    private TextView no_comment;
+//
+//    public void showBottomSheetDialogForComment() {
+//        requestComment();
+//        bottomSheetDialogForComment = new MyBottomSheetDialog(context, R.style.gaussianDialog);
+//        View view = LayoutInflater.from(context).inflate(R.layout.comment_bottom_sheet_doalog, null);
+//        bottomSheetDialogForComment.setContentView(view);
+//        ImageView iv_cancle = view.findViewById(R.id.iv_cancle);
+//        iv_cancle.setOnClickListener(view1 -> {
+//            bottomSheetDialog.dismiss();
+//        });
+//        recyclerViewComment = view.findViewById(R.id.recyclerView);
+//        no_comment = view.findViewById(R.id.no_comment);
+//        ed_search = view.findViewById(R.id.ed_search);
+//        ed_search.setOnEditorActionListener((v, actionId, event) -> {
+//            LogUtil.d("OOM", "setOnEditorActionListener");
+//            if (actionId == EditorInfo.IME_ACTION_SEND) { //键盘的搜索按钮
+//                String reply = ed_search.getText().toString().trim();
+//                if (!reply.equals("")) {
+//                    replyMessage(reply, "1","0");
+//                    cancelFocus();
+//                }
+//                return true;
+//            }
+//            return false;
+//        });
+//
+//
+//        bottomSheetDialogForComment.setCancelable(true);
+//        bottomSheetDialogForComment.setCanceledOnTouchOutside(true);
+//        View parent = (View) view.getParent();     //处理高度显示完全  https://www.jianshu.com/p/38af0cf77352
+//        parent.setBackgroundResource(android.R.color.transparent);
+//        BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);
+//        view.measure(0, 0);
+//        behavior.setPeekHeight(view.getMeasuredHeight());
+//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) parent.getLayoutParams();
+//        params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+//        parent.setLayoutParams(params);
+//        bottomSheetDialogForComment.show();
+//    }
 
 
 
 
-
-    /**
-     * description ：显示或影藏键盘
-     * creation date: 2020/7/31
-     * user : zhangtongju
-     */
-    public void hideShowKeyboard() {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE); //得到InputMethodManager的实例
-        if (imm.isActive()) {//如果开启
-            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_NOT_ALWAYS);//关闭软键盘，开启方法相同，这个方法是切换开启与关闭状态的
-        }else{
-            ed_search.requestFocus();
-            imm.showSoftInput(ed_search, InputMethodManager.SHOW_IMPLICIT);
-        }
-    }
-
-
-    private void cancelFocus() {
-        if (ed_search != null && ed_search.hasFocus()) {
-            ed_search.setText("");
-            ed_search.setFocusable(true);
-            ed_search.setFocusableInTouchMode(true);
-            ed_search.requestFocus();
-            ed_search.clearFocus();//失去焦点
-        }
-    }
-
-
-    /**
-     * description ：请求评论列表
-     * creation date: 2020/7/30
-     * user : zhangtongju
-     */
-    private void requestComment() {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("template_id", nowTemplateId);
-        // 启动时间
-        Observable ob = Api.getDefault().templateComment(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<MessageData>(context) {
-            @Override
-            protected void _onError(String message) {
-                ToastUtil.showToast(message);
-            }
-
-            @Override
-            protected void _onNext(MessageData data) {
-                String str=StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM","requestComment="+str);
-                initRecyclerView(data);
-            }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
-    }
+//    /**
+//     * description ：回复消息
+//     * type 1表示一级评论，2 表示二级回复
+//     * creation date: 2020/7/30
+//     * user : zhangtongju
+//     */
+//    private void replyMessage(String content, String type,String message_id) {
+//        HashMap<String, String> params = new HashMap<>();
+//        params.put("template_id", nowTemplateId);
+//        params.put("content", content);
+//        params.put("message_id", message_id);
+//
+//        params.put("type", type);
+//        // 启动时间
+//        Observable ob = Api.getDefault().addComment(BaseConstans.getRequestHead(params));
+//        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
+//            @Override
+//            protected void _onError(String message) {
+//                ToastUtil.showToast(message);
+//            }
+//
+//            @Override
+//            protected void _onNext(Object data) {
+//                String aa = StringUtil.beanToJSONString(data);
+//                LogUtil.d("OOM", aa);
+//                cancelFocus();
+//                hideShowKeyboard();
+////                requestComment();
+//            }
+//        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+//    }
 
 
 
 
-    /**
-     * description ：
-     * creation date: 2020/7/31
-     * user : zhangtongju
-     */
-   private  String message_id;
-    private void initRecyclerView(MessageData data) {
-        if (data.getList() == null || data.getList().size() == 0) {
-            no_comment.setVisibility(View.VISIBLE);
-        } else {
-            no_comment.setVisibility(View.GONE);
-            LinearLayoutManager linearLayoutManager =
-                    new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
-            recyclerViewComment.setLayoutManager(linearLayoutManager);
-            recyclerViewComment.setHasFixedSize(true);
-            Comment_message_adapter adapter = new Comment_message_adapter(R.layout.item_comment_preview, data.getList(), context, new Comment_message_adapter.CommentOnItemClick() {
-                @Override
-                public void clickPosition(int position,String id) {
-                    hideShowKeyboard();
-                    message_id=id;
-                }
-            });
-            recyclerViewComment.setAdapter(adapter);
-        }
-    }
+
+//    /**
+//     * description ：显示或影藏键盘
+//     * creation date: 2020/7/31
+//     * user : zhangtongju
+//     */
+//    public void hideShowKeyboard() {
+//        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE); //得到InputMethodManager的实例
+//        if (imm.isActive()) {//如果开启
+//            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_NOT_ALWAYS);//关闭软键盘，开启方法相同，这个方法是切换开启与关闭状态的
+//        }else{
+//            ed_search.requestFocus();
+//            imm.showSoftInput(ed_search, InputMethodManager.SHOW_IMPLICIT);
+//        }
+//    }
+//
+//
+//    private void cancelFocus() {
+//        if (ed_search != null && ed_search.hasFocus()) {
+//            ed_search.setText("");
+//            ed_search.setFocusable(true);
+//            ed_search.setFocusableInTouchMode(true);
+//            ed_search.requestFocus();
+//            ed_search.clearFocus();//失去焦点
+//        }
+//    }
+
+
+//    /**
+//     * description ：请求评论列表
+//     * creation date: 2020/7/30
+//     * user : zhangtongju
+//     */
+//    private void requestComment() {
+//        HashMap<String, String> params = new HashMap<>();
+//        params.put("template_id", nowTemplateId);
+//        // 启动时间
+//        Observable ob = Api.getDefault().templateComment(BaseConstans.getRequestHead(params));
+//        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<MessageData>(context) {
+//            @Override
+//            protected void _onError(String message) {
+//                ToastUtil.showToast(message);
+//            }
+//
+//            @Override
+//            protected void _onNext(MessageData data) {
+//                String str=StringUtil.beanToJSONString(data);
+//                LogUtil.d("OOM","requestComment="+str);
+//                initRecyclerView(data);
+//            }
+//        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+//    }
+
+
+
+
+//    /**
+//     * description ：
+//     * creation date: 2020/7/31
+//     * user : zhangtongju
+//     */
+//   private  String message_id;
+//    private void initRecyclerView(MessageData data) {
+//        if (data.getList() == null || data.getList().size() == 0) {
+//            no_comment.setVisibility(View.VISIBLE);
+//        } else {
+//            no_comment.setVisibility(View.GONE);
+//            LinearLayoutManager linearLayoutManager =
+//                    new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
+//            recyclerViewComment.setLayoutManager(linearLayoutManager);
+//            recyclerViewComment.setHasFixedSize(true);
+//            Comment_message_adapter adapter = new Comment_message_adapter(R.layout.item_comment_preview, data.getList(), context, new Comment_message_adapter.CommentOnItemClick() {
+//                @Override
+//                public void clickPosition(int position,String id) {
+//                    hideShowKeyboard();
+//                    message_id=id;
+//                }
+//            });
+//            recyclerViewComment.setAdapter(adapter);
+//        }
+//    }
 }

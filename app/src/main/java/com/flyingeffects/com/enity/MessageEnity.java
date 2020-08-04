@@ -144,6 +144,17 @@ public class MessageEnity implements Serializable {
     private String photourl;
     private ArrayList<MessageReply> reply;
 
+    public boolean isOpenComment() {
+        return isOpenComment;
+    }
+
+    public void setOpenComment(boolean openComment) {
+        isOpenComment = openComment;
+    }
+
+    //是否展开评论
+    private boolean isOpenComment=false;
+
 
 
 
