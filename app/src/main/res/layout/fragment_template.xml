@@ -6,6 +6,62 @@
     android:background="@color/home_base_balk_color"
     android:orientation="vertical">
 
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:background="@color/home_base_balk_color"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/relative_top"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/strok_search"
+            android:focusable="false"
+            android:orientation="horizontal">
+
+            <TextView
+                android:singleLine="true"
+                android:maxLines="1"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:background="@null"
+                android:gravity="center_vertical"
+                android:text="输入你想要的背景关键词"
+                android:paddingStart="40dp"
+                android:textColor="#515151"
+                android:textColorHint="#515151" />
+
+            <ImageView
+                android:layout_width="21dp"
+                android:layout_marginStart="15dp"
+                android:layout_height="21dp"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/search" />
+
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/iv_delete"
+                android:contentDescription="@string/app_name"
+                android:padding="5dp"
+                android:layout_width="30dp"
+                android:layout_marginEnd="15dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/serach_delete" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+
     <com.flyco.tablayout.SlidingTabLayout
         android:id="@+id/tl_tabs"
         android:layout_width="match_parent"

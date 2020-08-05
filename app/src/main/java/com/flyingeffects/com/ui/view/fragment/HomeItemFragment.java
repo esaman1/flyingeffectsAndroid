@@ -175,6 +175,7 @@ public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, V
     @Override
     public void isShowData(ArrayList<new_fag_template_item> listData) {
         if (getActivity() != null) {
+
             allData.clear();
             allData.addAll(listData);
             adapter.notifyDataSetChanged();

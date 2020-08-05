@@ -190,6 +190,7 @@ public class new_fag_template_item implements Serializable {
     private String reading;
     private String reading2;
 
+
     public int getTemplate_id() {
         return template_id;
     }
@@ -346,6 +347,18 @@ public class new_fag_template_item implements Serializable {
 
     //举报
     public String report;
+
+
+
+    public int getIs_praise() {
+        return is_praise;
+    }
+
+    public void setIs_praise(int is_praise) {
+        this.is_praise = is_praise;
+    }
+    //是否赞过
+    private int is_praise;
 
 
 
