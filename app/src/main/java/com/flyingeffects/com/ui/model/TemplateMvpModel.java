@@ -288,6 +288,9 @@ public class TemplateMvpModel {
                     subscriber.onCompleted();
                 }
 
+
+
+
                 @Override
                 public void onCancel() {
                     LogUtil.d("OOM", "onCancel");

@@ -226,6 +226,16 @@ public class PreviewUpAndDownMvpModel {
         });
 
 
+        LinearLayout ll_photograph=view.findViewById(R.id.ll_photograph);
+        ll_photograph.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //跟随音乐拍摄
+
+
+            }
+        });
+
         LinearLayout iv_download = view.findViewById(R.id.ll_download);
         iv_download.setOnClickListener(view12 -> {
 
