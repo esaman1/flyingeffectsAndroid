@@ -185,7 +185,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         templateId= templateItem.getId()+"";
         //需要得到之前allData 已经滑到的页数和分类的类别以及是模板页面或者背景页面等
         int nowSelectPage = getIntent().getIntExtra("nowSelectPage", 1);
-        nowCollectType = templateItem.getIs_collection();
+        nowCollectType = templateItem.getIs_praise();
+
+
+
         Presenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, fromTo, templateId, fromToMineCollect);
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
         if (nowChoosePosition >= allData.size() - 2) {
@@ -196,7 +199,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             switch (view.getId()) {
                 case R.id.iv_zan:
                     if (BaseConstans.hasLogin()) {
-                        onclickCollect();
+                        onclickZan();
                     } else {
                         goActivity(LoginActivity.class);
                     }
@@ -210,8 +213,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 case R.id.iv_download_bj:
                     statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "10_bj_arrow");
                     Presenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId(), templateItem);
-
-
                     break;
 
 
@@ -278,7 +279,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         });
         viewPage2.setCurrentItem(nowChoosePosition, false);
         if (nowCollectType == 1 && BaseConstans.hasLogin()) {
-            setIsCollect(true);
+            setIsZan(true);
         }
         if (BaseConstans.isFirstUseDownAndUpAct()) {
             rela_parent_show_alert.setVisibility(View.VISIBLE);
@@ -305,19 +306,19 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             templateId=templateItem.getId()+"";
             defaultnum = templateItem.getDefaultnum();
             is_picout = templateItem.getIs_picout();
-            nowCollectType = templateItem.getIs_collection();
+            nowCollectType = templateItem.getIs_praise();
         }
     }
 
 
-    private void setIsCollect(boolean isCollect) {
+    private void setIsZan(boolean isCollect) {
         new_fag_template_item item1 = allData.get(nowChoosePosition);
         if (isCollect) {
-            item1.setIs_collection(1);
-            adapter.setIsCollect(true);
+            item1.setIs_praise(1);
+            adapter.setIsZan(true);
         } else {
-            item1.setIs_collection(0);
-            adapter.setIsCollect(false);
+            item1.setIs_praise(0);
+            adapter.setIsZan(false);
         }
         allData.set(nowChoosePosition, item1);
 //        adapter.notifyItemChanged(nowChoosePosition);
@@ -375,47 +376,65 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * creation date: 2020/7/2
      * user : zhangtongju
      */
-    public void onclickCollect() {
+    public void onclickZan() {
         if (fromToMineCollect) {
             //模板收藏
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
-                Presenter.collectTemplate(templateItem.getId() + "", templateItem.getTitle(), 1 + "");
+                Presenter.ZanTemplate(templateItem.getId() + "", templateItem.getTitle(), 1 + "");
             } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
                 //我上传的背景
-                Presenter.collectTemplate(templateItem.getTemplate_id() + "", templateItem.getTitle(), 2 + "");
+                Presenter.ZanTemplate(templateItem.getTemplate_id() + "", templateItem.getTitle(), 2 + "");
             } else {
                 //背景 收藏
-                Presenter.collectTemplate(templateItem.getId() + "", templateItem.getTitle(), 2 + "");
+                Presenter.ZanTemplate(templateItem.getId() + "", templateItem.getTitle(), 2 + "");
             }
         } else {
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
-                Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), 1 + "");
+                Presenter.ZanTemplate(templateItem.getId(), templateItem.getTitle(), 1 + "");
             } else {
-                Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), 2 + "");
+                Presenter.ZanTemplate(templateItem.getId(), templateItem.getTitle(), 2 + "");
             }
         }
     }
 
+
+
+
+
+
+
     @Override
     public void collectionResult() {
         if (nowCollectType == 0) {
-            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "5_bj_keep", templateItem.getTitle());
-            } else {
-                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "1_mb_keep_cancel", templateItem.getTitle());
-            }
+//            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+//                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "5_bj_keep", templateItem.getTitle());
+//            } else {
+//                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "1_mb_keep_cancel", templateItem.getTitle());
+//            }
             nowCollectType = 1;
             ToastUtil.showToast(getString(R.string.template_collect_success));
         } else {
-            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "5_bj_keep_cancel", templateItem.getTitle());
-            } else {
-                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "1_mb_keep", templateItem.getTitle());
-            }
+//            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
+//                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "5_bj_keep_cancel", templateItem.getTitle());
+//            } else {
+//                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "1_mb_keep", templateItem.getTitle());
+//            }
             nowCollectType = 0;
             ToastUtil.showToast(getString(R.string.template_cancel_success));
         }
-        showCollectState(nowCollectType == 0);
+        //showCollectState(nowCollectType == 0);
+    }
+
+    @Override
+    public void ZanResult() {
+        if (nowCollectType == 0) {
+            nowCollectType = 1;
+//            ToastUtil.showToast(getString(R.string.template_collect_success));
+        } else {
+            nowCollectType = 0;
+//            ToastUtil.showToast(getString(R.string.template_cancel_success));
+        }
+        showZantState(nowCollectType == 0);
     }
 
     @Override
@@ -598,7 +617,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void getTemplateLInfo(new_fag_template_item data) {
         if (data != null) {
-            setIsCollect(data.getIs_collection() == 1);
+            setIsZan(data.getIs_collection() == 1);
             nowCollectType = data.getIs_collection();
         }
 
@@ -638,6 +657,28 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         }
     }
 
+    @Override
+    public void onclickCollect() {
+        if (fromToMineCollect) {
+            //模板收藏
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
+                Presenter.collectTemplate(templateItem.getId() + "", templateItem.getTitle(), 1 + "");
+            } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
+                //我上传的背景
+                Presenter.collectTemplate(templateItem.getTemplate_id() + "", templateItem.getTitle(), 2 + "");
+            } else {
+                //背景 收藏
+                Presenter.collectTemplate(templateItem.getId() + "", templateItem.getTitle(), 2 + "");
+            }
+        } else {
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
+                Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), 1 + "");
+            } else {
+                Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), 2 + "");
+            }
+        }
+    }
+
 
     /**
      * 这里逻辑优化下,背景页面是选择图片后在去下载背景
@@ -673,13 +714,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
 
-    private void showCollectState(boolean unSelected) {
+    private void showZantState(boolean unSelected) {
         if (unSelected) {
             nowCollectType = 0;
-            setIsCollect(false);
+            setIsZan(false);
         } else {
             nowCollectType = 1;
-            setIsCollect(true);
+            setIsZan(true);
         }
     }
 

@@ -200,10 +200,32 @@ public class PreviewUpAndDownMvpModel {
     private WaitingDialog_progress downProgressDialog;
     private BottomSheetDialog bottomSheetDialog;
 
+    private boolean nowHasCollect;
+    private ImageView iv_collect;
     public void showBottomSheetDialog(String path, String imagePath, String id, new_fag_template_item fag_template_item) {
         bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
         View view = LayoutInflater.from(context).inflate(R.layout.preview_bottom_sheet_dialog, null);
         bottomSheetDialog.setContentView(view);
+        LinearLayout ll_share_sc = view.findViewById(R.id.ll_share_sc);
+        iv_collect  = view.findViewById(R.id.iv_collect);
+        if(BaseConstans.hasLogin()&&fag_template_item.getIs_collection()==1){
+            nowHasCollect=true;
+            //表示收藏
+            iv_collect.setImageResource(R.mipmap.new_version_collect_ed);
+        }else{
+            nowHasCollect=false;
+            iv_collect.setImageResource(R.mipmap.new_version_collect);
+        }
+        ll_share_sc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                callback.onclickCollect();
+
+            }
+        });
+
+
         LinearLayout iv_download = view.findViewById(R.id.ll_download);
         iv_download.setOnClickListener(view12 -> {
 
@@ -582,6 +604,49 @@ public class PreviewUpAndDownMvpModel {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "collectTemplate=" + str);
                 callback.collectionResult();
+                nowHasCollect=!nowHasCollect;
+                if(nowHasCollect){
+                    iv_collect.setImageResource(R.mipmap.new_version_collect_ed);
+                }else{
+                    iv_collect.setImageResource(R.mipmap.new_version_collect);
+                }
+
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+
+    }
+
+
+
+
+
+
+
+    /**
+     * description ：
+     * creation date: 2020/3/24
+     * param : template_type 1 muban  2背景
+     * user : zhangtongju
+     */
+    public void ZanTemplate(String templateId, String title, String template_type) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("template_id", templateId);
+//        params.put("token", BaseConstans.GetUserToken());
+        params.put("type", template_type);
+        // 启动时间
+        Observable ob = Api.getDefault().newCollection(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
+            @Override
+            protected void _onError(String message) {
+                ToastUtil.showToast(message);
+//                LogUtil.d("");
+            }
+
+            @Override
+            protected void _onNext(Object data) {
+                String str = StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM", "collectTemplate=" + str);
+                callback.ZanResult();
 
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);

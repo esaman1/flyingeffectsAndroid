@@ -10,7 +10,11 @@ public interface PreviewUpAndDownMvpCallback {
 
     void collectionResult();
 
+    void ZanResult();
+
     void hasLogin(boolean hasLogin);
+
+    void onclickCollect();
 
 
     void downVideoSuccess(String path,String imagePath);

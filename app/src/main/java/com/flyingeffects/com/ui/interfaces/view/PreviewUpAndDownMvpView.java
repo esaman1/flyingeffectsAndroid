@@ -9,6 +9,8 @@ import java.util.List;
 public interface PreviewUpAndDownMvpView {
     void collectionResult();
 
+    void ZanResult();
+
     void hasLogin(boolean hasLogin);
 
     void downVideoSuccess(String path,String imagePath);
@@ -24,4 +26,6 @@ public interface PreviewUpAndDownMvpView {
     void getTemplateLInfo(new_fag_template_item data);
 
     void  returnSpliteMusic(String path,String videoPath);
+
+    void onclickCollect();
 }

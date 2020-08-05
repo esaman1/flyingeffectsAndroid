@@ -62,6 +62,12 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
         previewUpAndDownMvpModel.collectTemplate(templateId, title,template_type);
     }
 
+    public void ZanTemplate(String templateId,String title,String template_type){
+        previewUpAndDownMvpModel.ZanTemplate(templateId, title,template_type);
+    }
+
+
+
     public void DownVideo(String path,String imagePath,String id,boolean isFromAgainChooseBj){
         previewUpAndDownMvpModel.DownVideo(path,imagePath,id,false,isFromAgainChooseBj);
     }
@@ -75,8 +81,18 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
     }
 
     @Override
+    public void ZanResult() {
+        previewUpAndDownMvpView.ZanResult();
+    }
+
+    @Override
     public void hasLogin(boolean hasLogin) {
         previewUpAndDownMvpView.hasLogin(hasLogin);
+    }
+
+    @Override
+    public void onclickCollect() {
+        previewUpAndDownMvpView.onclickCollect();
     }
 
     @Override

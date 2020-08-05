@@ -99,9 +99,9 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             tv_writer_name.setVisibility(View.VISIBLE);
             tv_title.setVisibility(View.VISIBLE);
             tv_describe.setVisibility(View.VISIBLE);
-            helper.setText(R.id.tv_zan_count,item.getPraise());
-            helper.setText(R.id.tv_comment_count,item.getComment());
-            helper.setText(R.id.tv_download_count,item.getShare());
+            helper.setText(R.id.tv_zan_count, item.getPraise());
+            helper.setText(R.id.tv_comment_count, item.getComment());
+            helper.setText(R.id.tv_download_count, item.getShare());
             helper.addOnClickListener(R.id.iv_zan);
             helper.addOnClickListener(R.id.tv_make);
             initVideoPlayer(item, offset);
@@ -122,7 +122,13 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             tv_writer_name.setText(item.getAuth());
             tv_title.setText(item.getRemark());
 
-            if (item.getIs_collection() == 1 && BaseConstans.hasLogin()) {
+//            if (item.getIs_collection() == 1 && BaseConstans.hasLogin()) {
+//                iv_zan.setImageResource(R.mipmap.zan_selected);
+//            } else {
+//                iv_zan.setImageResource(R.mipmap.zan);
+//            }
+            //收藏功能变为点赞功能
+            if (item.getIs_praise() == 1 && BaseConstans.hasLogin()) {
                 iv_zan.setImageResource(R.mipmap.zan_selected);
             } else {
                 iv_zan.setImageResource(R.mipmap.zan);
@@ -154,7 +160,14 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
 
     }
 
-    public void setIsCollect(boolean isCollect) {
+
+
+    /**
+     * description ：点赞功能
+     * creation date: 2020/8/5
+     * user : zhangtongju
+     */
+    public void setIsZan(boolean isCollect) {
         if (iv_zan != null) {
             if (isCollect) {
                 iv_zan.setImageResource(R.mipmap.zan_selected);
@@ -226,12 +239,10 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     }
 
 
+    public void startVideo() {
 
-
-    public void startVideo(){
-
-        if(videoPlayer!=null&&!videoPlayer.isInPlayingState()){
-            LogUtil.d("OOM","isInPlayingState!=null?"+videoPlayer.isInPlayingState());
+        if (videoPlayer != null && !videoPlayer.isInPlayingState()) {
+            LogUtil.d("OOM", "isInPlayingState!=null?" + videoPlayer.isInPlayingState());
             videoPlayer.startPlayLogic();
         }
     }
