@@ -127,6 +127,7 @@
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait" />
 
 

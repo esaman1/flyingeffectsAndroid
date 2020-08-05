@@ -14,6 +14,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -43,6 +44,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
+import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
+import hani.momanii.supernova_emoji_library.Helper.EmojiconTextView;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
@@ -54,15 +58,18 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     private BottomSheetBehavior<FrameLayout> behavior;
     private RecyclerView recyclerViewComment;
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
-    private EditText ed_search;
+    private EmojiconEditText ed_search;
     private TextView no_comment;
+    private FrameLayout container;
     private String nowTemplateId;
     //2级回复id ,如果这个id 不为""，那么表示一级回复，否则表示二级回复
     private String message_id;
     private int lastOpenCommentPosition;
-
+    private ImageView iv_show_emoj;
     private ArrayList<MessageEnity> messageEnityList = new ArrayList<>();
     private Comment_message_adapter adapter;
+//    private EmojiconTextView textView;
+    EmojIconActions emojIcon;
 
     @NonNull
     @Override
@@ -78,7 +85,27 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bottom_sheet_fragment, container, false);
         recyclerViewComment = view.findViewById(R.id.recyclerView);
-        ed_search = view.findViewById(R.id.ed_search);
+        ed_search = view.findViewById(R.id.emojicon_edit_text);
+        iv_show_emoj=view.findViewById(R.id.iv_show_emoj);
+        container=view.findViewById(R.id.container);
+//        textView=view.findViewById(R.id.textView);
+        emojIcon = new EmojIconActions(getActivity(), container, ed_search, iv_show_emoj);
+        emojIcon.ShowEmojIcon();
+        emojIcon.setUseSystemEmoji(true);
+        emojIcon.setIconsIds(R.drawable.ic_action_keyboard, R.drawable.smiley);
+        emojIcon.setKeyboardListener(new EmojIconActions.KeyboardListener() {
+            @Override
+            public void onKeyboardOpen() {
+//                Log.e(TAG, "Keyboard opened!");
+                LogUtil.d("OOM","Keyboard opened!");
+            }
+
+            @Override
+            public void onKeyboardClose() {
+//                Log.e(TAG, "Keyboard closed");
+                LogUtil.d("OOM","Keyboard closed!");
+            }
+        });
         ed_search.setOnEditorActionListener((v, actionId, event) -> {
             LogUtil.d("OOM", "setOnEditorActionListener");
             if (actionId == EditorInfo.IME_ACTION_SEND) { //键盘的搜索按钮
@@ -96,12 +123,22 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
             }
             return false;
         });
+
+
+
         ed_search.setOnTouchListener((v, event) -> {
             message_id = "";
             hideShowKeyboard(true);
             return true;
         });
 
+        iv_show_emoj.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                hideShowKeyboard(true);
+            }
+        });
 
         no_comment = view.findViewById(R.id.no_comment);
         return view;
