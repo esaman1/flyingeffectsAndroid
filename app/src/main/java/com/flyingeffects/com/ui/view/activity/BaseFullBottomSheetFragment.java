@@ -263,15 +263,48 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
                 return false;
             });
 
-            adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+//            adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+//                @Override
+//                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+//
+//
+//
+//
+//
+//                }
+//            });
+
+            adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
                 @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                    LogUtil.d("OOM", "onItemClick");
-                    showSoftInputFromWindow(ed_search);
-                    ed_search.setHint("@" + data.getList().get(position).getUser_id());
-                    message_id = data.getList().get(position).getId();
+                public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                    switch (view.getId()){
+                        case R.id.iv_comment_head:
+                            //进入到用户主页
+
+                            Intent intent =new Intent(getActivity(), UserHomepageActivity.class);
+                            intent.putExtra("toUserId",data.getList().get(position).getTo_user_id());
+                            startActivity(intent);
+
+
+                            break;
+
+
+
+                        case R.id.ll_parent:
+                            LogUtil.d("OOM", "onItemClick");
+                            showSoftInputFromWindow(ed_search);
+                            ed_search.setHint("@" + data.getList().get(position).getUser_id());
+                            message_id = data.getList().get(position).getId();
+                            break;
+
+
+                        default:
+
+                            break;
+                    }
                 }
             });
+
 
             recyclerViewComment.setAdapter(adapter);
         }

@@ -2,11 +2,7 @@ package com.flyingeffects.com.enity;
 
 import java.io.Serializable;
 
-public class UserInfo implements Serializable {
-
-    private String id;
-    private String token;
-
+public class UserFollowEnity implements Serializable {
     public String getId() {
         return id;
     }
@@ -239,6 +235,24 @@ public class UserInfo implements Serializable {
         this.is_report = is_report;
     }
 
+    public String getIs_sign() {
+        return is_sign;
+    }
+
+    public void setIs_sign(String is_sign) {
+        this.is_sign = is_sign;
+    }
+
+    public String getIs_has_follow() {
+        return is_has_follow;
+    }
+
+    public void setIs_has_follow(String is_has_follow) {
+        this.is_has_follow = is_has_follow;
+    }
+
+    private String id;
+    private String token;
     private String openid;
     private String qq_openid;
     private String ios_openid;
@@ -266,62 +280,6 @@ public class UserInfo implements Serializable {
     private String enabled;
     private String is_test;
     private String is_report;
-
-
-    public String getIs_sign() {
-        return is_sign;
-    }
-
-    public void setIs_sign(String is_sign) {
-        this.is_sign = is_sign;
-    }
-
-    public String getIs_has_follow() {
-        return is_has_follow;
-    }
-
-    public void setIs_has_follow(String is_has_follow) {
-        this.is_has_follow = is_has_follow;
-    }
-
-    public String getUser_follower() {
-        return user_follower;
-    }
-
-    public void setUser_follower(String user_follower) {
-        this.user_follower = user_follower;
-    }
-
-    public String getUser_watch() {
-        return user_watch;
-    }
-
-    public void setUser_watch(String user_watch) {
-        this.user_watch = user_watch;
-    }
-
-    public String getUser_video() {
-        return user_video;
-    }
-
-    public void setUser_video(String user_video) {
-        this.user_video = user_video;
-    }
-
-    public String getUser_praise() {
-        return user_praise;
-    }
-
-    public void setUser_praise(String user_praise) {
-        this.user_praise = user_praise;
-    }
-
     private String is_sign;
     private String is_has_follow;
-    private String user_follower;
-    private String user_watch;
-    private String user_video;
-    private String user_praise;
-
-
 }

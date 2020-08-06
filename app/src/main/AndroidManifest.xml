@@ -136,7 +136,7 @@
 
 
         <activity
-            android:name="com.flyingeffects.com.ui.view.activity.UserHomepage"
+            android:name="com.flyingeffects.com.ui.view.activity.UserHomepageActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
         <activity

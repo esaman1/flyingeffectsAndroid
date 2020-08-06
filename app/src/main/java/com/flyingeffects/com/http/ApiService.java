@@ -7,6 +7,7 @@ import com.flyingeffects.com.enity.MessageData;
 import com.flyingeffects.com.enity.MessageEnity;
 import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.enity.TemplateType;
+import com.flyingeffects.com.enity.UserFollowEnity;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.checkVersion;
 import com.flyingeffects.com.enity.fansEnity;
@@ -127,6 +128,11 @@ public interface ApiService {
 
 
     @FormUrlEncoded
+    @POST("/api/message/getUserinfo")  //List<MessageEnity>
+    Observable<HttpResult<UserInfo>> getOtherUserinfo(@FieldMap Map<String, String> params);
+
+
+    @FormUrlEncoded
     @POST("/api/message/addComment")
     Observable<HttpResult<Object>> addComment(@FieldMap Map<String, String> params);
 
@@ -175,6 +181,14 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/template/templateList")
     Observable<HttpResult<List<new_fag_template_item>>> getTemplate(@FieldMap Map<String, String> params);
+
+
+
+    //用戶的关注数或者粉丝数
+    @FormUrlEncoded
+    @POST("/api/message/followerList")
+    Observable<HttpResult<List<UserFollowEnity>>> followerList(@FieldMap Map<String, String> params);
+
 
     @FormUrlEncoded
     @POST("/api/version/versionCheck")

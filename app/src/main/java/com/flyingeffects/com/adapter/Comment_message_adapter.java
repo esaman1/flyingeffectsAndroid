@@ -50,6 +50,8 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
                 .load(item.getPhotourl())
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(iv_comment_head);
+        helper.addOnClickListener(R.id.ll_parent);
+        helper.addOnClickListener(R.id.iv_comment_head);
         helper.setText(R.id.tv_user_id, item.getUser_id());
         helper.setText(R.id.tv_content, item.getContent());
         ll_more_comment = helper.getView(R.id.ll_more_comment);

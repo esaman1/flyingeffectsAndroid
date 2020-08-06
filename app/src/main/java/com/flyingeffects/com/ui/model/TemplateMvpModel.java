@@ -38,6 +38,8 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.StimulateControlManage;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
+
+
 import com.flyingeffects.com.ui.view.activity.AdHintActivity;
 import com.flyingeffects.com.ui.view.activity.ChooseBackgroundTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
@@ -76,7 +78,7 @@ import rx.subjects.PublishSubject;
 
 
 public class TemplateMvpModel {
-    MediaPlayer bgmPlayer;
+    private  MediaPlayer bgmPlayer;
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private TemplateMvpCallback callback;
     private Context context;
