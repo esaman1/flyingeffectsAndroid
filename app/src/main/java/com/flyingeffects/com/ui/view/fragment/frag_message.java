@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -66,6 +67,9 @@ public class frag_message extends BaseFragment {
 
     @BindView(R.id.tv_comment_count)
     TextView tv_comment_count;
+
+    @BindView(R.id.ll_comment)
+    LinearLayout ll_comment;
 
 
     @Override
@@ -231,7 +235,7 @@ public class frag_message extends BaseFragment {
     }
 
 
-    @OnClick({R.id.iv_icon_fans, R.id.iv_icon_zan, R.id.iv_icon_comment})
+    @OnClick({R.id.iv_icon_fans, R.id.iv_icon_zan, R.id.ll_comment})
     public void onClick(View view) {
         switch (view.getId()) {
 
@@ -249,8 +253,9 @@ public class frag_message extends BaseFragment {
 
                 break;
 
-            case R.id.iv_icon_comment:
+            case R.id.ll_comment:
                 Intent intentComment=new Intent(getActivity(),LikeActivity.class);
+                intentComment.putExtra("isFrom",0);
                 startActivity(intentComment);
                 break;
 

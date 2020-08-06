@@ -168,6 +168,7 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/tv_create_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
@@ -194,6 +195,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/tv_like"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -204,13 +206,16 @@
 
 
                 <View
+                    android:id="@+id/view_line_head_1"
                     android:layout_width="30dp"
+                    android:visibility="invisible"
                     android:layout_height="2dp"
                     android:layout_marginBottom="10dp"
                     android:background="@color/base_blue" />
             </LinearLayout>
 
             <TextView
+                android:id="@+id/tv_like_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"

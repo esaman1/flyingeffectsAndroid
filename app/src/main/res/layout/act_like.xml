@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    android:background="@color/black"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#1C1C1C"
     android:layout_height="match_parent">
 
 
@@ -10,7 +11,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:orientation="horizontal"
-
         android:gravity="center_vertical"
         android:layout_height="50dp">
 
@@ -41,11 +41,79 @@
 
     </RelativeLayout>
 
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <View
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:background="@color/black"
+        android:layout_height="1dp"/>
 
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/smart_refresh_layout_bj"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusableInTouchMode="true"
+        android:splitMotionEvents="false">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/home_base_balk_color"
+            android:overScrollMode="ifContentScrolls"
+            android:paddingLeft="@dimen/dp_7"
+            android:paddingEnd="@dimen/dp_7" />
+
+
+        <com.scwang.smartrefresh.layout.footer.ClassicsFooter
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_40"
+            app:srlAccentColor="@color/white"
+            app:srlClassicsSpinnerStyle="Translate"
+            app:srlDrawableArrowSize="20dp"
+            app:srlDrawableMarginRight="20dp"
+            app:srlDrawableProgress="@mipmap/mall_shuaxin"
+            app:srlDrawableProgressSize="20dp"
+            app:srlDrawableSize="20dp"
+            app:srlFinishDuration="500"
+            app:srlPrimaryColor="@color/black"
+            app:srlTextSizeTitle="16sp" />
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+
+
+
+
+
+
+    <LinearLayout
+        android:id="@+id/lin_show_nodata_bj"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="暂无数据"
+            android:textColor="#B9B9B9"
+            android:textSize="12sp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:textColor="#B9B9B9"
+            android:textSize="12sp"
+            />
+
+
+    </LinearLayout>
 
 </LinearLayout>

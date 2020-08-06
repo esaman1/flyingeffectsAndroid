@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import rx.Observable;
 
 
@@ -48,7 +49,7 @@ public class UserHomepageActivity extends BaseActivity {
 
     @BindView(R.id.iv_head)
     ImageView iv_head;
-    private ArrayList<TextView> listTv = new ArrayList<>();
+
 
     @BindView(R.id.tv_name)
     TextView tv_name;
@@ -66,6 +67,27 @@ public class UserHomepageActivity extends BaseActivity {
 
     @BindView(R.id.viewpager)
     ViewPager viewpager;
+
+    @BindView(R.id.tv_create_count)
+    TextView tv_create_count;
+
+    @BindView(R.id.tv_like_count)
+    TextView tv_like_count;
+
+    @BindView(R.id.view_line_head_1)
+    View view_line_head_1;
+
+    @BindView(R.id.view_line_head)
+    View view_line_head;
+
+
+    @BindView(R.id.tv_name_bj_head)
+    TextView tv_name_bj_head;
+
+
+
+    @BindView(R.id.tv_like)
+    TextView tv_like;
 
     private ArrayList<View> listView = new ArrayList<>();
 
@@ -88,13 +110,29 @@ public class UserHomepageActivity extends BaseActivity {
     }
 
 
-
     @Override
     protected void onResume() {
         super.onResume();
         requestUserInfo();
         addViewPager();
     }
+
+
+    @OnClick({R.id.view_line_head_1, R.id.view_line_head})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.view_line_head_1:
+                viewpager.setCurrentItem(1);
+                break;
+
+            case R.id.view_line_head:
+                viewpager.setCurrentItem(0);
+                break;
+
+        }
+
+    }
+
 
     /**
      * description ：请求用户信息
@@ -122,6 +160,8 @@ public class UserHomepageActivity extends BaseActivity {
                 fans_count.setText(data.getUser_follower());
                 attention_count.setText(data.getUser_watch());
                 tv_video_count.setText(data.getUser_video());
+                tv_create_count.setText(data.getUser_video());
+                tv_like_count.setText(data.getUser_praise());
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
@@ -164,18 +204,13 @@ public class UserHomepageActivity extends BaseActivity {
 
 
     private void showWitchBtn(int showWitch) {
-        for (int i = 0; i < listTv.size(); i++) {
-            TextView tv = listTv.get(i);
-            View view = listView.get(i);
-            if (i == showWitch) {
-                tv.setTextSize(21);
-                int width = tv.getWidth();
-                view.setVisibility(View.VISIBLE);
-//                setViewWidth(view, width);
-            } else {
-                tv.setTextSize(17);
-                view.setVisibility(View.INVISIBLE);
-            }
+        if (showWitch == 0) {
+            //选中的是我的作品
+            view_line_head_1.setVisibility(View.INVISIBLE);
+            view_line_head.setVisibility(View.VISIBLE);
+        } else {
+            view_line_head_1.setVisibility(View.VISIBLE);
+            view_line_head.setVisibility(View.INVISIBLE);
         }
         viewpager.setCurrentItem(showWitch);
     }
