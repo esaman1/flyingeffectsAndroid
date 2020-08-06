@@ -1,8 +1,6 @@
 package com.flyingeffects.com.ui.view.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -11,24 +9,15 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.frag_home_page_adapter;
-import com.flyingeffects.com.adapter.main_recycler_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.DownVideoPath;
-import com.flyingeffects.com.enity.ListForUpAndDown;
-import com.flyingeffects.com.enity.UserFollowEnity;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.MyProduction;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.ui.model.FromToTemplate;
-import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
-import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.orhanobut.hawk.Hawk;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -36,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
-import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 
@@ -52,7 +40,7 @@ public class fragHomePage extends BaseFragment {
     @BindView(R.id.RecyclerView)
     RecyclerView recyclerView;
     private frag_home_page_adapter adapter;
-    private List<UserFollowEnity> allData = new ArrayList<>();
+    private List<MyProduction> allData = new ArrayList<>();
     private String toUserId = "";
     private int isFrom;
     @BindView(R.id.smart_refresh_layout_bj)
@@ -60,10 +48,8 @@ public class fragHomePage extends BaseFragment {
     @BindView(R.id.lin_show_nodata_bj)
     LinearLayout lin_show_nodata;
     private boolean isRefresh = true;
-    private ArrayList<UserFollowEnity> listData = new ArrayList<>();
+    private ArrayList<MyProduction> listData = new ArrayList<>();
     private int selectPage = 1;
-
-
 
 
 
@@ -95,7 +81,7 @@ public class fragHomePage extends BaseFragment {
 
 
     private void initRecycler() {
-        adapter = new frag_home_page_adapter(R.layout.list_main_item, allData, getActivity());
+        adapter = new frag_home_page_adapter(R.layout.list_home_page_item, allData, getActivity());
         StaggeredGridLayoutManager layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -139,9 +125,10 @@ public class fragHomePage extends BaseFragment {
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
         params.put("to_user_id",toUserId);
+        params.put("type",isFrom+"");
         params.put("pageSize", perPageCount + "");
-        Observable ob = Api.getDefault().followerList(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<UserFollowEnity>>(getActivity()) {
+        Observable ob = Api.getDefault().getMyProduction(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<MyProduction>>(getActivity()) {
             @Override
             protected void _onError(String message) {
                 finishData();
@@ -149,7 +136,7 @@ public class fragHomePage extends BaseFragment {
             }
 
             @Override
-            protected void _onNext(List<UserFollowEnity> data) {
+            protected void _onNext(List<MyProduction> data) {
                 finishData();
                 if (isRefresh) {
                     listData.clear();
@@ -200,7 +187,7 @@ public class fragHomePage extends BaseFragment {
         }
     }
 
-    public void isShowData(ArrayList<UserFollowEnity> listData) {
+    public void isShowData(ArrayList<MyProduction> listData) {
         if (getActivity() != null) {
             allData.clear();
             allData.addAll(listData);

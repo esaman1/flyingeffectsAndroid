@@ -63,8 +63,6 @@ public class UserHomepageActivity extends BaseActivity {
     @BindView(R.id.tv_video_count)
     TextView tv_video_count;
 
-//    @BindView(R.id.ll_title)
-//    LinearLayout ll_title;
 
     @BindView(R.id.viewpager)
     ViewPager viewpager;
@@ -82,7 +80,6 @@ public class UserHomepageActivity extends BaseActivity {
     @Override
     protected void initView() {
         toUserId = getIntent().getStringExtra("toUserId");
-//        addHead();
     }
 
     @Override
@@ -90,18 +87,6 @@ public class UserHomepageActivity extends BaseActivity {
 
     }
 
-
-//    private void addHead() {
-//        for (int i = 0; i < str.length; i++) {
-//            View view = LayoutInflater.from(UserHomepageActivity.this).inflate(R.layout.view_home_page_head, null);
-//            TextView tv = view.findViewById(R.id.tv_name_bj_head);
-//            View view_line = view.findViewById(R.id.view_line_head);
-//            tv.setText(str[i]);
-//            listTv.add(tv);
-//            listView.add(view);
-//            ll_title.addView(view);
-//        }
-//    }
 
 
     @Override
@@ -149,10 +134,10 @@ public class UserHomepageActivity extends BaseActivity {
         fragHomePage fag_0 = new fragHomePage();
         Bundle bundle1 = new Bundle();
         bundle1.putSerializable("toUserId", toUserId);
-        bundle1.putSerializable("isFrom", 0);
+        bundle1.putSerializable("isFrom", 1);
         Bundle bundle = new Bundle();
         bundle.putSerializable("toUserId", toUserId);
-        bundle.putSerializable("isFrom", 1);
+        bundle.putSerializable("isFrom", 2);
         fag_0.setArguments(bundle);
         fag_1.setArguments(bundle1);
         list.add(fag_0);

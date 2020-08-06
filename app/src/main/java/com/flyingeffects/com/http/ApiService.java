@@ -4,10 +4,9 @@ import com.flyingeffects.com.enity.Config;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.enity.HttpResult;
 import com.flyingeffects.com.enity.MessageData;
-import com.flyingeffects.com.enity.MessageEnity;
 import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.enity.TemplateType;
-import com.flyingeffects.com.enity.UserFollowEnity;
+import com.flyingeffects.com.enity.MyProduction;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.checkVersion;
 import com.flyingeffects.com.enity.fansEnity;
@@ -187,7 +186,15 @@ public interface ApiService {
     //用戶的关注数或者粉丝数
     @FormUrlEncoded
     @POST("/api/message/followerList")
-    Observable<HttpResult<List<UserFollowEnity>>> followerList(@FieldMap Map<String, String> params);
+    Observable<HttpResult<List<MyProduction>>> followerList(@FieldMap Map<String, String> params);
+
+
+    //我发布的作品和我喜欢的作品
+    //用戶的关注数或者粉丝数
+    @FormUrlEncoded
+    @POST("/api/message/getMyProduction")
+    Observable<HttpResult<List<MyProduction>>> getMyProduction(@FieldMap Map<String, String> params);
+
 
 
     @FormUrlEncoded
