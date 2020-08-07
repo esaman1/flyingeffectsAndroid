@@ -11,6 +11,7 @@ import androidx.viewpager.widget.ViewPager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -59,6 +60,10 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
 
     @BindView(R.id.ll_add_child)
     LinearLayout ll_add_child;
+
+
+    @BindView(R.id.iv_search)
+    ImageView iv_search;
 
     private FagBjMvpPresenter presenter;
     public final static int SELECTALBUM = 1;
@@ -206,7 +211,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     }
 
 
-    @OnClick({R.id.iv_add, R.id.iv_cover, R.id.Toolbar, R.id.relative_top})
+    @OnClick({R.id.iv_add, R.id.iv_cover, R.id.Toolbar, R.id.relative_top,R.id.iv_search})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_add:
@@ -225,10 +230,13 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                 break;
 
             case R.id.relative_top:
+            case  R.id.iv_search:
                 //搜索栏目
                 Intent intent = new Intent(getActivity(), BackgroundSearchActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
+
+
 
                 break;
 
