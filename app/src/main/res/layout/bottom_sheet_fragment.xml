@@ -28,6 +28,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal|top"
             android:background="#ff0000"
+            app:behavior_peekHeight="600dp"
             app:layout_behavior="@string/bottom_sheet_behavior">
 
 

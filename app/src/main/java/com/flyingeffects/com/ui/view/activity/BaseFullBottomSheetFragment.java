@@ -69,6 +69,8 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
 //    private EmojiconTextView textView;
     EmojIconActions emojIcon;
 
+    CoordinatorLayout coordinator;
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -85,6 +87,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         recyclerViewComment = view.findViewById(R.id.recyclerView);
         ed_search = view.findViewById(R.id.emojicon_edit_text);
         iv_show_emoj=view.findViewById(R.id.iv_show_emoj);
+        coordinator=view.findViewById(R.id.coordinator);
         container=view.findViewById(R.id.container);
 //        textView=view.findViewById(R.id.textView);
         emojIcon = new EmojIconActions(getActivity(), container, ed_search, iv_show_emoj);
@@ -200,7 +203,18 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
             behavior = BottomSheetBehavior.from(bottomSheet);
             // 初始为展开状态
             behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
         }
+
+        bottomSheet.post(new Runnable() {
+            @Override
+            public void run() {
+                BottomSheetBehavior.from(bottomSheet).setPeekHeight( getHeight());
+                coordinator.getParent().requestLayout();
+            }
+        });
+
+
     }
 
 
@@ -263,16 +277,12 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
                 return false;
             });
 
-//            adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-//                @Override
-//                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-//
-//
-//
-//
-//
-//                }
-//            });
+            adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+
+                }
+            });
 
             adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
                 @Override
@@ -280,12 +290,9 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
                     switch (view.getId()){
                         case R.id.iv_comment_head:
                             //进入到用户主页
-
                             Intent intent =new Intent(getActivity(), UserHomepageActivity.class);
                             intent.putExtra("toUserId",data.getList().get(position).getTo_user_id());
                             startActivity(intent);
-
-
                             break;
 
 
