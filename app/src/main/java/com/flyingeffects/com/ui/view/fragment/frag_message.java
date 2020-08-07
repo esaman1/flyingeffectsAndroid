@@ -35,6 +35,7 @@ import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.ui.view.activity.FansActivity;
 import com.flyingeffects.com.ui.view.activity.LikeActivity;
+import com.flyingeffects.com.ui.view.activity.ZanActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 
@@ -248,14 +249,13 @@ public class frag_message extends BaseFragment {
                 break;
 
             case R.id.iv_icon_zan:
-                Intent intentZan=new Intent(getActivity(),LikeActivity.class);
+                Intent intentZan=new Intent(getActivity(), ZanActivity.class);
                 startActivity(intentZan);
 
                 break;
 
             case R.id.ll_comment:
                 Intent intentComment=new Intent(getActivity(),LikeActivity.class);
-                intentComment.putExtra("isFrom",0);
                 startActivity(intentComment);
                 break;
 

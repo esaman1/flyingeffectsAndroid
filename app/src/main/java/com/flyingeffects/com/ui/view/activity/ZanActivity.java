@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.adapter.Like_adapter;
+import com.flyingeffects.com.adapter.Mine_zan_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.MineCommentEnity;
+import com.flyingeffects.com.enity.MineZanEnity;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -35,16 +35,16 @@ import rx.Observable;
  * creation date: 2020/7/29
  * user : zhangtongju
  */
-public class LikeActivity extends BaseActivity {
+public class ZanActivity extends BaseActivity {
 
     private int perPageCount = 10;
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
-    private Like_adapter adapter;
+    private Mine_zan_adapter adapter;
 
-    private List<MineCommentEnity> listData=new ArrayList<>();
+    private List<MineZanEnity> listData=new ArrayList<>();
 
     private boolean isRefresh = true;
     private int selectPage = 1;
@@ -52,8 +52,6 @@ public class LikeActivity extends BaseActivity {
     @BindView(R.id.smart_refresh_layout_bj)
     SmartRefreshLayout smartRefreshLayout;
 
-    //0 表示评论，1表示赞
-    private int isFrom;
 
     @Override
     protected int getLayoutId() {
@@ -62,11 +60,10 @@ public class LikeActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        ((TextView) findViewById(R.id.tv_top_title)).setText("评论");
+        ((TextView) findViewById(R.id.tv_top_title)).setText("赞");
         findViewById(R.id.iv_top_back).setOnClickListener(this);
-        isFrom=getIntent().getIntExtra("isFrom",0);
         initSmartRefreshLayout();
-        adapter = new Like_adapter(R.layout.list_like_item, listData, this);
+        adapter = new Mine_zan_adapter(R.layout.list_like_item, listData, this);
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -91,21 +88,21 @@ public class LikeActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        requestCommentList(true);
+        requestPraiseList(true);
     }
 
 
     /**
-     * description ：请求我的评论列表
+     * description ：请求我的赞
      * creation date: 2020/8/6
      * user : zhangtongju
      */
-    private void requestCommentList(boolean isShowDialog) {
+    private void requestPraiseList(boolean isShowDialog) {
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
-        Observable ob = Api.getDefault().commentList(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<MineCommentEnity>>(LikeActivity.this) {
+        Observable ob = Api.getDefault().praiseList(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<MineZanEnity>>(ZanActivity.this) {
             @Override
             protected void _onError(String message) {
                 finishData();
@@ -113,7 +110,7 @@ public class LikeActivity extends BaseActivity {
             }
 
             @Override
-            protected void _onNext(List<MineCommentEnity> data) {
+            protected void _onNext(List<MineZanEnity> data) {
                 LogUtil.d("OOM", StringUtil.beanToJSONString(data));
 
                 finishData();
@@ -139,16 +136,16 @@ public class LikeActivity extends BaseActivity {
             isRefresh = true;
             refreshLayout.setEnableLoadMore(true);
             selectPage = 1;
-            requestCommentList(false );
+            requestPraiseList(false );
         });
         smartRefreshLayout.setOnLoadMoreListener(refresh -> {
             isRefresh = false;
             selectPage++;
-            requestCommentList(false);
+            requestPraiseList(false);
         });
     }
     private boolean isFirstData = true;
-    public void isShowData(List<MineCommentEnity> data) {
+    public void isShowData(List<MineZanEnity> data) {
             adapter.notifyDataSetChanged();
             if (isFirstData) {
                 BackgroundExecutor.execute(() -> {

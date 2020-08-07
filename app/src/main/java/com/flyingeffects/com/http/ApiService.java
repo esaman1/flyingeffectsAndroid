@@ -5,6 +5,7 @@ import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.enity.HttpResult;
 import com.flyingeffects.com.enity.MessageData;
 import com.flyingeffects.com.enity.MineCommentEnity;
+import com.flyingeffects.com.enity.MineZanEnity;
 import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.enity.MyProduction;
@@ -201,6 +202,12 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/message/commentList")
     Observable<HttpResult<List<MineCommentEnity>>> commentList(@FieldMap Map<String, String> params);
+
+
+    //我的赞列表
+    @FormUrlEncoded
+    @POST("/api/message/praiseList")
+    Observable<HttpResult<List<MineZanEnity>>> praiseList(@FieldMap Map<String, String> params);
 
 
 
