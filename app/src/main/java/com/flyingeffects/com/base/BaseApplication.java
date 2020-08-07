@@ -20,6 +20,7 @@ import com.flyingeffects.com.utils.ChannelUtil;
 import com.flyingeffects.com.utils.CrashHandler;
 import com.flyingeffects.com.utils.DateUtils;
 import com.flyingeffects.com.utils.LogUtil;
+import com.green.hand.library.EmojiManager;
 import com.lansosdk.box.OnLanSongLogOutListener;
 import com.lansosdk.videoeditor.LanSoEditor;
 import com.nineton.ntadsdk.NTAdConfig;
@@ -71,6 +72,7 @@ public class BaseApplication extends MultiDexApplication {
         initNTAdSDK();
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
         TTAdManagerHolder.init(this);
+        EmojiManager.init(this);//初始化
     }
 
     private void initBaiduAnalysis() {

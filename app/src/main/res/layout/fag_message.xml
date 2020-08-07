@@ -178,7 +178,7 @@
         android:layout_marginBottom="5dp"
         android:background="@color/black"/>
 
-    <com.baoyz.swipemenulistview.SwipeMenuListView
+    <ListView
         android:id="@+id/swipeMenuListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

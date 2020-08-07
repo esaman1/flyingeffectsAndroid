@@ -70,10 +70,10 @@
 
                 <RelativeLayout
 
-                    android:layout_below="@+id/rela_top"
                     android:id="@+id/rela_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/rela_top"
                     android:minHeight="300dp">
 
 
@@ -87,53 +87,65 @@
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerView"
-                        android:paddingBottom="70dp"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:paddingBottom="70dp" />
 
 
                 </RelativeLayout>
 
 
+
                 <LinearLayout
-                    android:layout_alignParentBottom="true"
                     android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:background="#181818"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="vertical"
+                    android:layout_alignParentBottom="true"
+                    android:layout_height="wrap_content">
 
-                    <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
-                        android:id="@+id/emojicon_edit_text"
-                        android:layout_width="wrap_content"
-                        android:background="@null"
-                        android:imeOptions="actionSend"
-                        android:layout_weight="1"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:background="#181818"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+
+                        <com.green.hand.library.widget.EmojiEdittext
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:background="@null"
+                            android:gravity="center_vertical"
+                            android:imeOptions="actionSend"
+                            android:hint="有爱评论，说点好听的~"
+                            android:textSize="14sp"
+                            android:textColor="@color/white"
+                            android:textColorHint="#A3A3A5"
+                            android:layout_height="50dp"
+                            android:id="@+id/emojicon_edit_text"
+                            />
+
+
+                        <ImageView
+                            android:contentDescription="@string/app_name"
+                            android:id="@+id/iv_show_emoj"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:src="@mipmap/smiling_face" />
+
+
+                    </LinearLayout>
+
+                    <com.green.hand.library.widget.EmojiBoard
+                        android:id="@+id/input_emoji_board"
+                        android:layout_width="match_parent"
+                        android:background="@color/white"
                         android:layout_height="wrap_content"
-
-                       />
-
-<!--                    <hani.momanii.supernova_emoji_library.Helper.EmojiconTextView-->
-<!--                        android:id="@+id/textView"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_centerHorizontal="true"-->
-<!--                        android:layout_centerVertical="true"-->
-<!--                        android:layout_marginTop="26dp"-->
-<!--                        android:text="Hello Emojis!"-->
-<!--                        android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
-<!--                        android:textColor="#000000"-->
-<!--                      />-->
-
-                    <ImageView
-                        android:id="@+id/iv_show_emoj"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="12dp"
-                        android:src="@mipmap/smiling_face" />
-
+                        android:visibility="gone" />
 
                 </LinearLayout>
+
+
 
 
 
@@ -143,5 +155,7 @@
         </FrameLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
 
 </FrameLayout>

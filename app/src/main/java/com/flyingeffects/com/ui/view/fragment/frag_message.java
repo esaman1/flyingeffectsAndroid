@@ -1,30 +1,13 @@
 package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.baoyz.swipemenulistview.SwipeMenu;
-import com.baoyz.swipemenulistview.SwipeMenuCreator;
-import com.baoyz.swipemenulistview.SwipeMenuItem;
-import com.baoyz.swipemenulistview.SwipeMenuListView;
-import com.chad.library.adapter.base.BaseItemDraggableAdapter;
-import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
-import com.chad.library.adapter.base.listener.OnItemDragListener;
-import com.chad.library.adapter.base.listener.OnItemSwipeListener;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.adapter.Fans_adapter;
 import com.flyingeffects.com.adapter.Frag_message_adapter;
-import com.flyingeffects.com.adapter.System_message_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -46,8 +29,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import rx.Observable;
 
-import static com.scwang.smartrefresh.layout.util.SmartUtil.dp2px;
-
 
 /**
  * description ：消息页面
@@ -58,7 +39,7 @@ public class frag_message extends BaseFragment {
 
 
     @BindView(R.id.swipeMenuListView)
-    SwipeMenuListView swipeMenuListView;
+    ListView swipeMenuListView;
 
     @BindView(R.id.tv_follow)
     TextView tv_follow;
@@ -180,56 +161,6 @@ public class frag_message extends BaseFragment {
 
     private void initRecyclerView(List<systemessagelist> systemessagelists) {
 
-
-        SwipeMenuCreator creator = new SwipeMenuCreator() {
-
-            @Override
-            public void create(SwipeMenu menu) {
-                SwipeMenuItem openItem = new SwipeMenuItem(
-                        getActivity());
-                openItem.setBackground(new ColorDrawable(Color.parseColor("#302F2F")));
-                openItem.setWidth(dp2px(90));
-                openItem.setTitle("标记未读");
-                openItem.setTitleSize(14);
-                openItem.setTitleColor(Color.WHITE);
-                menu.addMenuItem(openItem);
-
-
-
-                SwipeMenuItem openItem2 = new SwipeMenuItem(
-                        getActivity());
-                openItem2.setBackground(new ColorDrawable(Color.rgb(0xF9,
-                        0x3F, 0x25)));
-                openItem2.setWidth(dp2px(90));
-                openItem2.setTitle("刪除");
-                openItem2.setTitleSize(14);
-                openItem2.setTitleColor(Color.WHITE);
-                menu.addMenuItem(openItem2);
-
-            }
-        };
-
-   //     swipeMenuListView.setMenuCreator(creator);
-
-        swipeMenuListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
-                switch (index) {
-                    case 0:
-                        //标记未读
-
-
-                        break;
-                    case 1:
-                        //标记已读
-
-
-
-                        break;
-                }
-                return false;
-            }
-        });
         Frag_message_adapter adapter=new Frag_message_adapter(systemessagelists,getActivity());
         swipeMenuListView.setAdapter(adapter);
 
