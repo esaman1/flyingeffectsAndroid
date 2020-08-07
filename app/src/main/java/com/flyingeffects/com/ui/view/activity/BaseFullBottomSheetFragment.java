@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -28,7 +27,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.Comment_message_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
-import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.MessageData;
 import com.flyingeffects.com.enity.MessageEnity;
@@ -75,6 +73,8 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     //键盘输入框
     EmojiBoard emojiBoard;
 
+    private TextView tv_sent;
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -93,7 +93,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         ed_search = view.findViewById(R.id.emojicon_edit_text);
         ImageView iv_show_emoj = view.findViewById(R.id.iv_show_emoj);
         emojiBoard = view.findViewById(R.id.input_emoji_board);
-
+        tv_sent=view.findViewById(R.id.tv_sent);
         //表情框点击事件
         emojiBoard.setItemClickListener(code -> {
             if (code.equals("/DEL")) {//删除图标
@@ -103,23 +103,25 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
             }
         });
         coordinator = view.findViewById(R.id.coordinator);
-        ed_search.setOnEditorActionListener((v, actionId, event) -> {
-            LogUtil.d("OOM", "setOnEditorActionListener");
-            if (actionId == EditorInfo.IME_ACTION_SEND) { //键盘的搜索按钮
-                String reply = ed_search.getText().toString().trim();
-                if (!reply.equals("")) {
-                    if (!TextUtils.isEmpty(message_id)) {
-                        replyMessage(reply, "2", message_id);
-                    } else {
-                        replyMessage(reply, "1", "0");
-                    }
+//        ed_search.setOnEditorActionListener((v, actionId, event) -> {
+//            LogUtil.d("OOM", "setOnEditorActionListener");
+//            if (actionId == EditorInfo.IME_ACTION_SEND) { //键盘的搜索按钮
+//                String reply = ed_search.getText().toString().trim();
+//                if (!reply.equals("")) {
+//                    if (!TextUtils.isEmpty(message_id)) {
+//                        replyMessage(reply, "2", message_id);
+//                    } else {
+//                        replyMessage(reply, "1", "0");
+//                    }
+//
+//                    cancelFocus();
+//                }
+//                return true;
+//            }
+//            return false;
+//        });
 
-                    cancelFocus();
-                }
-                return true;
-            }
-            return false;
-        });
+        tv_sent.setOnClickListener(listener);
 
         iv_show_emoj.setOnClickListener(view1 -> {
             hideShowKeyboard(false);
@@ -129,6 +131,31 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         return view;
 
     }
+
+
+
+
+    View.OnClickListener listener=new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.tv_sent:
+                String reply = ed_search.getText().toString().trim();
+                if (!reply.equals("")) {
+                    if (!TextUtils.isEmpty(message_id)) {
+                        replyMessage(reply, "2", message_id);
+                    } else {
+                        replyMessage(reply, "1", "0");
+                    }
+                    cancelFocus();
+                }
+                break;
+        }
+
+
+        }
+    };
+
 
 
     /**
