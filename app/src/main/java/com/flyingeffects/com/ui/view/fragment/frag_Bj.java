@@ -106,6 +106,9 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
 
 
     @Override
+
+
+
     public void onPause() {
         super.onPause();
     }
