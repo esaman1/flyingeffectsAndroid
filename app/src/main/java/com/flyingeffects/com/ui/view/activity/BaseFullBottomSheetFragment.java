@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -71,7 +70,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     CoordinatorLayout coordinator;
 
     //键盘输入框
-    EmojiBoard emojiBoard;
+    private EmojiBoard emojiBoard;
 
     private TextView tv_sent;
 
@@ -93,7 +92,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         ed_search = view.findViewById(R.id.emojicon_edit_text);
         ImageView iv_show_emoj = view.findViewById(R.id.iv_show_emoj);
         emojiBoard = view.findViewById(R.id.input_emoji_board);
-        tv_sent=view.findViewById(R.id.tv_sent);
+        tv_sent = view.findViewById(R.id.tv_sent);
         //表情框点击事件
         emojiBoard.setItemClickListener(code -> {
             if (code.equals("/DEL")) {//删除图标
@@ -103,59 +102,38 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
             }
         });
         coordinator = view.findViewById(R.id.coordinator);
-//        ed_search.setOnEditorActionListener((v, actionId, event) -> {
-//            LogUtil.d("OOM", "setOnEditorActionListener");
-//            if (actionId == EditorInfo.IME_ACTION_SEND) { //键盘的搜索按钮
-//                String reply = ed_search.getText().toString().trim();
-//                if (!reply.equals("")) {
-//                    if (!TextUtils.isEmpty(message_id)) {
-//                        replyMessage(reply, "2", message_id);
-//                    } else {
-//                        replyMessage(reply, "1", "0");
-//                    }
-//
-//                    cancelFocus();
-//                }
-//                return true;
-//            }
-//            return false;
-//        });
-
         tv_sent.setOnClickListener(listener);
-
         iv_show_emoj.setOnClickListener(view1 -> {
             hideShowKeyboard(false);
             showEmojiBoard();
         });
         no_comment = view.findViewById(R.id.no_comment);
         return view;
-
     }
 
 
-
-
-    View.OnClickListener listener=new View.OnClickListener() {
+    View.OnClickListener listener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.tv_sent:
-                String reply = ed_search.getText().toString().trim();
-                if (!reply.equals("")) {
-                    if (!TextUtils.isEmpty(message_id)) {
-                        replyMessage(reply, "2", message_id);
-                    } else {
-                        replyMessage(reply, "1", "0");
+            switch (view.getId()) {
+                case R.id.tv_sent:
+                    String reply = ed_search.getText().toString().trim();
+                    if (!reply.equals("")) {
+                        if (!TextUtils.isEmpty(message_id)) {
+                            replyMessage(reply, "2", message_id);
+                        } else {
+                            replyMessage(reply, "1", "0");
+                        }
+                        cancelFocus();
                     }
-                    cancelFocus();
-                }
-                break;
-        }
+                    break;
 
 
+                default:
+                    break;
+            }
         }
     };
-
 
 
     /**
