@@ -76,6 +76,16 @@ public class keyBordUtils {
         }
     }
 
+
+    public static void HideKeyboard(View v) {
+        InputMethodManager imm = ( InputMethodManager ) v.getContext( ).getSystemService( Context.INPUT_METHOD_SERVICE );
+        if ( imm.isActive( ) ) {
+            imm.hideSoftInputFromWindow( v.getApplicationWindowToken( ) , 0 );
+
+        }
+    }
+
+
     /**
      * 打开关闭相互切换
      * @param activity

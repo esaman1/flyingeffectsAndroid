@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -32,6 +33,7 @@ import com.flyingeffects.com.enity.MessageEnity;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.utils.KeyboardUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -90,6 +92,11 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         View view = inflater.inflate(R.layout.bottom_sheet_fragment, container, false);
         recyclerViewComment = view.findViewById(R.id.recyclerView);
         ed_search = view.findViewById(R.id.emojicon_edit_text);
+        ed_search.setOnTouchListener((v, event) -> {
+            KeyboardUtil.showInputKeyboard(getActivity(),ed_search);
+            hideEmoJiBoard();
+            return false;
+        });
         ImageView iv_show_emoj = view.findViewById(R.id.iv_show_emoj);
         emojiBoard = view.findViewById(R.id.input_emoji_board);
         tv_sent = view.findViewById(R.id.tv_sent);
@@ -104,7 +111,8 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         coordinator = view.findViewById(R.id.coordinator);
         tv_sent.setOnClickListener(listener);
         iv_show_emoj.setOnClickListener(view1 -> {
-            hideShowKeyboard(false);
+            LogUtil.d("OOM","关闭");
+            keyBordUtils.HideKeyboard(view);
             showEmojiBoard();
         });
         no_comment = view.findViewById(R.id.no_comment);
@@ -389,6 +397,11 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     public void showEmojiBoard() {
         ed_search.setSelected(emojiBoard.getVisibility() == View.GONE);//设置图片选中效果
         emojiBoard.showBoard();//是否显示表情框
+    }
+
+
+    public void hideEmoJiBoard(){
+        emojiBoard.setVisibility(View.GONE);
     }
 
 
