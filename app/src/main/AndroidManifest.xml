@@ -129,7 +129,7 @@
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity"
             android:configChanges="orientation"
-            android:windowSoftInputMode="stateAlwaysHidden"
+            android:windowSoftInputMode="stateUnspecified|adjustPan"
             android:screenOrientation="portrait" />
 
 
