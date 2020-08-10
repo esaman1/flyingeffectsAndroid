@@ -161,10 +161,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     RelativeLayout relative_playerView;
 
 
-
-
-
-
     @Override
     protected int getLayoutId() {
         return R.layout.act_creation_template_edit;
@@ -197,6 +193,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
     private MediaSource mediaSource;
+
     private void initExo(String videoPath) {
         if (TextUtils.isEmpty(videoPath)) {
             return;
@@ -279,7 +276,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     protected void onResume() {
         super.onResume();
-        if (isIntoPause&&exoPlayer!=null) {
+        if (isIntoPause && exoPlayer != null) {
             exoPlayer.prepare(mediaSource, true, false);
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -316,7 +313,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker, R.id.iv_top_back, R.id.iv_change_ui,R.id.tv_background, R.id.tv_anim, R.id.tv_tiezhi})
+    boolean nowUiIsLandscape = false;
+
+    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker, R.id.iv_top_back, R.id.iv_change_ui, R.id.tv_background, R.id.tv_anim, R.id.tv_tiezhi})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
@@ -419,7 +418,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
             case R.id.iv_change_ui:
                 //横竖屏切换
-                setPlayerViewSize(true);
+                nowUiIsLandscape = !nowUiIsLandscape;
+                setPlayerViewSize(nowUiIsLandscape);
                 break;
 
             default:
@@ -464,48 +464,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             ivPlay.setImageResource(R.mipmap.iv_play_creation);
         }
     }
-
-
-
-//    /**
-//     * description ：交换ui
-//     * creation date: 2020/8/10
-//     * user : zhangtongju
-//     */
-//    private void changeUi(boolean isLandscape){
-//        if(isLandscape){
-//            ViewGroup.LayoutParams RelativeLayoutParams = scrollView.getLayoutParams();
-//            float oriRatio;
-//            oriRatio = 9f / 16f;
-//            //保证获得mContainer大小不为0
-//            scrollView.post(() -> {
-//                int oriWidth = screenUtil.getScreenWidth(this);
-//                LogUtil.d("OOM","oriWidth="+oriWidth);
-//                RelativeLayoutParams.width =oriWidth;
-//                RelativeLayoutParams.height = Math.round(1f * oriWidth * oriRatio);
-//                scrollView.setLayoutParams(RelativeLayoutParams);
-//
-//
-//            });
-//
-//            ViewGroup.LayoutParams RelativeLayoutParams2 = relative_playerView.getLayoutParams();
-//            relative_playerView.post(() -> {
-//                int oriWidth = screenUtil.getScreenWidth(this);
-//                LogUtil.d("OOM","oriWidth="+oriWidth);
-//                RelativeLayoutParams2.width =oriWidth;
-//                RelativeLayoutParams.height = Math.round(1f * oriWidth * oriRatio);
-//                scrollView.setLayoutParams(RelativeLayoutParams);
-//
-//
-//            });
-//
-//
-//
-//        }
-//    }
-
-
-
 
 
     /**
@@ -555,19 +513,18 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-
     /**
      * description ：设置播放器尺寸,如果不设置的话会出现黑屏，因为外面嵌套了ScrollView
-     *横竖屏切换的时候例外2层都需要修改尺寸
+     * 横竖屏切换的时候例外2层都需要修改尺寸
      * creation date: 2020/8/10
      * user : zhangtongju
      */
-    private void setPlayerViewSize(boolean isLandscape){
+    private void setPlayerViewSize(boolean isLandscape) {
         LinearLayout.LayoutParams RelativeLayoutParams = (LinearLayout.LayoutParams) playerView.getLayoutParams();
         float oriRatio = 9f / 16f;
-        if(isLandscape){
+        if (isLandscape) {
             scrollView.post(() -> {
-                int oriWidth= scrollView.getWidth();
+                int oriWidth = scrollView.getWidth();
                 RelativeLayout.LayoutParams RelativeLayoutParams2 = (RelativeLayout.LayoutParams) scrollView.getLayoutParams();
                 RelativeLayoutParams2.width = oriWidth;
                 RelativeLayoutParams2.height = Math.round(1f * oriWidth * oriRatio);
@@ -575,25 +532,22 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 RelativeLayoutParams.width = oriWidth;
                 RelativeLayoutParams.height = Math.round(1f * oriWidth / oriRatio);
                 playerView.setLayoutParams(RelativeLayoutParams);
-
+                //设置预览编辑界面
+                viewLayerRelativeLayout.setLayoutParams(RelativeLayoutParams2);
             });
-        }else{
+        } else {
             scrollView.post(() -> {
-                int oriHeight = scrollView.getHeight();
+                RelativeLayout.LayoutParams RelativeLayoutParams2 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+                scrollView.setLayoutParams(RelativeLayoutParams2);
+                int oriHeight = viewLayerRelativeLayout.getHeight();
                 RelativeLayoutParams.width = Math.round(1f * oriHeight * oriRatio);
                 RelativeLayoutParams.height = oriHeight;
                 playerView.setLayoutParams(RelativeLayoutParams);
+                //设置预览编辑界面
+                viewLayerRelativeLayout.setLayoutParams(RelativeLayoutParams2);
             });
         }
     }
-
-
-
-
-
-
-
-
 
 
     @Override
@@ -733,7 +687,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-
     /**
      * description ：动画初始化完成，接下来就开始预览
      * creation date: 2020/6/4
@@ -789,6 +742,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private long nowTime = 5;
     //自己计算的播放时间
     private int totalPlayTime;
+
     private void startTimer() {
         totalPlayTime = 0;
         int screenWidth = screenUtil.getScreenWidth(this);
@@ -841,7 +795,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 });
 
 
-
 //                });
             }
         };
@@ -859,7 +812,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 关闭timer 和task
      */
     private void endTimer() {
-        LogUtil.d("playBGMMusic","pauseBgmMusic---------------endTimer---------------");
+        LogUtil.d("playBGMMusic", "pauseBgmMusic---------------endTimer---------------");
         destroyTimer();
         if (bgmPlayer != null) {
             bgmPlayer.stop();
@@ -938,7 +891,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
     private void playBGMMusic() {
-        LogUtil.d("playBGMMusic","playBGMMusic");
+        LogUtil.d("playBGMMusic", "playBGMMusic");
         bgmPlayer = new MediaPlayer();
         try {
             bgmPlayer.setDataSource(bgmPath);
@@ -951,7 +904,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
     private void pauseBgmMusic() {
-        LogUtil.d("playBGMMusic","pauseBgmMusic------------------------------");
+        LogUtil.d("playBGMMusic", "pauseBgmMusic------------------------------");
         if (bgmPlayer != null) {
             bgmPlayer.pause();
         }
