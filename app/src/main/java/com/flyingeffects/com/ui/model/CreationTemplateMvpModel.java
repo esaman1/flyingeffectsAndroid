@@ -1621,4 +1621,18 @@ public class CreationTemplateMvpModel {
     }
 
 
+
+    /**
+     * description ：设置所有帖子居中状态，这里主要是为了横竖屏切换后，所有帖子居中
+     * creation date: 2020/8/10
+     * user : zhangtongju
+     */
+    public void setAllStickerCenter(){
+        for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
+            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
+            stickerView.setIntoCenter();
+        }
+    }
+
+
 }

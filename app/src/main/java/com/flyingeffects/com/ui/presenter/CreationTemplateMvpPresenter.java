@@ -49,6 +49,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.addNewSticker(path,originalPath);
     }
 
+
+    public void setAllStickerCenter(){
+        creationTemplatemodel.setAllStickerCenter();
+    }
+
     public void showGifAnim(boolean isShow){
         creationTemplatemodel.showGifAnim(isShow);
     }

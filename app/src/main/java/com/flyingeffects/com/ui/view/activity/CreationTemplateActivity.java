@@ -523,6 +523,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         LinearLayout.LayoutParams RelativeLayoutParams = (LinearLayout.LayoutParams) playerView.getLayoutParams();
         float oriRatio = 9f / 16f;
         if (isLandscape) {
+            //横屏的情况
             scrollView.post(() -> {
                 int oriWidth = scrollView.getWidth();
                 RelativeLayout.LayoutParams RelativeLayoutParams2 = (RelativeLayout.LayoutParams) scrollView.getLayoutParams();
@@ -547,7 +548,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 viewLayerRelativeLayout.setLayoutParams(RelativeLayoutParams2);
             });
         }
+        new Handler().postDelayed(() -> presenter.setAllStickerCenter(),1000);
     }
+
+
+
+
+
 
 
     @Override
