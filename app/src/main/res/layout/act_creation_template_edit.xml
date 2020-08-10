@@ -88,7 +88,7 @@
         android:layout_above="@+id/ll_progress"
         android:layout_marginTop="50dp">
 
-        <ScrollView
+        <com.flyingeffects.com.view.MyScrollView
             android:id="@+id/scrollView"
             android:layout_centerHorizontal="true"
             android:layout_width="match_parent"
@@ -112,7 +112,7 @@
 
             </LinearLayout>
 
-        </ScrollView>
+        </com.flyingeffects.com.view.MyScrollView>
 
 
     </RelativeLayout>

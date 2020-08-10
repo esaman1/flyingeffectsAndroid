@@ -24,6 +24,7 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.ChooseVideoAddSticker;
+import com.flyingeffects.com.enity.CreateTemplateScrollViewPosition;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
@@ -38,6 +39,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.HorizontalListView;
+import com.flyingeffects.com.view.MyScrollView;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -135,7 +137,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     LinearLayout ll_green_background;
 
     @BindView(R.id.scrollView)
-    ScrollView scrollView;
+    MyScrollView scrollView;
 
 
     /**
@@ -336,7 +338,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
                 }
 
-                presenter.toSaveVideo(imageBjPath);
+                CreateTemplateScrollViewPosition enity=new CreateTemplateScrollViewPosition(percentage,scrollViewHeight);
+
+                presenter.toSaveVideo(imageBjPath, nowUiIsLandscape,enity);
                 break;
 
             case R.id.ll_play:
@@ -519,9 +523,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * creation date: 2020/8/10
      * user : zhangtongju
      */
+    private int scrollViewHeight;
+    private float percentage;
     private void setPlayerViewSize(boolean isLandscape) {
         LinearLayout.LayoutParams RelativeLayoutParams = (LinearLayout.LayoutParams) playerView.getLayoutParams();
         float oriRatio = 9f / 16f;
+
         if (isLandscape) {
             //横屏的情况
             scrollView.post(() -> {
@@ -530,6 +537,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 RelativeLayoutParams2.width = oriWidth;
                 RelativeLayoutParams2.height = Math.round(1f * oriWidth * oriRatio);
                 scrollView.setLayoutParams(RelativeLayoutParams2);
+                scrollViewHeight = RelativeLayoutParams2.height;
                 RelativeLayoutParams.width = oriWidth;
                 RelativeLayoutParams.height = Math.round(1f * oriWidth / oriRatio);
                 playerView.setLayoutParams(RelativeLayoutParams);
@@ -540,6 +548,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             scrollView.post(() -> {
                 RelativeLayout.LayoutParams RelativeLayoutParams2 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
                 scrollView.setLayoutParams(RelativeLayoutParams2);
+                scrollViewHeight = RelativeLayoutParams2.height;
                 int oriHeight = viewLayerRelativeLayout.getHeight();
                 RelativeLayoutParams.width = Math.round(1f * oriHeight * oriRatio);
                 RelativeLayoutParams.height = oriHeight;
@@ -548,13 +557,19 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 viewLayerRelativeLayout.setLayoutParams(RelativeLayoutParams2);
             });
         }
-        new Handler().postDelayed(() -> presenter.setAllStickerCenter(),1000);
+        int totalHeight = scrollView.getChildAt(0).getHeight();
+        scrollView.setOnScrollListener(new MyScrollView.OnScrollListener() {
+            @Override
+            public void onScroll(int scrollY) {
+                percentage=scrollY/(float)totalHeight;
+                LogUtil.d("OOM2", "scrollY=" + scrollY + "totalHeight=" + totalHeight);
+                LogUtil.d("OOM2", "scrollViewHeight=" + scrollViewHeight);
+                LogUtil.d("OOM2", "precent"+scrollY/(float)totalHeight);
+
+            }
+        });
+        new Handler().postDelayed(() -> presenter.setAllStickerCenter(), 1000);
     }
-
-
-
-
-
 
 
     @Override

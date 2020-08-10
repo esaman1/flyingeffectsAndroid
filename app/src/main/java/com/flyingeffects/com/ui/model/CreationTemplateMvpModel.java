@@ -41,6 +41,7 @@ import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.AllStickerData;
+import com.flyingeffects.com.enity.CreateTemplateScrollViewPosition;
 import com.flyingeffects.com.enity.StickerAnim;
 import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.enity.VideoInfo;
@@ -1153,9 +1154,11 @@ public class CreationTemplateMvpModel {
      */
 
     private boolean isIntoSaveVideo = false;
+    CreateTemplateScrollViewPosition createTemplateScrollViewPosition;
 
-    public void toSaveVideo(String imageBjPath) {
+    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, CreateTemplateScrollViewPosition createTemplateScrollViewPosition) {
         stopAllAnim();
+        this.createTemplateScrollViewPosition=createTemplateScrollViewPosition;
         deleteSubLayerSticker();
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -1214,15 +1217,15 @@ public class CreationTemplateMvpModel {
                     if (cutVideoPathList.size() == 0) {
                         dialog.openProgressDialog();
                         //都不是视频的情况下，就直接渲染
-                        backgroundDraw.toSaveVideo(listAllSticker, isMatting);
+                        backgroundDraw.toSaveVideo(listAllSticker, isMatting,nowUiIsLandscape,createTemplateScrollViewPosition);
                     } else {
                         dialog.openProgressDialog();
                         cutList.clear();
                         if (videoInfo != null) {
-                            cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration());
+                            cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration(),nowUiIsLandscape);
                         } else {
                             //没选择背景默认裁剪10秒
-                            cutVideo(cutVideoPathList.get(0), defaultVideoDuration, cutVideoPathList.get(0).getDuration());
+                            cutVideo(cutVideoPathList.get(0), defaultVideoDuration, cutVideoPathList.get(0).getDuration(),nowUiIsLandscape);
                         }
                     }
                 }
@@ -1243,7 +1246,7 @@ public class CreationTemplateMvpModel {
      * creation date: 2020/4/21
      * user : zhangtongju
      */
-    private void cutVideo(videoType videoType, long duration, long materialDuration) {
+    private void cutVideo(videoType videoType, long duration, long materialDuration,boolean nowUiIsLandscape) {
         LogUtil.d("oom3", "需要裁剪的时长为" + materialDuration);
         videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, materialDuration, videoType.getPath(), 0, new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
@@ -1273,7 +1276,7 @@ public class CreationTemplateMvpModel {
                         //全部裁剪完成之后需要去把视频裁剪成全部帧
                         videoGetFrameModel getFrameModel = new videoGetFrameModel(context, cutList, (isSuccess1, progress) -> {
                             if (isSuccess1) {
-                                backgroundDraw.toSaveVideo(listAllSticker, true);
+                                backgroundDraw.toSaveVideo(listAllSticker, true,nowUiIsLandscape,createTemplateScrollViewPosition);
                             } else {
                                 //todo  临时手段
                                 if (progress <= 5) {
@@ -1286,13 +1289,13 @@ public class CreationTemplateMvpModel {
                         });
                         getFrameModel.startExecute();
                     } else {
-                        backgroundDraw.toSaveVideo(listAllSticker, false);
+                        backgroundDraw.toSaveVideo(listAllSticker, false,nowUiIsLandscape,createTemplateScrollViewPosition);
                     }
                 } else {
                     if (videoInfo != null) {
-                        cutVideo(cutVideoPathList.get(cutSuccessNum), videoInfo.getDuration(), cutVideoPathList.get(cutSuccessNum).getDuration());
+                        cutVideo(cutVideoPathList.get(cutSuccessNum), videoInfo.getDuration(), cutVideoPathList.get(cutSuccessNum).getDuration(),nowUiIsLandscape);
                     } else {
-                        cutVideo(cutVideoPathList.get(cutSuccessNum), defaultVideoDuration, cutVideoPathList.get(cutSuccessNum).getDuration());
+                        cutVideo(cutVideoPathList.get(cutSuccessNum), defaultVideoDuration, cutVideoPathList.get(cutSuccessNum).getDuration(),nowUiIsLandscape);
                     }
                 }
             }

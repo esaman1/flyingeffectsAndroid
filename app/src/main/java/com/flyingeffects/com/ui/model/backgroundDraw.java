@@ -12,6 +12,7 @@ import android.view.View;
 
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.enity.AllStickerData;
+import com.flyingeffects.com.enity.CreateTemplateScrollViewPosition;
 import com.flyingeffects.com.enity.TransplationPos;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.FileManager;
@@ -43,8 +44,8 @@ import java.util.List;
  */
 public class backgroundDraw {
 
-    private static final int DRAWPADWIDTH = 720;
-    private static final int DRAWPADHEIGHT = 1280;
+    private static  int DRAWPADWIDTH = 720;
+    private static  int DRAWPADHEIGHT = 1280;
     private static final int FRAME_RATE = 20;
     private DrawPadAllExecute2 execute;
     private Context context;
@@ -77,6 +78,8 @@ public class backgroundDraw {
 
     private AnimCollect animCollect;
 
+    private boolean nowUiIsLandscape;
+
     /**
      * description ：后台绘制，如果videoVoice不为null,那么需要把主视频图层的声音替换为用户选择的背景声音
      * imagePath 如果videoPath没有且imagePath 有的情况，需要把绿幕背景替换为图片背景
@@ -101,7 +104,10 @@ public class backgroundDraw {
         ExtractFramegFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "ExtractFrame");
     }
 
-    public void toSaveVideo(ArrayList<AllStickerData> list, boolean isMatting) {
+    private CreateTemplateScrollViewPosition createTemplateScrollViewPosition;
+    public void toSaveVideo(ArrayList<AllStickerData> list, boolean isMatting,boolean nowUiIsLandscape,CreateTemplateScrollViewPosition createTemplateScrollViewPosition) {
+        this.nowUiIsLandscape=nowUiIsLandscape;
+        this.createTemplateScrollViewPosition=createTemplateScrollViewPosition;
         //说明没得背景视频，那么渲染时长就是
         if (duration == 0) {
             for (AllStickerData data : list
@@ -120,6 +126,11 @@ public class backgroundDraw {
 //        waitingProgress.openProgressDialog();
         totleRenderTime = duration * 1000;
         try {
+
+            if(nowUiIsLandscape){
+                DRAWPADWIDTH=1280;
+                DRAWPADHEIGHT=720;
+            }
             execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, (long) (duration * 1000));
             execute.setFrameRate(FRAME_RATE);
 
@@ -197,6 +208,10 @@ public class backgroundDraw {
             }
             VideoFrameLayer bgLayer = execute.addVideoLayer(option);
             bgLayer.setScaleType(LSOScaleType.VIDEO_SCALE_TYPE);
+            if(nowUiIsLandscape){
+                bgLayer.setVisibleRect(0,1,createTemplateScrollViewPosition.getPercentage(),createTemplateScrollViewPosition.getScrollViewHeight());
+            }
+
             LogUtil.d("OOM", "主图层添加完毕");
         } catch (Exception e) {
             e.printStackTrace();

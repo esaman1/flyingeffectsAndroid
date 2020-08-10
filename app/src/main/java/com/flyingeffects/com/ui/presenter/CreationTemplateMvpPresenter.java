@@ -5,6 +5,7 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
+import com.flyingeffects.com.enity.CreateTemplateScrollViewPosition;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
@@ -153,7 +154,7 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
-    public void toSaveVideo(String imageBjPath){
-        creationTemplatemodel.toSaveVideo(imageBjPath);
+    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, CreateTemplateScrollViewPosition createTemplateScrollViewPosition){
+        creationTemplatemodel.toSaveVideo(imageBjPath,nowUiIsLandscape,createTemplateScrollViewPosition);
     }
 }
