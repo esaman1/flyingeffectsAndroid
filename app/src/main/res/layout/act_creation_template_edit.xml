@@ -80,35 +80,70 @@
     <!--        android:layout_marginTop="50dp" />-->
 
 
-    <com.google.android.exoplayer2.ui.PlayerView
-        android:id="@+id/exo_player"
+    <RelativeLayout
+        android:id="@+id/relative_playerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/ll_progress"
-        android:layout_marginTop="50dp"
-        android:background="#1D1D1D"
-        app:surface_type="texture_view"
-        app:use_controller="false" />
+        android:layout_marginTop="50dp">
 
-
-    <LinearLayout
-        android:id="@+id/ll_green_background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/ll_progress"
-        android:layout_marginTop="50dp"
-        android:background="@color/black"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:visibility="invisible">
-
-        <ImageView
-            android:id="@+id/iv_green_background"
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_centerHorizontal="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="@string/app_name"
-            android:src="@mipmap/green" />
-    </LinearLayout>
+            android:layout_centerInParent="true">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <com.google.android.exoplayer2.ui.PlayerView
+                    android:id="@+id/exo_player"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:surface_type="texture_view"
+                    app:use_controller="false" />
+
+
+            </LinearLayout>
+
+        </ScrollView>
+
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/ll_progress"
+        android:layout_marginTop="50dp"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:id="@+id/ll_green_background"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@color/black"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
+            <ImageView
+                android:id="@+id/iv_green_background"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/app_name"
+                android:src="@mipmap/green" />
+        </LinearLayout>
+
+    </RelativeLayout>
 
 
     <RelativeLayout
@@ -120,23 +155,25 @@
         android:gravity="center"
         android:orientation="vertical">
 
-<!--        <com.lansosdk.videoeditor.DrawPadView2-->
-<!--            android:id="@+id/DrawPad_view"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:visibility="invisible" />-->
-
         <com.lansosdk.box.ViewLayerRelativeLayout
             android:id="@+id/id_vview_realtime_gllayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
-            android:gravity="center"/>
-
-
+            android:gravity="center" />
 
 
     </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/iv_change_ui"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_progress"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="50dp"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/change_ui" />
 
 
     <TextView
