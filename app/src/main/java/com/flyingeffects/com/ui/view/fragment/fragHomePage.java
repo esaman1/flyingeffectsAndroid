@@ -42,6 +42,7 @@ public class fragHomePage extends BaseFragment {
     private frag_home_page_adapter adapter;
     private List<MyProduction> allData = new ArrayList<>();
     private String toUserId = "";
+    //0 shi 1 是喜欢
     private int isFrom;
     @BindView(R.id.smart_refresh_layout_bj)
     SmartRefreshLayout smartRefreshLayout;

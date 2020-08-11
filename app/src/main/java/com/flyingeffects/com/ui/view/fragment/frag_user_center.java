@@ -44,7 +44,7 @@ import rx.Observable;
 public class frag_user_center extends BaseFragment {
 
 
-    private String[] titles = {"我上传的背景", "模板收藏"};
+    private String[] titles = {"我上传的背景", "喜欢","模板收藏"};
 
     @BindView(R.id.viewpager)
     ViewPager viewpager;
@@ -123,6 +123,16 @@ public class frag_user_center extends BaseFragment {
         ArrayList<Fragment> list = new ArrayList<>();
         frag_user_upload_bj fag_1 = new frag_user_upload_bj();
         list.add(fag_1);
+
+        fragHomePage fag_like= new fragHomePage();
+        Bundle bundle1 = new Bundle();
+        bundle1.putSerializable("toUserId", BaseConstans.GetUserId());
+        bundle1.putSerializable("isFrom", 2);
+        fag_like.setArguments(bundle1);
+        list.add(fag_like);
+
+
+
         frag_user_collect fag_0 = new frag_user_collect();
         Bundle bundle2 = new Bundle();
         bundle2.putSerializable("template_type", "1");

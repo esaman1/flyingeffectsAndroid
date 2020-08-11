@@ -73,7 +73,7 @@ public class Comment_message_item_adapter extends BaseAdapter {
                 .into(holder.iv_comment_head_0);
 
 
-        holder.tv_user_0.setText(data.getUser_id());
+        holder.tv_user_0.setText(data.getNickname());
         holder.tv_content_1.setText(data.getContent());
 
 

@@ -55,7 +55,7 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
         helper.addOnClickListener(R.id.ll_parent);
         helper.addOnLongClickListener(R.id.ll_parent);
         helper.addOnClickListener(R.id.iv_comment_head);
-        helper.setText(R.id.tv_user_id, item.getUser_id());
+        helper.setText(R.id.tv_user_id, item.getNickname());
         helper.setText(R.id.tv_content, item.getContent());
         ll_more_comment = helper.getView(R.id.ll_more_comment);
 //        //显示第一个预览评论

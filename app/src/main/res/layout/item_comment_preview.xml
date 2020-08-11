@@ -41,7 +41,6 @@
                 android:id="@+id/tv_user_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="用户13213"
                 android:textColor="#A3A3A5"
                 android:textSize="12sp" />
 
