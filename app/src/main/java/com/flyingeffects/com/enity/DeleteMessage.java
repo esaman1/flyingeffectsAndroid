@@ -10,9 +10,20 @@ public class DeleteMessage {
         this.position = position;
     }
 
+    public boolean isFirstComment() {
+        return isFirstComment;
+    }
+
+    public void setFirstComment(boolean firstComment) {
+        isFirstComment = firstComment;
+    }
+
+    boolean isFirstComment;
+
     int position;
 
-    public DeleteMessage(int position) {
+    public DeleteMessage(int position,boolean isFirstComment) {
         this.position = position;
+        this.isFirstComment=isFirstComment;
     }
 }

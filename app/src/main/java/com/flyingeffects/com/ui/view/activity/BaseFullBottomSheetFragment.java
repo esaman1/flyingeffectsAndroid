@@ -32,6 +32,7 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.DeleteMessage;
 import com.flyingeffects.com.enity.MessageData;
 import com.flyingeffects.com.enity.MessageEnity;
+import com.flyingeffects.com.enity.MessageReply;
 import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -59,6 +60,8 @@ import rx.subjects.PublishSubject;
 public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
 
 
+
+
     /**
      * 顶部向下偏移量
      */
@@ -75,6 +78,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     private ArrayList<MessageEnity> messageEnityList = new ArrayList<>();
     private Comment_message_adapter adapter;
     CoordinatorLayout coordinator;
+    private int nowFirstOpenClickPosition;
 
     //键盘输入框
     private EmojiBoard emojiBoard;
@@ -246,6 +250,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
 
             @Override
             protected void _onNext(MessageData data) {
+                LogUtil.d("OOM","评论列表数据"+StringUtil.beanToJSONString(data));
                 messageEnityList = data.getList();
                 initRecyclerView(data);
             }
@@ -273,9 +278,12 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
                     hideShowKeyboard(true);
                     message_id = id;
                 }
+
             }, new Comment_message_adapter.click2Comment() {
                 @Override
                 public void click(int position) {
+                    //点击了展开更多
+                    nowFirstOpenClickPosition=position;
                     updateDataComment(position);
                 }
             });
@@ -284,11 +292,13 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
             adapter.setOnItemChildLongClickListener(new BaseQuickAdapter.OnItemChildLongClickListener() {
                 @Override
                 public boolean onItemChildLongClick(BaseQuickAdapter adapter, View view, int position) {
+                    nowFirstOpenClickPosition=position;
                     Intent intent = new Intent(getActivity(), MessageLongClickActivity.class);
                     intent.putExtra("user_id", data.getList().get(position).getUser_id());
                     intent.putExtra("message_id", data.getList().get(position).getId());
                     intent.putExtra("templateId", data.getList().get(position).getTemplate_id());
                     intent.putExtra("position", position);
+                    intent.putExtra("isFirstComment", true);
                     startActivity(intent);
                     return false;
                 }
@@ -410,6 +420,9 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     }
 
 
+
+
+
     /**
      * 展开or隐藏表情框
      */
@@ -428,8 +441,17 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     public void onEventMainThread(DeleteMessage event) {
         LogUtil.d("OOM","删除私信");
         int deletePosition = event.getPosition();
-        if(messageEnityList!=null&&messageEnityList.size()>=deletePosition){
-            messageEnityList.remove(deletePosition);
+        boolean isFirstComment=event.isFirstComment();
+        if(messageEnityList!=null){
+            if(isFirstComment&&messageEnityList.size()>deletePosition){
+                messageEnityList.remove(deletePosition);
+            }else{
+                MessageEnity messageEnity=messageEnityList.get(nowFirstOpenClickPosition);
+                ArrayList<MessageReply> reply=messageEnity.getReply();
+                if(reply!=null&&reply.size()>deletePosition){
+                    reply.remove(deletePosition);
+                }
+            }
             adapter.notifyDataSetChanged();
         }
 

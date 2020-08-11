@@ -37,6 +37,7 @@ public class MessageLongClickActivity extends Activity {
     private String user_id;
     private String message_id;
     private String templateId;
+    private boolean isFirstComment;
 
     LinearLayout ll_delete;
 
@@ -47,11 +48,12 @@ public class MessageLongClickActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.act_message_long_click);
-        ll_delete=findViewById(R.id.ll_delete);
+        ll_delete = findViewById(R.id.ll_delete);
+        isFirstComment = getIntent().getBooleanExtra("isFirstComment", false);
         user_id = getIntent().getStringExtra("user_id");
         message_id = getIntent().getStringExtra("message_id");
         templateId = getIntent().getStringExtra("templateId");
-        position=getIntent().getIntExtra("position",0);
+        position = getIntent().getIntExtra("position", 0);
         if (!user_id.equals(BaseConstans.GetUserId())) {
             //不是自己的评论
             ll_delete.setVisibility(View.GONE);
@@ -103,15 +105,11 @@ public class MessageLongClickActivity extends Activity {
 
             @Override
             protected void _onNext(Object data) {
-                EventBus.getDefault().post(new DeleteMessage(position));
+                EventBus.getDefault().post(new DeleteMessage(position, isFirstComment));
                 finish();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
-
-
-
-
 
 
 }
