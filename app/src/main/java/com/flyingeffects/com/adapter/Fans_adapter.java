@@ -36,7 +36,7 @@ public class Fans_adapter extends BaseQuickAdapter<fansEnity, BaseViewHolder> {
     protected void convert(final BaseViewHolder helper, final fansEnity item) {
         helper.setText(R.id.nickname,item.getNickname());
         ImageView iv_icon=helper.getView(R.id.iv_icon);
-
+        helper.addOnClickListener(R.id.tv_follow);
         Glide.with(context)
                 .load(item.getPhotourl())
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))

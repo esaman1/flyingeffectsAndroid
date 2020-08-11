@@ -103,6 +103,13 @@ public interface ApiService {
     @POST("/api/template/newCollection")
     Observable<HttpResult<Object>> newCollection(@FieldMap Map<String, String> params);
 
+    @FormUrlEncoded
+    @POST("/api/message/addPraise")
+    Observable<HttpResult<Object>> addPraise(@FieldMap Map<String, String> params);
+
+
+
+
 
     @FormUrlEncoded
     @POST("/api/template/templateLInfo")

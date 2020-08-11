@@ -70,8 +70,9 @@
 
         <ImageView
             android:id="@+id/iv_zan"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="53dp"
+            android:layout_height="53dp"
+            android:scaleType="fitCenter"
             android:contentDescription="@string/app_name"
             android:padding="10dp"
             android:src="@mipmap/zan" />

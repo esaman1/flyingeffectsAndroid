@@ -557,6 +557,8 @@ public class PreviewUpAndDownMvpModel {
 
             @Override
             protected void _onNext(List<new_fag_template_item> data) {
+                String str = StringUtil.beanToJSONString(data);
+//            LogUtil.d("OOM",str);
                 finishData();
                 if (isRefresh) {
                     allData.clear();
@@ -644,7 +646,7 @@ public class PreviewUpAndDownMvpModel {
 //        params.put("token", BaseConstans.GetUserToken());
         params.put("type", template_type);
         // 启动时间
-        Observable ob = Api.getDefault().newCollection(BaseConstans.getRequestHead(params));
+        Observable ob = Api.getDefault().addPraise(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
             @Override
             protected void _onError(String message) {

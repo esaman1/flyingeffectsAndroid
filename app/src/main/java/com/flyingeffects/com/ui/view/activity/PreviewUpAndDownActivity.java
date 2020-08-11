@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -187,8 +186,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         //需要得到之前allData 已经滑到的页数和分类的类别以及是模板页面或者背景页面等
         int nowSelectPage = getIntent().getIntExtra("nowSelectPage", 1);
         nowCollectType = templateItem.getIs_praise();
-
-
 
         Presenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, fromTo, templateId, fromToMineCollect);
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
@@ -618,8 +615,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void getTemplateLInfo(new_fag_template_item data) {
         if (data != null) {
-            setIsZan(data.getIs_collection() == 1);
-            nowCollectType = data.getIs_collection();
+            setIsZan(data.getIs_praise()== 1);
+            nowCollectType = data.getIs_praise();
         }
 
     }
