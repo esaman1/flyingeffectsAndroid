@@ -26,6 +26,20 @@ public class templateDataZanRefresh implements Serializable {
     private int position;
     private int zanCount;
 
+
+    public int getFrom() {
+        return from;
+    }
+
+    public void setFrom(int from) {
+        this.from = from;
+    }
+
+
+
+    //0模板收藏  1//我上传的背景,2//收藏背景,3 模板,4, 背景
+    private int from;
+
     public boolean isSeleted() {
         return isSeleted;
     }
@@ -36,12 +50,11 @@ public class templateDataZanRefresh implements Serializable {
 
     private boolean isSeleted;
 
-    public templateDataZanRefresh(int position, int zanCount, boolean isSeleted) {
+    public templateDataZanRefresh(int position, int zanCount, boolean isSeleted,int from ) {
         this.position = position;
         this.zanCount = zanCount;
         this.isSeleted = isSeleted;
-
-
+        this.from=from;
     }
 
 

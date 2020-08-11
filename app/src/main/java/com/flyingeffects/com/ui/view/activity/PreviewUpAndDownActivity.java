@@ -341,7 +341,24 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         item1.setPraise(iZanNum + "");
         allData.set(nowChoosePosition, item1);
         adapter.setIsZanCount(iZanNum);
-        EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition,iZanNum,isAdd));
+        if (fromToMineCollect) {
+            //模板收藏
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
+                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition,iZanNum,isAdd,0));
+            } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
+                //我上传的背景
+                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition,iZanNum,isAdd,1));
+            } else {
+                //背景 收藏
+                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition,iZanNum,isAdd,2));
+            }
+        } else {
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
+                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition,iZanNum,isAdd,3));
+            } else {
+                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition,iZanNum,isAdd,4));
+            }
+        }
     }
 
     @Override

@@ -17,6 +17,7 @@ import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.templateDataZanRefresh;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -32,6 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import rx.Observable;
 
 
@@ -78,6 +81,7 @@ public class frag_user_collect extends BaseFragment {
     protected void initView() {
         initSmartRefreshLayout();
         Bundle bundle = this.getArguments();
+        EventBus.getDefault().register(this);
         if (bundle != null) {
             template_type = bundle.getString("template_type");
             from=bundle.getInt("from",0);
@@ -266,6 +270,31 @@ public class frag_user_collect extends BaseFragment {
 
             }
         });
+    }
+
+    /**
+     * description ：这里的数据是用来刷新点赞功能的
+     * creation date: 2020/8/11
+     * user : zhangtongju
+     */
+    @Subscribe
+    public void onEventMainThread(templateDataZanRefresh event) {
+        int from=event.getFrom();
+        if(from==0||from==1||from==2){
+            int position = event.getPosition();
+            boolean isPraise = event.isSeleted();
+            if (allData != null && allData.size() > position) {
+                new_fag_template_item item = allData.get(position);
+                item.setPraise(event.getZanCount() + "");
+                if (isPraise) {
+                    item.setIs_praise(1);
+                } else {
+                    item.setIs_praise(0);
+                }
+                allData.set(position, item);
+                adapter.notifyItemChanged(position);
+            }
+        }
     }
 }
 

@@ -260,18 +260,20 @@ public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, V
      */
     @Subscribe
     public void onEventMainThread(templateDataZanRefresh event) {
-        int position = event.getPosition();
-        boolean isPraise = event.isSeleted();
-        if (allData != null && allData.size() > position) {
-            new_fag_template_item item = allData.get(position);
-            item.setPraise(event.getZanCount() + "");
-            if (isPraise) {
-                item.setIs_praise(1);
-            } else {
-                item.setIs_praise(0);
+        if(event.getFrom()==3){
+            int position = event.getPosition();
+            boolean isPraise = event.isSeleted();
+            if (allData != null && allData.size() > position) {
+                new_fag_template_item item = allData.get(position);
+                item.setPraise(event.getZanCount() + "");
+                if (isPraise) {
+                    item.setIs_praise(1);
+                } else {
+                    item.setIs_praise(0);
+                }
+                allData.set(position, item);
+                adapter.notifyItemChanged(position);
             }
-            allData.set(position, item);
-            adapter.notifyItemChanged(position);
         }
     }
 
