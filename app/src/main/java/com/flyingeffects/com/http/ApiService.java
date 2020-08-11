@@ -216,8 +216,11 @@ public interface ApiService {
     Observable<HttpResult<List<MineZanEnity>>> praiseList(@FieldMap Map<String, String> params);
 
 
+    //关注和取消关注
 
-
+    @FormUrlEncoded
+    @POST("/api/message/followUser")
+    Observable<HttpResult<Object>> followUser(@FieldMap Map<String, String> params);
 
 
     @FormUrlEncoded

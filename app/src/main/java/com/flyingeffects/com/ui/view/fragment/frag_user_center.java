@@ -65,6 +65,16 @@ public class frag_user_center extends BaseFragment {
     @BindView(R.id.tv_name)
     TextView tv_name;
 
+    @BindView(R.id.fans_count)
+    TextView fans_count;
+
+    @BindView(R.id.attention_count)
+    TextView attention_count;
+
+
+    @BindView(R.id.tv_video_count)
+    TextView tv_video_count;
+
 
     @Override
     protected int getContentLayout() {
@@ -208,6 +218,10 @@ public class frag_user_center extends BaseFragment {
                                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                                     .into(iv_head);
                         }
+
+                        fans_count.setText(data.getUser_follower());
+                        attention_count.setText(data.getUser_watch());
+                        tv_video_count.setText(data.getUser_video());
                     }
                     BaseConstans.SetUserId(data.getId(),data.getNickname(),data.getPhotourl());
                 }

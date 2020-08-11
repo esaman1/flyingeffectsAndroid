@@ -306,7 +306,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
                         case R.id.iv_comment_head:
                             //进入到用户主页
                             Intent intent = new Intent(getActivity(), UserHomepageActivity.class);
-                            intent.putExtra("toUserId", data.getList().get(position).getTo_user_id());
+                            intent.putExtra("toUserId", data.getList().get(position).getUser_id());
                             startActivity(intent);
                             break;
 

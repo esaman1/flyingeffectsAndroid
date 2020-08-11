@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -84,6 +85,8 @@ public class UserHomepageActivity extends BaseActivity {
     @BindView(R.id.tv_name_bj_head)
     TextView tv_name_bj_head;
 
+    @BindView(R.id.tv_focus)
+    TextView tv_focus;
 
 
     @BindView(R.id.tv_like)
@@ -93,6 +96,9 @@ public class UserHomepageActivity extends BaseActivity {
 
     private String[] str = {"我的作品", "喜欢"};
 
+
+    //是否已经关注
+    private boolean isFocus=false;
 
     @Override
     protected int getLayoutId() {
@@ -118,7 +124,7 @@ public class UserHomepageActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.view_line_head_1, R.id.view_line_head})
+    @OnClick({R.id.view_line_head_1, R.id.view_line_head,R.id.tv_focus})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.view_line_head_1:
@@ -129,9 +135,55 @@ public class UserHomepageActivity extends BaseActivity {
                 viewpager.setCurrentItem(0);
                 break;
 
+
+            case R.id.tv_focus:
+                requestFocus();
+                break;
+
         }
 
     }
+
+
+
+
+
+    /**
+     * description ：请求用户信息
+     * creation date: 2020/7/30
+     * user : zhangtongju
+     */
+    private void requestFocus() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("to_user_id", toUserId);
+
+        // 启动时间
+        Observable ob = Api.getDefault().followUser(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(this) {
+            @Override
+            protected void _onError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(Object data) {
+                if(isFocus){
+                    tv_focus.setText("关注");
+                    isFocus=false;
+                }else{
+                    tv_focus.setText("取消关注");
+                    isFocus=true;
+                }
+
+
+
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+    }
+
+
+
+
 
 
     /**
@@ -162,6 +214,14 @@ public class UserHomepageActivity extends BaseActivity {
                 tv_video_count.setText(data.getUser_video());
                 tv_create_count.setText(data.getUser_video());
                 tv_like_count.setText(data.getUser_praise());
+                String is_has_follow=data.getIs_has_follow();
+                if(!TextUtils.isEmpty(is_has_follow)&&is_has_follow.equals("0")){
+                    tv_focus.setText("关注");
+                    isFocus=true;
+                }else{
+                    tv_focus.setText("取消关注");
+                    isFocus=false;
+                }
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }

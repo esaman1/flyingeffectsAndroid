@@ -8,56 +8,128 @@
 
     <ImageView
         android:id="@+id/iv_about"
-        android:contentDescription="@string/app_name"
         android:layout_width="wrap_content"
-        android:src="@mipmap/more"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
+        android:contentDescription="@string/app_name"
         android:padding="10dp"
-        android:layout_alignParentRight="true"
-        android:layout_height="wrap_content"/>
+        android:src="@mipmap/more" />
+
+
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="170dp"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_height="250dp">
 
             <ImageView
-                android:contentDescription="@string/app_name"
-                android:id="@+id/iv_head"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:scaleType="fitXY"
-                android:src="@mipmap/head" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/home_page_bj" />
+
 
             <TextView
-                android:id="@+id/tv_name"
-                android:visibility="gone"
-                android:layout_width="wrap_content"
-                android:maxWidth="200dp"
-                android:singleLine="true"
-                android:ellipsize="end"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:textColor="@color/white"
-                android:textSize="15sp" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/home_page_gradient" />
 
-            <TextView
-                android:id="@+id/tv_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="未登录"
-                android:textColor="@color/white"
-                android:textSize="15sp" />
 
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_head"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                  />
+
+
+                <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="粉丝"
+                        android:textColor="#8C9090"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/fans_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="关注"
+                        android:textColor="#8C9090"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/attention_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:textColor="@color/white" />
+
+                    <TextView
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="视频"
+                        android:textColor="#8C9090"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tv_video_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:textColor="@color/white" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+
 
         <com.flyco.tablayout.SlidingTabLayout
             android:id="@+id/tl_tabs"
@@ -84,4 +156,14 @@
             android:layout_height="match_parent" />
 
     </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/tv_id"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:text="飞闪号："
+        android:textColor="#858A8D"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </RelativeLayout>
