@@ -80,6 +80,27 @@
     <!--        android:layout_marginTop="50dp" />-->
 
 
+
+    <!--没有任何作用的view,用来测量控件大小-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_above="@+id/ll_progress"
+        android:layout_marginTop="50dp"
+        android:layout_height="match_parent">
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/ll_space"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+
+    </RelativeLayout>
+
+
+
     <RelativeLayout
         android:id="@+id/relative_playerView"
         android:layout_width="match_parent"
@@ -122,6 +143,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/ll_progress"
+        android:layout_centerInParent="true"
         android:layout_marginTop="50dp"
         android:orientation="vertical">
 
@@ -129,6 +151,7 @@
         <LinearLayout
             android:id="@+id/ll_green_background"
             android:layout_width="match_parent"
+            android:layout_centerHorizontal="true"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:background="@color/black"

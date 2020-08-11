@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.viewpager.widget.ViewPager;
@@ -24,7 +23,6 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.ChooseVideoAddSticker;
-import com.flyingeffects.com.enity.CreateTemplateScrollViewPosition;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
@@ -161,6 +159,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @BindView(R.id.relative_playerView)
     RelativeLayout relative_playerView;
+
+    @BindView(R.id.ll_space)
+    LinearLayout ll_space;
 
 
     @Override
@@ -337,10 +338,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 } else {
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
                 }
-
-                CreateTemplateScrollViewPosition enity=new CreateTemplateScrollViewPosition(percentage,scrollViewHeight);
-
-                presenter.toSaveVideo(imageBjPath, nowUiIsLandscape,enity);
+                presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH);
                 break;
 
             case R.id.ll_play:
@@ -519,16 +517,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     /**
      * description ：设置播放器尺寸,如果不设置的话会出现黑屏，因为外面嵌套了ScrollView
-     * 横竖屏切换的时候例外2层都需要修改尺寸
+     * 横竖屏切换的时候例外2层都需要修改尺寸,
      * creation date: 2020/8/10
      * user : zhangtongju
      */
     private int scrollViewHeight;
-    private float percentage;
+    private float percentageH=1f;
     private void setPlayerViewSize(boolean isLandscape) {
         LinearLayout.LayoutParams RelativeLayoutParams = (LinearLayout.LayoutParams) playerView.getLayoutParams();
         float oriRatio = 9f / 16f;
-
         if (isLandscape) {
             //横屏的情况
             scrollView.post(() -> {
@@ -545,13 +542,16 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 viewLayerRelativeLayout.setLayoutParams(RelativeLayoutParams2);
             });
         } else {
+            //横屏模式下切换到了竖屏
             scrollView.post(() -> {
-                RelativeLayout.LayoutParams RelativeLayoutParams2 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+                RelativeLayout.LayoutParams RelativeLayoutParams2 = (RelativeLayout.LayoutParams) scrollView.getLayoutParams();
+                int height=ll_space.getHeight();
+                RelativeLayoutParams2.height = height;
+                RelativeLayoutParams2.width = Math.round(1f * height * oriRatio);
                 scrollView.setLayoutParams(RelativeLayoutParams2);
-                scrollViewHeight = RelativeLayoutParams2.height;
-                int oriHeight = viewLayerRelativeLayout.getHeight();
-                RelativeLayoutParams.width = Math.round(1f * oriHeight * oriRatio);
-                RelativeLayoutParams.height = oriHeight;
+                scrollViewHeight = height;
+                RelativeLayoutParams.width = Math.round(1f * height * oriRatio);
+                RelativeLayoutParams.height = height;
                 playerView.setLayoutParams(RelativeLayoutParams);
                 //设置预览编辑界面
                 viewLayerRelativeLayout.setLayoutParams(RelativeLayoutParams2);
@@ -561,14 +561,57 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         scrollView.setOnScrollListener(new MyScrollView.OnScrollListener() {
             @Override
             public void onScroll(int scrollY) {
-                percentage=scrollY/(float)totalHeight;
+                float percentage = scrollY / (float) totalHeight;
+                float percentageForHeight = scrollViewHeight / (float) totalHeight;
                 LogUtil.d("OOM2", "scrollY=" + scrollY + "totalHeight=" + totalHeight);
-                LogUtil.d("OOM2", "scrollViewHeight=" + scrollViewHeight);
-                LogUtil.d("OOM2", "precent"+scrollY/(float)totalHeight);
+                LogUtil.d("OOM2", "percentageForHeight=" + percentageForHeight);
+                LogUtil.d("OOM2", "precent" + scrollY / (float) totalHeight);
+                float xx = percentageForHeight / (float) 2;
+                float yy = scrollY / (float) totalHeight;
+                percentageH =1-yy;
+                LogUtil.d("OOM2", "percentage" + percentageH);
 
             }
         });
-        new Handler().postDelayed(() -> presenter.setAllStickerCenter(), 1000);
+
+
+        if(ll_green_background.getVisibility()==View.VISIBLE) {
+            //可见的时候需要修稿这里
+            if (isLandscape) {
+                //横屏的情况
+                ll_green_background.post(() -> {
+                    int oriWidth =ll_space.getWidth();
+                    RelativeLayout.LayoutParams RelativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
+                    RelativeLayoutParams3.width = oriWidth;
+                    RelativeLayoutParams3.height = Math.round(1f * oriWidth * oriRatio);
+                    ll_green_background.setLayoutParams(RelativeLayoutParams3);
+
+
+//                    LinearLayout.LayoutParams RelativeLayoutParams4 = (LinearLayout.LayoutParams) iv_green_background.getLayoutParams();
+//                    RelativeLayoutParams4.width = oriWidth;
+//                    RelativeLayoutParams4.height = Math.round(1f * oriWidth / oriRatio);
+//                    iv_green_background.setLayoutParams(RelativeLayoutParams4);
+
+
+
+                });
+            }else{
+                ll_green_background.post(() -> {
+                    int oriHeight= ll_space.getHeight();
+                    RelativeLayout.LayoutParams RelativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
+                    RelativeLayoutParams3.width = Math.round(1f * oriHeight * oriRatio);
+                    RelativeLayoutParams3.height = oriHeight;
+                    ll_green_background.setLayoutParams(RelativeLayoutParams3);
+
+//
+//                    LinearLayout.LayoutParams RelativeLayoutParams4 = (LinearLayout.LayoutParams) iv_green_background.getLayoutParams();
+//                    RelativeLayoutParams4.width =  Math.round(1f * oriHeight * oriRatio);;
+//                    RelativeLayoutParams4.height =oriHeight;
+//                    iv_green_background.setLayoutParams(RelativeLayoutParams4);
+                });
+            }
+        }
+        new Handler().postDelayed(() -> presenter.setAllStickerCenter(), 500);
     }
 
 
