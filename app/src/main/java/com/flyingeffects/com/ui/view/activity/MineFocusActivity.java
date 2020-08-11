@@ -74,7 +74,7 @@ public class MineFocusActivity extends BaseActivity {
         HashMap<String, String> params = new HashMap<>();
         params.put("to_user_id", to_user_id);
         params.put("type", "2");
-        Observable ob = Api.getDefault().getFollowList(BaseConstans.getRequestHead(params));
+        Observable ob = Api.getDefault().followerList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<fansEnity>>(MineFocusActivity.this) {
             @Override
             protected void _onError(String message) {
