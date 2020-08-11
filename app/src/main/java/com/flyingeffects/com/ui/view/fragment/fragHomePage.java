@@ -113,7 +113,7 @@ public class fragHomePage extends BaseFragment {
 
     //得到banner缓存数据
     public void requestData() {
-            requestFagData(true, false); //首页杂数据
+            requestFagData(false, false); //首页杂数据
     }
 
     /**

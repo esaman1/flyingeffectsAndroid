@@ -142,9 +142,9 @@ public class HomeMainActivity extends FragmentActivity {
 
     private void requestUserInfo() {
         HashMap<String, String> params = new HashMap<>();
-        params.put("token", BaseConstans.GetUserToken());
+        params.put("to_user_id", BaseConstans.GetUserId());
         // 启动时间
-        Observable ob = Api.getDefault().getUserInfo(BaseConstans.getRequestHead(params));
+        Observable ob = Api.getDefault().getOtherUserinfo(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(this) {
             @Override
             protected void _onError(String message) {

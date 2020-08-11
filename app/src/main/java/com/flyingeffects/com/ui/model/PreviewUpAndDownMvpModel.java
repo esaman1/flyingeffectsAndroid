@@ -666,9 +666,9 @@ public class PreviewUpAndDownMvpModel {
 
     public void requestUserInfo() {
         HashMap<String, String> params = new HashMap<>();
-        params.put("token", BaseConstans.GetUserToken());
+        params.put("to_user_id", BaseConstans.GetUserId());
         // 启动时间
-        Observable ob = Api.getDefault().getUserInfo(BaseConstans.getRequestHead(params));
+        Observable ob = Api.getDefault().getOtherUserinfo(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(context) {
             @Override
             protected void _onError(String message) {
