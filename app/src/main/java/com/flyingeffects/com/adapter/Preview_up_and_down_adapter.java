@@ -58,6 +58,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     private FrameLayout video_layout;
     private ImageView iv_download_bj;
     private String fromTo;
+    private TextView tv_zan_count;
 
     public Preview_up_and_down_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, boolean readOnly, String fromTo) {
         super(layoutResId, allData);
@@ -76,6 +77,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         videoPlayer = helper.getView(R.id.video_item_player);
         iv_download_bj = helper.getView(R.id.iv_download_bj);
         tv_make = helper.getView(R.id.tv_make);
+        tv_zan_count=helper.getView(R.id.tv_zan_count);
         iv_zan = helper.getView(R.id.iv_zan);
         iv_writer = helper.getView(R.id.iv_writer);
         tv_writer_name = helper.getView(R.id.tv_writer_name);
@@ -99,7 +101,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             tv_writer_name.setVisibility(View.VISIBLE);
             tv_title.setVisibility(View.VISIBLE);
             tv_describe.setVisibility(View.VISIBLE);
-            helper.setText(R.id.tv_zan_count, item.getPraise());
+            tv_zan_count.setText(item.getPraise());
             helper.setText(R.id.tv_comment_count, item.getComment());
             helper.setText(R.id.tv_download_count, item.getShare());
             helper.addOnClickListener(R.id.iv_zan);
@@ -176,7 +178,17 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             }
         }
 
+
     }
+
+    public void setIsZanCount(int  zanCount) {
+
+        if(tv_zan_count!=null){
+            tv_zan_count.setText(zanCount+"");
+        }
+
+    }
+
 
 
     /**

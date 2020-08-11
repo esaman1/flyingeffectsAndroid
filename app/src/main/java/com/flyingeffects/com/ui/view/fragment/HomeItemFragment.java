@@ -13,7 +13,9 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.main_recycler_adapter;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.enity.ListForUpAndDown;
+import com.flyingeffects.com.enity.WxLogin;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.templateDataZanRefresh;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.HomeItemMvpView;
@@ -24,12 +26,15 @@ import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 
 
 public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, View.OnClickListener {
@@ -66,6 +71,7 @@ public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, V
             actTag = bundle.getInt("num");
             fromType = bundle.getInt("from");
         }
+        EventBus.getDefault().register(this);
         LogUtil.d("OOM", "2222fromType=" + fromType);
         Presenter = new home_fag_itemMvpPresenter(getActivity(), this, fromType);
         initRecycler();
@@ -106,8 +112,8 @@ public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, V
                 intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
                 intent.putExtra("templateId", templateId);//直接存入被序列化的对象实例
                 intent.putExtra("position", position);
-                int selectPage=Presenter.getselectPage();
-                intent.putExtra("nowSelectPage",selectPage);
+                int selectPage = Presenter.getselectPage();
+                intent.putExtra("nowSelectPage", selectPage);
                 if (fromType == 0) {
                     intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
                 } else if (fromType == 1) {
@@ -244,6 +250,29 @@ public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, V
     @Override
     public void onClick(View view) {
 
+    }
+
+
+    /**
+     * description ：这里的数据是用来刷新点赞功能的
+     * creation date: 2020/8/11
+     * user : zhangtongju
+     */
+    @Subscribe
+    public void onEventMainThread(templateDataZanRefresh event) {
+        int position = event.getPosition();
+        boolean isPraise = event.isSeleted();
+        if (allData != null && allData.size() > position) {
+            new_fag_template_item item = allData.get(position);
+            item.setPraise(event.getZanCount() + "");
+            if (isPraise) {
+                item.setIs_praise(1);
+            } else {
+                item.setIs_praise(0);
+            }
+            allData.set(position, item);
+            adapter.notifyItemChanged(position);
+        }
     }
 
 }

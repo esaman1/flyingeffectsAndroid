@@ -24,6 +24,7 @@ import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.enity.showAdCallback;
+import com.flyingeffects.com.enity.templateDataZanRefresh;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
@@ -150,7 +151,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     private MattingImage mattingImage;
 
-    private boolean isIntoPause = false;
+//    private boolean isIntoPause = false;
 
     private boolean nowItemIsAd = false;
 
@@ -182,7 +183,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         readOnly = getIntent().getBooleanExtra("readOnly", false);
         fromToMineCollect = getIntent().getBooleanExtra("fromToMineCollect", false);
         fromTo = getIntent().getStringExtra("fromTo");
-        templateId= templateItem.getId()+"";
+        templateId = templateItem.getId() + "";
         //需要得到之前allData 已经滑到的页数和分类的类别以及是模板页面或者背景页面等
         int nowSelectPage = getIntent().getIntExtra("nowSelectPage", 1);
         nowCollectType = templateItem.getIs_praise();
@@ -301,7 +302,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private void refeshData() {
         if (nowChoosePosition >= 0 && nowChoosePosition < allData.size()) {
             templateItem = allData.get(nowChoosePosition);
-            templateId=templateItem.getId()+"";
+            templateId = templateItem.getId() + "";
             defaultnum = templateItem.getDefaultnum();
             is_picout = templateItem.getIs_picout();
             nowCollectType = templateItem.getIs_praise();
@@ -323,6 +324,26 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
 
+    /**
+     * description ：点赞之后数据是加还是减
+     * creation date: 2020/8/11
+     * user : zhangtongju
+     */
+    private void planZanNum(boolean isAdd) {
+        String zanNum = templateItem.getPraise();
+        int iZanNum = Integer.parseInt(zanNum);
+        if (isAdd) {
+            iZanNum++;
+        } else {
+            iZanNum--;
+        }
+        new_fag_template_item item1 = allData.get(nowChoosePosition);
+        item1.setPraise(iZanNum + "");
+        allData.set(nowChoosePosition, item1);
+        adapter.setIsZanCount(iZanNum);
+        EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition,iZanNum,isAdd));
+    }
+
     @Override
     protected void initAction() {
 
@@ -333,7 +354,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     protected void onPause() {
         super.onPause();
         GSYVideoManager.onPause();
-        isIntoPause = true;
+//        isIntoPause = true;
         LogUtil.d("OOM", "onPause");
     }
 
@@ -396,11 +417,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
 
-
-
-
-
-
     @Override
     public void collectionResult() {
         if (nowCollectType == 0) {
@@ -427,11 +443,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void ZanResult() {
         if (nowCollectType == 0) {
             nowCollectType = 1;
-//            ToastUtil.showToast(getString(R.string.template_collect_success));
         } else {
             nowCollectType = 0;
-//            ToastUtil.showToast(getString(R.string.template_cancel_success));
         }
+        planZanNum(nowCollectType == 1);
         showZantState(nowCollectType == 0);
     }
 
@@ -483,7 +498,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void showDownProgress(int progress) {
         Observable.just(progress).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-            if(!ondestroy){
+            if (!ondestroy) {
                 if (integer >= 100) {
                     isDownIng = false;
                     waitingDialog_progress.closePragressDialog();
@@ -615,7 +630,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void getTemplateLInfo(new_fag_template_item data) {
         if (data != null) {
-            setIsZan(data.getIs_praise()== 1);
+            setIsZan(data.getIs_praise() == 1);
             nowCollectType = data.getIs_praise();
         }
 
