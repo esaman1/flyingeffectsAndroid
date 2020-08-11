@@ -132,7 +132,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     ImageView iv_green_background;
 
     @BindView(R.id.ll_green_background)
-    LinearLayout ll_green_background;
+    RelativeLayout ll_green_background;
 
     @BindView(R.id.scrollView)
     MyScrollView scrollView;
@@ -501,7 +501,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if (!isInitImageBj) {
             float oriRatio = 9f / 16f;
             //保证获得mContainer大小不为0
-            LinearLayout.LayoutParams RelativeLayoutParams = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+            RelativeLayout.LayoutParams RelativeLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
             //如果没有选择下载视频，那么就是自定义视频入口进来，那么默认为绿布
             iv_green_background.post(() -> {
                 int oriHeight = iv_green_background.getHeight();
@@ -557,6 +557,39 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 viewLayerRelativeLayout.setLayoutParams(RelativeLayoutParams2);
             });
         }
+
+
+        if(ll_green_background.getVisibility()==View.VISIBLE) {
+            //可见的时候需要修稿这里
+            if (isLandscape) {
+                //横屏的情况
+                iv_green_background.post(() -> {
+                    int oriWidth =scrollView.getWidth();
+                    RelativeLayout.LayoutParams RelativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
+                    RelativeLayoutParams3.width = oriWidth;
+                    RelativeLayoutParams3.height = Math.round(1f * oriWidth * oriRatio);
+                    ll_green_background.setLayoutParams(RelativeLayoutParams3);
+                    RelativeLayout.LayoutParams RelativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
+                    RelativeLayoutParams4.width = oriWidth;
+                    RelativeLayoutParams4.height = Math.round(1f * oriWidth * oriRatio);
+                    iv_green_background.setLayoutParams(RelativeLayoutParams4);
+                });
+            }else{
+                iv_green_background.post(() -> {
+                    int oriHeight= scrollView.getHeight();
+                    RelativeLayout.LayoutParams RelativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
+                    RelativeLayoutParams3.width = Math.round(1f * oriHeight * oriRatio);
+                    RelativeLayoutParams3.height = oriHeight;
+                    ll_green_background.setLayoutParams(RelativeLayoutParams3);
+                    RelativeLayout.LayoutParams RelativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
+                    RelativeLayoutParams4.width =  Math.round(1f * oriHeight * oriRatio);;
+                    RelativeLayoutParams4.height =oriHeight;
+                    iv_green_background.setLayoutParams(RelativeLayoutParams4);
+                });
+            }
+        }
+
+
         int totalHeight = scrollView.getChildAt(0).getHeight();
         scrollView.setOnScrollListener(new MyScrollView.OnScrollListener() {
             @Override
@@ -575,42 +608,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         });
 
 
-        if(ll_green_background.getVisibility()==View.VISIBLE) {
-            //可见的时候需要修稿这里
-            if (isLandscape) {
-                //横屏的情况
-                ll_green_background.post(() -> {
-                    int oriWidth =ll_space.getWidth();
-                    RelativeLayout.LayoutParams RelativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
-                    RelativeLayoutParams3.width = oriWidth;
-                    RelativeLayoutParams3.height = Math.round(1f * oriWidth * oriRatio);
-                    ll_green_background.setLayoutParams(RelativeLayoutParams3);
 
-
-//                    LinearLayout.LayoutParams RelativeLayoutParams4 = (LinearLayout.LayoutParams) iv_green_background.getLayoutParams();
-//                    RelativeLayoutParams4.width = oriWidth;
-//                    RelativeLayoutParams4.height = Math.round(1f * oriWidth / oriRatio);
-//                    iv_green_background.setLayoutParams(RelativeLayoutParams4);
-
-
-
-                });
-            }else{
-                ll_green_background.post(() -> {
-                    int oriHeight= ll_space.getHeight();
-                    RelativeLayout.LayoutParams RelativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
-                    RelativeLayoutParams3.width = Math.round(1f * oriHeight * oriRatio);
-                    RelativeLayoutParams3.height = oriHeight;
-                    ll_green_background.setLayoutParams(RelativeLayoutParams3);
-
-//
-//                    LinearLayout.LayoutParams RelativeLayoutParams4 = (LinearLayout.LayoutParams) iv_green_background.getLayoutParams();
-//                    RelativeLayoutParams4.width =  Math.round(1f * oriHeight * oriRatio);;
-//                    RelativeLayoutParams4.height =oriHeight;
-//                    iv_green_background.setLayoutParams(RelativeLayoutParams4);
-                });
-            }
-        }
         new Handler().postDelayed(() -> presenter.setAllStickerCenter(), 500);
     }
 

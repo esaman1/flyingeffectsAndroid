@@ -63,9 +63,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
 
     private String imagePath;
-//    private long mEndDuration;
 
-    //    private timeUtils timeUtils;
     private MediaSource mediaSource;
 
     private boolean isIntoPause = false;
@@ -101,10 +99,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         imagePath = getIntent().getStringExtra("path");
         Presenter = new CreationTemplatePreviewPresenter(this, this, imagePath);
         VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
-//        timeUtils = new timeUtils();
-//        tv_end_time.setText(timeUtils.timeParse(videoInfo.getDuration()));
-
-//        videoPause();
         LogUtil.d("OOM", "timeUtils.timeParse(videoInfo.getDuration())=" + timeUtils.timeParse(videoInfo.getDuration()));
         tv_duration.setText(timeUtils.timeParse(videoInfo.getDuration()));
         initExo();
