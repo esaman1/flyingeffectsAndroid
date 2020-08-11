@@ -29,8 +29,10 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.Comment_message_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.DeleteMessage;
 import com.flyingeffects.com.enity.MessageData;
 import com.flyingeffects.com.enity.MessageEnity;
+import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -49,6 +51,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
@@ -99,8 +103,9 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         View view = inflater.inflate(R.layout.bottom_sheet_fragment, container, false);
         recyclerViewComment = view.findViewById(R.id.recyclerView);
         ed_search = view.findViewById(R.id.emojicon_edit_text);
+        EventBus.getDefault().register(this);
         ed_search.setOnTouchListener((v, event) -> {
-            KeyboardUtil.showInputKeyboard(getActivity(),ed_search);
+            KeyboardUtil.showInputKeyboard(getActivity(), ed_search);
             hideEmoJiBoard();
             return false;
         });
@@ -118,7 +123,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         coordinator = view.findViewById(R.id.coordinator);
         tv_sent.setOnClickListener(listener);
         iv_show_emoj.setOnClickListener(view1 -> {
-            LogUtil.d("OOM","关闭");
+            LogUtil.d("OOM", "关闭");
             keyBordUtils.HideKeyboard(view);
             showEmojiBoard();
         });
@@ -126,6 +131,12 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         return view;
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        requestComment();
+    }
 
     View.OnClickListener listener = new View.OnClickListener() {
         @Override
@@ -256,7 +267,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
                     new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
             recyclerViewComment.setLayoutManager(linearLayoutManager);
             recyclerViewComment.setHasFixedSize(true);
-            adapter = new Comment_message_adapter(R.layout.item_comment_preview, data.getList(), getActivity(), new Comment_message_adapter.CommentOnItemClick() {
+            adapter = new Comment_message_adapter(R.layout.item_comment_preview, messageEnityList, getActivity(), new Comment_message_adapter.CommentOnItemClick() {
                 @Override
                 public void clickPosition(int position, String id) {
                     hideShowKeyboard(true);
@@ -269,16 +280,17 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
                 }
             });
 
-            adapter.setOnItemLongClickListener((adapter1, view, position) -> {
-                Intent MessageLongClickActivity = new Intent(getActivity(), MessageLongClickActivity.class);
-                startActivity(MessageLongClickActivity);
-                return false;
-            });
 
-            adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            adapter.setOnItemChildLongClickListener(new BaseQuickAdapter.OnItemChildLongClickListener() {
                 @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-
+                public boolean onItemChildLongClick(BaseQuickAdapter adapter, View view, int position) {
+                    Intent intent = new Intent(getActivity(), MessageLongClickActivity.class);
+                    intent.putExtra("user_id", data.getList().get(position).getUser_id());
+                    intent.putExtra("message_id", data.getList().get(position).getId());
+                    intent.putExtra("templateId", data.getList().get(position).getTemplate_id());
+                    intent.putExtra("position", position);
+                    startActivity(intent);
+                    return false;
                 }
             });
 
@@ -407,9 +419,26 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     }
 
 
-    public void hideEmoJiBoard(){
+    public void hideEmoJiBoard() {
         emojiBoard.setVisibility(View.GONE);
     }
 
 
+    @Subscribe
+    public void onEventMainThread(DeleteMessage event) {
+        LogUtil.d("OOM","删除私信");
+        int deletePosition = event.getPosition();
+        if(messageEnityList!=null&&messageEnityList.size()>=deletePosition){
+            messageEnityList.remove(deletePosition);
+            adapter.notifyDataSetChanged();
+        }
+
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 }

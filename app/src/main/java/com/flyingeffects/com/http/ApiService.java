@@ -204,10 +204,19 @@ public interface ApiService {
     Observable<HttpResult<List<MineCommentEnity>>> commentList(@FieldMap Map<String, String> params);
 
 
+
+    //删除我的评论列表
+    @FormUrlEncoded
+    @POST("/api/message/delComment")
+    Observable<HttpResult<Object>> delComment(@FieldMap Map<String, String> params);
+
     //我的赞列表
     @FormUrlEncoded
     @POST("/api/message/praiseList")
     Observable<HttpResult<List<MineZanEnity>>> praiseList(@FieldMap Map<String, String> params);
+
+
+
 
 
 

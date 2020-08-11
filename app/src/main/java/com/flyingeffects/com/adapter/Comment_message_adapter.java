@@ -51,6 +51,7 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(iv_comment_head);
         helper.addOnClickListener(R.id.ll_parent);
+        helper.addOnLongClickListener(R.id.ll_parent);
         helper.addOnClickListener(R.id.iv_comment_head);
         helper.setText(R.id.tv_user_id, item.getUser_id());
         helper.setText(R.id.tv_content, item.getContent());
