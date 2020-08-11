@@ -6,20 +6,7 @@ public class fansEnity implements Serializable {
 
 
 
-//[
-//    {
-//        "id":159,
-//            "user_id":17205,
-//            "create_time":1596453979,
-//            "status":"1",
-//            "update_time":0,
-//            "is_read":"1",
-//            "to_user_id":13061,
-//            "nickname":"范先森",
-//            "photourl":"http://cdn.flying.flyingeffect.com/media/iOS/20200706/png/15940015733055AzJmm51.png",
-//            "is_has_follow":0
-//    }
-//]
+
 
 
 

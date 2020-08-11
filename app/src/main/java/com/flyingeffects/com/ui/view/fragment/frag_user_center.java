@@ -25,7 +25,9 @@ import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.activity.AboutActivity;
+import com.flyingeffects.com.ui.view.activity.FansActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
+import com.flyingeffects.com.ui.view.activity.MineFocusActivity;
 import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
@@ -169,7 +171,7 @@ public class frag_user_center extends BaseFragment {
     }
 
 
-    @OnClick({R.id.iv_head})
+    @OnClick({R.id.iv_head,R.id.fans,R.id.fans_count,R.id.attention,R.id.attention_count})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_head:
@@ -179,6 +181,28 @@ public class frag_user_center extends BaseFragment {
                     startActivity(intent);
                 }
                 break;
+
+
+            case R.id.fans:
+            case R.id.fans_count:
+
+                Intent intentFan=new Intent(getActivity(), FansActivity.class);
+                intentFan.putExtra("to_user_id",BaseConstans.GetUserId());
+                startActivity(intentFan);
+
+
+
+                break;
+
+
+            case R.id.attention:
+            case R.id.attention_count:
+                Intent intentFoucs=new Intent(getActivity(), MineFocusActivity.class);
+                intentFoucs.putExtra("to_user_id",BaseConstans.GetUserId());
+                startActivity(intentFoucs);
+                break;
+
+
         }
     }
 

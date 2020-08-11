@@ -172,9 +172,9 @@ public class frag_message extends BaseFragment {
         switch (view.getId()) {
 
             case R.id.iv_icon_fans:
-                LogUtil.d("OOM","tv_follow");
 
-                Intent intentFan=new Intent(getActivity(),FansActivity.class);
+                Intent intentFan=new Intent(getActivity(), FansActivity.class);
+                intentFan.putExtra("to_user_id",BaseConstans.GetUserId());
                 startActivity(intentFan);
 
                 break;

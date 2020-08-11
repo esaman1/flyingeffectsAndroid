@@ -149,6 +149,10 @@ public interface ApiService {
     Observable<HttpResult<List<fansEnity>>> getFollowList(@FieldMap Map<String, String> params);
 
 
+    @FormUrlEncoded
+    @POST("/api/message/followerList")
+    Observable<HttpResult<List<fansEnity>>> followerList(@FieldMap Map<String, String> params);
+
 
     //上传素材
     @FormUrlEncoded
@@ -184,11 +188,11 @@ public interface ApiService {
     Observable<HttpResult<List<new_fag_template_item>>> getTemplate(@FieldMap Map<String, String> params);
 
 
-
-    //用戶的关注数或者粉丝数
-    @FormUrlEncoded
-    @POST("/api/message/followerList")
-    Observable<HttpResult<List<MyProduction>>> followerList(@FieldMap Map<String, String> params);
+//
+//    //用戶的关注数或者粉丝数
+//    @FormUrlEncoded
+//    @POST("/api/message/followerList")
+//    Observable<HttpResult<List<MyProduction>>> followerList(@FieldMap Map<String, String> params);
 
 
     //我发布的作品和我喜欢的作品

@@ -228,6 +228,13 @@
             android:theme="@style/TransparentTheme" />
 
         <activity
+            android:name=".ui.view.activity.MineFocusActivity"
+            android:exported="false"
+            android:theme="@style/TransparentTheme" />
+
+
+
+        <activity
             android:name=".ui.view.activity.LikeActivity"
             android:exported="false"
             android:theme="@style/TransparentTheme" />

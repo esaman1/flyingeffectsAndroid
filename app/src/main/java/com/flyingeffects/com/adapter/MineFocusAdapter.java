@@ -21,12 +21,12 @@ import java.util.List;
  * time：2020/7/29
  * describe:消息页面
  **/
-public class Fans_adapter extends BaseQuickAdapter<fansEnity, BaseViewHolder> {
+public class MineFocusAdapter extends BaseQuickAdapter<fansEnity, BaseViewHolder> {
 
     private Context context;
     public final static String TAG = "main_recycler_adapter";
 
-    public Fans_adapter(int layoutResId, @Nullable List<fansEnity> allData, Context context) {
+    public MineFocusAdapter(int layoutResId, @Nullable List<fansEnity> allData, Context context) {
         super(layoutResId, allData);
         this.context = context;
     }
@@ -36,17 +36,10 @@ public class Fans_adapter extends BaseQuickAdapter<fansEnity, BaseViewHolder> {
     protected void convert(final BaseViewHolder helper, final fansEnity item) {
         helper.setText(R.id.nickname,item.getNickname());
         ImageView iv_icon=helper.getView(R.id.iv_icon);
-
         Glide.with(context)
                 .load(item.getPhotourl())
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(iv_icon);
-
-        if(item.getIs_has_follow()==0){
-            helper.setText(R.id.tv_follow,"关注");
-        }else{
-            helper.setText(R.id.tv_follow,"取关");
-        }
     }
 
 
