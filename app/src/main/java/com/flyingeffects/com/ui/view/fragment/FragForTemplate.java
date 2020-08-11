@@ -1,7 +1,8 @@
 package com.flyingeffects.com.ui.view.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
+import android.view.View;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -15,12 +16,13 @@ import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.home_fagMvpView;
 import com.flyingeffects.com.ui.presenter.home_fagMvpPresenter;
-import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.ui.view.activity.BackgroundSearchActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 
 /**
@@ -72,7 +74,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
             Presenter.getFragmentList();
         } else {
             setFragmentList(data);
-            if(viewpager!=null&&tabLayout!=null){
+            if (viewpager != null && tabLayout != null) {
                 viewpager.setCurrentItem(nowChooseIndex);
                 tabLayout.setCurrentTab(nowChooseIndex);
             }
@@ -110,7 +112,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
                     @Override
                     public void onPageSelected(int i) {
-                        nowChooseIndex=i;
+                        nowChooseIndex = i;
                         if (i <= data.size() - 1) {
                             statisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
                         }
@@ -127,6 +129,18 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
     }
 
+
+    @OnClick({R.id.relative_top})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.relative_top:
+                //搜索栏目
+                Intent intent = new Intent(getActivity(), BackgroundSearchActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                break;
+        }
+    }
 }
 
 
