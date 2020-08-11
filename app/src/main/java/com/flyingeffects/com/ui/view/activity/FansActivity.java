@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -12,6 +13,7 @@ import com.flyingeffects.com.adapter.Fans_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.HomeMessageCountUpdate;
 import com.flyingeffects.com.enity.fansEnity;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -23,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 /**
@@ -39,6 +42,8 @@ public class FansActivity extends BaseActivity {
     private Fans_adapter adapter;
     private String to_user_id;
     private List<fansEnity> fansList = new ArrayList<>();
+    //0 表示我的页面 1 表示消息
+    private int from;
 
     @Override
     protected int getLayoutId() {
@@ -50,6 +55,7 @@ public class FansActivity extends BaseActivity {
         ((TextView) findViewById(R.id.tv_top_title)).setText("粉丝");
         findViewById(R.id.iv_top_back).setOnClickListener(this);
         to_user_id = getIntent().getStringExtra("to_user_id");
+        from=getIntent().getIntExtra("from",0);
     }
 
 
@@ -70,7 +76,12 @@ public class FansActivity extends BaseActivity {
         HashMap<String, String> params = new HashMap<>();
         params.put("to_user_id", to_user_id);
         params.put("type", "1");
-        Observable ob = Api.getDefault().followerList(BaseConstans.getRequestHead(params));
+        Observable ob ;
+        if(from==0){
+            ob = Api.getDefault().followerList(BaseConstans.getRequestHead(params));
+        }else{
+            ob = Api.getDefault().getFollowList(BaseConstans.getRequestHead(params));
+        }
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<fansEnity>>(FansActivity.this) {
             @Override
             protected void _onError(String message) {
@@ -109,6 +120,15 @@ public class FansActivity extends BaseActivity {
                     default:
                         break;
                 }
+            }
+        });
+
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Intent intent = new Intent(FansActivity.this, UserHomepageActivity.class);
+                intent.putExtra("toUserId", fansList.get(position).getId());
+                startActivity(intent);
             }
         });
         recyclerView.setAdapter(adapter);

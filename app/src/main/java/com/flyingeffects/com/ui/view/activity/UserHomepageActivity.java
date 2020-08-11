@@ -69,8 +69,8 @@ public class UserHomepageActivity extends BaseActivity {
     @BindView(R.id.viewpager)
     ViewPager viewpager;
 
-    @BindView(R.id.tv_create_count)
-    TextView tv_create_count;
+//    @BindView(R.id.tv_create_count)
+//    TextView tv_create_count;
 
     @BindView(R.id.tv_like_count)
     TextView tv_like_count;
@@ -212,8 +212,8 @@ public class UserHomepageActivity extends BaseActivity {
                 fans_count.setText(data.getUser_follower());
                 attention_count.setText(data.getUser_watch());
                 tv_video_count.setText(data.getUser_video());
-                tv_create_count.setText(data.getUser_video());
-                tv_like_count.setText(data.getUser_praise());
+//                tv_create_count.setText(data.getUser_video());
+//                tv_like_count.setText(data.getUser_praise());
                 String is_has_follow=data.getIs_has_follow();
                 if(!TextUtils.isEmpty(is_has_follow)&&is_has_follow.equals("0")){
                     tv_focus.setText("关注");
@@ -240,8 +240,8 @@ public class UserHomepageActivity extends BaseActivity {
         bundle.putSerializable("isFrom", 2);
         fag_0.setArguments(bundle);
         fag_1.setArguments(bundle1);
-        list.add(fag_0);
         list.add(fag_1);
+        list.add(fag_0);
         home_vp_frg_adapter2 adapter = new home_vp_frg_adapter2(manager, list);
         viewpager.setAdapter(adapter);
         viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

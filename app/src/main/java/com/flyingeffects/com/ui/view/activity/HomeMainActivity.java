@@ -10,12 +10,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.util.TimeUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +32,7 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
+import com.flyingeffects.com.enity.HomeMessageCountUpdate;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.checkVersion;
 import com.flyingeffects.com.enity.messageCount;
@@ -49,16 +48,13 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
 import com.flyingeffects.com.ui.view.fragment.frag_Bj;
 import com.flyingeffects.com.ui.view.fragment.frag_message;
-import com.flyingeffects.com.ui.view.fragment.frag_search;
 import com.flyingeffects.com.ui.view.fragment.frag_user_center;
 import com.flyingeffects.com.utils.AssetsUtils;
-import com.flyingeffects.com.utils.DateUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NoDoubleClickListener;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
-import com.flyingeffects.com.utils.timeUtils;
 import com.githang.statusbar.StatusBarCompat;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.videoeditor.LanSongFileUtil;
@@ -74,6 +70,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
@@ -138,6 +135,8 @@ public class HomeMainActivity extends FragmentActivity {
 
         SegJni.nativeCreateSegHandler(HomeMainActivity.this, ConUtil.getFileContent(HomeMainActivity.this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
     }
+
+
 
 
     private void requestUserInfo() {
@@ -343,7 +342,6 @@ public class HomeMainActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
     }
 
 
@@ -439,6 +437,9 @@ public class HomeMainActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
+        if(BaseConstans.hasLogin()){
+            requestMessageCount();
+        }
     }
 
     @Override
@@ -625,16 +626,21 @@ public class HomeMainActivity extends FragmentActivity {
 
             @Override
             protected void _onNext(messageCount data) {
-                String allCount=data.getAll_num();
-                int intAllCount = Integer.parseInt(allCount);
-                if (intAllCount == 0) {
-                    message_count.setVisibility(View.GONE);
-                } else {
-                    message_count.setVisibility(View.VISIBLE);
-                    message_count.setText(intAllCount);
+                if(message_count!=null){
+                    String allCount=data.getAll_num();
+                    int intAllCount = Integer.parseInt(allCount);
+                    if (intAllCount == 0) {
+                        message_count.setVisibility(View.GONE);
+                    } else {
+                        message_count.setVisibility(View.VISIBLE);
+                        message_count.setText(intAllCount+"");
+                    }
                 }
+
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
+
+
 
 }

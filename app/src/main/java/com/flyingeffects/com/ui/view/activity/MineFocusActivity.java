@@ -110,7 +110,7 @@ public class MineFocusActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent(MineFocusActivity.this, UserHomepageActivity.class);
-                intent.putExtra("toUserId", fansList.get(position).getUser_id());
+                intent.putExtra("toUserId", fansList.get(position).getId());
                 startActivity(intent);
             }
         });

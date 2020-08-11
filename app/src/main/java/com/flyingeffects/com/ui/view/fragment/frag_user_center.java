@@ -188,6 +188,7 @@ public class frag_user_center extends BaseFragment {
 
                 Intent intentFan=new Intent(getActivity(), FansActivity.class);
                 intentFan.putExtra("to_user_id",BaseConstans.GetUserId());
+                intentFan.putExtra("from",0);
                 startActivity(intentFan);
 
 

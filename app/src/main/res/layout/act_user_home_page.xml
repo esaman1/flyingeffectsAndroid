@@ -173,7 +173,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:text="555"
                 android:textColor="#919191"
                 android:textSize="14sp" />
 
@@ -220,7 +219,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:text="555"
                 android:textColor="#919191"
                 android:textSize="14sp" />
 

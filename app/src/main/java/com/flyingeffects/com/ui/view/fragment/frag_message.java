@@ -138,7 +138,7 @@ public class frag_message extends BaseFragment {
 
         } else {
             tv_follow.setVisibility(View.VISIBLE);
-            tv_follow.setText(followNum);
+            tv_follow.setText(followNum+"");
         }
         String praise_num = data.getPraise_num();
         int praiseNum = Integer.parseInt(praise_num);
@@ -146,7 +146,7 @@ public class frag_message extends BaseFragment {
             tv_zan.setVisibility(View.GONE);
         } else {
             tv_zan.setVisibility(View.VISIBLE);
-            tv_zan.setText(praiseNum);
+            tv_zan.setText(praiseNum+"");
         }
         String comment_num = data.getComment_num();
         int commentNum = Integer.parseInt(comment_num);
@@ -154,7 +154,7 @@ public class frag_message extends BaseFragment {
             tv_comment_count.setVisibility(View.GONE);
         } else {
             tv_comment_count.setVisibility(View.VISIBLE);
-            tv_comment_count.setText(commentNum);
+            tv_comment_count.setText(commentNum+"");
         }
     }
 
@@ -172,9 +172,9 @@ public class frag_message extends BaseFragment {
         switch (view.getId()) {
 
             case R.id.iv_icon_fans:
-
                 Intent intentFan=new Intent(getActivity(), FansActivity.class);
                 intentFan.putExtra("to_user_id",BaseConstans.GetUserId());
+                intentFan.putExtra("from",1);
                 startActivity(intentFan);
 
                 break;
