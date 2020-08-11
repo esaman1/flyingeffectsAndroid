@@ -124,14 +124,14 @@ public class UserHomepageActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.view_line_head_1, R.id.view_line_head,R.id.tv_focus})
+    @OnClick({R.id.ll_0, R.id.ll_1,R.id.tv_focus})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.view_line_head_1:
+            case R.id.ll_1:
                 viewpager.setCurrentItem(1);
                 break;
 
-            case R.id.view_line_head:
+            case R.id.ll_0:
                 viewpager.setCurrentItem(0);
                 break;
 

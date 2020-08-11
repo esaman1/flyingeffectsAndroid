@@ -206,7 +206,7 @@ public interface ApiService {
     //用戶的关注数或者粉丝数
     @FormUrlEncoded
     @POST("/api/message/getMyProduction")
-    Observable<HttpResult<List<MyProduction>>> getMyProduction(@FieldMap Map<String, String> params);
+    Observable<HttpResult<List<new_fag_template_item>>> getMyProduction(@FieldMap Map<String, String> params);
 
 
     //请求我的评论列表

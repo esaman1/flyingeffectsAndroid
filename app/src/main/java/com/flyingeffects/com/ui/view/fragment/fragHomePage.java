@@ -1,6 +1,8 @@
 package com.flyingeffects.com.ui.view.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -12,10 +14,14 @@ import com.flyingeffects.com.adapter.frag_home_page_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.MyProduction;
+import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.ui.model.FromToTemplate;
+import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -40,7 +46,7 @@ public class fragHomePage extends BaseFragment {
     @BindView(R.id.RecyclerView)
     RecyclerView recyclerView;
     private frag_home_page_adapter adapter;
-    private List<MyProduction> allData = new ArrayList<>();
+    private List<new_fag_template_item> allData = new ArrayList<>();
     private String toUserId = "";
     //0 shi 1 是喜欢
     private int isFrom;
@@ -49,9 +55,8 @@ public class fragHomePage extends BaseFragment {
     @BindView(R.id.lin_show_nodata_bj)
     LinearLayout lin_show_nodata;
     private boolean isRefresh = true;
-    private ArrayList<MyProduction> listData = new ArrayList<>();
+    private ArrayList<new_fag_template_item> listData = new ArrayList<>();
     private int selectPage = 1;
-
 
 
     @Override
@@ -64,7 +69,7 @@ public class fragHomePage extends BaseFragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             toUserId = bundle.getString("toUserId");
-            isFrom=bundle.getInt("isFrom");
+            isFrom = bundle.getInt("isFrom");
         }
         initRecycler();
         initSmartRefreshLayout();
@@ -89,7 +94,20 @@ public class fragHomePage extends BaseFragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-
+            String type = allData.get(position).getTemplate_type();
+            Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
+            ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
+            intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
+            intent.putExtra("position", position);
+            intent.putExtra("fromToMineCollect", false);
+            intent.putExtra("nowSelectPage", selectPage);
+            intent.putExtra("templateId", allData.get(position).getTemplate_id());
+            if (!TextUtils.isEmpty(type) && type.equals("2")) {
+                intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+            } else {
+                intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
+            }
+            startActivity(intent);
         });
     }
 
@@ -113,7 +131,7 @@ public class fragHomePage extends BaseFragment {
 
     //得到banner缓存数据
     public void requestData() {
-            requestFagData(false, false); //首页杂数据
+        requestFagData(false, false); //首页杂数据
     }
 
     /**
@@ -125,11 +143,11 @@ public class fragHomePage extends BaseFragment {
     private void requestFagData(boolean isCanRefresh, boolean isSave) {
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
-        params.put("to_user_id",toUserId);
-        params.put("type",isFrom+"");
+        params.put("to_user_id", toUserId);
+        params.put("type", isFrom + "");
         params.put("pageSize", perPageCount + "");
         Observable ob = Api.getDefault().getMyProduction(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<MyProduction>>(getActivity()) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override
             protected void _onError(String message) {
                 finishData();
@@ -137,7 +155,7 @@ public class fragHomePage extends BaseFragment {
             }
 
             @Override
-            protected void _onNext(List<MyProduction> data) {
+            protected void _onNext(List<new_fag_template_item> data) {
                 finishData();
                 if (isRefresh) {
                     listData.clear();
@@ -188,7 +206,7 @@ public class fragHomePage extends BaseFragment {
         }
     }
 
-    public void isShowData(ArrayList<MyProduction> listData) {
+    public void isShowData(ArrayList<new_fag_template_item> listData) {
         if (getActivity() != null) {
             allData.clear();
             allData.addAll(listData);

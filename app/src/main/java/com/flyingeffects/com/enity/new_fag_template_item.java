@@ -361,6 +361,17 @@ public class new_fag_template_item implements Serializable {
     private int is_praise;
 
 
+    public String getTemplate_type() {
+        return template_type;
+    }
+
+    public void setTemplate_type(String template_type) {
+        this.template_type = template_type;
+    }
+
+    private String template_type;
+
+
 
 
 

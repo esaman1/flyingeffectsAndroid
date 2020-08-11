@@ -132,31 +132,7 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/ll_photograph"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
 
-
-            <ImageView
-
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@mipmap/photograph" />
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="拍同款"
-                android:textColor="#A3A3A5"
-                android:textSize="12sp" />
-
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ll_report"
@@ -183,7 +159,32 @@
                 android:textSize="12sp" />
 
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_photograph"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
 
+
+            <ImageView
+
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@mipmap/photograph" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="拍同款"
+                android:textColor="#A3A3A5"
+                android:textSize="12sp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
