@@ -529,7 +529,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if (isLandscape) {
             //横屏的情况
             scrollView.post(() -> {
-                int oriWidth = scrollView.getWidth();
+                int oriWidth = ll_space.getWidth();
                 RelativeLayout.LayoutParams RelativeLayoutParams2 = (RelativeLayout.LayoutParams) scrollView.getLayoutParams();
                 RelativeLayoutParams2.width = oriWidth;
                 RelativeLayoutParams2.height = Math.round(1f * oriWidth * oriRatio);
@@ -564,7 +564,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             if (isLandscape) {
                 //横屏的情况
                 iv_green_background.post(() -> {
-                    int oriWidth =scrollView.getWidth();
+                    int oriWidth =ll_space.getWidth();
                     RelativeLayout.LayoutParams RelativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
                     RelativeLayoutParams3.width = oriWidth;
                     RelativeLayoutParams3.height = Math.round(1f * oriWidth * oriRatio);
@@ -576,7 +576,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 });
             }else{
                 iv_green_background.post(() -> {
-                    int oriHeight= scrollView.getHeight();
+                    int oriHeight= ll_space.getHeight();
                     RelativeLayout.LayoutParams RelativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
                     RelativeLayoutParams3.width = Math.round(1f * oriHeight * oriRatio);
                     RelativeLayoutParams3.height = oriHeight;

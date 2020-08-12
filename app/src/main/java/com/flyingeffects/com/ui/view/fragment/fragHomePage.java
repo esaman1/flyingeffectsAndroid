@@ -77,7 +77,7 @@ public class fragHomePage extends BaseFragment {
 
     @Override
     protected void initAction() {
-        requestFagData(true, true);
+//        requestFagData(true, true);
     }
 
     @Override
@@ -114,11 +114,18 @@ public class fragHomePage extends BaseFragment {
 
     public void initSmartRefreshLayout() {
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
-            isOnRefresh();
-            isRefresh = true;
-            refreshLayout.setEnableLoadMore(true);
-            selectPage = 1;
-            requestFagData(false, true);
+
+            if(BaseConstans.hasLogin()){
+                isOnRefresh();
+                isRefresh = true;
+                refreshLayout.setEnableLoadMore(true);
+                selectPage = 1;
+                requestFagData(false, true);
+            }else{
+                ToastUtil.showToast("请先登录");
+            }
+
+
         });
         smartRefreshLayout.setOnLoadMoreListener(refresh -> {
             isOnLoadMore();
@@ -192,7 +199,9 @@ public class fragHomePage extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        requestData();
+        if(BaseConstans.hasLogin()){
+            requestData();
+        }
     }
 
     public void isOnRefresh() {

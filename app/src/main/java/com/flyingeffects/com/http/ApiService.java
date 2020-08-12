@@ -203,7 +203,6 @@ public interface ApiService {
 
 
     //我发布的作品和我喜欢的作品
-    //用戶的关注数或者粉丝数
     @FormUrlEncoded
     @POST("/api/message/getMyProduction")
     Observable<HttpResult<List<new_fag_template_item>>> getMyProduction(@FieldMap Map<String, String> params);

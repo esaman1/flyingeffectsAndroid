@@ -123,13 +123,14 @@ public class backgroundDraw {
             duration = 10000;
         }
         LogUtil.d("OOM2", "进入到了最后渲染");
-//        waitingProgress.openProgressDialog();
         totleRenderTime = duration * 1000;
         try {
-
             if (nowUiIsLandscape) {
                 DRAWPADWIDTH = 1280;
                 DRAWPADHEIGHT = 720;
+            }else{
+                DRAWPADWIDTH = 720;
+                DRAWPADHEIGHT = 1280;
             }
             execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, (long) (duration * 1000));
             execute.setFrameRate(FRAME_RATE);
