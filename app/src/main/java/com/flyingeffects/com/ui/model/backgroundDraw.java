@@ -128,7 +128,7 @@ public class backgroundDraw {
             if (nowUiIsLandscape) {
                 DRAWPADWIDTH = 1280;
                 DRAWPADHEIGHT = 720;
-            }else{
+            } else {
                 DRAWPADWIDTH = 720;
                 DRAWPADHEIGHT = 1280;
             }
@@ -193,7 +193,7 @@ public class backgroundDraw {
         }
     }
 
-
+    Layer bgLayer = null;
     private void setMainLayer() {
         LSOVideoOption option;
         try {
@@ -202,18 +202,24 @@ public class backgroundDraw {
             if (!TextUtils.isEmpty(videoVoice)) {
                 option.setAudioMute();
             }
-            VideoFrameLayer bgLayer = execute.addVideoLayer(option);
+            bgLayer = execute.addVideoLayer(option);
             if (!nowUiIsLandscape) {
                 bgLayer.setScaledToPadSize();
                 bgLayer.setScaleType(LSOScaleType.VIDEO_SCALE_TYPE);
             } else {
                 float LayerWidth = bgLayer.getLayerWidth();
-                float scale = DRAWPADWIDTH / LayerWidth;
+                float scale = DRAWPADWIDTH / (float)LayerWidth;
                 float LayerHeight = bgLayer.getLayerHeight();
-                LogUtil.d("OOM", "整体缩放比例=" + scale);
-                bgLayer.setScaledValue(DRAWPADWIDTH, LayerHeight * scale);
-                LogUtil.d("OOM", "高度中心点百分比=" + percentageH);
-                bgLayer.setPosition(bgLayer.getPositionX(), bgLayer.getLayerHeight() * percentageH);
+                float xxx=LayerHeight * scale;
+                bgLayer.setScaledValue(DRAWPADWIDTH, xxx);
+
+
+
+                float halft = xxx / (float) 2;
+                float top = xxx * percentageH;
+                float needHeight=halft-top;
+                LogUtil.d("oom3", "halft=" + halft + "top=" + top +"needHeight="+needHeight);
+                bgLayer.setPosition(bgLayer.getPositionX(), needHeight);
             }
             LogUtil.d("OOM", "主图层添加完毕");
         } catch (Exception e) {

@@ -522,7 +522,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * user : zhangtongju
      */
     private int scrollViewHeight;
-    private float percentageH=1f;
+    private float percentageH = 0;
+
     private void setPlayerViewSize(boolean isLandscape) {
         LinearLayout.LayoutParams RelativeLayoutParams = (LinearLayout.LayoutParams) playerView.getLayoutParams();
         float oriRatio = 9f / 16f;
@@ -545,7 +546,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             //横屏模式下切换到了竖屏
             scrollView.post(() -> {
                 RelativeLayout.LayoutParams RelativeLayoutParams2 = (RelativeLayout.LayoutParams) scrollView.getLayoutParams();
-                int height=ll_space.getHeight();
+                int height = ll_space.getHeight();
                 RelativeLayoutParams2.height = height;
                 RelativeLayoutParams2.width = Math.round(1f * height * oriRatio);
                 scrollView.setLayoutParams(RelativeLayoutParams2);
@@ -559,12 +560,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
 
 
-        if(ll_green_background.getVisibility()==View.VISIBLE) {
+        if (ll_green_background.getVisibility() == View.VISIBLE) {
             //可见的时候需要修稿这里
             if (isLandscape) {
                 //横屏的情况
                 iv_green_background.post(() -> {
-                    int oriWidth =ll_space.getWidth();
+                    int oriWidth = ll_space.getWidth();
                     RelativeLayout.LayoutParams RelativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
                     RelativeLayoutParams3.width = oriWidth;
                     RelativeLayoutParams3.height = Math.round(1f * oriWidth * oriRatio);
@@ -574,39 +575,38 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     RelativeLayoutParams4.height = Math.round(1f * oriWidth * oriRatio);
                     iv_green_background.setLayoutParams(RelativeLayoutParams4);
                 });
-            }else{
+            } else {
                 iv_green_background.post(() -> {
-                    int oriHeight= ll_space.getHeight();
+                    int oriHeight = ll_space.getHeight();
                     RelativeLayout.LayoutParams RelativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
                     RelativeLayoutParams3.width = Math.round(1f * oriHeight * oriRatio);
                     RelativeLayoutParams3.height = oriHeight;
                     ll_green_background.setLayoutParams(RelativeLayoutParams3);
                     RelativeLayout.LayoutParams RelativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
-                    RelativeLayoutParams4.width =  Math.round(1f * oriHeight * oriRatio);;
-                    RelativeLayoutParams4.height =oriHeight;
+                    RelativeLayoutParams4.width = Math.round(1f * oriHeight * oriRatio);
+                    ;
+                    RelativeLayoutParams4.height = oriHeight;
                     iv_green_background.setLayoutParams(RelativeLayoutParams4);
                 });
             }
         }
 
 
-        int totalHeight = scrollView.getChildAt(0).getHeight();
         scrollView.setOnScrollListener(new MyScrollView.OnScrollListener() {
             @Override
             public void onScroll(int scrollY) {
-                float percentage = scrollY / (float) totalHeight;
-                float percentageForHeight = scrollViewHeight / (float) totalHeight;
-                LogUtil.d("OOM2", "scrollY=" + scrollY + "totalHeight=" + totalHeight);
-                LogUtil.d("OOM2", "percentageForHeight=" + percentageForHeight);
-                LogUtil.d("OOM2", "precent" + scrollY / (float) totalHeight);
-                float xx = percentageForHeight / (float) 2;
-                float yy = scrollY / (float) totalHeight;
-                percentageH =1-yy;
-                LogUtil.d("OOM2", "percentage" + percentageH);
+//                float xx = scrollViewHeight / (float) 2;
+//                int totalHeight = scrollView.getChildAt(0).getHeight();
+//                percentageH = (xx + scrollY) / (float) totalHeight;
+                int totalHeight = scrollView.getChildAt(0).getHeight();
+                percentageH=scrollY/(float) totalHeight;
 
+
+
+//                percentageH= (float) (0.5-percentageH);
+                LogUtil.d("OOM3", "percentageH" + percentageH);
             }
         });
-
 
 
         new Handler().postDelayed(() -> presenter.setAllStickerCenter(), 500);
