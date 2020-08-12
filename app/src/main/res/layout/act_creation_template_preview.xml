@@ -21,11 +21,8 @@
         android:id="@+id/rela_parent_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="23dp"
-        android:layout_marginStart="50dp"
         android:layout_above="@+id/ll_bottom"
         android:layout_centerInParent="true"
-        android:layout_marginEnd="50dp"
         android:layout_below="@+id/tv_title">
 
 

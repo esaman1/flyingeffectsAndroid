@@ -592,20 +592,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
 
 
-        scrollView.setOnScrollListener(new MyScrollView.OnScrollListener() {
-            @Override
-            public void onScroll(int scrollY) {
-//                float xx = scrollViewHeight / (float) 2;
-//                int totalHeight = scrollView.getChildAt(0).getHeight();
-//                percentageH = (xx + scrollY) / (float) totalHeight;
-                int totalHeight = scrollView.getChildAt(0).getHeight();
-                percentageH=scrollY/(float) totalHeight;
-
-
-
-//                percentageH= (float) (0.5-percentageH);
-                LogUtil.d("OOM3", "percentageH" + percentageH);
-            }
+        scrollView.setOnScrollListener(scrollY -> {
+            int totalHeight = scrollView.getChildAt(0).getHeight();
+            percentageH=scrollY/(float) totalHeight;
+            LogUtil.d("OOM3", "percentageH" + percentageH);
         });
 
 

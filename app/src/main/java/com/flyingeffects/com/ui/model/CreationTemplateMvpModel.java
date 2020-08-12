@@ -867,6 +867,7 @@ public class CreationTemplateMvpModel {
             //来做复制或者来自联系点击下面的item
             StickerView.isFromCopy fromCopy = new StickerView.isFromCopy();
             fromCopy.setScale(copyStickerView.getScale());
+            LogUtil.d("OOM","isCopy=Scale"+copyStickerView.getScale());
             fromCopy.setDegree(copyStickerView.getRotateAngle());
             fromCopy.setRightOffsetPercent(copyStickerView.getRightOffsetPercent());
             if (isFromShowAnim) {
@@ -1630,6 +1631,13 @@ public class CreationTemplateMvpModel {
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             stickerView.setIntoCenter();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    stickerView.changeImage(stickerView.getResPath(),false);
+                }
+            },500);
+
         }
     }
 

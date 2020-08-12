@@ -193,7 +193,6 @@ public class backgroundDraw {
         }
     }
 
-    Layer bgLayer = null;
     private void setMainLayer() {
         LSOVideoOption option;
         try {
@@ -202,23 +201,19 @@ public class backgroundDraw {
             if (!TextUtils.isEmpty(videoVoice)) {
                 option.setAudioMute();
             }
-            bgLayer = execute.addVideoLayer(option);
+            Layer bgLayer = execute.addVideoLayer(option);
             if (!nowUiIsLandscape) {
                 bgLayer.setScaledToPadSize();
                 bgLayer.setScaleType(LSOScaleType.VIDEO_SCALE_TYPE);
             } else {
                 float LayerWidth = bgLayer.getLayerWidth();
-                float scale = DRAWPADWIDTH / (float)LayerWidth;
+                float scale = DRAWPADWIDTH / (float) LayerWidth;
                 float LayerHeight = bgLayer.getLayerHeight();
-                float xxx=LayerHeight * scale;
-                bgLayer.setScaledValue(DRAWPADWIDTH, xxx);
-
-
-
-                float halft = xxx / (float) 2;
-                float top = xxx * percentageH;
-                float needHeight=halft-top;
-                LogUtil.d("oom3", "halft=" + halft + "top=" + top +"needHeight="+needHeight);
+                float needDrawHeight = LayerHeight * scale;
+                bgLayer.setScaledValue(DRAWPADWIDTH, needDrawHeight);
+                float halft = needDrawHeight / (float) 2;
+                float top = needDrawHeight * percentageH;
+                float needHeight = halft - top;
                 bgLayer.setPosition(bgLayer.getPositionX(), needHeight);
             }
             LogUtil.d("OOM", "主图层添加完毕");

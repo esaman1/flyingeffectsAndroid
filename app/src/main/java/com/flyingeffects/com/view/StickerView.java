@@ -1389,7 +1389,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
 
     public void setIntoCenter(){
+
         setCenter(getWidth() / 2f, getHeight() / 2f);
+
+
     }
 
     public PointF getCenter() {
