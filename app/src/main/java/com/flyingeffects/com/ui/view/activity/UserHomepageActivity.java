@@ -2,10 +2,8 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -24,10 +22,7 @@ import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.fragment.fragHomePage;
-import com.flyingeffects.com.ui.view.fragment.frag_user_collect;
-import com.flyingeffects.com.ui.view.fragment.frag_user_upload_bj;
 import com.flyingeffects.com.utils.ToastUtil;
 
 import java.util.ArrayList;
@@ -92,9 +87,7 @@ public class UserHomepageActivity extends BaseActivity {
     @BindView(R.id.tv_like)
     TextView tv_like;
 
-    private ArrayList<View> listView = new ArrayList<>();
 
-    private String[] str = {"我的作品", "喜欢"};
 
 
     //是否已经关注
@@ -108,19 +101,22 @@ public class UserHomepageActivity extends BaseActivity {
     @Override
     protected void initView() {
         toUserId = getIntent().getStringExtra("toUserId");
+        if(toUserId.equals(BaseConstans.GetUserId())){
+            tv_focus.setVisibility(View.GONE);
+        }
     }
 
     @Override
     protected void initAction() {
-
+        requestUserInfo();
+        addViewPager();
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        requestUserInfo();
-        addViewPager();
+
     }
 
 
@@ -156,6 +152,8 @@ public class UserHomepageActivity extends BaseActivity {
     private void requestFocus() {
         HashMap<String, String> params = new HashMap<>();
         params.put("to_user_id", toUserId);
+
+
 
         // 启动时间
         Observable ob = Api.getDefault().followUser(BaseConstans.getRequestHead(params));
@@ -212,15 +210,13 @@ public class UserHomepageActivity extends BaseActivity {
                 fans_count.setText(data.getUser_follower());
                 attention_count.setText(data.getUser_watch());
                 tv_video_count.setText(data.getUser_video());
-//                tv_create_count.setText(data.getUser_video());
-//                tv_like_count.setText(data.getUser_praise());
                 String is_has_follow=data.getIs_has_follow();
                 if(!TextUtils.isEmpty(is_has_follow)&&is_has_follow.equals("0")){
                     tv_focus.setText("关注");
-                    isFocus=true;
+                    isFocus=false;
                 }else{
                     tv_focus.setText("取消关注");
-                    isFocus=false;
+                    isFocus=true;
                 }
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);

@@ -13,35 +13,24 @@ import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.adapter.Comment_message_adapter;
-import com.flyingeffects.com.adapter.System_message_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.MessageData;
-import com.flyingeffects.com.enity.MessageEnity;
-import com.flyingeffects.com.enity.SendSearchText;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.enity.new_fag_template_item;
-import com.flyingeffects.com.enity.systemessagelist;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -56,8 +45,6 @@ import com.flyingeffects.com.manager.ZipFileHelperManager;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
-import com.flyingeffects.com.ui.view.activity.BaseFullBottomSheetFragment;
-import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.ui.view.activity.ReportActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -65,7 +52,6 @@ import com.flyingeffects.com.utils.NetworkUtils;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
-import com.flyingeffects.com.view.MyBottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -83,7 +69,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -106,7 +91,6 @@ public class PreviewUpAndDownMvpModel {
     private boolean fromToMineCollect;
     private TTAdNative mTTAdNative;
     private String soundFolder;
-    private String nowTemplateId;
 
     public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage, String fromTo, String templateId, boolean fromToMineCollect) {
         this.context = context;
@@ -116,7 +100,6 @@ public class PreviewUpAndDownMvpModel {
         mVideoFolder = fileManager.getFileCachePath(context, "downVideo");
         this.allData = allData;
         this.fromTo = fromTo;
-        nowTemplateId = templateId;
         this.templateId = templateId;
         this.fromToMineCollect = fromToMineCollect;
         mTTAdNative = TTAdManagerHolder.get().createAdNative(context);
@@ -133,7 +116,6 @@ public class PreviewUpAndDownMvpModel {
             isRefresh = true;
             refreshLayout.setEnableLoadMore(true);
             selectPage = 1;
-//            requestFagData(false, true);
             requestFagData();
         });
         smartRefreshLayout.setOnLoadMoreListener(refresh -> {
@@ -173,7 +155,6 @@ public class PreviewUpAndDownMvpModel {
 
     public void requestTemplateDetail(String templateId) {
         if (!TextUtils.isEmpty(templateId)) {
-            nowTemplateId = templateId;
             HashMap<String, String> params = new HashMap<>();
             params.put("template_id", templateId);
             // 启动时间

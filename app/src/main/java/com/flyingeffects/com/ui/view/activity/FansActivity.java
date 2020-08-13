@@ -105,7 +105,7 @@ public class FansActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
-        if(from==1){
+        if(from==1&&!BaseConstans.hasLogin()){
             goActivity(LoginActivity.class);
         }
     }
@@ -138,7 +138,7 @@ public class FansActivity extends BaseActivity {
                 if(from==0){
                     intent.putExtra("toUserId", fansList.get(position).getId());
                 }else{
-                    intent.putExtra("toUserId", fansList.get(position).getTo_user_id());
+                    intent.putExtra("toUserId", fansList.get(position).getUser_id());
                 }
                 startActivity(intent);
             }

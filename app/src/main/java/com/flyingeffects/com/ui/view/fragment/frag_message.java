@@ -19,7 +19,6 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.ui.view.activity.FansActivity;
 import com.flyingeffects.com.ui.view.activity.LikeActivity;
 import com.flyingeffects.com.ui.view.activity.ZanActivity;
-import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 
 import java.util.HashMap;

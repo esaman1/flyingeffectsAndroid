@@ -146,7 +146,6 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     @Override
     public void onResume() {
         super.onResume();
-//        requestComment();
     }
 
     View.OnClickListener listener = new View.OnClickListener() {
@@ -347,6 +346,8 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
             });
             recyclerViewComment.setAdapter(adapter);
         }
+
+
     }
 
 

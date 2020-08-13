@@ -124,7 +124,7 @@ public class LikeActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
-        if(from==1){
+        if(from==1&&!BaseConstans.hasLogin()){
             goActivity(LoginActivity.class);
         }
     }

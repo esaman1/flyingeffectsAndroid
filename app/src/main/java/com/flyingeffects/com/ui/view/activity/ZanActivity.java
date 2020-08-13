@@ -125,7 +125,7 @@ public class ZanActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
-        if(from==1){
+        if(from==1&&!BaseConstans.hasLogin()){
             goActivity(LoginActivity.class);
         }
     }
@@ -137,7 +137,6 @@ public class ZanActivity extends BaseActivity {
         if(BaseConstans.hasLogin()){
             requestPraiseList(true);
         }else{
-
             ToastUtil.showToast(getResources().getString(R.string.need_login));
         }
 
