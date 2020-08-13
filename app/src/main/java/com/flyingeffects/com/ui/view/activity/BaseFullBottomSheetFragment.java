@@ -85,6 +85,8 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
 
     private TextView tv_sent;
 
+    private TextView tv_comment_count;
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -102,6 +104,8 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         View view = inflater.inflate(R.layout.bottom_sheet_fragment, container, false);
         recyclerViewComment = view.findViewById(R.id.recyclerView);
         ed_search = view.findViewById(R.id.emojicon_edit_text);
+        tv_comment_count=view.findViewById(R.id.tv_comment_count);
+
         EventBus.getDefault().register(this);
         ed_search.setOnTouchListener((v, event) -> {
             KeyboardUtil.showInputKeyboard(getActivity(), ed_search);
