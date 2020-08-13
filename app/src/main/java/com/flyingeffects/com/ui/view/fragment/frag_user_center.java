@@ -116,6 +116,10 @@ public class frag_user_center extends BaseFragment {
                         .load(R.mipmap.head)
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                         .into(iv_head);
+
+                fans_count.setText("");
+                attention_count.setText("");
+                tv_video_count.setText("");
                 tv_id.setText("未登录");
                 tv_name.setVisibility(View.GONE);
             }

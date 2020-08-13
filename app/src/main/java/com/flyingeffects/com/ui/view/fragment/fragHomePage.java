@@ -21,6 +21,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.ui.model.FromToTemplate;
+import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -123,6 +124,7 @@ public class fragHomePage extends BaseFragment {
                 requestFagData(false, true);
             }else{
                 ToastUtil.showToast("请先登录");
+                finishData();
             }
 
 
@@ -201,6 +203,8 @@ public class fragHomePage extends BaseFragment {
         super.onResume();
         if(BaseConstans.hasLogin()){
             requestData();
+        }else{
+            ToastUtil.showToast(getResources().getString(R.string.need_login));
         }
     }
 

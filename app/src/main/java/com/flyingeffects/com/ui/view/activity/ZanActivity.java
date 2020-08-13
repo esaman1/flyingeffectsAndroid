@@ -1,5 +1,7 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.content.Intent;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -13,10 +15,13 @@ import com.flyingeffects.com.adapter.Mine_zan_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.MineZanEnity;
+import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
@@ -53,6 +58,10 @@ public class ZanActivity extends BaseActivity {
     SmartRefreshLayout smartRefreshLayout;
 
 
+    int from ;
+    private List<new_fag_template_item> allData = new ArrayList<>();
+
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_like;
@@ -63,13 +72,12 @@ public class ZanActivity extends BaseActivity {
         ((TextView) findViewById(R.id.tv_top_title)).setText("赞");
         findViewById(R.id.iv_top_back).setOnClickListener(this);
         initSmartRefreshLayout();
+        from=getIntent().getIntExtra("from",0);
         adapter = new Mine_zan_adapter(R.layout.list_like_item, listData, this);
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-
-
-
+                requestTemplateDetail(listData.get(position).getTemplate_id());
             }
         });
         LinearLayoutManager layoutManager =
@@ -79,16 +87,60 @@ public class ZanActivity extends BaseActivity {
         recyclerView.setAdapter(adapter);
     }
 
+
+    public void requestTemplateDetail(String templateId) {
+        if (!TextUtils.isEmpty(templateId)) {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("template_id", templateId);
+            // 启动时间
+            Observable ob = Api.getDefault().templateLInfo(BaseConstans.getRequestHead(params));
+            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<new_fag_template_item>(this) {
+                @Override
+                protected void _onError(String message) {
+                    LogUtil.d("OOM", "requestTemplateDetail-error=" + message);
+                }
+
+                @Override
+                protected void _onNext(new_fag_template_item data) {
+                    Intent intent =new Intent(ZanActivity.this,PreviewUpAndDownActivity.class);
+                    String type = data.getTemplate_type();
+                    allData.add(data);
+                    ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
+                    intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
+                    intent.putExtra("position", 0);
+                    intent.putExtra("fromToMineCollect", false);
+                    intent.putExtra("nowSelectPage", 1);
+                    intent.putExtra("templateId", data.getTemplate_id());
+                    if (!TextUtils.isEmpty(type) && type.equals("2")) {
+                        intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+                    } else {
+                        intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
+                    }
+                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                }
+            }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+        }
+    }
+
     @Override
     protected void initAction() {
-
+        if(from==1){
+            goActivity(LoginActivity.class);
+        }
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        requestPraiseList(true);
+        if(BaseConstans.hasLogin()){
+            requestPraiseList(true);
+        }else{
+
+            ToastUtil.showToast(getResources().getString(R.string.need_login));
+        }
+
     }
 
 

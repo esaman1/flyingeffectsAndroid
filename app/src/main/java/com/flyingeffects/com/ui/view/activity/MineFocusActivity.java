@@ -60,7 +60,12 @@ public class MineFocusActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        requestMessageCount();
+        if(BaseConstans.hasLogin()){
+            requestMessageCount();
+        }else{
+            ToastUtil.showToast(getResources().getString(R.string.need_login));
+        }
+
 
     }
 

@@ -181,12 +181,14 @@ public class frag_message extends BaseFragment {
 
             case R.id.iv_icon_zan:
                 Intent intentZan=new Intent(getActivity(), ZanActivity.class);
+                intentZan.putExtra("from",1);
                 startActivity(intentZan);
 
                 break;
 
             case R.id.ll_comment:
                 Intent intentComment=new Intent(getActivity(),LikeActivity.class);
+                intentComment.putExtra("from",1);
                 startActivity(intentComment);
                 break;
 

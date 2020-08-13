@@ -146,15 +146,22 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.tv_sent:
-                    String reply = ed_search.getText().toString().trim();
-                    if (!reply.equals("")) {
-                        if (!TextUtils.isEmpty(message_id)) {
-                            replyMessage(reply, "2", message_id);
-                        } else {
-                            replyMessage(reply, "1", "0");
+
+                    if(BaseConstans.hasLogin()){
+                        String reply = ed_search.getText().toString().trim();
+                        if (!reply.equals("")) {
+                            if (!TextUtils.isEmpty(message_id)) {
+                                replyMessage(reply, "2", message_id);
+                            } else {
+                                replyMessage(reply, "1", "0");
+                            }
+                            cancelFocus();
                         }
-                        cancelFocus();
+                    }else{
+                        ToastUtil.showToast("请先登录");
                     }
+
+
                     break;
 
 

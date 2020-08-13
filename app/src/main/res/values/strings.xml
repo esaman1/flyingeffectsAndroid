@@ -79,4 +79,6 @@
     <string name="text_mine">我的</string>
 
 
+    <string name="need_login">请先登录</string>
+
 </resources>

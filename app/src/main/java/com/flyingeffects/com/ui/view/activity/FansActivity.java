@@ -62,7 +62,13 @@ public class FansActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        requestMessageCount();
+        if(BaseConstans.hasLogin()){
+            requestMessageCount();
+        }else{
+
+            ToastUtil.showToast(getResources().getString(R.string.need_login));
+        }
+
 
     }
 
@@ -99,7 +105,9 @@ public class FansActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
-
+        if(from==1){
+            goActivity(LoginActivity.class);
+        }
     }
 
 
@@ -127,7 +135,11 @@ public class FansActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent(FansActivity.this, UserHomepageActivity.class);
-                intent.putExtra("toUserId", fansList.get(position).getId());
+                if(from==0){
+                    intent.putExtra("toUserId", fansList.get(position).getId());
+                }else{
+                    intent.putExtra("toUserId", fansList.get(position).getTo_user_id());
+                }
                 startActivity(intent);
             }
         });
