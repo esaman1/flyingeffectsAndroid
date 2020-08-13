@@ -87,6 +87,8 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
 
     private TextView tv_comment_count;
 
+    private  ImageView iv_cancle;
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -105,7 +107,13 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         recyclerViewComment = view.findViewById(R.id.recyclerView);
         ed_search = view.findViewById(R.id.emojicon_edit_text);
         tv_comment_count=view.findViewById(R.id.tv_comment_count);
-
+        iv_cancle=view.findViewById(R.id.iv_cancle);
+        iv_cancle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CloseDialog();
+            }
+        });
         EventBus.getDefault().register(this);
         ed_search.setOnTouchListener((v, event) -> {
             KeyboardUtil.showInputKeyboard(getActivity(), ed_search);
@@ -273,6 +281,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         if (data.getList() == null || data.getList().size() == 0) {
             no_comment.setVisibility(View.VISIBLE);
         } else {
+            tv_comment_count.setText(data.getTotal()+"条评论");
             no_comment.setVisibility(View.GONE);
             LinearLayoutManager linearLayoutManager =
                     new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);

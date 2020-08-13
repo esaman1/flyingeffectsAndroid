@@ -5,7 +5,6 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,6 +93,9 @@ public class BackgroundSearchActivity extends BaseActivity {
     @BindView(R.id.appbar)
     AppBarLayout appbar;
 
+    //0表示 背景过来，1表示 模板进来
+    private int isFrom;
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_background_search;
@@ -101,13 +103,17 @@ public class BackgroundSearchActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+
+
+        isFrom = getIntent().getIntExtra("isForm", 0);
+
         //键盘的搜索按钮
         ed_text.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
                 nowShowText = ed_text.getText().toString().trim();
                 if (!nowShowText.equals("")) {
                     cancelFocus();
-                    statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "10_searchfor",nowShowText);
+                    statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "10_searchfor", nowShowText);
                     EventBus.getDefault().post(new SendSearchText(nowShowText));
                     hideResultView(false);
                 }
@@ -206,7 +212,7 @@ public class BackgroundSearchActivity extends BaseActivity {
                         hideResultView(false);
 //                        setResultMargin();
                         cancelFocus();
-                        statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "10_searchfor",nowShowText);
+                        statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "10_searchfor", nowShowText);
                         EventBus.getDefault().post(new SendSearchText(nowShowText));
 
                     }
@@ -227,7 +233,11 @@ public class BackgroundSearchActivity extends BaseActivity {
         listSearchKey.clear();
         HashMap<String, String> params = new HashMap<>();
         //2 表示背景
-        params.put("template_type", "2");
+        if (isFrom == 0) {
+            params.put("template_type", "1");
+        } else {
+            params.put("template_type", "2");
+        }
         // 启动时间
         Observable ob = Api.getDefault().keywordList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(BackgroundSearchActivity.this) {
@@ -261,7 +271,12 @@ public class BackgroundSearchActivity extends BaseActivity {
 
 
     private void showHeadTitle() {
-        String[] titles = {"背景", "模板"};
+        String[] titles;
+        if (isFrom == 0) {
+            titles = new String[]{"背景", "模板"};
+        } else {
+            titles = new String[]{"模板", "背景"};
+        }
         for (int i = 0; i < titles.length; i++) {
             View view = LayoutInflater.from(this).inflate(R.layout.view_bj_head, null);
             TextView tv = view.findViewById(R.id.tv_name_bj_head);
@@ -283,12 +298,18 @@ public class BackgroundSearchActivity extends BaseActivity {
         bundle.putSerializable("from", 1);
         fragBjSearch fragment = new fragBjSearch();
         fragment.setArguments(bundle);
-        list.add(fragment);
+
         Bundle bundle2 = new Bundle();
         bundle2.putSerializable("from", 0);
         fragBjSearch fragment2 = new fragBjSearch();
         fragment2.setArguments(bundle2);
-        list.add(fragment2);
+        if(isFrom==0){
+            list.add(fragment);
+            list.add(fragment2);
+        }else{
+            list.add(fragment2);
+            list.add(fragment);
+        }
         FragmentManager manager = getSupportFragmentManager();
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
         viewPager.setAdapter(adapter);

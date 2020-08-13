@@ -3,8 +3,10 @@ package com.flyingeffects.com.ui.view.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -65,6 +67,8 @@ public class fragBjSearch extends BaseFragment {
     //0 表示搜索出来模板 1表示搜索内容为背景
     private int isFrom;
 
+    private boolean hasSearch=false;
+
 
     @Override
     protected int getContentLayout() {
@@ -101,19 +105,7 @@ public class fragBjSearch extends BaseFragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-//            Intent intent = new Intent(getActivity(), PreviewActivity.class);
-//            if (isFrom == 0) {
-//                //模板页面
-//                intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
-//            } else {
-//                //背景页面
-//                intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
-//            }
-//            intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
-//            startActivity(intent);
             statisticsEventAffair.getInstance().setFlag(getActivity(), "11_yj_searchfor", allData.get(position).getTitle());
-
-
             Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
             ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
             intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
@@ -148,7 +140,10 @@ public class fragBjSearch extends BaseFragment {
                 public void run() {
                     isVisible = true;
                     if (allData != null && allData.size() == 0) {
-                        ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
+                        if(hasSearch){
+                            ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
+                        }
+
                     }
                 }
             }, 1000);
@@ -226,55 +221,60 @@ public class fragBjSearch extends BaseFragment {
 
 
     private void requestFagData(boolean isShowDialog) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("search", searchText);
-        params.put("page", selectPage + "");
-        params.put("pageSize", perPageCount + "");
-        if (isFrom == 0) {
-            params.put("template_type", "1");
-        } else {
-            params.put("template_type", "2");
-        }
-        Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
-            @Override
-            protected void _onError(String message) {
-                finishData();
-//                ToastUtil.showToast(message);
+
+        if(!TextUtils.isEmpty(searchText)){
+            hasSearch=true;
+            HashMap<String, String> params = new HashMap<>();
+            params.put("search", searchText);
+            params.put("page", selectPage + "");
+            params.put("pageSize", perPageCount + "");
+            if (isFrom == 0) {
+                params.put("template_type", "1");
+            } else {
+                params.put("template_type", "2");
             }
-
-            @Override
-            protected void _onNext(List<new_fag_template_item> data) {
-
-                finishData();
-                if (isRefresh) {
-                    allData.clear();
+            Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
+            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
+                @Override
+                protected void _onError(String message) {
+                    finishData();
+//                ToastUtil.showToast(message);
                 }
-                if (isRefresh && data.size() == 0) {
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "10_Noresults", searchText);
 
-                    if (isVisible) {
-                        ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
+                @Override
+                protected void _onNext(List<new_fag_template_item> data) {
+
+                    finishData();
+                    if (isRefresh) {
+                        allData.clear();
                     }
+                    if (isRefresh && data.size() == 0) {
+                        statisticsEventAffair.getInstance().setFlag(getActivity(), "10_Noresults", searchText);
 
-                    if (isVisible) {
-                        if (isFrom == 0) {
-                            statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none", searchText);
-                        } else {
-                            statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none_bj", searchText);
+                        if (isVisible) {
+                            ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
+                        }
+                        if (isVisible) {
+                            if (isFrom == 0) {
+                                statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none", searchText);
+                            } else {
+                                statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none_bj", searchText);
+                            }
                         }
                     }
+                    if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
+                        ToastUtil.showToast(getResources().getString(R.string.no_more_data));
+                    }
+                    if (data.size() < perPageCount) {
+                        smartRefreshLayout.setEnableLoadMore(false);
+                    }
+                    allData.addAll(data);
+                    adapter.notifyDataSetChanged();
                 }
-                if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
-                    ToastUtil.showToast(getResources().getString(R.string.no_more_data));
-                }
-                if (data.size() < perPageCount) {
-                    smartRefreshLayout.setEnableLoadMore(false);
-                }
-                allData.addAll(data);
-                adapter.notifyDataSetChanged();
-            }
-        }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
+            }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
+        }
+
+
     }
 
 

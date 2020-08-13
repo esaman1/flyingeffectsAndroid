@@ -3,11 +3,6 @@ package com.flyingeffects.com.ui.view.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.viewpager.widget.ViewPager;
-
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,11 +11,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter2;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -36,7 +29,6 @@ import com.flyingeffects.com.ui.presenter.FagBjMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.BackgroundSearchActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
-import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.shixing.sxve.ui.albumType;
 import com.yanzhenjie.album.AlbumFile;
@@ -236,6 +228,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
             case  R.id.iv_search:
                 //搜索栏目
                 Intent intent = new Intent(getActivity(), BackgroundSearchActivity.class);
+                intent.putExtra("isFrom",0);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
 

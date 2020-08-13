@@ -5,8 +5,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.os.Handler;
+
 import androidx.annotation.Nullable;
+
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
@@ -147,18 +152,43 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         FileManager fileManager = new FileManager();
         huaweiFolder = fileManager.getFileCachePath(this, "toHawei");
         statisticsEventAffair.getInstance().setFlag(UploadMaterialActivity.this, "6_customize_bj_Crop");
-        if(!TextUtils.isEmpty(BaseConstans.NickName())){
+        ed_nickname.addTextChangedListener(textpassWatcher);
+        if (!TextUtils.isEmpty(BaseConstans.NickName())) {
             ed_nickname.setText(BaseConstans.NickName());
         }
-        if(!TextUtils.isEmpty(BaseConstans.headUrl())){
+        if (!TextUtils.isEmpty(BaseConstans.headUrl())) {
             Glide.with(UploadMaterialActivity.this)
                     .load(BaseConstans.headUrl())
                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                     .into(add_head);
-            imageHeadPath=BaseConstans.headUrl();
+            imageHeadPath = BaseConstans.headUrl();
         }
 
     }
+
+    //密码限制
+    TextWatcher textpassWatcher = new TextWatcher() {
+        private CharSequence temp;
+
+
+        @Override
+        public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+                                      int arg3) {
+            temp = arg0;
+        }
+
+        @Override
+        public void afterTextChanged(Editable arg0) {
+            if ((temp.length() ) > 10) {
+                arg0.delete(10, 11);
+                ToastUtil.showToast("昵称不能太长");
+            }
+        }
+    };
 
     @Override
     protected void initAction() {
@@ -191,11 +221,11 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                 AlbumManager.chooseImageAlbum(UploadMaterialActivity.this, 1, 0, new AlbumChooseCallback() {
                     @Override
                     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-                        if(!isCancel){
+                        if (!isCancel) {
                             Glide.with(UploadMaterialActivity.this).load(paths.get(0)).into(add_head);
                             imageHeadPath = huaweiFolder + File.separator + "head.png";
                             //等到封面地址
-                            getHeadForPathToCompress(paths.get(0),imageHeadPath);
+                            getHeadForPathToCompress(paths.get(0), imageHeadPath);
 
 //                            CompressImgManage compressImgManage=new CompressImgManage(UploadMaterialActivity.this, new CompressImgManage.compressCallback() {
 //                                @Override
@@ -221,15 +251,11 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     }
 
 
-
-
     public void getHeadForPathToCompress(String path, String fileName) {
-        Bitmap bp=BitmapManager.getInstance().getOrientationBitmap(path);
-            bp = StringUtil.zoomImgNoDeformation(bp, 320, 180);
+        Bitmap bp = BitmapManager.getInstance().getOrientationBitmap(path);
+        bp = StringUtil.zoomImgNoDeformation(bp, 320, 180);
         BitmapManager.getInstance().saveBitmapToPath(bp, fileName);
     }
-
-
 
 
     private SeekBar.OnSeekBarChangeListener zoomChangeListener = new SeekBar.OnSeekBarChangeListener() {
@@ -345,9 +371,9 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                WaitingDialog.openPragressDialog(UploadMaterialActivity.this,"上传中");
+                WaitingDialog.openPragressDialog(UploadMaterialActivity.this, "上传中");
             }
-        },500);
+        }, 500);
         new Thread(() -> toNext(videoPath)).start();
 
 
@@ -371,24 +397,24 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         });
         uploadPathList = new ArrayList<>();
         uploadPathList.add(videoPath);
-        LogUtil.d("OOM","imageHeadPath="+imageHeadPath);
-        if(!imageHeadPath.contains("http")){
-            LogUtil.d("OOM","不包含http");
+        LogUtil.d("OOM", "imageHeadPath=" + imageHeadPath);
+        if (!imageHeadPath.contains("http")) {
+            LogUtil.d("OOM", "不包含http");
             uploadPathList.add(imageHeadPath);
-        }else{
-            LogUtil.d("OOM","包含http");
+        } else {
+            LogUtil.d("OOM", "包含http");
             uploadPathList.add("");
-            huaweiImagePath=imageHeadPath;
+            huaweiImagePath = imageHeadPath;
         }
-        if(!TextUtils.isEmpty(huaweiSound)){
+        if (!TextUtils.isEmpty(huaweiSound)) {
             uploadPathList.add(huaweiSound);
-        }else{
+        } else {
             uploadPathList.add("");
-            huaweiSound="";
+            huaweiSound = "";
         }
         uploadPathList.add(coverImagePath);
-        nowUpdateIndex=0;
-        uploadFileToHuawei(videoPath, getPathName(0,videoPath));
+        nowUpdateIndex = 0;
+        uploadFileToHuawei(videoPath, getPathName(0, videoPath));
     }
 
 
@@ -432,15 +458,15 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
 
 
     private void requestData() {
-        LogUtil.d("OOM2", "requestData" );
+        LogUtil.d("OOM2", "requestData");
         HashMap<String, String> params = new HashMap<>();
         params.put("videofile", huaweiVideoPath);
         params.put("auth", ed_nickname.getText().toString());
         params.put("auth_image", huaweiImagePath);
         params.put("audiourl", huaweiSound);
-        params.put("image",coverImagePath);
+        params.put("image", coverImagePath);
         // 启动时间
-        LogUtil.d("OOM2", params.toString() );
+        LogUtil.d("OOM2", params.toString());
         Observable ob = Api.getDefault().toLoadTemplate(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(UploadMaterialActivity.this) {
             @Override
@@ -466,7 +492,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     int nowUpdateIndex;
 
     private void uploadFileToHuawei(String videoPath, String copyName) {
-        Log.d("OOM2","uploadFileToHuawei"+"当前上传的地址为"+videoPath+"当前的名字为"+copyName);
+        Log.d("OOM2", "uploadFileToHuawei" + "当前上传的地址为" + videoPath + "当前的名字为" + copyName);
         new Thread(() -> huaweiObs.getInstance().uploadFileToHawei(videoPath, copyName, new huaweiObs.Callback() {
             @Override
             public void isSuccess(String str) {
@@ -474,21 +500,21 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                 Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                     @Override
                     public void call(String s) {
-                        if (nowUpdateIndex != uploadPathList.size()-1) {
+                        if (nowUpdateIndex != uploadPathList.size() - 1) {
                             nowUpdateIndex++;
-                            if(nowUpdateIndex==1&&TextUtils.isEmpty(uploadPathList.get(nowUpdateIndex))){
+                            if (nowUpdateIndex == 1 && TextUtils.isEmpty(uploadPathList.get(nowUpdateIndex))) {
                                 //已经上传了用户头像，不需要重新上传
-                                nowUpdateIndex=nowUpdateIndex+1;
-                                Log.d("OOM2","不需要上传头像"+"videoPath="+videoPath);
+                                nowUpdateIndex = nowUpdateIndex + 1;
+                                Log.d("OOM2", "不需要上传头像" + "videoPath=" + videoPath);
                             }
 
-                            if(nowUpdateIndex==2&&TextUtils.isEmpty(uploadPathList.get(nowUpdateIndex))){
+                            if (nowUpdateIndex == 2 && TextUtils.isEmpty(uploadPathList.get(nowUpdateIndex))) {
                                 //已经上传了用户头像，不需要重新上传
-                                nowUpdateIndex=nowUpdateIndex+1;
-                                Log.d("OOM2","不需要上传音频"+"videoPath="+videoPath);
+                                nowUpdateIndex = nowUpdateIndex + 1;
+                                Log.d("OOM2", "不需要上传音频" + "videoPath=" + videoPath);
                             }
 
-                            uploadFileToHuawei(uploadPathList.get(nowUpdateIndex),getPathName(nowUpdateIndex,uploadPathList.get(nowUpdateIndex)));
+                            uploadFileToHuawei(uploadPathList.get(nowUpdateIndex), getPathName(nowUpdateIndex, uploadPathList.get(nowUpdateIndex)));
                         } else {
                             requestData();
                         }
@@ -500,38 +526,34 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     }
 
 
-
-
-
-
-    private String getPathName(int position,String videoPath) {
+    private String getPathName(int position, String videoPath) {
         String type = videoPath.substring(videoPath.length() - 4);
         String nowTime = StringUtil.getCurrentTimeymd();
         if (position == 0) {
             //视频
             LogUtil.d("OOM", "nowTime=" + nowTime);
-            String path="media/android/video/" + nowTime + "/" + System.currentTimeMillis() + type;
-            huaweiVideoPath="http://cdn.flying.flyingeffect.com/"+path;
+            String path = "media/android/video/" + nowTime + "/" + System.currentTimeMillis() + type;
+            huaweiVideoPath = "http://cdn.flying.flyingeffect.com/" + path;
             return path;
-        }else if(position == 1){
+        } else if (position == 1) {
             //头像
             LogUtil.d("OOM", "nowTime=" + nowTime);
-            String path="media/android/image/" + nowTime + "/" + System.currentTimeMillis() + type;
-            huaweiImagePath="http://cdn.flying.flyingeffect.com/"+path;
+            String path = "media/android/image/" + nowTime + "/" + System.currentTimeMillis() + type;
+            huaweiImagePath = "http://cdn.flying.flyingeffect.com/" + path;
             return path;
-        }else if(position==2){
+        } else if (position == 2) {
             //音频地址
             LogUtil.d("OOM", "nowTime=" + nowTime);
-            String path="media/android/sound/" + nowTime + "/" + System.currentTimeMillis() + type;
-            huaweiSound="http://cdn.flying.flyingeffect.com/"+path;
+            String path = "media/android/sound/" + nowTime + "/" + System.currentTimeMillis() + type;
+            huaweiSound = "http://cdn.flying.flyingeffect.com/" + path;
             return path;
 
-        }else {
+        } else {
 
             //封面
             LogUtil.d("OOM", "nowTime=" + nowTime);
-            String path= "media/android/cover/" + nowTime + "/" + System.currentTimeMillis() + type;
-            coverImagePath="http://cdn.flying.flyingeffect.com/"+path;
+            String path = "media/android/cover/" + nowTime + "/" + System.currentTimeMillis() + type;
+            coverImagePath = "http://cdn.flying.flyingeffect.com/" + path;
             return path;
         }
     }
@@ -550,9 +572,6 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         }
         return super.dispatchTouchEvent(ev);
     }
-
-
-
 
 
 }

@@ -136,6 +136,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
             case R.id.relative_top:
                 //搜索栏目
                 Intent intent = new Intent(getActivity(), BackgroundSearchActivity.class);
+                intent.putExtra("isFrom",1);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 break;
