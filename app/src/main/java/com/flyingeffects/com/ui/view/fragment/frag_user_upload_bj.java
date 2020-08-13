@@ -1,25 +1,23 @@
 package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.Upload_bj_list_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -27,7 +25,7 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.FromToTemplate;
-import com.flyingeffects.com.ui.view.activity.PreviewActivity;
+import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -225,17 +223,32 @@ public class frag_user_upload_bj extends BaseFragment {
 
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                Intent intent = new Intent(getActivity(), PreviewActivity.class);
-                intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
+                Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
+                ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
+                intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
+                intent.putExtra("templateId", "");//直接存入被序列化的对象实例
+                intent.putExtra("position", position);
+                intent.putExtra("fromToMineCollect", true);
                 if (allData.get(position).getTest() != 0) {
                     intent.putExtra("readOnly", true);
                 } else {
                     intent.putExtra("readOnly", false);
                 }
-                intent.putExtra("fromToMineCollect", true);
+                ;
+                intent.putExtra("nowSelectPage", selectPage);
                 intent.putExtra("fromTo", FromToTemplate.ISFROMUPDATEBJ);
-                intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
                 startActivity(intent);
+//                Intent intent = new Intent(getActivity(), PreviewActivity.class);
+//                intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
+//                if (allData.get(position).getTest() != 0) {
+//                    intent.putExtra("readOnly", true);
+//                } else {
+//                    intent.putExtra("readOnly", false);
+//                }
+//                intent.putExtra("fromToMineCollect", true);
+//                intent.putExtra("fromTo", FromToTemplate.ISFROMUPDATEBJ);
+//                intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
+//                startActivity(intent);
             }
         });
     }

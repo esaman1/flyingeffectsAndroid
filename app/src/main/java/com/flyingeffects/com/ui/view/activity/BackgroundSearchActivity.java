@@ -139,6 +139,7 @@ public class BackgroundSearchActivity extends BaseActivity {
                     hideResultView(false);
                     iv_delete.setVisibility(View.GONE);
                     appbar.setExpanded(true);
+                    hideResultView(true);
                 } else {
                     iv_delete.setVisibility(View.VISIBLE);
                 }

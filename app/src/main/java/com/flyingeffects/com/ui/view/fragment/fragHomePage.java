@@ -115,7 +115,6 @@ public class fragHomePage extends BaseFragment {
 
     public void initSmartRefreshLayout() {
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
-
             if(BaseConstans.hasLogin()){
                 isOnRefresh();
                 isRefresh = true;
@@ -124,6 +123,7 @@ public class fragHomePage extends BaseFragment {
                 requestFagData(false, true);
             }else{
                 ToastUtil.showToast("请先登录");
+                allData.clear();
                 finishData();
             }
 
@@ -204,6 +204,9 @@ public class fragHomePage extends BaseFragment {
         if(BaseConstans.hasLogin()){
             requestData();
         }else{
+            allData.clear();
+            adapter.notifyDataSetChanged();
+            showNoData(true);
             ToastUtil.showToast(getResources().getString(R.string.need_login));
         }
     }
