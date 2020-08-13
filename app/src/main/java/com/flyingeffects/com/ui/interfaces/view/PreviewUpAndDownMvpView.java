@@ -7,7 +7,7 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import java.util.List;
 
 public interface PreviewUpAndDownMvpView {
-    void collectionResult();
+    void collectionResult(boolean collectionResult);
 
     void ZanResult();
 

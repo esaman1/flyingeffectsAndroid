@@ -107,7 +107,7 @@
 
 
         <LinearLayout
-            android:id="@+id/ll_share_sc"
+            android:id="@+id/ll_collect"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -126,7 +126,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="分享给好友"
+                android:text="收藏"
                 android:textColor="#A3A3A5"
                 android:textSize="12sp" />
 

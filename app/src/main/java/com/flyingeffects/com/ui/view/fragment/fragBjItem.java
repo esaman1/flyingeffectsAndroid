@@ -18,6 +18,7 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.templateDataCollectRefresh;
 import com.flyingeffects.com.enity.templateDataZanRefresh;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -293,6 +294,21 @@ public class fragBjItem extends BaseFragment {
             }
         }
 
+    }
+
+
+
+    @Subscribe
+    public void onEventMainThread(templateDataCollectRefresh event) {
+        if(event.getFrom()==4){
+            int position = event.getPosition();
+            if (allData != null && allData.size() > position) {
+                new_fag_template_item item = allData.get(position);
+                item.setIs_collection(event.isSeleted()?1:0);
+                allData.set(position, item);
+                adapter.notifyItemChanged(position);
+            }
+        }
     }
 
 }

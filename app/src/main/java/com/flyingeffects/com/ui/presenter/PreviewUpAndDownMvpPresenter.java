@@ -76,8 +76,8 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
 
 
     @Override
-    public void collectionResult() {
-        previewUpAndDownMvpView.collectionResult();
+    public void collectionResult(boolean collectionResult) {
+        previewUpAndDownMvpView.collectionResult(collectionResult);
     }
 
     @Override

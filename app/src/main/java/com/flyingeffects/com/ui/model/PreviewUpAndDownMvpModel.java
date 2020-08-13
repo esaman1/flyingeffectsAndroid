@@ -206,7 +206,7 @@ public class PreviewUpAndDownMvpModel {
         bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
         View view = LayoutInflater.from(context).inflate(R.layout.preview_bottom_sheet_dialog, null);
         bottomSheetDialog.setContentView(view);
-        LinearLayout ll_share_sc = view.findViewById(R.id.ll_share_sc);
+        LinearLayout ll_collect = view.findViewById(R.id.ll_collect);
         iv_collect  = view.findViewById(R.id.iv_collect);
         if(BaseConstans.hasLogin()&&fag_template_item.getIs_collection()==1){
             nowHasCollect=true;
@@ -216,7 +216,7 @@ public class PreviewUpAndDownMvpModel {
             nowHasCollect=false;
             iv_collect.setImageResource(R.mipmap.new_version_collect);
         }
-        ll_share_sc.setOnClickListener(new View.OnClickListener() {
+        ll_collect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -225,16 +225,6 @@ public class PreviewUpAndDownMvpModel {
             }
         });
 
-
-        LinearLayout ll_photograph=view.findViewById(R.id.ll_photograph);
-        ll_photograph.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //跟随音乐拍摄
-
-
-            }
-        });
 
         LinearLayout iv_download = view.findViewById(R.id.ll_download);
         iv_download.setOnClickListener(view12 -> {
@@ -615,8 +605,9 @@ public class PreviewUpAndDownMvpModel {
             protected void _onNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "collectTemplate=" + str);
-                callback.collectionResult();
+
                 nowHasCollect=!nowHasCollect;
+                callback.collectionResult(nowHasCollect);
                 if(nowHasCollect){
                     iv_collect.setImageResource(R.mipmap.new_version_collect_ed);
                 }else{

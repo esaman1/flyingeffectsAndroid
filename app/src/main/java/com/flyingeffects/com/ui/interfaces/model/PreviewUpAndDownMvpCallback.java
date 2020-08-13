@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface PreviewUpAndDownMvpCallback {
 
-    void collectionResult();
+    void collectionResult(boolean hasCollect);
 
     void ZanResult();
 

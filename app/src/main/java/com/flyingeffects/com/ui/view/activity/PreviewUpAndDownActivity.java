@@ -22,8 +22,10 @@ import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.CreateCutCallback;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.ListForUpAndDown;
+import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.enity.showAdCallback;
+import com.flyingeffects.com.enity.templateDataCollectRefresh;
 import com.flyingeffects.com.enity.templateDataZanRefresh;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AlbumManager;
@@ -102,7 +104,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     //来着来个页面
     private String fromTo;
 
-    private int nowCollectType;
+    private int nowPraise;
 
     private boolean ondestroy;
 
@@ -186,7 +188,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         templateId = templateItem.getId() + "";
         //需要得到之前allData 已经滑到的页数和分类的类别以及是模板页面或者背景页面等
         int nowSelectPage = getIntent().getIntExtra("nowSelectPage", 1);
-        nowCollectType = templateItem.getIs_praise();
+        nowPraise = templateItem.getIs_praise();
 
         Presenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, fromTo, templateId, fromToMineCollect);
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
@@ -207,6 +209,15 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
                 case R.id.tv_make:
                     toClickMake();
+                    break;
+
+
+                case R.id.iv_writer:
+                    Intent intent = new Intent(PreviewUpAndDownActivity.this, UserHomepageActivity.class);
+                    intent.putExtra("toUserId", allData.get(position).getAdmin_id());
+                    startActivity(intent);
+
+
                     break;
 
                 case R.id.iv_download_bj:
@@ -277,7 +288,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             }
         });
         viewPage2.setCurrentItem(nowChoosePosition, false);
-        if (nowCollectType == 1 && BaseConstans.hasLogin()) {
+        if (nowPraise == 1 && BaseConstans.hasLogin()) {
             setIsZan(true);
         }
         if (BaseConstans.isFirstUseDownAndUpAct()) {
@@ -305,7 +316,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             templateId = templateItem.getId() + "";
             defaultnum = templateItem.getDefaultnum();
             is_picout = templateItem.getIs_picout();
-            nowCollectType = templateItem.getIs_praise();
+            nowPraise = templateItem.getIs_praise();
         }
     }
 
@@ -344,19 +355,19 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         if (fromToMineCollect) {
             //模板收藏
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
-                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition,iZanNum,isAdd,0));
+                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 0));
             } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
                 //我上传的背景
-                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition,iZanNum,isAdd,1));
+                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 1));
             } else {
                 //背景 收藏
-                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition,iZanNum,isAdd,2));
+                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 2));
             }
         } else {
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
-                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition,iZanNum,isAdd,3));
+                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 3));
             } else {
-                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition,iZanNum,isAdd,4));
+                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 4));
             }
         }
     }
@@ -435,36 +446,50 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
 
     @Override
-    public void collectionResult() {
-        if (nowCollectType == 0) {
-//            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-//                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "5_bj_keep", templateItem.getTitle());
-//            } else {
-//                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "1_mb_keep_cancel", templateItem.getTitle());
-//            }
-            nowCollectType = 1;
-            ToastUtil.showToast(getString(R.string.template_collect_success));
-        } else {
-//            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-//                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "5_bj_keep_cancel", templateItem.getTitle());
-//            } else {
-//                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "1_mb_keep", templateItem.getTitle());
-//            }
-            nowCollectType = 0;
-            ToastUtil.showToast(getString(R.string.template_cancel_success));
+    public void collectionResult(boolean collectionResult) {
+
+
+        if(collectionResult){
+            new_fag_template_item item=   allData.get(nowChoosePosition);
+            item.setIs_collection(1);
+            allData.set(nowChoosePosition, item);
+        }else{
+            new_fag_template_item item=   allData.get(nowChoosePosition);
+            item.setIs_collection(0);
+            allData.set(nowChoosePosition, item);
         }
-        //showCollectState(nowCollectType == 0);
+
+
+        if (fromToMineCollect) {
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
+                EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 0));
+            } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
+                //我上传的背景
+                EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 1));
+            } else {
+                //背景 收藏
+                EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 2));
+            }
+        } else {
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
+                EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 3));
+            } else {
+                EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 4));
+            }
+        }
+
+
     }
 
     @Override
     public void ZanResult() {
-        if (nowCollectType == 0) {
-            nowCollectType = 1;
+        if (nowPraise == 0) {
+            nowPraise = 1;
         } else {
-            nowCollectType = 0;
+            nowPraise = 0;
         }
-        planZanNum(nowCollectType == 1);
-        showZantState(nowCollectType == 0);
+        planZanNum(nowPraise == 1);
+        showZantState(nowPraise == 0);
     }
 
     @Override
@@ -648,7 +673,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void getTemplateLInfo(new_fag_template_item data) {
         if (data != null) {
             setIsZan(data.getIs_praise() == 1);
-            nowCollectType = data.getIs_praise();
+            nowPraise = data.getIs_praise();
         }
 
     }
@@ -746,10 +771,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     private void showZantState(boolean unSelected) {
         if (unSelected) {
-            nowCollectType = 0;
+            nowPraise = 0;
             setIsZan(false);
         } else {
-            nowCollectType = 1;
+            nowPraise = 1;
             setIsZan(true);
         }
     }

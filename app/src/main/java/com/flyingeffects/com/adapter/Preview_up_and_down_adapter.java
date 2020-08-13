@@ -80,6 +80,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         tv_zan_count=helper.getView(R.id.tv_zan_count);
         iv_zan = helper.getView(R.id.iv_zan);
         iv_writer = helper.getView(R.id.iv_writer);
+        helper.addOnClickListener(R.id.iv_writer);
         tv_writer_name = helper.getView(R.id.tv_writer_name);
         tv_title = helper.getView(R.id.tv_title);
         tv_describe = helper.getView(R.id.tv_describe);

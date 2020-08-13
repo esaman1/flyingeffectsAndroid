@@ -371,6 +371,15 @@ public class new_fag_template_item implements Serializable {
 
     private String template_type;
 
+    public String getAdmin_id() {
+        return admin_id;
+    }
+
+    public void setAdmin_id(String admin_id) {
+        this.admin_id = admin_id;
+    }
+
+    private String admin_id;
 
 
 

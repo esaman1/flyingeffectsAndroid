@@ -39,7 +39,7 @@ public class Mine_zan_adapter extends BaseQuickAdapter<MineZanEnity, BaseViewHol
         helper.setText(R.id.tv_content,item.getAuth());
         ImageView iv_head=helper.getView(R.id.iv_icon);
         Glide.with(context)
-                .load(item.getAuth_image())
+                .load(item.getPhotourl())
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(iv_head);
 

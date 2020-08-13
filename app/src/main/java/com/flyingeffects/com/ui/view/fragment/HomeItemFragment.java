@@ -15,6 +15,7 @@ import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.WxLogin;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.templateDataCollectRefresh;
 import com.flyingeffects.com.enity.templateDataZanRefresh;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
@@ -276,6 +277,21 @@ public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, V
             }
         }
     }
+
+    @Subscribe
+    public void onEventMainThread(templateDataCollectRefresh event) {
+        if(event.getFrom()==3){
+            int position = event.getPosition();
+            boolean isPraise = event.isSeleted();
+            if (allData != null && allData.size() > position) {
+                new_fag_template_item item = allData.get(position);
+                item.setIs_collection(event.isSeleted()?1:0);
+                allData.set(position, item);
+                adapter.notifyItemChanged(position);
+            }
+        }
+    }
+
 
 }
 
