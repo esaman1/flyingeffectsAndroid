@@ -87,6 +87,8 @@ public class UserHomepageActivity extends BaseActivity {
     @BindView(R.id.tv_like)
     TextView tv_like;
 
+    @BindView(R.id.iv_back)
+    ImageView iv_back;
 
 
 
@@ -120,7 +122,7 @@ public class UserHomepageActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.ll_0, R.id.ll_1,R.id.tv_focus})
+    @OnClick({R.id.ll_0, R.id.ll_1,R.id.tv_focus,R.id.iv_back})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_1:
@@ -129,6 +131,10 @@ public class UserHomepageActivity extends BaseActivity {
 
             case R.id.ll_0:
                 viewpager.setCurrentItem(0);
+                break;
+
+            case R.id.iv_back:
+                this.finish();
                 break;
 
 

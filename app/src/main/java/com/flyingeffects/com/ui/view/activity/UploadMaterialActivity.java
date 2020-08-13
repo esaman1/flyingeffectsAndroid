@@ -27,6 +27,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.UserInfo;
@@ -34,6 +35,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AlbumManager;
+import com.flyingeffects.com.manager.AnimForViewShowAndHide;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressImgManage;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -54,7 +56,9 @@ import com.flyingeffects.com.view.RoundImageView;
 import com.flyingeffects.com.view.VideoFrameRecycler;
 import com.lansosdk.videoeditor.DrawPadView2;
 import com.lansosdk.videoeditor.MediaInfo;
+import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
+import com.suke.widget.SwitchButton;
 import com.yanzhenjie.album.AlbumFile;
 
 import java.io.File;
@@ -112,6 +116,10 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     EditText ed_nickname;
 
 
+    @BindView(R.id.ed_describe)
+    EditText ed_describe;
+
+
     private String uploadPath;
     /**
      * 用戶头像
@@ -133,8 +141,16 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
 
     private String huaweiFolder;
 
+    //0 表示不允许合拍，1表示允许合拍
+    private int is_with_play;
 
     private ArrayList<String> uploadPathList;
+
+
+    @BindView(R.id.switch_button)
+    SwitchButton switch_button;
+
+    private int isChecked=1;
 
     @Override
     protected int getLayoutId() {
@@ -163,6 +179,16 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                     .into(add_head);
             imageHeadPath = BaseConstans.headUrl();
         }
+        switch_button.setOnCheckedChangeListener((view, isChecked) ->
+        {
+            if (!isFastDoubleClick()) {
+                if(isChecked){
+                    this. isChecked=1;
+                }else{
+                    this. isChecked=0;
+                }
+            }
+        });
 
     }
 
@@ -212,6 +238,11 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
 
                 if (TextUtils.isEmpty(imageHeadPath)) {
                     ToastUtil.showToast("请选择头像");
+                    return;
+                }
+
+                if (ed_describe.getText() == null || ed_describe.getText().toString().equals("")) {
+                    ToastUtil.showToast("请填写描述");
                     return;
                 }
                 saveVideo(false);
@@ -457,14 +488,23 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     }
 
 
+
+    /**
+     * description ：
+     * creation date: 2020/8/13
+     * param : is_with_play 0 表示不允许合拍，1表示允许合拍
+     * user : zhangtongju
+     */
     private void requestData() {
         LogUtil.d("OOM2", "requestData");
         HashMap<String, String> params = new HashMap<>();
         params.put("videofile", huaweiVideoPath);
         params.put("auth", ed_nickname.getText().toString());
+        params.put("title", ed_describe.getText().toString());
         params.put("auth_image", huaweiImagePath);
         params.put("audiourl", huaweiSound);
         params.put("image", coverImagePath);
+        params.put("is_with_play", isChecked+"");
         // 启动时间
         LogUtil.d("OOM2", params.toString());
         Observable ob = Api.getDefault().toLoadTemplate(BaseConstans.getRequestHead(params));

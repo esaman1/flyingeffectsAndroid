@@ -30,11 +30,11 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:text="上传背景"
-                android:textSize="20sp"
+                android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:text="上传背景"
                 android:textColor="@color/white"
-                android:layout_height="wrap_content"/>
+                android:textSize="20sp" />
 
 
             <LinearLayout
@@ -52,11 +52,11 @@
                     android:background="@drawable/stroke_cut_video"
                     android:paddingStart="9dp"
                     android:paddingTop="5dp"
-                    android:textSize="17sp"
                     android:paddingEnd="9dp"
                     android:paddingBottom="5dp"
                     android:text="上传"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:textSize="17sp" />
 
 
             </LinearLayout>
@@ -146,7 +146,6 @@
 
                 <TextView
                     android:id="@+id/crop_show_duration"
-                    android:visibility="gone"
                     android:layout_width="@dimen/dp_50"
                     android:layout_height="@dimen/dp_14"
                     android:layout_alignBottom="@id/timeLineBar"
@@ -155,7 +154,8 @@
                     android:textAlignment="center"
                     android:textColor="@color/colorWhite"
                     android:textSize="10sp"
-                    android:translationY="@dimen/dp_15" />
+                    android:translationY="@dimen/dp_15"
+                    android:visibility="gone" />
 
                 <TextView
                     android:layout_width="@dimen/dp_50"
@@ -171,14 +171,14 @@
                     android:id="@+id/crop_show_start"
                     android:layout_width="@dimen/dp_50"
                     android:layout_height="@dimen/dp_14"
-                    android:visibility="gone"
                     android:layout_alignStart="@id/timeLineBar"
                     android:layout_alignTop="@id/timeLineBar"
                     android:text="00:00:00"
                     android:textAlignment="center"
                     android:textColor="@color/colorWhite"
                     android:textSize="10sp"
-                    android:translationY="-15dp" />
+                    android:translationY="-15dp"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/crop_show_end"
@@ -202,30 +202,30 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:gravity="center_vertical"
                     android:layout_height="50dp"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:textSize="16sp"
                         android:layout_height="wrap_content"
-                        android:text="昵称"
                         android:layout_marginEnd="5dp"
-                        android:textColor="@color/white" />
+                        android:text="昵称"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
 
                     <EditText
                         android:id="@+id/ed_nickname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:hint="填写昵称"
-                        android:singleLine="true"
                         android:layout_weight="1"
                         android:background="@null"
                         android:gravity="end"
-                        android:textSize="16sp"
+                        android:hint="填写昵称"
+                        android:singleLine="true"
                         android:textColor="@color/white"
-                        android:textColorHint="@color/white" />
+                        android:textColorHint="@color/white"
+                        android:textSize="16sp" />
 
 
                 </LinearLayout>
@@ -233,8 +233,8 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:background="#272727"
-                    android:layout_height="1dp"/>
+                    android:layout_height="1dp"
+                    android:background="#272727" />
 
 
                 <LinearLayout
@@ -248,8 +248,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="上传头像"
-                        android:textSize="16sp"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
 
                     <ImageView
                         android:id="@+id/add_head"
@@ -264,8 +264,76 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:background="#272727"
-                    android:layout_height="1dp"/>
+                    android:layout_height="1dp"
+                    android:background="#272727" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="描述"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                    <EditText
+                        android:id="@+id/ed_describe"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:gravity="end"
+                        android:hint="一句话描述您的视频"
+                        android:singleLine="true"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/white"
+                        android:textSize="16sp" />
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#272727" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="是否允许合拍"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+
+                    <com.suke.widget.SwitchButton
+                        android:id="@+id/switch_button"
+                        android:layout_width="40dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="9dp"
+                        app:sb_border_width="@dimen/dp_2"
+                        app:sb_button_color="@color/home_base_blue_color"
+                        app:sb_checked="true"
+                        app:sb_checked_color="@color/base_black"
+                        app:sb_checkline_color="@color/base_black"
+                        app:sb_show_indicator="false"
+                        app:sb_uncheckcircle_radius="@dimen/dp_0"
+                        app:sb_uncheckcircle_width="0dp" />
+
+
+                </LinearLayout>
+
             </LinearLayout>
 
 

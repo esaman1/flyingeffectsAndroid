@@ -90,7 +90,7 @@ public interface ApiService {
 
 
     @FormUrlEncoded
-    @POST("/api/media/uploadTemplate")
+    @POST("/api/message/uploadTemplate")
     Observable<HttpResult<Object>> toLoadTemplate(@FieldMap Map<String, String> params);
 
 
