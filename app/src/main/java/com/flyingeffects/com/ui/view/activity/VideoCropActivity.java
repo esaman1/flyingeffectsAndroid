@@ -188,7 +188,7 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
     }
 
     private boolean hasResult = false;
-    private static final int MAX_DURATION_SEC = 300;
+    private static final int MAX_DURATION_SEC = 1000;
     private static final int MIN_DURATION_SEC = 2;
 
 

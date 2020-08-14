@@ -435,9 +435,9 @@ public class VideoCropMVPModel {
                         }
                     }
                 });
-                seekbarTime = 180 * 1000;
+                seekbarTime = 600 * 1000;
                 seekbarPercent = 1f * mTimeLineView.getWidth() / (frameAdapter.getItemWidth() * frameAdapter.getItemCount());
-                float timeRatio = 1f * 180 * 1000 / getDuration();
+                float timeRatio = 1f * 600 * 1000 / getDuration();
                 float adjustRatio = timeRatio / seekbarPercent;
                 seekbarPercent *= adjustRatio;
                 mRangeSeekBarView.setMinDistance(Math.round(getDuration() * adjustRatio));
@@ -616,7 +616,7 @@ public class VideoCropMVPModel {
     }
 
 
-    private static final long maxCropDurationMs = 180 * 1000;
+    private static final long maxCropDurationMs = 600 * 1000;
     private static final long minCropDurationMs = 2 * 1000;
     private boolean isSaving = false;
     private boolean is4kVideo = false;
