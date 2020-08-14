@@ -168,6 +168,7 @@ public class fragHomePage extends BaseFragment {
                 finishData();
                 if (isRefresh) {
                     listData.clear();
+                    smartRefreshLayout.setEnableLoadMore(true);
 
                 }
                 if (isRefresh && data.size() == 0) {
@@ -202,6 +203,8 @@ public class fragHomePage extends BaseFragment {
     public void onResume() {
         super.onResume();
         if(BaseConstans.hasLogin()){
+            selectPage=1;
+            isRefresh=true;
             requestData();
         }else{
             allData.clear();

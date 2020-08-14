@@ -265,7 +265,7 @@ public class frag_user_collect extends BaseFragment {
                 }
                 intent.putExtra("fromToMineCollect", true);
                 intent.putExtra("nowSelectPage",selectPage);
-                intent.putExtra("templateId","");
+                intent.putExtra("category_id","");
                 startActivity(intent);
 
             }

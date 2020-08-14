@@ -45,7 +45,7 @@ public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, V
     RecyclerView recyclerView;
     private main_recycler_adapter adapter;
     private List<new_fag_template_item> allData = new ArrayList<>();
-    private String templateId = "";
+    private String category_id = "";
     private StaggeredGridLayoutManager layoutManager;
     private int actTag;
     @BindView(R.id.smart_refresh_layout)
@@ -68,7 +68,7 @@ public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, V
     protected void initView() {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            templateId = bundle.getString("id");
+            category_id = bundle.getString("id");
             actTag = bundle.getInt("num");
             fromType = bundle.getInt("from");
         }
@@ -80,7 +80,7 @@ public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, V
 
         if (getActivity() != null) {
             if (NetworkUtils.isNetworkAvailable(getActivity())) {
-                Presenter.requestData(templateId, actTag);
+                Presenter.requestData(category_id, actTag);
             }
         }
     }
@@ -111,7 +111,7 @@ public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, V
                 Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
                 ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
                 intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
-                intent.putExtra("templateId", templateId);//直接存入被序列化的对象实例
+                intent.putExtra("category_id", category_id);//直接存入被序列化的对象实例
                 intent.putExtra("position", position);
                 int selectPage = Presenter.getselectPage();
                 intent.putExtra("nowSelectPage", selectPage);
@@ -146,7 +146,7 @@ public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, V
         if (getActivity() != null) {
             if (allData == null || allData.size() == 0) {
                 LogUtil.d("OOM", "allData==null");
-                Presenter.requestData(templateId, actTag);
+                Presenter.requestData(category_id, actTag);
             } else {
                 LogUtil.d("OOM", "allData!=null");
             }

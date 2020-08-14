@@ -161,6 +161,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     private String templateId;
 
+    private String category_id;
+
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
@@ -180,12 +182,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         readOnly = getIntent().getBooleanExtra("readOnly", false);
         fromToMineCollect = getIntent().getBooleanExtra("fromToMineCollect", false);
         fromTo = getIntent().getStringExtra("fromTo");
+        category_id=getIntent().getStringExtra("category_id");
         templateId = templateItem.getId() + "";
         //需要得到之前allData 已经滑到的页数和分类的类别以及是模板页面或者背景页面等
         int nowSelectPage = getIntent().getIntExtra("nowSelectPage", 1);
         nowPraise = templateItem.getIs_praise();
-
-        Presenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, fromTo, templateId, fromToMineCollect);
+        Presenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, fromTo, category_id, fromToMineCollect);
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
         if (nowChoosePosition >= allData.size() - 2) {
             Presenter.requestMoreData();

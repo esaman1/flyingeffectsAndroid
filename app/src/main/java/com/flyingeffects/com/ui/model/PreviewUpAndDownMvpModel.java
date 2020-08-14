@@ -87,12 +87,12 @@ public class PreviewUpAndDownMvpModel {
     private SmartRefreshLayout smartRefreshLayout;
     private List<new_fag_template_item> allData;
     private String fromTo;
-    private String templateId;
+    private String category_id;
     private boolean fromToMineCollect;
     private TTAdNative mTTAdNative;
     private String soundFolder;
 
-    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage, String fromTo, String templateId, boolean fromToMineCollect) {
+    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage, String fromTo, String category_id, boolean fromToMineCollect) {
         this.context = context;
         this.selectPage = nowSelectPage;
         this.callback = callback;
@@ -100,7 +100,7 @@ public class PreviewUpAndDownMvpModel {
         mVideoFolder = fileManager.getFileCachePath(context, "downVideo");
         this.allData = allData;
         this.fromTo = fromTo;
-        this.templateId = templateId;
+        this.category_id = category_id;
         this.fromToMineCollect = fromToMineCollect;
         mTTAdNative = TTAdManagerHolder.get().createAdNative(context);
         //在合适的时机申请权限，如read_phone_state,防止获取不了imei时候，下载类广告没有填充的问题
@@ -127,6 +127,11 @@ public class PreviewUpAndDownMvpModel {
         });
 
         smartRefreshLayout.setEnableLoadMore(false);
+        if(TextUtils.isEmpty(category_id)){
+            smartRefreshLayout.setEnableRefresh(true);
+        }
+
+
     }
 
 
@@ -504,8 +509,8 @@ public class PreviewUpAndDownMvpModel {
     private void requestFagData() {
         Observable ob;
         HashMap<String, String> params = new HashMap<>();
-        LogUtil.d("templateId", "templateId=" + templateId);
-        params.put("category_id", templateId);
+        LogUtil.d("templateId", "templateId=" + category_id);
+        params.put("category_id", category_id);
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
             params.put("template_type", "1");
         } else {
@@ -529,7 +534,7 @@ public class PreviewUpAndDownMvpModel {
             @Override
             protected void _onNext(List<new_fag_template_item> data) {
                 String str = StringUtil.beanToJSONString(data);
-//            LogUtil.d("OOM",str);
+            LogUtil.d("OOM",str);
                 finishData();
                 if (isRefresh) {
                     allData.clear();
