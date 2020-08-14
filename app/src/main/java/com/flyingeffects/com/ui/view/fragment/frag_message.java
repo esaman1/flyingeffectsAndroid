@@ -80,6 +80,10 @@ public class frag_message extends BaseFragment {
             requestSystemMessage();
             if (BaseConstans.hasLogin()) {
                 requestMessageCount();
+            }else{
+                tv_follow.setVisibility(View.GONE);
+                tv_zan.setVisibility(View.GONE);
+                tv_comment_count.setVisibility(View.GONE);
             }
 
         }

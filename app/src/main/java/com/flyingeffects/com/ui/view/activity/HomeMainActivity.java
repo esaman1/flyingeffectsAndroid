@@ -439,6 +439,8 @@ public class HomeMainActivity extends FragmentActivity {
         MobclickAgent.onResume(this);
         if(BaseConstans.hasLogin()){
             requestMessageCount();
+        }else{
+            message_count.setVisibility(View.GONE);
         }
     }
 

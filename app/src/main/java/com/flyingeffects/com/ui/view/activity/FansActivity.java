@@ -18,6 +18,8 @@ import com.flyingeffects.com.enity.fansEnity;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 
 import java.util.ArrayList;
@@ -122,7 +124,7 @@ public class FansActivity extends BaseActivity {
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 switch (view.getId()) {
                     case R.id.tv_follow:
-                        requestFocus(fansList.get(position).getId());
+                        requestFocus(fansList.get(position).getUser_id());
                         break;
 
                     default:
@@ -168,6 +170,7 @@ public class FansActivity extends BaseActivity {
 
             @Override
             protected void _onNext(Object data) {
+                LogUtil.d("OOM", StringUtil.beanToJSONString(data));
                 requestMessageCount();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
