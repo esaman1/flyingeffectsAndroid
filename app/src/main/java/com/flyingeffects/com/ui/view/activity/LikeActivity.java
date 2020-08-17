@@ -78,6 +78,24 @@ public class LikeActivity extends BaseActivity {
                 requestTemplateDetail(listData.get(position).getTemplate_id());
             }
         });
+
+        adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                switch (view.getId()){
+                    case R.id.iv_icon:
+                        Intent intent = new Intent(LikeActivity.this, UserHomepageActivity.class);
+                        intent.putExtra("toUserId", listData.get(position).getUser_id());
+                        startActivity(intent);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+
+
         LinearLayoutManager layoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);

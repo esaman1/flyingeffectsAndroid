@@ -39,6 +39,8 @@ public class abc {
         }
         result.append(abc.API_SALT);
         String fResult = result.toString();
+        fResult = fResult.replaceAll(" ","");
+        LogUtil.d("OOM","fResult="+fResult);
         fResult = AuthCode.MD5(fResult);
         return fResult;
     }

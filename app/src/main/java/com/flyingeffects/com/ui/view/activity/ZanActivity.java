@@ -49,7 +49,7 @@ public class ZanActivity extends BaseActivity {
 
     private Mine_zan_adapter adapter;
 
-    private List<MineZanEnity> listData=new ArrayList<>();
+    private List<MineZanEnity> listData = new ArrayList<>();
 
     private boolean isRefresh = true;
     private int selectPage = 1;
@@ -58,7 +58,7 @@ public class ZanActivity extends BaseActivity {
     SmartRefreshLayout smartRefreshLayout;
 
 
-    int from ;
+    int from;
     private List<new_fag_template_item> allData = new ArrayList<>();
 
 
@@ -72,18 +72,35 @@ public class ZanActivity extends BaseActivity {
         ((TextView) findViewById(R.id.tv_top_title)).setText("赞");
         findViewById(R.id.iv_top_back).setOnClickListener(this);
         initSmartRefreshLayout();
-        from=getIntent().getIntExtra("from",0);
-        adapter = new Mine_zan_adapter(R.layout.list_like_item, listData,from, this);
+        from = getIntent().getIntExtra("from", 0);
+        adapter = new Mine_zan_adapter(R.layout.list_like_item, listData, from, this);
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                if(!TextUtils.isEmpty(listData.get(position).getTemplate_id())){
+                if (!TextUtils.isEmpty(listData.get(position).getTemplate_id())) {
                     requestTemplateDetail(listData.get(position).getTemplate_id());
-                }else{
+                } else {
                     requestTemplateDetail(listData.get(position).getId());
                 }
             }
         });
+
+
+        adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                switch (view.getId()) {
+                    case R.id.iv_icon:
+                        Intent intent = new Intent(ZanActivity.this, UserHomepageActivity.class);
+                        intent.putExtra("toUserId", listData.get(position).getUser_id());
+                        startActivity(intent);
+
+
+                        break;
+                }
+            }
+        });
+
         LinearLayoutManager layoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
@@ -107,9 +124,9 @@ public class ZanActivity extends BaseActivity {
                 @Override
                 protected void _onNext(new_fag_template_item data) {
                     allData.clear();
-                    String str=StringUtil.beanToJSONString(data);
-                    LogUtil.d("OOM",str);
-                    Intent intent =new Intent(ZanActivity.this,PreviewUpAndDownActivity.class);
+                    String str = StringUtil.beanToJSONString(data);
+                    LogUtil.d("OOM", str);
+                    Intent intent = new Intent(ZanActivity.this, PreviewUpAndDownActivity.class);
                     String type = data.getTemplate_type();
                     allData.add(data);
                     ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
@@ -132,7 +149,7 @@ public class ZanActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
-        if(from==1&&!BaseConstans.hasLogin()){
+        if (from == 1 && !BaseConstans.hasLogin()) {
             goActivity(LoginActivity.class);
         }
     }
@@ -141,9 +158,9 @@ public class ZanActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(BaseConstans.hasLogin()){
+        if (BaseConstans.hasLogin()) {
             requestPraiseList(true);
-        }else{
+        } else {
             ToastUtil.showToast(getResources().getString(R.string.need_login));
         }
 
@@ -164,7 +181,7 @@ public class ZanActivity extends BaseActivity {
             @Override
             protected void _onError(String message) {
                 finishData();
-                Log.e(TAG, "_onError: " + message);
+                Log.e("OOM", "_onError: " + message);
             }
 
             @Override
@@ -188,13 +205,12 @@ public class ZanActivity extends BaseActivity {
     }
 
 
-
     public void initSmartRefreshLayout() {
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
             isRefresh = true;
             refreshLayout.setEnableLoadMore(true);
             selectPage = 1;
-            requestPraiseList(false );
+            requestPraiseList(false);
         });
         smartRefreshLayout.setOnLoadMoreListener(refresh -> {
             isRefresh = false;
@@ -202,21 +218,22 @@ public class ZanActivity extends BaseActivity {
             requestPraiseList(false);
         });
     }
+
     private boolean isFirstData = true;
+
     public void isShowData(List<MineZanEnity> data) {
-            adapter.notifyDataSetChanged();
-            if (isFirstData) {
-                BackgroundExecutor.execute(() -> {
-                    isFirstData = false;
-                });
-            }
+        adapter.notifyDataSetChanged();
+        if (isFirstData) {
+            BackgroundExecutor.execute(() -> {
+                isFirstData = false;
+            });
+        }
     }
 
     private void finishData() {
         smartRefreshLayout.finishRefresh();
         smartRefreshLayout.finishLoadMore();
     }
-
 
 
 }

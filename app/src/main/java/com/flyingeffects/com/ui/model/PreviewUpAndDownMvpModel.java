@@ -119,19 +119,14 @@ public class PreviewUpAndDownMvpModel {
             requestFagData();
         });
         smartRefreshLayout.setOnLoadMoreListener(refresh -> {
-//            isOnLoadMore();
-//            isRefresh = false;
-//            selectPage++;
-////            requestFagData(false, false);
-//            requestFagData();
+            //被方法requestMoreData 所替换了
+
         });
 
         smartRefreshLayout.setEnableLoadMore(false);
-        if(TextUtils.isEmpty(category_id)){
+        if (TextUtils.isEmpty(category_id)) {
             smartRefreshLayout.setEnableRefresh(true);
         }
-
-
     }
 
 
@@ -186,27 +181,28 @@ public class PreviewUpAndDownMvpModel {
 
     private boolean nowHasCollect;
     private ImageView iv_collect;
+
     public void showBottomSheetDialog(String path, String imagePath, String id, new_fag_template_item fag_template_item) {
         bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
         View view = LayoutInflater.from(context).inflate(R.layout.preview_bottom_sheet_dialog, null);
         bottomSheetDialog.setContentView(view);
         LinearLayout ll_collect = view.findViewById(R.id.ll_collect);
-        iv_collect  = view.findViewById(R.id.iv_collect);
-        if(BaseConstans.hasLogin()&&fag_template_item.getIs_collection()==1){
-            nowHasCollect=true;
+        iv_collect = view.findViewById(R.id.iv_collect);
+        if (BaseConstans.hasLogin() && fag_template_item.getIs_collection() == 1) {
+            nowHasCollect = true;
             //表示收藏
             iv_collect.setImageResource(R.mipmap.new_version_collect_ed);
-        }else{
-            nowHasCollect=false;
+        } else {
+            nowHasCollect = false;
             iv_collect.setImageResource(R.mipmap.new_version_collect);
         }
         ll_collect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if(BaseConstans.hasLogin()){
+                if (BaseConstans.hasLogin()) {
                     callback.onclickCollect();
-                }else{
+                } else {
                     ToastUtil.showToast(context.getResources().getString(R.string.need_login));
                 }
 
@@ -513,31 +509,48 @@ public class PreviewUpAndDownMvpModel {
         Observable ob;
         HashMap<String, String> params = new HashMap<>();
         LogUtil.d("templateId", "templateId=" + category_id);
-        params.put("category_id", category_id);
-        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
-            params.put("template_type", "1");
+        if(!TextUtils.isEmpty(category_id)){
+            params.put("category_id", category_id);
+        }
+        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
+            params.put("to_user_id", BaseConstans.GetUserId());
+            params.put("type", "1");
         } else {
-            params.put("template_type", "2");
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
+                params.put("template_type", "1");
+            } else {
+                params.put("template_type", "2");
+            }
         }
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
-        if (fromToMineCollect) {
+
+
+        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
+            LogUtil.d("OOM", "请求的uploadList"  );
+            ob = Api.getDefault().uploadList(BaseConstans.getRequestHead(params));
+        } else if (fromToMineCollect) {
+            LogUtil.d("OOM", "请求的fromToMineCollect"  );
             params.put("token", BaseConstans.GetUserToken());
             ob = Api.getDefault().collectionList(BaseConstans.getRequestHead(params));
         } else {
+            LogUtil.d("OOM", "请求的getTemplate"  );
             ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
         }
+        String str = StringUtil.beanToJSONString(params);
+        LogUtil.d("OOM", "请求的参数为------" + str);
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
             @Override
             protected void _onError(String message) {
+                LogUtil.d("OOM", "下一页数据请求" + message);
                 finishData();
-                // ToastUtil.showToast(message);
+                ToastUtil.showToast("错误为" + message);
             }
 
             @Override
             protected void _onNext(List<new_fag_template_item> data) {
                 String str = StringUtil.beanToJSONString(data);
-            LogUtil.d("OOM",str);
+                LogUtil.d("OOM", "下一页数据请求" + str);
                 finishData();
                 if (isRefresh) {
                     allData.clear();
@@ -595,11 +608,11 @@ public class PreviewUpAndDownMvpModel {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "collectTemplate=" + str);
 
-                nowHasCollect=!nowHasCollect;
+                nowHasCollect = !nowHasCollect;
                 callback.collectionResult(nowHasCollect);
-                if(nowHasCollect){
+                if (nowHasCollect) {
                     iv_collect.setImageResource(R.mipmap.new_version_collect_ed);
-                }else{
+                } else {
                     iv_collect.setImageResource(R.mipmap.new_version_collect);
                 }
 
@@ -607,11 +620,6 @@ public class PreviewUpAndDownMvpModel {
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
 
     }
-
-
-
-
-
 
 
     /**
@@ -627,6 +635,11 @@ public class PreviewUpAndDownMvpModel {
         params.put("type", template_type);
         // 启动时间
         Observable ob = Api.getDefault().addPraise(BaseConstans.getRequestHead(params));
+
+        LogUtil.d("OOM",StringUtil.beanToJSONString(params));
+
+
+
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
             @Override
             protected void _onError(String message) {
@@ -926,8 +939,6 @@ public class PreviewUpAndDownMvpModel {
 //    }
 
 
-
-
 //    /**
 //     * description ：回复消息
 //     * type 1表示一级评论，2 表示二级回复
@@ -959,9 +970,6 @@ public class PreviewUpAndDownMvpModel {
 //            }
 //        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
 //    }
-
-
-
 
 
 //    /**
@@ -1015,8 +1023,6 @@ public class PreviewUpAndDownMvpModel {
 //            }
 //        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
 //    }
-
-
 
 
 //    /**

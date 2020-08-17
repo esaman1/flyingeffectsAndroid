@@ -104,7 +104,8 @@ public class frag_user_upload_bj extends BaseFragment {
         params.put("pageSize", perPageCount + "");
         params.put("type",  "1");
         params.put("to_user_id", BaseConstans.GetUserId());
-
+        String str = StringUtil.beanToJSONString(params);
+        LogUtil.d("OOM","请求的参数为"+ str);
         Observable ob = Api.getDefault().uploadList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override

@@ -95,7 +95,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private boolean nowSlideOrientationIsUp = false;
 
 
-//    boolean readOnly;
+    //    boolean readOnly;
     private boolean fromToMineCollect;
 
     //来着来个页面
@@ -179,12 +179,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         insertMinNum = nowChoosePosition;
         templateItem = allData.get(nowChoosePosition);
         is_picout = templateItem.getIs_picout();
-        is_with_play=templateItem.getIs_with_play();
+        is_with_play = templateItem.getIs_with_play();
         defaultnum = templateItem.getDefaultnum();
 //        readOnly = getIntent().getBooleanExtra("readOnly", false);
         fromToMineCollect = getIntent().getBooleanExtra("fromToMineCollect", false);
         fromTo = getIntent().getStringExtra("fromTo");
-        String category_id=getIntent().getStringExtra("category_id");
+        //种类
+        String category_id = getIntent().getStringExtra("category_id");
         templateId = templateItem.getId() + "";
         //需要得到之前allData 已经滑到的页数和分类的类别以及是模板页面或者背景页面等
         int nowSelectPage = getIntent().getIntExtra("nowSelectPage", 1);
@@ -257,9 +258,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     //判断当前滑动状态
                     nowSlideOrientationIsUp = nowChoosePosition < lastChoosePosition;
                     refeshData();
-                    if (position >= insertMaxNum || position <= insertMinNum) {
-                        Presenter.requestAD();
-                        LogUtil.d("OOM", "开始请求广告position=" + position + "insertMaxNum=" + insertMaxNum + "insertMinNum=" + insertMinNum);
+
+                    if (!DoubleClick.getInstance().isFastZDYDoubleClick(2000)) {
+                        if (position >= insertMaxNum || position <= insertMinNum) {
+                            Presenter.requestAD();
+                            LogUtil.d("OOM", "开始请求广告position=" + position + "insertMaxNum=" + insertMaxNum + "insertMinNum=" + insertMinNum);
+                        }
                     }
                     int allDataCount = allData.size();
                     if (position == allDataCount - 3) {
@@ -310,6 +314,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             defaultnum = templateItem.getDefaultnum();
             is_picout = templateItem.getIs_picout();
             nowPraise = templateItem.getIs_praise();
+            is_with_play = templateItem.getIs_with_play();
         }
     }
 
@@ -382,7 +387,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     protected void onResume() {
         super.onResume();
-        LogUtil.d("OOM","onResume");
+        LogUtil.d("OOM", "onResume");
         //出现bug 不能继续播放的问题
         if (!nowItemIsAd) {
             GSYVideoManager.onResume();
@@ -422,22 +427,29 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * user : zhangtongju
      */
     public void onclickZan() {
+        String needId;
+        int id=templateItem.getTemplate_id();
+        if(id!=0){
+            needId=id+"";
+        }else{
+            needId=templateItem.getId();
+        }
         if (fromToMineCollect) {
             //模板收藏
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
-                Presenter.ZanTemplate(templateItem.getId() + "", templateItem.getTitle(), 1 + "");
+                Presenter.ZanTemplate(needId, templateItem.getTitle(), 1 + "");
             } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
                 //我上传的背景
-                Presenter.ZanTemplate(templateItem.getTemplate_id() + "", templateItem.getTitle(), 2 + "");
+                Presenter.ZanTemplate(needId, templateItem.getTitle(), 2 + "");
             } else {
                 //背景 收藏
-                Presenter.ZanTemplate(templateItem.getId() + "", templateItem.getTitle(), 2 + "");
+                Presenter.ZanTemplate(needId , templateItem.getTitle(), 2 + "");
             }
         } else {
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
-                Presenter.ZanTemplate(templateItem.getId(), templateItem.getTitle(), 1 + "");
+                Presenter.ZanTemplate(needId, templateItem.getTitle(), 1 + "");
             } else {
-                Presenter.ZanTemplate(templateItem.getId(), templateItem.getTitle(), 2 + "");
+                Presenter.ZanTemplate(needId, templateItem.getTitle(), 2 + "");
             }
         }
     }
@@ -447,12 +459,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void collectionResult(boolean collectionResult) {
 
 
-        if(collectionResult){
-            new_fag_template_item item=   allData.get(nowChoosePosition);
+        if (collectionResult) {
+            new_fag_template_item item = allData.get(nowChoosePosition);
             item.setIs_collection(1);
             allData.set(nowChoosePosition, item);
-        }else{
-            new_fag_template_item item=   allData.get(nowChoosePosition);
+        } else {
+            new_fag_template_item item = allData.get(nowChoosePosition);
             item.setIs_collection(0);
             allData.set(nowChoosePosition, item);
         }
@@ -566,7 +578,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             //file 文件下载成功
             this.TemplateFilePath = filePath;
             Log.d(TAG, "getTemplateFileSuccess: TemplateFilePath = " + TemplateFilePath);
-            if (!TextUtils.isEmpty(templateItem.getVideotime()) && !templateItem.getVideotime().equals("0")&&is_with_play==1) {
+            if (!TextUtils.isEmpty(templateItem.getVideotime()) && !templateItem.getVideotime().equals("0") && is_with_play == 1) {
                 float videoTime = Float.parseFloat(templateItem.getVideotime());
                 LogUtil.d("OOM", "bj.mp3=" + TemplateFilePath);
                 String bjMp3 = TemplateFilePath + File.separator + "bj.mp3";
@@ -586,6 +598,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void showNewData(List<new_fag_template_item> newAllData, boolean isRefresh) {
         allData = newAllData;
+        templateItem=newAllData.get(0);
         if (isRefresh) {
             isNeedAddaD = false;
             randomPosition = 0;
@@ -670,15 +683,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void getTemplateLInfo(new_fag_template_item data) {
         if (data != null) {
-            templateItem=data;
+            templateItem = data;
             setIsZan(data.getIs_praise() == 1);
             nowPraise = data.getIs_praise();
-//            //更新页面数据，防止数据不全的情况
+            //更新页面数据，防止数据不全的情况
             allData.set(nowChoosePosition, data);
-           adapter.notifyItemChanged(nowChoosePosition);
-
-
-
+            adapter.notifyItemChanged(nowChoosePosition);
+            is_with_play = templateItem.getIs_with_play();
         }
 
     }
@@ -701,7 +712,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void returnSpliteMusic(String musicPath, String videoPath) {
         this.videoPath = videoPath;
-        if (!TextUtils.isEmpty(musicPath)&&is_with_play==1) {
+        if (!TextUtils.isEmpty(musicPath) && is_with_play == 1) {
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
                 AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "", (long) adapter.getVideoDuration(), templateItem.getTitle(), musicPath);
             } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {

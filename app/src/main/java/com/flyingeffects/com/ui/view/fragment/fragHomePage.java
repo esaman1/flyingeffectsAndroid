@@ -49,7 +49,7 @@ public class fragHomePage extends BaseFragment {
     private frag_home_page_adapter adapter;
     private List<new_fag_template_item> allData = new ArrayList<>();
     private String toUserId = "";
-    //0 shi 1 是喜欢
+    //类型:1=作者的作品,2=作者喜欢的作品,3=作者收藏的模板
     private int isFrom;
     @BindView(R.id.smart_refresh_layout_bj)
     SmartRefreshLayout smartRefreshLayout;
@@ -153,7 +153,7 @@ public class fragHomePage extends BaseFragment {
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
         params.put("to_user_id", toUserId);
-        params.put("type", isFrom + "");
+        params.put("type", isFrom + "");//	'类型:1=作者的作品,2=作者喜欢的作品,3=作者收藏的模板
         params.put("pageSize", perPageCount + "");
         Observable ob = Api.getDefault().getMyProduction(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {

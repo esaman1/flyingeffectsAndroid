@@ -293,6 +293,17 @@ public class MineZanEnity implements Serializable {
            private String vidoefile;
            private String zipid;
 
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
+
+    private String user_id;
+
+
     public String getPhotourl() {
         return photourl;
     }

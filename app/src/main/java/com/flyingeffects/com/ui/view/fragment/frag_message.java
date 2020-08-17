@@ -175,24 +175,41 @@ public class frag_message extends BaseFragment {
         switch (view.getId()) {
 
             case R.id.iv_icon_fans:
-                Intent intentFan=new Intent(getActivity(), FansActivity.class);
-                intentFan.putExtra("to_user_id",BaseConstans.GetUserId());
-                intentFan.putExtra("from",1);
-                startActivity(intentFan);
+
+                if(BaseConstans.hasLogin()){
+                    Intent intentFan=new Intent(getActivity(), FansActivity.class);
+                    intentFan.putExtra("to_user_id",BaseConstans.GetUserId());
+                    intentFan.putExtra("from",1);
+                    startActivity(intentFan);
+                }else{
+                    ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
+                }
+
 
                 break;
 
             case R.id.iv_icon_zan:
-                Intent intentZan=new Intent(getActivity(), ZanActivity.class);
-                intentZan.putExtra("from",1);
-                startActivity(intentZan);
+
+
+                if(BaseConstans.hasLogin()){
+                    Intent intentZan=new Intent(getActivity(), ZanActivity.class);
+                    intentZan.putExtra("from",1);
+                    startActivity(intentZan);
+                }else{
+                    ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
+                }
 
                 break;
 
             case R.id.ll_comment:
-                Intent intentComment=new Intent(getActivity(),LikeActivity.class);
-                intentComment.putExtra("from",1);
-                startActivity(intentComment);
+
+                if(BaseConstans.hasLogin()){
+                    Intent intentComment=new Intent(getActivity(),LikeActivity.class);
+                    intentComment.putExtra("from",1);
+                    startActivity(intentComment);
+                }else{
+                    ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
+                }
                 break;
 
             default:

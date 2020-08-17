@@ -255,6 +255,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     protected void initView() {
         isOnDestroy = false;
         EventBus.getDefault().register(this);
+        clearUmData();
         WaitingDialog.openPragressDialog(this);
         OneKeyLoginManager.getInstance().setLoadingVisibility(false);
         OneKeyLoginManager.getInstance().setAuthThemeConfig(ShanyanConfigUtils.getCJSConfig(getApplicationContext()), ShanyanConfigUtils.getCJSConfig(getApplicationContext()));
@@ -305,6 +306,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         spannableBuilder.setSpan(clickableSpanTwo, 15, 19, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         tv_xy.setMovementMethod(LinkMovementMethod.getInstance());
         tv_xy.setText(spannableBuilder);
+    }
+
+    private void clearUmData() {
+        UMShareAPI.get(mContext).deleteOauth(this, SHARE_MEDIA.WEIXIN, authListener);
+        UMShareAPI.get(mContext).deleteOauth(this, SHARE_MEDIA.QQ, authListener);
     }
 
 
@@ -602,10 +608,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     };
 
 
-    private void clearUmData() {
-        UMShareAPI.get(mContext).deleteOauth(this, SHARE_MEDIA.WEIXIN, authListener);
-        UMShareAPI.get(mContext).deleteOauth(this, SHARE_MEDIA.QQ, authListener);
-    }
 
 
     @Subscribe

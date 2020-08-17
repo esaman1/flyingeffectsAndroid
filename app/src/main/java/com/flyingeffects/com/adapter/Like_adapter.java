@@ -42,6 +42,8 @@ public class Like_adapter extends BaseQuickAdapter<MineCommentEnity, BaseViewHol
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(iv_head);
 
+        helper.addOnClickListener(R.id.iv_icon);
+
         helper.setText(R.id.tv_title,item.getNickname());
         ImageView iv_cover=helper.getView(R.id.iv_cover);
 
