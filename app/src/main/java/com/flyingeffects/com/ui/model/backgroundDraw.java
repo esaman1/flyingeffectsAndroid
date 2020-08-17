@@ -174,7 +174,7 @@ public class backgroundDraw {
             } else {
                 if (!TextUtils.isEmpty(imagePath)) {
                     Bitmap bt_nj = BitmapManager.getInstance().getOrientationBitmap(imagePath);
-                    BitmapLayer bitmapLayer=  execute.addBitmapLayer(bt_nj);
+                    BitmapLayer bitmapLayer = execute.addBitmapLayer(bt_nj);
                     bitmapLayer.setScaleType(LSOScaleType.CROP_FILL_COMPOSITION);
 
                 } else {
@@ -231,12 +231,18 @@ public class backgroundDraw {
             option.setAudioMute();
             VideoFrameLayer videoLayer = execute.addVideoLayer(option);
             videoLayer.setId(i);
-            //默认gif 的缩放位置是gif 宽度最大
-            float layerScale = DRAWPADWIDTH / (float) videoLayer.getLayerWidth();
+            float layerScale;
+            layerScale = DRAWPADWIDTH / (float) videoLayer.getLayerWidth();
             LogUtil.d("OOM", "图层的缩放为" + layerScale + "");
             float stickerScale = stickerItem.getScale();
             LogUtil.d("OOM", "gif+图层的缩放为" + layerScale * stickerScale + "");
             videoLayer.setScale(layerScale * stickerScale);
+//            if(nowUiIsLandscape){
+//                videoLayer.setScale(layerScale * stickerScale);
+//            }else{
+//                videoLayer.setScale(layerScale * stickerScale);
+//            }
+
             LogUtil.d("OOM", "mvLayerW=" + videoLayer.getLayerWidth() + "");
             LogUtil.d("OOM", "mvLayerpadW=" + videoLayer.getPadWidth() + "");
             int rotate = (int) stickerItem.getRotation();

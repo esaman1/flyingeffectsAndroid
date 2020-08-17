@@ -22,6 +22,7 @@ import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.CreateCutCallback;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.ListForUpAndDown;
+import com.flyingeffects.com.enity.ReplayMessageEvent;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.enity.templateDataCollectRefresh;
@@ -376,10 +377,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
 
+    private boolean isOnPause=false;
     @Override
     protected void onPause() {
         super.onPause();
         GSYVideoManager.onPause();
+        isOnPause=true;
 //        isIntoPause = true;
         LogUtil.d("OOM", "onPause");
     }
@@ -387,6 +390,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     protected void onResume() {
         super.onResume();
+        isOnPause=false;
         LogUtil.d("OOM", "onResume");
         //出现bug 不能继续播放的问题
         if (!nowItemIsAd) {
@@ -686,10 +690,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             templateItem = data;
             setIsZan(data.getIs_praise() == 1);
             nowPraise = data.getIs_praise();
-            //更新页面数据，防止数据不全的情况
-            allData.set(nowChoosePosition, data);
-            adapter.notifyItemChanged(nowChoosePosition);
+
             is_with_play = templateItem.getIs_with_play();
+            //更新页面数据，防止数据不全的情况
+            if(!isOnPause){
+                allData.set(nowChoosePosition, data);
+                adapter.notifyItemChanged(nowChoosePosition);
+            }
         }
 
     }
@@ -1095,4 +1102,14 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
 
     }
+
+
+    @Subscribe
+    public void onEventMainThread(ReplayMessageEvent event) {
+        if (BaseConstans.hasLogin()) {
+            //主要用于刷新当前页面
+            Presenter.requestTemplateDetail(templateItem.getId());
+        }
+    }
+
 }

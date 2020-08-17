@@ -1246,7 +1246,7 @@ public class CreationTemplateMvpModel {
      */
     private void cutVideo(videoType videoType, long duration, long materialDuration, boolean nowUiIsLandscape) {
         LogUtil.d("oom3", "需要裁剪的时长为" + materialDuration);
-        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, materialDuration, videoType.getPath(), 0, new videoCutDurationForVideoOneDo.isSuccess() {
+        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, false,materialDuration, videoType.getPath(), 0, new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
             public void progresss(int progress) {
                 float positionF = progress / (float) 100;
@@ -1261,6 +1261,7 @@ public class CreationTemplateMvpModel {
 
             @Override
             public void isSuccess(boolean isSuccess, String path) {
+                LogUtil.d("OOM","保存后的地址为"+path);
                 int position = videoType.getPosition();
                 cutList.add(path);
                 AllStickerData sticker = listAllSticker.get(position);

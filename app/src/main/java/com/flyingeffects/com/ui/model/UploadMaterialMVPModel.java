@@ -654,7 +654,7 @@ public class UploadMaterialMVPModel {
 //        long durationUs = getDuration() * 1000;
         long durationUs = getDuration();
         getUserChooseDuration(cropStartRatio, cropEndRatio);
-        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(mContext, Math.round(cropEndRatio * durationUs) - Math.round(cropStartRatio * durationUs)-500, videoPath, Math.round(cropStartRatio * durationUs), new videoCutDurationForVideoOneDo.isSuccess() {
+        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(mContext, false,Math.round(cropEndRatio * durationUs) - Math.round(cropStartRatio * durationUs)-500, videoPath, Math.round(cropStartRatio * durationUs), new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
             public void progresss(int progress) {
                 if (progress > 100) {

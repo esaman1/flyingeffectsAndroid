@@ -106,11 +106,15 @@ public class videoCutDurationForVideoOneDo {
      */
     private DrawPadAllExecute2 execute;
 
-    public void CutVideoForDrawPadAllExecute2(Context context, float duration, String path, long startDurtion, isSuccess callback) {
+    public void CutVideoForDrawPadAllExecute2(Context context,boolean nowUiIsLandscape, float duration, String path, long startDurtion, isSuccess callback) {
         try {
 //            VideoInfo   videoInfo = getVideoInfo.getInstance().getRingDuring(path);
 //            long allDuration=videoInfo.getDuration();
-            execute = new DrawPadAllExecute2(context, 720, 1280, (long) (duration * 1000));
+            if(nowUiIsLandscape){
+                execute = new DrawPadAllExecute2(context, 1280, 720, (long) (duration * 1000));
+            }else{
+                execute = new DrawPadAllExecute2(context, 720, 1280, (long) (duration * 1000));
+            }
             execute.setFrameRate(20);
             execute.setEncodeBitrate(5 * 1024 * 1024);
             execute.setOnLanSongSDKErrorListener(message -> {
@@ -202,6 +206,8 @@ public class videoCutDurationForVideoOneDo {
             e.printStackTrace();
         }
     }
+
+
 
 
 }

@@ -124,7 +124,7 @@ public class PreviewMvpModel {
                 @Override
                 public void call(String s1) {
                     VideoInfo info = getVideoInfo.getInstance().getRingDuring(s1);
-                    videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, info.getDuration(), videoName, 0, new videoCutDurationForVideoOneDo.isSuccess() {
+                    videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context,false, info.getDuration(), videoName, 0, new videoCutDurationForVideoOneDo.isSuccess() {
                         @Override
                         public void progresss(int progress) {
                             LogUtil.d("oom", "下载时候后重新裁剪进度为=" + progress);

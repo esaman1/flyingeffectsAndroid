@@ -33,6 +33,7 @@ import com.flyingeffects.com.enity.DeleteMessage;
 import com.flyingeffects.com.enity.MessageData;
 import com.flyingeffects.com.enity.MessageEnity;
 import com.flyingeffects.com.enity.MessageReply;
+import com.flyingeffects.com.enity.ReplayMessageEvent;
 import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -479,6 +480,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().post(new ReplayMessageEvent());
         EventBus.getDefault().unregister(this);
     }
 }
