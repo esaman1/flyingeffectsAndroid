@@ -161,6 +161,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     private String templateId;
 
+    //1表示可以合拍，而0表示不能合拍
+    private int is_with_play;
 
     @Override
     protected void initView() {
@@ -177,6 +179,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         insertMinNum = nowChoosePosition;
         templateItem = allData.get(nowChoosePosition);
         is_picout = templateItem.getIs_picout();
+        is_with_play=templateItem.getIs_with_play();
         defaultnum = templateItem.getDefaultnum();
 //        readOnly = getIntent().getBooleanExtra("readOnly", false);
         fromToMineCollect = getIntent().getBooleanExtra("fromToMineCollect", false);
@@ -563,7 +566,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             //file 文件下载成功
             this.TemplateFilePath = filePath;
             Log.d(TAG, "getTemplateFileSuccess: TemplateFilePath = " + TemplateFilePath);
-            if (!TextUtils.isEmpty(templateItem.getVideotime()) && !templateItem.getVideotime().equals("0")) {
+            if (!TextUtils.isEmpty(templateItem.getVideotime()) && !templateItem.getVideotime().equals("0")&&is_with_play==1) {
                 float videoTime = Float.parseFloat(templateItem.getVideotime());
                 LogUtil.d("OOM", "bj.mp3=" + TemplateFilePath);
                 String bjMp3 = TemplateFilePath + File.separator + "bj.mp3";
@@ -671,8 +674,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             setIsZan(data.getIs_praise() == 1);
             nowPraise = data.getIs_praise();
 //            //更新页面数据，防止数据不全的情况
-//            allData.set(nowChoosePosition, data);
-//            adapter.notifyItemChanged(nowChoosePosition);
+            allData.set(nowChoosePosition, data);
+           adapter.notifyItemChanged(nowChoosePosition);
 
 
 
@@ -698,7 +701,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void returnSpliteMusic(String musicPath, String videoPath) {
         this.videoPath = videoPath;
-        if (!TextUtils.isEmpty(musicPath)) {
+        if (!TextUtils.isEmpty(musicPath)&&is_with_play==1) {
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
                 AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "", (long) adapter.getVideoDuration(), templateItem.getTitle(), musicPath);
             } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {

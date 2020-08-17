@@ -183,8 +183,10 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         {
             if (!isFastDoubleClick()) {
                 if(isChecked){
+                    LogUtil.d("OOM","is_with_play="+1);
                     this. isChecked=1;
                 }else{
+                    LogUtil.d("OOM","is_with_play="+0);
                     this. isChecked=0;
                 }
             }
@@ -504,7 +506,8 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         params.put("auth_image", huaweiImagePath);
         params.put("audiourl", huaweiSound);
         params.put("image", coverImagePath);
-        params.put("is_with_play", isChecked+"");
+        params.put("is_with_play", isChecked+""); //1 表示可以合拍
+        LogUtil.d("OOM","is_with_play="+isChecked);
         // 启动时间
         LogUtil.d("OOM2", params.toString());
         Observable ob = Api.getDefault().toLoadTemplate(BaseConstans.getRequestHead(params));

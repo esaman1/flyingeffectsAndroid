@@ -381,6 +381,17 @@ public class new_fag_template_item implements Serializable {
 
     private String admin_id;
 
+    public int getIs_with_play() {
+        return is_with_play;
+    }
+
+    public void setIs_with_play(int is_with_play) {
+        this.is_with_play = is_with_play;
+    }
+
+    //1表示可以合拍，0 不能合拍
+    private int is_with_play;
+
 
 
 

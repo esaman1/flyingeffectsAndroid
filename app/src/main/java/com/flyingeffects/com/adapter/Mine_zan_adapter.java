@@ -25,18 +25,26 @@ import java.util.List;
 public class Mine_zan_adapter extends BaseQuickAdapter<MineZanEnity, BaseViewHolder> {
 
     private Context context;
+    int isFrom;
     public final static String TAG = "main_recycler_adapter";
 
-    public Mine_zan_adapter(int layoutResId, @Nullable List<MineZanEnity> data, Context context) {
+    public Mine_zan_adapter(int layoutResId, @Nullable List<MineZanEnity> data,int isFrom, Context context) {
         super(layoutResId, data);
         this.context = context;
+        this.isFrom=isFrom;
     }
 
 
     @Override
     protected void convert(final BaseViewHolder helper, final MineZanEnity item) {
 //        int offset = helper.getLayoutPosition();
-        helper.setText(R.id.tv_content,item.getAuth());
+
+        if(isFrom==1){
+            helper.setText(R.id.tv_content,item.getTitle());
+        }else{
+            helper.setText(R.id.tv_content,item.getComment());
+        }
+
         ImageView iv_head=helper.getView(R.id.iv_icon);
         Glide.with(context)
                 .load(item.getPhotourl())

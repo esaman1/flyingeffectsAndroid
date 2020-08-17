@@ -422,6 +422,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 //横竖屏切换
                 nowUiIsLandscape = !nowUiIsLandscape;
                 setPlayerViewSize(nowUiIsLandscape);
+
                 break;
 
             default:
@@ -525,6 +526,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private float percentageH = 0;
 
     private void setPlayerViewSize(boolean isLandscape) {
+
+        videoToPause();
+
         LinearLayout.LayoutParams RelativeLayoutParams = (LinearLayout.LayoutParams) playerView.getLayoutParams();
         float oriRatio = 9f / 16f;
         if (isLandscape) {

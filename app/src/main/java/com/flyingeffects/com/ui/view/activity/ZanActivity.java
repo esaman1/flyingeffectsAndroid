@@ -73,11 +73,15 @@ public class ZanActivity extends BaseActivity {
         findViewById(R.id.iv_top_back).setOnClickListener(this);
         initSmartRefreshLayout();
         from=getIntent().getIntExtra("from",0);
-        adapter = new Mine_zan_adapter(R.layout.list_like_item, listData, this);
+        adapter = new Mine_zan_adapter(R.layout.list_like_item, listData,from, this);
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                requestTemplateDetail(listData.get(position).getTemplate_id());
+                if(!TextUtils.isEmpty(listData.get(position).getTemplate_id())){
+                    requestTemplateDetail(listData.get(position).getTemplate_id());
+                }else{
+                    requestTemplateDetail(listData.get(position).getId());
+                }
             }
         });
         LinearLayoutManager layoutManager =
@@ -102,6 +106,9 @@ public class ZanActivity extends BaseActivity {
 
                 @Override
                 protected void _onNext(new_fag_template_item data) {
+                    allData.clear();
+                    String str=StringUtil.beanToJSONString(data);
+                    LogUtil.d("OOM",str);
                     Intent intent =new Intent(ZanActivity.this,PreviewUpAndDownActivity.class);
                     String type = data.getTemplate_type();
                     allData.add(data);

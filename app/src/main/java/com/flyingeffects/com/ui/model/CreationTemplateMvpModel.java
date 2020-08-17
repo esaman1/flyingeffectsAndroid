@@ -837,7 +837,7 @@ public class CreationTemplateMvpModel {
                 stickView.setNowMaterialIsVideo(false);
             }
             stickView.setIsmaterial(true);
-        }else{
+        } else {
             stickView.setIsmaterial(false);
         }
         if (isFirstAdd) {
@@ -867,7 +867,7 @@ public class CreationTemplateMvpModel {
             //来做复制或者来自联系点击下面的item
             StickerView.isFromCopy fromCopy = new StickerView.isFromCopy();
             fromCopy.setScale(copyStickerView.getScale());
-            LogUtil.d("OOM","isCopy=Scale"+copyStickerView.getScale());
+            LogUtil.d("OOM", "isCopy=Scale" + copyStickerView.getScale());
             fromCopy.setDegree(copyStickerView.getRotateAngle());
             fromCopy.setRightOffsetPercent(copyStickerView.getRightOffsetPercent());
             if (isFromShowAnim) {
@@ -1153,9 +1153,10 @@ public class CreationTemplateMvpModel {
 
     private boolean isIntoSaveVideo = false;
     private float percentageH;
+
     public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH) {
         stopAllAnim();
-        this.percentageH=percentageH;
+        this.percentageH = percentageH;
         deleteSubLayerSticker();
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -1214,15 +1215,15 @@ public class CreationTemplateMvpModel {
                     if (cutVideoPathList.size() == 0) {
                         dialog.openProgressDialog();
                         //都不是视频的情况下，就直接渲染
-                        backgroundDraw.toSaveVideo(listAllSticker, isMatting,nowUiIsLandscape,percentageH);
+                        backgroundDraw.toSaveVideo(listAllSticker, isMatting, nowUiIsLandscape, percentageH);
                     } else {
                         dialog.openProgressDialog();
                         cutList.clear();
                         if (videoInfo != null) {
-                            cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration(),nowUiIsLandscape);
+                            cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration(), nowUiIsLandscape);
                         } else {
                             //没选择背景默认裁剪10秒
-                            cutVideo(cutVideoPathList.get(0), defaultVideoDuration, cutVideoPathList.get(0).getDuration(),nowUiIsLandscape);
+                            cutVideo(cutVideoPathList.get(0), defaultVideoDuration, cutVideoPathList.get(0).getDuration(), nowUiIsLandscape);
                         }
                     }
                 }
@@ -1243,7 +1244,7 @@ public class CreationTemplateMvpModel {
      * creation date: 2020/4/21
      * user : zhangtongju
      */
-    private void cutVideo(videoType videoType, long duration, long materialDuration,boolean nowUiIsLandscape) {
+    private void cutVideo(videoType videoType, long duration, long materialDuration, boolean nowUiIsLandscape) {
         LogUtil.d("oom3", "需要裁剪的时长为" + materialDuration);
         videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, materialDuration, videoType.getPath(), 0, new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
@@ -1273,7 +1274,7 @@ public class CreationTemplateMvpModel {
                         //全部裁剪完成之后需要去把视频裁剪成全部帧
                         videoGetFrameModel getFrameModel = new videoGetFrameModel(context, cutList, (isSuccess1, progress) -> {
                             if (isSuccess1) {
-                                backgroundDraw.toSaveVideo(listAllSticker, true,nowUiIsLandscape,percentageH);
+                                backgroundDraw.toSaveVideo(listAllSticker, true, nowUiIsLandscape, percentageH);
                             } else {
                                 //todo  临时手段
                                 if (progress <= 5) {
@@ -1286,13 +1287,13 @@ public class CreationTemplateMvpModel {
                         });
                         getFrameModel.startExecute();
                     } else {
-                        backgroundDraw.toSaveVideo(listAllSticker, false,nowUiIsLandscape,percentageH);
+                        backgroundDraw.toSaveVideo(listAllSticker, false, nowUiIsLandscape, percentageH);
                     }
                 } else {
                     if (videoInfo != null) {
-                        cutVideo(cutVideoPathList.get(cutSuccessNum), videoInfo.getDuration(), cutVideoPathList.get(cutSuccessNum).getDuration(),nowUiIsLandscape);
+                        cutVideo(cutVideoPathList.get(cutSuccessNum), videoInfo.getDuration(), cutVideoPathList.get(cutSuccessNum).getDuration(), nowUiIsLandscape);
                     } else {
-                        cutVideo(cutVideoPathList.get(cutSuccessNum), defaultVideoDuration, cutVideoPathList.get(cutSuccessNum).getDuration(),nowUiIsLandscape);
+                        cutVideo(cutVideoPathList.get(cutSuccessNum), defaultVideoDuration, cutVideoPathList.get(cutSuccessNum).getDuration(), nowUiIsLandscape);
                     }
                 }
             }
@@ -1311,10 +1312,10 @@ public class CreationTemplateMvpModel {
         ) {
             if (data.getChooseAnimId() != null && data.getChooseAnimId() != AnimType.NULL) {
 
-                if(data.isMaterial()){
-                    statisticsEventAffair.getInstance().setFlag(context, "9_Animation",data.getChooseAnimId().name());
-                }else{
-                    statisticsEventAffair.getInstance().setFlag(context, "9_Animation3",data.getChooseAnimId().name());
+                if (data.isMaterial()) {
+                    statisticsEventAffair.getInstance().setFlag(context, "9_Animation", data.getChooseAnimId().name());
+                } else {
+                    statisticsEventAffair.getInstance().setFlag(context, "9_Animation3", data.getChooseAnimId().name());
                 }
 
             }
@@ -1621,28 +1622,25 @@ public class CreationTemplateMvpModel {
     }
 
 
-
     /**
      * description ：设置所有帖子居中状态，这里主要是为了横竖屏切换后，所有帖子居中
      * creation date: 2020/8/10
      * user : zhangtongju
      */
-    public void setAllStickerCenter(){
+    public void setAllStickerCenter() {
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
-           stickerView.setIntoCenter();
+            stickerView.setIntoCenter();
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     if (!isCheckedMatting) {
-                        stickerView.changeImage(stickerView.getOriginalPath(),false);
+                        stickerView.changeImage(stickerView.getOriginalPath(), false);
                     } else {
-                        stickerView.changeImage(stickerView.getResPath(),false);
+                        stickerView.changeImage(stickerView.getResPath(), false);
                     }
-
-
                 }
-            },500);
+            }, 500);
 
         }
     }

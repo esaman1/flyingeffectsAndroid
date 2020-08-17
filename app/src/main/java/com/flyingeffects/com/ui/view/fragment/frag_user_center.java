@@ -28,6 +28,7 @@ import com.flyingeffects.com.ui.view.activity.AboutActivity;
 import com.flyingeffects.com.ui.view.activity.FansActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.MineFocusActivity;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
@@ -190,10 +191,15 @@ public class frag_user_center extends BaseFragment {
             case R.id.fans:
             case R.id.fans_count:
 
-                Intent intentFan=new Intent(getActivity(), FansActivity.class);
-                intentFan.putExtra("to_user_id",BaseConstans.GetUserId());
-                intentFan.putExtra("from",0);
-                startActivity(intentFan);
+                if(BaseConstans.hasLogin()){
+                    Intent intentFan=new Intent(getActivity(), FansActivity.class);
+                    intentFan.putExtra("to_user_id",BaseConstans.GetUserId());
+                    intentFan.putExtra("from",0);
+                    startActivity(intentFan);
+                }else{
+                    ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
+                }
+
 
 
 
@@ -202,9 +208,17 @@ public class frag_user_center extends BaseFragment {
 
             case R.id.attention:
             case R.id.attention_count:
-                Intent intentFoucs=new Intent(getActivity(), MineFocusActivity.class);
-                intentFoucs.putExtra("to_user_id",BaseConstans.GetUserId());
-                startActivity(intentFoucs);
+
+
+
+                if(BaseConstans.hasLogin()){
+                    Intent intentFoucs=new Intent(getActivity(), MineFocusActivity.class);
+                    intentFoucs.putExtra("to_user_id",BaseConstans.GetUserId());
+                    startActivity(intentFoucs);
+                }else{
+                    ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
+                }
+
                 break;
 
 
