@@ -100,20 +100,22 @@ public class frag_user_upload_bj extends BaseFragment {
     private void requestUploadBjList(boolean isShowDialog) {
         tv_hint.setVisibility(View.GONE);
         HashMap<String, String> params = new HashMap<>();
-        params.put("token", BaseConstans.GetUserToken());
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
+        params.put("type",  "1");
+        params.put("to_user_id", BaseConstans.GetUserId());
+
         Observable ob = Api.getDefault().uploadList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override
             protected void _onError(String message) {
                 finishData();
-                Log.e(TAG, "_onError: " + message);
+                Log.e("OOM", "_onError: " + message);
             }
 
             @Override
             protected void _onNext(List<new_fag_template_item> data) {
-                LogUtil.d(TAG, StringUtil.beanToJSONString(data));
+                LogUtil.d("OOM", StringUtil.beanToJSONString(data));
                 finishData();
                 if (isRefresh) {
                     listData.clear();
@@ -224,31 +226,18 @@ public class frag_user_upload_bj extends BaseFragment {
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
                 Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
-                ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
-                intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
-                intent.putExtra("templateId", "");//直接存入被序列化的对象实例
-                intent.putExtra("position", position);
-                intent.putExtra("fromToMineCollect", true);
-                if (allData.get(position).getTest() != 0) {
-                    intent.putExtra("readOnly", true);
-                } else {
-                    intent.putExtra("readOnly", false);
+                if(allData!=null&&allData.size()>1){
+                    allData.remove(0);
+                    ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
+                    intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
+                    intent.putExtra("templateId", "");//直接存入被序列化的对象实例
+                    intent.putExtra("position", position-1);
+                    intent.putExtra("fromToMineCollect", true);
+                    intent.putExtra("nowSelectPage", selectPage);
+                    intent.putExtra("fromTo", FromToTemplate.ISFROMUPDATEBJ);
+                    startActivity(intent);
                 }
-                ;
-                intent.putExtra("nowSelectPage", selectPage);
-                intent.putExtra("fromTo", FromToTemplate.ISFROMUPDATEBJ);
-                startActivity(intent);
-//                Intent intent = new Intent(getActivity(), PreviewActivity.class);
-//                intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
-//                if (allData.get(position).getTest() != 0) {
-//                    intent.putExtra("readOnly", true);
-//                } else {
-//                    intent.putExtra("readOnly", false);
-//                }
-//                intent.putExtra("fromToMineCollect", true);
-//                intent.putExtra("fromTo", FromToTemplate.ISFROMUPDATEBJ);
-//                intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
-//                startActivity(intent);
+
             }
         });
     }

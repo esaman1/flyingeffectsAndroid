@@ -95,7 +95,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private boolean nowSlideOrientationIsUp = false;
 
 
-    boolean readOnly;
+//    boolean readOnly;
     private boolean fromToMineCollect;
 
     //来着来个页面
@@ -178,7 +178,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         templateItem = allData.get(nowChoosePosition);
         is_picout = templateItem.getIs_picout();
         defaultnum = templateItem.getDefaultnum();
-        readOnly = getIntent().getBooleanExtra("readOnly", false);
+//        readOnly = getIntent().getBooleanExtra("readOnly", false);
         fromToMineCollect = getIntent().getBooleanExtra("fromToMineCollect", false);
         fromTo = getIntent().getStringExtra("fromTo");
         String category_id=getIntent().getStringExtra("category_id");
@@ -191,7 +191,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         if (nowChoosePosition >= allData.size() - 2) {
             Presenter.requestMoreData();
         }
-        adapter = new Preview_up_and_down_adapter(R.layout.list_preview_up_down_item, allData, PreviewUpAndDownActivity.this, readOnly, fromTo);
+        adapter = new Preview_up_and_down_adapter(R.layout.list_preview_up_down_item, allData, PreviewUpAndDownActivity.this, fromTo);
         adapter.setOnItemChildClickListener((adapter, view, position) -> {
             switch (view.getId()) {
                 case R.id.iv_zan:
@@ -670,6 +670,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             templateItem=data;
             setIsZan(data.getIs_praise() == 1);
             nowPraise = data.getIs_praise();
+//            //更新页面数据，防止数据不全的情况
+//            allData.set(nowChoosePosition, data);
+//            adapter.notifyItemChanged(nowChoosePosition);
+
+
+
         }
 
     }

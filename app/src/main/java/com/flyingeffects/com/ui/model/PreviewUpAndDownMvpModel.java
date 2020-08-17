@@ -173,9 +173,7 @@ public class PreviewUpAndDownMvpModel {
 
                 @Override
                 protected void _onNext(new_fag_template_item data) {
-
                     callback.getTemplateLInfo(data);
-
                 }
             }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
 

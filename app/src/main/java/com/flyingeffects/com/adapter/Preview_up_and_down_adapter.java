@@ -1,12 +1,12 @@
 package com.flyingeffects.com.adapter;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -41,29 +41,16 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
 
     private Context context;
     private SampleCoverVideo videoPlayer;
-    private TextView tv_make;
     private ImageView iv_zan;
-    private ImageView iv_writer;
-    //    private ImageView iv_video_play;
-    private MarqueTextView tv_writer_name;
-    private TextView tv_title;
     private MarqueTextView tv_describe;
-    private ImageView iv_show_cover;
-    //    private List<new_fag_template_item> allData;
-//    private boolean isPlayComplete = false;
     private int nowPreviewPosition;
-    //    private AlphaAnimation hideAnim;
-    private boolean readOnly;
     public TTNativeExpressAd ad;
-    private FrameLayout video_layout;
-    private ImageView iv_download_bj;
     private String fromTo;
     private TextView tv_zan_count;
 
-    public Preview_up_and_down_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, boolean readOnly, String fromTo) {
+    public Preview_up_and_down_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, String fromTo) {
         super(layoutResId, allData);
         this.context = context;
-        this.readOnly = readOnly;
         this.fromTo = fromTo;
     }
 
@@ -71,18 +58,20 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     @Override
     protected void convert(final BaseViewHolder helper, final new_fag_template_item item) {
         int offset = helper.getLayoutPosition();
-//        LogUtil.d("OOM","更新了adapter，更新的位置为"+offset);
         ad = item.getAd();
-        video_layout = helper.getView(R.id.video_layout);
+        FrameLayout video_layout = helper.getView(R.id.video_layout);
         videoPlayer = helper.getView(R.id.video_item_player);
-        iv_download_bj = helper.getView(R.id.iv_download_bj);
-        tv_make = helper.getView(R.id.tv_make);
-        tv_zan_count=helper.getView(R.id.tv_zan_count);
+        LinearLayout ll_down_bj = helper.getView(R.id.ll_down_bj);
+        LinearLayout ll_zan = helper.getView(R.id.ll_zan);
+        TextView tv_make = helper.getView(R.id.tv_make);
+        LinearLayout ll_comment = helper.getView(R.id.ll_comment);
+        tv_zan_count = helper.getView(R.id.tv_zan_count);
+        boolean readOnly = item.getTest() != 0;
         iv_zan = helper.getView(R.id.iv_zan);
-        iv_writer = helper.getView(R.id.iv_writer);
+        ImageView iv_writer = helper.getView(R.id.iv_writer);
         helper.addOnClickListener(R.id.iv_writer);
-        tv_writer_name = helper.getView(R.id.tv_writer_name);
-        tv_title = helper.getView(R.id.tv_title);
+        MarqueTextView tv_writer_name = helper.getView(R.id.tv_writer_name);
+        TextView tv_title = helper.getView(R.id.tv_title);
         tv_describe = helper.getView(R.id.tv_describe);
         tv_describe.setVisibility(View.GONE);
         helper.addOnClickListener(R.id.iv_download_bj);
@@ -112,11 +101,15 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
                 videoPlayer.startPlayLogic();
             }
             if (readOnly) {
+                ll_down_bj.setVisibility(View.GONE);
                 tv_make.setVisibility(View.GONE);
-                iv_zan.setVisibility(View.GONE);
+                ll_comment.setVisibility(View.GONE);
+                ll_zan.setVisibility(View.GONE);
             } else {
+                ll_down_bj.setVisibility(View.VISIBLE);
+                ll_comment.setVisibility(View.VISIBLE);
                 tv_make.setVisibility(View.VISIBLE);
-                iv_zan.setVisibility(View.VISIBLE);
+                ll_zan.setVisibility(View.VISIBLE);
             }
             Glide.with(context)
                     .load(item.getAuth_image())
@@ -164,7 +157,6 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     }
 
 
-
     /**
      * description ：点赞功能
      * creation date: 2020/8/5
@@ -182,14 +174,13 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
 
     }
 
-    public void setIsZanCount(int  zanCount) {
+    public void setIsZanCount(int zanCount) {
 
-        if(tv_zan_count!=null){
-            tv_zan_count.setText(zanCount+"");
+        if (tv_zan_count != null) {
+            tv_zan_count.setText(zanCount + "");
         }
 
     }
-
 
 
     /**
@@ -253,7 +244,6 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
 
 
     public void startVideo() {
-
         if (videoPlayer != null && !videoPlayer.isInPlayingState()) {
             LogUtil.d("OOM", "isInPlayingState!=null?" + videoPlayer.isInPlayingState());
             videoPlayer.startPlayLogic();
