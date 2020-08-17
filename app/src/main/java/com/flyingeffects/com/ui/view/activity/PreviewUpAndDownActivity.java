@@ -379,9 +379,14 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     protected void onResume() {
         super.onResume();
+        LogUtil.d("OOM","onResume");
         //出现bug 不能继续播放的问题
         if (!nowItemIsAd) {
             GSYVideoManager.onResume();
+        }
+        if (BaseConstans.hasLogin()) {
+            //主要用于刷新当前页面
+            Presenter.requestTemplateDetail(templateItem.getId());
         }
         LogUtil.d("OOM", "onResume");
         WaitingDialog.closePragressDialog();
@@ -662,6 +667,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void getTemplateLInfo(new_fag_template_item data) {
         if (data != null) {
+            templateItem=data;
             setIsZan(data.getIs_praise() == 1);
             nowPraise = data.getIs_praise();
         }

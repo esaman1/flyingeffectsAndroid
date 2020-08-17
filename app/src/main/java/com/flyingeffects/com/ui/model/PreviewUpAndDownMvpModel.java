@@ -206,7 +206,12 @@ public class PreviewUpAndDownMvpModel {
             @Override
             public void onClick(View view) {
 
-                callback.onclickCollect();
+                if(BaseConstans.hasLogin()){
+                    callback.onclickCollect();
+                }else{
+                    ToastUtil.showToast(context.getResources().getString(R.string.need_login));
+                }
+
 
             }
         });

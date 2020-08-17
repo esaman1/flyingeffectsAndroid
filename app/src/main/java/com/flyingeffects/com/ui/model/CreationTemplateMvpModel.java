@@ -1630,11 +1630,17 @@ public class CreationTemplateMvpModel {
     public void setAllStickerCenter(){
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
-            stickerView.setIntoCenter();
+           stickerView.setIntoCenter();
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    stickerView.changeImage(stickerView.getResPath(),false);
+                    if (!isCheckedMatting) {
+                        stickerView.changeImage(stickerView.getOriginalPath(),false);
+                    } else {
+                        stickerView.changeImage(stickerView.getResPath(),false);
+                    }
+
+
                 }
             },500);
 

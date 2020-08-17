@@ -70,8 +70,6 @@ public class FansActivity extends BaseActivity {
 
             ToastUtil.showToast(getResources().getString(R.string.need_login));
         }
-
-
     }
 
 

@@ -584,7 +584,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     ll_green_background.setLayoutParams(RelativeLayoutParams3);
                     RelativeLayout.LayoutParams RelativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
                     RelativeLayoutParams4.width = Math.round(1f * oriHeight * oriRatio);
-                    ;
                     RelativeLayoutParams4.height = oriHeight;
                     iv_green_background.setLayoutParams(RelativeLayoutParams4);
                 });
