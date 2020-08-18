@@ -105,7 +105,7 @@ public class BackgroundSearchActivity extends BaseActivity {
     protected void initView() {
 
 
-        isFrom = getIntent().getIntExtra("isForm", 0);
+        isFrom = getIntent().getIntExtra("isFrom", 0);
 
         //键盘的搜索按钮
         ed_text.setOnEditorActionListener((v, actionId, event) -> {
@@ -233,11 +233,11 @@ public class BackgroundSearchActivity extends BaseActivity {
     private void requestKeywordList() {
         listSearchKey.clear();
         HashMap<String, String> params = new HashMap<>();
-        //2 表示背景
+        //0 表示背景
         if (isFrom == 0) {
-            params.put("template_type", "1");
-        } else {
             params.put("template_type", "2");
+        } else {
+            params.put("template_type", "1");
         }
         // 启动时间
         Observable ob = Api.getDefault().keywordList(BaseConstans.getRequestHead(params));
