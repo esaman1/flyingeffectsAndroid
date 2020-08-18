@@ -280,7 +280,7 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
         //自定义只能够选择素材
         GetVideoCover getVideoCover=new GetVideoCover(this);
         getVideoCover.getCover(videoPath, path -> Observable.just(path).subscribeOn(AndroidSchedulers.mainThread()).subscribe(cover -> {
-            if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEO)){
+            if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISCHOOSEBJ)){
                 Presenter.hasFinishCrop();
                 EventBus.getDefault().post(new CreateCutCallback(cover,videoPath,isNeedCut));
             }else if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORUSER)){

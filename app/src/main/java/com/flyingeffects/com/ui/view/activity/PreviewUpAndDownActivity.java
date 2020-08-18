@@ -671,7 +671,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         Intent intent = new Intent(PreviewUpAndDownActivity.this, VideoCropActivity.class);
                         intent.putExtra("videoPath", imagePath);
 //                        intent.putExtra("comeFrom", FromToTemplate.ISFROMEDOWNVIDEO);
-                        intent.putExtra("comeFrom", FromToTemplate.ISFROMEDOWNVIDEO);
+                        intent.putExtra("comeFrom", FromToTemplate.ISCHOOSEBJ);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
 
@@ -1084,7 +1084,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                                             //源图地址和剪切之后的地址完全一样，那说明只有一个情况，就是当前选择的素材是视频的情况，那么需要去得到视频的第一针，然后传过去
                                             Intent intent = new Intent(PreviewUpAndDownActivity.this, VideoCropActivity.class);
                                             intent.putExtra("videoPath", paths.get(0));
-                                            intent.putExtra("comeFrom", FromToTemplate.ISFROMEDOWNVIDEO);
+                                            intent.putExtra("comeFrom", FromToTemplate.ISCHOOSEBJ);
                                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                             startActivity(intent);
                                         } else {

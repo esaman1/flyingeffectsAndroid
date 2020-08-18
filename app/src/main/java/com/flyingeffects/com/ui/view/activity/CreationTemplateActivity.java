@@ -404,7 +404,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 }
                 break;
             case R.id.tv_background:
-                Intent intent = new Intent(this, ChooseBackgroundTemplateActivity.class);
+                Intent intent = new Intent(
+                        this, ChooseBackgroundTemplateActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 break;

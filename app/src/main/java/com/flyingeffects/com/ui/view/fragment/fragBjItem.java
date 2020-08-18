@@ -137,7 +137,7 @@ public class fragBjItem extends BaseFragment {
                     if (fromType == 0) {
                         intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
                     } else if (fromType == 3) {//来自选择背景tab
-                        intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
+                        intent.putExtra("fromTo", FromToTemplate.ISCHOOSEBJ);
                     } else {
                         intent.putExtra("fromTo", FromToTemplate.ISBJ);
                     }

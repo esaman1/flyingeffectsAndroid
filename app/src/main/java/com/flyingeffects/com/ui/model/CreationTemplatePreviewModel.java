@@ -88,7 +88,9 @@ public class CreationTemplatePreviewModel {
 
     public void initTrimmer(RangeSeekBarView mRangeSeekBarView, VideoFrameRecycler mTimeLineView, RoundImageView progressCursor, long duration) {
         this.cursor = progressCursor;
-        this.duration = duration;
+
+
+
         this.mRangeSeekBarView = mRangeSeekBarView;
         canScroll = getDuration() > VideoTimelineAdapter.FULL_SCROLL_DURATION;
         RecyclerView.LayoutManager layoutManager =

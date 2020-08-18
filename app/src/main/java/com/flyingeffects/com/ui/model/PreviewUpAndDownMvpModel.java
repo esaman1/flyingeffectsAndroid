@@ -554,8 +554,16 @@ public class PreviewUpAndDownMvpModel {
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
                 break;
             case FromToTemplate.ISBJCOLLECT:
+                params.put("template_type",  "2");
+                params.put("token", BaseConstans.GetUserToken());
+                ob = Api.getDefault().collectionList(BaseConstans.getRequestHead(params));
+
                 break;
             case FromToTemplate.ISCHOOSEBJ:
+
+                params.put("template_type",  "2");
+                ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
+
                 break;
             case FromToTemplate.ISSEARCHBJ:
 

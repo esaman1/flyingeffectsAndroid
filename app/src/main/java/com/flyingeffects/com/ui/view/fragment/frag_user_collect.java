@@ -258,13 +258,13 @@ public class frag_user_collect extends BaseFragment {
                 intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
                 intent.putExtra("position", position);
                 if(from==3){
-                    intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
+                    intent.putExtra("fromTo", FromToTemplate.ISCHOOSEBJ);
                 }else{
                     if (template_type != null && template_type.equals("1")) {
 //                        intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
                         intent.putExtra("fromTo", FromToTemplate.ISHOMEMYTEMPLATECOLLECT);
                     } else if(template_type != null && template_type.equals("2")) {
-                        intent.putExtra("fromTo", FromToTemplate.ISBJ);
+                        intent.putExtra("fromTo", FromToTemplate.ISBJCOLLECT);
                     }else{
                         intent.putExtra("fromTo", FromToTemplate.ISHOMEFROMBJ);
                     }

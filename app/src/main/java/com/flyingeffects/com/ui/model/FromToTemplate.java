@@ -5,7 +5,7 @@ public class FromToTemplate {
 //    public static final String ISFROMUPDATEBJ = "ISFROMUPDATEBJ";
 //    public static final String ISFROMTEMPLATE = "ISFROMTEMPLATE";
 //    public static final String ISFROMSEARCH = "ISFROMSEARCH";
-    public static final String ISFROMEDOWNVIDEO = "ISFROMDOWNVIDEO";
+//    public static final String ISFROMEDOWNVIDEO = "ISFROMDOWNVIDEO";
 //    /**
 //     * 用戶自己选择的背景
 //     */
