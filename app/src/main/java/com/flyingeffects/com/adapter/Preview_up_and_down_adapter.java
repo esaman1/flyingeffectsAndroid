@@ -47,11 +47,13 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     public TTNativeExpressAd ad;
     private String fromTo;
     private TextView tv_zan_count;
+    private String  OldFromTo;
 
-    public Preview_up_and_down_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, String fromTo) {
+    public Preview_up_and_down_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, String fromTo,String OldFromTo) {
         super(layoutResId, allData);
         this.context = context;
         this.fromTo = fromTo;
+        this.OldFromTo=OldFromTo;
     }
 
 
@@ -66,7 +68,18 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         TextView tv_make = helper.getView(R.id.tv_make);
         LinearLayout ll_comment = helper.getView(R.id.ll_comment);
         tv_zan_count = helper.getView(R.id.tv_zan_count);
+
         boolean readOnly = item.getTest() != 0;
+        boolean needHideCreate;
+
+        if( !TextUtils.isEmpty(fromTo)&&fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)&&readOnly){
+            needHideCreate=true;
+        }else{
+            needHideCreate=false;
+        }
+
+
+
         iv_zan = helper.getView(R.id.iv_zan);
         ImageView iv_writer = helper.getView(R.id.iv_writer);
         helper.addOnClickListener(R.id.iv_writer);
@@ -100,7 +113,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             if (nowPreviewPosition == offset) {
                 videoPlayer.startPlayLogic();
             }
-            if (readOnly) {
+            if (needHideCreate) {
                 ll_down_bj.setVisibility(View.GONE);
                 tv_make.setVisibility(View.GONE);
                 ll_comment.setVisibility(View.GONE);
@@ -196,7 +209,21 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         }
 //        videoPlayer.setAnimation(null);
         videoPlayer.getStartButton().setVisibility(View.GONE);
-        videoPlayer.setUpLazy(item.getVidoefile(), true, null, null, "这是title");
+
+        if(OldFromTo.equals(FromToTemplate.ISFROMTEMPLATE)&&item.getTemplate_type().equals("2")){
+            videoPlayer.setUpLazy(item.getPre_url(), true, null, null, "这是title");
+        }else{
+            videoPlayer.setUpLazy(item.getVidoefile(), true, null, null, "这是title");
+        }
+
+
+//        if(item.isNeedChangeVideoPath()){
+//            videoPlayer.setUpLazy(item.getPre_url(), true, null, null, "这是title");
+//            LogUtil.d("OOM","播放的地址为"+item.getPre_url());
+//        }else{
+//            videoPlayer.setUpLazy(item.getVidoefile(), true, null, null, "这是title");
+//            LogUtil.d("OOM","播放的地址为"+item.getVidoefile());
+//        }
         videoPlayer.setPlayPosition(offset);
         videoPlayer.clearAnimation();
         videoPlayer.getTitleTextView().setVisibility(View.GONE);

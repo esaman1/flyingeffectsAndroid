@@ -165,6 +165,7 @@ public class frag_user_center extends BaseFragment {
 
             @Override
             public void onPageSelected(int i) {
+
             }
 
             @Override

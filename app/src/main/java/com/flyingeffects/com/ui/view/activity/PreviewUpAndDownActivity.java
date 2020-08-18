@@ -151,6 +151,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     private MattingImage mattingImage;
 
+    private String OldfromTo;
 
     private boolean nowItemIsAd = false;
 
@@ -164,6 +165,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     //1表示可以合拍，而0表示不能合拍
     private int is_with_play;
+
+
+    private boolean isSlideViewpager=false;
 
     @Override
     protected void initView() {
@@ -185,6 +189,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 //        readOnly = getIntent().getBooleanExtra("readOnly", false);
         fromToMineCollect = getIntent().getBooleanExtra("fromToMineCollect", false);
         fromTo = getIntent().getStringExtra("fromTo");
+        OldfromTo=fromTo;
+        //如果模板是来自一键模板，但是模板类型是背景，那么修改状态值
+        if(fromTo.equals(FromToTemplate.ISFROMTEMPLATE)&&templateItem.getTemplate_type().equals("2")){
+            fromTo=FromToTemplate.ISFROMBJ;
+        }
+
         //种类
         String category_id = getIntent().getStringExtra("category_id");
         templateId = templateItem.getId() + "";
@@ -196,7 +206,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         if (nowChoosePosition >= allData.size() - 2) {
             Presenter.requestMoreData();
         }
-        adapter = new Preview_up_and_down_adapter(R.layout.list_preview_up_down_item, allData, PreviewUpAndDownActivity.this, fromTo);
+        adapter = new Preview_up_and_down_adapter(R.layout.list_preview_up_down_item, allData, PreviewUpAndDownActivity.this, fromTo,OldfromTo);
         adapter.setOnItemChildClickListener((adapter, view, position) -> {
             switch (view.getId()) {
                 case R.id.iv_zan:
@@ -251,6 +261,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 if (position != -1) {
+                    //置空数据
+                    fromTo=OldfromTo;
                     LogUtil.d("OOM", "当前位置为" + position);
                     adapter.NowPreviewChooseItem(position);
                     adapter.notifyItemChanged(position);
@@ -262,8 +274,11 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
                     if (!DoubleClick.getInstance().isFastZDYDoubleClick(2000)) {
                         if (position >= insertMaxNum || position <= insertMinNum) {
-                            Presenter.requestAD();
-                            LogUtil.d("OOM", "开始请求广告position=" + position + "insertMaxNum=" + insertMaxNum + "insertMinNum=" + insertMinNum);
+                            if(isSlideViewpager){
+                                Presenter.requestAD();
+                                LogUtil.d("OOM", "开始请求广告position=" + position + "insertMaxNum=" + insertMaxNum + "insertMinNum=" + insertMinNum);
+
+                            }
                         }
                     }
                     int allDataCount = allData.size();
@@ -276,8 +291,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         //主要用于刷新当前页面
                         Presenter.requestTemplateDetail(templateItem.getId());
                     }
-
                 }
+                isSlideViewpager=true;
             }
 
             @Override
@@ -691,9 +706,16 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             setIsZan(data.getIs_praise() == 1);
             nowPraise = data.getIs_praise();
 
+            //如果模板是来自一键模板，但是模板类型是背景，那么修改状态值
+            if(OldfromTo.equals(FromToTemplate.ISFROMTEMPLATE)&&templateItem.getTemplate_type().equals("2")){
+                fromTo=FromToTemplate.ISFROMBJ;
+                new_fag_template_item item = allData.get(nowChoosePosition);
+                allData.set(nowChoosePosition, item);
+            }
             is_with_play = templateItem.getIs_with_play();
             //更新页面数据，防止数据不全的情况
             if(!isOnPause){
+
                 allData.set(nowChoosePosition, data);
                 adapter.notifyItemChanged(nowChoosePosition);
             }
@@ -761,7 +783,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
             LogUtil.d("OOM", "来自背景");
             statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
-            Presenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId(), false);
+//            if(isBjFromTemplate){
+//                Presenter.DownVideo(templateItem.getTemplatefile(), "", templateItem.getId(), false);
+//            }else{
+                Presenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId(), false);
+//            }
+
         } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
             LogUtil.d("OOM", "来自背景");
             statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");

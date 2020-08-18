@@ -393,6 +393,29 @@ public class new_fag_template_item implements Serializable {
     private int is_with_play;
 
 
+//    public boolean isNeedChangeVideoPath() {
+//        return isNeedChangeVideoPath;
+//    }
+//
+//    public void setNeedChangeVideoPath(boolean needChangeVideoPath) {
+//        isNeedChangeVideoPath = needChangeVideoPath;
+//    }
+
+
+    public String getPre_url() {
+        return pre_url;
+    }
+
+    public void setPre_url(String pre_url) {
+        this.pre_url = pre_url;
+    }
+
+    private String pre_url;
+//
+//    //是否需要切换视频地址，迎来模板页面有背景的情况
+//    private boolean isNeedChangeVideoPath=false;
+
+
 
 
 

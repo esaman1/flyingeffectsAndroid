@@ -232,16 +232,21 @@ public class backgroundDraw {
             VideoFrameLayer videoLayer = execute.addVideoLayer(option);
             videoLayer.setId(i);
             float layerScale;
+            videoLayer.setScaleType(LSOScaleType.CROP_FILL_COMPOSITION);
             layerScale = DRAWPADWIDTH / (float) videoLayer.getLayerWidth();
             LogUtil.d("OOM", "图层的缩放为" + layerScale + "");
             float stickerScale = stickerItem.getScale();
             LogUtil.d("OOM", "gif+图层的缩放为" + layerScale * stickerScale + "");
-            videoLayer.setScale(layerScale * stickerScale);
-//            if(nowUiIsLandscape){
-//                videoLayer.setScale(layerScale * stickerScale);
-//            }else{
-//                videoLayer.setScale(layerScale * stickerScale);
-//            }
+//            videoLayer.setScale(layerScale * stickerScale);
+            if(nowUiIsLandscape){
+                float LayerWidth = videoLayer.getLayerWidth();
+                float scale = DRAWPADWIDTH *stickerScale/ (float) LayerWidth;
+                float LayerHeight = videoLayer.getLayerHeight();
+                float needDrawHeight = LayerHeight * scale;
+                videoLayer.setScaledValue(DRAWPADWIDTH*stickerScale, needDrawHeight);
+            }else{
+                videoLayer.setScale(layerScale * stickerScale);
+            }
 
             LogUtil.d("OOM", "mvLayerW=" + videoLayer.getLayerWidth() + "");
             LogUtil.d("OOM", "mvLayerpadW=" + videoLayer.getPadWidth() + "");

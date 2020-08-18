@@ -90,13 +90,6 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
             } else {
                 ConstraintLayout_addVideo.setVisibility(View.GONE);
             }
-//            //背景
-//            iv_show_author.setVisibility(View.VISIBLE);
-//            tv_name.setVisibility(View.GONE);
-//            Glide.with(context)
-//                    .load(item.getAuth_image())
-//                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-//                    .into(iv_show_author);
 
             helper.setText(R.id.tv_name2,item.getAuth());
             ImageView iv_show_author_template=helper.getView(R.id.iv_show_author_template);
@@ -145,8 +138,18 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
             } else {
                 ConstraintLayout_addVideo.setVisibility(View.GONE);
             }
+            helper.setText(R.id.tv_name2,item.getAuth());
+            ImageView iv_show_author_template=helper.getView(R.id.iv_show_author_template);
+            Glide.with(context)
+                    .load(item.getAuth_image())
+                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                    .into(iv_show_author_template);
             iv_show_author.setVisibility(View.GONE);
+            helper.setText(R.id.tv_zan_count,item.getPraise());
             tv_name.setVisibility(View.VISIBLE);
+            ImageView iv_zan_state=helper.getView(R.id.iv_zan_state);
+            iv_zan_state.setImageResource(item.getIs_praise()!=0?R.mipmap.zan_clicked:R.mipmap.zan_unclicked);
+            iv_show_author.setVisibility(View.GONE);
         } else {
             //模板
             if (offset == 1 && fromType == 0) {
