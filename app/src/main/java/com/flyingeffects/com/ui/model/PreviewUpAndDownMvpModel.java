@@ -31,6 +31,7 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.templateDataZanRefresh;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -69,6 +70,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -88,20 +90,20 @@ public class PreviewUpAndDownMvpModel {
     private List<new_fag_template_item> allData;
     private String fromTo;
     private String category_id;
-    private boolean fromToMineCollect;
     private TTAdNative mTTAdNative;
     private String soundFolder;
+    private String toUserID;
 
-    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage, String fromTo, String category_id, boolean fromToMineCollect) {
+    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage,String fromTo ,String category_id,String toUserID) {
         this.context = context;
         this.selectPage = nowSelectPage;
         this.callback = callback;
+        this.toUserID=toUserID;
         FileManager fileManager = new FileManager();
         mVideoFolder = fileManager.getFileCachePath(context, "downVideo");
         this.allData = allData;
         this.fromTo = fromTo;
         this.category_id = category_id;
-        this.fromToMineCollect = fromToMineCollect;
         mTTAdNative = TTAdManagerHolder.get().createAdNative(context);
         //在合适的时机申请权限，如read_phone_state,防止获取不了imei时候，下载类广告没有填充的问题
         TTAdManagerHolder.get().requestPermissionIfNecessary(context);
@@ -214,7 +216,7 @@ public class PreviewUpAndDownMvpModel {
         LinearLayout iv_download = view.findViewById(R.id.ll_download);
         iv_download.setOnClickListener(view12 -> {
 
-            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
+            if ( fromTo.equals(FromToTemplate.ISTEMPLATE)) {
                 statisticsEventAffair.getInstance().setFlag(context, "11_yj_save1");
             } else {
                 statisticsEventAffair.getInstance().setFlag(context, "10_bj_csave1");
@@ -230,7 +232,7 @@ public class PreviewUpAndDownMvpModel {
             @Override
             public void onClick(View view) {
 
-                if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
+                if ( fromTo.equals(FromToTemplate.ISTEMPLATE)) {
                     statisticsEventAffair.getInstance().setFlag(context, "11_yjj_WeChat");
                 } else {
                     statisticsEventAffair.getInstance().setFlag(context, "10_bj_WeChat");
@@ -254,7 +256,7 @@ public class PreviewUpAndDownMvpModel {
             @Override
             public void onClick(View view) {
 
-                if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
+                if (fromTo.equals(FromToTemplate.ISTEMPLATE)) {
                     statisticsEventAffair.getInstance().setFlag(context, "11_yj_circle");
                 } else {
                     statisticsEventAffair.getInstance().setFlag(context, "10_bj_circle");
@@ -268,7 +270,7 @@ public class PreviewUpAndDownMvpModel {
             @Override
             public void onClick(View view) {
 
-                if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
+                if ( fromTo.equals(FromToTemplate.ISTEMPLATE)) {
                     statisticsEventAffair.getInstance().setFlag(context, "11_yj_Report");
                 } else {
                     statisticsEventAffair.getInstance().setFlag(context, "10_bj_Report");
@@ -506,39 +508,64 @@ public class PreviewUpAndDownMvpModel {
      */
 
     private void requestFagData() {
-        Observable ob;
+        Observable ob = null;
         HashMap<String, String> params = new HashMap<>();
         LogUtil.d("templateId", "templateId=" + category_id);
         if(!TextUtils.isEmpty(category_id)){
             params.put("category_id", category_id);
         }
-        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
-            params.put("to_user_id", BaseConstans.GetUserId());
-            params.put("type", "1");
-        } else {
-            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
-                params.put("template_type", "1");
-            } else {
-                params.put("template_type", "2");
-            }
-        }
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
+        switch (fromTo){
+            case FromToTemplate.ISHOMEFROMBJ:
+                params.put("to_user_id", BaseConstans.GetUserId());
+                params.put("type", "1");
+                ob = Api.getDefault().uploadList(BaseConstans.getRequestHead(params));
+                break;
+            case FromToTemplate.ISHOMEMYLIKE:
+                params.put("to_user_id", BaseConstans.GetUserId());
+                params.put("type", "2");
+                ob = Api.getDefault().getMyProduction(BaseConstans.getRequestHead(params));
+                break;
+            case FromToTemplate.ISHOMEMYTEMPLATECOLLECT:
+                params.put("template_type", "1");
+                String str = StringUtil.beanToJSONString(params);
+                LogUtil.d("OOM", "请求的参数为------" + str);
 
+                ob = Api.getDefault().collectionList(BaseConstans.getRequestHead(params));
+                break;
+            case FromToTemplate.ISMESSAGEMYPRODUCTION:
+                params.put("to_user_id", toUserID);
+                params.put("type", "1");
+                ob = Api.getDefault().getMyProduction(BaseConstans.getRequestHead(params));
 
-        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
-            LogUtil.d("OOM", "请求的uploadList"  );
-            ob = Api.getDefault().uploadList(BaseConstans.getRequestHead(params));
-        } else if (fromToMineCollect) {
-            LogUtil.d("OOM", "请求的fromToMineCollect"  );
-            params.put("token", BaseConstans.GetUserToken());
-            ob = Api.getDefault().collectionList(BaseConstans.getRequestHead(params));
-        } else {
-            LogUtil.d("OOM", "请求的getTemplate"  );
-            ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
+                break;
+            case FromToTemplate.ISMESSAGEMYLIKE:
+                params.put("to_user_id", toUserID);
+                params.put("type", "2");
+                ob = Api.getDefault().getMyProduction(BaseConstans.getRequestHead(params));
+                break;
+            case FromToTemplate.ISTEMPLATE:
+                params.put("template_type", "1");
+                ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
+                break;
+            case FromToTemplate.ISBJ:
+                params.put("template_type", "2");
+                ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
+                break;
+            case FromToTemplate.ISBJCOLLECT:
+                break;
+            case FromToTemplate.ISCHOOSEBJ:
+                break;
+            case FromToTemplate.ISSEARCHBJ:
+
+                break;
+            case FromToTemplate.ISSEARCHTEMPLATE:
+                break;
         }
+
         String str = StringUtil.beanToJSONString(params);
-        LogUtil.d("OOM", "请求的参数为------" + str);
+        LogUtil.d("OOM", "总请求的参数为------" + str);
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
             @Override
             protected void _onError(String message) {
@@ -555,10 +582,6 @@ public class PreviewUpAndDownMvpModel {
                 if (isRefresh) {
                     allData.clear();
                 }
-
-//                if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
-//                    ToastUtil.showToast(context.getResources().getString(R.string.no_more_data));
-//                }
                 if (data.size() < perPageCount) {
                     smartRefreshLayout.setEnableLoadMore(false);
                 }

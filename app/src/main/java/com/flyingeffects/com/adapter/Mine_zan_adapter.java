@@ -46,7 +46,7 @@ public class Mine_zan_adapter extends BaseQuickAdapter<MineZanEnity, BaseViewHol
         }
 
         helper.addOnClickListener(R.id.iv_icon);
-
+        helper.addOnClickListener(R.id.tv_title);
 
         ImageView iv_head=helper.getView(R.id.iv_icon);
         Glide.with(context)

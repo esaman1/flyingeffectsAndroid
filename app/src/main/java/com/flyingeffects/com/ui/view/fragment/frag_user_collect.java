@@ -23,8 +23,9 @@ import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.ui.model.FromToTemplate;
-import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
+import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -107,6 +108,10 @@ public class frag_user_collect extends BaseFragment {
         params.put("page", selectPage + "");
         params.put("template_type", template_type + "");
         params.put("pageSize", perPageCount + "");
+
+        String str = StringUtil.beanToJSONString(params);
+        LogUtil.d("OOM", "请求的参数为------" + str);
+
         Observable ob = Api.getDefault().collectionList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override
@@ -256,11 +261,12 @@ public class frag_user_collect extends BaseFragment {
                     intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
                 }else{
                     if (template_type != null && template_type.equals("1")) {
-                        intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
+//                        intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
+                        intent.putExtra("fromTo", FromToTemplate.ISHOMEMYTEMPLATECOLLECT);
                     } else if(template_type != null && template_type.equals("2")) {
-                        intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+                        intent.putExtra("fromTo", FromToTemplate.ISBJ);
                     }else{
-                        intent.putExtra("fromTo", FromToTemplate.ISFROMUPDATEBJ);
+                        intent.putExtra("fromTo", FromToTemplate.ISHOMEFROMBJ);
                     }
                 }
                 intent.putExtra("fromToMineCollect", true);

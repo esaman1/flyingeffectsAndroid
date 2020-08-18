@@ -45,14 +45,12 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     private MarqueTextView tv_describe;
     private int nowPreviewPosition;
     public TTNativeExpressAd ad;
-    private String fromTo;
     private TextView tv_zan_count;
     private String  OldFromTo;
 
-    public Preview_up_and_down_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, String fromTo,String OldFromTo) {
+    public Preview_up_and_down_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context,String OldFromTo) {
         super(layoutResId, allData);
         this.context = context;
-        this.fromTo = fromTo;
         this.OldFromTo=OldFromTo;
     }
 
@@ -72,14 +70,18 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         boolean readOnly = item.getTest() != 0;
         boolean needHideCreate;
 
-        if( !TextUtils.isEmpty(fromTo)&&fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)&&readOnly){
+//        if( !TextUtils.isEmpty(fromTo)&&fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)&&readOnly){
+//            needHideCreate=true;
+//        }else{
+//            needHideCreate=false;
+//        }
+
+
+        if(OldFromTo.equals(FromToTemplate.ISHOMEFROMBJ)&&readOnly){
             needHideCreate=true;
         }else{
             needHideCreate=false;
         }
-
-
-
         iv_zan = helper.getView(R.id.iv_zan);
         ImageView iv_writer = helper.getView(R.id.iv_writer);
         helper.addOnClickListener(R.id.iv_writer);
@@ -89,7 +91,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         tv_describe.setVisibility(View.GONE);
         helper.addOnClickListener(R.id.iv_download_bj);
         helper.addOnClickListener(R.id.ll_comment);
-        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
+        if (OldFromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
             tv_make.setText("使用背景");
         } else {
             tv_make.setText("马上制作");
@@ -210,7 +212,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
 //        videoPlayer.setAnimation(null);
         videoPlayer.getStartButton().setVisibility(View.GONE);
 
-        if(OldFromTo.equals(FromToTemplate.ISFROMTEMPLATE)&&item.getTemplate_type().equals("2")){
+        if(OldFromTo.equals(FromToTemplate.ISTEMPLATE)&&item.getTemplate_type().equals("2")){
             videoPlayer.setUpLazy(item.getPre_url(), true, null, null, "这是title");
         }else{
             videoPlayer.setUpLazy(item.getVidoefile(), true, null, null, "这是title");

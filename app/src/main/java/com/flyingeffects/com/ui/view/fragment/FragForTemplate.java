@@ -98,7 +98,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                     bundle.putSerializable("num", i);
                     bundle.putSerializable("from", 0);
                     titles[i] = data.get(i).getName();
-                    HomeItemFragment fragment = new HomeItemFragment();
+                    HomeTemplateItemFragment fragment = new HomeTemplateItemFragment();
                     fragment.setArguments(bundle);
                     list.add(fragment);
                 }

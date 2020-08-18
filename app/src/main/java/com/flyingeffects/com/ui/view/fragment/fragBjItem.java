@@ -24,9 +24,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.FromToTemplate;
-import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
@@ -137,11 +135,11 @@ public class fragBjItem extends BaseFragment {
                     intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
                     intent.putExtra("position", position);
                     if (fromType == 0) {
-                        intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
+                        intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
                     } else if (fromType == 3) {//来自选择背景tab
                         intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
                     } else {
-                        intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+                        intent.putExtra("fromTo", FromToTemplate.ISBJ);
                     }
                     intent.putExtra("nowSelectPage",selectPage);
                     intent.putExtra("category_id",templateId);

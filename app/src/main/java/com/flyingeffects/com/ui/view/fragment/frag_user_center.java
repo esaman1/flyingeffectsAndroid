@@ -24,6 +24,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.AboutActivity;
 import com.flyingeffects.com.ui.view.activity.FansActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
@@ -145,6 +146,7 @@ public class frag_user_center extends BaseFragment {
         Bundle bundle1 = new Bundle();
         bundle1.putSerializable("toUserId", BaseConstans.GetUserId());
         bundle1.putSerializable("isFrom", 2);
+        bundle1.putSerializable("fromTo", FromToTemplate.ISHOMEMYLIKE);
         fag_like.setArguments(bundle1);
         list.add(fag_like);
 

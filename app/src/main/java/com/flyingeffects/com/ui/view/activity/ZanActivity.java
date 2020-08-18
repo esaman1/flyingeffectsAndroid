@@ -91,11 +91,10 @@ public class ZanActivity extends BaseActivity {
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 switch (view.getId()) {
                     case R.id.iv_icon:
+                    case R.id.tv_title:
                         Intent intent = new Intent(ZanActivity.this, UserHomepageActivity.class);
                         intent.putExtra("toUserId", listData.get(position).getUser_id());
                         startActivity(intent);
-
-
                         break;
                 }
             }
@@ -136,9 +135,9 @@ public class ZanActivity extends BaseActivity {
                     intent.putExtra("nowSelectPage", 1);
                     intent.putExtra("templateId", data.getTemplate_id());
                     if (!TextUtils.isEmpty(type) && type.equals("2")) {
-                        intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+                        intent.putExtra("fromTo", FromToTemplate.ISBJ);
                     } else {
-                        intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
+                        intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
                     }
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(intent);

@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -24,8 +23,6 @@ import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.FromToTemplate;
-import com.flyingeffects.com.ui.view.activity.BackgroundSearchActivity;
-import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
@@ -114,10 +111,10 @@ public class fragBjSearch extends BaseFragment {
             intent.putExtra("nowSelectPage", selectPage);
             if (isFrom == 0) {
                 //模板页面
-                intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
+                intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
             } else {
                 //背景页面
-                intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+                intent.putExtra("fromTo", FromToTemplate.ISBJ);
             }
             startActivity(intent);
 

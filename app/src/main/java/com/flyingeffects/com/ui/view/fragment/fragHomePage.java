@@ -15,15 +15,15 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ListForUpAndDown;
-import com.flyingeffects.com.enity.MyProduction;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.ui.model.FromToTemplate;
-import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
+import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -51,6 +51,7 @@ public class fragHomePage extends BaseFragment {
     private String toUserId = "";
     //类型:1=作者的作品,2=作者喜欢的作品,3=作者收藏的模板
     private int isFrom;
+    private String fromTo;
     @BindView(R.id.smart_refresh_layout_bj)
     SmartRefreshLayout smartRefreshLayout;
     @BindView(R.id.lin_show_nodata_bj)
@@ -71,6 +72,7 @@ public class fragHomePage extends BaseFragment {
         if (bundle != null) {
             toUserId = bundle.getString("toUserId");
             isFrom = bundle.getInt("isFrom");
+            fromTo=bundle.getString("fromTo");
         }
         initRecycler();
         initSmartRefreshLayout();
@@ -95,7 +97,6 @@ public class fragHomePage extends BaseFragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-            String type = allData.get(position).getTemplate_type();
             Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
             ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
             intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
@@ -103,10 +104,18 @@ public class fragHomePage extends BaseFragment {
             intent.putExtra("fromToMineCollect", false);
             intent.putExtra("nowSelectPage", selectPage);
             intent.putExtra("templateId", allData.get(position).getTemplate_id());
-            if (!TextUtils.isEmpty(type) && type.equals("2")) {
-                intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
-            } else {
-                intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
+            intent.putExtra("toUserID", toUserId);
+            intent.putExtra("fromTo", FromToTemplate.ISMESSAGEMYLIKE);
+            if(!TextUtils.isEmpty(fromTo)&&fromTo.equals(FromToTemplate.ISHOMEMYLIKE)){
+                intent.putExtra("fromTo", FromToTemplate.ISHOMEMYLIKE);
+            }else{
+                if(isFrom==1){
+                    //我的作品
+                    intent.putExtra("fromTo", FromToTemplate.ISMESSAGEMYPRODUCTION);
+                }else if(isFrom==2){
+                    //我的喜欢
+                    intent.putExtra("fromTo", FromToTemplate.ISMESSAGEMYLIKE);
+                }
             }
             startActivity(intent);
         });
@@ -155,6 +164,7 @@ public class fragHomePage extends BaseFragment {
         params.put("to_user_id", toUserId);
         params.put("type", isFrom + "");//	'类型:1=作者的作品,2=作者喜欢的作品,3=作者收藏的模板
         params.put("pageSize", perPageCount + "");
+        LogUtil.d("OOM","请求喜欢数据参数"+ StringUtil.beanToJSONString(params));
         Observable ob = Api.getDefault().getMyProduction(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override

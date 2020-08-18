@@ -131,7 +131,7 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
 
                 if (TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)){
                     statisticsEventAffair.getInstance().setFlag(this, "7_Chromakey" );
-                }else if(TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMBJ)){
+                }else if(TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISBJ)){
                     statisticsEventAffair.getInstance().setFlag(this, "8_Chromakey" );
                 }else{
                     statisticsEventAffair.getInstance().setFlag(this, "2_Titles_cutdone", "手动卡点_片头裁剪完成");
@@ -147,7 +147,7 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
 
                 if (TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)){
                     statisticsEventAffair.getInstance().setFlag(this, "7_Nokeying" );
-                }else if(TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMBJ)){
+                }else if(TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISBJ)){
                     statisticsEventAffair.getInstance().setFlag(this, "8_Nokeying" );
                 }else{
                     statisticsEventAffair.getInstance().setFlag(this, "2_Titles_cutdone", "手动卡点_片头裁剪完成");

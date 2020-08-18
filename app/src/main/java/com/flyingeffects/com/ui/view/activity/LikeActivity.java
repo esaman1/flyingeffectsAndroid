@@ -128,9 +128,9 @@ public class LikeActivity extends BaseActivity {
                     intent.putExtra("nowSelectPage", 1);
                     intent.putExtra("templateId", data.getTemplate_id());
                     if (!TextUtils.isEmpty(type) && type.equals("2")) {
-                        intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+                        intent.putExtra("fromTo", FromToTemplate.ISBJ);
                     } else {
-                        intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
+                        intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
                     }
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(intent);

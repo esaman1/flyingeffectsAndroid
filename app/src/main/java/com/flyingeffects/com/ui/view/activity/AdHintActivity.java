@@ -56,7 +56,7 @@ public class AdHintActivity extends Activity {
         switch (view.getId()) {
             case R.id.tv_cancle:
                 //取消
-                if (!TextUtils.isEmpty(from) && from.equals(FromToTemplate.ISFROMTEMPLATE)) {
+                if (from.equals(FromToTemplate.ISTEMPLATE)) {
                     statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "mb_ad_cancel", title);
                 } else {
                     statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "bj_ad_cancel", title);
@@ -69,7 +69,7 @@ public class AdHintActivity extends Activity {
 
                 if(!DoubleClick.getInstance().isFastZDYDoubleClick(2000)){
                     //观看广告
-                    if (!TextUtils.isEmpty(from) && from.equals(FromToTemplate.ISFROMTEMPLATE)) {
+                    if (from.equals(FromToTemplate.ISTEMPLATE)) {
                         statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "mb_ad_open", title);
                     } else {
                         statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "bj_ad_open", title);

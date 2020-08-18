@@ -13,7 +13,6 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.main_recycler_adapter;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.enity.ListForUpAndDown;
-import com.flyingeffects.com.enity.WxLogin;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.enity.templateDataCollectRefresh;
 import com.flyingeffects.com.enity.templateDataZanRefresh;
@@ -22,12 +21,10 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.HomeItemMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.presenter.home_fag_itemMvpPresenter;
-import com.flyingeffects.com.ui.view.activity.PreviewActivity;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
-import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -38,7 +35,12 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 
 
-public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, View.OnClickListener {
+/**
+ * description ：模板详情
+ * creation date: 2020/8/18
+ * user : zhangtongju
+ */
+public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMvpView, View.OnClickListener {
 
     private home_fag_itemMvpPresenter Presenter;
     @BindView(R.id.RecyclerView)
@@ -96,18 +98,6 @@ public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, V
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
                 statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
-//                Intent intent = new Intent(getActivity(), PreviewActivity.class);
-//                if (fromType == 0) {
-//                    intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
-//                } else if (fromType == 1) {
-//                    intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
-//                } else if (fromType == 3) {
-//                    intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
-//                }
-//                intent.putExtra("person", allData.get(position));//直接存入被序列化的对象实例
-//                startActivity(intent);
-
-
                 Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
                 ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
                 intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
@@ -115,13 +105,13 @@ public class HomeItemFragment extends BaseFragment implements HomeItemMvpView, V
                 intent.putExtra("position", position);
                 int selectPage = Presenter.getselectPage();
                 intent.putExtra("nowSelectPage", selectPage);
-                if (fromType == 0) {
-                    intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
-                } else if (fromType == 1) {
-                    intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
-                } else if (fromType == 3) {
-                    intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
-                }
+//                if (fromType == 0) {
+                    intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
+//                } else if (fromType == 1) {
+//                    intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
+//                } else if (fromType == 3) {
+//                    intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
+//                }
                 startActivity(intent);
 
             }
