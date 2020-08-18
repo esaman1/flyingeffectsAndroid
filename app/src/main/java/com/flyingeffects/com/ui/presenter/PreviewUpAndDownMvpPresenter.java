@@ -17,9 +17,9 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
     private PreviewUpAndDownMvpView previewUpAndDownMvpView;
     private PreviewUpAndDownMvpModel previewUpAndDownMvpModel;
 
-    public PreviewUpAndDownMvpPresenter(Context context, PreviewUpAndDownMvpView mvp_view, List<new_fag_template_item> allData,int nowSelectPage,String fromTo,String templateId,String toUserID) {
+    public PreviewUpAndDownMvpPresenter(Context context, PreviewUpAndDownMvpView mvp_view, List<new_fag_template_item> allData,int nowSelectPage,String fromTo,String templateId,String toUserID,String searchText) {
         this.previewUpAndDownMvpView = mvp_view;
-        previewUpAndDownMvpModel = new PreviewUpAndDownMvpModel(context, this,allData,nowSelectPage,fromTo,templateId,toUserID);
+        previewUpAndDownMvpModel = new PreviewUpAndDownMvpModel(context, this,allData,nowSelectPage,fromTo,templateId,toUserID,searchText);
     }
 
 

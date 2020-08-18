@@ -93,8 +93,9 @@ public class PreviewUpAndDownMvpModel {
     private TTAdNative mTTAdNative;
     private String soundFolder;
     private String toUserID;
+    private String searchText;
 
-    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage,String fromTo ,String category_id,String toUserID) {
+    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage,String fromTo ,String category_id,String toUserID,String searchText) {
         this.context = context;
         this.selectPage = nowSelectPage;
         this.callback = callback;
@@ -102,6 +103,7 @@ public class PreviewUpAndDownMvpModel {
         FileManager fileManager = new FileManager();
         mVideoFolder = fileManager.getFileCachePath(context, "downVideo");
         this.allData = allData;
+        this.searchText=searchText;
         this.fromTo = fromTo;
         this.category_id = category_id;
         mTTAdNative = TTAdManagerHolder.get().createAdNative(context);
@@ -550,6 +552,7 @@ public class PreviewUpAndDownMvpModel {
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
                 break;
             case FromToTemplate.ISBJ:
+            case FromToTemplate.ISCHOOSEBJ:
                 params.put("template_type", "2");
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
                 break;
@@ -559,16 +562,21 @@ public class PreviewUpAndDownMvpModel {
                 ob = Api.getDefault().collectionList(BaseConstans.getRequestHead(params));
 
                 break;
-            case FromToTemplate.ISCHOOSEBJ:
 
-                params.put("template_type",  "2");
-                ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
 
-                break;
+
             case FromToTemplate.ISSEARCHBJ:
 
+
+
+                params.put("searchText",  searchText);
+                params.put("template_type", "2");
+                ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
                 break;
             case FromToTemplate.ISSEARCHTEMPLATE:
+                params.put("searchText",  searchText);
+                params.put("template_type", "1");
+                ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
                 break;
         }
 

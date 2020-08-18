@@ -109,12 +109,15 @@ public class fragBjSearch extends BaseFragment {
             intent.putExtra("templateId", "");//直接存入被序列化的对象实例
             intent.putExtra("position", position);
             intent.putExtra("nowSelectPage", selectPage);
+            intent.putExtra("searchText", searchText);
+
+
             if (isFrom == 0) {
                 //模板页面
-                intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
+                intent.putExtra("fromTo", FromToTemplate.ISSEARCHTEMPLATE);
             } else {
                 //背景页面
-                intent.putExtra("fromTo", FromToTemplate.ISBJ);
+                intent.putExtra("fromTo", FromToTemplate.ISSEARCHBJ);
             }
             startActivity(intent);
 
