@@ -95,9 +95,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     //当前滑动趋势，false 是向下，true 是向上
     private boolean nowSlideOrientationIsUp = false;
 
-    private String toUserID;
-
-//    private boolean fromToMineCollect;
+//    private String toUserID;
 
 
     private int nowPraise;
@@ -159,8 +157,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     private String templateType;
 
-    private String searchText;
-
 
     @Override
     protected int getLayoutId() {
@@ -194,14 +190,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         is_picout = templateItem.getIs_picout();
         is_with_play = templateItem.getIs_with_play();
         templateType = templateItem.getTemplate_type();
-        searchText=getIntent().getStringExtra("searchText");
+        String searchText = getIntent().getStringExtra("searchText");
         defaultnum = templateItem.getDefaultnum();
-        toUserID=getIntent().getStringExtra("toUserID");
-//        fromToMineCollect = getIntent().getBooleanExtra("fromToMineCollect", false);
-//        fromTo = getIntent().getStringExtra("fromTo");
-//        OldfromTo=fromTo;
-//        templateType = templateItem.getTemplate_type();
-        //TODO
+        String toUserID = getIntent().getStringExtra("toUserID");
         OldfromTo = getIntent().getStringExtra("fromTo");
         keepOldFrom = OldfromTo;
         //如果模板是来自一键模板，但是模板类型是背景，那么修改状态值
@@ -215,7 +206,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         //需要得到之前allData 已经滑到的页数和分类的类别以及是模板页面或者背景页面等
         int nowSelectPage = getIntent().getIntExtra("nowSelectPage", 1);
         nowPraise = templateItem.getIs_praise();
-        Presenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, OldfromTo, category_id,toUserID,searchText);
+        Presenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, OldfromTo, category_id, toUserID, searchText);
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
         if (nowChoosePosition >= allData.size() - 2) {
             Presenter.requestMoreData();
@@ -415,26 +406,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         }
 
 
-//        if (fromToMineCollect) {
-//            //模板收藏
-//            if (fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
-//                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 0));
-//            } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
-//                //我上传的背景
-//                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 1));
-//            } else {
-//                //背景 收藏
-//                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 2));
-//            }
-//        } else {
-//            if (OldfromTo.equals(FromToTemplate.ISTEMPLATE)) {
-//                //模板
-//                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 3));
-//            } else {
-//                //背景
-//                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 4));
-//            }
-//        }
     }
 
     @Override
@@ -505,58 +476,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         } else {
             needId = templateItem.getId();
         }
-
-
-        switch (OldfromTo) {
-            case FromToTemplate.ISHOMEFROMBJ:
-                Presenter.ZanTemplate(needId, templateItem.getTitle(), 2 + "");
-                break;
-            case FromToTemplate.ISHOMEMYLIKE:
-                break;
-            case FromToTemplate.ISHOMEMYTEMPLATECOLLECT:
-                Presenter.ZanTemplate(needId, templateItem.getTitle(), 1 + "");
-                break;
-            case FromToTemplate.ISMESSAGEMYPRODUCTION:
-                break;
-            case FromToTemplate.ISMESSAGEMYLIKE:
-                break;
-            case FromToTemplate.ISTEMPLATE:
-                Presenter.ZanTemplate(needId, templateItem.getTitle(), 1 + "");
-                break;
-            case FromToTemplate.ISBJ:
-                Presenter.ZanTemplate(needId, templateItem.getTitle(), 2 + "");
-                break;
-            case FromToTemplate.ISBJCOLLECT:
-                Presenter.ZanTemplate(needId, templateItem.getTitle(), 2 + "");
-                break;
-            case FromToTemplate.ISCHOOSEBJ:
-                break;
-            case FromToTemplate.ISSEARCHBJ:
-
-                break;
-            case FromToTemplate.ISSEARCHTEMPLATE:
-                break;
-        }
-
-
-//        if (fromToMineCollect) {
-//            //模板收藏
-//            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
-//                Presenter.ZanTemplate(needId, templateItem.getTitle(), 1 + "");
-//            } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
-//                //我上传的背景
-//                Presenter.ZanTemplate(needId, templateItem.getTitle(), 2 + "");
-//            } else {
-//                //背景 收藏
-//                Presenter.ZanTemplate(needId , templateItem.getTitle(), 2 + "");
-//            }
-//        } else {
-//            if ( OldfromTo.equals(FromToTemplate.ISTEMPLATE)) {
-//                Presenter.ZanTemplate(needId, templateItem.getTitle(), 1 + "");
-//            } else {
-//                Presenter.ZanTemplate(needId, templateItem.getTitle(), 2 + "");
-//            }
-//        }
+        Presenter.ZanTemplate(needId, templateItem.getTitle(), templateType);
     }
 
 
@@ -607,25 +527,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         }
 
 
-//        if (fromToMineCollect) {
-//            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
-//                EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 0));
-//            } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
-//                //我上传的背景
-//                EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 1));
-//            } else {
-//                //背景 收藏
-//                EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 2));
-//            }
-//        } else {
-//            if (OldfromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
-//                EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 3));
-//            } else {
-//                EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 4));
-//            }
-//        }
-
-
     }
 
     @Override
@@ -656,10 +557,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void downVideoSuccess(String videoPath, String imagePath) {
         LogUtil.d("OOM", "downVideoSuccess");
         toCloseProgressDialog();
-//        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
-//            EventBus.getDefault().post(new DownVideoPath(videoPath));
-//            finish();
-//        }
 
         //背景选择页面
         if (OldfromTo.equals(FromToTemplate.ISCHOOSEBJ)) {
@@ -673,7 +570,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         //源图地址和剪切之后的地址完全一样，那说明只有一个情况，就是当前选择的素材是视频的情况，那么需要去得到视频的第一针，然后传过去
                         Intent intent = new Intent(PreviewUpAndDownActivity.this, VideoCropActivity.class);
                         intent.putExtra("videoPath", imagePath);
-//                        intent.putExtra("comeFrom", FromToTemplate.ISFROMEDOWNVIDEO);
                         intent.putExtra("comeFrom", FromToTemplate.ISCHOOSEBJ);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
@@ -750,7 +646,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             insertMinNum = 0;
         } else {
             //如果当前页面需要广告，则插入广告
-            if (isNeedAddaD && allData != null && allData.size() > randomPosition) {
+            if (isNeedAddaD && allData.size() > randomPosition) {
                 isNeedAddaD = false;
                 new_fag_template_item item = new new_fag_template_item();
                 item.setAd(ad);
@@ -813,8 +709,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 isNeedAddaD = true;
             }
         }
-
-
     }
 
 
@@ -876,55 +770,14 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     @Override
     public void onclickCollect() {
-//        if (fromToMineCollect) {
-//            //模板收藏
-//            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
-//                Presenter.collectTemplate(templateItem.getId() + "", templateItem.getTitle(), 1 + "");
-//            } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
-//                //我上传的背景
-//                Presenter.collectTemplate(templateItem.getTemplate_id() + "", templateItem.getTitle(), 2 + "");
-//            } else {
-//                //背景 收藏
-//                Presenter.collectTemplate(templateItem.getId() + "", templateItem.getTitle(), 2 + "");
-//            }
-//        } else {
-//            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMTEMPLATE)) {
-//                Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), 1 + "");
-//            } else {
-//                Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), 2 + "");
-//            }
-//        }
-
-
-        switch (OldfromTo) {
-            case FromToTemplate.ISHOMEFROMBJ:
-                Presenter.collectTemplate(templateItem.getTemplate_id() + "", templateItem.getTitle(), 2 + "");
-
-                break;
-            case FromToTemplate.ISHOMEMYLIKE:
-                break;
-            case FromToTemplate.ISHOMEMYTEMPLATECOLLECT:
-                Presenter.collectTemplate(templateItem.getId() + "", templateItem.getTitle(), 1 + "");
-                break;
-            case FromToTemplate.ISMESSAGEMYPRODUCTION:
-                Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), templateType);
-            case FromToTemplate.ISMESSAGEMYLIKE:
-                Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), templateType);
-            case FromToTemplate.ISTEMPLATE:
-                Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), templateType);
-            case FromToTemplate.ISBJ:
-                Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), templateType);
-            case FromToTemplate.ISBJCOLLECT:
-                Presenter.collectTemplate(templateItem.getId(), templateItem.getTitle(), templateType);
-                break;
-            case FromToTemplate.ISCHOOSEBJ:
-                break;
-            case FromToTemplate.ISSEARCHBJ:
-
-                break;
-            case FromToTemplate.ISSEARCHTEMPLATE:
-                break;
+        String needId;
+        int id = templateItem.getTemplate_id();
+        if (id != 0) {
+            needId = id + "";
+        } else {
+            needId = templateItem.getId();
         }
+        Presenter.collectTemplate(needId, templateItem.getTitle(), templateType);
     }
 
 
@@ -933,7 +786,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * 现在修改为先下载视频，下载完成后在打开相册选择图片
      */
     private void hasLoginToNext() {
-
 
         switch (OldfromTo) {
             case FromToTemplate.ISHOMEFROMBJ:
@@ -976,34 +828,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 }
                 break;
         }
-
-
-//        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMBJ)) {
-//            LogUtil.d("OOM", "来自背景");
-//            statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
-//            Presenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId(), false);
-//        } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)) {
-//            LogUtil.d("OOM", "来自背景");
-//            statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
-//            Presenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId(), false);
-//        } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMEDOWNVIDEO)) {
-//            //来自下载背景，就是用户重新选择背景页面
-//            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> {
-//                if (!ondestroy) {
-//                    String alert = "正在生成中...";
-//                    WaitingDialog.openPragressDialog(PreviewUpAndDownActivity.this, alert);
-//                    Presenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId(), true);
-//                }
-//            }, 200));
-//        } else {
-//            LogUtil.d("OOM", "来自其他");
-//            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISFROMSEARCH)) {
-//                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "4_search_make", templateItem.getTitle());
-//            }
-//            statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "mb_make", templateItem.getTitle());
-//            adapter.pauseVideo();
-//            Presenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
-//        }
     }
 
 
@@ -1162,11 +986,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private void compressImage(List<String> paths, String templateId) {
         boolean hasCache = templateItem.getIs_anime() != 1;
         CompressionCuttingManage manage = new CompressionCuttingManage(PreviewUpAndDownActivity.this, templateId, hasCache, tailorPaths -> {
-//            if (OldfromTo.equals(FromToTemplate.ISBJ)) {
-//                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId(), false);
-//            } else if (OldfromTo.equals(FromToTemplate.ISHOMEFROMBJ)) {
-//                Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId(), false);
-//            }
             if (templateType.equals("2")) {
                 Presenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId(), false);
             } else {
