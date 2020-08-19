@@ -1176,6 +1176,7 @@ public class CreationTemplateMvpModel {
                                     Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     intent.putExtra("path", path);
+                                    intent.putExtra("nowUiIsLandscape",nowUiIsLandscape);
                                     context.startActivity(intent);
                                     Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> isIntoSaveVideo = false, 500));
                                 } else {

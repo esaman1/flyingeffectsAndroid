@@ -88,6 +88,8 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
     boolean isIntoInitTrimmer = false;
 
+    private boolean nowUiIsLandscape;
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_creation_template_preview;
@@ -97,6 +99,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     protected void initView() {
         EventBus.getDefault().register(this);
         imagePath = getIntent().getStringExtra("path");
+        nowUiIsLandscape=getIntent().getBooleanExtra("nowUiIsLandscape",false);
         Presenter = new CreationTemplatePreviewPresenter(this, this, imagePath);
         VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
         LogUtil.d("OOM", "timeUtils.timeParse(videoInfo.getDuration())=" + timeUtils.timeParse(videoInfo.getDuration()));
@@ -220,7 +223,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
                     videoPause();
                     Presenter.destroyTimer();
-                    Presenter.toSaveVideo(false);
+                    Presenter.toSaveVideo(false,nowUiIsLandscape);
 
 
                 }
@@ -461,13 +464,13 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                     statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "video_ad_alert_request_fail");
                     LogUtil.d("OOM", "onVideoAdError" + s);
                     videoPause();
-                    Presenter.toSaveVideo(false);
+                    Presenter.toSaveVideo(false,nowUiIsLandscape);
                 }
 
                 @Override
                 public void onVideoAdClose() {
                     videoPause();
-                    Presenter.toSaveVideo(true);
+                    Presenter.toSaveVideo(true,nowUiIsLandscape);
                 }
 
                 @Override

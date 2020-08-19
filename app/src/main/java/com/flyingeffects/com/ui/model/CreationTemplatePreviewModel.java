@@ -88,7 +88,7 @@ public class CreationTemplatePreviewModel {
 
     public void initTrimmer(RangeSeekBarView mRangeSeekBarView, VideoFrameRecycler mTimeLineView, RoundImageView progressCursor, long duration) {
         this.cursor = progressCursor;
-
+        this.duration=duration;
 
 
         this.mRangeSeekBarView = mRangeSeekBarView;
@@ -336,7 +336,7 @@ public class CreationTemplatePreviewModel {
      * user : zhangtongju
      */
     float allDuration;
-    public void toSaveVideo(boolean hasShowStimulateAd) {
+    public void toSaveVideo(boolean hasShowStimulateAd,boolean nowUiIsLandscape) {
         long cropDurationMs = (long) (getDuration() * (cropEndRatio - cropStartRatio));
         if (cropDurationMs == realityDuration) {
             //不需要裁剪
@@ -349,7 +349,7 @@ public class CreationTemplatePreviewModel {
             dialog.openProgressDialog();
             //需要裁剪
 
-            videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(mContext,false,(cropEndRatio-cropStartRatio)*allDuration/1000,videoPath, (long) (cropStartRatio*allDuration)/1000, new videoCutDurationForVideoOneDo.isSuccess() {
+            videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(mContext,nowUiIsLandscape,(cropEndRatio-cropStartRatio)*allDuration/1000,videoPath, (long) (cropStartRatio*allDuration)/1000, new videoCutDurationForVideoOneDo.isSuccess() {
                 @Override
                 public void progresss(int progress) {
                     if (progress > 100) {

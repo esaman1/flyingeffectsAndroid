@@ -66,17 +66,8 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         TextView tv_make = helper.getView(R.id.tv_make);
         LinearLayout ll_comment = helper.getView(R.id.ll_comment);
         tv_zan_count = helper.getView(R.id.tv_zan_count);
-
         boolean readOnly = item.getTest() != 0;
         boolean needHideCreate;
-
-//        if( !TextUtils.isEmpty(fromTo)&&fromTo.equals(FromToTemplate.ISFROMUPDATEBJ)&&readOnly){
-//            needHideCreate=true;
-//        }else{
-//            needHideCreate=false;
-//        }
-
-
         if(OldFromTo.equals(FromToTemplate.ISHOMEFROMBJ)&&readOnly){
             needHideCreate=true;
         }else{
@@ -133,11 +124,6 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             tv_writer_name.setText(item.getAuth());
             tv_title.setText(item.getRemark());
 
-//            if (item.getIs_collection() == 1 && BaseConstans.hasLogin()) {
-//                iv_zan.setImageResource(R.mipmap.zan_selected);
-//            } else {
-//                iv_zan.setImageResource(R.mipmap.zan);
-//            }
             //收藏功能变为点赞功能
             if (item.getIs_praise() == 1 && BaseConstans.hasLogin()) {
                 iv_zan.setImageResource(R.mipmap.zan_selected);
@@ -267,6 +253,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
 
 
     public void pauseVideo() {
+        LogUtil.d("OOM","pauseVideo");
         videoPlayer.onVideoPause();
         GSYVideoManager.onPause();
     }

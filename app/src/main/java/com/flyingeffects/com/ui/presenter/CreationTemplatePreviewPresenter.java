@@ -21,8 +21,8 @@ public class CreationTemplatePreviewPresenter extends BasePresenter implements C
         CreationTemplatePreviewModel = new CreationTemplatePreviewModel(context, this,videoPath);
     }
 
-    public void toSaveVideo(boolean hasShowStimulateAd){
-        CreationTemplatePreviewModel.toSaveVideo(hasShowStimulateAd);
+    public void toSaveVideo(boolean hasShowStimulateAd,boolean nowUiIsLandscape){
+        CreationTemplatePreviewModel.toSaveVideo(hasShowStimulateAd,nowUiIsLandscape);
 
     }
 
