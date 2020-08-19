@@ -1,12 +1,9 @@
 package com.flyingeffects.com.ui.model;
 
-import android.app.Service;
 import android.content.Context;
 import android.net.Uri;
-import android.os.Vibrator;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,7 +15,6 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplatePreviewMvpCallback;
-import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
@@ -31,7 +27,6 @@ import com.flyingeffects.com.view.interfaces.OnRangeSeekBarListener;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
