@@ -113,6 +113,8 @@ public class fragHomePage extends BaseFragment {
                 if(isFrom==1){
                     //我的作品
                     intent.putExtra("fromTo", FromToTemplate.ISMESSAGEMYPRODUCTION);
+                    intent.putExtra("isTest", allData.get(position).getTest());
+
                 }else if(isFrom==2){
                     //我的喜欢
                     intent.putExtra("fromTo", FromToTemplate.ISMESSAGEMYLIKE);
@@ -140,10 +142,20 @@ public class fragHomePage extends BaseFragment {
 
         });
         smartRefreshLayout.setOnLoadMoreListener(refresh -> {
-            isOnLoadMore();
-            isRefresh = false;
-            selectPage++;
-            requestFagData(false, false);
+
+
+            if(BaseConstans.hasLogin()){
+                isOnLoadMore();
+                isRefresh = false;
+                selectPage++;
+                requestFagData(false, false);
+            }else{
+                ToastUtil.showToast("请先登录");
+                allData.clear();
+                finishData();
+            }
+
+
         });
     }
 
@@ -162,9 +174,13 @@ public class fragHomePage extends BaseFragment {
     private void requestFagData(boolean isCanRefresh, boolean isSave) {
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
-        //解决bug 第一次登录的情况
-        if(TextUtils.isEmpty(toUserId)){
+        if(isFrom==1){
+            //我的作品
             toUserId=BaseConstans.GetUserId();
+        }else{
+            if(TextUtils.isEmpty(toUserId)){
+                toUserId=BaseConstans.GetUserId();
+            }
         }
         params.put("to_user_id", toUserId);
         params.put("type", isFrom + "");//	'类型:1=作者的作品,2=作者喜欢的作品,3=作者收藏的模板

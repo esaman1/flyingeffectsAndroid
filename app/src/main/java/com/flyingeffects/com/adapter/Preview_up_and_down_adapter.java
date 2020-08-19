@@ -46,12 +46,12 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     private int nowPreviewPosition;
     public TTNativeExpressAd ad;
     private TextView tv_zan_count;
-    private String  OldFromTo;
+    private String OldFromTo;
 
-    public Preview_up_and_down_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context,String OldFromTo) {
+    public Preview_up_and_down_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, String OldFromTo) {
         super(layoutResId, allData);
         this.context = context;
-        this.OldFromTo=OldFromTo;
+        this.OldFromTo = OldFromTo;
     }
 
 
@@ -68,10 +68,10 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         tv_zan_count = helper.getView(R.id.tv_zan_count);
         boolean readOnly = item.getTest() != 0;
         boolean needHideCreate;
-        if(OldFromTo.equals(FromToTemplate.ISHOMEFROMBJ)&&readOnly){
-            needHideCreate=true;
-        }else{
-            needHideCreate=false;
+        if (readOnly) {
+            needHideCreate = OldFromTo.equals(FromToTemplate.ISHOMEFROMBJ) || OldFromTo.equals(FromToTemplate.ISMESSAGEMYPRODUCTION);
+        } else {
+            needHideCreate = false;
         }
         iv_zan = helper.getView(R.id.iv_zan);
         ImageView iv_writer = helper.getView(R.id.iv_writer);
@@ -124,7 +124,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             tv_writer_name.setText(item.getAuth());
             tv_title.setText(item.getRemark());
 
-            //收藏功能变为点赞功能
+            //点赞功能
             if (item.getIs_praise() == 1 && BaseConstans.hasLogin()) {
                 iv_zan.setImageResource(R.mipmap.zan_selected);
             } else {
@@ -198,9 +198,9 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
 //        videoPlayer.setAnimation(null);
         videoPlayer.getStartButton().setVisibility(View.GONE);
 
-        if(OldFromTo.equals(FromToTemplate.ISTEMPLATE)&&item.getTemplate_type().equals("2")){
+        if (OldFromTo.equals(FromToTemplate.ISTEMPLATE) && item.getTemplate_type().equals("2")) {
             videoPlayer.setUpLazy(item.getPre_url(), true, null, null, "这是title");
-        }else{
+        } else {
             videoPlayer.setUpLazy(item.getVidoefile(), true, null, null, "这是title");
         }
 
@@ -253,7 +253,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
 
 
     public void pauseVideo() {
-        LogUtil.d("OOM","pauseVideo");
+        LogUtil.d("OOM", "pauseVideo");
         videoPlayer.onVideoPause();
         GSYVideoManager.onPause();
     }

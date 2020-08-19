@@ -917,6 +917,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 LogUtil.d("OOM", "重新选择了视频背景,地址为" + event.getPath());
                 videoPath = event.getPath();
                 ll_green_background.setVisibility(View.GONE);
+                setPlayerViewSize(nowUiIsLandscape);
                 initExo(videoPath);
                 presenter.setmVideoPath(videoPath);
                 presenter.initVideoProgressView(hListView);

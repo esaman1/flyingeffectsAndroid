@@ -795,6 +795,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      */
     private void hasLoginToNext() {
 
+        LogUtil.d("OOM","hasLoginToNext");
         switch (OldfromTo) {
             case FromToTemplate.ISHOMEFROMBJ:
                 statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
@@ -851,8 +852,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
 
     private void toClickMake() {
-        adapter.pauseVideo();
-        if (!DoubleClick.getInstance().isFastZDYDoubleClick(3000)) {
+
+        if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
+            adapter.pauseVideo();
             if (OldfromTo.equals(FromToTemplate.ISBJ) || OldfromTo.equals(FromToTemplate.ISHOMEFROMBJ)) {
                 statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "5_bj_Make", templateItem.getTitle());
                 UiStep.isFromDownBj = true;
