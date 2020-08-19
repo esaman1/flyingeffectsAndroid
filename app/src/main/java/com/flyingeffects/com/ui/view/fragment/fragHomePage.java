@@ -104,6 +104,7 @@ public class fragHomePage extends BaseFragment {
             intent.putExtra("fromToMineCollect", false);
             intent.putExtra("nowSelectPage", selectPage);
             intent.putExtra("templateId", allData.get(position).getTemplate_id());
+
             intent.putExtra("toUserID", toUserId);
             intent.putExtra("fromTo", FromToTemplate.ISMESSAGEMYLIKE);
             if(!TextUtils.isEmpty(fromTo)&&fromTo.equals(FromToTemplate.ISHOMEMYLIKE)){
@@ -161,6 +162,10 @@ public class fragHomePage extends BaseFragment {
     private void requestFagData(boolean isCanRefresh, boolean isSave) {
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
+        //解决bug 第一次登录的情况
+        if(TextUtils.isEmpty(toUserId)){
+            toUserId=BaseConstans.GetUserId();
+        }
         params.put("to_user_id", toUserId);
         params.put("type", isFrom + "");//	'类型:1=作者的作品,2=作者喜欢的作品,3=作者收藏的模板
         params.put("pageSize", perPageCount + "");

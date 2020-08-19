@@ -134,6 +134,7 @@ public class ZanActivity extends BaseActivity {
                     intent.putExtra("fromToMineCollect", false);
                     intent.putExtra("nowSelectPage", 1);
                     intent.putExtra("templateId", data.getTemplate_id());
+                    intent.putExtra("isCanLoadMore", false);
                     if (!TextUtils.isEmpty(type) && type.equals("2")) {
                         intent.putExtra("fromTo", FromToTemplate.ISBJ);
                     } else {

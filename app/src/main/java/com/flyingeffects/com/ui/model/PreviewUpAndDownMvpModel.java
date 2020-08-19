@@ -94,9 +94,11 @@ public class PreviewUpAndDownMvpModel {
     private String soundFolder;
     private String toUserID;
     private String searchText;
+    private boolean isCanLoadMore;
 
-    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage,String fromTo ,String category_id,String toUserID,String searchText) {
+    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage,String fromTo ,String category_id,String toUserID,String searchText,boolean isCanLoadMore) {
         this.context = context;
+        this.isCanLoadMore=isCanLoadMore;
         this.selectPage = nowSelectPage;
         this.callback = callback;
         this.toUserID=toUserID;
@@ -118,7 +120,9 @@ public class PreviewUpAndDownMvpModel {
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
             isOnRefresh();
             isRefresh = true;
-            refreshLayout.setEnableLoadMore(true);
+            if(isCanLoadMore){
+                refreshLayout.setEnableLoadMore(true);
+            }
             selectPage = 1;
             requestFagData();
         });
@@ -127,9 +131,11 @@ public class PreviewUpAndDownMvpModel {
 
         });
 
-        smartRefreshLayout.setEnableLoadMore(false);
-        if (TextUtils.isEmpty(category_id)) {
-            smartRefreshLayout.setEnableRefresh(true);
+        if(isCanLoadMore){
+            smartRefreshLayout.setEnableLoadMore(true);
+        }else{
+            smartRefreshLayout.setEnableRefresh(false);
+            smartRefreshLayout.setEnableLoadMore(false);
         }
     }
 
@@ -578,6 +584,10 @@ public class PreviewUpAndDownMvpModel {
                 params.put("template_type", "1");
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
                 break;
+
+
+
+
         }
 
         String str = StringUtil.beanToJSONString(params);

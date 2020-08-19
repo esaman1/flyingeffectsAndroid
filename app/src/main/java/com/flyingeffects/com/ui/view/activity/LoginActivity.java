@@ -411,6 +411,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         params.put("phone", editTextUsername);
         params.put("code", password);
         // 启动时间
+        LogUtil.d("OOM",StringUtil.beanToJSONString(params));
         Observable ob = Api.getDefault().toLogin(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(LoginActivity.this) {
             @Override

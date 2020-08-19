@@ -75,7 +75,7 @@ public class LikeActivity extends BaseActivity {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                requestTemplateDetail(listData.get(position).getTemplate_id());
+                requestTemplateDetail(listData.get(position).getTemplate_id(),position);
             }
         });
 
@@ -104,7 +104,7 @@ public class LikeActivity extends BaseActivity {
     }
 
 
-    public void requestTemplateDetail(String templateId) {
+    public void requestTemplateDetail(String templateId,int position) {
         if (!TextUtils.isEmpty(templateId)) {
             HashMap<String, String> params = new HashMap<>();
             params.put("template_id", templateId);
@@ -118,6 +118,7 @@ public class LikeActivity extends BaseActivity {
 
                 @Override
                 protected void _onNext(new_fag_template_item data) {
+                    allData.clear();
                     Intent intent =new Intent(LikeActivity.this,PreviewUpAndDownActivity.class);
                     String type = data.getTemplate_type();
                     allData.add(data);
@@ -127,6 +128,7 @@ public class LikeActivity extends BaseActivity {
                     intent.putExtra("fromToMineCollect", false);
                     intent.putExtra("nowSelectPage", 1);
                     intent.putExtra("templateId", data.getTemplate_id());
+                    intent.putExtra("isCanLoadMore", false);
                     if (!TextUtils.isEmpty(type) && type.equals("2")) {
                         intent.putExtra("fromTo", FromToTemplate.ISBJ);
                     } else {

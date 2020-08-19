@@ -293,6 +293,17 @@ public class MineZanEnity implements Serializable {
            private String vidoefile;
            private String zipid;
 
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    private String nickname;
+
+
     public String getUser_id() {
         return user_id;
     }

@@ -172,6 +172,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
 
     private boolean isSlideViewpager = false;
+    boolean   isCanLoadMore;
 
     @Override
     protected void initView() {
@@ -183,6 +184,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         ondestroy = false;
         waitingDialog_progress = new WaitingDialog_progress(this);
         nowChoosePosition = getIntent().getIntExtra("position", 0);
+        isCanLoadMore =getIntent().getBooleanExtra("isCanLoadMore",true);
+        LogUtil.d("OOM","isCanLoadMore="+isCanLoadMore);
         //默认插入最值为当前位置
         insertMaxNum = nowChoosePosition;
         insertMinNum = nowChoosePosition;
@@ -206,11 +209,14 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         //需要得到之前allData 已经滑到的页数和分类的类别以及是模板页面或者背景页面等
         int nowSelectPage = getIntent().getIntExtra("nowSelectPage", 1);
         nowPraise = templateItem.getIs_praise();
-        Presenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, OldfromTo, category_id, toUserID, searchText);
+        Presenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, OldfromTo, category_id, toUserID, searchText,isCanLoadMore);
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
-        if (nowChoosePosition >= allData.size() - 2) {
-            Presenter.requestMoreData();
+        if(isCanLoadMore){
+            if (nowChoosePosition >= allData.size() - 2) {
+                Presenter.requestMoreData();
+            }
         }
+
         adapter = new Preview_up_and_down_adapter(R.layout.list_preview_up_down_item, allData, PreviewUpAndDownActivity.this, OldfromTo);
         adapter.setOnItemChildClickListener((adapter, view, position) -> {
             switch (view.getId()) {
@@ -288,9 +294,11 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         }
                     }
                     int allDataCount = allData.size();
-                    if (position == allDataCount - 3) {
-                        LogUtil.d("OOM", "请求更多数据");
-                        Presenter.requestMoreData();
+                    if(isCanLoadMore){
+                        if (position == allDataCount - 3) {
+                            LogUtil.d("OOM", "请求更多数据");
+                            Presenter.requestMoreData();
+                        }
                     }
                     lastChoosePosition = position;
                     if (BaseConstans.hasLogin()) {
