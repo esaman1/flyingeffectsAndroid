@@ -72,7 +72,7 @@ public class fragHomePage extends BaseFragment {
         if (bundle != null) {
             toUserId = bundle.getString("toUserId");
             isFrom = bundle.getInt("isFrom");
-            fromTo=bundle.getString("fromTo");
+            fromTo = bundle.getString("fromTo");
         }
         initRecycler();
         initSmartRefreshLayout();
@@ -107,15 +107,15 @@ public class fragHomePage extends BaseFragment {
 
             intent.putExtra("toUserID", toUserId);
             intent.putExtra("fromTo", FromToTemplate.ISMESSAGEMYLIKE);
-            if(!TextUtils.isEmpty(fromTo)&&fromTo.equals(FromToTemplate.ISHOMEMYLIKE)){
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISHOMEMYLIKE)) {
                 intent.putExtra("fromTo", FromToTemplate.ISHOMEMYLIKE);
-            }else{
-                if(isFrom==1){
+            } else {
+                if (isFrom == 1) {
                     //我的作品
                     intent.putExtra("fromTo", FromToTemplate.ISMESSAGEMYPRODUCTION);
                     intent.putExtra("isTest", allData.get(position).getTest());
 
-                }else if(isFrom==2){
+                } else if (isFrom == 2) {
                     //我的喜欢
                     intent.putExtra("fromTo", FromToTemplate.ISMESSAGEMYLIKE);
                 }
@@ -127,13 +127,13 @@ public class fragHomePage extends BaseFragment {
 
     public void initSmartRefreshLayout() {
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
-            if(BaseConstans.hasLogin()){
+            if (BaseConstans.hasLogin()) {
                 isOnRefresh();
                 isRefresh = true;
                 refreshLayout.setEnableLoadMore(true);
                 selectPage = 1;
                 requestFagData(false, true);
-            }else{
+            } else {
                 ToastUtil.showToast("请先登录");
                 allData.clear();
                 finishData();
@@ -144,12 +144,12 @@ public class fragHomePage extends BaseFragment {
         smartRefreshLayout.setOnLoadMoreListener(refresh -> {
 
 
-            if(BaseConstans.hasLogin()){
+            if (BaseConstans.hasLogin()) {
                 isOnLoadMore();
                 isRefresh = false;
                 selectPage++;
                 requestFagData(false, false);
-            }else{
+            } else {
                 ToastUtil.showToast("请先登录");
                 allData.clear();
                 finishData();
@@ -174,18 +174,10 @@ public class fragHomePage extends BaseFragment {
     private void requestFagData(boolean isCanRefresh, boolean isSave) {
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
-        if(isFrom==1){
-            //我的作品
-            toUserId=BaseConstans.GetUserId();
-        }else{
-            if(TextUtils.isEmpty(toUserId)){
-                toUserId=BaseConstans.GetUserId();
-            }
-        }
         params.put("to_user_id", toUserId);
         params.put("type", isFrom + "");//	'类型:1=作者的作品,2=作者喜欢的作品,3=作者收藏的模板
         params.put("pageSize", perPageCount + "");
-        LogUtil.d("OOM","请求喜欢数据参数"+ StringUtil.beanToJSONString(params));
+        LogUtil.d("OOM", "请求喜欢数据参数" + StringUtil.beanToJSONString(params));
         Observable ob = Api.getDefault().getMyProduction(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override
@@ -233,11 +225,11 @@ public class fragHomePage extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(BaseConstans.hasLogin()){
-            selectPage=1;
-            isRefresh=true;
+        if (BaseConstans.hasLogin()) {
+            selectPage = 1;
+            isRefresh = true;
             requestData();
-        }else{
+        } else {
             allData.clear();
             adapter.notifyDataSetChanged();
             showNoData(true);

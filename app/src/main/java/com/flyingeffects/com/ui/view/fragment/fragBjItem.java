@@ -276,20 +276,26 @@ public class fragBjItem extends BaseFragment {
      */
     @Subscribe
     public void onEventMainThread(templateDataZanRefresh event) {
-        if(event.getFrom()==4){
-            int position = event.getPosition();
-            boolean isPraise = event.isSeleted();
-            if (allData != null && allData.size() > position) {
-                new_fag_template_item item = allData.get(position);
-                item.setPraise(event.getZanCount() + "");
-                if (isPraise) {
-                    item.setIs_praise(1);
-                } else {
-                    item.setIs_praise(0);
+            if(event.getTemplateId()!=0){
+                if(allData != null && allData.size() > 0){
+                    int changeId=event.getTemplateId();
+                    boolean isPraise = event.isSeleted();
+                    for (int i=0;i<allData.size();i++){
+                        if(allData.get(i).getTemplate_id()==changeId){
+                            new_fag_template_item item = allData.get(i);
+                            item.setPraise(event.getZanCount() + "");
+                            if (isPraise) {
+                                item.setIs_praise(1);
+                            } else {
+                                item.setIs_praise(0);
+                            }
+                            allData.set(i, item);
+                            adapter.notifyItemChanged(i);
+                            return;
+                        }
+                    }
                 }
-                allData.set(position, item);
-                adapter.notifyItemChanged(position);
-            }
+
         }
 
     }

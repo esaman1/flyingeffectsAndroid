@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -85,7 +86,7 @@ public class frag_user_collect extends BaseFragment {
         EventBus.getDefault().register(this);
         if (bundle != null) {
             template_type = bundle.getString("template_type");
-            from=bundle.getInt("from",0);
+            from = bundle.getInt("from", 0);
         }
     }
 
@@ -164,7 +165,7 @@ public class frag_user_collect extends BaseFragment {
                 refreshLayout.setEnableLoadMore(true);
                 selectPage = 1;
                 requestCollectionList(false);
-            }else{
+            } else {
                 finishData();
                 ToastUtil.showToast("请先登录");
             }
@@ -176,7 +177,7 @@ public class frag_user_collect extends BaseFragment {
                 isRefresh = false;
                 selectPage++;
                 requestCollectionList(false);
-            }else{
+            } else {
                 finishData();
                 ToastUtil.showToast("请先登录");
             }
@@ -217,10 +218,10 @@ public class frag_user_collect extends BaseFragment {
     private void initRecycler() {
         int fromType;
         //0 模板  1 背景 2 搜索/我的收藏 3 表示背景模板下载
-        if(!TextUtils.isEmpty(template_type)&&template_type.equals("2")){
-            fromType=1;
-        }else{
-            fromType=2;
+        if (!TextUtils.isEmpty(template_type) && template_type.equals("2")) {
+            fromType = 1;
+        } else {
+            fromType = 2;
         }
         adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), fromType);
         layoutManager =
@@ -249,29 +250,25 @@ public class frag_user_collect extends BaseFragment {
 //                startActivity(intent);
 
 
-
-
-
-
                 Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
                 ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
                 intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
                 intent.putExtra("position", position);
-                if(from==3){
+                if (from == 3) {
                     intent.putExtra("fromTo", FromToTemplate.ISCHOOSEBJ);
-                }else{
+                } else {
                     if (template_type != null && template_type.equals("1")) {
 //                        intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
                         intent.putExtra("fromTo", FromToTemplate.ISHOMEMYTEMPLATECOLLECT);
-                    } else if(template_type != null && template_type.equals("2")) {
+                    } else if (template_type != null && template_type.equals("2")) {
                         intent.putExtra("fromTo", FromToTemplate.ISBJCOLLECT);
-                    }else{
+                    } else {
                         intent.putExtra("fromTo", FromToTemplate.ISHOMEFROMBJ);
                     }
                 }
                 intent.putExtra("fromToMineCollect", true);
-                intent.putExtra("nowSelectPage",selectPage);
-                intent.putExtra("category_id","");
+                intent.putExtra("nowSelectPage", selectPage);
+                intent.putExtra("category_id", "");
                 startActivity(intent);
 
             }
@@ -285,21 +282,26 @@ public class frag_user_collect extends BaseFragment {
      */
     @Subscribe
     public void onEventMainThread(templateDataZanRefresh event) {
-        int from=event.getFrom();
-        if(from==0||from==1||from==2){
-            int position = event.getPosition();
-            boolean isPraise = event.isSeleted();
-            if (allData != null && allData.size() > position) {
-                new_fag_template_item item = allData.get(position);
-                item.setPraise(event.getZanCount() + "");
-                if (isPraise) {
-                    item.setIs_praise(1);
-                } else {
-                    item.setIs_praise(0);
+        if(event.getTemplateId()!=0){
+            if(allData != null && allData.size() > 0){
+                int changeId=event.getTemplateId();
+                boolean isPraise = event.isSeleted();
+                for (int i=0;i<allData.size();i++){
+                    if(allData.get(i).getTemplate_id()==changeId){
+                        new_fag_template_item item = allData.get(i);
+                        item.setPraise(event.getZanCount() + "");
+                        if (isPraise) {
+                            item.setIs_praise(1);
+                        } else {
+                            item.setIs_praise(0);
+                        }
+                        allData.set(i, item);
+                        adapter.notifyItemChanged(i);
+                        return;
+                    }
                 }
-                allData.set(position, item);
-                adapter.notifyItemChanged(position);
             }
+
         }
     }
 }

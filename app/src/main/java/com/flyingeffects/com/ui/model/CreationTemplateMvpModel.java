@@ -1639,7 +1639,7 @@ public class CreationTemplateMvpModel {
                     if (!isCheckedMatting) {
                         stickerView.changeImage(stickerView.getOriginalPath(), false);
                     } else {
-                        stickerView.changeImage(stickerView.getResPath(), false);
+                        stickerView.changeImage(stickerView.getClipPath(), false);
                     }
                 }
             }, 500);

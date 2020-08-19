@@ -92,6 +92,7 @@ public class BaseConstans {
     public static void SetUserId(String id, String userName, String headUrl) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putString("userId", id);
+        LogUtil.d("oom3","设置的userId="+id);
         spUtil.putString("userName", userName);
         spUtil.putString("headUrl", headUrl);
     }

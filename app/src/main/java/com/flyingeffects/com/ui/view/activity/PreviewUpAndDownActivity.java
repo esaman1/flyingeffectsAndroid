@@ -380,38 +380,40 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         item1.setPraise(iZanNum + "");
         allData.set(nowChoosePosition, item1);
         adapter.setIsZanCount(iZanNum);
+        EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, item1.getTemplate_id()));
 
-
-        switch (OldfromTo) {
-            case FromToTemplate.ISHOMEFROMBJ:
-                break;
-            case FromToTemplate.ISHOMEMYLIKE:
-                break;
-            case FromToTemplate.ISHOMEMYTEMPLATECOLLECT:
-                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 0));
-                break;
-            case FromToTemplate.ISMESSAGEMYPRODUCTION:
-                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 1));
-                break;
-            case FromToTemplate.ISMESSAGEMYLIKE:
-                break;
-            case FromToTemplate.ISTEMPLATE:
-                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 3));
-                break;
-            case FromToTemplate.ISBJ:
-                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 4));
-                break;
-            case FromToTemplate.ISBJCOLLECT:
-                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 2));
-                break;
-            case FromToTemplate.ISCHOOSEBJ:
-                break;
-            case FromToTemplate.ISSEARCHBJ:
-
-                break;
-            case FromToTemplate.ISSEARCHTEMPLATE:
-                break;
-        }
+//        switch (OldfromTo) {
+//            case FromToTemplate.ISHOMEFROMBJ:
+//                break;
+//            case FromToTemplate.ISHOMEMYLIKE:
+//
+//                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 4,item1.getTemplate_id()));
+//                break;
+//            case FromToTemplate.ISHOMEMYTEMPLATECOLLECT:
+//                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 0,item1.getTemplate_id()));
+//                break;
+//            case FromToTemplate.ISMESSAGEMYPRODUCTION:
+//                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 1,item1.getTemplate_id()));
+//                break;
+//            case FromToTemplate.ISMESSAGEMYLIKE:
+//                break;
+//            case FromToTemplate.ISTEMPLATE:
+//                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 3,item1.getTemplate_id()));
+//                break;
+//            case FromToTemplate.ISBJ:
+//                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 4,item1.getTemplate_id()));
+//                break;
+//            case FromToTemplate.ISBJCOLLECT:
+//                EventBus.getDefault().post(new templateDataZanRefresh(nowChoosePosition, iZanNum, isAdd, 2,item1.getTemplate_id()));
+//                break;
+//            case FromToTemplate.ISCHOOSEBJ:
+//                break;
+//            case FromToTemplate.ISSEARCHBJ:
+//
+//                break;
+//            case FromToTemplate.ISSEARCHTEMPLATE:
+//                break;
+//        }
 
 
     }
@@ -693,15 +695,16 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 LogUtil.d("OOM", "广告插入的位置=" + randomPosition);
                 //因为提前插入的，所以需要加1
                 viewPage2.setCurrentItem(nowChoosePosition + 1, false);
-            } else {
-                //否则永远都是第一个
-                new_fag_template_item item = new new_fag_template_item();
-                item.setAd(ad);
-                allData.add(0, item);
-                adapter.notifyDataSetChanged();
-                viewPage2.setCurrentItem(nowChoosePosition + 1, false);
-                LogUtil.d("OOM", "超过数据限制，第一个为广告");
             }
+//            else {
+//                //否则永远都是第一个
+//                new_fag_template_item item = new new_fag_template_item();
+//                item.setAd(ad);
+//                allData.add(0, item);
+//                adapter.notifyDataSetChanged();
+//                viewPage2.setCurrentItem(nowChoosePosition + 1, false);
+//                LogUtil.d("OOM", "超过数据限制，第一个为广告");
+//            }
         } else {
             //下滑的情况
             randomPosition = insertMaxNum + randomPosition;
