@@ -1611,6 +1611,49 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
+    public void onresmeView(){
+        getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                getTarger().setAutoRun(false);
+                contentWidth = getMeasuredWidth() / 2f;
+                originalBitmapWidth = (int) contentWidth;
+                originalBitmap = BitmapFactory.decodeFile(resPath);
+                if (originalBitmap != null) {
+                    int bitmapW = originalBitmap.getWidth();
+                    int bitmapH = originalBitmap.getHeight();
+                    boolean direction = BitmapManager.getInstance().getOrientation(resPath);
+                    if (!direction) {
+                        contentHeight = widthBigger ? contentWidth * (bitmapH / (float) bitmapW) : contentWidth * (bitmapW / (float) bitmapH);
+                    } else {
+                        //正常模式
+                        contentHeight = widthBigger ? contentWidth * (bitmapW / (float) bitmapH) : contentWidth * (bitmapH / (float) bitmapW);
+                    }
+                    originalBitmapHeight = (int) contentHeight;
+//                        LogUtil.d("OOM", "contentHeight=" + contentHeight);
+//                        LogUtil.d("OOM", "contentWidth=" + contentWidth);
+                } else {
+                    contentHeight = getMeasuredHeight() / 2;
+                }
+                // contentHeight = (int) (getMinDisplayWidth() / 2f);
+                RequestManager manager = Glide.with(getContext());
+                RequestBuilder builder = null;
+                if (resPath.endsWith(".gif")) {
+                    builder = manager.asGif();
+                } else {
+                    builder = manager.asDrawable();
+                }
+                options.override((int) contentWidth, (int) contentHeight);
+                builder.load(resPath)
+                        .apply(options)
+                        .into(getTarger());
+                recyclerBitmap();
+            }
+        });
+    }
+
+
     public static class isFromCopy {
 
         public float getScale() {

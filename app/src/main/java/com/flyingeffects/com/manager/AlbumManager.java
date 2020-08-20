@@ -7,6 +7,7 @@ import android.graphics.Color;
 import androidx.core.content.ContextCompat;
 
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.utils.LogUtil;
 import com.yanzhenjie.album.Album;
@@ -26,6 +27,10 @@ public class AlbumManager {
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String material_info) {
+
+
+
+        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
         Album.album(context)
                 .multipleChoice()
                 .columnCount(3)
@@ -84,6 +89,7 @@ public class AlbumManager {
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String material_info, long duration) {
+        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
         Album.album(context)
                 .multipleChoice()
                 .columnCount(3)
@@ -143,6 +149,7 @@ public class AlbumManager {
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String material_info, long duration, String title, String musicFolder) {
+        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
         Album.album(context)
                 .multipleChoice()
                 .columnCount(3)
@@ -204,7 +211,7 @@ public class AlbumManager {
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     public static void chooseImageAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String material_info) {
-
+        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
         Album.image(context) // Image selection.
                 .multipleChoice()
                 .camera(false)
@@ -257,6 +264,7 @@ public class AlbumManager {
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     public static void chooseVideo(Activity act, int selectNum, int tag, AlbumChooseCallback callback, String material_info) {
+        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
         Album.video(act) // Video selection.
                 .multipleChoice()
                 .camera(false)

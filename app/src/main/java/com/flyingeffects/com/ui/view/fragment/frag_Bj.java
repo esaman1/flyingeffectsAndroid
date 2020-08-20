@@ -103,6 +103,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     }
 
     private ArrayList<Fragment> list = new ArrayList<>();
+    String[] titles;
 
     @Override
     public void setFragmentList(List<TemplateType> data) {
@@ -118,7 +119,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                 listTv.clear();
                 list.clear();
 //                FragmentManager manager = getFragmentManager();
-                String[] titles = new String[data.size()];
+                titles = new String[data.size()];
                 for (int i = 0; i < data.size(); i++) {
                     View view = LayoutInflater.from(getActivity()).inflate(R.layout.view_bj_head, null);
                     TextView tv = view.findViewById(R.id.tv_name_bj_head);
@@ -193,6 +194,9 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                 view.setVisibility(View.INVISIBLE);
             }
         }
+        if (titles != null) {
+            statisticsEventAffair.getInstance().setFlag(getActivity(), "13_back_tab_click", titles[showWitch]);
+        }
         viewPager.setCurrentItem(showWitch);
     }
 
@@ -203,7 +207,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     }
 
 
-    @OnClick({R.id.iv_add, R.id.iv_cover, R.id.Toolbar, R.id.relative_top,R.id.iv_search})
+    @OnClick({R.id.iv_add, R.id.iv_cover, R.id.Toolbar, R.id.relative_top, R.id.iv_search})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_add:
@@ -222,13 +226,12 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                 break;
 
             case R.id.relative_top:
-            case  R.id.iv_search:
+            case R.id.iv_search:
                 //搜索栏目
                 Intent intent = new Intent(getActivity(), BackgroundSearchActivity.class);
-                intent.putExtra("isFrom",0);
+                intent.putExtra("isFrom", 0);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
-
 
 
                 break;

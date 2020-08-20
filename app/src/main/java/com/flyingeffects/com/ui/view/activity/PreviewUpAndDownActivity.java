@@ -1120,7 +1120,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         bundle.putString("video_path", videoPath);
         bundle.putBoolean("isNeedCut", isNeedCut);
         int id=templateItem.getTemplate_id();
-        if(id!=0){
+        if(id==0){
             id=templateItem.getId();
         }
         bundle.putSerializable("templateId",id);

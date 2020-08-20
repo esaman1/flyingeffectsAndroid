@@ -358,6 +358,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         nowStateIsPlaying(false);
                         presenter.showAllAnim(false);
                     } else {
+                        statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, " 14_preview_video_bj");
+
                         WaitingDialog.openPragressDialog(this);
                         new Thread(() -> presenter.showAllAnim(true)).start();
                     }

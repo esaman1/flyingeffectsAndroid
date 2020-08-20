@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -168,6 +169,12 @@ public class frag_message extends BaseFragment {
 
         Frag_message_adapter adapter=new Frag_message_adapter(systemessagelists,getActivity());
         swipeMenuListView.setAdapter(adapter);
+        swipeMenuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                statisticsEventAffair.getInstance().setFlag(getActivity(), "12_system");
+            }
+        });
 
     }
 

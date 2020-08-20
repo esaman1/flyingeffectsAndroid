@@ -1156,6 +1156,7 @@ public class CreationTemplateMvpModel {
 
     public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH,int templateId) {
         if(templateId!=0){
+            LogUtil.d("OOM","toSaveVideo-templateId="+templateId);
             StatisticsToSave(templateId+"");
         }
         stopAllAnim();
@@ -1658,16 +1659,20 @@ public class CreationTemplateMvpModel {
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             stickerView.setIntoCenter();
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    if (!isCheckedMatting) {
-//                        stickerView.changeImage(stickerView.getOriginalPath(), false);
-//                    } else {
-//                        stickerView.changeImage(stickerView.getClipPath(), false);
-//                    }
-//                }
-//            }, 500);
+//            stickerView.onresmeView();
+
+
+            //目的解决复制后大小不一的情况
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (!isCheckedMatting) {
+                        stickerView.changeImage(stickerView.getOriginalPath(), false);
+                    } else {
+                        stickerView.changeImage(stickerView.getClipPath(), false);
+                    }
+                }
+            }, 500);
 
         }
     }

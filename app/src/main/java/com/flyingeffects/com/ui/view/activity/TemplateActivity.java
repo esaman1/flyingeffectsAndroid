@@ -482,6 +482,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             ivPlayButton.setImageResource(R.mipmap.pause);
             if (real_time_preview.getVisibility() == View.VISIBLE) {
                 if (mPlayer != null) {
+                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, " 14_preview_video_template");
                     mPlayer.start();
                     showPreview(true, false);
                 } else {
@@ -939,6 +940,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             case R.id.iv_play:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
                     onclickPlaying();
+
+
                 }
                 break;
 

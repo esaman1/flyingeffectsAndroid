@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
 import com.flyco.tablayout.SlidingTabLayout;
+import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseFragment;
@@ -124,6 +125,17 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                     }
                 });
                 tabLayout.setViewPager(viewpager, titles);
+                tabLayout.setOnTabSelectListener(new OnTabSelectListener() {
+                    @Override
+                    public void onTabSelect(int position) {
+                        statisticsEventAffair.getInstance().setFlag(getActivity(), "13_template_tab_click", titles[position]);
+                    }
+
+                    @Override
+                    public void onTabReselect(int position) {
+
+                    }
+                });
             }
         }
 
