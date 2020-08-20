@@ -25,6 +25,7 @@ import java.util.List;
 public class Mine_zan_adapter extends BaseQuickAdapter<MineZanEnity, BaseViewHolder> {
 
     private Context context;
+    //1是消息页面的赞
     int isFrom;
     public final static String TAG = "main_recycler_adapter";
 
@@ -40,9 +41,9 @@ public class Mine_zan_adapter extends BaseQuickAdapter<MineZanEnity, BaseViewHol
 //        int offset = helper.getLayoutPosition();
 
         if(isFrom==1){
-            helper.setText(R.id.tv_content,item.getTitle());
+            helper.setText(R.id.tv_title,item.getNickname());
         }else{
-            helper.setText(R.id.tv_content,item.getComment());
+            helper.setText(R.id.tv_title,item.getAuth());
         }
 
         helper.addOnClickListener(R.id.iv_icon);
@@ -54,7 +55,7 @@ public class Mine_zan_adapter extends BaseQuickAdapter<MineZanEnity, BaseViewHol
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(iv_head);
 
-        helper.setText(R.id.tv_title,item.getAuth());
+//        helper.setText(R.id.tv_title,item.getAuth());
         ImageView iv_cover=helper.getView(R.id.iv_cover);
 
         Glide.with(context)

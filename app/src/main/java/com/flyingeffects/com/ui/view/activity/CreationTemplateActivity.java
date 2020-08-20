@@ -24,6 +24,7 @@ import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.ChooseVideoAddSticker;
 import com.flyingeffects.com.enity.DownVideoPath;
+import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -422,6 +423,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             case R.id.iv_change_ui:
                 //横竖屏切换
                 nowUiIsLandscape = !nowUiIsLandscape;
+//                if(nowUiIsLandscape){
+//                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "13_horizontal");
+//                }
+
                 setPlayerViewSize(nowUiIsLandscape);
 
                 break;

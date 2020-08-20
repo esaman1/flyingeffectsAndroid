@@ -38,6 +38,7 @@ import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.KeyboardUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
@@ -73,6 +74,8 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     private EmojiEdittext ed_search;
     private TextView no_comment;
     private String nowTemplateId;
+    private String templateTitle;
+    private String  templateType;
     //2级回复id ,如果这个id 不为""，那么表示一级回复，否则表示二级回复
     private String message_id;
     private int lastOpenCommentPosition;
@@ -203,9 +206,29 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
      * user : zhangtongju
      */
     private void replyMessage(String content, String type, String message_id) {
+        if(type.equals("1")){
+            if(templateType.equals("1")){
+                statisticsEventAffair.getInstance().setFlag(getActivity(), " 12_amount",templateTitle);
+            }else{
+                statisticsEventAffair.getInstance().setFlag(getActivity(), " 13_amount",templateTitle);
+            }
+        }else{
+
+            if(templateType.equals("1")){
+                statisticsEventAffair.getInstance().setFlag(getActivity(), " 12_Reply",templateTitle);
+            }else{
+                statisticsEventAffair.getInstance().setFlag(getActivity(), " 13_Reply",templateTitle);
+            }
+
+
+        }
+
+
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", nowTemplateId);
         params.put("content", content);
+
+
         params.put("message_id", message_id);
         params.put("type", type);
         // 启动时间
@@ -409,6 +432,14 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     public void setNowTemplateId(String nowTemplateId) {
         this.nowTemplateId = nowTemplateId;
         requestComment();
+    }
+
+    public void setNowTemplateTitle(String templateTitle) {
+        this.templateTitle = templateTitle;
+    }
+
+    public void setNowTemplateType(String templateType){
+        this.templateType=templateType;
     }
 
 

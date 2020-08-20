@@ -16,7 +16,9 @@ import com.flyingeffects.com.enity.systemessagelist;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.activity.FansActivity;
+import com.flyingeffects.com.ui.view.activity.HomeMainActivity;
 import com.flyingeffects.com.ui.view.activity.LikeActivity;
 import com.flyingeffects.com.ui.view.activity.ZanActivity;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -177,6 +179,8 @@ public class frag_message extends BaseFragment {
             case R.id.iv_icon_fans:
 
                 if(BaseConstans.hasLogin()){
+
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "12_Fans");
                     Intent intentFan=new Intent(getActivity(), FansActivity.class);
                     intentFan.putExtra("to_user_id",BaseConstans.GetUserId());
                     intentFan.putExtra("from",1);
@@ -192,6 +196,7 @@ public class frag_message extends BaseFragment {
 
 
                 if(BaseConstans.hasLogin()){
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "12_awesome");
                     Intent intentZan=new Intent(getActivity(), ZanActivity.class);
                     intentZan.putExtra("from",1);
                     startActivity(intentZan);
@@ -204,6 +209,7 @@ public class frag_message extends BaseFragment {
             case R.id.ll_comment:
 
                 if(BaseConstans.hasLogin()){
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "12_comment");
                     Intent intentComment=new Intent(getActivity(),LikeActivity.class);
                     intentComment.putExtra("from",1);
                     startActivity(intentComment);

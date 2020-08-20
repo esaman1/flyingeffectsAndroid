@@ -520,6 +520,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
 
             @Override
             protected void _onNext(UserInfo data) {
+                statisticsEventAffair.getInstance().setFlag(UploadMaterialActivity.this, "13_video");
                 WaitingDialog.closePragressDialog();
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM2", "requestLogin=" + str);

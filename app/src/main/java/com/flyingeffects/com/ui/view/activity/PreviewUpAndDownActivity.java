@@ -237,6 +237,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 case R.id.iv_writer:
                     Intent intent = new Intent(PreviewUpAndDownActivity.this, UserHomepageActivity.class);
                     intent.putExtra("toUserId", allData.get(position).getAdmin_id());
+                    intent.putExtra("templateType", templateType);
+
                     startActivity(intent);
 
 
@@ -253,6 +255,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     int height = ScreenUtil.getScreenHeight(this) / 3;
                     fullSheetDialogFragment.setTopOffset(height);
                     fullSheetDialogFragment.setNowTemplateId(templateId);
+                    fullSheetDialogFragment.setNowTemplateTitle(templateItem.getTitle());
+                    fullSheetDialogFragment.setNowTemplateType(templateItem.getTemplate_type());
                     fullSheetDialogFragment.show(getSupportFragmentManager(), "FullSheetDialogFragment");
                     break;
 
@@ -373,7 +377,22 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         int iZanNum = Integer.parseInt(zanNum);
         if (isAdd) {
             iZanNum++;
+
+            if(templateType.equals("1")){
+                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, " 12_like",templateItem.getTitle());
+            }else{
+                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, " 13_like",templateItem.getTitle());
+            }
+
         } else {
+
+
+            if(templateType.equals("1")){
+                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, " 12_cancel",templateItem.getTitle());
+            }else{
+                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, " 13_cancel",templateItem.getTitle());
+            }
+
             iZanNum--;
         }
         new_fag_template_item item1 = allData.get(nowChoosePosition);

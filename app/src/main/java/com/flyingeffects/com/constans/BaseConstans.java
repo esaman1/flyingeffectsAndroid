@@ -189,7 +189,7 @@ public class BaseConstans {
             if (kuaishou != null && !kuaishou.equals("")) {
                 return kuaishou;
             } else {
-                return "看了这么多快手，还是「卡点哥哥」最好玩了！ http://m.gifshow.com/s/xEna7Voi 复制此链接，打开【快手】直接观看！";
+                return "看了这么多快手，还是「飞闪哥哥」最好玩了！ http://m.gifshow.com/s/xEna7Voi 复制此链接，打开【快手】直接观看！";
             }
         }
     }

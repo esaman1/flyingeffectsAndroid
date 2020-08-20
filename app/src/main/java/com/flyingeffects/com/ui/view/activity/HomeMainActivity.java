@@ -389,6 +389,7 @@ public class HomeMainActivity extends FragmentActivity {
 //                case R.id.iv_menu_2:
                 case R.id.iv_back_menu_2:
                     whichMenuSelect(2);
+                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "12_news");
                     if(BaseConstans.hasLogin()){
                         requestMessageCount();
                     }

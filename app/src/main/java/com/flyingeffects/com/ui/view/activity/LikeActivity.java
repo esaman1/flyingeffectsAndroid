@@ -86,6 +86,8 @@ public class LikeActivity extends BaseActivity {
                     case R.id.iv_icon:
                         Intent intent = new Intent(LikeActivity.this, UserHomepageActivity.class);
                         intent.putExtra("toUserId", listData.get(position).getUser_id());
+                        intent.putExtra("templateType", listData.get(position).getType());
+
                         startActivity(intent);
                         break;
 

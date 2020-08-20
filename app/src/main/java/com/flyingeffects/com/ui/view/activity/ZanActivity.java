@@ -94,6 +94,7 @@ public class ZanActivity extends BaseActivity {
                     case R.id.tv_title:
                         Intent intent = new Intent(ZanActivity.this, UserHomepageActivity.class);
                         intent.putExtra("toUserId", listData.get(position).getUser_id());
+                        intent.putExtra("templateType", listData.get(position).getType());
                         startActivity(intent);
                         break;
                 }
