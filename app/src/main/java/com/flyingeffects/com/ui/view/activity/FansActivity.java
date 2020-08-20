@@ -122,7 +122,16 @@ public class FansActivity extends BaseActivity {
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 switch (view.getId()) {
                     case R.id.tv_follow:
-                        requestFocus(fansList.get(position).getUser_id());
+
+                        if(from==0){
+                            //我的页面
+                            requestFocus(fansList.get(position).getId());
+                        }else{
+                            //消息的粉丝
+                            requestFocus(fansList.get(position).getUser_id());
+                        }
+
+
                         break;
 
                     default:

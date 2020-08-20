@@ -51,7 +51,7 @@ public class Fans_adapter extends BaseQuickAdapter<fansEnity, BaseViewHolder> {
         }
 
 
-        helper.setText(R.id.tv_content,timeUtils.xxx(item.getCreate_time()));
+//        helper.setText(R.id.tv_content,timeUtils.xxx(item.getCreate_time()));
 
 
     }

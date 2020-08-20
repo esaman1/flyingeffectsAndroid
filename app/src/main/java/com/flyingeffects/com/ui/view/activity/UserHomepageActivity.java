@@ -142,6 +142,8 @@ public class UserHomepageActivity extends BaseActivity {
 
 
             case R.id.tv_focus:
+
+
                 requestFocus();
                 break;
 
@@ -186,7 +188,7 @@ public class UserHomepageActivity extends BaseActivity {
                     tv_focus.setText("取消关注");
                     isFocus=true;
                 }
-
+                requestUserInfo();
 
 
             }
