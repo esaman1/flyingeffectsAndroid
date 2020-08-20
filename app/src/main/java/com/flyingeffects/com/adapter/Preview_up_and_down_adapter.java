@@ -198,7 +198,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
 //        videoPlayer.setAnimation(null);
         videoPlayer.getStartButton().setVisibility(View.GONE);
 
-        if (OldFromTo.equals(FromToTemplate.ISTEMPLATE) && item.getTemplate_type().equals("2")) {
+        if (!TextUtils.isEmpty(item.getPre_url())) {
             videoPlayer.setUpLazy(item.getPre_url(), true, null, null, "这是title");
         } else {
             videoPlayer.setUpLazy(item.getVidoefile(), true, null, null, "这是title");

@@ -148,6 +148,7 @@ public class BackgroundSearchActivity extends BaseActivity {
         iv_delete.setOnClickListener(view -> {
             ed_text.setText("");
             hideResultView(true);
+            viewPager.setCurrentItem(0);
         });
         hideResultView(true);
         iv_back.setOnClickListener(new View.OnClickListener() {

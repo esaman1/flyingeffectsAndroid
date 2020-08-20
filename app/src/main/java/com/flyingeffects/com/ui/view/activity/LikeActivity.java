@@ -57,6 +57,7 @@ public class LikeActivity extends BaseActivity {
     @BindView(R.id.smart_refresh_layout_bj)
     SmartRefreshLayout smartRefreshLayout;
 
+    //1 来自消息评论页面
     int from ;
 
     private List<new_fag_template_item> allData = new ArrayList<>();

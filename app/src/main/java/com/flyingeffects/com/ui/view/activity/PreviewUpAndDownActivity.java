@@ -199,7 +199,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         OldfromTo = getIntent().getStringExtra("fromTo");
         keepOldFrom = OldfromTo;
         //如果模板是来自一键模板，但是模板类型是背景，那么修改状态值
-        if (OldfromTo.equals(FromToTemplate.ISTEMPLATE) && templateItem.getTemplate_type().equals("2")) {
+        if (!TextUtils.isEmpty(templateItem.getPre_url())) {
             OldfromTo = FromToTemplate.ISBJ;
         }
 
@@ -209,7 +209,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         //需要得到之前allData 已经滑到的页数和分类的类别以及是模板页面或者背景页面等
         int nowSelectPage = getIntent().getIntExtra("nowSelectPage", 1);
         nowPraise = templateItem.getIs_praise();
-        Presenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, OldfromTo, category_id, toUserID, searchText,isCanLoadMore);
+        Presenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, keepOldFrom, category_id, toUserID, searchText,isCanLoadMore);
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
         if(isCanLoadMore){
             if (nowChoosePosition >= allData.size() - 2) {
@@ -760,9 +760,11 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             nowPraise = data.getIs_praise();
             templateType = data.getTemplate_type();
             //如果模板是来自一键模板，但是模板类型是背景，那么修改状态值
-            if (OldfromTo.equals(FromToTemplate.ISTEMPLATE) && templateItem.getTemplate_type().equals("2")) {
+            if (!TextUtils.isEmpty(templateItem.getPre_url())) {
                 OldfromTo = FromToTemplate.ISBJ;
             }
+
+
             is_with_play = templateItem.getIs_with_play();
             //更新页面数据，防止数据不全的情况
             if (!isOnPause) {
