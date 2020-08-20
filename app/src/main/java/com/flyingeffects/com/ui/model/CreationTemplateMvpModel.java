@@ -1176,7 +1176,7 @@ public class CreationTemplateMvpModel {
                                     Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     intent.putExtra("path", path);
-                                    intent.putExtra("nowUiIsLandscape",nowUiIsLandscape);
+                                    intent.putExtra("nowUiIsLandscape", nowUiIsLandscape);
                                     context.startActivity(intent);
                                     Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> isIntoSaveVideo = false, 500));
                                 } else {
@@ -1247,7 +1247,7 @@ public class CreationTemplateMvpModel {
      */
     private void cutVideo(videoType videoType, long duration, long materialDuration, boolean nowUiIsLandscape) {
         LogUtil.d("oom3", "需要裁剪的时长为" + materialDuration);
-        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, false,materialDuration, videoType.getPath(), 0, new videoCutDurationForVideoOneDo.isSuccess() {
+        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, false, materialDuration, videoType.getPath(), 0, new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
             public void progresss(int progress) {
                 float positionF = progress / (float) 100;
@@ -1262,7 +1262,7 @@ public class CreationTemplateMvpModel {
 
             @Override
             public void isSuccess(boolean isSuccess, String path) {
-                LogUtil.d("OOM","保存后的地址为"+path);
+                LogUtil.d("OOM", "保存后的地址为" + path);
                 int position = videoType.getPosition();
                 cutList.add(path);
                 AllStickerData sticker = listAllSticker.get(position);
@@ -1633,19 +1633,62 @@ public class CreationTemplateMvpModel {
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             stickerView.setIntoCenter();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (!isCheckedMatting) {
-                        stickerView.changeImage(stickerView.getOriginalPath(), false);
-                    } else {
-                        stickerView.changeImage(stickerView.getClipPath(), false);
-                    }
-                }
-            }, 500);
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    if (!isCheckedMatting) {
+//                        stickerView.changeImage(stickerView.getOriginalPath(), false);
+//                    } else {
+//                        stickerView.changeImage(stickerView.getClipPath(), false);
+//                    }
+//                }
+//            }, 500);
 
         }
     }
 
 
+    public void statisticsDuration(String path, Context context) {
+        int duration;
+        if (!TextUtils.isEmpty(path) && albumType.isImage(GetPathType.getInstance().getPathType(path))) {
+            VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(path);
+            duration = videoInfo.getDuration();
+            if (duration <= 10000) {
+                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于10秒");
+            } else if (duration <= 20000) {
+                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于20秒");
+            } else if (duration <= 30000) {
+                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于30秒");
+            } else if (duration <= 40000) {
+                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于40秒");
+            } else if (duration <= 50000) {
+                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于50秒");
+            } else if (duration <= 60000) {
+                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于60秒");
+            } else if (duration <= 120000) {
+                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于2分钟");
+            } else if (duration <= 180000) {
+                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于3分钟");
+            } else if (duration <= 240000) {
+                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于4分钟");
+            } else if (duration <= 300000) {
+                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于5分钟");
+            } else if (duration <= 360000) {
+                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于6分钟");
+            } else if (duration <= 420000) {
+                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于7分钟");
+            } else if (duration <= 480000) {
+                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于8分钟");
+            } else if (duration <= 540000) {
+                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于9分钟");
+            } else
+                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于10分钟");
+        }
+    }
+
+
+
+
+
 }
+

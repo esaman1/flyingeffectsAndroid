@@ -104,7 +104,7 @@ public class BackgroundSearchActivity extends BaseActivity {
     @Override
     protected void initView() {
 
-
+        statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "14_go_to_search");
         isFrom = getIntent().getIntExtra("isFrom", 0);
 
         //键盘的搜索按钮

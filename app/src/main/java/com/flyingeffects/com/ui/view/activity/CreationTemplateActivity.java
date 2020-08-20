@@ -194,6 +194,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             showGreenBj();
         }
         presenter.requestStickersList();
+        presenter.statisticsDuration(videoPath,this);
     }
 
     private MediaSource mediaSource;

@@ -380,15 +380,21 @@ public class HomeMainActivity extends FragmentActivity {
 //                case R.id.iv_menu_0:
                 case R.id.iv_back_menu_0:
                     whichMenuSelect(0);
+
+                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click","1");
                     statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "5_bj");
                     break;
 //                case R.id.iv_menu_1:
                 case R.id.iv_back_menu_1:
+                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click","2");
+
                     whichMenuSelect(1);
                     break;
 //                case R.id.iv_menu_2:
                 case R.id.iv_back_menu_2:
                     whichMenuSelect(2);
+                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click","3");
+
                     statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "12_news");
                     if(BaseConstans.hasLogin()){
                         requestMessageCount();
@@ -396,6 +402,8 @@ public class HomeMainActivity extends FragmentActivity {
                     break;
 //                case R.id.iv_menu_3:
                 case R.id.iv_back_menu_3:
+                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click","4");
+
                     statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "3_mine");
                     whichMenuSelect(3);
                     break;

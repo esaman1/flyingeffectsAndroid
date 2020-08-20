@@ -92,6 +92,10 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
+    public void statisticsDuration(String path, Context context){
+        creationTemplatemodel.statisticsDuration(path,context);
+    }
+
     @Override
     public void ItemClickForStickView(AnimStickerModel stickView) {
         creationTemplatemvpView.ItemClickForStickView(stickView);
