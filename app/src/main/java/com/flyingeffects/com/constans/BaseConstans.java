@@ -30,7 +30,7 @@ public class BaseConstans {
     public static boolean hasCreatingSegJni = true;
     public static String titok;
     public static String kuaishou;
-    public static final boolean PRODUCTION = false;
+    public static final boolean PRODUCTION = true;
     private static String channel = "";
     private static String versionCode = "";
     private static String uuid = "";
