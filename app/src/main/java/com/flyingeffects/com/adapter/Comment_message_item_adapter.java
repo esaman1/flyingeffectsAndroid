@@ -1,6 +1,7 @@
 package com.flyingeffects.com.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.MessageReply;
 import com.flyingeffects.com.enity.hotSearch;
+import com.flyingeffects.com.ui.view.activity.UserHomepageActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +73,18 @@ public class Comment_message_item_adapter extends BaseAdapter {
                 .load(data.getPhotourl())
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(holder.iv_comment_head_0);
+
+        holder.iv_comment_head_0.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //进入到用户主页
+                Intent intent = new Intent(context, UserHomepageActivity.class);
+                intent.putExtra("toUserId",  data.getUser_id());
+                context. startActivity(intent);
+            }
+        });
+
+
 
 
         holder.tv_user_0.setText(data.getNickname());

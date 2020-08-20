@@ -38,7 +38,7 @@ public class MessageLongClickActivity extends Activity {
     private String message_id;
     private String templateId;
     private boolean isFirstComment;
-
+    private LinearLayout ll_parent;
     LinearLayout ll_delete;
 
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
@@ -49,6 +49,13 @@ public class MessageLongClickActivity extends Activity {
 
         setContentView(R.layout.act_message_long_click);
         ll_delete = findViewById(R.id.ll_delete);
+        ll_parent=findViewById(R.id.ll_parent);
+        ll_parent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         isFirstComment = getIntent().getBooleanExtra("isFirstComment", false);
         user_id = getIntent().getStringExtra("user_id");
         message_id = getIntent().getStringExtra("message_id");

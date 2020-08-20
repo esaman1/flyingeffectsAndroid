@@ -6,17 +6,21 @@ import java.io.Serializable;
 
 public class new_fag_template_item implements Serializable {
 
-    private String id;
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-
-
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
+
+    private int id;
+
+
+
+
+
 
     public String getTitle() {
         return title;

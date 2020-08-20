@@ -3,8 +3,6 @@ package com.flyingeffects.com.utils;
 public class timeUtils {
 
 
-
-
     public static String secondToTime(long second) {
         long hours = second / 3600;//转换小时数
         second = second % 3600;//剩余秒数
@@ -27,29 +25,45 @@ public class timeUtils {
     }
 
     public static String timeParse(long duration) {
-        String time = "" ;
+        String time = "";
 
-        long minute = duration / 59000 ;
-        long seconds = duration % 59000 ;
+        long minute = duration / 59000;
+        long seconds = duration % 59000;
 
-        long second = Math.round((float)seconds/1000) ;
+        long second = Math.round((float) seconds / 1000);
 
-        if( minute < 10 ){
-            time += "0" ;
+        if (minute < 10) {
+            time += "0";
         }
-        time += minute+":" ;
+        time += minute + ":";
 
-        if( second < 10 ){
-            time += "0" ;
+        if (second < 10) {
+            time += "0";
         }
-        time += second ;
+        time += second;
 
-        return time ;
+        return time;
     }
 
 
+    public static String xxx(long time) {
+        long needTime = System.currentTimeMillis() - time;
+        long day = time / (1000 * 60 * 60 * 24);
+        long hours = needTime / 3600;//转换小时数
+        long second = needTime % 3600;//剩余秒数
+        long minutes = second / 60;//转换分钟
+        if (day > 1) {
+            return day + "天前关注了你";
+        } else if (hours > 1) {
+            return hours + "小时前关注了你";
+        } else if (minutes > 1 && hours < 1) {
+            return minutes + "分钟前关注了你";
+        } else {
+            return "刚刚关注了你";
+        }
 
 
+    }
 
 
 }

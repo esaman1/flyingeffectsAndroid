@@ -247,7 +247,7 @@ public class PreviewUpAndDownMvpModel {
                 }
 
                 UMImage image = new UMImage(context, fag_template_item.getImage());//分享图标
-                UMWeb web = new UMWeb(getShareWeiXinCircleText(fag_template_item.getId())); //切记切记 这里分享的链接必须是http开头
+                UMWeb web = new UMWeb(getShareWeiXinCircleText(fag_template_item.getId()+"")); //切记切记 这里分享的链接必须是http开头
                 web.setTitle(BaseConstans.getminapp_share_title() + fag_template_item.getTitle());//标题
                 web.setThumb(image);  //缩略图
                 new ShareAction((Activity) context).setPlatform(SHARE_MEDIA.WEIXIN_CIRCLE)

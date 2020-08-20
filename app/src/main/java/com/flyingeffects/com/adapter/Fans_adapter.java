@@ -1,6 +1,7 @@
 package com.flyingeffects.com.adapter;
 
 import android.content.Context;
+import android.provider.ContactsContract;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
@@ -12,6 +13,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.fansEnity;
+import com.flyingeffects.com.utils.timeUtils;
 
 import java.util.List;
 
@@ -47,6 +49,11 @@ public class Fans_adapter extends BaseQuickAdapter<fansEnity, BaseViewHolder> {
         }else{
             helper.setText(R.id.tv_follow,"取关");
         }
+
+
+        helper.setText(R.id.tv_content,timeUtils.xxx(item.getCreate_time()));
+
+
     }
 
 

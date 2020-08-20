@@ -56,7 +56,7 @@ public class Upload_bj_list_adapter extends BaseQuickAdapter<new_fag_template_it
         TextView tv_audit = helper.getView(R.id.tv_audit);
         TextView tv_play_num = helper.getView(R.id.tv_play_num);
         ivDelete.setOnClickListener(v -> {
-            mListener.onDelete(item.getId());
+            mListener.onDelete(item.getId()+"");
         });
         if (item.getTest() == 0) {
             tv_play_num.setVisibility(View.VISIBLE);

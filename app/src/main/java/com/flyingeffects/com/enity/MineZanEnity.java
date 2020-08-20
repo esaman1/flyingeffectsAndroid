@@ -36,13 +36,7 @@ public class MineZanEnity implements Serializable {
         this.comment = comment;
     }
 
-    public String getCreate_time() {
-        return create_time;
-    }
 
-    public void setCreate_time(String create_time) {
-        this.create_time = create_time;
-    }
 
     public String getDefaultnum() {
         return defaultnum;
@@ -264,7 +258,16 @@ public class MineZanEnity implements Serializable {
            private String auth_image;
            private String collection;
            private String comment;
-           private String create_time;
+
+    public long getCreate_time() {
+        return create_time;
+    }
+
+    public void setCreate_time(long create_time) {
+        this.create_time = create_time;
+    }
+
+    private long create_time;
            private String defaultnum;
            private String id;
            private String image;

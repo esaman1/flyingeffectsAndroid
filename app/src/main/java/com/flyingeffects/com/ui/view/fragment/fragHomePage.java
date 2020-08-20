@@ -174,7 +174,11 @@ public class fragHomePage extends BaseFragment {
     private void requestFagData(boolean isCanRefresh, boolean isSave) {
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
-        params.put("to_user_id", toUserId);
+        if(!TextUtils.isEmpty(fromTo)&&fromTo.equals(FromToTemplate.ISHOMEMYLIKE)){
+            params.put("to_user_id", BaseConstans.GetUserId());
+        }else{
+            params.put("to_user_id", toUserId);
+        }
         params.put("type", isFrom + "");//	'类型:1=作者的作品,2=作者喜欢的作品,3=作者收藏的模板
         params.put("pageSize", perPageCount + "");
         LogUtil.d("OOM", "请求喜欢数据参数" + StringUtil.beanToJSONString(params));

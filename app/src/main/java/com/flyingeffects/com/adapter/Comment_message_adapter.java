@@ -15,6 +15,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.MessageEnity;
 import com.flyingeffects.com.ui.view.activity.MessageLongClickActivity;
+import com.flyingeffects.com.ui.view.activity.UserHomepageActivity;
 import com.flyingeffects.com.view.MyListView;
 
 import java.util.List;
@@ -75,7 +76,10 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    callback.clickPosition(i, item.getId());
+
+                            callback.clickPosition(i, item.getId());
+
+
                 }
             });
 
@@ -83,15 +87,13 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
                 @Override
                 public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
 //                    callback.longClickPosition(i, item.getId());
-
                     Intent intent = new Intent(context, MessageLongClickActivity.class);
-                    intent.putExtra("user_id", item.getUser_id());
+                    intent.putExtra("user_id", item.getReply().get(i).getUser_id());
                     intent.putExtra("message_id", item.getReply().get(i).getId());
-                    intent.putExtra("templateId", item.getTemplate_id());
+                    intent.putExtra("templateId", item.getReply().get(i).getTemplate_id());
                     intent.putExtra("position", i);
                     intent.putExtra("isFirstComment", false);
                      context.startActivity(intent);
-
                     return false;
                 }
             });

@@ -54,7 +54,7 @@ public class Mine_zan_adapter extends BaseQuickAdapter<MineZanEnity, BaseViewHol
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(iv_head);
 
-        helper.setText(R.id.tv_title,item.getNickname());
+        helper.setText(R.id.tv_title,item.getAuth());
         ImageView iv_cover=helper.getView(R.id.iv_cover);
 
         Glide.with(context)

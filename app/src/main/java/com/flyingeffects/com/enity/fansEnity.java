@@ -28,13 +28,6 @@ public class fansEnity implements Serializable {
         this.user_id = user_id;
     }
 
-    public String getCreate_time() {
-        return create_time;
-    }
-
-    public void setCreate_time(String create_time) {
-        this.create_time = create_time;
-    }
 
     public String getStatus() {
         return status;
@@ -86,7 +79,16 @@ public class fansEnity implements Serializable {
 
 
     private String user_id;
-    private String create_time;
+
+    public long getCreate_time() {
+        return create_time;
+    }
+
+    public void setCreate_time(long create_time) {
+        this.create_time = create_time;
+    }
+
+    private long create_time;
     private String status;
     private String update_time;
     private String is_read;

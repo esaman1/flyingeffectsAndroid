@@ -287,7 +287,12 @@ public class frag_user_collect extends BaseFragment {
                 int changeId=event.getTemplateId();
                 boolean isPraise = event.isSeleted();
                 for (int i=0;i<allData.size();i++){
-                    if(allData.get(i).getTemplate_id()==changeId){
+
+                    int needId = allData.get(i).getTemplate_id();
+                    if (needId == 0) {
+                        needId = allData.get(i).getId();
+                    }
+                    if(needId==changeId){
                         new_fag_template_item item = allData.get(i);
                         item.setPraise(event.getZanCount() + "");
                         if (isPraise) {
