@@ -1154,7 +1154,10 @@ public class CreationTemplateMvpModel {
     private boolean isIntoSaveVideo = false;
     private float percentageH;
 
-    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH) {
+    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH,int templateId) {
+        if(templateId!=0){
+            StatisticsToSave(templateId+"");
+        }
         stopAllAnim();
         this.percentageH = percentageH;
         deleteSubLayerSticker();
@@ -1231,6 +1234,28 @@ public class CreationTemplateMvpModel {
             }
         }, 200);
 
+
+    }
+
+
+
+
+    public void StatisticsToSave(String templateId) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("template_id", templateId);
+        params.put("action_type", 2 + "");
+        // 启动时间
+        Observable ob = Api.getDefault().saveTemplate(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
+            @Override
+            protected void _onError(String message) {
+            }
+
+            @Override
+            protected void _onNext(Object data) {
+
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
 
     }
 

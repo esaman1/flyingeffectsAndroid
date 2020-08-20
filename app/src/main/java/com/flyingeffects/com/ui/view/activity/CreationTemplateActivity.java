@@ -164,6 +164,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @BindView(R.id.ll_space)
     LinearLayout ll_space;
 
+    private int templateId;
+
 
     @Override
     protected int getLayoutId() {
@@ -184,6 +186,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             originalPath = bundle.getString("originalPath");
             isNeedCut = bundle.getBoolean("isNeedCut");
             title = bundle.getString("bjTemplateTitle");
+            templateId=bundle.getInt("templateId");
         }
         presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout, originalPath, null);
         if (!TextUtils.isEmpty(videoPath)) {
@@ -340,7 +343,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 } else {
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
                 }
-                presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH);
+                presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH,templateId);
                 break;
 
             case R.id.ll_play:
