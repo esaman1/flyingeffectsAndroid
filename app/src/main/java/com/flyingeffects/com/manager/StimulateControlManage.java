@@ -38,7 +38,16 @@ public class StimulateControlManage {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject obArray = jsonArray.getJSONObject(i);
                             String Channel = obArray.getString("channel");
+                            if (Channel.equals("isVideoadvertising")) { //控制了版本号
+                                int id = obArray.getInt("id");
+                                int NowVersion = Integer.parseInt(BaseConstans.getVersionCode());
+                                if (NowVersion != id) {//不是最新版本，都默认开启广告
+                                    BaseConstans.setHasAdvertising(1);
+                                    break;
+                                }
+                            }
                             if (Channel.equals(nowUserChannel)) { //最新版的审核模式
+
                                 boolean audit_on = obArray.getBoolean("audit_on");
                                 if (audit_on) {
                                     BaseConstans.setHasAdvertising(1);
@@ -52,11 +61,6 @@ public class StimulateControlManage {
                                 boolean save_video_ad = obArray.getBoolean("save_video_ad");
                                 LogUtil.d("OOM","当前保存需要激励视频"+save_video_ad);
                                 BaseConstans.setSave_video_ad(save_video_ad);
-
-
-
-
-
                             }
                         }
                     }
