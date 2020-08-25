@@ -6,6 +6,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Handler;
@@ -22,7 +23,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -56,8 +60,10 @@ import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
+import com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.utils.screenUtil;
@@ -269,6 +275,12 @@ public class CreationTemplateMvpModel {
     private boolean isRefresh = true;
     private ViewPager viewPager;
 
+    CheckBox check_box_0;
+    CheckBox check_box_1 ;
+    CheckBox check_box_2;
+    CheckBox check_box_3;
+
+
     public void initBottomLayout(ViewPager viewPager) {
         this.viewPager = viewPager;
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager, false);
@@ -335,6 +347,34 @@ public class CreationTemplateMvpModel {
         gridViewAnim.setAdapter(templateGridViewAnimAdapter);
         listForInitBottom.add(templateThumbView);
         listForInitBottom.add(viewForChooseAnim);
+
+        //添加音乐
+        View viewForChooseMusic = LayoutInflater.from(context).inflate(R.layout.view_choose_music, viewPager, false);
+        TextView tv_add_music = viewForChooseMusic.findViewById(R.id.tv_add_music);
+        tv_add_music.setOnClickListener(view -> {
+            Intent intent=new Intent(context, LocalMusicTailorActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            context.startActivity(intent);
+        });
+
+
+         check_box_0 = viewForChooseMusic.findViewById(R.id.check_box_0);
+         check_box_1 = viewForChooseMusic.findViewById(R.id.check_box_1);
+         check_box_2 = viewForChooseMusic.findViewById(R.id.check_box_2);
+         check_box_3 = viewForChooseMusic.findViewById(R.id.check_box_3);
+        Drawable drawable_news = context.getResources().getDrawable(R.drawable.template_choose_btn);
+        //当这个图片被绘制时，给他绑定一个矩形 ltrb规定这个矩形
+        int radio_size = StringUtil.dip2px(context, 16);
+        drawable_news.setBounds(0, 0, radio_size, radio_size);
+        check_box_0.setCompoundDrawables(drawable_news, null, null, null);
+        check_box_1.setCompoundDrawables(drawable_news, null, null, null);
+        check_box_2.setCompoundDrawables(drawable_news, null, null, null);
+        check_box_3.setCompoundDrawables(drawable_news, null, null, null);
+        check_box_0.setOnClickListener(tvMusicListener);
+        check_box_1.setOnClickListener(tvMusicListener);
+        check_box_2.setOnClickListener(tvMusicListener);
+        check_box_3.setOnClickListener(tvMusicListener);
+        listForInitBottom.add(viewForChooseMusic);
         TemplateViewPager adapter = new TemplateViewPager(listForInitBottom);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -354,6 +394,42 @@ public class CreationTemplateMvpModel {
 
             }
         });
+    }
+
+
+
+    View.OnClickListener tvMusicListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            clearCheckBox();
+            switch (view.getId()) {
+                case R.id.ll_choose_0:
+                case R.id.check_box_0:
+                    check_box_0.setChecked(true);
+                    break;
+
+                case R.id.ll_choose_1:
+                case R.id.check_box_1:
+                    check_box_1.setChecked(true);
+                    break;
+                case R.id.ll_choose_2:
+                case R.id.check_box_2:
+                    check_box_2.setChecked(true);
+                    break;
+
+                case R.id.ll_choose_3:
+                case R.id.check_box_3:
+                    check_box_3.setChecked(true);
+                    break;
+            }
+        }
+    };
+
+    private void clearCheckBox() {
+        check_box_1.setChecked(false);
+        check_box_0.setChecked(false);
+        check_box_3.setChecked(false);
+        check_box_2.setChecked(false);
     }
 
 
@@ -1154,10 +1230,10 @@ public class CreationTemplateMvpModel {
     private boolean isIntoSaveVideo = false;
     private float percentageH;
 
-    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH,int templateId) {
-        if(templateId!=0){
-            LogUtil.d("OOM","toSaveVideo-templateId="+templateId);
-            StatisticsToSave(templateId+"");
+    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH, int templateId) {
+        if (templateId != 0) {
+            LogUtil.d("OOM", "toSaveVideo-templateId=" + templateId);
+            StatisticsToSave(templateId + "");
         }
         stopAllAnim();
         this.percentageH = percentageH;
@@ -1237,8 +1313,6 @@ public class CreationTemplateMvpModel {
 
 
     }
-
-
 
 
     public void StatisticsToSave(String templateId) {
@@ -1715,9 +1789,6 @@ public class CreationTemplateMvpModel {
                 statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于10分钟");
         }
     }
-
-
-
 
 
 }

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#181818"
+    android:orientation="vertical">
+
+
+    <include layout="@layout/base_view_top" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="140dp">
+
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animation_view"
+            android:layout_width="278dp"
+            android:layout_height="278dp"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="50dp"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="phonograph1.json"
+            app:lottie_loop="true" />
+
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animation_view_2"
+            android:layout_width="278dp"
+            android:layout_height="278dp"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            app:lottie_fileName="phonograph2.json" />
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:textColor="@color/white"
+                android:textSize="13sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="模板时长 00:33"
+                android:textColor="@color/white"
+                android:textSize="13sp" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="15:04"
+                android:textColor="@color/white"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+
+        <com.flyingeffects.com.view.histogram.MyBarChartView
+            android:id="@+id/mybarCharView"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            app:bar_color="#f9e5c9"
+            app:bottom_line_color="#ededed"
+            app:bottom_text_color="#939393"
+            app:top_text_color="#939393" />
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

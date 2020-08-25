@@ -114,6 +114,12 @@
             android:theme="@style/AllTransparentTheme" />
 
 
+        <activity
+            android:name="com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+
+
 
 
         <activity

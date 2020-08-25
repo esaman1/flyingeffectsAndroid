@@ -323,7 +323,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     boolean nowUiIsLandscape = false;
 
-    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker, R.id.iv_top_back, R.id.iv_change_ui, R.id.tv_background, R.id.tv_anim, R.id.tv_tiezhi})
+    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker, R.id.iv_top_back, R.id.iv_change_ui, R.id.tv_background,R.id.tv_music, R.id.tv_anim, R.id.tv_tiezhi})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
@@ -364,6 +364,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         new Thread(() -> presenter.showAllAnim(true)).start();
                     }
                 }
+
+                break;
+
+
+            case R.id.tv_music:
+
+                presenter.chooseAnim(2);
+                setTextColor(2);
 
                 break;
 
@@ -443,7 +451,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-    private int[] lin_Id = {R.id.tv_tiezhi, R.id.tv_anim};
+    private int[] lin_Id = {R.id.tv_tiezhi, R.id.tv_anim,R.id.tv_music};
 
     private void setTextColor(int chooseItem) {
         for (int i = 0; i < lin_Id.length; i++) {

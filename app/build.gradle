@@ -193,6 +193,8 @@ dependencies {
 
     implementation 'com.github.OneGreenHand:Emoji:v1.2.4'
 
+    implementation 'com.airbnb.android:lottie:2.8.0'
+
 }
 
 
