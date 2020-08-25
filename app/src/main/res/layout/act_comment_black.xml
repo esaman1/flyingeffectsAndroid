@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:id="@+id/rela_content"
+    android:layout_height="match_parent">
+
+
+    <RelativeLayout
+        android:id="@+id/rela_top"
+        android:layout_above="@+id/rela_parent"
+        android:layout_width="wrap_content"
+        android:background="@color/home_base_balk_color"
+        android:layout_height="52dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_comment_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="0条评论"
+            android:textColor="#A3A3A5"
+            android:textSize="14sp" />
+
+
+        <ImageView
+            android:id="@+id/iv_cancle"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="12dp"
+            android:src="@mipmap/close_other_app" />
+
+
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:id="@+id/rela_parent"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_height="600dp">
+
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/smart_refresh_layout_bj"
+            android:layout_width="match_parent"
+            android:background="@color/home_base_balk_color"
+
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="ifContentScrolls"
+                android:paddingLeft="@dimen/dp_7"
+                android:paddingEnd="@dimen/dp_7" />
+
+
+            <com.scwang.smartrefresh.layout.footer.ClassicsFooter
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_40"
+                app:srlAccentColor="@color/white"
+                app:srlClassicsSpinnerStyle="Translate"
+                app:srlDrawableArrowSize="20dp"
+                app:srlDrawableMarginRight="20dp"
+                app:srlDrawableProgress="@mipmap/mall_shuaxin"
+                app:srlDrawableProgressSize="20dp"
+                app:srlDrawableSize="20dp"
+                app:srlFinishDuration="500"
+                app:srlPrimaryColor="@color/black"
+                app:srlTextSizeTitle="16sp" />
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+
+        <TextView
+            android:id="@+id/no_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="暂无评论"
+            android:textColor="#A3A3A5" />
+
+    </RelativeLayout>
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="#181818"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+
+            <com.green.hand.library.widget.EmojiEdittext
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:gravity="center_vertical"
+                android:imeOptions="actionSend"
+                android:hint="友爱评论，说点好听的~"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:textColorHint="#A3A3A5"
+                android:layout_height="50dp"
+                android:id="@+id/emojicon_edit_text"
+                />
+
+
+            <ImageView
+                android:id="@+id/iv_show_emoj"
+                android:layout_width="wrap_content"
+                android:layout_height="38dp"
+                android:contentDescription="@string/app_name"
+                android:padding="5dp"
+                android:src="@mipmap/smiling_face" />
+
+
+            <TextView
+                android:background="@drawable/message_focus"
+                android:text="发送"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:textSize="14sp"
+                android:layout_marginStart="10dp"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:id="@+id/tv_sent"
+                android:layout_height="wrap_content"/>
+
+
+        </LinearLayout>
+
+
+
+
+        <com.green.hand.library.widget.EmojiBoard
+            android:id="@+id/input_emoji_board"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</RelativeLayout>

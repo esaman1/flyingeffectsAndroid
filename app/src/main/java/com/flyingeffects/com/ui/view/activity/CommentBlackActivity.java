@@ -1,28 +1,21 @@
 package com.flyingeffects.com.ui.view.activity;
 
-import android.app.Dialog;
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.bigkoo.convenientbanner.utils.ScreenUtil;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.Comment_message_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
@@ -31,7 +24,6 @@ import com.flyingeffects.com.enity.DeleteMessage;
 import com.flyingeffects.com.enity.MessageData;
 import com.flyingeffects.com.enity.MessageEnity;
 import com.flyingeffects.com.enity.MessageReply;
-import com.flyingeffects.com.enity.ReplayMessageEvent;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -41,9 +33,6 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.keyBordUtils;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.green.hand.library.widget.EmojiBoard;
 import com.green.hand.library.widget.EmojiEdittext;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -57,14 +46,18 @@ import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
-public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
+
+/**
+ * description ：评论回复页面
+ * creation date: 2020/8/24
+ * user : zhangtongju
+ */
+public class CommentBlackActivity extends Activity {
 
 
     /**
      * 顶部向下偏移量
      */
-    private int topOffset = 0;
-    private BottomSheetBehavior<FrameLayout> behavior;
     private RecyclerView recyclerViewComment;
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private EmojiEdittext ed_search;
@@ -76,7 +69,6 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     private String message_id;
     private int lastOpenCommentPosition;
     private Comment_message_adapter adapter;
-    CoordinatorLayout coordinator;
     private int nowFirstOpenClickPosition;
 
     //键盘输入框
@@ -92,93 +84,69 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
 
     private boolean isRefresh = true;
 
-    private ArrayList<MessageEnity> allDataList=new ArrayList<>();
+    private ArrayList<MessageEnity> allDataList = new ArrayList<>();
 
     private int selectPage = 1;
     private int perPageCount = 10;
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        if (getContext() == null) {
-            return super.onCreateDialog(savedInstanceState);
-        }
-        return new BottomSheetDialog(getContext(), R.style.TransparentBottomSheetStyle);
-    }
+    private RelativeLayout rela_parent;
+
+    private RelativeLayout rela_content;
 
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.bottom_sheet_fragment, container, false);
-        recyclerViewComment = view.findViewById(R.id.recyclerView);
-        ed_search = view.findViewById(R.id.emojicon_edit_text);
-        tv_comment_count = view.findViewById(R.id.tv_comment_count);
-        iv_cancle = view.findViewById(R.id.iv_cancle);
-        iv_cancle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CloseDialog();
-            }
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.act_comment_black);
+        rela_content=findViewById(R.id.rela_content);
+        rela_content.setOnClickListener(view -> finish());
+        int height = ScreenUtil.getScreenHeight(this) / 2;
+        rela_parent=findViewById(R.id.rela_parent);
+        RelativeLayout.LayoutParams RelativeLayoutParams = (RelativeLayout.LayoutParams) rela_parent.getLayoutParams();
+        //如果没有选择下载视频，那么就是自定义视频入口进来，那么默认为绿布
+        rela_parent.post(() -> {
+            RelativeLayoutParams.height = height;
+            rela_parent.setLayoutParams(RelativeLayoutParams);
         });
         EventBus.getDefault().register(this);
+        nowTemplateId = getIntent().getStringExtra("templateId");
+        templateTitle = getIntent().getStringExtra("templateTitle");
+        templateType = getIntent().getStringExtra("templateType");
+        recyclerViewComment = findViewById(R.id.recyclerView);
+        ed_search = findViewById(R.id.emojicon_edit_text);
+        tv_comment_count = findViewById(R.id.tv_comment_count);
+        iv_cancle = findViewById(R.id.iv_cancle);
+        iv_cancle.setOnClickListener(view -> CommentBlackActivity.this.finish());
+        no_comment = findViewById(R.id.no_comment);
+        ImageView iv_show_emoj = findViewById(R.id.iv_show_emoj);
+        emojiBoard = findViewById(R.id.input_emoji_board);
+        tv_sent = findViewById(R.id.tv_sent);
+        smartRefreshLayout = findViewById(R.id.smart_refresh_layout_bj);
         ed_search.setOnTouchListener((v, event) -> {
-            KeyboardUtil.showInputKeyboard(getActivity(), ed_search);
+            KeyboardUtil.showInputKeyboard(this, ed_search);
             hideEmoJiBoard();
             return false;
         });
-        ImageView iv_show_emoj = view.findViewById(R.id.iv_show_emoj);
-        emojiBoard = view.findViewById(R.id.input_emoji_board);
-        tv_sent = view.findViewById(R.id.tv_sent);
-        smartRefreshLayout=view.findViewById(R.id.smart_refresh_layout_bj);
         //表情框点击事件
         emojiBoard.setItemClickListener(code -> {
-
             if (code.equals("/DEL")) {//删除图标
                 ed_search.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
             } else {//插入表情
                 ed_search.getText().insert(ed_search.getSelectionStart(), code);
             }
         });
-        coordinator = view.findViewById(R.id.coordinator);
+
         tv_sent.setOnClickListener(listener);
         iv_show_emoj.setOnClickListener(view1 -> {
             LogUtil.d("OOM", "关闭");
-            keyBordUtils.HideKeyboard(view);
+            keyBordUtils.closeKeybord(this);
             showEmojiBoard();
         });
         initSmartRefreshLayout();
         initRecyclerView();
-        no_comment = view.findViewById(R.id.no_comment);
         initAction();
-        return view;
     }
 
-
-    private void initAction(){
-        requestComment();
-    }
-
-
-    public void initSmartRefreshLayout() {
-        smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
-            isRefresh = true;
-            refreshLayout.setEnableLoadMore(true);
-            selectPage = 1;
-            requestComment();
-        });
-        smartRefreshLayout.setOnLoadMoreListener(refresh -> {
-            isRefresh = false;
-            selectPage++;
-            requestComment();
-        });
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
 
     View.OnClickListener listener = new View.OnClickListener() {
         @Override
@@ -210,7 +178,6 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         }
     };
 
-
     /**
      * description ：去掉焦点
      * creation date: 2020/8/7
@@ -226,7 +193,6 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         }
     }
 
-
     /**
      * description ：回复消息
      * type 1表示一级评论，2 表示二级回复
@@ -236,16 +202,16 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     private void replyMessage(String content, String type, String message_id) {
         if (type.equals("1")) {
             if (templateType.equals("1")) {
-                statisticsEventAffair.getInstance().setFlag(getActivity(), " 12_amount", templateTitle);
+                statisticsEventAffair.getInstance().setFlag(CommentBlackActivity.this, " 12_amount", templateTitle);
             } else {
-                statisticsEventAffair.getInstance().setFlag(getActivity(), " 13_amount", templateTitle);
+                statisticsEventAffair.getInstance().setFlag(CommentBlackActivity.this, " 13_amount", templateTitle);
             }
         } else {
 
             if (templateType.equals("1")) {
-                statisticsEventAffair.getInstance().setFlag(getActivity(), " 12_Reply", templateTitle);
+                statisticsEventAffair.getInstance().setFlag(CommentBlackActivity.this, " 12_Reply", templateTitle);
             } else {
-                statisticsEventAffair.getInstance().setFlag(getActivity(), " 13_Reply", templateTitle);
+                statisticsEventAffair.getInstance().setFlag(CommentBlackActivity.this, " 13_Reply", templateTitle);
             }
 
 
@@ -255,13 +221,11 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", nowTemplateId);
         params.put("content", content);
-
-
         params.put("message_id", message_id);
         params.put("type", type);
         // 启动时间
         Observable ob = Api.getDefault().addComment(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(getActivity()) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(CommentBlackActivity.this) {
             @Override
             protected void _onError(String message) {
                 ToastUtil.showToast(message);
@@ -279,22 +243,17 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     }
 
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        // 设置软键盘不自动弹出
-        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        BottomSheetDialog dialog = (BottomSheetDialog) getDialog();
-        FrameLayout bottomSheet = dialog.getDelegate().findViewById(R.id.design_bottom_sheet);
-        if (bottomSheet != null) {
-            CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) bottomSheet.getLayoutParams();
-            layoutParams.height = getHeight();
-            behavior = BottomSheetBehavior.from(bottomSheet);
-            // 初始为展开状态
-            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        }
+    /**
+     * 展开or隐藏表情框
+     */
+    public void showEmojiBoard() {
+        ed_search.setSelected(emojiBoard.getVisibility() == View.GONE);//设置图片选中效果
+        emojiBoard.showBoard();//是否显示表情框
     }
 
+    private void initAction() {
+        requestComment();
+    }
 
     /**
      * description ：请求评论列表
@@ -308,7 +267,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         params.put("pageSize", perPageCount + "");
         // 启动时间
         Observable ob = Api.getDefault().templateComment(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<MessageData>(getActivity()) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<MessageData>(this) {
             @Override
             protected void _onError(String message) {
                 finishData();
@@ -319,12 +278,12 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
             protected void _onNext(MessageData data) {
                 finishData();
                 LogUtil.d("OOM", "评论列表数据" + StringUtil.beanToJSONString(data));
-                ArrayList<MessageEnity> dataList   = data.getList();
-                if(dataList!=null){
+                ArrayList<MessageEnity> dataList = data.getList();
+                if (dataList != null) {
                     if (isRefresh && dataList.size() == 0) {
-                        showNoData(true,data.getTotal());
+                        showNoData(true, data.getTotal());
                     } else {
-                        showNoData(false,data.getTotal());
+                        showNoData(false, data.getTotal());
                     }
                     if (isRefresh) {
                         allDataList.clear();
@@ -342,6 +301,14 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
+    public void showNoData(boolean isShowNoData, String total) {
+        if (isShowNoData) {
+            no_comment.setVisibility(View.VISIBLE);
+        } else {
+            tv_comment_count.setText(total + "条评论");
+            no_comment.setVisibility(View.GONE);
+        }
+    }
 
     private void finishData() {
         smartRefreshLayout.finishRefresh();
@@ -349,14 +316,25 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     }
 
 
-    public void showNoData(boolean isShowNoData,String total) {
-        if (isShowNoData) {
-            no_comment.setVisibility(View.VISIBLE);
-        } else {
-            tv_comment_count.setText(total+"条评论");
-            no_comment.setVisibility(View.GONE);
-        }
+    public void hideEmoJiBoard() {
+        emojiBoard.setVisibility(View.GONE);
     }
+
+    public void initSmartRefreshLayout() {
+        smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
+            isRefresh = true;
+            refreshLayout.setEnableLoadMore(true);
+            selectPage = 1;
+            requestComment();
+        });
+        smartRefreshLayout.setOnLoadMoreListener(refresh -> {
+            isRefresh = false;
+            selectPage++;
+            requestComment();
+        });
+        smartRefreshLayout.setEnableRefresh(false);
+    }
+
 
     /**
      * description ：初始化RecyclerView
@@ -364,75 +342,63 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
      * user : zhangtongju
      */
     private void initRecyclerView() {
-//        if (data.getList() == null || data.getList().size() == 0) {
-//            no_comment.setVisibility(View.VISIBLE);
-//        } else {
-//            tv_comment_count.setText(data.getTotal()+"条评论");
-//            no_comment.setVisibility(View.GONE);
         LinearLayoutManager linearLayoutManager =
-                new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerViewComment.setLayoutManager(linearLayoutManager);
         recyclerViewComment.setHasFixedSize(true);
-        adapter = new Comment_message_adapter(R.layout.item_comment_preview, allDataList, getActivity(), new Comment_message_adapter.CommentOnItemClick() {
-            @Override
-            public void clickPosition(int position, String id) {
-                hideShowKeyboard(true);
-                message_id = id;
-            }
-
-        }, new Comment_message_adapter.click2Comment() {
-            @Override
-            public void click(int position) {
-                //点击了展开更多
-                nowFirstOpenClickPosition = position;
-                updateDataComment(position);
-            }
+        adapter = new Comment_message_adapter(R.layout.item_comment_preview, allDataList, this, (position, id) -> {
+            hideShowKeyboard(true);
+            message_id = id;
+        }, position -> {
+            //点击了展开更多
+            nowFirstOpenClickPosition = position;
+            updateDataComment(position);
         }
         );
 
 
-        adapter.setOnItemChildLongClickListener(new BaseQuickAdapter.OnItemChildLongClickListener() {
-            @Override
-            public boolean onItemChildLongClick(BaseQuickAdapter adapter, View view, int position) {
-                nowFirstOpenClickPosition = position;
-                Intent intent = new Intent(getActivity(), MessageLongClickActivity.class);
-                intent.putExtra("user_id", allDataList.get(position).getUser_id());
-                intent.putExtra("message_id",allDataList.get(position).getId());
-                intent.putExtra("templateId", allDataList.get(position).getTemplate_id());
-                intent.putExtra("position", position);
-                intent.putExtra("isFirstComment", true);
-                startActivity(intent);
-                return false;
-            }
+        adapter.setOnItemChildLongClickListener((adapter, view, position) -> {
+            nowFirstOpenClickPosition = position;
+            Intent intent = new Intent(CommentBlackActivity.this, MessageLongClickActivity.class);
+            intent.putExtra("user_id", allDataList.get(position).getUser_id());
+            intent.putExtra("message_id", allDataList.get(position).getId());
+            intent.putExtra("templateId", allDataList.get(position).getTemplate_id());
+            intent.putExtra("position", position);
+            intent.putExtra("isFirstComment", true);
+            startActivity(intent);
+            return false;
         });
 
-        adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                switch (view.getId()) {
-                    case R.id.iv_comment_head:
-                        //进入到用户主页
-                        Intent intent = new Intent(getActivity(), UserHomepageActivity.class);
-                        intent.putExtra("toUserId",allDataList.get(position).getUser_id());
-                        startActivity(intent);
-                        break;
+        adapter.setOnItemChildClickListener((adapter, view, position) -> {
+            switch (view.getId()) {
+                case R.id.iv_comment_head:
+                    //进入到用户主页
+                    Intent intent = new Intent(CommentBlackActivity.this, UserHomepageActivity.class);
+                    intent.putExtra("toUserId", allDataList.get(position).getUser_id());
+                    startActivity(intent);
+                    break;
 
 
-                    case R.id.ll_parent:
-                        LogUtil.d("OOM", "onItemClick");
-                        showSoftInputFromWindow(ed_search);
-                        ed_search.setHint("@" + allDataList.get(position).getUser_id());
-                        message_id = allDataList.get(position).getId();
-                        break;
+                case R.id.ll_parent:
+                    LogUtil.d("OOM", "onItemClick");
+                    showSoftInputFromWindow(ed_search);
+                    ed_search.setHint("@" + allDataList.get(position).getUser_id());
+                    message_id = allDataList.get(position).getId();
+                    break;
 
 
-                    default:
+                default:
 
-                        break;
-                }
+                    break;
             }
         });
         recyclerViewComment.setAdapter(adapter);
+    }
+
+
+    private void showSoftInputFromWindow(EditText editText) {
+        editText.requestFocus();
+        hideShowKeyboard(true);
     }
 
 
@@ -443,77 +409,11 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
      */
     public void hideShowKeyboard(boolean isOpen) {
         if (isOpen) {
-            keyBordUtils.showSoftInput(getActivity(), ed_search);
+            keyBordUtils.showSoftInput(this, ed_search);
         } else {
-            keyBordUtils.closeKeybord(Objects.requireNonNull(getActivity()));
+            keyBordUtils.closeKeybord(Objects.requireNonNull(this));
         }
     }
-
-
-    /**
-     * description ：关闭弹框
-     * creation date: 2020/8/3
-     * user : zhangtongju
-     */
-    public void CloseDialog() {
-        if (behavior != null) {
-            behavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-        }
-    }
-
-
-    /**
-     * 获取屏幕高度
-     *
-     * @return height
-     */
-    private int getHeight() {
-        int height = 1920;
-        if (getContext() != null) {
-            WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-            Point point = new Point();
-            if (wm != null) {
-                // 使用Point已经减去了状态栏高度
-                wm.getDefaultDisplay().getSize(point);
-                height = point.y - getTopOffset();
-            }
-        }
-        return height;
-    }
-
-    public int getTopOffset() {
-        return topOffset;
-    }
-
-    public void setTopOffset(int topOffset) {
-        this.topOffset = topOffset;
-    }
-
-
-    public void setNowTemplateId(String nowTemplateId) {
-        this.nowTemplateId = nowTemplateId;
-        requestComment();
-    }
-
-    public void setNowTemplateTitle(String templateTitle) {
-        this.templateTitle = templateTitle;
-    }
-
-    public void setNowTemplateType(String templateType) {
-        this.templateType = templateType;
-    }
-
-
-    public BottomSheetBehavior<FrameLayout> getBehavior() {
-        return behavior;
-    }
-
-
-    private void showSoftInputFromWindow(EditText editText) {
-        editText.requestFocus();
-        hideShowKeyboard(true);
-    }
-
 
     private void updateDataComment(int position) {
         allDataList.get(position).isOpenComment();
@@ -529,21 +429,6 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         adapter.notifyItemChanged(position);
         lastOpenCommentPosition = position;
     }
-
-
-    /**
-     * 展开or隐藏表情框
-     */
-    public void showEmojiBoard() {
-        ed_search.setSelected(emojiBoard.getVisibility() == View.GONE);//设置图片选中效果
-        emojiBoard.showBoard();//是否显示表情框
-    }
-
-
-    public void hideEmoJiBoard() {
-        emojiBoard.setVisibility(View.GONE);
-    }
-
 
     @Subscribe
     public void onEventMainThread(DeleteMessage event) {
@@ -564,10 +449,10 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         }
     }
 
+
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().post(new ReplayMessageEvent());
         EventBus.getDefault().unregister(this);
     }
 }

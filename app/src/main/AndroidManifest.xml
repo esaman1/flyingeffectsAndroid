@@ -86,6 +86,7 @@
         </provider>
 
 
+
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.WelcomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -118,6 +119,14 @@
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.ReportActivity"
             android:theme="@style/AllTransparentTheme" />
+
+
+        <activity
+            android:name="com.flyingeffects.com.ui.view.activity.CommentBlackActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/AllTransparentTheme" />
+
+
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.MessageLongClickActivity"
