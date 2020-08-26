@@ -79,9 +79,9 @@ public class MyBarChartView extends View {
         super(context, attrs, defStyleAttr);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.barchar_style);
-        barInterval = (int) typedArray.getDimension(R.styleable.barchar_style_barInterval, dp2Px(1));
-        bar_color = typedArray.getColor(R.styleable.barchar_style_bar_color, Color.parseColor("#f9e5c9"));
-        barWidth = (int) typedArray.getDimension(R.styleable.barchar_style_barWidth, dp2Px(1));
+        barInterval = (int) typedArray.getDimension(R.styleable.barchar_style_barInterval, dp2Px(0.2f));
+        bar_color = typedArray.getColor(R.styleable.barchar_style_bar_color, Color.parseColor("#5496FF"));
+        barWidth = (int) typedArray.getDimension(R.styleable.barchar_style_barWidth, dp2Px(0.5f));
         top_text_size = (int) typedArray.getDimension(R.styleable.barchar_style_top_text_size, sp2Px(8));
         top_text_color = typedArray.getColor(R.styleable.barchar_style_top_text_color, Color.parseColor("#00ff00"));
         bottom_text_size = (int) typedArray.getDimension(R.styleable.barchar_style_bottom_text_size, sp2Px(8));
@@ -150,11 +150,19 @@ public class MyBarChartView extends View {
         int defaultValue = 0;
         if (innerData.size() > 0) {
             defaultValue = innerData.get(0).getCount();
-            for (int i = 0; i < innerData.size(); i++) {
-                if (innerData.get(i).getCount() > defaultValue) {
-                    defaultValue = innerData.get(i).getCount();
+
+            for (BarData data:innerData
+                 ) {
+                if (data.getCount() > defaultValue) {
+                    defaultValue = data.getCount();
                 }
             }
+
+//            for (int i = 0; i < innerData.size(); i++) {
+//                if (innerData.get(i).getCount() > defaultValue) {
+//                    defaultValue = innerData.get(i).getCount();
+//                }
+//            }
         }
         return defaultValue;
     }
@@ -258,7 +266,7 @@ public class MyBarChartView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
 
-        drawBottomLine(canvas);
+     //   drawBottomLine(canvas);
 
 //        //如果没有数据 绘制loading...
 //        if (innerData.size() <= 0) {
@@ -281,8 +289,8 @@ public class MyBarChartView extends View {
                 }
                 int startY = (int) (defaultHeight - bottom_view_height - barHeight);
 
-                int haltEndY=startY/2;
-
+//                int haltEndY=startY/2;
+                int haltEndY= (int) barHeight;
 
 
 //                float topTextWidth = mTopTextPaint.measureText(innerData.get(i).getCount() + "");

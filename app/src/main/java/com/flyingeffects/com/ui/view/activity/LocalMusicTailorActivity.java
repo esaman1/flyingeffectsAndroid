@@ -46,29 +46,32 @@ public class LocalMusicTailorActivity extends BaseActivity {
 
     private void test(){
         ArrayList<BarData> innerData = new ArrayList<>();
-        for(int i=0;i<100;i++){
-            innerData.add(new BarData(14, "1月"));
-            innerData.add(new BarData(14, "2月"));
-            innerData.add(new BarData(43, "3月"));
-            innerData.add(new BarData(35, "4月"));
-            innerData.add(new BarData(56, "5月"));
-            innerData.add(new BarData(12, "6月"));
-            innerData.add(new BarData(102, "9月"));
-            innerData.add(new BarData(142, "7月"));
-            innerData.add(new BarData(121, "8月"));
-            innerData.add(new BarData(238, "10月"));
-            innerData.add(new BarData(18, "11月"));
-            innerData.add(new BarData(348, "12月"));
-            innerData.add(new BarData(82, "13月"));
-            innerData.add(new BarData(238, "14月"));
-            innerData.add(new BarData(18, "15月"));
-            innerData.add(new BarData(348, "16月"));
-            innerData.add(new BarData(82, "17月"));
+        for(int i=0;i<1000;i++){
+            innerData.add(new BarData(Test(), "1月"));
         }
 
 
         MyBarChartView mybarCharView =findViewById(R.id.mybarCharView);
         mybarCharView.setBarChartData(innerData);
+    }
+
+
+    public int  Test() {
+        int pre = -1;
+        while (true) {
+            int random = (int) (Math.random()*300);
+            if (pre>-1){
+                int nowRandom = Math.abs(random - pre);
+                if (nowRandom<5) {
+                    pre = random;
+                 return  pre;
+                }
+            } else {
+                pre = random;
+                return  pre;
+            }
+        }
+
     }
 
 
