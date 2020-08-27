@@ -1,5 +1,6 @@
 package com.flyingeffects.com.http;
 
+import com.flyingeffects.com.enity.ChooseMusic;
 import com.flyingeffects.com.enity.Config;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.enity.HttpResult;
@@ -236,6 +237,12 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/version/versionCheck")
     Observable<HttpResult<checkVersion>> checkUpdate(@FieldMap Map<String, String> params);
+
+
+
+    @FormUrlEncoded
+    @POST("/api/message/musicList")
+    Observable<HttpResult<List<ChooseMusic>>> musicList(@FieldMap Map<String, String> params);
 
 
 }

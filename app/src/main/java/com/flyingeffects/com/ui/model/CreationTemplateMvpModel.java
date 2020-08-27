@@ -59,6 +59,7 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
+import com.flyingeffects.com.ui.view.activity.ChooseMusicActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
 import com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity;
 import com.flyingeffects.com.utils.FileUtil;
@@ -276,7 +277,7 @@ public class CreationTemplateMvpModel {
     private ViewPager viewPager;
 
     CheckBox check_box_0;
-    CheckBox check_box_1 ;
+    CheckBox check_box_1;
     CheckBox check_box_2;
     CheckBox check_box_3;
 
@@ -352,16 +353,17 @@ public class CreationTemplateMvpModel {
         View viewForChooseMusic = LayoutInflater.from(context).inflate(R.layout.view_choose_music, viewPager, false);
         TextView tv_add_music = viewForChooseMusic.findViewById(R.id.tv_add_music);
         tv_add_music.setOnClickListener(view -> {
-            Intent intent=new Intent(context, LocalMusicTailorActivity.class);
+            Intent intent = new Intent(context, ChooseMusicActivity.class);
+            intent.putExtra("needDuration", getDuration());
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             context.startActivity(intent);
         });
 
 
-         check_box_0 = viewForChooseMusic.findViewById(R.id.check_box_0);
-         check_box_1 = viewForChooseMusic.findViewById(R.id.check_box_1);
-         check_box_2 = viewForChooseMusic.findViewById(R.id.check_box_2);
-         check_box_3 = viewForChooseMusic.findViewById(R.id.check_box_3);
+        check_box_0 = viewForChooseMusic.findViewById(R.id.check_box_0);
+        check_box_1 = viewForChooseMusic.findViewById(R.id.check_box_1);
+        check_box_2 = viewForChooseMusic.findViewById(R.id.check_box_2);
+        check_box_3 = viewForChooseMusic.findViewById(R.id.check_box_3);
         Drawable drawable_news = context.getResources().getDrawable(R.drawable.template_choose_btn);
         //当这个图片被绘制时，给他绑定一个矩形 ltrb规定这个矩形
         int radio_size = StringUtil.dip2px(context, 16);
@@ -396,6 +398,24 @@ public class CreationTemplateMvpModel {
         });
     }
 
+
+    private long getDuration() {
+        long duration = 0;
+        if (listAllSticker != null) {
+            //说明没得背景视频，那么渲染时长就是
+            for (AllStickerData data : listAllSticker
+            ) {
+                if (duration < (int) data.getDuration()) {
+                    duration = (int) data.getDuration();
+                }
+            }
+            //如果还是0,说明全是图片，就修改为10
+            if (duration == 0) {
+                duration = 10000;
+            }
+        }
+        return duration;
+    }
 
 
     View.OnClickListener tvMusicListener = new View.OnClickListener() {

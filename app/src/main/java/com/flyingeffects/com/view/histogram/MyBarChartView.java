@@ -15,7 +15,10 @@ import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 
+import com.bigkoo.convenientbanner.utils.ScreenUtil;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.utils.LogUtil;
 
 import java.util.ArrayList;
 
@@ -38,7 +41,7 @@ public class MyBarChartView extends View {
     private int bottom_line_color;
     private int top_text_color;
     private int bottom_text_color;
-//    private Paint mTopTextPaint;
+    //    private Paint mTopTextPaint;
 //    private Paint mBottomTextPaint;
     private Paint mBarPaint;
     private Paint mBottomLinePaint;
@@ -67,6 +70,9 @@ public class MyBarChartView extends View {
     private boolean isBoundary = false;
     private boolean isMove = false;
 
+    private int frameCount;
+    private float showPercentage;
+
     public MyBarChartView(Context context) {
         this(context, null);
     }
@@ -77,7 +83,6 @@ public class MyBarChartView extends View {
 
     public MyBarChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.barchar_style);
         barInterval = (int) typedArray.getDimension(R.styleable.barchar_style_barInterval, dp2Px(0.2f));
         bar_color = typedArray.getColor(R.styleable.barchar_style_bar_color, Color.parseColor("#5496FF"));
@@ -89,8 +94,6 @@ public class MyBarChartView extends View {
         bottom_line_color = typedArray.getColor(R.styleable.barchar_style_bottom_line_color, Color.parseColor("#000000"));
         typedArray.recycle();
         initPaint();
-
-
     }
 
     private int dp2Px(float dipValue) {
@@ -141,18 +144,35 @@ public class MyBarChartView extends View {
 
     public void setBarChartData(ArrayList<BarData> innerData) {
         this.innerData.clear();
+        innerData= complementData(innerData);
         this.innerData.addAll(innerData);
         scaleTimes = (float) getMaxValue() / (float) (defaultHeight - bottom_view_height - top_text_height);
         invalidate();
     }
+
+
+    /**
+     * description ：frameCount
+     * creation date: 2020/8/26
+     * user : zhangtongju
+     */
+    public void setBaseData(int frameCount, float showPercentage) {
+        this.frameCount = frameCount;
+        this.showPercentage = showPercentage;
+
+        LogUtil.d("OOM2", "百分比为" + showPercentage);
+        LogUtil.d("OOM2", "点数" + frameCount);
+
+    }
+
 
     private int getMaxValue() {
         int defaultValue = 0;
         if (innerData.size() > 0) {
             defaultValue = innerData.get(0).getCount();
 
-            for (BarData data:innerData
-                 ) {
+            for (BarData data : innerData
+            ) {
                 if (data.getCount() > defaultValue) {
                     defaultValue = data.getCount();
                 }
@@ -166,6 +186,7 @@ public class MyBarChartView extends View {
         }
         return defaultValue;
     }
+
     //进行滑动的边界处理
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -266,31 +287,28 @@ public class MyBarChartView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
 
-     //   drawBottomLine(canvas);
+        //   drawBottomLine(canvas);
 
 //        //如果没有数据 绘制loading...
 //        if (innerData.size() <= 0) {
 //            drawNoDataText(canvas);
 //
 //        } else {
-            int startX = (int) (paddingLeft + startOriganalX);
-            int endY = defaultHeight - bottom_view_height;
-            //jj
-        int halft=defaultHeight/2;
+        int startX = (int) (paddingLeft + startOriganalX);
+        int endY = defaultHeight - bottom_view_height;
+        //jj
+        int halft = defaultHeight / 2;
 
 
-
-
-
-            for (int i = 0; i < innerData.size(); i++) {
-                float barHeight = 0;
-                if (scaleTimes != 0) {
-                    barHeight = (float) innerData.get(i).getCount() / scaleTimes;
-                }
-                int startY = (int) (defaultHeight - bottom_view_height - barHeight);
+        for (int i = 0; i < innerData.size(); i++) {
+            float barHeight = 0;
+            if (scaleTimes != 0) {
+                barHeight = (float) innerData.get(i).getCount() / scaleTimes;
+            }
+            int startY = (int) (defaultHeight - bottom_view_height - barHeight);
 
 //                int haltEndY=startY/2;
-                int haltEndY= (int) barHeight;
+            int haltEndY = (int) barHeight;
 
 
 //                float topTextWidth = mTopTextPaint.measureText(innerData.get(i).getCount() + "");
@@ -298,11 +316,11 @@ public class MyBarChartView extends View {
 //                float textStartY = startY - 10;
 //                //绘制bar上的文字
 //                drawTopText(canvas, innerData.get(i).getCount() + "", textStartX, textStartY);
-                //绘制bar
-              //  drawBar(canvas, startX, startY, endY);
+            //绘制bar
+            //  drawBar(canvas, startX, startY, endY);
 
-                drawBar(canvas, startX, halft-haltEndY, halft+haltEndY);
-                //绘制下面的文字
+            drawBar(canvas, startX, halft - haltEndY, halft + haltEndY);
+            //绘制下面的文字
 //                float bottomTextWidth = mBottomTextPaint.measureText(innerData.get(i).bottomText);
 //                float bottomStartX = startX + barWidth / 2 - bottomTextWidth / 2;
 //                Rect rect = new Rect();
@@ -311,8 +329,8 @@ public class MyBarChartView extends View {
 //                //绘制底部的文字
 //                drawBottomText(canvas, innerData.get(i).getBottomText(), bottomStartX, bottomStartY);
 
-                startX = startX + barWidth + barInterval;
-            }
+            startX = startX + barWidth + barInterval;
+        }
 //        }
 
     }
@@ -436,6 +454,7 @@ public class MyBarChartView extends View {
         public HorizontalScrollRunnable(float speed) {
             this.speed = speed;
         }
+
         @Override
         public void run() {
             if (Math.abs(speed) < 30) {
@@ -462,6 +481,53 @@ public class MyBarChartView extends View {
             invalidate();
         }
     }
+
+
+    /**
+     * description ：计算当前在不滑动的时候需要多少个点（减去magrin），然后计算当前屏幕需要显示的百分比，如果是1以下，表示需要滑动，
+     * 那么总需要的点为当前屏幕需要点除以百分比，得到总需要的点，最后在用得到的点模拟需要的点。如果是1以上，表示，表示正常情况下要少
+     * 余屏幕点，不需要滑动，那么只需要得到屏幕点就可以了。
+     * 添加点的逻辑，比如，100变为120  及、100/（120-100），表示多少个点就复制一次
+     * creation date: 2020/8/27
+     * user : zhangtongju
+     */
+    private  ArrayList<BarData>  complementData(ArrayList<BarData> innerData) {
+        // 1   计算当前屏幕需要多少个点
+        int screenWidth = ScreenUtil.getScreenWidth(BaseApplication.getInstance());
+        //减去外层margin 16dp
+        screenWidth = screenWidth - dp2Px(32);
+        //1个点占有位置
+        int oneWidth = barWidth + barWidth;
+        //大约一页能显示多少个
+        float needCountF = screenWidth / (float) oneWidth;
+//        flaot needCount = (int) needCountF;
+        int needCopyPositionI = 0;
+        if (frameCount > needCountF) {
+            //如果超过当前需要的点，需要滑动
+            float differenceValue = frameCount - needCountF;
+            float needCopyPosition = needCountF / differenceValue;
+            needCopyPositionI=(int) needCopyPosition;
+        } else {
+            //小于当前的点，需要添加值
+            float differenceValue = needCountF - frameCount;
+            float needCopyPosition = frameCount /  differenceValue;
+            needCopyPositionI=(int) needCopyPosition;
+        }
+        ArrayList<BarData> newInnerData=new ArrayList<>();
+        for(int i=1;i<=innerData.size();i++){
+            newInnerData.add(innerData.get(i-1));
+            if(i % needCopyPositionI == 0){
+                newInnerData.add(innerData.get(i));//多复制一次
+            }
+        }
+       return newInnerData;
+    }
+
+
+
+
+
+
 }
 
 
