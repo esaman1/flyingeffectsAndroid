@@ -2,7 +2,6 @@ package com.flyingeffects.com.ui.view.activity;
 
 
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;

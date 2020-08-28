@@ -20,6 +20,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.utils.LogUtil;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
@@ -35,8 +36,8 @@ public class MyBarChartView extends View {
 
     private int barInterval;
     private int barWidth;
-    private int top_text_size;
-    private int bottom_text_size;
+    //    private int top_text_size;
+//    private int bottom_text_size;
     private int bar_color;
     private int bottom_line_color;
     private int top_text_color;
@@ -86,10 +87,10 @@ public class MyBarChartView extends View {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.barchar_style);
         barInterval = (int) typedArray.getDimension(R.styleable.barchar_style_barInterval, dp2Px(0.2f));
         bar_color = typedArray.getColor(R.styleable.barchar_style_bar_color, Color.parseColor("#5496FF"));
-        barWidth = (int) typedArray.getDimension(R.styleable.barchar_style_barWidth, dp2Px(0.5f));
-        top_text_size = (int) typedArray.getDimension(R.styleable.barchar_style_top_text_size, sp2Px(8));
+        barWidth = (int) typedArray.getDimension(R.styleable.barchar_style_barWidth, dp2Px(1f));
+//        top_text_size = (int) typedArray.getDimension(R.styleable.barchar_style_top_text_size, sp2Px(8));
         top_text_color = typedArray.getColor(R.styleable.barchar_style_top_text_color, Color.parseColor("#00ff00"));
-        bottom_text_size = (int) typedArray.getDimension(R.styleable.barchar_style_bottom_text_size, sp2Px(8));
+//        bottom_text_size = (int) typedArray.getDimension(R.styleable.barchar_style_bottom_text_size, sp2Px(8));
         bottom_text_color = typedArray.getColor(R.styleable.barchar_style_bottom_text_color, Color.parseColor("#0000ff"));
         bottom_line_color = typedArray.getColor(R.styleable.barchar_style_bottom_line_color, Color.parseColor("#000000"));
         typedArray.recycle();
@@ -123,7 +124,7 @@ public class MyBarChartView extends View {
 
 
         mBarPaint = new Paint();
-        mBarPaint.setTextSize(top_text_size);
+//        mBarPaint.setTextSize(top_text_size);
         mBarPaint.setColor(bar_color);
         mBarPaint.setStrokeCap(Paint.Cap.ROUND);
         mBarPaint.setStyle(Paint.Style.FILL);
@@ -131,7 +132,7 @@ public class MyBarChartView extends View {
 
 
         mBottomLinePaint = new Paint();
-        mBottomLinePaint.setTextSize(top_text_size);
+//        mBottomLinePaint.setTextSize(top_text_size);
         mBottomLinePaint.setColor(bottom_line_color);
         mBottomLinePaint.setStrokeCap(Paint.Cap.ROUND);
         mBottomLinePaint.setStyle(Paint.Style.FILL);
@@ -144,7 +145,7 @@ public class MyBarChartView extends View {
 
     public void setBarChartData(ArrayList<BarData> innerData) {
         this.innerData.clear();
-        innerData= complementData(innerData);
+        innerData = complementData(innerData);
         this.innerData.addAll(innerData);
         scaleTimes = (float) getMaxValue() / (float) (defaultHeight - bottom_view_height - top_text_height);
         invalidate();
@@ -387,8 +388,6 @@ public class MyBarChartView extends View {
         paddingLeft = getPaddingLeft();
         paddingBottom = getPaddingBottom();
         paddingRight = getPaddingRight();
-
-
     }
 
     private ArrayList<Integer> getAndroiodScreenProperty() {
@@ -491,41 +490,52 @@ public class MyBarChartView extends View {
      * creation date: 2020/8/27
      * user : zhangtongju
      */
-    private  ArrayList<BarData>  complementData(ArrayList<BarData> innerData) {
+    boolean hasMore = false;
+
+    private ArrayList<BarData> complementData(ArrayList<BarData> innerData) {
         // 1   计算当前屏幕需要多少个点
-        int screenWidth = ScreenUtil.getScreenWidth(BaseApplication.getInstance());
-        //减去外层margin 16dp
-        screenWidth = screenWidth - dp2Px(32);
+        int screenWidth = getMeasuredWidth();
         //1个点占有位置
-        int oneWidth = barWidth + barWidth;
+        int oneWidth = barWidth + barInterval;
         //大约一页能显示多少个
         float needCountF = screenWidth / (float) oneWidth;
-//        flaot needCount = (int) needCountF;
         int needCopyPositionI = 0;
         if (frameCount > needCountF) {
+            hasMore = true;
             //如果超过当前需要的点，需要滑动
             float differenceValue = frameCount - needCountF;
-            float needCopyPosition = needCountF / differenceValue;
-            needCopyPositionI=(int) needCopyPosition;
+            LogUtil.d("OOM2","全部count="+frameCount+"一页需要的cont="+needCountF);
+            float needCopyPosition;
+            if(needCountF>differenceValue){
+                needCopyPosition  = needCountF / differenceValue;
+            }else{
+                 needCopyPosition = differenceValue / needCountF;
+            }
+            needCopyPositionI = (int) needCopyPosition;
+            LogUtil.d("OOM2","需要复制的值为"+needCopyPositionI);
         } else {
             //小于当前的点，需要添加值
             float differenceValue = needCountF - frameCount;
-            float needCopyPosition = frameCount /  differenceValue;
-            needCopyPositionI=(int) needCopyPosition;
+            float needCopyPosition = frameCount / differenceValue;
+            needCopyPositionI = (int) needCopyPosition;
+            hasMore = false;
         }
-        ArrayList<BarData> newInnerData=new ArrayList<>();
-        for(int i=1;i<=innerData.size();i++){
-            newInnerData.add(innerData.get(i-1));
-            if(i % needCopyPositionI == 0){
-                newInnerData.add(innerData.get(i));//多复制一次
+        ArrayList<BarData> newInnerData = new ArrayList<>();
+        for (int i = 1; i <= innerData.size(); i++) {
+            newInnerData.add(innerData.get(i - 1));
+            if (!hasMore) {
+                if (i % needCopyPositionI == 0) {
+                    newInnerData.add(innerData.get(i));//多复制一次
+                }
+            } else {
+                //太大了就多复制几次
+                for (int x = 0; x < needCopyPositionI; x++) {
+                    newInnerData.add(innerData.get(i - 1));
+                }
             }
         }
-       return newInnerData;
+        return newInnerData;
     }
-
-
-
-
 
 
 }
