@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="117dp"
+    android:layout_height="130dp"
+    android:orientation="vertical">
+
+
+    <ImageView
+        android:id="@+id/iv_cover"
+        android:layout_width="117dp"
+        android:layout_height="130dp"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/icon_wx" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/choose_music_translation_bj">
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="00:15"
+            android:layout_centerVertical="true"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+
+        <TextView
+            android:id="@+id/tv_make"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/message_focus"
+            android:paddingStart="14dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="6dp"
+            android:text="使用"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+    </RelativeLayout>
+
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:src="@mipmap/choose_music_pause"
+        android:layout_centerInParent="true"
+        android:layout_height="wrap_content"/>
+
+
+</RelativeLayout>

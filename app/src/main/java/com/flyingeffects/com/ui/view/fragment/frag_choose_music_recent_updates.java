@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.music_recent_adapter;
@@ -14,11 +14,13 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.commonlyModel.DoubleClick;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.BlogFile.Music;
 import com.flyingeffects.com.enity.ChooseMusic;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity;
+import com.flyingeffects.com.utils.BlogFileResource.FileManager;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -30,6 +32,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 
 /**
@@ -73,7 +78,8 @@ public class frag_choose_music_recent_updates extends BaseFragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             id = bundle.getInt("id", 0);
-            needDuration=bundle.getLong("needDuration");
+            LogUtil.d("oom2","id="+id+"bundle != null");
+            needDuration = bundle.getLong("needDuration");
         }
         initSmartRefreshLayout();
         initRecycler();
@@ -81,7 +87,33 @@ public class frag_choose_music_recent_updates extends BaseFragment {
 
     @Override
     protected void initAction() {
-        requestFagData();
+        if (id == 1) {
+            LogUtil.d("OOM2","当前选择的是本地音频");
+            //本地音频
+            Observable.create((Observable.OnSubscribe<List<ChooseMusic>>) subscriber -> {
+                FileManager mInstance = FileManager.getInstance();
+                for (Music music : mInstance.getMusics()
+                ) {
+                    ChooseMusic chooseMusic = new ChooseMusic();
+                    chooseMusic.setAudio_url(music.getPath());
+                    chooseMusic.setImage(music.getAlbum());
+                    chooseMusic.setNickname(music.getName());
+                    listData.add(chooseMusic);
+                }
+                subscriber.onNext(listData);
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<ChooseMusic>>() {
+                @Override
+                public void call(List<ChooseMusic> chooseMusics) {
+                    adapter.notifyDataSetChanged();
+                }
+            });
+
+        } else {
+            LogUtil.d("OOM2","当前选择的是请求");
+            requestFagData();
+        }
+
     }
 
     @Override
@@ -157,10 +189,8 @@ public class frag_choose_music_recent_updates extends BaseFragment {
 
     private void initRecycler() {
         adapter = new music_recent_adapter(R.layout.list_music_recent_item, listData, getActivity(), id);
-        StaggeredGridLayoutManager layoutManager =
-                new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.
-                        VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
         adapter.setOnItemChildClickListener((adapter, view, position) -> {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
@@ -168,9 +198,9 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                     case R.id.tv_make:
                         Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.putExtra("videoPath",listData.get(position).getAudio_url());
-                        intent.putExtra("needDuration",needDuration);
-                        intent.putExtra("isAudio",true);
+                        intent.putExtra("videoPath", listData.get(position).getAudio_url());
+                        intent.putExtra("needDuration", needDuration);
+                        intent.putExtra("isAudio", true);
                         startActivity(intent);
                         break;
 

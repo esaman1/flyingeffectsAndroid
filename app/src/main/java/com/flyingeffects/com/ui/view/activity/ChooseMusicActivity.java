@@ -64,7 +64,7 @@ public class ChooseMusicActivity extends BaseActivity {
 
         frag_choose_music_local_music fragment_local_music = new frag_choose_music_local_music();
         Bundle bundle_local_music = new Bundle();
-        fragment_1.setArguments(bundle_local_music);
+        fragment_local_music.setArguments(bundle_local_music);
         list.add(fragment_local_music);
 
 

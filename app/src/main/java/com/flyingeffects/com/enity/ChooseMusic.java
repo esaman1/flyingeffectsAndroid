@@ -1,6 +1,9 @@
 package com.flyingeffects.com.enity;
 
+import com.flyingeffects.com.enity.BlogFile.Music;
+
 import java.io.Serializable;
+import java.util.List;
 
 public class ChooseMusic implements Serializable {
 
@@ -177,4 +180,15 @@ public class ChooseMusic implements Serializable {
     private String nickname;
     private String photourl;
     private String is_collection;
+
+    public List<Music> getMusics() {
+        return musics;
+    }
+
+    public void setMusics(List<Music> musics) {
+        this.musics = musics;
+    }
+
+    private List<Music> musics;
+
 }
