@@ -66,6 +66,8 @@ public class frag_choose_music_recent_updates extends BaseFragment {
 
     private long needDuration;
 
+    private int nowClickPosition;
+
 
     @Override
     protected int getContentLayout() {
@@ -78,7 +80,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             id = bundle.getInt("id", 0);
-            LogUtil.d("oom2","id="+id+"bundle != null");
+            LogUtil.d("oom2", "id=" + id + "bundle != null");
             needDuration = bundle.getLong("needDuration");
         }
         initSmartRefreshLayout();
@@ -88,7 +90,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
     @Override
     protected void initAction() {
         if (id == 1) {
-            LogUtil.d("OOM2","当前选择的是本地音频");
+            LogUtil.d("OOM2", "当前选择的是本地音频");
             //本地音频
             Observable.create((Observable.OnSubscribe<List<ChooseMusic>>) subscriber -> {
                 FileManager mInstance = FileManager.getInstance();
@@ -110,8 +112,9 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             });
 
         } else {
-            LogUtil.d("OOM2","当前选择的是请求");
+            LogUtil.d("OOM2", "当前选择的是请求");
             requestFagData();
+
         }
 
     }
@@ -124,12 +127,14 @@ public class frag_choose_music_recent_updates extends BaseFragment {
 
     private void requestFagData() {
         HashMap<String, String> params = new HashMap<>();
-//        params.put("keyword", "");
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
         Observable ob = null;
         if (id == 0) {
             ob = Api.getDefault().musicList(BaseConstans.getRequestHead(params));
+        } else {
+            //2 我的收藏
+            ob = Api.getDefault().musicCollectionList(BaseConstans.getRequestHead(params));
         }
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<ChooseMusic>>(getActivity()) {
             @Override
@@ -194,6 +199,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
         recyclerView.setHasFixedSize(true);
         adapter.setOnItemChildClickListener((adapter, view, position) -> {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
+                nowClickPosition = position;
                 switch (view.getId()) {
                     case R.id.tv_make:
                         Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
@@ -202,6 +208,13 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                         intent.putExtra("needDuration", needDuration);
                         intent.putExtra("isAudio", true);
                         startActivity(intent);
+                        break;
+
+
+                    case R.id.iv_collect:
+                        //收藏
+                        clickCollect(listData.get(position).getId(), listData.get(position).getIs_collection());
+
                         break;
 
                     default:
@@ -221,5 +234,45 @@ public class frag_choose_music_recent_updates extends BaseFragment {
         }
     }
 
+
+    public void clickCollect(String music_id, int isCollect) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("music_id", music_id);
+        // 启动时间
+        Observable ob = Api.getDefault().collectMusic(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(getActivity()) {
+            @Override
+            protected void _onError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(Object data) {
+                String str = StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM", "收藏音乐返回的值为" + str);
+                updateCollect(isCollect);
+
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+
+    private void updateCollect(int oldIsCollect) {
+        if (id == 2) {
+            //移除收藏item
+            listData.remove(nowClickPosition);
+            adapter.notifyDataSetChanged();
+        } else {
+            if (oldIsCollect == 0) {
+                oldIsCollect = 1;
+            } else {
+                oldIsCollect = 0;
+            }
+            ChooseMusic chooseMusic = listData.get(nowClickPosition);
+            chooseMusic.setIs_collection(oldIsCollect);
+            listData.set(nowClickPosition, chooseMusic);
+            adapter.notifyItemChanged(nowClickPosition);
+        }
+    }
 
 }

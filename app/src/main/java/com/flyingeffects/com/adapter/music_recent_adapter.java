@@ -56,10 +56,21 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
     @Override
     protected void convert(final BaseViewHolder helper, final ChooseMusic item) {
         int offset = helper.getLayoutPosition();
+        ImageView iv_collect=helper.getView(R.id.iv_collect);
         ImageView cover=helper.getView(R.id.iv_cover);
         Glide.with(context).load(item.getImage()).into(cover);
         helper.setText(R.id.tv_time,item.getTimelength());
         helper.addOnClickListener(R.id.tv_make);
+        helper.addOnClickListener(R.id.iv_collect);
+        if(item.getIs_collection()==0){
+            //未收藏
+            iv_collect.setImageResource(R.mipmap.new_version_collect);
+        }else{
+            iv_collect.setImageResource(R.mipmap.new_version_collect_ed);
+        }
+
+
+
         }
 
 

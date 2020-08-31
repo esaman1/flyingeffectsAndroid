@@ -154,13 +154,7 @@ public class ChooseMusic implements Serializable {
         this.photourl = photourl;
     }
 
-    public String getIs_collection() {
-        return is_collection;
-    }
 
-    public void setIs_collection(String is_collection) {
-        this.is_collection = is_collection;
-    }
 
     private String user_id;
     private String create_time;
@@ -179,7 +173,16 @@ public class ChooseMusic implements Serializable {
     private String image;
     private String nickname;
     private String photourl;
-    private String is_collection;
+
+    public int getIs_collection() {
+        return is_collection;
+    }
+
+    public void setIs_collection(int is_collection) {
+        this.is_collection = is_collection;
+    }
+
+    private int is_collection;
 
     public List<Music> getMusics() {
         return musics;

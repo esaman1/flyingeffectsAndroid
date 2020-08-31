@@ -245,4 +245,19 @@ public interface ApiService {
     Observable<HttpResult<List<ChooseMusic>>> musicList(@FieldMap Map<String, String> params);
 
 
+
+    //音乐收藏和取消收藏
+
+    @FormUrlEncoded
+    @POST("/api/message/collectMusic")
+    Observable<HttpResult<Object>> collectMusic(@FieldMap Map<String, String> params);
+
+    //收藏音乐列表
+    @FormUrlEncoded
+    @POST("/api/message/musicCollectionList")
+    Observable<HttpResult<List<ChooseMusic>>> musicCollectionList(@FieldMap Map<String, String> params);
+
+
+
+
 }
