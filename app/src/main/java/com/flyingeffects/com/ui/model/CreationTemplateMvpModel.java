@@ -281,6 +281,11 @@ public class CreationTemplateMvpModel {
     CheckBox check_box_2;
     CheckBox check_box_3;
 
+    TextView tv_0;
+    TextView tv_1;
+    TextView tv_2;
+    TextView tv_3;
+
 
     public void initBottomLayout(ViewPager viewPager) {
         this.viewPager = viewPager;
@@ -359,7 +364,10 @@ public class CreationTemplateMvpModel {
             context.startActivity(intent);
         });
 
-
+        tv_0 = viewForChooseMusic.findViewById(R.id.tv_0);
+        tv_1 = viewForChooseMusic.findViewById(R.id.tv_1);
+        tv_2 = viewForChooseMusic.findViewById(R.id.tv_2);
+        tv_3 = viewForChooseMusic.findViewById(R.id.tv_3);
         check_box_0 = viewForChooseMusic.findViewById(R.id.check_box_0);
         check_box_1 = viewForChooseMusic.findViewById(R.id.check_box_1);
         check_box_2 = viewForChooseMusic.findViewById(R.id.check_box_2);
@@ -372,6 +380,10 @@ public class CreationTemplateMvpModel {
         check_box_1.setCompoundDrawables(drawable_news, null, null, null);
         check_box_2.setCompoundDrawables(drawable_news, null, null, null);
         check_box_3.setCompoundDrawables(drawable_news, null, null, null);
+        tv_0.setOnClickListener(tvMusicListener);
+        tv_1.setOnClickListener(tvMusicListener);
+        tv_2.setOnClickListener(tvMusicListener);
+        tv_3.setOnClickListener(tvMusicListener);
         check_box_0.setOnClickListener(tvMusicListener);
         check_box_1.setOnClickListener(tvMusicListener);
         check_box_2.setOnClickListener(tvMusicListener);
@@ -423,22 +435,23 @@ public class CreationTemplateMvpModel {
         public void onClick(View view) {
             clearCheckBox();
             switch (view.getId()) {
-                case R.id.ll_choose_0:
                 case R.id.check_box_0:
+                case R.id.tv_0:
                     check_box_0.setChecked(true);
                     break;
 
-                case R.id.ll_choose_1:
+                case R.id.tv_1:
                 case R.id.check_box_1:
                     check_box_1.setChecked(true);
                     break;
-                case R.id.ll_choose_2:
+
+                case R.id.tv_2:
                 case R.id.check_box_2:
                     check_box_2.setChecked(true);
                     break;
 
-                case R.id.ll_choose_3:
                 case R.id.check_box_3:
+                case R.id.tv_3:
                     check_box_3.setChecked(true);
                     break;
             }
@@ -446,10 +459,11 @@ public class CreationTemplateMvpModel {
     };
 
     private void clearCheckBox() {
-        check_box_1.setChecked(false);
         check_box_0.setChecked(false);
-        check_box_3.setChecked(false);
+        check_box_1.setChecked(false);
         check_box_2.setChecked(false);
+        check_box_3.setChecked(false);
+
     }
 
 
