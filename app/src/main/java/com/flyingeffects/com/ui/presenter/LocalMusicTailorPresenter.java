@@ -1,9 +1,11 @@
 package com.flyingeffects.com.ui.presenter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
-import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.mediaManager;
@@ -17,6 +19,8 @@ import com.flyingeffects.com.utils.record.soundfile.SoundFile;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -36,6 +40,11 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
     private Context context;
     boolean nowMaterialIsVideo = false;
     private String soundFolder;
+    private Timer timer;
+    private TimerTask task;
+    //视频需要裁剪时长，毫秒
+    private int needDuration;
+    private int nowTimerDuration;
 
 
     public LocalMusicTailorPresenter(Context context, LocalMusicTailorMvpView localMusicTailorMvpView) {
@@ -48,12 +57,41 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
     }
 
 
+    public void SeekToPositionMusic(int position){
+        if(mPlayer!=null){
+            mPlayer.start();
+            mPlayer.seekTo(position);
+            startTimer();
+        }
+    }
+
+
+    public void setNeedDuration(int needDuration){
+        this.needDuration=needDuration;
+    }
+
+
+
+
+
+
+    public void pauseMusic(){
+        if(mPlayer!=null&&mPlayer.isPlaying()){
+            mPlayer.pause();
+        }
+    }
+
+
     public void DownPath(String path) {
         LogUtil.d("OOM2", "DownPath");
         toDownVideo(path);
     }
 
     public void OnDestroy() {
+        if(mPlayer!=null&&mPlayer.isPlaying()){
+            mPlayer.stop();
+            mPlayer.release();
+        }
     }
 
 
@@ -175,8 +213,9 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
                         return;
                     }
                     mPlayer = new SamplePlayer(mSoundFile);
-                    mPlayer.setOnCompletionListener(() -> mPlayer.start());
+                    mPlayer.setOnCompletionListener(() -> localMusicTailorMvpView.onPlayerCompletion());
                     mPlayer.start();
+                    startTimer();
                 } catch (final Exception e) {
                     e.printStackTrace();
                     String mInfoContent = e.toString();
@@ -213,5 +252,76 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
         return System.nanoTime() / 1000000;
     }
 
+
+
+
+
+    /***
+     * 倒计时60s
+     */
+    private void startTimer() {
+        if (timer != null) {
+            timer.purge();
+            timer.cancel();
+            timer = null;
+        }
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+        timer = new Timer();
+        task = new TimerTask() {
+            public void run() {
+                Message msg = new Message();
+                msg.what = 1;
+                handler.sendMessage(msg);
+            }
+        };
+        timer.schedule(task, 0, 500);
+    }
+
+    @SuppressLint("HandlerLeak")
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 1:
+                    nowTimerDuration+=500;
+                    if (nowTimerDuration == needDuration) {
+                        nowTimerDuration = 0;
+                        endTimer();
+                    }
+                    break;
+
+
+                default:
+
+                    break;
+            }
+        }
+    };
+
+
+
+
+
+
+    /**
+     * 关闭timer 和task
+     */
+    private void endTimer() {
+        pauseMusic();
+        localMusicTailorMvpView.onPlayerCompletion();
+        if (timer != null) {
+            timer.purge();
+            timer.cancel();
+            timer = null;
+        }
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+    }
 
 }

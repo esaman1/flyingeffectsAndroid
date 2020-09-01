@@ -73,6 +73,14 @@ public class MyBarChartView extends View {
 
     private int frameCount;
     private float showPercentage;
+    //素材需要时长
+    private long nowMaterial;
+    //需要截取时间
+    private float needDuration;
+    //是否能够滑动
+    private boolean isCanSlide = true;
+
+    private ProgressCallback callback;
 
     public MyBarChartView(Context context) {
         this(context, null);
@@ -82,12 +90,16 @@ public class MyBarChartView extends View {
         this(context, attrs, 0);
     }
 
+    public void setCallback(ProgressCallback callback) {
+        this.callback = callback;
+    }
+
     public MyBarChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.barchar_style);
-        barInterval = (int) typedArray.getDimension(R.styleable.barchar_style_barInterval, dp2Px(0.2f));
+        barInterval = (int) typedArray.getDimension(R.styleable.barchar_style_barInterval, dp2Px(1f));
         bar_color = typedArray.getColor(R.styleable.barchar_style_bar_color, Color.parseColor("#5496FF"));
-        barWidth = (int) typedArray.getDimension(R.styleable.barchar_style_barWidth, dp2Px(1f));
+        barWidth = (int) typedArray.getDimension(R.styleable.barchar_style_barWidth, dp2Px(0.5f));
 //        top_text_size = (int) typedArray.getDimension(R.styleable.barchar_style_top_text_size, sp2Px(8));
         top_text_color = typedArray.getColor(R.styleable.barchar_style_top_text_color, Color.parseColor("#00ff00"));
 //        bottom_text_size = (int) typedArray.getDimension(R.styleable.barchar_style_bottom_text_size, sp2Px(8));
@@ -146,6 +158,7 @@ public class MyBarChartView extends View {
     public void setBarChartData(ArrayList<BarData> innerData) {
         this.innerData.clear();
         innerData = complementData(innerData);
+//        test();
         this.innerData.addAll(innerData);
         scaleTimes = (float) getMaxValue() / (float) (defaultHeight - bottom_view_height - top_text_height);
         invalidate();
@@ -157,10 +170,11 @@ public class MyBarChartView extends View {
      * creation date: 2020/8/26
      * user : zhangtongju
      */
-    public void setBaseData(int frameCount, float showPercentage) {
+    public void setBaseData(int frameCount, float showPercentage, long nowMaterial, float needDuration) {
         this.frameCount = frameCount;
         this.showPercentage = showPercentage;
-
+        this.nowMaterial = nowMaterial;
+        this.needDuration = needDuration;
         LogUtil.d("OOM2", "百分比为" + showPercentage);
         LogUtil.d("OOM2", "点数" + frameCount);
 
@@ -227,61 +241,71 @@ public class MyBarChartView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        isBoundary = false;
-        isMove = true;
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                lastX = event.getX();
-                lastY = event.getY();
-                startTime = System.currentTimeMillis();
-                //当点击的时候，判断如果是在fling的效果的时候，就停止快速滑动
-                if (isFling) {
-                    removeCallbacks(horizontalScrollRunnable);
-                    isFling = false;
-                }
-                break;
-            case MotionEvent.ACTION_MOVE:
-                float currX = event.getX();
-                float currY = event.getY();
-                startOriganalX += currX - lastX;
 
-                //这是向右滑动
-                if ((currX - lastX) > 0) {
-                    Log.e("TAG", "向右滑动");
-                    if (startOriganalX > 0) {
-                        startOriganalX = 0;
-                        isBoundary = true;
+        if (isCanSlide) {
+            isBoundary = false;
+            isMove = true;
+
+
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    lastX = event.getX();
+                    lastY = event.getY();
+                    startTime = System.currentTimeMillis();
+                    //当点击的时候，判断如果是在fling的效果的时候，就停止快速滑动
+                    if (isFling) {
+                        removeCallbacks(horizontalScrollRunnable);
+                        isFling = false;
+                    }
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    float currX = event.getX();
+                    float currY = event.getY();
+                    startOriganalX += currX - lastX;
+                    LogUtil.d("OOM3", "startOriganalX=" + startOriganalX);
+                    //这是向右滑动
+                    if ((currX - lastX) > 0) {
+                        Log.e("TAG", "向右滑动");
+                        if (startOriganalX > 0) {
+                            startOriganalX = 0;
+                            isBoundary = true;
+                        }
+
+                    } else {//这是向右滑动
+                        Log.e("TAG", "向左滑动");
+                        if (-startOriganalX > getMoveLength()) {
+                            startOriganalX = -getMoveLength();
+                            isBoundary = true;
+                        }
+                    }
+                    tempLength = currX - lastX;
+                    //如果数据量少，根本没有充满横屏，就没必要重新绘制，
+                    if (measureWidth < innerData.size() * (barWidth + barInterval)) {
+                        invalidate();
                     }
 
-                } else {//这是向右滑动
-                    Log.e("TAG", "向左滑动");
-                    if (-startOriganalX > getMoveLength()) {
-                        startOriganalX = -getMoveLength();
-                        isBoundary = true;
+                    lastX = currX;
+                    lastY = currY;
+                    break;
+                case MotionEvent.ACTION_UP:
+                    long endTime = System.currentTimeMillis();
+                    //计算猛滑动的速度，如果是大于某个值，并且数据的长度大于整个屏幕的长度，那么就允许有flIng后逐渐停止的效果
+                    float speed = tempLength / (endTime - startTime) * 1000;
+                    if (Math.abs(speed) > 100 && !isFling && measureWidth < innerData.size() * (barWidth + barInterval)) {
+                        this.post(horizontalScrollRunnable = new HorizontalScrollRunnable(speed));
                     }
-                }
-                tempLength = currX - lastX;
-                //如果数据量少，根本没有充满横屏，就没必要重新绘制，
-                if (measureWidth < innerData.size() * (barWidth + barInterval)) {
-                    invalidate();
-                }
-
-                lastX = currX;
-                lastY = currY;
-                break;
-            case MotionEvent.ACTION_UP:
-                long endTime = System.currentTimeMillis();
-                //计算猛滑动的速度，如果是大于某个值，并且数据的长度大于整个屏幕的长度，那么就允许有flIng后逐渐停止的效果
-                float speed = tempLength / (endTime - startTime) * 1000;
-                if (Math.abs(speed) > 100 && !isFling && measureWidth < innerData.size() * (barWidth + barInterval)) {
-                    this.post(horizontalScrollRunnable = new HorizontalScrollRunnable(speed));
-                }
-                isMove = false;
-                break;
-            case MotionEvent.ACTION_CANCEL:
-                isMove = false;
-                break;
+                    isMove = false;
+                    if(callback!=null){
+                        callback.isDone();
+                    }
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    isMove = false;
+                    break;
+            }
+            return true;
         }
+
         return true;
     }
 
@@ -299,7 +323,11 @@ public class MyBarChartView extends View {
         int endY = defaultHeight - bottom_view_height;
         //jj
         int halft = defaultHeight / 2;
-
+        if (callback != null) {
+            float percent = startX + getAllLength();
+            float needPercent = percent / (float) getAllLength();
+            callback.progress(1-needPercent);
+        }
 
         for (int i = 0; i < innerData.size(); i++) {
             float barHeight = 0;
@@ -331,6 +359,7 @@ public class MyBarChartView extends View {
 //                drawBottomText(canvas, innerData.get(i).getBottomText(), bottomStartX, bottomStartY);
 
             startX = startX + barWidth + barInterval;
+
         }
 //        }
 
@@ -412,6 +441,11 @@ public class MyBarChartView extends View {
         return (barWidth + barInterval) * innerData.size() - measureWidth;
     }
 
+    private int getAllLength() {
+        return (barWidth + barInterval) * innerData.size();
+    }
+
+
     public boolean isBoundary() {
         return isBoundary;
     }
@@ -477,64 +511,64 @@ public class MyBarChartView extends View {
                 }
             }
             postDelayed(this, 20);
+            if(callback!=null){
+                callback.isDone();
+            }
             invalidate();
         }
     }
 
 
     /**
-     * description ：计算当前在不滑动的时候需要多少个点（减去magrin），然后计算当前屏幕需要显示的百分比，如果是1以下，表示需要滑动，
-     * 那么总需要的点为当前屏幕需要点除以百分比，得到总需要的点，最后在用得到的点模拟需要的点。如果是1以上，表示，表示正常情况下要少
-     * 余屏幕点，不需要滑动，那么只需要得到屏幕点就可以了。
-     * 添加点的逻辑，比如，100变为120  及、100/（120-100），表示多少个点就复制一次
+     * description ：计算当前在不滑动的时候需要多少个点
      * creation date: 2020/8/27
      * user : zhangtongju
      */
-    boolean hasMore = false;
-
     private ArrayList<BarData> complementData(ArrayList<BarData> innerData) {
         // 1   计算当前屏幕需要多少个点
         int screenWidth = getMeasuredWidth();
         //1个点占有位置
         int oneWidth = barWidth + barInterval;
+
         //大约一页能显示多少个
-        float needCountF = screenWidth / (float) oneWidth;
-        int needCopyPositionI = 0;
-        if (frameCount > needCountF) {
-            hasMore = true;
-            //如果超过当前需要的点，需要滑动
-            float differenceValue = frameCount - needCountF;
-            LogUtil.d("OOM2","全部count="+frameCount+"一页需要的cont="+needCountF);
-            float needCopyPosition;
-            if(needCountF>differenceValue){
-                needCopyPosition  = needCountF / differenceValue;
-            }else{
-                 needCopyPosition = differenceValue / needCountF;
-            }
-            needCopyPositionI = (int) needCopyPosition;
-            LogUtil.d("OOM2","需要复制的值为"+needCopyPositionI);
+        float onePageShowCount = screenWidth / (float) oneWidth;
+        if (showPercentage > 1) {
+            //当前素材长度超过截取长度
+            return setData(innerData, frameCount, (int) (onePageShowCount * showPercentage));
         } else {
-            //小于当前的点，需要添加值
-            float differenceValue = needCountF - frameCount;
-            float needCopyPosition = frameCount / differenceValue;
-            needCopyPositionI = (int) needCopyPosition;
-            hasMore = false;
+            //当前素材长度小于截取长度
+            return setData(innerData, frameCount, (int) onePageShowCount);
         }
+
+    }
+
+
+    /**
+     * description ：整合数据，
+     * creation date: 2020/9/1
+     * user : zhangtongju
+     */
+    private ArrayList<BarData> setData(ArrayList<BarData> innerData, int frameCount, int needFrameCount) {
         ArrayList<BarData> newInnerData = new ArrayList<>();
-        for (int i = 1; i <= innerData.size(); i++) {
-            newInnerData.add(innerData.get(i - 1));
-            if (!hasMore) {
-                if (i % needCopyPositionI == 0) {
-                    newInnerData.add(innerData.get(i));//多复制一次
-                }
-            } else {
-                //太大了就多复制几次
-                for (int x = 0; x < needCopyPositionI; x++) {
-                    newInnerData.add(innerData.get(i - 1));
-                }
+        float difference = frameCount / (float) needFrameCount;
+        LogUtil.d("OOM2", "difference=" + difference + ",frameCount=" + frameCount + ",needFrameCount=" + needFrameCount);
+        for (int i = 0; i < needFrameCount; i++) {
+            //得到需要的值
+            float getI = i * difference;
+            int getIInt = (int) Math.floor(getI);
+            if (getIInt > frameCount - 1) {
+                getIInt = frameCount - 1;
             }
+            LogUtil.d("OOM2", "getIInt=" + getIInt);
+            newInnerData.add(innerData.get(getIInt));
         }
         return newInnerData;
+    }
+
+
+    public interface ProgressCallback {
+        void progress(float percent);
+        void isDone();
     }
 
 

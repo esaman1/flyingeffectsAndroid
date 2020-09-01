@@ -7,15 +7,14 @@
         android:id="@+id/tv_title_back"
         android:layout_width="0dp"
         android:layout_height="64dp"
-        android:background="@color/home_base_balk_color"
-  />
+        android:background="@color/home_base_balk_color" />
 
     <ImageView
         android:id="@+id/iv_top_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_10"
         android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/dp_10"
         android:contentDescription="@string/app_name"
         android:padding="@dimen/dp_10"
         android:src="@mipmap/back"
@@ -42,6 +41,8 @@
         android:id="@+id/tv_top_submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
         android:layout_marginEnd="@dimen/dp_15"
         android:text="@string/app_name"
         android:textColor="@color/white"
