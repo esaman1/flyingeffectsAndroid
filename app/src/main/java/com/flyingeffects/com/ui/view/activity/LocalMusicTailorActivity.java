@@ -184,10 +184,7 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
         switch (view.getId()) {
             case R.id.tv_top_submit:
                 //裁剪保存
-
                 Presenter.toSaveCutMusic(nowPlayStartTime,nowPlayEndTime);
-
-
                 break;
 
 
