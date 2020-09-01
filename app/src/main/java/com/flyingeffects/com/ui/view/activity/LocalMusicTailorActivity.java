@@ -66,6 +66,8 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
 
     private long nowPlayStartTime;
 
+    private long nowPlayEndTime;
+
 
     @Override
     protected int getLayoutId() {
@@ -92,8 +94,8 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
                     LogUtil.d("OOM3", "percent=" + percent);
                     nowPlayStartTime = (long) (allDuration * percent);
                     tv_start.setText(timeUtils.timeParse(nowPlayStartTime));
-                    long endTime = nowPlayStartTime + needDuration;
-                    tv_end.setText(timeUtils.timeParse(endTime));
+                    nowPlayEndTime   = nowPlayStartTime + needDuration;
+                    tv_end.setText(timeUtils.timeParse(nowPlayEndTime));
                 });
             }
 
@@ -170,11 +172,21 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     }
 
 
+    @Override
+    public void isAudioCutDone(String audioPath) {
+        LogUtil.d("OOM2","裁剪完成后音频的地址为"+audioPath);
+        this.finish();
+    }
+
+
     @OnClick({R.id.tv_top_submit})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
                 //裁剪保存
+
+                Presenter.toSaveCutMusic(nowPlayStartTime,nowPlayEndTime);
+
 
                 break;
 

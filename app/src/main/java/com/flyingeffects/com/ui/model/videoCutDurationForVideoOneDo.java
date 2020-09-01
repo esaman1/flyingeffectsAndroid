@@ -13,13 +13,19 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.lansosdk.box.AudioLayer;
+import com.lansosdk.box.AudioPad;
 import com.lansosdk.box.CanvasLayer;
+import com.lansosdk.box.LSOAudioLayer;
 import com.lansosdk.box.LSOScaleType;
 import com.lansosdk.box.LSOVideoOption;
+import com.lansosdk.box.OnAudioPadExecuteCompletedListener;
 import com.lansosdk.box.OnLanSongSDKCompletedListener;
 import com.lansosdk.box.OnLanSongSDKErrorListener;
 import com.lansosdk.box.OnLanSongSDKProgressListener;
 import com.lansosdk.box.VideoFrameLayer;
+import com.lansosdk.box.onAudioPadProgressListener;
+import com.lansosdk.videoeditor.AudioPadExecute;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.lansosdk.videoeditor.VideoOneDo2;
@@ -208,6 +214,43 @@ public class videoCutDurationForVideoOneDo {
     }
 
 
+
+
+    /**
+     * description ：裁剪音频
+     * creation date: 2020/9/1
+     * user : zhangtongju
+     */
+    public void cuttingAudio(Context context, String path, long startTimer, long endTimer, cutAudioCallback callback){
+        try {
+            AudioPadExecute audioPadExecute=new AudioPadExecute(context,(endTimer-startTimer)*1000);
+            AudioLayer audioLayer=   audioPadExecute.addAudioLayer(path,0,startTimer*1000,endTimer*1000);
+            audioLayer.setVolume(1f);
+            audioPadExecute.setOnAudioPadCompletedListener(new OnAudioPadExecuteCompletedListener() {
+                @Override
+                public void onCompleted(String s) {
+                    callback.isDone(s);
+                }
+            });
+            audioPadExecute.setOnAudioPadProgressListener(new onAudioPadProgressListener() {
+                @Override
+                public void onProgress(AudioPad audioPad, long l) {
+                    callback.isProgress(l);
+                }
+            });
+            audioPadExecute.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+    public interface  cutAudioCallback{
+        void isDone(String path);
+        void isProgress(long i);
+    }
 
 
 }

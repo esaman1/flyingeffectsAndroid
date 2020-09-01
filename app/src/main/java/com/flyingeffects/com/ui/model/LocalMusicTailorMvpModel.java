@@ -39,6 +39,11 @@ public class LocalMusicTailorMvpModel {
     }
 
 
+    public String   getSoundPath(){
+        return soundPath;
+    }
+
+
     public void setChartData(int[] frameGains, int frameCount) {
         this.frameCount = frameCount;
         this.frameGains = frameGains;

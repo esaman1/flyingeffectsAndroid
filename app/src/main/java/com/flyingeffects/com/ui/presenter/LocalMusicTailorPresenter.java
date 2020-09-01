@@ -12,6 +12,8 @@ import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.LocalMusicTailorCallback;
 import com.flyingeffects.com.ui.interfaces.view.LocalMusicTailorMvpView;
 import com.flyingeffects.com.ui.model.LocalMusicTailorMvpModel;
+import com.flyingeffects.com.ui.model.videoCutDurationForVideoOneDo;
+import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.record.SamplePlayer;
@@ -19,11 +21,13 @@ import com.flyingeffects.com.utils.record.soundfile.SoundFile;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 
@@ -40,6 +44,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
     private Context context;
     boolean nowMaterialIsVideo = false;
     private String soundFolder;
+    private String soundCutFolder;
     private Timer timer;
     private TimerTask task;
     //视频需要裁剪时长，毫秒
@@ -54,6 +59,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
         this.context = context;
         mVideoFolder = fileManager.getFileCachePath(context, "downVideoForMusic");
         soundFolder = fileManager.getFileCachePath(context, "downSoundForMusic");
+        soundCutFolder=fileManager.getFileCachePath(context, "downCutSoundForMusic");
     }
 
 
@@ -323,5 +329,67 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
             task = null;
         }
     }
+
+
+
+    /**
+     * description ：保存裁剪方法
+     * creation date: 2020/9/1
+     * user : zhangtongju
+     */
+    public void toSaveCutMusic(long startTimer, long endTimer){
+        showProgressDialog();
+        videoCutDurationForVideoOneDo.getInstance().cuttingAudio(context, localMusicTailorMvpModel.getSoundPath(), startTimer, endTimer, new videoCutDurationForVideoOneDo.cutAudioCallback() {
+            @Override
+            public void isDone(String path) {
+                closeProgress();
+                soundCutFolder=soundCutFolder+"/audio.mp3";
+                File file=new File(soundCutFolder);
+                if(file.exists()){
+                    file.delete();
+                }
+                try {
+                    FileUtil.copyFile(new File(path),soundCutFolder);
+                    localMusicTailorMvpView.isAudioCutDone(soundCutFolder);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    LogUtil.d("OOM2","复制文件报错"+e.getMessage());
+                }
+
+            }
+
+            @Override
+            public void isProgress(long i) {
+              Observable.just(i).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Long>() {
+                  @Override
+                  public void call(Long aLong) {
+                     // downProgressDialog.setProgress(aLong+"%");
+                  }
+              });
+            }
+        });
+    }
+
+
+
+    private void showProgressDialog(){
+        if (downProgressDialog == null) {
+            downProgressDialog = new WaitingDialog_progress(context);
+            downProgressDialog.openProgressDialog();
+        }else{
+            downProgressDialog.openProgressDialog();
+        }
+    }
+
+
+    private void closeProgress(){
+        if (downProgressDialog != null) {
+            downProgressDialog.closePragressDialog();
+            downProgressDialog = null;
+        }
+    }
+
+
+
 
 }
