@@ -12,12 +12,17 @@ import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.CutSuccess;
+import com.flyingeffects.com.enity.ReplayMessageEvent;
 import com.flyingeffects.com.ui.view.fragment.frag_choose_music_local_music;
 import com.flyingeffects.com.ui.view.fragment.frag_choose_music_recent_updates;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 
 
 /**
@@ -45,6 +50,7 @@ public class ChooseMusicActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         needDuration=getIntent().getLongExtra("needDuration",10000);
         ArrayList<Fragment> list = new ArrayList<>();
         String[] titles = {"最近更新","本地音频","视频提取","收藏音乐"};
@@ -114,11 +120,25 @@ public class ChooseMusicActivity extends BaseActivity {
     }
 
 
-
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 
     @Override
     protected void initAction() {
 
     }
+
+
+
+
+    @Subscribe
+    public void onEventMainThread( CutSuccess cutSuccess) {
+            this.finish();
+    }
+
+
+
 }

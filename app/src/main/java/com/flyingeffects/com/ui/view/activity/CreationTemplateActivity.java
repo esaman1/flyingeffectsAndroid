@@ -23,6 +23,7 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.ChooseVideoAddSticker;
+import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.manager.AlbumManager;
@@ -985,6 +986,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if (bgmPlayer != null) {
             bgmPlayer.pause();
         }
+    }
+
+
+    @Subscribe
+    public void onEventMainThread( CutSuccess cutSuccess) {
+        String nowChooseBjPath=cutSuccess.getFilePath();
+
+
     }
 
 

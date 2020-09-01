@@ -7,6 +7,7 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
+import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.ui.interfaces.view.LocalMusicTailorMvpView;
 import com.flyingeffects.com.ui.presenter.LocalMusicTailorPresenter;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 
 
 /**
@@ -175,6 +177,7 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     @Override
     public void isAudioCutDone(String audioPath) {
         LogUtil.d("OOM2","裁剪完成后音频的地址为"+audioPath);
+        EventBus.getDefault().post(new CutSuccess(audioPath));
         this.finish();
     }
 

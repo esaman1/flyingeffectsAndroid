@@ -1,159 +1,183 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_vertical"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:background="@color/black"
     android:paddingStart="15dp"
     android:paddingEnd="15dp">
 
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:id="@+id/ll_parents"
         android:layout_height="wrap_content">
 
-
         <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+
+            android:orientation="vertical"
+            android:layout_weight="1"
             android:layout_height="wrap_content">
 
+
             <LinearLayout
-                android:id="@+id/ll_choose_0"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
 
-                <TextView
+                <LinearLayout
+                    android:id="@+id/ll_choose_0"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="素材音乐"
+                        android:textColor="#ffffff"
+                        android:textSize="14sp" />
+
+
+                    <CheckBox
+                        android:id="@+id/check_box_0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:button="@null"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_choose_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="素材音乐"
-                    android:textColor="#ffffff"
-                    android:textSize="14sp" />
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="模板音乐"
+                        android:textColor="#ffffff"
+                        android:textSize="14sp" />
 
 
-                <CheckBox
-                    android:id="@+id/check_box_0"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:button="@null"
-                    />
+                    <CheckBox
+                        android:id="@+id/check_box_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:button="@null"
+                        />
+
+                </LinearLayout>
 
             </LinearLayout>
 
+
             <LinearLayout
-                android:id="@+id/ll_choose_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
+                android:layout_width="match_parent"
+                android:layout_marginTop="28dp"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
 
-                <TextView
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ll_choose_2"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="背景音乐"
+                        android:textColor="#ffffff"
+                        android:textSize="14sp" />
+
+
+                    <CheckBox
+                        android:id="@+id/check_box_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:button="@null"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_choose_3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="背景音乐"
-                    android:textColor="#ffffff"
-                    android:textSize="14sp" />
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="提取音乐"
+                        android:textColor="#ffffff"
+                        android:textSize="14sp" />
 
 
-                <CheckBox
-                    android:id="@+id/check_box_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:button="@null"
-                    />
+                    <CheckBox
+                        android:id="@+id/check_box_3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:button="@null"
+                        />
+
+                </LinearLayout>
 
             </LinearLayout>
+
+
 
         </LinearLayout>
 
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/ll_choose_2"
-
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tv_0"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="素材音乐"
-                    android:textColor="#ffffff"
-                    android:textSize="14sp" />
 
 
-                <CheckBox
-                    android:id="@+id/check_box_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:button="@null"
-                    />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/ll_choose_3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tv_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="背景音乐"
-                    android:textColor="#ffffff"
-                    android:textSize="14sp" />
-
-
-                <CheckBox
-                    android:id="@+id/check_box_3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:button="@null"
-                    />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-
+        <TextView
+            android:id="@+id/tv_add_music"
+            android:layout_width="95dp"
+            android:textSize="16sp"
+            android:text="添加音乐"
+            android:background="@drawable/add_music"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_height="60dp"/>
 
     </LinearLayout>
 
 
 
-
     <TextView
-        android:id="@+id/tv_add_music"
-        android:layout_width="95dp"
-        android:textSize="16sp"
-        android:text="添加音乐"
+        android:layout_width="250dp"
         android:background="@drawable/add_music"
         android:textColor="@color/white"
+        android:layout_marginTop="32dp"
+        android:layout_below="@+id/ll_parents"
         android:gravity="center"
-        android:layout_height="60dp"/>
+        android:layout_centerHorizontal="true"
+        android:textSize="16sp"
+        android:text="完成"
+        android:layout_height="35dp"/>
 
 
-</LinearLayout>
+
+</RelativeLayout>
