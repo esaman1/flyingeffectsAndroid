@@ -131,6 +131,8 @@ public class frag_choose_music_recent_updates extends BaseFragment {
         params.put("pageSize", perPageCount + "");
         Observable ob = null;
         if (id == 0) {
+
+
             ob = Api.getDefault().musicList(BaseConstans.getRequestHead(params));
         } else {
             //2 我的收藏
