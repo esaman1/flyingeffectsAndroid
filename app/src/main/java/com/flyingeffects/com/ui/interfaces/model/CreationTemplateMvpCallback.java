@@ -29,5 +29,7 @@ public interface CreationTemplateMvpCallback {
 
     void showCreateTemplateAnim(boolean isShow);
 
+    void showMusicBtn(boolean isShow);
+
 
 }

@@ -128,6 +128,10 @@ public class CreationTemplateMvpModel {
     private boolean isCheckedMatting = true;
     private HorizontalListView hListView;
     /**
+     * 当前添加的音乐路径
+     */
+    private String addChooseBjPath;
+    /**
      * 需要裁剪视频的集合
      */
     private ArrayList<videoType> cutVideoPathList = new ArrayList<>();
@@ -152,6 +156,8 @@ public class CreationTemplateMvpModel {
      * originalPath  初始化第一张的时长
      */
     private String originalPath;
+
+    private StickerView nowChooseStickerView;
 
     private ArrayList<StickerAnim> listAllAnima;
     private ArrayList<StickerView> nowChooseSubLayerAnimList = new ArrayList<>();
@@ -215,6 +221,13 @@ public class CreationTemplateMvpModel {
         closeAllAnim();
         deleteSubLayerSticker();
 //        new Handler().postDelayed(() -> deleteSubLayerSticker(), 200);
+    }
+
+
+
+    public void setAddChooseBjPath(String path){
+        addChooseBjPath=path;
+
     }
 
     public void initStickerView(String imagePath, String originalPath) {
@@ -382,8 +395,7 @@ public class CreationTemplateMvpModel {
         drawable_news_0.setBounds(0, 0, radio_size, radio_size);
         drawable_news_1.setBounds(0, 0, radio_size, radio_size);
         drawable_news_2.setBounds(0, 0, radio_size, radio_size);
-
-
+        tv_2.setText("提取音乐");
         check_box_0.setCompoundDrawables(drawable_news, null, null, null);
         check_box_1.setCompoundDrawables(drawable_news_0, null, null, null);
         check_box_2.setCompoundDrawables(drawable_news_1, null, null, null);
@@ -441,21 +453,23 @@ public class CreationTemplateMvpModel {
     View.OnClickListener tvMusicListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            clearCheckBox();
+
             switch (view.getId()) {
                 case R.id.check_box_0:
                 case R.id.tv_0:
-                    check_box_0.setChecked(true);
+
+                    chooseMaterialMusic();
                     break;
 
                 case R.id.tv_1:
                 case R.id.check_box_1:
-                    check_box_1.setChecked(true);
+                    chooseTemplateMusic();
+
                     break;
 
                 case R.id.tv_2:
                 case R.id.check_box_2:
-                    check_box_2.setChecked(true);
+                    chooseAddChooseBjPath();
                     break;
 
                 case R.id.check_box_3:
@@ -465,6 +479,52 @@ public class CreationTemplateMvpModel {
             }
         }
     };
+
+
+
+    /**
+     * description ：选择素材音乐
+     * creation date: 2020/9/2
+     * user : zhangtongju
+     */
+    private void chooseMaterialMusic(){
+        if(nowChooseStickerView!=null){
+            if (albumType.isVideo(GetPathType.getInstance().getPathType(nowChooseStickerView.getOriginalPath()))) {
+                clearCheckBox();
+                check_box_0.setChecked(true);
+            }else{
+                ToastUtil.showToast("当前素材不是视频");
+            }
+        }
+    }
+
+
+    /**
+     * description ：选择模板音乐
+     * creation date: 2020/9/2
+     * user : zhangtongju
+     */
+    private void chooseTemplateMusic(){
+        if(!TextUtils.isEmpty(mVideoPath)){
+            clearCheckBox();
+            check_box_1.setChecked(true);
+        }else{
+            ToastUtil.showToast("没有模板音乐");
+        }
+    }
+
+
+    private void chooseAddChooseBjPath(){
+        if(!TextUtils.isEmpty(addChooseBjPath)){
+            clearCheckBox();
+            check_box_2.setChecked(true);
+        }else{
+            ToastUtil.showToast("没有提取音乐");
+        }
+    }
+
+
+
 
     private void clearCheckBox() {
         check_box_0.setChecked(false);
@@ -937,6 +997,15 @@ public class CreationTemplateMvpModel {
                     startTimer(stickView);
                 }
                 isIntoDragMove = false;
+                if(stickView.isFirstAddSticker()){
+                    //显示音乐按钮
+                callback.showMusicBtn(true);
+                }else{
+                    callback.showMusicBtn(false);
+                }
+                nowChooseStickerView=stickView;
+
+
             }
         });
         stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
@@ -960,6 +1029,7 @@ public class CreationTemplateMvpModel {
             stickView.setIsmaterial(false);
         }
         if (isFirstAdd) {
+            nowChooseStickerView=stickView;
             stickView.setFirstAddSticker(true);
             if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
 

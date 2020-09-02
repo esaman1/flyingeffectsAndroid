@@ -167,6 +167,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private int templateId;
 
+    @BindView(R.id.tv_music)
+    TextView tv_music;
+
 
     @Override
     protected int getLayoutId() {
@@ -763,6 +766,16 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
     }
 
+    @Override
+    public void showMusicBtn(boolean isShow) {
+        if(isShow){
+            tv_music.setVisibility(View.VISIBLE);
+        }else{
+            tv_music.setVisibility(View.GONE);
+        }
+
+    }
+
 
     /**
      * description ：动画初始化完成，接下来就开始预览
@@ -992,7 +1005,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Subscribe
     public void onEventMainThread( CutSuccess cutSuccess) {
         String nowChooseBjPath=cutSuccess.getFilePath();
-
+        presenter.setAddChooseBjPath(nowChooseBjPath);
 
     }
 

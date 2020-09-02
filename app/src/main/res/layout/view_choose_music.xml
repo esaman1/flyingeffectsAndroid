@@ -121,6 +121,7 @@
                 <LinearLayout
                     android:id="@+id/ll_choose_3"
                     android:layout_width="wrap_content"
+                    android:visibility="invisible"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"

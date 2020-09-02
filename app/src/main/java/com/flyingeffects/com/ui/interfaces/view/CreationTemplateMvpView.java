@@ -25,6 +25,9 @@ public interface CreationTemplateMvpView {
 
     void showCreateTemplateAnim(boolean isShow);
 
+
+    void showMusicBtn(boolean isShow);
+
     void animIsComplate();
 
 //    void showRenderVideoTime(int duration);

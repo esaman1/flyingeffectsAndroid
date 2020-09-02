@@ -30,6 +30,10 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.CheckedChanged(isChecked);
     }
 
+    public void setAddChooseBjPath(String path){
+        creationTemplatemodel.setAddChooseBjPath(path);
+    }
+
 
     public void intoOnPause(){
         creationTemplatemodel.intoOnPause();
@@ -154,6 +158,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     @Override
     public void showCreateTemplateAnim(boolean isShow) {
         creationTemplatemvpView.showCreateTemplateAnim(isShow);
+    }
+
+    @Override
+    public void showMusicBtn(boolean isShow) {
+        creationTemplatemvpView.showMusicBtn(isShow);
     }
 
 
