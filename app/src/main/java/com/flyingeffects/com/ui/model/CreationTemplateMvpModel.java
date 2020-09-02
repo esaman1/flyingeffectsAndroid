@@ -117,7 +117,7 @@ public class CreationTemplateMvpModel {
     private List<View> listForInitBottom = new ArrayList<>();
     private String mVideoPath;
     private ViewLayerRelativeLayout viewLayerRelativeLayout;
-
+    private int nowChooseMusicId=0;
     private ArrayList<AnimStickerModel> listForStickerModel = new ArrayList<>();
     private boolean isDestroy = false;
     private VideoInfo videoInfo;
@@ -227,7 +227,7 @@ public class CreationTemplateMvpModel {
 
     public void setAddChooseBjPath(String path){
         addChooseBjPath=path;
-
+        chooseAddChooseBjPath();
     }
 
     public void initStickerView(String imagePath, String originalPath) {
@@ -457,18 +457,20 @@ public class CreationTemplateMvpModel {
             switch (view.getId()) {
                 case R.id.check_box_0:
                 case R.id.tv_0:
-
+                    nowChooseMusicId=1;
                     chooseMaterialMusic();
                     break;
 
                 case R.id.tv_1:
                 case R.id.check_box_1:
+                    nowChooseMusicId=2;
                     chooseTemplateMusic();
 
                     break;
 
                 case R.id.tv_2:
                 case R.id.check_box_2:
+                    nowChooseMusicId=3;
                     chooseAddChooseBjPath();
                     break;
 
@@ -492,6 +494,8 @@ public class CreationTemplateMvpModel {
             if (albumType.isVideo(GetPathType.getInstance().getPathType(nowChooseStickerView.getOriginalPath()))) {
                 clearCheckBox();
                 check_box_0.setChecked(true);
+
+                getVideoVoice(nowChooseStickerView.getOriginalPath(), soundFolder);
             }else{
                 ToastUtil.showToast("当前素材不是视频");
             }
@@ -508,6 +512,8 @@ public class CreationTemplateMvpModel {
         if(!TextUtils.isEmpty(mVideoPath)){
             clearCheckBox();
             check_box_1.setChecked(true);
+            videoVoicePath="";
+            callback.getBgmPath("");
         }else{
             ToastUtil.showToast("没有模板音乐");
         }
@@ -518,6 +524,8 @@ public class CreationTemplateMvpModel {
         if(!TextUtils.isEmpty(addChooseBjPath)){
             clearCheckBox();
             check_box_2.setChecked(true);
+            videoVoicePath=addChooseBjPath;
+            callback.getBgmPath(addChooseBjPath);
         }else{
             ToastUtil.showToast("没有提取音乐");
         }
@@ -1031,23 +1039,22 @@ public class CreationTemplateMvpModel {
         if (isFirstAdd) {
             nowChooseStickerView=stickView;
             stickView.setFirstAddSticker(true);
-            if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
-
-                LogUtil.d("OOM", "mVideoPath=" + mVideoPath);
-                if (!TextUtils.isEmpty(mVideoPath)) {
-                    LogUtil.d("OOM", "默认是有背景");
-                    //有背景音乐
-                    stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
-                    callback.getBgmPath("");
-                    stickView.setOpenVoice(false);
-                } else {
-                    LogUtil.d("OOM", "默认是没有背景");
-                    //无背景音乐
-                    stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_open_voice));
-                    stickView.setOpenVoice(true);
-                    getVideoVoice(stickView.getOriginalPath(), soundFolder);
-                }
-            }
+//            if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
+//                LogUtil.d("OOM", "mVideoPath=" + mVideoPath);
+//                if (!TextUtils.isEmpty(mVideoPath)) {
+//                    LogUtil.d("OOM", "默认是有背景");
+//                    //有背景音乐
+//                    stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
+//                    callback.getBgmPath("");
+//                    stickView.setOpenVoice(false);
+//                } else {
+//                    LogUtil.d("OOM", "默认是没有背景");
+//                    //无背景音乐
+//                    stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_open_voice));
+//                    stickView.setOpenVoice(true);
+//                    getVideoVoice(stickView.getOriginalPath(), soundFolder);
+//                }
+//            }
         }
         if (hasReplace) {
             stickView.setLeftBottomBitmap(context.getDrawable(R.mipmap.sticker_change));
@@ -1359,6 +1366,9 @@ public class CreationTemplateMvpModel {
                     listAllSticker.clear();
                     cutSuccessNum = 0;
                     cutVideoPathList.clear();
+
+
+
                     backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, new backgroundDraw.saveCallback() {
                         @Override
                         public void saveSuccessPath(String path, int progress) {

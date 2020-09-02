@@ -42,15 +42,18 @@
                 android:id="@+id/switch_button"
                 android:layout_width="40dp"
                 android:layout_height="24dp"
-                android:layout_marginStart="9dp"
-                app:sb_border_width="@dimen/dp_2"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp"
+                app:sb_border_width="@dimen/dp_0"
+                app:sb_show_indicator="false"
+                app:sb_uncheckcircle_color="@color/dark_gray"
+                app:sb_checked_color="@color/white"
+                app:sb_uncheck_color="@color/black"
                 app:sb_button_color="@color/home_base_blue_color"
                 app:sb_checked="true"
-                app:sb_checked_color="@color/base_black"
-                app:sb_checkline_color="@color/base_black"
-                app:sb_show_indicator="false"
-                app:sb_uncheckcircle_radius="@dimen/dp_0"
-                app:sb_uncheckcircle_width="0dp" />
+
+
+            />
 
 
         </LinearLayout>
@@ -161,9 +164,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
+                android:contentDescription="@string/app_name"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/green"
-                android:contentDescription="@string/app_name" />
+                android:src="@mipmap/green" />
         </RelativeLayout>
 
     </RelativeLayout>
@@ -344,7 +347,6 @@
             android:gravity="center"
             android:text="动画"
             android:textColor="@color/white" />
-
 
 
         <TextView
