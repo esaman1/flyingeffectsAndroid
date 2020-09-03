@@ -87,10 +87,10 @@ import static com.umeng.socialize.utils.ContextUtil.getPackageName;
  * @author zhang
  */
 public class HomeMainActivity extends FragmentActivity {
-//    private ImageView[] mIvMenu = new ImageView[4];
+    //    private ImageView[] mIvMenu = new ImageView[4];
     private ImageView[] mIvMenuBack = new ImageView[4];
     private TextView[] tv_main = new TextView[4];
-//    private int[] img_Id = {R.id.iv_menu_0, R.id.iv_menu_1, R.id.iv_menu_2, R.id.iv_menu_3};
+    //    private int[] img_Id = {R.id.iv_menu_0, R.id.iv_menu_1, R.id.iv_menu_2, R.id.iv_menu_3};
     private int[] mImBackId = {R.id.iv_back_menu_0, R.id.iv_back_menu_1, R.id.iv_back_menu_2, R.id.iv_back_menu_3};
     public HomeMainActivity ThisMain;
     private int[] tv_main_button = {R.id.tv_main_0, R.id.tv_main_1, R.id.tv_main_2, R.id.tv_main_3};
@@ -112,7 +112,7 @@ public class HomeMainActivity extends FragmentActivity {
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         setContentView(R.layout.act_home_main);
-        message_count=findViewById(R.id.message_count);
+        message_count = findViewById(R.id.message_count);
         StatusBarCompat.setStatusBarColor(this, Color.parseColor("#181818"));
         ThisMain = this;
         final ActionBar actionBar = getActionBar();
@@ -139,8 +139,6 @@ public class HomeMainActivity extends FragmentActivity {
 
         SegJni.nativeCreateSegHandler(HomeMainActivity.this, ConUtil.getFileContent(HomeMainActivity.this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
     }
-
-
 
 
     private void requestUserInfo() {
@@ -188,18 +186,12 @@ public class HomeMainActivity extends FragmentActivity {
                 AdManager.getInstance().showCpAd(HomeMainActivity.this, AdConfigs.AD_SCREEN, new AdManager.Callback() {
                     @Override
                     public void adClose() {
-
-
                         ShowPraiseModel.statisticsCloseNum();
-
-                        if(ShowPraiseModel.canShowAlert()&&!ShowPraiseModel.getHasComment()&&ShowPraiseModel.getIsNewUser()&&!ShowPraiseModel.ToDayHasShowAd()){
+                        if (ShowPraiseModel.canShowAlert() && !ShowPraiseModel.getHasComment() && ShowPraiseModel.getIsNewUser() && !ShowPraiseModel.ToDayHasShowAd()) {
                             new Handler().postDelayed(() -> {
                                 showPraise();
-                            },3000);
+                            }, 3000);
                         }
-
-
-
                     }
                 });
                 destroyTimer();
@@ -209,10 +201,7 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-
-
-
-    private void showPraise(){
+    private void showPraise() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(
                 //去除黑边
@@ -243,17 +232,16 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-
     public void reception() {
-            try {
-                Uri uri = Uri.parse("market://details?id=" + getPackageName());
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            } catch (Exception e) {
-                ToastUtil.showToast(getString(R.string.install_app_store_notification));
-                e.printStackTrace();
-            }
+        try {
+            Uri uri = Uri.parse("market://details?id=" + getPackageName());
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } catch (Exception e) {
+            ToastUtil.showToast(getString(R.string.install_app_store_notification));
+            e.printStackTrace();
+        }
 
 
     }
@@ -455,28 +443,28 @@ public class HomeMainActivity extends FragmentActivity {
                 case R.id.iv_back_menu_0:
                     whichMenuSelect(0);
 
-                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click","1");
+                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "1");
                     statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "5_bj");
                     break;
 //                case R.id.iv_menu_1:
                 case R.id.iv_back_menu_1:
-                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click","2");
+                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "2");
 
                     whichMenuSelect(1);
                     break;
 //                case R.id.iv_menu_2:
                 case R.id.iv_back_menu_2:
                     whichMenuSelect(2);
-                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click","3");
+                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "3");
 
                     statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "12_news");
-                    if(BaseConstans.hasLogin()){
+                    if (BaseConstans.hasLogin()) {
                         requestMessageCount();
                     }
                     break;
 //                case R.id.iv_menu_3:
                 case R.id.iv_back_menu_3:
-                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click","4");
+                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "4");
 
                     statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "3_mine");
                     whichMenuSelect(3);
@@ -520,9 +508,9 @@ public class HomeMainActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
-        if(BaseConstans.hasLogin()){
+        if (BaseConstans.hasLogin()) {
             requestMessageCount();
-        }else{
+        } else {
             message_count.setVisibility(View.GONE);
         }
     }
@@ -693,8 +681,6 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-
-
     /**
      * description ：请求粉丝数，赞和评论数量
      * creation date: 2020/7/29
@@ -711,21 +697,20 @@ public class HomeMainActivity extends FragmentActivity {
 
             @Override
             protected void _onNext(messageCount data) {
-                if(message_count!=null){
-                    String allCount=data.getAll_num();
+                if (message_count != null) {
+                    String allCount = data.getAll_num();
                     int intAllCount = Integer.parseInt(allCount);
                     if (intAllCount == 0) {
                         message_count.setVisibility(View.GONE);
                     } else {
                         message_count.setVisibility(View.VISIBLE);
-                        message_count.setText(intAllCount+"");
+                        message_count.setText(intAllCount + "");
                     }
                 }
 
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
-
 
 
 }
