@@ -96,6 +96,11 @@ public interface ApiService {
 
 
     @FormUrlEncoded
+    @POST("/api/message/uploadSearchResult")
+    Observable<HttpResult<Object>> uploadSearchResult(@FieldMap Map<String, String> params);
+
+
+    @FormUrlEncoded
     @POST("/api/template/keywordList")
     Observable<HttpResult<List<Object>>> keywordList(@FieldMap Map<String, String> params);
 

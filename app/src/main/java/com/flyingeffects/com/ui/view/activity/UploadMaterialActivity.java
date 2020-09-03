@@ -141,6 +141,9 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
 
     private String huaweiFolder;
 
+    //1 是来自搜索的提交 0 表示来自我的页面
+    private int isFrom;
+
     //0 表示不允许合拍，1表示允许合拍
     private int is_with_play;
 
@@ -162,6 +165,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         Presenter = new UploadMaterialMVPPresenter(this, this);
         //点击进入视频剪切界面
         String videoPath = getIntent().getStringExtra("videoPath");
+        isFrom=getIntent().getIntExtra("isFrom",0);
         initVideoDrawPad(videoPath, false);
         UiStep.nowUiTag = "";
         UiStep.isFromDownBj = false;
@@ -510,7 +514,13 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         LogUtil.d("OOM","is_with_play="+isChecked);
         // 启动时间
         LogUtil.d("OOM2", params.toString());
-        Observable ob = Api.getDefault().toLoadTemplate(BaseConstans.getRequestHead(params));
+        Observable ob;
+        if(isFrom!=0){
+            ob = Api.getDefault().uploadSearchResult(BaseConstans.getRequestHead(params));
+        }else{
+            ob = Api.getDefault().toLoadTemplate(BaseConstans.getRequestHead(params));
+        }
+
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(UploadMaterialActivity.this) {
             @Override
             protected void _onError(String message) {

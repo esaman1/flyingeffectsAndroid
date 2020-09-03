@@ -1,11 +1,13 @@
 package com.flyingeffects.com.ui.view.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -21,9 +23,11 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
+import com.flyingeffects.com.ui.view.activity.UploadMaterialActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -34,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
@@ -63,8 +68,10 @@ public class fragBjSearch extends BaseFragment {
     private String searchText;
     //0 表示搜索出来模板 1表示搜索内容为背景
     private int isFrom;
+    private boolean hasSearch = false;
 
-    private boolean hasSearch=false;
+    @BindView(R.id.relative_add)
+    RelativeLayout relative_add;
 
 
     @Override
@@ -140,7 +147,7 @@ public class fragBjSearch extends BaseFragment {
                 public void run() {
                     isVisible = true;
                     if (allData != null && allData.size() == 0) {
-                        if(hasSearch){
+                        if (hasSearch) {
                             ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
                         }
 
@@ -222,8 +229,8 @@ public class fragBjSearch extends BaseFragment {
 
     private void requestFagData(boolean isShowDialog) {
 
-        if(!TextUtils.isEmpty(searchText)){
-            hasSearch=true;
+        if (!TextUtils.isEmpty(searchText)) {
+            hasSearch = true;
             HashMap<String, String> params = new HashMap<>();
             params.put("search", searchText);
             params.put("page", selectPage + "");
@@ -250,7 +257,7 @@ public class fragBjSearch extends BaseFragment {
                     }
                     if (isRefresh && data.size() == 0) {
                         statisticsEventAffair.getInstance().setFlag(getActivity(), "10_Noresults", searchText);
-
+                        showNoData(true);
                         if (isVisible) {
                             ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
                         }
@@ -261,6 +268,8 @@ public class fragBjSearch extends BaseFragment {
                                 statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none_bj", searchText);
                             }
                         }
+                    }else{
+                        showNoData(false);
                     }
                     if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
                         ToastUtil.showToast(getResources().getString(R.string.no_more_data));
@@ -290,8 +299,31 @@ public class fragBjSearch extends BaseFragment {
         } else {
             ToastUtil.showToast("目标页面已销毁");
         }
-
     }
+
+    @OnClick({R.id.relative_add})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.relative_add:
+
+                AlbumManager.chooseVideo( getActivity(), 1, 1, (tag, paths, isCancel, albumFileList) -> {
+                    if (!isCancel) {
+                        Intent intent = new Intent(getActivity(), UploadMaterialActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra("videoPath", paths.get(0));
+                        intent.putExtra("isFrom",1);
+                        startActivity(intent);
+                    }
+                }, "");
+
+
+
+
+                break;
+
+        }
+    }
+
 
 
 }

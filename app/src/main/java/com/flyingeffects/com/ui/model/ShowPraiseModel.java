@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.model;
 
 
+import com.flyingeffects.com.utils.LogUtil;
 import com.orhanobut.hawk.Hawk;
 
 import java.util.Calendar;
@@ -20,14 +21,29 @@ public class ShowPraiseModel {
      * user : zhangtongju
      */
     public  static  boolean getIsNewUser() {
-        int count =Hawk.get("keepAlbumNum");
-        return count<5;
+        int num = 0;
+        try{
+            num  =Hawk.get("keepAlbumNum");
+        }catch (Exception e){
+            LogUtil.d("OOM",e.getMessage());
+        }
+
+        return num<5;
     }
 
     public static void keepAlbumCount(){
-        int num= Hawk.get("keepAlbumNum");
-        num++;
-        Hawk.put("keepAlbumNum", num);
+
+        int num = 0;
+        try{
+            num  =Hawk.get("keepAlbumNum");
+        }catch (Exception e){
+            LogUtil.d("OOM",e.getMessage());
+        }finally {
+            num++;
+            Hawk.put("keepAlbumNum", num);
+        }
+
+
     }
 
 
@@ -39,9 +55,18 @@ public class ShowPraiseModel {
      * user : zhangtongju
      */
     public  static  void statisticsCloseNum() {
-        int num = Hawk.get("statisticsCloseNum");
-        num++;
-        Hawk.put("statisticsCloseNum", num);
+        int num = 0;
+        try{
+            num  = Hawk.get("statisticsCloseNum");
+        }catch (Exception e){
+            LogUtil.d("OOM",e.getMessage());
+        }finally {
+            num++;
+            Hawk.put("statisticsCloseNum", num);
+        }
+
+
+
     }
 
 
@@ -49,7 +74,15 @@ public class ShowPraiseModel {
      * 关闭三次后就不显示弹窗
      */
     public  static  boolean canShowAlert() {
-        int num = Hawk.get("statisticsCloseNum");
+
+
+        int num = 0;
+        try{
+            num  =Hawk.get("statisticsCloseNum");
+        }catch (Exception e){
+            LogUtil.d("OOM",e.getMessage());
+        }
+
         return num < 3;
     }
 
@@ -101,8 +134,13 @@ public class ShowPraiseModel {
      * 关闭三次后就不显示弹窗
      */
     public  static  boolean getHasComment() {
-        int getHasComment=Hawk.get("setHasComment");
-        return getHasComment!=0;
+        int num = 0;
+        try{
+            num  =Hawk.get("setHasComment");
+        }catch (Exception e){
+            LogUtil.d("OOM",e.getMessage());
+        }
+        return num!=0;
     }
 
 
