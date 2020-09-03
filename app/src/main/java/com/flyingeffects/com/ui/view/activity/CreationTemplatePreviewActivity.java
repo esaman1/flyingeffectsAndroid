@@ -23,6 +23,7 @@ import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.StimulateControlManage;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplatePreviewMvpView;
+import com.flyingeffects.com.ui.model.ShowPraiseModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplatePreviewPresenter;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -39,6 +40,7 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.nineton.ntadsdk.itr.VideoAdCallBack;
 import com.nineton.ntadsdk.manager.VideoAdManager;
+import com.orhanobut.hawk.Hawk;
 
 import java.io.File;
 import java.io.IOException;
@@ -179,6 +181,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
     private void showKeepSuccessDialog(String path) {
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
+            ShowPraiseModel.keepAlbumCount();
             AlertDialog.Builder builder = new AlertDialog.Builder( //去除黑边
                     new ContextThemeWrapper(CreationTemplatePreviewActivity.this, R.style.Theme_Transparent));
             builder.setTitle(R.string.notification);
@@ -191,6 +194,9 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
             dialog.show();
         }
     }
+
+
+
 
     @OnClick({R.id.tv_back, R.id.tv_save, R.id.rela_parent_content})
     public void onClick(View v) {

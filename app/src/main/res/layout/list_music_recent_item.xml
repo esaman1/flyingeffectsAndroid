@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:gravity="center_vertical"
     android:background="#181818"
+    android:gravity="center_vertical"
     android:orientation="horizontal">
 
 
@@ -14,13 +14,12 @@
         <ImageView
             android:id="@+id/iv_cover"
             android:layout_width="68dp"
-            android:scaleType="centerCrop"
             android:layout_height="68dp"
             android:contentDescription="@string/app_name"
-            android:layout_marginStart="16dp"
-            android:src="@mipmap/icon_wx" />
+            android:scaleType="centerCrop" />
 
         <ImageView
+            android:id="@+id/iv_play_music"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -31,38 +30,38 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_weight="1"
-        android:layout_marginStart="10dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
-            android:textColor="#F0F0F0"
-            android:textSize="16sp"
             android:layout_height="wrap_content"
-            />
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textColor="#F0F0F0"
+            android:textSize="16sp" />
 
 
         <TextView
             android:id="@+id/tv_time"
-            android:textColor="#F0F0F0"
-            android:layout_marginTop="7dp"
-            android:textSize="16sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-           />
+            android:layout_marginTop="7dp"
+            android:textColor="#F0F0F0"
+            android:textSize="16sp" />
 
 
         <TextView
             android:id="@+id/tv_user"
             android:layout_width="wrap_content"
-            android:textColor="#727272"
-            android:textSize="12sp"
-            android:layout_marginTop="7dp"
             android:layout_height="wrap_content"
-            android:text="创作的原生" />
+            android:layout_marginTop="7dp"
+            android:text="创作的原生"
+            android:textColor="#727272"
+            android:textSize="12sp" />
 
 
     </LinearLayout>
@@ -71,8 +70,8 @@
     <ImageView
         android:id="@+id/iv_collect"
         android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:src="@mipmap/new_version_collect" />
+        android:padding="1dp"
+        android:layout_height="22dp" />
 
 
     <TextView
@@ -80,11 +79,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/message_focus"
         android:paddingStart="14dp"
         android:paddingTop="6dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:paddingEnd="14dp"
         android:paddingBottom="6dp"
         android:text="使用"

@@ -189,6 +189,13 @@
             android:theme="@style/TransparentTheme" />
 
         <activity
+            android:name="com.flyingeffects.com.ui.view.activity.searchMusicActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+
+
+
+        <activity
             android:name="com.flyingeffects.com.ui.view.activity.CreationTemplateActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />

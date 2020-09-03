@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -9,7 +10,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -45,6 +48,7 @@ import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.SPHelper;
 import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.ui.model.ShowPraiseModel;
 import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
 import com.flyingeffects.com.ui.view.fragment.frag_Bj;
 import com.flyingeffects.com.ui.view.fragment.frag_message;
@@ -75,6 +79,7 @@ import rx.Observable;
 import rx.subjects.PublishSubject;
 
 import static com.flyingeffects.com.constans.BaseConstans.getChannel;
+import static com.umeng.socialize.utils.ContextUtil.getPackageName;
 
 
 /****
@@ -113,7 +118,6 @@ public class HomeMainActivity extends FragmentActivity {
         final ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.hide();
-
         }
         fragmentManager = getSupportFragmentManager();
         clearAllData();
@@ -181,11 +185,77 @@ public class HomeMainActivity extends FragmentActivity {
         task = new TimerTask() {
             @Override
             public void run() {
-                AdManager.getInstance().showCpAd(HomeMainActivity.this, AdConfigs.AD_SCREEN);
+                AdManager.getInstance().showCpAd(HomeMainActivity.this, AdConfigs.AD_SCREEN, new AdManager.Callback() {
+                    @Override
+                    public void adClose() {
+
+
+                        ShowPraiseModel.statisticsCloseNum();
+
+                        if(ShowPraiseModel.canShowAlert()&&!ShowPraiseModel.getHasComment()&&ShowPraiseModel.getIsNewUser()&&!ShowPraiseModel.ToDayHasShowAd()){
+                            new Handler().postDelayed(() -> {
+                                showPraise();
+                            },3000);
+                        }
+
+
+
+                    }
+                });
                 destroyTimer();
             }
         };
         timer.schedule(task, second * 1000, second * 1000);
+    }
+
+
+
+
+
+    private void showPraise(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                //去除黑边
+                new ContextThemeWrapper(this, R.style.Theme_Transparent));
+        builder.setTitle(this.getString(R.string.notification));
+
+        builder.setMessage("如果好用的话给我们好评吧"
+        );
+
+
+        builder.setNegativeButton(getString(R.string.reject), (dialog, which) -> {
+            dialog.dismiss();
+
+        });
+
+        builder.setPositiveButton(getString(R.string.to_good_comment), (dialog, which) -> {
+            ShowPraiseModel.setHasComment();
+            reception();
+            dialog.dismiss();
+        });
+
+        builder.setCancelable(true);
+        Dialog mDialog = builder.show();
+        mDialog.setCanceledOnTouchOutside(false);
+        mDialog.show();
+
+
+    }
+
+
+
+    public void reception() {
+            try {
+                Uri uri = Uri.parse("market://details?id=" + getPackageName());
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            } catch (Exception e) {
+                ToastUtil.showToast(getString(R.string.install_app_store_notification));
+                e.printStackTrace();
+            }
+
+
     }
 
     /**

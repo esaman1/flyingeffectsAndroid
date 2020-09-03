@@ -174,6 +174,18 @@ public class ChooseMusic implements Serializable {
     private String nickname;
     private String photourl;
 
+    public boolean isPlaying() {
+        return isPlaying;
+    }
+
+    public void setPlaying(boolean playing) {
+        isPlaying = playing;
+    }
+
+    private boolean isPlaying=false;
+
+
+
     public int getIs_collection() {
         return is_collection;
     }

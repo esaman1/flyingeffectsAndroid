@@ -49,11 +49,43 @@ public class AdManager {
                 }
             });
         });
-
-
     }
 
 
+
+    public void showCpAd(Context context,String  id,Callback callback){
+        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+            ScreenAdManager screenAdManager = new ScreenAdManager();
+            screenAdManager.showScreenAd((Activity) context,id , new ScreenAdCallBack() {
+                @Override
+                public void onScreenAdShow() {
+                    LogUtil.d("OOM","onScreenAdShow");
+                }
+
+                @Override
+                public void onScreenAdError(String errorMsg) {
+                    LogUtil.d("OOM","onScreenAdError="+errorMsg);
+                }
+
+                @Override
+                public void onScreenAdClose() {
+                    callback.adClose();
+                    LogUtil.d("OOM","onScreenAdClose=");
+                }
+
+                @Override
+                public boolean onScreenAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
+                    return false;
+                }
+            });
+        });
+    }
+
+
+    public interface  Callback{
+        void adClose();
+
+    }
 
 
 }

@@ -408,7 +408,8 @@ public class PreviewUpAndDownMvpModel {
         AdSlot adSlot = new AdSlot.Builder()
                 .setCodeId(AdConfigs.POST_ID_CSJ_Feed)
                 .setSupportDeepLink(true)
-                .setExpressViewAcceptedSize(expressViewWidth, expressViewHeight) //期望模板广告view的size,单位dp
+              .setImageAcceptedSize(1080, 1920) //符合广告场景的广告尺寸
+                .setExpressViewAcceptedSize(1080, 1920) //期望模板广告view的size,单位dp
                 .setAdCount(1) //请求广告数量为1到3条
                 .build();
         //step4:请求广告,对请求回调的广告作渲染处理

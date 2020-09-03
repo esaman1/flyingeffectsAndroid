@@ -1,7 +1,10 @@
 package com.flyingeffects.com.ui.view.activity;
 
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.RelativeLayout;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -41,6 +44,9 @@ public class ChooseMusicActivity extends BaseActivity {
 
     FragmentManager manager;
 
+    @BindView(R.id.relative_top)
+    RelativeLayout relative_top;
+
     private long needDuration;
 
     @Override
@@ -79,6 +85,16 @@ public class ChooseMusicActivity extends BaseActivity {
         bundle_2.putSerializable("id",2);
         fragment_2.setArguments(bundle_2);
         list.add(fragment_2);
+
+
+        relative_top.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(ChooseMusicActivity.this,searchMusicActivity.class);
+                intent.putExtra("needDuration",needDuration);
+                startActivity(intent);
+            }
+        });
 
 
 

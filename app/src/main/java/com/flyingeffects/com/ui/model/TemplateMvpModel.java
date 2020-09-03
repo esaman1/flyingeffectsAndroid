@@ -49,6 +49,7 @@ import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.glidebitmappool.GlideBitmapPool;
 import com.megvii.segjni.SegJni;
+import com.orhanobut.hawk.Hawk;
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.SxveConstans;
 import com.shixing.sxve.ui.albumType;
@@ -366,6 +367,8 @@ public class TemplateMvpModel {
 
     private void showDialog(String path) {
         if (!DoubleClick.getInstance().isFastDoubleClick()&&!isOnDestroy) {
+            ShowPraiseModel.keepAlbumCount();
+            keepAlbumCount();
             LogUtil.d("showDialog", "showDialog");
             AlertDialog.Builder builder = new AlertDialog.Builder(
                     //去除黑边
@@ -379,6 +382,9 @@ public class TemplateMvpModel {
 
 
             builder.setNegativeButton(context.getString(R.string.got_it), (dialog, which) -> {
+
+
+
                 dialog.dismiss();
             });
             builder.setCancelable(true);
@@ -387,6 +393,14 @@ public class TemplateMvpModel {
             mDialog.show();
         }
     }
+
+    private void keepAlbumCount(){
+        int num=Hawk.get("keepAlbumNum");
+        num++;
+        Hawk.put("keepAlbumNum", num);
+    }
+
+
 
 
     /**
