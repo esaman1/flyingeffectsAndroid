@@ -8,6 +8,10 @@
     android:paddingEnd="15dp">
 
 
+
+
+
+
     <LinearLayout
         android:layout_width="0dp"
         android:id="@+id/ll_0"

@@ -17,7 +17,6 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-
             android:orientation="vertical"
             android:layout_weight="1"
             android:layout_height="wrap_content">
@@ -26,6 +25,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:orientation="horizontal"
+                android:id="@+id/ll_line_0"
                 android:layout_height="wrap_content">
 
                 <LinearLayout
@@ -175,6 +175,7 @@
         android:textColor="@color/white"
         android:layout_marginTop="32dp"
         android:layout_below="@+id/ll_parents"
+        android:visibility="gone"
         android:gravity="center"
         android:layout_centerHorizontal="true"
         android:textSize="16sp"
