@@ -121,6 +121,10 @@
 
 
 
+        <activity
+            android:name="com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.ReportActivity"

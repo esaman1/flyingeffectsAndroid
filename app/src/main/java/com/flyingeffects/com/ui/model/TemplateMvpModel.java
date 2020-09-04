@@ -43,6 +43,7 @@ import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.AdHintActivity;
 import com.flyingeffects.com.ui.view.activity.ChooseBackgroundTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
+import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
@@ -325,18 +326,22 @@ public class TemplateMvpModel {
             callback.toPreview(outputPath);
         } else {
             if (isSucceed && !isOnDestroy) {
-                if(BaseConstans.getHasAdvertising() == 1 &&BaseConstans.getIncentiveVideo()&& !BaseConstans.getIsNewUser()&&BaseConstans.getSave_video_ad()&&!BaseConstans.TemplateHasWatchingAd){
-                    Intent intent = new Intent(context, AdHintActivity.class);
-                    intent.putExtra("from", "isFormPreviewVideo");
-                    intent.putExtra("templateTitle", "");
-                    context.startActivity(intent);
-                }else{
-                    albumBroadcast(outputPath);
-                    showDialog(outputPath);
-                    if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-                        AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
-                    }
-                }
+                Intent intent =new Intent(context , TemplateAddStickerActivity.class);
+                intent.putExtra("videoPath",outputPath);
+                context.startActivity(intent);
+
+//                if(BaseConstans.getHasAdvertising() == 1 &&BaseConstans.getIncentiveVideo()&& !BaseConstans.getIsNewUser()&&BaseConstans.getSave_video_ad()&&!BaseConstans.TemplateHasWatchingAd){
+//                    Intent intent = new Intent(context, AdHintActivity.class);
+//                    intent.putExtra("from", "isFormPreviewVideo");
+//                    intent.putExtra("templateTitle", "");
+//                    context.startActivity(intent);
+//                }else{
+//                    albumBroadcast(outputPath);
+//                    showDialog(outputPath);
+//                    if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+//                        AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
+//                    }
+//                }
             }
         }
     }
