@@ -14,6 +14,7 @@
     <string name="folder">文件夹</string>
     <string name="got_it">我知道啦</string>
     <string name="to_good_comment">立即好评</string>
+
     <string name="reject">我在想想</string>
     <string name="cancel">取消</string>
     <string name="check_login_notification" translatable="false">检查到您手机没有安装微信，请安装后使用该功能</string>
@@ -80,7 +81,7 @@
     <string name="text_message">消息</string>
     <string name="text_mine">我的</string>
 
-
+    <string name="dvertising">广告</string>
     <string name="need_login">请先登录</string>
 
 </resources>

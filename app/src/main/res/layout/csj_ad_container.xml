@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/listitem_ad_large_video"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:visibility="gone"
+    tools:ignore="HardcodedText">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_235">
+
+        <FrameLayout
+            android:id="@+id/iv_listitem_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/iv_listitem_image"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_235"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:scaleType="centerCrop" />
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="10dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:background="@drawable/csj_ad_bj"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_toLeftOf="@+id/iv_ad"
+                android:contentDescription="@string/app_name"
+                android:src="@mipmap/csj_logo" />
+
+         <TextView
+             android:layout_width="wrap_content"
+             android:text="@string/dvertising"
+             android:textColor="@color/white"
+             android:textSize="@dimen/text_16sp_size"
+             android:layout_height="wrap_content"
+/>
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/tv_advertising_title_csj"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_8"
+        android:textColor="#333333"
+        android:textSize="@dimen/sp_14"
+        android:textStyle="bold" />
+
+
+</LinearLayout>

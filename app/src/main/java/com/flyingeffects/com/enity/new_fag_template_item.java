@@ -20,8 +20,6 @@ public class new_fag_template_item implements Serializable {
 
 
 
-
-
     public String getTitle() {
         return title;
     }
@@ -419,6 +417,27 @@ public class new_fag_template_item implements Serializable {
 //    //是否需要切换视频地址，迎来模板页面有背景的情况
 //    private boolean isNeedChangeVideoPath=false;
 
+
+    public boolean isHasShowAd() {
+        return hasShowAd;
+    }
+
+    public void setHasShowAd(boolean hasShowAd) {
+        this.hasShowAd = hasShowAd;
+    }
+
+    private boolean hasShowAd=false;
+
+
+//    public CommonNewsBean getNewBean() {
+//        return newBean;
+//    }
+//
+//    public void setNewBean(CommonNewsBean newBean) {
+//        this.newBean = newBean;
+//    }
+//
+//    private CommonNewsBean newBean;
 
 
 

@@ -17,6 +17,11 @@ public class AdConfigs {
     public static final String AD_SCREEN_FOR_DOWNLOAD = "384";
 
 
+    //feed 广告
+    public static final String AD_FEED = "503";
+
+
+
 //
 //    // 预览视频的时候插屏广告
  //   public static final String AD_SCREEN_PREVIEW = "253"; //253

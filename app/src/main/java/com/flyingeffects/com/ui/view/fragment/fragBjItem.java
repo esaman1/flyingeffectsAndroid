@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -15,6 +16,7 @@ import com.flyingeffects.com.adapter.main_recycler_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.CommonNewsBean;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.new_fag_template_item;
@@ -23,12 +25,18 @@ import com.flyingeffects.com.enity.templateDataZanRefresh;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.google.android.exoplayer2.C;
+import com.nineton.ntadsdk.bean.FeedAdConfigBean;
+import com.nineton.ntadsdk.itr.FeedAdCallBack;
+import com.nineton.ntadsdk.manager.FeedAdManager;
 import com.orhanobut.hawk.Hawk;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -40,6 +48,10 @@ import butterknife.BindView;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
+
+import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.BAIDU_FEED_AD_EVENT;
+import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.GDT_FEED_AD_EVENT;
+import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TT_FEED_AD_EVENT;
 
 
 /**
@@ -74,6 +86,8 @@ public class fragBjItem extends BaseFragment {
      */
     private String cover;
 
+    private FeedAdManager mAdManager;
+
 
     @Override
     protected int getContentLayout() {
@@ -96,6 +110,7 @@ public class fragBjItem extends BaseFragment {
 
     @Override
     protected void initAction() {
+        mAdManager = new FeedAdManager();
         requestFagData(true, true);
     }
 
@@ -206,6 +221,9 @@ public class fragBjItem extends BaseFragment {
 
             @Override
             protected void _onNext(List<new_fag_template_item> data) {
+                String str = StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM", "str=" + str);
+                LogUtil.d("OOM", "请求广告");
                 finishData();
                 if (isRefresh) {
                     listData.clear();
@@ -225,13 +243,75 @@ public class fragBjItem extends BaseFragment {
                 if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
                     ToastUtil.showToast(getResources().getString(R.string.no_more_data));
                 }
+
+
                 if (data.size() < perPageCount) {
                     smartRefreshLayout.setEnableLoadMore(false);
                 }
                 listData.addAll(data);
+                int allPosition = listData.size();
+                if (data.size() >= 5) {
+                    int needPosition = allPosition - 5;
+                    new_fag_template_item item = new new_fag_template_item();
+                    item.setHasShowAd(true);
+                    listData.add(needPosition, item);
+                    requestAd(needPosition);
+                }
+
                 isShowData(listData);
             }
         }, "fagBjItem", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, isSave, true, isCanRefresh);
+    }
+
+
+    ArrayList<CommonNewsBean> listCommentBean = new ArrayList<>();
+
+    private void requestAd(int position) {
+        LogUtil.d("OOM", "请求广告");
+        if (getActivity() != null) {
+            mAdManager.getFeedAd(getActivity(), AdConfigs.AD_FEED, new FeedAdCallBack() {
+                @Override
+                public void onFeedAdShow(int typeId, FeedAdConfigBean.FeedAdResultBean feedAdResultBean) {
+                    CommonNewsBean bean = new CommonNewsBean();
+                    bean.setTitle(feedAdResultBean.getTitle());
+                    bean.setImageUrl(feedAdResultBean.getImageUrl());
+                    bean.setEventType(feedAdResultBean.getEventType());
+                    Log.d("OOM", "EventType=" + feedAdResultBean.getEventType());
+                    bean.setChannel(feedAdResultBean.getChannel());
+                    bean.setReadCounts(feedAdResultBean.getAdReadCount());
+                    //根据类型设置对应的属性
+                    switch (typeId) {
+                        case BAIDU_FEED_AD_EVENT:
+                            bean.setNativeResponse(feedAdResultBean.getNativeResponse());
+                            break;
+                        case GDT_FEED_AD_EVENT:
+                            bean.setGdtAdData(feedAdResultBean.getGdtAdData());
+                            break;
+                        case TT_FEED_AD_EVENT:
+                            bean.setTtFeedAd(feedAdResultBean.getTtFeedAd());
+                            break;
+                    }
+                    listCommentBean.add(bean);
+                    adapter.setAdList(listCommentBean);
+                    adapter.notifyItemChanged(position);
+                }
+
+                @Override
+                public void onFeedAdError(String error) {
+                    LogUtil.d("OOM", "onFeedAdError=" + error);
+                }
+
+                @Override
+                public void onFeedAdClose() {
+
+                }
+
+                @Override
+                public boolean onFeedAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
+                    return false;
+                }
+            });
+        }
     }
 
 

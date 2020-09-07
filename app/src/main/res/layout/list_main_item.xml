@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ll_parent"
     android:gravity="center_vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
    >
 
 
     <LinearLayout
+        android:id="@+id/ll_content_patents"
         android:layout_width="match_parent"
         android:background="@drawable/template_item_bj"
         android:orientation="vertical"
@@ -122,6 +122,14 @@
 
 
 
+    <!--广点通-->
+    <include layout="@layout/item_ad_unified" />
 
-</LinearLayout>
+
+    <!--穿山甲-->
+    <include layout="@layout/csj_ad_container" />
+
+
+
+</RelativeLayout>
 
