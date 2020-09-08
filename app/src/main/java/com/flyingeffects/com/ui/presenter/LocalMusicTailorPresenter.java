@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.manager.DownloadVideoManage;
@@ -107,40 +108,57 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
      * user : zhangtongju
      */
     private void toDownVideo(String path) {
-        String videoName;
-        if (path.contains(".mp4")) {
-            nowMaterialIsVideo = true;
-            videoName = mVideoFolder + File.separator + "downPath.mp4";
-        } else {
-            videoName = mVideoFolder + File.separator + "downPath.mp3";
-        }
-        File file = new File(videoName);
-        if (file.exists()) {
-            boolean tag = file.delete();
-            LogUtil.d("OOM2", "删除文件" + tag);
+        if(!TextUtils.isEmpty(path)&&!path.contains("http")){
+            soundCutFolder=soundCutFolder+"/audio.mp3";
+            try {
+                FileUtil.copyFile(new File(path),soundCutFolder);
+                localMusicTailorMvpModel.setSoundPath(soundCutFolder);
+                requestSoundData(path);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+
+        }else{
+            String videoName;
+            if (path.contains(".mp4")) {
+                nowMaterialIsVideo = true;
+                videoName = mVideoFolder + File.separator + "downPath.mp4";
+            } else {
+                videoName = mVideoFolder + File.separator + "downPath.mp3";
+            }
+            File file = new File(videoName);
+            if (file.exists()) {
+                boolean tag = file.delete();
+                LogUtil.d("OOM2", "删除文件" + tag);
+            }
+
+            if (downProgressDialog == null) {
+                downProgressDialog = new WaitingDialog_progress(context);
+                downProgressDialog.openProgressDialog();
+            }
+
+            Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
+                DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> Observable.just(videoName).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s1 -> {
+                    LogUtil.d("OOM2", "s1=" + s1);
+                    if (nowMaterialIsVideo) {
+                        //当前是视频的情况下，需要分离出音频
+                        downProgressDialog.setProgress("得到音频文件");
+                        toSplitMp4(s1);
+                    } else {
+                        requestSoundData(s1);
+                        localMusicTailorMvpModel.setSoundPath(s1);
+
+                    }
+                }));
+                LogUtil.d("OOM2", "path=" + path);
+                manage.DownloadVideo(path, videoName);
+            });
         }
 
-        if (downProgressDialog == null) {
-            downProgressDialog = new WaitingDialog_progress(context);
-            downProgressDialog.openProgressDialog();
-        }
 
-        Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
-            DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> Observable.just(videoName).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s1 -> {
-                LogUtil.d("OOM2", "s1=" + s1);
-                if (nowMaterialIsVideo) {
-                    //当前是视频的情况下，需要分离出音频
-                    downProgressDialog.setProgress("得到音频文件");
-                    toSplitMp4(s1);
-                } else {
-                    requestSoundData(s1);
-                    localMusicTailorMvpModel.setSoundPath(s1);
 
-                }
-            }));
-            LogUtil.d("OOM2", "path=" + path);
-            manage.DownloadVideo(path, videoName);
-        });
     }
 
 
@@ -225,7 +243,8 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
                 } catch (final Exception e) {
                     e.printStackTrace();
                     String mInfoContent = e.toString();
-                    ToastUtil.showToast(mInfoContent);
+                    LogUtil.d("OOM2",mInfoContent);
+//                    ToastUtil.showToast(mInfoContent);
                     return;
                 }
                 if (mLoadingKeepGoing) {

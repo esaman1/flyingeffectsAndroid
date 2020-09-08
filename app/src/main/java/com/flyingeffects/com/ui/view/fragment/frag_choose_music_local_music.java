@@ -125,28 +125,7 @@ public class frag_choose_music_local_music extends BaseFragment {
     }
 
 
-    private void notifyVideoData() {
-        adapter.notifyDataSetChanged();
-    }
 
-
-
-    private List<Video> filtrateMp4(List<Video> listVideo) {
-        listVideoFiltrateMp4.clear();
-        if (listVideo != null && listVideo.size() > 0) {
-            for (int i = 0; i < listVideo.size(); i++) {
-                String path=listVideo.get(i).getPath();
-                File file =new File(path);
-                if(file.exists()&&file.length()>0){
-                    long longtime = listVideo.get(i).getDuration();
-                    if (longtime < 5000000) {
-                        listVideoFiltrateMp4.add(listVideo.get(i));
-                    }
-                }
-            }
-        }
-        return listVideoFiltrateMp4;
-    }
 
     QueryHandler handler;
     private void startQuery() {

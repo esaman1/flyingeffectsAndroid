@@ -77,7 +77,7 @@ public class FileManager {
 
                 String name = c.getString(c.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)); // 歌曲名
                 String album = c.getString(c.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM)); // 专辑
-                String artist = c.getString(c.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)); // 作者
+                String artist = c.getString(c.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)); // 作者
                 long size = c.getLong(c.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE));// 大小
                 MediaInfo mediaInfo = new MediaInfo(path);
                 int duration;

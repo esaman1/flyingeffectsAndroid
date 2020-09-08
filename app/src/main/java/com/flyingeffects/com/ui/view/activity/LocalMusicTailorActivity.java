@@ -113,6 +113,7 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
 
     @Override
     protected void initAction() {
+
         Presenter.DownPath(videoPath);
         animStart();
     }

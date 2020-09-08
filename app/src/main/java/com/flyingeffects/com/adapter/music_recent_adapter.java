@@ -1,6 +1,7 @@
 package com.flyingeffects.com.adapter;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
@@ -44,9 +45,15 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
         ImageView iv_collect = helper.getView(R.id.iv_collect);
         ImageView cover = helper.getView(R.id.iv_cover);
         ImageView iv_play_music=helper.getView(R.id.iv_play_music);
+        if(fromType==1){
+            iv_collect.setVisibility(View.GONE);
+        }else{
+            iv_collect.setVisibility(View.VISIBLE);
+        }
         Glide.with(context)
                 .load(item.getImage())
                 .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 3)))
+              .apply(RequestOptions.placeholderOf(R.mipmap.placeholder))
                 .into(cover);
         helper.setText(R.id.tv_user, item.getNickname());
         helper.setText(R.id.tv_title, item.getTitle());

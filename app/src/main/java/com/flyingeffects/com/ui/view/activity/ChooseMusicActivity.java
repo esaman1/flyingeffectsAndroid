@@ -71,6 +71,7 @@ public class ChooseMusicActivity extends BaseActivity {
         frag_choose_music_recent_updates fragment_1 = new frag_choose_music_recent_updates();
         Bundle bundle_1 = new Bundle();
         bundle_1.putSerializable("id",1);
+        bundle_1.putSerializable("needDuration",needDuration);
         fragment_1.setArguments(bundle_1);
         list.add(fragment_1);
 
@@ -83,6 +84,7 @@ public class ChooseMusicActivity extends BaseActivity {
         frag_choose_music_recent_updates fragment_2 = new frag_choose_music_recent_updates();
         Bundle bundle_2 = new Bundle();
         bundle_2.putSerializable("id",2);
+        bundle_2.putSerializable("needDuration",needDuration);
         fragment_2.setArguments(bundle_2);
         list.add(fragment_2);
 

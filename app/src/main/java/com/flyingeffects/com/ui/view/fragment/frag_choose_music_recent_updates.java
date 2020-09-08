@@ -3,6 +3,7 @@ package com.flyingeffects.com.ui.view.fragment;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -17,7 +18,6 @@ import com.flyingeffects.com.commonlyModel.DoubleClick;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.BlogFile.Music;
 import com.flyingeffects.com.enity.ChooseMusic;
-import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -26,7 +26,6 @@ import com.flyingeffects.com.utils.BlogFileResource.FileManager;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.utils.record.SamplePlayer;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.io.IOException;
@@ -86,6 +85,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             id = bundle.getInt("id", 0);
             LogUtil.d("oom2", "id=" + id + "bundle != null");
             needDuration = bundle.getLong("needDuration");
+            LogUtil.d("oom2", "needDuration=" +needDuration);
         }
         initSmartRefreshLayout();
         initRecycler();
@@ -103,7 +103,9 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                     ChooseMusic chooseMusic = new ChooseMusic();
                     chooseMusic.setAudio_url(music.getPath());
                     chooseMusic.setImage(music.getAlbum());
-                    chooseMusic.setNickname(music.getName());
+
+                    chooseMusic.setNickname(music.getArtist());
+                    chooseMusic.setTitle(music.getName());
                     listData.add(chooseMusic);
                 }
                 subscriber.onNext(listData);
@@ -122,6 +124,12 @@ public class frag_choose_music_recent_updates extends BaseFragment {
         }
 
     }
+
+
+
+
+
+
 
     @Override
     protected void initData() {
@@ -183,10 +191,22 @@ public class frag_choose_music_recent_updates extends BaseFragment {
 
     public void initSmartRefreshLayout() {
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
-            isRefresh = true;
-            refreshLayout.setEnableLoadMore(true);
-            selectPage = 1;
-            requestFagData();
+            if(id!=1){
+                isRefresh = true;
+                refreshLayout.setEnableLoadMore(true);
+                selectPage = 1;
+                requestFagData();
+            }else{
+                //本地音频
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        finishData();
+                    }
+                },500);
+            ;
+            }
+
         });
         smartRefreshLayout.setOnLoadMoreListener(refresh -> {
             isRefresh = false;
