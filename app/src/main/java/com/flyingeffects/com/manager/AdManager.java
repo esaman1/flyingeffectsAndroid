@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.flyingeffects.com.ui.model.ShowPraiseModel;
 import com.flyingeffects.com.utils.LogUtil;
 import com.nineton.ntadsdk.bean.AdInfoBean;
 import com.nineton.ntadsdk.itr.ImageAdCallBack;

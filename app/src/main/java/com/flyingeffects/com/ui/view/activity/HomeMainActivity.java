@@ -3,6 +3,7 @@ package com.flyingeffects.com.ui.view.activity;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -186,8 +187,8 @@ public class HomeMainActivity extends FragmentActivity {
                 AdManager.getInstance().showCpAd(HomeMainActivity.this, AdConfigs.AD_SCREEN, new AdManager.Callback() {
                     @Override
                     public void adClose() {
-                        ShowPraiseModel.statisticsCloseNum();
-                        if (ShowPraiseModel.canShowAlert() && !ShowPraiseModel.getHasComment() && ShowPraiseModel.getIsNewUser() && !ShowPraiseModel.ToDayHasShowAd()) {
+
+                        if (ShowPraiseModel.canShowAlert() && !ShowPraiseModel.getHasComment() && !ShowPraiseModel.getIsNewUser() && !ShowPraiseModel.ToDayHasShowAd()) {
                             new Handler().postDelayed(() -> {
                                 showPraise();
                             }, 3000);
@@ -202,33 +203,25 @@ public class HomeMainActivity extends FragmentActivity {
 
 
     private void showPraise() {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(
                 //去除黑边
                 new ContextThemeWrapper(this, R.style.Theme_Transparent));
         builder.setTitle(this.getString(R.string.notification));
-
         builder.setMessage("如果好用的话给我们好评吧"
         );
-
-
         builder.setNegativeButton(getString(R.string.reject), (dialog, which) -> {
+            ShowPraiseModel.statisticsCloseNum();
             dialog.dismiss();
-
         });
-
         builder.setPositiveButton(getString(R.string.to_good_comment), (dialog, which) -> {
             ShowPraiseModel.setHasComment();
             reception();
             dialog.dismiss();
         });
-
         builder.setCancelable(true);
         Dialog mDialog = builder.show();
         mDialog.setCanceledOnTouchOutside(false);
         mDialog.show();
-
-
     }
 
 

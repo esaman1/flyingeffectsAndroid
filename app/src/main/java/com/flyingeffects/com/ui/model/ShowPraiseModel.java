@@ -1,6 +1,8 @@
 package com.flyingeffects.com.ui.model;
 
 
+import android.util.Log;
+
 import com.flyingeffects.com.utils.LogUtil;
 import com.orhanobut.hawk.Hawk;
 
@@ -20,25 +22,26 @@ public class ShowPraiseModel {
      * creation date: 2020/9/2
      * user : zhangtongju
      */
-    public  static  boolean getIsNewUser() {
+    public static boolean getIsNewUser() {
         int num = 0;
-        try{
-            num  =Hawk.get("keepAlbumNum");
-        }catch (Exception e){
-            LogUtil.d("OOM",e.getMessage());
+        try {
+            num = Hawk.get("keepAlbumNum");
+        } catch (Exception e) {
+            LogUtil.d("OOM", e.getMessage());
         }
+        LogUtil.d("OOM","保存了次数"+num);
 
-        return num<5;
+        return num < 5;
     }
 
-    public static void keepAlbumCount(){
+    public static void keepAlbumCount() {
 
         int num = 0;
-        try{
-            num  =Hawk.get("keepAlbumNum");
-        }catch (Exception e){
-            LogUtil.d("OOM",e.getMessage());
-        }finally {
+        try {
+            num = Hawk.get("keepAlbumNum");
+        } catch (Exception e) {
+            LogUtil.d("OOM", e.getMessage());
+        } finally {
             num++;
             Hawk.put("keepAlbumNum", num);
         }
@@ -47,24 +50,21 @@ public class ShowPraiseModel {
     }
 
 
-
-
     /**
      * description ：统计关闭好评弹窗次数
      * creation date: 2020/9/3
      * user : zhangtongju
      */
-    public  static  void statisticsCloseNum() {
+    public static void statisticsCloseNum() {
         int num = 0;
-        try{
-            num  = Hawk.get("statisticsCloseNum");
-        }catch (Exception e){
-            LogUtil.d("OOM",e.getMessage());
-        }finally {
-            num++;
+        try {
+            num = Hawk.get("statisticsCloseNum");
+        } catch (Exception e) {
+            LogUtil.d("OOM", e.getMessage());
+        } finally {
+            num=num+1;
             Hawk.put("statisticsCloseNum", num);
         }
-
 
 
     }
@@ -73,16 +73,15 @@ public class ShowPraiseModel {
     /**
      * 关闭三次后就不显示弹窗
      */
-    public  static  boolean canShowAlert() {
-
-
+    public static boolean canShowAlert() {
         int num = 0;
-        try{
-            num  =Hawk.get("statisticsCloseNum");
-        }catch (Exception e){
-            LogUtil.d("OOM",e.getMessage());
+        try {
+            num = Hawk.get("statisticsCloseNum");
+        } catch (Exception e) {
+            LogUtil.d("OOM", e.getMessage());
         }
 
+        LogUtil.d("OOM","关闭了弹出的数量"+num);
         return num < 3;
     }
 
@@ -90,15 +89,23 @@ public class ShowPraiseModel {
     /**
      * 当日已经有了弹窗，那么不显示弹窗
      */
-    public  static  boolean ToDayHasShowAd() {
-        long showAdAlertTime = Hawk.get("showAdAlertTime");
-        boolean hasShow=isSameDate(showAdAlertTime);
-        if(hasShow){
-            return true;
-        }else{
-            Hawk.put("showAdAlertTime",System.currentTimeMillis());
+    public static boolean ToDayHasShowAd() {
+        try {
+            long showAdAlertTime = Hawk.get("showAdAlertTime");
+            boolean hasShow = isSameDate(showAdAlertTime);
+            LogUtil.d("OOM", "好评弹窗是否已经今天显示过一次了" + hasShow);
+            if (hasShow) {
+                return true;
+            } else {
+                Hawk.put("showAdAlertTime", System.currentTimeMillis());
+                return false;
+            }
+        } catch (Exception e) {
+            LogUtil.d("OOM", "好评弹窗是否已经今天显示过一次了=否" );
+            Hawk.put("showAdAlertTime", System.currentTimeMillis());
             return false;
         }
+
     }
 
 
@@ -124,25 +131,23 @@ public class ShowPraiseModel {
     }
 
 
-
-    public  static  void setHasComment() {
+    public static void setHasComment() {
         Hawk.put("setHasComment", 1);
     }
 
 
-    /**
-     * 关闭三次后就不显示弹窗
-     */
-    public  static  boolean getHasComment() {
+    public static boolean getHasComment() {
         int num = 0;
-        try{
-            num  =Hawk.get("setHasComment");
-        }catch (Exception e){
-            LogUtil.d("OOM",e.getMessage());
+        try {
+            num = Hawk.get("setHasComment");
+        } catch (Exception e) {
+            LogUtil.d("OOM", e.getMessage());
         }
-        return num!=0;
-    }
 
+        LogUtil.d("OOM","评论的次数为"+num);
+
+        return num != 0;
+    }
 
 
 }
