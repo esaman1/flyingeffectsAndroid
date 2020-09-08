@@ -361,18 +361,24 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
         videoCutDurationForVideoOneDo.getInstance().cuttingAudio(context, localMusicTailorMvpModel.getSoundPath(), startTimer, endTimer, new videoCutDurationForVideoOneDo.cutAudioCallback() {
             @Override
             public void isDone(String path) {
-                closeProgress();
-                soundCutFolder=soundCutFolder+"/audio.mp3";
-                File file=new File(soundCutFolder);
-                if(file.exists()){
-                    file.delete();
-                }
-                try {
-                    FileUtil.copyFile(new File(path),soundCutFolder);
-                    localMusicTailorMvpView.isAudioCutDone(soundCutFolder);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    LogUtil.d("OOM2","复制文件报错"+e.getMessage());
+
+                if(!TextUtils.isEmpty(path)){
+                    closeProgress();
+                    soundCutFolder=soundCutFolder+"/audio.mp3";
+                    File file=new File(soundCutFolder);
+                    if(file.exists()){
+                        file.delete();
+                    }
+                    try {
+                        FileUtil.copyFile(new File(path),soundCutFolder);
+                        localMusicTailorMvpView.isAudioCutDone(soundCutFolder);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        LogUtil.d("OOM2","复制文件报错"+e.getMessage());
+                    }
+                }else{
+                    closeProgress();
+                    ToastUtil.showToast("不支持该视频");
                 }
 
             }

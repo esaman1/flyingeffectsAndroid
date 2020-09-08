@@ -3,7 +3,6 @@ package com.flyingeffects.com.ui.view.fragment;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.util.TimeUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -30,7 +29,6 @@ import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.timeUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,7 +40,6 @@ import java.util.TimerTask;
 import butterknife.BindView;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 
@@ -91,7 +88,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             id = bundle.getInt("id", 0);
             LogUtil.d("oom2", "id=" + id + "bundle != null");
             needDuration = bundle.getLong("needDuration");
-            LogUtil.d("oom2", "needDuration=" +needDuration);
+            LogUtil.d("oom2", "needDuration=" + needDuration);
         }
         initSmartRefreshLayout();
         initRecycler();
@@ -108,7 +105,6 @@ public class frag_choose_music_recent_updates extends BaseFragment {
     }
 
 
-
     @Override
     protected void initData() {
     }
@@ -118,7 +114,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
-        Observable ob ;
+        Observable ob;
         if (id == 0) {
             ob = Api.getDefault().musicList(BaseConstans.getRequestHead(params));
         } else {
@@ -145,7 +141,6 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                 } else {
                     showNoData(false);
                 }
-
                 if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
                     ToastUtil.showToast(getResources().getString(R.string.no_more_data));
                 }
@@ -168,17 +163,15 @@ public class frag_choose_music_recent_updates extends BaseFragment {
 
     public void initSmartRefreshLayout() {
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
-            if(id!=1){
+            if (id != 1) {
                 isRefresh = true;
                 refreshLayout.setEnableLoadMore(true);
                 selectPage = 1;
                 requestFagData();
-            }else{
+            } else {
                 //本地音频
                 getLocalMusic();
-
             }
-
         });
         smartRefreshLayout.setOnLoadMoreListener(refresh -> {
             isRefresh = false;
@@ -188,7 +181,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
     }
 
 
-    private void getLocalMusic(){
+    private void getLocalMusic() {
         listData.clear();
         LogUtil.d("OOM2", "当前选择的是本地音频");
         //本地音频
@@ -206,10 +199,9 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             subscriber.onNext(listData);
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(chooseMusics -> {
-                    adapter.notifyDataSetChanged();
-                    finishData();
-                });
-
+            adapter.notifyDataSetChanged();
+            finishData();
+        });
     }
 
 
@@ -256,7 +248,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
     private MediaPlayer mediaPlayer;
 
     private void playMusic(String path, int position) {
-        if(mediaPlayer!=null&&mediaPlayer.isPlaying()){
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
             endTimer();
             mediaPlayer.stop();
@@ -293,15 +285,16 @@ public class frag_choose_music_recent_updates extends BaseFragment {
 
     private Timer mTimer;
     TimerTask mTimerTask;
-    private void startTimer(String url){
+
+    private void startTimer(String url) {
         mTimer = new Timer();
         mTimerTask = new TimerTask() {
             @Override
             public void run() {
-                VideoInfo videoInfo = VideoManage.getInstance().getVideoInfo(getActivity(),url);
-                int allDuration=videoInfo.getDuration();
-                float position=mediaPlayer.getCurrentPosition()/(float)allDuration;
-                adapter.setPlayingProgress((int) (position*100), timeUtils.timeParse(mediaPlayer.getCurrentPosition()));
+                VideoInfo videoInfo = VideoManage.getInstance().getVideoInfo(getActivity(), url);
+                int allDuration = videoInfo.getDuration();
+                float position = mediaPlayer.getCurrentPosition() / (float) allDuration;
+                adapter.setPlayingProgress((int) (position * 100), timeUtils.timeParse(mediaPlayer.getCurrentPosition()));
             }
         };
         mTimer.schedule(mTimerTask, 0, 10);
@@ -321,18 +314,12 @@ public class frag_choose_music_recent_updates extends BaseFragment {
     }
 
 
-
-
-
-
-
     @Override
     public void onPause() {
         super.onPause();
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
         }
-
     }
 
     public void showNoData(boolean isShowNoData) {
@@ -360,7 +347,6 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "收藏音乐返回的值为" + str);
                 updateCollect(isCollect);
-
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }

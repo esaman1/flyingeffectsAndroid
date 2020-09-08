@@ -240,6 +240,7 @@ public class videoCutDurationForVideoOneDo {
             });
             audioPadExecute.start();
         } catch (Exception e) {
+            callback.isDone("");
             e.printStackTrace();
         }
     }
