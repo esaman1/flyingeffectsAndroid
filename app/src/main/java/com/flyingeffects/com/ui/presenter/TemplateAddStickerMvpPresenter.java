@@ -32,17 +32,17 @@ import java.io.File;
 public class TemplateAddStickerMvpPresenter extends BasePresenter implements TemplateAddStickerMvpCallback {
     private TemplateAddStickerMvpView TemplateAddStickermvpView;
     private TemplateAddStickerMvpModel TemplateAddStickermodel;
-    private Context context;
     private LinearLayout ll_space;
 
     public TemplateAddStickerMvpPresenter(Context context, TemplateAddStickerMvpView mvp_view,LinearLayout ll_space,ViewLayerRelativeLayout viewLayerRelativeLayout,  String mVideoPath) {
         this.TemplateAddStickermvpView = mvp_view;
-        this.context = context;
         this.ll_space=ll_space;
         TemplateAddStickermodel = new TemplateAddStickerMvpModel(context, this,viewLayerRelativeLayout,mVideoPath);
     }
 
-
+    public void alertAlbumUpdate(boolean isSuccess){
+        TemplateAddStickermodel.alertAlbumUpdate(isSuccess);
+    }
 
 
 
@@ -59,8 +59,8 @@ public class TemplateAddStickerMvpPresenter extends BasePresenter implements Tem
     }
 
 
-    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH){
-        TemplateAddStickermodel.toSaveVideo(imageBjPath,nowUiIsLandscape,percentageH);
+    public void toSaveVideo(float percentageH){
+        TemplateAddStickermodel.toSaveVideo(percentageH);
     }
 
     public void setPlayerViewSize(PlayerView playerView, MyScrollView scrollView, ViewLayerRelativeLayout viewLayerRelativeLayout) {

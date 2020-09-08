@@ -1,29 +1,27 @@
 package com.flyingeffects.com.ui.view.activity;
 
-import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.viewpager.widget.ViewPager;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
-import com.flyingeffects.com.constans.UiStep;
-import com.flyingeffects.com.manager.AlbumManager;
-import com.flyingeffects.com.manager.CompressionCuttingManage;
+import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.showAdCallback;
+import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.TemplateAddStickerMvpView;
-import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.TemplateAddStickerMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
-import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.HorizontalListView;
 import com.flyingeffects.com.view.MyScrollView;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -34,7 +32,8 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.lansosdk.box.ViewLayerRelativeLayout;
-import com.shixing.sxve.ui.albumType;
+import com.nineton.ntadsdk.itr.VideoAdCallBack;
+import com.nineton.ntadsdk.manager.VideoAdManager;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.io.File;
@@ -43,6 +42,8 @@ import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -87,7 +88,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
     private SimpleExoPlayer exoPlayer;
 
-    private MediaSource mediaSource;
+//    private MediaSource mediaSource;
 
     private boolean isPlayComplate = false;
 
@@ -99,10 +100,6 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     @BindView(R.id.iv_list)
     HorizontalListView hListView;
 
-    /**
-     * 默认图片背景，""表示绿幕
-     */
-    private String imageBjPath;
 
     @BindView(R.id.viewPager)
     ViewPager viewPager;
@@ -114,6 +111,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         videoPath=getIntent().getStringExtra("videoPath");
         presenter=new TemplateAddStickerMvpPresenter(this,this,ll_space,viewLayerRelativeLayout,videoPath);
         if (!TextUtils.isEmpty(videoPath)) {
@@ -124,8 +122,15 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
         presenter.initBottomLayout(viewPager);
         presenter.requestStickersList();
         initViewLayerRelative();
+        ((TextView)findViewById(R.id.tv_top_submit)).setText("保存");
     }
 
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 
     /**
      * description ：设置预览界面大小
@@ -171,6 +176,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 switch (playbackState) {
                     case Player.STATE_READY:
+
                         break;
                     case Player.STATE_ENDED:
                         videoToStart();
@@ -182,12 +188,11 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                 }
             }
         });
-        mediaSource = new ExtractorMediaSource.Factory(
+        MediaSource   mediaSource = new ExtractorMediaSource.Factory(
                 new DefaultDataSourceFactory(TemplateAddStickerActivity.this, "exoplayer-codelab")).
                 createMediaSource(Uri.fromFile(new File(videoPath)));
-
         exoPlayer.prepare(mediaSource, true, false);
-//        videoPause();
+        new Handler().postDelayed(() -> toPlay(),500);
     }
 
     private void videoToStart() {
@@ -205,8 +210,6 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
         if (exoPlayer != null) {
             exoPlayer.seekTo(to);
         }
-
-
     }
 
 
@@ -291,7 +294,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
     @Override
     public void needPauseVideo() {
-
+        videoToPause();
     }
 
     @Override
@@ -341,33 +344,28 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
             public void run() {
                 totalPlayTime = totalPlayTime + 5;
 //                Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (!TextUtils.isEmpty(videoPath)) {
-                            int nowDuration = (int) getCurrentPos();
-                            float percent = nowDuration / (float) allVideoDuration;
-                            int widthX = (int) (percent * listWidth);
-                            hListView.scrollTo(widthX);
-                            LogUtil.d("OOM", "percent=" + percent);
-                        } else {
-                            //没有选择背景
-                            nowTime = nowTime + 5;
-                            float percent = nowTime / (float) 10000;
-                            int widthX = (int) (percent * listWidth);
-                            hListView.scrollTo(widthX);
-                            LogUtil.d("OOM", "percent=" + percent);
-                            if (percent >= 1) {
-                                nowTime = 5;
-                                isPlayComplate = true;
-                                endTimer();
-                                isPlaying = false;
-                                presenter.showGifAnim(false);
-                                nowStateIsPlaying(false);
-                                presenter.showAllAnim(false);
-                            }
+                runOnUiThread(() -> {
+                    if (!TextUtils.isEmpty(videoPath)) {
+                        int nowDuration = (int) getCurrentPos();
+                        float percent = nowDuration / (float) allVideoDuration;
+                        int widthX = (int) (percent * listWidth);
+                        hListView.scrollTo(widthX);
+                        LogUtil.d("OOM", "percent=" + percent);
+                    } else {
+                        //没有选择背景
+                        nowTime = nowTime + 5;
+                        float percent = nowTime / (float) 10000;
+                        int widthX = (int) (percent * listWidth);
+                        hListView.scrollTo(widthX);
+                        LogUtil.d("OOM", "percent=" + percent);
+                        if (percent >= 1) {
+                            nowTime = 5;
+                            isPlayComplate = true;
+                            endTimer();
+                            isPlaying = false;
+                            presenter.showGifAnim(false);
+                            nowStateIsPlaying(false);
+                            presenter.showAllAnim(false);
                         }
                     }
                 });
@@ -403,24 +401,11 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                     videoToPause();
                     endTimer();
                 }
-                presenter.toSaveVideo("", false, 0);
+                presenter.toSaveVideo( 0);
                 break;
 
             case R.id.ll_play:
-                if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
-                    if (isPlaying) {
-                        isIntoPause = false;
-                        isPlayComplate = false;
-                        videoToPause();
-                        presenter.showGifAnim(false);
-                        isPlaying = false;
-                        nowStateIsPlaying(false);
-                        presenter.showAllAnim(false);
-                    } else {
-                        WaitingDialog.openPragressDialog(this);
-                        new Thread(() -> presenter.showAllAnim(true)).start();
-                    }
-                }
+                toPlay();
 
                 break;
 
@@ -436,6 +421,72 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
         }
     }
 
+
+
+    private void toPlay(){
+        if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
+            if (isPlaying) {
+                isIntoPause = false;
+                isPlayComplate = false;
+                videoToPause();
+                presenter.showGifAnim(false);
+                isPlaying = false;
+                nowStateIsPlaying(false);
+                presenter.showAllAnim(false);
+            } else {
+                WaitingDialog.openPragressDialog(this);
+                new Thread(() -> presenter.showAllAnim(true)).start();
+            }
+        }
+    }
+
+    @Subscribe
+    public void onEventMainThread(showAdCallback event) {
+        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+            VideoAdManager videoAdManager = new VideoAdManager();
+            String adId;
+            if (BaseConstans.getOddNum()) {
+                adId = AdConfigs.AD_save_video;
+            } else {
+                adId = AdConfigs.AD_save_video2;
+            }
+            videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
+                @Override
+                public void onVideoAdSuccess() {
+                    statisticsEventAffair.getInstance().setFlag(TemplateAddStickerActivity.this, "video_ad_alert_request_sucess");
+                    LogUtil.d("OOM", "onVideoAdSuccess");
+                }
+
+                @Override
+                public void onVideoAdError(String s) {
+                    statisticsEventAffair.getInstance().setFlag(TemplateAddStickerActivity.this, "video_ad_alert_request_fail");
+                    LogUtil.d("OOM", "onVideoAdError" + s);
+                    presenter.alertAlbumUpdate(false);
+                }
+
+                @Override
+                public void onVideoAdClose() {
+                    presenter.alertAlbumUpdate(true);
+                }
+
+                @Override
+                public void onVideoAdSkip() {
+                    LogUtil.d("OOM", "onVideoAdSkip");
+                }
+
+                @Override
+                public void onVideoAdComplete() {
+                }
+
+                @Override
+                public void onVideoAdClicked() {
+                    LogUtil.d("OOM", "onVideoAdClicked");
+                }
+            });
+        } else {
+            presenter.alertAlbumUpdate(true);
+        }
+    }
 
 
 }

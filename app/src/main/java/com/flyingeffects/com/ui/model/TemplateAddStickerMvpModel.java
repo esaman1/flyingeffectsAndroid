@@ -2,27 +2,26 @@ package com.flyingeffects.com.ui.model;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.collection.SparseArrayCompat;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.viewpager.widget.ViewPager;
 
@@ -48,6 +47,8 @@ import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.AdConfigs;
+import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -55,14 +56,10 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.TemplateAddStickerMvpCallback;
-import com.flyingeffects.com.ui.interfaces.model.VideoClippingMvpCallback;
-import com.flyingeffects.com.ui.view.activity.ChooseMusicActivity;
-import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
+import com.flyingeffects.com.ui.view.activity.AdHintActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.HorizontalListView;
 import com.flyingeffects.com.view.StickerView;
@@ -71,11 +68,8 @@ import com.flyingeffects.com.view.animations.CustomMove.AnimType;
 import com.flyingeffects.com.view.animations.CustomMove.StartAnimModel;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnDragListener;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.kwad.sdk.core.response.model.PhotoInfo;
 import com.lansosdk.box.ViewLayerRelativeLayout;
-import com.megvii.segjni.SegJni;
+import com.orhanobut.hawk.Hawk;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
@@ -102,7 +96,6 @@ public class TemplateAddStickerMvpModel {
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private TemplateAddStickerMvpCallback callback;
     private Context context;
-    private BottomSheetDialog bottomSheetDialog;
     private ArrayList<AnimStickerModel> listForStickerModel = new ArrayList<>();
     private SparseArrayCompat<ArrayList<StickerView>> sublayerListForBitmapLayer = new SparseArrayCompat<>();
     private ArrayList<AllStickerData> listAllSticker = new ArrayList<>();
@@ -112,7 +105,7 @@ public class TemplateAddStickerMvpModel {
     private ArrayList<StickerView> nowChooseSubLayerAnimList = new ArrayList<>();
     private AnimCollect animCollect;
     private ArrayList<StickerAnim> listAllAnima;
-     private String mGifFolder;
+    private String mGifFolder;
     private boolean isCheckedMatting = true;
     private String mImageCopyFolder;
     private Vibrator vibrator;
@@ -151,16 +144,17 @@ public class TemplateAddStickerMvpModel {
     private String originalPath;
 
 
-    public TemplateAddStickerMvpModel(Context context, TemplateAddStickerMvpCallback callback, ViewLayerRelativeLayout viewLayerRelativeLayout,String mVideoPath) {
+    public TemplateAddStickerMvpModel(Context context, TemplateAddStickerMvpCallback callback, ViewLayerRelativeLayout viewLayerRelativeLayout, String mVideoPath) {
         this.context = context;
         this.callback = callback;
-        this.viewLayerRelativeLayout=viewLayerRelativeLayout;
-        this.mVideoPath=mVideoPath;
+        this.viewLayerRelativeLayout = viewLayerRelativeLayout;
+        this.mVideoPath = mVideoPath;
         dialog = new WaitingDialogProgressNowAnim(context);
         this.originalPath = mVideoPath;
         FileManager fileManager = new FileManager();
         mImageCopyFolder = fileManager.getFileCachePath(context, "imageCopy");
-        videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);  mGifFolder = fileManager.getFileCachePath(context, "gifFolder");
+        videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
+        mGifFolder = fileManager.getFileCachePath(context, "gifFolder");
         soundFolder = fileManager.getFileCachePath(context, "soundFolder");
     }
 
@@ -179,7 +173,6 @@ public class TemplateAddStickerMvpModel {
             initSingleThumbSize(720, 1280, defaultVideoDuration, defaultVideoDuration / 2, "");
         }
     }
-
 
 
     private List<Integer> perSticker = new ArrayList<>();
@@ -232,8 +225,6 @@ public class TemplateAddStickerMvpModel {
     }
 
 
-
-
     private int mTotalWidth;
 
     private void initSingleThumbSize(int width, int height, float duration, float mTemplateDuration, String mVideoPath) {
@@ -275,8 +266,6 @@ public class TemplateAddStickerMvpModel {
 
 
     }
-
-
 
 
     public void showGifAnim(boolean isShow) {
@@ -352,8 +341,6 @@ public class TemplateAddStickerMvpModel {
     }
 
 
-
-
     public void initBottomLayout(ViewPager viewPager) {
         this.viewPager = viewPager;
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager, false);
@@ -373,6 +360,7 @@ public class TemplateAddStickerMvpModel {
         GridView gridView = templateThumbView.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view, i, l) -> {
             if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
+
                 showAllAnim(false);
                 callback.needPauseVideo();
                 modificationSingleItemIsChecked(i);
@@ -594,6 +582,7 @@ public class TemplateAddStickerMvpModel {
     private int hasAnimCount;
     private int previewCount;
     private int sublayerListPosition;
+
     public void showAllAnim(boolean isShow) {
         previewCount = 0;
         sublayerListPosition = 0;
@@ -653,7 +642,6 @@ public class TemplateAddStickerMvpModel {
     }
 
 
-
     private Timer timer;
     private TimerTask task;
     private int totalPlayTime;
@@ -707,7 +695,6 @@ public class TemplateAddStickerMvpModel {
     }
 
 
-
     /**
      * description ：删除动画的子贴纸
      * creation date: 2020/5/27
@@ -756,16 +743,15 @@ public class TemplateAddStickerMvpModel {
     }
 
 
-
     /**
      * description ：开始播放动画 ，如果来自预览，那么stickver
      * creation date: 2020/5/27
      *
      * @param position          动画的类型
      * @param targetStickerView 目标贴纸，如果为null ,那么目标贴纸为最上层的那个，这里的多久就是针对设置当个动画，如果不为null ,
-     * 那么动画就是针对预览页面，某个贴纸设置动画
+     *                          那么动画就是针对预览页面，某个贴纸设置动画
      * @param isFromPreview     是否来自播放预览
-     * user : zhangtongju
+     *                          user : zhangtongju
      */
 
     private synchronized void startPlayAnim(int position, boolean isClearAllAnim, StickerView targetStickerView, int intoPosition, boolean isFromPreview) {
@@ -1174,7 +1160,6 @@ public class TemplateAddStickerMvpModel {
     }
 
 
-
     /**
      * description ：视频音视频分离，获得视频的声音
      * creation date: 2020/4/23
@@ -1200,7 +1185,6 @@ public class TemplateAddStickerMvpModel {
     }
 
 
-
     private void showVibrator() {
         if (vibrator.hasVibrator()) {
             vibrator.vibrate(5);  //设置手机振动
@@ -1216,6 +1200,23 @@ public class TemplateAddStickerMvpModel {
     }
 
 
+    public String getKeepOutput() {
+        String product = android.os.Build.MANUFACTURER; //获得手机厂商
+        if (product != null && product.equals("vivo")) {
+            File file_camera = new File(Environment.getExternalStorageDirectory() + "/相机");
+            if (file_camera.exists()) {
+                return file_camera.getPath() + File.separator + System.currentTimeMillis() + "synthetic.mp4";
+            }
+        }
+        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();
+        File path_Camera = new File(path + "/Camera");
+        if (path_Camera.exists()) {
+            return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath() + File.separator + "Camera" + File.separator + System.currentTimeMillis() + "synthetic.mp4";
+        }
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath() + File.separator + System.currentTimeMillis() + "synthetic.mp4";
+    }
+
+
     /**
      * description ：保存视频采用蓝松sdk提供的在保存功能
      * creation date: 2020/3/12
@@ -1227,34 +1228,35 @@ public class TemplateAddStickerMvpModel {
     //裁剪成功数量
     private int cutSuccessNum;
     private ArrayList<String> cutList = new ArrayList<>();
-    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH) {
+
+    public void toSaveVideo(float percentageH) {
         stopAllAnim();
         this.percentageH = percentageH;
         deleteSubLayerSticker();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        if (listAllSticker.size() == 0) {
+            saveToAlbum(mVideoPath);
+        } else {
+            new Handler().postDelayed(() -> {
                 if (!isIntoSaveVideo) {
                     isIntoSaveVideo = true;
                     listAllSticker.clear();
                     cutSuccessNum = 0;
                     cutVideoPathList.clear();
-
-
-
-                    backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, new backgroundDraw.saveCallback() {
+                    backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, "", new backgroundDraw.saveCallback() {
                         @Override
                         public void saveSuccessPath(String path, int progress) {
                             if (!isDestroy) {
                                 if (!TextUtils.isEmpty(path)) {
                                     dialog.closePragressDialog();
-                                    //成功后的回调
-                                    Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                    intent.putExtra("path", path);
-                                    intent.putExtra("nowUiIsLandscape", nowUiIsLandscape);
-                                    context.startActivity(intent);
-                                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> isIntoSaveVideo = false, 500));
+                                    String keepPath = getKeepOutput();
+                                    try {
+                                        FileUtil.copyFile(new File(path), keepPath);
+                                        saveToAlbum(keepPath);
+                                        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> isIntoSaveVideo = false, 500));
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+
                                 } else {
                                     if (progress == 10000) {
                                         isIntoSaveVideo = false;
@@ -1292,22 +1294,105 @@ public class TemplateAddStickerMvpModel {
                     if (cutVideoPathList.size() == 0) {
                         dialog.openProgressDialog();
                         //都不是视频的情况下，就直接渲染
-                        backgroundDraw.toSaveVideo(listAllSticker, false, nowUiIsLandscape, percentageH);
+                        backgroundDraw.toSaveVideo(listAllSticker, false, false, percentageH);
                     } else {
                         dialog.openProgressDialog();
                         cutList.clear();
                         if (videoInfo != null) {
-                            cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration(), nowUiIsLandscape);
+                            cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration(), false);
                         } else {
                             //没选择背景默认裁剪10秒
-                            cutVideo(cutVideoPathList.get(0), defaultVideoDuration, cutVideoPathList.get(0).getDuration(), nowUiIsLandscape);
+                            cutVideo(cutVideoPathList.get(0), defaultVideoDuration, cutVideoPathList.get(0).getDuration(), false);
                         }
                     }
                 }
-            }
-        }, 200);
+            }, 200);
+        }
     }
 
+
+    /**
+     * description ：保存在相册
+     * creation date: 2020/9/8
+     * user : zhangtongju
+     */
+    private void saveToAlbum(String path) {
+        outputPathForVideoSaveToPhoto = path;
+        if (BaseConstans.getHasAdvertising() == 1 && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser() && BaseConstans.getSave_video_ad() && !BaseConstans.TemplateHasWatchingAd) {
+            Intent intent = new Intent(context, AdHintActivity.class);
+            intent.putExtra("from", "isFormPreviewVideo");
+            intent.putExtra("templateTitle", "");
+            context.startActivity(intent);
+        } else {
+            LogUtil.d("OOM", "保存的地址为" + path);
+            albumBroadcast(path);
+            showDialog(path);
+            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
+            }
+        }
+    }
+
+    private String outputPathForVideoSaveToPhoto;
+
+    public void alertAlbumUpdate(boolean isSuccess) {
+        if (!isSuccess) {
+            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
+            }
+        }
+        albumBroadcast(outputPathForVideoSaveToPhoto);
+        showDialog(outputPathForVideoSaveToPhoto);
+
+    }
+
+
+    /**
+     * description ：通知相册更新
+     * date: ：2019/8/16 14:24
+     * author: 张同举 @邮箱 jutongzhang@sina.com
+     */
+    private void albumBroadcast(String outputFile) {
+        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        intent.setData(Uri.fromFile(new File(outputFile)));
+        context.sendBroadcast(intent);
+    }
+
+
+    private void showDialog(String path) {
+        if (!com.flyingeffects.com.commonlyModel.DoubleClick.getInstance().isFastDoubleClick()) {
+            ShowPraiseModel.keepAlbumCount();
+            keepAlbumCount();
+            LogUtil.d("showDialog", "showDialog");
+            AlertDialog.Builder builder = new AlertDialog.Builder(
+                    //去除黑边
+                    new ContextThemeWrapper(context, R.style.Theme_Transparent));
+            builder.setTitle(context.getString(R.string.notification));
+//            builder.setMessage(context.getString(R.string.have_saved_to_sdcard) +
+//                    "【" + path + context.getString(R.string.folder) + "】");
+
+            builder.setMessage("已为你保存到相册,多多分享给友友\n" + "【" + path + context.getString(R.string.folder) + "】"
+            );
+
+
+            builder.setNegativeButton(context.getString(R.string.got_it), (dialog, which) -> {
+
+
+                dialog.dismiss();
+            });
+            builder.setCancelable(true);
+            Dialog mDialog = builder.show();
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.show();
+        }
+    }
+
+
+    private void keepAlbumCount() {
+        int num = Hawk.get("keepAlbumNum");
+        num++;
+        Hawk.put("keepAlbumNum", num);
+    }
 
     class videoType {
 
@@ -1378,7 +1463,7 @@ public class TemplateAddStickerMvpModel {
                 sticker.setPath(path);
                 cutSuccessNum++;
                 if (cutSuccessNum == cutVideoPathList.size()) {
-                        backgroundDraw.toSaveVideo(listAllSticker, false, nowUiIsLandscape, percentageH);
+                    backgroundDraw.toSaveVideo(listAllSticker, false, nowUiIsLandscape, percentageH);
                 } else {
                     if (videoInfo != null) {
                         cutVideo(cutVideoPathList.get(cutSuccessNum), videoInfo.getDuration(), cutVideoPathList.get(cutSuccessNum).getDuration(), nowUiIsLandscape);
@@ -1391,14 +1476,12 @@ public class TemplateAddStickerMvpModel {
     }
 
 
-
     /**
      * description ：统计贴纸动画
      * creation date: 2020/7/14
      * user : zhangtongju
      */
     private void statisticsAnim() {
-
 
 
         for (AllStickerData data : listAllSticker
@@ -1433,7 +1516,6 @@ public class TemplateAddStickerMvpModel {
             }
         }
     };
-
 
 
 }

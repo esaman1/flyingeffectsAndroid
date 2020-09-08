@@ -1381,13 +1381,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 //提取
                 case R.id.ll_choose_3:
                 case R.id.check_box_3:
-
                     if(!TextUtils.isEmpty(downMusicPath)){
                         clearCheckBox();
                         cb_3.setChecked(true);
                     }else{
                         ToastUtil.showToast("沒有添加音乐");
                     }
+                    changeMusic();
+                    chooseDownMusic();
                     break;
 
                 case R.id.tv_add_music:
@@ -1409,6 +1410,16 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         nowChooseMusic = 0;
         if (isPlaying) {
             mPlayer.replaceAudio(mAudio1Path);
+        }
+    }
+
+
+    private void chooseDownMusic() {
+        clearCheckBox();
+        cb_3.setChecked(true);
+        nowChooseMusic = 3;
+        if (isPlaying) {
+            mPlayer.replaceAudio(nowSpliteMusic);
         }
     }
 
@@ -1464,56 +1475,54 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         });
     }
 
-
-    @Subscribe
-    public void onEventMainThread(showAdCallback event) {
-        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-            VideoAdManager videoAdManager = new VideoAdManager();
-            String adId;
-            if (BaseConstans.getOddNum()) {
-                adId = AdConfigs.AD_save_video;
-            } else {
-                adId = AdConfigs.AD_save_video2;
-            }
-            videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
-                @Override
-                public void onVideoAdSuccess() {
-                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "video_ad_alert_request_sucess");
-                    LogUtil.d("OOM", "onVideoAdSuccess");
-                }
-
-                @Override
-                public void onVideoAdError(String s) {
-                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "video_ad_alert_request_fail");
-                    LogUtil.d("OOM", "onVideoAdError" + s);
-                    presenter.alertAlbumUpdate(false);
-                }
-
-                @Override
-                public void onVideoAdClose() {
-                    presenter.alertAlbumUpdate(true);
-                }
-
-                @Override
-                public void onVideoAdSkip() {
-                    LogUtil.d("OOM", "onVideoAdSkip");
-                }
-
-                @Override
-                public void onVideoAdComplete() {
-                }
-
-                @Override
-                public void onVideoAdClicked() {
-                    LogUtil.d("OOM", "onVideoAdClicked");
-                }
-            });
-        } else {
-            presenter.alertAlbumUpdate(true);
-        }
-
-
-    }
+//
+//    @Subscribe
+//    public void onEventMainThread(showAdCallback event) {
+//        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+//            VideoAdManager videoAdManager = new VideoAdManager();
+//            String adId;
+//            if (BaseConstans.getOddNum()) {
+//                adId = AdConfigs.AD_save_video;
+//            } else {
+//                adId = AdConfigs.AD_save_video2;
+//            }
+//            videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
+//                @Override
+//                public void onVideoAdSuccess() {
+//                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "video_ad_alert_request_sucess");
+//                    LogUtil.d("OOM", "onVideoAdSuccess");
+//                }
+//
+//                @Override
+//                public void onVideoAdError(String s) {
+//                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "video_ad_alert_request_fail");
+//                    LogUtil.d("OOM", "onVideoAdError" + s);
+//                    presenter.alertAlbumUpdate(false);
+//                }
+//
+//                @Override
+//                public void onVideoAdClose() {
+//                    presenter.alertAlbumUpdate(true);
+//                }
+//
+//                @Override
+//                public void onVideoAdSkip() {
+//                    LogUtil.d("OOM", "onVideoAdSkip");
+//                }
+//
+//                @Override
+//                public void onVideoAdComplete() {
+//                }
+//
+//                @Override
+//                public void onVideoAdClicked() {
+//                    LogUtil.d("OOM", "onVideoAdClicked");
+//                }
+//            });
+//        } else {
+//            presenter.alertAlbumUpdate(true);
+//        }
+//    }
 
 
 
@@ -1532,7 +1541,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         nowChooseMusic = 3;
         nowSpliteMusic = downMusicPath;
         setBjMusic();
-
     }
 
 }

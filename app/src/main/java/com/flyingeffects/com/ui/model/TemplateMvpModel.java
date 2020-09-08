@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.media.MediaMetadataRetriever;
@@ -38,18 +37,12 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.StimulateControlManage;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
-
-
-import com.flyingeffects.com.ui.view.activity.AdHintActivity;
 import com.flyingeffects.com.ui.view.activity.ChooseBackgroundTemplateActivity;
-import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.glidebitmappool.GlideBitmapPool;
-import com.megvii.segjni.SegJni;
 import com.orhanobut.hawk.Hawk;
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.SxveConstans;
@@ -243,18 +236,12 @@ public class TemplateMvpModel {
                 String[] newPaths = new String[paths.length + 1];
                 System.arraycopy(paths, 0, newPaths, 0, paths.length);
                 MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.mAssets.get(0).ui;
-
                 if (albumType.isVideo(GetPathType.getInstance().getPathType(mTemplateModel.getBackgroundPath()))) {
                     newPaths[newPaths.length - 1] = mediaUiModel2.getpathForThisBjMatrixVideo(Objects.requireNonNull(context.getExternalFilesDir("runCatch/")).getPath(), mTemplateModel.getBackgroundPath());
-
                 } else {
                     newPaths[newPaths.length - 1] = mediaUiModel2.getpathForThisBjMatrixImage(Objects.requireNonNull(context.getExternalFilesDir("runCatch/")).getPath(), mTemplateModel.getBackgroundPath());
                 }
-
-
                 template.setReplaceableFilePaths(newPaths); //设置用户可修改的视频路径
-
-
             } else {
                 template.setReplaceableFilePaths(paths); //设置用户可修改的视频路径
             }
