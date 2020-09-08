@@ -249,15 +249,14 @@ public class fragBjItem extends BaseFragment {
                     smartRefreshLayout.setEnableLoadMore(false);
                 }
                 listData.addAll(data);
-                int allPosition = listData.size();
-                if (data.size() >= 5) {
-                    int needPosition = allPosition - 5;
-                    new_fag_template_item item = new new_fag_template_item();
-                    item.setHasShowAd(true);
-                    listData.add(needPosition, item);
-                    requestAd(needPosition);
-                }
-
+//                int allPosition = listData.size();
+//                if (data.size() >= 5) {
+//                    int needPosition = allPosition - 5;
+//                    new_fag_template_item item = new new_fag_template_item();
+//                    item.setHasShowAd(true);
+//                    listData.add(needPosition, item);
+//                    requestAd(needPosition);
+//                }
                 isShowData(listData);
             }
         }, "fagBjItem", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, isSave, true, isCanRefresh);
