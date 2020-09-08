@@ -20,7 +20,12 @@ public class AdConfigs {
     //feed 广告
     public static final String AD_FEED = "503";
 
+    //图文广告id
+    public static final String AD_IMAGE = "490";
 
+
+    //图文广告id
+    public static final String AD_IMAGE_message = "491";
 
 //
 //    // 预览视频的时候插屏广告

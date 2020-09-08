@@ -29,6 +29,8 @@ import com.flyingeffects.com.enity.SendSearchText;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.AdConfigs;
+import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.ColorCorrectionManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
@@ -93,6 +95,9 @@ public class BackgroundSearchActivity extends BaseActivity {
     @BindView(R.id.appbar)
     AppBarLayout appbar;
 
+    @BindView(R.id.ll_ad_content)
+    LinearLayout ll_ad_content;
+
     //0表示 背景过来，1表示 模板进来
     private int isFrom;
 
@@ -116,6 +121,7 @@ public class BackgroundSearchActivity extends BaseActivity {
                     statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "10_searchfor", nowShowText);
                     EventBus.getDefault().post(new SendSearchText(nowShowText));
                     hideResultView(false);
+                    ll_ad_content.setVisibility(View.GONE);
                 }
                 return true;
             }
@@ -155,6 +161,14 @@ public class BackgroundSearchActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 finish();
+            }
+        });
+
+
+        AdManager.getInstance().showImageAd(this, AdConfigs.AD_IMAGE, ll_ad_content, new AdManager.Callback() {
+            @Override
+            public void adClose() {
+
             }
         });
     }
@@ -213,6 +227,7 @@ public class BackgroundSearchActivity extends BaseActivity {
                         ed_text.setText(nowShowText);
                         hideResultView(false);
 //                        setResultMargin();
+                        ll_ad_content.setVisibility(View.GONE);
                         cancelFocus();
                         statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "10_searchfor", nowShowText);
                         EventBus.getDefault().post(new SendSearchText(nowShowText));

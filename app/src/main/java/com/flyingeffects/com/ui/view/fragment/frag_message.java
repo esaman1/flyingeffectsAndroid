@@ -17,6 +17,8 @@ import com.flyingeffects.com.enity.systemessagelist;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.AdConfigs;
+import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.activity.FansActivity;
 import com.flyingeffects.com.ui.view.activity.HomeMainActivity;
@@ -56,6 +58,10 @@ public class frag_message extends BaseFragment {
     LinearLayout ll_comment;
 
 
+    @BindView(R.id.ll_ad_content)
+    LinearLayout ll_ad_content;
+
+
     @Override
     protected int getContentLayout() {
         return R.layout.fag_message;
@@ -63,6 +69,12 @@ public class frag_message extends BaseFragment {
 
     @Override
     protected void initView() {
+        AdManager.getInstance().showImageAd(getActivity(), AdConfigs.AD_IMAGE, ll_ad_content, new AdManager.Callback() {
+            @Override
+            public void adClose() {
+
+            }
+        });
     }
 
     @Override
