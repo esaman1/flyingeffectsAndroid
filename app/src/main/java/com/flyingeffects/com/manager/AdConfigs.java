@@ -12,6 +12,10 @@ public class AdConfigs {
     // 保存后的插屏广告
     public static final String AD_SCREEN_FOR_keep = "374";
 
+    // 预览后的插屏广告
+    public static final String AD_SCREEN_FOR_PREVIEW = "493";
+
+
 
     // 下载后的广告
     public static final String AD_SCREEN_FOR_DOWNLOAD = "384";

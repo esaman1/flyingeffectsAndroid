@@ -21,11 +21,14 @@ import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.ChooseVideoAddSticker;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.TemplateType;
+import com.flyingeffects.com.manager.AdConfigs;
+import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -170,7 +173,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @BindView(R.id.tv_music)
     TextView tv_music;
 
-
+    private  boolean isShowPreviewAd=false;
     @Override
     protected int getLayoutId() {
         return R.layout.act_creation_template_edit;
@@ -352,6 +355,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
             case R.id.ll_play:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
+                    if(!isShowPreviewAd&& BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()){
+                        AdManager.getInstance().showCpAd(this, AdConfigs.AD_SCREEN_FOR_PREVIEW);
+                        isShowPreviewAd=true;
+                    }
+
                     if (isPlaying) {
                         pauseBgmMusic();
                         isIntoPause = false;
@@ -363,7 +371,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         presenter.showAllAnim(false);
                     } else {
                         statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, " 14_preview_video_bj");
-
                         WaitingDialog.openPragressDialog(this);
                         new Thread(() -> presenter.showAllAnim(true)).start();
                     }

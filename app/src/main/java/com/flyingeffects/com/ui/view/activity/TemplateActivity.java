@@ -22,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -44,6 +43,7 @@ import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.manager.AdConfigs;
+import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.AnimForViewShowAndHide;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
@@ -254,6 +254,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private new_fag_template_item templateItem;
 
+    private  boolean isShowPreviewAd=false;
 
     @Override
     protected int getLayoutId() {
@@ -459,6 +460,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     private void onclickPlaying() {
+
+        if(!isShowPreviewAd&&BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()){
+            AdManager.getInstance().showCpAd(this, AdConfigs.AD_SCREEN_FOR_PREVIEW);
+            isShowPreviewAd=true;
+        }
+
         if (isPlaying) {
             if (mPlayer != null) {
                 mPlayer.pause();
@@ -928,8 +935,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             case R.id.iv_play:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
                     onclickPlaying();
-
-
                 }
                 break;
 

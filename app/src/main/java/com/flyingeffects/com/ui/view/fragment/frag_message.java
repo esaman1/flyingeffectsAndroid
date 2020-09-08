@@ -69,12 +69,13 @@ public class frag_message extends BaseFragment {
 
     @Override
     protected void initView() {
-        AdManager.getInstance().showImageAd(getActivity(), AdConfigs.AD_IMAGE, ll_ad_content, new AdManager.Callback() {
-            @Override
-            public void adClose() {
-
-            }
-        });
+        if( BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()){
+            AdManager.getInstance().showImageAd(getActivity(), AdConfigs.AD_IMAGE, ll_ad_content, new AdManager.Callback() {
+                @Override
+                public void adClose() {
+                }
+            });
+        }
     }
 
     @Override
