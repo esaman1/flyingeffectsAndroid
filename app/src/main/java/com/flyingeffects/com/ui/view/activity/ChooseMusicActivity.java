@@ -89,18 +89,11 @@ public class ChooseMusicActivity extends BaseActivity {
         list.add(fragment_2);
 
 
-        relative_top.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent=new Intent(ChooseMusicActivity.this,searchMusicActivity.class);
-                intent.putExtra("needDuration",needDuration);
-                startActivity(intent);
-            }
+        relative_top.setOnClickListener(view -> {
+            Intent intent=new Intent(ChooseMusicActivity.this,searchMusicActivity.class);
+            intent.putExtra("needDuration",needDuration);
+            startActivity(intent);
         });
-
-
-
-
         manager = getSupportFragmentManager();
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
         viewpager.setAdapter(adapter);
@@ -133,8 +126,7 @@ public class ChooseMusicActivity extends BaseActivity {
             }
         });
 
-
-
+        findViewById(R.id.iv_top_back).setOnClickListener(view -> finish());
     }
 
 

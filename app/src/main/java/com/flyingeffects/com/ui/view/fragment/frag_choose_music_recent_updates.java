@@ -3,7 +3,7 @@ package com.flyingeffects.com.ui.view.fragment;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.Handler;
+import android.util.TimeUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -18,20 +18,26 @@ import com.flyingeffects.com.commonlyModel.DoubleClick;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.BlogFile.Music;
 import com.flyingeffects.com.enity.ChooseMusic;
+import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.ui.model.VideoManage;
 import com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity;
 import com.flyingeffects.com.utils.BlogFileResource.FileManager;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.utils.timeUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import rx.Observable;
@@ -94,46 +100,17 @@ public class frag_choose_music_recent_updates extends BaseFragment {
     @Override
     protected void initAction() {
         if (id == 1) {
-            LogUtil.d("OOM2", "当前选择的是本地音频");
-            //本地音频
-            Observable.create((Observable.OnSubscribe<List<ChooseMusic>>) subscriber -> {
-                FileManager mInstance = FileManager.getInstance();
-                for (Music music : mInstance.getMusics()
-                ) {
-                    ChooseMusic chooseMusic = new ChooseMusic();
-                    chooseMusic.setAudio_url(music.getPath());
-                    chooseMusic.setImage(music.getAlbum());
-
-                    chooseMusic.setNickname(music.getArtist());
-                    chooseMusic.setTitle(music.getName());
-                    listData.add(chooseMusic);
-                }
-                subscriber.onNext(listData);
-            }).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<ChooseMusic>>() {
-                @Override
-                public void call(List<ChooseMusic> chooseMusics) {
-                    adapter.notifyDataSetChanged();
-                }
-            });
-
+            getLocalMusic();
         } else {
             LogUtil.d("OOM2", "当前选择的是请求");
             requestFagData();
-
         }
-
     }
-
-
-
-
 
 
 
     @Override
     protected void initData() {
-
     }
 
 
@@ -141,7 +118,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
-        Observable ob = null;
+        Observable ob ;
         if (id == 0) {
             ob = Api.getDefault().musicList(BaseConstans.getRequestHead(params));
         } else {
@@ -198,13 +175,8 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                 requestFagData();
             }else{
                 //本地音频
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        finishData();
-                    }
-                },500);
-            ;
+                getLocalMusic();
+
             }
 
         });
@@ -213,6 +185,31 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             selectPage++;
             requestFagData();
         });
+    }
+
+
+    private void getLocalMusic(){
+        listData.clear();
+        LogUtil.d("OOM2", "当前选择的是本地音频");
+        //本地音频
+        Observable.create((Observable.OnSubscribe<List<ChooseMusic>>) subscriber -> {
+            FileManager mInstance = FileManager.getInstance();
+            for (Music music : mInstance.getMusics()
+            ) {
+                ChooseMusic chooseMusic = new ChooseMusic();
+                chooseMusic.setAudio_url(music.getPath());
+                chooseMusic.setImage(music.getAlbum());
+                chooseMusic.setNickname(music.getArtist());
+                chooseMusic.setTitle(music.getName());
+                listData.add(chooseMusic);
+            }
+            subscriber.onNext(listData);
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(chooseMusics -> {
+                    adapter.notifyDataSetChanged();
+                    finishData();
+                });
+
     }
 
 
@@ -259,6 +256,12 @@ public class frag_choose_music_recent_updates extends BaseFragment {
     private MediaPlayer mediaPlayer;
 
     private void playMusic(String path, int position) {
+        if(mediaPlayer!=null&&mediaPlayer.isPlaying()){
+            mediaPlayer.pause();
+            endTimer();
+            mediaPlayer.stop();
+            mediaPlayer.release();
+        }
         ChooseMusic chooseMusic = listData.get(position);
         chooseMusic.setPlaying(true);
         listData.set(position, chooseMusic);
@@ -270,7 +273,6 @@ public class frag_choose_music_recent_updates extends BaseFragment {
         adapter.notifyItemChanged(lastPosition);
         adapter.notifyItemChanged(position);
         lastPosition = position;
-
         try {
             mediaPlayer = new MediaPlayer();
             mediaPlayer.setDataSource(path);
@@ -281,11 +283,47 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                 chooseMusic2.setPlaying(false);
                 listData.set(lastPosition, chooseMusic2);
                 adapter.notifyItemChanged(lastPosition);
+                endTimer();
             });
+            startTimer(path);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    private Timer mTimer;
+    TimerTask mTimerTask;
+    private void startTimer(String url){
+        mTimer = new Timer();
+        mTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                VideoInfo videoInfo = VideoManage.getInstance().getVideoInfo(getActivity(),url);
+                int allDuration=videoInfo.getDuration();
+                float position=mediaPlayer.getCurrentPosition()/(float)allDuration;
+                adapter.setPlayingProgress((int) (position*100), timeUtils.timeParse(mediaPlayer.getCurrentPosition()));
+            }
+        };
+        mTimer.schedule(mTimerTask, 0, 10);
+    }
+
+
+    private void endTimer() {
+        if (mTimer != null) {
+            mTimer.purge();
+            mTimer.cancel();
+            mTimer = null;
+        }
+        if (mTimerTask != null) {
+            mTimerTask.cancel();
+            mTimerTask = null;
+        }
+    }
+
+
+
+
+
 
 
     @Override

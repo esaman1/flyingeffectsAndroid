@@ -3,6 +3,9 @@ package com.flyingeffects.com.adapter;
 import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
@@ -20,6 +23,10 @@ import com.flyingeffects.com.utils.timeUtils;
 
 import java.util.List;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+
 
 /**
  * user :TongJu  ; email:jutongzhang@sina.com
@@ -31,6 +38,9 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
     private Context context;
     public final static String TAG = "music_recent_adapter";
     private int fromType;
+    private LinearLayout ll_show_progress;
+    private TextView tv_playing_time;
+    private SeekBar seekBar;
 
     public music_recent_adapter(int layoutResId, @Nullable List<ChooseMusic> allData, Context context, int fromType) {
         super(layoutResId, allData);
@@ -41,9 +51,11 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
 
     @Override
     protected void convert(final BaseViewHolder helper, final ChooseMusic item) {
-//        int offset = helper.getLayoutPosition();
         ImageView iv_collect = helper.getView(R.id.iv_collect);
+        seekBar=helper.getView(R.id.seekBar);
         ImageView cover = helper.getView(R.id.iv_cover);
+        ll_show_progress=helper.getView(R.id.ll_show_progress);
+        tv_playing_time=helper.getView(R.id.tv_playing_time);
         ImageView iv_play_music=helper.getView(R.id.iv_play_music);
         if(fromType==1){
             iv_collect.setVisibility(View.GONE);
@@ -64,8 +76,10 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
         helper.addOnClickListener(R.id.tv_make);
         helper.addOnClickListener(R.id.iv_collect);
         if(item.isPlaying()){
+            ll_show_progress.setVisibility(View.VISIBLE);
             iv_play_music.setImageResource(R.mipmap.choose_music_play);
         }else{
+            ll_show_progress.setVisibility(View.GONE);
             iv_play_music.setImageResource(R.mipmap.choose_music_pause);
         }
         helper.addOnClickListener(R.id.iv_play_music);
@@ -75,7 +89,20 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
         } else {
             iv_collect.setImageResource(R.mipmap.zan_selected);
         }
+    }
 
+
+
+    /**
+     * description ：设置播放进度
+     * creation date: 2020/9/8
+     * user : zhangtongju
+     */
+    public void setPlayingProgress(int progress,String time){
+        Observable.just(time).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
+            seekBar.setProgress(progress);
+            tv_playing_time.setText(s);
+        });
 
     }
 

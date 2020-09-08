@@ -1,93 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="wrap_content"
     android:background="#181818"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
-
-
-    <RelativeLayout
-        android:layout_width="68dp"
-        android:layout_height="68dp">
-
-        <ImageView
-            android:id="@+id/iv_cover"
-            android:layout_width="68dp"
-            android:layout_height="68dp"
-            android:contentDescription="@string/app_name"
-            android:scaleType="centerCrop" />
-
-        <ImageView
-            android:id="@+id/iv_play_music"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:src="@mipmap/choose_music_pause" />
-
-    </RelativeLayout>
-
+    android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_height="68dp">
+        <RelativeLayout
+            android:layout_width="68dp"
+            android:layout_height="68dp">
 
-        <TextView
-            android:id="@+id/tv_title"
+            <ImageView
+                android:id="@+id/iv_cover"
+                android:layout_width="68dp"
+                android:layout_height="68dp"
+                android:contentDescription="@string/app_name"
+                android:scaleType="centerCrop" />
+
+            <ImageView
+                android:id="@+id/iv_play_music"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@mipmap/choose_music_pause" />
+
+        </RelativeLayout>
+
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:ellipsize="end"
-            android:textColor="#F0F0F0"
-            android:textSize="16sp" />
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textColor="#F0F0F0"
+                android:textSize="16sp" />
+
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:textColor="#F0F0F0"
+                android:textSize="16sp" />
+
+
+            <TextView
+                android:id="@+id/tv_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:textColor="#727272"
+                android:textSize="12sp" />
+
+
+        </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/iv_collect"
+            android:layout_width="22dp"
+            android:padding="1dp"
+            android:layout_height="22dp" />
 
 
         <TextView
-            android:id="@+id/tv_time"
+            android:id="@+id/tv_make"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
-            android:textColor="#F0F0F0"
-            android:textSize="16sp" />
-
-
-        <TextView
-            android:id="@+id/tv_user"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
-            android:textColor="#727272"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/message_focus"
+            android:paddingStart="14dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="6dp"
+            android:text="使用"
+            android:textColor="@color/white"
             android:textSize="12sp" />
 
 
     </LinearLayout>
 
 
-    <ImageView
-        android:id="@+id/iv_collect"
-        android:layout_width="22dp"
-        android:padding="1dp"
-        android:layout_height="22dp" />
+    <LinearLayout
+        android:id="@+id/ll_show_progress"
+        android:layout_width="match_parent"
+        android:paddingStart="16dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:paddingEnd="16dp"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_playing_time"
+            android:text="00:00"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:maxHeight="2dp"
+            android:progress="0"
+            android:progressDrawable="@drawable/bg_adjust_seek_bar"
+            android:thumb="@drawable/seek_bar_thumb" />
 
 
-    <TextView
-        android:id="@+id/tv_make"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/message_focus"
-        android:paddingStart="14dp"
-        android:paddingTop="6dp"
-        android:paddingEnd="14dp"
-        android:paddingBottom="6dp"
-        android:text="使用"
-        android:textColor="@color/white"
-        android:textSize="12sp" />
+    </LinearLayout>
 
 
 </LinearLayout>

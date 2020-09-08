@@ -85,6 +85,14 @@ public class searchMusicActivity extends BaseActivity {
 
         initSmartRefreshLayout();
         initRecycler();
+
+        findViewById(R.id.iv_back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
         //键盘的搜索按钮
         ed_search.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
@@ -241,7 +249,9 @@ public class searchMusicActivity extends BaseActivity {
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
+
         params.put("keyword",searchText);
+        LogUtil.d("OOM","searchText="+params);
         Observable    ob = Api.getDefault().musicList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<ChooseMusic>>(this) {
             @Override
