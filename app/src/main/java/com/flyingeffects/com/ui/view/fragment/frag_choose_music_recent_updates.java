@@ -40,6 +40,8 @@ import java.util.TimerTask;
 import butterknife.BindView;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 
@@ -131,8 +133,6 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             @Override
             protected void _onNext(List<ChooseMusic> data) {
                 finishData();
-                String str = StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM2", str);
                 if (isRefresh) {
                     listData.clear();
                 }
@@ -141,7 +141,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                 } else {
                     showNoData(false);
                 }
-                if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
+                if (!isRefresh && data.size() < perPageCount) {
                     ToastUtil.showToast(getResources().getString(R.string.no_more_data));
                 }
                 if (data.size() < perPageCount) {
@@ -209,7 +209,6 @@ public class frag_choose_music_recent_updates extends BaseFragment {
         adapter = new music_recent_adapter(R.layout.list_music_recent_item, listData, getActivity(), id);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setHasFixedSize(true);
         adapter.setOnItemChildClickListener((adapter, view, position) -> {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
                 nowClickPosition = position;
@@ -248,53 +247,61 @@ public class frag_choose_music_recent_updates extends BaseFragment {
     private MediaPlayer mediaPlayer;
 
     private void playMusic(String path, int position) {
-        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-            mediaPlayer.pause();
-            endTimer();
-            mediaPlayer.stop();
-            mediaPlayer.release();
-        }
-        ChooseMusic chooseMusic = listData.get(position);
-        chooseMusic.setPlaying(true);
-        listData.set(position, chooseMusic);
-        if (lastPosition != position) {
-            ChooseMusic chooseMusic2 = listData.get(lastPosition);
-            chooseMusic2.setPlaying(false);
-            listData.set(lastPosition, chooseMusic2);
-        }
-        adapter.notifyItemChanged(lastPosition);
-        adapter.notifyItemChanged(position);
-        lastPosition = position;
-        try {
-            mediaPlayer = new MediaPlayer();
-            mediaPlayer.setDataSource(path);
-            mediaPlayer.prepare();
-            mediaPlayer.start();
-            mediaPlayer.setOnCompletionListener(mediaPlayer1 -> {
+        Observable.just(path).map(s -> {
+            VideoInfo videoInfo = VideoManage.getInstance().getVideoInfo(getActivity(), s);
+            return videoInfo.getDuration();
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                mediaPlayer.pause();
+                endTimer();
+            }
+            ChooseMusic chooseMusic = listData.get(position);
+            chooseMusic.setPlaying(true);
+            listData.set(position, chooseMusic);
+            if (lastPosition != position) {
                 ChooseMusic chooseMusic2 = listData.get(lastPosition);
                 chooseMusic2.setPlaying(false);
                 listData.set(lastPosition, chooseMusic2);
-                adapter.notifyItemChanged(lastPosition);
-                endTimer();
-            });
-            startTimer(path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            }
+            adapter.notifyItemChanged(lastPosition);
+            adapter.notifyItemChanged(position);
+            lastPosition = position;
+            try {
+                if (mediaPlayer == null) {
+                    mediaPlayer = new MediaPlayer();
+                }
+                mediaPlayer.reset();
+                mediaPlayer.setDataSource(path);
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+                mediaPlayer.setOnCompletionListener(mediaPlayer1 -> {
+                    ChooseMusic chooseMusic2 = listData.get(lastPosition);
+                    chooseMusic2.setPlaying(false);
+                    listData.set(lastPosition, chooseMusic2);
+                    adapter.notifyItemChanged(lastPosition);
+                    endTimer();
+                });
+                startTimer(integer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     private Timer mTimer;
     TimerTask mTimerTask;
 
-    private void startTimer(String url) {
+    private void startTimer(int allDuration) {
         mTimer = new Timer();
         mTimerTask = new TimerTask() {
             @Override
             public void run() {
-                VideoInfo videoInfo = VideoManage.getInstance().getVideoInfo(getActivity(), url);
-                int allDuration = videoInfo.getDuration();
-                float position = mediaPlayer.getCurrentPosition() / (float) allDuration;
-                adapter.setPlayingProgress((int) (position * 100), timeUtils.timeParse(mediaPlayer.getCurrentPosition()));
+                if (getActivity() != null) {
+                    if (allDuration != 0) {
+                        float position = mediaPlayer.getCurrentPosition() / (float) allDuration;
+                        adapter.setPlayingProgress((int) (position * 100), timeUtils.timeParse(mediaPlayer.getCurrentPosition()));
+                    }
+                }
             }
         };
         mTimer.schedule(mTimerTask, 0, 10);

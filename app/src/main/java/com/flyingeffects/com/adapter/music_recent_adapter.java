@@ -24,7 +24,11 @@ import com.flyingeffects.com.utils.timeUtils;
 import java.util.List;
 
 import rx.Observable;
+import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 
 /**
@@ -37,7 +41,7 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
     private Context context;
     public final static String TAG = "music_recent_adapter";
     private int fromType;
-    private LinearLayout ll_show_progress;
+    //    private LinearLayout ll_show_progress;
     private TextView tv_playing_time;
     private SeekBar seekBar;
 
@@ -51,33 +55,35 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
     @Override
     protected void convert(final BaseViewHolder helper, final ChooseMusic item) {
         ImageView iv_collect = helper.getView(R.id.iv_collect);
-        seekBar=helper.getView(R.id.seekBar);
+        seekBar = helper.getView(R.id.seekBar);
         ImageView cover = helper.getView(R.id.iv_cover);
-        ll_show_progress=helper.getView(R.id.ll_show_progress);
-        tv_playing_time=helper.getView(R.id.tv_playing_time);
-        ImageView iv_play_music=helper.getView(R.id.iv_play_music);
-        if(fromType==1){
+        LinearLayout ll_show_progress = helper.getView(R.id.ll_show_progress);
+        tv_playing_time = helper.getView(R.id.tv_playing_time);
+        ImageView iv_play_music = helper.getView(R.id.iv_play_music);
+        if (fromType == 1) {
             iv_collect.setVisibility(View.GONE);
-        }else{
+        } else {
             iv_collect.setVisibility(View.VISIBLE);
         }
         Glide.with(context)
                 .load(item.getImage())
                 .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 3)))
-              .apply(RequestOptions.placeholderOf(R.mipmap.placeholder))
+                .apply(RequestOptions.placeholderOf(R.mipmap.placeholder))
                 .into(cover);
         helper.setText(R.id.tv_user, item.getNickname());
         helper.setText(R.id.tv_title, item.getTitle());
         LogUtil.d("OOM2", "fromType=" + fromType);
-        VideoInfo videoInfo = VideoManage.getInstance().getVideoInfo(context, item.getAudio_url());
-        LogUtil.d("OOM2", "videoInfo.getDuration()=" + videoInfo.getDuration());
-        helper.setText(R.id.tv_time, timeUtils.timeParse(videoInfo.getDuration()));
+//        VideoInfo videoInfo = VideoManage.getInstance().getVideoInfo(context, item.getAudio_url());
+//        LogUtil.d("OOM2", "videoInfo.getDuration()=" + videoInfo.getDuration());
+//        helper.setText(R.id.tv_time, timeUtils.timeParse(videoInfo.getDuration()));
+
+
         helper.addOnClickListener(R.id.tv_make);
         helper.addOnClickListener(R.id.iv_collect);
-        if(item.isPlaying()){
+        if (item.isPlaying()) {
             ll_show_progress.setVisibility(View.VISIBLE);
             iv_play_music.setImageResource(R.mipmap.choose_music_play);
-        }else{
+        } else {
             ll_show_progress.setVisibility(View.GONE);
             iv_play_music.setImageResource(R.mipmap.choose_music_pause);
         }
@@ -88,8 +94,24 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
         } else {
             iv_collect.setImageResource(R.mipmap.zan_new_select);
         }
-    }
 
+
+        Observable.just(item.getAudio_url()).map(new Func1<String, Integer>() {
+            @Override
+            public Integer call(String s) {
+                VideoInfo videoInfo = VideoManage.getInstance().getVideoInfo(context, s);
+                return videoInfo.getDuration();
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+
+            @Override
+            public void call(Integer integer) {
+                helper.setText(R.id.tv_time, timeUtils.timeParse(integer));
+            }
+        });
+
+
+    }
 
 
     /**
@@ -97,12 +119,11 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
      * creation date: 2020/9/8
      * user : zhangtongju
      */
-    public void setPlayingProgress(int progress,String time){
+    public void setPlayingProgress(int progress, String time) {
         Observable.just(time).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
             seekBar.setProgress(progress);
             tv_playing_time.setText(s);
         });
-
 
 
     }
