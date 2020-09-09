@@ -132,6 +132,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     @Override
     public void onDestroy() {
         super.onDestroy();
+        videoToPause();
         EventBus.getDefault().unregister(this);
     }
 

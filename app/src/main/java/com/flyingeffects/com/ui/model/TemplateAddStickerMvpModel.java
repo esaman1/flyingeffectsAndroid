@@ -1232,7 +1232,7 @@ public class TemplateAddStickerMvpModel {
         stopAllAnim();
         this.percentageH = percentageH;
         deleteSubLayerSticker();
-        if (listAllSticker.size() == 0) {
+        if (viewLayerRelativeLayout.getChildCount() == 0) {
             saveToAlbum(mVideoPath);
         } else {
             new Handler().postDelayed(() -> {
@@ -1503,15 +1503,15 @@ public class TemplateAddStickerMvpModel {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (dialogProgress <= 25) {
-                dialog.setProgress("飞闪预览处理中" + dialogProgress + "%\n" + "请耐心等待 不要离开");
+                dialog.setProgress("正在保存中" + dialogProgress + "%\n" + "请耐心等待 不要离开");
             } else if (dialogProgress <= 40) {
-                dialog.setProgress("飞闪音频添加中" + dialogProgress + "%\n" + "快了，友友稍等片刻");
+                dialog.setProgress("正在保存中" + dialogProgress + "%\n" + "快了，友友稍等片刻");
             } else if (dialogProgress <= 60) {
-                dialog.setProgress("飞闪视频处理中" + dialogProgress + "%\n" + "抠像太强大，即将生成");
+                dialog.setProgress("正在保存中" + dialogProgress + "%\n" + "抠像太强大，即将生成");
             } else if (dialogProgress <= 80) {
-                dialog.setProgress("飞闪视频合成中" + dialogProgress + "%\n" + "马上就好，不要离开");
+                dialog.setProgress("正在保存中" + dialogProgress + "%\n" + "马上就好，不要离开");
             } else {
-                dialog.setProgress("视频即将呈现啦" + dialogProgress + "%\n" + "最后合成中，请稍后");
+                dialog.setProgress("正在保存中" + dialogProgress + "%\n" + "最后合成中，请稍后");
             }
         }
     };

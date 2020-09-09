@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerVertical="true"
+    android:background="#90000000"
+    android:orientation="vertical">
+
+
+
+
+    <RelativeLayout
+        android:id="@+id/ll_content"
+        android:layout_width="match_parent"
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="60dp"
+        android:layout_centerInParent="true"
+        android:layout_height="214dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:src="@mipmap/praise_content"
+            android:scaleType="centerCrop"
+            android:layout_height="match_parent"/>
+
+
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_marginBottom="27dp"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:src="@mipmap/praise_btn"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:layout_height="wrap_content"/>
+
+
+
+          <LinearLayout
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_alignParentBottom="true"
+              android:layout_height="40dp">
+
+              <TextView
+                  android:id="@+id/tv_0"
+                  android:layout_width="0dp"
+                  android:layout_weight="1"
+                  android:layout_height="match_parent"/>
+
+
+              <TextView
+                  android:id="@+id/tv_1"
+                  android:layout_width="0dp"
+                  android:layout_weight="1"
+                  android:layout_height="match_parent"/>
+
+
+          </LinearLayout>
+
+
+
+        </RelativeLayout>
+
+
+
+
+
+
+    </RelativeLayout>
+
+
+
+    <ImageView
+        android:src="@mipmap/praise_head"
+        android:layout_centerHorizontal="true"
+        android:layout_width="156dp"
+        android:layout_marginBottom="-30dp"
+        android:layout_above="@+id/ll_content"
+        android:layout_height="wrap_content"/>
+
+
+</RelativeLayout>

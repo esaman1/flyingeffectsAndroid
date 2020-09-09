@@ -80,15 +80,21 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     protected void initView() {
         tv_top_submit.setVisibility(View.VISIBLE);
         tv_top_submit.setText("保存");
+
         ((TextView) findViewById(R.id.tv_top_title)).setText("裁剪音乐");
-        findViewById(R.id.iv_top_back).setOnClickListener(this);
+        findViewById(R.id.iv_top_back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         Presenter = new LocalMusicTailorPresenter(this, this);
         videoPath = getIntent().getStringExtra("videoPath");
         videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
         allDuration = videoInfo.getDuration();
         needDuration = getIntent().getLongExtra("needDuration", 10000);
         Presenter.setNeedDuration((int) needDuration);
-        tv_allDuration.setText("模板时长" + timeUtils.timeParse(allDuration));
+        tv_allDuration.setText("模板时长" + timeUtils.timeParse(needDuration));
         mybarCharView.setCallback(new MyBarChartView.ProgressCallback() {
             @Override
             public void progress(float percent) {

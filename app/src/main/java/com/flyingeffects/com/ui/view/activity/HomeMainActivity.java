@@ -2,8 +2,6 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -13,7 +11,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -36,7 +33,6 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
-import com.flyingeffects.com.enity.HomeMessageCountUpdate;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.checkVersion;
 import com.flyingeffects.com.enity.messageCount;
@@ -74,13 +70,10 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import de.greenrobot.event.EventBus;
-import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
 import static com.flyingeffects.com.constans.BaseConstans.getChannel;
-import static com.umeng.socialize.utils.ContextUtil.getPackageName;
 
 
 /****
@@ -187,10 +180,12 @@ public class HomeMainActivity extends FragmentActivity {
                 AdManager.getInstance().showCpAd(HomeMainActivity.this, AdConfigs.AD_SCREEN, new AdManager.Callback() {
                     @Override
                     public void adClose() {
-
                         if (ShowPraiseModel.canShowAlert() && !ShowPraiseModel.getHasComment() && !ShowPraiseModel.getIsNewUser() && !ShowPraiseModel.ToDayHasShowAd()) {
                             new Handler().postDelayed(() -> {
-                                showPraise();
+                                Intent intent=new Intent(HomeMainActivity.this,PraiseActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+
                             }, 3000);
                         }
                     }
@@ -202,42 +197,6 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-    private void showPraise() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(
-                //去除黑边
-                new ContextThemeWrapper(this, R.style.Theme_Transparent));
-        builder.setTitle(this.getString(R.string.notification));
-        builder.setMessage("如果好用的话给我们好评吧"
-        );
-        builder.setNegativeButton(getString(R.string.reject), (dialog, which) -> {
-            ShowPraiseModel.statisticsCloseNum();
-            dialog.dismiss();
-        });
-        builder.setPositiveButton(getString(R.string.to_good_comment), (dialog, which) -> {
-            ShowPraiseModel.setHasComment();
-            reception();
-            dialog.dismiss();
-        });
-        builder.setCancelable(true);
-        Dialog mDialog = builder.show();
-        mDialog.setCanceledOnTouchOutside(false);
-        mDialog.show();
-    }
-
-
-    public void reception() {
-        try {
-            Uri uri = Uri.parse("market://details?id=" + getPackageName());
-            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        } catch (Exception e) {
-            ToastUtil.showToast(getString(R.string.install_app_store_notification));
-            e.printStackTrace();
-        }
-
-
-    }
 
     /**
      * user :TongJu  ; email:jutongzhang@sina.com

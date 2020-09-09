@@ -250,6 +250,13 @@
             android:theme="@style/TransparentTheme" />
 
         <activity
+            android:name=".ui.view.activity.PraiseActivity"
+            android:exported="false"
+            android:theme="@style/AllTransparentTheme" />
+
+
+
+        <activity
             android:name=".ui.view.activity.FansActivity"
             android:exported="false"
             android:theme="@style/TransparentTheme" />
