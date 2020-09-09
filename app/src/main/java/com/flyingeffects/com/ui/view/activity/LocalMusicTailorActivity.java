@@ -156,7 +156,9 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
         }
         MyBarChartView myBarCharView = findViewById(R.id.mybarCharView);
         long nowMaterial = videoInfo.getDuration();
+        LogUtil.d("OOM2", "nowMaterial=" + nowMaterial);
         float percent = nowMaterial / (float) needDuration;
+        LogUtil.d("OOM2", "needDuration=" + needDuration+"percent="+percent);
         LogUtil.d("OOM2", "numFrame=" + numFrame + ",percent=" + percent);
         myBarCharView.setBaseData(numFrame, percent, nowMaterial, needDuration);
         myBarCharView.setBarChartData(innerData);

@@ -7,6 +7,7 @@ import android.os.Message;
 import android.text.TextUtils;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
+import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.mediaManager;
@@ -19,6 +20,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.record.SamplePlayer;
 import com.flyingeffects.com.utils.record.soundfile.SoundFile;
+import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
@@ -60,12 +62,12 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
         this.context = context;
         mVideoFolder = fileManager.getFileCachePath(context, "downVideoForMusic");
         soundFolder = fileManager.getFileCachePath(context, "downSoundForMusic");
-        soundCutFolder=fileManager.getFileCachePath(context, "downCutSoundForMusic");
+        soundCutFolder = fileManager.getFileCachePath(context, "downCutSoundForMusic");
     }
 
 
-    public void SeekToPositionMusic(int position){
-        if(mPlayer!=null){
+    public void SeekToPositionMusic(int position) {
+        if (mPlayer != null) {
             mPlayer.start();
             mPlayer.seekTo(position);
             startTimer();
@@ -73,17 +75,13 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
     }
 
 
-    public void setNeedDuration(int needDuration){
-        this.needDuration=needDuration;
+    public void setNeedDuration(int needDuration) {
+        this.needDuration = needDuration;
     }
 
 
-
-
-
-
-    public void pauseMusic(){
-        if(mPlayer!=null&&mPlayer.isPlaying()){
+    public void pauseMusic() {
+        if (mPlayer != null && mPlayer.isPlaying()) {
             mPlayer.pause();
         }
     }
@@ -95,7 +93,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
     }
 
     public void OnDestroy() {
-        if(mPlayer!=null&&mPlayer.isPlaying()){
+        if (mPlayer != null && mPlayer.isPlaying()) {
             mPlayer.stop();
             mPlayer.release();
         }
@@ -108,21 +106,28 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
      * user : zhangtongju
      */
     private void toDownVideo(String path) {
-        if(!TextUtils.isEmpty(path)&&!path.contains("http")){
-            soundCutFolder=soundCutFolder+"/audio.mp3";
-            try {
-                FileUtil.copyFile(new File(path),soundCutFolder);
-                localMusicTailorMvpModel.setSoundPath(soundCutFolder);
-                requestSoundData(path);
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (!TextUtils.isEmpty(path) && !path.contains("http")) {
+            String mimeType = GetPathType.getInstance().getPathType(path);
+            if (albumType.isVideo(mimeType)) {
+                LogUtil.d("OOM", "当前的地址是本地视频地址" + path);
+                toSplitMp4(path);
+            } else {
+                LogUtil.d("OOM", "当前的地址是本地音频地址" + path);
+                soundCutFolder = soundCutFolder + "/audio.mp3";
+                try {
+                    FileUtil.copyFile(new File(path), soundCutFolder);
+                    localMusicTailorMvpModel.setSoundPath(soundCutFolder);
+                    requestSoundData(path);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-
-
-
-        }else{
+        } else {
+            LogUtil.d("OOM", "当前的地址是网络地址" + path);
             String videoName;
-            if (path.contains(".mp4")) {
+            String mimeType = GetPathType.getInstance().getPathType(path);
+            if (albumType.isVideo(mimeType)) {
+                LogUtil.d("OOM", "当前的地址是网络视频音频地址" + path);
                 nowMaterialIsVideo = true;
                 videoName = mVideoFolder + File.separator + "downPath.mp4";
             } else {
@@ -133,12 +138,10 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
                 boolean tag = file.delete();
                 LogUtil.d("OOM2", "删除文件" + tag);
             }
-
             if (downProgressDialog == null) {
                 downProgressDialog = new WaitingDialog_progress(context);
                 downProgressDialog.openProgressDialog();
             }
-
             Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
                 DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> Observable.just(videoName).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s1 -> {
                     LogUtil.d("OOM2", "s1=" + s1);
@@ -156,9 +159,6 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
                 manage.DownloadVideo(path, videoName);
             });
         }
-
-
-
     }
 
 
@@ -243,7 +243,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
                 } catch (final Exception e) {
                     e.printStackTrace();
                     String mInfoContent = e.toString();
-                    LogUtil.d("OOM2",mInfoContent);
+                    LogUtil.d("OOM2", mInfoContent);
 //                    ToastUtil.showToast(mInfoContent);
                     return;
                 }
@@ -266,9 +266,10 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
                     mSoundFile.getFiletype() + ", " +
                             mSoundFile.getSampleRate() + " Hz, " +
                             mSoundFile.getAvgBitrateKbps() + " kbps, ";
-            LogUtil.d("OOM2", mCaption+"波纹点大小"+mSoundFile.getNumFrames());
-            localMusicTailorMvpModel.setChartData(mSoundFile.getFrameGains(),mSoundFile.getNumFrames());
-            localMusicTailorMvpView.showCharView(mSoundFile.getFrameGains(),mSoundFile.getNumFrames());
+            LogUtil.d("OOM2", mCaption + "波纹点大小" + mSoundFile.getNumFrames());
+            LogUtil.d("OOM2","mSoundFile.getNumFrames()="+mSoundFile.getNumFrames());
+            localMusicTailorMvpModel.setChartData(mSoundFile.getFrameGains(), mSoundFile.getNumFrames());
+            localMusicTailorMvpView.showCharView(mSoundFile.getFrameGains(), mSoundFile.getNumFrames());
         });
     }
 
@@ -276,9 +277,6 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
     private long getCurrentTime() {
         return System.nanoTime() / 1000000;
     }
-
-
-
 
 
     /***
@@ -312,7 +310,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
             super.handleMessage(msg);
             switch (msg.what) {
                 case 1:
-                    nowTimerDuration+=500;
+                    nowTimerDuration += 500;
                     if (nowTimerDuration == needDuration) {
                         nowTimerDuration = 0;
                         endTimer();
@@ -326,10 +324,6 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
             }
         }
     };
-
-
-
-
 
 
     /**
@@ -350,33 +344,32 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
     }
 
 
-
     /**
      * description ：保存裁剪方法
      * creation date: 2020/9/1
      * user : zhangtongju
      */
-    public void toSaveCutMusic(long startTimer, long endTimer){
+    public void toSaveCutMusic(long startTimer, long endTimer) {
         showProgressDialog();
         videoCutDurationForVideoOneDo.getInstance().cuttingAudio(context, localMusicTailorMvpModel.getSoundPath(), startTimer, endTimer, new videoCutDurationForVideoOneDo.cutAudioCallback() {
             @Override
             public void isDone(String path) {
 
-                if(!TextUtils.isEmpty(path)){
+                if (!TextUtils.isEmpty(path)) {
                     closeProgress();
-                    soundCutFolder=soundCutFolder+"/audio.mp3";
-                    File file=new File(soundCutFolder);
-                    if(file.exists()){
+                    soundCutFolder = soundCutFolder + "/audio.mp3";
+                    File file = new File(soundCutFolder);
+                    if (file.exists()) {
                         file.delete();
                     }
                     try {
-                        FileUtil.copyFile(new File(path),soundCutFolder);
+                        FileUtil.copyFile(new File(path), soundCutFolder);
                         localMusicTailorMvpView.isAudioCutDone(soundCutFolder);
                     } catch (IOException e) {
                         e.printStackTrace();
-                        LogUtil.d("OOM2","复制文件报错"+e.getMessage());
+                        LogUtil.d("OOM2", "复制文件报错" + e.getMessage());
                     }
-                }else{
+                } else {
                     closeProgress();
                     ToastUtil.showToast("不支持该视频");
                 }
@@ -385,36 +378,33 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
 
             @Override
             public void isProgress(long i) {
-              Observable.just(i).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Long>() {
-                  @Override
-                  public void call(Long aLong) {
-                     // downProgressDialog.setProgress(aLong+"%");
-                  }
-              });
+                Observable.just(i).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        // downProgressDialog.setProgress(aLong+"%");
+                    }
+                });
             }
         });
     }
 
 
-
-    private void showProgressDialog(){
+    private void showProgressDialog() {
         if (downProgressDialog == null) {
             downProgressDialog = new WaitingDialog_progress(context);
             downProgressDialog.openProgressDialog();
-        }else{
+        } else {
             downProgressDialog.openProgressDialog();
         }
     }
 
 
-    private void closeProgress(){
+    private void closeProgress() {
         if (downProgressDialog != null) {
             downProgressDialog.closePragressDialog();
             downProgressDialog = null;
         }
     }
-
-
 
 
 }

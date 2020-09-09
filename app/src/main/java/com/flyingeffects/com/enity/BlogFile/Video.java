@@ -96,6 +96,17 @@ public class Video implements Serializable, Comparator<Video> {
     }
 
 
+    public boolean isPlaying() {
+        return isPlaying;
+    }
+
+    public void setPlaying(boolean playing) {
+        isPlaying = playing;
+    }
+
+    private boolean isPlaying;
+
+
 
 
 

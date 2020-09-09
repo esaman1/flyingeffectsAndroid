@@ -92,6 +92,9 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
     private boolean nowUiIsLandscape;
 
+    private  boolean isShowPreviewAd=false;
+
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_creation_template_preview;
@@ -131,6 +134,12 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     }
 
     private void videoPause() {
+
+        if(!isShowPreviewAd&& BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()){
+            AdManager.getInstance().showCpAd(this, AdConfigs.AD_SCREEN_FOR_PREVIEW);
+            isShowPreviewAd=true;
+        }
+
         if (exoPlayer != null) {
             exoPlayer.stop();
         }

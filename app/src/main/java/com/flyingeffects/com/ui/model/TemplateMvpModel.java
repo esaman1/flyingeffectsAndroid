@@ -266,7 +266,7 @@ public class TemplateMvpModel {
 
                 @Override
                 public void onUpdate(int progress) {
-                    waitingDialog_progress.setProgress("正在保存中" + progress + "%\n" +
+                    waitingDialog_progress.setProgress("飞闪预览处理中" + progress + "%\n" +
                             "请勿离开页面");
                     LogUtil.d("OOM", "progress=" + progress);
                 }

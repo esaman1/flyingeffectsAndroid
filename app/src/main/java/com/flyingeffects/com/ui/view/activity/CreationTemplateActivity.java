@@ -173,7 +173,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @BindView(R.id.tv_music)
     TextView tv_music;
 
-    private  boolean isShowPreviewAd=false;
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_creation_template_edit;
@@ -355,10 +355,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
             case R.id.ll_play:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
-                    if(!isShowPreviewAd&& BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()){
-                        AdManager.getInstance().showCpAd(this, AdConfigs.AD_SCREEN_FOR_PREVIEW);
-                        isShowPreviewAd=true;
-                    }
+
 
                     if (isPlaying) {
                         pauseBgmMusic();

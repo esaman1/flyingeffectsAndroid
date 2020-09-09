@@ -5,6 +5,8 @@ import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.MediaPlayer;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.widget.LinearLayout;
 
@@ -16,16 +18,22 @@ import com.flyingeffects.com.adapter.music_local_adapter;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.commonlyModel.DoubleClick;
 import com.flyingeffects.com.enity.BlogFile.Video;
+import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.ui.model.VideoManage;
 import com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 import static com.flyingeffects.com.utils.BlogFileResource.FileManager.isLansongVESuppport;
 
@@ -46,14 +54,12 @@ public class frag_choose_music_local_music extends BaseFragment {
     @BindView(R.id.lin_show_nodata_bj)
     LinearLayout lin_show_nodata_bj;
 
-    private boolean isRefresh = true;
-    private int selectPage = 1;
-    private int perPageCount = 10;
-
     private List<Video> listVideoFiltrateMp4 = new ArrayList<>();
 
 
     private music_local_adapter adapter;
+
+    private long needDuration;
 
 
     @Override
@@ -63,12 +69,15 @@ public class frag_choose_music_local_music extends BaseFragment {
 
     @Override
     protected void initView() {
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            needDuration = bundle.getLong("needDuration", 10000);
+        }
         initRecycler();
     }
 
     @Override
     protected void initAction() {
-//        initVideo();
     }
 
     @Override
@@ -85,16 +94,10 @@ public class frag_choose_music_local_music extends BaseFragment {
 
     public void initSmartRefreshLayout() {
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
-            isRefresh = true;
-            refreshLayout.setEnableLoadMore(true);
-            selectPage = 1;
+            startQuery();
         });
-        smartRefreshLayout.setOnLoadMoreListener(refresh -> {
-            isRefresh = false;
-            selectPage++;
-        });
+        smartRefreshLayout.setEnableLoadMore(true);
     }
-
 
 
     private void initRecycler() {
@@ -110,10 +113,15 @@ public class frag_choose_music_local_music extends BaseFragment {
                     case R.id.tv_make:
                         Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                        intent.putExtra("videoPath", listData.get(position).getAudio_url());
-//                        intent.putExtra("needDuration", needDuration);
-                        intent.putExtra("isAudio", true);
+                        intent.putExtra("videoPath", listVideoFiltrateMp4.get(position).getPath());
+                        intent.putExtra("needDuration", needDuration);
+                        intent.putExtra("isAudio", false);
                         startActivity(intent);
+                        break;
+
+
+                    case R.id.iv_play:
+                        playMusic(listVideoFiltrateMp4.get(position).getPath(), position);
                         break;
 
                     default:
@@ -121,17 +129,69 @@ public class frag_choose_music_local_music extends BaseFragment {
                 }
             }
         });
+
+
         recyclerView.setAdapter(adapter);
+    }
+
+
+    private int lastPosition;
+    private MediaPlayer mediaPlayer;
+
+    private void playMusic(String path, int position) {
+        Observable.just(path).map(s -> {
+            VideoInfo videoInfo = VideoManage.getInstance().getVideoInfo(getActivity(), s);
+            return videoInfo.getDuration();
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                mediaPlayer.pause();
+                if(lastPosition==position){
+                    Video video = listVideoFiltrateMp4.get(lastPosition);
+                    video.setPlaying(false);
+                    adapter.notifyItemChanged(lastPosition);
+                    return;
+                }
+            }
+            Video video = listVideoFiltrateMp4.get(position);
+            video.setPlaying(true);
+            listVideoFiltrateMp4.set(position, video);
+            if (lastPosition != position) {
+                Video video2 = listVideoFiltrateMp4.get(lastPosition);
+                video2.setPlaying(false);
+                listVideoFiltrateMp4.set(lastPosition, video2);
+            }
+            adapter.notifyItemChanged(lastPosition);
+            adapter.notifyItemChanged(position);
+            lastPosition = position;
+            try {
+                if (mediaPlayer == null) {
+                    mediaPlayer = new MediaPlayer();
+                }
+                mediaPlayer.reset();
+                mediaPlayer.setDataSource(path);
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+                mediaPlayer.setOnCompletionListener(mediaPlayer1 -> {
+                    Video video3 = listVideoFiltrateMp4.get(lastPosition);
+                    video3.setPlaying(false);
+                    listVideoFiltrateMp4.set(lastPosition, video3);
+                    adapter.notifyItemChanged(lastPosition);
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
 
 
 
     QueryHandler handler;
+
     private void startQuery() {
-        if(getActivity()!=null){
-            handler =new QueryHandler(getActivity().getContentResolver());
-            handler.startQuery(0,null, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, new String[]{
+        if (getActivity() != null) {
+            handler = new QueryHandler(getActivity().getContentResolver());
+            handler.startQuery(0, null, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, new String[]{
                     MediaStore.Video.Media._ID,
                     MediaStore.Video.Media.DATA,
                     MediaStore.Video.Media.TITLE,
@@ -164,7 +224,7 @@ public class frag_choose_music_local_music extends BaseFragment {
                 }
                 int id = c.getInt(c.getColumnIndexOrThrow(MediaStore.Video.Media._ID));// 视频的id
                 try {
-                  String name = c.getString(c.getColumnIndexOrThrow("title")); // 视频名称
+                    String name = c.getString(c.getColumnIndexOrThrow("title")); // 视频名称
                     long size = c.getLong(c.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));// 大小
                     File file = new File(path);
                     if (file.exists()) {
@@ -184,8 +244,16 @@ public class frag_choose_music_local_music extends BaseFragment {
                 }
             }
             adapter.notifyDataSetChanged();
+            finishData();
         }
     }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(mediaPlayer!=null){
+            mediaPlayer.stop();
+            mediaPlayer.release();
+        }
+    }
 }

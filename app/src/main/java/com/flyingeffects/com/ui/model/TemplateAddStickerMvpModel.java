@@ -1062,8 +1062,7 @@ public class TemplateAddStickerMvpModel {
             }
         });
         stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
-
-
+        stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
         stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
         stickView.setRightBitmap(context.getDrawable(R.mipmap.sticker_updown));
 

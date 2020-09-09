@@ -40,8 +40,6 @@ import java.util.TimerTask;
 import butterknife.BindView;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 
@@ -110,6 +108,8 @@ public class frag_choose_music_recent_updates extends BaseFragment {
     @Override
     protected void initData() {
     }
+
+
 
 
     private void requestFagData() {
@@ -254,6 +254,12 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                 mediaPlayer.pause();
                 endTimer();
+                if(lastPosition==position){
+                    ChooseMusic chooseMusic2 = listData.get(lastPosition);
+                    chooseMusic2.setPlaying(false);
+                    adapter.notifyItemChanged(lastPosition);
+                    return;
+                }
             }
             ChooseMusic chooseMusic = listData.get(position);
             chooseMusic.setPlaying(true);

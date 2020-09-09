@@ -14,7 +14,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.webkit.MimeTypeMap;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
@@ -41,7 +40,6 @@ import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.TabEntity;
 import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.enity.new_fag_template_item;
-import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.AlbumManager;
@@ -63,8 +61,6 @@ import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.flyingeffects.com.view.NoSlidingViewPager;
-import com.nineton.ntadsdk.itr.VideoAdCallBack;
-import com.nineton.ntadsdk.manager.VideoAdManager;
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.SxveConstans;
 import com.shixing.sxve.ui.albumType;
@@ -185,7 +181,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private int nowChoosePosition;
     private int lastChoosePosition;
-    private AlphaAnimation hideAnim;
 
 
     /**
@@ -254,7 +249,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private new_fag_template_item templateItem;
 
-    private  boolean isShowPreviewAd=false;
+
 
     @Override
     protected int getLayoutId() {
@@ -266,7 +261,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         EventBus.getDefault().register(this);
         findViewById(R.id.iv_top_back).setOnClickListener(this);
         findViewById(R.id.tv_top_submit).setVisibility(View.VISIBLE);
-        ((TextView) findViewById(R.id.tv_top_submit)).setText("保存");
+        ((TextView) findViewById(R.id.tv_top_submit)).setText("下一步");
         presenter = new TemplatePresenter(this, this);
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("Message");
@@ -461,10 +456,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private void onclickPlaying() {
 
-        if(!isShowPreviewAd&&BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()){
-            AdManager.getInstance().showCpAd(this, AdConfigs.AD_SCREEN_FOR_PREVIEW);
-            isShowPreviewAd=true;
-        }
+
 
         if (isPlaying) {
             if (mPlayer != null) {

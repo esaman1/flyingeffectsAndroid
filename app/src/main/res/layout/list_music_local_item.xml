@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="130dp"
-android:layout_margin="8dp"
+    android:layout_margin="8dp"
     android:orientation="vertical">
 
 
@@ -10,24 +10,23 @@ android:layout_margin="8dp"
         android:id="@+id/iv_cover"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="@string/app_name"
-        />
+        android:contentDescription="@string/app_name" />
 
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="4dp"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/choose_music_translation_bj">
+        android:background="@drawable/choose_music_translation_bj"
+        android:padding="4dp">
 
         <TextView
             android:id="@+id/tv_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_weight="1"
             android:text="00:15"
-            android:layout_centerVertical="true"
             android:textColor="@color/white"
             android:textSize="14sp" />
 
@@ -49,12 +48,12 @@ android:layout_margin="8dp"
     </RelativeLayout>
 
 
-
     <ImageView
+        android:id="@+id/iv_play"
         android:layout_width="wrap_content"
-        android:src="@mipmap/choose_music_pause"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_height="wrap_content"/>
+        android:src="@mipmap/choose_music_pause" />
 
 
 </RelativeLayout>

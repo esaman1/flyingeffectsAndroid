@@ -559,7 +559,6 @@ public class MyBarChartView extends View {
             if (getIInt > frameCount - 1) {
                 getIInt = frameCount - 1;
             }
-            LogUtil.d("OOM2", "getIInt=" + getIInt);
             newInnerData.add(innerData.get(getIInt));
         }
         return newInnerData;

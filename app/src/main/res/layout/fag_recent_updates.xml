@@ -22,19 +22,7 @@
             android:paddingEnd="@dimen/dp_16" />
 
 
-        <com.scwang.smartrefresh.layout.footer.ClassicsFooter
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_40"
-            app:srlAccentColor="@color/white"
-            app:srlClassicsSpinnerStyle="Translate"
-            app:srlDrawableArrowSize="20dp"
-            app:srlDrawableMarginRight="20dp"
-            app:srlDrawableProgress="@mipmap/mall_shuaxin"
-            app:srlDrawableProgressSize="20dp"
-            app:srlDrawableSize="20dp"
-            app:srlFinishDuration="500"
-            app:srlPrimaryColor="@color/black"
-            app:srlTextSizeTitle="16sp" />
+
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
 

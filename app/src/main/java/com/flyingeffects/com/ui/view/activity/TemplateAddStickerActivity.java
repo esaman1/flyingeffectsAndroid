@@ -16,6 +16,7 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.manager.AdConfigs;
+import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.TemplateAddStickerMvpView;
@@ -103,6 +104,8 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
     @BindView(R.id.viewPager)
     ViewPager viewPager;
+
+    private  boolean isShowPreviewAd=false;
 
     @Override
     protected int getLayoutId() {
@@ -426,6 +429,10 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     private void toPlay(){
         if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
             if (isPlaying) {
+                if(!isShowPreviewAd&&BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()){
+                    AdManager.getInstance().showCpAd(this, AdConfigs.AD_SCREEN_FOR_PREVIEW);
+                    isShowPreviewAd=true;
+                }
                 isIntoPause = false;
                 isPlayComplate = false;
                 videoToPause();
