@@ -380,6 +380,7 @@ public class CreationTemplateMvpModel {
         tv_0 = viewForChooseMusic.findViewById(R.id.tv_0);
         tv_1 = viewForChooseMusic.findViewById(R.id.tv_1);
         tv_2 = viewForChooseMusic.findViewById(R.id.tv_2);
+        tv_1.setText("背景音乐");
         tv_3 = viewForChooseMusic.findViewById(R.id.tv_3);
         check_box_0 = viewForChooseMusic.findViewById(R.id.check_box_0);
         check_box_1 = viewForChooseMusic.findViewById(R.id.check_box_1);

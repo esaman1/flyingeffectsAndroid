@@ -17,6 +17,7 @@ import com.flyingeffects.com.commonlyModel.DoubleClick;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.BlogFile.Music;
 import com.flyingeffects.com.enity.ChooseMusic;
+import com.flyingeffects.com.enity.FragmentHasSlide;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -38,6 +39,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.BindView;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -83,6 +86,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             id = bundle.getInt("id", 0);
@@ -382,5 +386,16 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             adapter.notifyItemChanged(nowClickPosition);
         }
     }
+
+
+    @Subscribe
+    public void onEventMainThread( FragmentHasSlide fragmentHasSlide) {
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+            endTimer();
+        }
+    }
+
+
 
 }

@@ -1220,7 +1220,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         Observable.just(nowChoosePosition).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> mTemplateViews.get(integer).invalidate(), 200));
     }
 
-
+    LinearLayout ll_choose_3;
     private int lastChooseCommonTabLayout;
     private CheckBox cb_0;
     private CheckBox cb_1;
@@ -1280,7 +1280,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         LinearLayout ll_choose_0 = templateThumbForMusic.findViewById(R.id.ll_choose_0);
         LinearLayout ll_choose_1 = templateThumbForMusic.findViewById(R.id.ll_choose_1);
         LinearLayout ll_choose_2 = templateThumbForMusic.findViewById(R.id.ll_choose_2);
-        LinearLayout ll_choose_3 = templateThumbForMusic.findViewById(R.id.ll_choose_3);
+        ll_choose_3 = templateThumbForMusic.findViewById(R.id.ll_choose_3);
         ll_choose_3.setVisibility(View.VISIBLE);
         LinearLayout ll_line_0 = templateThumbForMusic.findViewById(R.id.ll_line_0);
         TextView tv_add_music = templateThumbForMusic.findViewById(R.id.tv_add_music);
@@ -1290,6 +1290,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         }
         if (albumType.isImage(GetPathTypeModel.getInstance().getMediaType(imgPath.get(0)))) {
             ll_choose_0.setVisibility(View.INVISIBLE);
+
+
+
+
         }
         if (!mTemplateModel.HasBj && albumType.isImage(GetPathTypeModel.getInstance().getMediaType(imgPath.get(0)))) {
             ll_line_0.setVisibility(View.GONE);
@@ -1298,6 +1302,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         ll_choose_1.setOnClickListener(tvMusicListener);
         ll_choose_2.setOnClickListener(tvMusicListener);
         ll_choose_3.setOnClickListener(tvMusicListener);
+        ll_choose_3.setVisibility(View.INVISIBLE);
         cb_0 = templateThumbForMusic.findViewById(R.id.check_box_0);
         cb_1 = templateThumbForMusic.findViewById(R.id.check_box_1);
         cb_2 = templateThumbForMusic.findViewById(R.id.check_box_2);
@@ -1376,11 +1381,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     if(!TextUtils.isEmpty(downMusicPath)){
                         clearCheckBox();
                         cb_3.setChecked(true);
+                        changeMusic();
+                        chooseDownMusic();
                     }else{
                         ToastUtil.showToast("沒有添加音乐");
                     }
-                    changeMusic();
-                    chooseDownMusic();
+
                     break;
 
                 case R.id.tv_add_music:
@@ -1533,6 +1539,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         nowChooseMusic = 3;
         nowSpliteMusic = downMusicPath;
         setBjMusic();
+        ll_choose_3.setVisibility(View.VISIBLE);
     }
 
 }

@@ -18,6 +18,7 @@ import com.flyingeffects.com.adapter.music_local_adapter;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.commonlyModel.DoubleClick;
 import com.flyingeffects.com.enity.BlogFile.Video;
+import com.flyingeffects.com.enity.FragmentHasSlide;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.ui.model.VideoManage;
 import com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity;
@@ -31,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -69,6 +72,7 @@ public class frag_choose_music_local_music extends BaseFragment {
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             needDuration = bundle.getLong("needDuration", 10000);
@@ -254,6 +258,13 @@ public class frag_choose_music_local_music extends BaseFragment {
         if(mediaPlayer!=null){
             mediaPlayer.stop();
             mediaPlayer.release();
+        }
+    }
+
+    @Subscribe
+    public void onEventMainThread( FragmentHasSlide fragmentHasSlide) {
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
         }
     }
 }

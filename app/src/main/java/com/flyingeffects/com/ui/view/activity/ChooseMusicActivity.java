@@ -17,6 +17,7 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.CutSuccess;
+import com.flyingeffects.com.enity.FragmentHasSlide;
 import com.flyingeffects.com.enity.ReplayMessageEvent;
 import com.flyingeffects.com.ui.view.fragment.frag_choose_music_local_music;
 import com.flyingeffects.com.ui.view.fragment.frag_choose_music_recent_updates;
@@ -106,11 +107,12 @@ public class ChooseMusicActivity extends BaseActivity {
 
             @Override
             public void onPageSelected(int i) {
-
+                EventBus.getDefault().post(new FragmentHasSlide());
             }
 
             @Override
             public void onPageScrollStateChanged(int i) {
+
 
             }
         });
