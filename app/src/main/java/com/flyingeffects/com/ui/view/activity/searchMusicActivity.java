@@ -1,12 +1,17 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.media.MediaPlayer;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,15 +23,23 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.DoubleClick;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ChooseMusic;
+import com.flyingeffects.com.enity.DownVideoPath;
+import com.flyingeffects.com.enity.SearchKeyWord;
 import com.flyingeffects.com.enity.SendSearchText;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.ColorCorrectionManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.view.WarpLinearLayout;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,6 +48,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import rx.Observable;
 
 
@@ -75,6 +89,12 @@ public class searchMusicActivity extends BaseActivity {
     @BindView(R.id.iv_back)
     ImageView iv_back;
 
+    @BindView(R.id.AutoNewLineLayout)
+    WarpLinearLayout autoNewLineLayout;
+
+    private ArrayList<SearchKeyWord> listSearchKey = new ArrayList<>();
+
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_search_music;
@@ -82,10 +102,9 @@ public class searchMusicActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-
+        EventBus.getDefault().register(this);
         initSmartRefreshLayout();
         initRecycler();
-
         findViewById(R.id.iv_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,7 +131,81 @@ public class searchMusicActivity extends BaseActivity {
                 finish();
             }
         });
+        requestKeywordList();
+    }
 
+
+    /**
+     * 请求友友推荐
+     */
+    private void requestKeywordList() {
+        listSearchKey.clear();
+        HashMap<String, String> params = new HashMap<>();
+        // 启动时间
+        Observable ob = Api.getDefault().musicKeyword(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(searchMusicActivity.this) {
+            @Override
+            protected void _onError(String message) {
+            }
+
+            @Override
+            protected void _onNext(Object data) {
+                String str = StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM","requestKeywordList="+str);
+                try {
+                    JSONArray array = new JSONArray(str);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject ob = array.getJSONObject(i);
+                        SearchKeyWord key = new SearchKeyWord();
+//                        key.setColor(ob.getString("color"));
+                        key.setName(ob.getString("name"));
+                        key.setID(ob.getString("id"));
+                        key.setWeigh(ob.getString("weigh"));
+                        key.setCreate_time(ob.getString("create_time"));
+                        listSearchKey.add(key);
+                    }
+                    setKeyWordList(listSearchKey);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                LogUtil.d("OOM", str);
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+
+    private void setKeyWordList(ArrayList<SearchKeyWord> listSearchKey) {
+        autoNewLineLayout.removeAllViews();
+        for (int i = 0; i < listSearchKey.size(); i++) {
+            String nowChooseColor = ColorCorrectionManager.getInstance().getChooseColor(i);
+            TextView tv = (TextView) LayoutInflater.from(searchMusicActivity.this).inflate(R.layout.textview_recommend, null);
+            tv.setText(listSearchKey.get(i).getName());
+            tv.setTextColor(Color.parseColor("#FFFFFF"));
+            int finalI = i;
+            tv.setOnClickListener(view -> {
+                if (!com.flyingeffects.com.manager.DoubleClick.getInstance().isFastDoubleClick()) {
+                    if (listSearchKey.size() >= finalI + 1) {
+                        searchText = listSearchKey.get(finalI).getName();
+                        ed_search.setText(searchText);
+                        requestFagData();
+                        cancelFocus();
+                    }
+                }
+            });
+            GradientDrawable view_ground = (GradientDrawable) tv.getBackground(); //获取控件的背
+            view_ground.setStroke(2, Color.parseColor(nowChooseColor));
+            autoNewLineLayout.addView(tv);
+        }
+
+    }
+
+
+
+    private void cancelFocus() {
+        ed_search.setFocusable(true);
+        ed_search.setFocusableInTouchMode(true);
+        ed_search.requestFocus();
+        ed_search.clearFocus();//失去焦点
     }
 
     @Override
@@ -249,7 +342,6 @@ public class searchMusicActivity extends BaseActivity {
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
-
         params.put("keyword",searchText);
         LogUtil.d("OOM","searchText="+params);
         Observable    ob = Api.getDefault().musicList(BaseConstans.getRequestHead(params));
@@ -297,9 +389,22 @@ public class searchMusicActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
     private void finishData() {
         smartRefreshLayout.finishRefresh();
         smartRefreshLayout.finishLoadMore();
     }
+
+    @Subscribe
+    public void onEventMainThread(DownVideoPath event) {
+        LogUtil.d("OOM2", "销毁了onEventMainThread");
+        this.finish();
+    }
+
 
 }

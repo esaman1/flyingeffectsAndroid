@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="17dp"
-    android:paddingBottom="17dp"
     android:background="#181818"
     android:gravity="center_vertical"
     android:orientation="vertical">
@@ -129,6 +128,13 @@
 
 
     </LinearLayout>
+
+
+    <View
+        android:background="#292929"
+        android:layout_marginTop="17dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
 
 
 </LinearLayout>

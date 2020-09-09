@@ -85,6 +85,7 @@
     <com.flyco.tablayout.SlidingTabLayout
         android:id="@+id/tl_tabs"
         android:layout_width="match_parent"
+        app:tl_divider_padding="5dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="7dp"
@@ -93,6 +94,8 @@
         app:tl_indicator_corner_radius="@dimen/dp_5"
         app:tl_indicator_height="@dimen/dp_4"
         app:tl_indicator_margin_left="6dp"
+        app:tl_tab_space_equal="true"
+
         app:tl_indicator_margin_right="6dp"
         app:tl_tab_padding="10dp"
         app:tl_textAllCaps="true"

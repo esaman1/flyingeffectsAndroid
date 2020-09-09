@@ -25,7 +25,6 @@ import java.util.List;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 
 
 /**
@@ -85,9 +84,9 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
         helper.addOnClickListener(R.id.iv_play_music);
         if (item.getIs_collection() == 0) {
             //未收藏
-            iv_collect.setImageResource(R.mipmap.zan_unclicked);
+            iv_collect.setImageResource(R.mipmap.zan_unselect);
         } else {
-            iv_collect.setImageResource(R.mipmap.zan_selected);
+            iv_collect.setImageResource(R.mipmap.zan_new_select);
         }
     }
 
@@ -103,6 +102,8 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
             seekBar.setProgress(progress);
             tv_playing_time.setText(s);
         });
+
+
 
     }
 

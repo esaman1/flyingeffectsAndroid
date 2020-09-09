@@ -104,6 +104,12 @@ public interface ApiService {
     @POST("/api/template/keywordList")
     Observable<HttpResult<List<Object>>> keywordList(@FieldMap Map<String, String> params);
 
+    @FormUrlEncoded
+    @POST("/api/message/musicKeyword")
+    Observable<HttpResult<List<Object>>> musicKeyword(@FieldMap Map<String, String> params);
+
+
+
 
     @FormUrlEncoded
     @POST("/api/template/newCollection")

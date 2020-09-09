@@ -8,6 +8,9 @@
     android:fitsSystemWindows="true">
 
 
+
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="horizontal"
@@ -73,8 +76,36 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/ll_show_commend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/relative_top"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_youyou"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="17dp"
+            android:gravity="center_vertical"
+            android:text="友友推荐"
+            android:textColor="#D5D5D5"
+            android:textSize="16sp" />
 
 
+        <com.flyingeffects.com.view.WarpLinearLayout
+            android:id="@+id/AutoNewLineLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            app:grivate="left"
+            app:horizontal_Space="10dp"
+            app:isFull="false"
+            app:vertical_Space="10dp" />
+    </LinearLayout>
 
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
