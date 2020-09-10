@@ -776,6 +776,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             tv_music.setVisibility(View.VISIBLE);
         }else{
             tv_music.setVisibility(View.GONE);
+            viewPager.setCurrentItem(0);
         }
 
     }

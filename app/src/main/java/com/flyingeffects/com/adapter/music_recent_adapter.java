@@ -65,6 +65,7 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
         } else {
             iv_collect.setVisibility(View.VISIBLE);
         }
+        helper.addOnClickListener(R.id.tv_user);
         Glide.with(context)
                 .load(item.getImage())
                 .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 3)))
@@ -73,16 +74,17 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
         helper.setText(R.id.tv_user, item.getNickname());
         helper.setText(R.id.tv_title, item.getTitle());
         LogUtil.d("OOM2", "fromType=" + fromType);
-//        VideoInfo videoInfo = VideoManage.getInstance().getVideoInfo(context, item.getAudio_url());
-//        LogUtil.d("OOM2", "videoInfo.getDuration()=" + videoInfo.getDuration());
-//        helper.setText(R.id.tv_time, timeUtils.timeParse(videoInfo.getDuration()));
-
-
         helper.addOnClickListener(R.id.tv_make);
         helper.addOnClickListener(R.id.iv_collect);
         if (item.isPlaying()) {
-            ll_show_progress.setVisibility(View.VISIBLE);
+            if(fromType!=3){
+                ll_show_progress.setVisibility(View.VISIBLE);
+            }else{
+                ll_show_progress.setVisibility(View.GONE);
+            }
             iv_play_music.setImageResource(R.mipmap.choose_music_play);
+//            seekBar.setProgress(item.getProgress());
+//            tv_playing_time.setText(item.getTitle());
         } else {
             ll_show_progress.setVisibility(View.GONE);
             iv_play_music.setImageResource(R.mipmap.choose_music_pause);
@@ -94,8 +96,6 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
         } else {
             iv_collect.setImageResource(R.mipmap.zan_new_select);
         }
-
-
         Observable.just(item.getAudio_url()).map(new Func1<String, Integer>() {
             @Override
             public Integer call(String s) {
@@ -109,7 +109,6 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
                 helper.setText(R.id.tv_time, timeUtils.timeParse(integer));
             }
         });
-
 
     }
 

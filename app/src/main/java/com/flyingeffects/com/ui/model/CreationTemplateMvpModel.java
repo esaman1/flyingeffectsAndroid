@@ -117,7 +117,7 @@ public class CreationTemplateMvpModel {
     private List<View> listForInitBottom = new ArrayList<>();
     private String mVideoPath;
     private ViewLayerRelativeLayout viewLayerRelativeLayout;
-    private int nowChooseMusicId=0;
+    private int nowChooseMusicId = 0;
     private ArrayList<AnimStickerModel> listForStickerModel = new ArrayList<>();
     private boolean isDestroy = false;
     private VideoInfo videoInfo;
@@ -224,9 +224,8 @@ public class CreationTemplateMvpModel {
     }
 
 
-
-    public void setAddChooseBjPath(String path){
-        addChooseBjPath=path;
+    public void setAddChooseBjPath(String path) {
+        addChooseBjPath = path;
         chooseAddChooseBjPath();
     }
 
@@ -298,7 +297,6 @@ public class CreationTemplateMvpModel {
     TextView tv_1;
     TextView tv_2;
     TextView tv_3;
-
 
     public void initBottomLayout(ViewPager viewPager) {
         this.viewPager = viewPager;
@@ -429,6 +427,21 @@ public class CreationTemplateMvpModel {
 
             }
         });
+
+        new Handler().postDelayed(() -> {
+            if (!TextUtils.isEmpty(mVideoPath)) {
+                LogUtil.d("OOM", "当前有背景");
+                //模板音乐
+                nowChooseMusicId = 2;
+                chooseTemplateMusic();
+            } else if (albumType.isVideo(GetPathType.getInstance().getPathType(originalPath))) {
+                LogUtil.d("OOM", "当前素材是视频");
+                nowChooseMusicId = 1;
+                chooseMaterialMusic(originalPath);
+            }
+        }, 500);
+
+
     }
 
 
@@ -458,25 +471,29 @@ public class CreationTemplateMvpModel {
             switch (view.getId()) {
                 case R.id.check_box_0:
                 case R.id.tv_0:
-                    nowChooseMusicId=1;
-                    chooseMaterialMusic();
+                    clearCheckBox();
+                    nowChooseMusicId = 1;
+                    chooseMaterialMusic(nowChooseStickerView.getOriginalPath());
                     break;
 
                 case R.id.tv_1:
                 case R.id.check_box_1:
-                    nowChooseMusicId=2;
+                    clearCheckBox();
+                    nowChooseMusicId = 2;
                     chooseTemplateMusic();
 
                     break;
 
                 case R.id.tv_2:
                 case R.id.check_box_2:
-                    nowChooseMusicId=3;
+
+                    nowChooseMusicId = 3;
                     chooseAddChooseBjPath();
                     break;
 
                 case R.id.check_box_3:
                 case R.id.tv_3:
+                    clearCheckBox();
                     check_box_3.setChecked(true);
                     break;
             }
@@ -484,20 +501,18 @@ public class CreationTemplateMvpModel {
     };
 
 
-
     /**
      * description ：选择素材音乐
      * creation date: 2020/9/2
      * user : zhangtongju
      */
-    private void chooseMaterialMusic(){
-        if(nowChooseStickerView!=null){
-            if (albumType.isVideo(GetPathType.getInstance().getPathType(nowChooseStickerView.getOriginalPath()))) {
+    private void chooseMaterialMusic(String path) {
+        if (nowChooseStickerView != null) {
+            if (albumType.isVideo(GetPathType.getInstance().getPathType(path))) {
                 clearCheckBox();
                 check_box_0.setChecked(true);
-
-                getVideoVoice(nowChooseStickerView.getOriginalPath(), soundFolder);
-            }else{
+                getVideoVoice(path, soundFolder);
+            } else {
                 ToastUtil.showToast("当前素材不是视频");
             }
         }
@@ -509,30 +524,28 @@ public class CreationTemplateMvpModel {
      * creation date: 2020/9/2
      * user : zhangtongju
      */
-    private void chooseTemplateMusic(){
-        if(!TextUtils.isEmpty(mVideoPath)){
+    private void chooseTemplateMusic() {
+        if (!TextUtils.isEmpty(mVideoPath)) {
             clearCheckBox();
             check_box_1.setChecked(true);
-            videoVoicePath="";
+            videoVoicePath = "";
             callback.getBgmPath("");
-        }else{
+        } else {
             ToastUtil.showToast("没有模板音乐");
         }
     }
 
 
-    private void chooseAddChooseBjPath(){
-        if(!TextUtils.isEmpty(addChooseBjPath)){
+    private void chooseAddChooseBjPath() {
+        if (!TextUtils.isEmpty(addChooseBjPath)) {
             clearCheckBox();
             check_box_2.setChecked(true);
-            videoVoicePath=addChooseBjPath;
+            videoVoicePath = addChooseBjPath;
             callback.getBgmPath(addChooseBjPath);
-        }else{
+        } else {
             ToastUtil.showToast("没有提取音乐");
         }
     }
-
-
 
 
     private void clearCheckBox() {
@@ -1006,13 +1019,13 @@ public class CreationTemplateMvpModel {
                     startTimer(stickView);
                 }
                 isIntoDragMove = false;
-                if(stickView.isFirstAddSticker()){
+                if (stickView.isFirstAddSticker()) {
                     //显示音乐按钮
-                callback.showMusicBtn(true);
-                }else{
+                    callback.showMusicBtn(true);
+                } else {
                     callback.showMusicBtn(false);
                 }
-                nowChooseStickerView=stickView;
+                nowChooseStickerView = stickView;
 
 
             }
@@ -1037,7 +1050,7 @@ public class CreationTemplateMvpModel {
             stickView.setIsmaterial(false);
         }
         if (isFirstAdd) {
-            nowChooseStickerView=stickView;
+            nowChooseStickerView = stickView;
             stickView.setFirstAddSticker(true);
 //            if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
 //                LogUtil.d("OOM", "mVideoPath=" + mVideoPath);
@@ -1366,7 +1379,6 @@ public class CreationTemplateMvpModel {
                     listAllSticker.clear();
                     cutSuccessNum = 0;
                     cutVideoPathList.clear();
-
 
 
                     backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, new backgroundDraw.saveCallback() {

@@ -133,7 +133,7 @@
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.CommentBlackActivity"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="adjustPan|stateHidden"
             android:theme="@style/AllTransparentTheme" />
 
         <activity

@@ -18,12 +18,14 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.BlogFile.Music;
 import com.flyingeffects.com.enity.ChooseMusic;
 import com.flyingeffects.com.enity.FragmentHasSlide;
+import com.flyingeffects.com.enity.SelectMusicCollet;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.ui.model.VideoManage;
 import com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity;
+import com.flyingeffects.com.ui.view.activity.UserHomepageActivity;
 import com.flyingeffects.com.utils.BlogFileResource.FileManager;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
@@ -232,6 +234,13 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                         clickCollect(listData.get(position).getId(), listData.get(position).getIs_collection());
                         break;
 
+                    case R.id.tv_user:
+                        //跳转到用户主页
+                        Intent intentUserHome = new Intent(getActivity(), UserHomepageActivity.class);
+                        intentUserHome.putExtra("toUserId",  listData.get(position).getId());
+                       startActivity(intentUserHome);
+                        break;
+
 
                     case R.id.iv_play_music:
                         //播放音乐
@@ -306,10 +315,14 @@ public class frag_choose_music_recent_updates extends BaseFragment {
         mTimerTask = new TimerTask() {
             @Override
             public void run() {
-                if (getActivity() != null) {
+                if (getActivity() != null&&adapter!=null) {
                     if (allDuration != 0) {
                         float position = mediaPlayer.getCurrentPosition() / (float) allDuration;
-                        adapter.setPlayingProgress((int) (position * 100), timeUtils.timeParse(mediaPlayer.getCurrentPosition()));
+//                        ChooseMusic chooseMusic2 = listData.get(lastPosition);
+//                        chooseMusic2.setTitle(timeUtils.timeParse(mediaPlayer.getCurrentPosition()));
+//                        chooseMusic2.setProgress((int) (position * 100));
+//                        adapter.notifyItemChanged(lastPosition);
+                     adapter.setPlayingProgress((int) (position * 100), timeUtils.timeParse(mediaPlayer.getCurrentPosition()));
                     }
                 }
             }
@@ -374,6 +387,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             //移除收藏item
             listData.remove(nowClickPosition);
             adapter.notifyDataSetChanged();
+            pauseMusic();
         } else {
             if (oldIsCollect == 0) {
                 oldIsCollect = 1;
@@ -388,14 +402,43 @@ public class frag_choose_music_recent_updates extends BaseFragment {
     }
 
 
+
+
     @Subscribe
     public void onEventMainThread( FragmentHasSlide fragmentHasSlide) {
+        pauseMusic();
+    }
+
+
+    private void pauseMusic(){
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
             endTimer();
         }
     }
 
+
+
+
+    /**
+     * description ：收藏状态改变
+     * creation date: 2020/9/10
+     * user : zhangtongju
+     */
+    @Subscribe
+    public void onEventMainThread(SelectMusicCollet selectMusicCollet  ) {
+        String musicId = selectMusicCollet.getMusic_id();
+        if(id!=1){
+            for (int i = 0; i < listData.size(); i++) {
+                String needId = listData.get(i).getId();
+                if(needId.equals(musicId)){
+                    nowClickPosition=i;
+                    updateCollect(listData.get(i).getIs_collection());
+                    return;
+                }
+            }
+        }
+    }
 
 
 }

@@ -2,10 +2,12 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -127,6 +129,27 @@ public class CommentBlackActivity extends Activity {
             hideEmoJiBoard();
             return false;
         });
+
+
+        ed_search.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Rect r = new Rect();
+                ed_search.getWindowVisibleDisplayFrame(r);
+                int screenHeight = ed_search.getRootView().getHeight();
+                int heightDifference = screenHeight - (r.bottom);
+                if (heightDifference > 200) {
+                    //软键盘显示
+                    LogUtil.e("TAG", "mIsSoftKeyboardShowing 显示");
+                } else {
+                    //软键盘隐藏
+                    ed_search.setHint("");
+                    message_id="";
+                }
+            }
+        });
+
+
         //表情框点击事件
         emojiBoard.setItemClickListener(code -> {
             if (code.equals("/DEL")) {//删除图标
@@ -135,6 +158,8 @@ public class CommentBlackActivity extends Activity {
                 ed_search.getText().insert(ed_search.getSelectionStart(), code);
             }
         });
+
+
 
         tv_sent.setOnClickListener(listener);
         iv_show_emoj.setOnClickListener(view1 -> {

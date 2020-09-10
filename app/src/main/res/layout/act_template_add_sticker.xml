@@ -131,6 +131,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/ll_progress"
         android:layout_alignParentEnd="true"
+        android:visibility="invisible"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:text="00:00s"
@@ -198,6 +199,7 @@
                 <ImageView
                     android:id="@+id/iv_add_sticker"
                     android:layout_width="34dp"
+                    android:visibility="invisible"
                     android:layout_height="34dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"

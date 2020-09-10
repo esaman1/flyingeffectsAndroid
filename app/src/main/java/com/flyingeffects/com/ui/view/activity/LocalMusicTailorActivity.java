@@ -15,6 +15,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.histogram.MyBarChartView;
 import com.flyingeffects.com.view.histogram.MyBarChartView.BarData;
+import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.util.ArrayList;
 
@@ -114,6 +115,7 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
                 Presenter.SeekToPositionMusic((int) nowPlayStartTime);
             }
         });
+        WaitingDialog.openPragressDialog(this);
     }
 
 
@@ -188,6 +190,11 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
         LogUtil.d("OOM2","裁剪完成后音频的地址为"+audioPath);
         EventBus.getDefault().post(new CutSuccess(audioPath));
         this.finish();
+    }
+
+    @Override
+    public void initComplate() {
+        WaitingDialog.closePragressDialog();
     }
 
 

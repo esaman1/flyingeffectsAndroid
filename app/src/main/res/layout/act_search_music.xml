@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/home_base_balk_color"
     android:fitsSystemWindows="true">
 
 
-
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -138,15 +139,20 @@
             app:srlTextSizeTitle="16sp" />
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
+</LinearLayout>
+
+
+
 
     <LinearLayout
         android:id="@+id/lin_show_nodata"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:visibility="gone"
         android:layout_centerInParent="true"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone">
+      >
 
         <TextView
             android:layout_width="wrap_content"
@@ -166,4 +172,4 @@
             android:textSize="12sp" />
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

@@ -29,6 +29,7 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -115,6 +116,7 @@ public class frag_choose_music_local_music extends BaseFragment {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
                 switch (view.getId()) {
                     case R.id.tv_make:
+                        pauseMusic();
                         Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.putExtra("videoPath", listVideoFiltrateMp4.get(position).getPath());
@@ -139,6 +141,16 @@ public class frag_choose_music_local_music extends BaseFragment {
     }
 
 
+    private void pauseMusic(){
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+            Video video = listVideoFiltrateMp4.get(lastPosition);
+            video.setPlaying(false);
+            adapter.notifyItemChanged(lastPosition);
+        }
+    }
+
+
     private int lastPosition;
     private MediaPlayer mediaPlayer;
 
@@ -149,7 +161,7 @@ public class frag_choose_music_local_music extends BaseFragment {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
             if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                 mediaPlayer.pause();
-                if(lastPosition==position){
+                if (lastPosition == position) {
                     Video video = listVideoFiltrateMp4.get(lastPosition);
                     video.setPlaying(false);
                     adapter.notifyItemChanged(lastPosition);
@@ -189,7 +201,6 @@ public class frag_choose_music_local_music extends BaseFragment {
 
 
 
-
     QueryHandler handler;
 
     private void startQuery() {
@@ -217,6 +228,8 @@ public class frag_choose_music_local_music extends BaseFragment {
         protected void onQueryComplete(int token, Object cookie, Cursor c) {
             super.onQueryComplete(token, cookie, c);
             listVideoFiltrateMp4.clear();
+
+
             while (c.moveToNext()) {
                 String path = c.getString(c.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));// 路径
                 LogUtil.d("getVideos", "系统筛选出来的视频：" + path);
@@ -247,6 +260,8 @@ public class frag_choose_music_local_music extends BaseFragment {
                     e.printStackTrace();
                 }
             }
+            //倒序
+            Collections.reverse(listVideoFiltrateMp4);
             adapter.notifyDataSetChanged();
             finishData();
         }
@@ -255,14 +270,14 @@ public class frag_choose_music_local_music extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(mediaPlayer!=null){
+        if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
         }
     }
 
     @Subscribe
-    public void onEventMainThread( FragmentHasSlide fragmentHasSlide) {
+    public void onEventMainThread(FragmentHasSlide fragmentHasSlide) {
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
         }

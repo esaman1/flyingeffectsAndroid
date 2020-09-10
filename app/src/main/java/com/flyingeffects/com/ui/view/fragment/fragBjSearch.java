@@ -1,6 +1,5 @@
 package com.flyingeffects.com.ui.view.fragment;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,7 +7,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -27,6 +25,7 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.FromToTemplate;
+import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.ui.view.activity.UploadMaterialActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
@@ -307,15 +306,22 @@ public class fragBjSearch extends BaseFragment {
         switch (view.getId()) {
             case R.id.relative_add:
 
-                AlbumManager.chooseVideo( getActivity(), 1, 1, (tag, paths, isCancel, albumFileList) -> {
-                    if (!isCancel) {
-                        Intent intent = new Intent(getActivity(), UploadMaterialActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.putExtra("videoPath", paths.get(0));
-                        intent.putExtra("isFrom",1);
-                        startActivity(intent);
-                    }
-                }, "");
+                if(BaseConstans.hasLogin()){
+                    AlbumManager.chooseVideo( getActivity(), 1, 1, (tag, paths, isCancel, albumFileList) -> {
+                        if (!isCancel) {
+                            Intent intent = new Intent(getActivity(), UploadMaterialActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.putExtra("videoPath", paths.get(0));
+                            intent.putExtra("isFrom",1);
+                            startActivity(intent);
+                        }
+                    }, "");
+                }else{
+                    Intent intent=new Intent(getActivity(), LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
+
 
 
 

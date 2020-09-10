@@ -53,6 +53,7 @@ import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.StimulateControlManage;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.TemplateAddStickerMvpCallback;
@@ -1316,6 +1317,7 @@ public class TemplateAddStickerMvpModel {
      * user : zhangtongju
      */
     private void saveToAlbum(String path) {
+        StimulateControlManage.getInstance().InitRefreshStimulate();
         outputPathForVideoSaveToPhoto = path;
         if (BaseConstans.getHasAdvertising() == 1 && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser() && BaseConstans.getSave_video_ad() && !BaseConstans.TemplateHasWatchingAd) {
             Intent intent = new Intent(context, AdHintActivity.class);

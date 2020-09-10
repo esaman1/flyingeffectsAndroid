@@ -25,6 +25,7 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ChooseMusic;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.SearchKeyWord;
+import com.flyingeffects.com.enity.SelectMusicCollet;
 import com.flyingeffects.com.enity.SendSearchText;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -231,7 +232,7 @@ public class searchMusicActivity extends BaseActivity {
 
 
     private void initRecycler() {
-        adapter = new music_recent_adapter(R.layout.list_music_recent_item, listData, this, 0);
+        adapter = new music_recent_adapter(R.layout.list_music_recent_item, listData, this, 3);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
@@ -273,6 +274,18 @@ public class searchMusicActivity extends BaseActivity {
     private MediaPlayer mediaPlayer;
 
     private void playMusic(String path, int position) {
+
+
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+            if(lastPosition==position){
+                ChooseMusic chooseMusic2 = listData.get(lastPosition);
+                chooseMusic2.setPlaying(false);
+                adapter.notifyItemChanged(lastPosition);
+                return;
+            }
+        }
+
         ChooseMusic chooseMusic = listData.get(position);
         chooseMusic.setPlaying(true);
         listData.set(position, chooseMusic);
@@ -316,15 +329,14 @@ public class searchMusicActivity extends BaseActivity {
             protected void _onNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "收藏音乐返回的值为" + str);
-                updateCollect(isCollect);
+                updateCollect(isCollect,music_id);
 
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
 
-    private void updateCollect(int oldIsCollect) {
-
+    private void updateCollect(int oldIsCollect,String music_id) {
             if (oldIsCollect == 0) {
                 oldIsCollect = 1;
             } else {
@@ -334,11 +346,13 @@ public class searchMusicActivity extends BaseActivity {
             chooseMusic.setIs_collection(oldIsCollect);
             listData.set(nowClickPosition, chooseMusic);
             adapter.notifyItemChanged(nowClickPosition);
+            EventBus.getDefault().post(new SelectMusicCollet(music_id));
     }
 
 
 
     private void requestFagData() {
+        pauseMusic();
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
@@ -362,6 +376,7 @@ public class searchMusicActivity extends BaseActivity {
                 }
                 if (isRefresh && data.size() == 0) {
                     showNoData(true);
+                    ToastUtil.showToast("没有找到相关内容");
                 } else {
                     showNoData(false);
                 }
@@ -392,9 +407,28 @@ public class searchMusicActivity extends BaseActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        if(mediaPlayer!=null){
+            mediaPlayer.stop();
+            mediaPlayer.release();
+
+        }
+
         EventBus.getDefault().unregister(this);
     }
 
+
+
+    private void pauseMusic(){
+
+        if(mediaPlayer!=null&&mediaPlayer.isPlaying()){
+            mediaPlayer.pause();
+
+        }
+
+
+
+    }
     private void finishData() {
         smartRefreshLayout.finishRefresh();
         smartRefreshLayout.finishLoadMore();

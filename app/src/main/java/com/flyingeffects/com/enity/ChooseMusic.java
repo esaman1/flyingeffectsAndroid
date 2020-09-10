@@ -174,6 +174,17 @@ public class ChooseMusic implements Serializable {
     private String nickname;
     private String photourl;
 
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
+
+    private int progress;
+    private String nowPlayingTime;
+
     public boolean isPlaying() {
         return isPlaying;
     }

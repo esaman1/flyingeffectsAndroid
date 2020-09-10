@@ -113,10 +113,10 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
                 toSplitMp4(path);
             } else {
                 LogUtil.d("OOM", "当前的地址是本地音频地址" + path);
-                soundCutFolder = soundCutFolder + "/audio.mp3";
+                String nowPath = soundCutFolder + "/audio.mp3";
                 try {
-                    FileUtil.copyFile(new File(path), soundCutFolder);
-                    localMusicTailorMvpModel.setSoundPath(soundCutFolder);
+                    FileUtil.copyFile(new File(path), nowPath);
+                    localMusicTailorMvpModel.setSoundPath(nowPath);
                     requestSoundData(path);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -240,6 +240,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
                     mPlayer.setOnCompletionListener(() -> localMusicTailorMvpView.onPlayerCompletion());
                     mPlayer.start();
                     startTimer();
+                    localMusicTailorMvpView.initComplate();
                 } catch (final Exception e) {
                     e.printStackTrace();
                     String mInfoContent = e.toString();
@@ -267,7 +268,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
                             mSoundFile.getSampleRate() + " Hz, " +
                             mSoundFile.getAvgBitrateKbps() + " kbps, ";
             LogUtil.d("OOM2", mCaption + "波纹点大小" + mSoundFile.getNumFrames());
-            LogUtil.d("OOM2","mSoundFile.getNumFrames()="+mSoundFile.getNumFrames());
+            LogUtil.d("OOM2", "mSoundFile.getNumFrames()=" + mSoundFile.getNumFrames());
             localMusicTailorMvpModel.setChartData(mSoundFile.getFrameGains(), mSoundFile.getNumFrames());
             localMusicTailorMvpView.showCharView(mSoundFile.getFrameGains(), mSoundFile.getNumFrames());
         });
@@ -357,14 +358,14 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
 
                 if (!TextUtils.isEmpty(path)) {
                     closeProgress();
-                    soundCutFolder = soundCutFolder + "/audio.mp3";
-                    File file = new File(soundCutFolder);
+                    String SoundPath = soundCutFolder + "/audio.mp3";
+                    File file = new File(SoundPath);
                     if (file.exists()) {
                         file.delete();
                     }
                     try {
-                        FileUtil.copyFile(new File(path), soundCutFolder);
-                        localMusicTailorMvpView.isAudioCutDone(soundCutFolder);
+                        FileUtil.copyFile(new File(path), SoundPath);
+                        localMusicTailorMvpView.isAudioCutDone(SoundPath);
                     } catch (IOException e) {
                         e.printStackTrace();
                         LogUtil.d("OOM2", "复制文件报错" + e.getMessage());
