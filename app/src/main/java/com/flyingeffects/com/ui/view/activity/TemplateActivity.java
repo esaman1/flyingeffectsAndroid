@@ -1373,8 +1373,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 //提取
                 case R.id.ll_choose_3:
                 case R.id.check_box_3:
-                    clearCheckBox();
                     if(!TextUtils.isEmpty(downMusicPath)){
+                        clearCheckBox();
                         cb_3.setChecked(true);
                         changeMusic();
                         chooseDownMusic();

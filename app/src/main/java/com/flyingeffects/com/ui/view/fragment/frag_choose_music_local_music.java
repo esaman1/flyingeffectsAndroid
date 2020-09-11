@@ -141,7 +141,7 @@ public class frag_choose_music_local_music extends BaseFragment {
     }
 
 
-    private void pauseMusic(){
+    private void pauseMusic() {
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
             Video video = listVideoFiltrateMp4.get(lastPosition);
@@ -200,7 +200,6 @@ public class frag_choose_music_local_music extends BaseFragment {
     }
 
 
-
     QueryHandler handler;
 
     private void startQuery() {
@@ -228,42 +227,44 @@ public class frag_choose_music_local_music extends BaseFragment {
         protected void onQueryComplete(int token, Object cookie, Cursor c) {
             super.onQueryComplete(token, cookie, c);
             listVideoFiltrateMp4.clear();
+            if(c!=null&&c.getColumnCount()>0){
 
-
-            while (c.moveToNext()) {
-                String path = c.getString(c.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));// 路径
-                LogUtil.d("getVideos", "系统筛选出来的视频：" + path);
-                if (!new File(path).exists()) {
-                    continue;
-                }
-                if (!isLansongVESuppport(path)) {
-                    continue;
-                }
-                int id = c.getInt(c.getColumnIndexOrThrow(MediaStore.Video.Media._ID));// 视频的id
-                try {
-                    String name = c.getString(c.getColumnIndexOrThrow("title")); // 视频名称
-                    long size = c.getLong(c.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));// 大小
-                    File file = new File(path);
-                    if (file.exists()) {
-                        MediaInfo mediaInfo = new MediaInfo(path);
-                        if (mediaInfo.prepare() && mediaInfo.isSupport()) {
-                            long duration = Math.round(mediaInfo.vDuration * 1000);
-                            long date = c.getLong(c.getColumnIndexOrThrow("_data"));//修改时间
-                            if (duration >= 1000) {
-                                Video video = new Video(id, path, name, "", size, date, duration);
-                                listVideoFiltrateMp4.add(video);
+                while (c.moveToNext()) {
+                    String path = c.getString(c.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));// 路径
+                    LogUtil.d("getVideos", "系统筛选出来的视频：" + path);
+                    if (!new File(path).exists()) {
+                        continue;
+                    }
+                    if (!isLansongVESuppport(path)) {
+                        continue;
+                    }
+                    int id = c.getInt(c.getColumnIndexOrThrow(MediaStore.Video.Media._ID));// 视频的id
+                    try {
+                        String name = c.getString(c.getColumnIndexOrThrow("title")); // 视频名称
+                        long size = c.getLong(c.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));// 大小
+                        File file = new File(path);
+                        if (file.exists()) {
+                            MediaInfo mediaInfo = new MediaInfo(path);
+                            if (mediaInfo.prepare() && mediaInfo.isSupport()) {
+                                long duration = Math.round(mediaInfo.vDuration * 1000);
+                                long date = c.getLong(c.getColumnIndexOrThrow("_data"));//修改时间
+                                if (duration >= 1000) {
+                                    Video video = new Video(id, path, name, "", size, date, duration);
+                                    listVideoFiltrateMp4.add(video);
+                                }
                             }
                         }
-                    }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
+                //倒序
+                Collections.reverse(listVideoFiltrateMp4);
+                adapter.notifyDataSetChanged();
+                finishData();
             }
-            //倒序
-            Collections.reverse(listVideoFiltrateMp4);
-            adapter.notifyDataSetChanged();
-            finishData();
+
         }
     }
 
@@ -281,5 +282,8 @@ public class frag_choose_music_local_music extends BaseFragment {
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
         }
+        Video video = listVideoFiltrateMp4.get(lastPosition);
+        video.setPlaying(false);
+        adapter.notifyItemChanged(lastPosition);
     }
 }

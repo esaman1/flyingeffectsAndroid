@@ -1,12 +1,17 @@
 package com.flyingeffects.com.ui.view.fragment;
 
+import android.annotation.SuppressLint;
+import android.content.AsyncQueryHandler;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +22,6 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.commonlyModel.DoubleClick;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.BlogFile.Music;
 import com.flyingeffects.com.enity.ChooseMusic;
 import com.flyingeffects.com.enity.FragmentHasSlide;
 import com.flyingeffects.com.enity.RefeshCollectState;
@@ -29,15 +33,16 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.ui.model.VideoManage;
 import com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity;
 import com.flyingeffects.com.ui.view.activity.UserHomepageActivity;
-import com.flyingeffects.com.utils.BlogFileResource.FileManager;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.timeUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
@@ -49,6 +54,8 @@ import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+
+import static com.flyingeffects.com.utils.BlogFileResource.FileManager.isLansongVESuppport;
 
 
 /**
@@ -106,7 +113,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
     @Override
     protected void initAction() {
         if (id == 1) {
-            getLocalMusic();
+            startQuery();
         } else {
             LogUtil.d("OOM2", "当前选择的是请求");
             requestFagData();
@@ -158,7 +165,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                 adapter.notifyDataSetChanged();
 
             }
-        }, "fagBjItem", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+        }, "fagBjItem", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
 
 
@@ -176,8 +183,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                 selectPage = 1;
                 requestFagData();
             } else {
-                //本地音频
-                getLocalMusic();
+                startQuery();
             }
         });
         smartRefreshLayout.setOnLoadMoreListener(refresh -> {
@@ -188,28 +194,28 @@ public class frag_choose_music_recent_updates extends BaseFragment {
     }
 
 
-    private void getLocalMusic() {
-        listData.clear();
-        LogUtil.d("OOM2", "当前选择的是本地音频");
-        //本地音频
-        Observable.create((Observable.OnSubscribe<List<ChooseMusic>>) subscriber -> {
-            FileManager mInstance = FileManager.getInstance();
-            for (Music music : mInstance.getMusics()
-            ) {
-                ChooseMusic chooseMusic = new ChooseMusic();
-                chooseMusic.setAudio_url(music.getPath());
-                chooseMusic.setImage(music.getAlbum());
-                chooseMusic.setNickname(music.getArtist());
-                chooseMusic.setTitle(music.getName());
-                listData.add(chooseMusic);
-            }
-            subscriber.onNext(listData);
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(chooseMusics -> {
-            adapter.notifyDataSetChanged();
-            finishData();
-        });
-    }
+//    private void getLocalMusic() {
+//        listData.clear();
+//        LogUtil.d("OOM2", "当前选择的是本地音频");
+//        WaitingDialog.openPragressDialog(getActivity());
+//        Observable.just(0).map(integer -> {
+//            FileManager mInstance = FileManager.getInstance();
+//            for (Music music : mInstance.getMusics()
+//            ) {
+//                ChooseMusic chooseMusic = new ChooseMusic();
+//                chooseMusic.setAudio_url(music.getPath());
+//                chooseMusic.setImage(music.getAlbum());
+//                chooseMusic.setNickname(music.getArtist());
+//                chooseMusic.setTitle(music.getName());
+//                listData.add(chooseMusic);
+//            }
+//            return listData;
+//        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(chooseMusics -> {
+//            adapter.notifyDataSetChanged();
+//            finishData();
+//            WaitingDialog.closePragressDialog();
+//        });
+//    }
 
 
     private void initRecycler() {
@@ -238,7 +244,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                     case R.id.tv_user:
                         //跳转到用户主页
                         Intent intentUserHome = new Intent(getActivity(), UserHomepageActivity.class);
-                        intentUserHome.putExtra("toUserId", listData.get(position).getId());
+                        intentUserHome.putExtra("toUserId", listData.get(position).getUser_id());
                         startActivity(intentUserHome);
                         break;
 
@@ -362,6 +368,67 @@ public class frag_choose_music_recent_updates extends BaseFragment {
     }
 
 
+    QueryHandler handler;
+
+    private void startQuery() {
+        if (getActivity() != null) {
+            handler = new QueryHandler(getActivity().getContentResolver());
+            Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+            String[] projection = {MediaStore.Audio.AudioColumns.DATA, MediaStore.Audio.AudioColumns.TITLE, MediaStore.Audio.AudioColumns.ALBUM, MediaStore.Audio.ArtistColumns.ARTIST,};
+            handler.startQuery(0, null, uri, projection, null, null, null);
+        }
+    }
+
+    // 写一个异步查询类
+    @SuppressLint("HandlerLeak")
+    public final class QueryHandler extends AsyncQueryHandler {
+        public QueryHandler(ContentResolver cr) {
+            super(cr);
+        }
+
+        @Override
+        protected void onQueryComplete(int token, Object cookie, Cursor c) {
+            super.onQueryComplete(token, cookie, c);
+            listData.clear();
+            if (c != null && c.getColumnCount() > 0) {
+                while (c.moveToNext()) {
+                    String path = c.getString(0);// 路径
+                    if (!new File(path).exists()) {
+                        continue;
+                    }
+                    if (!isLansongVESuppport(path)) {
+                        continue;
+                    }
+                    try {
+                        String name = c.getString(1);
+                        String album = c.getString(2);
+                        String artist = c.getString(3);
+                        File file = new File(path);
+                        if (file.exists()) {
+                            ChooseMusic chooseMusic = new ChooseMusic();
+                            chooseMusic.setAudio_url(path);
+                            chooseMusic.setImage(album);
+                            if(!TextUtils.isEmpty(artist)){
+                                chooseMusic.setNickname(artist);
+                            }else{
+                                chooseMusic.setNickname("无作者");
+                            }
+                            chooseMusic.setTitle(name);
+                            listData.add(chooseMusic);
+                    }
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+            //倒序
+            Collections.reverse(listData);
+            adapter.notifyDataSetChanged();
+            finishData();
+        }
+    }
+}
+
+
     public void clickCollect(String music_id, int isCollect) {
         HashMap<String, String> params = new HashMap<>();
         params.put("music_id", music_id);
@@ -425,10 +492,6 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             mediaPlayer.pause();
             endTimer();
         }
-
-
-
-
     }
 
 
@@ -465,7 +528,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
     }
 
 
-    private void refreshData(){
+    private void refreshData() {
         isRefresh = true;
         selectPage = 1;
         requestFagData();

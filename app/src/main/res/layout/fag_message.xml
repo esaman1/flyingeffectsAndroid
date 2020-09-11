@@ -186,18 +186,26 @@
         <ListView
             android:id="@+id/swipeMenuListView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/ll_ad_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+
+
 
     </LinearLayout>
 
 
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:id="@+id/ll_ad_content"
-        android:layout_centerInParent="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+
+
+
 
 
 </RelativeLayout>

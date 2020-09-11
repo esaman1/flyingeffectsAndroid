@@ -1,6 +1,7 @@
 package com.flyingeffects.com.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -83,8 +84,6 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
                 ll_show_progress.setVisibility(View.GONE);
             }
             iv_play_music.setImageResource(R.mipmap.choose_music_play);
-//            seekBar.setProgress(item.getProgress());
-//            tv_playing_time.setText(item.getTitle());
         } else {
             ll_show_progress.setVisibility(View.GONE);
             iv_play_music.setImageResource(R.mipmap.choose_music_pause);
@@ -96,20 +95,11 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
         } else {
             iv_collect.setImageResource(R.mipmap.zan_new_select);
         }
-        Observable.just(item.getAudio_url()).map(new Func1<String, Integer>() {
-            @Override
-            public Integer call(String s) {
-                VideoInfo videoInfo = VideoManage.getInstance().getVideoInfo(context, s);
-                return videoInfo.getDuration();
-            }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
-
-            @Override
-            public void call(Integer integer) {
-                helper.setText(R.id.tv_time, timeUtils.timeParse(integer));
-            }
-        });
-
+        if(!TextUtils.isEmpty(item.getTimelength())){
+            float time=Float.parseFloat(item.getTimelength());
+            long lTong= (long) (time*1000);
+            helper.setText(R.id.tv_time, timeUtils.timeParse(lTong) );
+        }
 
     }
 
