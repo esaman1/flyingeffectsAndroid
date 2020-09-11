@@ -135,6 +135,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     @Override
     public void onDestroy() {
         videoStop();
+        endTimer();
         isOnDestroy=true;
         EventBus.getDefault().unregister(this);
         super.onDestroy();
@@ -332,14 +333,14 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
      * 开始播放
      */
     private void videoPlay() {
-        if (exoPlayer != null) {
-            LogUtil.d("video", "play");
-
+        if(!isOnDestroy){
+            if (exoPlayer != null) {
+                LogUtil.d("video", "play");
                 exoPlayer.setVolume(1f);
-
-            exoPlayer.setPlayWhenReady(true);
+                exoPlayer.setPlayWhenReady(true);
+            }
+            startTimer();
         }
-        startTimer();
     }
 
     private int listWidth;
