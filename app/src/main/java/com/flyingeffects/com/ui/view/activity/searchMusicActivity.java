@@ -116,9 +116,9 @@ public class searchMusicActivity extends BaseActivity {
         //键盘的搜索按钮
         ed_search.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
-               String nowShowText = ed_search.getText().toString().trim();
+                String nowShowText = ed_search.getText().toString().trim();
                 if (!nowShowText.equals("")) {
-                    searchText=nowShowText;
+                    searchText = nowShowText;
                     requestFagData();
                 }
                 return true;
@@ -152,7 +152,7 @@ public class searchMusicActivity extends BaseActivity {
             @Override
             protected void _onNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM","requestKeywordList="+str);
+                LogUtil.d("OOM", "requestKeywordList=" + str);
                 try {
                     JSONArray array = new JSONArray(str);
                     for (int i = 0; i < array.length(); i++) {
@@ -201,7 +201,6 @@ public class searchMusicActivity extends BaseActivity {
     }
 
 
-
     private void cancelFocus() {
         ed_search.setFocusable(true);
         ed_search.setFocusableInTouchMode(true);
@@ -211,7 +210,7 @@ public class searchMusicActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
-        needDuration=getIntent().getLongExtra("needDuration",10000);
+        needDuration = getIntent().getLongExtra("needDuration", 10000);
 
     }
 
@@ -261,6 +260,12 @@ public class searchMusicActivity extends BaseActivity {
                         playMusic(listData.get(position).getAudio_url(), position);
                         break;
 
+                    case R.id.tv_user:
+                        Intent intentUserHome = new Intent(this, UserHomepageActivity.class);
+                        intentUserHome.putExtra("toUserId", listData.get(position).getUser_id());
+                        startActivity(intentUserHome);
+                        break;
+
                     default:
                         break;
                 }
@@ -278,7 +283,7 @@ public class searchMusicActivity extends BaseActivity {
 
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
-            if(lastPosition==position){
+            if (lastPosition == position) {
                 ChooseMusic chooseMusic2 = listData.get(lastPosition);
                 chooseMusic2.setPlaying(false);
                 adapter.notifyItemChanged(lastPosition);
@@ -331,37 +336,36 @@ public class searchMusicActivity extends BaseActivity {
             protected void _onNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "收藏音乐返回的值为" + str);
-                updateCollect(isCollect,music_id);
+                updateCollect(isCollect, music_id);
 
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
 
-    private void updateCollect(int oldIsCollect,String music_id) {
-            if (oldIsCollect == 0) {
-                oldIsCollect = 1;
-            } else {
-                oldIsCollect = 0;
-            }
-            ChooseMusic chooseMusic = listData.get(nowClickPosition);
-            chooseMusic.setIs_collection(oldIsCollect);
-            listData.set(nowClickPosition, chooseMusic);
-            adapter.notifyItemChanged(nowClickPosition);
-            EventBus.getDefault().post(new SelectMusicCollet(music_id));
+    private void updateCollect(int oldIsCollect, String music_id) {
+        if (oldIsCollect == 0) {
+            oldIsCollect = 1;
+        } else {
+            oldIsCollect = 0;
+        }
+        ChooseMusic chooseMusic = listData.get(nowClickPosition);
+        chooseMusic.setIs_collection(oldIsCollect);
+        listData.set(nowClickPosition, chooseMusic);
+        adapter.notifyItemChanged(nowClickPosition);
+        EventBus.getDefault().post(new SelectMusicCollet(music_id));
     }
 
 
-
     private void requestFagData() {
-        lastPosition=0;
+        lastPosition = 0;
         pauseMusic();
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
-        params.put("keyword",searchText);
-        LogUtil.d("OOM","searchText="+params);
-        Observable    ob = Api.getDefault().musicList(BaseConstans.getRequestHead(params));
+        params.put("keyword", searchText);
+        LogUtil.d("OOM", "searchText=" + params);
+        Observable ob = Api.getDefault().musicList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<ChooseMusic>>(this) {
             @Override
             protected void _onError(String message) {
@@ -398,7 +402,6 @@ public class searchMusicActivity extends BaseActivity {
     }
 
 
-
     public void showNoData(boolean isShowNoData) {
         if (isShowNoData) {
             lin_show_nodata.setVisibility(View.VISIBLE);
@@ -411,7 +414,7 @@ public class searchMusicActivity extends BaseActivity {
     public void onDestroy() {
         super.onDestroy();
 
-        if(mediaPlayer!=null){
+        if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
 
@@ -421,17 +424,16 @@ public class searchMusicActivity extends BaseActivity {
     }
 
 
+    private void pauseMusic() {
 
-    private void pauseMusic(){
-
-        if(mediaPlayer!=null&&mediaPlayer.isPlaying()){
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
 
         }
 
 
-
     }
+
     private void finishData() {
         smartRefreshLayout.finishRefresh();
         smartRefreshLayout.finishLoadMore();

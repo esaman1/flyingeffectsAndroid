@@ -129,11 +129,25 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     }
 
 
+
+
+    boolean isOnDestroy=false;
     @Override
     public void onDestroy() {
-        super.onDestroy();
-        videoToPause();
+        videoStop();
+        isOnDestroy=true;
         EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
+
+    /**
+     * 释放资源
+     */
+    private void videoStop() {
+        if (exoPlayer != null) {
+            exoPlayer.stop();
+            exoPlayer.release();
+        }
     }
 
     /**
@@ -267,33 +281,37 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
     @Override
     public void animIsComplate() {
+
         WaitingDialog.closePragressDialog();
-        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-            nowStateIsPlaying(true);
-            if (!TextUtils.isEmpty(videoPath)) {
-                if (isPlayComplate) {
-                    videoPlay();
-                    isIntoPause = false;
-                } else {
-                    if (isInitVideoLayer) {
-                        if (!isIntoPause) {
-                            videoPlay();
+        if(!isOnDestroy){
+            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+                nowStateIsPlaying(true);
+                if (!TextUtils.isEmpty(videoPath)) {
+                    if (isPlayComplate) {
+                        videoPlay();
+                        isIntoPause = false;
+                    } else {
+                        if (isInitVideoLayer) {
+                            if (!isIntoPause) {
+                                videoPlay();
+                            } else {
+                                videoPlay();
+                                isIntoPause = false;
+                                isInitVideoLayer = true;
+                            }
                         } else {
-                            videoPlay();
                             isIntoPause = false;
                             isInitVideoLayer = true;
+                            videoPlay();
                         }
-                    } else {
-                        isIntoPause = false;
-                        isInitVideoLayer = true;
-                        videoPlay();
                     }
                 }
-            }
-            isPlaying = true;
-            startTimer();
-            presenter.showGifAnim(true);
-        });
+                isPlaying = true;
+                startTimer();
+                presenter.showGifAnim(true);
+            });
+        }
+
     }
 
     @Override
@@ -428,7 +446,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
 
     private void toPlay(){
-        if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
+        if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)&&!isOnDestroy) {
             if (isPlaying) {
                 if(!isShowPreviewAd&&BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()){
                     AdManager.getInstance().showCpAd(this, AdConfigs.AD_SCREEN_FOR_PREVIEW);

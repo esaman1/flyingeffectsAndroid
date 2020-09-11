@@ -201,6 +201,12 @@ public class CreationTemplateMvpModel {
         if (!TextUtils.isEmpty(mVideoPath)) {
             this.mVideoPath = mVideoPath;
             videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
+
+            if( TextUtils.isEmpty(videoVoicePath)){
+                chooseTemplateMusic(true);
+            }
+
+
         } else {
             this.mVideoPath = null;
             videoInfo = null;
@@ -891,7 +897,7 @@ public class CreationTemplateMvpModel {
             public void stickerOnclick(int type) {
                 if (type == StickerView.LEFT_TOP_MODE) {//刪除
                     if (stickView.isFirstAddSticker()) {
-                        if(nowChooseMusicId ==1){
+                        if(nowChooseMusicId ==1||nowChooseMusicId==3){
                             callback.getBgmPath("");
                             videoVoicePath = "";
                             clearCheckBox();

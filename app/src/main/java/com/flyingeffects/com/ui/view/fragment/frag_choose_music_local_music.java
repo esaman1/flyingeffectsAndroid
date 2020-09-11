@@ -37,6 +37,8 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 import static com.flyingeffects.com.utils.BlogFileResource.FileManager.isLansongVESuppport;
@@ -227,43 +229,86 @@ public class frag_choose_music_local_music extends BaseFragment {
         protected void onQueryComplete(int token, Object cookie, Cursor c) {
             super.onQueryComplete(token, cookie, c);
             listVideoFiltrateMp4.clear();
-            if(c!=null&&c.getColumnCount()>0){
-
-                while (c.moveToNext()) {
-                    String path = c.getString(c.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));// 路径
-                    LogUtil.d("getVideos", "系统筛选出来的视频：" + path);
-                    if (!new File(path).exists()) {
-                        continue;
-                    }
-                    if (!isLansongVESuppport(path)) {
-                        continue;
-                    }
-                    int id = c.getInt(c.getColumnIndexOrThrow(MediaStore.Video.Media._ID));// 视频的id
-                    try {
-                        String name = c.getString(c.getColumnIndexOrThrow("title")); // 视频名称
-                        long size = c.getLong(c.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));// 大小
-                        File file = new File(path);
-                        if (file.exists()) {
-                            MediaInfo mediaInfo = new MediaInfo(path);
-                            if (mediaInfo.prepare() && mediaInfo.isSupport()) {
-                                long duration = Math.round(mediaInfo.vDuration * 1000);
-                                long date = c.getLong(c.getColumnIndexOrThrow("_data"));//修改时间
-                                if (duration >= 1000) {
-                                    Video video = new Video(id, path, name, "", size, date, duration);
-                                    listVideoFiltrateMp4.add(video);
+            Observable.just(c).map(c1 -> {
+                if(c1 !=null&& c1.getColumnCount()>0) {
+                    while (c1.moveToNext()) {
+                        String path = c1.getString(c1.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));// 路径
+                        LogUtil.d("getVideos", "系统筛选出来的视频：" + path);
+                        if (!new File(path).exists()) {
+                            continue;
+                        }
+                        if (!isLansongVESuppport(path)) {
+                            continue;
+                        }
+                        int id = c1.getInt(c1.getColumnIndexOrThrow(MediaStore.Video.Media._ID));// 视频的id
+                        try {
+                            String name = c1.getString(c1.getColumnIndexOrThrow("title")); // 视频名称
+                            long size = c1.getLong(c1.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));// 大小
+                            File file = new File(path);
+                            if (file.exists()) {
+                                MediaInfo mediaInfo = new MediaInfo(path);
+                                if (mediaInfo.prepare() && mediaInfo.isSupport()) {
+                                    long duration = Math.round(mediaInfo.vDuration * 1000);
+                                    long date = c1.getLong(c1.getColumnIndexOrThrow("_data"));//修改时间
+                                    if (duration >= 1000) {
+                                        Video video = new Video(id, path, name, "", size, date, duration);
+                                        listVideoFiltrateMp4.add(video);
+                                    }
                                 }
                             }
-                        }
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-                //倒序
                 Collections.reverse(listVideoFiltrateMp4);
-                adapter.notifyDataSetChanged();
-                finishData();
-            }
+                return listVideoFiltrateMp4;
+            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<Video>>() {
+                @Override
+                public void call(List<Video> videos) {
+                    adapter.notifyDataSetChanged();
+                    finishData();
+                }
+            });
+
+
+//            if(c!=null&&c.getColumnCount()>0){
+//                while (c.moveToNext()) {
+//                    String path = c.getString(c.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));// 路径
+//                    LogUtil.d("getVideos", "系统筛选出来的视频：" + path);
+//                    if (!new File(path).exists()) {
+//                        continue;
+//                    }
+//                    if (!isLansongVESuppport(path)) {
+//                        continue;
+//                    }
+//                    int id = c.getInt(c.getColumnIndexOrThrow(MediaStore.Video.Media._ID));// 视频的id
+//                    try {
+//                        String name = c.getString(c.getColumnIndexOrThrow("title")); // 视频名称
+//                        long size = c.getLong(c.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));// 大小
+//                        File file = new File(path);
+//                        if (file.exists()) {
+//                            MediaInfo mediaInfo = new MediaInfo(path);
+//                            if (mediaInfo.prepare() && mediaInfo.isSupport()) {
+//                                long duration = Math.round(mediaInfo.vDuration * 1000);
+//                                long date = c.getLong(c.getColumnIndexOrThrow("_data"));//修改时间
+//                                if (duration >= 1000) {
+//                                    Video video = new Video(id, path, name, "", size, date, duration);
+//                                    listVideoFiltrateMp4.add(video);
+//                                }
+//                            }
+//                        }
+//
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                //倒序
+//                Collections.reverse(listVideoFiltrateMp4);
+//                adapter.notifyDataSetChanged();
+//                finishData();
+//            }
 
         }
     }

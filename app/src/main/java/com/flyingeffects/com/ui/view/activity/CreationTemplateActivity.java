@@ -355,8 +355,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
             case R.id.ll_play:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
-
-
                     if (isPlaying) {
                         pauseBgmMusic();
                         isIntoPause = false;
@@ -667,10 +665,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void deleteFirstSticker() {
-        if(viewPager.getCurrentItem()==3){
+        new Handler().postDelayed(() -> {
             viewPager.setCurrentItem(0);
-        }
-        setTextColor(0);
+            tv_music.setVisibility(View.GONE);
+            setTextColor(0);
+        },500);
     }
 
     @Override
@@ -729,6 +728,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 if (exoPlayer != null) {
                     exoPlayer.setVolume(0f);
                 }
+                pauseBgmMusic();
                 playBGMMusic();
                 if (bgmPlayer != null) {
                     if (exoPlayer != null) {
@@ -1010,7 +1010,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private void pauseBgmMusic() {
         LogUtil.d("playBGMMusic", "pauseBgmMusic------------------------------");
-        if (bgmPlayer != null) {
+        if (bgmPlayer != null&&bgmPlayer.isPlaying()) {
             bgmPlayer.pause();
         }
     }

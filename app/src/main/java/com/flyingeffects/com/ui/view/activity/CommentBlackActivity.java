@@ -143,7 +143,7 @@ public class CommentBlackActivity extends Activity {
                     LogUtil.e("TAG", "mIsSoftKeyboardShowing 显示");
                 } else {
                     //软键盘隐藏
-                    ed_search.setHint("");
+                    ed_search.setHint("有爱评论，说点儿好听的~");
                     message_id="";
                 }
             }

@@ -141,7 +141,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             @Override
             protected void _onError(String message) {
                 finishData();
-                ToastUtil.showToast(message);
+             //   ToastUtil.showToast(message);
             }
 
             @Override
@@ -243,9 +243,11 @@ public class frag_choose_music_recent_updates extends BaseFragment {
 
                     case R.id.tv_user:
                         //跳转到用户主页
-                        Intent intentUserHome = new Intent(getActivity(), UserHomepageActivity.class);
-                        intentUserHome.putExtra("toUserId", listData.get(position).getUser_id());
-                        startActivity(intentUserHome);
+                        if(id!=1){
+                            Intent intentUserHome = new Intent(getActivity(), UserHomepageActivity.class);
+                            intentUserHome.putExtra("toUserId", listData.get(position).getUser_id());
+                            startActivity(intentUserHome);
+                        }
                         break;
 
 
