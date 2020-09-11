@@ -1288,25 +1288,20 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         if (!mTemplateModel.HasBj) {
             ll_choose_1.setVisibility(View.INVISIBLE);
         }
-        if (albumType.isImage(GetPathTypeModel.getInstance().getMediaType(imgPath.get(0)))) {
-            ll_choose_0.setVisibility(View.INVISIBLE);
-
-
-
-
-        }
-        if (!mTemplateModel.HasBj && albumType.isImage(GetPathTypeModel.getInstance().getMediaType(imgPath.get(0)))) {
-            ll_line_0.setVisibility(View.GONE);
-        }
         ll_choose_0.setOnClickListener(tvMusicListener);
         ll_choose_1.setOnClickListener(tvMusicListener);
         ll_choose_2.setOnClickListener(tvMusicListener);
         ll_choose_3.setOnClickListener(tvMusicListener);
-        ll_choose_3.setVisibility(View.INVISIBLE);
         cb_0 = templateThumbForMusic.findViewById(R.id.check_box_0);
         cb_1 = templateThumbForMusic.findViewById(R.id.check_box_1);
         cb_2 = templateThumbForMusic.findViewById(R.id.check_box_2);
         cb_3 = templateThumbForMusic.findViewById(R.id.check_box_3);
+
+        TextView tv_1=templateThumbForMusic.findViewById(R.id.tv_1);
+        tv_1.setText("背景音乐");
+        TextView tv_2=templateThumbForMusic.findViewById(R.id.tv_2);
+        tv_2.setText("模板音乐");
+
         Drawable drawable_news = ResourcesCompat.getDrawable(getResources(), R.drawable.template_choose_btn, null);
         Drawable drawable_news1 = ResourcesCompat.getDrawable(getResources(), R.drawable.template_choose_btn, null);
         Drawable drawable_news2 =ResourcesCompat.getDrawable(getResources(), R.drawable.template_choose_btn, null);
@@ -1342,12 +1337,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 case R.id.ll_choose_0:
                 case R.id.check_box_0:
                     clearCheckBox();
-                    cb_0.setChecked(true);
-                    nowChooseMusic = 1;
                     String path = imgPath.get(0);
                     if (albumType.isVideo(GetPathTypeModel.getInstance().getMediaType(path))) {
                         presenter.getBjMusic(primitivePath);
                         changeMusic();
+                        cb_0.setChecked(true);
+                        nowChooseMusic = 1;
                     } else {
                         cb_2.setChecked(true);
                         ToastUtil.showToast("没有素材");
@@ -1378,8 +1373,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 //提取
                 case R.id.ll_choose_3:
                 case R.id.check_box_3:
+                    clearCheckBox();
                     if(!TextUtils.isEmpty(downMusicPath)){
-                        clearCheckBox();
                         cb_3.setChecked(true);
                         changeMusic();
                         chooseDownMusic();

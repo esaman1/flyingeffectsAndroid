@@ -91,6 +91,7 @@ public class ChooseMusicActivity extends BaseActivity {
         list.add(fragment_2);
 
 
+
         relative_top.setOnClickListener(view -> {
             Intent intent=new Intent(ChooseMusicActivity.this,searchMusicActivity.class);
             intent.putExtra("needDuration",needDuration);
@@ -128,7 +129,7 @@ public class ChooseMusicActivity extends BaseActivity {
 
             }
         });
-
+        viewpager.setOffscreenPageLimit(4);
         findViewById(R.id.iv_top_back).setOnClickListener(view -> finish());
     }
 

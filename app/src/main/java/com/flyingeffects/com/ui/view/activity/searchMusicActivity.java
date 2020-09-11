@@ -290,6 +290,8 @@ public class searchMusicActivity extends BaseActivity {
         chooseMusic.setPlaying(true);
         listData.set(position, chooseMusic);
         if (lastPosition != position) {
+
+
             ChooseMusic chooseMusic2 = listData.get(lastPosition);
             chooseMusic2.setPlaying(false);
             listData.set(lastPosition, chooseMusic2);
@@ -352,6 +354,7 @@ public class searchMusicActivity extends BaseActivity {
 
 
     private void requestFagData() {
+        lastPosition=0;
         pauseMusic();
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");

@@ -43,7 +43,7 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
     private int fromType;
     //    private LinearLayout ll_show_progress;
     private TextView tv_playing_time;
-    private SeekBar seekBar;
+    public   SeekBar seekBar;
 
     public music_recent_adapter(int layoutResId, @Nullable List<ChooseMusic> allData, Context context, int fromType) {
         super(layoutResId, allData);
@@ -109,6 +109,7 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
                 helper.setText(R.id.tv_time, timeUtils.timeParse(integer));
             }
         });
+
 
     }
 

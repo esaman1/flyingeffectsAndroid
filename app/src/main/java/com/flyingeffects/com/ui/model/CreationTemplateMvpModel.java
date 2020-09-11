@@ -433,7 +433,7 @@ public class CreationTemplateMvpModel {
                 LogUtil.d("OOM", "当前有背景");
                 //模板音乐
                 nowChooseMusicId = 2;
-                chooseTemplateMusic();
+                chooseTemplateMusic(true);
             } else if (albumType.isVideo(GetPathType.getInstance().getPathType(originalPath))) {
                 LogUtil.d("OOM", "当前素材是视频");
                 nowChooseMusicId = 1;
@@ -471,16 +471,14 @@ public class CreationTemplateMvpModel {
             switch (view.getId()) {
                 case R.id.check_box_0:
                 case R.id.tv_0:
-                    clearCheckBox();
-                    nowChooseMusicId = 1;
+
                     chooseMaterialMusic(nowChooseStickerView.getOriginalPath());
                     break;
 
                 case R.id.tv_1:
                 case R.id.check_box_1:
-                    clearCheckBox();
-                    nowChooseMusicId = 2;
-                    chooseTemplateMusic();
+
+                    chooseTemplateMusic(true);
 
                     break;
 
@@ -510,6 +508,7 @@ public class CreationTemplateMvpModel {
         if (nowChooseStickerView != null) {
             if (albumType.isVideo(GetPathType.getInstance().getPathType(path))) {
                 clearCheckBox();
+                nowChooseMusicId = 1;
                 check_box_0.setChecked(true);
                 getVideoVoice(path, soundFolder);
             } else {
@@ -524,14 +523,18 @@ public class CreationTemplateMvpModel {
      * creation date: 2020/9/2
      * user : zhangtongju
      */
-    private void chooseTemplateMusic() {
+    private void chooseTemplateMusic(boolean isHint) {
         if (!TextUtils.isEmpty(mVideoPath)) {
+            nowChooseMusicId = 2;
             clearCheckBox();
             check_box_1.setChecked(true);
             videoVoicePath = "";
             callback.getBgmPath("");
         } else {
-            ToastUtil.showToast("没有模板音乐");
+            if(isHint){
+                ToastUtil.showToast("没有背景音乐");
+            }
+
         }
     }
 
@@ -887,7 +890,17 @@ public class CreationTemplateMvpModel {
             @Override
             public void stickerOnclick(int type) {
                 if (type == StickerView.LEFT_TOP_MODE) {//刪除
+                    if (stickView.isFirstAddSticker()) {
+                        if(nowChooseMusicId ==1){
+                            callback.getBgmPath("");
+                            videoVoicePath = "";
+                            clearCheckBox();
+                            chooseTemplateMusic(false);
+                        }
+                        callback.deleteFirstSticker();
+                    }
                     deleteStickView(stickView);
+
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     stickView.dismissFrame();
                     //copy

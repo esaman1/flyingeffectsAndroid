@@ -3,8 +3,10 @@ package com.flyingeffects.com.ui.view.fragment;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +20,7 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.BlogFile.Music;
 import com.flyingeffects.com.enity.ChooseMusic;
 import com.flyingeffects.com.enity.FragmentHasSlide;
+import com.flyingeffects.com.enity.RefeshCollectState;
 import com.flyingeffects.com.enity.SelectMusicCollet;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.http.Api;
@@ -114,8 +117,6 @@ public class frag_choose_music_recent_updates extends BaseFragment {
     @Override
     protected void initData() {
     }
-
-
 
 
     private void requestFagData() {
@@ -237,8 +238,8 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                     case R.id.tv_user:
                         //跳转到用户主页
                         Intent intentUserHome = new Intent(getActivity(), UserHomepageActivity.class);
-                        intentUserHome.putExtra("toUserId",  listData.get(position).getId());
-                       startActivity(intentUserHome);
+                        intentUserHome.putExtra("toUserId", listData.get(position).getId());
+                        startActivity(intentUserHome);
                         break;
 
 
@@ -267,7 +268,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                 mediaPlayer.pause();
                 endTimer();
-                if(lastPosition==position){
+                if (lastPosition == position) {
                     ChooseMusic chooseMusic2 = listData.get(lastPosition);
                     chooseMusic2.setPlaying(false);
                     adapter.notifyItemChanged(lastPosition);
@@ -315,14 +316,14 @@ public class frag_choose_music_recent_updates extends BaseFragment {
         mTimerTask = new TimerTask() {
             @Override
             public void run() {
-                if (getActivity() != null&&adapter!=null) {
+                if (getActivity() != null && adapter != null) {
                     if (allDuration != 0) {
                         float position = mediaPlayer.getCurrentPosition() / (float) allDuration;
 //                        ChooseMusic chooseMusic2 = listData.get(lastPosition);
 //                        chooseMusic2.setTitle(timeUtils.timeParse(mediaPlayer.getCurrentPosition()));
 //                        chooseMusic2.setProgress((int) (position * 100));
 //                        adapter.notifyItemChanged(lastPosition);
-                     adapter.setPlayingProgress((int) (position * 100), timeUtils.timeParse(mediaPlayer.getCurrentPosition()));
+                        adapter.setPlayingProgress((int) (position * 100), timeUtils.timeParse(mediaPlayer.getCurrentPosition()));
                     }
                 }
             }
@@ -376,13 +377,13 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             protected void _onNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "收藏音乐返回的值为" + str);
-                updateCollect(isCollect);
+                updateCollect(isCollect, music_id);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
 
-    private void updateCollect(int oldIsCollect) {
+    private void updateCollect(int oldIsCollect, String music_id) {
         if (id == 2) {
             //移除收藏item
             listData.remove(nowClickPosition);
@@ -399,25 +400,36 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             listData.set(nowClickPosition, chooseMusic);
             adapter.notifyItemChanged(nowClickPosition);
         }
-    }
 
-
-
-
-    @Subscribe
-    public void onEventMainThread( FragmentHasSlide fragmentHasSlide) {
-        pauseMusic();
-    }
-
-
-    private void pauseMusic(){
-        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-            mediaPlayer.pause();
-            endTimer();
+        if (!TextUtils.isEmpty(music_id) && id == 2) {
+            EventBus.getDefault().post(new SelectMusicCollet(music_id));
+        } else {
+            EventBus.getDefault().post(new RefeshCollectState());
         }
     }
 
 
+    @Subscribe
+    public void onEventMainThread(FragmentHasSlide fragmentHasSlide) {
+        pauseMusic();
+        ChooseMusic chooseMusic2 = listData.get(lastPosition);
+        chooseMusic2.setPlaying(false);
+        listData.set(lastPosition, chooseMusic2);
+        adapter.notifyItemChanged(lastPosition);
+        endTimer();
+    }
+
+
+    private void pauseMusic() {
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+            endTimer();
+        }
+
+
+
+
+    }
 
 
     /**
@@ -426,19 +438,37 @@ public class frag_choose_music_recent_updates extends BaseFragment {
      * user : zhangtongju
      */
     @Subscribe
-    public void onEventMainThread(SelectMusicCollet selectMusicCollet  ) {
+    public void onEventMainThread(SelectMusicCollet selectMusicCollet) {
         String musicId = selectMusicCollet.getMusic_id();
-        if(id!=1){
+        if (id == 0) {
             for (int i = 0; i < listData.size(); i++) {
                 String needId = listData.get(i).getId();
-                if(needId.equals(musicId)){
-                    nowClickPosition=i;
-                    updateCollect(listData.get(i).getIs_collection());
+                if (needId.equals(musicId)) {
+                    nowClickPosition = i;
+                    updateCollect(listData.get(i).getIs_collection(), "");
                     return;
                 }
             }
+        } else if (id == 2) {
+            refreshData();
+
+        }
+
+    }
+
+
+    @Subscribe
+    public void onEventMainThread(RefeshCollectState selectMusicCollet) {
+        if (id == 2) {
+            refreshData();
         }
     }
 
+
+    private void refreshData(){
+        isRefresh = true;
+        selectPage = 1;
+        requestFagData();
+    }
 
 }

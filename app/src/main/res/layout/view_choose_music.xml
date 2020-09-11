@@ -47,6 +47,8 @@
 
                     <CheckBox
                         android:id="@+id/check_box_0"
+                        android:clickable="false"
+                        android:enabled="false"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
@@ -73,6 +75,8 @@
 
 
                     <CheckBox
+                        android:clickable="false"
+                        android:enabled="false"
                         android:id="@+id/check_box_1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -113,6 +117,8 @@
                         android:id="@+id/check_box_2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:enabled="false"
                         android:layout_marginStart="5dp"
                         android:button="@null"
                         />
@@ -139,6 +145,8 @@
 
                     <CheckBox
                         android:id="@+id/check_box_3"
+                        android:clickable="false"
+                        android:enabled="false"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"

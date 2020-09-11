@@ -116,6 +116,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
     @Override
+    public void deleteFirstSticker() {
+        creationTemplatemvpView.deleteFirstSticker();
+    }
+
+    @Override
     public void animIsComplate() {
         creationTemplatemvpView.animIsComplate();
     }

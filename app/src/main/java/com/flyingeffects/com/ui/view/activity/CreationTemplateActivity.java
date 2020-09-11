@@ -666,6 +666,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
     @Override
+    public void deleteFirstSticker() {
+        if(viewPager.getCurrentItem()==3){
+            viewPager.setCurrentItem(0);
+        }
+        setTextColor(0);
+    }
+
+    @Override
     public void setgsyVideoProgress(int progress) {
         LogUtil.d("OOM", "videoProgress=" + progress);
         if (!isPlaying) {
@@ -777,6 +785,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }else{
             tv_music.setVisibility(View.GONE);
             viewPager.setCurrentItem(0);
+            setTextColor(0);
         }
 
     }
