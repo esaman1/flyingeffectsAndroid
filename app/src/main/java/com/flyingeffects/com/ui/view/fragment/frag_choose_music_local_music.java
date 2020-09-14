@@ -107,6 +107,20 @@ public class frag_choose_music_local_music extends BaseFragment {
     }
 
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+        }
+        if(listVideoFiltrateMp4!=null&&listVideoFiltrateMp4.size()!=0&&listVideoFiltrateMp4.size()>=lastPosition){
+            Video video3 = listVideoFiltrateMp4.get(lastPosition);
+            video3.setPlaying(false);
+            listVideoFiltrateMp4.set(lastPosition, video3);
+            adapter.notifyItemChanged(lastPosition);
+        }
+    }
+
     private void initRecycler() {
         adapter = new music_local_adapter(R.layout.list_music_local_item, listVideoFiltrateMp4, getActivity());
         StaggeredGridLayoutManager layoutManager =

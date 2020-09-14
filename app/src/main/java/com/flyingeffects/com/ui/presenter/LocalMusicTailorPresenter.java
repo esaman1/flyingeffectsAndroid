@@ -66,7 +66,12 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
     }
 
 
+    boolean isCanSeek=true;
     public void SeekToPositionMusic(int position) {
+
+
+        
+
         if (mPlayer != null) {
             mPlayer.start();
             mPlayer.seekTo(position);

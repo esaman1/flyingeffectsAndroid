@@ -359,6 +359,13 @@ public class frag_choose_music_recent_updates extends BaseFragment {
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
         }
+        if(listData!=null&&listData.size()!=0&&listData.size()>=lastPosition){
+            ChooseMusic chooseMusic2 = listData.get(lastPosition);
+            chooseMusic2.setPlaying(false);
+            listData.set(lastPosition, chooseMusic2);
+            adapter.notifyItemChanged(lastPosition);
+        }
+        endTimer();
     }
 
     public void showNoData(boolean isShowNoData) {

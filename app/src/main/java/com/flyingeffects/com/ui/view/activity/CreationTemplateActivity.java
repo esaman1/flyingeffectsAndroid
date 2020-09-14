@@ -992,6 +992,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             exoPlayer.stop();
             exoPlayer.release();
         }
+
     }
 
 

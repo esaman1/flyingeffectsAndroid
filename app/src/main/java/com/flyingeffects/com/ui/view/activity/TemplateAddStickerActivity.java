@@ -129,11 +129,16 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     }
 
 
-
+    @Override
+    protected void onPause() {
+        videoToPause();
+        super.onPause();
+    }
 
     boolean isOnDestroy=false;
     @Override
     public void onDestroy() {
+        LogUtil.d("OOM","onDestroy");
         videoStop();
         endTimer();
         isOnDestroy=true;
@@ -211,7 +216,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                 new DefaultDataSourceFactory(TemplateAddStickerActivity.this, "exoplayer-codelab")).
                 createMediaSource(Uri.fromFile(new File(videoPath)));
         exoPlayer.prepare(mediaSource, true, false);
-        new Handler().postDelayed(() -> toPlay(),500);
+        new Handler().postDelayed(() -> toPlay(),200);
     }
 
     private void videoToStart() {
@@ -224,6 +229,9 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
         nowStateIsPlaying(false);
         presenter.showAllAnim(false);
     }
+
+
+
 
     private void seekTo(long to) {
         if (exoPlayer != null) {

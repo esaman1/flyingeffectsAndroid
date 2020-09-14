@@ -1,5 +1,8 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.annotation.SuppressLint;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.TextView;
 
@@ -18,6 +21,8 @@ import com.flyingeffects.com.view.histogram.MyBarChartView.BarData;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -83,12 +88,7 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
         tv_top_submit.setText("保存");
 
         ((TextView) findViewById(R.id.tv_top_title)).setText("裁剪音乐");
-        findViewById(R.id.iv_top_back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        findViewById(R.id.iv_top_back).setOnClickListener(view -> finish());
         Presenter = new LocalMusicTailorPresenter(this, this);
         videoPath = getIntent().getStringExtra("videoPath");
         videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
@@ -100,10 +100,9 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
             @Override
             public void progress(float percent) {
                 runOnUiThread(() -> {
-                    LogUtil.d("OOM3", "percent=" + percent);
                     nowPlayStartTime = (long) (allDuration * percent);
                     tv_start.setText(timeUtils.timeParse(nowPlayStartTime));
-                    nowPlayEndTime   = nowPlayStartTime + needDuration;
+                    nowPlayEndTime = nowPlayStartTime + needDuration;
                     tv_end.setText(timeUtils.timeParse(nowPlayEndTime));
                 });
             }
@@ -111,8 +110,9 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
 
             @Override
             public void isDone() {
-                animation_view.playAnimation();
-                Presenter.SeekToPositionMusic((int) nowPlayStartTime);
+                startTimer();
+
+
             }
         });
         WaitingDialog.openPragressDialog(this);
@@ -131,6 +131,7 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     public void onDestroy() {
         super.onDestroy();
         Presenter.OnDestroy();
+        endTimer();
     }
 
     private void animStart() {
@@ -166,7 +167,7 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
         long nowMaterial = videoInfo.getDuration();
         LogUtil.d("OOM2", "nowMaterial=" + nowMaterial);
         float percent = nowMaterial / (float) needDuration;
-        LogUtil.d("OOM2", "needDuration=" + needDuration+"percent="+percent);
+        LogUtil.d("OOM2", "needDuration=" + needDuration + "percent=" + percent);
         LogUtil.d("OOM2", "numFrame=" + numFrame + ",percent=" + percent);
         myBarCharView.setBaseData(numFrame, percent, nowMaterial, needDuration);
         myBarCharView.setBarChartData(innerData);
@@ -187,7 +188,7 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
 
     @Override
     public void isAudioCutDone(String audioPath) {
-        LogUtil.d("OOM2","裁剪完成后音频的地址为"+audioPath);
+        LogUtil.d("OOM2", "裁剪完成后音频的地址为" + audioPath);
         EventBus.getDefault().post(new CutSuccess(audioPath));
         this.finish();
     }
@@ -203,7 +204,7 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
         switch (view.getId()) {
             case R.id.tv_top_submit:
                 //裁剪保存
-                Presenter.toSaveCutMusic(nowPlayStartTime,nowPlayEndTime);
+                Presenter.toSaveCutMusic(nowPlayStartTime, nowPlayEndTime);
                 break;
 
 
@@ -211,10 +212,59 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
                 break;
         }
 
-};
+    }
+
+    ;
 
 
+    private Timer timer;
+    private TimerTask task;
 
+    /***
+     * 倒计时60s
+     */
+    private void startTimer() {
+        if (timer != null) {
+            timer.purge();
+            timer.cancel();
+            timer = null;
+        }
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+        timer = new Timer();
+        task = new TimerTask() {
+            public void run() {
+                endTimer();
+                handler.sendEmptyMessage(1);
+            }
+        };
+        timer.schedule(task, 0, 500);
+    }
+
+
+    @SuppressLint("HandlerLeak")
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            animation_view.playAnimation();
+            Presenter.SeekToPositionMusic((int) nowPlayStartTime);
+        }
+    };
+
+    private void endTimer() {
+        if (timer != null) {
+            timer.purge();
+            timer.cancel();
+            timer = null;
+        }
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+    }
 
 
 }
