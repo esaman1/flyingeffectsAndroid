@@ -190,6 +190,9 @@ public class searchMusicActivity extends BaseActivity {
                     if (listSearchKey.size() >= finalI + 1) {
                         searchText = listSearchKey.get(finalI).getName();
                         ed_search.setText(searchText);
+                        isRefresh=true;
+                        selectPage=1;
+                        smartRefreshLayout.setEnableLoadMore(true);
                         requestFagData();
                         cancelFocus();
                     }

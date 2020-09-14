@@ -1057,7 +1057,9 @@ public class CreationTemplateMvpModel {
         stickView.setIsFromStickerAnim(isFromShowAnim);
         stickView.setComeFromAlbum(isFromAubum);
         if (isFromAubum) {
+            LogUtil.d("OOM2","ClipPath="+path);
             stickView.setClipPath(path);
+            LogUtil.d("OOM2","originalPath="+originalPath);
             stickView.setOriginalPath(originalPath);
             if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
                 stickView.setNowMaterialIsVideo(true);
