@@ -43,8 +43,8 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
     public final static String TAG = "music_recent_adapter";
     private int fromType;
     //    private LinearLayout ll_show_progress;
-    private TextView tv_playing_time;
-    public   SeekBar seekBar;
+    private  TextView tv_playing_time;
+    public    SeekBar seekBar;
 
     public music_recent_adapter(int layoutResId, @Nullable List<ChooseMusic> allData, Context context, int fromType) {
         super(layoutResId, allData);
@@ -80,6 +80,9 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
         if (item.isPlaying()) {
             if(fromType!=3){
                 ll_show_progress.setVisibility(View.VISIBLE);
+                seekBar.setProgress(item.getProgress());
+               tv_playing_time.setText(item.getPlayingTime());
+
             }else{
                 ll_show_progress.setVisibility(View.GONE);
             }

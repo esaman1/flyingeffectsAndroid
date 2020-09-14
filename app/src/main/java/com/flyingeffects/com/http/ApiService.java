@@ -249,6 +249,10 @@ public interface ApiService {
     @POST("/api/version/versionCheck")
     Observable<HttpResult<checkVersion>> checkUpdate(@FieldMap Map<String, String> params);
 
+    @FormUrlEncoded
+    @POST("/api/message/commentcheck")
+    Observable<HttpResult<Object>> commentcheck(@FieldMap Map<String, String> params);
+
 
 
     @FormUrlEncoded

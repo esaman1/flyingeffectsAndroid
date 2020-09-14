@@ -50,6 +50,16 @@ public class ChooseMusic implements Serializable {
         this.title = title;
     }
 
+    public String getPlayingTime() {
+        return playingTime;
+    }
+
+    public void setPlayingTime(String playingTime) {
+        this.playingTime = playingTime;
+    }
+
+    private String playingTime;
+
     public String getSearch() {
         return search;
     }

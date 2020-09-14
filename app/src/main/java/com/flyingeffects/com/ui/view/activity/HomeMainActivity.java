@@ -63,6 +63,9 @@ import com.megvii.segjni.SegJni;
 import com.orhanobut.hawk.Hawk;
 import com.umeng.analytics.MobclickAgent;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -181,12 +184,7 @@ public class HomeMainActivity extends FragmentActivity {
                     @Override
                     public void adClose() {
                         if (ShowPraiseModel.canShowAlert() && !ShowPraiseModel.getHasComment() && !ShowPraiseModel.getIsNewUser() && !ShowPraiseModel.ToDayHasShowAd()) {
-                            new Handler().postDelayed(() -> {
-                                Intent intent=new Intent(HomeMainActivity.this,PraiseActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(intent);
-
-                            }, 3000);
+                            checkCommentcheck();
                         }
                     }
                 });
@@ -195,6 +193,42 @@ public class HomeMainActivity extends FragmentActivity {
         };
         timer.schedule(task, second * 1000, second * 1000);
     }
+
+    /**
+     * description ：检查是否可以好评弹窗
+     * date: ：2019/6/13 10:44
+     * author: 张同举 @邮箱 jutongzhang@sina.com
+     */
+    public void checkCommentcheck() {
+        HashMap<String, String> params = new HashMap<>();
+        Observable ob = Api.getDefault().commentcheck(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(this) {
+            @Override
+            protected void _onError(String message) {
+                LogUtil.d("checkUpdate", message);
+            }
+
+            @Override
+            protected void _onNext(Object data) {
+                String str=StringUtil.beanToJSONString(data);
+                try {
+                    JSONObject ob=new JSONObject(str);
+                    int is_open_comment=ob.getInt("is_open_comment");
+                    if(is_open_comment==1){
+                        new Handler().postDelayed(() -> {
+                            Intent intent=new Intent(HomeMainActivity.this,PraiseActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                        }, 3000);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, "checkUpdate", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+
 
 
 

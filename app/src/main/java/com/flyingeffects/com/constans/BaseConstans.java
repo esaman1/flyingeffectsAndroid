@@ -30,18 +30,18 @@ public class BaseConstans {
     public static boolean hasCreatingSegJni = true;
     public static String titok;
     public static String kuaishou;
-    public static final boolean PRODUCTION = false;
+    public static final boolean PRODUCTION = true;
     private static String channel = "";
     private static String versionCode = "";
     private static String uuid = "";
-    public static final String PRIVACYPOLICY = "http://copy-book.oss-cn-hangzhou.aliyuncs.com/link/FeiShan/FS-PrivacyPolicy.html";
+    public static final String PRIVACYPOLICY = "http://www.flyingeffect.com/fly/FS-PrivacyPolicy.html";
     public static String service_wxi;
     public static boolean TemplateHasWatchingAd=false;
     public static ConfigForTemplateList configList;
     private static int hasAdvertising = 0;  //是否有广告，0表示没得，1表示有，全局控制
     public static int showAgainKaipingAd = 60; //退出后台后多少秒后会重新显示插屏
     private static boolean isNewUserForAdvertising = false; //只是用前几次的新用户
-    public static final String PROTOCOL = "http://copy-book.oss-cn-hangzhou.aliyuncs.com/link/FeiShan/FS-Agreement.html";
+    public static final String PROTOCOL = "http://www.flyingeffect.com/fly/FS-Agreement.html";
 
     public static HashMap getRequestHead(HashMap<String, String> map) {
         String nowTimestamp = getTimestamp() + "";

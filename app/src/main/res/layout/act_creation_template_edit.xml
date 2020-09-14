@@ -326,7 +326,7 @@
             android:layout_height="56dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="背景"
+            android:text="换背景"
             android:textColor="@color/white" />
 
         <TextView
@@ -355,7 +355,7 @@
             android:layout_height="56dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="音乐"
+            android:text="换音乐"
             android:textColor="@color/white" />
 
 

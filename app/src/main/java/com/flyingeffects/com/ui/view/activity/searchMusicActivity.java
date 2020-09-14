@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.media.MediaPlayer;
+import android.os.Handler;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -217,15 +219,24 @@ public class searchMusicActivity extends BaseActivity {
 
     public void initSmartRefreshLayout() {
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
-            isRefresh = true;
-            refreshLayout.setEnableLoadMore(true);
-            selectPage = 1;
-            requestFagData();
+            if (!TextUtils.isEmpty(searchText)) {
+                isRefresh = true;
+                refreshLayout.setEnableLoadMore(true);
+                selectPage = 1;
+                requestFagData();
+            } else {
+                new Handler().postDelayed(() -> finishData(), 500);
+            }
         });
         smartRefreshLayout.setOnLoadMoreListener(refresh -> {
-            isRefresh = false;
-            selectPage++;
-            requestFagData();
+            if (!TextUtils.isEmpty(searchText)) {
+                isRefresh = false;
+                selectPage++;
+                requestFagData();
+            } else {
+                new Handler().postDelayed(() -> finishData(), 500);
+            }
+
         });
     }
 

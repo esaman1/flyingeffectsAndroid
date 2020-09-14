@@ -179,7 +179,7 @@ public class BackgroundSearchActivity extends BaseActivity {
     private void hideResultView(boolean isHide) {
         if (isHide) {
             viewPager.setVisibility(View.INVISIBLE);
-            horizontalScrollView.setVisibility(View.GONE);
+            horizontalScrollView.setVisibility(View.INVISIBLE);
         } else {
             viewPager.setVisibility(View.VISIBLE);
             horizontalScrollView.setVisibility(View.VISIBLE);

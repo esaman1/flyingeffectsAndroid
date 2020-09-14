@@ -70,8 +70,8 @@
 
 
     <string name="template_edit">编辑</string>
-    <string name="template_bj">背景</string>
-    <string name="template_music">音乐</string>
+    <string name="template_bj">换背景</string>
+    <string name="template_music">换音乐</string>
     <string name="capture_permission_no">拒绝</string>
     <string name="capture_permission_message">拍摄视频需要摄像权限，如需使用相关功能，请选择同意</string>
     <string name="capture_permission_ok">同意</string>

@@ -174,6 +174,8 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     }
 
 
+
+
     /**
      * description ：音频播放完成回调
      * creation date: 2020/9/1
@@ -185,6 +187,13 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
         animation_view_2.pauseAnimation();
     }
 
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Presenter.pauseMusic();
+        endTimer();
+    }
 
     @Override
     public void isAudioCutDone(String audioPath) {

@@ -263,6 +263,7 @@ public class CommentBlackActivity extends Activity {
                 cancelFocus();
                 hideShowKeyboard(false);
                 requestComment();
+                ToastUtil.showToast("评论成功");
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
