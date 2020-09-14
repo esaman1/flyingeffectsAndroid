@@ -282,36 +282,42 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         }, 0);
     }
 
+
+
+
+
     @SuppressLint("RestrictedApi")
     private void RecordingStart() {
-        player.prepare(mediaSource);
-        player.setPlayWhenReady(true);
-        mIvFlip.setVisibility(View.INVISIBLE);
-        mIvSwitchTimer.setVisibility(View.INVISIBLE);
-        mIvBack.setVisibility(View.INVISIBLE);
-        //开始录像
-        takingPicture = false;
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), System.currentTimeMillis() + ".mp4");
-        mRecording = true;
-        Log.d("OOM", "开始录制");
-        mVideoCapture.startRecording(file, mCameraExecutor, new VideoCapture.OnVideoSavedCallback() {
-            @Override
-            public void onVideoSaved(@NonNull File file) {
-                Log.d("OOM", "录制完成");
-                if (mCameraSelectorInt == CameraSelector.LENS_FACING_FRONT) {
-                    mirrorFlip(file.getPath());
-                } else {
-                    onFileSaved(file);
+        if(!isOnDestroy){
+            player.prepare(mediaSource);
+            player.setPlayWhenReady(true);
+            mIvFlip.setVisibility(View.INVISIBLE);
+            mIvSwitchTimer.setVisibility(View.INVISIBLE);
+            mIvBack.setVisibility(View.INVISIBLE);
+            //开始录像
+            takingPicture = false;
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), System.currentTimeMillis() + ".mp4");
+            mRecording = true;
+            Log.d("OOM", "开始录制");
+            mVideoCapture.startRecording(file, mCameraExecutor, new VideoCapture.OnVideoSavedCallback() {
+                @Override
+                public void onVideoSaved(@NonNull File file) {
+                    Log.d("OOM", "录制完成");
+                    if (mCameraSelectorInt == CameraSelector.LENS_FACING_FRONT) {
+                        mirrorFlip(file.getPath());
+                    } else {
+                        onFileSaved(file);
+                    }
                 }
-            }
 
-            @Override
-            public void onError(int videoCaptureError, @NonNull String message, @Nullable Throwable cause) {
-                canClickRecordBtn = true;
-                Log.e(TAG, "onError: int " + videoCaptureError + " message " + message, cause);
-            }
-        });
-        mRecordView.startRecord();
+                @Override
+                public void onError(int videoCaptureError, @NonNull String message, @Nullable Throwable cause) {
+                    canClickRecordBtn = true;
+                    Log.e(TAG, "onError: int " + videoCaptureError + " message " + message, cause);
+                }
+            });
+            mRecordView.startRecord();
+        }
     }
 
     private void mirrorFlip(String path) {
