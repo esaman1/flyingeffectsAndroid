@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -294,10 +295,10 @@ public class CreationTemplateMvpModel {
     private boolean isRefresh = true;
     private ViewPager viewPager;
 
-    CheckBox check_box_0;
-    CheckBox check_box_1;
-    CheckBox check_box_2;
-    CheckBox check_box_3;
+    ImageView check_box_0;
+    ImageView check_box_1;
+    ImageView check_box_2;
+    ImageView check_box_3;
 
     TextView tv_0;
     TextView tv_1;
@@ -386,25 +387,25 @@ public class CreationTemplateMvpModel {
         tv_2 = viewForChooseMusic.findViewById(R.id.tv_2);
         tv_1.setText("背景音乐");
         tv_3 = viewForChooseMusic.findViewById(R.id.tv_3);
-        check_box_0 = viewForChooseMusic.findViewById(R.id.check_box_0);
-        check_box_1 = viewForChooseMusic.findViewById(R.id.check_box_1);
-        check_box_2 = viewForChooseMusic.findViewById(R.id.check_box_2);
-        check_box_3 = viewForChooseMusic.findViewById(R.id.check_box_3);
-        Drawable drawable_news = context.getResources().getDrawable(R.drawable.template_choose_btn);
-        Drawable drawable_news_0 = context.getResources().getDrawable(R.drawable.template_choose_btn);
-        Drawable drawable_news_1 = context.getResources().getDrawable(R.drawable.template_choose_btn);
-        Drawable drawable_news_2 = context.getResources().getDrawable(R.drawable.template_choose_btn);
+        check_box_0 = viewForChooseMusic.findViewById(R.id.iv_check_box_0);
+        check_box_1 = viewForChooseMusic.findViewById(R.id.iv_check_box_1);
+        check_box_2 = viewForChooseMusic.findViewById(R.id.iv_check_box_2);
+        check_box_3 = viewForChooseMusic.findViewById(R.id.iv_check_box_3);
+//        Drawable drawable_news = context.getResources().getDrawable(R.drawable.template_choose_btn);
+//        Drawable drawable_news_0 = context.getResources().getDrawable(R.drawable.template_choose_btn);
+//        Drawable drawable_news_1 = context.getResources().getDrawable(R.drawable.template_choose_btn);
+//        Drawable drawable_news_2 = context.getResources().getDrawable(R.drawable.template_choose_btn);
         //当这个图片被绘制时，给他绑定一个矩形 ltrb规定这个矩形
-        int radio_size = StringUtil.dip2px(context, 16);
-        drawable_news.setBounds(0, 0, radio_size, radio_size);
-        drawable_news_0.setBounds(0, 0, radio_size, radio_size);
-        drawable_news_1.setBounds(0, 0, radio_size, radio_size);
-        drawable_news_2.setBounds(0, 0, radio_size, radio_size);
+//        int radio_size = StringUtil.dip2px(context, 16);
+//        drawable_news.setBounds(0, 0, radio_size, radio_size);
+//        drawable_news_0.setBounds(0, 0, radio_size, radio_size);
+//        drawable_news_1.setBounds(0, 0, radio_size, radio_size);
+//        drawable_news_2.setBounds(0, 0, radio_size, radio_size);
         tv_2.setText("提取音乐");
-        check_box_0.setCompoundDrawables(drawable_news, null, null, null);
-        check_box_1.setCompoundDrawables(drawable_news_0, null, null, null);
-        check_box_2.setCompoundDrawables(drawable_news_1, null, null, null);
-        check_box_3.setCompoundDrawables(drawable_news_2, null, null, null);
+//        check_box_0.setCompoundDrawables(drawable_news, null, null, null);
+//        check_box_1.setCompoundDrawables(drawable_news_0, null, null, null);
+//        check_box_2.setCompoundDrawables(drawable_news_1, null, null, null);
+//        check_box_3.setCompoundDrawables(drawable_news_2, null, null, null);
         tv_0.setOnClickListener(tvMusicListener);
         tv_1.setOnClickListener(tvMusicListener);
         tv_2.setOnClickListener(tvMusicListener);
@@ -453,19 +454,26 @@ public class CreationTemplateMvpModel {
 
     private long getDuration() {
         long duration = 0;
-        if (listAllSticker != null) {
-            //说明没得背景视频，那么渲染时长就是
-            for (AllStickerData data : listAllSticker
-            ) {
-                if (duration < (int) data.getDuration()) {
-                    duration = (int) data.getDuration();
+        if(!TextUtils.isEmpty(mVideoPath)){
+            duration = videoInfo.getDuration();
+        }else{
+            if (listAllSticker != null) {
+                //说明没得背景视频，那么渲染时长就是
+                for (AllStickerData data : listAllSticker
+                ) {
+                    if (duration < (int) data.getDuration()) {
+                        duration = (int) data.getDuration();
+                    }
+                }
+                //如果还是0,说明全是图片，就修改为10
+                if (duration == 0) {
+                    duration = 10000;
                 }
             }
-            //如果还是0,说明全是图片，就修改为10
-            if (duration == 0) {
-                duration = 10000;
-            }
         }
+
+
+
         return duration;
     }
 
@@ -475,30 +483,30 @@ public class CreationTemplateMvpModel {
         public void onClick(View view) {
 
             switch (view.getId()) {
-                case R.id.check_box_0:
+                case R.id.iv_check_box_0:
                 case R.id.tv_0:
 
                     chooseMaterialMusic(nowChooseStickerView.getOriginalPath());
                     break;
 
                 case R.id.tv_1:
-                case R.id.check_box_1:
+                case R.id.iv_check_box_1:
 
                     chooseTemplateMusic(true);
 
                     break;
 
                 case R.id.tv_2:
-                case R.id.check_box_2:
+                case R.id.iv_check_box_2:
 
                     nowChooseMusicId = 3;
                     chooseAddChooseBjPath();
                     break;
 
-                case R.id.check_box_3:
+                case R.id.iv_check_box_3:
                 case R.id.tv_3:
                     clearCheckBox();
-                    check_box_3.setChecked(true);
+                    check_box_3.setImageResource(R.mipmap.template_btn_selected);
                     break;
             }
         }
@@ -515,7 +523,7 @@ public class CreationTemplateMvpModel {
             if (albumType.isVideo(GetPathType.getInstance().getPathType(path))) {
                 clearCheckBox();
                 nowChooseMusicId = 1;
-                check_box_0.setChecked(true);
+                check_box_0.setImageResource(R.mipmap.template_btn_selected);
                 getVideoVoice(path, soundFolder);
             } else {
                 ToastUtil.showToast("当前素材不是视频");
@@ -533,7 +541,7 @@ public class CreationTemplateMvpModel {
         if (!TextUtils.isEmpty(mVideoPath)) {
             nowChooseMusicId = 2;
             clearCheckBox();
-            check_box_1.setChecked(true);
+            check_box_1.setImageResource(R.mipmap.template_btn_selected);
             videoVoicePath = "";
             callback.getBgmPath("");
         } else {
@@ -548,7 +556,7 @@ public class CreationTemplateMvpModel {
     private void chooseAddChooseBjPath() {
         if (!TextUtils.isEmpty(addChooseBjPath)) {
             clearCheckBox();
-            check_box_2.setChecked(true);
+            check_box_2.setImageResource(R.mipmap.template_btn_selected);
             videoVoicePath = addChooseBjPath;
             callback.getBgmPath(addChooseBjPath);
         } else {
@@ -558,10 +566,10 @@ public class CreationTemplateMvpModel {
 
 
     private void clearCheckBox() {
-        check_box_0.setChecked(false);
-        check_box_1.setChecked(false);
-        check_box_2.setChecked(false);
-        check_box_3.setChecked(false);
+       check_box_0.setImageResource(R.mipmap.template_btn_unselected);
+        check_box_1.setImageResource(R.mipmap.template_btn_unselected);
+        check_box_2.setImageResource(R.mipmap.template_btn_unselected);
+        check_box_3.setImageResource(R.mipmap.template_btn_unselected);
 
     }
 

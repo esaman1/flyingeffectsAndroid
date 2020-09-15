@@ -44,7 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:background="@null"
-                android:hint="请输入模板关键字"
+                android:hint="请输入音乐关键字"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:maxLines="1"

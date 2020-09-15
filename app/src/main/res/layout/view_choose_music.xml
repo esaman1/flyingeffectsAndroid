@@ -16,7 +16,7 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:orientation="vertical"
             android:layout_weight="1"
             android:layout_height="wrap_content">
@@ -45,21 +45,29 @@
                         android:textSize="14sp" />
 
 
-                    <CheckBox
-                        android:id="@+id/check_box_0"
-                        android:clickable="false"
-                        android:enabled="false"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:button="@null"
-                        />
+
+                    <ImageView
+                        android:id="@+id/iv_check_box_0"
+                        android:layout_width="17dp"
+                        android:layout_marginStart="10dp"
+                        android:src="@mipmap/template_btn_unselected"
+                        android:layout_height="17dp"/>
+
+<!--                    <CheckBox-->
+<!--                        android:id="@+id/check_box_0"-->
+<!--                        android:clickable="false"-->
+<!--                        android:enabled="false"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginStart="5dp"-->
+<!--                        android:button="@null"-->
+<!--                        />-->
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/ll_choose_1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
@@ -74,15 +82,22 @@
                         android:textSize="14sp" />
 
 
-                    <CheckBox
-                        android:clickable="false"
-                        android:enabled="false"
-                        android:id="@+id/check_box_1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:button="@null"
-                        />
+<!--                    <CheckBox-->
+<!--                        android:clickable="false"-->
+<!--                        android:enabled="false"-->
+<!--                        android:id="@+id/check_box_1"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginStart="5dp"-->
+<!--                        android:button="@null"-->
+<!--                        />-->
+
+                    <ImageView
+                        android:id="@+id/iv_check_box_1"
+                        android:layout_width="17dp"
+                        android:layout_marginStart="10dp"
+                        android:src="@mipmap/template_btn_unselected"
+                        android:layout_height="17dp"/>
 
                 </LinearLayout>
 
@@ -111,23 +126,28 @@
                         android:text="背景音乐"
                         android:textColor="#ffffff"
                         android:textSize="14sp" />
+                    <ImageView
+                        android:id="@+id/iv_check_box_2"
+                        android:layout_width="17dp"
+                        android:layout_marginStart="10dp"
+                        android:src="@mipmap/template_btn_unselected"
+                        android:layout_height="17dp"/>
 
-
-                    <CheckBox
-                        android:id="@+id/check_box_2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="false"
-                        android:enabled="false"
-                        android:layout_marginStart="5dp"
-                        android:button="@null"
-                        />
+<!--                    <CheckBox-->
+<!--                        android:id="@+id/check_box_2"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:clickable="false"-->
+<!--                        android:enabled="false"-->
+<!--                        android:layout_marginStart="5dp"-->
+<!--                        android:button="@null"-->
+<!--                        />-->
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/ll_choose_3"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:visibility="invisible"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -142,16 +162,23 @@
                         android:textColor="#ffffff"
                         android:textSize="14sp" />
 
+                    <ImageView
+                        android:id="@+id/iv_check_box_3"
+                        android:layout_width="17dp"
+                        android:layout_marginStart="10dp"
+                        android:src="@mipmap/template_btn_unselected"
+                        android:layout_height="17dp"/>
 
-                    <CheckBox
-                        android:id="@+id/check_box_3"
-                        android:clickable="false"
-                        android:enabled="false"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:button="@null"
-                        />
+
+<!--                    <CheckBox-->
+<!--                        android:id="@+id/check_box_3"-->
+<!--                        android:clickable="false"-->
+<!--                        android:enabled="false"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginStart="5dp"-->
+<!--                        android:button="@null"-->
+<!--                        />-->
 
                 </LinearLayout>
 

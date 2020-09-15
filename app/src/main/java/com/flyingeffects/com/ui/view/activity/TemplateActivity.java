@@ -1219,10 +1219,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     LinearLayout ll_choose_3;
     private int lastChooseCommonTabLayout;
-    private CheckBox cb_0;
-    private CheckBox cb_1;
-    private CheckBox cb_2;
-    private CheckBox cb_3;
+    private ImageView cb_0;
+    private ImageView cb_1;
+    private ImageView cb_2;
+    private ImageView cb_3;
     String[] titlesHasBj;
     private View templateThumbForMusic;
 
@@ -1289,37 +1289,37 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         ll_choose_1.setOnClickListener(tvMusicListener);
         ll_choose_2.setOnClickListener(tvMusicListener);
         ll_choose_3.setOnClickListener(tvMusicListener);
-        cb_0 = templateThumbForMusic.findViewById(R.id.check_box_0);
-        cb_1 = templateThumbForMusic.findViewById(R.id.check_box_1);
-        cb_2 = templateThumbForMusic.findViewById(R.id.check_box_2);
-        cb_3 = templateThumbForMusic.findViewById(R.id.check_box_3);
-
+        cb_0 = templateThumbForMusic.findViewById(R.id.iv_check_box_0);
+        cb_1 = templateThumbForMusic.findViewById(R.id.iv_check_box_1);
+        cb_2 = templateThumbForMusic.findViewById(R.id.iv_check_box_2);
+        cb_3 = templateThumbForMusic.findViewById(R.id.iv_check_box_3);
+        cb_2.setImageResource(R.mipmap.template_btn_selected);
         TextView tv_1=templateThumbForMusic.findViewById(R.id.tv_1);
         tv_1.setText("背景音乐");
         TextView tv_2=templateThumbForMusic.findViewById(R.id.tv_2);
         tv_2.setText("模板音乐");
 
-        Drawable drawable_news = ResourcesCompat.getDrawable(getResources(), R.drawable.template_choose_btn, null);
-        Drawable drawable_news1 = ResourcesCompat.getDrawable(getResources(), R.drawable.template_choose_btn, null);
-        Drawable drawable_news2 =ResourcesCompat.getDrawable(getResources(), R.drawable.template_choose_btn, null);
-        Drawable drawable_news3 = ResourcesCompat.getDrawable(getResources(), R.drawable.template_choose_btn, null);
-        //当这个图片被绘制时，给他绑定一个矩形 ltrb规定这个矩形
-        int radio_size = StringUtil.dip2px(this, 16);
-        if(drawable_news!=null){
-            drawable_news.setBounds(0, 0, radio_size, radio_size);
-            drawable_news1.setBounds(0, 0, radio_size, radio_size);
-            drawable_news2.setBounds(0, 0, radio_size, radio_size);
-            drawable_news3.setBounds(0, 0, radio_size, radio_size);
-        }
-        cb_0.setCompoundDrawables(drawable_news, null, null, null);
-        cb_1.setCompoundDrawables(drawable_news1, null, null, null);
-        cb_2.setCompoundDrawables(drawable_news2, null, null, null);
-        cb_3.setCompoundDrawables(drawable_news3, null, null, null);
+//        Drawable drawable_news = ResourcesCompat.getDrawable(getResources(), R.drawable.template_choose_btn, null);
+//        Drawable drawable_news1 = ResourcesCompat.getDrawable(getResources(), R.drawable.template_choose_btn, null);
+//        Drawable drawable_news2 =ResourcesCompat.getDrawable(getResources(), R.drawable.template_choose_btn, null);
+//        Drawable drawable_news3 = ResourcesCompat.getDrawable(getResources(), R.drawable.template_choose_btn, null);
+//        //当这个图片被绘制时，给他绑定一个矩形 ltrb规定这个矩形
+//        int radio_size = StringUtil.dip2px(this, 16);
+//        if(drawable_news!=null){
+//            drawable_news.setBounds(0, 0, radio_size, radio_size);
+//            drawable_news1.setBounds(0, 0, radio_size, radio_size);
+//            drawable_news2.setBounds(0, 0, radio_size, radio_size);
+//            drawable_news3.setBounds(0, 0, radio_size, radio_size);
+//        }
+//        cb_0.setCompoundDrawables(drawable_news, null, null, null);
+//        cb_1.setCompoundDrawables(drawable_news1, null, null, null);
+//        cb_2.setCompoundDrawables(drawable_news2, null, null, null);
+//        cb_3.setCompoundDrawables(drawable_news3, null, null, null);
         cb_0.setOnClickListener(tvMusicListener);
         cb_1.setOnClickListener(tvMusicListener);
         cb_2.setOnClickListener(tvMusicListener);
         cb_3.setOnClickListener(tvMusicListener);
-        cb_2.setChecked(true);
+//        cb_2.setChecked(true);
         pagerList.add(templateThumbForMusic);
         TemplateViewPager adapter = new TemplateViewPager(pagerList);
         viewPager.setAdapter(adapter);
@@ -1332,24 +1332,28 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             switch (view.getId()) {
                 //素材
                 case R.id.ll_choose_0:
-                case R.id.check_box_0:
+//                case R.id.check_box_0:
                     clearCheckBox();
                     String path = imgPath.get(0);
                     if (albumType.isVideo(GetPathTypeModel.getInstance().getMediaType(path))) {
                         presenter.getBjMusic(primitivePath);
                         changeMusic();
-                        cb_0.setChecked(true);
+                        cb_0.setImageResource(R.mipmap.template_btn_selected);
+
+//                        cb_0.setChecked(true);
                         nowChooseMusic = 1;
                     } else {
-                        cb_2.setChecked(true);
-                        ToastUtil.showToast("没有素材");
+                        cb_2.setImageResource(R.mipmap.template_btn_selected);
+//                        cb_2.setChecked(true);
+                        ToastUtil.showToast("当前素材不是视频");
                     }
                     break;
                     //模板
                 case R.id.ll_choose_1:
-                case R.id.check_box_1:
+//                case R.id.check_box_1:
                     clearCheckBox();
-                    cb_1.setChecked(true);
+//                    cb_1.setChecked(true);
+                    cb_1.setImageResource(R.mipmap.template_btn_selected);
                     if (TextUtils.isEmpty(mTemplateModel.getBackgroundPath())) {
                         chooseTemplateMusic();
                         ToastUtil.showToast("背景音乐为默认模板音乐");
@@ -1362,17 +1366,18 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     break;
                     //背景
                 case R.id.ll_choose_2:
-                case R.id.check_box_2:
+//                case R.id.check_box_2:
                     changeMusic();
                     chooseTemplateMusic();
                     break;
 
                 //提取
                 case R.id.ll_choose_3:
-                case R.id.check_box_3:
+//                case R.id.check_box_3:
                     if(!TextUtils.isEmpty(downMusicPath)){
                         clearCheckBox();
-                        cb_3.setChecked(true);
+                        cb_3.setImageResource(R.mipmap.template_btn_selected);
+//                        cb_3.setChecked(true);
                         changeMusic();
                         chooseDownMusic();
                     }else{
@@ -1396,7 +1401,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private void chooseTemplateMusic() {
         clearCheckBox();
-        cb_2.setChecked(true);
+        cb_2.setImageResource(R.mipmap.template_btn_selected);
         nowChooseMusic = 0;
         if (isPlaying) {
             mPlayer.replaceAudio(mAudio1Path);
@@ -1406,7 +1411,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private void chooseDownMusic() {
         clearCheckBox();
-        cb_3.setChecked(true);
+        cb_3.setImageResource(R.mipmap.template_btn_selected);
         nowChooseMusic = 3;
         if (isPlaying) {
             mPlayer.replaceAudio(nowSpliteMusic);
@@ -1435,10 +1440,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     private void clearCheckBox() {
-        cb_0.setChecked(false);
-        cb_1.setChecked(false);
-        cb_2.setChecked(false);
-        cb_3.setChecked(false);
+        cb_0.setImageResource(R.mipmap.template_btn_unselected);
+        cb_1.setImageResource(R.mipmap.template_btn_unselected);
+        cb_2.setImageResource(R.mipmap.template_btn_unselected);
+        cb_3.setImageResource(R.mipmap.template_btn_unselected);
     }
 
     @Subscribe
@@ -1527,7 +1532,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public void onEventMainThread( CutSuccess cutSuccess) {
         downMusicPath=cutSuccess.getFilePath();
         clearCheckBox();
-        cb_3.setChecked(true);
+        cb_3.setImageResource(R.mipmap.template_btn_selected);
         nowChooseMusic = 3;
         nowSpliteMusic = downMusicPath;
         setBjMusic();

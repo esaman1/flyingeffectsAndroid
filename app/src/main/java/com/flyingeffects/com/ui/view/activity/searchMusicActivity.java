@@ -25,6 +25,7 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.DoubleClick;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ChooseMusic;
+import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.SearchKeyWord;
 import com.flyingeffects.com.enity.SelectMusicCollet;
@@ -190,8 +191,8 @@ public class searchMusicActivity extends BaseActivity {
                     if (listSearchKey.size() >= finalI + 1) {
                         searchText = listSearchKey.get(finalI).getName();
                         ed_search.setText(searchText);
-                        isRefresh=true;
-                        selectPage=1;
+                        isRefresh = true;
+                        selectPage = 1;
                         smartRefreshLayout.setEnableLoadMore(true);
                         requestFagData();
                         cancelFocus();
@@ -424,6 +425,20 @@ public class searchMusicActivity extends BaseActivity {
         }
     }
 
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(mediaPlayer!=null&&mediaPlayer.isPlaying()){
+            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                mediaPlayer.pause();
+                ChooseMusic chooseMusic2 = listData.get(lastPosition);
+                chooseMusic2.setPlaying(false);
+                adapter.notifyItemChanged(lastPosition);
+            }
+        }
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -459,5 +474,10 @@ public class searchMusicActivity extends BaseActivity {
         this.finish();
     }
 
+
+    @Subscribe
+    public void onEventMainThread( CutSuccess cutSuccess) {
+        this.finish();
+    }
 
 }

@@ -85,7 +85,7 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     @Override
     protected void initView() {
         tv_top_submit.setVisibility(View.VISIBLE);
-        tv_top_submit.setText("保存");
+        tv_top_submit.setText("下一步");
 
         ((TextView) findViewById(R.id.tv_top_title)).setText("裁剪音乐");
         findViewById(R.id.iv_top_back).setOnClickListener(view -> finish());
@@ -103,7 +103,11 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
                     nowPlayStartTime = (long) (allDuration * percent);
                     tv_start.setText(timeUtils.timeParse(nowPlayStartTime));
                     nowPlayEndTime = nowPlayStartTime + needDuration;
-                    tv_end.setText(timeUtils.timeParse(nowPlayEndTime));
+                    if(allDuration<needDuration){
+                        tv_end.setText(timeUtils.timeParse(allDuration));
+                    }else{
+                        tv_end.setText(timeUtils.timeParse(nowPlayEndTime));
+                    }
                 });
             }
 

@@ -184,7 +184,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     protected void initView() {
         EventBus.getDefault().register(this);
         LogUtil.d("OOM", "进入到创作页面");
-        ((TextView) findViewById(R.id.tv_top_submit)).setText("预览效果");
+        ((TextView) findViewById(R.id.tv_top_submit)).setText("下一步");
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("Message");
         if (bundle != null) {
