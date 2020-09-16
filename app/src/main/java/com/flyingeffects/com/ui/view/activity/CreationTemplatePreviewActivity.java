@@ -202,6 +202,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
 
 
+    @Override
     @OnClick({R.id.tv_back, R.id.tv_save, R.id.rela_parent_content})
     public void onClick(View v) {
         switch (v.getId()) {

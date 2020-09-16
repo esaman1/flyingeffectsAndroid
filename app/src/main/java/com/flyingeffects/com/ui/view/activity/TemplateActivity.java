@@ -892,6 +892,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
+    @Override
     @OnClick({R.id.tv_top_submit, R.id.iv_play, R.id.edit_view_container})
     public void onClick(View v) {
 

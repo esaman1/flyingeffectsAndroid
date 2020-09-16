@@ -203,7 +203,7 @@ public class CreationTemplateMvpModel {
             this.mVideoPath = mVideoPath;
             videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
 
-            if( TextUtils.isEmpty(videoVoicePath)){
+            if (TextUtils.isEmpty(videoVoicePath)) {
                 chooseTemplateMusic(true);
             }
 
@@ -243,8 +243,7 @@ public class CreationTemplateMvpModel {
 
     public void showGifAnim(boolean isShow) {
         if (listForStickerModel != null && listForStickerModel.size() > 0) {
-            for (AnimStickerModel stickerModel : listForStickerModel
-            ) {
+            for (AnimStickerModel stickerModel : listForStickerModel) {
                 StickerView stickerView = stickerModel.getStickerView();
                 if (stickerView != null) {
                     if (isShow) {
@@ -270,21 +269,18 @@ public class CreationTemplateMvpModel {
         Bitmap mBitmap = retriever.getFrameAtTime(0);
         String fileName = mImageCopyFolder + File.separator + UUID.randomUUID() + ".png";
         BitmapManager.getInstance().saveBitmapToPath(mBitmap, fileName, isSuccess -> {
-            CompressionCuttingManage manage = new CompressionCuttingManage(context, "", false, tailorPaths -> {
-                callback.getVideoCover(tailorPaths.get(0), path);
-            });
-            List mattingPath = new ArrayList();
+            CompressionCuttingManage manage = new CompressionCuttingManage(context, ""
+                    , false, tailorPaths -> callback.getVideoCover(tailorPaths.get(0), path));
+            List<String> mattingPath = new ArrayList<>();
             mattingPath.add(fileName);
             manage.ToMatting(mattingPath);
             GlideBitmapPool.putBitmap(mBitmap);
         });
     }
 
-
     public void scrollToPosition(int position) {
         linearLayoutManager.scrollToPositionWithOffset(position, 0);
     }
-
 
     private TemplateGridViewAdapter gridAdapter;
     TemplateGridViewAnimAdapter templateGridViewAnimAdapter;
@@ -426,7 +422,6 @@ public class CreationTemplateMvpModel {
             @Override
             public void onPageSelected(int position) {
 
-
             }
 
             @Override
@@ -447,16 +442,14 @@ public class CreationTemplateMvpModel {
                 chooseMaterialMusic(originalPath);
             }
         }, 500);
-
-
     }
 
 
     private long getDuration() {
         long duration = 0;
-        if(!TextUtils.isEmpty(mVideoPath)){
+        if (!TextUtils.isEmpty(mVideoPath)) {
             duration = videoInfo.getDuration();
-        }else{
+        } else {
             if (listAllSticker != null) {
                 //说明没得背景视频，那么渲染时长就是
                 for (AllStickerData data : listAllSticker
@@ -471,9 +464,6 @@ public class CreationTemplateMvpModel {
                 }
             }
         }
-
-
-
         return duration;
     }
 
@@ -507,6 +497,8 @@ public class CreationTemplateMvpModel {
                 case R.id.tv_3:
                     clearCheckBox();
                     check_box_3.setImageResource(R.mipmap.template_btn_selected);
+                    break;
+                default:
                     break;
             }
         }
@@ -545,7 +537,7 @@ public class CreationTemplateMvpModel {
             videoVoicePath = "";
             callback.getBgmPath("");
         } else {
-            if(isHint){
+            if (isHint) {
                 ToastUtil.showToast("没有背景音乐");
             }
 
@@ -566,7 +558,7 @@ public class CreationTemplateMvpModel {
 
 
     private void clearCheckBox() {
-       check_box_0.setImageResource(R.mipmap.template_btn_unselected);
+        check_box_0.setImageResource(R.mipmap.template_btn_unselected);
         check_box_1.setImageResource(R.mipmap.template_btn_unselected);
         check_box_2.setImageResource(R.mipmap.template_btn_unselected);
         check_box_3.setImageResource(R.mipmap.template_btn_unselected);
@@ -630,9 +622,8 @@ public class CreationTemplateMvpModel {
                             copyGif(targetStickerView.getResPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true);
                         }
                         if (x == animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType())) {
-                            ArrayList<StickerView> list = new ArrayList<>();
                             LogUtil.d("OOM", "sublayerListPosition" + sublayerListPosition);
-                            list.addAll(nowChooseSubLayerAnimList);
+                            ArrayList<StickerView> list = new ArrayList<>(nowChooseSubLayerAnimList);
                             sublayerListForBitmapLayer.put(sublayerListPosition, list);
                             StartAnimModel startAnimModel = new StartAnimModel(animCollect);
                             targetStickerView.setChooseAnimId(animType);
@@ -705,8 +696,7 @@ public class CreationTemplateMvpModel {
                 ArrayList<StickerView> nowChooseSubLayerAnimList = sublayerListForBitmapLayer.get(i);
                 //删除动画贴纸
                 if (nowChooseSubLayerAnimList != null && nowChooseSubLayerAnimList.size() > 0) {
-                    for (StickerView stickerView : nowChooseSubLayerAnimList
-                    ) {
+                    for (StickerView stickerView : nowChooseSubLayerAnimList) {
                         deleteStickView(stickerView);
                     }
                 }
@@ -739,8 +729,7 @@ public class CreationTemplateMvpModel {
             }
         }
 
-        for (StickerView stickerView : needDeleteList
-        ) {
+        for (StickerView stickerView : needDeleteList) {
             deleteStickView(stickerView);
         }
 
@@ -905,7 +894,7 @@ public class CreationTemplateMvpModel {
             public void stickerOnclick(int type) {
                 if (type == StickerView.LEFT_TOP_MODE) {//刪除
                     if (stickView.isFirstAddSticker()) {
-                        if(nowChooseMusicId ==1||nowChooseMusicId==3){
+                        if (nowChooseMusicId == 1 || nowChooseMusicId == 3) {
                             callback.getBgmPath("");
                             videoVoicePath = "";
                             clearCheckBox();
@@ -1065,9 +1054,9 @@ public class CreationTemplateMvpModel {
         stickView.setIsFromStickerAnim(isFromShowAnim);
         stickView.setComeFromAlbum(isFromAubum);
         if (isFromAubum) {
-            LogUtil.d("OOM2","ClipPath="+path);
+            LogUtil.d("OOM2", "ClipPath=" + path);
             stickView.setClipPath(path);
-            LogUtil.d("OOM2","originalPath="+originalPath);
+            LogUtil.d("OOM2", "originalPath=" + originalPath);
             stickView.setOriginalPath(originalPath);
             if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
                 stickView.setNowMaterialIsVideo(true);
@@ -1227,9 +1216,9 @@ public class CreationTemplateMvpModel {
                 FileUtil.copyFile(new File(path), copyName, new FileUtil.copySucceed() {
                     @Override
                     public void isSucceed() {
-                        if(isFromShowAnim){
+                        if (isFromShowAnim) {
                             addSticker(getResPath, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim);
-                        }else{
+                        } else {
                             addSticker(finalCopyName1, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim);
                         }
                     }
@@ -1953,8 +1942,9 @@ public class CreationTemplateMvpModel {
                 statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于8分钟");
             } else if (duration <= 540000) {
                 statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于9分钟");
-            } else
+            } else {
                 statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于10分钟");
+            }
         }
     }
 

@@ -135,6 +135,7 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
     }
 
 
+    @Override
     @OnClick({R.id.iv_back})
     public void onClick(View v) {
         switch (v.getId()) {

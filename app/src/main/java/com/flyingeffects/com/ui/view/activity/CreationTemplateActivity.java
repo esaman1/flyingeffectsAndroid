@@ -330,6 +330,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     boolean nowUiIsLandscape = false;
 
+    @Override
     @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker, R.id.iv_top_back, R.id.iv_change_ui, R.id.tv_background,R.id.tv_music, R.id.tv_anim, R.id.tv_tiezhi})
     public void onClick(View view) {
         switch (view.getId()) {

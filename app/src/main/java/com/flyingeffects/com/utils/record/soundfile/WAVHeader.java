@@ -40,6 +40,7 @@ public class WAVHeader {
         return new WAVHeader(sampleRate, numChannels, numSamples).mHeader;
     }
 
+    @Override
     public String toString() {
         String str = "";
         if (mHeader == null) {

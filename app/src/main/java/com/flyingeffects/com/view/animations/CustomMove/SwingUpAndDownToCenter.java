@@ -77,6 +77,7 @@ public class SwingUpAndDownToCenter extends baseAnimModel {
 
 
 
+    @Override
     public void StopAnim() {
         if (animationLinearInterpolator != null) {
             animationLinearInterpolator.endTimer();

@@ -56,7 +56,8 @@ public class BaseApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         baseApp = this;
-        MultiDex.install(this); //分包支持
+        //分包支持
+        MultiDex.install(this);
         //initBaiduAnalysis();
         initLansong();
         Hawk.init(this).build();
@@ -72,7 +73,7 @@ public class BaseApplication extends MultiDexApplication {
         initNTAdSDK();
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
         TTAdManagerHolder.init(this);
-        EmojiManager.init(this);//初始化
+        EmojiManager.init(this);
     }
 
     private void initBaiduAnalysis() {

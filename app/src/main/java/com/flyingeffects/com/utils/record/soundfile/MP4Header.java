@@ -173,6 +173,7 @@ class Atom {  // note: latest versions of spec simply call it 'box' instead of '
     }
 
     // Used for debugging purpose only.
+    @Override
     public String toString() {
         String str = "";
         byte[] atom_bytes = getBytes();
@@ -260,6 +261,7 @@ public class MP4Header {
         return new MP4Header(sampleRate, numChannels, frame_size, bitrate).mHeader;
     }
 
+    @Override
     public String toString() {
         String str = "";
         if (mHeader == null) {

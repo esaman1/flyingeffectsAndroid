@@ -59,8 +59,9 @@ public class RectUtil {
      */
     public static void rectAddV(final RectF srcRect, final RectF addRect,
                                 int padding) {
-        if (srcRect == null || addRect == null)
+        if (srcRect == null || addRect == null) {
             return;
+        }
 
         float left = srcRect.left;
         float top = srcRect.top;
@@ -85,8 +86,9 @@ public class RectUtil {
      */
     public static void rectAddV(final Rect srcRect, final Rect addRect,
                                 int padding, int charMinHeight) {
-        if (srcRect == null || addRect == null)
+        if (srcRect == null || addRect == null) {
             return;
+        }
 
         int left = srcRect.left;
         int top = srcRect.top;

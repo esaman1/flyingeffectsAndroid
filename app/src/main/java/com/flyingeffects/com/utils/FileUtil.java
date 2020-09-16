@@ -465,18 +465,20 @@ public class FileUtil {
                 to.write(buffer, 0, bytesRead); // write
             }
         } finally {
-            if (from != null)
+            if (from != null) {
                 try {
                     from.close();
                 } catch (IOException e) {
                     Log.e(TAG, "", e);
                 }
-            if (to != null)
+            }
+            if (to != null) {
                 try {
                     to.close();
                 } catch (IOException e) {
                     Log.e(TAG, "", e);
                 }
+            }
         }
     }
 
@@ -496,18 +498,20 @@ public class FileUtil {
             }
             callback.isSucceed();
         } finally {
-            if (from != null)
+            if (from != null) {
                 try {
                     from.close();
                 } catch (IOException e) {
                     Log.e(TAG, "", e);
                 }
-            if (to != null)
+            }
+            if (to != null) {
                 try {
                     to.close();
                 } catch (IOException e) {
                     Log.e(TAG, "", e);
                 }
+            }
         }
     }
 
@@ -846,8 +850,9 @@ public class FileUtil {
         } else if (w < h && h > pixHeight) {
             scale = (int) (options.outHeight / pixHeight);
         }
-        if (scale <= 0)
+        if (scale <= 0) {
             scale = 1;
+        }
         options.inSampleSize = scale;// 设置采样率
 
         options.inPreferredConfig = Config.ARGB_8888;// 该模式是默认的,可不设

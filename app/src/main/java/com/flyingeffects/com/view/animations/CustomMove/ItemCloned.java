@@ -89,6 +89,7 @@ public class ItemCloned extends baseAnimModel {
         animationLinearInterpolator.PlayAnimationNoTimer(percentage);
     }
 
+    @Override
     public void StopAnim() {
         if (animationLinearInterpolator != null) {
             animationLinearInterpolator.endTimer();

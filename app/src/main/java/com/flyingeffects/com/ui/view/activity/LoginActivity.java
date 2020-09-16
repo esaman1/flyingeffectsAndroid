@@ -329,6 +329,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
+    @Override
     @OnClick({R.id.tv_login, R.id.iv_close, R.id.ll_weixin})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -517,6 +518,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }
         timer = new Timer();
         task = new TimerTask() {
+            @Override
             public void run() {
                 Message msg = new Message();
                 msg.what = 1;
