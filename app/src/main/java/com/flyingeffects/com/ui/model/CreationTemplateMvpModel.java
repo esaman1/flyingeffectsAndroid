@@ -391,21 +391,7 @@ public class CreationTemplateMvpModel {
         check_box_1 = viewForChooseMusic.findViewById(R.id.iv_check_box_1);
         check_box_2 = viewForChooseMusic.findViewById(R.id.iv_check_box_2);
         check_box_3 = viewForChooseMusic.findViewById(R.id.iv_check_box_3);
-//        Drawable drawable_news = context.getResources().getDrawable(R.drawable.template_choose_btn);
-//        Drawable drawable_news_0 = context.getResources().getDrawable(R.drawable.template_choose_btn);
-//        Drawable drawable_news_1 = context.getResources().getDrawable(R.drawable.template_choose_btn);
-//        Drawable drawable_news_2 = context.getResources().getDrawable(R.drawable.template_choose_btn);
-        //当这个图片被绘制时，给他绑定一个矩形 ltrb规定这个矩形
-//        int radio_size = StringUtil.dip2px(context, 16);
-//        drawable_news.setBounds(0, 0, radio_size, radio_size);
-//        drawable_news_0.setBounds(0, 0, radio_size, radio_size);
-//        drawable_news_1.setBounds(0, 0, radio_size, radio_size);
-//        drawable_news_2.setBounds(0, 0, radio_size, radio_size);
         tv_2.setText("提取音乐");
-//        check_box_0.setCompoundDrawables(drawable_news, null, null, null);
-//        check_box_1.setCompoundDrawables(drawable_news_0, null, null, null);
-//        check_box_2.setCompoundDrawables(drawable_news_1, null, null, null);
-//        check_box_3.setCompoundDrawables(drawable_news_2, null, null, null);
         tv_0.setOnClickListener(tvMusicListener);
         tv_1.setOnClickListener(tvMusicListener);
         tv_2.setOnClickListener(tvMusicListener);
@@ -415,6 +401,12 @@ public class CreationTemplateMvpModel {
         check_box_2.setOnClickListener(tvMusicListener);
         check_box_3.setOnClickListener(tvMusicListener);
         listForInitBottom.add(viewForChooseMusic);
+
+        View viewForChooseAddText= LayoutInflater.from(context).inflate(R.layout.view_choose_music, viewPager, false);
+
+
+
+
         TemplateViewPager adapter = new TemplateViewPager(listForInitBottom);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -1957,6 +1949,13 @@ public class CreationTemplateMvpModel {
                 statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于10分钟");
         }
     }
+
+
+
+
+
+
+
 
 
 }

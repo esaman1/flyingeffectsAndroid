@@ -114,12 +114,18 @@
             android:theme="@style/AllTransparentTheme" />
 
 
+
+
+
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
-
+        <activity
+            android:name="com.flyingeffects.com.ui.view.activity.TextActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity"
@@ -198,10 +204,10 @@
             android:screenOrientation="portrait" />
 
 
-
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.CreationTemplateActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateUnspecified|adjustPan"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.BackgroundSearchActivity"

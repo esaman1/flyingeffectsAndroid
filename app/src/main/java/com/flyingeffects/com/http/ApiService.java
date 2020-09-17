@@ -9,7 +9,6 @@ import com.flyingeffects.com.enity.MineCommentEnity;
 import com.flyingeffects.com.enity.MineZanEnity;
 import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.enity.TemplateType;
-import com.flyingeffects.com.enity.MyProduction;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.checkVersion;
 import com.flyingeffects.com.enity.fansEnity;
@@ -271,6 +270,19 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/message/musicCollectionList")
     Observable<HttpResult<List<ChooseMusic>>> musicCollectionList(@FieldMap Map<String, String> params);
+
+
+    //请求字体
+    @FormUrlEncoded
+    @POST("/api/message/fontList")
+    Observable<HttpResult<Object>> fontList(@FieldMap Map<String, String> params);
+
+    //收藏音乐列表
+    @FormUrlEncoded
+    @POST("/api/message/fontImage")
+    Observable<HttpResult<Object>> fontImage(@FieldMap Map<String, String> params);
+
+
 
 
 

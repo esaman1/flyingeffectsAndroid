@@ -70,8 +70,10 @@ public class AboutActivity extends BaseActivity {
                 this.finish();
                 break;
             case R.id.tv_contact_us:
-                statisticsEventAffair.getInstance().setFlag(this, "3_Evaluation");
-                reception();
+//                statisticsEventAffair.getInstance().setFlag(this, "3_Evaluation");
+//                reception();
+
+                goActivity(TextActivity.class);
                 break;
             case R.id.tv_relation_us:
                 statisticsEventAffair.getInstance().setFlag(this, "3_contact");
