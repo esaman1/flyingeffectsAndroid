@@ -148,6 +148,7 @@ public class WaveformViewForMove extends View {
         mGestureDetector = new GestureDetector(
                 context,
                 new GestureDetector.SimpleOnGestureListener() {
+                    @Override
                     public boolean onFling(MotionEvent e1, MotionEvent e2, float vx, float vy) {
                         mListener.waveformFling(vx);
                         return true;
@@ -158,12 +159,14 @@ public class WaveformViewForMove extends View {
         mScaleGestureDetector = new ScaleGestureDetector(
                 context,
                 new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                    @Override
                     public boolean onScaleBegin(ScaleGestureDetector d) {
                         Log.v("Ringdroid", "ScaleBegin " + d.getCurrentSpanX());
                         mInitialScaleSpan = Math.abs(d.getCurrentSpanX());
                         return true;
                     }
 
+                    @Override
                     public boolean onScale(ScaleGestureDetector d) {
                         float scale = Math.abs(d.getCurrentSpanX());
                         Log.v("Ringdroid", "Scale " + (scale - mInitialScaleSpan));
@@ -178,6 +181,7 @@ public class WaveformViewForMove extends View {
                         return true;
                     }
 
+                    @Override
                     public void onScaleEnd(ScaleGestureDetector d) {
                         Log.v("Ringdroid", "ScaleEnd " + d.getCurrentSpanX());
                     }
@@ -262,8 +266,9 @@ public class WaveformViewForMove extends View {
             int offsetCenter = mOffset + getMeasuredWidth() / 2;
             offsetCenter *= 2;
             mOffset = offsetCenter - getMeasuredWidth() / 2;
-            if (mOffset < 0)
+            if (mOffset < 0) {
                 mOffset = 0;
+            }
             invalidate();
         }
     }
@@ -281,8 +286,9 @@ public class WaveformViewForMove extends View {
             int offsetCenter = mOffset + getMeasuredWidth() / 2;
             offsetCenter /= 2;
             mOffset = offsetCenter - getMeasuredWidth() / 2;
-            if (mOffset < 0)
+            if (mOffset < 0) {
                 mOffset = 0;
+            }
             mHeightsAtThisZoomLevel = null;
             invalidate();
         }
@@ -389,10 +395,12 @@ public class WaveformViewForMove extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (mSoundFile == null)
+        if (mSoundFile == null) {
             return;
-        if (mHeightsAtThisZoomLevel == null)
+        }
+        if (mHeightsAtThisZoomLevel == null) {
             computeIntsForThisZoomLevel();
+        }
         zoomRatio = 1;
         measuredWidth = getMeasuredWidth();//990
         halfMeasuredWidth = measuredWidth / 2;
@@ -400,8 +408,9 @@ public class WaveformViewForMove extends View {
         int start = mOffset;
         int width = mHeightsAtThisZoomLevel.length - start;
         int ctr = measuredHeight / 2; //300
-        if (width > measuredWidth)
+        if (width > measuredWidth) {
             width = measuredWidth;
+        }
 
         //Draw Background
 //        canvas.drawLine( //画边框
@@ -548,13 +557,16 @@ public class WaveformViewForMove extends View {
         int gainHist[] = new int[256];
         for (int i = 0; i < numFrames; i++) {
             int smoothedGain = (int) (smoothedGains[i] * scaleFactor);
-            if (smoothedGain < 0)
+            if (smoothedGain < 0) {
                 smoothedGain = 0;
-            if (smoothedGain > 255)
+            }
+            if (smoothedGain > 255) {
                 smoothedGain = 255;
+            }
 
-            if (smoothedGain > maxGain)
+            if (smoothedGain > maxGain) {
                 maxGain = smoothedGain;
+            }
 
             gainHist[smoothedGain]++; //历史值，里面重复的值出现的次数，肯定在255以内
         }
@@ -579,10 +591,12 @@ public class WaveformViewForMove extends View {
         double range = maxGain - minGain;//18  38  20
         for (int i = 0; i < numFrames; i++) {
             double value = (smoothedGains[i] * scaleFactor - minGain) / range;
-            if (value < 0.0)
+            if (value < 0.0) {
                 value = 0.0;
-            if (value > 1.0)
+            }
+            if (value > 1.0) {
                 value = 1.0;
+            }
             heights[i] = value * value;
         }
 

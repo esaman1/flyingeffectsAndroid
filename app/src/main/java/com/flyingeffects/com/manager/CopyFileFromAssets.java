@@ -30,8 +30,9 @@ public class CopyFileFromAssets {
 
         File dir = new File(LanSongFileUtil.getPath());
         // 如果目录不中存在，创建这个目录
-        if (!dir.exists())
+        if (!dir.exists()) {
             dir.mkdirs();
+        }
         try {
             if (!(new File(filePath)).exists()) { // 如果不存在.
 //                InputStream is = mContext.getResources().getAssets().open(assetsName);  //原来的
@@ -59,8 +60,9 @@ public class CopyFileFromAssets {
         String dir = LanSongFileUtil.getPath() +  dirName;
         File dirFile = new File(dir);
         // 如果目录不中存在，创建这个目录
-        if (!dirFile.exists())
+        if (!dirFile.exists()) {
             dirFile.mkdirs();
+        }
 
         String  dstName=dir+"/"+dstFileName;
         try {
@@ -120,8 +122,9 @@ public class CopyFileFromAssets {
 
         File dir = new File(LanSongFileUtil.getPath());
         // 如果目录不中存在，创建这个目录
-        if (!dir.exists())
+        if (!dir.exists()) {
             dir.mkdirs();
+        }
 
         try {
             if (!(new File(filePath)).exists()) { // 如果不存在.
@@ -167,8 +170,9 @@ public class CopyFileFromAssets {
 
         File dir = new File(LanSongFileUtil.getPath());
         // 如果目录不中存在，创建这个目录
-        if (!dir.exists())
+        if (!dir.exists()) {
             dir.mkdirs();
+        }
 
         try {
             if (!(new File(filePath)).exists()) { // 如果不存在.

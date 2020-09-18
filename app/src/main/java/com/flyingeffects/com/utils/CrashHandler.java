@@ -103,8 +103,9 @@ public class CrashHandler implements UncaughtExceptionHandler {
      * @return true:如果处理了该异常信息; 否则返回false.
      */
     private boolean handleException(Throwable ex) {
-        if (ex == null)
+        if (ex == null) {
             return false;
+        }
 
         try {
             // 使用Toast来显示异常信息
@@ -209,8 +210,9 @@ public class CrashHandler implements UncaughtExceptionHandler {
                 android.os.Environment.MEDIA_MOUNTED)){
             String path = getGlobalpath();
             File dir = new File(path);
-            if (!dir.exists())
+            if (!dir.exists()) {
                 dir.mkdirs();
+            }
 
             FileOutputStream fos = new FileOutputStream(path + fileName, true);
             fos.write(sb.getBytes());

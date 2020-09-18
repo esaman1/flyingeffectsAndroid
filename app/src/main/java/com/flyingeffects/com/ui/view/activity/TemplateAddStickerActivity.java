@@ -426,6 +426,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     }
 
 
+    @Override
     @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_top_back})
     public void onClick(View view) {
         switch (view.getId()) {

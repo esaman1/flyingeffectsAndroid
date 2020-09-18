@@ -500,6 +500,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
 
+    @Override
     @OnClick({R.id.ibBack})
     public void onClick(View view) {
         if (view.getId() == R.id.ibBack) {

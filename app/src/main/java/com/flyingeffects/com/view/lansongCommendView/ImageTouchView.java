@@ -192,8 +192,9 @@ public class ImageTouchView extends AppCompatImageView {
                                                     mid.y);// 縮放
                                         }
                                     }
-                                    if (PaintConstants.SELECTOR.HAIR_RURN)
+                                    if (PaintConstants.SELECTOR.HAIR_RURN) {
                                         matrix.postRotate(rotation, mid.x, mid.y);// 旋轉
+                                    }
                                 }
                             }
                         } else {
@@ -336,7 +337,7 @@ public class ImageTouchView extends AppCompatImageView {
     }
 
     /**
-     * @param bm
+     * @param bitmap bitmap
      * @note set cover byteBuffer , which overlay on background.
      */
     private void setCoverBitmap(Bitmap bitmap) {

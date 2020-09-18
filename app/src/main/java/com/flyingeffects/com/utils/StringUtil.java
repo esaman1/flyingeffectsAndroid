@@ -200,10 +200,11 @@ public class StringUtil {
     //
     public static boolean isEmailAddress(String emailAddress) {
         String emailRegex = "^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$";
-        if (TextUtils.isEmpty(emailAddress))
+        if (TextUtils.isEmpty(emailAddress)) {
             return false;
-        else
+        } else {
             return emailAddress.matches(emailRegex);
+        }
     }
 
     /**
@@ -415,16 +416,18 @@ public class StringUtil {
      * @return
      */
     public static boolean isEmpty(Object o) {
-        if (o == null)
+        if (o == null) {
             return true;
-        if (o instanceof String)
+        }
+        if (o instanceof String) {
             return (String.valueOf(o).trim().length() == 0);
-        else if (o instanceof List)
+        } else if (o instanceof List) {
             return ((List<?>) o).isEmpty();
-        else if (o instanceof Map)
+        } else if (o instanceof Map) {
             return ((Map<?, ?>) o).isEmpty();
-        else
+        } else {
             return false;
+        }
     }
 
 

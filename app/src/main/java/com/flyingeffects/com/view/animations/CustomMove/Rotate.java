@@ -59,6 +59,7 @@ public class Rotate extends baseAnimModel {
     }
 
 
+    @Override
     public void StopAnim() {
 
 
