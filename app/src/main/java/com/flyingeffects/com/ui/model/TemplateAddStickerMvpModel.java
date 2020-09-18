@@ -289,7 +289,10 @@ public class TemplateAddStickerMvpModel {
     public void onDestroy() {
         isDestroy = true;
         stopAllAnim();
+        closeAllAnim();
+        deleteAllSticker();
     }
+
 
 
     public void requestStickersList(boolean isShowDialog) {
@@ -421,81 +424,84 @@ public class TemplateAddStickerMvpModel {
      * @param position 当前点击的那个item ，主要用来更新数据
      */
     private void downSticker(String path, String imageId, int position) {
-        WaitingDialog.openPragressDialog(context);
-        if (path.endsWith(".gif")) {
+        if(!isDestroy){
+            WaitingDialog.openPragressDialog(context);
+            if (path.endsWith(".gif")) {
 //            String finalPath = path;
-            String format = path.substring(path.length() - 4);
-            String fileName = mGifFolder + File.separator + imageId + format;
-            File file = new File(fileName);
-            if (file.exists()) {
-                //如果已经下载了，就用已经下载的，但是如果已经展示了，就不能复用，需要类似于复制功能，只针对gif
-                if (nowStickerHasChoose(imageId, path)) {
-                    String copyName = mGifFolder + File.separator + System.currentTimeMillis() + format;
-                    copyGif(fileName, copyName, false, null, fileName, false);
-                    WaitingDialog.closePragressDialog();
-                    return;
-                } else {
-                    addSticker(fileName, false, false, false, null, false, null, false);
-                    WaitingDialog.closePragressDialog();
-                    return;
-                }
-
-            }
-            Observable.just(path).map(s -> {
-                File file1 = null;
-                try {
-                    file1 = Glide.with(context)
-                            .load(path)
-                            .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                            .get();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return file1;
-            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> {
-                try {
-                    if (path1 != null) {
-                        FileUtil.copyFile(path1, fileName);
+                String format = path.substring(path.length() - 4);
+                String fileName = mGifFolder + File.separator + imageId + format;
+                File file = new File(fileName);
+                if (file.exists()) {
+                    //如果已经下载了，就用已经下载的，但是如果已经展示了，就不能复用，需要类似于复制功能，只针对gif
+                    if (nowStickerHasChoose(imageId, path)) {
+                        String copyName = mGifFolder + File.separator + System.currentTimeMillis() + format;
+                        copyGif(fileName, copyName, false, null, fileName, false);
+                        WaitingDialog.closePragressDialog();
+                        return;
+                    } else {
                         addSticker(fileName, false, false, false, null, false, null, false);
                         WaitingDialog.closePragressDialog();
-                        modificationSingleItem(position);
-                    } else {
-                        WaitingDialog.closePragressDialog();
-                        ToastUtil.showToast("请重试");
+                        return;
                     }
 
-                } catch (IOException e) {
-                    WaitingDialog.closePragressDialog();
-                    e.printStackTrace();
                 }
-            });
-
-        } else {
-            new Thread(() -> {
-                Bitmap originalBitmap = null;
-                FutureTarget<Bitmap> futureTarget =
-                        Glide.with(BaseApplication.getInstance())
-                                .asBitmap()
+                Observable.just(path).map(s -> {
+                    File file1 = null;
+                    try {
+                        file1 = Glide.with(context)
                                 .load(path)
-                                .submit();
-                try {
-                    originalBitmap = futureTarget.get();
-                    Bitmap finalOriginalBitmap = originalBitmap;
-                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                        WaitingDialog.closePragressDialog();
-                        String aa = path.substring(path.length() - 4);
-                        String copyName = mGifFolder + File.separator + System.currentTimeMillis() + aa;
-                        saveBitmapToPath(finalOriginalBitmap, copyName, isSucceed -> {
+                                .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                                .get();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return file1;
+                }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> {
+                    try {
+                        if (path1 != null) {
+                            FileUtil.copyFile(path1, fileName);
+                            addSticker(fileName, false, false, false, null, false, null, false);
+                            WaitingDialog.closePragressDialog();
                             modificationSingleItem(position);
-                            addSticker(copyName, false, false, false, null, false, null, false);
+                        } else {
+                            WaitingDialog.closePragressDialog();
+                            ToastUtil.showToast("请重试");
+                        }
+
+                    } catch (IOException e) {
+                        WaitingDialog.closePragressDialog();
+                        e.printStackTrace();
+                    }
+                });
+
+            } else {
+                new Thread(() -> {
+                    Bitmap originalBitmap = null;
+                    FutureTarget<Bitmap> futureTarget =
+                            Glide.with(BaseApplication.getInstance())
+                                    .asBitmap()
+                                    .load(path)
+                                    .submit();
+                    try {
+                        originalBitmap = futureTarget.get();
+                        Bitmap finalOriginalBitmap = originalBitmap;
+                        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+                            WaitingDialog.closePragressDialog();
+                            String aa = path.substring(path.length() - 4);
+                            String copyName = mGifFolder + File.separator + System.currentTimeMillis() + aa;
+                            saveBitmapToPath(finalOriginalBitmap, copyName, isSucceed -> {
+                                modificationSingleItem(position);
+                                addSticker(copyName, false, false, false, null, false, null, false);
+                            });
                         });
-                    });
-                } catch (Exception e) {
-                    LogUtil.d("oom", e.getMessage());
-                }
-                Glide.with(BaseApplication.getInstance()).clear(futureTarget);
-            }).start();
+                    } catch (Exception e) {
+                        LogUtil.d("oom", e.getMessage());
+                    }
+                    Glide.with(BaseApplication.getInstance()).clear(futureTarget);
+                }).start();
+            }
         }
+
     }
 
 
@@ -564,7 +570,6 @@ public class TemplateAddStickerMvpModel {
         ) {
             deleteStickView(stickerView);
         }
-
     }
 
 
@@ -1166,22 +1171,25 @@ public class TemplateAddStickerMvpModel {
      * user : zhangtongju
      */
     private void getVideoVoice(String videoPath, String outputPath) {
-        WaitingDialog.openPragressDialog(context);
+        if(!isDestroy){
+            WaitingDialog.openPragressDialog(context);
 //        new Thread(() -> {
-        mediaManager manager = new mediaManager(context);
-        manager.splitMp4(videoPath, new File(outputPath), (isSuccess, putPath) -> {
-            WaitingDialog.closePragressDialog();
-            if (isSuccess) {
-                LogUtil.d("OOM2", "分离出来的因为地址为" + outputPath);
-                videoVoicePath = outputPath + File.separator + "bgm.mp3";
+            mediaManager manager = new mediaManager(context);
+            manager.splitMp4(videoPath, new File(outputPath), (isSuccess, putPath) -> {
+                WaitingDialog.closePragressDialog();
+                if (isSuccess) {
+                    LogUtil.d("OOM2", "分离出来的因为地址为" + outputPath);
+                    videoVoicePath = outputPath + File.separator + "bgm.mp3";
 //                callback.getBgmPath(videoVoicePath);
-            } else {
-                LogUtil.d("OOM2", "分离出来的因为地址为null" + outputPath);
+                } else {
+                    LogUtil.d("OOM2", "分离出来的因为地址为null" + outputPath);
 //                callback.getBgmPath("");
-                videoVoicePath = "";
-            }
-        });
+                    videoVoicePath = "";
+                }
+            });
 //        }).start();
+        }
+
     }
 
 

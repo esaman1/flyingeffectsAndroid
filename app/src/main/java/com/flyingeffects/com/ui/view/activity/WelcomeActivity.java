@@ -160,11 +160,11 @@ public class WelcomeActivity extends BaseActivity {
             hasPermission = false;
             // 如果用户没有授权，那么应该说明意图，引导用户去设置里面授权。
             ToastUtil.showToast(this.getString(R.string.Permissions_repulse));
-            intoMain();
-//            new Handler().postDelayed(() -> {
-//                PermissionUtil.gotoPermission(WelcomeActivity.this);
-//                finish();
-//            }, 3000);
+//            intoMain();
+            new Handler().postDelayed(() -> {
+                PermissionUtil.gotoPermission(WelcomeActivity.this);
+                finish();
+            }, 3000);
         }
     }
 
