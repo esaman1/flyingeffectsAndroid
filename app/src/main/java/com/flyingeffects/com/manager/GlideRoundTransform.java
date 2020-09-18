@@ -24,7 +24,7 @@ public class GlideRoundTransform extends CenterCrop {
 
     public GlideRoundTransform(Context context, int dp) {
         super();
-        this.radius = screenUtil.dip2px(context, dp);
+        radius = screenUtil.dip2px(context, dp);
     }
 
     @Override
@@ -42,9 +42,6 @@ public class GlideRoundTransform extends CenterCrop {
         }
 
         Bitmap result = pool.get(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
-        if (result == null) {
-            result = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
-        }
 
         Canvas canvas = new Canvas(result);
         Paint paint = new Paint();

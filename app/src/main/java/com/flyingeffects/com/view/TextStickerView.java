@@ -2,10 +2,16 @@ package com.flyingeffects.com.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RadialGradient;
 import android.graphics.RectF;
+import android.graphics.Shader;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -18,94 +24,59 @@ import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.Nullable;
 
+import com.bigkoo.convenientbanner.utils.ScreenUtil;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.utils.AbScreenUtils;
+import com.flyingeffects.com.utils.BitmapUtil;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.PxUtils;
+import com.flyingeffects.com.view.lansongCommendView.BaseStickerView;
 
 /**
  * 可以添加文字的stickerView 与常规的stickerView分开创建
  *
  * @author vidya
  */
-public class TextStickerView extends View {
+public class TextStickerView extends BaseStickerView {
     private static final String TAG = "TextStickerView";
+    /**
+     * 高光
+     */
+    private static final int[] COLORS = {Color.parseColor("#00000000"), Color.parseColor("#ffffff"),
+            Color.parseColor("#00000000"), Color.parseColor("#EEEEEE"), Color.parseColor("#ffffff"),
+            Color.parseColor("#00000000"), Color.parseColor("#ffffff")};
 
-    // 控件的几种模式
-    /**
-     * 正常
-     */
-    public static final int IDLE_MODE = 2;
-    /**
-     * 移动模式
-     */
-    public static final int MOVE_MODE = 3;
-    /**
-     * 左上角动作
-     */
-    public static final int LEFT_TOP_MODE = 6;
-
-    /**
-     * 左下角动作
-     */
-    public static final int LEFT_BOTTOM_MODE = 7;
-    /**
-     * 右上角动作
-     */
-    public static final int RIGHT_TOP_MODE = 8;
-    /**
-     * 右下角动作
-     */
-    public static final int RIGHT_BOTTOM_MODE = 9;
-
-    /**
-     * 右中间动作
-     */
-    public static final int RIGHT_CENTER_MODE = 10;
-
-    /**
-     * 双指动作
-     */
-    public static final int NEW_POINTER_DOWN_MODE = 11;
-
-    /**
-     * 右侧滑动动作
-     */
-    public static final int RIGHT_MODE = 12;
     /**
      * 文字paint
      */
     private Paint mTextPaint;
+    private Paint mPaintShadow;
+    private Paint mPaintShadow3;
     private float mTextSize;
     private int mTextColor;
+    private float paintWidth = 50;
+    private float paint3Width = 40;
+
     /**
      * 触摸点位置
      */
     private float mTouchX;
     private float mTouchY;
+
     /**
      * 移动的距离
      */
     private float mMoveX;
     private float mMoveY;
+
     /**
      * 与输入法的连接
      */
     private TextInputConnection mTextInputConnection;
 
-    /**
-     * 按钮位置
-     */
-    private Drawable leftTopBitmap;
-    private Drawable rightTopBitmap;
-    private Drawable leftBottomBitmap;
-    private Drawable rightBottomBitmap;
-    private Drawable rightCenterBitmap;
-    private Drawable rightBitmap;
-    private RectF leftTopDstRect = new RectF();
-    private RectF rightBottomDstRect = new RectF();
-    private RectF rightCenterDstRect = new RectF();
-    private RectF rightTopDstRect = new RectF();
-    private RectF leftBottomDstRect = new RectF();
-    private RectF rightDstRect = new RectF();
+    private int measureWidth = ScreenUtil.getScreenWidth(BaseApplication.getInstance());
+    private int defaultHeight = PxUtils.dp2px(BaseApplication.getInstance(), 380);
 
     public TextStickerView(Context context) {
         this(context, null);
@@ -121,8 +92,9 @@ public class TextStickerView extends View {
 
     public TextStickerView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        initStickerView(context,attrs);
-        initTextPainter();
+        initStickerView(context, attrs);
+        initTextPainter(context);
+        initFrameView(context);
         //只有下面两个方法设置为true才能获取到输入的内容
         setFocusable(true);
         setFocusableInTouchMode(true);
@@ -130,29 +102,125 @@ public class TextStickerView extends View {
     }
 
     /**
+     * 初始化边框的样式
+     *
+     * @param context context
+     */
+    private void initFrameView(Context context) {
+
+        if (leftTopBitmap != null) {
+            leftTopRect.set(0, 0, leftTopBitmap.getIntrinsicWidth(),
+                    leftTopBitmap.getIntrinsicHeight());
+            //相当于STICKER_BTN_HALF_SIZE*2 左移运算符
+            leftTopDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
+                    STICKER_BTN_HALF_SIZE << 1);
+        }
+
+        if (rightBottomBitmap != null) {
+            rightBottomRect.set(0, 0, rightBottomBitmap.getIntrinsicWidth(),
+                    rightBottomBitmap.getIntrinsicHeight());
+            rightBottomDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
+                    STICKER_BTN_HALF_SIZE << 1);
+        }
+
+        if (rightBitmap != null) {
+            rightRect.set(0, 0, rightBitmap.getIntrinsicWidth(),
+                    rightBitmap.getIntrinsicHeight());
+            rightDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
+                    STICKER_BTN_HALF_SIZE << 1);
+        }
+
+        if (rightCenterBitmap != null) {
+            rightCenterRect.set(0, 0, rightCenterBitmap.getIntrinsicWidth(),
+                    rightCenterBitmap.getIntrinsicHeight());
+            rightCenterDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
+                    STICKER_BTN_HALF_SIZE << 1);
+        }
+
+        if (leftBottomBitmap != null) {
+            leftBottomRect.set(0, 0, leftBottomBitmap.getIntrinsicWidth(), leftBottomBitmap.getIntrinsicHeight());
+            leftBottomDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
+                    STICKER_BTN_HALF_SIZE << 1);
+        }
+
+        if (rightTopBitmap != null) {
+            rightTopRect.set(0, 0, rightTopBitmap.getIntrinsicWidth(), rightTopBitmap.getIntrinsicHeight());
+            rightTopDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
+                    STICKER_BTN_HALF_SIZE << 1);
+        }
+
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        int width;
+        int height;
+        if (widthMode == MeasureSpec.EXACTLY) {
+            measureWidth = width = widthSize;
+        } else {
+            width = AbScreenUtils.getAndroidScreenProperty().get(0);
+        }
+        if (heightMode == MeasureSpec.EXACTLY) {
+            defaultHeight = height = heightSize;
+        } else {
+            height = defaultHeight;
+        }
+
+        setMeasuredDimension(width, height);
+//        paddingTop = getPaddingTop();
+//        paddingLeft = getPaddingLeft();
+//        paddingBottom = getPaddingBottom();
+//        paddingRight = getPaddingRight();
+    }
+
+    /**
      * 文字相关的初始化
      */
-    private void initTextPainter() {
+    private void initTextPainter(Context context) {
+        mTextSize = 380;
         mTextPaint = new Paint();
-        mTextPaint.setTextSize(36);
-        mTextPaint.setColor(Color.BLACK);
+        mPaintShadow = new Paint();
+        mPaintShadow3 = new Paint();
+        mTextPaint.setColor(Color.parseColor("#000000"));
+        mTextPaint.setTextSize(mTextSize);
+        mTextPaint.setStrokeWidth(paintWidth);
+
+        mPaintShadow.setColor(Color.parseColor("#000000"));
+        mPaintShadow.setTextSize(mTextSize);
+        mPaintShadow.setStrokeWidth(paintWidth);
+
+        Bitmap bp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.bg_text_sticker);
+        BitmapShader bitmapShader = new BitmapShader(BitmapUtil.GetBitmapForScale(bp, measureWidth / 2,
+                defaultHeight / 3), Shader.TileMode.MIRROR, Shader.TileMode.MIRROR);
+        mTextPaint.setShader(bitmapShader);
+        mPaintShadow.setShader(bitmapShader);
+        Typeface typeface = Typeface.createFromAsset(BaseApplication.getInstance().getAssets(), "ktjt.ttf");
+        mTextPaint.setTypeface(typeface);
+        Typeface typeface3 = Typeface.createFromAsset(BaseApplication.getInstance().getAssets(), "ktjt.ttf");
+        Typeface typeface2 = Typeface.createFromAsset(BaseApplication.getInstance().getAssets(), "ktjt.ttf");
+        mPaintShadow.setTypeface(typeface2);
+        mPaintShadow3.setColor(Color.parseColor("#000000"));
+        mPaintShadow3.setTextSize(mTextSize);
+        mPaintShadow3.setStrokeWidth(paint3Width);
+        RadialGradient radialGradient4 = new RadialGradient(measureWidth / (float) 4,
+                defaultHeight / (float) 2, measureWidth / (float) 2, COLORS, null, Shader.TileMode.CLAMP);
+        mPaintShadow3.setShader(radialGradient4);
+        mPaintShadow3.setAntiAlias(true);
+        mPaintShadow3.setTypeface(typeface3);
     }
 
     /**
      * 自定义view 基础属性初始化
-     * @param context
-     * @param attrs
+     *
+     * @param context context
+     * @param attrs   attrs
      */
     private void initStickerView(Context context, AttributeSet attrs) {
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.TextStickerView);
-        leftTopBitmap = typedArray.getDrawable(R.styleable.TextStickerView_sv_left_top_drawable);
-        leftBottomBitmap = typedArray.getDrawable(R.styleable.TextStickerView_sv_left_bottom_drawable);
-        rightBitmap = typedArray.getDrawable(R.styleable.TextStickerView_sv_right_drawable);
-        rightTopBitmap = typedArray.getDrawable(R.styleable.TextStickerView_sv_right_top_drawable);
-        rightBottomBitmap = typedArray.getDrawable(R.styleable.TextStickerView_sv_right_bottom_drawable);
 
-
-        typedArray.recycle();
     }
 
     /**
@@ -182,14 +250,17 @@ public class TextStickerView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (!TextUtils.isEmpty(mTextInputConnection.getNowStr())) {
-            canvas.drawText(mTextInputConnection.getNowStr(), mTouchX, mTouchY, mTextPaint);
+        float textWidth = mTextPaint.measureText(mTextInputConnection.getNowStr());
+        for (int i = 1; i < 15; i++) {
+            canvas.drawText(mTextInputConnection.getNowStr(), measureWidth / (float) 2 - (i * 2) - textWidth / (float) 2, defaultHeight / (float) 2 - 10 + i, mPaintShadow);
         }
-        canvas.drawLine(mTouchX, mTouchY + 18, mTouchX, mTouchY - 18, mTextPaint);
+        canvas.drawText(mTextInputConnection.getNowStr(), measureWidth / (float) 2 - textWidth / (float) 2 - 10, defaultHeight / (float) 2 - 10, mPaintShadow3);
+        canvas.drawText(mTextInputConnection.getNowStr(), measureWidth / (float) 2 - textWidth / (float) 2, defaultHeight / (float) 2 - 10, mTextPaint);
     }
 
     /**
      * 触摸监听
+     *
      * @param event 事件
      * @return true 拦截事件
      */

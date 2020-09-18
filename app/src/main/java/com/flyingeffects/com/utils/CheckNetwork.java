@@ -40,7 +40,7 @@ public class CheckNetwork {
     public static boolean isWifiConnected(Context context) {
         if (context != null) {
             ConnectivityManager cm = (ConnectivityManager) context
-                    .getSystemService(context.CONNECTIVITY_SERVICE);
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo info = cm.getActiveNetworkInfo();
             return info != null && (info.getType() == ConnectivityManager.TYPE_WIFI);
         } else {

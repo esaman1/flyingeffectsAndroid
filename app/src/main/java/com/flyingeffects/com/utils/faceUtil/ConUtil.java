@@ -438,7 +438,7 @@ public class ConUtil {
     public static void isGoneKeyBoard(Activity activity) {
         if (activity.getCurrentFocus() != null) {
             // 隐藏软键盘
-            ((InputMethodManager) activity.getSystemService(activity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
+            ((InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
                     activity.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
@@ -463,25 +463,15 @@ public class ConUtil {
     public static byte[] getPixelsRGBA(Bitmap image) {
         // calculate how many bytes our image consists of
         int bytes = image.getByteCount();
-
-        ByteBuffer buffer = ByteBuffer.allocate(bytes); // Create a new buffer
-        image.copyPixelsToBuffer(buffer); // Move the byte data to the buffer
-
-        byte[] temp = buffer.array(); // Get the underlying array containing the data.
+        // Create a new buffer
+        ByteBuffer buffer = ByteBuffer.allocate(bytes);
+        // Move the byte data to the buffer
+        image.copyPixelsToBuffer(buffer);
+        // Get the underlying array containing the data.
+        byte[] temp = buffer.array();
 
         return temp;
 
-//        byte[] pixels = new byte[temp.length]; // Allocate for RGBA
-//
-//        // Copy pixels into place
-//        for (int i = 0; i < (temp.length / 4); i++) {
-//            pixels[i * 4 + 0] = temp[i * 4 + 0];       //R
-//            pixels[i * 4 + 1] = temp[i * 4 + 1];       //G
-//            pixels[i * 4 + 2] = temp[i * 4 + 2];       //B
-//            pixels[i * 4 + 3] = temp[i * 4 + 3];       //A
-//        }
-//
-//        return pixels;
     }
 
 
@@ -720,6 +710,7 @@ public class ConUtil {
         }
         return ret;
     }
+
     public static Bitmap setBitmapAlpha(Bitmap image, byte[] alphas) {
         // calculate how many bytes our image consists of
         int bytes = image.getByteCount();
@@ -765,7 +756,6 @@ public class ConUtil {
 
         return Bitmap.createBitmap(bitmapSource, width, height, Config.ARGB_8888);
     }
-
 
 
     public static void updateAlbum(Context context, File file) {
@@ -823,8 +813,8 @@ public class ConUtil {
             float scale = 1080.0f / hight;
 
             Log.d("xie ", "scale = " + scale);
-            Log.d("xie" , "src.getHeight()" + src.getHeight());
-            Log.d("xie" , "src.getWidth()" + src.getWidth());
+            Log.d("xie", "src.getHeight()" + src.getHeight());
+            Log.d("xie", "src.getWidth()" + src.getWidth());
 
             if (scale < 1) {
                 matrix.setScale(scale, scale);
@@ -832,7 +822,7 @@ public class ConUtil {
             }
 //            Bitmap dst = Bitmap.createBitmap(src, 0, 0, src.getWidth(),src.getHeight(), matrix, true);
 //            src.recycle();
-            return  Bitmap.createBitmap(src, 0, 0, src.getWidth(),src.getHeight(), matrix, true);
+            return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

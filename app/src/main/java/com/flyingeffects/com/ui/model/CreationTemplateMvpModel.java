@@ -14,6 +14,7 @@ import android.os.Message;
 import android.os.Vibrator;
 
 import androidx.collection.SparseArrayCompat;
+import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -237,7 +238,7 @@ public class CreationTemplateMvpModel {
     }
 
     public void initStickerView(String imagePath, String originalPath) {
-        new Handler().postDelayed(() -> addSticker(imagePath, true, true, true, originalPath, false, null, false), 500);
+        new Handler().postDelayed(() -> addSticker(imagePath, true, true, true, originalPath, false, null, false,false), 500);
     }
 
 
@@ -782,7 +783,7 @@ public class CreationTemplateMvpModel {
                     WaitingDialog.closePragressDialog();
                     return;
                 } else {
-                    addSticker(fileName, false, false, false, null, false, null, false);
+                    addSticker(fileName, false, false, false, null, false, null, false, false);
                     WaitingDialog.closePragressDialog();
                     return;
                 }
@@ -803,7 +804,7 @@ public class CreationTemplateMvpModel {
                 try {
                     if (path1 != null) {
                         FileUtil.copyFile(path1, fileName);
-                        addSticker(fileName, false, false, false, null, false, null, false);
+                        addSticker(fileName, false, false, false, null, false, null, false, false);
                         WaitingDialog.closePragressDialog();
                         modificationSingleItem(position);
                     } else {
@@ -834,7 +835,7 @@ public class CreationTemplateMvpModel {
                         String copyName = mGifFolder + File.separator + System.currentTimeMillis() + aa;
                         saveBitmapToPath(finalOriginalBitmap, copyName, isSucceed -> {
                             modificationSingleItem(position);
-                            addSticker(copyName, false, false, false, null, false, null, false);
+                            addSticker(copyName, false, false, false, null, false, null, false, false);
                         });
                     });
                 } catch (Exception e) {
@@ -848,6 +849,9 @@ public class CreationTemplateMvpModel {
 
     /**
      * 当前的item 是否已经被选中上了预览页面
+     * @param id
+     * @param imagePath
+     * @return
      */
     private boolean nowStickerHasChoose(String id, String imagePath) {
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
@@ -884,9 +888,10 @@ public class CreationTemplateMvpModel {
     private int stickerViewID;
     private boolean isIntoDragMove = false;
 
-    private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim) {
+    private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim,boolean isText) {
         closeAllAnim();
-        StickerView stickView = new StickerView(context);
+
+        StickerView stickView = new StickerView(context,isText);
         stickerViewID++;
         stickView.setId(stickerViewID);
         stickView.setOnitemClickListener(new StickerItemOnitemclick() {
@@ -965,7 +970,7 @@ public class CreationTemplateMvpModel {
                                         }
 
                                         if (stickView.isFirstAddSticker()) {
-                                            stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
+                                            stickView.setRightCenterBitmap(ContextCompat.getDrawable(context,R.mipmap.sticker_close_voice));
                                             callback.changFirstVideoSticker(paths.get(0));
                                             callback.getBgmPath("");
                                         }
@@ -997,8 +1002,6 @@ public class CreationTemplateMvpModel {
                             }
                         }
                     }, "");
-
-
                 }
             }
 
@@ -1042,14 +1045,12 @@ public class CreationTemplateMvpModel {
                     callback.showMusicBtn(false);
                 }
                 nowChooseStickerView = stickView;
-
-
             }
         });
-        stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
-        stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
-        stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
-        stickView.setRightBitmap(context.getDrawable(R.mipmap.sticker_updown));
+        stickView.setRightTopBitmap(ContextCompat.getDrawable(context,R.mipmap.sticker_copy));
+        stickView.setLeftTopBitmap(ContextCompat.getDrawable(context,R.drawable.sticker_delete));
+        stickView.setRightBottomBitmap(ContextCompat.getDrawable(context,R.mipmap.sticker_redact));
+        stickView.setRightBitmap(ContextCompat.getDrawable(context,R.mipmap.sticker_updown));
 
         stickView.setIsFromStickerAnim(isFromShowAnim);
         stickView.setComeFromAlbum(isFromAubum);
@@ -1088,7 +1089,7 @@ public class CreationTemplateMvpModel {
 //            }
         }
         if (hasReplace) {
-            stickView.setLeftBottomBitmap(context.getDrawable(R.mipmap.sticker_change));
+            stickView.setLeftBottomBitmap(ContextCompat.getDrawable(context,R.mipmap.sticker_change));
         }
         if (isCopy && copyStickerView != null) {
             //来做复制或者来自联系点击下面的item
@@ -1201,7 +1202,7 @@ public class CreationTemplateMvpModel {
                 FileUtil.copyFile(new File(getResPath), copyName, new FileUtil.copySucceed() {
                     @Override
                     public void isSucceed() {
-                        addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim);
+                        addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, false);
                     }
                 });
             } else {
@@ -1217,9 +1218,9 @@ public class CreationTemplateMvpModel {
                     @Override
                     public void isSucceed() {
                         if (isFromShowAnim) {
-                            addSticker(getResPath, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim);
+                            addSticker(getResPath, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, false);
                         } else {
-                            addSticker(finalCopyName1, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim);
+                            addSticker(finalCopyName1, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, false);
                         }
                     }
                 });
@@ -1670,7 +1671,7 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     public void addNewSticker(String path, String originalPath) {
-        Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> addSticker(path1, false, true, true, originalPath, false, null, false));
+        Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> addSticker(path1, false, true, true, originalPath, false, null, false, false));
     }
 
 

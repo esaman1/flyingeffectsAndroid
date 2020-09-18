@@ -167,9 +167,8 @@
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateUnspecified|adjustPan"
             android:screenOrientation="portrait" />
-
-
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.VideoCropActivity"
@@ -202,6 +201,7 @@
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.CreationTemplateActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateUnspecified|adjustPan"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.BackgroundSearchActivity"

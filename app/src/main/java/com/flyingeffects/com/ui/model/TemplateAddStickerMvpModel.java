@@ -8,9 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.text.TextUtils;
 import android.util.Log;
@@ -1195,7 +1197,12 @@ public class TemplateAddStickerMvpModel {
 
     private void showVibrator() {
         if (vibrator.hasVibrator()) {
-            vibrator.vibrate(5);  //设置手机振动
+            //设置手机振动
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createOneShot(5,VibrationEffect.DEFAULT_AMPLITUDE));
+            }else {
+                vibrator.vibrate(5);
+            }
         }
     }
 
