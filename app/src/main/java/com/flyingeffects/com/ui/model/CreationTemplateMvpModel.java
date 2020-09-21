@@ -1671,7 +1671,7 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     public void addNewSticker(String path, String originalPath) {
-        Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> addSticker(path1, false, true, true, originalPath, false, null, false, false));
+        Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> addSticker(path1, false, true, true, originalPath, false, null, false, true));
     }
 
 
