@@ -224,8 +224,9 @@ public class RangeSeekBarView extends View {
         float lastVal = mThumbs.get(index).getVal();
         for (int i = index - 1; i >= 0; i--) {
             Thumb th = mThumbs.get(i);
-            if (th.getVal() != lastVal)
+            if (th.getVal() != lastVal) {
                 return i + 1;
+            }
         }
         return unstuck;
     }
@@ -355,8 +356,9 @@ public class RangeSeekBarView extends View {
     }
 
     private void onCreate(RangeSeekBarView rangeSeekBarView, int index, float value) {
-        if (mListeners == null)
+        if (mListeners == null) {
             return;
+        }
 
         for (OnRangeSeekBarListener item : mListeners) {
             item.onCreate(rangeSeekBarView, index, value);
@@ -364,8 +366,9 @@ public class RangeSeekBarView extends View {
     }
 
     private void onSeek(RangeSeekBarView rangeSeekBarView, int index, float value) {
-        if (mListeners == null)
+        if (mListeners == null) {
             return;
+        }
 
         for (OnRangeSeekBarListener item : mListeners) {
             item.onSeek(rangeSeekBarView, index, value);
@@ -373,8 +376,9 @@ public class RangeSeekBarView extends View {
     }
 
     private void onSeekStart(RangeSeekBarView rangeSeekBarView, int index, float value) {
-        if (mListeners == null)
+        if (mListeners == null) {
             return;
+        }
 
         for (OnRangeSeekBarListener item : mListeners) {
             item.onSeekStart(rangeSeekBarView, index, value);
@@ -382,8 +386,9 @@ public class RangeSeekBarView extends View {
     }
 
     private void onSeekStop(RangeSeekBarView rangeSeekBarView, int index, float value) {
-        if (mListeners == null)
+        if (mListeners == null) {
             return;
+        }
 
         for (OnRangeSeekBarListener item : mListeners) {
             item.onSeekStop(rangeSeekBarView, index, value);

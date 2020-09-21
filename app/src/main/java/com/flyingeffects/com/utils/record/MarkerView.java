@@ -24,6 +24,8 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
+import androidx.appcompat.widget.AppCompatImageView;
+
 /**
  * Represents a draggable start or end marker.
  *
@@ -34,7 +36,7 @@ import android.widget.ImageView;
  * accelerating as the user holds down the left or right arrows
  * while this control is focused.
  */
-public class MarkerView extends ImageView {
+public class MarkerView extends AppCompatImageView {
 
     public interface MarkerListener {
         public void markerTouchStart(MarkerView marker, float pos);
@@ -89,8 +91,9 @@ public class MarkerView extends ImageView {
     @Override
     protected void onFocusChanged(boolean gainFocus, int direction,
                                   Rect previouslyFocusedRect) {
-        if (gainFocus && mListener != null)
+        if (gainFocus && mListener != null) {
             mListener.markerFocus(this);
+        }
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
     }
 
@@ -98,8 +101,9 @@ public class MarkerView extends ImageView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (mListener != null)
+        if (mListener != null) {
             mListener.markerDraw();
+        }
     }
 
     @Override
@@ -125,8 +129,9 @@ public class MarkerView extends ImageView {
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         mVelocity = 0;
-        if (mListener != null)
+        if (mListener != null) {
             mListener.markerKeyUp();
+        }
         return super.onKeyDown(keyCode, event);
     }
 }

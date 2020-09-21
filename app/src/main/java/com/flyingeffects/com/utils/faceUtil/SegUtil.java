@@ -42,6 +42,7 @@ import java.util.regex.Pattern;
  */
 
 public class SegUtil {
+    public static Pattern pattern = Pattern.compile(" [0-9]+");
     // 实时获取CPU当前频率（单位KHZ）
     //https://testerhome.com/topics/501
     public static String getCurCpuFreq() {
@@ -107,7 +108,7 @@ public class SegUtil {
         int firstCPUNum = 0;//设置这个参数，这要是防止两次读取文件获知的CPU数量不同，导致不能计算。这里统一以第一次的CPU数量为基准
         FileReader fileReader = null;
         BufferedReader bufferedReader = null;
-        Pattern pattern = Pattern.compile(" [0-9]+");
+
         for (int i = 0; i < 2; i++) {
             totalJiffies[i] = 0;
             totalIdle[i] = 0;

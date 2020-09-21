@@ -225,6 +225,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
                 };
 
         Thread mLoadSoundFileThread = new Thread() {
+            @Override
             public void run() {
                 try {
                     mSoundFile = SoundFile.create(mFile.getAbsolutePath(), listener);
@@ -300,6 +301,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
         }
         timer = new Timer();
         task = new TimerTask() {
+            @Override
             public void run() {
                 Message msg = new Message();
                 msg.what = 1;

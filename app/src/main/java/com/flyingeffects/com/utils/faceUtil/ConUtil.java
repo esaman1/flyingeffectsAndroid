@@ -44,19 +44,21 @@ import java.util.Locale;
 public class ConUtil {
 
     public static float[] rotateFloat(float[] data, int width, int height, int angle, boolean isMirror) {
-        if (angle == 90)
+        if (angle == 90) {
             return rotateFloat_90(data, width, height, isMirror);
-        else if (angle == 180)
+        } else if (angle == 180) {
             return rotateFloat_180(data, width, height, isMirror);
-        else if (angle == 270)
+        } else if (angle == 270) {
             return rotateFloat_270(data, width, height, isMirror);
-        else
+        } else {
             return data;
+        }
     }
 
     public static float[] rotateFloat_90(float[] data, int width, int height, boolean isMirror) {
-        if (data == null || width == 0 || height == 0)
+        if (data == null || width == 0 || height == 0) {
             return null;
+        }
 
         float[][] data_1 = new float[height][width];
 
@@ -72,10 +74,11 @@ public class ConUtil {
         int n = 0;
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                if (isMirror)
+                if (isMirror) {
                     data_2[n] = data_1[height - j - 1][width - 1 - i];
-                else
+                } else {
                     data_2[n] = data_1[height - j - 1][i];
+                }
                 ++n;
             }
         }
@@ -83,8 +86,9 @@ public class ConUtil {
     }
 
     public static float[] rotateFloat_270(float[] data, int width, int height, boolean isMirror) {
-        if (data == null || width == 0 || height == 0)
+        if (data == null || width == 0 || height == 0) {
             return null;
+        }
 
         float[][] data_1 = new float[height][width];
 
@@ -101,10 +105,11 @@ public class ConUtil {
         int n = 0;
         for (int i = width - 1; i >= 0; i--) {
             for (int j = height - 1; j >= 0; j--) {
-                if (isMirror)
+                if (isMirror) {
                     data_2[n] = data_1[height - j - 1][width - 1 - i];
-                else
+                } else {
                     data_2[n] = data_1[height - j - 1][i];
+                }
                 ++n;
             }
         }
@@ -112,8 +117,9 @@ public class ConUtil {
     }
 
     public static float[] rotateFloat_180(float[] data, int width, int height, boolean isMirror) {
-        if (data == null || width == 0 || height == 0)
+        if (data == null || width == 0 || height == 0) {
             return null;
+        }
 
         float[] data_1 = new float[width * height];
 
@@ -142,8 +148,9 @@ public class ConUtil {
     public static Bitmap bitmap;
 
     public static Bitmap setBitmapPixel(Context context, int width, int height, float[] data) {
-        if (bitmap == null)
+        if (bitmap == null) {
             bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+        }
 
         //bitmap = bitmap.copy(Config.ARGB_8888, true);
         int mBitmapWidth = bitmap.getWidth();
@@ -277,8 +284,9 @@ public class ConUtil {
 
             String path = newPath + name;
             File stickerFile = new File(path);
-            if (stickerFile.exists())
+            if (stickerFile.exists()) {
                 return stickerFile.getAbsolutePath();
+            }
 
             FileOutputStream fileOutputStream = new FileOutputStream(path);
             byte[] buffer = new byte[512];
@@ -430,7 +438,7 @@ public class ConUtil {
     public static void isGoneKeyBoard(Activity activity) {
         if (activity.getCurrentFocus() != null) {
             // 隐藏软键盘
-            ((InputMethodManager) activity.getSystemService(activity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
+            ((InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
                     activity.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
@@ -455,25 +463,15 @@ public class ConUtil {
     public static byte[] getPixelsRGBA(Bitmap image) {
         // calculate how many bytes our image consists of
         int bytes = image.getByteCount();
-
-        ByteBuffer buffer = ByteBuffer.allocate(bytes); // Create a new buffer
-        image.copyPixelsToBuffer(buffer); // Move the byte data to the buffer
-
-        byte[] temp = buffer.array(); // Get the underlying array containing the data.
+        // Create a new buffer
+        ByteBuffer buffer = ByteBuffer.allocate(bytes);
+        // Move the byte data to the buffer
+        image.copyPixelsToBuffer(buffer);
+        // Get the underlying array containing the data.
+        byte[] temp = buffer.array();
 
         return temp;
 
-//        byte[] pixels = new byte[temp.length]; // Allocate for RGBA
-//
-//        // Copy pixels into place
-//        for (int i = 0; i < (temp.length / 4); i++) {
-//            pixels[i * 4 + 0] = temp[i * 4 + 0];       //R
-//            pixels[i * 4 + 1] = temp[i * 4 + 1];       //G
-//            pixels[i * 4 + 2] = temp[i * 4 + 2];       //B
-//            pixels[i * 4 + 3] = temp[i * 4 + 3];       //A
-//        }
-//
-//        return pixels;
     }
 
 
@@ -527,11 +525,12 @@ public class ConUtil {
      * 获取bitmap的灰度图像
      */
     public static byte[] getGrayscale(Bitmap bitmap) {
-        if (bitmap == null)
+        if (bitmap == null) {
             return null;
+        }
 
         byte[] ret = new byte[bitmap.getWidth() * bitmap.getHeight()];
-        for (int j = 0; j < bitmap.getHeight(); ++j)
+        for (int j = 0; j < bitmap.getHeight(); ++j) {
             for (int i = 0; i < bitmap.getWidth(); ++i) {
                 int pixel = bitmap.getPixel(i, j);
                 int red = ((pixel & 0x00FF0000) >> 16);
@@ -539,6 +538,7 @@ public class ConUtil {
                 int blue = pixel & 0x000000FF;
                 ret[j * bitmap.getWidth() + i] = (byte) ((299 * red + 587 * green + 114 * blue) / 1000);
             }
+        }
         return ret;
     }
 
@@ -568,8 +568,9 @@ public class ConUtil {
      * 输出toast
      */
     public static void showToast(Context context, String str) {
-        if (toast != null)
+        if (toast != null) {
             toast.cancel();
+        }
         if (context != null) {
             toast = Toast.makeText(context, str, Toast.LENGTH_SHORT);
             // 可以控制toast显示的位置
@@ -582,8 +583,9 @@ public class ConUtil {
      * 输出长时间toast
      */
     public static void showLongToast(Context context, String str) {
-        if (toast != null)
+        if (toast != null) {
             toast.cancel();
+        }
         if (context != null) {
             toast = Toast.makeText(context, str, Toast.LENGTH_LONG);
             // 可以控制toast显示的位置
@@ -628,8 +630,9 @@ public class ConUtil {
      * 保存bitmap至指定Picture文件夹
      */
     public static String saveBitmap(Context context, Bitmap bitmaptosave, String fp) {
-        if (bitmaptosave == null)
+        if (bitmaptosave == null) {
             return null;
+        }
 
 //        File mediaStorageDir = MainApp.getContext().getExternalFilesDir("megvii");
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath() + "/camera");
@@ -653,8 +656,9 @@ public class ConUtil {
             if (successful) {
                 updateAlbum(context, new File(mediaStorageDir + "/" + bitmapFileName));
                 return mediaStorageDir.getAbsolutePath() + "/" + bitmapFileName;
-            } else
+            } else {
                 return null;
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return null;
@@ -694,14 +698,19 @@ public class ConUtil {
             return null;
         } finally {
             try {
-                if (fos != null) fos.close();
-                if (is != null) is.close();
+                if (fos != null) {
+                    fos.close();
+                }
+                if (is != null) {
+                    is.close();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         return ret;
     }
+
     public static Bitmap setBitmapAlpha(Bitmap image, byte[] alphas) {
         // calculate how many bytes our image consists of
         int bytes = image.getByteCount();
@@ -747,7 +756,6 @@ public class ConUtil {
 
         return Bitmap.createBitmap(bitmapSource, width, height, Config.ARGB_8888);
     }
-
 
 
     public static void updateAlbum(Context context, File file) {
@@ -805,8 +813,8 @@ public class ConUtil {
             float scale = 1080.0f / hight;
 
             Log.d("xie ", "scale = " + scale);
-            Log.d("xie" , "src.getHeight()" + src.getHeight());
-            Log.d("xie" , "src.getWidth()" + src.getWidth());
+            Log.d("xie", "src.getHeight()" + src.getHeight());
+            Log.d("xie", "src.getWidth()" + src.getWidth());
 
             if (scale < 1) {
                 matrix.setScale(scale, scale);
@@ -814,7 +822,7 @@ public class ConUtil {
             }
 //            Bitmap dst = Bitmap.createBitmap(src, 0, 0, src.getWidth(),src.getHeight(), matrix, true);
 //            src.recycle();
-            return  Bitmap.createBitmap(src, 0, 0, src.getWidth(),src.getHeight(), matrix, true);
+            return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

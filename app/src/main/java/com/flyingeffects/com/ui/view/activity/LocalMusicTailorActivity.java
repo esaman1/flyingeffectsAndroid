@@ -212,6 +212,7 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     }
 
 
+    @Override
     @OnClick({R.id.tv_top_submit})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -248,6 +249,7 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
         }
         timer = new Timer();
         task = new TimerTask() {
+            @Override
             public void run() {
                 endTimer();
                 handler.sendEmptyMessage(1);

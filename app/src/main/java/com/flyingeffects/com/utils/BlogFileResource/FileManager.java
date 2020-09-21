@@ -226,19 +226,23 @@ public class FileManager {
             while (c.moveToNext()) {
                 String path = c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA));// 路径
                 File parentFile = new File(path).getParentFile();
-                if (parentFile == null)
+                if (parentFile == null) {
                     continue;
+                }
 
                 String dir = parentFile.getAbsolutePath();
                 if (mDirs.contains(dir))//如果已经添加过
+                {
                     continue;
+                }
 
                 mDirs.add(dir);//添加到保存目录的集合中
                 ImgFolderBean folderBean = new ImgFolderBean();
                 folderBean.setDir(dir);
                 folderBean.setFistImgPath(path);
-                if (parentFile.list() == null)
+                if (parentFile.list() == null) {
                     continue;
+                }
                 int count = parentFile.list(new FilenameFilter() {
                     @Override
                     public boolean accept(File dir, String filename) {

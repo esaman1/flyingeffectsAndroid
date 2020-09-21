@@ -17,10 +17,11 @@ public class timeUtils {
 
     private static String unitFormat(long i) {
         String retStr;
-        if (i >= 0 && i < 10)
+        if (i >= 0 && i < 10) {
             retStr = "0" + i;
-        else
+        } else {
             retStr = "" + i;
+        }
         return retStr;
     }
 

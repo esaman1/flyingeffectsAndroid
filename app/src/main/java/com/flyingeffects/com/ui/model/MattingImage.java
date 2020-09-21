@@ -90,6 +90,7 @@ public class MattingImage {
         }
         timer = new Timer();
         task = new TimerTask() {
+            @Override
             public void run() {
                 if (BaseConstans.hasCreatingSegJni) {
                     updateDuration(nowNeedDuration * 500, context);

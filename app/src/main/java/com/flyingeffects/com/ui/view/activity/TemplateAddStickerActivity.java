@@ -131,6 +131,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
     @Override
     protected void onPause() {
+        presenter.onPause();
         videoToPause();
         super.onPause();
     }
@@ -138,6 +139,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     boolean isOnDestroy=false;
     @Override
     public void onDestroy() {
+        presenter.onDestroy();
         LogUtil.d("OOM","onDestroy");
         videoStop();
         endTimer();
@@ -424,6 +426,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     }
 
 
+    @Override
     @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_top_back})
     public void onClick(View view) {
         switch (view.getId()) {

@@ -46,6 +46,14 @@ public class TemplateAddStickerMvpPresenter extends BasePresenter implements Tem
 
 
 
+    public void onPause(){
+    }
+
+    public void onDestroy(){
+        TemplateAddStickermodel.onDestroy();
+    }
+
+
     public void initVideoProgressView(HorizontalListView mTimeLineView){
         TemplateAddStickermodel.initVideoProgressView(mTimeLineView);
     }

@@ -158,6 +158,7 @@ public class webViewActivity extends BaseWebActivity {
 
 
             // For Lollipop 5.0+ Devices
+            @Override
             @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             public boolean onShowFileChooser(WebView mWebView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
                 if (uploadMessage != null) {
@@ -220,21 +221,24 @@ public class webViewActivity extends BaseWebActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (requestCode == REQUEST_SELECT_FILE) {
-                if (uploadMessage == null)
+                if (uploadMessage == null) {
                     return;
+                }
                 uploadMessage.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, intent));
                 uploadMessage = null;
             }
         } else if (requestCode == FILECHOOSER_RESULTCODE) {
-            if (null == mUploadMessage)
+            if (null == mUploadMessage) {
                 return;
+            }
             // Use MainActivity.RESULT_OK if you're implementing WebView inside Fragment
             // Use RESULT_OK only if you're implementing WebView inside an Activity
             Uri result = intent == null || resultCode != webViewActivity.RESULT_OK ? null : intent.getData();
             mUploadMessage.onReceiveValue(result);
             mUploadMessage = null;
-        } else
+        } else {
             Toast.makeText(getBaseContext(), "Failed to Upload Image", Toast.LENGTH_LONG).show();
+        }
     }
 
 

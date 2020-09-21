@@ -56,6 +56,7 @@ public class AboutActivity extends BaseActivity {
         }
     }
 
+    @Override
     @OnClick({R.id.tv_test,R.id.tv_top_submit, R.id.iv_top_back, R.id.tv_close_account, R.id.tv_contact_us, R.id.tv_relation_us, R.id.tv_privacy_policy, R.id.tv_protocol, R.id.tv_clear_cache})
     public void onClick(View view) {
         switch (view.getId()) {

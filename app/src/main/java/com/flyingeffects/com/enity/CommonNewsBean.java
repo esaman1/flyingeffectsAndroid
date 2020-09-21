@@ -30,10 +30,12 @@ public class CommonNewsBean extends FeedAdConfigBean.FeedAdResultBean implements
         this.subTitle = subTitle;
     }
 
+    @Override
     public int getEventType() {
         return eventType;
     }
 
+    @Override
     public void setEventType(int eventType) {
         this.eventType = eventType;
     }

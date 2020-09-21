@@ -274,8 +274,9 @@ public class StickerItem {
 
 
         double cos = (xa * xb + ya * yb) / (srcLen * curLen);
-        if (cos > 1 || cos < -1)
+        if (cos > 1 || cos < -1) {
             return;
+        }
         float angle = (float) Math.toDegrees(Math.acos(cos));
         // System.out.println("angle--->" + angle);
 

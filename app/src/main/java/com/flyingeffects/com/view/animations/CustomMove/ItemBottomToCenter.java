@@ -76,6 +76,7 @@ public class ItemBottomToCenter extends baseAnimModel {
     }
 
 
+    @Override
     public void StopAnim() {
         if (animationLinearInterpolator != null) {
             animationLinearInterpolator.endTimer();

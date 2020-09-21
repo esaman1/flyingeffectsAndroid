@@ -86,6 +86,7 @@ public class ItemLeftAndRightDissmiss extends baseAnimModel {
     }
 
 
+    @Override
     public void StopAnim() {
         if (animationLinearInterpolator != null) {
             animationLinearInterpolator.endTimer();
