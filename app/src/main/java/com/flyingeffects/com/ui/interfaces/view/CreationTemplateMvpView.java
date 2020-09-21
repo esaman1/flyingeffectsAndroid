@@ -11,6 +11,8 @@ public interface CreationTemplateMvpView {
 
     void deleteFirstSticker();
 
+    void showTextDialog();
+
     void setgsyVideoProgress(int progress);
 
     void getVideoDuration(int duration,int thumbCount);
