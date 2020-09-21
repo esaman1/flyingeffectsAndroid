@@ -802,11 +802,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             float halfTextWidth=textWidth / (float) 2;
             LogUtil.d("OOM4","halfTextWidth="+halfTextWidth);
             float needRectLeft=mHelpBoxRect.centerX();
-
             BitmapShader bitmapShader = new BitmapShader(BitmapUtil.GetBitmapForScale(bpForTextBj, (int)mHelpBoxRect.width(),
                     (int)mHelpBoxRect.height()), Shader.TileMode.MIRROR, Shader.TileMode.MIRROR);
             mTextPaint.setShader(bitmapShader);
-
             for (int i = 1; i < 10; i++) {
                 canvas.drawText(stickerText, needRectLeft - halfTextWidth-i, needRectHeight - 10 + i/(float)2, mTextPaint);
             }
