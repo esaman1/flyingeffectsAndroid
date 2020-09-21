@@ -21,14 +21,10 @@ import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
-import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.ChooseVideoAddSticker;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.DownVideoPath;
-import com.flyingeffects.com.enity.TemplateType;
-import com.flyingeffects.com.manager.AdConfigs;
-import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -43,6 +39,7 @@ import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.utils.timeUtils;
 import com.flyingeffects.com.view.HorizontalListView;
 import com.flyingeffects.com.view.MyScrollView;
+import com.flyingeffects.com.view.mine.CreateViewForAddText;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -330,8 +327,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     boolean nowUiIsLandscape = false;
 
-    @Override
-    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker, R.id.iv_top_back, R.id.iv_change_ui, R.id.tv_background,R.id.tv_music, R.id.tv_anim, R.id.tv_tiezhi})
+    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker, R.id.iv_top_back, R.id.iv_change_ui, R.id.tv_background,R.id.tv_music, R.id.tv_anim, R.id.tv_tiezhi,R.id.tv_add_text})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
@@ -376,11 +372,23 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
             case R.id.tv_music:
-
                 presenter.chooseAnim(2);
                 setTextColor(2);
 
                 break;
+
+            case R.id.tv_add_text:
+                if(!DoubleClick.getInstance().isFastDoubleClick()){
+                    CreateViewForAddText createViewForAddText=new CreateViewForAddText(this, new CreateViewForAddText.downCallback() {
+                        @Override
+                        public void isSuccess(String path, int type) {
+
+                        }
+                    });
+                    createViewForAddText.showBottomSheetDialog();
+                }
+                break;
+
 
             case R.id.iv_top_back:
                 this.finish();
@@ -458,7 +466,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-    private int[] lin_Id = {R.id.tv_tiezhi, R.id.tv_anim,R.id.tv_music};
+    private int[] lin_Id = {R.id.tv_tiezhi, R.id.tv_anim,R.id.tv_music,R.id.tv_add_text};
 
     private void setTextColor(int chooseItem) {
         for (int i = 0; i < lin_Id.length; i++) {
