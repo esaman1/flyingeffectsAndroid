@@ -387,6 +387,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     });
                     createViewForAddText.showBottomSheetDialog();
                 }
+                presenter.addTextSticker();
+
                 break;
 
 

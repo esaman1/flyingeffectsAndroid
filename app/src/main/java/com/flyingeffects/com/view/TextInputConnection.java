@@ -22,7 +22,7 @@ public class TextInputConnection extends BaseInputConnection {
     public TextInputConnection(View targetView, boolean fullEditor, TextInputListener inputListener) {
         super(targetView, fullEditor);
         mInputListener = inputListener;
-        mNowStr = "";
+        mNowStr = "输入字体";
         mInputStr = "";
     }
 
