@@ -27,6 +27,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="10dp"
+                android:padding="1dp"
                 android:background="@null"
                 android:hint="输入文本"
                 android:textColorHint="@color/dark_gray"

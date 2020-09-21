@@ -27,6 +27,16 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
+    public void ChangeTextStyle(String path, int type){
+        creationTemplatemodel.ChangeTextStyle(path,type);
+    }
+
+
+    public void ChangeTextLabe(String str){
+        creationTemplatemodel.ChangeTextLabe(str);
+    }
+
+
 
     public void addTextSticker(){
         creationTemplatemodel.addTextSticker();
@@ -174,6 +184,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     @Override
     public void showMusicBtn(boolean isShow) {
         creationTemplatemvpView.showMusicBtn(isShow);
+    }
+
+    @Override
+    public void showTextDialog() {
+        creationTemplatemvpView.showTextDialog();
     }
 
 

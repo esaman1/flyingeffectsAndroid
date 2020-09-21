@@ -2,9 +2,11 @@ package com.flyingeffects.com.view.mine;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -58,6 +60,7 @@ public class CreateViewForAddText {
     private CreateTemplateTextFontAdapter createTemplateTextEffectAdapterFont;
     private String mTTFFolder;
     private downCallback callback;
+    private EditText edit_text;
 
     public CreateViewForAddText(Context context, downCallback callback) {
         this.context = context;
@@ -76,6 +79,7 @@ public class CreateViewForAddText {
             bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
             View view = LayoutInflater.from(context).inflate(R.layout.view_add_text, null);
             ImageView iv_down=view.findViewById(R.id.iv_down);
+            edit_text=view.findViewById(R.id.edit_text);
             iv_down.setOnClickListener(view12 -> dismissDialog());
             TextView tv_hot = view.findViewById(R.id.tv_hot);
             TextView tv_complete = view.findViewById(R.id.tv_complete);
@@ -87,7 +91,7 @@ public class CreateViewForAddText {
             ArrayList<View> list = new ArrayList<>();
             View gridViewLayout = LayoutInflater.from(context).inflate(R.layout.view_creat_template_effect_type, viewPager, false);
             GridView gridView = gridViewLayout.findViewById(R.id.gridView);
-            gridView.setOnItemClickListener((adapterView, view13, i, l) -> downFile(listFont.get(i).getImage(),0));
+            gridView.setOnItemClickListener((adapterView, view13, i, l) -> downFile(listEffect.get(i).getImage(),0));
             createTemplateTextEffectAdapterEffect = new CreateTemplateTextEffectAdapter(listEffect, context);
             gridView.setAdapter(createTemplateTextEffectAdapterEffect);
             list.add(gridViewLayout);
@@ -140,6 +144,7 @@ public class CreateViewForAddText {
 
 
     private void downFile(String path,int type) {
+        LogUtil.d("OOM4","downFilePath="+path);
         int index = path.lastIndexOf("/");
         String newStr = path.substring(index);
         LogUtil.d("OOM2", "newStr=" + newStr);
@@ -174,6 +179,8 @@ public class CreateViewForAddText {
 
         void isSuccess(String path, int type);
 
+        void setText(String text);
+
     }
 
 
@@ -202,6 +209,10 @@ public class CreateViewForAddText {
 
                 break;
             case R.id.tv_complete:
+                String text=edit_text.getText().toString();
+                if(callback!=null&& !TextUtils.isEmpty(text)){
+                    callback.setText(text);
+                }
                 dismissDialog();
                 break;
 

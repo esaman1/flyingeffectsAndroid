@@ -378,15 +378,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 break;
 
             case R.id.tv_add_text:
-                if(!DoubleClick.getInstance().isFastDoubleClick()){
-                    CreateViewForAddText createViewForAddText=new CreateViewForAddText(this, new CreateViewForAddText.downCallback() {
-                        @Override
-                        public void isSuccess(String path, int type) {
-
-                        }
-                    });
-                    createViewForAddText.showBottomSheetDialog();
-                }
+                intoTextStyleDialog();
                 presenter.addTextSticker();
 
                 break;
@@ -467,6 +459,24 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
     }
 
+
+
+    private void intoTextStyleDialog(){
+        if(!DoubleClick.getInstance().isFastDoubleClick()){
+            CreateViewForAddText createViewForAddText=new CreateViewForAddText(this, new CreateViewForAddText.downCallback() {
+                @Override
+                public void isSuccess(String path, int type) {
+                    presenter.ChangeTextStyle(path,type);
+                }
+
+                @Override
+                public void setText(String text) {
+                    presenter.ChangeTextLabe(text);
+                }
+            });
+            createViewForAddText.showBottomSheetDialog();
+        }
+    }
 
     private int[] lin_Id = {R.id.tv_tiezhi, R.id.tv_anim,R.id.tv_music,R.id.tv_add_text};
 
@@ -681,6 +691,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             tv_music.setVisibility(View.GONE);
             setTextColor(0);
         },500);
+    }
+
+    @Override
+    public void showTextDialog() {
+        intoTextStyleDialog();
     }
 
     @Override

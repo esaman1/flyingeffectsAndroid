@@ -184,7 +184,33 @@ public class CreationTemplateMvpModel {
         mImageCopyFolder = fileManager.getFileCachePath(context, "imageCopy");
         animCollect = new AnimCollect();
         listAllAnima = animCollect.getAnimList();
+    }
 
+
+    /**
+     * description ：更换字体样式  type 0 是热门效果，1是字体
+     * creation date: 2020/9/21
+     * user : zhangtongju
+     */
+    public void ChangeTextStyle(String path, int type) {
+        if (nowChooseStickerView.getIsTextSticker()) {
+            if (type == 0) {
+                nowChooseStickerView.setTextBitmapStyle(path);
+            } else {
+                nowChooseStickerView.setTextStyle(path);
+            }
+        }
+    }
+
+    /**
+     * description ：更换文字
+     * creation date: 2020/9/21
+     * user : zhangtongju
+     */
+    public void ChangeTextLabe(String text) {
+        if (nowChooseStickerView.getIsTextSticker()) {
+            nowChooseStickerView.setStickerText(text);
+        }
     }
 
 
@@ -937,59 +963,64 @@ public class CreationTemplateMvpModel {
                     }
 
                 } else if (type == StickerView.LEFT_BOTTOM_MODE) {
-                    if (UiStep.isFromDownBj) {
-                        statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_replace");
-                    } else {
-                        statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_replace");
-                    }
-                    //切換素材
-                    AlbumManager.chooseAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
-                        if (!isCancel) {
-                            if (albumType.isVideo(GetPathType.getInstance().getPathType(paths.get(0)))) {
-                                GetVideoCover getVideoCover = new GetVideoCover(context);
-                                getVideoCover.getCover(paths.get(0), path1 -> {
-                                    Observable.just(path1).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
-                                        stickView.setOriginalPath(paths.get(0));
-                                        stickView.setClipPath(s);
-                                        if (!isCheckedMatting) {
-                                            stickView.changeImage(paths.get(0), false);
-                                        } else {
-                                            stickView.changeImage(s, false);
-                                        }
 
-                                        if (stickView.isFirstAddSticker()) {
-                                            stickView.setRightCenterBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_close_voice));
-                                            callback.changFirstVideoSticker(paths.get(0));
+                    if(!stickView.getIsTextSticker()){
+                        if (UiStep.isFromDownBj) {
+                            statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_replace");
+                        } else {
+                            statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_replace");
+                        }
+                        //切換素材
+                        AlbumManager.chooseAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
+                            if (!isCancel) {
+                                if (albumType.isVideo(GetPathType.getInstance().getPathType(paths.get(0)))) {
+                                    GetVideoCover getVideoCover = new GetVideoCover(context);
+                                    getVideoCover.getCover(paths.get(0), path1 -> {
+                                        Observable.just(path1).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
+                                            stickView.setOriginalPath(paths.get(0));
+                                            stickView.setClipPath(s);
+                                            if (!isCheckedMatting) {
+                                                stickView.changeImage(paths.get(0), false);
+                                            } else {
+                                                stickView.changeImage(s, false);
+                                            }
+
+                                            if (stickView.isFirstAddSticker()) {
+                                                stickView.setRightCenterBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_close_voice));
+                                                callback.changFirstVideoSticker(paths.get(0));
+                                                callback.getBgmPath("");
+                                            }
+
+                                        });
+                                    });
+                                } else {
+                                    CompressionCuttingManage manage = new CompressionCuttingManage(context, "", tailorPaths -> {
+                                        Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
+                                            stickView.setOriginalPath(paths.get(0));
+                                            stickView.setClipPath(s);
+                                            if (!isCheckedMatting) {
+                                                stickView.changeImage(paths.get(0), false);
+                                            } else {
+                                                stickView.changeImage(s, false);
+                                            }
+                                        });
+                                    });
+                                    manage.ToMatting(paths);
+
+                                    if (stickView.isFirstAddSticker()) {
+                                        if (stickView.isOpenVoice()) {
+                                            stickView.setOpenVoice(false);
+                                            stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
                                             callback.getBgmPath("");
                                         }
-
-                                    });
-                                });
-                            } else {
-                                CompressionCuttingManage manage = new CompressionCuttingManage(context, "", tailorPaths -> {
-                                    Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
-                                        stickView.setOriginalPath(paths.get(0));
-                                        stickView.setClipPath(s);
-                                        if (!isCheckedMatting) {
-                                            stickView.changeImage(paths.get(0), false);
-                                        } else {
-                                            stickView.changeImage(s, false);
-                                        }
-                                    });
-                                });
-                                manage.ToMatting(paths);
-
-                                if (stickView.isFirstAddSticker()) {
-                                    if (stickView.isOpenVoice()) {
-                                        stickView.setOpenVoice(false);
-                                        stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
-                                        callback.getBgmPath("");
                                     }
-                                }
 
+                                }
                             }
-                        }
-                    }, "");
+                        }, "");
+                    }else{
+                        callback.showTextDialog();
+                    }
                 }
             }
 
@@ -1076,9 +1107,12 @@ public class CreationTemplateMvpModel {
 //                }
 //            }
         }
-        if (hasReplace) {
+        if (hasReplace||isText) {
             stickView.setLeftBottomBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_change));
         }
+
+
+
         if (isCopy && copyStickerView != null) {
             //来做复制或者来自联系点击下面的item
             StickerView.isFromCopy fromCopy = new StickerView.isFromCopy();
