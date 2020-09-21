@@ -84,9 +84,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     /**
      * 高光
      */
-    private static final int[] COLORS = {Color.parseColor("#00000000"), Color.parseColor("#ffffff"),
-            Color.parseColor("#00000000"), Color.parseColor("#EEEEEE"), Color.parseColor("#ffffff"),
-            Color.parseColor("#00000000"), Color.parseColor("#ffffff")};
+    private static final int[] COLORS = {Color.parseColor("#00000000"), Color.parseColor("#EEEEEE"),
+            Color.parseColor("#ffffff"), Color.parseColor("#EEEEEE"), Color.parseColor("#ffffff"),
+            Color.parseColor("#00000000"), Color.parseColor("#ffffff"),Color.parseColor("#EEEEEE"), Color.parseColor("#00000000")};
 
     private boolean isFromStickerAnim = false;
     private boolean mIsText = false;
@@ -97,6 +97,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private int measureWidth = 300;
     private int defaultHeight = 300;
     private String stickerText="输入文本";
+    private Bitmap bpForTextBj;
 
     public AnimType getChooseAnimId() {
         return ChooseAnimId;
@@ -303,7 +304,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      */
     private Paint mTextPaint;
     private Paint mPaintShadow;
-    private float mTextSize;
+    private float mTextSize=100;
     private float paintWidth = 50;
 
 
@@ -410,25 +411,21 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      * 文字相关的初始化
      */
     private void initTextPainter(Context context) {
-        mTextSize = 80;
+
         mTextPaint = new Paint();
         mPaintShadow = new Paint();
         mTextPaint.setColor(Color.parseColor("#000000"));
         mTextPaint.setTextSize(mTextSize);
         mTextPaint.setStrokeWidth(paintWidth);
-        Bitmap bp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.bg_text_sticker);
-        BitmapShader bitmapShader = new BitmapShader(BitmapUtil.GetBitmapForScale(bp, measureWidth / 2,
-                defaultHeight / 3), Shader.TileMode.MIRROR, Shader.TileMode.MIRROR);
-        mTextPaint.setShader(bitmapShader);
+        mTextPaint.setAntiAlias(true);
+        bpForTextBj = BitmapFactory.decodeResource(context.getResources(), R.mipmap.bg_text_sticker);
+
         Typeface typeface = Typeface.createFromAsset(BaseApplication.getInstance().getAssets(), "ktjt.ttf");
         Typeface typeface1 = Typeface.createFromAsset(BaseApplication.getInstance().getAssets(), "ktjt.ttf");
         mTextPaint.setTypeface(typeface);
-        RadialGradient radialGradient4 = new RadialGradient(measureWidth / (float) 4,
-                defaultHeight / (float) 2, measureWidth / (float) 2, COLORS, null, Shader.TileMode.CLAMP);
         mPaintShadow.setColor(Color.parseColor("#000000"));
         mPaintShadow.setTextSize(mTextSize);
         mPaintShadow.setStrokeWidth(paintWidth);
-        mPaintShadow.setShader(radialGradient4);
         mPaintShadow.setAntiAlias(true);
         mPaintShadow.setTypeface(typeface1);
     }
@@ -803,11 +800,20 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             mHelpBoxRect.set(rectF);
             float textWidth = mTextPaint.measureText(stickerText);
             float halfTextWidth=textWidth / (float) 2;
+            LogUtil.d("OOM4","halfTextWidth="+halfTextWidth);
             float needRectLeft=mHelpBoxRect.centerX();
-            for (int i = 1; i < 15; i++) {
-                canvas.drawText(stickerText, needRectLeft  - (i * 2) - halfTextWidth, needRectHeight - 10 + i, mTextPaint);
+
+            BitmapShader bitmapShader = new BitmapShader(BitmapUtil.GetBitmapForScale(bpForTextBj, (int)mHelpBoxRect.width(),
+                    (int)mHelpBoxRect.height()), Shader.TileMode.MIRROR, Shader.TileMode.MIRROR);
+            mTextPaint.setShader(bitmapShader);
+
+            for (int i = 1; i < 10; i++) {
+                canvas.drawText(stickerText, needRectLeft - halfTextWidth-i, needRectHeight - 10 + i/(float)2, mTextPaint);
             }
-            canvas.drawText(stickerText, needRectLeft - halfTextWidth - 10, needRectHeight - 10, mPaintShadow);
+            RadialGradient radialGradient4 = new RadialGradient(mHelpBoxRect.centerX(),
+                    mHelpBoxRect.centerY(), mHelpBoxRect.width(), COLORS, null, Shader.TileMode.CLAMP);
+            mPaintShadow.setShader(radialGradient4);
+            canvas.drawText(stickerText, needRectLeft - halfTextWidth - 5, needRectHeight - 10, mPaintShadow);
             canvas.drawText(stickerText, needRectLeft-halfTextWidth, needRectHeight- 10, mTextPaint);
             drawFrame(canvas);
         } else if (currentDrawable != null) {
