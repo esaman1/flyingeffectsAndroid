@@ -26,6 +26,12 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.setmVideoPath(path);
     }
 
+
+
+    public void addTextSticker(){
+        creationTemplatemodel.addTextSticker();
+    }
+
     public void CheckedChanged(boolean isChecked){
         creationTemplatemodel.CheckedChanged(isChecked);
     }

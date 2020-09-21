@@ -11,6 +11,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.flyingeffects.com.base.BaseApplication;
+
+import java.util.ArrayList;
+
 /**
  * 获得屏幕相关数据的辅助类
  */
@@ -155,6 +159,23 @@ public class AbScreenUtils {
         } else {
             mainHandler.post(runnable);
         }
+    }
+
+    public static ArrayList<Integer> getAndroidScreenProperty() {
+        WindowManager wm = (WindowManager) BaseApplication.getInstance().getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics dm = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(dm);
+        int width = dm.widthPixels;         // 屏幕宽度（像素）
+        int height = dm.heightPixels;       // 屏幕高度（像素）
+        float density = dm.density;         // 屏幕密度（0.75 / 1.0 / 1.5）
+        int densityDpi = dm.densityDpi;     // 屏幕密度dpi（120 / 160 / 240）
+        // 屏幕宽度算法:屏幕宽度（像素）/屏幕密度
+        int screenWidth = (int) (width / density);  // 屏幕宽度(dp)
+        int screenHeight = (int) (height / density);// 屏幕高度(dp)
+        ArrayList<Integer> integers = new ArrayList<>();
+        integers.add(screenWidth);
+        integers.add(screenHeight);
+        return integers;
     }
 }
 

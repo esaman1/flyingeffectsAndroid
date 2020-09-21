@@ -84,8 +84,9 @@ public class TextStickerView extends View {
     }
 
     public static boolean isEmpty(List list) {
-        if (list == null)
+        if (list == null) {
             return true;
+        }
 
         return list.size() == 0;
     }
@@ -147,16 +148,18 @@ public class TextStickerView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (TextUtils.isEmpty(mText))
+        if (TextUtils.isEmpty(mText)) {
             return;
+        }
 
         parseText();
         drawContent(canvas);
     }
 
     protected void parseText() {
-        if (TextUtils.isEmpty(mText))
+        if (TextUtils.isEmpty(mText)) {
             return;
+        }
 
         mTextContents.clear();
 
@@ -203,8 +206,9 @@ public class TextStickerView extends View {
 
     public void drawText(Canvas canvas, int _x, int _y, float scale,
                          float rotate) {
-        if (isEmpty(mTextContents))
+        if (isEmpty(mTextContents)) {
             return;
+        }
 
         int x = _x;
         int y = _y;
@@ -376,8 +380,9 @@ public class TextStickerView extends View {
         }
 
         double cos = (xa * xb + ya * yb) / (srcLen * curLen);
-        if (cos > 1 || cos < -1)
+        if (cos > 1 || cos < -1) {
             return;
+        }
         float angle = (float) Math.toDegrees(Math.acos(cos));
         float calMatrix = xa * yb - xb * ya;// 行列式计算 确定转动方向
 

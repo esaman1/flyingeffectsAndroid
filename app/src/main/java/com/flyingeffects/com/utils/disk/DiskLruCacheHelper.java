@@ -110,7 +110,9 @@ public class DiskLruCacheHelper
         try
         {
             edit = editor(key);
-            if (edit == null) return;
+            if (edit == null) {
+                return;
+            }
             OutputStream os = edit.newOutputStream(0);
             bw = new BufferedWriter(new OutputStreamWriter(os));
             bw.write(value);
@@ -130,8 +132,9 @@ public class DiskLruCacheHelper
         {
             try
             {
-                if (bw != null)
+                if (bw != null) {
                     bw.close();
+                }
             } catch (IOException e)
             {
                 e.printStackTrace();
@@ -142,7 +145,9 @@ public class DiskLruCacheHelper
     public String getAsString(String key) {
         InputStream inputStream = null;
         inputStream = get(key);
-        if (inputStream == null) return null;
+        if (inputStream == null) {
+            return null;
+        }
         String str = null;
         try {
             str = Util.readFully(new InputStreamReader(inputStream, Util.UTF_8));
@@ -169,8 +174,9 @@ public class DiskLruCacheHelper
         String val = getAsString(key);
         try
         {
-            if (val != null)
+            if (val != null) {
                 return new JSONObject(val);
+            }
         } catch (JSONException e)
         {
             e.printStackTrace();
@@ -257,7 +263,9 @@ public class DiskLruCacheHelper
     {
         byte[] res = null;
         InputStream is = get(key);
-        if (is == null) return null;
+        if (is == null) {
+            return null;
+        }
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try
         {
@@ -283,7 +291,9 @@ public class DiskLruCacheHelper
     {
         DiskLruCache.Editor editor = editor(key);
         ObjectOutputStream oos = null;
-        if (editor == null) return;
+        if (editor == null) {
+            return;
+        }
         try
         {
             OutputStream os = editor.newOutputStream(0);
@@ -305,8 +315,9 @@ public class DiskLruCacheHelper
         {
             try
             {
-                if (oos != null)
+                if (oos != null) {
                     oos.close();
+                }
             } catch (IOException e)
             {
                 e.printStackTrace();
@@ -319,7 +330,9 @@ public class DiskLruCacheHelper
         T t = null;
         InputStream is = get(key);
         ObjectInputStream ois = null;
-        if (is == null) return null;
+        if (is == null) {
+            return null;
+        }
         try
         {
             ois = new ObjectInputStream(is);
@@ -334,8 +347,9 @@ public class DiskLruCacheHelper
         {
             try
             {
-                if (ois != null)
+                if (ois != null) {
                     ois.close();
+                }
             } catch (IOException e)
             {
                 e.printStackTrace();
@@ -355,7 +369,9 @@ public class DiskLruCacheHelper
     public Bitmap getAsBitmap(String key)
     {
         byte[] bytes = getAsBytes(key);
-        if (bytes == null) return null;
+        if (bytes == null) {
+            return null;
+        }
         return Utils.bytes2Bitmap(bytes);
     }
 

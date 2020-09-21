@@ -125,6 +125,7 @@ public class UserHomepageActivity extends BaseActivity {
     }
 
 
+    @Override
     @OnClick({R.id.ll_0, R.id.ll_1,R.id.tv_focus,R.id.iv_back})
     public void onClick(View view) {
         switch (view.getId()) {

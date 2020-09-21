@@ -123,11 +123,6 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.flyingeffects.com.ui.view.activity.TextActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
-
-        <activity
             android:name="com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
@@ -139,7 +134,7 @@
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.CommentBlackActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden"
+            android:windowSoftInputMode="adjustNothing"
             android:theme="@style/AllTransparentTheme" />
 
         <activity
@@ -173,9 +168,8 @@
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateUnspecified|adjustPan"
             android:screenOrientation="portrait" />
-
-
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.VideoCropActivity"

@@ -109,6 +109,7 @@ public class SamplePlayer {
         // Setting thread feeding the audio samples to the audio hardware.
         // (Assumes mChannels = 1 or 2).
         mPlayThread = new Thread() {
+            @Override
             public void run() {
                 int position = mPlaybackStart * mChannels;
                 mSamples.position(position);

@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -473,10 +474,10 @@ public class HomeMainActivity extends FragmentActivity {
     private void changeBottomTab() {
         for (int i = 0; i < mIvMenuBack.length; i++) {
 //            mIvMenu[i].setImageResource(unSelectIconArr[i]);
-            tv_main[i].setTextColor(getResources().getColor(R.color.home_navigation_dark_gray));
+            tv_main[i].setTextColor(ContextCompat.getColor(this,R.color.home_navigation_dark_gray));
         }
 //        mIvMenu[LastWhichMenu].setImageResource(selectIconArr[LastWhichMenu]);
-        tv_main[LastWhichMenu].setTextColor(getResources().getColor(R.color.white));
+        tv_main[LastWhichMenu].setTextColor(ContextCompat.getColor(this,R.color.white));
     }
 
     /**
@@ -513,13 +514,11 @@ public class HomeMainActivity extends FragmentActivity {
     private frag_message menu2F = null;
     private frag_user_center menu3F = null;
 
-
     private void openMenu(int which) {
         setStatusBar();
         if (fragmentManager != null) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             switch (which) {
-
                 case 0: {
                     if (menu0F == null) {
                         menu0F = new frag_Bj();
@@ -529,7 +528,6 @@ public class HomeMainActivity extends FragmentActivity {
                     }
                     break;
                 }
-
                 case 1: {
                     if (menu1F == null) {
                         menu1F = new FragForTemplate();

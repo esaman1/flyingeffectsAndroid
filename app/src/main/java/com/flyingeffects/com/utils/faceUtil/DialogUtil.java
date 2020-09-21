@@ -34,10 +34,11 @@ public class DialogUtil {
 
 	public void showImageDialog(String message, String path, final boolean isCompare) {
 		Builder builder = new Builder(activity);
-		if (isCompare)
-			builder.setTitle("比对完成"); // 设置对话框标题
-		else
-			builder.setTitle("注册成功"); // 设置对话框标题
+		if (isCompare) {
+            builder.setTitle("比对完成"); // 设置对话框标题
+        } else {
+            builder.setTitle("注册成功"); // 设置对话框标题
+        }
 		builder.setIcon(android.R.drawable.btn_star); // 设置对话框标题前的图标
 		LayoutParams linearLp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		LayoutParams textLp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -49,10 +50,11 @@ public class DialogUtil {
 		TextView text = new TextView(activity);
 		text.setText(message);
 		text.setTextColor(0XFFFFFFFF);
-		if (isCompare)
-			text.setTextSize(15);
-		else
-			text.setTextSize(35);
+		if (isCompare) {
+            text.setTextSize(15);
+        } else {
+            text.setTextSize(35);
+        }
 		text.setGravity(Gravity.CENTER);
 		linear.addView(text, textLp);
 		ImageView image = new ImageView(activity);
@@ -166,16 +168,17 @@ public class DialogUtil {
 	}
 
 	public static void setTextSzie(TextView text, int num) {
-		if (num < 3)
-			text.setTextSize(20);
-		else if (num < 5)
-			text.setTextSize(18);
-		else if (num < 7)
-			text.setTextSize(16);
-		else if (num < 9)
-			text.setTextSize(14);
-		else if (num >= 9)
-			text.setTextSize(12);
+		if (num < 3) {
+            text.setTextSize(20);
+        } else if (num < 5) {
+            text.setTextSize(18);
+        } else if (num < 7) {
+            text.setTextSize(16);
+        } else if (num < 9) {
+            text.setTextSize(14);
+        } else if (num >= 9) {
+            text.setTextSize(12);
+        }
 	}
 
 	public String getTitle(int index) {
@@ -205,19 +208,21 @@ public class DialogUtil {
 		switch (index) {
 		case 0:
 			long faceSize = (long) Float.parseFloat(content);
-			if (faceSize < 33)
-				faceSize = 33;
-			else if (faceSize > 2147483647)
-				faceSize = 2147483647;
+			if (faceSize < 33) {
+                faceSize = 33;
+            } else if (faceSize > 2147483647) {
+                faceSize = 2147483647;
+            }
 
 			content = faceSize + "";
 			break;
 		case 1:
 			long interval = (long) Float.parseFloat(content);
-			if (interval < 1)
-				interval = 1;
-			else if (interval > 2147483647)
-				interval = 2147483647;
+			if (interval < 1) {
+                interval = 1;
+            } else if (interval > 2147483647) {
+                interval = 2147483647;
+            }
 
 			content = interval + "";
 			break;
@@ -225,10 +230,11 @@ public class DialogUtil {
 		case 3:
 		case 4:
 			float vlaue = Float.parseFloat(content);
-			if (vlaue < 0)
-				vlaue = 0;
-			else if (vlaue > 1)
-				vlaue = 1;
+			if (vlaue < 0) {
+                vlaue = 0;
+            } else if (vlaue > 1) {
+                vlaue = 1;
+            }
 
 			content = vlaue + "";
 			break;

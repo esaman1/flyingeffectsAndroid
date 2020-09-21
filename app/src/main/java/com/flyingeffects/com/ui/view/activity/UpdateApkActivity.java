@@ -100,6 +100,7 @@ public class UpdateApkActivity extends Activity implements OnClickListener {
             URL url = new URL(path);
             try {
                 TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                    @Override
                     public X509Certificate[] getAcceptedIssuers() {
                         return new X509Certificate[0];
                     }
