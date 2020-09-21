@@ -1644,8 +1644,7 @@ public class CreationTemplateMvpModel {
 
 
     private void modificationSingleItemIsChecked(int position) {
-        for (StickerList item : listForSticker
-        ) {
+        for (StickerList item : listForSticker) {
             item.setChecked(false);
         }
         StickerList item1 = listForSticker.get(position);

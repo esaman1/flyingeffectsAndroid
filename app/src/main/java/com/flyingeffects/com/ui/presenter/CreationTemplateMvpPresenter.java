@@ -24,8 +24,6 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
 
     public void setmVideoPath(String path){
         creationTemplatemodel.setmVideoPath(path);
-
-
     }
 
     public void CheckedChanged(boolean isChecked){
