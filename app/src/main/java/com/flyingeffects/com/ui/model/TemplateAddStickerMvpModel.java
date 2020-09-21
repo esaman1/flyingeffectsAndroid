@@ -912,7 +912,7 @@ public class TemplateAddStickerMvpModel {
 
     private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim) {
         closeAllAnim();
-        StickerView stickView = new StickerView(context);
+        StickerView stickView = new StickerView(BaseApplication.getInstance());
         stickerViewID++;
         stickView.setId(stickerViewID);
         stickView.setOnitemClickListener(new StickerItemOnitemclick() {
