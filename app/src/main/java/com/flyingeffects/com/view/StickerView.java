@@ -91,6 +91,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private float mMeasureWidth = 300;
     private float mMeasureHeight = 300;
     private String stickerText = "输入文本";
+    //文字格式地址
+    private String TypefacePath;
+    //文字图片地址
+    private String getTypefaceBitmapPath;
+    //文字图片
     private Bitmap bpForTextBj;
     private boolean isChooseTextEffect = false;
     // 文字背景矩形变阵
@@ -2084,7 +2089,13 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
+    public String getStickerText() {
+        return stickerText;
+    }
+
+
     public void setTextStyle(String path) {
+        TypefacePath = path;
         Typeface typeface = Typeface.createFromFile(path);
         Typeface typeface2 = Typeface.createFromFile(path);
         Typeface typeface1 = Typeface.createFromFile(path);
@@ -2093,14 +2104,23 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         mTextPaint2.setTypeface(typeface2);
     }
 
+    public String getTypefacePath() {
+        return TypefacePath;
+    }
+
 
     public void setTextBitmapStyle(String path) {
+        getTypefaceBitmapPath = path;
         isChooseTextEffect = true;
         bpForTextBj = BitmapFactory.decodeFile(path);
     }
 
     public boolean getIsTextSticker() {
         return mIsText;
+    }
+
+    public String getTypefaceBitmapPath() {
+        return getTypefaceBitmapPath;
     }
 
 

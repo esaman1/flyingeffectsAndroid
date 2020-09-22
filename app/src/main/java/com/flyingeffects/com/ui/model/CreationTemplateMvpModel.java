@@ -962,7 +962,7 @@ public class CreationTemplateMvpModel {
 
                 } else if (type == StickerView.LEFT_BOTTOM_MODE) {
 
-                    if(!stickView.getIsTextSticker()){
+                    if (!stickView.getIsTextSticker()) {
                         if (UiStep.isFromDownBj) {
                             statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_replace");
                         } else {
@@ -1016,7 +1016,7 @@ public class CreationTemplateMvpModel {
                                 }
                             }
                         }, "");
-                    }else{
+                    } else {
                         callback.showTextDialog();
                     }
                 }
@@ -1109,10 +1109,10 @@ public class CreationTemplateMvpModel {
             stickView.setLeftBottomBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_change));
         }
 
-        if(isText){
+        if (isText) {
             stickView.setLeftBottomBitmap(ContextCompat.getDrawable(context, R.mipmap.shader_edit));
             nowChooseStickerView = stickView;
-            new Handler().postDelayed(stickView::setIntoCenter,500);
+            new Handler().postDelayed(stickView::setIntoCenter, 500);
         }
 
         if (isCopy && copyStickerView != null) {
@@ -1123,8 +1123,19 @@ public class CreationTemplateMvpModel {
             fromCopy.setDegree(copyStickerView.getRotateAngle());
             fromCopy.setRightOffsetPercent(copyStickerView.getRightOffsetPercent());
             if (isFromShowAnim) {
-                fromCopy.setTranX(copyStickerView.getCenterX());
-                fromCopy.setTranY(copyStickerView.getCenterY());
+                if (isText) {
+                    stickView.setStickerText(copyStickerView.getStickerText());
+                    if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
+                        stickView.setTextStyle(copyStickerView.getTypefacePath());
+                    }
+                    if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
+                        stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath());
+                    }
+                } else {
+                    fromCopy.setTranX(copyStickerView.getCenterX());
+                    fromCopy.setTranY(copyStickerView.getCenterY());
+                }
+
             } else {
                 fromCopy.setTranX(copyStickerView.getCenterXAdd30());
                 fromCopy.setTranY(copyStickerView.getCenterYAdd30());
@@ -1213,46 +1224,53 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     private void copyGif(String getResPath, String path, boolean isFromAubum, StickerView stickerView, String OriginalPath, boolean isFromShowAnim) {
-        try {
-            String copyName = null;
-            if (getResPath.endsWith(".gif")) {
-                if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(context, "5_mb_sticker_plus");
-                } else {
-                    statisticsEventAffair.getInstance().setFlag(context, "6_mb_sticker_plus");
-                }
-                copyName = mGifFolder + File.separator + System.currentTimeMillis() + "synthetic.gif";
-                String finalCopyName = copyName;
-                FileUtil.copyFile(new File(getResPath), copyName, new FileUtil.copySucceed() {
-                    @Override
-                    public void isSucceed() {
-                        addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, false);
-                    }
-                });
-            } else {
-                if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(context, "5_mb_bj_plus one");
-                } else {
-                    statisticsEventAffair.getInstance().setFlag(context, "6_customize_bj_plus one");
-                }
-                String aa = path.substring(path.length() - 4);
-                copyName = mImageCopyFolder + File.separator + System.currentTimeMillis() + aa;
-                String finalCopyName1 = copyName;
-                FileUtil.copyFile(new File(path), copyName, new FileUtil.copySucceed() {
-                    @Override
-                    public void isSucceed() {
-                        if (isFromShowAnim) {
-                            addSticker(getResPath, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, false);
-                        } else {
-                            addSticker(finalCopyName1, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, false);
-                        }
-                    }
-                });
-            }
 
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        if (stickerView.getIsTextSticker()) {
+            addSticker("", false, false, false, "", true, stickerView, isFromShowAnim, true);
+        } else {
+            try {
+                String copyName = null;
+                if (getResPath.endsWith(".gif")) {
+                    if (UiStep.isFromDownBj) {
+                        statisticsEventAffair.getInstance().setFlag(context, "5_mb_sticker_plus");
+                    } else {
+                        statisticsEventAffair.getInstance().setFlag(context, "6_mb_sticker_plus");
+                    }
+                    copyName = mGifFolder + File.separator + System.currentTimeMillis() + "synthetic.gif";
+                    String finalCopyName = copyName;
+                    FileUtil.copyFile(new File(getResPath), copyName, new FileUtil.copySucceed() {
+                        @Override
+                        public void isSucceed() {
+                            addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, false);
+                        }
+                    });
+                } else {
+                    if (UiStep.isFromDownBj) {
+                        statisticsEventAffair.getInstance().setFlag(context, "5_mb_bj_plus one");
+                    } else {
+                        statisticsEventAffair.getInstance().setFlag(context, "6_customize_bj_plus one");
+                    }
+                    String aa = path.substring(path.length() - 4);
+                    copyName = mImageCopyFolder + File.separator + System.currentTimeMillis() + aa;
+                    String finalCopyName1 = copyName;
+                    FileUtil.copyFile(new File(path), copyName, new FileUtil.copySucceed() {
+                        @Override
+                        public void isSucceed() {
+                            if (isFromShowAnim) {
+                                addSticker(getResPath, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, false);
+                            } else {
+                                addSticker(finalCopyName1, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, false);
+                            }
+                        }
+                    });
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
     }
 
 
