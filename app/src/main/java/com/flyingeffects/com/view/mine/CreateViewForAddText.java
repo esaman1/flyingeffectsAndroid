@@ -256,6 +256,9 @@ public class CreateViewForAddText {
                         fontEnity.setId(ib.getString("id"));
                         fontEnity.setStatus(ib.getString("status"));
                         fontEnity.setTitle(ib.getString("title"));
+                        if(ib.has("icon_image")){
+                            fontEnity.setIcon_image(ib.getString("icon_image"));
+                        }
                         listFont.add(fontEnity);
                     }
                     createTemplateTextEffectAdapterFont.notifyDataSetChanged();
@@ -296,7 +299,9 @@ public class CreateViewForAddText {
                         fontEnity.setId(ib.getString("id"));
                         fontEnity.setStatus(ib.getString("status"));
                         fontEnity.setTitle(ib.getString("title"));
-//                        fontEnity.setIcon_image(ib.getString("icon_image"));
+                        if(ib.has("icon_image")){
+                            fontEnity.setIcon_image(ib.getString("icon_image"));
+                        }
                         listEffect.add(fontEnity);
                     }
                     createTemplateTextEffectAdapterEffect.notifyDataSetChanged();
