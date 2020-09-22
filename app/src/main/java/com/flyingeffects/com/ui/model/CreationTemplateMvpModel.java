@@ -1141,6 +1141,8 @@ public class CreationTemplateMvpModel {
                 } else {
                     fromCopy.setTranX(copyStickerView.getCenterX());
                     fromCopy.setTranY(copyStickerView.getCenterY());
+
+
                 }
 
             } else {

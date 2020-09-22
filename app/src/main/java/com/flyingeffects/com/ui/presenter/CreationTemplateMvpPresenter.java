@@ -38,6 +38,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
 
 
 
+
+
     public void addTextSticker(){
         creationTemplatemodel.addTextSticker();
     }
