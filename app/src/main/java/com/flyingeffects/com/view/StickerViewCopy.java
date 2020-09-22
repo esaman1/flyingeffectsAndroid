@@ -155,7 +155,6 @@ public class StickerViewCopy<D extends Drawable> extends View implements TickerA
     private PointF center = new PointF(0, 0);
     public float mRotateAngle = 0;
     public float mScale = 1;
-    private Paint debugPaint = new Paint();
     private TextPaint textPaint = new TextPaint();
     private TextPaint whitePaint = new TextPaint();
     private TextPaint shadowPaint = new TextPaint();
@@ -307,10 +306,6 @@ public class StickerViewCopy<D extends Drawable> extends View implements TickerA
         frameColor = mTypedArray.getColor(R.styleable.StickerView_sv_frame_color, getResources().getColor(R.color.white));
         frameWidth = mTypedArray.getDimension(R.styleable.StickerView_sv_frame_width, 1);
         mTypedArray.recycle();
-
-        debugPaint.setColor(Color.parseColor("#000000"));
-        debugPaint.setStrokeWidth(20);
-        debugPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
         textPaint.setTextSize(40);
         textPaint.setColor(Color.RED);
@@ -665,39 +660,6 @@ public class StickerViewCopy<D extends Drawable> extends View implements TickerA
 
     boolean hasVibrated = false;
 
-    /**
-     * 绘制基准线
-     * 当中心点对准时出现 基准线
-     */
-    private void drawGuideLine(Canvas canvas) {
-        if (isGuideLineShow() && center != null && canvas != null && guideLineShowOntouch) {
-            //绘制水平辅助线
-            debugPaint.setStrokeWidth(guideLineWidth);
-            debugPaint.setColor(guideLineColor);
-            float canvasWidth = canvas.getWidth();
-            float canvasHeight = canvas.getHeight();
-            float lineLength = Math.min(canvasWidth, canvasHeight) * 0.2f;
-            boolean needVib = false;
-            if (center.x < canvasWidth / 2f + 25 && center.x > canvasWidth / 2f - 25) {
-                canvas.drawLine(canvasWidth / 2f, 0, canvasWidth / 2f, lineLength, debugPaint);
-                canvas.drawLine(canvasWidth / 2f, canvasHeight, canvasWidth / 2f, canvasHeight - lineLength, debugPaint);
-                needVib = true;
-            }
-            if (center.y < canvasHeight / 2f + 25 && center.y > canvasHeight / 2f - 25) {
-                canvas.drawLine(0, canvasHeight / 2f, lineLength, canvasHeight / 2f, debugPaint);
-                canvas.drawLine(canvasWidth, canvasHeight / 2f, canvasWidth - lineLength, canvasHeight / 2f, debugPaint);
-                needVib = true;
-            }
-            if (needVib) {
-                if (!hasVibrated) {
-                    vibrate();
-                    hasVibrated = true;
-                }
-            } else {
-                hasVibrated = false;
-            }
-        }
-    }
 
     private synchronized void vibrate() {
         Log.e("Sticker", "开始振动=====");
@@ -1264,10 +1226,10 @@ public class StickerViewCopy<D extends Drawable> extends View implements TickerA
     float autoCenterMoveY = 0;
 
     /**
-     * 辅助层中
+     * 调整中心点
      *
-     * @param dx
-     * @param dy
+     * @param dx x位移量
+     * @param dy y位移量
      */
     private void adjustCenter(float dx, float dy) {
 
@@ -1327,14 +1289,6 @@ public class StickerViewCopy<D extends Drawable> extends View implements TickerA
         }
         return false;
     }
-
-//    public void resetView() {
-//        layoutX = getMeasuredWidth() / 2;
-//        layoutY = getMeasuredHeight() / 2;
-//        center.set(layoutX, layoutY);
-//        mRotateAngle = 0;
-//        mScale = 1;
-//    }
 
     public void setCenter(float centerx, float centery) {
         if (center == null) {

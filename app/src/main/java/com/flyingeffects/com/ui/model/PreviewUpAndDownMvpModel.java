@@ -731,13 +731,14 @@ public class PreviewUpAndDownMvpModel {
 
     public void DownVideo(String path, String imagePath, String id, boolean keepAlbum, boolean isFromAgainChooseBj) {
         String videoName = mVideoFolder + File.separator + id + "synthetic.mp4";
-        File File = new File(videoName);
-        if (File.exists()) {
+        File file = new File(videoName);
+        if (file.exists()) {
             if (downProgressDialog != null) {
                 downProgressDialog.closePragressDialog();
             }
             if (!keepAlbum) {
-                callback.downVideoSuccess(videoName, imagePath);//文件已存在，直接回传path
+                //文件已存在，直接回传path
+                callback.downVideoSuccess(videoName, imagePath);
             } else {
                 WaitingDialog.closePragressDialog();
                 saveToAlbum(videoName);

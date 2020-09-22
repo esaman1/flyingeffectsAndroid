@@ -538,7 +538,6 @@ public class CreationTemplateMvpModel {
         }
     }
 
-
     /**
      * description ：选择模板音乐
      * creation date: 2020/9/2
@@ -555,7 +554,6 @@ public class CreationTemplateMvpModel {
             if (isHint) {
                 ToastUtil.showToast("没有背景音乐");
             }
-
         }
     }
 
