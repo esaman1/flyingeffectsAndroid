@@ -92,6 +92,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private String stickerText = "输入文本";
     private Bitmap bpForTextBj;
     private boolean isChooseTextEffect = false;
+    // 文字背景矩形变阵
+    Matrix matrixForBitmapShader = new Matrix();
 
     public AnimType getChooseAnimId() {
         return ChooseAnimId;
@@ -811,7 +813,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             float needRectLeft = mHelpBoxRect.centerX();
             if (bpForTextBj != null && isChooseTextEffect) {
                 BitmapShader bitmapShader = new BitmapShader(BitmapUtil.GetBitmapForScale(bpForTextBj, (int) mHelpBoxRect.width(),
-                        (int) mHelpBoxRect.height()), Shader.TileMode.MIRROR, Shader.TileMode.MIRROR);
+                        (int) mHelpBoxRect.width()), Shader.TileMode.MIRROR , Shader.TileMode.MIRROR );
+                matrixForBitmapShader.setTranslate(mHelpBoxRect.left, mHelpBoxRect.top);
+                bitmapShader.setLocalMatrix(matrixForBitmapShader);
                 mTextPaint.setShader(bitmapShader);
             }
             for (int i = 1; i < 10; i++) {
@@ -828,10 +832,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             }
             drawFrame(canvas);
         } else if (currentDrawable != null) {
-            // drawGuideLine(canvas);
             RectF rectF = new RectF(0, 0, currentDrawable.getIntrinsicWidth(), currentDrawable.getIntrinsicHeight());
             rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY());
-
             mHelpBoxRect.set(rectF);
             textRect.set(mHelpBoxRect.left, mHelpBoxRect.bottom - 50, mHelpBoxRect.right, mHelpBoxRect.bottom);
             //透明遮罩
