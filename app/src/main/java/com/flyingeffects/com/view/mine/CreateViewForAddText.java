@@ -210,7 +210,7 @@ public class CreateViewForAddText {
                 break;
             case R.id.tv_complete:
                 String text=edit_text.getText().toString();
-                if(callback!=null&& !TextUtils.isEmpty(text)){
+                if(callback!=null){
                     callback.setText(text);
                 }
                 dismissDialog();

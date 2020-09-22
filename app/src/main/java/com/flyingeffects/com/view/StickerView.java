@@ -2104,6 +2104,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         mTextPaint2.setTypeface(typeface2);
     }
 
+
     public String getTypefacePath() {
         return TypefacePath;
     }
@@ -2121,6 +2122,21 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     public String getTypefaceBitmapPath() {
         return getTypefaceBitmapPath;
+    }
+
+    public void disMissFrame() {
+        handler.sendEmptyMessage(DISMISS_FRAME);
+    }
+
+
+    public void SetTextScale(float scale) {
+
+        mScale=scale;
+    }
+
+
+    public void SetTextAngle(float angle) {
+        mRotateAngle=angle;
     }
 
 

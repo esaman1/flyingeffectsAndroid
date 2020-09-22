@@ -209,7 +209,12 @@ public class CreationTemplateMvpModel {
      */
     public void ChangeTextLabe(String text) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            nowChooseStickerView.setStickerText(text);
+            if(!TextUtils.isEmpty(text)){
+                nowChooseStickerView.setStickerText(text);
+            }else{
+                deleteStickView(nowChooseStickerView);
+            }
+
         }
     }
 
@@ -1131,6 +1136,8 @@ public class CreationTemplateMvpModel {
                     if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
                         stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath());
                     }
+                    stickView.SetTextAngle(copyStickerView.getRotateAngle());
+                    stickView.setScale(copyStickerView.getScale());
                 } else {
                     fromCopy.setTranX(copyStickerView.getCenterX());
                     fromCopy.setTranY(copyStickerView.getCenterY());
@@ -1419,6 +1426,16 @@ public class CreationTemplateMvpModel {
     }
 
 
+
+    private void disMissStickerFrame(){
+        for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
+            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
+            if (stickerView.getIsTextSticker()) {
+                stickerView.disMissFrame();
+            }
+        }
+    }
+
     /**
      * description ：保存视频采用蓝松sdk提供的在保存功能
      * creation date: 2020/3/12
@@ -1429,6 +1446,7 @@ public class CreationTemplateMvpModel {
     private float percentageH;
 
     public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH, int templateId) {
+        disMissStickerFrame();
         if (templateId != 0) {
             LogUtil.d("OOM", "toSaveVideo-templateId=" + templateId);
             StatisticsToSave(templateId + "");
@@ -1444,8 +1462,6 @@ public class CreationTemplateMvpModel {
                     listAllSticker.clear();
                     cutSuccessNum = 0;
                     cutVideoPathList.clear();
-
-
                     backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, new backgroundDraw.saveCallback() {
                         @Override
                         public void saveSuccessPath(String path, int progress) {
@@ -1476,6 +1492,9 @@ public class CreationTemplateMvpModel {
 
                     for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
                         StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
+                        if(stickerView.getIsTextSticker()) {
+                            stickerView.disMissFrame();
+                        }
                         listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
                     }
 

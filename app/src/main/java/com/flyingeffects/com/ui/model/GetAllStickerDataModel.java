@@ -1,6 +1,5 @@
 package com.flyingeffects.com.ui.model;
 
-import android.content.Context;
 import android.text.TextUtils;
 
 import com.flyingeffects.com.base.BaseApplication;
@@ -26,9 +25,7 @@ public class GetAllStickerDataModel {
 
 
     public AllStickerData getStickerData(StickerView stickerView,boolean isMatting,VideoInfo videoInfo){
-
         AllStickerData stickerData = new AllStickerData();
-
         if(stickerView.getIsTextSticker()){
             ScreenCaptureUtil screenCaptureUtil=new ScreenCaptureUtil(BaseApplication.getInstance());
             stickerData.setOriginalPath(screenCaptureUtil.GetFilePath(stickerView));
@@ -40,9 +37,7 @@ public class GetAllStickerDataModel {
             stickerData.setMaterial(stickerView.getIsmaterial());
             stickerData.setTranslationX(stickerView.getTranslationX());
             stickerData.setTranslationy(stickerView.getTranslationY());
-
         }else{
-
             stickerData.setBoxH((int) stickerView.getmHelpBoxRectH());
             stickerData.setBoxW((int) stickerView.getmHelpBoxRectW());
             stickerData.setScale(stickerView.getScale());
