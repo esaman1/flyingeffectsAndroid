@@ -44,6 +44,12 @@ public class TemplateAddStickerMvpPresenter extends BasePresenter implements Tem
         TemplateAddStickermodel.ChangeTextStyle(path,type);
     }
 
+
+    public void ChangeTextColor(String color0, String color1){
+        TemplateAddStickermodel.ChangeTextColor(color0,color1);
+    }
+
+
     public void alertAlbumUpdate(boolean isSuccess){
         TemplateAddStickermodel.alertAlbumUpdate(isSuccess);
     }

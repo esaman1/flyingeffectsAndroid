@@ -273,6 +273,14 @@ public class TemplateAddStickerMvpModel {
     }
 
 
+    public void ChangeTextColor(String color0, String color1) {
+        if (nowChooseStickerView.getIsTextSticker()) {
+            nowChooseStickerView.setTextPaintColor(color0,color1);
+        }
+    }
+
+
+
     public void showGifAnim(boolean isShow) {
         if (listForStickerModel != null && listForStickerModel.size() > 0) {
             for (AnimStickerModel stickerModel : listForStickerModel

@@ -2,7 +2,6 @@ package com.flyingeffects.com.view.mine;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +38,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import rx.Observable;
 import rx.schedulers.Schedulers;
@@ -54,7 +54,7 @@ public class CreateViewForAddText {
     private ViewPager viewPager;
     private Context context;
     private ArrayList<FontEnity> listFont = new ArrayList<>();
-    private ArrayList<FontEnity> listEffect =new ArrayList<>();
+    private ArrayList<FontEnity> listEffect = new ArrayList<>();
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private CreateTemplateTextEffectAdapter createTemplateTextEffectAdapterEffect;
     private CreateTemplateTextFontAdapter createTemplateTextEffectAdapterFont;
@@ -78,8 +78,8 @@ public class CreateViewForAddText {
         if (bottomSheetDialog == null) {
             bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
             View view = LayoutInflater.from(context).inflate(R.layout.view_add_text, null);
-            ImageView iv_down=view.findViewById(R.id.iv_down);
-            edit_text=view.findViewById(R.id.edit_text);
+            ImageView iv_down = view.findViewById(R.id.iv_down);
+            edit_text = view.findViewById(R.id.edit_text);
             iv_down.setOnClickListener(view12 -> dismissDialog());
             TextView tv_hot = view.findViewById(R.id.tv_hot);
             TextView tv_complete = view.findViewById(R.id.tv_complete);
@@ -91,14 +91,14 @@ public class CreateViewForAddText {
             ArrayList<View> list = new ArrayList<>();
             View gridViewLayout = LayoutInflater.from(context).inflate(R.layout.view_creat_template_effect_type, viewPager, false);
             GridView gridView = gridViewLayout.findViewById(R.id.gridView);
-            gridView.setOnItemClickListener((adapterView, view13, i, l) -> downFile(listEffect.get(i).getImage(),0));
+            gridView.setOnItemClickListener((adapterView, view13, i, l) -> downFile(listEffect.get(i).getImage(), 0,listEffect.get(i).getType(),listEffect.get(i).getColor()));
             createTemplateTextEffectAdapterEffect = new CreateTemplateTextEffectAdapter(listEffect, context);
             gridView.setAdapter(createTemplateTextEffectAdapterEffect);
             list.add(gridViewLayout);
             View gridViewLayoutFont = LayoutInflater.from(context).inflate(R.layout.view_creat_template_text_type, viewPager, false);
             GridView gridViewFont = gridViewLayoutFont.findViewById(R.id.gridView);
             gridViewFont.setOnItemClickListener((adapterView, view1, i, l) -> {
-                downFile(listFont.get(i).getFile(),1);
+                downFile(listFont.get(i).getFile(), 1,1,"");
             });
             createTemplateTextEffectAdapterFont = new CreateTemplateTextFontAdapter(listFont, context);
             gridViewFont.setAdapter(createTemplateTextEffectAdapterFont);
@@ -143,28 +143,40 @@ public class CreateViewForAddText {
     }
 
 
-    private void downFile(String path,int type) {
-        LogUtil.d("OOM4","downFilePath="+path);
-        int index = path.lastIndexOf("/");
-        String newStr = path.substring(index);
-        LogUtil.d("OOM2", "newStr=" + newStr);
-        String name = mTTFFolder + newStr;
-        File file = new File(name);
-        LogUtil.d("OOM2", "name=" + name);
-        if (file.exists()) {
-            LogUtil.d("OOM2", "已下载");
-            if(callback!=null){
-                callback.isSuccess(name,type);
-            }
-        } else {
-            WaitingDialog.openPragressDialog(context);
-            Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
-                DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> {
-                    callback.isSuccess(name,type);
-                    WaitingDialog.closePragressDialog();
+    /**
+     * description ：
+     * creation date: 2020/9/22
+     * param : type 0 热门效果或者 1字体   textType ：热门效果 2表示文字，1 表示图片
+     * user : zhangtongju
+     */
+    private void downFile(String path, int type,int textType,String color) {
+
+        if(type==0&&textType==2){
+            String[]str=color.split(",");
+            callback.setTextColor("#"+str[1],"#"+str[0]);
+        }else{
+            LogUtil.d("OOM4", "downFilePath=" + path);
+            int index = path.lastIndexOf("/");
+            String newStr = path.substring(index);
+            LogUtil.d("OOM2", "newStr=" + newStr);
+            String name = mTTFFolder + newStr;
+            File file = new File(name);
+            LogUtil.d("OOM2", "name=" + name);
+            if (file.exists()) {
+                LogUtil.d("OOM2", "已下载");
+                if (callback != null) {
+                    callback.isSuccess(name, type);
+                }
+            } else {
+                WaitingDialog.openPragressDialog(context);
+                Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
+                    DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> {
+                        callback.isSuccess(name, type);
+                        WaitingDialog.closePragressDialog();
+                    });
+                    manage.DownloadVideo(path, name);
                 });
-                manage.DownloadVideo(path, name);
-            });
+            }
         }
     }
 
@@ -180,6 +192,8 @@ public class CreateViewForAddText {
         void isSuccess(String path, int type);
 
         void setText(String text);
+
+        void setTextColor(String color0,String color1);
 
     }
 
@@ -209,8 +223,8 @@ public class CreateViewForAddText {
 
                 break;
             case R.id.tv_complete:
-                String text=edit_text.getText().toString();
-                if(callback!=null){
+                String text = edit_text.getText().toString();
+                if (callback != null) {
                     callback.setText(text);
                 }
                 dismissDialog();
@@ -237,34 +251,16 @@ public class CreateViewForAddText {
     private void requestFontList() {
         HashMap<String, String> params = new HashMap<>();
         Observable ob = Api.getDefault().fontList(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<FontEnity>>(context) {
             @Override
             protected void _onError(String message) {
             }
 
             @Override
-            protected void _onNext(Object data) {
-                String str = StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM2", str);
-                try {
-                    JSONArray jsonArray = new JSONArray(str);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject ib = (JSONObject) jsonArray.get(i);
-                        FontEnity fontEnity = new FontEnity();
-                        fontEnity.setCreate_time(ib.getString("create_time"));
-                        fontEnity.setFile(ib.getString("file"));
-                        fontEnity.setId(ib.getString("id"));
-                        fontEnity.setStatus(ib.getString("status"));
-                        fontEnity.setTitle(ib.getString("title"));
-                        if(ib.has("icon_image")){
-                            fontEnity.setIcon_image(ib.getString("icon_image"));
-                        }
-                        listFont.add(fontEnity);
-                    }
-                    createTemplateTextEffectAdapterFont.notifyDataSetChanged();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            protected void _onNext(List<FontEnity> data) {
+                listFont.clear();
+                listFont.addAll(data);
+                createTemplateTextEffectAdapterFont.notifyDataSetChanged();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
 
@@ -279,35 +275,17 @@ public class CreateViewForAddText {
     private void requestFontImage() {
         HashMap<String, String> params = new HashMap<>();
         Observable ob = Api.getDefault().fontImage(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<FontEnity>>(context) {
             @Override
             protected void _onError(String message) {
 
             }
 
             @Override
-            protected void _onNext(Object data) {
-                String str = StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM2", str);
-                try {
-                    JSONArray jsonArray = new JSONArray(str);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject ib = (JSONObject) jsonArray.get(i);
-                        FontEnity fontEnity = new FontEnity();
-                        fontEnity.setCreate_time(ib.getString("create_time"));
-                        fontEnity.setImage(ib.getString("image"));
-                        fontEnity.setId(ib.getString("id"));
-                        fontEnity.setStatus(ib.getString("status"));
-                        fontEnity.setTitle(ib.getString("title"));
-                        if(ib.has("icon_image")){
-                            fontEnity.setIcon_image(ib.getString("icon_image"));
-                        }
-                        listEffect.add(fontEnity);
-                    }
-                    createTemplateTextEffectAdapterEffect.notifyDataSetChanged();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            protected void _onNext(List<FontEnity> data) {
+                listEffect.clear();
+                listEffect.addAll(data);
+                createTemplateTextEffectAdapterEffect.notifyDataSetChanged();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }

@@ -37,6 +37,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
+    public void ChangeTextColor(String color0, String color1){
+        creationTemplatemodel.ChangeTextColor(color0,color1);
+    }
+
+
 
 
 

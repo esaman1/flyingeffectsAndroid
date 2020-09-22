@@ -480,6 +480,11 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                 public void setText(String text) {
                     presenter.ChangeTextLabe(text);
                 }
+
+                @Override
+                public void setTextColor(String color0, String color1) {
+                    presenter.ChangeTextColor(color0,color1);
+                }
             });
             createViewForAddText.showBottomSheetDialog();
         }

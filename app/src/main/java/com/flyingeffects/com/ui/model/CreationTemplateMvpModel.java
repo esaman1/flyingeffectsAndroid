@@ -209,13 +209,20 @@ public class CreationTemplateMvpModel {
      */
     public void ChangeTextLabe(String text) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            if(!TextUtils.isEmpty(text)){
+            if (!TextUtils.isEmpty(text)) {
                 nowChooseStickerView.setStickerText(text);
-            }else{
+            } else {
                 deleteStickView(nowChooseStickerView);
             }
-
         }
+    }
+
+
+    public void ChangeTextColor(String color0, String color1) {
+        if (nowChooseStickerView.getIsTextSticker()) {
+            nowChooseStickerView.setTextPaintColor(color0,color1);
+        }
+
     }
 
 
@@ -1428,8 +1435,7 @@ public class CreationTemplateMvpModel {
     }
 
 
-
-    private void disMissStickerFrame(){
+    private void disMissStickerFrame() {
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             if (stickerView.getIsTextSticker()) {
@@ -1494,7 +1500,7 @@ public class CreationTemplateMvpModel {
 
                     for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
                         StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
-                        if(stickerView.getIsTextSticker()) {
+                        if (stickerView.getIsTextSticker()) {
                             stickerView.disMissFrame();
                         }
                         listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));

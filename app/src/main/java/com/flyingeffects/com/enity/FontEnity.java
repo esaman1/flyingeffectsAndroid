@@ -72,4 +72,24 @@ public class FontEnity implements Serializable {
 
     private String icon_image;
 
+    private  int type;
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    private String color;
+
 }
