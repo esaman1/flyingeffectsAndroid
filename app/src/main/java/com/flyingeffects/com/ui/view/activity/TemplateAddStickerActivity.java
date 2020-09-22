@@ -106,6 +106,10 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     @BindView(R.id.viewPager)
     ViewPager viewPager;
 
+
+    @BindView(R.id.ll_add_text_style)
+    LinearLayout ll_add_text_style;
+
     private  boolean isShowPreviewAd=false;
 
     @Override
@@ -469,8 +473,9 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
 
     private void intoTextStyleDialog(){
+        ll_add_text_style.setVisibility(View.VISIBLE);
         if(!DoubleClick.getInstance().isFastDoubleClick()){
-            CreateViewForAddText createViewForAddText=new CreateViewForAddText(this, new CreateViewForAddText.downCallback() {
+            CreateViewForAddText createViewForAddText=new CreateViewForAddText(this,ll_add_text_style, new CreateViewForAddText.downCallback() {
                 @Override
                 public void isSuccess(String path, int type) {
                     presenter.ChangeTextStyle(path,type);

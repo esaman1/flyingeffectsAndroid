@@ -363,4 +363,8 @@
     </LinearLayout>
 
 
+
+   <include layout="@layout/view_add_text"/>
+
+
 </RelativeLayout>

@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -61,23 +62,25 @@ public class CreateViewForAddText {
     private String mTTFFolder;
     private downCallback callback;
     private EditText edit_text;
+    private LinearLayout view;
 
-    public CreateViewForAddText(Context context, downCallback callback) {
+    public CreateViewForAddText(Context context,LinearLayout view, downCallback callback) {
         this.context = context;
+        this.view=view;
         this.callback = callback;
         FileManager fileManager = new FileManager();
         mTTFFolder = fileManager.getFileCachePath(context, "fontStyle");
     }
 
 
-    private BottomSheetDialog bottomSheetDialog;
+//    private BottomSheetDialog bottomSheetDialog;
 
     private ArrayList<TextView> listTitle = new ArrayList<>();
 
     public void showBottomSheetDialog() {
-        if (bottomSheetDialog == null) {
-            bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
-            View view = LayoutInflater.from(context).inflate(R.layout.view_add_text, null);
+//        if (bottomSheetDialog == null) {
+//            bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
+//            View view = LayoutInflater.from(context).inflate(R.layout.view_add_text, null);
             ImageView iv_down = view.findViewById(R.id.iv_down);
             edit_text = view.findViewById(R.id.edit_text);
             iv_down.setOnClickListener(view12 -> dismissDialog());
@@ -121,25 +124,25 @@ public class CreateViewForAddText {
 
                 }
             });
-            bottomSheetDialog.setContentView(view);
-            bottomSheetDialog.setCancelable(true);
-            bottomSheetDialog.setCanceledOnTouchOutside(true);
-            bottomSheetDialog.setOnDismissListener(dialog -> {
-            });
-            View parent = (View) view.getParent();     //处理高度显示完全  https://www.jianshu.com/p/38af0cf77352
-            parent.setBackgroundResource(android.R.color.transparent);
-            BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);
-            view.measure(0, 0);
-            behavior.setPeekHeight(view.getMeasuredHeight());
-            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) parent.getLayoutParams();
-            params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
-            parent.setLayoutParams(params);
-            bottomSheetDialog.show();
+//            bottomSheetDialog.setContentView(view);
+//            bottomSheetDialog.setCancelable(true);
+//            bottomSheetDialog.setCanceledOnTouchOutside(true);
+//            bottomSheetDialog.setOnDismissListener(dialog -> {
+//            });
+//            View parent = (View) view.getParent();     //处理高度显示完全  https://www.jianshu.com/p/38af0cf77352
+//            parent.setBackgroundResource(android.R.color.transparent);
+//            BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);
+//            view.measure(0, 0);
+//            behavior.setPeekHeight(view.getMeasuredHeight());
+//            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) parent.getLayoutParams();
+//            params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+//            parent.setLayoutParams(params);
+//            bottomSheetDialog.show();
             listTitle.add(tv_hot);
             listTitle.add(tv_font);
             requestFontImage();
             requestFontList();
-        }
+//        }
     }
 
 
@@ -199,14 +202,19 @@ public class CreateViewForAddText {
 
 
     private void dismissDialog() {
-        try {
-            if (bottomSheetDialog != null && bottomSheetDialog.isShowing()) {
-                bottomSheetDialog.dismiss();
-                bottomSheetDialog = null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        if(view!=null){
+            view.setVisibility(View.GONE);
         }
+
+//        try {
+//            if (bottomSheetDialog != null && bottomSheetDialog.isShowing()) {
+//                bottomSheetDialog.dismiss();
+//                bottomSheetDialog = null;
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
 

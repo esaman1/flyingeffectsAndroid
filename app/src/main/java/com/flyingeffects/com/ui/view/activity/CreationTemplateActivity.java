@@ -171,6 +171,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     TextView tv_music;
 
 
+    @BindView(R.id.ll_add_text_style)
+    LinearLayout ll_add_text_style;
+
+
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_creation_template_edit;
@@ -463,7 +468,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private void intoTextStyleDialog(){
         if(!DoubleClick.getInstance().isFastDoubleClick()){
-            CreateViewForAddText createViewForAddText=new CreateViewForAddText(this, new CreateViewForAddText.downCallback() {
+
+            ll_add_text_style.setVisibility(View.VISIBLE);
+            CreateViewForAddText createViewForAddText=new CreateViewForAddText(this,ll_add_text_style, new CreateViewForAddText.downCallback() {
                 @Override
                 public void isSuccess(String path, int type) {
                     presenter.ChangeTextStyle(path,type);
