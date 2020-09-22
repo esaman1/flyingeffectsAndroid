@@ -1107,11 +1107,13 @@ public class CreationTemplateMvpModel {
 //                }
 //            }
         }
-        if (hasReplace||isText) {
+        if (hasReplace) {
             stickView.setLeftBottomBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_change));
         }
 
-
+        if(isText){
+            stickView.setLeftBottomBitmap(ContextCompat.getDrawable(context, R.mipmap.shader_edit));
+        }
 
         if (isCopy && copyStickerView != null) {
             //来做复制或者来自联系点击下面的item
