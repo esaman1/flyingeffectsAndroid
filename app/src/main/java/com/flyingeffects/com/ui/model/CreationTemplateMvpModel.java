@@ -1113,7 +1113,8 @@ public class CreationTemplateMvpModel {
 
         if(isText){
             stickView.setLeftBottomBitmap(ContextCompat.getDrawable(context, R.mipmap.shader_edit));
-            new Handler().postDelayed(() -> stickView.setIntoCenter(),500);
+            nowChooseStickerView = stickView;
+            new Handler().postDelayed(stickView::setIntoCenter,500);
         }
 
         if (isCopy && copyStickerView != null) {
