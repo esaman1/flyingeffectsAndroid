@@ -330,12 +330,12 @@ public class backgroundDraw {
         BitmapLayer bpLayer = execute.addBitmapLayer(bp);
         bpLayer.setId(id);
         float layerScale = DRAWPADWIDTH / (float) bpLayer.getLayerWidth();
-        LogUtil.d("OOM", "图层的缩放为" + layerScale + "");
+        LogUtil.d("OOM5", "图层的缩放为" + layerScale + "");
         float stickerScale = stickerItem.getScale();
-        LogUtil.d("OOM", "gif+图层的缩放为" + layerScale * stickerScale + "");
+        LogUtil.d("OOM5", "gif+图层的缩放为" + layerScale * stickerScale + "");
         bpLayer.setScale(layerScale * stickerScale);
-        LogUtil.d("OOM", "mvLayerW=" + bpLayer.getLayerWidth() + "");
-        LogUtil.d("OOM", "mvLayerpadW=" + bpLayer.getPadWidth() + "");
+        LogUtil.d("OOM5", "mvLayerW=" + bpLayer.getLayerWidth() + "");
+        LogUtil.d("OOM5", "mvLayerpadW=" + bpLayer.getPadWidth() + "");
         int rotate = (int) stickerItem.getRotation();
         if (rotate < 0) {
             rotate = 360 + rotate;

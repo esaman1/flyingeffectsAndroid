@@ -36,10 +36,13 @@ public class GetAllStickerDataModel {
             stickerData.setMaskBitmap(stickerView.getMaskBitmap());
             stickerData.setMaterial(stickerView.getIsmaterial());
             stickerData.setTranslationX(stickerView.getTranslationX());
+            stickerData.setText(true);
             stickerData.setTranslationy(stickerView.getTranslationY());
         }else{
             stickerData.setBoxH((int) stickerView.getmHelpBoxRectH());
             stickerData.setBoxW((int) stickerView.getmHelpBoxRectW());
+            stickerData.setText(false);
+            stickerData.setRotation(stickerView.getRotation());
             stickerData.setScale(stickerView.getScale());
             stickerData.setMaskBitmap(stickerView.getMaskBitmap());
             stickerData.setMaterial(stickerView.getIsmaterial());

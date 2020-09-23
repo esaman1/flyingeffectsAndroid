@@ -50,6 +50,16 @@ public class AllStickerData implements Serializable {
         this.scale = scale;
     }
 
+    public boolean isText() {
+        return isText;
+    }
+
+    public void setText(boolean text) {
+        isText = text;
+    }
+
+    private boolean isText=false;
+
 
     private float scale;
     private float translationX;

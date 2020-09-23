@@ -1359,6 +1359,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         //+= angle;
         mRotateAngle = adjustDegree(mRotateAngle, angle);
 
+
         LogUtil.d("updateRotateAndScale", "mScale=" + mScale);
         LogUtil.d("updateRotateAndScale", "mRotateAngle=" + mRotateAngle);
 
