@@ -169,6 +169,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @BindView(R.id.tv_music)
     TextView tv_music;
+    @BindView(R.id.view_line)
+    View viewLine;
 
 
     @Override

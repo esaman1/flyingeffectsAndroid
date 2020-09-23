@@ -2,20 +2,16 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.KeyEvent;
+import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.widget.EditText;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bigkoo.convenientbanner.utils.ScreenUtil;
 import com.flyingeffects.com.R;
@@ -29,20 +25,19 @@ import com.flyingeffects.com.enity.MessageReply;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.statisticsEventAffair;
-import com.flyingeffects.com.utils.KeyboardUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.utils.keyBordUtils;
-import com.green.hand.library.widget.EmojiBoard;
-import com.green.hand.library.widget.EmojiEdittext;
+import com.flyingeffects.com.utils.record.CommentInputDialog;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
@@ -62,7 +57,6 @@ public class CommentBlackActivity extends Activity {
      */
     private RecyclerView recyclerViewComment;
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
-    private EmojiEdittext ed_search;
     private TextView no_comment;
     private String nowTemplateId;
     private String templateTitle;
@@ -73,10 +67,6 @@ public class CommentBlackActivity extends Activity {
     private Comment_message_adapter adapter;
     private int nowFirstOpenClickPosition;
 
-    //键盘输入框
-    private EmojiBoard emojiBoard;
-
-    private TextView tv_sent;
 
     private TextView tv_comment_count;
 
@@ -94,15 +84,18 @@ public class CommentBlackActivity extends Activity {
     private RelativeLayout rela_parent;
 
     private RelativeLayout rela_content;
+    private LinearLayout llComment;
+
+    CommentInputDialog commentInputDialog;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_comment_black);
-        rela_content=findViewById(R.id.rela_content);
-        rela_content.setOnClickListener(view -> finish());
-        int height = ScreenUtil.getScreenHeight(this) / 2;
+//        rela_content=findViewById(R.id.rela_content);
+//        rela_content.setOnClickListener(view -> finish());
+        int height = (int) (ScreenUtil.getScreenHeight(this) * 0.7f);
         rela_parent=findViewById(R.id.rela_parent);
         RelativeLayout.LayoutParams RelativeLayoutParams = (RelativeLayout.LayoutParams) rela_parent.getLayoutParams();
         //如果没有选择下载视频，那么就是自定义视频入口进来，那么默认为绿布
@@ -115,166 +108,44 @@ public class CommentBlackActivity extends Activity {
         templateTitle = getIntent().getStringExtra("templateTitle");
         templateType = getIntent().getStringExtra("templateType");
         recyclerViewComment = findViewById(R.id.recyclerView);
-        ed_search = findViewById(R.id.emojicon_edit_text);
         tv_comment_count = findViewById(R.id.tv_comment_count);
         iv_cancle = findViewById(R.id.iv_cancle);
         iv_cancle.setOnClickListener(view -> CommentBlackActivity.this.finish());
         no_comment = findViewById(R.id.no_comment);
-        ImageView iv_show_emoj = findViewById(R.id.iv_show_emoj);
-        emojiBoard = findViewById(R.id.input_emoji_board);
-        tv_sent = findViewById(R.id.tv_sent);
+        llComment = findViewById(R.id.ll_comment);
         smartRefreshLayout = findViewById(R.id.smart_refresh_layout_bj);
-        ed_search.setOnTouchListener((v, event) -> {
-            KeyboardUtil.showInputKeyboard(this, ed_search);
-            hideEmoJiBoard();
-            return false;
-        });
-
-
-        ed_search.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        llComment.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onGlobalLayout() {
-                Rect r = new Rect();
-                ed_search.getWindowVisibleDisplayFrame(r);
-                int screenHeight = ed_search.getRootView().getHeight();
-                int heightDifference = screenHeight - (r.bottom);
-                if (heightDifference > 200) {
-                    //软键盘显示
-                    LogUtil.e("TAG", "mIsSoftKeyboardShowing 显示");
-                } else {
-                    //软键盘隐藏
-                    ed_search.setHint("有爱评论，说点儿好听的~");
-                    message_id="";
-                }
+            public void onClick(View v) {
+                Window window = commentInputDialog.getWindow();
+                commentInputDialog.show();
+                window.getDecorView().setPadding(0, 0, 0, 0); //消除边距
+                WindowManager.LayoutParams lp = window.getAttributes();
+                lp.width = WindowManager.LayoutParams.MATCH_PARENT;   //设置宽度充满屏幕
+                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                window.setAttributes(lp);
+                window.setGravity(Gravity.BOTTOM);
+                llComment.setVisibility(View.GONE);
+                commentInputDialog.showSoftInputFromWindow();
             }
         });
 
+        commentInputDialog = new CommentInputDialog(this,nowTemplateId,templateType,templateTitle);
+        commentInputDialog.setCommentSuccessListener(new CommentInputDialog.OnCommentSuccessListener() {
+            @Override
+            public void commentSuccess() {
+                requestComment();
+            }
 
-        //表情框点击事件
-        emojiBoard.setItemClickListener(code -> {
-            if (code.equals("/DEL")) {//删除图标
-                ed_search.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
-            } else {//插入表情
-                ed_search.getText().insert(ed_search.getSelectionStart(), code);
+            @Override
+            public void closeComment() {
+                llComment.setVisibility(View.VISIBLE);
             }
         });
 
-
-
-        tv_sent.setOnClickListener(listener);
-        iv_show_emoj.setOnClickListener(view1 -> {
-            LogUtil.d("OOM", "关闭");
-            keyBordUtils.closeKeybord(this);
-            showEmojiBoard();
-        });
         initSmartRefreshLayout();
         initRecyclerView();
         initAction();
-    }
-
-
-    View.OnClickListener listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            switch (view.getId()) {
-                case R.id.tv_sent:
-
-                    if (BaseConstans.hasLogin()) {
-                        String reply = ed_search.getText().toString().trim();
-                        if (!reply.equals("")) {
-                            if (!TextUtils.isEmpty(message_id)) {
-                                replyMessage(reply, "2", message_id);
-                            } else {
-                                replyMessage(reply, "1", "0");
-                            }
-                            cancelFocus();
-                        }
-                    } else {
-                        ToastUtil.showToast("请先登录");
-                    }
-
-
-                    break;
-
-
-                default:
-                    break;
-            }
-        }
-    };
-
-    /**
-     * description ：去掉焦点
-     * creation date: 2020/8/7
-     * user : zhangtongju
-     */
-    private void cancelFocus() {
-        if (ed_search != null && ed_search.hasFocus()) {
-            ed_search.setText("");
-            ed_search.setFocusable(true);
-            ed_search.setFocusableInTouchMode(true);
-            ed_search.requestFocus();
-            ed_search.clearFocus();//失去焦点
-        }
-    }
-
-    /**
-     * description ：回复消息
-     * type 1表示一级评论，2 表示二级回复
-     * creation date: 2020/7/30
-     * user : zhangtongju
-     */
-    private void replyMessage(String content, String type, String message_id) {
-        if (type.equals("1")) {
-            if (templateType.equals("1")) {
-                statisticsEventAffair.getInstance().setFlag(CommentBlackActivity.this, " 12_amount", templateTitle);
-            } else {
-                statisticsEventAffair.getInstance().setFlag(CommentBlackActivity.this, " 13_amount", templateTitle);
-            }
-        } else {
-
-            if (templateType.equals("1")) {
-                statisticsEventAffair.getInstance().setFlag(CommentBlackActivity.this, " 12_Reply", templateTitle);
-            } else {
-                statisticsEventAffair.getInstance().setFlag(CommentBlackActivity.this, " 13_Reply", templateTitle);
-            }
-
-
-        }
-
-
-        HashMap<String, String> params = new HashMap<>();
-        params.put("template_id", nowTemplateId);
-        params.put("content", content);
-        params.put("message_id", message_id);
-        params.put("type", type);
-        // 启动时间
-        Observable ob = Api.getDefault().addComment(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(CommentBlackActivity.this) {
-            @Override
-            protected void _onError(String message) {
-                ToastUtil.showToast(message);
-            }
-
-            @Override
-            protected void _onNext(Object data) {
-                String aa = StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM", aa);
-                cancelFocus();
-                hideShowKeyboard(false);
-                requestComment();
-                ToastUtil.showToast("评论成功");
-            }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
-    }
-
-
-    /**
-     * 展开or隐藏表情框
-     */
-    public void showEmojiBoard() {
-        ed_search.setSelected(emojiBoard.getVisibility() == View.GONE);//设置图片选中效果
-        emojiBoard.showBoard();//是否显示表情框
     }
 
     private void initAction() {
@@ -341,11 +212,6 @@ public class CommentBlackActivity extends Activity {
         smartRefreshLayout.finishLoadMore();
     }
 
-
-    public void hideEmoJiBoard() {
-        emojiBoard.setVisibility(View.GONE);
-    }
-
     public void initSmartRefreshLayout() {
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
             isRefresh = true;
@@ -373,7 +239,6 @@ public class CommentBlackActivity extends Activity {
         recyclerViewComment.setLayoutManager(linearLayoutManager);
         recyclerViewComment.setHasFixedSize(true);
         adapter = new Comment_message_adapter(R.layout.item_comment_preview, allDataList, this, (position, id) -> {
-            hideShowKeyboard(true);
             message_id = id;
         }, position -> {
             //点击了展开更多
@@ -407,9 +272,8 @@ public class CommentBlackActivity extends Activity {
 
                 case R.id.ll_parent:
                     LogUtil.d("OOM", "onItemClick");
-                    showSoftInputFromWindow(ed_search);
-                    ed_search.setHint("@" + allDataList.get(position).getUser_id());
                     message_id = allDataList.get(position).getId();
+                    commentInputDialog.setMessage_id(message_id);
                     break;
 
 
@@ -419,26 +283,6 @@ public class CommentBlackActivity extends Activity {
             }
         });
         recyclerViewComment.setAdapter(adapter);
-    }
-
-
-    private void showSoftInputFromWindow(EditText editText) {
-        editText.requestFocus();
-        hideShowKeyboard(true);
-    }
-
-
-    /**
-     * description ：显示或影藏键盘
-     * creation date: 2020/7/31
-     * user : zhangtongju
-     */
-    public void hideShowKeyboard(boolean isOpen) {
-        if (isOpen) {
-            keyBordUtils.showSoftInput(this, ed_search);
-        } else {
-            keyBordUtils.closeKeybord(Objects.requireNonNull(this));
-        }
     }
 
     private void updateDataComment(int position) {
@@ -475,6 +319,12 @@ public class CommentBlackActivity extends Activity {
         }
     }
 
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0,R.anim.activity_anim_out);
+    }
 
     @Override
     protected void onDestroy() {

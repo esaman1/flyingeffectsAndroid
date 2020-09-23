@@ -1,42 +1,42 @@
 {
   "stringTable": {
-    "0": "D:/githubSpace/flyingeffectsAndroid/segjni/.cxx/cmake/release/armeabi-v7a",
-    "1": "--target=armv7-none-linux-androideabi16 --gcc-toolchain=E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=E:/Sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot -DMegviiSegJni_EXPORTS -I. -ID:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp -ID:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp/include -ID:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp/../../../../android_sdk/jni/src -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security -Oz -DNDEBUG -fPIC"
+    "0": "E:/NinetonProject/feishan_Android/segjni/.cxx/cmake/release/armeabi-v7a",
+    "1": "--target=armv7-none-linux-androideabi16 --gcc-toolchain=E:/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=E:/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/windows-x86_64/sysroot -DMegviiSegJni_EXPORTS -I. -IE:/NinetonProject/feishan_Android/segjni/src/main/cpp -IE:/NinetonProject/feishan_Android/segjni/src/main/cpp/include -IE:/NinetonProject/feishan_Android/segjni/src/main/cpp/../../../../android_sdk/jni/src -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security -Oz -DNDEBUG -fPIC"
   },
   "buildFiles": [
-    "E:\\Sdk\\ndk\\21.0.6113669\\build\\cmake\\platforms.cmake",
-    "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
-    "E:\\Sdk\\ndk\\21.0.6113669\\build\\cmake\\android.toolchain.cmake"
+    "E:\\Android\\sdk\\ndk\\21.0.6113669\\build\\cmake\\android.toolchain.cmake",
+    "E:\\Android\\sdk\\ndk\\21.0.6113669\\build\\cmake\\platforms.cmake",
+    "E:\\NinetonProject\\feishan_Android\\segjni\\src\\main\\cpp\\CMakeLists.txt"
   ],
   "cleanCommands": [
-    "E:\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"D:\\githubSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\release\\armeabi-v7a\" clean"
+    "E:\\Android\\sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"E:\\NinetonProject\\feishan_Android\\segjni\\.cxx\\cmake\\release\\armeabi-v7a\" clean"
   ],
-  "buildTargetsCommand": "E:\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe  -C \"D:\\githubSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\release\\armeabi-v7a\" {LIST_OF_TARGETS_TO_BUILD}",
+  "buildTargetsCommand": "E:\\Android\\sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe  -C \"E:\\NinetonProject\\feishan_Android\\segjni\\.cxx\\cmake\\release\\armeabi-v7a\" {LIST_OF_TARGETS_TO_BUILD}",
   "libraries": {
     "MegviiSegJni-Release-armeabi-v7a": {
-      "buildCommand": "E:\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"D:\\githubSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\release\\armeabi-v7a\" MegviiSegJni",
+      "buildCommand": "E:\\Android\\sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"E:\\NinetonProject\\feishan_Android\\segjni\\.cxx\\cmake\\release\\armeabi-v7a\" MegviiSegJni",
       "buildType": "release",
-      "toolchain": "1238995930",
+      "toolchain": "2289356845",
       "abi": "armeabi-v7a",
       "artifactName": "MegviiSegJni",
       "files": [
         {
-          "src": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\megvii_seg_jni_new.cpp",
+          "src": "E:\\NinetonProject\\feishan_Android\\segjni\\src\\main\\cpp\\megvii_seg_jni_new.cpp",
           "flagsOrdinal": 1,
           "workingDirectoryOrdinal": 0
         }
       ],
       "headers": [],
-      "output": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\jniLibs\\armeabi-v7a\\libMegviiSegJni.so",
+      "output": "E:\\NinetonProject\\feishan_Android\\segjni\\src\\main\\jniLibs\\armeabi-v7a\\libMegviiSegJni.so",
       "runtimeFiles": [
-        "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\jniLibs\\armeabi-v7a\\libmegsegment.so",
-        "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\src\\main\\jniLibs\\armeabi-v7a\\libmegface-new.so"
+        "E:\\NinetonProject\\feishan_Android\\segjni\\src\\main\\jniLibs\\armeabi-v7a\\libmegsegment.so",
+        "E:\\NinetonProject\\feishan_Android\\segjni\\src\\main\\jniLibs\\armeabi-v7a\\libmegface-new.so"
       ]
     }
   },
   "toolchains": {
-    "1238995930": {
-      "cppCompilerExecutable": "E:\\Sdk\\ndk\\21.0.6113669\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
+    "2289356845": {
+      "cppCompilerExecutable": "E:\\Android\\sdk\\ndk\\21.0.6113669\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
     }
   },
   "cFileExtensions": [],

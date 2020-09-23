@@ -1,3 +1,3 @@
-D:/githubSpace/flyingeffectsAndroid/segjni/.cxx/cmake/release/arm64-v8a/CMakeFiles/MegviiSegJni.dir
-D:/githubSpace/flyingeffectsAndroid/segjni/.cxx/cmake/release/arm64-v8a/CMakeFiles/edit_cache.dir
-D:/githubSpace/flyingeffectsAndroid/segjni/.cxx/cmake/release/arm64-v8a/CMakeFiles/rebuild_cache.dir
+E:/NinetonProject/feishan_Android/segjni/.cxx/cmake/release/arm64-v8a/CMakeFiles/MegviiSegJni.dir
+E:/NinetonProject/feishan_Android/segjni/.cxx/cmake/release/arm64-v8a/CMakeFiles/edit_cache.dir
+E:/NinetonProject/feishan_Android/segjni/.cxx/cmake/release/arm64-v8a/CMakeFiles/rebuild_cache.dir

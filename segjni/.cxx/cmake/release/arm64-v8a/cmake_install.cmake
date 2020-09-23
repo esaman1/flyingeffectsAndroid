@@ -1,4 +1,4 @@
-# Install script for directory: D:/githubSpace/flyingeffectsAndroid/segjni/src/main/cpp
+# Install script for directory: E:/NinetonProject/feishan_Android/segjni/src/main/cpp
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "D:/githubSpace/flyingeffectsAndroid/segjni/.cxx/cmake/release/arm64-v8a/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "E:/NinetonProject/feishan_Android/segjni/.cxx/cmake/release/arm64-v8a/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
