@@ -28,7 +28,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.text.InputType;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -39,14 +38,10 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputConnection;
-import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bigkoo.convenientbanner.utils.ScreenUtil;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
@@ -61,10 +56,9 @@ import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.TickerAnimated;
-import com.flyingeffects.com.utils.AbScreenUtils;
 import com.flyingeffects.com.utils.BitmapUtil;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.PxUtils;
+import com.flyingeffects.com.utils.MeasureTextUtils;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.animations.CustomMove.AnimType;
@@ -81,12 +75,13 @@ import java.util.List;
  * @date 2019/12/19
  */
 public class StickerView<D extends Drawable> extends View implements TickerAnimated {
+    private static final String TAG = "StickerView";
     /**
      * 高光
      */
-    private static final int[] COLORS = {Color.parseColor("#00000000"), Color.parseColor("#ffffff"),
-            Color.parseColor("#00000000"), Color.parseColor("#EEEEEE"), Color.parseColor("#ffffff"),
-            Color.parseColor("#00000000"), Color.parseColor("#ffffff")};
+    private static final int[] COLORS = {Color.parseColor("#00000000"), Color.parseColor("#EEEEEE"),
+            Color.parseColor("#ffffff"), Color.parseColor("#EEEEEE"), Color.parseColor("#ffffff"),
+            Color.parseColor("#00000000"), Color.parseColor("#ffffff"), Color.parseColor("#EEEEEE"), Color.parseColor("#00000000")};
 
     private boolean isFromStickerAnim = false;
     private boolean mIsText = false;
@@ -94,8 +89,19 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private int mPaddingStart;
     private int mPaddingBottom;
     private int mPaddingEnd;
-    private int measureWidth = 300;
-    private int defaultHeight = 300;
+    private float mMeasureWidth = 300;
+    private float mMeasureHeight = 300;
+    private String stickerText = "输入文本";
+    //文字格式地址
+    private String TypefacePath;
+    //文字图片地址
+    private String getTypefaceBitmapPath;
+    //文字图片
+    private Bitmap bpForTextBj;
+    //    private boolean isChooseTextEffect = false;
+    // 文字背景矩形变阵
+    Matrix matrixForBitmapShader = new Matrix();
+    private float mTextScale;
 
     public AnimType getChooseAnimId() {
         return ChooseAnimId;
@@ -172,8 +178,17 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     private float moveX;
     private float moveY;
+    /**
+     * 中心
+     */
     private PointF center = new PointF(0, 0);
+    /**
+     * 旋转角度
+     */
     public float mRotateAngle = 0;
+    /**
+     * 缩放比
+     */
     public float mScale = 1;
     private Paint debugPaint = new Paint();
     private TextPaint textPaint = new TextPaint();
@@ -301,18 +316,18 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      * 文字paint
      */
     private Paint mTextPaint;
+    //没有选择效果之前的样式
+    private Paint mTextPaint2;
+    //高光
     private Paint mPaintShadow;
-    private Paint mPaintShadow3;
-    private float mTextSize;
-    private int mTextColor;
+    private float mTextSize = 100;
     private float paintWidth = 50;
-    private float paint3Width = 40;
 
 
-    /**
-     * 与输入法的连接
-     */
-    private TextInputConnection mTextInputConnection;
+//    /**
+//     * 与输入法的连接
+//     */
+//    private TextInputConnection mTextInputConnection;
 
     public StickerView(Context context) {
         this(context, null);
@@ -327,9 +342,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         mIsText = isText;
         initTextPainter(context);
         //只有下面两个方法设置为true才能获取到输入的内容
-        setFocusable(true);
-        setFocusableInTouchMode(true);
-        mTextInputConnection = new TextInputConnection(this, true, this::postInvalidate);
+//        setFocusable(true);
+//        setFocusableInTouchMode(true);
+        //  mTextInputConnection = new TextInputConnection(this, true, this::postInvalidate);
     }
 
     public StickerView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -377,9 +392,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         mHelpPaint.setStrokeWidth(screenUtil.dip2px(BaseApplication.getInstance(), frameWidth));
 
         vibrator = (Vibrator) getContext().getSystemService(Service.VIBRATOR_SERVICE);
-
     }
-
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -412,37 +425,27 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      * 文字相关的初始化
      */
     private void initTextPainter(Context context) {
-        mTextSize = 380;
         mTextPaint = new Paint();
         mPaintShadow = new Paint();
-        mPaintShadow3 = new Paint();
-        mTextPaint.setColor(Color.parseColor("#000000"));
+        mTextPaint.setColor(Color.parseColor("#626262"));
         mTextPaint.setTextSize(mTextSize);
         mTextPaint.setStrokeWidth(paintWidth);
-
+        mTextPaint.setAntiAlias(true);
+        mTextPaint2 = new Paint();
+        mTextPaint2.setColor(Color.parseColor("#000000"));
+        mTextPaint2.setTextSize(mTextSize);
+        mTextPaint2.setStrokeWidth(paintWidth);
+        mTextPaint2.setAntiAlias(true);
+//        bpForTextBj = BitmapFactory.decodeResource(context.getResources(), R.mipmap.bg_text_sticker);
+//        Typeface typeface = Typeface.createFromAsset(BaseApplication.getInstance().getAssets(), "ktjt.ttf");
+//        Typeface typeface1 = Typeface.createFromAsset(BaseApplication.getInstance().getAssets(), "ktjt.ttf");
+//        mTextPaint.setTypeface(typeface);
+//        mPaintShadow.setTypeface(typeface1);
         mPaintShadow.setColor(Color.parseColor("#000000"));
         mPaintShadow.setTextSize(mTextSize);
-        mPaintShadow.setStrokeWidth(paintWidth);
+        mPaintShadow.setStrokeWidth(paintWidth / (float) 3);
+        mPaintShadow.setAntiAlias(true);
 
-        Bitmap bp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.bg_text_sticker);
-
-        BitmapShader bitmapShader = new BitmapShader(BitmapUtil.GetBitmapForScale(bp, measureWidth / 2,
-                defaultHeight / 3), Shader.TileMode.MIRROR, Shader.TileMode.MIRROR);
-        mTextPaint.setShader(bitmapShader);
-        mPaintShadow.setShader(bitmapShader);
-        Typeface typeface = Typeface.createFromAsset(BaseApplication.getInstance().getAssets(), "ktjt.ttf");
-        mTextPaint.setTypeface(typeface);
-        Typeface typeface3 = Typeface.createFromAsset(BaseApplication.getInstance().getAssets(), "ktjt.ttf");
-        Typeface typeface2 = Typeface.createFromAsset(BaseApplication.getInstance().getAssets(), "ktjt.ttf");
-        mPaintShadow.setTypeface(typeface2);
-        mPaintShadow3.setColor(Color.parseColor("#000000"));
-        mPaintShadow3.setTextSize(mTextSize);
-        mPaintShadow3.setStrokeWidth(paint3Width);
-        RadialGradient radialGradient4 = new RadialGradient(measureWidth / (float) 4,
-                defaultHeight / (float) 2, measureWidth / (float) 2, COLORS, null, Shader.TileMode.CLAMP);
-        mPaintShadow3.setShader(radialGradient4);
-        mPaintShadow3.setAntiAlias(true);
-        mPaintShadow3.setTypeface(typeface3);
     }
 
     static Bitmap makeSrc(int w, int h, float percent) {
@@ -468,6 +471,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         drawable.draw(canvas);
         return bitmap;
     }
+
 
     /**
      * 框架上按钮初始化
@@ -704,7 +708,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-
                 case SHOW_FRAME:
                     if (!frameShow) {
                         frameShow = true;
@@ -735,6 +738,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     protected void onDraw(Canvas canvas) {
 //        super.onDraw(canvas);
         LogUtil.d("oom", "-----------------------ondraw------------------------------");
+        LogUtil.d(TAG, "stickerView width = " + getWidth());
+        LogUtil.d(TAG, "stickerView height = " + getHeight());
         drawContent(canvas);
     }
 
@@ -807,52 +812,62 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     Rect bounds = new Rect();
 
+    /**
+     * 绘制具体内容
+     *
+     * @param canvas
+     */
     private void drawContent(Canvas canvas) {
-//        if (mIsText) {
-//            RectF rectF = new RectF(0, 0, measureWidth, defaultHeight);
-//            rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY());
-//            mHelpBoxRect.set(rectF);
-//            float textWidth = mTextPaint.measureText(mTextInputConnection.getNowStr());
-//            for (int i = 1; i < 15; i++) {
-//                canvas.drawText(mTextInputConnection.getNowStr(), mHelpBoxRect.width() / (float) 2 - (i * 2) - textWidth / (float) 2, mHelpBoxRect.height() / (float) 2 - 10 + i, mPaintShadow);
-//            }
-//            canvas.drawText(mTextInputConnection.getNowStr(), mHelpBoxRect.width() / (float) 2 - textWidth / (float) 2 - 10, mHelpBoxRect.height() / (float) 2 - 10, mPaintShadow3);
-//            canvas.drawText(mTextInputConnection.getNowStr(), mHelpBoxRect.width() / (float) 2 - textWidth / (float) 2, mHelpBoxRect.height() / (float) 2 - 10, mTextPaint);
-//            drawFrame(canvas);
-//        } else if (currentDrawable != null) {
-//            // drawGuideLine(canvas);
-//            RectF rectF = new RectF(0, 0, currentDrawable.getIntrinsicWidth(), currentDrawable.getIntrinsicHeight());
-//            rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY());
-//
-//            mHelpBoxRect.set(rectF);
-//            textRect.set(mHelpBoxRect.left, mHelpBoxRect.bottom - 50, mHelpBoxRect.right, mHelpBoxRect.bottom);
-//            //透明遮罩
-//            int w = (int) (currentDrawable.getIntrinsicWidth() + 0.5);
-//            int h = (int) (currentDrawable.getIntrinsicHeight() + 0.5);
-//            mMaskBitmap = makeSrc(w, h, mRightOffsetPercent);
-//            //Bitmap dstBm = makeDst(w, h, currentDrawable);
-//
-//            //实现透明可调节遮罩
-//            int layerID = canvas.saveLayer(0, 0, canvas.getWidth(), canvas.getHeight(), mHelpDstPaint);
-//
-//            canvas.scale(mScale, mScale, center.x, center.y);
-//            canvas.rotate(mRotateAngle, center.x, center.y);
-//            //canvas.drawBitmap(dstBm, mHelpBoxRect.left, mHelpBoxRect.top, mHelpDstPaint);
-//            mHelpDstPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-//            canvas.drawBitmap(mMaskBitmap, mHelpBoxRect.left, mHelpBoxRect.top, mHelpDstPaint);
-//            mHelpDstPaint.setXfermode(null);
-//            canvas.restoreToCount(layerID);
-//
-//            RectUtil.scaleRect(mHelpBoxRect, mScale);
-////            RectUtil.scaleRect(textRect, mScale);
-//            drawFrame(canvas);
-//        }
+        if (mIsText) {
+            mMeasureWidth = MeasureTextUtils.getFontWidth(mTextPaint, stickerText);
+            mMeasureHeight = MeasureTextUtils.getFontHeight(mTextPaint);
+            mMeasureWidth = mMeasureWidth + 10;
+            mMeasureHeight = mMeasureHeight + 10;
+            RectF rectF = new RectF(0, 0, mMeasureWidth, mMeasureHeight);
+            rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY());
+            LogUtil.d("OOM4", "center.x=" + center.x + "----center.y=" + center.y + "----mHelpBoxRect.left=" + mHelpBoxRect.left + "----+mHelpBoxRect.width()=" + mHelpBoxRect.width());
+            mHelpBoxRect.set(rectF);
+            LogUtil.d("sticker_size", "mHelpBoxRect.width() = " + mHelpBoxRect.width());
+            LogUtil.d("sticker_size", "mHelpBoxRect.height() = " + mHelpBoxRect.height());
+            mTextScale = mMeasureWidth / (getMeasuredWidth() / 2f);
+            LogUtil.d(TAG, "text scale = " + mTextScale);
 
-        if (currentDrawable != null) {
-            // drawGuideLine(canvas);
+            float needRectHeight = mHelpBoxRect.top + mHelpBoxRect.height() * 0.8f;
+            float halfTextWidth = mMeasureWidth / (float) 2;
+            LogUtil.d("OOM4", "halfTextWidth=" + halfTextWidth);
+//            if ( isChooseTextEffect) {
+            if (bpForTextBj != null) {
+                BitmapShader bitmapShader = new BitmapShader(BitmapUtil.GetBitmapForScale(bpForTextBj, (int) mHelpBoxRect.width(),
+                        (int) mHelpBoxRect.height()), Shader.TileMode.MIRROR, Shader.TileMode.MIRROR);
+                matrixForBitmapShader.setTranslate(mHelpBoxRect.left, mHelpBoxRect.top);
+                bitmapShader.setLocalMatrix(matrixForBitmapShader);
+                mTextPaint.setShader(bitmapShader);
+            }
+//            }
+
+            canvas.save();
+            canvas.scale(mScale, mScale, center.x, center.y);
+            canvas.rotate(mRotateAngle, center.x, center.y);
+
+            for (int i = 1; i < 10; i++) {
+                canvas.drawText(stickerText, mHelpBoxRect.left + 10 - i, needRectHeight - 10 + i / (float) 2, mTextPaint);
+            }
+            RadialGradient radialGradient4 = new RadialGradient(mHelpBoxRect.centerX(),
+                    mHelpBoxRect.centerY(), mHelpBoxRect.width(), COLORS, null, Shader.TileMode.CLAMP);
+            mPaintShadow.setShader(radialGradient4);
+            if (bpForTextBj == null) {
+                //只要没有选择图片背景
+                canvas.drawText(stickerText, mHelpBoxRect.left + 10, needRectHeight - 10, mTextPaint2);
+            } else {
+                canvas.drawText(stickerText, mHelpBoxRect.left + 10 - 5, needRectHeight - 7.5f, mPaintShadow);
+                canvas.drawText(stickerText, mHelpBoxRect.left + 10, needRectHeight - 10, mTextPaint);
+            }
+            canvas.restore();
+            RectUtil.scaleRect(mHelpBoxRect, mScale);
+            drawFrame(canvas);
+        } else if (currentDrawable != null) {
             RectF rectF = new RectF(0, 0, currentDrawable.getIntrinsicWidth(), currentDrawable.getIntrinsicHeight());
             rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY());
-
             mHelpBoxRect.set(rectF);
             textRect.set(mHelpBoxRect.left, mHelpBoxRect.bottom - 50, mHelpBoxRect.right, mHelpBoxRect.bottom);
             //透明遮罩
@@ -875,19 +890,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             RectUtil.scaleRect(mHelpBoxRect, mScale);
 //            RectUtil.scaleRect(textRect, mScale);
             drawFrame(canvas);
-        } else if (mIsText) {
-            RectF rectF = new RectF(0, 0, measureWidth, defaultHeight);
-            rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY());
-            mHelpBoxRect.set(rectF);
-            float textWidth = mTextPaint.measureText(mTextInputConnection.getNowStr());
-            for (int i = 1; i < 15; i++) {
-                canvas.drawText(mTextInputConnection.getNowStr(), mHelpBoxRect.width() / (float) 2 - (i * 2) - textWidth / (float) 2, mHelpBoxRect.height() / (float) 2 - 10 + i, mPaintShadow);
-            }
-            canvas.drawText(mTextInputConnection.getNowStr(), mHelpBoxRect.width() / (float) 2 - textWidth / (float) 2 - 10, mHelpBoxRect.height() / (float) 2 - 10, mPaintShadow3);
-            canvas.drawText(mTextInputConnection.getNowStr(), mHelpBoxRect.width() / (float) 2 - textWidth / (float) 2, mHelpBoxRect.height() / (float) 2 - 10, mTextPaint);
-            drawFrame(canvas);
         }
-
     }
 
     private void drawFrame(Canvas canvas) {
@@ -921,12 +924,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             rightTopDstRect.offsetTo(mHelpBoxRect.right - offsetValue,
                     mHelpBoxRect.top - offsetValue);
             float center = (mHelpBoxRect.bottom - mHelpBoxRect.top) / (float) 2;
-//                LogUtil.d("center", "center=" + center);
-//                LogUtil.d("center", "mHelpBoxRect.top=" + mHelpBoxRect.top);
             // 音量按键位置
             rightCenterDstRect.offsetTo(mHelpBoxRect.left - offsetValue,
                     mHelpBoxRect.top + center - offsetValue);
-
+            //按钮随画布转动
             RectUtil.rotateRect(leftTopDstRect, mHelpBoxRect.centerX(),
                     mHelpBoxRect.centerY(), mRotateAngle);
             RectUtil.rotateRect(rightBottomDstRect, mHelpBoxRect.centerX(),
@@ -941,13 +942,13 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     mHelpBoxRect.centerY(), mRotateAngle);
             RectUtil.rotateRect(textRect, mHelpBoxRect.centerX(),
                     mHelpBoxRect.centerY(), mRotateAngle);
-
+            //画边框
             canvas.save();
             canvas.rotate(mRotateAngle, mHelpBoxRect.centerX(),
                     mHelpBoxRect.centerY());
             canvas.drawRoundRect(mHelpBoxRect, 10, 10, mHelpPaint);
             canvas.restore();
-
+            //周边按钮
             if (leftTopBitmap != null) {
                 leftTopBitmap.setBounds((int) leftTopDstRect.left, (int) leftTopDstRect.top, (int) leftTopDstRect.right, (int) leftTopDstRect.bottom);
                 leftTopBitmap.draw(canvas);
@@ -991,43 +992,43 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-    /**
-     * 让这个view具备唤起输入法的能力
-     *
-     * @return true 可以当作editor
-     */
-    @Override
-    public boolean onCheckIsTextEditor() {
-        return mIsText;
-    }
+//    /**
+//     * 让这个view具备唤起输入法的能力
+//     *
+//     * @return true 可以当作editor
+//     */
+//    @Override
+//    public boolean onCheckIsTextEditor() {
+//        return mIsText;
+//    }
 
-    /**
-     * 创建与输入法的联系
-     *
-     * @param outAttrs 需要设置的输入法的各种类型
-     * @return InputConnection
-     */
-    @Override
-    public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
-        if (mIsText) {
-            LogUtil.d("onCreateInput","onCreateInputConnection");
-            // outAttrs中最重要的就是:
-            outAttrs.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI;
-            outAttrs.inputType = InputType.TYPE_NULL;
-            return mTextInputConnection;
-        } else {
-            return null;
-        }
-    }
+//    /**
+//     * 创建与输入法的联系
+//     *
+//     * @param outAttrs 需要设置的输入法的各种类型
+//     * @return InputConnection
+//     */
+//    @Override
+//    public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
+//        if (mIsText) {
+//            LogUtil.d("onCreateInput", "onCreateInputConnection");
+//            // outAttrs中最重要的就是:
+//            outAttrs.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI;
+//            outAttrs.inputType = InputType.TYPE_NULL;
+//            return mTextInputConnection;
+//        } else {
+//            return null;
+//        }
+//    }
 
-    /**
-     * 弹出输入法
-     */
-    private void popUpInputMethod() {
-        //InputMethodManager来控制输入法弹起和缩回。
-        InputMethodManager m = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        m.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-    }
+//    /**
+//     * 弹出输入法
+//     */
+//    private void popUpInputMethod() {
+//        //InputMethodManager来控制输入法弹起和缩回。
+//        InputMethodManager m = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+//        m.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+//    }
 
 
     @Override
@@ -1035,6 +1036,15 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         return super.performClick();
     }
 
+    /**
+     * 变更当前的按钮模式
+     *
+     * @param x            按压位置x
+     * @param y            按压位置y
+     * @param pointerCount 手指数量
+     * @param pointerUp    双指抬起
+     * @return 模式code
+     */
     private int adjustMode(float x, float y, int pointerCount, boolean pointerUp) {
         if (leftTopDstRect != null && leftTopDstRect.contains(x, y)) {
             return LEFT_TOP_MODE;
@@ -1075,9 +1085,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     if (callback != null) {
                         callback.stickerMove();
                     }
-                    if (mIsText) {
-                        popUpInputMethod();
-                    }
+//                    if (mIsText) {
+//                        popUpInputMethod();
+//                    }
                     mCurrentMode = adjustMode(x, y, pointerCount, false);
                     if (mCurrentMode == IDLE_MODE) {
                         return false;
@@ -1359,6 +1369,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         //+= angle;
         mRotateAngle = adjustDegree(mRotateAngle, angle);
 
+
         LogUtil.d("updateRotateAndScale", "mScale=" + mScale);
         LogUtil.d("updateRotateAndScale", "mRotateAngle=" + mRotateAngle);
 
@@ -1528,7 +1539,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
     public float getScale() {
-        return mScale;
+        if (mIsText) {
+            return mScale * mTextScale;
+        } else {
+            return mScale;
+        }
     }
 
 
@@ -1714,7 +1729,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     recyclerBitmap();
                 }
             });
-        } else {
+        } else if (!mIsText) {
             //路径不存在
             ToastUtil.showToast("文件不存在");
         }
@@ -1748,7 +1763,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 }
                 // contentHeight = (int) (getMinDisplayWidth() / 2f);
                 RequestManager manager = Glide.with(getContext());
-                RequestBuilder builder = null;
+                RequestBuilder builder;
                 if (resPath.endsWith(".gif")) {
                     builder = manager.asGif();
                 } else {
@@ -1867,7 +1882,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             }
         } else {
             //路径不存在
-//            Toast.makeText(getContext(), "文件不存在", Toast.LENGTH_LONG).show();
             LogUtil.d("OOM", "文件不存在");
         }
     }
@@ -1878,7 +1892,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public void mattingChange(String path) {
         isMatting = true;
         RequestManager manager = Glide.with(BaseApplication.getInstance());
-        RequestBuilder builder = null;
+        RequestBuilder builder;
         if (path.endsWith(".gif")) {
             builder = manager.asGif();
         } else {
@@ -1933,6 +1947,20 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     public float getMBoxCenterY() {
         return mHelpBoxRect.centerY();
+    }
+
+
+    public float getMBoxLeft() {
+        return mHelpBoxRect.left;
+    }
+    public float getMBoxTop() {
+        return mHelpBoxRect.top;
+    }
+    public float getMBoxRight() {
+        return mHelpBoxRect.right;
+    }
+    public float getMBoxBottom() {
+        return mHelpBoxRect.bottom;
     }
 
 
@@ -2081,5 +2109,75 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public void setIsFromStickerAnim(boolean isFromStickerAnim) {
         this.isFromStickerAnim = isFromStickerAnim;
     }
+
+
+    //----------------------------文字相关逻辑---------------------------------
+    public void setStickerText(String text) {
+        this.stickerText = text;
+    }
+
+
+    public String getStickerText() {
+        return stickerText;
+    }
+
+
+    public void setTextStyle(String path) {
+        TypefacePath = path;
+        Typeface typeface = Typeface.createFromFile(path);
+        Typeface typeface2 = Typeface.createFromFile(path);
+        Typeface typeface1 = Typeface.createFromFile(path);
+        mTextPaint.setTypeface(typeface);
+        mPaintShadow.setTypeface(typeface1);
+        mTextPaint2.setTypeface(typeface2);
+    }
+
+
+    public String getTypefacePath() {
+        return TypefacePath;
+    }
+
+
+    public void setTextBitmapStyle(String path) {
+        getTypefaceBitmapPath = path;
+//        isChooseTextEffect = true;
+        bpForTextBj = BitmapFactory.decodeFile(path);
+    }
+
+    public boolean getIsTextSticker() {
+        return mIsText;
+    }
+
+    public String getTypefaceBitmapPath() {
+        return getTypefaceBitmapPath;
+    }
+
+    public void disMissFrame() {
+        handler.sendEmptyMessage(DISMISS_FRAME);
+    }
+
+
+    public void SetTextScale(float scale) {
+
+        mScale = scale;
+    }
+
+
+    public void SetTextAngle(float angle) {
+        mRotateAngle = angle;
+    }
+
+
+    public void setTextPaintColor(String paintColor1, String paintColor2) {
+        if (bpForTextBj != null) {
+            bpForTextBj.recycle();
+            bpForTextBj = null;
+        }
+        mTextPaint.setShader(null);
+        mTextPaint.setColor(Color.parseColor(paintColor1));
+        mTextPaint2.setColor(Color.parseColor(paintColor2));
+
+    }
+
 
 }

@@ -193,7 +193,7 @@ public class TextStickerView extends BaseStickerView {
         mPaintShadow.setTextSize(mTextSize);
         mPaintShadow.setStrokeWidth(paintWidth);
 
-        Bitmap bp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.bg_text_sticker);
+        Bitmap bp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.logo);
         BitmapShader bitmapShader = new BitmapShader(BitmapUtil.GetBitmapForScale(bp, measureWidth / 2,
                 defaultHeight / 3), Shader.TileMode.MIRROR, Shader.TileMode.MIRROR);
         mTextPaint.setShader(bitmapShader);

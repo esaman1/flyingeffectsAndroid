@@ -169,8 +169,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @BindView(R.id.tv_music)
     TextView tv_music;
-    @BindView(R.id.view_line)
-    View viewLine;
+
+
+    @BindView(R.id.ll_add_text_style)
+    LinearLayout ll_add_text_style;
+
 
 
     @Override
@@ -329,6 +332,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     boolean nowUiIsLandscape = false;
 
+    @Override
     @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker, R.id.iv_top_back, R.id.iv_change_ui, R.id.tv_background,R.id.tv_music, R.id.tv_anim, R.id.tv_tiezhi,R.id.tv_add_text})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -380,15 +384,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 break;
 
             case R.id.tv_add_text:
-                if(!DoubleClick.getInstance().isFastDoubleClick()){
-                    CreateViewForAddText createViewForAddText=new CreateViewForAddText(this, new CreateViewForAddText.downCallback() {
-                        @Override
-                        public void isSuccess(String path, int type) {
+                intoTextStyleDialog();
+                presenter.addTextSticker();
 
-                        }
-                    });
-                    createViewForAddText.showBottomSheetDialog();
-                }
                 break;
 
 
@@ -467,6 +465,34 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
     }
 
+
+
+    private void intoTextStyleDialog(){
+        if(!DoubleClick.getInstance().isFastDoubleClick()){
+
+            ll_add_text_style.setVisibility(View.VISIBLE);
+            CreateViewForAddText createViewForAddText=new CreateViewForAddText(this,ll_add_text_style, new CreateViewForAddText.downCallback() {
+                @Override
+                public void isSuccess(String path, int type) {
+                    presenter.ChangeTextStyle(path,type);
+                }
+
+                @Override
+                public void setText(String text) {
+                    presenter.ChangeTextLabe(text);
+                }
+
+                @Override
+                public void setTextColor(String color0, String color1) {
+                    LogUtil.d("OOM4","color0="+color0+"color1="+color1);
+                    presenter.ChangeTextColor(color0,color1);
+                }
+
+
+            });
+            createViewForAddText.showBottomSheetDialog();
+        }
+    }
 
     private int[] lin_Id = {R.id.tv_tiezhi, R.id.tv_anim,R.id.tv_music,R.id.tv_add_text};
 
@@ -681,6 +707,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             tv_music.setVisibility(View.GONE);
             setTextColor(0);
         },500);
+    }
+
+    @Override
+    public void showTextDialog() {
+        intoTextStyleDialog();
     }
 
     @Override
@@ -969,8 +1000,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 videoPath = "";
                 showGreenBj();
                 imageBjPath = event.getPath();
-                new Handler().postDelayed(() -> Glide.with(CreationTemplateActivity.this).load(s).into(iv_green_background), 500);
-
+                new Handler().postDelayed(() ->
+                        Glide.with(CreationTemplateActivity.this)
+                                .load(s).into(iv_green_background), 500);
             } else {
                 LogUtil.d("OOM", "重新选择了视频背景,地址为" + event.getPath());
                 videoPath = event.getPath();

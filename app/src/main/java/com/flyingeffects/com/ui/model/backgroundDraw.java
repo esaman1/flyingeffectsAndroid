@@ -168,7 +168,7 @@ public class backgroundDraw {
 //                waitingProgress.closePragressDialog();
                 callback.saveSuccessPath(exportPath, 100);
                 long time = System.currentTimeMillis() - nowCurtime;
-                statisticsSaveDuration(time,context);
+                statisticsSaveDuration(time, context);
 
                 //todo 需要移除全部的子图层
                 execute.release();
@@ -244,13 +244,13 @@ public class backgroundDraw {
             float stickerScale = stickerItem.getScale();
             LogUtil.d("OOM", "gif+图层的缩放为" + layerScale * stickerScale + "");
 //            videoLayer.setScale(layerScale * stickerScale);
-            if(nowUiIsLandscape){
+            if (nowUiIsLandscape) {
                 float LayerWidth = videoLayer.getLayerWidth();
-                float scale = DRAWPADWIDTH *stickerScale/ (float) LayerWidth;
+                float scale = DRAWPADWIDTH * stickerScale / (float) LayerWidth;
                 float LayerHeight = videoLayer.getLayerHeight();
                 float needDrawHeight = LayerHeight * scale;
-                videoLayer.setScaledValue(DRAWPADWIDTH*stickerScale, needDrawHeight);
-            }else{
+                videoLayer.setScaledValue(DRAWPADWIDTH * stickerScale, needDrawHeight);
+            } else {
                 videoLayer.setScale(layerScale * stickerScale);
             }
 
@@ -327,15 +327,18 @@ public class backgroundDraw {
     private void addBitmapLayer(AllStickerData stickerItem, int id) {
         LogUtil.d("OOM", "addBitmapLayer");
         Bitmap bp = BitmapFactory.decodeFile(stickerItem.getPath());
+        LogUtil.d("OOM", "Path" + stickerItem.getPath());
         BitmapLayer bpLayer = execute.addBitmapLayer(bp);
         bpLayer.setId(id);
         float layerScale = DRAWPADWIDTH / (float) bpLayer.getLayerWidth();
-        LogUtil.d("OOM", "图层的缩放为" + layerScale + "");
+        LogUtil.d("OOM5", "图层的缩放为" + layerScale + "");
+
         float stickerScale = stickerItem.getScale();
-        LogUtil.d("OOM", "gif+图层的缩放为" + layerScale * stickerScale + "");
+        LogUtil.d("OOM5", "gif+图层的缩放为" + layerScale * stickerScale + "");
         bpLayer.setScale(layerScale * stickerScale);
-        LogUtil.d("OOM", "mvLayerW=" + bpLayer.getLayerWidth() + "");
-        LogUtil.d("OOM", "mvLayerpadW=" + bpLayer.getPadWidth() + "");
+        LogUtil.d("OOM5", "mvLayerH=" + bpLayer.getLayerHeight() + "");
+        LogUtil.d("OOM5", "mvLayerW=" + bpLayer.getLayerWidth() + "");
+        LogUtil.d("OOM5", "mvLayerpadW=" + bpLayer.getPadWidth() + "");
         int rotate = (int) stickerItem.getRotation();
         if (rotate < 0) {
             rotate = 360 + rotate;
@@ -347,7 +350,6 @@ public class backgroundDraw {
         float percentX = stickerItem.getTranslationX();
 //        float posX = (bpLayer.getPadWidth() + bpLayer.getLayerWidth()) * percentX - bpLayer.getLayerWidth() / 2.0f;
         bpLayer.setPosition(bpLayer.getPadWidth() * percentX, bpLayer.getPositionY());
-
 
         float percentY = stickerItem.getTranslationy();
         LogUtil.d("OOM", "percentX=" + percentX + "percentY=" + percentY);
@@ -546,7 +548,6 @@ public class backgroundDraw {
                     bpLayer.setVisibility(View.GONE);
                 }
             }
-
 
         });
 
@@ -786,7 +787,7 @@ public class backgroundDraw {
             statisticsEventAffair.getInstance().setFlag(context, "MattingDuration", "小于120分钟");
         } else if (duration <= 9600000) {
             statisticsEventAffair.getInstance().setFlag(context, "MattingDuration", "小于150分钟");
-        }  else {
+        } else {
             statisticsEventAffair.getInstance().setFlag(context, "MattingDuration", "大于150分钟");
         }
     }

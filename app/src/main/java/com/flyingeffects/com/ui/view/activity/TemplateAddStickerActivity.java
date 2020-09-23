@@ -25,6 +25,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.HorizontalListView;
 import com.flyingeffects.com.view.MyScrollView;
+import com.flyingeffects.com.view.mine.CreateViewForAddText;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -104,6 +105,10 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
     @BindView(R.id.viewPager)
     ViewPager viewPager;
+
+
+    @BindView(R.id.ll_add_text_style)
+    LinearLayout ll_add_text_style;
 
     private  boolean isShowPreviewAd=false;
 
@@ -425,9 +430,14 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
         }
     }
 
+    @Override
+    public void showTextDialog() {
+        intoTextStyleDialog();
+    }
+
 
     @Override
-    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_top_back})
+    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_top_back,R.id.tv_add_text})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
@@ -450,8 +460,38 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                 break;
 
 
+            case R.id.tv_add_text:
+                intoTextStyleDialog();
+                presenter.addTextSticker();
+                break;
+
+
             default:
                 break;
+        }
+    }
+
+
+    private void intoTextStyleDialog(){
+        ll_add_text_style.setVisibility(View.VISIBLE);
+        if(!DoubleClick.getInstance().isFastDoubleClick()){
+            CreateViewForAddText createViewForAddText=new CreateViewForAddText(this,ll_add_text_style, new CreateViewForAddText.downCallback() {
+                @Override
+                public void isSuccess(String path, int type) {
+                    presenter.ChangeTextStyle(path,type);
+                }
+
+                @Override
+                public void setText(String text) {
+                    presenter.ChangeTextLabe(text);
+                }
+
+                @Override
+                public void setTextColor(String color0, String color1) {
+                    presenter.ChangeTextColor(color0,color1);
+                }
+            });
+            createViewForAddText.showBottomSheetDialog();
         }
     }
 

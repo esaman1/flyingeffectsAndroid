@@ -50,6 +50,16 @@ public class AllStickerData implements Serializable {
         this.scale = scale;
     }
 
+    public boolean isText() {
+        return isText;
+    }
+
+    public void setText(boolean text) {
+        isText = text;
+    }
+
+    private boolean isText=false;
+
 
     private float scale;
     private float translationX;
@@ -146,5 +156,19 @@ public class AllStickerData implements Serializable {
      * 是否选择了动画，动画id值
      */
     private AnimType ChooseAnimId;
+
+
+    public float getTextInterspace() {
+        return textInterspace;
+    }
+
+    public void setTextInterspace(float textInterspace) {
+        this.textInterspace = textInterspace;
+    }
+
+    /**
+     * 文字和view 的间距
+     */
+    private float textInterspace;
 
 }

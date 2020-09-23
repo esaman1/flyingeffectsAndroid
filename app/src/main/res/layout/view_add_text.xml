@@ -2,6 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/ll_add_text_style"
+    android:visibility="gone"
+    android:layout_alignParentBottom="true"
     android:background="#181818"
     android:orientation="vertical">
 
@@ -27,6 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="10dp"
+                android:padding="1dp"
                 android:background="@null"
                 android:hint="输入文本"
                 android:textColorHint="@color/dark_gray"

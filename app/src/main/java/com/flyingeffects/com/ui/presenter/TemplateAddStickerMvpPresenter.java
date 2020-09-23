@@ -40,10 +40,28 @@ public class TemplateAddStickerMvpPresenter extends BasePresenter implements Tem
         TemplateAddStickermodel = new TemplateAddStickerMvpModel(context, this,viewLayerRelativeLayout,mVideoPath);
     }
 
+    public void ChangeTextStyle(String path, int type){
+        TemplateAddStickermodel.ChangeTextStyle(path,type);
+    }
+
+
+    public void ChangeTextColor(String color0, String color1){
+        TemplateAddStickermodel.ChangeTextColor(color0,color1);
+    }
+
+
     public void alertAlbumUpdate(boolean isSuccess){
         TemplateAddStickermodel.alertAlbumUpdate(isSuccess);
     }
 
+    public void ChangeTextLabe(String str){
+        TemplateAddStickermodel.ChangeTextLabe(str);
+    }
+
+
+    public void addTextSticker(){
+        TemplateAddStickermodel.addTextSticker();
+    }
 
 
     public void onPause(){
@@ -118,5 +136,10 @@ public class TemplateAddStickerMvpPresenter extends BasePresenter implements Tem
     @Override
     public void setgsyVideoProgress(int progress) {
         TemplateAddStickermvpView.setgsyVideoProgress(progress);
+    }
+
+    @Override
+    public void showTextDialog() {
+        TemplateAddStickermvpView.showTextDialog();
     }
 }

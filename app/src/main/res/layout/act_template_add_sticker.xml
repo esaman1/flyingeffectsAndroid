@@ -256,9 +256,19 @@
             android:textColor="#5496FF" />
 
 
+        <TextView
+            android:id="@+id/tv_add_text"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="加字"
+            android:textColor="@color/white" />
 
 
     </LinearLayout>
 
+
+    <include layout="@layout/view_add_text"/>
 
 </RelativeLayout>

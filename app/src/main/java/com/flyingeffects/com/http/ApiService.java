@@ -3,6 +3,7 @@ package com.flyingeffects.com.http;
 import com.flyingeffects.com.enity.ChooseMusic;
 import com.flyingeffects.com.enity.Config;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
+import com.flyingeffects.com.enity.FontEnity;
 import com.flyingeffects.com.enity.HttpResult;
 import com.flyingeffects.com.enity.MessageData;
 import com.flyingeffects.com.enity.MineCommentEnity;
@@ -275,12 +276,12 @@ public interface ApiService {
     //请求字体
     @FormUrlEncoded
     @POST("/api/message/fontList")
-    Observable<HttpResult<Object>> fontList(@FieldMap Map<String, String> params);
+    Observable<HttpResult<List<FontEnity>>> fontList(@FieldMap Map<String, String> params);
 
     //收藏音乐列表
     @FormUrlEncoded
     @POST("/api/message/fontImage")
-    Observable<HttpResult<Object>> fontImage(@FieldMap Map<String, String> params);
+    Observable<HttpResult<List<FontEnity>>> fontImage(@FieldMap Map<String, String> params);
 
 
 

@@ -76,7 +76,6 @@ android {
     }
     buildToolsVersion = '29.0.3'
 
-
 }
 
 dependencies {

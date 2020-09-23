@@ -60,7 +60,6 @@ public class CreateTemplateTextEffectAdapter extends BaseAdapter {
         }
         FontEnity fontEnity=list.get(position);
         holder.tv_name.setText(fontEnity.getTitle());
-//        Glide.with(context).load(fontEnity.getIcon_image()).into(holder.iv_logo);
         Glide.with(context).load(fontEnity.getIcon_image()).apply(new RequestOptions().placeholder(R.mipmap.placeholder)).into(holder.iv_logo);
         return view;
     }

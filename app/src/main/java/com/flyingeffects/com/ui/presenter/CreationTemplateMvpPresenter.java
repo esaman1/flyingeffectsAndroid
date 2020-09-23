@@ -24,8 +24,29 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
 
     public void setmVideoPath(String path){
         creationTemplatemodel.setmVideoPath(path);
+    }
 
 
+    public void ChangeTextStyle(String path, int type){
+        creationTemplatemodel.ChangeTextStyle(path,type);
+    }
+
+
+    public void ChangeTextLabe(String str){
+        creationTemplatemodel.ChangeTextLabe(str);
+    }
+
+
+    public void ChangeTextColor(String color0, String color1){
+        creationTemplatemodel.ChangeTextColor(color0,color1);
+    }
+
+
+
+
+
+    public void addTextSticker(){
+        creationTemplatemodel.addTextSticker();
     }
 
     public void CheckedChanged(boolean isChecked){
@@ -170,6 +191,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     @Override
     public void showMusicBtn(boolean isShow) {
         creationTemplatemvpView.showMusicBtn(isShow);
+    }
+
+    @Override
+    public void showTextDialog() {
+        creationTemplatemvpView.showTextDialog();
     }
 
 

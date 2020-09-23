@@ -156,18 +156,20 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
      * user : zhangtongju
      */
     private void saveToAlbum(String path, boolean hasShowStimulateAd) {
-        String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
-        try {
-            FileUtil.copyFile(new File(path), albumPath);
-            albumBroadcast(albumPath);
-            showKeepSuccessDialog(albumPath);
-            if (!hasShowStimulateAd) {
-                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-                    AdManager.getInstance().showCpAd(CreationTemplatePreviewActivity.this, AdConfigs.AD_SCREEN_FOR_keep);
+        if(!isOndesTroy){
+            String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
+            try {
+                FileUtil.copyFile(new File(path), albumPath);
+                albumBroadcast(albumPath);
+                showKeepSuccessDialog(albumPath);
+                if (!hasShowStimulateAd) {
+                    if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                        AdManager.getInstance().showCpAd(CreationTemplatePreviewActivity.this, AdConfigs.AD_SCREEN_FOR_keep);
+                    }
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -418,10 +420,14 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 //        };
 //        timer.schedule(task, 0, 16);
 //    }
+
+
+    boolean isOndesTroy=false;
     @Override
     public void onDestroy() {
         super.onDestroy();
         videoStop();
+        isOndesTroy=true;
 //        destroyTimer();
         EventBus.getDefault().unregister(this);
     }
@@ -536,7 +542,10 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
     @Override
     public void isSaveToAlbum(String path, boolean isAdSuccess) {
-        saveToAlbum(path, isAdSuccess);
+        if(!isOndesTroy){
+            saveToAlbum(path, isAdSuccess);
+        }
+
 
     }
 }
