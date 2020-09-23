@@ -36,11 +36,29 @@ public class ScreenCaptureUtil {
         view.buildDrawingCache();
         Bitmap bp = view.getDrawingCache();
         BitmapManager.getInstance().saveBitmapToPath(bp, path);
-        int Top = (int) view.getMBoxTop();
-        int Right = (int) view.getMBoxRight();
-        int Left = (int) view.getMBoxLeft();
-        int Bottom = (int) view.getMBoxBottom();
-        float angle = view.getRotateAngle();
+        float scale=view.getScale();
+        int Top ;
+        int Right;
+        int Left ;
+        int Bottom;
+        if(scale<1){
+             Top = (int) (view.getMBoxTop()+ view.getMBoxTop()*(1-scale));
+             Right = (int) (view.getMBoxRight()-view.getMBoxRight()*(1-scale));
+             Left = (int) (view.getMBoxLeft()+ view.getMBoxLeft()*(1-scale));
+             Bottom = (int) (view.getMBoxBottom()-view.getMBoxBottom()*(1-scale));
+        }else if(scale>1){
+             Top = (int) (view.getMBoxTop()- view.getMBoxTop()*scale);
+             Right = (int) (view.getMBoxRight()+view.getMBoxRight()*scale);
+             Left = (int) (view.getMBoxLeft()- view.getMBoxLeft()*scale);
+             Bottom = (int) (view.getMBoxBottom()+view.getMBoxBottom()*scale);
+        }else{
+             Top = (int) (view.getMBoxTop());
+             Right = (int) (view.getMBoxRight());
+             Left = (int) (view.getMBoxLeft());
+             Bottom = (int) (view.getMBoxBottom());
+        }
+        //需要逆时针
+        float angle = 360-view.getRotateAngle();
         int cx = (int) view.getCenterX();
         int cY = (int) view.getCenterY();
         int[] a1 = test(Left, Top, cx, cY, angle);
