@@ -238,6 +238,8 @@ public class BitmapManager {
                 case ExifInterface.ORIENTATION_ROTATE_180:
                     mat.postRotate(180);
                     break;
+                default:
+                    break;
             }
             return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mat, true);
         } catch (IOException e) {

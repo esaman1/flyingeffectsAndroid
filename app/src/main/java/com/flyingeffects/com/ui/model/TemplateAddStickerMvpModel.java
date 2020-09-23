@@ -306,7 +306,6 @@ public class TemplateAddStickerMvpModel {
     }
 
 
-
     public void requestStickersList(boolean isShowDialog) {
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
@@ -436,7 +435,7 @@ public class TemplateAddStickerMvpModel {
      * @param position 当前点击的那个item ，主要用来更新数据
      */
     private void downSticker(String path, String imageId, int position) {
-        if(!isDestroy){
+        if (!isDestroy) {
             WaitingDialog.openPragressDialog(context);
             if (path.endsWith(".gif")) {
 //            String finalPath = path;
@@ -451,7 +450,7 @@ public class TemplateAddStickerMvpModel {
                         WaitingDialog.closePragressDialog();
                         return;
                     } else {
-                        addSticker(fileName, false, false, false, null, false, null, false,false);
+                        addSticker(fileName, false, false, false, null, false, null, false, false);
                         WaitingDialog.closePragressDialog();
                         return;
                     }
@@ -472,7 +471,7 @@ public class TemplateAddStickerMvpModel {
                     try {
                         if (path1 != null) {
                             FileUtil.copyFile(path1, fileName);
-                            addSticker(fileName, false, false, false, null, false, null, false,false);
+                            addSticker(fileName, false, false, false, null, false, null, false, false);
                             WaitingDialog.closePragressDialog();
                             modificationSingleItem(position);
                         } else {
@@ -503,7 +502,7 @@ public class TemplateAddStickerMvpModel {
                             String copyName = mGifFolder + File.separator + System.currentTimeMillis() + aa;
                             saveBitmapToPath(finalOriginalBitmap, copyName, isSucceed -> {
                                 modificationSingleItem(position);
-                                addSticker(copyName, false, false, false, null, false, null, false,false);
+                                addSticker(copyName, false, false, false, null, false, null, false, false);
                             });
                         });
                     } catch (Exception e) {
@@ -914,7 +913,7 @@ public class TemplateAddStickerMvpModel {
                 FileUtil.copyFile(new File(getResPath), copyName, new FileUtil.copySucceed() {
                     @Override
                     public void isSucceed() {
-                        addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim,false);
+                        addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, false);
                     }
                 });
             } else {
@@ -929,7 +928,7 @@ public class TemplateAddStickerMvpModel {
                 FileUtil.copyFile(new File(path), copyName, new FileUtil.copySucceed() {
                     @Override
                     public void isSucceed() {
-                        addSticker(getResPath, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim,false);
+                        addSticker(getResPath, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, false);
                     }
                 });
             }
@@ -971,7 +970,7 @@ public class TemplateAddStickerMvpModel {
                     if (!stickView.isOpenVoice) {
                         //打开声音
                         stickView.setOpenVoice(true);
-                        stickView.setRightCenterBitmapForChangeIcon(context.getDrawable(R.mipmap.sticker_open_voice));
+                        stickView.setRightCenterBitmapForChangeIcon(ContextCompat.getDrawable(context, R.mipmap.sticker_open_voice));
                         getVideoVoice(stickView.getOriginalPath(), soundFolder);
                         if (UiStep.isFromDownBj) {
                             statisticsEventAffair.getInstance().setFlag(context, "7_open");
@@ -982,7 +981,7 @@ public class TemplateAddStickerMvpModel {
                         //关闭声音
                         videoVoicePath = "";
                         stickView.setOpenVoice(false);
-                        stickView.setRightCenterBitmapForChangeIcon(context.getDrawable(R.mipmap.sticker_close_voice));
+                        stickView.setRightCenterBitmapForChangeIcon(ContextCompat.getDrawable(context, R.mipmap.sticker_close_voice));
 //                        callback.getBgmPath("");
                         if (UiStep.isFromDownBj) {
                             statisticsEventAffair.getInstance().setFlag(context, "7_turnoff");
@@ -1015,10 +1014,11 @@ public class TemplateAddStickerMvpModel {
                                                 stickView.changeImage(s, false);
                                             }
 
+
                                             if (stickView.isFirstAddSticker()) {
                                                 stickView.setRightCenterBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_close_voice));
-//                                                callback.changFirstVideoSticker(paths.get(0));
-//                                                callback.getBgmPath("");
+//                                            callback.changFirstVideoSticker(paths.get(0));
+//                                            callback.getBgmPath("");
                                             }
 
                                         });
@@ -1040,8 +1040,8 @@ public class TemplateAddStickerMvpModel {
                                     if (stickView.isFirstAddSticker()) {
                                         if (stickView.isOpenVoice()) {
                                             stickView.setOpenVoice(false);
-                                            stickView.setRightCenterBitmap(context.getDrawable(R.mipmap.sticker_close_voice));
-//                                            callback.getBgmPath("");
+                                            stickView.setRightCenterBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_close_voice));
+//                                        callback.getBgmPath("");
                                         }
                                     }
 
@@ -1094,15 +1094,15 @@ public class TemplateAddStickerMvpModel {
 //                }else{
 //                    callback.showMusicBtn(false);
 //                }
-                nowChooseStickerView=stickView;
+                nowChooseStickerView = stickView;
 
 
             }
         });
-        stickView.setRightTopBitmap(context.getDrawable(R.mipmap.sticker_copy));
-        stickView.setLeftTopBitmap(context.getDrawable(R.drawable.sticker_delete));
-        stickView.setRightBottomBitmap(context.getDrawable(R.mipmap.sticker_redact));
-        stickView.setRightBitmap(context.getDrawable(R.mipmap.sticker_updown));
+        stickView.setRightTopBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_copy));
+        stickView.setLeftTopBitmap(ContextCompat.getDrawable(context, R.drawable.sticker_delete));
+        stickView.setRightBottomBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_redact));
+        stickView.setRightBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_updown));
 
         stickView.setIsFromStickerAnim(isFromShowAnim);
         stickView.setComeFromAlbum(isFromAubum);
@@ -1119,7 +1119,7 @@ public class TemplateAddStickerMvpModel {
             stickView.setIsmaterial(false);
         }
         if (isFirstAdd) {
-            nowChooseStickerView=stickView;
+            nowChooseStickerView = stickView;
             stickView.setFirstAddSticker(true);
 //            if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
 //                LogUtil.d("OOM", "mVideoPath=" + mVideoPath);
@@ -1209,15 +1209,14 @@ public class TemplateAddStickerMvpModel {
      */
     public void ChangeTextLabe(String text) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            if(!TextUtils.isEmpty(text)){
+            if (!TextUtils.isEmpty(text)) {
                 nowChooseStickerView.setStickerText(text);
-            }else{
+            } else {
                 deleteStickView(nowChooseStickerView);
             }
 
         }
     }
-
 
     /**
      * description ：视频音视频分离，获得视频的声音
@@ -1225,7 +1224,7 @@ public class TemplateAddStickerMvpModel {
      * user : zhangtongju
      */
     private void getVideoVoice(String videoPath, String outputPath) {
-        if(!isDestroy){
+        if (!isDestroy) {
             WaitingDialog.openPragressDialog(context);
 //        new Thread(() -> {
             mediaManager manager = new mediaManager(context);
@@ -1251,8 +1250,8 @@ public class TemplateAddStickerMvpModel {
         if (vibrator.hasVibrator()) {
             //设置手机振动
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(VibrationEffect.createOneShot(5,VibrationEffect.DEFAULT_AMPLITUDE));
-            }else {
+                vibrator.vibrate(VibrationEffect.createOneShot(5, VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
                 vibrator.vibrate(5);
             }
         }
@@ -1284,7 +1283,7 @@ public class TemplateAddStickerMvpModel {
     }
 
 
-    private void disMissStickerFrame(){
+    private void disMissStickerFrame() {
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             if (stickerView.getIsTextSticker()) {
@@ -1454,8 +1453,6 @@ public class TemplateAddStickerMvpModel {
 
 
             builder.setNegativeButton(context.getString(R.string.got_it), (dialog, which) -> {
-
-
                 dialog.dismiss();
             });
             builder.setCancelable(true);
@@ -1594,7 +1591,6 @@ public class TemplateAddStickerMvpModel {
             }
         }
     };
-
 
 
     public void addTextSticker() {

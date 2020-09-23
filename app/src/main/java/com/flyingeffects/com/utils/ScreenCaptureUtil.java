@@ -3,6 +3,8 @@ package com.flyingeffects.com.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.view.View;
 
 import com.flyingeffects.com.manager.BitmapManager;
@@ -14,7 +16,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class ScreenCaptureUtil {
-
+    private static final String TAG = "ScreenCaptureUtil";
     private String mTextFolder;
 
     public ScreenCaptureUtil(Context context) {
@@ -22,13 +24,11 @@ public class ScreenCaptureUtil {
         mTextFolder = fileManager.getFileCachePath(context, "TextFolder");
     }
 
-
     public Bitmap GetImagePath(View view) {
         view.setDrawingCacheEnabled(true);
         view.buildDrawingCache();
         return view.getDrawingCache();
     }
-
 
     public String GetFilePath(StickerView view) {
         String path = mTextFolder + File.separator + System.currentTimeMillis() + ".png";
@@ -71,9 +71,19 @@ public class ScreenCaptureUtil {
         }
         view.setDrawingCacheEnabled(false);
         return path;
-
     }
 
+    private Bitmap loadBitmapFromView(View v) {
+        int w = v.getWidth();
+        int h = v.getHeight();
+        LogUtil.d(TAG, "height = " + h);
+        LogUtil.d(TAG, "width = " + w);
+        Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmp);
+        v.layout(0, 0, w, h);
+        v.draw(c);
+        return bmp;
+    }
 
 
 

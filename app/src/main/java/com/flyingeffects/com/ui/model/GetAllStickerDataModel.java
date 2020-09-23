@@ -6,6 +6,7 @@ import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.enity.AllStickerData;
 import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ScreenCaptureUtil;
 import com.flyingeffects.com.view.StickerView;
 import com.shixing.sxve.ui.albumType;
@@ -14,6 +15,7 @@ public class GetAllStickerDataModel {
 
 
     private static GetAllStickerDataModel thisModel;
+
     public static GetAllStickerDataModel getInstance() {
         if (thisModel == null) {
             thisModel = new GetAllStickerDataModel();
@@ -23,16 +25,17 @@ public class GetAllStickerDataModel {
     }
 
 
-
-    public AllStickerData getStickerData(StickerView stickerView,boolean isMatting,VideoInfo videoInfo){
+    public AllStickerData getStickerData(StickerView stickerView, boolean isMatting, VideoInfo videoInfo) {
         AllStickerData stickerData = new AllStickerData();
-        if(stickerView.getIsTextSticker()){
-            ScreenCaptureUtil screenCaptureUtil=new ScreenCaptureUtil(BaseApplication.getInstance());
+        if (stickerView.getIsTextSticker()) {
+            ScreenCaptureUtil screenCaptureUtil = new ScreenCaptureUtil(BaseApplication.getInstance());
             stickerData.setOriginalPath(screenCaptureUtil.GetFilePath(stickerView));
             stickerData.setPath(screenCaptureUtil.GetFilePath(stickerView));
             stickerData.setBoxH((int) stickerView.getmHelpBoxRectH());
             stickerData.setBoxW((int) stickerView.getmHelpBoxRectW());
 //            stickerData.setTextInterspace(screenCaptureUtil.GetTextInterspace(stickerView));
+            LogUtil.d("sticker_size", "stickerView.getmHelpBoxRectH() = " + stickerView.getmHelpBoxRectH());
+            LogUtil.d("sticker_size", "stickerView.getmHelpBoxRectW() = " + stickerView.getmHelpBoxRectW());
             stickerData.setScale(stickerView.getScale());
             stickerData.setMaskBitmap(stickerView.getMaskBitmap());
             stickerData.setMaterial(stickerView.getIsmaterial());
@@ -83,12 +86,8 @@ public class GetAllStickerDataModel {
             }
         }
         stickerData.setChooseAnimId(stickerView.getChooseAnimId());
-
-
-        return  stickerData;
+        return stickerData;
     }
-
-
 
 
 }

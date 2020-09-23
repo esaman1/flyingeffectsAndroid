@@ -6,7 +6,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Handler;
@@ -24,10 +23,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,10 +60,8 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.ChooseMusicActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
-import com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.utils.screenUtil;
@@ -591,6 +586,10 @@ public class CreationTemplateMvpModel {
     }
 
 
+
+    private int previewCount;
+    private int sublayerListPosition;
+
     /**
      * description ：开始播放动画 ，如果来自预览，那么stickver
      * creation date: 2020/5/27
@@ -601,9 +600,6 @@ public class CreationTemplateMvpModel {
      * @param isFromPreview     是否来自播放预览
      * user : zhangtongju
      */
-    private int previewCount;
-    private int sublayerListPosition;
-
     private synchronized void startPlayAnim(int position, boolean isClearAllAnim, StickerView targetStickerView, int intoPosition, boolean isFromPreview) {
         if (!isFromPreview) {
             stopAllAnim();
@@ -681,7 +677,7 @@ public class CreationTemplateMvpModel {
 
         new Handler().postDelayed(() -> {
             //如果是gif 那么开启gif动画
-            ArrayList<StickerView> list = null;
+            ArrayList<StickerView> list;
             finalTargetStickerView.start();
             if (sublayerListForBitmapLayer != null) {
                 list = sublayerListForBitmapLayer.get(position);
@@ -1499,7 +1495,9 @@ public class CreationTemplateMvpModel {
                                     intent.putExtra("path", path);
                                     intent.putExtra("nowUiIsLandscape", nowUiIsLandscape);
                                     context.startActivity(intent);
-                                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> isIntoSaveVideo = false, 500));
+                                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread())
+                                            .subscribe(integer -> new Handler().postDelayed(() ->
+                                                    isIntoSaveVideo = false, 500));
                                 } else {
                                     if (progress == 10000) {
                                         isIntoSaveVideo = false;
@@ -1525,7 +1523,9 @@ public class CreationTemplateMvpModel {
 
                     if (listAllSticker.size() == 0) {
                         isIntoSaveVideo = false;
-                        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().post(() -> Toast.makeText(context, "你未选择素材", Toast.LENGTH_SHORT).show()));
+                        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread())
+                                .subscribe(integer -> new Handler().post(() ->
+                                        Toast.makeText(context, "你未选择素材", Toast.LENGTH_SHORT).show()));
                         return;
                     }
 
@@ -1554,8 +1554,6 @@ public class CreationTemplateMvpModel {
                 }
             }
         }, 200);
-
-
     }
 
 
@@ -1733,7 +1731,8 @@ public class CreationTemplateMvpModel {
         }
         StickerList item1 = listForSticker.get(position);
         item1.setChecked(true);
-        listForSticker.set(position, item1);//修改对应的元素
+        //修改对应的元素
+        listForSticker.set(position, item1);
         gridAdapter.notifyDataSetChanged();
     }
 
@@ -1745,7 +1744,8 @@ public class CreationTemplateMvpModel {
         }
         StickerAnim item1 = listAllAnima.get(position);
         item1.setChecked(true);
-        listAllAnima.set(position, item1);//修改对应的元素
+        //修改对应的元素
+        listAllAnima.set(position, item1);
         templateGridViewAnimAdapter.notifyDataSetChanged();
     }
 

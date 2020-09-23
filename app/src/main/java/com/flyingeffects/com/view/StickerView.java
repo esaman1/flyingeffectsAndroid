@@ -75,6 +75,7 @@ import java.util.List;
  * @date 2019/12/19
  */
 public class StickerView<D extends Drawable> extends View implements TickerAnimated {
+    private static final String TAG = "StickerView";
     /**
      * 高光
      */
@@ -97,9 +98,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private String getTypefaceBitmapPath;
     //文字图片
     private Bitmap bpForTextBj;
-//    private boolean isChooseTextEffect = false;
+    //    private boolean isChooseTextEffect = false;
     // 文字背景矩形变阵
     Matrix matrixForBitmapShader = new Matrix();
+    private float mTextScale;
 
     public AnimType getChooseAnimId() {
         return ChooseAnimId;
@@ -392,7 +394,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         vibrator = (Vibrator) getContext().getSystemService(Service.VIBRATOR_SERVICE);
     }
 
-
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -442,7 +443,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 //        mPaintShadow.setTypeface(typeface1);
         mPaintShadow.setColor(Color.parseColor("#000000"));
         mPaintShadow.setTextSize(mTextSize);
-        mPaintShadow.setStrokeWidth(paintWidth/(float)3);
+        mPaintShadow.setStrokeWidth(paintWidth / (float) 3);
         mPaintShadow.setAntiAlias(true);
 
     }
@@ -470,6 +471,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         drawable.draw(canvas);
         return bitmap;
     }
+
 
     /**
      * 框架上按钮初始化
@@ -736,6 +738,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     protected void onDraw(Canvas canvas) {
 //        super.onDraw(canvas);
         LogUtil.d("oom", "-----------------------ondraw------------------------------");
+        LogUtil.d(TAG, "stickerView width = " + getWidth());
+        LogUtil.d(TAG, "stickerView height = " + getHeight());
         drawContent(canvas);
     }
 
@@ -823,17 +827,22 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY());
             LogUtil.d("OOM4", "center.x=" + center.x + "----center.y=" + center.y + "----mHelpBoxRect.left=" + mHelpBoxRect.left + "----+mHelpBoxRect.width()=" + mHelpBoxRect.width());
             mHelpBoxRect.set(rectF);
+            LogUtil.d("sticker_size", "mHelpBoxRect.width() = " + mHelpBoxRect.width());
+            LogUtil.d("sticker_size", "mHelpBoxRect.height() = " + mHelpBoxRect.height());
+            mTextScale = mMeasureWidth / (getMeasuredWidth() / 2f);
+            LogUtil.d(TAG, "text scale = " + mTextScale);
+
             float needRectHeight = mHelpBoxRect.top + mHelpBoxRect.height() * 0.8f;
             float halfTextWidth = mMeasureWidth / (float) 2;
             LogUtil.d("OOM4", "halfTextWidth=" + halfTextWidth);
 //            if ( isChooseTextEffect) {
-                if(bpForTextBj!=null){
-                    BitmapShader bitmapShader = new BitmapShader(BitmapUtil.GetBitmapForScale(bpForTextBj, (int) mHelpBoxRect.width(),
-                            (int) mHelpBoxRect.height()), Shader.TileMode.MIRROR, Shader.TileMode.MIRROR);
-                    matrixForBitmapShader.setTranslate(mHelpBoxRect.left, mHelpBoxRect.top);
-                    bitmapShader.setLocalMatrix(matrixForBitmapShader);
-                    mTextPaint.setShader(bitmapShader);
-                }
+            if (bpForTextBj != null) {
+                BitmapShader bitmapShader = new BitmapShader(BitmapUtil.GetBitmapForScale(bpForTextBj, (int) mHelpBoxRect.width(),
+                        (int) mHelpBoxRect.height()), Shader.TileMode.MIRROR, Shader.TileMode.MIRROR);
+                matrixForBitmapShader.setTranslate(mHelpBoxRect.left, mHelpBoxRect.top);
+                bitmapShader.setLocalMatrix(matrixForBitmapShader);
+                mTextPaint.setShader(bitmapShader);
+            }
 //            }
 
             canvas.save();
@@ -846,7 +855,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             RadialGradient radialGradient4 = new RadialGradient(mHelpBoxRect.centerX(),
                     mHelpBoxRect.centerY(), mHelpBoxRect.width(), COLORS, null, Shader.TileMode.CLAMP);
             mPaintShadow.setShader(radialGradient4);
-            if (bpForTextBj==null) {
+            if (bpForTextBj == null) {
                 //只要没有选择图片背景
                 canvas.drawText(stickerText, mHelpBoxRect.left + 10, needRectHeight - 10, mTextPaint2);
             } else {
@@ -1530,7 +1539,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
     public float getScale() {
-        return mScale;
+        if (mIsText) {
+            return mScale * mTextScale;
+        } else {
+            return mScale;
+        }
     }
 
 
@@ -1750,7 +1763,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 }
                 // contentHeight = (int) (getMinDisplayWidth() / 2f);
                 RequestManager manager = Glide.with(getContext());
-                RequestBuilder builder = null;
+                RequestBuilder builder;
                 if (resPath.endsWith(".gif")) {
                     builder = manager.asGif();
                 } else {
@@ -2146,19 +2159,19 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     public void SetTextScale(float scale) {
 
-        mScale=scale;
+        mScale = scale;
     }
 
 
     public void SetTextAngle(float angle) {
-        mRotateAngle=angle;
+        mRotateAngle = angle;
     }
 
 
-    public void setTextPaintColor(String paintColor1,String paintColor2){
-        if(bpForTextBj!=null){
+    public void setTextPaintColor(String paintColor1, String paintColor2) {
+        if (bpForTextBj != null) {
             bpForTextBj.recycle();
-            bpForTextBj=null;
+            bpForTextBj = null;
         }
         mTextPaint.setShader(null);
         mTextPaint.setColor(Color.parseColor(paintColor1));

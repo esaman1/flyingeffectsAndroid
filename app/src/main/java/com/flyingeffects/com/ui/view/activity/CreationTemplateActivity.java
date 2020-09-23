@@ -332,6 +332,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     boolean nowUiIsLandscape = false;
 
+    @Override
     @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker, R.id.iv_top_back, R.id.iv_change_ui, R.id.tv_background,R.id.tv_music, R.id.tv_anim, R.id.tv_tiezhi,R.id.tv_add_text})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -999,8 +1000,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 videoPath = "";
                 showGreenBj();
                 imageBjPath = event.getPath();
-                new Handler().postDelayed(() -> Glide.with(CreationTemplateActivity.this).load(s).into(iv_green_background), 500);
-
+                new Handler().postDelayed(() ->
+                        Glide.with(CreationTemplateActivity.this)
+                                .load(s).into(iv_green_background), 500);
             } else {
                 LogUtil.d("OOM", "重新选择了视频背景,地址为" + event.getPath());
                 videoPath = event.getPath();
