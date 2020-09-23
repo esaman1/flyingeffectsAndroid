@@ -839,6 +839,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             canvas.save();
             canvas.scale(mScale, mScale, center.x, center.y);
             canvas.rotate(mRotateAngle, center.x, center.y);
+
             for (int i = 1; i < 10; i++) {
                 canvas.drawText(stickerText, mHelpBoxRect.left + 10 - i, needRectHeight - 10 + i / (float) 2, mTextPaint);
             }
@@ -1933,6 +1934,20 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     public float getMBoxCenterY() {
         return mHelpBoxRect.centerY();
+    }
+
+
+    public float getMBoxLeft() {
+        return mHelpBoxRect.left;
+    }
+    public float getMBoxTop() {
+        return mHelpBoxRect.top;
+    }
+    public float getMBoxRight() {
+        return mHelpBoxRect.right;
+    }
+    public float getMBoxBottom() {
+        return mHelpBoxRect.bottom;
     }
 
 

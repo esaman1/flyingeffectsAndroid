@@ -331,6 +331,7 @@ public class backgroundDraw {
         bpLayer.setId(id);
         float layerScale = DRAWPADWIDTH / (float) bpLayer.getLayerWidth();
         LogUtil.d("OOM5", "图层的缩放为" + layerScale + "");
+
         float stickerScale = stickerItem.getScale();
         LogUtil.d("OOM5", "gif+图层的缩放为" + layerScale * stickerScale + "");
         bpLayer.setScale(layerScale * stickerScale);

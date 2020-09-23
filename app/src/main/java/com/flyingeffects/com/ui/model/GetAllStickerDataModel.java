@@ -32,6 +32,7 @@ public class GetAllStickerDataModel {
             stickerData.setPath(screenCaptureUtil.GetFilePath(stickerView));
             stickerData.setBoxH((int) stickerView.getmHelpBoxRectH());
             stickerData.setBoxW((int) stickerView.getmHelpBoxRectW());
+//            stickerData.setTextInterspace(screenCaptureUtil.GetTextInterspace(stickerView));
             stickerData.setScale(stickerView.getScale());
             stickerData.setMaskBitmap(stickerView.getMaskBitmap());
             stickerData.setMaterial(stickerView.getIsmaterial());

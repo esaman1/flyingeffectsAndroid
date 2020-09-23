@@ -157,4 +157,18 @@ public class AllStickerData implements Serializable {
      */
     private AnimType ChooseAnimId;
 
+
+    public float getTextInterspace() {
+        return textInterspace;
+    }
+
+    public void setTextInterspace(float textInterspace) {
+        this.textInterspace = textInterspace;
+    }
+
+    /**
+     * 文字和view 的间距
+     */
+    private float textInterspace;
+
 }
