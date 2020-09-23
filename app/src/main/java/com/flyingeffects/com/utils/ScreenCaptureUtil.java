@@ -34,8 +34,14 @@ public class ScreenCaptureUtil {
         Bitmap bp = view.getDrawingCache();
         int width = (int) view.getmHelpBoxRectW();
         int height = (int) view.getmHelpBoxRectH();
-        int X = (int) view.getMBoxCenterX()-width/2;
-        int Y = (int) view.getMBoxCenterY()-height/2;
+        int X = (int) view.getMBoxCenterX() - width / 2;
+        if (X < 0) {
+            X = 0;
+        }
+        int Y = (int) view.getMBoxCenterY() - height / 2;
+        if (Y < 0) {
+            Y = 0;
+        }
         if (bp != null) {
             //获取需要截图部分的在屏幕上的坐标(view的左上角坐标）
             int[] viewLocationArray = {X, Y};

@@ -220,7 +220,7 @@ public class CreationTemplateMvpModel {
 
     public void ChangeTextColor(String color0, String color1) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            nowChooseStickerView.setTextPaintColor(color0,color1);
+            nowChooseStickerView.setTextPaintColor(color0, color1);
         }
 
     }
@@ -1124,40 +1124,57 @@ public class CreationTemplateMvpModel {
         if (isText) {
             stickView.setLeftBottomBitmap(ContextCompat.getDrawable(context, R.mipmap.shader_edit));
             nowChooseStickerView = stickView;
-            new Handler().postDelayed(stickView::setIntoCenter, 500);
+            if (!isCopy) {
+                new Handler().postDelayed(stickView::setIntoCenter, 500);
+            }
         }
 
         if (isCopy && copyStickerView != null) {
-            //来做复制或者来自联系点击下面的item
-            StickerView.isFromCopy fromCopy = new StickerView.isFromCopy();
-            fromCopy.setScale(copyStickerView.getScale());
-            LogUtil.d("OOM", "isCopy=Scale" + copyStickerView.getScale());
-            fromCopy.setDegree(copyStickerView.getRotateAngle());
-            fromCopy.setRightOffsetPercent(copyStickerView.getRightOffsetPercent());
-            if (isFromShowAnim) {
-                if (isText) {
-                    stickView.setStickerText(copyStickerView.getStickerText());
-                    if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
-                        stickView.setTextStyle(copyStickerView.getTypefacePath());
-                    }
-                    if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
-                        stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath());
-                    }
-                    stickView.SetTextAngle(copyStickerView.getRotateAngle());
-                    stickView.setScale(copyStickerView.getScale());
-                } else {
-                    fromCopy.setTranX(copyStickerView.getCenterX());
-                    fromCopy.setTranY(copyStickerView.getCenterY());
-
-
+            if (copyStickerView.getIsTextSticker()) {
+                stickView.setStickerText(copyStickerView.getStickerText());
+                if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
+                    stickView.setTextStyle(copyStickerView.getTypefacePath());
                 }
-
+                if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
+                    stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath());
+                }
+                stickView.SetTextAngle(copyStickerView.getRotateAngle());
+                stickView.setScale(copyStickerView.getScale());
+                stickView.setCenter(copyStickerView.getCenterXAdd30(),copyStickerView.getCenterYAdd30());
             } else {
-                fromCopy.setTranX(copyStickerView.getCenterXAdd30());
-                fromCopy.setTranY(copyStickerView.getCenterYAdd30());
+                //来做复制或者来自联系点击下面的item
+                StickerView.isFromCopy fromCopy = new StickerView.isFromCopy();
+                fromCopy.setScale(copyStickerView.getScale());
+                LogUtil.d("OOM", "isCopy=Scale" + copyStickerView.getScale());
+                fromCopy.setDegree(copyStickerView.getRotateAngle());
+                fromCopy.setRightOffsetPercent(copyStickerView.getRightOffsetPercent());
+                if (isFromShowAnim) {
+                    if (isText) {
+                        stickView.setStickerText(copyStickerView.getStickerText());
+                        if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
+                            stickView.setTextStyle(copyStickerView.getTypefacePath());
+                        }
+                        if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
+                            stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath());
+                        }
+                        stickView.SetTextAngle(copyStickerView.getRotateAngle());
+                        stickView.setScale(copyStickerView.getScale());
+                    } else {
+                        fromCopy.setTranX(copyStickerView.getCenterX());
+                        fromCopy.setTranY(copyStickerView.getCenterY());
+
+
+                    }
+
+                } else {
+                    fromCopy.setTranX(copyStickerView.getCenterXAdd30());
+                    fromCopy.setTranY(copyStickerView.getCenterYAdd30());
+                }
+                stickView.setImageRes(path, false, fromCopy);
+                stickView.showFrame();
             }
-            stickView.setImageRes(path, false, fromCopy);
-            stickView.showFrame();
+
+
         } else {
             stickView.setImageRes(path, true, null);
         }

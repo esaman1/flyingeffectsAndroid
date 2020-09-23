@@ -42,7 +42,7 @@ public class GetAllStickerDataModel {
             stickerData.setBoxH((int) stickerView.getmHelpBoxRectH());
             stickerData.setBoxW((int) stickerView.getmHelpBoxRectW());
             stickerData.setText(false);
-            stickerData.setRotation(stickerView.getRotation());
+            stickerData.setRotation(stickerView.getRotateAngle());
             stickerData.setScale(stickerView.getScale());
             stickerData.setMaskBitmap(stickerView.getMaskBitmap());
             stickerData.setMaterial(stickerView.getIsmaterial());
