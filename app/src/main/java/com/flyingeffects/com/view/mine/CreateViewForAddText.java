@@ -23,6 +23,7 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.record.StickerInputTextDialog;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.io.File;
@@ -53,6 +54,8 @@ public class CreateViewForAddText {
     private downCallback callback;
     private EditText edit_text;
     private LinearLayout view;
+    StickerInputTextDialog inputTextDialog;
+    String inputText="";
 
     public CreateViewForAddText(Context context,LinearLayout view, downCallback callback) {
         this.context = context;
@@ -62,31 +65,37 @@ public class CreateViewForAddText {
         mTTFFolder = fileManager.getFileCachePath(context, "fontStyle");
     }
 
-
-//    private BottomSheetDialog bottomSheetDialog;
-
     private ArrayList<TextView> listTitle = new ArrayList<>();
 
     public void showBottomSheetDialog(String text) {
-//        if (bottomSheetDialog == null) {
-//            bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
-//            View view = LayoutInflater.from(context).inflate(R.layout.view_add_text, null);
+            inputTextDialog = new StickerInputTextDialog(context);
+            inputTextDialog.show();
+            inputTextDialog.setInputText(text);
             ImageView iv_down = view.findViewById(R.id.iv_down);
-            edit_text = view.findViewById(R.id.edit_text);
-            edit_text.setText(text);
+            inputTextDialog.setOnInputTextListener(new StickerInputTextDialog.OnInputTextListener() {
+                @Override
+                public void inputText(String string) {
+                    if (callback != null) {
+                        callback.setText(string);
+                    }
+                    dismissDialog();
+                }
+
+                @Override
+                public void afterTextChanged(String string) {
+                    inputText = string;
+                }
+            });
             iv_down.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view12) {
                     dismissDialog();
                     if (callback != null) {
-                        callback.setText(edit_text.getText().toString().trim());
-                        edit_text.setText("");
+                        callback.setText(inputText);
                     }
                 }
             });
             TextView tv_hot = view.findViewById(R.id.tv_hot);
-            TextView tv_complete = view.findViewById(R.id.tv_complete);
-            tv_complete.setOnClickListener(listener);
             tv_hot.setOnClickListener(listener);
             TextView tv_font = view.findViewById(R.id.tv_font);
             tv_font.setOnClickListener(listener);
@@ -124,25 +133,10 @@ public class CreateViewForAddText {
 
                 }
             });
-//            bottomSheetDialog.setContentView(view);
-//            bottomSheetDialog.setCancelable(true);
-//            bottomSheetDialog.setCanceledOnTouchOutside(true);
-//            bottomSheetDialog.setOnDismissListener(dialog -> {
-//            });
-//            View parent = (View) view.getParent();     //处理高度显示完全  https://www.jianshu.com/p/38af0cf77352
-//            parent.setBackgroundResource(android.R.color.transparent);
-//            BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);
-//            view.measure(0, 0);
-//            behavior.setPeekHeight(view.getMeasuredHeight());
-//            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) parent.getLayoutParams();
-//            params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
-//            parent.setLayoutParams(params);
-//            bottomSheetDialog.show();
             listTitle.add(tv_hot);
             listTitle.add(tv_font);
             requestFontImage();
             requestFontList();
-//        }
     }
 
 
@@ -230,15 +224,6 @@ public class CreateViewForAddText {
                 setTextColor(1);
 
                 break;
-            case R.id.tv_complete:
-                String text = edit_text.getText().toString();
-                if (callback != null) {
-                    callback.setText(text);
-                }
-                edit_text.setText("");
-                dismissDialog();
-                break;
-
             default:
                 break;
         }
