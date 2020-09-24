@@ -1025,7 +1025,7 @@ public class CreationTemplateMvpModel {
                             }
                         }, "");
                     } else {
-                        callback.showTextDialog();
+                        callback.showTextDialog(nowChooseStickerView.getStickerText());
                     }
                 }
             }

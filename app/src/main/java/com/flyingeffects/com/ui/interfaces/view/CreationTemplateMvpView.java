@@ -12,7 +12,7 @@ public interface CreationTemplateMvpView {
     void deleteFirstSticker();
 
 
-    void showTextDialog();
+    void showTextDialog(String inputText);
 
     void setgsyVideoProgress(int progress);
 

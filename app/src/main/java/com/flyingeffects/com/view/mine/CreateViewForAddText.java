@@ -2,7 +2,6 @@ package com.flyingeffects.com.view.mine;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -10,9 +9,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.viewpager.widget.ViewPager;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.CreateTemplateTextEffectAdapter;
@@ -27,20 +23,14 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.StringUtil;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.shixing.sxve.ui.view.WaitingDialog;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import androidx.viewpager.widget.ViewPager;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -77,13 +67,23 @@ public class CreateViewForAddText {
 
     private ArrayList<TextView> listTitle = new ArrayList<>();
 
-    public void showBottomSheetDialog() {
+    public void showBottomSheetDialog(String text) {
 //        if (bottomSheetDialog == null) {
 //            bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
 //            View view = LayoutInflater.from(context).inflate(R.layout.view_add_text, null);
             ImageView iv_down = view.findViewById(R.id.iv_down);
             edit_text = view.findViewById(R.id.edit_text);
-            iv_down.setOnClickListener(view12 -> dismissDialog());
+            edit_text.setText(text);
+            iv_down.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view12) {
+                    dismissDialog();
+                    if (callback != null) {
+                        callback.setText(edit_text.getText().toString().trim());
+                        edit_text.setText("");
+                    }
+                }
+            });
             TextView tv_hot = view.findViewById(R.id.tv_hot);
             TextView tv_complete = view.findViewById(R.id.tv_complete);
             tv_complete.setOnClickListener(listener);
@@ -235,6 +235,7 @@ public class CreateViewForAddText {
                 if (callback != null) {
                     callback.setText(text);
                 }
+                edit_text.setText("");
                 dismissDialog();
                 break;
 
