@@ -275,10 +275,9 @@ public class TemplateAddStickerMvpModel {
 
     public void ChangeTextColor(String color0, String color1) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            nowChooseStickerView.setTextPaintColor(color0,color1);
+            nowChooseStickerView.setTextPaintColor(color0, color1);
         }
     }
-
 
 
     public void showGifAnim(boolean isShow) {
@@ -1052,6 +1051,10 @@ public class TemplateAddStickerMvpModel {
                         callback.showTextDialog(nowChooseStickerView.getStickerText());
                     }
 
+                } else if (type == StickerView.ONCLICK_MODE) {
+                    if (stickView.getIsTextSticker()) {
+                        callback.showTextDialog(nowChooseStickerView.getStickerText());
+                    }
                 }
             }
 
@@ -1071,7 +1074,6 @@ public class TemplateAddStickerMvpModel {
                 callback.needPauseVideo();
                 viewLayerRelativeLayout.addView(stickView);
                 stickView.start();
-
             }
         });
 

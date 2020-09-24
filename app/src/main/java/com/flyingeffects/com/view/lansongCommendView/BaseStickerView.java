@@ -184,6 +184,7 @@ public class BaseStickerView extends View {
 
     private GestureHandler mHandler = new GestureHandler(this);
 
+
     private static class GestureHandler extends Handler {
 
         WeakReference<BaseStickerView> mReference;
