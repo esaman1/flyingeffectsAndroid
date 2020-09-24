@@ -827,6 +827,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY());
             LogUtil.d("OOM4", "center.x=" + center.x + "----center.y=" + center.y + "----mHelpBoxRect.left=" + mHelpBoxRect.left + "----+mHelpBoxRect.width()=" + mHelpBoxRect.width());
             mHelpBoxRect.set(rectF);
+            LogUtil.d(TAG,"bottom = "+mHelpBoxRect.bottom);
             LogUtil.d("sticker_size", "mHelpBoxRect.width() = " + mHelpBoxRect.width());
             LogUtil.d("sticker_size", "mHelpBoxRect.height() = " + mHelpBoxRect.height());
             mTextScale = mMeasureWidth / (getMeasuredWidth() / 2f);
@@ -1960,6 +1961,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         return mHelpBoxRect.right;
     }
     public float getMBoxBottom() {
+
         return mHelpBoxRect.bottom;
     }
 
