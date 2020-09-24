@@ -29,8 +29,8 @@ public class GetAllStickerDataModel {
         AllStickerData stickerData = new AllStickerData();
         if (stickerView.getIsTextSticker()) {
             ScreenCaptureUtil screenCaptureUtil = new ScreenCaptureUtil(BaseApplication.getInstance());
-            stickerData.setOriginalPath(screenCaptureUtil.GetFilePath(stickerView));
-            stickerData.setPath(screenCaptureUtil.GetFilePath(stickerView));
+            stickerData.setOriginalPath(screenCaptureUtil.getFilePath(stickerView));
+            stickerData.setPath(screenCaptureUtil.getFilePath(stickerView));
             stickerData.setBoxH((int) stickerView.getmHelpBoxRectH());
             stickerData.setBoxW((int) stickerView.getmHelpBoxRectW());
 //            stickerData.setTextInterspace(screenCaptureUtil.GetTextInterspace(stickerView));
