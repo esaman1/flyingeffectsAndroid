@@ -586,7 +586,6 @@ public class CreationTemplateMvpModel {
     }
 
 
-
     private int previewCount;
     private int sublayerListPosition;
 
@@ -596,9 +595,9 @@ public class CreationTemplateMvpModel {
      *
      * @param position          动画的类型
      * @param targetStickerView 目标贴纸，如果为null ,那么目标贴纸为最上层的那个，这里的多久就是针对设置当个动画，如果不为null ,
-     * 那么动画就是针对预览页面，某个贴纸设置动画
+     *                          那么动画就是针对预览页面，某个贴纸设置动画
      * @param isFromPreview     是否来自播放预览
-     * user : zhangtongju
+     *                          user : zhangtongju
      */
     private synchronized void startPlayAnim(int position, boolean isClearAllAnim, StickerView targetStickerView, int intoPosition, boolean isFromPreview) {
         if (!isFromPreview) {
@@ -1135,8 +1134,8 @@ public class CreationTemplateMvpModel {
                     stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath());
                 }
                 stickView.SetTextAngle(copyStickerView.getRotateAngle());
-                stickView.setScale(copyStickerView.getScale());
-                stickView.setCenter(copyStickerView.getCenterXAdd30(),copyStickerView.getCenterYAdd30());
+                stickView.setScale(copyStickerView.getCopyScale());
+                stickView.setCenter(copyStickerView.getCenterXAdd30(), copyStickerView.getCenterYAdd30());
             } else {
                 //来做复制或者来自联系点击下面的item
                 StickerView.isFromCopy fromCopy = new StickerView.isFromCopy();
@@ -1158,8 +1157,6 @@ public class CreationTemplateMvpModel {
                     } else {
                         fromCopy.setTranX(copyStickerView.getCenterX());
                         fromCopy.setTranY(copyStickerView.getCenterY());
-
-
                     }
 
                 } else {
@@ -1207,9 +1204,7 @@ public class CreationTemplateMvpModel {
             stickView.setIsfromAnim(true);
             nowChooseSubLayerAnimList.add(stickView);
         }
-
     }
-
 
     private void deleteStickView(StickerView stickView) {
         viewLayerRelativeLayout.removeView(stickView);
@@ -1236,7 +1231,6 @@ public class CreationTemplateMvpModel {
         }
     }
 
-
     private void closeAllAnim() {
         //ArrayList<AllStickerData> list = new ArrayList<>();
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
@@ -1245,7 +1239,6 @@ public class CreationTemplateMvpModel {
         }
     }
 
-
     /**
      * description ：复制一个gif出来
      * creation date: 2020/5/22
@@ -1253,7 +1246,6 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     private void copyGif(String getResPath, String path, boolean isFromAubum, StickerView stickerView, String OriginalPath, boolean isFromShowAnim) {
-
 
         if (stickerView.getIsTextSticker()) {
             addSticker("", false, false, false, "", true, stickerView, isFromShowAnim, true);
@@ -1294,14 +1286,11 @@ public class CreationTemplateMvpModel {
                         }
                     });
                 }
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
     }
-
 
     public void onDestroy() {
         isDestroy = true;
@@ -1357,8 +1346,7 @@ public class CreationTemplateMvpModel {
             if (perSticker.size() == 1) {
                 defaultVideoDuration = perSticker.get(0);
             } else {
-                for (int duration : perSticker
-                ) {
+                for (int duration : perSticker) {
                     if (defaultVideoDuration < duration) {
                         defaultVideoDuration = duration;
                     }
@@ -1369,7 +1357,6 @@ public class CreationTemplateMvpModel {
             LogUtil.d("OOM", "获得贴纸时长失败");
             defaultVideoDuration = 10 * 1000;
         }
-
 //        callback.showRenderVideoTime(defaultVideoDuration);
     }
 
@@ -1462,7 +1449,6 @@ public class CreationTemplateMvpModel {
      * creation date: 2020/3/12
      * user : zhangtongju
      */
-
     private boolean isIntoSaveVideo = false;
     private float percentageH;
 

@@ -83,6 +83,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             Color.parseColor("#ffffff"), Color.parseColor("#EEEEEE"), Color.parseColor("#ffffff"),
             Color.parseColor("#00000000"), Color.parseColor("#ffffff"), Color.parseColor("#EEEEEE"), Color.parseColor("#00000000")};
 
+
     private boolean isFromStickerAnim = false;
     private boolean mIsText = false;
     private int mPaddingTop;
@@ -163,6 +164,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      * 右侧滑动动作
      */
     public static final int RIGHT_MODE = 12;
+
+    public static final int ONCLICK_MODE = 13;
 
     public boolean isOpenVoice = false;
     /**
@@ -827,7 +830,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY());
             LogUtil.d("OOM4", "center.x=" + center.x + "----center.y=" + center.y + "----mHelpBoxRect.left=" + mHelpBoxRect.left + "----+mHelpBoxRect.width()=" + mHelpBoxRect.width());
             mHelpBoxRect.set(rectF);
-            LogUtil.d(TAG,"bottom = "+mHelpBoxRect.bottom);
+            LogUtil.d(TAG, "bottom = " + mHelpBoxRect.bottom);
             LogUtil.d("sticker_size", "mHelpBoxRect.width() = " + mHelpBoxRect.width());
             LogUtil.d("sticker_size", "mHelpBoxRect.height() = " + mHelpBoxRect.height());
             mTextScale = mMeasureWidth / (getMeasuredWidth() / 2f);
@@ -1085,7 +1088,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     LogUtil.d("event", "ACTION_DOWN");
                     if (callback != null) {
                         callback.stickerMove();
+                        //callback.stickerOnclick(ONCLICK_MODE);
                     }
+
 //                    if (mIsText) {
 //                        popUpInputMethod();
 //                    }
@@ -1547,6 +1552,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         }
     }
 
+    public float getCopyScale() {
+        return mScale;
+    }
+
 
     /**
      * description ：得到的是一个比例
@@ -1912,22 +1921,18 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         }
     }
 
-
     private boolean widthBigger;
-
 
     public float getCenterX() {
 //        LogUtil.d("getCenterX", "getCenterX=" + mHelpBoxRect.right);
         float xx = (mHelpBoxRect.right - mHelpBoxRect.left) / 2;
         return mHelpBoxRect.right - xx;
-
     }
 
     public float getCenterXAdd30() {
 //        LogUtil.d("getCenterX", "getCenterX=" + mHelpBoxRect.right);
         float xx = (mHelpBoxRect.right - mHelpBoxRect.left) / 2;
         return mHelpBoxRect.right - xx + 30;
-
     }
 
     public float getCenterY() {
@@ -1954,14 +1959,16 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public float getMBoxLeft() {
         return mHelpBoxRect.left;
     }
+
     public float getMBoxTop() {
         return mHelpBoxRect.top;
     }
+
     public float getMBoxRight() {
         return mHelpBoxRect.right;
     }
-    public float getMBoxBottom() {
 
+    public float getMBoxBottom() {
         return mHelpBoxRect.bottom;
     }
 
