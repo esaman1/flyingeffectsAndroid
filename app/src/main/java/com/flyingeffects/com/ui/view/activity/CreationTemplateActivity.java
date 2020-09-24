@@ -384,7 +384,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 break;
 
             case R.id.tv_add_text:
-                intoTextStyleDialog();
+                intoTextStyleDialog("");
                 presenter.addTextSticker();
 
                 break;
@@ -467,7 +467,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
 
-    private void intoTextStyleDialog(){
+    private void intoTextStyleDialog(String inputText){
         if(!DoubleClick.getInstance().isFastDoubleClick()){
 
             ll_add_text_style.setVisibility(View.VISIBLE);
@@ -490,7 +490,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
             });
-            createViewForAddText.showBottomSheetDialog();
+            createViewForAddText.showBottomSheetDialog(inputText);
         }
     }
 
@@ -710,8 +710,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
     @Override
-    public void showTextDialog() {
-        intoTextStyleDialog();
+    public void showTextDialog(String inputText) {
+        intoTextStyleDialog(inputText);
     }
 
     @Override

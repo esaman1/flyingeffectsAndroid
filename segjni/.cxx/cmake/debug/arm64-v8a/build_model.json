@@ -5,9 +5,9 @@
     "environmentVariables": []
   },
   "cmake": {
-    "cmakeArtifactsBaseFolder": "D:\\WorkSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\debug\\arm64-v8a",
-    "cmakeServerLogFile": "D:\\WorkSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\debug\\arm64-v8a\\cmake_server_log.txt",
-    "cmakeWrappingBaseFolder": "D:\\WorkSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cxx\\debug\\arm64-v8a",
+    "cmakeArtifactsBaseFolder": "E:\\NinetonProject\\feishan_Android\\segjni\\.cxx\\cmake\\debug\\arm64-v8a",
+    "cmakeServerLogFile": "E:\\NinetonProject\\feishan_Android\\segjni\\.cxx\\cmake\\debug\\arm64-v8a\\cmake_server_log.txt",
+    "cmakeWrappingBaseFolder": "E:\\NinetonProject\\feishan_Android\\segjni\\.cxx\\cxx\\debug\\arm64-v8a",
     "effectiveConfiguration": {
       "name": "traditional-android-studio-cmake-environment",
       "description": "Composite reified CMakeSettings configuration",
@@ -15,13 +15,13 @@
       "inheritEnvironments": [
         "ndk"
       ],
-      "buildRoot": "D:\\WorkSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\debug\\arm64-v8a",
-      "cmakeToolchain": "D:\\SDK\\ndk\\21.0.6113669\\build\\cmake\\android.toolchain.cmake",
-      "cmakeExecutable": "D:\\SDK\\cmake\\3.10.2.4988404\\bin\\cmake.exe",
+      "buildRoot": "E:\\NinetonProject\\feishan_Android\\segjni\\.cxx\\cmake\\debug\\arm64-v8a",
+      "cmakeToolchain": "E:\\Android\\sdk\\ndk\\21.0.6113669\\build\\cmake\\android.toolchain.cmake",
+      "cmakeExecutable": "E:\\Android\\sdk\\cmake\\3.10.2.4988404\\bin\\cmake.exe",
       "variables": [
         {
           "name": "CMAKE_FIND_ROOT_PATH",
-          "value": "D:\\WorkSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\debug\\prefab\\arm64-v8a\\prefab"
+          "value": "E:\\NinetonProject\\feishan_Android\\segjni\\.cxx\\cmake\\debug\\prefab\\arm64-v8a\\prefab"
         },
         {
           "name": "CMAKE_BUILD_TYPE",
@@ -29,7 +29,7 @@
         },
         {
           "name": "CMAKE_TOOLCHAIN_FILE",
-          "value": "D:\\SDK\\ndk\\21.0.6113669\\build\\cmake\\android.toolchain.cmake"
+          "value": "E:\\Android\\sdk\\ndk\\21.0.6113669\\build\\cmake\\android.toolchain.cmake"
         },
         {
           "name": "ANDROID_ABI",
@@ -37,7 +37,7 @@
         },
         {
           "name": "ANDROID_NDK",
-          "value": "D:\\SDK\\ndk\\21.0.6113669"
+          "value": "E:\\Android\\sdk\\ndk\\21.0.6113669"
         },
         {
           "name": "ANDROID_PLATFORM",
@@ -49,7 +49,7 @@
         },
         {
           "name": "CMAKE_ANDROID_NDK",
-          "value": "D:\\SDK\\ndk\\21.0.6113669"
+          "value": "E:\\Android\\sdk\\ndk\\21.0.6113669"
         },
         {
           "name": "CMAKE_EXPORT_COMPILE_COMMANDS",
@@ -57,11 +57,11 @@
         },
         {
           "name": "CMAKE_LIBRARY_OUTPUT_DIRECTORY",
-          "value": "D:\\WorkSpace\\flyingeffectsAndroid\\segjni\\build\\intermediates\\cmake\\debug\\obj\\arm64-v8a"
+          "value": "E:\\NinetonProject\\feishan_Android\\segjni\\build\\intermediates\\cmake\\debug\\obj\\arm64-v8a"
         },
         {
           "name": "CMAKE_MAKE_PROGRAM",
-          "value": "D:\\SDK\\cmake\\3.10.2.4988404\\bin\\ninja.exe"
+          "value": "E:\\Android\\sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe"
         },
         {
           "name": "CMAKE_SYSTEM_NAME",
@@ -82,14 +82,14 @@
       ]
     }
   },
-  "cxxBuildFolder": "D:\\WorkSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\debug\\arm64-v8a",
+  "cxxBuildFolder": "E:\\NinetonProject\\feishan_Android\\segjni\\.cxx\\cmake\\debug\\arm64-v8a",
   "info": {
     "abi": "ARM64_V8A",
     "bitness": 64,
     "deprecated": false,
     "default": true
   },
-  "originalCxxBuildFolder": "D:\\WorkSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\debug\\arm64-v8a",
+  "originalCxxBuildFolder": "E:\\NinetonProject\\feishan_Android\\segjni\\.cxx\\cmake\\debug\\arm64-v8a",
   "variant": {
     "buildSystemArgumentList": [
       "-DANDROID_ARM_NEON\u003dTRUE",
@@ -103,24 +103,24 @@
     "module": {
       "buildSystem": "CMAKE",
       "cmake": {
-        "cmakeExe": "D:\\SDK\\cmake\\3.10.2.4988404\\bin\\cmake.exe",
+        "cmakeExe": "E:\\Android\\sdk\\cmake\\3.10.2.4988404\\bin\\cmake.exe",
         "minimumCmakeVersion": "3.10.2",
-        "ninjaExe": "D:\\SDK\\cmake\\3.10.2.4988404\\bin\\ninja.exe"
+        "ninjaExe": "E:\\Android\\sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe"
       },
-      "cmakeToolchainFile": "D:\\SDK\\ndk\\21.0.6113669\\build\\cmake\\android.toolchain.cmake",
-      "cxxFolder": "D:\\WorkSpace\\flyingeffectsAndroid\\segjni\\.cxx",
+      "cmakeToolchainFile": "E:\\Android\\sdk\\ndk\\21.0.6113669\\build\\cmake\\android.toolchain.cmake",
+      "cxxFolder": "E:\\NinetonProject\\feishan_Android\\segjni\\.cxx",
       "gradleModulePathName": ":segjni",
-      "intermediatesFolder": "D:\\WorkSpace\\flyingeffectsAndroid\\segjni\\build\\intermediates",
-      "makeFile": "D:\\WorkSpace\\flyingeffectsAndroid\\segjni\\src\\main\\cpp\\CMakeLists.txt",
-      "moduleBuildFile": "D:\\WorkSpace\\flyingeffectsAndroid\\segjni\\build.gradle",
-      "moduleRootFolder": "D:\\WorkSpace\\flyingeffectsAndroid\\segjni",
+      "intermediatesFolder": "E:\\NinetonProject\\feishan_Android\\segjni\\build\\intermediates",
+      "makeFile": "E:\\NinetonProject\\feishan_Android\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+      "moduleBuildFile": "E:\\NinetonProject\\feishan_Android\\segjni\\build.gradle",
+      "moduleRootFolder": "E:\\NinetonProject\\feishan_Android\\segjni",
       "ndkDefaultAbiList": [
         "ARMEABI_V7A",
         "ARM64_V8A",
         "X86",
         "X86_64"
       ],
-      "ndkFolder": "D:\\SDK\\ndk\\21.0.6113669",
+      "ndkFolder": "E:\\Android\\sdk\\ndk\\21.0.6113669",
       "ndkMetaAbiList": [
         {
           "abi": "ARMEABI_V7A",
@@ -177,36 +177,36 @@
       "ndkDefaultStl": "LIBCXX_STATIC",
       "ndkVersion": "21.0.6113669",
       "project": {
-        "compilerSettingsCacheFolder": "D:\\WorkSpace\\flyingeffectsAndroid\\.cxx",
-        "cxxFolder": "D:\\WorkSpace\\flyingeffectsAndroid\\.cxx",
+        "compilerSettingsCacheFolder": "E:\\NinetonProject\\feishan_Android\\.cxx",
+        "cxxFolder": "E:\\NinetonProject\\feishan_Android\\.cxx",
+        "ideBuildTargetAbi": "arm64-v8a,armeabi-v7a,armeabi",
         "isBuildOnlyTargetAbiEnabled": true,
         "isCmakeBuildCohabitationEnabled": false,
         "isNativeCompilerSettingsCacheEnabled": false,
-        "rootBuildGradleFolder": "D:\\WorkSpace\\flyingeffectsAndroid",
-        "sdkFolder": "D:\\SDK",
+        "rootBuildGradleFolder": "E:\\NinetonProject\\feishan_Android",
+        "sdkFolder": "E:\\Android\\sdk",
         "isPrefabEnabled": false
       },
       "splitsAbiFilterSet": [],
       "stlSharedObjectMap": {
         "LIBCXX_SHARED": {
-          "ARMEABI_V7A": "D:\\SDK\\ndk\\21.0.6113669\\toolchains\\llvm\\prebuilt\\windows-x86_64\\sysroot\\usr\\lib\\arm-linux-androideabi\\libc++_shared.so",
-          "ARM64_V8A": "D:\\SDK\\ndk\\21.0.6113669\\toolchains\\llvm\\prebuilt\\windows-x86_64\\sysroot\\usr\\lib\\aarch64-linux-android\\libc++_shared.so",
-          "X86": "D:\\SDK\\ndk\\21.0.6113669\\toolchains\\llvm\\prebuilt\\windows-x86_64\\sysroot\\usr\\lib\\i686-linux-android\\libc++_shared.so",
-          "X86_64": "D:\\SDK\\ndk\\21.0.6113669\\toolchains\\llvm\\prebuilt\\windows-x86_64\\sysroot\\usr\\lib\\x86_64-linux-android\\libc++_shared.so"
+          "ARMEABI_V7A": "E:\\Android\\sdk\\ndk\\21.0.6113669\\toolchains\\llvm\\prebuilt\\windows-x86_64\\sysroot\\usr\\lib\\arm-linux-androideabi\\libc++_shared.so",
+          "ARM64_V8A": "E:\\Android\\sdk\\ndk\\21.0.6113669\\toolchains\\llvm\\prebuilt\\windows-x86_64\\sysroot\\usr\\lib\\aarch64-linux-android\\libc++_shared.so",
+          "X86": "E:\\Android\\sdk\\ndk\\21.0.6113669\\toolchains\\llvm\\prebuilt\\windows-x86_64\\sysroot\\usr\\lib\\i686-linux-android\\libc++_shared.so",
+          "X86_64": "E:\\Android\\sdk\\ndk\\21.0.6113669\\toolchains\\llvm\\prebuilt\\windows-x86_64\\sysroot\\usr\\lib\\x86_64-linux-android\\libc++_shared.so"
         },
         "LIBCXX_STATIC": {},
         "NONE": {},
         "SYSTEM": {}
       }
     },
-    "objFolder": "D:\\WorkSpace\\flyingeffectsAndroid\\segjni\\build\\intermediates\\cmake\\debug\\obj",
+    "objFolder": "E:\\NinetonProject\\feishan_Android\\segjni\\build\\intermediates\\cmake\\debug\\obj",
     "variantName": "debug",
     "validAbiList": [
-      "ARMEABI_V7A",
       "ARM64_V8A"
     ],
-    "prefabDirectory": "D:\\WorkSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\debug\\prefab",
+    "prefabDirectory": "E:\\NinetonProject\\feishan_Android\\segjni\\.cxx\\cmake\\debug\\prefab",
     "prefabPackageDirectoryList": []
   },
-  "prefabFolder": "D:\\WorkSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\debug\\prefab\\arm64-v8a"
+  "prefabFolder": "E:\\NinetonProject\\feishan_Android\\segjni\\.cxx\\cmake\\debug\\prefab\\arm64-v8a"
 }

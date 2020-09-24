@@ -9,7 +9,7 @@ public interface TemplateAddStickerMvpCallback {
 
     void setgsyVideoProgress(int progress);
 
-    void showTextDialog();
+    void showTextDialog(String inputText);
 
 
 

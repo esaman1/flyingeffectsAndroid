@@ -194,8 +194,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
     @Override
-    public void showTextDialog() {
-        creationTemplatemvpView.showTextDialog();
+    public void showTextDialog(String inputText) {
+        creationTemplatemvpView.showTextDialog(inputText);
     }
 
 

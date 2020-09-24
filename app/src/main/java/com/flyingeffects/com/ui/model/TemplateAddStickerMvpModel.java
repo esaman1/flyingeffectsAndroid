@@ -1049,7 +1049,7 @@ public class TemplateAddStickerMvpModel {
                             }
                         }, "");
                     } else {
-                        callback.showTextDialog();
+                        callback.showTextDialog(nowChooseStickerView.getStickerText());
                     }
 
                 }

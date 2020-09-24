@@ -10,8 +10,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import androidx.viewpager2.widget.ViewPager2;
-
 import com.bigkoo.convenientbanner.utils.ScreenUtil;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.flyingeffects.com.R;
@@ -57,6 +55,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import androidx.viewpager2.widget.ViewPager2;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -259,12 +258,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     intent_comment.putExtra("templateId", templateId);
                     intent_comment.putExtra("templateTitle", templateItem.getTitle());
                     intent_comment.putExtra("templateType", templateItem.getTemplate_type());
-
-
                     startActivity(intent_comment);
-
+                    overridePendingTransition( R.anim.activity_anim_in,0);
 //                    BaseFullBottomSheetFragment fullSheetDialogFragment = new BaseFullBottomSheetFragment();
-//                    int height = ScreenUtil.getScreenHeight(this) / 3;
+//                    int height = (int) (ScreenUtil.getScreenHeight(this) * 0.3f);
 //                    fullSheetDialogFragment.setTopOffset(height);
 //                    fullSheetDialogFragment.setNowTemplateId(templateId);
 //                    fullSheetDialogFragment.setNowTemplateTitle(templateItem.getTitle());

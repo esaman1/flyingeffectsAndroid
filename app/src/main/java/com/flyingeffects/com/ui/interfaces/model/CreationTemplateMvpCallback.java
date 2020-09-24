@@ -34,7 +34,7 @@ public interface CreationTemplateMvpCallback {
 
     void showMusicBtn(boolean isShow);
 
-    void showTextDialog();
+    void showTextDialog(String inputText);
 
 
 }

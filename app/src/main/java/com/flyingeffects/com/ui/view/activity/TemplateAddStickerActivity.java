@@ -431,8 +431,8 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     }
 
     @Override
-    public void showTextDialog() {
-        intoTextStyleDialog();
+    public void showTextDialog(String inputText) {
+        intoTextStyleDialog(inputText);
     }
 
 
@@ -461,7 +461,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
 
             case R.id.tv_add_text:
-                intoTextStyleDialog();
+                intoTextStyleDialog("");
                 presenter.addTextSticker();
                 break;
 
@@ -472,7 +472,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     }
 
 
-    private void intoTextStyleDialog(){
+    private void intoTextStyleDialog(String inputText){
         ll_add_text_style.setVisibility(View.VISIBLE);
         if(!DoubleClick.getInstance().isFastDoubleClick()){
             CreateViewForAddText createViewForAddText=new CreateViewForAddText(this,ll_add_text_style, new CreateViewForAddText.downCallback() {
@@ -491,7 +491,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                     presenter.ChangeTextColor(color0,color1);
                 }
             });
-            createViewForAddText.showBottomSheetDialog();
+            createViewForAddText.showBottomSheetDialog(inputText);
         }
     }
 

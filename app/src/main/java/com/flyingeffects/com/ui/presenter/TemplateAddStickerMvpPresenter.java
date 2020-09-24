@@ -139,7 +139,7 @@ public class TemplateAddStickerMvpPresenter extends BasePresenter implements Tem
     }
 
     @Override
-    public void showTextDialog() {
-        TemplateAddStickermvpView.showTextDialog();
+    public void showTextDialog(String inputText) {
+        TemplateAddStickermvpView.showTextDialog(inputText);
     }
 }
