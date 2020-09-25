@@ -273,6 +273,34 @@ public class TemplateAddStickerMvpModel {
     }
 
 
+    public void deleteAllTextSticker() {
+        toDeleteAllTextSticker();
+    }
+    /**
+     * description ：删除帖子(包括动画贴纸)
+     * creation date: 2020/6/8
+     * user : zhangtongju
+     */
+    private ArrayList<StickerView> needDeleteTextList = new ArrayList<>();
+
+    private void toDeleteAllTextSticker() {
+        needDeleteTextList.clear();
+        if (listForStickerModel != null && listForStickerModel.size() > 0) {
+            for (int i = 0; i < listForStickerModel.size(); i++) {
+                StickerView stickerView = listForStickerModel.get(i).getStickerView();
+                if (stickerView != null && stickerView.getIsTextSticker()) {
+                    needDeleteTextList.add(stickerView);
+                }
+            }
+        }
+
+        for (StickerView stickerView : needDeleteTextList) {
+            deleteStickView(stickerView);
+        }
+
+    }
+
+
     public void ChangeTextColor(String color0, String color1) {
         if (nowChooseStickerView.getIsTextSticker()) {
             nowChooseStickerView.setTextPaintColor(color0, color1);

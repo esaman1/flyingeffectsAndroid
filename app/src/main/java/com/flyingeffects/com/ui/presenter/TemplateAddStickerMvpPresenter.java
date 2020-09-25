@@ -40,6 +40,11 @@ public class TemplateAddStickerMvpPresenter extends BasePresenter implements Tem
         TemplateAddStickermodel = new TemplateAddStickerMvpModel(context, this,viewLayerRelativeLayout,mVideoPath);
     }
 
+
+    public void deleteAllTextSticker(){
+        TemplateAddStickermodel.deleteAllTextSticker();
+    }
+
     public void ChangeTextStyle(String path, int type){
         TemplateAddStickermodel.ChangeTextStyle(path,type);
     }

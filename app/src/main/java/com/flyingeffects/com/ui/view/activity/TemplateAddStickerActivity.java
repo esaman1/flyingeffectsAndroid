@@ -3,6 +3,7 @@ package com.flyingeffects.com.ui.view.activity;
 import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -440,7 +441,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     }
 
     @Override
-    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_top_back, R.id.tv_add_text})
+    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_top_back, R.id.tv_add_text,R.id.iv_delete_all_text})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
@@ -454,6 +455,10 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
             case R.id.ll_play:
                 toPlay();
 
+                break;
+
+            case R.id.iv_delete_all_text:
+                presenter.deleteAllTextSticker();
                 break;
 
 
@@ -477,6 +482,10 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
     private void intoTextStyleDialog(String inputText) {
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
+            if (createViewForAddText != null) {
+                createViewForAddText.hideInputTextDialog();
+                createViewForAddText = null;
+            }
             ll_add_text_style.setVisibility(View.VISIBLE);
             createViewForAddText = new CreateViewForAddText(this, ll_add_text_style, new CreateViewForAddText.downCallback() {
                 @Override
@@ -568,5 +577,21 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
         }
     }
 
+
+
+    @Override
+    public final boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (ll_add_text_style.getVisibility() == View.VISIBLE) {
+                if (createViewForAddText != null) {
+                    createViewForAddText.hideInput();
+                }
+                ll_add_text_style.setVisibility(View.GONE);
+            } else {
+                finish();
+            }
+        }
+        return true;
+    }
 
 }
