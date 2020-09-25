@@ -78,7 +78,6 @@ public class CreateViewForAddText {
                     if (callback != null) {
                         callback.setText(string);
                     }
-                    dismissDialog();
                 }
 
                 @Override
@@ -90,6 +89,7 @@ public class CreateViewForAddText {
                 @Override
                 public void onClick(View view12) {
                     dismissDialog();
+                    inputTextDialog.dismiss();
                     if (callback != null) {
                         callback.setText(inputText);
                     }

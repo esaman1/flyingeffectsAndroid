@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -37,7 +38,8 @@ public class StickerInputTextDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setGravity(Gravity.BOTTOM);//设置显示在底部
+        //设置显示在底部
+        getWindow().setGravity(Gravity.BOTTOM);
         setContentView(R.layout.dialog_sticker_input_text);
         editText = findViewById(R.id.edit_text);
         if (!TextUtils.isEmpty(inputText)) {
@@ -48,8 +50,17 @@ public class StickerInputTextDialog extends Dialog {
         tv_complete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (onInputTextListener != null) {
+                    onInputTextListener.inputText(editText.getText().toString());
+                }
                 keyBordUtils.HideKeyboard(editText);
-                dismiss();
+            }
+        });
+        editText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+                keyBordUtils.showSoftInput(context,editText);
             }
         });
         editText.addTextChangedListener(new TextWatcher() {
@@ -82,15 +93,13 @@ public class StickerInputTextDialog extends Dialog {
 
     @Override
     public void cancel() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         keyBordUtils.HideKeyboard(editText);
-        super.cancel();
-        if (onInputTextListener != null) {
-            onInputTextListener.inputText(editText.getText().toString());
-        }
     }
 
     @Override
     public void dismiss() {
+        keyBordUtils.HideKeyboard(editText);
         if (onInputTextListener != null) {
             onInputTextListener.inputText(editText.getText().toString());
         }
