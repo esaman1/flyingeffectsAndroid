@@ -1161,35 +1161,32 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                         // 移动贴图
                         float dx = x - lastX;
                         float dy = y - lastY;
-
                         layoutX += dx;
                         layoutY += dy;
+//                        if (mIsText) {
+//                            //设置不能超出边界
+//                            float centerX = center.x + dx;
+//                            float haltBox = mHelpBoxRect.width() / 2;
+//                            if (centerX - haltBox < 0) {
+//                                break;
+//                            } else if (centerX + haltBox > getMeasuredWidth()) {
+//                                break;
+//                            }
+//                            float centerY = center.y + dy;
+//                            float haltBoxH = mHelpBoxRect.height() / 2;
+//                            if (centerY - haltBoxH < 0) {
+//                                break;
+//                            } else if (centerY + haltBoxH > getMeasuredHeight()) {
+//                                break;
+//                            }
+//                        }
                         adjustCenter(dx, dy);
-
                         invalidate();
 
                         lastX = x;
                         lastY = y;
                         moveX = mHelpBoxRect.right;
                         moveY = mHelpBoxRect.bottom;
-
-                        LogUtil.d("OOM", "moveX" + moveX);
-                        LogUtil.d("OOM", "width" + getMeasuredWidth());
-
-                        float xx = mHelpBoxRect.width();
-                        float xx2 = xx / 2;
-                        LogUtil.d("OOM", "xx2 ==" + xx2);
-                        float aaaa = moveX - xx2;
-                        LogUtil.d("OOM", "aaaa ==" + aaaa);
-                        float bbb = aaaa / getMeasuredWidth();
-                        LogUtil.d("OOM", "P=" + bbb);
-
-
-                        float xx1 = mHelpBoxRect.height();
-                        float xx21 = xx1 / 2;
-                        float aaaa1 = moveY - xx21;
-                        float bbb1 = aaaa1 / getMeasuredHeight();
-                        LogUtil.d("OOM", "P=" + bbb1);
                     } else if (mCurrentMode == rotateLocation) {
                         // 旋转 缩放文字操作
                         float dx = x - lastX;
@@ -1241,6 +1238,12 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             return true;
         }
         return false;
+    }
+
+
+    private void isCanOvertheScreen() {
+
+
     }
 
 
@@ -2122,9 +2125,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     //----------------------------文字相关逻辑---------------------------------
     public void setStickerText(String text) {
-        if (TextUtils.isEmpty(text)){
+        if (TextUtils.isEmpty(text)) {
             this.stickerText = "输入文本";
-        }else {
+        } else {
             this.stickerText = text;
         }
     }
@@ -2190,6 +2193,49 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         mTextPaint.setColor(Color.parseColor(paintColor1));
         mTextPaint2.setColor(Color.parseColor(paintColor2));
 
+    }
+
+
+    /**
+     * * description ：在保存的时候，如果有文字功能，并且超过了屏幕外，那么截屏的时候会出现截屏出问题，蓝松位置计算有问题
+     * * 这里修改为，在保存的时候默认把位置居中，然后等比例放大到屏幕的位置，截了图在恢复正常
+     * * creation date: 2020/9/25
+     * * user : zhangtongju
+     */
+
+
+    private float keepToScreenScale;
+    private float[] keepToCenter = new float[2];
+    private boolean hasChangeTextPosition = false;
+    private boolean hasChangeTextScale = false;
+
+    public void changePositionToScreenShot() {
+        if (mIsText) {
+            if (mHelpBoxRect.left < 0 || mHelpBoxRect.right > getMeasuredWidth() || mHelpBoxRect.top < 0 || mHelpBoxRect.bottom > getMeasuredHeight()) {
+                keepToScreenScale = mScale;
+                hasChangeTextPosition = true;
+                keepToCenter[0] = center.x;
+                keepToCenter[1] = center.y;
+                setCenter(getMeasuredWidth() / (float) 2, getMeasuredHeight() / (float) 2);
+                float width = mHelpBoxRect.width();
+                if (width > getMeasuredWidth()) {
+                    hasChangeTextScale = true;
+                    float scale = getMeasuredWidth() / width;
+                    setScale(keepToScreenScale * scale);
+                }
+            }
+        }
+    }
+
+    public void restoreToScreenShot() {
+        if (mIsText && hasChangeTextPosition) {
+            setCenter(keepToCenter[0], keepToCenter[1]);
+            hasChangeTextPosition = false;
+            if (hasChangeTextScale) {
+                setScale(keepToScreenScale);
+                hasChangeTextScale = false;
+            }
+        }
     }
 
 
