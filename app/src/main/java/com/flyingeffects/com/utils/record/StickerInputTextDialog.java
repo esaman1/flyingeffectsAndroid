@@ -43,6 +43,8 @@ public class StickerInputTextDialog extends Dialog {
         setContentView(R.layout.dialog_sticker_input_text);
         editText = findViewById(R.id.edit_text);
         if (!TextUtils.isEmpty(inputText)) {
+            editText.setText(inputText);
+        }else {
             editText.setText("");
         }
         keyBordUtils.showSoftInput(context,editText);
@@ -84,6 +86,13 @@ public class StickerInputTextDialog extends Dialog {
     }
 
     public void setInputText(String text) {
+        if (editText != null) {
+            if (!TextUtils.isEmpty(text)) {
+                editText.setText(text);
+            } else {
+                editText.setText("");
+            }
+        }
         this.inputText = text;
     }
 
@@ -100,9 +109,6 @@ public class StickerInputTextDialog extends Dialog {
     @Override
     public void dismiss() {
         keyBordUtils.HideKeyboard(editText);
-        if (onInputTextListener != null) {
-            onInputTextListener.inputText(editText.getText().toString());
-        }
         super.dismiss();
     }
 

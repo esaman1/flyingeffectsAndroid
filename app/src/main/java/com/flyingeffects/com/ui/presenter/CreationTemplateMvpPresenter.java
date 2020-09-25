@@ -198,6 +198,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemvpView.showTextDialog(inputText);
     }
 
+    @Override
+    public void hineTextDialog() {
+        creationTemplatemvpView.hideTextDialog();
+    }
+
 
     public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH,int templateId){
         creationTemplatemodel.toSaveVideo(imageBjPath,nowUiIsLandscape,percentageH,templateId);

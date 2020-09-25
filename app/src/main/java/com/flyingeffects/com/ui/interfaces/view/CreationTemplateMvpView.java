@@ -14,6 +14,8 @@ public interface CreationTemplateMvpView {
 
     void showTextDialog(String inputText);
 
+    void hideTextDialog();
+
     void setgsyVideoProgress(int progress);
 
     void getVideoDuration(int duration,int thumbCount);

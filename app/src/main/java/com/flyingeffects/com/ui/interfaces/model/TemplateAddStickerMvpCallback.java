@@ -11,6 +11,6 @@ public interface TemplateAddStickerMvpCallback {
 
     void showTextDialog(String inputText);
 
-
+    void hideTextDialog();
 
 }

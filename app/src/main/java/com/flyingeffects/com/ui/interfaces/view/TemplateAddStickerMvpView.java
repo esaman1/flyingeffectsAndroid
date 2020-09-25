@@ -6,4 +6,5 @@ public interface TemplateAddStickerMvpView {
     void getVideoDuration(int duration,int thumbCount );
     void setgsyVideoProgress(int progress);
     void showTextDialog(String inputText);
+    void hideTextDialog();
 }

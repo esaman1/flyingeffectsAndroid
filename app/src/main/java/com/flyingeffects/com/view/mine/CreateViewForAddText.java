@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -52,7 +53,6 @@ public class CreateViewForAddText {
     private CreateTemplateTextFontAdapter createTemplateTextEffectAdapterFont;
     private String mTTFFolder;
     private downCallback callback;
-    private EditText edit_text;
     private LinearLayout view;
     StickerInputTextDialog inputTextDialog;
     String inputText="";
@@ -66,6 +66,13 @@ public class CreateViewForAddText {
     }
 
     private ArrayList<TextView> listTitle = new ArrayList<>();
+
+    public void hideInputTextDialog(){
+        if(inputTextDialog!=null){
+            inputTextDialog.dismiss();
+            dismissDialog();
+        }
+    }
 
     public void showBottomSheetDialog(String text) {
             inputTextDialog = new StickerInputTextDialog(context);
@@ -103,17 +110,31 @@ public class CreateViewForAddText {
             ArrayList<View> list = new ArrayList<>();
             View gridViewLayout = LayoutInflater.from(context).inflate(R.layout.view_creat_template_effect_type, viewPager, false);
             GridView gridView = gridViewLayout.findViewById(R.id.gridView);
-            gridView.setOnItemClickListener((adapterView, view13, i, l) -> downFile(listEffect.get(i).getImage(), 0,listEffect.get(i).getType(),listEffect.get(i).getColor()));
+            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view13, int i, long l) {
+                    CreateViewForAddText.this.downFile(listEffect.get(i).getImage(), 0, listEffect.get(i).getType(), listEffect.get(i).getColor());
+                    createTemplateTextEffectAdapterEffect.select(i);
+                }
+            });
             createTemplateTextEffectAdapterEffect = new CreateTemplateTextEffectAdapter(listEffect, context);
             gridView.setAdapter(createTemplateTextEffectAdapterEffect);
+            createTemplateTextEffectAdapterEffect.select(0);
+
             list.add(gridViewLayout);
             View gridViewLayoutFont = LayoutInflater.from(context).inflate(R.layout.view_creat_template_text_type, viewPager, false);
             GridView gridViewFont = gridViewLayoutFont.findViewById(R.id.gridView);
-            gridViewFont.setOnItemClickListener((adapterView, view1, i, l) -> {
-                downFile(listFont.get(i).getFile(), 1,1,"");
+            gridViewFont.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view1, int i, long l) {
+                    CreateViewForAddText.this.downFile(listFont.get(i).getFile(), 1, 1, "");
+                    createTemplateTextEffectAdapterFont.select(i);
+                }
             });
             createTemplateTextEffectAdapterFont = new CreateTemplateTextFontAdapter(listFont, context);
             gridViewFont.setAdapter(createTemplateTextEffectAdapterFont);
+            createTemplateTextEffectAdapterFont.select(0);
+
             list.add(gridViewLayoutFont);
             TemplateViewPager adapter = new TemplateViewPager(list);
             viewPager.setAdapter(adapter);

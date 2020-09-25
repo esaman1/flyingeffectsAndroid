@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,7 +22,7 @@ import java.util.ArrayList;
  **/
 public class CreateTemplateTextEffectAdapter extends BaseAdapter {
 
-
+    int lastSelectId = 0;
     private ArrayList<FontEnity> list;
     private Context context;
 
@@ -53,23 +54,39 @@ public class CreateTemplateTextEffectAdapter extends BaseAdapter {
             view = LayoutInflater.from(context).inflate(R.layout.item_create_template_text_effect, parent, false);
             holder.iv_logo = view.findViewById(R.id.iv_logo);
             holder.tv_name = view.findViewById(R.id.tv_name);
-            holder.tv_checked=view.findViewById(R.id.tv_checked);
+            holder.tv_checked = view.findViewById(R.id.tv_checked);
+            holder.flFrame = view.findViewById(R.id.fl_frame);
             view.setTag(holder);
         } else {
             holder = (ViewHold) view.getTag();
         }
-        FontEnity fontEnity=list.get(position);
+        FontEnity fontEnity = list.get(position);
         holder.tv_name.setText(fontEnity.getTitle());
         Glide.with(context).load(fontEnity.getIcon_image()).apply(new RequestOptions().placeholder(R.mipmap.placeholder)).into(holder.iv_logo);
+        if (list.get(position).isSelected()) {
+            holder.flFrame.setVisibility(View.VISIBLE);
+        } else {
+            holder.flFrame.setVisibility(View.GONE);
+        }
         return view;
     }
 
+    public void select(int i) {
+        if (i < list.size() && i >= 0) {
+            if (lastSelectId < list.size() && lastSelectId >= 0) {
+                list.get(lastSelectId).setSelected(false);
+            }
+            list.get(i).setSelected(true);
+            notifyDataSetChanged();
+            lastSelectId = i;
+        }
+    }
 
     class ViewHold {
         ImageView iv_logo;
         TextView tv_name;
         TextView tv_checked;
+        FrameLayout flFrame;
     }
-
 
 }
