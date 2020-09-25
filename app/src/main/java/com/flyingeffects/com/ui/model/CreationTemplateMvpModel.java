@@ -204,20 +204,14 @@ public class CreationTemplateMvpModel {
      */
     public void ChangeTextLabe(String text) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            if (!TextUtils.isEmpty(text)) {
-                nowChooseStickerView.setStickerText(text);
-            } else {
-                deleteStickView(nowChooseStickerView);
-            }
+            nowChooseStickerView.setStickerText(text);
         }
     }
-
 
     public void ChangeTextColor(String color0, String color1) {
         if (nowChooseStickerView.getIsTextSticker()) {
             nowChooseStickerView.setTextPaintColor(color0, color1);
         }
-
     }
 
 
