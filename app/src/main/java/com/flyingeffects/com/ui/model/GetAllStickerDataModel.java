@@ -29,19 +29,18 @@ public class GetAllStickerDataModel {
         AllStickerData stickerData = new AllStickerData();
         if (stickerView.getIsTextSticker()) {
             ScreenCaptureUtil screenCaptureUtil = new ScreenCaptureUtil(BaseApplication.getInstance());
-            stickerData.setOriginalPath(screenCaptureUtil.getFilePath(stickerView));
-            stickerData.setPath(screenCaptureUtil.getFilePath(stickerView));
             stickerData.setBoxH((int) stickerView.getmHelpBoxRectH());
             stickerData.setBoxW((int) stickerView.getmHelpBoxRectW());
-//            stickerData.setTextInterspace(screenCaptureUtil.GetTextInterspace(stickerView));
-            LogUtil.d("sticker_size", "stickerView.getmHelpBoxRectH() = " + stickerView.getmHelpBoxRectH());
-            LogUtil.d("sticker_size", "stickerView.getmHelpBoxRectW() = " + stickerView.getmHelpBoxRectW());
             stickerData.setScale(stickerView.getScale());
             stickerData.setMaskBitmap(stickerView.getMaskBitmap());
             stickerData.setMaterial(stickerView.getIsmaterial());
             stickerData.setTranslationX(stickerView.getTranslationX());
             stickerData.setText(true);
             stickerData.setTranslationy(stickerView.getTranslationY());
+            String textImagePath=screenCaptureUtil.getFilePath(stickerView);
+            stickerData.setOriginalPath(textImagePath);
+            stickerData.setPath(textImagePath);
+
         }else{
             stickerData.setBoxH((int) stickerView.getmHelpBoxRectH());
             stickerData.setBoxW((int) stickerView.getmHelpBoxRectW());
