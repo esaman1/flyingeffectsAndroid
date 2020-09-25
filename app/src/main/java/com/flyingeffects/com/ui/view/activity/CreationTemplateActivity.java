@@ -467,6 +467,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
 
+
     private void intoTextStyleDialog(String inputText){
         if(!DoubleClick.getInstance().isFastDoubleClick()){
 

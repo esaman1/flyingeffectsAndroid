@@ -2122,7 +2122,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     //----------------------------文字相关逻辑---------------------------------
     public void setStickerText(String text) {
-        this.stickerText = text;
+        if (TextUtils.isEmpty(text)){
+            this.stickerText = "输入文本";
+        }else {
+            this.stickerText = text;
+        }
     }
 
 

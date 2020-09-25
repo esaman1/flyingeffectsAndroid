@@ -1,8 +1,11 @@
 package com.flyingeffects.com.view.mine;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -22,6 +25,7 @@ import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.SoftKeyBoardListener;
 import com.flyingeffects.com.utils.LogUtil;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
@@ -31,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import androidx.viewpager.widget.ViewPager;
+
 import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -42,6 +47,7 @@ import rx.subjects.PublishSubject;
  * user : zhangtongju
  */
 public class CreateViewForAddText {
+    private static final String TAG = "CreateViewForAddText";
     private ViewPager viewPager;
     private Context context;
     private ArrayList<FontEnity> listFont = new ArrayList<>();
@@ -54,12 +60,33 @@ public class CreateViewForAddText {
     private EditText edit_text;
     private LinearLayout view;
 
-    public CreateViewForAddText(Context context,LinearLayout view, downCallback callback) {
+    public CreateViewForAddText(Context context, LinearLayout view, downCallback callback) {
         this.context = context;
-        this.view=view;
+        this.view = view;
         this.callback = callback;
         FileManager fileManager = new FileManager();
         mTTFFolder = fileManager.getFileCachePath(context, "fontStyle");
+    }
+
+    private void initKeyBoardListener(Context context) {
+        SoftKeyBoardListener.setListener((Activity) context, new SoftKeyBoardListener.OnSoftKeyBoardChangeListener() {
+            @Override
+            public void keyBoardShow(int height) {
+                LogUtil.d(TAG, "keyboard show : " + height);
+            }
+
+            @Override
+            public void keyBoardHide(int height) {
+                LogUtil.d(TAG, "keyboard hide : " + height);
+                view.setOnTouchListener((v, event) -> {
+                    view.setFocusable(true);
+                    view.setFocusableInTouchMode(true);
+                    view.requestFocus();
+
+                    return false;
+                });
+            }
+        });
     }
 
 
@@ -71,59 +98,59 @@ public class CreateViewForAddText {
 //        if (bottomSheetDialog == null) {
 //            bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
 //            View view = LayoutInflater.from(context).inflate(R.layout.view_add_text, null);
-            ImageView iv_down = view.findViewById(R.id.iv_down);
-            edit_text = view.findViewById(R.id.edit_text);
-            edit_text.setText(text);
-            iv_down.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view12) {
-                    dismissDialog();
-                    if (callback != null) {
-                        callback.setText(edit_text.getText().toString().trim());
-                        edit_text.setText("");
-                    }
+        ImageView iv_down = view.findViewById(R.id.iv_down);
+        edit_text = view.findViewById(R.id.edit_text);
+        edit_text.setText(text);
+        iv_down.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view12) {
+                dismissDialog();
+                if (callback != null) {
+                    callback.setText(edit_text.getText().toString().trim());
+                    edit_text.setText("");
                 }
-            });
-            TextView tv_hot = view.findViewById(R.id.tv_hot);
-            TextView tv_complete = view.findViewById(R.id.tv_complete);
-            tv_complete.setOnClickListener(listener);
-            tv_hot.setOnClickListener(listener);
-            TextView tv_font = view.findViewById(R.id.tv_font);
-            tv_font.setOnClickListener(listener);
-            viewPager = view.findViewById(R.id.viewpager);
-            ArrayList<View> list = new ArrayList<>();
-            View gridViewLayout = LayoutInflater.from(context).inflate(R.layout.view_creat_template_effect_type, viewPager, false);
-            GridView gridView = gridViewLayout.findViewById(R.id.gridView);
-            gridView.setOnItemClickListener((adapterView, view13, i, l) -> downFile(listEffect.get(i).getImage(), 0,listEffect.get(i).getType(),listEffect.get(i).getColor()));
-            createTemplateTextEffectAdapterEffect = new CreateTemplateTextEffectAdapter(listEffect, context);
-            gridView.setAdapter(createTemplateTextEffectAdapterEffect);
-            list.add(gridViewLayout);
-            View gridViewLayoutFont = LayoutInflater.from(context).inflate(R.layout.view_creat_template_text_type, viewPager, false);
-            GridView gridViewFont = gridViewLayoutFont.findViewById(R.id.gridView);
-            gridViewFont.setOnItemClickListener((adapterView, view1, i, l) -> {
-                downFile(listFont.get(i).getFile(), 1,1,"");
-            });
-            createTemplateTextEffectAdapterFont = new CreateTemplateTextFontAdapter(listFont, context);
-            gridViewFont.setAdapter(createTemplateTextEffectAdapterFont);
-            list.add(gridViewLayoutFont);
-            TemplateViewPager adapter = new TemplateViewPager(list);
-            viewPager.setAdapter(adapter);
-            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int i, float v, int i1) {
+            }
+        });
+        TextView tv_hot = view.findViewById(R.id.tv_hot);
+        TextView tv_complete = view.findViewById(R.id.tv_complete);
+        tv_complete.setOnClickListener(listener);
+        tv_hot.setOnClickListener(listener);
+        TextView tv_font = view.findViewById(R.id.tv_font);
+        tv_font.setOnClickListener(listener);
+        viewPager = view.findViewById(R.id.viewpager);
+        ArrayList<View> list = new ArrayList<>();
+        View gridViewLayout = LayoutInflater.from(context).inflate(R.layout.view_creat_template_effect_type, viewPager, false);
+        GridView gridView = gridViewLayout.findViewById(R.id.gridView);
+        gridView.setOnItemClickListener((adapterView, view13, i, l) -> downFile(listEffect.get(i).getImage(), 0, listEffect.get(i).getType(), listEffect.get(i).getColor()));
+        createTemplateTextEffectAdapterEffect = new CreateTemplateTextEffectAdapter(listEffect, context);
+        gridView.setAdapter(createTemplateTextEffectAdapterEffect);
+        list.add(gridViewLayout);
+        View gridViewLayoutFont = LayoutInflater.from(context).inflate(R.layout.view_creat_template_text_type, viewPager, false);
+        GridView gridViewFont = gridViewLayoutFont.findViewById(R.id.gridView);
+        gridViewFont.setOnItemClickListener((adapterView, view1, i, l) -> {
+            downFile(listFont.get(i).getFile(), 1, 1, "");
+        });
+        createTemplateTextEffectAdapterFont = new CreateTemplateTextFontAdapter(listFont, context);
+        gridViewFont.setAdapter(createTemplateTextEffectAdapterFont);
+        list.add(gridViewLayoutFont);
+        TemplateViewPager adapter = new TemplateViewPager(list);
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
 
-                }
+            }
 
-                @Override
-                public void onPageSelected(int i) {
-                    setTextColor(i);
-                }
+            @Override
+            public void onPageSelected(int i) {
+                setTextColor(i);
+            }
 
-                @Override
-                public void onPageScrollStateChanged(int i) {
+            @Override
+            public void onPageScrollStateChanged(int i) {
 
-                }
-            });
+            }
+        });
 //            bottomSheetDialog.setContentView(view);
 //            bottomSheetDialog.setCancelable(true);
 //            bottomSheetDialog.setCanceledOnTouchOutside(true);
@@ -138,10 +165,10 @@ public class CreateViewForAddText {
 //            params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
 //            parent.setLayoutParams(params);
 //            bottomSheetDialog.show();
-            listTitle.add(tv_hot);
-            listTitle.add(tv_font);
-            requestFontImage();
-            requestFontList();
+        listTitle.add(tv_hot);
+        listTitle.add(tv_font);
+        requestFontImage();
+        requestFontList();
 //        }
     }
 
@@ -152,12 +179,12 @@ public class CreateViewForAddText {
      * param : type 0 热门效果或者 1字体   textType ：热门效果 2表示文字，1 表示图片
      * user : zhangtongju
      */
-    private void downFile(String path, int type,int textType,String color) {
+    private void downFile(String path, int type, int textType, String color) {
 
-        if(type==0&&textType==2){
-            String[]str=color.split(",");
-            callback.setTextColor("#"+str[1],"#"+str[0]);
-        }else{
+        if (type == 0 && textType == 2) {
+            String[] str = color.split(",");
+            callback.setTextColor("#" + str[1], "#" + str[0]);
+        } else {
             LogUtil.d("OOM4", "downFilePath=" + path);
             int index = path.lastIndexOf("/");
             String newStr = path.substring(index);
@@ -196,14 +223,14 @@ public class CreateViewForAddText {
 
         void setText(String text);
 
-        void setTextColor(String color0,String color1);
+        void setTextColor(String color0, String color1);
 
     }
 
 
     private void dismissDialog() {
 
-        if(view!=null){
+        if (view != null) {
             view.setVisibility(View.GONE);
         }
 
@@ -235,8 +262,9 @@ public class CreateViewForAddText {
                 if (callback != null) {
                     callback.setText(text);
                 }
-                edit_text.setText("");
-                dismissDialog();
+                if ("".equals(text)) {
+                    dismissDialog();
+                }
                 break;
 
             default:

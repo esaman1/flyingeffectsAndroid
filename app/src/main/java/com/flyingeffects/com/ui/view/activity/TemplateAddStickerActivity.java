@@ -110,7 +110,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     @BindView(R.id.ll_add_text_style)
     LinearLayout ll_add_text_style;
 
-    private  boolean isShowPreviewAd=false;
+    private boolean isShowPreviewAd = false;
 
     @Override
     protected int getLayoutId() {
@@ -120,17 +120,17 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
-        videoPath=getIntent().getStringExtra("videoPath");
-        presenter=new TemplateAddStickerMvpPresenter(this,this,ll_space,viewLayerRelativeLayout,videoPath);
+        videoPath = getIntent().getStringExtra("videoPath");
+        presenter = new TemplateAddStickerMvpPresenter(this, this, ll_space, viewLayerRelativeLayout, videoPath);
         if (!TextUtils.isEmpty(videoPath)) {
             //有视频的时候，初始化视频值
-            presenter.setPlayerViewSize(playerView,scrollView,viewLayerRelativeLayout);
+            presenter.setPlayerViewSize(playerView, scrollView, viewLayerRelativeLayout);
             initExo(videoPath);
         }
         presenter.initBottomLayout(viewPager);
         presenter.requestStickersList();
         initViewLayerRelative();
-        ((TextView)findViewById(R.id.tv_top_submit)).setText("保存");
+        ((TextView) findViewById(R.id.tv_top_submit)).setText("保存");
     }
 
 
@@ -141,14 +141,15 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
         super.onPause();
     }
 
-    boolean isOnDestroy=false;
+    boolean isOnDestroy = false;
+
     @Override
     public void onDestroy() {
         presenter.onDestroy();
-        LogUtil.d("OOM","onDestroy");
+        LogUtil.d("OOM", "onDestroy");
         videoStop();
         endTimer();
-        isOnDestroy=true;
+        isOnDestroy = true;
         EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
@@ -219,11 +220,11 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                 }
             }
         });
-        MediaSource   mediaSource = new ExtractorMediaSource.Factory(
+        MediaSource mediaSource = new ExtractorMediaSource.Factory(
                 new DefaultDataSourceFactory(TemplateAddStickerActivity.this, "exoplayer-codelab")).
                 createMediaSource(Uri.fromFile(new File(videoPath)));
         exoPlayer.prepare(mediaSource, true, false);
-        new Handler().postDelayed(() -> toPlay(),200);
+        new Handler().postDelayed(() -> toPlay(), 200);
     }
 
     private void videoToStart() {
@@ -236,8 +237,6 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
         nowStateIsPlaying(false);
         presenter.showAllAnim(false);
     }
-
-
 
 
     private void seekTo(long to) {
@@ -299,7 +298,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     public void animIsComplate() {
 
         WaitingDialog.closePragressDialog();
-        if(!isOnDestroy){
+        if (!isOnDestroy) {
             Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
                 nowStateIsPlaying(true);
                 if (!TextUtils.isEmpty(videoPath)) {
@@ -343,12 +342,11 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     }
 
 
-
     /**
      * 开始播放
      */
     private void videoPlay() {
-        if(!isOnDestroy){
+        if (!isOnDestroy) {
             if (exoPlayer != null) {
                 LogUtil.d("video", "play");
                 exoPlayer.setVolume(1f);
@@ -362,6 +360,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     private long nowTime = 5;
     //自己计算的播放时间
     private int totalPlayTime;
+
     private void startTimer() {
         totalPlayTime = 0;
         int screenWidth = screenUtil.getScreenWidth(this);
@@ -437,7 +436,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
 
     @Override
-    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_top_back,R.id.tv_add_text})
+    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_top_back, R.id.tv_add_text})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
@@ -445,14 +444,13 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                     videoToPause();
                     endTimer();
                 }
-                presenter.toSaveVideo( 0);
+                presenter.toSaveVideo(0);
                 break;
 
             case R.id.ll_play:
                 toPlay();
 
                 break;
-
 
 
             case R.id.iv_top_back:
@@ -472,13 +470,13 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     }
 
 
-    private void intoTextStyleDialog(String inputText){
+    private void intoTextStyleDialog(String inputText) {
         ll_add_text_style.setVisibility(View.VISIBLE);
-        if(!DoubleClick.getInstance().isFastDoubleClick()){
-            CreateViewForAddText createViewForAddText=new CreateViewForAddText(this,ll_add_text_style, new CreateViewForAddText.downCallback() {
+        if (!DoubleClick.getInstance().isFastDoubleClick()) {
+            CreateViewForAddText createViewForAddText = new CreateViewForAddText(this, ll_add_text_style, new CreateViewForAddText.downCallback() {
                 @Override
                 public void isSuccess(String path, int type) {
-                    presenter.ChangeTextStyle(path,type);
+                    presenter.ChangeTextStyle(path, type);
                 }
 
                 @Override
@@ -488,7 +486,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
                 @Override
                 public void setTextColor(String color0, String color1) {
-                    presenter.ChangeTextColor(color0,color1);
+                    presenter.ChangeTextColor(color0, color1);
                 }
             });
             createViewForAddText.showBottomSheetDialog(inputText);
@@ -496,13 +494,12 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     }
 
 
-
-    private void toPlay(){
-        if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)&&!isOnDestroy) {
+    private void toPlay() {
+        if (!DoubleClick.getInstance().isFastZDYDoubleClick(500) && !isOnDestroy) {
             if (isPlaying) {
-                if(!isShowPreviewAd&&BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()){
+                if (!isShowPreviewAd && BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                     AdManager.getInstance().showCpAd(this, AdConfigs.AD_SCREEN_FOR_PREVIEW);
-                    isShowPreviewAd=true;
+                    isShowPreviewAd = true;
                 }
                 isIntoPause = false;
                 isPlayComplate = false;

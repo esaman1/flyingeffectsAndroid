@@ -8,7 +8,6 @@
     android:background="#181818"
     android:orientation="vertical">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="37dp"
@@ -37,7 +36,6 @@
                 android:textSize="14sp" />
         </RelativeLayout>
 
-
         <TextView
             android:id="@+id/tv_complete"
             android:layout_width="65dp"
@@ -45,10 +43,9 @@
             android:layout_marginStart="8dp"
             android:background="@drawable/tv_make"
             android:gravity="center"
-            android:text="完成"
+            android:text="@string/make_sure"
             android:textColor="@color/white"
             android:textSize="17sp" />
-
 
     </LinearLayout>
 
