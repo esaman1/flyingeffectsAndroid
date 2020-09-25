@@ -65,6 +65,10 @@ public class CreateViewForAddText {
         mTTFFolder = fileManager.getFileCachePath(context, "fontStyle");
     }
 
+    public void hideInput(){
+        inputTextDialog.dismiss();
+    }
+
     private ArrayList<TextView> listTitle = new ArrayList<>();
 
     public void showBottomSheetDialog(String text) {

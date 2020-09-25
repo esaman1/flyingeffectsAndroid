@@ -871,15 +871,16 @@ public class CreationTemplateMvpModel {
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             String path = stickerView.getResPath();
-            String format = imagePath.substring(imagePath.length() - 4);
-            if (imagePath.endsWith(".gif")) {
-                String copyName = mGifFolder + File.separator + id + format;
-                if (path.equals(copyName)) {
-                    return true;
+            if (!TextUtils.isEmpty(path)) {
+                String format = imagePath.substring(imagePath.length() - 4);
+                if (imagePath.endsWith(".gif")) {
+                    String copyName = mGifFolder + File.separator + id + format;
+                    if (path.equals(copyName)) {
+                        return true;
+                    }
                 }
             }
         }
-
         return false;
 
     }
@@ -2019,6 +2020,35 @@ public class CreationTemplateMvpModel {
         addSticker("", false, false, false, "", false, null, false, true);
     }
 
+
+    public void deleteAllTextSticker() {
+        toDeleteAllTextSticker();
+    }
+
+
+    /**
+     * description ：删除帖子(包括动画贴纸)
+     * creation date: 2020/6/8
+     * user : zhangtongju
+     */
+    private ArrayList<StickerView> needDeleteTextList = new ArrayList<>();
+
+    private void toDeleteAllTextSticker() {
+        needDeleteTextList.clear();
+        if (listForStickerModel != null && listForStickerModel.size() > 0) {
+            for (int i = 0; i < listForStickerModel.size(); i++) {
+                StickerView stickerView = listForStickerModel.get(i).getStickerView();
+                if (stickerView != null && stickerView.getIsTextSticker()) {
+                    needDeleteTextList.add(stickerView);
+                }
+            }
+        }
+
+        for (StickerView stickerView : needDeleteTextList) {
+            deleteStickView(stickerView);
+        }
+
+    }
 
 }
 

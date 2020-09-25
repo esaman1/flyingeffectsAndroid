@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -175,7 +176,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     LinearLayout ll_add_text_style;
 
 
-
     @Override
     protected int getLayoutId() {
         return R.layout.act_creation_template_edit;
@@ -333,9 +333,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     boolean nowUiIsLandscape = false;
 
     @Override
-    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_add_sticker, R.id.iv_top_back, R.id.iv_change_ui, R.id.tv_background,R.id.tv_music, R.id.tv_anim, R.id.tv_tiezhi,R.id.tv_add_text})
+    @OnClick({R.id.tv_top_submit, R.id.ll_content_top, R.id.ll_play, R.id.iv_delete_all_text, R.id.iv_add_sticker, R.id.iv_top_back, R.id.iv_change_ui, R.id.tv_background, R.id.tv_music, R.id.tv_anim, R.id.tv_tiezhi, R.id.tv_add_text})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.ll_content_top:
+                LogUtil.d("OOM", "点击了顶部");
+                break;
+
             case R.id.tv_top_submit:
                 if (isPlaying) {
                     videoToPause();
@@ -353,8 +357,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 } else {
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
                 }
-                presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH,templateId);
+                presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId);
                 break;
+
+            case R.id.iv_delete_all_text:
+                presenter.deleteAllTextSticker();
+                break;
+
 
             case R.id.ll_play:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
@@ -465,17 +474,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
     }
 
+    private CreateViewForAddText createViewForAddText;
 
-
-
-    private void intoTextStyleDialog(String inputText){
-        if(!DoubleClick.getInstance().isFastDoubleClick()){
-
+    private void intoTextStyleDialog(String inputText) {
+        if (!DoubleClick.getInstance().isFastDoubleClick()) {
             ll_add_text_style.setVisibility(View.VISIBLE);
-            CreateViewForAddText createViewForAddText=new CreateViewForAddText(this,ll_add_text_style, new CreateViewForAddText.downCallback() {
+            createViewForAddText = new CreateViewForAddText(this, ll_add_text_style, new CreateViewForAddText.downCallback() {
                 @Override
                 public void isSuccess(String path, int type) {
-                    presenter.ChangeTextStyle(path,type);
+                    presenter.ChangeTextStyle(path, type);
                 }
 
                 @Override
@@ -485,8 +492,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
                 @Override
                 public void setTextColor(String color0, String color1) {
-                    LogUtil.d("OOM4","color0="+color0+"color1="+color1);
-                    presenter.ChangeTextColor(color0,color1);
+                    LogUtil.d("OOM4", "color0=" + color0 + "color1=" + color1);
+                    presenter.ChangeTextColor(color0, color1);
                 }
 
 
@@ -495,7 +502,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
     }
 
-    private int[] lin_Id = {R.id.tv_tiezhi, R.id.tv_anim,R.id.tv_music,R.id.tv_add_text};
+    private int[] lin_Id = {R.id.tv_tiezhi, R.id.tv_anim, R.id.tv_music, R.id.tv_add_text};
 
     private void setTextColor(int chooseItem) {
         for (int i = 0; i < lin_Id.length; i++) {
@@ -661,7 +668,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
         scrollView.setOnScrollListener(scrollY -> {
             int totalHeight = scrollView.getChildAt(0).getHeight();
-            percentageH=scrollY/(float) totalHeight;
+            percentageH = scrollY / (float) totalHeight;
             LogUtil.d("OOM3", "percentageH" + percentageH);
         });
 
@@ -707,7 +714,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             viewPager.setCurrentItem(0);
             tv_music.setVisibility(View.GONE);
             setTextColor(0);
-        },500);
+        }, 500);
     }
 
     @Override
@@ -823,9 +830,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void showMusicBtn(boolean isShow) {
-        if(isShow){
+        if (isShow) {
             tv_music.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             tv_music.setVisibility(View.GONE);
             viewPager.setCurrentItem(0);
             setTextColor(0);
@@ -1055,17 +1062,32 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private void pauseBgmMusic() {
         LogUtil.d("playBGMMusic", "pauseBgmMusic------------------------------");
-        if (bgmPlayer != null&&bgmPlayer.isPlaying()) {
+        if (bgmPlayer != null && bgmPlayer.isPlaying()) {
             bgmPlayer.pause();
         }
     }
 
 
     @Subscribe
-    public void onEventMainThread( CutSuccess cutSuccess) {
-        String nowChooseBjPath=cutSuccess.getFilePath();
+    public void onEventMainThread(CutSuccess cutSuccess) {
+        String nowChooseBjPath = cutSuccess.getFilePath();
         presenter.setAddChooseBjPath(nowChooseBjPath);
+    }
 
+
+    @Override
+    public final boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (ll_add_text_style.getVisibility() == View.VISIBLE) {
+                if (createViewForAddText != null) {
+                    createViewForAddText.hideInput();
+                }
+                ll_add_text_style.setVisibility(View.GONE);
+            } else {
+                finish();
+            }
+        }
+        return true;
     }
 
 

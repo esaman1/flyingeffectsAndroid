@@ -202,4 +202,9 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH,int templateId){
         creationTemplatemodel.toSaveVideo(imageBjPath,nowUiIsLandscape,percentageH,templateId);
     }
+
+
+    public void deleteAllTextSticker(){
+        creationTemplatemodel.deleteAllTextSticker();
+    }
 }

@@ -2,13 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/ll_add_text_style"
     android:visibility="gone"
+    android:id="@+id/ll_add_text_style"
     android:layout_alignParentBottom="true"
     android:background="#181818"
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/ll_content_top"
         android:layout_width="match_parent"
         android:layout_height="47dp"
         android:gravity="center_vertical"
@@ -18,15 +19,16 @@
 
 
         <ImageView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
+            android:id="@+id/iv_delete_all_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:src="@mipmap/text_delete_all" />
 
 
         <TextView
             android:id="@+id/tv_hot"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:text="热门效果"
             android:textColor="#5496FF"
@@ -36,7 +38,7 @@
         <TextView
             android:id="@+id/tv_font"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:text="字体"
             android:textColor="@color/white"
