@@ -16,8 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.viewpager.widget.ViewPager;
-
 import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
@@ -58,6 +56,7 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -474,15 +473,20 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
     }
 
-    private CreateViewForAddText createViewForAddText;
 
-    private void intoTextStyleDialog(String inputText) {
-        if (!DoubleClick.getInstance().isFastDoubleClick()) {
+    CreateViewForAddText createViewForAddText;
+
+    private void intoTextStyleDialog(String inputText){
+        if(!DoubleClick.getInstance().isFastDoubleClick()){
+            if (createViewForAddText != null) {
+                createViewForAddText.hideInputTextDialog();
+                createViewForAddText = null;
+            }
             ll_add_text_style.setVisibility(View.VISIBLE);
-            createViewForAddText = new CreateViewForAddText(this, ll_add_text_style, new CreateViewForAddText.downCallback() {
+            createViewForAddText=new CreateViewForAddText(this,ll_add_text_style, new CreateViewForAddText.downCallback() {
                 @Override
                 public void isSuccess(String path, int type) {
-                    presenter.ChangeTextStyle(path, type);
+                    presenter.ChangeTextStyle(path,type);
                 }
 
                 @Override
@@ -492,8 +496,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
                 @Override
                 public void setTextColor(String color0, String color1) {
-                    LogUtil.d("OOM4", "color0=" + color0 + "color1=" + color1);
-                    presenter.ChangeTextColor(color0, color1);
+                    LogUtil.d("OOM4","color0="+color0+"color1="+color1);
+                    presenter.ChangeTextColor(color0,color1);
                 }
 
 
@@ -720,6 +724,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void showTextDialog(String inputText) {
         intoTextStyleDialog(inputText);
+    }
+
+
+    @Override
+    public void hideTextDialog() {
+        createViewForAddText.hideInputTextDialog();
     }
 
     @Override

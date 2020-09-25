@@ -434,6 +434,10 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
         intoTextStyleDialog(inputText);
     }
 
+    @Override
+    public void hideTextDialog() {
+        createViewForAddText.hideInputTextDialog();
+    }
 
     @Override
     @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_top_back, R.id.tv_add_text})
@@ -469,11 +473,12 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
         }
     }
 
+    CreateViewForAddText createViewForAddText;
 
     private void intoTextStyleDialog(String inputText) {
-        ll_add_text_style.setVisibility(View.VISIBLE);
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
-            CreateViewForAddText createViewForAddText = new CreateViewForAddText(this, ll_add_text_style, new CreateViewForAddText.downCallback() {
+            ll_add_text_style.setVisibility(View.VISIBLE);
+            createViewForAddText = new CreateViewForAddText(this, ll_add_text_style, new CreateViewForAddText.downCallback() {
                 @Override
                 public void isSuccess(String path, int type) {
                     presenter.ChangeTextStyle(path, type);

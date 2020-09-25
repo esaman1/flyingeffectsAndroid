@@ -4,7 +4,16 @@ import java.io.Serializable;
 
 public class FontEnity implements Serializable {
 
-      private String id;
+    private String id;
+    private String image;
+    private String title;
+    private String file;
+    private String create_time;
+    private String status;
+    private String icon_image;
+    private int type;
+    private String color;
+    private boolean selected;
 
     public String getId() {
         return id;
@@ -46,14 +55,6 @@ public class FontEnity implements Serializable {
         this.status = status;
     }
 
-
-    private String image;
-    private String title;
-              private String file;
-              private String create_time;
-              private String status;
-
-
     public String getImage() {
         return image;
     }
@@ -69,10 +70,6 @@ public class FontEnity implements Serializable {
     public void setIcon_image(String icon_image) {
         this.icon_image = icon_image;
     }
-
-    private String icon_image;
-
-    private  int type;
 
     public int getType() {
         return type;
@@ -90,6 +87,11 @@ public class FontEnity implements Serializable {
         this.color = color;
     }
 
-    private String color;
+    public boolean isSelected() {
+        return selected;
+    }
 
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
 }

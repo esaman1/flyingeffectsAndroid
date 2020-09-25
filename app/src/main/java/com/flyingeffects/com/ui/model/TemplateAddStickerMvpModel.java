@@ -950,6 +950,9 @@ public class TemplateAddStickerMvpModel {
             @Override
             public void stickerOnclick(int type) {
                 if (type == StickerView.LEFT_TOP_MODE) {//刪除
+                    if (stickView.getIsTextSticker()) {
+                        callback.hideTextDialog();
+                    }
                     deleteStickView(stickView);
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     stickView.dismissFrame();

@@ -36,5 +36,7 @@ public interface CreationTemplateMvpCallback {
 
     void showTextDialog(String inputText);
 
+    void hineTextDialog();
+
 
 }

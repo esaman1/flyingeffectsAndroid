@@ -921,6 +921,9 @@ public class CreationTemplateMvpModel {
                         }
                         callback.deleteFirstSticker();
                     }
+                    if (stickView.getIsTextSticker()) {
+                        callback.hineTextDialog();
+                    }
                     deleteStickView(stickView);
 
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
