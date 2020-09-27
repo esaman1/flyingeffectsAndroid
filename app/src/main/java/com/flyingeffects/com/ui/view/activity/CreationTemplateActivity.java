@@ -361,6 +361,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
             case R.id.iv_delete_all_text:
                 presenter.deleteAllTextSticker();
+                if(createViewForAddText!=null){
+                    createViewForAddText.hideInputTextDialog();
+                }
+
                 break;
 
 

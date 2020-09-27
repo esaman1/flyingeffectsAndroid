@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.adapter.Fans_adapter;
 import com.flyingeffects.com.adapter.MineFocusAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
@@ -19,6 +18,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +44,14 @@ public class MineFocusActivity extends BaseActivity {
 
     private List<fansEnity> fansList = new ArrayList<>();
 
+    @BindView(R.id.smart_refresh_layout_bj)
+    SmartRefreshLayout smartRefreshLayout;
+
+    private boolean isRefresh = true;
+
+    private int selectPage = 1;
+
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_fans;
@@ -53,20 +61,19 @@ public class MineFocusActivity extends BaseActivity {
     protected void initView() {
         ((TextView) findViewById(R.id.tv_top_title)).setText("关注");
         findViewById(R.id.iv_top_back).setOnClickListener(this);
-        to_user_id=getIntent().getStringExtra("to_user_id");
+        to_user_id = getIntent().getStringExtra("to_user_id");
+        ShowData();
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(BaseConstans.hasLogin()){
+        if (BaseConstans.hasLogin()) {
             requestMessageCount();
-        }else{
+        } else {
             ToastUtil.showToast(getResources().getString(R.string.need_login));
         }
-
-
     }
 
 
@@ -79,6 +86,9 @@ public class MineFocusActivity extends BaseActivity {
         HashMap<String, String> params = new HashMap<>();
         params.put("to_user_id", to_user_id);
         params.put("type", "2");
+        params.put("page", selectPage + "");
+        params.put("pageSize", "10");
+
         Observable ob = Api.getDefault().followerList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<fansEnity>>(MineFocusActivity.this) {
             @Override
@@ -88,39 +98,62 @@ public class MineFocusActivity extends BaseActivity {
 
             @Override
             protected void _onNext(List<fansEnity> data) {
-                fansList = data;
-                ShowData();
+                finishData();
+                if (isRefresh) {
+                    fansList.clear();
+                }
+                if (data.size() < 10) {
+                    smartRefreshLayout.setEnableLoadMore(false);
+                }
+                fansList.addAll(data);
+                adapter.notifyDataSetChanged();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
 
+    private void finishData() {
+        smartRefreshLayout.finishRefresh();
+        smartRefreshLayout.finishLoadMore();
+    }
+
+
     @Override
     protected void initAction() {
-
+        initSmartRefreshLayout();
     }
 
 
     private void ShowData() {
-
-
         adapter = new MineFocusAdapter(R.layout.list_mine_foucs_item, fansList, this);
         LinearLayoutManager layoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-
-
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent(MineFocusActivity.this, UserHomepageActivity.class);
                 intent.putExtra("toUserId", fansList.get(position).getId());
-
                 startActivity(intent);
             }
         });
         recyclerView.setAdapter(adapter);
+    }
+
+
+    public void initSmartRefreshLayout() {
+        smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
+            isRefresh = true;
+            refreshLayout.setEnableLoadMore(true);
+            selectPage = 1;
+            requestMessageCount();
+        });
+        smartRefreshLayout.setOnLoadMoreListener(refresh -> {
+            isRefresh = false;
+            selectPage++;
+            requestMessageCount();
+        });
     }
 
 

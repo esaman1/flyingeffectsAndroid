@@ -1351,14 +1351,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     break;
                     //模板
                 case R.id.ll_choose_1:
-//                case R.id.check_box_1:
-                    clearCheckBox();
-//                    cb_1.setChecked(true);
-                    cb_1.setImageResource(R.mipmap.template_btn_selected);
                     if (TextUtils.isEmpty(mTemplateModel.getBackgroundPath())) {
                         chooseTemplateMusic();
                         ToastUtil.showToast("背景音乐为默认模板音乐");
-                    } else {
+                    } else  if(!albumType.isVideo(GetPathType.getInstance().getPathType(mTemplateModel.getBackgroundPath()))){
+                        ToastUtil.showToast("没有背景音乐");
+                    }else {
+                        clearCheckBox();
+                        cb_1.setImageResource(R.mipmap.template_btn_selected);
                         nowChooseMusic = 2;
                         presenter.getBjMusic(mTemplateModel.getBackgroundPath());
                     }
@@ -1470,55 +1470,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         });
     }
-
-//
-//    @Subscribe
-//    public void onEventMainThread(showAdCallback event) {
-//        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-//            VideoAdManager videoAdManager = new VideoAdManager();
-//            String adId;
-//            if (BaseConstans.getOddNum()) {
-//                adId = AdConfigs.AD_save_video;
-//            } else {
-//                adId = AdConfigs.AD_save_video2;
-//            }
-//            videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
-//                @Override
-//                public void onVideoAdSuccess() {
-//                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "video_ad_alert_request_sucess");
-//                    LogUtil.d("OOM", "onVideoAdSuccess");
-//                }
-//
-//                @Override
-//                public void onVideoAdError(String s) {
-//                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "video_ad_alert_request_fail");
-//                    LogUtil.d("OOM", "onVideoAdError" + s);
-//                    presenter.alertAlbumUpdate(false);
-//                }
-//
-//                @Override
-//                public void onVideoAdClose() {
-//                    presenter.alertAlbumUpdate(true);
-//                }
-//
-//                @Override
-//                public void onVideoAdSkip() {
-//                    LogUtil.d("OOM", "onVideoAdSkip");
-//                }
-//
-//                @Override
-//                public void onVideoAdComplete() {
-//                }
-//
-//                @Override
-//                public void onVideoAdClicked() {
-//                    LogUtil.d("OOM", "onVideoAdClicked");
-//                }
-//            });
-//        } else {
-//            presenter.alertAlbumUpdate(true);
-//        }
-//    }
 
 
 

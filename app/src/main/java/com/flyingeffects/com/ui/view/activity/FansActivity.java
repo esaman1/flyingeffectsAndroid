@@ -13,7 +13,6 @@ import com.flyingeffects.com.adapter.Fans_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.HomeMessageCountUpdate;
 import com.flyingeffects.com.enity.fansEnity;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -21,13 +20,13 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
-import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 /**
@@ -47,6 +46,14 @@ public class FansActivity extends BaseActivity {
     //0 表示我的页面 1 表示消息
     private int from;
 
+    @BindView(R.id.smart_refresh_layout_bj)
+    SmartRefreshLayout smartRefreshLayout;
+
+    private boolean isRefresh = true;
+
+    private int selectPage = 1;
+
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_fans;
@@ -58,6 +65,7 @@ public class FansActivity extends BaseActivity {
         findViewById(R.id.iv_top_back).setOnClickListener(this);
         to_user_id = getIntent().getStringExtra("to_user_id");
         from=getIntent().getIntExtra("from",0);
+        ShowData();
     }
 
 
@@ -82,6 +90,8 @@ public class FansActivity extends BaseActivity {
         HashMap<String, String> params = new HashMap<>();
         params.put("to_user_id", to_user_id);
         params.put("type", "1");
+        params.put("page", selectPage + "");
+        params.put("pageSize", "10");
         Observable ob ;
         if(from==0){
             ob = Api.getDefault().followerList(BaseConstans.getRequestHead(params));
@@ -96,10 +106,23 @@ public class FansActivity extends BaseActivity {
 
             @Override
             protected void _onNext(List<fansEnity> data) {
-                fansList = data;
-                ShowData();
+
+                finishData();
+                if (isRefresh) {
+                    fansList.clear();
+                }
+                if (data.size() < 10) {
+                    smartRefreshLayout.setEnableLoadMore(false);
+                }
+                fansList.addAll(data);
+                adapter.notifyDataSetChanged();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+    private void finishData() {
+        smartRefreshLayout.finishRefresh();
+        smartRefreshLayout.finishLoadMore();
     }
 
 

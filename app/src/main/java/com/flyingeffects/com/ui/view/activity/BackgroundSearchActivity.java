@@ -154,6 +154,7 @@ public class BackgroundSearchActivity extends BaseActivity {
         iv_delete.setOnClickListener(view -> {
             ed_text.setText("");
             hideResultView(true);
+            EventBus.getDefault().post(new SendSearchText(""));
             viewPager.setCurrentItem(0);
         });
         hideResultView(true);

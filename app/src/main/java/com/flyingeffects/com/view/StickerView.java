@@ -66,6 +66,7 @@ import com.flyingeffects.com.view.lansongCommendView.RectUtil;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnDragListener;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -99,7 +100,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private String getTypefaceBitmapPath;
     //文字图片
     private Bitmap bpForTextBj;
-    //    private boolean isChooseTextEffect = false;
+     private boolean isChooseTextBjEffect = false;
     // 文字背景矩形变阵
     Matrix matrixForBitmapShader = new Matrix();
     private float mTextScale;
@@ -344,6 +345,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         this(context);
         mIsText = isText;
         initTextPainter(context);
+        colors.add("#626262");
+        colors.add("#000000");
+
         //只有下面两个方法设置为true才能获取到输入的内容
 //        setFocusable(true);
 //        setFocusableInTouchMode(true);
@@ -2156,6 +2160,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     public void setTextBitmapStyle(String path) {
         getTypefaceBitmapPath = path;
+        isChooseTextBjEffect=true;
 //        isChooseTextEffect = true;
         bpForTextBj = BitmapFactory.decodeFile(path);
     }
@@ -2184,15 +2189,27 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
+    private ArrayList<String>colors=new ArrayList<>();
     public void setTextPaintColor(String paintColor1, String paintColor2) {
         if (bpForTextBj != null) {
             bpForTextBj.recycle();
             bpForTextBj = null;
         }
+        isChooseTextBjEffect=false;
         mTextPaint.setShader(null);
         mTextPaint.setColor(Color.parseColor(paintColor1));
         mTextPaint2.setColor(Color.parseColor(paintColor2));
+        colors.clear();
+        colors.add(paintColor1);
+        colors.add(paintColor2);
+    }
 
+
+    public boolean GetIsChooseTextBjEffect(){
+        return  isChooseTextBjEffect;
+    }
+    public ArrayList<String> GetTextColors(){
+        return  colors;
     }
 
 
@@ -2205,7 +2222,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
 
     private float keepToScreenScale;
-    private float[] keepToCenter = new float[2];
+    private float[] keepToCenter ={};
     private boolean hasChangeTextPosition = false;
     private boolean hasChangeTextScale = false;
 

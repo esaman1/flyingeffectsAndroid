@@ -293,9 +293,11 @@ public class fragBjSearch extends BaseFragment {
             LogUtil.d("OOM", event.getText());
             //搜索了内容
             searchText = event.getText();
-            isRefresh = true;
-            selectPage = 1;
-            requestFagData(true);
+            if(!TextUtils.isEmpty(searchText)){
+                isRefresh = true;
+                selectPage = 1;
+                requestFagData(true);
+            }
         } else {
             ToastUtil.showToast("目标页面已销毁");
         }

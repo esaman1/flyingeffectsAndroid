@@ -1124,13 +1124,20 @@ public class CreationTemplateMvpModel {
 
         if (isCopy && copyStickerView != null) {
             if (copyStickerView.getIsTextSticker()) {
+                if(stickView.GetIsChooseTextBjEffect()){
+                    if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
+                        stickView.setTextStyle(copyStickerView.getTypefacePath());
+                    }
+                    if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
+                        stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath());
+                    }
+                }else{
+                    ArrayList<String>colors=stickView.GetTextColors();
+                    stickView.setTextPaintColor(colors.get(0), colors.get(1));
+                }
+
                 stickView.setStickerText(copyStickerView.getStickerText());
-                if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
-                    stickView.setTextStyle(copyStickerView.getTypefacePath());
-                }
-                if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
-                    stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath());
-                }
+
                 stickView.SetTextAngle(copyStickerView.getRotateAngle());
                 stickView.setScale(copyStickerView.getCopyScale());
                 stickView.setCenter(copyStickerView.getCenterXAdd30(), copyStickerView.getCenterYAdd30());
