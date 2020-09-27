@@ -1072,8 +1072,9 @@ public class CreationTemplateMvpModel {
         stickView.setRightTopBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_copy));
         stickView.setLeftTopBitmap(ContextCompat.getDrawable(context, R.drawable.sticker_delete));
         stickView.setRightBottomBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_redact));
-        stickView.setRightBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_updown));
-
+        if(!isText){
+            stickView.setRightBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_updown));
+        }
         stickView.setIsFromStickerAnim(isFromShowAnim);
         stickView.setComeFromAlbum(isFromAubum);
         if (isFromAubum) {
@@ -1124,20 +1125,19 @@ public class CreationTemplateMvpModel {
 
         if (isCopy && copyStickerView != null) {
             if (copyStickerView.getIsTextSticker()) {
-                if(stickView.GetIsChooseTextBjEffect()){
-                    if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
-                        stickView.setTextStyle(copyStickerView.getTypefacePath());
-                    }
+                //是否是图片文字效果
+                if (copyStickerView.GetIsChooseTextBjEffect()) {
                     if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
                         stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath());
                     }
-                }else{
-                    ArrayList<String>colors=stickView.GetTextColors();
+                } else {
+                    ArrayList<String> colors = copyStickerView.GetTextColors();
                     stickView.setTextPaintColor(colors.get(0), colors.get(1));
                 }
-
+                if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
+                    stickView.setTextStyle(copyStickerView.getTypefacePath());
+                }
                 stickView.setStickerText(copyStickerView.getStickerText());
-
                 stickView.SetTextAngle(copyStickerView.getRotateAngle());
                 stickView.setScale(copyStickerView.getCopyScale());
                 stickView.setCenter(copyStickerView.getCenterXAdd30(), copyStickerView.getCenterYAdd30());
@@ -1150,15 +1150,22 @@ public class CreationTemplateMvpModel {
                 fromCopy.setRightOffsetPercent(copyStickerView.getRightOffsetPercent());
                 if (isFromShowAnim) {
                     if (isText) {
+                        if (copyStickerView.GetIsChooseTextBjEffect()) {
+                            if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
+                                stickView.setTextStyle(copyStickerView.getTypefacePath());
+                            }
+                            if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
+                                stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath());
+                            }
+                        } else {
+                            ArrayList<String> colors = copyStickerView.GetTextColors();
+                            stickView.setTextPaintColor(colors.get(0), colors.get(1));
+                        }
                         stickView.setStickerText(copyStickerView.getStickerText());
-                        if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
-                            stickView.setTextStyle(copyStickerView.getTypefacePath());
-                        }
-                        if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
-                            stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath());
-                        }
                         stickView.SetTextAngle(copyStickerView.getRotateAngle());
                         stickView.setScale(copyStickerView.getScale());
+
+
                     } else {
                         fromCopy.setTranX(copyStickerView.getCenterX());
                         fromCopy.setTranY(copyStickerView.getCenterY());

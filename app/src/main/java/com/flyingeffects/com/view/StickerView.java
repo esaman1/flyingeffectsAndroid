@@ -100,7 +100,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private String getTypefaceBitmapPath;
     //文字图片
     private Bitmap bpForTextBj;
-     private boolean isChooseTextBjEffect = false;
+    //选择的时背景效果
+    private boolean isChooseTextBjEffect = false;
     // 文字背景矩形变阵
     Matrix matrixForBitmapShader = new Matrix();
     private float mTextScale;
@@ -2160,8 +2161,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     public void setTextBitmapStyle(String path) {
         getTypefaceBitmapPath = path;
-        isChooseTextBjEffect=true;
-//        isChooseTextEffect = true;
+        isChooseTextBjEffect = true;
         bpForTextBj = BitmapFactory.decodeFile(path);
     }
 
@@ -2189,13 +2189,14 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-    private ArrayList<String>colors=new ArrayList<>();
+    private ArrayList<String> colors = new ArrayList<>();
+
     public void setTextPaintColor(String paintColor1, String paintColor2) {
         if (bpForTextBj != null) {
             bpForTextBj.recycle();
             bpForTextBj = null;
         }
-        isChooseTextBjEffect=false;
+        isChooseTextBjEffect = false;
         mTextPaint.setShader(null);
         mTextPaint.setColor(Color.parseColor(paintColor1));
         mTextPaint2.setColor(Color.parseColor(paintColor2));
@@ -2205,11 +2206,12 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-    public boolean GetIsChooseTextBjEffect(){
-        return  isChooseTextBjEffect;
+    public boolean GetIsChooseTextBjEffect() {
+        return isChooseTextBjEffect;
     }
-    public ArrayList<String> GetTextColors(){
-        return  colors;
+
+    public ArrayList<String> GetTextColors() {
+        return colors;
     }
 
 
@@ -2222,7 +2224,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
 
     private float keepToScreenScale;
-    private float[] keepToCenter ={};
+    private float[] keepToCenter = {};
     private boolean hasChangeTextPosition = false;
     private boolean hasChangeTextScale = false;
 

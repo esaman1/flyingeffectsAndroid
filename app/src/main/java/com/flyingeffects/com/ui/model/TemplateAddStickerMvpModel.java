@@ -276,6 +276,7 @@ public class TemplateAddStickerMvpModel {
     public void deleteAllTextSticker() {
         toDeleteAllTextSticker();
     }
+
     /**
      * description ：删除帖子(包括动画贴纸)
      * creation date: 2020/6/8
@@ -927,41 +928,47 @@ public class TemplateAddStickerMvpModel {
      * user : zhangtongju
      */
     private void copyGif(String getResPath, String path, boolean isFromAubum, StickerView stickerView, String OriginalPath, boolean isFromShowAnim) {
-        try {
-            String copyName = null;
-            if (getResPath.endsWith(".gif")) {
-                if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(context, "5_mb_sticker_plus");
-                } else {
-                    statisticsEventAffair.getInstance().setFlag(context, "6_mb_sticker_plus");
-                }
-                copyName = mGifFolder + File.separator + System.currentTimeMillis() + "synthetic.gif";
-                String finalCopyName = copyName;
-                FileUtil.copyFile(new File(getResPath), copyName, new FileUtil.copySucceed() {
-                    @Override
-                    public void isSucceed() {
-                        addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, false);
-                    }
-                });
-            } else {
-                if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(context, "5_mb_bj_plus one");
-                } else {
-                    statisticsEventAffair.getInstance().setFlag(context, "6_customize_bj_plus one");
-                }
-                String aa = path.substring(path.length() - 4);
-                copyName = mImageCopyFolder + File.separator + System.currentTimeMillis() + aa;
-                String finalCopyName1 = copyName;
-                FileUtil.copyFile(new File(path), copyName, new FileUtil.copySucceed() {
-                    @Override
-                    public void isSucceed() {
-                        addSticker(getResPath, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, false);
-                    }
-                });
-            }
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (stickerView.getIsTextSticker()) {
+            addSticker("", false, false, false, "", true, stickerView, isFromShowAnim, true);
+        } else {
+
+            try {
+                String copyName = null;
+                if (getResPath.endsWith(".gif")) {
+                    if (UiStep.isFromDownBj) {
+                        statisticsEventAffair.getInstance().setFlag(context, "5_mb_sticker_plus");
+                    } else {
+                        statisticsEventAffair.getInstance().setFlag(context, "6_mb_sticker_plus");
+                    }
+                    copyName = mGifFolder + File.separator + System.currentTimeMillis() + "synthetic.gif";
+                    String finalCopyName = copyName;
+                    FileUtil.copyFile(new File(getResPath), copyName, new FileUtil.copySucceed() {
+                        @Override
+                        public void isSucceed() {
+                            addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, false);
+                        }
+                    });
+                } else {
+                    if (UiStep.isFromDownBj) {
+                        statisticsEventAffair.getInstance().setFlag(context, "5_mb_bj_plus one");
+                    } else {
+                        statisticsEventAffair.getInstance().setFlag(context, "6_customize_bj_plus one");
+                    }
+                    String aa = path.substring(path.length() - 4);
+                    copyName = mImageCopyFolder + File.separator + System.currentTimeMillis() + aa;
+                    String finalCopyName1 = copyName;
+                    FileUtil.copyFile(new File(path), copyName, new FileUtil.copySucceed() {
+                        @Override
+                        public void isSucceed() {
+                            addSticker(getResPath, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, false);
+                        }
+                    });
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -1135,7 +1142,9 @@ public class TemplateAddStickerMvpModel {
         stickView.setRightTopBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_copy));
         stickView.setLeftTopBitmap(ContextCompat.getDrawable(context, R.drawable.sticker_delete));
         stickView.setRightBottomBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_redact));
-        stickView.setRightBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_updown));
+        if(!isText){
+            stickView.setRightBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_updown));
+        }
 
         stickView.setIsFromStickerAnim(isFromShowAnim);
         stickView.setComeFromAlbum(isFromAubum);
@@ -1178,24 +1187,46 @@ public class TemplateAddStickerMvpModel {
         if (isText) {
             stickView.setLeftBottomBitmap(ContextCompat.getDrawable(context, R.mipmap.shader_edit));
             nowChooseStickerView = stickView;
-            new Handler().postDelayed(stickView::setIntoCenter, 500);
+            if (!isCopy) {
+                new Handler().postDelayed(stickView::setIntoCenter, 500);
+            }
         }
         if (isCopy && copyStickerView != null) {
-            //来做复制或者来自联系点击下面的item
-            StickerView.isFromCopy fromCopy = new StickerView.isFromCopy();
-            fromCopy.setScale(copyStickerView.getScale());
-            LogUtil.d("OOM", "isCopy=Scale" + copyStickerView.getScale());
-            fromCopy.setDegree(copyStickerView.getRotateAngle());
-            fromCopy.setRightOffsetPercent(copyStickerView.getRightOffsetPercent());
-            if (isFromShowAnim) {
-                fromCopy.setTranX(copyStickerView.getCenterX());
-                fromCopy.setTranY(copyStickerView.getCenterY());
+            if (copyStickerView.getIsTextSticker()) {
+                //是否是图片文字效果
+                if (copyStickerView.GetIsChooseTextBjEffect()) {
+                    if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
+                        stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath());
+                    }
+                } else {
+                    ArrayList<String> colors = copyStickerView.GetTextColors();
+                    stickView.setTextPaintColor(colors.get(0), colors.get(1));
+                }
+                if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
+                    stickView.setTextStyle(copyStickerView.getTypefacePath());
+                }
+                stickView.setStickerText(copyStickerView.getStickerText());
+                stickView.SetTextAngle(copyStickerView.getRotateAngle());
+                stickView.setScale(copyStickerView.getCopyScale());
+                stickView.setCenter(copyStickerView.getCenterXAdd30(), copyStickerView.getCenterYAdd30());
             } else {
-                fromCopy.setTranX(copyStickerView.getCenterXAdd30());
-                fromCopy.setTranY(copyStickerView.getCenterYAdd30());
+                //来做复制或者来自联系点击下面的item
+                StickerView.isFromCopy fromCopy = new StickerView.isFromCopy();
+                fromCopy.setScale(copyStickerView.getScale());
+                LogUtil.d("OOM", "isCopy=Scale" + copyStickerView.getScale());
+                fromCopy.setDegree(copyStickerView.getRotateAngle());
+                fromCopy.setRightOffsetPercent(copyStickerView.getRightOffsetPercent());
+                if (isFromShowAnim) {
+                    fromCopy.setTranX(copyStickerView.getCenterX());
+                    fromCopy.setTranY(copyStickerView.getCenterY());
+                } else {
+                    fromCopy.setTranX(copyStickerView.getCenterXAdd30());
+                    fromCopy.setTranY(copyStickerView.getCenterYAdd30());
+                }
+                stickView.setImageRes(path, false, fromCopy);
+                stickView.showFrame();
+
             }
-            stickView.setImageRes(path, false, fromCopy);
-            stickView.showFrame();
         } else {
             stickView.setImageRes(path, true, null);
         }

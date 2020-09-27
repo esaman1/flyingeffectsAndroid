@@ -70,7 +70,7 @@
                         android:id="@+id/fans"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="粉丝"
+                        android:text="赞"
                         android:textColor="#8C9090"
                         android:textSize="12sp" />
 
@@ -102,7 +102,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:text="视频"
+                        android:text="粉丝"
                         android:textColor="#8C9090"
                         android:textSize="12sp" />
 

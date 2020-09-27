@@ -265,9 +265,9 @@ public class frag_user_center extends BaseFragment {
                                     .into(iv_head);
                         }
 
-                        fans_count.setText(data.getUser_follower());
+                        fans_count.setText(data.getUser_praise());
                         attention_count.setText(data.getUser_watch());
-                        tv_video_count.setText(data.getUser_video());
+                        tv_video_count.setText(data.getUser_follower());
                     }
                     BaseConstans.SetUserId(data.getId(),data.getNickname(),data.getPhotourl());
                 }
