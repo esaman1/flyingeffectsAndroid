@@ -29,7 +29,7 @@
                 android:background="@null"
                 android:textColor="@color/soft_gray"
                 android:hint="输入文本"
-                android:textColorHint="#e1e1e1"
+                android:textColorHint="@color/soft_text"
                 android:textSize="14sp" />
         </RelativeLayout>
 

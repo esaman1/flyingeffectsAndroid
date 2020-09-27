@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -55,7 +54,7 @@ public class CreateViewForAddText {
     private downCallback callback;
     private LinearLayout view;
     StickerInputTextDialog inputTextDialog;
-    String inputText="";
+    String inputText = "";
 
     public CreateViewForAddText(Context context,LinearLayout view, downCallback callback) {
         this.context = context;
@@ -79,89 +78,80 @@ public class CreateViewForAddText {
     }
 
     public void showBottomSheetDialog(String text) {
-            inputTextDialog = new StickerInputTextDialog(context);
-            inputTextDialog.show();
-            inputTextDialog.setInputText(text);
-            ImageView iv_down = view.findViewById(R.id.iv_down);
-            inputTextDialog.setOnInputTextListener(new StickerInputTextDialog.OnInputTextListener() {
-                @Override
-                public void inputText(String string) {
-                    if (callback != null) {
-                        callback.setText(string);
-                    }
+        inputText = text;
+        inputTextDialog = new StickerInputTextDialog(context);
+        inputTextDialog.show();
+        inputTextDialog.setInputText(text);
+        ImageView iv_down = view.findViewById(R.id.iv_down);
+        inputTextDialog.setOnInputTextListener(new StickerInputTextDialog.OnInputTextListener() {
+            @Override
+            public void inputText(String string) {
+                if (callback != null) {
+                    callback.setText(string);
                 }
+            }
 
-                @Override
-                public void afterTextChanged(String string) {
-                    inputText = string;
-                }
-            });
-            iv_down.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view12) {
-                    dismissDialog();
-                    inputTextDialog.dismiss();
-                    if (callback != null) {
-                        callback.setText(inputText);
-                    }
-                }
-            });
-            TextView tv_hot = view.findViewById(R.id.tv_hot);
-            tv_hot.setOnClickListener(listener);
-            TextView tv_font = view.findViewById(R.id.tv_font);
-            tv_font.setOnClickListener(listener);
-            viewPager = view.findViewById(R.id.viewpager);
-            ArrayList<View> list = new ArrayList<>();
-            View gridViewLayout = LayoutInflater.from(context).inflate(R.layout.view_creat_template_effect_type, viewPager, false);
-            GridView gridView = gridViewLayout.findViewById(R.id.gridView);
-            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view13, int i, long l) {
-                    CreateViewForAddText.this.downFile(listEffect.get(i).getImage(), 0, listEffect.get(i).getType(), listEffect.get(i).getColor());
-                    createTemplateTextEffectAdapterEffect.select(i);
-                }
-            });
-            createTemplateTextEffectAdapterEffect = new CreateTemplateTextEffectAdapter(listEffect, context);
-            gridView.setAdapter(createTemplateTextEffectAdapterEffect);
-            createTemplateTextEffectAdapterEffect.select(0);
+            @Override
+            public void afterTextChanged(String string) {
+                inputText = string;
+            }
+        });
+        iv_down.setOnClickListener(view12 -> {
+            dismissDialog();
+            inputTextDialog.dismiss();
+            if (callback != null) {
+                callback.setText(inputText);
+            }
+        });
+        TextView tv_hot = view.findViewById(R.id.tv_hot);
+        tv_hot.setOnClickListener(listener);
+        TextView tv_font = view.findViewById(R.id.tv_font);
+        tv_font.setOnClickListener(listener);
+        viewPager = view.findViewById(R.id.viewpager);
+        ArrayList<View> list = new ArrayList<>();
+        View gridViewLayout = LayoutInflater.from(context).inflate(R.layout.view_creat_template_effect_type, viewPager, false);
+        GridView gridView = gridViewLayout.findViewById(R.id.gridView);
+        gridView.setOnItemClickListener((adapterView, view13, i, l) -> {
+            CreateViewForAddText.this.downFile(listEffect.get(i).getImage(), 0, listEffect.get(i).getType(), listEffect.get(i).getColor());
+            createTemplateTextEffectAdapterEffect.select(i);
+        });
+        createTemplateTextEffectAdapterEffect = new CreateTemplateTextEffectAdapter(listEffect, context);
+        gridView.setAdapter(createTemplateTextEffectAdapterEffect);
+        createTemplateTextEffectAdapterEffect.select(0);
 
-            list.add(gridViewLayout);
-            View gridViewLayoutFont = LayoutInflater.from(context).inflate(R.layout.view_creat_template_text_type, viewPager, false);
-            GridView gridViewFont = gridViewLayoutFont.findViewById(R.id.gridView);
-            gridViewFont.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view1, int i, long l) {
-                    CreateViewForAddText.this.downFile(listFont.get(i).getFile(), 1, 1, "");
-                    createTemplateTextEffectAdapterFont.select(i);
-                }
-            });
-            createTemplateTextEffectAdapterFont = new CreateTemplateTextFontAdapter(listFont, context);
-            gridViewFont.setAdapter(createTemplateTextEffectAdapterFont);
-            createTemplateTextEffectAdapterFont.select(0);
+        list.add(gridViewLayout);
+        View gridViewLayoutFont = LayoutInflater.from(context).inflate(R.layout.view_creat_template_text_type, viewPager, false);
+        GridView gridViewFont = gridViewLayoutFont.findViewById(R.id.gridView);
+        gridViewFont.setOnItemClickListener((adapterView, view1, i, l) -> {
+            CreateViewForAddText.this.downFile(listFont.get(i).getFile(), 1, 1, "");
+            createTemplateTextEffectAdapterFont.select(i);
+        });
+        createTemplateTextEffectAdapterFont = new CreateTemplateTextFontAdapter(listFont, context);
+        gridViewFont.setAdapter(createTemplateTextEffectAdapterFont);
+        createTemplateTextEffectAdapterFont.select(0);
 
-            list.add(gridViewLayoutFont);
-            TemplateViewPager adapter = new TemplateViewPager(list);
-            viewPager.setAdapter(adapter);
-            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int i, float v, int i1) {
+        list.add(gridViewLayoutFont);
+        TemplateViewPager adapter = new TemplateViewPager(list);
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+            }
 
-                }
+            @Override
+            public void onPageSelected(int i) {
+                setTextColor(i);
+            }
 
-                @Override
-                public void onPageSelected(int i) {
-                    setTextColor(i);
-                }
-
-                @Override
-                public void onPageScrollStateChanged(int i) {
-
-                }
-            });
-            listTitle.add(tv_hot);
-            listTitle.add(tv_font);
-            requestFontImage();
-            requestFontList();
+            @Override
+            public void onPageScrollStateChanged(int i) {
+            }
+        });
+        listTitle.add(tv_hot);
+        listTitle.add(tv_font);
+        setTextColor(0);
+        requestFontImage();
+        requestFontList();
     }
 
 
@@ -221,19 +211,9 @@ public class CreateViewForAddText {
 
 
     private void dismissDialog() {
-
         if(view!=null){
             view.setVisibility(View.GONE);
         }
-
-//        try {
-//            if (bottomSheetDialog != null && bottomSheetDialog.isShowing()) {
-//                bottomSheetDialog.dismiss();
-//                bottomSheetDialog = null;
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }
 
 
