@@ -13,6 +13,7 @@ import com.flyingeffects.com.adapter.Fans_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.AttentionChange;
 import com.flyingeffects.com.enity.fansEnity;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -27,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
+import de.greenrobot.event.Subscribe;
 import rx.Observable;
 
 /**
@@ -204,6 +206,17 @@ public class FansActivity extends BaseActivity {
                 requestMessageCount();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+    }
+
+
+    @Subscribe
+    public void onEventMainThread(AttentionChange event) {
+        if(from==1){
+            isRefresh=true;
+            selectPage=1;
+            requestMessageCount();
+        }
+
     }
 
 

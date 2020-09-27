@@ -21,7 +21,6 @@ import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.activity.FansActivity;
-import com.flyingeffects.com.ui.view.activity.HomeMainActivity;
 import com.flyingeffects.com.ui.view.activity.LikeActivity;
 import com.flyingeffects.com.ui.view.activity.ZanActivity;
 import com.flyingeffects.com.utils.ToastUtil;

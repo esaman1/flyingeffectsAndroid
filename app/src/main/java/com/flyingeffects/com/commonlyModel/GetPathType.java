@@ -16,15 +16,19 @@ public class GetPathType {
     }
 
     public  String getPathType(String path) {
-        String mimeType;
-        String suffix = path.substring(path.lastIndexOf(".") + 1).toUpperCase();
-        if (suffix.equalsIgnoreCase("MP4") || suffix.equalsIgnoreCase("M4V") || suffix.equalsIgnoreCase("3GP") || suffix.equalsIgnoreCase("3G2") || suffix.equalsIgnoreCase("WMV") || suffix.equalsIgnoreCase("ASF") || suffix.equalsIgnoreCase("AVI") || suffix.equalsIgnoreCase("FLV") || suffix.equalsIgnoreCase("MKV") || suffix.equalsIgnoreCase("WEBM")) {
-            mimeType = "video/*";
-        } else {
-            mimeType = "image/*";
+        if(!TextUtils.isEmpty(path)){
+            String mimeType;
+            String suffix = path.substring(path.lastIndexOf(".") + 1).toUpperCase();
+            if (suffix.equalsIgnoreCase("MP4") || suffix.equalsIgnoreCase("M4V") || suffix.equalsIgnoreCase("3GP") || suffix.equalsIgnoreCase("3G2") || suffix.equalsIgnoreCase("WMV") || suffix.equalsIgnoreCase("ASF") || suffix.equalsIgnoreCase("AVI") || suffix.equalsIgnoreCase("FLV") || suffix.equalsIgnoreCase("MKV") || suffix.equalsIgnoreCase("WEBM")) {
+                mimeType = "video/*";
+            } else {
+                mimeType = "image/*";
+            }
+            return mimeType;
         }
 
-        return mimeType;
+        return "image/*";
+
     }
 
 

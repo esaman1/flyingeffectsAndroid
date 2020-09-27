@@ -150,18 +150,18 @@ public class LikeActivity extends BaseActivity {
         if(from==1&&!BaseConstans.hasLogin()){
             goActivity(LoginActivity.class);
         }
+        if(BaseConstans.hasLogin()){
+            requestCommentList(true);
+        }else{
+            ToastUtil.showToast(getResources().getString(R.string.need_login));
+        }
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(BaseConstans.hasLogin()){
-            requestCommentList(true);
-        }else{
 
-            ToastUtil.showToast(getResources().getString(R.string.need_login));
-        }
 
     }
 

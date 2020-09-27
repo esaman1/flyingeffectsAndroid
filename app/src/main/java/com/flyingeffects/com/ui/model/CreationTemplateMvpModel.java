@@ -237,6 +237,9 @@ public class CreationTemplateMvpModel {
 
 
         } else {
+            if(nowChooseMusicId==2){
+                clearCheckBox();
+            }
             this.mVideoPath = null;
             videoInfo = null;
         }

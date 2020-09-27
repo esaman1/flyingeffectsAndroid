@@ -29,6 +29,7 @@ import com.flyingeffects.com.ui.view.activity.AboutActivity;
 import com.flyingeffects.com.ui.view.activity.FansActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.MineFocusActivity;
+import com.flyingeffects.com.ui.view.activity.ZanActivity;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.orhanobut.hawk.Hawk;
 
@@ -179,7 +180,7 @@ public class frag_user_center extends BaseFragment {
     }
 
 
-    @OnClick({R.id.iv_head,R.id.fans,R.id.fans_count,R.id.attention,R.id.attention_count})
+    @OnClick({R.id.iv_head,R.id.fans,R.id.fans_count,R.id.attention,R.id.attention_count,R.id.tv_2,R.id.tv_video_count})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_head:
@@ -195,16 +196,12 @@ public class frag_user_center extends BaseFragment {
             case R.id.fans_count:
 
                 if(BaseConstans.hasLogin()){
-                    Intent intentFan=new Intent(getActivity(), FansActivity.class);
-                    intentFan.putExtra("to_user_id",BaseConstans.GetUserId());
-                    intentFan.putExtra("from",0);
-                    startActivity(intentFan);
+                    Intent intentZan=new Intent(getActivity(), ZanActivity.class);
+                    intentZan.putExtra("from",1);
+                    startActivity(intentZan);
                 }else{
                     ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
                 }
-
-
-
 
                 break;
 
@@ -221,6 +218,19 @@ public class frag_user_center extends BaseFragment {
                 }else{
                     ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
                 }
+
+                break;
+            case R.id.tv_2:
+            case R.id.tv_video_count:
+                if(BaseConstans.hasLogin()){
+                    Intent intentFan=new Intent(getActivity(), FansActivity.class);
+                    intentFan.putExtra("to_user_id",BaseConstans.GetUserId());
+                    intentFan.putExtra("from",0);
+                    startActivity(intentFan);
+                }else{
+                    ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
+                }
+
 
                 break;
 

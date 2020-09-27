@@ -2224,7 +2224,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
 
     private float keepToScreenScale;
-    private float[] keepToCenter = {};
+    private float[] keepToCenter = new float[2];
     private boolean hasChangeTextPosition = false;
     private boolean hasChangeTextScale = false;
 

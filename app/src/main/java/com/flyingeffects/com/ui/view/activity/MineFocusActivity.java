@@ -13,7 +13,10 @@ import com.flyingeffects.com.adapter.MineFocusAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.AttentionChange;
 import com.flyingeffects.com.enity.fansEnity;
+import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.templateDataCollectRefresh;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -25,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import rx.Observable;
 
 /**
@@ -59,16 +64,11 @@ public class MineFocusActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         ((TextView) findViewById(R.id.tv_top_title)).setText("关注");
         findViewById(R.id.iv_top_back).setOnClickListener(this);
         to_user_id = getIntent().getStringExtra("to_user_id");
         ShowData();
-    }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         if (BaseConstans.hasLogin()) {
             requestMessageCount();
         } else {
@@ -76,6 +76,17 @@ public class MineFocusActivity extends BaseActivity {
         }
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 
     /**
      * description ：我的关注
@@ -156,5 +167,12 @@ public class MineFocusActivity extends BaseActivity {
         });
     }
 
+
+    @Subscribe
+    public void onEventMainThread(AttentionChange event) {
+        isRefresh=true;
+        selectPage=1;
+        requestMessageCount();
+    }
 
 }

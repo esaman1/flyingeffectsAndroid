@@ -18,6 +18,7 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter2;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.AttentionChange;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -31,6 +32,7 @@ import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 
@@ -144,7 +146,7 @@ public class UserHomepageActivity extends BaseActivity {
 
             case R.id.tv_focus:
 
-
+                EventBus.getDefault().post(new AttentionChange());
                 requestFocus();
                 break;
 
