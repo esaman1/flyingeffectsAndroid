@@ -1242,12 +1242,7 @@ public class TemplateAddStickerMvpModel {
      */
     public void ChangeTextLabe(String text) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            if (!TextUtils.isEmpty(text)) {
-                nowChooseStickerView.setStickerText(text);
-            } else {
-                deleteStickView(nowChooseStickerView);
-            }
-
+            nowChooseStickerView.setStickerText(text);
         }
     }
 
