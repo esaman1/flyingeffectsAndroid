@@ -473,6 +473,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
             case R.id.tv_add_text:
                 intoTextStyleDialog("");
                 presenter.addTextSticker();
+                statisticsEventAffair.getInstance().setFlag(this,"20_mb_text");
                 break;
 
 
@@ -506,7 +507,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                     presenter.ChangeTextColor(color0, color1);
                 }
             });
-            createViewForAddText.showBottomSheetDialog(inputText);
+            createViewForAddText.showBottomSheetDialog(inputText,"OneKey_template");
         }
     }
 

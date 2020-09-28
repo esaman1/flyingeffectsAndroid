@@ -398,7 +398,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             case R.id.tv_add_text:
                 intoTextStyleDialog("");
                 presenter.addTextSticker();
-
+                statisticsEventAffair.getInstance().setFlag(this,"20_bj_text");
                 break;
 
 
@@ -506,7 +506,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
             });
-            createViewForAddText.showBottomSheetDialog(inputText);
+            createViewForAddText.showBottomSheetDialog(inputText,"bj_template");
         }
     }
 

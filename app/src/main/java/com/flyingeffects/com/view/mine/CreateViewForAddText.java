@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,6 +21,7 @@ import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.record.StickerInputTextDialog;
 import com.shixing.sxve.ui.view.WaitingDialog;
@@ -77,7 +77,7 @@ public class CreateViewForAddText {
         }
     }
 
-    public void showBottomSheetDialog(String text) {
+    public void showBottomSheetDialog(String text,String type) {
         inputText = text;
         inputTextDialog = new StickerInputTextDialog(context);
         inputTextDialog.show();
@@ -114,6 +114,12 @@ public class CreateViewForAddText {
         gridView.setOnItemClickListener((adapterView, view13, i, l) -> {
             CreateViewForAddText.this.downFile(listEffect.get(i).getImage(), 0, listEffect.get(i).getType(), listEffect.get(i).getColor());
             createTemplateTextEffectAdapterEffect.select(i);
+            if ("bj_template".equals(type)) {
+                statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_style", listEffect.get(i).getTitle());
+            } else if ("OneKey_template".equals(type)) {
+                statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_font", listEffect.get(i).getTitle());
+            }
+
         });
         createTemplateTextEffectAdapterEffect = new CreateTemplateTextEffectAdapter(listEffect, context);
         gridView.setAdapter(createTemplateTextEffectAdapterEffect);
@@ -125,6 +131,11 @@ public class CreateViewForAddText {
         gridViewFont.setOnItemClickListener((adapterView, view1, i, l) -> {
             CreateViewForAddText.this.downFile(listFont.get(i).getFile(), 1, 1, "");
             createTemplateTextEffectAdapterFont.select(i);
+            if ("bj_template".equals(type)) {
+                statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_style", listEffect.get(i).getTitle());
+            } else if ("OneKey_template".equals(type)) {
+                statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_font", listEffect.get(i).getTitle());
+            }
         });
         createTemplateTextEffectAdapterFont = new CreateTemplateTextFontAdapter(listFont, context);
         gridViewFont.setAdapter(createTemplateTextEffectAdapterFont);
