@@ -2230,7 +2230,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     public void changePositionToScreenShot() {
         if (mIsText) {
-            if (mHelpBoxRect.left < 0 || mHelpBoxRect.right > getMeasuredWidth() || mHelpBoxRect.top < 0 || mHelpBoxRect.bottom > getMeasuredHeight()) {
+//            if (mHelpBoxRect.left < 0 || mHelpBoxRect.right > getMeasuredWidth() || mHelpBoxRect.top < 0 || mHelpBoxRect.bottom > getMeasuredHeight()) {
                 keepToScreenScale = mScale;
                 hasChangeTextPosition = true;
                 keepToCenter[0] = center.x;
@@ -2242,7 +2242,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     float scale = getMeasuredWidth() / width;
                     setScale(keepToScreenScale * scale);
                 }
-            }
+//            }
         }
     }
 
