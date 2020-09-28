@@ -259,7 +259,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     intent_comment.putExtra("templateTitle", templateItem.getTitle());
                     intent_comment.putExtra("templateType", templateItem.getTemplate_type());
                     startActivity(intent_comment);
-                    overridePendingTransition( R.anim.activity_anim_in,0);
+//                    overridePendingTransition( R.anim.activity_anim_in,0);
 //                    BaseFullBottomSheetFragment fullSheetDialogFragment = new BaseFullBottomSheetFragment();
 //                    int height = (int) (ScreenUtil.getScreenHeight(this) * 0.3f);
 //                    fullSheetDialogFragment.setTopOffset(height);
