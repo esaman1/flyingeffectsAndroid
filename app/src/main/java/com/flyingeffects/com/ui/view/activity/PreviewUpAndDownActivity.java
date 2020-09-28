@@ -251,24 +251,14 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
 
                 case R.id.ll_comment:
-
-
-                    Intent intent_comment = new Intent(this, CommentBlackActivity.class);
-                    intent_comment.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    intent_comment.putExtra("templateId", templateId);
-                    intent_comment.putExtra("templateTitle", templateItem.getTitle());
-                    intent_comment.putExtra("templateType", templateItem.getTemplate_type());
-                    startActivity(intent_comment);
-                    overridePendingTransition( R.anim.activity_anim_in,0);
-//                    BaseFullBottomSheetFragment fullSheetDialogFragment = new BaseFullBottomSheetFragment();
-//                    int height = (int) (ScreenUtil.getScreenHeight(this) * 0.3f);
-//                    fullSheetDialogFragment.setTopOffset(height);
-//                    fullSheetDialogFragment.setNowTemplateId(templateId);
-//                    fullSheetDialogFragment.setNowTemplateTitle(templateItem.getTitle());
-//                    fullSheetDialogFragment.setNowTemplateType(templateItem.getTemplate_type());
-//                    fullSheetDialogFragment.show(getSupportFragmentManager(), "FullSheetDialogFragment");
+                    BaseFullBottomSheetFragment fullSheetDialogFragment = new BaseFullBottomSheetFragment();
+                    int height = (int) (ScreenUtil.getScreenHeight(this) * 0.3f);
+                    fullSheetDialogFragment.setTopOffset(height);
+                    fullSheetDialogFragment.setNowTemplateId(templateId);
+                    fullSheetDialogFragment.setNowTemplateTitle(templateItem.getTitle());
+                    fullSheetDialogFragment.setNowTemplateType(templateItem.getTemplate_type());
+                    fullSheetDialogFragment.show(getSupportFragmentManager(), "FullSheetDialogFragment");
                     break;
-
                 default:
                     break;
             }

@@ -2,30 +2,19 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyingeffects.com.R;
@@ -40,24 +29,23 @@ import com.flyingeffects.com.enity.ReplayMessageEvent;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.statisticsEventAffair;
-import com.flyingeffects.com.utils.KeyboardUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.utils.keyBordUtils;
 import com.flyingeffects.com.utils.record.CommentInputDialog;
+import com.flyingeffects.com.view.CustomAdapterLoadMoreView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.green.hand.library.widget.EmojiBoard;
-import com.green.hand.library.widget.EmojiEdittext;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
@@ -66,13 +54,16 @@ import rx.subjects.PublishSubject;
 public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
 
 
+    public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
+    CoordinatorLayout coordinator;
+    CommentInputDialog commentInputDialog;
+    boolean isSlideTop = true;
     /**
      * 顶部向下偏移量
      */
     private int topOffset = 0;
     private BottomSheetBehavior<FrameLayout> behavior;
     private RecyclerView recyclerViewComment;
-    public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private TextView no_comment;
     private String nowTemplateId;
     private String templateTitle;
@@ -81,24 +72,14 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     private String message_id;
     private int lastOpenCommentPosition;
     private Comment_message_adapter adapter;
-    CoordinatorLayout coordinator;
     private int nowFirstOpenClickPosition;
-
-
     private TextView tv_comment_count;
-
     private ImageView iv_cancle;
-
-    private SmartRefreshLayout smartRefreshLayout;
     private LinearLayout llComment;
-
     private boolean isRefresh = true;
-
-    private ArrayList<MessageEnity> allDataList=new ArrayList<>();
-
+    private ArrayList<MessageEnity> allDataList = new ArrayList<>();
     private int selectPage = 1;
     private int perPageCount = 10;
-    CommentInputDialog commentInputDialog;
 
     @NonNull
     @Override
@@ -106,7 +87,9 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         if (getContext() == null) {
             return super.onCreateDialog(savedInstanceState);
         }
-        return new BottomSheetDialog(getContext(), R.style.TransparentBottomSheetStyle);
+        Dialog dialog = new BottomSheetDialog(getContext(), R.style.TransparentBottomSheetStyle);
+        dialog.getWindow().setDimAmount(0f);
+        return dialog;
     }
 
 
@@ -126,11 +109,10 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         });
         EventBus.getDefault().register(this);
 
-        smartRefreshLayout=view.findViewById(R.id.smart_refresh_layout_bj);
 
         coordinator = view.findViewById(R.id.coordinator);
-        initSmartRefreshLayout();
         initRecyclerView();
+        initLoadMore();
         no_comment = view.findViewById(R.id.no_comment);
         initAction();
 
@@ -149,8 +131,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
                 commentInputDialog.showSoftInputFromWindow();
             }
         });
-
-        commentInputDialog = new CommentInputDialog(getActivity(),nowTemplateId,templateType,templateTitle);
+        commentInputDialog = new CommentInputDialog(getActivity(), nowTemplateId, templateType, templateTitle);
         commentInputDialog.setCommentSuccessListener(new CommentInputDialog.OnCommentSuccessListener() {
             @Override
             public void commentSuccess() {
@@ -162,29 +143,41 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
                 llComment.setVisibility(View.VISIBLE);
             }
         });
-
+        recyclerViewComment.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                //当前状态为停止滑动
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    // 到达顶部
+                    if (!recyclerViewComment.canScrollVertically(-1)) {
+                        if (isSlideTop) {
+                            CloseDialog();
+                        } else {
+                            isSlideTop = true;
+                        }
+                    } else {
+                        isSlideTop = false;
+                    }
+                }
+            }
+        });
         return view;
     }
 
 
-    private void initAction(){
+    private void initAction() {
         requestComment();
     }
 
 
-    public void initSmartRefreshLayout() {
-        smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
-            isRefresh = true;
-            refreshLayout.setEnableLoadMore(true);
-            selectPage = 1;
-            requestComment();
-        });
-        smartRefreshLayout.setOnLoadMoreListener(refresh -> {
+    public void initLoadMore() {
+        adapter.setLoadMoreView(new CustomAdapterLoadMoreView());
+        adapter.setEnableLoadMore(true);
+        adapter.setOnLoadMoreListener(() -> {
             isRefresh = false;
             selectPage++;
             requestComment();
-        });
-
+        }, recyclerViewComment);
     }
 
     @Override
@@ -195,8 +188,6 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        // 设置软键盘不自动弹出
-//        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         BottomSheetDialog dialog = (BottomSheetDialog) getDialog();
         FrameLayout bottomSheet = dialog.getDelegate().findViewById(R.id.design_bottom_sheet);
         if (bottomSheet != null) {
@@ -224,29 +215,30 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<MessageData>(getActivity()) {
             @Override
             protected void _onError(String message) {
-                finishData();
+                adapter.loadMoreFail();
                 ToastUtil.showToast(message);
             }
 
             @Override
             protected void _onNext(MessageData data) {
-                finishData();
+                adapter.loadMoreComplete();
                 LogUtil.d("OOM", "评论列表数据" + StringUtil.beanToJSONString(data));
-                ArrayList<MessageEnity> dataList   = data.getList();
-                if(dataList!=null){
+                ArrayList<MessageEnity> dataList = data.getList();
+                if (dataList != null) {
                     if (isRefresh && dataList.size() == 0) {
-                        showNoData(true,data.getTotal());
+                        showNoData(true, data.getTotal());
                     } else {
-                        showNoData(false,data.getTotal());
+                        showNoData(false, data.getTotal());
                     }
                     if (isRefresh) {
                         allDataList.clear();
                     }
                     if (!isRefresh && dataList.size() < perPageCount) {  //因为可能默认只请求8条数据
                         ToastUtil.showToast(getResources().getString(R.string.no_more_data));
+                        adapter.loadMoreEnd();
                     }
                     if (dataList.size() < perPageCount) {
-                        smartRefreshLayout.setEnableLoadMore(false);
+                        adapter.setEnableLoadMore(false);
                     }
                     allDataList.addAll(dataList);
                     adapter.notifyDataSetChanged();
@@ -255,18 +247,11 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
-
-    private void finishData() {
-        smartRefreshLayout.finishRefresh();
-        smartRefreshLayout.finishLoadMore();
-    }
-
-
-    public void showNoData(boolean isShowNoData,String total) {
+    public void showNoData(boolean isShowNoData, String total) {
         if (isShowNoData) {
             no_comment.setVisibility(View.VISIBLE);
         } else {
-            tv_comment_count.setText(total+"条评论");
+            tv_comment_count.setText(total + "条评论");
             no_comment.setVisibility(View.GONE);
         }
     }
@@ -305,7 +290,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
                 nowFirstOpenClickPosition = position;
                 Intent intent = new Intent(getActivity(), MessageLongClickActivity.class);
                 intent.putExtra("user_id", allDataList.get(position).getUser_id());
-                intent.putExtra("message_id",allDataList.get(position).getId());
+                intent.putExtra("message_id", allDataList.get(position).getId());
                 intent.putExtra("templateId", allDataList.get(position).getTemplate_id());
                 intent.putExtra("position", position);
                 intent.putExtra("isFirstComment", true);
@@ -321,7 +306,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
                     case R.id.iv_comment_head:
                         //进入到用户主页
                         Intent intent = new Intent(getActivity(), UserHomepageActivity.class);
-                        intent.putExtra("toUserId",allDataList.get(position).getUser_id());
+                        intent.putExtra("toUserId", allDataList.get(position).getUser_id());
                         startActivity(intent);
                         break;
 
