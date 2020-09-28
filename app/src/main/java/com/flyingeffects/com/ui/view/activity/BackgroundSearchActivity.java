@@ -98,6 +98,9 @@ public class BackgroundSearchActivity extends BaseActivity {
     @BindView(R.id.ll_ad_content)
     LinearLayout ll_ad_content;
 
+    @BindView(R.id.tv_search)
+    TextView tv_search;
+
     //0表示 背景过来，1表示 模板进来
     private int isFrom;
 
@@ -115,14 +118,7 @@ public class BackgroundSearchActivity extends BaseActivity {
         //键盘的搜索按钮
         ed_text.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
-                nowShowText = ed_text.getText().toString().trim();
-                if (!nowShowText.equals("")) {
-                    cancelFocus();
-                    statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "10_searchfor", nowShowText);
-                    EventBus.getDefault().post(new SendSearchText(nowShowText));
-                    hideResultView(false);
-                    ll_ad_content.setVisibility(View.GONE);
-                }
+                toSearch();
                 return true;
             }
             return false;
@@ -174,6 +170,22 @@ public class BackgroundSearchActivity extends BaseActivity {
             });
         }
 
+        tv_search.setOnClickListener(view -> {
+            toSearch();
+        });
+    }
+
+
+
+    private void toSearch(){
+        nowShowText = ed_text.getText().toString().trim();
+        if (!nowShowText.equals("")) {
+            cancelFocus();
+            statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "10_searchfor", nowShowText);
+            EventBus.getDefault().post(new SendSearchText(nowShowText));
+            hideResultView(false);
+            ll_ad_content.setVisibility(View.GONE);
+        }
     }
 
 

@@ -296,6 +296,7 @@ public class fragBjSearch extends BaseFragment {
             if(!TextUtils.isEmpty(searchText)){
                 isRefresh = true;
                 selectPage = 1;
+                smartRefreshLayout.setEnableLoadMore(true);
                 requestFagData(true);
             }
         } else {
