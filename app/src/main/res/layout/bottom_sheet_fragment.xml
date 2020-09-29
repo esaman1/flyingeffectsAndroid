@@ -32,13 +32,11 @@
             app:behavior_peekHeight="600dp"
             app:layout_behavior="@string/bottom_sheet_behavior">
 
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#181818"
                 android:orientation="vertical">
-
 
                 <RelativeLayout
                     android:id="@+id/rela_top"
@@ -56,7 +54,6 @@
                         android:textColor="#A3A3A5"
                         android:textSize="14sp" />
 
-
                     <ImageView
                         android:id="@+id/iv_cancle"
                         android:layout_width="24dp"
@@ -65,7 +62,6 @@
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="12dp"
                         android:src="@mipmap/close_other_app" />
-
 
                 </RelativeLayout>
 
@@ -87,17 +83,6 @@
                         android:text="暂无评论"
                         android:textColor="#A3A3A5" />
 
-
-
-
-
-<!--                    <com.scwang.smartrefresh.layout.SmartRefreshLayout-->
-<!--                        android:id="@+id/smart_refresh_layout_bj"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:focusableInTouchMode="true"-->
-<!--                        android:splitMotionEvents="false">-->
-
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/recyclerView"
                             android:layout_width="match_parent"
@@ -106,23 +91,8 @@
                             android:paddingLeft="@dimen/dp_7"
                             android:paddingEnd="@dimen/dp_7" />
 
-
-<!--                        <com.scwang.smartrefresh.layout.footer.ClassicsFooter-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="@dimen/dp_40"-->
-<!--                            app:srlAccentColor="@color/white"-->
-<!--                            app:srlClassicsSpinnerStyle="Translate"-->
-<!--                            app:srlDrawableArrowSize="20dp"-->
-<!--                            app:srlDrawableMarginRight="20dp"-->
-<!--                            app:srlDrawableProgress="@mipmap/mall_shuaxin"-->
-<!--                            app:srlDrawableProgressSize="20dp"-->
-<!--                            app:srlDrawableSize="20dp"-->
-<!--                            app:srlFinishDuration="500"-->
-<!--                            app:srlPrimaryColor="@color/black"-->
-<!--                            app:srlTextSizeTitle="16sp" />-->
-<!--                    </com.scwang.smartrefresh.layout.SmartRefreshLayout>-->
-
                 </RelativeLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:orientation="vertical"
@@ -171,19 +141,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
                     </LinearLayout>
+
                 </LinearLayout>
 
-
-
-
-
             </RelativeLayout>
-
 
         </FrameLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-
 
 </FrameLayout>
