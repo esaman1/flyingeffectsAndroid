@@ -16,6 +16,7 @@ import com.flyingeffects.com.enity.TransplationPos;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.utils.BitmapUtils;
 import com.flyingeffects.com.utils.FilterUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.animations.CustomMove.AnimCollect;
@@ -180,9 +181,9 @@ public class backgroundDraw {
             } else {
                 if (!TextUtils.isEmpty(imagePath)) {
                     Bitmap bt_nj = BitmapManager.getInstance().getOrientationBitmap(imagePath);
-                    BitmapLayer bitmapLayer = execute.addBitmapLayer(bt_nj);
-                    bitmapLayer.setScaleType(LSOScaleType.FILL_COMPOSITION);
-
+                    BitmapUtils bpUtils = new BitmapUtils();
+                    bt_nj = bpUtils.zoomImg2(bt_nj, execute.getPadWidth() / 16 * 16, execute.getPadHeight() / 16 * 16);
+                    execute.addBitmapLayer(bt_nj);
                 } else {
                     execute.setBackgroundColor(Color.parseColor("#1FA400"));
                 }
