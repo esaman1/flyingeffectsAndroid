@@ -47,6 +47,8 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     public TTNativeExpressAd ad;
     private TextView tv_zan_count;
     private String OldFromTo;
+    private TextView tv_comment_count;
+
 
     public Preview_up_and_down_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, String OldFromTo) {
         super(layoutResId, allData);
@@ -65,6 +67,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         LinearLayout ll_zan = helper.getView(R.id.ll_zan);
         TextView tv_make = helper.getView(R.id.tv_make);
         LinearLayout ll_comment = helper.getView(R.id.ll_comment);
+        tv_comment_count=helper.getView(R.id.tv_comment_count);
         tv_zan_count = helper.getView(R.id.tv_zan_count);
         boolean readOnly = item.getTest() != 0;
         boolean needHideCreate;
@@ -98,7 +101,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             tv_title.setVisibility(View.VISIBLE);
             tv_describe.setVisibility(View.VISIBLE);
             tv_zan_count.setText(item.getPraise());
-            helper.setText(R.id.tv_comment_count, item.getComment());
+            tv_comment_count.setText(item.getComment());
             helper.setText(R.id.tv_download_count, item.getShare());
             helper.addOnClickListener(R.id.iv_zan);
             helper.addOnClickListener(R.id.tv_make);
@@ -172,13 +175,20 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             }
         }
 
-
     }
 
     public void setIsZanCount(int zanCount) {
 
         if (tv_zan_count != null) {
             tv_zan_count.setText(zanCount + "");
+        }
+
+    }
+
+    public void setCommentCount(String  commentCount) {
+
+        if (tv_comment_count != null) {
+            tv_comment_count.setText(commentCount);
         }
 
     }

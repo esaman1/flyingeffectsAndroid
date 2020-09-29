@@ -181,7 +181,7 @@ public class backgroundDraw {
                 if (!TextUtils.isEmpty(imagePath)) {
                     Bitmap bt_nj = BitmapManager.getInstance().getOrientationBitmap(imagePath);
                     BitmapLayer bitmapLayer = execute.addBitmapLayer(bt_nj);
-                    bitmapLayer.setScaleType(LSOScaleType.CROP_FILL_COMPOSITION);
+                    bitmapLayer.setScaleType(LSOScaleType.FILL_COMPOSITION);
 
                 } else {
                     execute.setBackgroundColor(Color.parseColor("#1FA400"));
