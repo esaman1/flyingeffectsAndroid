@@ -56,6 +56,7 @@ import java.util.List;
 import java.util.Random;
 
 import androidx.viewpager2.widget.ViewPager2;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -457,23 +458,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         LogUtil.d("OOM", "onPause");
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        isOnPause = false;
-        LogUtil.d("OOM", "onResume");
-        //出现bug 不能继续播放的问题
-        if (!nowItemIsAd) {
-            GSYVideoManager.onResume();
-        }
-        if (BaseConstans.hasLogin()) {
-            //主要用于刷新当前页面
-            Presenter.requestTemplateDetail(templateItem.getId() + "");
-        }
-        LogUtil.d("OOM", "onResume");
-        WaitingDialog.closePragressDialog();
-    }
-
 
     @Override
     public void onDestroy() {
@@ -745,6 +729,23 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isOnPause = false;
+        LogUtil.d("OOM", "onResume");
+        //出现bug 不能继续播放的问题
+        if (!nowItemIsAd) {
+            GSYVideoManager.onResume();
+        }
+        if (BaseConstans.hasLogin()) {
+            //主要用于刷新当前页面
+            Presenter.requestTemplateDetail(templateItem.getId() + "");
+        }
+        LogUtil.d("OOM", "onResume");
+        WaitingDialog.closePragressDialog();
+    }
+
 
     /**
      * description ：刷新当前页面数据 ，主要用来显示收藏状态
@@ -763,13 +764,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             if (!TextUtils.isEmpty(templateItem.getPre_url())) {
                 OldfromTo = FromToTemplate.ISBJ;
             }
-
-
+            adapter.setCommentCount(data.getComment());
             is_with_play = templateItem.getIs_with_play();
             //更新页面数据，防止数据不全的情况
             if (!isOnPause) {
                 allData.set(nowChoosePosition, data);
-                adapter.notifyItemChanged(nowChoosePosition);
+//                adapter.notifyItemChanged(nowChoosePosition);
             }
         }
 
