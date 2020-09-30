@@ -473,11 +473,11 @@ public class TemplateAddStickerMvpModel {
                 if (file.exists()) {  //todo  临时解决bug ,和自定义不一样
                     //如果已经下载了，就用已经下载的，但是如果已经展示了，就不能复用，需要类似于复制功能，只针对gif
 //                    if (nowStickerHasChoose(imageId, path)) {
-                        LogUtil.d("OOM2", "已经下载过贴纸了");
-                        String copyName = mGifFolder + File.separator + System.currentTimeMillis() + format;
-                        copyGif(fileName, copyName, false, null, fileName, false);
-                        WaitingDialog.closePragressDialog();
-                        return;
+                    LogUtil.d("OOM2", "已经下载过贴纸了");
+                    String copyName = mGifFolder + File.separator + System.currentTimeMillis() + format;
+                    copyGif(fileName, copyName, false, null, fileName, false);
+                    WaitingDialog.closePragressDialog();
+                    return;
 //                    } else {
 //                        LogUtil.d("OOM2", "新下载贴纸了");
 //                        addSticker(fileName, false, false, false, null, false, null, false, false);
@@ -620,7 +620,7 @@ public class TemplateAddStickerMvpModel {
         if (listForStickerModel != null && listForStickerModel.size() > 0) {
             for (int i = 0; i < listForStickerModel.size(); i++) {
                 StickerView stickerView = listForStickerModel.get(i).getStickerView();
-                if (stickerView != null && !stickerView.getComeFrom()&&!stickerView.getIsTextSticker()) {
+                if (stickerView != null && !stickerView.getComeFrom() && !stickerView.getIsTextSticker()) {
                     needDeleteList.add(stickerView);
                 }
             }
@@ -631,7 +631,6 @@ public class TemplateAddStickerMvpModel {
             deleteStickView(stickerView);
         }
     }
-
 
 
     private void finishData() {
@@ -1394,6 +1393,15 @@ public class TemplateAddStickerMvpModel {
         deleteSubLayerSticker();
         if (viewLayerRelativeLayout.getChildCount() == 0) {
             saveToAlbum(mVideoPath);
+//            String keepPath = getKeepOutput();
+//            try {
+//                FileUtil.copyFile(new File(keepPath), keepPath);
+//                saveToAlbum(keepPath);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+
+
         } else {
 
 
@@ -1409,14 +1417,14 @@ public class TemplateAddStickerMvpModel {
                             if (!isDestroy) {
                                 if (!TextUtils.isEmpty(path)) {
                                     dialog.closePragressDialog();
-                                    try {
-                                        String keepPath = getKeepOutput();
-                                        FileUtil.copyFile(new File(path), keepPath);
-                                        saveToAlbum(keepPath);
-                                        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> isIntoSaveVideo = false, 500));
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
+//                                    try {
+//                                        String keepPath = getKeepOutput();
+//                                        FileUtil.copyFile(new File(path), keepPath);
+                                    saveToAlbum(path);
+                                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> isIntoSaveVideo = false, 500));
+//                                    } catch (IOException e) {
+//                                        e.printStackTrace();
+//                                    }
 
                                 } else {
                                     if (progress == 10000) {
@@ -1486,12 +1494,22 @@ public class TemplateAddStickerMvpModel {
             intent.putExtra("templateTitle", "");
             context.startActivity(intent);
         } else {
-            LogUtil.d("OOM", "保存的地址为" + path);
-            albumBroadcast(path);
-            showDialog(path);
-            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-                AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
+
+
+            try {
+                String keepPath = getKeepOutput();
+                FileUtil.copyFile(new File(path), keepPath);
+                LogUtil.d("OOM", "保存的地址为" + keepPath);
+                albumBroadcast(keepPath);
+                showDialog(keepPath);
+                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                    AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+
+
         }
     }
 
@@ -1503,9 +1521,14 @@ public class TemplateAddStickerMvpModel {
                 AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
             }
         }
-        albumBroadcast(outputPathForVideoSaveToPhoto);
-        showDialog(outputPathForVideoSaveToPhoto);
-
+        try {
+            String keepPath = getKeepOutput();
+            FileUtil.copyFile(new File(outputPathForVideoSaveToPhoto), keepPath);
+            albumBroadcast(keepPath);
+            showDialog(keepPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

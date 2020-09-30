@@ -83,6 +83,7 @@ public class TemplateMvpModel {
     private String cacheCutVideoPath;
     private String backgroundPath;
     private String soundFolder;
+    private String saveVideoPath;
 
     public TemplateMvpModel(Context context, TemplateMvpCallback callback) {
         this.context = context;
@@ -92,6 +93,7 @@ public class TemplateMvpModel {
         cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
         backgroundPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "background");
         soundFolder = fileManager.getFileCachePath(context, "soundFolder");
+        saveVideoPath= fileManager.getFileCachePath(context, "saveVideoPath");
         isOnDestroy = false;
     }
 
@@ -222,7 +224,7 @@ public class TemplateMvpModel {
     }
 
 
-    private String outputPathForVideoSaveToPhoto;
+//    private String outputPathForVideoSaveToPhoto;
 
     public void renderVideo(String mTemplateFolder, String mAudio1Path, Boolean isPreview) {
         WaitingDialog_progress waitingDialog_progress = new WaitingDialog_progress(context);
@@ -248,8 +250,9 @@ public class TemplateMvpModel {
             template.commit();
             template.setFileForAsset("black", SxveConstans.default_bg_path); //控制默认颜色
             SXTemplateRender sxTemplateRender;
-            outputPathForVideoSaveToPhoto = SaveAlbumPathModel.getInstance().getKeepOutput();
-            sxTemplateRender = new SXTemplateRender(template, mAudio1Path, outputPathForVideoSaveToPhoto);
+//            outputPathForVideoSaveToPhoto = SaveAlbumPathModel.getInstance().getKeepOutput();
+            saveVideoPath=saveVideoPath+ File.separator + System.currentTimeMillis() + "synthetic.mp4";
+            sxTemplateRender = new SXTemplateRender(template, mAudio1Path, saveVideoPath);
 //            test()
 //            sxTemplateRender.setBitrateFactor();
 //            sxTemplateRender.setBitrateFactor(2f);
@@ -288,7 +291,7 @@ public class TemplateMvpModel {
                 }
             });
 
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(aBoolean -> renderFinish(aBoolean, isPreview, outputPathForVideoSaveToPhoto));
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(aBoolean -> renderFinish(aBoolean, isPreview, saveVideoPath));
 
     }
 
@@ -334,16 +337,16 @@ public class TemplateMvpModel {
     }
 
 
-    public void alertAlbumUpdate(boolean isSuccess){
-        if(!isSuccess){
-            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-                AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
-            }
-        }
-        albumBroadcast(outputPathForVideoSaveToPhoto);
-        showDialog(outputPathForVideoSaveToPhoto);
-
-    }
+//    public void alertAlbumUpdate(boolean isSuccess){
+//        if(!isSuccess){
+//            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+//                AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
+//            }
+//        }
+//        albumBroadcast(outputPathForVideoSaveToPhoto);
+//        showDialog(outputPathForVideoSaveToPhoto);
+//
+//    }
 
     /**
      * description ：通知相册更新

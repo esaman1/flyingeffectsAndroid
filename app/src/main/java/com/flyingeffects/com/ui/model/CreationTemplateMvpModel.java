@@ -793,16 +793,16 @@ public class CreationTemplateMvpModel {
             File file = new File(fileName);
             if (file.exists()) {
                 //如果已经下载了，就用已经下载的，但是如果已经展示了，就不能复用，需要类似于复制功能，只针对gif
-                if (nowStickerHasChoose(imageId, path)) {
+//                if (nowStickerHasChoose(imageId, path)) {
                     String copyName = mGifFolder + File.separator + System.currentTimeMillis() + format;
                     copyGif(fileName, copyName, false, null, fileName, false);
                     WaitingDialog.closePragressDialog();
                     return;
-                } else {
-                    addSticker(fileName, false, false, false, null, false, null, false, false);
-                    WaitingDialog.closePragressDialog();
-                    return;
-                }
+//                } else {
+//                    addSticker(fileName, false, false, false, null, false, null, false, false);
+//                    WaitingDialog.closePragressDialog();
+//                    return;
+//                }
 
             }
             Observable.just(path).map(s -> {

@@ -46,7 +46,7 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     }
 
     public void alertAlbumUpdate(boolean isSuccess){
-        home_model.alertAlbumUpdate(isSuccess);
+//        home_model.alertAlbumUpdate(isSuccess);
     }
 
 
