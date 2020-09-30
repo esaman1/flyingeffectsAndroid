@@ -122,6 +122,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     protected void initView() {
         EventBus.getDefault().register(this);
         videoPath = getIntent().getStringExtra("videoPath");
+        LogUtil.d("OOM","path="+videoPath);
         presenter = new TemplateAddStickerMvpPresenter(this, this, ll_space, viewLayerRelativeLayout, videoPath);
         if (!TextUtils.isEmpty(videoPath)) {
             //有视频的时候，初始化视频值

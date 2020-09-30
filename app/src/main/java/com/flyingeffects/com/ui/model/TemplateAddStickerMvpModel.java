@@ -411,7 +411,7 @@ public class TemplateAddStickerMvpModel {
                     //删除选择的帖子
                     stopAllAnim();
                     closeAllAnim();
-                    deleteAllSticker();
+                    deleteSticker();
                     if (UiStep.isFromDownBj) {
                         statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Stickeroff");
                     } else {
@@ -470,18 +470,20 @@ public class TemplateAddStickerMvpModel {
                 String format = path.substring(path.length() - 4);
                 String fileName = mGifFolder + File.separator + imageId + format;
                 File file = new File(fileName);
-                if (file.exists()) {
+                if (file.exists()) {  //todo  临时解决bug ,和自定义不一样
                     //如果已经下载了，就用已经下载的，但是如果已经展示了，就不能复用，需要类似于复制功能，只针对gif
-                    if (nowStickerHasChoose(imageId, path)) {
+//                    if (nowStickerHasChoose(imageId, path)) {
+                        LogUtil.d("OOM2", "已经下载过贴纸了");
                         String copyName = mGifFolder + File.separator + System.currentTimeMillis() + format;
                         copyGif(fileName, copyName, false, null, fileName, false);
                         WaitingDialog.closePragressDialog();
                         return;
-                    } else {
-                        addSticker(fileName, false, false, false, null, false, null, false, false);
-                        WaitingDialog.closePragressDialog();
-                        return;
-                    }
+//                    } else {
+//                        LogUtil.d("OOM2", "新下载贴纸了");
+//                        addSticker(fileName, false, false, false, null, false, null, false, false);
+//                        WaitingDialog.closePragressDialog();
+//                        return;
+//                    }
 
                 }
                 Observable.just(path).map(s -> {
@@ -551,15 +553,16 @@ public class TemplateAddStickerMvpModel {
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             String path = stickerView.getResPath();
-            String format = imagePath.substring(imagePath.length() - 4);
-            if (imagePath.endsWith(".gif")) {
-                String copyName = mGifFolder + File.separator + id + format;
-                if (path.equals(copyName)) {
-                    return true;
+            if (!TextUtils.isEmpty(path)) {
+                String format = imagePath.substring(imagePath.length() - 4);
+                if (imagePath.endsWith(".gif")) {
+                    String copyName = mGifFolder + File.separator + id + format;
+                    if (path.equals(copyName)) {
+                        return true;
+                    }
                 }
             }
         }
-
         return false;
 
     }
@@ -610,6 +613,25 @@ public class TemplateAddStickerMvpModel {
             deleteStickView(stickerView);
         }
     }
+
+
+    private void deleteSticker() {
+        needDeleteList.clear();
+        if (listForStickerModel != null && listForStickerModel.size() > 0) {
+            for (int i = 0; i < listForStickerModel.size(); i++) {
+                StickerView stickerView = listForStickerModel.get(i).getStickerView();
+                if (stickerView != null && !stickerView.getComeFrom()&&!stickerView.getIsTextSticker()) {
+                    needDeleteList.add(stickerView);
+                }
+            }
+        }
+
+        for (StickerView stickerView : needDeleteList
+        ) {
+            deleteStickView(stickerView);
+        }
+    }
+
 
 
     private void finishData() {
@@ -781,7 +803,8 @@ public class TemplateAddStickerMvpModel {
             AnimStickerModel model = listForStickerModel.get(i);
             StickerView stackView = model.getStickerView();
             if (stackView.getId() == id) {
-                stackView.stop();
+                stackView.pause();
+                stackView.destory();
                 listForStickerModel.remove(i);
             }
         }
@@ -929,7 +952,7 @@ public class TemplateAddStickerMvpModel {
      */
     private void copyGif(String getResPath, String path, boolean isFromAubum, StickerView stickerView, String OriginalPath, boolean isFromShowAnim) {
 
-        if (stickerView.getIsTextSticker()) {
+        if (stickerView != null && stickerView.getIsTextSticker()) {
             addSticker("", false, false, false, "", true, stickerView, isFromShowAnim, true);
         } else {
 
@@ -989,6 +1012,7 @@ public class TemplateAddStickerMvpModel {
                         callback.hideTextDialog();
                     }
                     deleteStickView(stickView);
+
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     stickView.dismissFrame();
                     //copy
@@ -1142,7 +1166,7 @@ public class TemplateAddStickerMvpModel {
         stickView.setRightTopBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_copy));
         stickView.setLeftTopBitmap(ContextCompat.getDrawable(context, R.drawable.sticker_delete));
         stickView.setRightBottomBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_redact));
-        if(!isText){
+        if (!isText) {
             stickView.setRightBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_updown));
         }
 
@@ -1371,6 +1395,8 @@ public class TemplateAddStickerMvpModel {
         if (viewLayerRelativeLayout.getChildCount() == 0) {
             saveToAlbum(mVideoPath);
         } else {
+
+
             new Handler().postDelayed(() -> {
                 if (!isIntoSaveVideo) {
                     isIntoSaveVideo = true;
@@ -1383,8 +1409,8 @@ public class TemplateAddStickerMvpModel {
                             if (!isDestroy) {
                                 if (!TextUtils.isEmpty(path)) {
                                     dialog.closePragressDialog();
-                                    String keepPath = getKeepOutput();
                                     try {
+                                        String keepPath = getKeepOutput();
                                         FileUtil.copyFile(new File(path), keepPath);
                                         saveToAlbum(keepPath);
                                         Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> isIntoSaveVideo = false, 500));

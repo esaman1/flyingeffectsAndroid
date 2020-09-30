@@ -1262,7 +1262,7 @@ public class CreationTemplateMvpModel {
      */
     private void copyGif(String getResPath, String path, boolean isFromAubum, StickerView stickerView, String OriginalPath, boolean isFromShowAnim) {
 
-        if (stickerView.getIsTextSticker()) {
+        if (stickerView!=null&&stickerView.getIsTextSticker()) {
             addSticker("", false, false, false, "", true, stickerView, isFromShowAnim, true);
         } else {
             try {
