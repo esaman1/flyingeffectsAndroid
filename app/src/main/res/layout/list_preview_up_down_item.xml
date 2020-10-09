@@ -201,8 +201,41 @@
         app:layout_constraintVertical_bias="0" />
 
 
+
+    <ImageView
+        android:src="@mipmap/music_icon"
+        android:contentDescription="@string/app_name"
+        android:layout_width="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/iv_writer"
+        android:id="@+id/iv_music"
+        app:layout_constraintTop_toBottomOf="@id/iv_writer"
+        app:layout_constraintEnd_toStartOf="@id/iv_writer"
+        android:layout_height="15dp"/>
+
+
+    <com.flyingeffects.com.view.MarqueTextView
+        android:id="@+id/tv_title_music"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:layout_marginStart="3dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tv_make"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@+id/iv_music"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        app:layout_constraintVertical_bias="0" />
+
+
+
     <com.flyingeffects.com.view.MarqueTextView
         android:id="@+id/tv_describe"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_8"
@@ -222,8 +255,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/tv_make"
         app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="@id/tv_title"
-        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        app:layout_constraintStart_toStartOf="@id/iv_music"
+        app:layout_constraintTop_toBottomOf="@id/tv_title_music"
         app:layout_constraintVertical_bias="0" />
 
 

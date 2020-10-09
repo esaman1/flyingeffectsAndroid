@@ -236,13 +236,11 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
 
                 case R.id.iv_writer:
+                case R.id.tv_describe:
                     Intent intent = new Intent(PreviewUpAndDownActivity.this, UserHomepageActivity.class);
                     intent.putExtra("toUserId", allData.get(position).getAdmin_id());
                     intent.putExtra("templateType", templateType);
-
                     startActivity(intent);
-
-
                     break;
 
                 case R.id.iv_download_bj:
