@@ -119,16 +119,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         llComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Window window = commentInputDialog.getWindow();
-                commentInputDialog.show();
-                window.getDecorView().setPadding(0, 0, 0, 0); //消除边距
-                WindowManager.LayoutParams lp = window.getAttributes();
-                lp.width = WindowManager.LayoutParams.MATCH_PARENT;   //设置宽度充满屏幕
-                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                window.setAttributes(lp);
-                window.setGravity(Gravity.BOTTOM);
-                llComment.setVisibility(View.GONE);
-                commentInputDialog.showSoftInputFromWindow();
+                showInputTextDialog();
             }
         });
         commentInputDialog = new CommentInputDialog(getActivity(), nowTemplateId, templateType, templateTitle);
@@ -273,6 +264,13 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
                 commentInputDialog.setMessage_id(message_id);
             }
 
+            @Override
+            public void clickItemComment(String id) {
+                message_id = id;
+                commentInputDialog.setMessage_id(message_id);
+                showInputTextDialog();
+            }
+
         }, new Comment_message_adapter.click2Comment() {
             @Override
             public void click(int position) {
@@ -315,6 +313,8 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
                         LogUtil.d("OOM", "onItemClick");
                         message_id = allDataList.get(position).getId();
                         commentInputDialog.setMessage_id(message_id);
+                        showInputTextDialog();
+                        commentInputDialog.setEdittextHint(allDataList.get(position).getUser_id());
                         break;
 
 
@@ -325,6 +325,23 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
             }
         });
         recyclerViewComment.setAdapter(adapter);
+    }
+
+    private void showInputTextDialog() {
+        if (commentInputDialog != null) {
+            Window window = commentInputDialog.getWindow();
+            commentInputDialog.show();
+            //消除边距
+            window.getDecorView().setPadding(0, 0, 0, 0);
+            WindowManager.LayoutParams lp = window.getAttributes();
+            //设置宽度充满屏幕
+            lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+            lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            window.setAttributes(lp);
+            window.setGravity(Gravity.BOTTOM);
+            llComment.setVisibility(View.GONE);
+            commentInputDialog.showSoftInputFromWindow();
+        }
     }
 
     /**

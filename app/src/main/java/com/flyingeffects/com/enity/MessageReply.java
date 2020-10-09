@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class MessageReply implements Serializable {
 
     private String id;
+    private int reply_id;
 
     public String getId() {
         return id;
@@ -54,11 +55,11 @@ public class MessageReply implements Serializable {
         this.type = type;
     }
 
-    public String getPid() {
+    public int getPid() {
         return pid;
     }
 
-    public void setPid(String pid) {
+    public void setPid(int pid) {
         this.pid = pid;
     }
 
@@ -134,12 +135,16 @@ public class MessageReply implements Serializable {
         this.to_user_photourl = to_user_photourl;
     }
 
+    public boolean isReply() {
+        return reply_id > 0 && reply_id != pid;
+    }
+
     private String user_id;
     private String create_time;
     private String status;
     private String update_time;
     private String type;
-    private String pid;
+    private int pid;
     private String template_id;
     private String is_read;
     private String content;
