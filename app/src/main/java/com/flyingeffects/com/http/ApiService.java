@@ -284,6 +284,12 @@ public interface ApiService {
     Observable<HttpResult<List<FontEnity>>> fontImage(@FieldMap Map<String, String> params);
 
 
+    //收藏音乐列表
+    @FormUrlEncoded
+    @POST("/api/message/systemessageinfo")
+    Observable<HttpResult<Object>> systemessageinfo(@FieldMap Map<String, String> params);
+
+
 
 
 

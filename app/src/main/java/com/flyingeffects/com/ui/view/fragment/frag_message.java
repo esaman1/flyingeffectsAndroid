@@ -22,6 +22,7 @@ import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.activity.FansActivity;
 import com.flyingeffects.com.ui.view.activity.LikeActivity;
+import com.flyingeffects.com.ui.view.activity.SystemMessageDetailActivity;
 import com.flyingeffects.com.ui.view.activity.ZanActivity;
 import com.flyingeffects.com.utils.ToastUtil;
 
@@ -68,7 +69,7 @@ public class frag_message extends BaseFragment {
 
     @Override
     protected void initView() {
-        if( BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()){
+        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             AdManager.getInstance().showImageAd(getActivity(), AdConfigs.AD_IMAGE_message, ll_ad_content, new AdManager.Callback() {
                 @Override
                 public void adClose() {
@@ -95,7 +96,7 @@ public class frag_message extends BaseFragment {
             requestSystemMessage();
             if (BaseConstans.hasLogin()) {
                 requestMessageCount();
-            }else{
+            } else {
                 tv_follow.setVisibility(View.GONE);
                 tv_zan.setVisibility(View.GONE);
                 tv_comment_count.setVisibility(View.GONE);
@@ -156,7 +157,7 @@ public class frag_message extends BaseFragment {
 
         } else {
             tv_follow.setVisibility(View.VISIBLE);
-            tv_follow.setText(followNum+"");
+            tv_follow.setText(followNum + "");
         }
         String praise_num = data.getPraise_num();
         int praiseNum = Integer.parseInt(praise_num);
@@ -164,7 +165,7 @@ public class frag_message extends BaseFragment {
             tv_zan.setVisibility(View.GONE);
         } else {
             tv_zan.setVisibility(View.VISIBLE);
-            tv_zan.setText(praiseNum+"");
+            tv_zan.setText(praiseNum + "");
         }
         String comment_num = data.getComment_num();
         int commentNum = Integer.parseInt(comment_num);
@@ -172,19 +173,22 @@ public class frag_message extends BaseFragment {
             tv_comment_count.setVisibility(View.GONE);
         } else {
             tv_comment_count.setVisibility(View.VISIBLE);
-            tv_comment_count.setText(commentNum+"");
+            tv_comment_count.setText(commentNum + "");
         }
     }
 
 
     private void initRecyclerView(List<systemessagelist> systemessagelists) {
 
-        Frag_message_adapter adapter=new Frag_message_adapter(systemessagelists,getActivity());
+        Frag_message_adapter adapter = new Frag_message_adapter(systemessagelists, getActivity());
         swipeMenuListView.setAdapter(adapter);
         swipeMenuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 statisticsEventAffair.getInstance().setFlag(getActivity(), "12_system");
+                Intent intent = new Intent(getActivity(), SystemMessageDetailActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
 
@@ -197,14 +201,14 @@ public class frag_message extends BaseFragment {
 
             case R.id.iv_icon_fans:
 
-                if(BaseConstans.hasLogin()){
+                if (BaseConstans.hasLogin()) {
 
                     statisticsEventAffair.getInstance().setFlag(getActivity(), "12_Fans");
-                    Intent intentFan=new Intent(getActivity(), FansActivity.class);
-                    intentFan.putExtra("to_user_id",BaseConstans.GetUserId());
-                    intentFan.putExtra("from",1);
+                    Intent intentFan = new Intent(getActivity(), FansActivity.class);
+                    intentFan.putExtra("to_user_id", BaseConstans.GetUserId());
+                    intentFan.putExtra("from", 1);
                     startActivity(intentFan);
-                }else{
+                } else {
                     ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
                 }
 
@@ -214,12 +218,12 @@ public class frag_message extends BaseFragment {
             case R.id.iv_icon_zan:
 
 
-                if(BaseConstans.hasLogin()){
+                if (BaseConstans.hasLogin()) {
                     statisticsEventAffair.getInstance().setFlag(getActivity(), "12_awesome");
-                    Intent intentZan=new Intent(getActivity(), ZanActivity.class);
-                    intentZan.putExtra("from",1);
+                    Intent intentZan = new Intent(getActivity(), ZanActivity.class);
+                    intentZan.putExtra("from", 1);
                     startActivity(intentZan);
-                }else{
+                } else {
                     ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
                 }
 
@@ -227,12 +231,12 @@ public class frag_message extends BaseFragment {
 
             case R.id.ll_comment:
 
-                if(BaseConstans.hasLogin()){
+                if (BaseConstans.hasLogin()) {
                     statisticsEventAffair.getInstance().setFlag(getActivity(), "12_comment");
-                    Intent intentComment=new Intent(getActivity(),LikeActivity.class);
-                    intentComment.putExtra("from",1);
+                    Intent intentComment = new Intent(getActivity(), LikeActivity.class);
+                    intentComment.putExtra("from", 1);
                     startActivity(intentComment);
-                }else{
+                } else {
                     ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
                 }
                 break;

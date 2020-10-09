@@ -122,6 +122,16 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
+
+
+
+
+        <activity
+            android:name="com.flyingeffects.com.ui.view.activity.SystemMessageDetailActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+
+
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity"
             android:windowSoftInputMode="adjustNothing"
