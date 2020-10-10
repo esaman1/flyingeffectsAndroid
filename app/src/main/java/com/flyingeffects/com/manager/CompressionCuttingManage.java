@@ -11,7 +11,7 @@ import com.flyingeffects.com.enity.DownImgDataList;
 import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
-import com.flyingeffects.com.utils.updateFileUtils;
+import com.flyingeffects.com.utils.UpdateFileUtils;
 import com.glidebitmappool.GlideBitmapPool;
 import com.google.gson.Gson;
 import com.megvii.segjni.SegJni;
@@ -19,7 +19,6 @@ import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -227,7 +226,7 @@ public class CompressionCuttingManage {
 
         LogUtil.d("OOM", "pathNum=" + pathNum);
 
-        updateFileUtils.uploadFile(listFile, "http://flying.nineton.cn/api/picture/picturesHumanList?filenum=" + pathNum + "&template_id=" + templateId+"&version="+BaseConstans.getVersionCode(), (code, str) -> {
+        UpdateFileUtils.uploadFile(listFile, "http://flying.nineton.cn/api/picture/picturesHumanList?filenum=" + pathNum + "&template_id=" + templateId+"&version="+BaseConstans.getVersionCode(), (code, str) -> {
             LogUtil.d("OOM", "uploadFileCallBack=" + str);
             WaitingDialog.closePragressDialog();
             Gson gson = new Gson();

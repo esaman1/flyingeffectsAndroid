@@ -153,7 +153,11 @@
             android:theme="@style/AllTransparentTheme" />
 
 
-
+        <activity
+            android:name="com.flyingeffects.com.ui.view.activity.EditInformationActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateUnspecified|adjustPan"
+            android:theme="@style/AllTransparentTheme" />
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.MessageLongClickActivity"

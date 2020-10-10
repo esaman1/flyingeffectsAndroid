@@ -1,5 +1,7 @@
 package com.flyingeffects.com.utils;
 
+import android.os.Handler;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -11,9 +13,106 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
-public class updateFileUtils {
+public class UpdateFileUtils {
+
+    private static Handler handler = new Handler();
+
+    public static void postUpdateFile(final Map strMap, final String strUrl, final HttpCallBack callBack) {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                HttpURLConnection connection = null;
+                OutputStream os = null;
+                InputStream is = null;
+                try {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    for (Object key : strMap.keySet()) {
+                        stringBuilder.append(key + "=" + strMap.get(key) + "&");
+                    }
+                    stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+                    URL url = new URL(strUrl);
+                    connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setConnectTimeout(10 * 1000);
+                    connection.setDoOutput(true);
+                    connection.setDoInput(true);
+                    connection.setUseCaches(false);
+                    connection.setRequestProperty("Charset", "utf-8");
+                    connection.connect();
+                    os = connection.getOutputStream();
+                    os.write(stringBuilder.toString().getBytes());
+                    os.flush();
+                    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        is = connection.getInputStream();
+                        final String result = InputStreamToString(is);
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callBack.onSuccess(result);
+                            }
+                        });
+                    } else {
+                        throw new Exception("ResponseCode:" + connection.getResponseCode());
+                    }
+                } catch (final Exception e) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callBack.onError(e);
+                        }
+                    });
+                } finally {
+                    if (connection != null) {
+                        connection.disconnect();
+                    }
+                    try {
+                        if (is != null) {
+                            is.close();
+                        }
+                        if (os != null) {
+                            os.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callBack.onFinish();
+                        }
+                    });
+                }
+            }
+        };
+        thread.start();
+    }
+
+
+    public static String InputStreamToString(InputStream is) throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        byte[] data = new byte[1024];
+        int len = -1;
+        while ((len = is.read(data)) != -1) {
+            os.write(data, 0, len);
+        }
+        os.flush();
+        os.close();
+        String result = new String(data, "UTF-8");
+        return result;
+    }
+
+    public interface HttpCallBack {
+        public void onSuccess(String result);
+
+        public void onError(Exception e);
+
+        public void onFinish();
+
+    }
+
 
     public static void uploadFile(final List<File> files, final String url, final HttpCallbackListener listener) {
         new Thread(new Runnable() {
@@ -110,18 +209,8 @@ public class updateFileUtils {
 
     }
 
-
-
-
-
-
-
-
-
-
-
-   public  interface  HttpCallbackListener{
-       void  onFinish(int code,String  str);
+    public  interface  HttpCallbackListener{
+        void  onFinish(int code,String  str);
 
     }
 

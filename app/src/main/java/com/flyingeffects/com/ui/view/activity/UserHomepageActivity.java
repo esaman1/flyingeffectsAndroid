@@ -6,10 +6,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.viewpager.widget.ViewPager;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
@@ -30,6 +26,9 @@ import com.flyingeffects.com.utils.ToastUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -92,6 +91,12 @@ public class UserHomepageActivity extends BaseActivity {
 
     @BindView(R.id.iv_back)
     ImageView iv_back;
+    @BindView(R.id.tv_number)
+    TextView tvNumber;
+    @BindView(R.id.im_user_skin_other)
+    ImageView imSkin;
+    @BindView(R.id.tv_Introduction)
+    TextView tvIntroduction;
 
 
 
@@ -143,13 +148,13 @@ public class UserHomepageActivity extends BaseActivity {
                 this.finish();
                 break;
 
-
             case R.id.tv_focus:
 
                 EventBus.getDefault().post(new AttentionChange());
                 requestFocus();
                 break;
-
+            default:
+                break;
         }
 
     }
@@ -229,6 +234,7 @@ public class UserHomepageActivity extends BaseActivity {
                 fans_count.setText(data.getUser_follower());
                 attention_count.setText(data.getUser_watch());
                 tv_video_count.setText(data.getUser_video());
+                tvNumber.setText("飞友号：" + data.getId());
                 String is_has_follow=data.getIs_has_follow();
                 if(!TextUtils.isEmpty(is_has_follow)&&is_has_follow.equals("0")){
                     tv_focus.setText("关注");
@@ -236,6 +242,20 @@ public class UserHomepageActivity extends BaseActivity {
                 }else{
                     tv_focus.setText("取消关注");
                     isFocus=true;
+                }
+                if(TextUtils.isEmpty(data.getSkin())){
+                    Glide.with(UserHomepageActivity.this)
+                            .load(R.mipmap.home_page_bj)
+                            .into(imSkin);
+                }else {
+                    Glide.with(UserHomepageActivity.this)
+                            .load(data.getSkin())
+                            .into(imSkin);
+                }
+                if (!TextUtils.isEmpty(data.getRemark())) {
+                    tvIntroduction.setText(data.getRemark());
+                }else {
+                    tvIntroduction.setText("这位友友很懒，什么也没留下");
                 }
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);

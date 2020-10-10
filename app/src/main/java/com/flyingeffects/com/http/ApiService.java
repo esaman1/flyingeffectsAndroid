@@ -289,9 +289,14 @@ public interface ApiService {
     @POST("/api/message/systemessageinfo")
     Observable<HttpResult<Object>> systemessageinfo(@FieldMap Map<String, String> params);
 
+    /**上传用户皮肤*/
+    @FormUrlEncoded
+    @POST("/api/message/changeSkin")
+    Observable<HttpResult<Object>> uploadUserSkin(@FieldMap Map<String, String> params);
 
-
-
-
+    /**修改个人信息*/
+    @FormUrlEncoded
+    @POST("/api/user/member_edit")
+    Observable<HttpResult<Object>> memberEdit(@FieldMap Map<String,String> params);
 
 }

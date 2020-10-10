@@ -7,123 +7,146 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="250dp">
+        android:layout_height="210dp">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@mipmap/home_page_bj" />
-
+            android:id="@+id/im_user_skin_other" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:background="@drawable/home_page_gradient" />
-
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:gravity="center"
-            android:orientation="vertical">
-
+            android:paddingRight="12dp"
+            android:paddingLeft="12dp"
+            android:layout_centerVertical="true">
             <ImageView
                 android:id="@+id/iv_head"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:src="@mipmap/logo" />
-
-
-            <TextView
-                android:id="@+id/tv_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="隔壁家的吴阿姨"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
-
+                android:layout_toRightOf="@+id/iv_head"
+                android:layout_marginLeft="10dp"
+                android:layout_centerVertical="true"
+                android:orientation="vertical">
                 <TextView
+                    android:id="@+id/tv_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="粉丝"
-                    android:textColor="#8C9090"
+                    android:text="隔壁家的吴阿姨"
+                    android:textColor="#858A8D"
                     android:textSize="12sp" />
-
                 <TextView
-                    android:id="@+id/fans_count"
+                    android:id="@+id/tv_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:text="77万"
-                    android:textColor="@color/white" />
-
+                    android:text="隔壁家的吴阿姨"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
                 <TextView
+                    android:id="@+id/tv_Introduction"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="关注"
-                    android:textColor="#8C9090"
+                    android:layout_marginTop="8dp"
+                    android:textColor="#858A8D"
                     android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/attention_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:text="7"
-                    android:textColor="@color/white" />
-
-                <TextView
-
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="视频"
-                    android:textColor="#8C9090"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/tv_video_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:text="7722"
-                    android:textColor="@color/white" />
-
             </LinearLayout>
-
             <TextView
                 android:id="@+id/tv_focus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:background="@drawable/message_focus"
-                android:paddingStart="42dp"
+                android:background="@drawable/message_focus_20"
+                android:layout_alignParentRight="true"
+                android:paddingStart="32dp"
                 android:paddingTop="10dp"
-                android:paddingEnd="42dp"
+                android:layout_centerVertical="true"
+                android:paddingEnd="32dp"
                 android:paddingBottom="10dp"
                 android:text="关注"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold" />
-
-
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="20dp">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/fans_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="77万"
+                    android:textSize="18sp"
+                    android:textColor="@color/white" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="粉丝"
+                    android:layout_marginLeft="2dp"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/attention_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="7"
+                    android:textSize="18sp"
+                    android:textColor="@color/white" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="关注"
+                    android:layout_marginLeft="2dp"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/tv_video_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="7722"
+                    android:textSize="18sp"
+                    android:textColor="@color/white" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="视频"
+                    android:layout_marginLeft="2dp"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+            </LinearLayout>
         </LinearLayout>
-
-
         <ImageView
             android:id="@+id/iv_back"
             android:layout_width="40dp"
@@ -132,7 +155,6 @@
             android:layout_marginStart="20dp"
             android:src="@mipmap/back"
             android:layout_height="40dp"/>
-
     </RelativeLayout>
 
 
@@ -147,9 +169,8 @@
 
         <LinearLayout
             android:id="@+id/ll_0"
-            android:layout_width="0dp"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -174,7 +195,7 @@
                 <View
                     android:id="@+id/view_line_head"
                     android:layout_width="50dp"
-                    android:layout_height="2dp"
+                    android:layout_height="3dp"
                     android:layout_marginBottom="10dp"
                     android:background="@color/base_blue" />
             </LinearLayout>
@@ -193,9 +214,8 @@
 
         <LinearLayout
             android:id="@+id/ll_1"
-            android:layout_width="0dp"
+            android:layout_width="120dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -221,7 +241,7 @@
                     android:id="@+id/view_line_head_1"
                     android:layout_width="30dp"
                     android:visibility="invisible"
-                    android:layout_height="2dp"
+                    android:layout_height="3dp"
                     android:layout_marginBottom="10dp"
                     android:background="@color/base_blue" />
             </LinearLayout>

@@ -2,10 +2,8 @@ package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.viewpager.widget.ViewPager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,19 +21,30 @@ import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.AlbumManager;
+import com.flyingeffects.com.manager.huaweiObs;
 import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.AboutActivity;
+import com.flyingeffects.com.ui.view.activity.EditInformationActivity;
 import com.flyingeffects.com.ui.view.activity.FansActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.MineFocusActivity;
 import com.flyingeffects.com.ui.view.activity.ZanActivity;
+import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.orhanobut.hawk.Hawk;
+import com.shixing.sxve.ui.view.WaitingDialog;
+import com.yanzhenjie.album.AlbumFile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 import rx.Observable;
@@ -46,8 +55,8 @@ import rx.Observable;
  * 时间：2018/4/24
  **/
 
-public class frag_user_center extends BaseFragment {
-
+public class frag_user_center extends BaseFragment implements AlbumChooseCallback {
+    public final static int SELECTALBUMFROMUSETCENTERBJ = 1;
 
     private String[] titles = {"我上传的背景", "喜欢","模板收藏"};
 
@@ -79,6 +88,12 @@ public class frag_user_center extends BaseFragment {
 
     @BindView(R.id.tv_video_count)
     TextView tv_video_count;
+    @BindView(R.id.im_user_skin)
+    ImageView imSkin;
+    @BindView(R.id.tv_Introduction)
+    TextView tvIntroduction;
+    @BindView(R.id.im_edit)
+    ImageView imEdit;
 
 
     @Override
@@ -180,7 +195,7 @@ public class frag_user_center extends BaseFragment {
     }
 
 
-    @OnClick({R.id.iv_head,R.id.fans,R.id.fans_count,R.id.attention,R.id.attention_count,R.id.tv_2,R.id.tv_video_count})
+    @OnClick({R.id.iv_head,R.id.fans_count,R.id.attention_count,R.id.tv_video_count,R.id.iv_Peeling,R.id.tv_edit_information})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_head:
@@ -191,10 +206,7 @@ public class frag_user_center extends BaseFragment {
                 }
                 break;
 
-
-            case R.id.fans:
             case R.id.fans_count:
-
                 if(BaseConstans.hasLogin()){
                     Intent intentZan=new Intent(getActivity(), ZanActivity.class);
                     intentZan.putExtra("from",1);
@@ -205,12 +217,7 @@ public class frag_user_center extends BaseFragment {
 
                 break;
 
-
-            case R.id.attention:
             case R.id.attention_count:
-
-
-
                 if(BaseConstans.hasLogin()){
                     Intent intentFoucs=new Intent(getActivity(), MineFocusActivity.class);
                     intentFoucs.putExtra("to_user_id",BaseConstans.GetUserId());
@@ -220,7 +227,6 @@ public class frag_user_center extends BaseFragment {
                 }
 
                 break;
-            case R.id.tv_2:
             case R.id.tv_video_count:
                 if(BaseConstans.hasLogin()){
                     Intent intentFan=new Intent(getActivity(), FansActivity.class);
@@ -230,10 +236,16 @@ public class frag_user_center extends BaseFragment {
                 }else{
                     ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
                 }
-
-
                 break;
-
+            case R.id.iv_Peeling:
+                AlbumManager.chooseImageAlbum(getContext(),1,SELECTALBUMFROMUSETCENTERBJ,this,"");
+                break;
+            case R.id.tv_edit_information:
+                Intent intent = new Intent(getActivity(), EditInformationActivity.class);
+                startActivity(intent);
+                break;
+            default:
+                break;
 
         }
     }
@@ -278,6 +290,22 @@ public class frag_user_center extends BaseFragment {
                         fans_count.setText(data.getUser_praise());
                         attention_count.setText(data.getUser_watch());
                         tv_video_count.setText(data.getUser_follower());
+                        if(TextUtils.isEmpty(data.getSkin())){
+                            Glide.with(getActivity())
+                                    .load(R.mipmap.home_page_bj)
+                                    .into(imSkin);
+                        }else {
+                            Glide.with(getActivity())
+                                    .load(data.getSkin())
+                                    .into(imSkin);
+                        }
+                        if (!TextUtils.isEmpty(data.getRemark())) {
+                            tvIntroduction.setText(data.getRemark());
+                            imEdit.setVisibility(View.GONE);
+                        }else {
+                            tvIntroduction.setText("完善简介让更多的友友认识你");
+                            imEdit.setVisibility(View.VISIBLE);
+                        }
                     }
                     BaseConstans.SetUserId(data.getId(),data.getNickname(),data.getPhotourl());
                 }
@@ -285,6 +313,50 @@ public class frag_user_center extends BaseFragment {
         }
     }
 
+    @Override
+    public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
+        if (!isCancel &&  paths != null && paths.size() > 0) {
+            String path = paths.get(0);
+            String type = path.substring(path.length() - 4);
+            String nowTime = StringUtil.getCurrentTimeymd();
+            String huaweiSkinPath = "media/android/user_skin_img/" + nowTime + "/" + System.currentTimeMillis() + type;
+            uploadFileToHuawei(path,huaweiSkinPath);
+        }
+    }
+
+
+    private void uploadFileToHuawei(String videoPath, String copyName) {
+        WaitingDialog.openPragressDialog(getContext());
+        Log.d("OOM2", "uploadFileToHuawei" + "当前上传的地址为" + videoPath + "当前的名字为" + copyName);
+        new Thread(() -> huaweiObs.getInstance().uploadFileToHawei(videoPath, copyName, new huaweiObs.Callback() {
+            @Override
+            public void isSuccess(String str) {
+                if (!TextUtils.isEmpty(str)) {
+                    String path = str.substring(str.lastIndexOf("=") + 1, str.length() - 1);
+                    uploadUserSkin(path);
+                }
+            }
+        })).start();
+    }
+
+    private void uploadUserSkin(String skinPath) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("skin", skinPath);
+        HttpUtil.getInstance().toSubscribe(Api.getDefault().uploadUserSkin(BaseConstans.getRequestHead(params)),
+                new ProgressSubscriber<Object>(getContext()) {
+                    @Override
+                    protected void _onError(String message) {
+                        ToastUtil.showToast(message);
+                    }
+
+                    @Override
+                    protected void _onNext(Object data) {
+                        Glide.with(getActivity())
+                                .load(skinPath)
+                                .into(imSkin);
+                    }
+                }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+    }
 }
 
 
