@@ -1,5 +1,8 @@
 package com.flyingeffects.com.utils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class timeUtils {
 
 
@@ -64,6 +67,15 @@ public class timeUtils {
         }
 
 
+    }
+
+
+    public static  String  GetSystemMessageTime(long time){
+
+            Date d = new Date(time);
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd mm:ss");
+            System.out.println(sdf.format(d));
+            return sdf.format(d);
     }
 
 

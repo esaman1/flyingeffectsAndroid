@@ -91,8 +91,9 @@ public class BaseApplication extends MultiDexApplication {
                         .appId("61074cddf23c0a8dd2b7e00996057e78")
                         .appChannel(ChannelUtil.getChannel(this))
                         .TTAppKey(AdConfigs.APP_ID_CSJ)
+                        .KSAppKey("517200002")
                         .GDTAppKey(AdConfigs.APP_ID_GDT)
-                        .isDebug(false)
+                        .isDebug(true)
                         .build());
     }
 

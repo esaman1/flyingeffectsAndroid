@@ -33,7 +33,9 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.AttentionChange;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
+import com.flyingeffects.com.enity.RequestMessage;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.checkVersion;
 import com.flyingeffects.com.enity.messageCount;
@@ -45,6 +47,7 @@ import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.SPHelper;
+import com.flyingeffects.com.manager.SituationTimer;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.ShowPraiseModel;
 import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
@@ -74,6 +77,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
@@ -98,7 +103,7 @@ public class HomeMainActivity extends FragmentActivity {
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private Timer timer;
     private TimerTask task;
-
+    private SituationTimer situationTimer;
     private TextView message_count;
 
     @Override
@@ -110,6 +115,7 @@ public class HomeMainActivity extends FragmentActivity {
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         setContentView(R.layout.act_home_main);
+        EventBus.getDefault().register(this);
         message_count = findViewById(R.id.message_count);
         StatusBarCompat.setStatusBarColor(this, Color.parseColor("#181818"));
         ThisMain = this;
@@ -134,8 +140,10 @@ public class HomeMainActivity extends FragmentActivity {
             requestUserInfo();
             requestMessageCount();
         }
-
         SegJni.nativeCreateSegHandler(HomeMainActivity.this, ConUtil.getFileContent(HomeMainActivity.this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
+        situationTimer = new SituationTimer();
+        situationTimer.startTimer(30);
+
     }
 
 
@@ -195,6 +203,7 @@ public class HomeMainActivity extends FragmentActivity {
         timer.schedule(task, second * 1000, second * 1000);
     }
 
+
     /**
      * description ：检查是否可以好评弹窗
      * date: ：2019/6/13 10:44
@@ -211,13 +220,13 @@ public class HomeMainActivity extends FragmentActivity {
 
             @Override
             protected void _onNext(Object data) {
-                String str=StringUtil.beanToJSONString(data);
+                String str = StringUtil.beanToJSONString(data);
                 try {
-                    JSONObject ob=new JSONObject(str);
-                    int is_open_comment=ob.getInt("is_open_comment");
-                    if(is_open_comment==1){
+                    JSONObject ob = new JSONObject(str);
+                    int is_open_comment = ob.getInt("is_open_comment");
+                    if (is_open_comment == 1) {
                         new Handler().postDelayed(() -> {
-                            Intent intent=new Intent(HomeMainActivity.this,PraiseActivity.class);
+                            Intent intent = new Intent(HomeMainActivity.this, PraiseActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
                         }, 3000);
@@ -228,9 +237,6 @@ public class HomeMainActivity extends FragmentActivity {
             }
         }, "checkUpdate", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
-
-
-
 
 
     /**
@@ -387,6 +393,8 @@ public class HomeMainActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        situationTimer.destroyTimer();
+        EventBus.getDefault().unregister(this);
     }
 
 
@@ -474,10 +482,10 @@ public class HomeMainActivity extends FragmentActivity {
     private void changeBottomTab() {
         for (int i = 0; i < mIvMenuBack.length; i++) {
 //            mIvMenu[i].setImageResource(unSelectIconArr[i]);
-            tv_main[i].setTextColor(ContextCompat.getColor(this,R.color.home_navigation_dark_gray));
+            tv_main[i].setTextColor(ContextCompat.getColor(this, R.color.home_navigation_dark_gray));
         }
 //        mIvMenu[LastWhichMenu].setImageResource(selectIconArr[LastWhichMenu]);
-        tv_main[LastWhichMenu].setTextColor(ContextCompat.getColor(this,R.color.white));
+        tv_main[LastWhichMenu].setTextColor(ContextCompat.getColor(this, R.color.white));
     }
 
     /**
@@ -696,5 +704,12 @@ public class HomeMainActivity extends FragmentActivity {
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
+
+    @Subscribe
+    public void onEventMainThread(RequestMessage event) {
+        if (BaseConstans.hasLogin()) {
+            requestMessageCount();
+        }
+    }
 
 }

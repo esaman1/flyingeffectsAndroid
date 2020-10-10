@@ -12,6 +12,8 @@ import com.flyingeffects.com.adapter.Frag_message_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.RequestMessage;
+import com.flyingeffects.com.enity.SystemMessageCountAllEntiy;
 import com.flyingeffects.com.enity.messageCount;
 import com.flyingeffects.com.enity.systemessagelist;
 import com.flyingeffects.com.http.Api;
@@ -24,13 +26,18 @@ import com.flyingeffects.com.ui.view.activity.FansActivity;
 import com.flyingeffects.com.ui.view.activity.LikeActivity;
 import com.flyingeffects.com.ui.view.activity.SystemMessageDetailActivity;
 import com.flyingeffects.com.ui.view.activity.ZanActivity;
+import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import rx.Observable;
 
 
@@ -69,6 +76,7 @@ public class frag_message extends BaseFragment {
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             AdManager.getInstance().showImageAd(getActivity(), AdConfigs.AD_IMAGE_message, ll_ad_content, new AdManager.Callback() {
                 @Override
@@ -93,9 +101,10 @@ public class frag_message extends BaseFragment {
     public void onResume() {
         super.onResume();
         if (getActivity() != null) {
-            requestSystemMessage();
+//            requestSystemMessage();
             if (BaseConstans.hasLogin()) {
                 requestMessageCount();
+                requestSystemMessageCount();
             } else {
                 tv_follow.setVisibility(View.GONE);
                 tv_zan.setVisibility(View.GONE);
@@ -106,25 +115,30 @@ public class frag_message extends BaseFragment {
 
     }
 
-    /**
-     * description ：请求系统消息
-     * creation date: 2020/7/28
-     * user : zhangtongju
-     */
-    private void requestSystemMessage() {
-        Observable ob = Api.getDefault().systemessagelist(BaseConstans.getRequestHead(new HashMap<>()));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<systemessagelist>>(getActivity()) {
-            @Override
-            protected void _onError(String message) {
-                ToastUtil.showToast(message);
-            }
+//    /**
+//     * description ：请求系统消息
+//     * creation date: 2020/7/28
+//     * user : zhangtongju
+//     */
+//    private void requestSystemMessage() {
+//        Observable ob = Api.getDefault().systemessagelist(BaseConstans.getRequestHead(new HashMap<>()));
+//        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<systemessagelist>>(getActivity()) {
+//            @Override
+//            protected void _onError(String message) {
+//                ToastUtil.showToast(message);
+//            }
+//
+//            @Override
+//            protected void _onNext(List<systemessagelist> data) {
+//                initRecyclerView(data);
+//            }
+//        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+//    }
 
-            @Override
-            protected void _onNext(List<systemessagelist> data) {
-                initRecyclerView(data);
-            }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
-    }
+
+
+
+
 
 
     /**
@@ -147,6 +161,26 @@ public class frag_message extends BaseFragment {
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
+
+
+    private void requestSystemMessageCount() {
+        HashMap<String, String> params = new HashMap<>();
+        Observable ob = Api.getDefault().systemTotal(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<SystemMessageCountAllEntiy>(getActivity()) {
+            @Override
+            protected void _onError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(SystemMessageCountAllEntiy data) {
+                ArrayList<systemessagelist> list=data.getSystem_message();
+                initRecyclerView(list);
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+
 
 
     private void showMessageCount(messageCount data) {
@@ -187,6 +221,7 @@ public class frag_message extends BaseFragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 statisticsEventAffair.getInstance().setFlag(getActivity(), "12_system");
                 Intent intent = new Intent(getActivity(), SystemMessageDetailActivity.class);
+                intent.putExtra("needId",systemessagelists.get(i).getId());
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
@@ -246,6 +281,25 @@ public class frag_message extends BaseFragment {
         }
 
 
+    }
+
+
+
+
+
+    @Subscribe
+    public void onEventMainThread(RequestMessage event) {
+        if (getActivity() != null) {
+            if (BaseConstans.hasLogin()) {
+                requestMessageCount();
+                requestSystemMessageCount();
+            } else {
+                tv_follow.setVisibility(View.GONE);
+                tv_zan.setVisibility(View.GONE);
+                tv_comment_count.setVisibility(View.GONE);
+            }
+
+        }
     }
 
 

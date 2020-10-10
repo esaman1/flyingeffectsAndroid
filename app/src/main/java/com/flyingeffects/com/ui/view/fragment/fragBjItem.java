@@ -306,6 +306,11 @@ public class fragBjItem extends BaseFragment {
                 }
 
                 @Override
+                public void onFeedAdExposed() {
+
+                }
+
+                @Override
                 public boolean onFeedAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
                     return false;
                 }

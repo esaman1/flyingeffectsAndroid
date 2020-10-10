@@ -26,8 +26,8 @@ android {
         multiDexEnabled true  //分包支持
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 20
-        versionName "3.3.0"
+        versionCode 21
+        versionName "3.4.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [UMENG_CHANNEL_VALUE: "umeng"]//添加一个默认渠道号  2018-6-19
         flavorDimensions "versionCode" //版本名后面添加一句话，意思就是flavor dimension 它的维度就是该版本号，这样维度就是都是统一的了
@@ -164,13 +164,13 @@ dependencies {
     //开屏广告
     implementation(name: 'GDTSDK.unionNormal.4.211.1081', ext: 'aar')
     // 广告sdk
-    implementation(name: 'NTADSDK-v2.4.1', ext: 'aar')
+    implementation(name: 'NTADSDK-v2.4.3', ext: 'aar')
     // 百度联盟
     implementation(name: 'Baidu_MobAds_SDK-release_v5.85', ext: 'aar')
     // 穿山甲
     implementation(name: 'open_ad_sdk_3.2.0.2', ext: 'aar')
     //快手
-    implementation(name: 'ks_adsdk-3.3.1', ext: 'aar')
+    implementation(name: 'ks_adsdk-3.3.6', ext: 'aar')
     //oppo
     implementation(name: 'mobad_normal_pub_354_2020_05_19', ext: 'aar')
     // 抖音1
