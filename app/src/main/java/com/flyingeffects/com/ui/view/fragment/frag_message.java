@@ -175,6 +175,8 @@ public class frag_message extends BaseFragment {
 
             @Override
             protected void _onNext(SystemMessageCountAllEntiy data) {
+                String str=StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM",str);
                 ArrayList<systemessagelist> list=data.getSystem_message();
                 initRecyclerView(list);
             }

@@ -2,6 +2,7 @@ package com.flyingeffects.com.view.mine;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.GridView;
@@ -94,6 +95,10 @@ public class CreateViewForAddText {
             @Override
             public void afterTextChanged(String string) {
                 inputText = string;
+                if (callback != null&& !TextUtils.isEmpty(string)) {
+                    callback.setText(inputText);
+                }
+
             }
         });
         iv_down.setOnClickListener(view12 -> {

@@ -103,6 +103,16 @@ public class systemessagelist implements Serializable {
     private String pid;
     private String to_user_id;
 
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
+    private int total;
+
     public int getIs_read() {
         return is_read;
     }
