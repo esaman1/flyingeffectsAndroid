@@ -10,13 +10,11 @@
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="15dp"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:orientation="horizontal">
-
-
 
         <ImageView
             android:layout_width="wrap_content"
@@ -29,7 +27,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_toEndOf="@+id/iv_back"
-            android:layout_toStartOf="@+id/tv_search"
+            android:layout_toStartOf="@+id/tv_cancel"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:background="@drawable/strok_search"
@@ -56,27 +54,12 @@
                 android:layout_height="21dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="15dp"
-                android:src="@mipmap/search" />
-
-            <ImageView
-                android:id="@+id/iv_delete"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="15dp"
-                android:contentDescription="@string/app_name"
-                android:padding="5dp"
-                android:src="@mipmap/serach_delete"
-                android:visibility="gone" />
-
+                android:src="@mipmap/gray_search" />
 
         </RelativeLayout>
 
-
-
         <TextView
-            android:id="@+id/tv_search"
+            android:id="@+id/tv_cancel"
             android:layout_width="wrap_content"
             android:layout_alignParentRight="true"
             android:gravity="center"
@@ -86,15 +69,22 @@
             android:paddingEnd="15dp"
             android:paddingTop="3dp"
             android:paddingBottom="3dp"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textColor="@color/white"
-            android:text="搜索"
-            android:background="@drawable/tv_make"
+            android:text="取消"
             android:layout_height="match_parent"/>
 
-
     </RelativeLayout>
-
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rc_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_below="@+id/relative_top"
+        android:visibility="gone"
+        android:layout_marginTop="20dp"/>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/main_content"
@@ -116,7 +106,6 @@
                 android:background="@color/home_base_balk_color"
                 android:fitsSystemWindows="true"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
-
 
                 <Toolbar
                     android:id="@+id/Toolbar"
@@ -144,7 +133,6 @@
                             android:textColor="#D5D5D5"
                             android:textSize="16sp" />
 
-
                         <com.flyingeffects.com.view.WarpLinearLayout
                             android:id="@+id/AutoNewLineLayout"
                             android:layout_width="match_parent"
@@ -158,12 +146,7 @@
 
                 </Toolbar>
 
-
             </com.google.android.material.appbar.CollapsingToolbarLayout>
-
-
-
-
 
             <HorizontalScrollView
                 android:id="@+id/horizontal_scrollView"
@@ -181,15 +164,12 @@
                     android:orientation="horizontal" />
             </HorizontalScrollView>
 
-
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:orientation="vertical"
                 android:id="@+id/ll_ad_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_height="wrap_content"/>
-
-
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -200,9 +180,5 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-
-
-
 
 </RelativeLayout>

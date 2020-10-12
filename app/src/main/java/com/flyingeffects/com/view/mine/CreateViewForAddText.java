@@ -132,9 +132,9 @@ public class CreateViewForAddText {
             CreateViewForAddText.this.downFile(listFont.get(i).getFile(), 1, 1, "");
             createTemplateTextEffectAdapterFont.select(i);
             if ("bj_template".equals(type)) {
-                statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_font", listEffect.get(i).getTitle());
+                statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_font", listFont.get(i).getTitle());
             } else if ("OneKey_template".equals(type)) {
-                statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_font", listEffect.get(i).getTitle());
+                statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_font", listFont.get(i).getTitle());
             }
         });
         createTemplateTextEffectAdapterFont = new CreateTemplateTextFontAdapter(listFont, context);

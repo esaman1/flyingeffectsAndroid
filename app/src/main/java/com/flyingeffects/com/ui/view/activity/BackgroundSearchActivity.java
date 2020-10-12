@@ -8,23 +8,21 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.viewpager.widget.ViewPager;
-
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.adapter.SearchTemplateItemAdapter;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.SearchKeyWord;
+import com.flyingeffects.com.enity.SearchTemplateInfoEntity;
 import com.flyingeffects.com.enity.SendSearchText;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -37,6 +35,7 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.fragment.fragBjSearch;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.WarpLinearLayout;
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -46,24 +45,30 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 
+/**
+ * @author ZhouGang
+ * @date 2020/10/12
+ * 模板搜索
+ */
 public class BackgroundSearchActivity extends BaseActivity {
 
 
     @BindView(R.id.AutoNewLineLayout)
     WarpLinearLayout autoNewLineLayout;
 
-
     @BindView(R.id.ed_search)
     EditText ed_text;
-
-
-    @BindView(R.id.iv_delete)
-    ImageView iv_delete;
 
     @BindView(R.id.tv_youyou)
     TextView tv_youyou;
@@ -83,6 +88,10 @@ public class BackgroundSearchActivity extends BaseActivity {
 
     @BindView(R.id.iv_back)
     ImageView iv_back;
+    @BindView(R.id.rc_search)
+    RecyclerView rcSearch;
+    @BindView(R.id.main_content)
+    CoordinatorLayout coordinatorLayout;
 
 
     private ArrayList<Fragment> list = new ArrayList<>();
@@ -98,10 +107,12 @@ public class BackgroundSearchActivity extends BaseActivity {
     @BindView(R.id.ll_ad_content)
     LinearLayout ll_ad_content;
 
-    @BindView(R.id.tv_search)
-    TextView tv_search;
+    @BindView(R.id.tv_cancel)
+    TextView tv_cancel;
 
-    //0表示 背景过来，1表示 模板进来
+    SearchTemplateItemAdapter  searchTemplateItemAdapter;
+
+    /**0表示 背景过来，1表示 模板进来*/
     private int isFrom;
 
     @Override
@@ -115,15 +126,9 @@ public class BackgroundSearchActivity extends BaseActivity {
         statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "14_go_to_search");
         isFrom = getIntent().getIntExtra("isFrom", 0);
 
-        //键盘的搜索按钮
-        ed_text.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
-                toSearch();
-                return true;
-            }
-            return false;
-        });
 
+        searchTemplateItemAdapter = new SearchTemplateItemAdapter(R.layout.item_search_template_mohu);
+        rcSearch.setAdapter(searchTemplateItemAdapter);
         ed_text.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -139,19 +144,17 @@ public class BackgroundSearchActivity extends BaseActivity {
             public void afterTextChanged(Editable s) {
                 if (s.length() == 0) {
                     hideResultView(false);
-                    iv_delete.setVisibility(View.GONE);
+                    rcSearch.setVisibility(View.GONE);
+                    coordinatorLayout.setVisibility(View.VISIBLE);
                     appbar.setExpanded(true);
                     hideResultView(true);
+                    searchTemplateItemAdapter.setInquireWordColor("");
                 } else {
-                    iv_delete.setVisibility(View.VISIBLE);
+                    rcSearch.setVisibility(View.VISIBLE);
+                    coordinatorLayout.setVisibility(View.GONE);
+                    requestServerTemplateFuzzyQuery(ed_text.getText().toString().trim());
                 }
             }
-        });
-        iv_delete.setOnClickListener(view -> {
-            ed_text.setText("");
-            hideResultView(true);
-            EventBus.getDefault().post(new SendSearchText(""));
-            viewPager.setCurrentItem(0);
         });
         hideResultView(true);
         iv_back.setOnClickListener(new View.OnClickListener() {
@@ -170,15 +173,48 @@ public class BackgroundSearchActivity extends BaseActivity {
             });
         }
 
-        tv_search.setOnClickListener(view -> {
-            toSearch();
+        tv_cancel.setOnClickListener(view -> {
+            rcSearch.setVisibility(View.GONE);
+            coordinatorLayout.setVisibility(View.VISIBLE);
+            ed_text.setText("");
+            hideResultView(true);
+            EventBus.getDefault().post(new SendSearchText(""));
+            viewPager.setCurrentItem(0);
         });
     }
 
+    /**关键字模糊查询*/
+    private void requestServerTemplateFuzzyQuery(String keywords){
+        HashMap<String, String> params = new HashMap<>();
+        params.put("keywords", keywords);
+        HttpUtil.getInstance().toSubscribe(Api.getDefault().templateKeywords(BaseConstans.getRequestHead(params)),
+                new ProgressSubscriber<List<SearchTemplateInfoEntity>>(BackgroundSearchActivity.this) {
+                    @Override
+                    protected void _onError(String message) {
+                        ToastUtil.showToast(message);
+                        rcSearch.setVisibility(View.GONE);
+                        coordinatorLayout.setVisibility(View.VISIBLE);
+                    }
 
+                    @Override
+                    protected void _onNext(List<SearchTemplateInfoEntity> datas) {
+                        LogUtil.d("OOM", "模板模糊查询" + StringUtil.beanToJSONString(datas));
+                        searchTemplateItemAdapter.setNewData(datas);
+                        searchTemplateItemAdapter.setInquireWordColor(keywords);
+                    }
+                }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+        searchTemplateItemAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                toTemplate(searchTemplateItemAdapter.getData().get(position).getName());
+                rcSearch.setVisibility(View.GONE);
+                coordinatorLayout.setVisibility(View.VISIBLE);
+            }
+        });
+    }
 
-    private void toSearch(){
-        nowShowText = ed_text.getText().toString().trim();
+    private void toTemplate(String content){
+        nowShowText = content;
         if (!nowShowText.equals("")) {
             cancelFocus();
             statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "10_searchfor", nowShowText);
@@ -202,7 +238,6 @@ public class BackgroundSearchActivity extends BaseActivity {
 
     @Override
     public void onDestroy() {
-
         super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
@@ -241,7 +276,6 @@ public class BackgroundSearchActivity extends BaseActivity {
                         nowShowText = listSearchKey.get(finalI).getName();
                         ed_text.setText(nowShowText);
                         hideResultView(false);
-//                        setResultMargin();
                         ll_ad_content.setVisibility(View.GONE);
                         cancelFocus();
                         statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "10_searchfor", nowShowText);
@@ -250,7 +284,8 @@ public class BackgroundSearchActivity extends BaseActivity {
                     }
                 }
             });
-            GradientDrawable view_ground = (GradientDrawable) tv.getBackground(); //获取控件的背
+            //获取控件的背
+            GradientDrawable view_ground = (GradientDrawable) tv.getBackground();
             view_ground.setStroke(2, Color.parseColor(nowChooseColor));
             autoNewLineLayout.addView(tv);
         }
@@ -385,7 +420,8 @@ public class BackgroundSearchActivity extends BaseActivity {
         ed_text.setFocusable(true);
         ed_text.setFocusableInTouchMode(true);
         ed_text.requestFocus();
-        ed_text.clearFocus();//失去焦点
+        //失去焦点
+        ed_text.clearFocus();
     }
 
 }

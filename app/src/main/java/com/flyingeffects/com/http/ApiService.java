@@ -8,6 +8,7 @@ import com.flyingeffects.com.enity.HttpResult;
 import com.flyingeffects.com.enity.MessageData;
 import com.flyingeffects.com.enity.MineCommentEnity;
 import com.flyingeffects.com.enity.MineZanEnity;
+import com.flyingeffects.com.enity.SearchTemplateInfoEntity;
 import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.enity.UserInfo;
@@ -299,4 +300,8 @@ public interface ApiService {
     @POST("/api/user/member_edit")
     Observable<HttpResult<Object>> memberEdit(@FieldMap Map<String,String> params);
 
+    /**模板关键字列表*/
+    @FormUrlEncoded
+    @POST("/api/template/keywords")
+    Observable<HttpResult<List<SearchTemplateInfoEntity>>> templateKeywords(@FieldMap Map<String,String> params);
 }
