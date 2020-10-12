@@ -496,6 +496,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 @Override
                 public void setText(String text) {
                     presenter.ChangeTextLabe(text);
+                    if(TextUtils.isEmpty(text)){
+                        if (createViewForAddText != null) {
+                            createViewForAddText.hideInputTextDialog();
+                            createViewForAddText = null;
+                        }
+                    }
                 }
 
                 @Override
@@ -503,8 +509,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     LogUtil.d("OOM4","color0="+color0+"color1="+color1);
                     presenter.ChangeTextColor(color0,color1);
                 }
-
-
             });
             createViewForAddText.showBottomSheetDialog(inputText,"bj_template");
         }

@@ -500,7 +500,15 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
                 @Override
                 public void setText(String text) {
+
                     presenter.ChangeTextLabe(text);
+                    if(TextUtils.isEmpty(text)){
+                        if (createViewForAddText != null) {
+                            createViewForAddText.hideInputTextDialog();
+                            createViewForAddText = null;
+                        }
+                    }
+
                 }
 
                 @Override
