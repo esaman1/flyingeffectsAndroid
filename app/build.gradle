@@ -194,6 +194,9 @@ dependencies {
 
     implementation 'com.airbnb.android:lottie:2.8.0'
 
+    //中台导流
+    implementation(name: 'Market-v1.2', ext: 'aar')
+
 }
 
 

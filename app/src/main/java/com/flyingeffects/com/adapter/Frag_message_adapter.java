@@ -49,7 +49,7 @@ public class Frag_message_adapter extends BaseAdapter {
         if (view == null) {
             holder = new ViewHold();
             view = LayoutInflater.from(context).inflate(R.layout.item_system_message, parent, false);
-            holder.tv_point=view.findViewById(R.id.tv_point);
+            holder.tv_point = view.findViewById(R.id.tv_point);
             holder.tv_content_1 = view.findViewById(R.id.tv_content);
             view.setTag(holder);
         } else {
@@ -57,15 +57,15 @@ public class Frag_message_adapter extends BaseAdapter {
         }
         systemessagelist data = allData.get(position);
         holder.tv_content_1.setText(data.getContent());
-        if(allData.get(position).getIs_read()==1){
+        if (allData.get(position).getIs_read() == 0) {
             holder.tv_point.setVisibility(View.GONE);
-        }else{
+        } else {
             holder.tv_point.setVisibility(View.VISIBLE);
+            holder.tv_point.setText(allData.get(position).getIs_read()+"");
+
         }
         return view;
     }
-
-
 
 
     class ViewHold {

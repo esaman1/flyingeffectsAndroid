@@ -17,8 +17,16 @@ public class new_fag_template_item implements Serializable {
 
     private int id;
 
+    public int getIs_ad_recommend() {
+        return is_ad_recommend;
+    }
 
+    public void setIs_ad_recommend(int is_ad_recommend) {
+        this.is_ad_recommend = is_ad_recommend;
+    }
 
+    // 0 表示正常，1 表示导流
+    private int is_ad_recommend;
 
     public String getTitle() {
         return title;

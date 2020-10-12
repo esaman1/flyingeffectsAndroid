@@ -67,6 +67,7 @@ import com.umeng.socialize.media.UMWeb;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -567,15 +568,9 @@ public class PreviewUpAndDownMvpModel {
                 params.put("template_type",  "2");
                 params.put("token", BaseConstans.GetUserToken());
                 ob = Api.getDefault().collectionList(BaseConstans.getRequestHead(params));
-
                 break;
 
-
-
             case FromToTemplate.ISSEARCHBJ:
-
-
-
                 params.put("searchText",  searchText);
                 params.put("template_type", "2");
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
@@ -585,10 +580,6 @@ public class PreviewUpAndDownMvpModel {
                 params.put("template_type", "1");
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
                 break;
-
-
-
-
         }
 
         String str = StringUtil.beanToJSONString(params);
@@ -612,10 +603,22 @@ public class PreviewUpAndDownMvpModel {
                 if (data.size() < perPageCount) {
                     smartRefreshLayout.setEnableLoadMore(false);
                 }
-                allData.addAll(data);
+                List<new_fag_template_item> needData=getFiltration(data);
+                allData.addAll(needData);
                 callback.showNewData(allData, isRefresh);
             }
         }, "fagBjItem", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+    public List<new_fag_template_item> getFiltration(List<new_fag_template_item> allData) {
+        List<new_fag_template_item> needData = new ArrayList<>();
+        for (int i = 0; i < allData.size(); i++) {
+            new_fag_template_item item = allData.get(i);
+            if (item.getIs_ad_recommend() == 0) {
+                needData.add(item);
+            }
+        }
+        return  needData;
     }
 
 

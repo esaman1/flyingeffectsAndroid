@@ -61,6 +61,7 @@ public class frag_message extends BaseFragment {
     @BindView(R.id.tv_comment_count)
     TextView tv_comment_count;
 
+
     @BindView(R.id.ll_comment)
     LinearLayout ll_comment;
 
@@ -251,8 +252,6 @@ public class frag_message extends BaseFragment {
                 break;
 
             case R.id.iv_icon_zan:
-
-
                 if (BaseConstans.hasLogin()) {
                     statisticsEventAffair.getInstance().setFlag(getActivity(), "12_awesome");
                     Intent intentZan = new Intent(getActivity(), ZanActivity.class);
@@ -265,7 +264,6 @@ public class frag_message extends BaseFragment {
                 break;
 
             case R.id.ll_comment:
-
                 if (BaseConstans.hasLogin()) {
                     statisticsEventAffair.getInstance().setFlag(getActivity(), "12_comment");
                     Intent intentComment = new Intent(getActivity(), LikeActivity.class);
@@ -279,8 +277,6 @@ public class frag_message extends BaseFragment {
             default:
                 break;
         }
-
-
     }
 
 
@@ -290,6 +286,7 @@ public class frag_message extends BaseFragment {
     @Subscribe
     public void onEventMainThread(RequestMessage event) {
         if (getActivity() != null) {
+            LogUtil.d("OOM","onEventMainThread");
             if (BaseConstans.hasLogin()) {
                 requestMessageCount();
                 requestSystemMessageCount();

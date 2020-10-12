@@ -29,11 +29,12 @@ import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
+import com.flyingeffects.com.ui.view.activity.webViewActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.google.android.exoplayer2.C;
+import com.nineton.market.android.sdk.AppMarketHelper;
 import com.nineton.ntadsdk.bean.FeedAdConfigBean;
 import com.nineton.ntadsdk.itr.FeedAdCallBack;
 import com.nineton.ntadsdk.manager.FeedAdManager;
@@ -88,6 +89,8 @@ public class fragBjItem extends BaseFragment {
 
     private FeedAdManager mAdManager;
 
+    private int intoTiktokClickPosition;
+
 
     @Override
     protected int getContentLayout() {
@@ -133,38 +136,53 @@ public class fragBjItem extends BaseFragment {
                 if (!TextUtils.isEmpty(cover) && position == 0) {
                     EventBus.getDefault().post(new DownVideoPath(""));
                 } else {
-//                    statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
-////                    Intent intent =new Intent(getActivity(), PreviewActivity.class);
-////                    if(fromType==0){
-////                        intent.putExtra("fromTo", FromToTemplate.ISFROMTEMPLATE);
-////                    }else if(fromType==3){
-////                        intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
-////                    }else{
-////                        intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
-////                    }
-////                    intent.putExtra("person",allData.get(position));//直接存入被序列化的对象实例
-////                    startActivity(intent);
-
-                    //test
-                    Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
-                    ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
-                    intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
-                    intent.putExtra("position", position);
-                    if (fromType == 0) {
-                        intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
-                    } else if (fromType == 3) {//来自选择背景tab
-                        intent.putExtra("fromTo", FromToTemplate.ISCHOOSEBJ);
+                    if (allData.get(position).getIs_ad_recommend() ==1) {
+                      String url = allData.get(position).getRemark();
+                        boolean result =   AppMarketHelper.of(getActivity()).skipMarket(url);
+                        if(!result){
+                            Intent intent = new Intent(getActivity(), webViewActivity.class);
+                            intent.putExtra("webUrl", url);
+                            startActivity(intent);
+                        }
                     } else {
-                        intent.putExtra("fromTo", FromToTemplate.ISBJ);
+                        Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
+                        List<new_fag_template_item> data=  getFiltration(allData,position);;
+                        ListForUpAndDown listForUpAndDown = new ListForUpAndDown(data);
+                        intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
+                        intent.putExtra("position", intoTiktokClickPosition);
+                        if (fromType == 0) {
+                            intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
+                        } else if (fromType == 3) {//来自选择背景tab
+                            intent.putExtra("fromTo", FromToTemplate.ISCHOOSEBJ);
+                        } else {
+                            intent.putExtra("fromTo", FromToTemplate.ISBJ);
+                        }
+                        intent.putExtra("nowSelectPage", selectPage);
+                        intent.putExtra("category_id", templateId);
+                        startActivity(intent);
                     }
-                    intent.putExtra("nowSelectPage", selectPage);
-                    intent.putExtra("category_id", templateId);
-
-                    startActivity(intent);
                 }
             }
         });
     }
+
+
+    public List<new_fag_template_item> getFiltration(List<new_fag_template_item> allData,int position) {
+        intoTiktokClickPosition=position;
+        List<new_fag_template_item> needData = new ArrayList<>();
+        for (int i = 0; i < allData.size(); i++) {
+            new_fag_template_item item = allData.get(i);
+            if (item.getIs_ad_recommend() == 0) {
+                needData.add(item);
+            }else{
+                if(i<position){
+                    intoTiktokClickPosition--;
+                }
+            }
+        }
+        return  needData;
+    }
+
 
 
     public void initSmartRefreshLayout() {

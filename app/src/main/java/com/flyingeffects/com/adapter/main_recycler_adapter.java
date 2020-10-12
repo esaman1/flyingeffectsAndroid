@@ -291,8 +291,13 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                 iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
                 ll_content_patents.setVisibility(View.VISIBLE);
             }
-
-
+        }
+        ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
+        if(item.getIs_ad_recommend()==1){
+            iv_zan_state.setVisibility(View.GONE);
+            helper.setText(R.id.tv_zan_count, "");
+        }else{
+            iv_zan_state.setVisibility(View.VISIBLE);
         }
     }
 

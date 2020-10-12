@@ -85,7 +85,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private Preview_up_and_down_adapter adapter;
 
     private List<new_fag_template_item> allData = new ArrayList<>();
+
     private new_fag_template_item templateItem;
+
     //当前选中的页码
     private int nowChoosePosition;
 
@@ -1192,5 +1194,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             Presenter.requestTemplateDetail(templateItem.getId() + "");
         }
     }
+
+
+
+
 
 }

@@ -22,9 +22,11 @@ import com.flyingeffects.com.ui.interfaces.view.HomeItemMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.presenter.home_fag_itemMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
+import com.flyingeffects.com.ui.view.activity.webViewActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
+import com.nineton.market.android.sdk.AppMarketHelper;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -58,6 +60,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
      * 0 表示来做模板，1表示来自背景 3表示来自背景下载
      */
     private int fromType;
+    private int intoTiktokClickPosition;
 
 
     @Override
@@ -97,26 +100,57 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
-                Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
-                ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
-                intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
-                intent.putExtra("category_id", category_id);//直接存入被序列化的对象实例
-                intent.putExtra("position", position);
-                int selectPage = Presenter.getselectPage();
-                intent.putExtra("nowSelectPage", selectPage);
-//                if (fromType == 0) {
-                    intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
-//                } else if (fromType == 1) {
-//                    intent.putExtra("fromTo", FromToTemplate.ISFROMBJ);
-//                } else if (fromType == 3) {
-//                    intent.putExtra("fromTo", FromToTemplate.ISFROMEDOWNVIDEO);
-//                }
-                startActivity(intent);
 
+                if(allData.get(position).getIs_ad_recommend()==1){
+                    String url = allData.get(position).getRemark();
+//                    String url = "http://transaction.chucitech.cn//#/index/?appid=76&NTExchange=true";
+                    boolean result =   AppMarketHelper.of(getActivity()).skipMarket(url);
+                    if(!result){
+                        Intent intent = new Intent(getActivity(), webViewActivity.class);
+                        intent.putExtra("webUrl", url);
+                        startActivity(intent);
+                    }
+                }else{
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
+                    Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
+                    List<new_fag_template_item> data=  getFiltration(allData,position);
+                    ListForUpAndDown listForUpAndDown = new ListForUpAndDown(data);
+                    intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
+                    intent.putExtra("category_id", category_id);//直接存入被序列化的对象实例
+                    intent.putExtra("position", intoTiktokClickPosition);
+                    int selectPage = Presenter.getselectPage();
+                    intent.putExtra("nowSelectPage", selectPage);
+                    intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
+                    startActivity(intent);
+                }
             }
         });
     }
+
+
+    public List<new_fag_template_item> getFiltration(List<new_fag_template_item> allData,int position) {
+        intoTiktokClickPosition=position;
+        List<new_fag_template_item> needData = new ArrayList<>();
+        for (int i = 0; i < allData.size(); i++) {
+            new_fag_template_item item = allData.get(i);
+            if (item.getIs_ad_recommend() == 0) {
+                needData.add(item);
+            }else{
+                if(i<position){
+                    intoTiktokClickPosition--;
+                }
+            }
+        }
+        return  needData;
+    }
+
+
+
+
+
+
+
+
 
 
     @Override

@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,7 +12,6 @@ import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.utils.LogUtil;
 import com.nineton.ntadsdk.itr.ContentAllianceAdCallBack;
 import com.nineton.ntadsdk.manager.ContentAllianceAdManager;
-
 
 
 /**
@@ -26,12 +26,13 @@ public class ContentAllianceActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content_alliacnce);
-        LogUtil.d("OOM","ContentAllianceActivity=");
+        findViewById(R.id.iv_top_back).setOnClickListener(view -> finish());
+        LogUtil.d("OOM", "ContentAllianceActivity=");
         ContentAllianceAdManager contentAllianceAdManager = new ContentAllianceAdManager();
         contentAllianceAdManager.showContentAllianceAd(this, AdConfigs.APP_kuaishou, new ContentAllianceAdCallBack() {
             @Override
             public void onContentAllianceAdShow(Fragment adFragment) {
-                LogUtil.d("OOM","adFragment=");
+                LogUtil.d("OOM", "adFragment=");
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.container, adFragment)
                         .commitAllowingStateLoss();
@@ -39,7 +40,7 @@ public class ContentAllianceActivity extends AppCompatActivity {
 
             @Override
             public void onContentAllianceAdError(String error) {
-                LogUtil.d("OOM","error="+error);
+                LogUtil.d("OOM", "error=" + error);
             }
 
         });

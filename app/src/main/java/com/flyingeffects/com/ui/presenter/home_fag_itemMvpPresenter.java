@@ -10,29 +10,31 @@ import com.flyingeffects.com.ui.model.home_fag_itemMvpModel;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class home_fag_itemMvpPresenter extends BasePresenter implements homeItemMvpCallback {
     private HomeItemMvpView mvp_view;
     private home_fag_itemMvpModel homeItemModel;
 
-    public home_fag_itemMvpPresenter(Context context, HomeItemMvpView mvp_view,int fromType) {
+    public home_fag_itemMvpPresenter(Context context, HomeItemMvpView mvp_view, int fromType) {
         this.mvp_view = mvp_view;
-        homeItemModel = new home_fag_itemMvpModel(context, this,fromType);
+        homeItemModel = new home_fag_itemMvpModel(context, this, fromType);
     }
 
 
-    public int getselectPage(){
-        return  homeItemModel.getselectPage();
+    public int getselectPage() {
+        return homeItemModel.getselectPage();
     }
-
 
 
     public void requestData(String templateId, int num) {
         homeItemModel.requestData(templateId, num);
     }
+
     public void initSmartRefreshLayout(SmartRefreshLayout smartRefreshLayout) {
         homeItemModel.initSmartRefreshLayout(smartRefreshLayout);
     }
+
 
 
 

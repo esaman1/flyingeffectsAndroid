@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="79dp"
     android:background="#1C1C1C"
-    android:gravity="center_vertical"
+
     android:orientation="horizontal"
     android:paddingStart="12dp"
     android:paddingEnd="12dp">
@@ -13,6 +13,7 @@
 
     <RelativeLayout
         android:layout_width="50dp"
+        android:layout_gravity="center_vertical"
         android:layout_height="45dp">
 
         <ImageView
@@ -41,6 +42,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_weight="1"
+        android:layout_gravity="center_vertical"
         android:layout_height="wrap_content"
         android:layout_marginStart="14dp"
         android:gravity="center_vertical"
@@ -80,9 +82,11 @@
 
     <TextView
         android:id="@+id/tv_point"
-        android:layout_width="10dp"
-        android:layout_gravity="center_vertical"
-        android:layout_height="10dp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="11sp"
+        android:layout_width="20dp"
+        android:layout_height="23dp"
         android:background="@drawable/red_point" />
 
 </LinearLayout>
