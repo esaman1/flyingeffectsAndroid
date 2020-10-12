@@ -146,6 +146,40 @@
         app:layout_constraintTop_toBottomOf="@id/tv_protocol" />
 
     <TextView
+        android:id="@+id/tv_notification_management"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/dp_21"
+        android:paddingTop="@dimen/dp_20"
+        android:paddingEnd="@dimen/dp_16"
+        android:paddingBottom="@dimen/dp_18"
+        android:text="通知管理"
+        android:textColor="@color/font_color_about_us"
+        android:textSize="@dimen/sp_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_protocol" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dp_14"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/right_more"
+        app:layout_constraintBottom_toBottomOf="@id/tv_notification_management"
+        app:layout_constraintEnd_toEndOf="@id/tv_notification_management"
+        app:layout_constraintTop_toTopOf="@id/tv_notification_management" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp_0_5"
+        android:layout_marginStart="@dimen/dp_21"
+        android:background="@color/color_about_us_line"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_notification_management" />
+
+    <TextView
         android:id="@+id/tv_clear_cache"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -158,7 +192,7 @@
         android:textSize="@dimen/sp_16"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_protocol" />
+        app:layout_constraintTop_toBottomOf="@id/tv_notification_management" />
 
 
     <ImageView

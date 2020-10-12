@@ -238,14 +238,14 @@ public class CommentBlackActivity extends Activity {
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerViewComment.setLayoutManager(linearLayoutManager);
         recyclerViewComment.setHasFixedSize(true);
-        adapter = new Comment_message_adapter(R.layout.item_comment_preview, allDataList, this, (position, id) -> {
-            message_id = id;
-        }, position -> {
-            //点击了展开更多
-            nowFirstOpenClickPosition = position;
-            updateDataComment(position);
-        }
-        );
+//        adapter = new Comment_message_adapter(R.layout.item_comment_preview, allDataList, this, (position, id) -> {
+//            message_id = id;
+//        }, position -> {
+//            //点击了展开更多
+//            nowFirstOpenClickPosition = position;
+//            updateDataComment(position);
+//        }
+//        );
 
 
         adapter.setOnItemChildLongClickListener((adapter, view, position) -> {

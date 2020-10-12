@@ -15,7 +15,6 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.MessageEnity;
 import com.flyingeffects.com.ui.view.activity.MessageLongClickActivity;
-import com.flyingeffects.com.ui.view.activity.UserHomepageActivity;
 import com.flyingeffects.com.view.MyListView;
 
 import java.util.List;
@@ -56,8 +55,8 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
         helper.addOnClickListener(R.id.ll_parent);
         helper.addOnLongClickListener(R.id.ll_parent);
         helper.addOnClickListener(R.id.iv_comment_head);
-        helper.setText(R.id.tv_user_id, item.getNickname());
         helper.setText(R.id.tv_content, item.getContent());
+        helper.setText(R.id.tv_user_id, item.getNickname());
         ll_more_comment = helper.getView(R.id.ll_more_comment);
 //        //显示第一个预览评论
         if (item.getReply() != null && item.getReply().size() > 0) {
@@ -102,6 +101,12 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
 
             adapter = new Comment_message_item_adapter(item.getReply(), context);
             listView.setAdapter(adapter);
+            adapter.setCommentListener(new Comment_message_item_adapter.OnItemCommentListener() {
+                @Override
+                public void clickComment(String id) {
+                    callback.clickItemComment(id);
+                }
+            });
             if (item.getReply().size() >= 10) {
                 ll_more_comment.setVisibility(View.VISIBLE);
             } else {
@@ -116,7 +121,7 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
 
     public interface CommentOnItemClick {
         void clickPosition(int position, String message_id);
-
+        void clickItemComment(String id);
     }
 
     public interface click2Comment {

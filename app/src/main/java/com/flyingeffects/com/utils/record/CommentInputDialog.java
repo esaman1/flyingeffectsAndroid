@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -114,6 +113,12 @@ public class CommentInputDialog extends Dialog {
 
     public void setMessage_id(String message_id) {
         this.message_id = message_id;
+    }
+
+    public void setEdittextHint(String id) {
+        if (ed_search != null) {
+            ed_search.setHint("@" + id);
+        }
     }
 
     public void showSoftInputFromWindow() {

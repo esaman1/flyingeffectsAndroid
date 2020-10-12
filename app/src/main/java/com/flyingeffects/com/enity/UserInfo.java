@@ -6,6 +6,7 @@ public class UserInfo implements Serializable {
 
     private String id;
     private String token;
+    private String skin;
 
     public String getId() {
         return id;
@@ -314,6 +315,14 @@ public class UserInfo implements Serializable {
 
     public void setUser_praise(String user_praise) {
         this.user_praise = user_praise;
+    }
+
+    public String getSkin() {
+        return skin;
+    }
+
+    public void setSkin(String skin) {
+        this.skin = skin;
     }
 
     private String is_sign;

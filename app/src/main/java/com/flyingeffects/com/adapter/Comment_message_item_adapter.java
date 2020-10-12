@@ -2,12 +2,12 @@ package com.flyingeffects.com.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -15,11 +15,9 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.MessageReply;
-import com.flyingeffects.com.enity.hotSearch;
 import com.flyingeffects.com.ui.view.activity.UserHomepageActivity;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * user :TongJu  ;描述：评论的查看更多
@@ -61,6 +59,7 @@ public class Comment_message_item_adapter extends BaseAdapter {
             holder.iv_comment_head_0 = view.findViewById(R.id.iv_comment_head_0);
             holder.tv_content_1 = view.findViewById(R.id.tv_content_1);
             holder.tv_user_0=view.findViewById(R.id.tv_user_0);
+            holder.llComment = view.findViewById(R.id.ll_item_comment);
             view.setTag(holder);
         } else {
             holder = (ViewHold) view.getTag();
@@ -84,13 +83,22 @@ public class Comment_message_item_adapter extends BaseAdapter {
             }
         });
 
+        holder.llComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (commentListener != null) {
+                    commentListener.clickComment(SearchList.get(position).getId());
+                }
+            }
+        });
 
-
-
-        holder.tv_user_0.setText(data.getNickname());
         holder.tv_content_1.setText(data.getContent());
 
-
+        if (SearchList.get(position).isReply()) {
+            holder.tv_user_0.setText(SearchList.get(position).getNickname() + "回复了用户" + SearchList.get(position).getTo_user_nickname());
+        } else {
+            holder.tv_user_0.setText(SearchList.get(position).getNickname());
+        }
         return view;
     }
 
@@ -101,5 +109,16 @@ public class Comment_message_item_adapter extends BaseAdapter {
         ImageView  iv_comment_head_0;
         TextView tv_user_0;
         TextView tv_content_1;
+        LinearLayout llComment;
+    }
+
+    public interface OnItemCommentListener{
+        void clickComment(String id);
+    }
+
+    OnItemCommentListener commentListener;
+
+    public void setCommentListener(OnItemCommentListener commentListener) {
+        this.commentListener = commentListener;
     }
 }
