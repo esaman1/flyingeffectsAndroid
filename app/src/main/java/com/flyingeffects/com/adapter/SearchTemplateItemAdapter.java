@@ -29,7 +29,7 @@ public class SearchTemplateItemAdapter extends BaseQuickAdapter<SearchTemplateIn
             int index = item.getName().indexOf(inquireWord);
             SpannableString spannableString = new SpannableString(item.getName());
             spannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#5496FF")),
-                    index, inquireWord.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    index, index + inquireWord.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             helper.setText(R.id.tv_content, spannableString);
         } else {
             helper.setText(R.id.tv_content, item.getName());
@@ -42,6 +42,5 @@ public class SearchTemplateItemAdapter extends BaseQuickAdapter<SearchTemplateIn
      */
     public void setInquireWordColor(String str) {
         this.inquireWord = str;
-        notifyDataSetChanged();
     }
 }

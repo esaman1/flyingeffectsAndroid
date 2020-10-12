@@ -199,8 +199,8 @@ public class BackgroundSearchActivity extends BaseActivity {
                     @Override
                     protected void _onNext(List<SearchTemplateInfoEntity> datas) {
                         LogUtil.d("OOM", "模板模糊查询" + StringUtil.beanToJSONString(datas));
-                        searchTemplateItemAdapter.setNewData(datas);
                         searchTemplateItemAdapter.setInquireWordColor(keywords);
+                        searchTemplateItemAdapter.setNewData(datas);
                     }
                 }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
         searchTemplateItemAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
