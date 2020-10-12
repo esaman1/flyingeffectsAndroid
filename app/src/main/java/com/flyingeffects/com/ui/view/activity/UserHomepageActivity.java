@@ -93,10 +93,8 @@ public class UserHomepageActivity extends BaseActivity {
     @BindView(R.id.iv_back)
     ImageView iv_back;
 
-
-
     //是否已经关注
-    private boolean isFocus=false;
+    private boolean isFocus = false;
 
     @Override
     protected int getLayoutId() {
@@ -105,10 +103,9 @@ public class UserHomepageActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-
         statisticsEventAffair.getInstance().setFlag(UserHomepageActivity.this, "12_Homepage");
         toUserId = getIntent().getStringExtra("toUserId");
-        if(toUserId.equals(BaseConstans.GetUserId())){
+        if (toUserId.equals(BaseConstans.GetUserId())) {
             tv_focus.setVisibility(View.GONE);
         }
     }
@@ -128,7 +125,7 @@ public class UserHomepageActivity extends BaseActivity {
 
 
     @Override
-    @OnClick({R.id.ll_0, R.id.ll_1,R.id.tv_focus,R.id.iv_back})
+    @OnClick({R.id.ll_0, R.id.ll_1, R.id.tv_focus, R.id.iv_back})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_1:
@@ -149,13 +146,11 @@ public class UserHomepageActivity extends BaseActivity {
                 EventBus.getDefault().post(new AttentionChange());
                 requestFocus();
                 break;
-
+            default:
+                break;
         }
 
     }
-
-
-
 
 
     /**
@@ -167,10 +162,10 @@ public class UserHomepageActivity extends BaseActivity {
         HashMap<String, String> params = new HashMap<>();
         params.put("to_user_id", toUserId);
 
-        if(isFocus){
+        if (isFocus) {
             //取消关注
             statisticsEventAffair.getInstance().setFlag(UserHomepageActivity.this, "12_unsubscribe");
-        }else{
+        } else {
             statisticsEventAffair.getInstance().setFlag(UserHomepageActivity.this, "12_Attention");
         }
 
@@ -184,12 +179,12 @@ public class UserHomepageActivity extends BaseActivity {
 
             @Override
             protected void _onNext(Object data) {
-                if(isFocus){
+                if (isFocus) {
                     tv_focus.setText("关注");
-                    isFocus=false;
-                }else{
+                    isFocus = false;
+                } else {
                     tv_focus.setText("取消关注");
-                    isFocus=true;
+                    isFocus = true;
                 }
                 requestUserInfo();
 
@@ -197,10 +192,6 @@ public class UserHomepageActivity extends BaseActivity {
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
-
-
-
-
 
 
     /**
@@ -229,13 +220,13 @@ public class UserHomepageActivity extends BaseActivity {
                 fans_count.setText(data.getUser_follower());
                 attention_count.setText(data.getUser_watch());
                 tv_video_count.setText(data.getUser_video());
-                String is_has_follow=data.getIs_has_follow();
-                if(!TextUtils.isEmpty(is_has_follow)&&is_has_follow.equals("0")){
+                String is_has_follow = data.getIs_has_follow();
+                if (!TextUtils.isEmpty(is_has_follow) && is_has_follow.equals("0")) {
                     tv_focus.setText("关注");
-                    isFocus=false;
-                }else{
+                    isFocus = false;
+                } else {
                     tv_focus.setText("取消关注");
-                    isFocus=true;
+                    isFocus = true;
                 }
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);

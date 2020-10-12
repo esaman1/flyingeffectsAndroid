@@ -26,6 +26,8 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.google.android.material.tabs.TabLayout;
 import com.yanzhenjie.album.Action;
@@ -152,7 +154,9 @@ public class AlbumActivityForCreateVideo extends BaseActivity implements
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mView.onConfigurationChanged(newConfig);
-        if (mFolderDialog != null && !mFolderDialog.isShowing()) mFolderDialog = null;
+        if (mFolderDialog != null && !mFolderDialog.isShowing()) {
+            mFolderDialog = null;
+        }
     }
 
     @Override
@@ -218,7 +222,9 @@ public class AlbumActivityForCreateVideo extends BaseActivity implements
                 if (resultCode == RESULT_OK) {
                     String imagePath = NullActivity.parsePath(data);
                     String mimeType = AlbumUtils.getMimeType(imagePath);
-                    if (!TextUtils.isEmpty(mimeType)) mCameraAction.onAction(imagePath);
+                    if (!TextUtils.isEmpty(mimeType)) {
+                        mCameraAction.onAction(imagePath);
+                    }
                 } else {
                     callbackCancel();
                 }
@@ -238,7 +244,9 @@ public class AlbumActivityForCreateVideo extends BaseActivity implements
                 }
             });
         }
-        if (!mFolderDialog.isShowing()) mFolderDialog.show();
+        if (!mFolderDialog.isShowing()) {
+            mFolderDialog.show();
+        }
     }
 
     /**
@@ -367,8 +375,11 @@ public class AlbumActivityForCreateVideo extends BaseActivity implements
     public void onConvertCallback(AlbumFile albumFile) {
         albumFile.setChecked(!albumFile.isDisable());
         if (albumFile.isDisable()) {
-            if (mFilterVisibility) addFileToList(albumFile);
-            else mView.toast(getString(R.string.album_take_file_unavailable));
+            if (mFilterVisibility) {
+                addFileToList(albumFile);
+            } else {
+                mView.toast(getString(R.string.album_take_file_unavailable));
+            }
         } else {
             addFileToList(albumFile);
         }
@@ -379,8 +390,11 @@ public class AlbumActivityForCreateVideo extends BaseActivity implements
     private void addFileToList(AlbumFile albumFile) {
         if (mCurrentFolder != 0) {
             List<AlbumFile> albumFiles = mAlbumFolders.get(0).getAlbumFiles();
-            if (albumFiles.size() > 0) albumFiles.add(0, albumFile);
-            else albumFiles.add(albumFile);
+            if (albumFiles.size() > 0) {
+                albumFiles.add(0, albumFile);
+            } else {
+                albumFiles.add(albumFile);
+            }
         }
 
         AlbumFolder albumFolder = mAlbumFolders.get(mCurrentFolder);
@@ -515,9 +529,13 @@ public class AlbumActivityForCreateVideo extends BaseActivity implements
         mView.notifyItem(notifyPosition);
 
         if (albumFile.isChecked()) {
-            if (!mCheckedList.contains(albumFile)) mCheckedList.add(albumFile);
+            if (!mCheckedList.contains(albumFile)) {
+                mCheckedList.add(albumFile);
+            }
         } else {
-            if (mCheckedList.contains(albumFile)) mCheckedList.remove(albumFile);
+            if (mCheckedList.contains(albumFile)) {
+                mCheckedList.remove(albumFile);
+            }
         }
         setCheckedCount();
     }
@@ -560,8 +578,16 @@ public class AlbumActivityForCreateVideo extends BaseActivity implements
     }
 
     @Override
+    public void returnAdContainer(LinearLayout flAdContainer) {
+
+    }
+
+
+    @Override
     public void onBackPressed() {
-        if (mMediaReadTask != null) mMediaReadTask.cancel(true);
+        if (mMediaReadTask != null) {
+            mMediaReadTask.cancel(true);
+        }
         callbackCancel();
     }
 
@@ -581,7 +607,9 @@ public class AlbumActivityForCreateVideo extends BaseActivity implements
 
     @Override
     public void onThumbnailCallback(ArrayList<AlbumFile> albumFiles) {
-        if (sResult != null) sResult.onAction(albumFiles);
+        if (sResult != null) {
+            sResult.onAction(albumFiles);
+        }
         dismissLoadingDialog();
         finish();
     }
@@ -590,7 +618,9 @@ public class AlbumActivityForCreateVideo extends BaseActivity implements
      * Callback cancel action.
      */
     private void callbackCancel() {
-        if (sCancel != null) sCancel.onAction("User canceled.");
+        if (sCancel != null) {
+            sCancel.onAction("User canceled.");
+        }
         finish();
     }
 

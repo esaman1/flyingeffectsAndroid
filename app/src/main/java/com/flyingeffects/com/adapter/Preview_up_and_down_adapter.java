@@ -65,12 +65,12 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         FrameLayout video_layout = helper.getView(R.id.video_layout);
         videoPlayer = helper.getView(R.id.video_item_player);
         LinearLayout ll_down_bj = helper.getView(R.id.ll_down_bj);
-        tv_title_music=helper.getView(R.id.tv_title_music);
+        tv_title_music = helper.getView(R.id.tv_title_music);
         LinearLayout ll_zan = helper.getView(R.id.ll_zan);
         TextView tv_make = helper.getView(R.id.tv_make);
         LinearLayout ll_comment = helper.getView(R.id.ll_comment);
 
-        tv_comment_count=helper.getView(R.id.tv_comment_count);
+        tv_comment_count = helper.getView(R.id.tv_comment_count);
         tv_zan_count = helper.getView(R.id.tv_zan_count);
         boolean readOnly = item.getTest() != 0;
         boolean needHideCreate;
@@ -84,13 +84,14 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         helper.addOnClickListener(R.id.iv_writer);
         helper.addOnClickListener(R.id.tv_describe);
 
-
         MarqueTextView tv_writer_name = helper.getView(R.id.tv_writer_name);
         TextView tv_title = helper.getView(R.id.tv_title);
         tv_describe = helper.getView(R.id.tv_describe);
         tv_describe.setVisibility(View.GONE);
         helper.addOnClickListener(R.id.iv_download_bj);
         helper.addOnClickListener(R.id.ll_comment);
+        helper.addOnClickListener(R.id.tv_btn_follow);
+
         if (OldFromTo.equals(FromToTemplate.ISCHOOSEBJ)) {
             tv_make.setText("使用背景");
         } else {
@@ -131,8 +132,8 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                     .into(iv_writer);
             tv_writer_name.setText(item.getAuth());
-           tv_title.setText(item.getTitle());
-            tv_title_music.setText(item.getAuth()+"的原创音乐");
+            tv_title.setText(item.getTitle());
+            tv_title_music.setText(item.getAuth() + "的原创音乐");
 
             //点赞功能
             if (item.getIs_praise() == 1 && BaseConstans.hasLogin()) {
@@ -140,6 +141,13 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             } else {
                 iv_zan.setImageResource(R.mipmap.zan);
             }
+            //关注按键
+            if (item.getIs_follow() == 1 && BaseConstans.hasLogin()) {
+                helper.setText(R.id.tv_btn_follow,"取消关注");
+            } else {
+                helper.setText(R.id.tv_btn_follow,"关注");
+            }
+
             if (video_layout.getChildCount() != 0) {
                 video_layout.removeAllViews();
             }
@@ -147,7 +155,6 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         } else {
             pauseVideo();
             //有广告的情况下，显示广告页面
-
             video_layout.setVisibility(View.VISIBLE);
             tv_title_music.setVisibility(View.GONE);
             videoPlayer.setVisibility(View.GONE);
@@ -166,9 +173,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             video_layout.addView(view);
         }
 
-
     }
-
 
     /**
      * description ：点赞功能
@@ -183,7 +188,6 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
                 iv_zan.setImageResource(R.mipmap.zan);
             }
         }
-
     }
 
     public void setIsZanCount(int zanCount) {
@@ -194,14 +198,12 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
 
     }
 
-    public void setCommentCount(String  commentCount) {
+    public void setCommentCount(String commentCount) {
 
         if (tv_comment_count != null) {
             tv_comment_count.setText(commentCount);
         }
-
     }
-
 
     /**
      * description ：初始化视频播放器，针对列表
@@ -255,11 +257,9 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         videoPlayer.setLooping(true);
     }
 
-
     public float getVideoDuration() {
         return videoPlayer.getDuration();
     }
-
 
     /**
      * description ：当前正在预览的位置
@@ -285,11 +285,9 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         }
     }
 
-
     public void onDestroy() {
         videoPlayer.release();
     }
-
 
 }
 

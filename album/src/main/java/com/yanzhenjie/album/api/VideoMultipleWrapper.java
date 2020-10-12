@@ -17,6 +17,8 @@ package com.yanzhenjie.album.api;
 
 import android.content.Context;
 import android.content.Intent;
+import android.widget.LinearLayout;
+
 import androidx.annotation.IntRange;
 
 import com.yanzhenjie.album.Album;
@@ -30,7 +32,7 @@ import java.util.ArrayList;
 /**
  * Created by YanZhenjie on 2017/8/16.
  */
-public final class VideoMultipleWrapper extends BasicChoiceVideoWrapper<VideoMultipleWrapper, ArrayList<AlbumFile>, String, ArrayList<AlbumFile>> {
+public final class VideoMultipleWrapper extends BasicChoiceVideoWrapper<VideoMultipleWrapper, ArrayList<AlbumFile>, String, ArrayList<AlbumFile>, LinearLayout> {
 
     private int mLimitCount = Integer.MAX_VALUE;
     private Filter<Long> mDurationFilter;
@@ -76,6 +78,7 @@ public final class VideoMultipleWrapper extends BasicChoiceVideoWrapper<VideoMul
         AlbumActivity.sDurationFilter = mDurationFilter;
         AlbumActivity.sResult = mResult;
         AlbumActivity.sCancel = mCancel;
+        AlbumActivity.sActionView = mViewAction;
         Intent intent = null;
         if(!isFromCreateVideo){
              intent = new Intent(mContext, AlbumActivity.class);

@@ -17,6 +17,7 @@ package com.yanzhenjie.album.api;
 
 import android.content.Context;
 import android.content.Intent;
+import android.widget.LinearLayout;
 
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.AlbumFile;
@@ -27,7 +28,7 @@ import java.util.ArrayList;
 /**
  * Created by YanZhenjie on 2017/8/16.
  */
-public final class ImageSingleWrapper extends BasicChoiceWrapper<ImageSingleWrapper, ArrayList<AlbumFile>, String, AlbumFile> {
+public final class ImageSingleWrapper extends BasicChoiceWrapper<ImageSingleWrapper, ArrayList<AlbumFile>, String, AlbumFile, LinearLayout> {
 
     public ImageSingleWrapper(Context context) {
         super(context);
@@ -38,6 +39,7 @@ public final class ImageSingleWrapper extends BasicChoiceWrapper<ImageSingleWrap
         AlbumActivity.sSizeFilter = mSizeFilter;
         AlbumActivity.sMimeFilter = mMimeTypeFilter;
         AlbumActivity.sResult = mResult;
+        AlbumActivity.sActionView = mViewAction;
         AlbumActivity.sCancel = mCancel;
         Intent intent = new Intent(mContext, AlbumActivity.class);
         intent.putExtra(Album.KEY_INPUT_WIDGET, mWidget);

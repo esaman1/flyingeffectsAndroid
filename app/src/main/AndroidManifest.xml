@@ -74,7 +74,6 @@
             android:name="org.apache.http.legacy"
             android:required="false" />  <!--兼容9.0  使用http时奔溃，android p要求全部走https ，解决瑰珀sdk奔溃问题-->
 
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.flyingeffects.com.fileprovider"
@@ -84,8 +83,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
-
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.WelcomeActivity"
@@ -114,23 +111,15 @@
             android:theme="@style/AllTransparentTheme" />
 
 
-
-
-
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
-
-
-
-
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.SystemMessageDetailActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
-
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity"
@@ -140,7 +129,6 @@
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.ReportActivity"
             android:theme="@style/AllTransparentTheme" />
-
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.CommentBlackActivity"
@@ -152,15 +140,9 @@
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/AllTransparentTheme" />
 
-
-
-
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.MessageLongClickActivity"
             android:theme="@style/AllTransparentTheme" />
-
-
-
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity"
@@ -168,13 +150,11 @@
             android:windowSoftInputMode="stateUnspecified|adjustPan"
             android:screenOrientation="portrait" />
 
-
-
-
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.UserHomepageActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
+
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -252,7 +232,6 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
-
         <activity
             android:name=".ui.view.activity.privacyPolicyActivity"
             android:exported="false"
@@ -262,8 +241,6 @@
             android:name=".ui.view.activity.PraiseActivity"
             android:exported="false"
             android:theme="@style/AllTransparentTheme" />
-
-
 
         <activity
             android:name=".ui.view.activity.FansActivity"
@@ -275,27 +252,20 @@
             android:exported="false"
             android:theme="@style/TransparentTheme" />
 
-
-
         <activity
             android:name=".ui.view.activity.LikeActivity"
             android:exported="false"
             android:theme="@style/TransparentTheme" />
-
 
         <activity
             android:name=".ui.view.activity.ZanActivity"
             android:exported="false"
             android:theme="@style/TransparentTheme" />
 
-
-
-
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.VideoClippingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
-
 
 <!--        &lt;!&ndash; 广告开始  广点通配置Start&ndash;&gt;-->
 <!--        <uses-library-->
@@ -317,10 +287,12 @@
         <activity
             android:name="com.qq.e.ads.ADActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />
+
         <activity
             android:name="com.qq.e.ads.PortraitADActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
+
         <activity
             android:name="com.qq.e.ads.LandscapeADActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
@@ -422,16 +394,6 @@
             </intent-filter>
         </receiver>
 
-
-
-
-
     </application>
-
-
-
-
-
-
 
 </manifest>

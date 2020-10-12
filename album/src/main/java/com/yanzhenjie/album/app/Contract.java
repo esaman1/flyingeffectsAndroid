@@ -19,6 +19,8 @@ import android.app.Activity;
 import android.content.res.Configuration;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.google.android.material.tabs.TabLayout;
 import com.yanzhenjie.album.Album;
@@ -81,6 +83,12 @@ public final class Contract {
          * 关闭相册
          */
         void finishActivity();
+
+        /**
+         * 返回广告需要的容器
+         * @param flAdContainer 容器
+         */
+        void returnAdContainer(LinearLayout flAdContainer);
     }
 
     public static abstract class AlbumView extends BaseView<AlbumPresenter> {
@@ -167,7 +175,6 @@ public final class Contract {
         public abstract boolean isSingleCompletion();
 
         public abstract void setSingleCompletion(boolean singleCompletion);
-
 
     }
 

@@ -64,11 +64,15 @@ public class GalleryActivity extends BaseActivity implements Contract.GalleryPre
         mCheckable = argument.getBoolean(Album.KEY_INPUT_GALLERY_CHECKABLE);
 
         mCheckedMap = new HashMap<>();
-        for (String path : mPathList) mCheckedMap.put(path, true);
+        for (String path : mPathList) {
+            mCheckedMap.put(path, true);
+        }
 
         mView.setTitle(mWidget.getTitle());
         mView.setupViews(mWidget, mCheckable);
-        if (!mCheckable) mView.setBottomDisplay(false);
+        if (!mCheckable) {
+            mView.setBottomDisplay(false);
+        }
         mView.setLayerDisplay(false);
         mView.setDurationDisplay(false);
         mView.bindData(mPathList);
@@ -84,7 +88,9 @@ public class GalleryActivity extends BaseActivity implements Contract.GalleryPre
     private void setCheckedCount() {
         int checkedCount = 0;
         for (Map.Entry<String, Boolean> entry : mCheckedMap.entrySet()) {
-            if (entry.getValue()) checkedCount += 1;
+            if (entry.getValue()) {
+                checkedCount += 1;
+            }
         }
 
         String completeText = getString(R.string.album_menu_finish);
@@ -111,7 +117,9 @@ public class GalleryActivity extends BaseActivity implements Contract.GalleryPre
         mCurrentPosition = position;
         mView.setSubTitle(position + 1 + " / " + mPathList.size());
 
-        if (mCheckable) mView.setChecked(mCheckedMap.get(mPathList.get(position)));
+        if (mCheckable) {
+            mView.setChecked(mCheckedMap.get(mPathList.get(position)));
+        }
     }
 
     @Override
@@ -127,7 +135,9 @@ public class GalleryActivity extends BaseActivity implements Contract.GalleryPre
         if (sResult != null) {
             ArrayList<String> checkedList = new ArrayList<>();
             for (Map.Entry<String, Boolean> entry : mCheckedMap.entrySet()) {
-                if (entry.getValue()) checkedList.add(entry.getKey());
+                if (entry.getValue()) {
+                    checkedList.add(entry.getKey());
+                }
             }
             sResult.onAction(checkedList);
         }
@@ -136,7 +146,9 @@ public class GalleryActivity extends BaseActivity implements Contract.GalleryPre
 
     @Override
     public void onBackPressed() {
-        if (sCancel != null) sCancel.onAction("User canceled.");
+        if (sCancel != null) {
+            sCancel.onAction("User canceled.");
+        }
         finish();
     }
 

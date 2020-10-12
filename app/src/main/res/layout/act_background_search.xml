@@ -16,8 +16,6 @@
         android:focusableInTouchMode="true"
         android:orientation="horizontal">
 
-
-
         <ImageView
             android:layout_width="wrap_content"
             android:id="@+id/iv_back"
@@ -70,10 +68,7 @@
                 android:src="@mipmap/serach_delete"
                 android:visibility="gone" />
 
-
         </RelativeLayout>
-
-
 
         <TextView
             android:id="@+id/tv_search"

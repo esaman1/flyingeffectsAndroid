@@ -106,20 +106,24 @@ public class MediaReader {
                     }
 
                     if (mSizeFilter != null && mSizeFilter.filter(size)) {
-                        if (!mFilterVisibility) continue;
+                        if (!mFilterVisibility) {
+                            continue;
+                        }
                         imageFile.setDisable(true);
                     }
                     if (mMimeFilter != null && mMimeFilter.filter(mimeType)) {
-                        if (!mFilterVisibility) continue;
+                        if (!mFilterVisibility) {
+                            continue;
+                        }
                         imageFile.setDisable(true);
                     }
 
                     allFileFolder.addAlbumFile(imageFile);
                     AlbumFolder albumFolder = albumFolderMap.get(bucketName);
 
-                    if (albumFolder != null)
+                    if (albumFolder != null) {
                         albumFolder.addAlbumFile(imageFile);
-                    else {
+                    } else {
                         albumFolder = new AlbumFolder();
                         albumFolder.setName(bucketName);
                         albumFolder.addAlbumFile(imageFile);
@@ -186,24 +190,30 @@ public class MediaReader {
                         continue;
                     }
                     if (mSizeFilter != null && mSizeFilter.filter(size)) {
-                        if (!mFilterVisibility) continue;
+                        if (!mFilterVisibility) {
+                            continue;
+                        }
                         videoFile.setDisable(true);
                     }
                     if (mMimeFilter != null && mMimeFilter.filter(mimeType)) {
-                        if (!mFilterVisibility) continue;
+                        if (!mFilterVisibility) {
+                            continue;
+                        }
                         videoFile.setDisable(true);
                     }
                     if (mDurationFilter != null && mDurationFilter.filter(duration)) {
-                        if (!mFilterVisibility) continue;
+                        if (!mFilterVisibility) {
+                            continue;
+                        }
                         videoFile.setDisable(true);
                     }
 
                     allFileFolder.addAlbumFile(videoFile);
                     AlbumFolder albumFolder = albumFolderMap.get(bucketName);
 
-                    if (albumFolder != null)
+                    if (albumFolder != null) {
                         albumFolder.addAlbumFile(videoFile);
-                    else {
+                    } else {
                         albumFolder = new AlbumFolder();
                         albumFolder.setName(bucketName);
                         albumFolder.addAlbumFile(videoFile);

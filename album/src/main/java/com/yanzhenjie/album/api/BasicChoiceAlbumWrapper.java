@@ -21,7 +21,7 @@ import androidx.annotation.IntRange;
 /**
  * Created by YanZhenjie on 2017/11/8.
  */
-public abstract class BasicChoiceAlbumWrapper<Returner extends BasicChoiceAlbumWrapper, Result, Cancel, Checked> extends BasicChoiceWrapper<Returner, Result, Cancel, Checked> {
+public abstract class BasicChoiceAlbumWrapper<Returner extends BasicChoiceAlbumWrapper, Result, Cancel, Checked,view> extends BasicChoiceWrapper<Returner, Result, Cancel, Checked,view> {
 
     BasicChoiceAlbumWrapper(Context context) {
         super(context);

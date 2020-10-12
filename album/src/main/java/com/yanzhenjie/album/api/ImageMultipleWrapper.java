@@ -17,6 +17,8 @@ package com.yanzhenjie.album.api;
 
 import android.content.Context;
 import android.content.Intent;
+import android.widget.LinearLayout;
+
 import androidx.annotation.IntRange;
 
 import com.yanzhenjie.album.Album;
@@ -28,7 +30,7 @@ import java.util.ArrayList;
 /**
  * Created by YanZhenjie on 2017/8/16.
  */
-public final class ImageMultipleWrapper extends BasicChoiceWrapper<ImageMultipleWrapper, ArrayList<AlbumFile>, String, ArrayList<AlbumFile>> {
+public final class ImageMultipleWrapper extends BasicChoiceWrapper<ImageMultipleWrapper, ArrayList<AlbumFile>, String, ArrayList<AlbumFile>, LinearLayout> {
 
     @IntRange(from = 1, to = Integer.MAX_VALUE)
     private int mLimitCount = Integer.MAX_VALUE;
@@ -63,6 +65,7 @@ public final class ImageMultipleWrapper extends BasicChoiceWrapper<ImageMultiple
         AlbumActivity.sMimeFilter = mMimeTypeFilter;
         AlbumActivity.sResult = mResult;
         AlbumActivity.sCancel = mCancel;
+        AlbumActivity.sActionView = mViewAction;
         Intent intent = new Intent(mContext, AlbumActivity.class);
         intent.putExtra(Album.KEY_INPUT_WIDGET, mWidget);
         intent.putParcelableArrayListExtra(Album.KEY_INPUT_CHECKED_LIST, mChecked);

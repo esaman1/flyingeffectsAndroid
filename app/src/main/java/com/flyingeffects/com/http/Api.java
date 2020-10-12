@@ -150,7 +150,6 @@ public class Api {
                     .baseUrl(Url.BASE_URL)
                     .build().create(ApiService.class);
         }
-
         return sService;
     }
 

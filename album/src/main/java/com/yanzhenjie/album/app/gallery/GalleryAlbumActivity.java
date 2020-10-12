@@ -75,7 +75,9 @@ public class GalleryAlbumActivity extends BaseActivity implements Contract.Galle
     private void setCheckedCount() {
         int checkedCount = 0;
         for (AlbumFile albumFile : mAlbumFiles) {
-            if (albumFile.isChecked()) checkedCount += 1;
+            if (albumFile.isChecked()) {
+                checkedCount += 1;
+            }
         }
 
         String completeText = getString(R.string.album_menu_finish);
@@ -103,15 +105,21 @@ public class GalleryAlbumActivity extends BaseActivity implements Contract.Galle
         mView.setSubTitle(position + 1 + " / " + mAlbumFiles.size());
 
         AlbumFile albumFile = mAlbumFiles.get(position);
-        if (mCheckable) mView.setChecked(albumFile.isChecked());
+        if (mCheckable) {
+            mView.setChecked(albumFile.isChecked());
+        }
         mView.setLayerDisplay(albumFile.isDisable());
 
         if (albumFile.getMediaType() == AlbumFile.TYPE_VIDEO) {
-            if (!mCheckable) mView.setBottomDisplay(true);
+            if (!mCheckable) {
+                mView.setBottomDisplay(true);
+            }
             mView.setDuration(AlbumUtils.convertDuration(albumFile.getDuration()));
             mView.setDurationDisplay(true);
         } else {
-            if (!mCheckable) mView.setBottomDisplay(false);
+            if (!mCheckable) {
+                mView.setBottomDisplay(false);
+            }
             mView.setDurationDisplay(false);
         }
     }
@@ -129,7 +137,9 @@ public class GalleryAlbumActivity extends BaseActivity implements Contract.Galle
         if (sResult != null) {
             ArrayList<AlbumFile> checkedList = new ArrayList<>();
             for (AlbumFile albumFile : mAlbumFiles) {
-                if (albumFile.isChecked()) checkedList.add(albumFile);
+                if (albumFile.isChecked()) {
+                    checkedList.add(albumFile);
+                }
             }
             sResult.onAction(checkedList);
         }
@@ -138,7 +148,9 @@ public class GalleryAlbumActivity extends BaseActivity implements Contract.Galle
 
     @Override
     public void onBackPressed() {
-        if (sCancel != null) sCancel.onAction("User canceled.");
+        if (sCancel != null) {
+            sCancel.onAction("User canceled.");
+        }
         finish();
     }
 

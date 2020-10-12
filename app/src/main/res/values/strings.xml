@@ -84,5 +84,6 @@
     <string name="dvertising">广告</string>
     <string name="need_login">请先登录</string>
     <string name="make_sure">确定</string>
+    <string name="follow">关注</string>
 
 </resources>

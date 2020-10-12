@@ -70,7 +70,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -80,9 +79,12 @@ import rx.subjects.PublishSubject;
 
 public class PreviewUpAndDownMvpModel {
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
+    /**
+     * 0 下拉刷新 1 加载 2 更新数据
+     */
+    private static int sIsRefresh = 0;
     private PreviewUpAndDownMvpCallback callback;
     private Context context;
-    private boolean isRefresh = true;
     private int selectPage = 1;
     private String mVideoFolder;
     private int perPageCount = 10;
@@ -96,16 +98,16 @@ public class PreviewUpAndDownMvpModel {
     private String searchText;
     private boolean isCanLoadMore;
 
-    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage,String fromTo ,String category_id,String toUserID,String searchText,boolean isCanLoadMore) {
+    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage, String fromTo, String category_id, String toUserID, String searchText, boolean isCanLoadMore) {
         this.context = context;
-        this.isCanLoadMore=isCanLoadMore;
+        this.isCanLoadMore = isCanLoadMore;
         this.selectPage = nowSelectPage;
         this.callback = callback;
-        this.toUserID=toUserID;
+        this.toUserID = toUserID;
         FileManager fileManager = new FileManager();
         mVideoFolder = fileManager.getFileCachePath(context, "downVideo");
         this.allData = allData;
-        this.searchText=searchText;
+        this.searchText = searchText;
         this.fromTo = fromTo;
         this.category_id = category_id;
         mTTAdNative = TTAdManagerHolder.get().createAdNative(context);
@@ -119,8 +121,8 @@ public class PreviewUpAndDownMvpModel {
         this.smartRefreshLayout = smartRefreshLayout;
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
             isOnRefresh();
-            isRefresh = true;
-            if(isCanLoadMore){
+            sIsRefresh = 0;
+            if (isCanLoadMore) {
                 refreshLayout.setEnableLoadMore(true);
             }
             selectPage = 1;
@@ -131,9 +133,9 @@ public class PreviewUpAndDownMvpModel {
 
         });
 
-        if(isCanLoadMore){
+        if (isCanLoadMore) {
             smartRefreshLayout.setEnableLoadMore(true);
-        }else{
+        } else {
             smartRefreshLayout.setEnableRefresh(false);
             smartRefreshLayout.setEnableLoadMore(false);
         }
@@ -157,7 +159,7 @@ public class PreviewUpAndDownMvpModel {
 
     public void requestMoreData() {
         isOnLoadMore();
-        isRefresh = false;
+        sIsRefresh = 1;
         selectPage++;
         requestFagData();
     }
@@ -224,7 +226,7 @@ public class PreviewUpAndDownMvpModel {
         LinearLayout iv_download = view.findViewById(R.id.ll_download);
         iv_download.setOnClickListener(view12 -> {
 
-            if ( fromTo.equals(FromToTemplate.ISTEMPLATE)) {
+            if (fromTo.equals(FromToTemplate.ISTEMPLATE)) {
                 statisticsEventAffair.getInstance().setFlag(context, "11_yj_save1");
             } else {
                 statisticsEventAffair.getInstance().setFlag(context, "10_bj_csave1");
@@ -240,14 +242,14 @@ public class PreviewUpAndDownMvpModel {
             @Override
             public void onClick(View view) {
 
-                if ( fromTo.equals(FromToTemplate.ISTEMPLATE)) {
+                if (fromTo.equals(FromToTemplate.ISTEMPLATE)) {
                     statisticsEventAffair.getInstance().setFlag(context, "11_yjj_WeChat");
                 } else {
                     statisticsEventAffair.getInstance().setFlag(context, "10_bj_WeChat");
                 }
 
                 UMImage image = new UMImage(context, fag_template_item.getImage());//分享图标
-                UMWeb web = new UMWeb(getShareWeiXinCircleText(fag_template_item.getId()+"")); //切记切记 这里分享的链接必须是http开头
+                UMWeb web = new UMWeb(getShareWeiXinCircleText(fag_template_item.getId() + "")); //切记切记 这里分享的链接必须是http开头
                 web.setTitle(BaseConstans.getminapp_share_title() + fag_template_item.getTitle());//标题
                 web.setThumb(image);  //缩略图
                 new ShareAction((Activity) context).setPlatform(SHARE_MEDIA.WEIXIN_CIRCLE)
@@ -278,7 +280,7 @@ public class PreviewUpAndDownMvpModel {
             @Override
             public void onClick(View view) {
 
-                if ( fromTo.equals(FromToTemplate.ISTEMPLATE)) {
+                if (fromTo.equals(FromToTemplate.ISTEMPLATE)) {
                     statisticsEventAffair.getInstance().setFlag(context, "11_yj_Report");
                 } else {
                     statisticsEventAffair.getInstance().setFlag(context, "10_bj_Report");
@@ -408,7 +410,7 @@ public class PreviewUpAndDownMvpModel {
         AdSlot adSlot = new AdSlot.Builder()
                 .setCodeId(AdConfigs.POST_ID_CSJ_Feed)
                 .setSupportDeepLink(true)
-              .setImageAcceptedSize(1080, 1920) //符合广告场景的广告尺寸
+                .setImageAcceptedSize(1080, 1920) //符合广告场景的广告尺寸
                 .setExpressViewAcceptedSize(1080, 1920) //期望模板广告view的size,单位dp
                 .setAdCount(1) //请求广告数量为1到3条
                 .build();
@@ -478,6 +480,7 @@ public class PreviewUpAndDownMvpModel {
                         public void onClickRetry() {
                             Log.d("drawss", "onClickRetry!");
                         }
+
                     });
                     ad.setCanInterruptVideoPlay(true);
                     ad.setExpressInteractionListener(new TTNativeExpressAd.ExpressAdInteractionListener() {
@@ -498,7 +501,9 @@ public class PreviewUpAndDownMvpModel {
 
                         @Override
                         public void onRenderSuccess(View view, float width, float height) {
+
                         }
+
                     });
                     ad.render();
                 }
@@ -509,23 +514,23 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
+
     /**
      * description ：
      * creation date: 2020/3/11
      * param : template_type  1是模板 2是背景
      * user : zhangtongju
      */
-
     private void requestFagData() {
         Observable ob = null;
         HashMap<String, String> params = new HashMap<>();
         LogUtil.d("templateId", "templateId=" + category_id);
-        if(!TextUtils.isEmpty(category_id)){
+        if (!TextUtils.isEmpty(category_id)) {
             params.put("category_id", category_id);
         }
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
-        switch (fromTo){
+        switch (fromTo) {
             case FromToTemplate.ISHOMEFROMBJ:
                 params.put("to_user_id", BaseConstans.GetUserId());
                 params.put("type", "1");
@@ -564,31 +569,22 @@ public class PreviewUpAndDownMvpModel {
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
                 break;
             case FromToTemplate.ISBJCOLLECT:
-                params.put("template_type",  "2");
+                params.put("template_type", "2");
                 params.put("token", BaseConstans.GetUserToken());
                 ob = Api.getDefault().collectionList(BaseConstans.getRequestHead(params));
-
                 break;
-
-
-
             case FromToTemplate.ISSEARCHBJ:
-
-
-
-                params.put("searchText",  searchText);
+                params.put("searchText", searchText);
                 params.put("template_type", "2");
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
                 break;
             case FromToTemplate.ISSEARCHTEMPLATE:
-                params.put("searchText",  searchText);
+                params.put("searchText", searchText);
                 params.put("template_type", "1");
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
                 break;
-
-
-
-
+            default:
+                break;
         }
 
         String str = StringUtil.beanToJSONString(params);
@@ -606,9 +602,14 @@ public class PreviewUpAndDownMvpModel {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "下一页数据请求" + str);
                 finishData();
-                if (isRefresh) {
+                boolean isRefresh = false;
+                if (sIsRefresh == 0) {
+                    allData.clear();
+                    isRefresh = true;
+                } else if (sIsRefresh == 2) {
                     allData.clear();
                 }
+
                 if (data.size() < perPageCount) {
                     smartRefreshLayout.setEnableLoadMore(false);
                 }
@@ -630,6 +631,7 @@ public class PreviewUpAndDownMvpModel {
     }
 
     public void isOnRefresh() {
+
     }
 
 
@@ -686,9 +688,7 @@ public class PreviewUpAndDownMvpModel {
         // 启动时间
         Observable ob = Api.getDefault().addPraise(BaseConstans.getRequestHead(params));
 
-        LogUtil.d("OOM",StringUtil.beanToJSONString(params));
-
-
+        LogUtil.d("OOM", StringUtil.beanToJSONString(params));
 
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
             @Override
@@ -702,12 +702,10 @@ public class PreviewUpAndDownMvpModel {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "collectTemplate=" + str);
                 callback.ZanResult();
-
             }
+
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
-
     }
-
 
     public void requestUserInfo() {
         HashMap<String, String> params = new HashMap<>();
@@ -760,7 +758,7 @@ public class PreviewUpAndDownMvpModel {
                 @Override
                 public void call(String s1) {
                     VideoInfo info = getVideoInfo.getInstance().getRingDuring(s1);
-                    videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context,false, info.getDuration(), videoName, 0, new videoCutDurationForVideoOneDo.isSuccess() {
+                    videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, false, info.getDuration(), videoName, 0, new videoCutDurationForVideoOneDo.isSuccess() {
                         @Override
                         public void progresss(int progress) {
                             LogUtil.d("oom", "下载时候后重新裁剪进度为=" + progress);
@@ -770,7 +768,6 @@ public class PreviewUpAndDownMvpModel {
                                 } else {
                                     downProgressDialog.setProgress("下载进度为" + progress + "%");
                                 }
-
                             }
                         }
 
@@ -795,7 +792,6 @@ public class PreviewUpAndDownMvpModel {
             }));
             manage.DownloadVideo(path, videoName);
         });
-
     }
 
 
@@ -816,8 +812,7 @@ public class PreviewUpAndDownMvpModel {
             AlertDialog.Builder builder = new AlertDialog.Builder( //去除黑边
                     new ContextThemeWrapper(context, R.style.Theme_Transparent));
             builder.setTitle(R.string.notification);
-            builder.setMessage("已为你保存到相册,多多分享给友友\n" + "【" + path + context.getString(R.string.folder) + "】"
-            );
+            builder.setMessage("已为你保存到相册,多多分享给友友\n" + "【" + path + context.getString(R.string.folder) + "】");
             builder.setNegativeButton(context.getString(R.string.got_it), (dialog, which) -> dialog.dismiss());
             builder.setCancelable(true);
             Dialog dialog = builder.show();
@@ -837,7 +832,6 @@ public class PreviewUpAndDownMvpModel {
         intent.setData(Uri.fromFile(new File(outputFile)));
         context.sendBroadcast(intent);
     }
-
 
     public void prepareDownZip(String url, String zipPid) {
         if (NetworkUtils.isNetworkAvailable(context)) {
@@ -877,7 +871,6 @@ public class PreviewUpAndDownMvpModel {
     private void showMakeProgress() {
         callback.showDownProgress(mProgress);
     }
-
 
     private void intoTemplateActivity(String filePath) {
         callback.getTemplateFileSuccess(filePath);

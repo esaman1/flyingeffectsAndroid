@@ -59,11 +59,11 @@ public class BackgroundSearchActivity extends BaseActivity {
 
 
     @BindView(R.id.ed_search)
-    EditText ed_text;
+    EditText mEtSearch;
 
 
     @BindView(R.id.iv_delete)
-    ImageView iv_delete;
+    ImageView mIvDelete;
 
     @BindView(R.id.tv_youyou)
     TextView tv_youyou;
@@ -113,10 +113,11 @@ public class BackgroundSearchActivity extends BaseActivity {
     protected void initView() {
 
         statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "14_go_to_search");
+
         isFrom = getIntent().getIntExtra("isFrom", 0);
 
         //键盘的搜索按钮
-        ed_text.setOnEditorActionListener((v, actionId, event) -> {
+        mEtSearch.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
                 toSearch();
                 return true;
@@ -124,7 +125,7 @@ public class BackgroundSearchActivity extends BaseActivity {
             return false;
         });
 
-        ed_text.addTextChangedListener(new TextWatcher() {
+        mEtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -139,16 +140,16 @@ public class BackgroundSearchActivity extends BaseActivity {
             public void afterTextChanged(Editable s) {
                 if (s.length() == 0) {
                     hideResultView(false);
-                    iv_delete.setVisibility(View.GONE);
+                    mIvDelete.setVisibility(View.GONE);
                     appbar.setExpanded(true);
                     hideResultView(true);
                 } else {
-                    iv_delete.setVisibility(View.VISIBLE);
+                    mIvDelete.setVisibility(View.VISIBLE);
                 }
             }
         });
-        iv_delete.setOnClickListener(view -> {
-            ed_text.setText("");
+        mIvDelete.setOnClickListener(view -> {
+            mEtSearch.setText("");
             hideResultView(true);
             EventBus.getDefault().post(new SendSearchText(""));
             viewPager.setCurrentItem(0);
@@ -170,16 +171,14 @@ public class BackgroundSearchActivity extends BaseActivity {
             });
         }
 
-        tv_search.setOnClickListener(view -> {
-            toSearch();
-        });
+        tv_search.setOnClickListener(view -> toSearch());
     }
 
 
 
     private void toSearch(){
-        nowShowText = ed_text.getText().toString().trim();
-        if (!nowShowText.equals("")) {
+        nowShowText = mEtSearch.getText().toString().trim();
+        if (!"".equals(nowShowText)) {
             cancelFocus();
             statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "10_searchfor", nowShowText);
             EventBus.getDefault().post(new SendSearchText(nowShowText));
@@ -202,7 +201,6 @@ public class BackgroundSearchActivity extends BaseActivity {
 
     @Override
     public void onDestroy() {
-
         super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
@@ -213,18 +211,15 @@ public class BackgroundSearchActivity extends BaseActivity {
         requestKeywordList();
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
     }
 
-
     @Override
     public void onPause() {
         super.onPause();
     }
-
 
     private void setKeyWordList(ArrayList<SearchKeyWord> listSearchKey) {
         autoNewLineLayout.removeAllViews();
@@ -239,7 +234,7 @@ public class BackgroundSearchActivity extends BaseActivity {
                     if (listSearchKey.size() >= finalI + 1) {
                         statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "4_recommend", listSearchKey.get(finalI).getName());
                         nowShowText = listSearchKey.get(finalI).getName();
-                        ed_text.setText(nowShowText);
+                        mEtSearch.setText(nowShowText);
                         hideResultView(false);
 //                        setResultMargin();
                         ll_ad_content.setVisibility(View.GONE);
@@ -250,7 +245,7 @@ public class BackgroundSearchActivity extends BaseActivity {
                     }
                 }
             });
-            GradientDrawable view_ground = (GradientDrawable) tv.getBackground(); //获取控件的背
+            GradientDrawable view_ground = (GradientDrawable) tv.getBackground();
             view_ground.setStroke(2, Color.parseColor(nowChooseColor));
             autoNewLineLayout.addView(tv);
         }
@@ -312,12 +307,12 @@ public class BackgroundSearchActivity extends BaseActivity {
         for (int i = 0; i < titles.length; i++) {
             View view = LayoutInflater.from(this).inflate(R.layout.view_bj_head, null);
             TextView tv = view.findViewById(R.id.tv_name_bj_head);
-            View view_line = view.findViewById(R.id.view_line_head);
+            View viewLine = view.findViewById(R.id.view_line_head);
             tv.setText(titles[i]);
             tv.setId(i);
             tv.setOnClickListener(v -> showWitchBtn(v.getId()));
             listTv.add(tv);
-            listView.add(view_line);
+            listView.add(viewLine);
             ll_add_child.addView(view);
             setViewpager();
         }
@@ -382,10 +377,10 @@ public class BackgroundSearchActivity extends BaseActivity {
 
 
     private void cancelFocus() {
-        ed_text.setFocusable(true);
-        ed_text.setFocusableInTouchMode(true);
-        ed_text.requestFocus();
-        ed_text.clearFocus();//失去焦点
+        mEtSearch.setFocusable(true);
+        mEtSearch.setFocusableInTouchMode(true);
+        mEtSearch.requestFocus();
+        mEtSearch.clearFocus();//失去焦点
     }
 
 }

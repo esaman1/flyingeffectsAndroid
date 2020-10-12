@@ -72,9 +72,9 @@
             android:id="@+id/iv_zan"
             android:layout_width="53dp"
             android:layout_height="53dp"
-            android:scaleType="fitCenter"
             android:contentDescription="@string/app_name"
             android:padding="10dp"
+            android:scaleType="fitCenter"
             android:src="@mipmap/zan" />
 
         <TextView
@@ -118,27 +118,24 @@
     </LinearLayout>
 
 
-
     <LinearLayout
         android:id="@+id/ll_down_bj"
         android:layout_width="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
-        android:gravity="center"
         android:layout_marginEnd="20dp"
-        app:layout_constraintStart_toStartOf="@+id/ll_comment"
-        app:layout_constraintTop_toBottomOf="@+id/ll_comment"
+        android:gravity="center"
         android:orientation="vertical"
-        android:layout_height="wrap_content">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/ll_comment"
+        app:layout_constraintTop_toBottomOf="@+id/ll_comment">
 
         <ImageView
             android:id="@+id/iv_download_bj"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/app_name"
-            android:src="@mipmap/down_bj"
-        />
-
+            android:src="@mipmap/down_bj" />
 
         <TextView
             android:id="@+id/tv_download_count"
@@ -147,10 +144,6 @@
             android:textColor="@color/white"
             android:textSize="12sp" />
     </LinearLayout>
-
-
-
-
 
     <ImageView
         android:id="@+id/iv_writer"
@@ -183,6 +176,23 @@
         app:layout_constraintStart_toEndOf="@id/iv_writer"
         app:layout_constraintTop_toTopOf="@id/iv_writer" />
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_btn_follow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_5"
+        android:background="@drawable/tv_make"
+        android:paddingStart="@dimen/dp_10"
+        android:paddingTop="@dimen/dp_5"
+        android:paddingEnd="@dimen/dp_10"
+        android:paddingBottom="@dimen/dp_5"
+        android:text="@string/follow"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_12"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/tv_writer_name"
+        app:layout_constraintStart_toEndOf="@id/tv_writer_name"
+        app:layout_constraintTop_toTopOf="@id/tv_writer_name" />
 
     <com.flyingeffects.com.view.MarqueTextView
         android:id="@+id/tv_title"
@@ -200,30 +210,27 @@
         app:layout_constraintTop_toBottomOf="@id/iv_writer"
         app:layout_constraintVertical_bias="0" />
 
-
-
     <ImageView
-        android:src="@mipmap/music_icon"
-        android:contentDescription="@string/app_name"
-        android:layout_width="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@id/iv_writer"
         android:id="@+id/iv_music"
-        app:layout_constraintTop_toBottomOf="@id/iv_writer"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/music_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/iv_writer"
-        android:layout_height="15dp"/>
-
+        app:layout_constraintStart_toStartOf="@id/iv_writer"
+        app:layout_constraintTop_toBottomOf="@id/iv_writer" />
 
     <com.flyingeffects.com.view.MarqueTextView
         android:id="@+id/tv_title_music"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
         android:layout_marginTop="@dimen/dp_10"
         android:ellipsize="end"
         android:singleLine="true"
         android:textColor="@color/white"
         android:textSize="14sp"
-        android:layout_marginStart="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/tv_make"
         app:layout_constraintHorizontal_bias="0"
@@ -231,11 +238,8 @@
         app:layout_constraintTop_toBottomOf="@id/tv_title"
         app:layout_constraintVertical_bias="0" />
 
-
-
     <com.flyingeffects.com.view.MarqueTextView
         android:id="@+id/tv_describe"
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_8"
@@ -258,7 +262,6 @@
         app:layout_constraintStart_toStartOf="@id/iv_music"
         app:layout_constraintTop_toBottomOf="@id/tv_title_music"
         app:layout_constraintVertical_bias="0" />
-
 
     <com.flyingeffects.com.view.MarqueTextView
         android:id="@+id/tv_make"
@@ -290,6 +293,5 @@
         android:clickable="false"
         android:focusable="false"
         android:visibility="invisible" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

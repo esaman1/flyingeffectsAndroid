@@ -41,7 +41,7 @@ import rx.Observable;
  * user : zhangtongju
  */
 public class LikeActivity extends BaseActivity {
-
+    private static final String TAG = "LikeActivity";
     private int perPageCount = 10;
 
     @BindView(R.id.recyclerView)

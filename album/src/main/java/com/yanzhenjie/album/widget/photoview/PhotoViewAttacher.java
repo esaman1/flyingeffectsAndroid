@@ -154,7 +154,9 @@ public class PhotoViewAttacher
         imageView.setOnTouchListener(this);
 
         ViewTreeObserver observer = imageView.getViewTreeObserver();
-        if (null != observer) observer.addOnGlobalLayoutListener(this);
+        if (null != observer) {
+            observer.addOnGlobalLayoutListener(this);
+        }
 
         // Make sure we using MATRIX Scale Type
         setImageViewScaleTypeMatrix(imageView);
@@ -774,6 +776,7 @@ public class PhotoViewAttacher
         return null;
     }
 
+    @Override
     public Bitmap getVisibleRectangleBitmap() {
         ImageView imageView = getImageView();
         return imageView == null ? null : imageView.getDrawingCache();
@@ -781,7 +784,9 @@ public class PhotoViewAttacher
 
     @Override
     public void setZoomTransitionDuration(int milliseconds) {
-        if (milliseconds < 0) milliseconds = DEFAULT_ZOOM_DURATION;
+        if (milliseconds < 0) {
+            milliseconds = DEFAULT_ZOOM_DURATION;
+        }
         this.ZOOM_DURATION = milliseconds;
     }
 
@@ -900,12 +905,16 @@ public class PhotoViewAttacher
     }
 
     private int getImageViewWidth(ImageView imageView) {
-        if (null == imageView) return 0;
+        if (null == imageView) {
+            return 0;
+        }
         return imageView.getWidth() - imageView.getPaddingLeft() - imageView.getPaddingRight();
     }
 
     private int getImageViewHeight(ImageView imageView) {
-        if (null == imageView) return 0;
+        if (null == imageView) {
+            return 0;
+        }
         return imageView.getHeight() - imageView.getPaddingTop() - imageView.getPaddingBottom();
     }
 
