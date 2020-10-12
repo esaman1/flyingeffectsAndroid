@@ -57,12 +57,11 @@ public class Frag_message_adapter extends BaseAdapter {
         }
         systemessagelist data = allData.get(position);
         holder.tv_content_1.setText(data.getContent());
-        if (allData.get(position).getIs_read() == 0) {
+        if (allData.get(position).getTotal() ==0) {
             holder.tv_point.setVisibility(View.GONE);
         } else {
             holder.tv_point.setVisibility(View.VISIBLE);
-            holder.tv_point.setText(allData.get(position).getIs_read()+"");
-
+            holder.tv_point.setText(allData.get(position).getTotal()+"");
         }
         return view;
     }

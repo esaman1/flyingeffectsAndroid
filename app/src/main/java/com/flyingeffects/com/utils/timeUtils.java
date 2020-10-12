@@ -70,12 +70,12 @@ public class timeUtils {
     }
 
 
-    public static  String  GetSystemMessageTime(long time){
-
-            Date d = new Date(time);
-            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd mm:ss");
-            System.out.println(sdf.format(d));
-            return sdf.format(d);
+    public static String GetSystemMessageTime(long time) {
+        time = time * 1000;
+        Date d = new Date(time);
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd mm:ss");
+        System.out.println(sdf.format(d));
+        return sdf.format(d);
     }
 
 
