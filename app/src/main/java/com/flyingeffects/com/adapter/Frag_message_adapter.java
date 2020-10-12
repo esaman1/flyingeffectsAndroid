@@ -5,17 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.MessageReply;
 import com.flyingeffects.com.enity.systemessagelist;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,6 +49,7 @@ public class Frag_message_adapter extends BaseAdapter {
         if (view == null) {
             holder = new ViewHold();
             view = LayoutInflater.from(context).inflate(R.layout.item_system_message, parent, false);
+            holder.tv_point=view.findViewById(R.id.tv_point);
             holder.tv_content_1 = view.findViewById(R.id.tv_content);
             view.setTag(holder);
         } else {
@@ -62,8 +57,11 @@ public class Frag_message_adapter extends BaseAdapter {
         }
         systemessagelist data = allData.get(position);
         holder.tv_content_1.setText(data.getContent());
-
-
+        if(allData.get(position).getIs_read()==1){
+            holder.tv_point.setVisibility(View.GONE);
+        }else{
+            holder.tv_point.setVisibility(View.VISIBLE);
+        }
         return view;
     }
 
@@ -72,5 +70,6 @@ public class Frag_message_adapter extends BaseAdapter {
 
     class ViewHold {
         TextView tv_content_1;
+        TextView tv_point;
     }
 }

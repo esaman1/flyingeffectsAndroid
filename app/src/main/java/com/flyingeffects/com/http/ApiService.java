@@ -10,6 +10,9 @@ import com.flyingeffects.com.enity.MineCommentEnity;
 import com.flyingeffects.com.enity.MineZanEnity;
 import com.flyingeffects.com.enity.SearchTemplateInfoEntity;
 import com.flyingeffects.com.enity.StickerList;
+import com.flyingeffects.com.enity.SystemMessageCountAllEntiy;
+import com.flyingeffects.com.enity.SystemMessageDetailAllEnity;
+import com.flyingeffects.com.enity.SystemMessageDetailEnity;
 import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.checkVersion;
@@ -67,6 +70,13 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/message/systemessagelist")
     Observable<HttpResult<List<systemessagelist>>> systemessagelist(@FieldMap Map<String, String> params);
+
+
+
+    @FormUrlEncoded
+    @POST("/api/message/systemTotal")
+    Observable<HttpResult<SystemMessageCountAllEntiy>> systemTotal(@FieldMap Map<String, String> params);
+
 
 
 
@@ -287,8 +297,8 @@ public interface ApiService {
 
     //收藏音乐列表
     @FormUrlEncoded
-    @POST("/api/message/systemessageinfo")
-    Observable<HttpResult<Object>> systemessageinfo(@FieldMap Map<String, String> params);
+    @POST("/api/message/systeMessageDetail")
+    Observable<HttpResult<SystemMessageDetailAllEnity>> systemessageinfo(@FieldMap Map<String, String> params);
 
     /**上传用户皮肤*/
     @FormUrlEncoded

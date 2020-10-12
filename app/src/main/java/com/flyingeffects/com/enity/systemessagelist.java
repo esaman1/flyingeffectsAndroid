@@ -85,13 +85,7 @@ public class systemessagelist implements Serializable {
         this.to_user_id = to_user_id;
     }
 
-    public String getIs_read() {
-        return is_read;
-    }
 
-    public void setIs_read(String is_read) {
-        this.is_read = is_read;
-    }
 
     public String getContent() {
         return content;
@@ -108,7 +102,16 @@ public class systemessagelist implements Serializable {
     private String template_id;
     private String pid;
     private String to_user_id;
-    private String is_read;
+
+    public int getIs_read() {
+        return is_read;
+    }
+
+    public void setIs_read(int is_read) {
+        this.is_read = is_read;
+    }
+
+    private int is_read;
     private String content;
 
 

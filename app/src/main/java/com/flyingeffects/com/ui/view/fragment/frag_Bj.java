@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -27,9 +28,12 @@ import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.ui.presenter.FagBjMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.BackgroundSearchActivity;
+import com.flyingeffects.com.ui.view.activity.ContentAllianceActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
+import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
 import com.shixing.sxve.ui.albumType;
 import com.yanzhenjie.album.AlbumFile;
 
@@ -107,6 +111,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
 
     @Override
     public void setFragmentList(List<TemplateType> data) {
+
         if (getActivity() != null) {
             this.data = data;
             if (data != null && data.size() > 0) {
@@ -126,7 +131,26 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                     View view_line = view.findViewById(R.id.view_line_head);
                     tv.setText(data.get(i).getName());
                     tv.setId(i);
-                    tv.setOnClickListener(v -> showWitchBtn(v.getId()));
+                    tv.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            TemplateType templateType1 = data.get(view.getId());
+                            String str = StringUtil.beanToJSONString(templateType1);
+                            LogUtil.d("OMM2", str);
+                            try {
+                                int id = Integer.parseInt(templateType1.getId());
+                                LogUtil.d("OMM2","id="+id);
+                                if (id != 10000) {
+                                    showWitchBtn(view.getId());
+                                } else {
+                                    startActivity(new Intent(getActivity(), ContentAllianceActivity.class));
+                                }
+                            } catch (Exception e) {
+                                showWitchBtn(view.getId());
+                            }
+                        }
+                    });
+
                     listTv.add(tv);
                     listView.add(view_line);
                     ll_add_child.addView(view);

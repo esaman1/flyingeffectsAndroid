@@ -123,6 +123,11 @@
             android:screenOrientation="portrait" />
 
 
+        <activity
+            android:name="com.flyingeffects.com.ui.view.activity.ContentAllianceActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+
 
 
 

@@ -84,4 +84,9 @@ public class AdConfigs {
     public static final String APP_ID_CSJ = "5059305";
 
 
+
+    // 快手
+    public static final String APP_kuaishou = "560";
+
+
 }
