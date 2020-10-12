@@ -426,10 +426,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             } else {
                 statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, " 13_like", templateItem.getTitle());
             }
-
         } else {
-
-
             if (templateType.equals("1")) {
                 statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, " 12_cancel", templateItem.getTitle());
             } else {
@@ -454,7 +451,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     }
 
-
     private boolean isOnPause = false;
 
     @Override
@@ -465,7 +461,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 //        isIntoPause = true;
         LogUtil.d("OOM", "onPause");
     }
-
 
     @Override
     public void onDestroy() {
@@ -478,7 +473,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         GSYVideoManager.releaseAllVideos();
     }
 
-
     @Override
     @OnClick({R.id.ibBack})
     public void onClick(View view) {
@@ -486,7 +480,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             this.finish();
         }
     }
-
 
     /**
      * description ：点击了收藏功能
@@ -548,8 +541,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             default:
                 break;
         }
-
-
     }
 
     @Override
@@ -596,7 +587,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         intent.putExtra("comeFrom", FromToTemplate.ISCHOOSEBJ);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
-
                     } else {
                         intoCreationTemplateActivity(imagePath, videoPath, originalImagePath.get(0), true);
                     }
@@ -606,7 +596,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             }
         }
     }
-
 
     boolean isDownIng = false;
 
@@ -627,7 +616,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             }
         });
     }
-
 
     /**
      * description ：一键模板文件下载成功，背景页面是下载视频，而一键模板是下载zip
@@ -1021,7 +1009,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 intoTemplateActivity(tailorPaths, TemplateFilePath);
             }
         });
-        manage.CompressImgAndCache(paths);
+        manage.compressImgAndCache(paths);
     }
 
 
@@ -1039,7 +1027,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 intoTemplateActivity(tailorPaths, TemplateFilePath);
             }
         });
-        manage.ToMatting(paths);
+        manage.toMatting(paths);
     }
 
 

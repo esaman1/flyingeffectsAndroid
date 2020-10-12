@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
+
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -83,10 +85,9 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
     @BindView(R.id.tv_choose_pic)
     TextView tv_choose_pic;
 
-    private boolean isNeedCut=true;
+    private boolean isNeedCut = true;
 
     private String isFrom;
-
 
     @Override
     protected int getLayoutId() {
@@ -98,20 +99,18 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
         Presenter = new VideoCropMVPPresenter(this, this);
         //点击进入视频剪切界面
         String videoPath = getIntent().getStringExtra("videoPath");
-        isFrom=getIntent().getStringExtra("comeFrom");
+        isFrom = getIntent().getStringExtra("comeFrom");
 //        userSetDuration = getIntent().getLongExtra("duration", 0);
         initVideoDrawPad(videoPath, false);
-        UiStep.nowUiTag="";
-        UiStep.isFromDownBj=false;
+        UiStep.nowUiTag = "";
+        UiStep.isFromDownBj = false;
         statisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Crop");
-        if(!TextUtils.isEmpty(isFrom)){
-            if (isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORUSER)||isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)){
+        if (!TextUtils.isEmpty(isFrom)) {
+            if (isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORUSER) || isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)) {
                 tv_choose_pic.setVisibility(View.GONE);
                 tv_no_kt.setText("下一步");
             }
         }
-
-
     }
 
     @Override
@@ -120,41 +119,39 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
     }
 
     @Override
-    @OnClick({R.id.iv_back, R.id.tv_choose_pic,R.id.tv_no_kt
-    })
+    @OnClick({R.id.iv_back, R.id.tv_choose_pic, R.id.tv_no_kt})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_back:
                 onBackPressed();
                 break;
-            case R.id.tv_choose_pic: //抠图
+            case R.id.tv_choose_pic:
 
-                if (TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)){
-                    statisticsEventAffair.getInstance().setFlag(this, "7_Chromakey" );
-                }else if(TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISBJ)){
-                    statisticsEventAffair.getInstance().setFlag(this, "8_Chromakey" );
-                }else{
+                if (TextUtils.isEmpty(isFrom) && isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)) {
+                    statisticsEventAffair.getInstance().setFlag(this, "7_Chromakey");
+                } else if (TextUtils.isEmpty(isFrom) && isFrom.equals(FromToTemplate.ISBJ)) {
+                    statisticsEventAffair.getInstance().setFlag(this, "8_Chromakey");
+                } else {
                     statisticsEventAffair.getInstance().setFlag(this, "2_Titles_cutdone", "手动卡点_片头裁剪完成");
                     statisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Cutout");
                 }
 
-
                 saveVideo(true);
-                isNeedCut=true;
+                isNeedCut = true;
                 break;
 
             case R.id.tv_no_kt: //不需要抠图
 
-                if (TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)){
-                    statisticsEventAffair.getInstance().setFlag(this, "7_Nokeying" );
-                }else if(TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISBJ)){
-                    statisticsEventAffair.getInstance().setFlag(this, "8_Nokeying" );
-                }else{
+                if (TextUtils.isEmpty(isFrom) && isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)) {
+                    statisticsEventAffair.getInstance().setFlag(this, "7_Nokeying");
+                } else if (TextUtils.isEmpty(isFrom) && isFrom.equals(FromToTemplate.ISBJ)) {
+                    statisticsEventAffair.getInstance().setFlag(this, "8_Nokeying");
+                } else {
                     statisticsEventAffair.getInstance().setFlag(this, "2_Titles_cutdone", "手动卡点_片头裁剪完成");
                     statisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Cutout");
                 }
                 saveVideo(false);
-                isNeedCut=false;
+                isNeedCut = false;
                 break;
             default:
                 break;
@@ -164,11 +161,7 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
     private SeekBar.OnSeekBarChangeListener zoomChangeListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            if (progress <= 50) {
-                Presenter.changeVideoZoom(progress);
-            } else {
-                Presenter.changeVideoZoom(progress);
-            }
+            Presenter.changeVideoZoom(progress);
         }
 
         @Override
@@ -276,28 +269,27 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
     @Override
     public void finishCrop(String videoPath) {
 
-        LogUtil.d("OOM","finishCrop"+"isFrom="+isFrom);
+        LogUtil.d("OOM", "finishCrop" + "isFrom=" + isFrom);
         //自定义只能够选择素材
-        GetVideoCover getVideoCover=new GetVideoCover(this);
+        GetVideoCover getVideoCover = new GetVideoCover(this);
         getVideoCover.getCover(videoPath, path -> Observable.just(path).subscribeOn(AndroidSchedulers.mainThread()).subscribe(cover -> {
-            if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISCHOOSEBJ)){
+            if (!TextUtils.isEmpty(isFrom) && isFrom.equals(FromToTemplate.ISCHOOSEBJ)) {
                 Presenter.hasFinishCrop();
-                EventBus.getDefault().post(new CreateCutCallback(cover,videoPath,isNeedCut));
-            }else if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORUSER)){
+                EventBus.getDefault().post(new CreateCutCallback(cover, videoPath, isNeedCut));
+            } else if (!TextUtils.isEmpty(isFrom) && isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORUSER)) {
                 Presenter.hasFinishCrop();
                 EventBus.getDefault().post(new DownVideoPath(videoPath));
-            }else if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)){
+            } else if (!TextUtils.isEmpty(isFrom) && isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)) {
                 Presenter.hasFinishCrop();
                 EventBus.getDefault().post(new ChooseVideoAddSticker(videoPath));
-            }
-            else{
+            } else {
                 Presenter.hasFinishCrop();
                 Intent intent = new Intent(VideoCropActivity.this, CreationTemplateActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("paths", cover);
-                bundle.putString("originalPath",videoPath );
+                bundle.putString("originalPath", videoPath);
                 bundle.putString("video_path", "");
-                bundle.putBoolean("isNeedCut",isNeedCut);
+                bundle.putBoolean("isNeedCut", isNeedCut);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("Message", bundle);
                 startActivity(intent);
@@ -310,18 +302,17 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
 
     @Override
     public void getRealCutTime(float RealCutTime) {
-        if(!TextUtils.isEmpty(isFrom)&&isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORUSER)) {
+        if (!TextUtils.isEmpty(isFrom) && isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORUSER)) {
             requestLoginForSdk(RealCutTime);
         }
     }
 
 
-
     private void requestLoginForSdk(float cutTime) {
-        if(!DoubleClick.getInstance().isFastDoubleClick()){
+        if (!DoubleClick.getInstance().isFastDoubleClick()) {
             HashMap<String, String> params = new HashMap<>();
-            params.put("type","1");
-            params.put("timelength",cutTime+"");
+            params.put("type", "1");
+            params.put("timelength", cutTime + "");
             // 启动时间
             Observable ob = Api.getDefault().userDefine(BaseConstans.getRequestHead(params));
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(VideoCropActivity.this) {
@@ -369,8 +360,6 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
             Presenter.saveVideo(needCut);
         }
     }
-
-
 
 
 }

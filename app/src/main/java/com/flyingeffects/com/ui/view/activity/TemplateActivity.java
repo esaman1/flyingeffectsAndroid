@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,14 +14,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
-import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -52,9 +49,8 @@ import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.utils.timeUtils;
+import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.flyingeffects.com.view.NoSlidingViewPager;
@@ -413,7 +409,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         bottomButtonCount = templateModel.groupSize;
         int duration = mTemplateModel.getDuration();
         needDuration = (long) (duration / mTemplateModel.fps);
-        tv_end_time.setText(timeUtils.secondToTime((needDuration)));
+        tv_end_time.setText(TimeUtils.secondToTime((needDuration)));
         initTemplateViews(mTemplateModel);
         //设置切换按钮
         new Handler().postDelayed(this::setMattingBtnState, 500);
@@ -1026,7 +1022,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 LogUtil.d("OOM", "onProgressChangedFrame=" + frame);
                 seekBar.setProgress(frame);
                 float nowDuration = frame / mTemplateModel.fps;
-                tv_start_time.setText(timeUtils.secondToTime((long) (nowDuration)));
+                tv_start_time.setText(TimeUtils.secondToTime((long) (nowDuration)));
             });
         }
 
@@ -1144,7 +1140,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 }
             });
         });
-        manage.ToMatting(paths);
+        manage.toMatting(paths);
     }
 
 

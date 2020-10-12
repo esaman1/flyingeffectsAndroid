@@ -22,19 +22,15 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.DoubleClick;
 import com.flyingeffects.com.commonlyModel.GetPathType;
-import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.AdConfigs;
-import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.FileManager;
-import com.flyingeffects.com.manager.StimulateControlManage;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.ChooseBackgroundTemplateActivity;
@@ -163,7 +159,7 @@ public class TemplateMvpModel {
                         });
                         List<String> list = new ArrayList<>();
                         list.add(savePath);
-                        manage.ToMatting(list);
+                        manage.toMatting(list);
 //                    }
 //                }).start();
 

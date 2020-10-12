@@ -1,6 +1,10 @@
 package com.flyingeffects.com.utils;
 
-public class timeUtils {
+/**
+ *
+ * @author Coca Cola
+ */
+public class TimeUtils {
 
 
     public static String secondToTime(long second) {

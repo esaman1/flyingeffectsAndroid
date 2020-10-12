@@ -55,7 +55,7 @@ public class GetVideoCover {
             List mattingPath = new ArrayList();
             LogUtil.d("OOM","抠图的图片地址为"+fileName);
             mattingPath.add(fileName);
-            manage.ToMatting(mattingPath);
+            manage.toMatting(mattingPath);
             GlideBitmapPool.putBitmap(mBitmap);
         });
     }

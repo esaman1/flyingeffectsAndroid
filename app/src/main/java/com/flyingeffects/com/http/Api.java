@@ -278,7 +278,7 @@ public class Api {
                     request = request.newBuilder().post(formBuild.build()).build();//构造新的请求体
                 }
                 Request.Builder builder = request.newBuilder();
-                //            MediaType mediaType = MediaType.parse("text/plain; charset=utf-8");
+//            MediaType mediaType = MediaType.parse("text/plain; charset=utf-8");
 //            String newBodyStr = null;
 //            try {
 //                newBodyStr = DESUtil.encode("12345678", "13264147335");
@@ -306,6 +306,5 @@ public class Api {
     public static String getTime() {
         long time = System.currentTimeMillis() / 1000;//获取系统时间的10位的时间戳
         return String.valueOf(time);
-
     }
 }

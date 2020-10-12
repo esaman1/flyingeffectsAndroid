@@ -23,7 +23,7 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.timeUtils;
+import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.view.MarqueTextView;
 import com.flyingeffects.com.view.SampleCoverVideo;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
@@ -250,7 +250,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             @Override
             public void onPrepared(boolean onPrepared) {
                 tv_describe.setVisibility(View.VISIBLE);
-                tv_describe.setText("时长" + timeUtils.timeParse(videoPlayer.getDuration()) + "        上传" + item.getDefaultnum() + "个素材即可制作");
+                tv_describe.setText("时长" + TimeUtils.timeParse(videoPlayer.getDuration()) + "        上传" + item.getDefaultnum() + "个素材即可制作");
             }
         }));
         GSYVideoType.setShowType(GSYVideoType.SCREEN_TYPE_FULL);

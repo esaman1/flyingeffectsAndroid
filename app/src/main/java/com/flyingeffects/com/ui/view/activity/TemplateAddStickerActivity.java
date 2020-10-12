@@ -340,7 +340,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     public void getVideoDuration(int allVideoDuration, int thumbCount) {
         this.allVideoDuration = allVideoDuration;
         LogUtil.d("OOM", "allVideoDuration=" + allVideoDuration);
-//        tv_total.setText(timeUtils.timeParse(allVideoDuration) + "s");
+//        tv_total.setText(TimeUtils.timeParse(allVideoDuration) + "s");
     }
 
 
