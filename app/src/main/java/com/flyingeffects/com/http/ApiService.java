@@ -171,7 +171,7 @@ public interface ApiService {
 
 
     @FormUrlEncoded
-    @POST("/api/message/allMessageNum")
+    @POST("/api/message/allMessageNumNew")
     Observable<HttpResult<messageCount>> getAllMessageNum(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
