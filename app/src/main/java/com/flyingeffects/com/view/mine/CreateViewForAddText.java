@@ -95,10 +95,13 @@ public class CreateViewForAddText {
             @Override
             public void afterTextChanged(String string) {
                 inputText = string;
-                if (callback != null&& !TextUtils.isEmpty(string)) {
-                    callback.setText(inputText);
+                if (callback != null) {
+                    if( !TextUtils.isEmpty(string)){
+                        callback.setText(inputText);
+                    }else{
+                        callback.setText("输入文本");
+                    }
                 }
-
             }
         });
         iv_down.setOnClickListener(view12 -> {

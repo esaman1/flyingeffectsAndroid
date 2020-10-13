@@ -243,6 +243,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     toClickMake();
                     break;
 
+                case R.id.tv_title_music:
                 case R.id.iv_writer:
                 case R.id.tv_describe:
                     Intent intent = new Intent(PreviewUpAndDownActivity.this, UserHomepageActivity.class);
@@ -270,6 +271,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         mIsFollow = allData.get(position).getIs_follow() == 1;
                         LogUtil.d(TAG, "isfollow = " + mIsFollow);
                         LogUtil.d(TAG, "isfollow = " + allData.get(position).getIs_follow());
+                        isOnPause=true;
                         requestFollowThisUser(allData.get(position).getAdmin_id(), view, position);
                     } else {
                         goActivity(LoginActivity.class);
@@ -321,6 +323,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     lastChoosePosition = position;
                     if (BaseConstans.hasLogin()) {
                         //主要用于刷新当前页面
+                        LogUtil.d("OOM", "onPageSelected");
                         mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
                     }
                 }
@@ -376,6 +379,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     ((AppCompatTextView) view.findViewById(R.id.tv_btn_follow)).setText("取消关注");
                     mIsFollow = true;
                 }
+                LogUtil.d("OOM", "requestFollowThisUser");
                 mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
@@ -763,6 +767,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             }
             adapter.setCommentCount(data.getComment());
             is_with_play = templateItem.getIs_with_play();
+            mIsFollow = data.getIs_follow() == 1;
+            adapter.setIsFollow(templateItem.getIs_follow());
             //更新页面数据，防止数据不全的情况
             if (!isOnPause) {
                 allData.set(nowChoosePosition, data);
@@ -1192,6 +1198,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void onEventMainThread(ReplayMessageEvent event) {
         if (BaseConstans.hasLogin()) {
             //主要用于刷新当前页面
+            LogUtil.d("OOM", "ReplayMessageEvent");
+            isOnPause=true;
             mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
         }
     }
