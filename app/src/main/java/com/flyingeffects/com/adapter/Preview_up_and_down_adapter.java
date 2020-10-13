@@ -49,6 +49,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     private TextView tv_zan_count;
     private String OldFromTo;
     private TextView tv_comment_count;
+    private TextView tv_btn_follow;
 
 
     public Preview_up_and_down_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, String OldFromTo) {
@@ -69,7 +70,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         LinearLayout ll_zan = helper.getView(R.id.ll_zan);
         TextView tv_make = helper.getView(R.id.tv_make);
         LinearLayout ll_comment = helper.getView(R.id.ll_comment);
-
+        tv_btn_follow=helper.getView(R.id.tv_btn_follow);
         tv_comment_count=helper.getView(R.id.tv_comment_count);
         tv_zan_count = helper.getView(R.id.tv_zan_count);
         boolean readOnly = item.getTest() != 0;
@@ -145,9 +146,9 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             }
             //关注按键
             if (item.getIs_follow() == 1 && BaseConstans.hasLogin()) {
-                helper.setText(R.id.tv_btn_follow,"取消关注");
+                tv_btn_follow.setText("取消关注");
             } else {
-                helper.setText(R.id.tv_btn_follow,"关注");
+                tv_btn_follow.setText("关注");
             }
 
             if (video_layout.getChildCount() != 0) {
@@ -206,6 +207,22 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             tv_comment_count.setText(commentCount);
         }
     }
+
+
+    public void setIsFollow(int isFollow){
+        //关注按键
+        if (isFollow == 1 && BaseConstans.hasLogin()) {
+            tv_btn_follow.setText("取消关注");
+        } else {
+            tv_btn_follow.setText("关注");
+        }
+    }
+
+
+
+
+
+
 
     /**
      * description ：初始化视频播放器，针对列表

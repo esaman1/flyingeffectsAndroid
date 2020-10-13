@@ -167,6 +167,7 @@ public class PreviewUpAndDownMvpModel {
 
 
     public void requestTemplateDetail(String templateId) {
+        LogUtil.d("OOM","requestTemplateDetail");
         if (!TextUtils.isEmpty(templateId)) {
             HashMap<String, String> params = new HashMap<>();
             params.put("template_id", templateId);
