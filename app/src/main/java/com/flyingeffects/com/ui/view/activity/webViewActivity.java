@@ -45,7 +45,7 @@ public class webViewActivity extends BaseWebActivity {
     WebView webView;
 
     @BindView(R.id.iv_back)
-    ImageView iv_back;
+    ImageView ivBack;
 
 
 
@@ -64,7 +64,7 @@ public class webViewActivity extends BaseWebActivity {
     protected void initView() {
         WaitingDialog.openPragressDialog(this);
         webUrl = getIntent().getStringExtra("webUrl");
-        iv_back.setOnClickListener(new View.OnClickListener() {
+        ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 webViewActivity.this.finish();
@@ -196,7 +196,6 @@ public class webViewActivity extends BaseWebActivity {
 
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
-                // TODO Auto-generated method stub
                 super.onProgressChanged(view, newProgress);
                 if (newProgress == 100) {
                     new Thread(() -> {
@@ -211,8 +210,6 @@ public class webViewActivity extends BaseWebActivity {
             }
 
         });
-
-
         webView.loadUrl(webUrl);
     }
 
@@ -240,7 +237,6 @@ public class webViewActivity extends BaseWebActivity {
             Toast.makeText(getBaseContext(), "Failed to Upload Image", Toast.LENGTH_LONG).show();
         }
     }
-
 
     @Override
     protected void onStop() {

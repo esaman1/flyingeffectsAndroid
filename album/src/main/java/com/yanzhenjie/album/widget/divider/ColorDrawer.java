@@ -37,7 +37,9 @@ class ColorDrawer extends Drawer {
     @ColorInt
     public static int opaqueColor(@ColorInt int color) {
         int alpha = Color.alpha(color);
-        if (alpha == 0) return color;
+        if (alpha == 0) {
+            return color;
+        }
         int red = Color.red(color);
         int green = Color.green(color);
         int blue = Color.blue(color);

@@ -16,7 +16,7 @@ public interface UploadMaterialMVPView {
 
     void showCursor();
 
-    void finishCrop(String path);
+    void finishCrop(String path,boolean isLandscape);
 
     void  getRealCutTime(float RealCutTime);
 }

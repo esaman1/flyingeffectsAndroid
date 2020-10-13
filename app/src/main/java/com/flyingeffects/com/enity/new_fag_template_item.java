@@ -370,6 +370,15 @@ public class new_fag_template_item implements Serializable {
     //是否赞过
     private int is_praise;
 
+    private int is_follow;
+
+    public int getIs_follow() {
+        return is_follow;
+    }
+
+    public void setIs_follow(int is_follow) {
+        this.is_follow = is_follow;
+    }
 
     public String getTemplate_type() {
         return template_type;
@@ -435,6 +444,17 @@ public class new_fag_template_item implements Serializable {
     }
 
     private boolean hasShowAd=false;
+
+    public int getIsLandscape() {
+        return isLandscape;
+    }
+
+    public void setIsLandscape(int isLandscape) {
+        this.isLandscape = isLandscape;
+    }
+
+    //1 是横屏
+    private int isLandscape;
 
 
 //    public CommonNewsBean getNewBean() {

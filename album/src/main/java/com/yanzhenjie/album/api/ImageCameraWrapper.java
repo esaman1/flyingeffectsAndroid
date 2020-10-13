@@ -31,6 +31,7 @@ public class ImageCameraWrapper extends BasicCameraWrapper<ImageCameraWrapper> {
         super(context);
     }
 
+    @Override
     public void start() {
         CameraActivity.sResult = mResult;
         CameraActivity.sCancel = mCancel;

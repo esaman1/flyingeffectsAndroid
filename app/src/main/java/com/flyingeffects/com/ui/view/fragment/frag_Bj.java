@@ -160,9 +160,9 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("template_type", "2");
                         titles[i] = data.get(i).getName();
-                        frag_user_collect fag_0 = new frag_user_collect();
-                        fag_0.setArguments(bundle);
-                        list.add(fag_0);
+                        frag_user_collect fragUserCollect = new frag_user_collect();
+                        fragUserCollect.setArguments(bundle);
+                        list.add(fragUserCollect);
                     } else {
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("id", data.get(i).getId());
@@ -203,7 +203,6 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
         }
     }
 
-
     private void showWitchBtn(int showWitch) {
         for (int i = 0; i < listTv.size(); i++) {
             TextView tv = listTv.get(i);
@@ -225,9 +224,9 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     }
 
     private void setViewWidth(View mView, int width) {
-        LinearLayout.LayoutParams Params = (LinearLayout.LayoutParams) mView.getLayoutParams();
-        Params.width = width;
-        mView.setLayoutParams(Params);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mView.getLayoutParams();
+        params.width = width;
+        mView.setLayoutParams(params);
     }
 
 
@@ -248,7 +247,6 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                 toAddSticker();
                 statisticsEventAffair.getInstance().setFlag(getActivity(), "7_background");
                 break;
-
             case R.id.relative_top:
             case R.id.iv_search:
                 //搜索栏目
@@ -256,10 +254,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                 intent.putExtra("isFrom", 0);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
-
-
                 break;
-
             default:
                 break;
         }
@@ -316,13 +311,10 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                     startActivity(intent);
                 }
             });
-            List<String> Paths = new ArrayList<>();
-            Paths.add(path);
-            manage.ToMatting(Paths);
+            List<String> paths = new ArrayList<>();
+            paths.add(path);
+            manage.toMatting(paths);
         }
-
     }
-
-
 }
 

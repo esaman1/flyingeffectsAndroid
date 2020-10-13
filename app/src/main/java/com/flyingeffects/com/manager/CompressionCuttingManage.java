@@ -81,18 +81,18 @@ public class CompressionCuttingManage {
 
 
 
-    public void ToMatting(List<String> paths){
+    public void toMatting(List<String> paths){
         if(BaseConstans.UserFaceSdk){
            SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
-            CompressImgForFace(paths);
+            compressImgForFace(paths);
         }else{
-            CompressImgAndCache(paths);
+            compressImgAndCache(paths);
         }
     }
 
 
 
-    public void CompressImgAndCache(List<String> paths) {
+    public void compressImgAndCache(List<String> paths) {
         //todo 暂时只针对一张图片的时候
 
         if (hasCache) {
@@ -118,7 +118,7 @@ public class CompressionCuttingManage {
     private List<String> allPaths;
     private int downSuccessNum;
 
-    public void CompressImgForFace(List<String> allPaths) {
+    public void compressImgForFace(List<String> allPaths) {
 
         if (hasCache) {
             if (allPaths != null && allPaths.size() == 1) {
@@ -266,8 +266,8 @@ public class CompressionCuttingManage {
             FileManager manager = new FileManager();
             localCacheName = manager.getFileNameWithSuffix(localCacheName);
             if (mTailtoFolder != null) {
-                File mTailto = new File(mTailtoFolder, localCacheName);
-                manager.mCopyFile(file, mTailto);
+                File tailTo = new File(mTailtoFolder, localCacheName);
+                manager.mCopyFile(file, tailTo);
             }
         }
     }

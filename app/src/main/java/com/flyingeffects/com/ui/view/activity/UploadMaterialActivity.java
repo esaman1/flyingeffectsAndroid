@@ -2,7 +2,6 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.os.Handler;
 
@@ -19,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
@@ -27,7 +25,6 @@ import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
-import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.UserInfo;
@@ -35,9 +32,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AlbumManager;
-import com.flyingeffects.com.manager.AnimForViewShowAndHide;
 import com.flyingeffects.com.manager.BitmapManager;
-import com.flyingeffects.com.manager.CompressImgManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.huaweiObs;
@@ -56,7 +51,6 @@ import com.flyingeffects.com.view.RoundImageView;
 import com.flyingeffects.com.view.VideoFrameRecycler;
 import com.lansosdk.videoeditor.DrawPadView2;
 import com.lansosdk.videoeditor.MediaInfo;
-import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.suke.widget.SwitchButton;
 import com.yanzhenjie.album.AlbumFile;
@@ -74,14 +68,14 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
-import static android.media.MediaMetadataRetriever.OPTION_PREVIOUS_SYNC;
-
 /**
  * description ：上傳背景頁面
  * creation date: 2020/5/12
  * user : zhangtongju
  */
 public class UploadMaterialActivity extends BaseActivity implements UploadMaterialMVPView {
+    //0 表示竖屏，1表示横屏
+    private int isLandscape;
     private UploadMaterialMVPPresenter Presenter;
     @BindView(R.id.crop_preivew_icon)
     ImageView playIcon;
@@ -153,7 +147,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     @BindView(R.id.switch_button)
     SwitchButton switch_button;
 
-    private int isChecked=1;
+    private int isChecked = 1;
 
     @Override
     protected int getLayoutId() {
@@ -165,7 +159,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         Presenter = new UploadMaterialMVPPresenter(this, this);
         //点击进入视频剪切界面
         String videoPath = getIntent().getStringExtra("videoPath");
-        isFrom=getIntent().getIntExtra("isFrom",0);
+        isFrom = getIntent().getIntExtra("isFrom", 0);
         initVideoDrawPad(videoPath, false);
         UiStep.nowUiTag = "";
         UiStep.isFromDownBj = false;
@@ -186,12 +180,12 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         switch_button.setOnCheckedChangeListener((view, isChecked) ->
         {
             if (!isFastDoubleClick()) {
-                if(isChecked){
-                    LogUtil.d("OOM","is_with_play="+1);
-                    this. isChecked=1;
-                }else{
-                    LogUtil.d("OOM","is_with_play="+0);
-                    this. isChecked=0;
+                if (isChecked) {
+                    LogUtil.d("OOM", "is_with_play=" + 1);
+                    this.isChecked = 1;
+                } else {
+                    LogUtil.d("OOM", "is_with_play=" + 0);
+                    this.isChecked = 0;
                 }
             }
         });
@@ -215,7 +209,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
 
         @Override
         public void afterTextChanged(Editable arg0) {
-            if ((temp.length() ) > 10) {
+            if ((temp.length()) > 10) {
                 arg0.delete(10, 11);
                 ToastUtil.showToast("昵称不能太长");
             }
@@ -228,8 +222,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     }
 
     @Override
-    @OnClick({R.id.iv_back, R.id.tv_choose_pic, R.id.add_head
-    })
+    @OnClick({R.id.iv_back, R.id.tv_choose_pic, R.id.add_head})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_back:
@@ -251,7 +244,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                     ToastUtil.showToast("请填写描述");
                     return;
                 }
-                saveVideo(false);
+                saveVideo();
                 break;
 
             case R.id.add_head:
@@ -402,8 +395,14 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     }
 
     @Override
-    public void finishCrop(String videoPath) {
+    public void finishCrop(String videoPath,boolean Landscape) {
 //        WaitingDialog.openPragressDialog(this);
+
+        if(Landscape){
+            isLandscape=1;
+        }else{
+            isLandscape=0;
+        }
         //分为3步 1 提取音频，2提取封面  3 ，提取头像
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -456,7 +455,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
 
 
     @Override
-    public void getRealCutTime(float RealCutTime) {
+    public void getRealCutTime(float realCutTime) {
 
     }
 
@@ -486,14 +485,11 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         this.finish();
     }
 
-
-    private void saveVideo(boolean needCut) {
+    private void saveVideo() {
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
-            Presenter.saveVideo(needCut);
+            Presenter.saveVideo(false);
         }
     }
-
-
 
     /**
      * description ：
@@ -510,18 +506,21 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         params.put("auth_image", huaweiImagePath);
         params.put("audiourl", huaweiSound);
         params.put("image", coverImagePath);
-        params.put("is_with_play", isChecked+""); //1 表示可以合拍
-        LogUtil.d("OOM","is_with_play="+isChecked);
+        LogUtil.d("OOM2","isLandscape="+isLandscape);
+        params.put("isLandscape", isLandscape+"");
+        params.put("is_with_play", isChecked + ""); //1 表示可以合拍
+        LogUtil.d("OOM", "is_with_play=" + isChecked);
         // 启动时间
         LogUtil.d("OOM2", params.toString());
         Observable ob;
-        if(isFrom!=0){
+        if (isFrom != 0) {
             ob = Api.getDefault().uploadSearchResult(BaseConstans.getRequestHead(params));
-        }else{
+        } else {
             ob = Api.getDefault().toLoadTemplate(BaseConstans.getRequestHead(params));
         }
 
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(UploadMaterialActivity.this) {
+
             @Override
             protected void _onError(String message) {
                 WaitingDialog.closePragressDialog();
@@ -538,9 +537,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
 
-
     }
-
 
     //当前上传的标识
     int nowUpdateIndex;

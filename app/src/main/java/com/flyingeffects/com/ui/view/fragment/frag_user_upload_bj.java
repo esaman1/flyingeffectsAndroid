@@ -212,7 +212,6 @@ public class frag_user_upload_bj extends BaseFragment {
                     .setNegativeButton("取消", (dialog, which) -> {
                         dialog.dismiss();
                         statisticsEventAffair.getInstance().setFlag(getActivity(), "9_deletebj3");
-
                     })
                     .setPositiveButton("确定", (dialog, which) -> {
                         requestDelete(id);
@@ -274,9 +273,7 @@ public class frag_user_upload_bj extends BaseFragment {
 //            }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
 
-
     }
-
 
 //    @Subscribe
 //    public void onEventMainThread(uploadMaterialEvent event) {
@@ -288,7 +285,6 @@ public class frag_user_upload_bj extends BaseFragment {
 //        listData.add(1,item);
 //        adapter.notifyDataSetChanged();
 //    }
-
 
 //
 //    //当前上传的标识

@@ -15,7 +15,7 @@ import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.ui.interfaces.view.LocalMusicTailorMvpView;
 import com.flyingeffects.com.ui.presenter.LocalMusicTailorPresenter;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.timeUtils;
+import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.view.histogram.MyBarChartView;
 import com.flyingeffects.com.view.histogram.MyBarChartView.BarData;
 import com.shixing.sxve.ui.view.WaitingDialog;
@@ -95,18 +95,18 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
         allDuration = videoInfo.getDuration();
         needDuration = getIntent().getLongExtra("needDuration", 10000);
         Presenter.setNeedDuration((int) needDuration);
-        tv_allDuration.setText("模板时长" + timeUtils.timeParse(needDuration));
+        tv_allDuration.setText("模板时长" + TimeUtils.timeParse(needDuration));
         mybarCharView.setCallback(new MyBarChartView.ProgressCallback() {
             @Override
             public void progress(float percent) {
                 runOnUiThread(() -> {
                     nowPlayStartTime = (long) (allDuration * percent);
-                    tv_start.setText(timeUtils.timeParse(nowPlayStartTime));
+                    tv_start.setText(TimeUtils.timeParse(nowPlayStartTime));
                     nowPlayEndTime = nowPlayStartTime + needDuration;
                     if(allDuration<needDuration){
-                        tv_end.setText(timeUtils.timeParse(allDuration));
+                        tv_end.setText(TimeUtils.timeParse(allDuration));
                     }else{
-                        tv_end.setText(timeUtils.timeParse(nowPlayEndTime));
+                        tv_end.setText(TimeUtils.timeParse(nowPlayEndTime));
                     }
                 });
             }

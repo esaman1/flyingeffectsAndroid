@@ -88,8 +88,11 @@ public class FolderDialog extends BottomSheetDialog {
         if (window != null) {
             Display display = window.getWindowManager().getDefaultDisplay();
             DisplayMetrics metrics = new DisplayMetrics();
-            if (Build.VERSION.SDK_INT >= 17) display.getRealMetrics(metrics);
-            else display.getMetrics(metrics);
+            if (Build.VERSION.SDK_INT >= 17) {
+                display.getRealMetrics(metrics);
+            } else {
+                display.getMetrics(metrics);
+            }
             int minSize = Math.min(metrics.widthPixels, metrics.heightPixels);
             window.setLayout(minSize, -1);
             if (Build.VERSION.SDK_INT >= 21) {

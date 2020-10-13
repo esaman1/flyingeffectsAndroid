@@ -171,7 +171,9 @@ public class Api20ItemDivider extends Divider {
         if (orientation == RecyclerView.VERTICAL) {
             return position < columnCount;
         } else {
-            if (columnCount == 1) return true;
+            if (columnCount == 1) {
+                return true;
+            }
             return position % columnCount == 0;
         }
     }
@@ -194,14 +196,18 @@ public class Api20ItemDivider extends Divider {
                 }
             }
         } else {
-            if (columnCount == 1) return true;
+            if (columnCount == 1) {
+                return true;
+            }
             return (position + 1) % columnCount == 0;
         }
     }
 
     private boolean isFirstColumn(int orientation, int position, int columnCount, int childCount) {
         if (orientation == RecyclerView.VERTICAL) {
-            if (columnCount == 1) return true;
+            if (columnCount == 1) {
+                return true;
+            }
             return position % columnCount == 0;
         } else {
             return position < columnCount;
@@ -210,7 +216,9 @@ public class Api20ItemDivider extends Divider {
 
     private boolean isLastColumn(int orientation, int position, int columnCount, int childCount) {
         if (orientation == RecyclerView.VERTICAL) {
-            if (columnCount == 1) return true;
+            if (columnCount == 1) {
+                return true;
+            }
             return (position + 1) % columnCount == 0;
         } else {
             if (columnCount == 1) {

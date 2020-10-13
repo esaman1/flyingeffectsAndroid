@@ -23,7 +23,7 @@ import com.yanzhenjie.album.Filter;
 /**
  * Created by YanZhenjie on 2017/8/16.
  */
-public abstract class BasicChoiceWrapper<Returner extends BasicChoiceWrapper, Result, Cancel, Checked> extends BasicAlbumWrapper<Returner, Result, Cancel, Checked> {
+public abstract class BasicChoiceWrapper<Returner extends BasicChoiceWrapper, Result, Cancel, Checked,view> extends BaseAlbumWrapper<Returner, Result, Cancel, Checked,view> {
 
     boolean mHasCamera = true;
     int mColumnCount = 2;
@@ -76,8 +76,8 @@ public abstract class BasicChoiceWrapper<Returner extends BasicChoiceWrapper, Re
         return (Returner) this;
     }
 
-    public Returner material_info( String material_info) {
-        this.material_info = material_info;
+    public Returner materialInfo(String materialInfo) {
+        this.material_info = materialInfo;
         return (Returner) this;
     }
 

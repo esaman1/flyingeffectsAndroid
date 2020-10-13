@@ -3,13 +3,17 @@ package com.flyingeffects.com.ui.model;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Vibrator;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
@@ -70,21 +74,40 @@ public class UploadMaterialMVPModel {
     private VideoTimelineAdapter frameAdapter;
     private RoundImageView cursor;
     private Vibrator vibrator;
+    private int mVideoWidth;
+    private int mVideoHeight;
 
     public UploadMaterialMVPModel(Context context, UploadMaterialMVPCallback callback) {
         this.mContext = context;
         this.callback = callback;
     }
 
+    private static final String TAG = "UploadMaterialMVPModel";
+
     public void initDrawpad(DrawPadView2 drawPadView, String path) {
         this.drawPadView = drawPadView;
         this.videoPath = path;
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(videoPath);
+        String width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
+        String height = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
+        mVideoWidth = Integer.parseInt(width);
+        mVideoHeight = Integer.parseInt(height);
         drawPadView.setUpdateMode(DrawPadUpdateMode.AUTO_FLUSH, FRAME_RATE);
         drawPadView.setOnDrawPadCompletedListener(completeListener);
-        drawPadView.setDrawPadSize(DRAWPAD_WIDTH, DRAWPAD_HEIGHT, (i, i1) -> {
-            padRealWidth = i;
-            padRealHeight = i1;
-        });
+        Log.d(TAG, "initDrawpad: " + "videoWidth = " + mVideoWidth + " videoHeight = " + mVideoHeight);
+        if (mVideoWidth > mVideoHeight) {
+            drawPadView.setDrawPadSize(DRAWPAD_HEIGHT, DRAWPAD_WIDTH, (i, i1) -> {
+                padRealWidth = i;
+                padRealHeight = i1;
+            });
+        } else {
+            drawPadView.setDrawPadSize(DRAWPAD_WIDTH, DRAWPAD_HEIGHT, (i, i1) -> {
+                padRealWidth = i;
+                padRealHeight = i1;
+            });
+
+        }
         drawPadView.setOnDrawPadRecordProgressListener((drawPad, currentTimeUs) -> {
             LogUtil.d("drawPadView", "currentTimeUs=" + currentTimeUs);
         });
@@ -135,8 +158,13 @@ public class UploadMaterialMVPModel {
                 MediaInfo videoInfo = new MediaInfo(videoPath);
                 if (videoInfo.prepare()) {
                     if (padRealHeight == 0) {
-                        padRealWidth = drawPadView.getDrawPadWidth();
-                        padRealHeight = drawPadView.getDrawPadHeight();
+                        if (mVideoWidth > mVideoHeight) {
+                            padRealWidth = drawPadView.getDrawPadHeight();
+                            padRealHeight = drawPadView.getDrawPadWidth();
+                        } else {
+                            padRealWidth = drawPadView.getDrawPadWidth();
+                            padRealHeight = drawPadView.getDrawPadHeight();
+                        }
                     }
                     FRAME_RATE = Math.round(videoInfo.vFrameRate);
                     videoRatio = 1f * videoInfo.getWidth() / videoInfo.getHeight();
@@ -168,12 +196,8 @@ public class UploadMaterialMVPModel {
                             e.printStackTrace();
                         }
                     }
-
-
                 }
-
             }
-
         }
     }
 
@@ -620,7 +644,7 @@ public class UploadMaterialMVPModel {
     private boolean isSaving = false;
     private boolean is4kVideo = false;
     private WaitingDialog_progress dialog;
-
+    private MediaInfo videoInfo;
     public void saveVideo(boolean needCut) {
         if (!fullyInitiated || isSaving) {
             ToastUtil.showToast("还在加载请稍等");
@@ -629,7 +653,8 @@ public class UploadMaterialMVPModel {
 
         dialog = new WaitingDialog_progress(mContext);
         dialog.openProgressDialog();
-        MediaInfo videoInfo = new MediaInfo(videoPath);
+        videoInfo   = new MediaInfo(videoPath);
+
         MediaInfo.checkFile(videoPath);
         if (!videoInfo.prepare()) {
             return;
@@ -650,11 +675,16 @@ public class UploadMaterialMVPModel {
         }
         onPause();
         isSaving = true;
+        int videoHeight=videoInfo.getHeight();
 
+        int videoWidth=videoInfo.getWidth();
+        boolean isLandscape=videoWidth>videoHeight;
+        LogUtil.d("OOM2","videoWidth="+videoWidth);
+        LogUtil.d("OOM2","videoHeight="+videoHeight);
 //        long durationUs = getDuration() * 1000;
         long durationUs = getDuration();
         getUserChooseDuration(cropStartRatio, cropEndRatio);
-        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(mContext, false,Math.round(cropEndRatio * durationUs) - Math.round(cropStartRatio * durationUs)-500, videoPath, Math.round(cropStartRatio * durationUs), new videoCutDurationForVideoOneDo.isSuccess() {
+        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(mContext, false, Math.round(cropEndRatio * durationUs) - Math.round(cropStartRatio * durationUs) - 500, videoPath, Math.round(cropStartRatio * durationUs), new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
             public void progresss(int progress) {
                 if (progress > 100) {
@@ -684,8 +714,8 @@ public class UploadMaterialMVPModel {
                         String tempPath = getTempVideoPath(mContext) + video.getName();
                         try {
                             FileUtil.copyFile(video, tempPath);
-                            callback.finishCrop(tempPath);
-
+                            callback.finishCrop(tempPath,isLandscape);
+                            videoInfo.release();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -710,7 +740,6 @@ public class UploadMaterialMVPModel {
         callback.getRealCutTime(realCutTime);
     }
 
-
     private String getTempVideoPath(Context mContext) {
         try {
             File file = mContext.getExternalFilesDir("runCatch/videos/");
@@ -728,12 +757,10 @@ public class UploadMaterialMVPModel {
         return mContext.getExternalCacheDir().getAbsolutePath();
     }
 
-
     private void toCloseDialog() {
         if (!isOnDestroy) {
             dialog.closePragressDialog();
         }
     }
-
 
 }

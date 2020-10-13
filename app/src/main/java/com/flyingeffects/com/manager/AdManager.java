@@ -8,8 +8,10 @@ import android.widget.LinearLayout;
 import com.flyingeffects.com.ui.model.ShowPraiseModel;
 import com.flyingeffects.com.utils.LogUtil;
 import com.nineton.ntadsdk.bean.AdInfoBean;
+import com.nineton.ntadsdk.itr.BannerAdCallBack;
 import com.nineton.ntadsdk.itr.ImageAdCallBack;
 import com.nineton.ntadsdk.itr.ScreenAdCallBack;
+import com.nineton.ntadsdk.manager.BannerAdManager;
 import com.nineton.ntadsdk.manager.ImageAdManager;
 import com.nineton.ntadsdk.manager.ScreenAdManager;
 
@@ -17,16 +19,15 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
 public class AdManager {
-
+    private static final String TAG = "AdManager";
     private static AdManager thisModel;
+    private BannerAdManager mBannerAdManager;
 
     public static AdManager getInstance() {
-
         if (thisModel == null) {
             thisModel = new AdManager();
         }
         return thisModel;
-
     }
 
 
@@ -87,6 +88,7 @@ public class AdManager {
     }
 
     ImageAdManager imageAdManager;
+
     public void showImageAd(Context context, String id, LinearLayout ll_ad_container, Callback callback) {
         imageAdManager = new ImageAdManager();
         imageAdManager.showImageAd(context, id, ll_ad_container, null, new ImageAdCallBack() {
@@ -100,7 +102,7 @@ public class AdManager {
 
             @Override
             public void onImageAdError(String error) {
-            LogUtil.e("ImageAdError = " + error);
+                LogUtil.e("ImageAdError = " + error);
             }
 
             @Override
@@ -116,15 +118,52 @@ public class AdManager {
     }
 
 
-    public void  ImageAdClose(LinearLayout ll_ad_container){
-        ll_ad_container.removeAllViews();
+    /**
+     * 加载banner广告
+     */
+    public void showBannerAd(Activity activity, String id, LinearLayout llAdContainer) {
+        mBannerAdManager = new BannerAdManager();
+        llAdContainer.setVisibility(View.VISIBLE);
+        llAdContainer.post(() -> mBannerAdManager.showBannerAd(activity, id, llAdContainer, new BannerAdCallBack() {
+            @Override
+            public void onBannerAdShow(View adView) {
+                if (adView != null) {
+                    llAdContainer.removeAllViews();
+                    llAdContainer.addView(adView);
+                }
+            }
+
+            @Override
+            public void onBannerAdError(String error) {
+                com.nineton.ntadsdk.utils.LogUtil.e("banner错误：" + error);
+            }
+
+            @Override
+            public void onBannerAdClose() {
+                llAdContainer.setVisibility(View.GONE);
+            }
+
+            @Override
+            public boolean onBannerAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
+                return false;
+            }
+        }));
     }
 
+    public void releaseBannerManager() {
+        if (mBannerAdManager != null) {
+            LogUtil.d(TAG,"releaseBannerManager");
+            mBannerAdManager.destory();
+            mBannerAdManager = null;
+        }
+    }
+
+    public void ImageAdClose(LinearLayout llAdContainer) {
+        llAdContainer.removeAllViews();
+    }
 
     public interface Callback {
         void adClose();
-
     }
-
 
 }

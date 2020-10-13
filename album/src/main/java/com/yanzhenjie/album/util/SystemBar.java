@@ -35,7 +35,9 @@ public class SystemBar {
      * Set the status bar color.
      */
     public static void setStatusBarColor(Activity activity, int statusBarColor) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) setStatusBarColor(activity.getWindow(), statusBarColor);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setStatusBarColor(activity.getWindow(), statusBarColor);
+        }
     }
 
     /**
@@ -51,7 +53,9 @@ public class SystemBar {
      * Set the navigation bar color.
      */
     public static void setNavigationBarColor(Activity activity, int navigationBarColor) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) setNavigationBarColor(activity.getWindow(), navigationBarColor);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setNavigationBarColor(activity.getWindow(), navigationBarColor);
+        }
     }
 
     /**
@@ -67,7 +71,9 @@ public class SystemBar {
      * Set the content layout full the StatusBar, but do not hide StatusBar.
      */
     public static void invasionStatusBar(Activity activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) invasionStatusBar(activity.getWindow());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            invasionStatusBar(activity.getWindow());
+        }
     }
 
     /**
@@ -86,7 +92,9 @@ public class SystemBar {
      * Set the content layout full the NavigationBar, but do not hide NavigationBar.
      */
     public static void invasionNavigationBar(Activity activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) invasionNavigationBar(activity.getWindow());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            invasionNavigationBar(activity.getWindow());
+        }
     }
 
     /**

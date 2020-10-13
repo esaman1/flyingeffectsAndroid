@@ -16,20 +16,14 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.ChooseMusic;
-import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.GlideRoundTransform;
-import com.flyingeffects.com.ui.model.VideoManage;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.timeUtils;
+import com.flyingeffects.com.utils.TimeUtils;
 
 import java.util.List;
 
 import rx.Observable;
-import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 
 /**
@@ -101,7 +95,7 @@ public class music_recent_adapter extends BaseQuickAdapter<ChooseMusic, BaseView
         if(!TextUtils.isEmpty(item.getTimelength())){
             float time=Float.parseFloat(item.getTimelength());
             long lTong= (long) (time*1000);
-            helper.setText(R.id.tv_time, timeUtils.timeParse(lTong) );
+            helper.setText(R.id.tv_time, TimeUtils.timeParse(lTong) );
         }
 
     }

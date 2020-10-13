@@ -36,7 +36,7 @@ import com.flyingeffects.com.ui.view.activity.UserHomepageActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.utils.timeUtils;
+import com.flyingeffects.com.utils.TimeUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.io.File;
@@ -53,7 +53,6 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 import static com.flyingeffects.com.utils.BlogFileResource.FileManager.isLansongVESuppport;
@@ -329,7 +328,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                     if (allDuration != 0) {
                         float position = mediaPlayer.getCurrentPosition() / (float) allDuration;
                         ChooseMusic chooseMusic2 = listData.get(lastPosition);
-                        chooseMusic2.setPlayingTime(timeUtils.timeParse(mediaPlayer.getCurrentPosition()));
+                        chooseMusic2.setPlayingTime(TimeUtils.timeParse(mediaPlayer.getCurrentPosition()));
                         chooseMusic2.setProgress((int) (position * 100));
                         Observable.just(lastPosition).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> adapter.notifyItemChanged(lastPosition));
                     }

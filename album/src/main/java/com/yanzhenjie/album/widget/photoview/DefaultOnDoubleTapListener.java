@@ -49,8 +49,9 @@ public class DefaultOnDoubleTapListener implements GestureDetector.OnDoubleTapLi
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
-        if (this.photoViewAttacher == null)
+        if (this.photoViewAttacher == null) {
             return false;
+        }
 
         ImageView imageView = photoViewAttacher.getImageView();
 
@@ -84,8 +85,9 @@ public class DefaultOnDoubleTapListener implements GestureDetector.OnDoubleTapLi
 
     @Override
     public boolean onDoubleTap(MotionEvent ev) {
-        if (photoViewAttacher == null)
+        if (photoViewAttacher == null) {
             return false;
+        }
 
         try {
             float scale = photoViewAttacher.getScale();
