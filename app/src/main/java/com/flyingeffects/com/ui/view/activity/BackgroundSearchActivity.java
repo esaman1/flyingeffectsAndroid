@@ -148,7 +148,6 @@ public class BackgroundSearchActivity extends BaseActivity {
                     coordinatorLayout.setVisibility(View.VISIBLE);
                     appbar.setExpanded(true);
                     hideResultView(true);
-                    searchTemplateItemAdapter.setInquireWordColor("");
                 } else {
                     rcSearch.setVisibility(View.VISIBLE);
                     coordinatorLayout.setVisibility(View.GONE);
