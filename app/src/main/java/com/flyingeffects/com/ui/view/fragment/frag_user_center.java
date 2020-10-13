@@ -197,7 +197,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     }
 
 
-    @OnClick({R.id.iv_head,R.id.fans_count,R.id.attention_count,R.id.tv_video_count,R.id.iv_Peeling,R.id.tv_edit_information})
+    @OnClick({R.id.iv_head,R.id.ll_fans_count,R.id.ll_attention_count,R.id.ll_video_count,R.id.iv_Peeling,R.id.tv_edit_information})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_head:
@@ -208,7 +208,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 }
                 break;
 
-            case R.id.fans_count:
+            case R.id.ll_fans_count:
                 if(BaseConstans.hasLogin()){
                     Intent intentZan=new Intent(getActivity(), ZanActivity.class);
                     intentZan.putExtra("from",1);
@@ -219,7 +219,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
                 break;
 
-            case R.id.attention_count:
+            case R.id.ll_attention_count:
                 if(BaseConstans.hasLogin()){
                     Intent intentFoucs=new Intent(getActivity(), MineFocusActivity.class);
                     intentFoucs.putExtra("to_user_id",BaseConstans.GetUserId());
@@ -229,7 +229,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 }
 
                 break;
-            case R.id.tv_video_count:
+            case R.id.ll_video_count:
                 if(BaseConstans.hasLogin()){
                     Intent intentFan=new Intent(getActivity(), FansActivity.class);
                     intentFan.putExtra("to_user_id",BaseConstans.GetUserId());
@@ -305,7 +305,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                             tvIntroduction.setText(data.getRemark());
                             imEdit.setVisibility(View.GONE);
                         }else {
-                            tvIntroduction.setText("完善简介让更多的友友认识你");
+                            tvIntroduction.setText("您还没有填写简介，点击编辑资料添加");
                             imEdit.setVisibility(View.VISIBLE);
                         }
                     }
