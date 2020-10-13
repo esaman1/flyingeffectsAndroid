@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.util.Log;
+import android.widget.LinearLayout;
 
 import androidx.annotation.IntDef;
 
@@ -87,8 +88,6 @@ public final class Album {
     // Filter.
     public static final String KEY_INPUT_FILTER_VISIBILITY = "KEY_INPUT_FILTER_VISIBILITY";
 
-
-
     @IntDef({FUNCTION_CHOICE_IMAGE, FUNCTION_CHOICE_VIDEO, FUNCTION_CHOICE_ALBUM})
     @Retention(RetentionPolicy.SOURCE)
     public @interface ChoiceFunction {
@@ -112,9 +111,11 @@ public final class Album {
      * @param albumConfig {@link AlbumConfig}.
      */
     public static void initialize(AlbumConfig albumConfig) {
-        if (sAlbumConfig == null) sAlbumConfig = albumConfig;
-        else
+        if (sAlbumConfig == null) {
+            sAlbumConfig = albumConfig;
+        } else {
             Log.w("Album", new IllegalStateException("Illegal operation, only allowed to configure once."));
+        }
     }
 
     /**
@@ -200,14 +201,14 @@ public final class Album {
     /**
      * Preview picture.
      */
-    public static BasicGalleryWrapper<GalleryWrapper, String, String, String> gallery(Activity activity) {
+    public static BasicGalleryWrapper<GalleryWrapper, String, String, String, LinearLayout> gallery(Activity activity) {
         return new GalleryWrapper(activity);
     }
 
     /**
      * Preview Album.
      */
-    public static BasicGalleryWrapper<GalleryAlbumWrapper, AlbumFile, String, AlbumFile> galleryAlbum(Activity activity) {
+    public static BasicGalleryWrapper<GalleryAlbumWrapper, AlbumFile, String, AlbumFile, LinearLayout> galleryAlbum(Activity activity) {
         return new GalleryAlbumWrapper(activity);
     }
 
@@ -242,14 +243,14 @@ public final class Album {
     /**
      * Preview picture.
      */
-    public static BasicGalleryWrapper<GalleryWrapper, String, String, String> gallery(Fragment fragment) {
+    public static BasicGalleryWrapper<GalleryWrapper, String, String, String, LinearLayout> gallery(Fragment fragment) {
         return new GalleryWrapper(fragment.getActivity());
     }
 
     /**
      * Preview Album.
      */
-    public static BasicGalleryWrapper<GalleryAlbumWrapper, AlbumFile, String, AlbumFile> galleryAlbum(Fragment fragment) {
+    public static BasicGalleryWrapper<GalleryAlbumWrapper, AlbumFile, String, AlbumFile, LinearLayout> galleryAlbum(Fragment fragment) {
         return new GalleryAlbumWrapper(fragment.getActivity());
     }
 
@@ -284,14 +285,15 @@ public final class Album {
     /**
      * Preview picture.
      */
-    public static BasicGalleryWrapper<GalleryWrapper, String, String, String> gallery(androidx.fragment.app.Fragment fragment) {
+    public static BasicGalleryWrapper<GalleryWrapper, String, String, String, LinearLayout> gallery(androidx.fragment.app.Fragment fragment) {
         return new GalleryWrapper(fragment.getContext());
     }
 
     /**
      * Preview Album.
      */
-    public static BasicGalleryWrapper<GalleryAlbumWrapper, AlbumFile, String, AlbumFile> galleryAlbum(androidx.fragment.app.Fragment fragment) {
+    public static BasicGalleryWrapper<GalleryAlbumWrapper, AlbumFile, String, AlbumFile, LinearLayout> galleryAlbum(androidx.fragment.app.Fragment fragment) {
         return new GalleryAlbumWrapper(fragment.getContext());
     }
+
 }

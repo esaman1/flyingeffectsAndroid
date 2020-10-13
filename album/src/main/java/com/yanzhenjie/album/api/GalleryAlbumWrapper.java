@@ -17,6 +17,7 @@ package com.yanzhenjie.album.api;
 
 import android.content.Context;
 import android.content.Intent;
+import android.widget.LinearLayout;
 
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.AlbumFile;
@@ -27,7 +28,7 @@ import com.yanzhenjie.album.app.gallery.GalleryAlbumActivity;
  * <p>Gallery wrapper.</p>
  * Created by yanzhenjie on 17-3-29.
  */
-public class GalleryAlbumWrapper extends BasicGalleryWrapper<GalleryAlbumWrapper, AlbumFile, String, AlbumFile> {
+public class GalleryAlbumWrapper extends BasicGalleryWrapper<GalleryAlbumWrapper, AlbumFile, String, AlbumFile, LinearLayout> {
 
     public GalleryAlbumWrapper(Context context) {
         super(context);

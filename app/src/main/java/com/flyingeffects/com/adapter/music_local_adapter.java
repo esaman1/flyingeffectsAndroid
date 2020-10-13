@@ -1,7 +1,6 @@
 package com.flyingeffects.com.adapter;
 
 import android.content.Context;
-import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
@@ -13,7 +12,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.BlogFile.Video;
 import com.flyingeffects.com.manager.GlideRoundTransform;
-import com.flyingeffects.com.utils.timeUtils;
+import com.flyingeffects.com.utils.TimeUtils;
 
 import java.util.List;
 
@@ -38,7 +37,7 @@ public class music_local_adapter extends BaseQuickAdapter<Video, BaseViewHolder>
     protected void convert(final BaseViewHolder helper, final Video item) {
         int offset = helper.getLayoutPosition();
         long duration=item.getDuration();
-        helper.setText(R.id.tv_time, timeUtils.timeParse(duration));
+        helper.setText(R.id.tv_time, TimeUtils.timeParse(duration));
         helper.addOnClickListener(R.id.tv_make);
         helper.addOnClickListener(R.id.iv_play);
         ImageView iv_cover=helper.getView(R.id.iv_cover);

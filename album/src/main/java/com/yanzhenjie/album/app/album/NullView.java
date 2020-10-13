@@ -20,6 +20,8 @@ import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.ViewCompat;
+
 import android.view.View;
 import android.widget.TextView;
 
@@ -76,8 +78,8 @@ class NullView extends Contract.NullView implements View.OnClickListener {
 
         Widget.ButtonStyle buttonStyle = widget.getButtonStyle();
         ColorStateList buttonSelector = buttonStyle.getButtonSelector();
-        mBtnTakeImage.setSupportBackgroundTintList(buttonSelector);
-        mBtnTakeVideo.setSupportBackgroundTintList(buttonSelector);
+        ViewCompat.setBackgroundTintList(mBtnTakeImage,buttonSelector);
+        ViewCompat.setBackgroundTintList(mBtnTakeVideo,buttonSelector);
         if (buttonStyle.getUiStyle() == Widget.STYLE_LIGHT) {
             Drawable drawable = mBtnTakeImage.getCompoundDrawables()[0];
             AlbumUtils.setDrawableTint(drawable, getColor(R.color.albumIconDark));

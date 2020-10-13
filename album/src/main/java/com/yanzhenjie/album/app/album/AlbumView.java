@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -62,6 +63,7 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
 
     private Toolbar mToolbar;
     private MenuItem mCompleteMenu;
+    private LinearLayout mFlAdContainer;
 
     private RecyclerView mRecyclerView;
     private GridLayoutManager mLayoutManager;
@@ -91,6 +93,7 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
         this.mTvSwitchFolder = activity.findViewById(R.id.tv_switch_dir);
         this.mBtnPreview = activity.findViewById(R.id.btn_preview);
         this.mTvCapture = activity.findViewById(R.id.tv_capture);
+        this.mFlAdContainer = activity.findViewById(R.id.fl_ad_container);
 
         this.mLayoutLoading = activity.findViewById(R.id.layout_loading);
         this.mProgressBar = activity.findViewById(R.id.progress_bar);
@@ -121,6 +124,7 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
 
             }
         });
+        getPresenter().returnAdContainer(mFlAdContainer);
     }
 
     @Override

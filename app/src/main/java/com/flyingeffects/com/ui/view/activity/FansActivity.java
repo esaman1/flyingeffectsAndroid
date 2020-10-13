@@ -66,7 +66,7 @@ public class FansActivity extends BaseActivity {
         ((TextView) findViewById(R.id.tv_top_title)).setText("粉丝");
         findViewById(R.id.iv_top_back).setOnClickListener(this);
         to_user_id = getIntent().getStringExtra("to_user_id");
-        from=getIntent().getIntExtra("from",0);
+        from = getIntent().getIntExtra("from", 0);
         ShowData();
     }
 
@@ -74,9 +74,9 @@ public class FansActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(BaseConstans.hasLogin()){
+        if (BaseConstans.hasLogin()) {
             requestMessageCount();
-        }else{
+        } else {
 
             ToastUtil.showToast(getResources().getString(R.string.need_login));
         }
@@ -94,10 +94,10 @@ public class FansActivity extends BaseActivity {
         params.put("type", "1");
         params.put("page", selectPage + "");
         params.put("pageSize", "10");
-        Observable ob ;
-        if(from==0){
+        Observable ob;
+        if (from == 0) {
             ob = Api.getDefault().followerList(BaseConstans.getRequestHead(params));
-        }else{
+        } else {
             ob = Api.getDefault().getFollowList(BaseConstans.getRequestHead(params));
         }
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<fansEnity>>(FansActivity.this) {
@@ -130,7 +130,7 @@ public class FansActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
-        if(from==1&&!BaseConstans.hasLogin()){
+        if (from == 1 && !BaseConstans.hasLogin()) {
             goActivity(LoginActivity.class);
         }
     }
@@ -148,10 +148,10 @@ public class FansActivity extends BaseActivity {
                 switch (view.getId()) {
                     case R.id.tv_follow:
 
-                        if(from==0){
+                        if (from == 0) {
                             //我的页面
                             requestFocus(fansList.get(position).getId());
-                        }else{
+                        } else {
                             //消息的粉丝
                             requestFocus(fansList.get(position).getUser_id());
                         }
@@ -169,9 +169,9 @@ public class FansActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent(FansActivity.this, UserHomepageActivity.class);
-                if(from==0){
+                if (from == 0) {
                     intent.putExtra("toUserId", fansList.get(position).getId());
-                }else{
+                } else {
                     intent.putExtra("toUserId", fansList.get(position).getUser_id());
                 }
                 startActivity(intent);
@@ -179,8 +179,6 @@ public class FansActivity extends BaseActivity {
         });
         recyclerView.setAdapter(adapter);
     }
-
-
 
 
     /**
@@ -211,9 +209,9 @@ public class FansActivity extends BaseActivity {
 
     @Subscribe
     public void onEventMainThread(AttentionChange event) {
-        if(from==1){
-            isRefresh=true;
-            selectPage=1;
+        if (from == 1) {
+            isRefresh = true;
+            selectPage = 1;
             requestMessageCount();
         }
 

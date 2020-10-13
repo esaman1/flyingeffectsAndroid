@@ -3,7 +3,11 @@ package com.flyingeffects.com.utils;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class timeUtils {
+public class TimeUtils {
+/**
+ *
+ * @author Coca Cola
+ */
 
 
     public static String secondToTime(long second) {

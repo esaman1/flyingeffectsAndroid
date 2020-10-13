@@ -184,7 +184,6 @@ public class DataCleanManager {
                     }
                 }
             } catch (Exception e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }

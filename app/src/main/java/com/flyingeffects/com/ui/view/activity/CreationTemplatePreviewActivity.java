@@ -27,7 +27,7 @@ import com.flyingeffects.com.ui.model.ShowPraiseModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplatePreviewPresenter;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.timeUtils;
+import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.RoundImageView;
 import com.flyingeffects.com.view.VideoFrameRecycler;
@@ -40,7 +40,6 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.nineton.ntadsdk.itr.VideoAdCallBack;
 import com.nineton.ntadsdk.manager.VideoAdManager;
-import com.orhanobut.hawk.Hawk;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,8 +106,8 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         nowUiIsLandscape=getIntent().getBooleanExtra("nowUiIsLandscape",false);
         Presenter = new CreationTemplatePreviewPresenter(this, this, imagePath);
         VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
-        LogUtil.d("OOM", "timeUtils.timeParse(videoInfo.getDuration())=" + timeUtils.timeParse(videoInfo.getDuration()));
-        tv_duration.setText(timeUtils.timeParse(videoInfo.getDuration()));
+        LogUtil.d("OOM", "TimeUtils.timeParse(videoInfo.getDuration())=" + TimeUtils.timeParse(videoInfo.getDuration()));
+        tv_duration.setText(TimeUtils.timeParse(videoInfo.getDuration()));
         initExo();
     }
 
@@ -412,8 +411,8 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 //                    }
 //                    float progress = getCurrentPos() / (float) mEndDuration;
 ////                    int realPosition = (int) (progress * 100);
-////                    timeUtils = new timeUtils();
-////                    tv_start_time.setText(timeUtils.timeParse(getCurrentPos()));
+////                    TimeUtils = new TimeUtils();
+////                    tv_start_time.setText(TimeUtils.timeParse(getCurrentPos()));
 ////                    seekBar.setProgress(realPosition);
 //                });
 //            }
@@ -536,7 +535,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         LogUtil.d("OOM", "allDuration=" + allDuration);
         exoPlayer.seekTo(position);
         if (allDuration != 0) {
-            tv_duration.setText(timeUtils.timeParse((long) allDuration));
+            tv_duration.setText(TimeUtils.timeParse((long) allDuration));
         }
     }
 

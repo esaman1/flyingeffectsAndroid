@@ -9,24 +9,32 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/album_dp_44"
         android:background="@color/albumColorTabBlack"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0"/>
+        app:layout_constraintVertical_bias="0" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_back"
         android:layout_width="@dimen/album_dp_32"
         android:layout_height="@dimen/album_dp_32"
+        android:layout_marginStart="@dimen/album_dp_16"
         android:src="@drawable/album_ic_back_white"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/v_top_back"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
-        android:layout_marginStart="@dimen/album_dp_16"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <LinearLayout
+        android:id="@+id/fl_ad_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/v_top_back" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tl_index"
@@ -34,7 +42,7 @@
         android:layout_height="@dimen/album_dp_44"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/v_top_back"
+        app:layout_constraintTop_toBottomOf="@id/fl_ad_container"
         app:tabIndicator="@drawable/album_shape_indicator"
         app:tabIndicatorColor="@color/albumColorBlue"
         app:tabIndicatorFullWidth="false"
@@ -53,94 +61,92 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tl_index" />
 
-
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_switch_dir"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/album_sp_16"
         android:layout_marginTop="@dimen/album_dp_11"
-        android:textColor="@color/albumColorWhite"
         android:drawableEnd="@drawable/album_abc_spinner_white"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/albumColorWhite"
+        android:textSize="@dimen/album_sp_16"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/album_dp_11"
+        android:layout_marginEnd="@dimen/album_dp_16"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="0/1"
         android:textColor="@color/albumColorBlue"
         android:textSize="@dimen/album_sp_16"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:text="0/1"
+        app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0"
-        app:layout_constraintHorizontal_bias="1"
-        android:layout_marginTop="@dimen/album_dp_11"
-        android:layout_marginEnd="@dimen/album_dp_16" />
+        app:layout_constraintVertical_bias="0" />
 
     <View
         android:id="@+id/v_bottom_back"
         android:layout_width="0dp"
         android:layout_height="@dimen/album_dp_49"
         android:background="@color/albumColorTabBlack"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1"/>
+        app:layout_constraintVertical_bias="1" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_capture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/album_shape_capture"
-        android:textSize="@dimen/album_sp_16"
-        android:textColor="@color/albumColorWhite"
-        app:layout_constraintTop_toTopOf="@id/v_bottom_back"
-        app:layout_constraintBottom_toBottomOf="@id/v_bottom_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:paddingStart="@dimen/album_dp_12"
-        android:paddingEnd="@dimen/album_dp_12"
         android:paddingTop="@dimen/album_dp_10"
+        android:paddingEnd="@dimen/album_dp_12"
         android:paddingBottom="@dimen/album_dp_10"
-        android:text="跟着音乐拍摄" />
+        android:text="跟着音乐拍摄"
+        android:textColor="@color/albumColorWhite"
+        android:textSize="@dimen/album_sp_16"
+        app:layout_constraintBottom_toBottomOf="@id/v_bottom_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/v_bottom_back" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/album_dp_15"
         android:background="@drawable/album_shape_next"
-        android:textSize="@dimen/album_sp_16"
+        android:paddingStart="@dimen/album_dp_20"
+        android:paddingTop="@dimen/album_dp_10"
+        android:paddingEnd="@dimen/album_dp_20"
+        android:paddingBottom="@dimen/album_dp_10"
+        android:text="下一步"
         android:textColor="@color/albumColorWhite"
-        app:layout_constraintTop_toTopOf="@id/v_bottom_back"
+        android:textSize="@dimen/album_sp_16"
         app:layout_constraintBottom_toBottomOf="@id/v_bottom_back"
-        app:layout_constraintStart_toEndOf="@id/tv_capture"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1"
-        android:layout_marginEnd="@dimen/album_dp_15"
-        android:paddingStart="@dimen/album_dp_20"
-        android:paddingEnd="@dimen/album_dp_20"
-        android:paddingTop="@dimen/album_dp_10"
-        android:paddingBottom="@dimen/album_dp_10"
-        android:text="下一步" />
+        app:layout_constraintStart_toEndOf="@id/tv_capture"
+        app:layout_constraintTop_toTopOf="@id/v_bottom_back" />
 
     <TextView
         android:id="@+id/tv_show_alert"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:textColor="#ffffff"
-        android:visibility="gone"
-        android:textSize="@dimen/album_sp_14" />
-
+        android:textSize="@dimen/album_sp_14"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/layout_loading"
@@ -157,11 +163,9 @@
         <TextView
             style="@style/Album.WrapContent"
             android:layout_marginStart="@dimen/album_dp_20"
-            android:layout_marginLeft="@dimen/album_dp_20"
             android:text="@string/album_loading"
             android:textColor="@color/albumFontHint"
             android:textSize="@dimen/album_sp_16" />
-
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatButton
@@ -169,6 +173,6 @@
         style="@style/Album.TextButton.WrapContent.SheetBottom"
         android:layout_alignParentEnd="true"
         android:drawableStart="@drawable/album_ic_eye_white"
-        android:drawableLeft="@drawable/album_ic_eye_white"
         android:visibility="gone" />
+
 </merge>

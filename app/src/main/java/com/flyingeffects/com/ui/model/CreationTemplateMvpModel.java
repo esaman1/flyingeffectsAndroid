@@ -308,7 +308,7 @@ public class CreationTemplateMvpModel {
                     , false, tailorPaths -> callback.getVideoCover(tailorPaths.get(0), path));
             List<String> mattingPath = new ArrayList<>();
             mattingPath.add(fileName);
-            manage.ToMatting(mattingPath);
+            manage.toMatting(mattingPath);
             GlideBitmapPool.putBitmap(mBitmap);
         });
     }
@@ -1015,7 +1015,7 @@ public class CreationTemplateMvpModel {
                                             }
                                         });
                                     });
-                                    manage.ToMatting(paths);
+                                    manage.toMatting(paths);
 
                                     if (stickView.isFirstAddSticker()) {
                                         if (stickView.isOpenVoice()) {

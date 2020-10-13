@@ -80,8 +80,9 @@ public class AlbumUtils {
     public static boolean sdCardIsAvailable() {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             return Environment.getExternalStorageDirectory().canWrite();
-        } else
+        } else {
             return false;
+        }
     }
 
     /**
@@ -251,8 +252,12 @@ public class AlbumUtils {
      */
     @NonNull
     private static String randomMediaPath(File bucket, String extension) {
-        if (bucket.exists() && bucket.isFile()) bucket.delete();
-        if (!bucket.exists()) bucket.mkdirs();
+        if (bucket.exists() && bucket.isFile()) {
+            bucket.delete();
+        }
+        if (!bucket.exists()) {
+            bucket.mkdirs();
+        }
         String outFilePath = AlbumUtils.getNowDateTime("yyyyMMdd_HHmmssSSS") + "_" + getMD5ForString(UUID.randomUUID().toString()) + extension;
         File file = new File(bucket, outFilePath);
         return file.getAbsolutePath();
@@ -278,7 +283,9 @@ public class AlbumUtils {
      */
     public static String getMimeType(String url) {
         String extension = getExtension(url);
-        if (!MimeTypeMap.getSingleton().hasExtension(extension)) return "";
+        if (!MimeTypeMap.getSingleton().hasExtension(extension)) {
+            return "";
+        }
 
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
         return TextUtils.isEmpty(mimeType) ? "" : mimeType;

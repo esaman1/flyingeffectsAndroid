@@ -46,6 +46,8 @@ public class BaseFragment extends Fragment implements Bye {
     @Override
     public void bye() {
         Activity activity = getActivity();
-        if (activity != null) activity.finish();
+        if (activity != null) {
+            activity.finish();
+        }
     }
 }

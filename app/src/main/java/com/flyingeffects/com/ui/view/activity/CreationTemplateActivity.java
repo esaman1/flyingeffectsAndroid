@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -35,7 +36,7 @@ import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
-import com.flyingeffects.com.utils.timeUtils;
+import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.view.HorizontalListView;
 import com.flyingeffects.com.view.MyScrollView;
 import com.flyingeffects.com.view.mine.CreateViewForAddText;
@@ -44,6 +45,7 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.lansosdk.box.ViewLayerRelativeLayout;
@@ -57,6 +59,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import androidx.viewpager.widget.ViewPager;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -72,7 +75,7 @@ import rx.android.schedulers.AndroidSchedulers;
 
 
 public class CreationTemplateActivity extends BaseActivity implements CreationTemplateMvpView {
-
+    private static final String TAG = "CreationTemplate";
     @BindView(R.id.viewPager)
     ViewPager viewPager;
 
@@ -174,7 +177,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @BindView(R.id.ll_add_text_style)
     LinearLayout ll_add_text_style;
 
-
     @Override
     protected int getLayoutId() {
         return R.layout.act_creation_template_edit;
@@ -194,18 +196,28 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             originalPath = bundle.getString("originalPath");
             isNeedCut = bundle.getBoolean("isNeedCut");
             title = bundle.getString("bjTemplateTitle");
-            templateId=bundle.getInt("templateId");
+            templateId = bundle.getInt("templateId");
         }
         presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout, originalPath, null);
+        LogUtil.d(TAG, "videoPath = " + videoPath);
+
         if (!TextUtils.isEmpty(videoPath)) {
-            //有视频的时候，初始化视频值
-            setPlayerViewSize(false);
+            //有视频的时候，初始化视频
+            //todo 改变默认横竖屏，需知视频宽高比 待验证
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(videoPath);
+            String width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
+            String height = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
+            int w = Integer.parseInt(width);
+            int h = Integer.parseInt(height);
+            LogUtil.d(TAG, "video width = " + width + " video height = " + height);
+            setPlayerViewSize(w > h);
             initExo(videoPath);
         } else {
             showGreenBj();
         }
         presenter.requestStickersList();
-        presenter.statisticsDuration(videoPath,this);
+        presenter.statisticsDuration(videoPath, this);
     }
 
     private MediaSource mediaSource;
@@ -236,7 +248,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 }
             }
         });
-        mediaSource = new ExtractorMediaSource.Factory(
+        mediaSource = new ProgressiveMediaSource.Factory(
                 new DefaultDataSourceFactory(CreationTemplateActivity.this, "exoplayer-codelab")).
                 createMediaSource(Uri.fromFile(new File(videoPath)));
 
@@ -341,7 +353,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
             case R.id.tv_top_submit:
                 if (isPlaying) {
-                    videoToPause();
+                    videoToPause();//submit
                     pauseBgmMusic();
                     endTimer();
                 }
@@ -361,20 +373,17 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
             case R.id.iv_delete_all_text:
                 presenter.deleteAllTextSticker();
-                if(createViewForAddText!=null){
+                if (createViewForAddText != null) {
                     createViewForAddText.hideInputTextDialog();
                 }
-
                 break;
-
-
             case R.id.ll_play:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
                     if (isPlaying) {
                         pauseBgmMusic();
                         isIntoPause = false;
                         isPlayComplate = false;
-                        videoToPause();
+                        videoToPause();//点击播放暂定
                         presenter.showGifAnim(false);
                         isPlaying = false;
                         nowStateIsPlaying(false);
@@ -385,32 +394,24 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         new Thread(() -> presenter.showAllAnim(true)).start();
                     }
                 }
-
                 break;
-
-
             case R.id.tv_music:
                 presenter.chooseAnim(2);
                 setTextColor(2);
-
                 break;
-
             case R.id.tv_add_text:
                 intoTextStyleDialog("");
                 presenter.addTextSticker();
-                statisticsEventAffair.getInstance().setFlag(this,"20_bj_text");
+                statisticsEventAffair.getInstance().setFlag(this, "20_bj_text");
                 break;
-
-
             case R.id.iv_top_back:
                 this.finish();
                 break;
-
             case R.id.iv_add_sticker:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
                     presenter.showAllAnim(false);
                     if (isPlaying) {
-                        videoToPause();
+                        videoToPause();//添加贴纸
                         isPlaying = false;
                         endTimer();
                         presenter.showGifAnim(false);
@@ -435,7 +436,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                                 CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this, "", tailorPaths -> {
                                     presenter.addNewSticker(tailorPaths.get(0), paths.get(0));
                                 });
-                                manage.ToMatting(paths);
+                                manage.toMatting(paths);
                             } else {
                                 //贴纸选择的视频
                                 intoVideoCropActivity(paths.get(0));
@@ -451,7 +452,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 break;
-
             case R.id.tv_anim:
                 presenter.chooseAnim(1);
                 setTextColor(1);
@@ -460,18 +460,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 presenter.chooseAnim(0);
                 setTextColor(0);
                 break;
-
             case R.id.iv_change_ui:
                 //横竖屏切换
                 nowUiIsLandscape = !nowUiIsLandscape;
 //                if(nowUiIsLandscape){
 //                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "13_horizontal");
 //                }
-
                 setPlayerViewSize(nowUiIsLandscape);
-
                 break;
-
             default:
                 break;
         }
@@ -480,17 +476,17 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     CreateViewForAddText createViewForAddText;
 
-    private void intoTextStyleDialog(String inputText){
-        if(!DoubleClick.getInstance().isFastDoubleClick()){
+    private void intoTextStyleDialog(String inputText) {
+        if (!DoubleClick.getInstance().isFastDoubleClick()) {
             if (createViewForAddText != null) {
                 createViewForAddText.hideInputTextDialog();
                 createViewForAddText = null;
             }
             ll_add_text_style.setVisibility(View.VISIBLE);
-            createViewForAddText=new CreateViewForAddText(this,ll_add_text_style, new CreateViewForAddText.downCallback() {
+            createViewForAddText = new CreateViewForAddText(this, ll_add_text_style, new CreateViewForAddText.downCallback() {
                 @Override
                 public void isSuccess(String path, int type) {
-                    presenter.ChangeTextStyle(path,type);
+                    presenter.ChangeTextStyle(path, type);
                 }
 
                 @Override
@@ -506,11 +502,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
                 @Override
                 public void setTextColor(String color0, String color1) {
-                    LogUtil.d("OOM4","color0="+color0+"color1="+color1);
-                    presenter.ChangeTextColor(color0,color1);
+                    LogUtil.d("OOM4", "color0=" + color0 + "color1=" + color1);
+                    presenter.ChangeTextColor(color0, color1);
                 }
             });
-            createViewForAddText.showBottomSheetDialog(inputText,"bj_template");
+            createViewForAddText.showBottomSheetDialog(inputText, "bj_template");
         }
     }
 
@@ -558,15 +554,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     private void initViewLayerRelative() {
-        ViewGroup.LayoutParams RelativeLayoutParams = viewLayerRelativeLayout.getLayoutParams();
+        ViewGroup.LayoutParams relativeLayoutParams = viewLayerRelativeLayout.getLayoutParams();
         float oriRatio;
         oriRatio = 9f / 16f;
         //保证获得mContainer大小不为0
         viewLayerRelativeLayout.post(() -> {
             int oriHeight = viewLayerRelativeLayout.getHeight();
-            RelativeLayoutParams.width = Math.round(1f * oriHeight * oriRatio);
-            RelativeLayoutParams.height = oriHeight;
-            viewLayerRelativeLayout.setLayoutParams(RelativeLayoutParams);
+            relativeLayoutParams.width = Math.round(1f * oriHeight * oriRatio);
+            relativeLayoutParams.height = oriHeight;
+            viewLayerRelativeLayout.setLayoutParams(relativeLayoutParams);
         });
 
         if (!TextUtils.isEmpty(videoPath)) {
@@ -610,39 +606,38 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private void setPlayerViewSize(boolean isLandscape) {
 
-        videoToPause();
-
-        LinearLayout.LayoutParams RelativeLayoutParams = (LinearLayout.LayoutParams) playerView.getLayoutParams();
+        videoToPause();//切换横竖屏
+        LinearLayout.LayoutParams relativeLayoutParams = (LinearLayout.LayoutParams) playerView.getLayoutParams();
         float oriRatio = 9f / 16f;
         if (isLandscape) {
             //横屏的情况
             scrollView.post(() -> {
                 int oriWidth = ll_space.getWidth();
-                RelativeLayout.LayoutParams RelativeLayoutParams2 = (RelativeLayout.LayoutParams) scrollView.getLayoutParams();
-                RelativeLayoutParams2.width = oriWidth;
-                RelativeLayoutParams2.height = Math.round(1f * oriWidth * oriRatio);
-                scrollView.setLayoutParams(RelativeLayoutParams2);
-                scrollViewHeight = RelativeLayoutParams2.height;
-                RelativeLayoutParams.width = oriWidth;
-                RelativeLayoutParams.height = Math.round(1f * oriWidth / oriRatio);
-                playerView.setLayoutParams(RelativeLayoutParams);
+                RelativeLayout.LayoutParams relativeLayoutParams2 = (RelativeLayout.LayoutParams) scrollView.getLayoutParams();
+                relativeLayoutParams2.width = oriWidth;
+                relativeLayoutParams2.height = Math.round(1f * oriWidth * oriRatio);
+                scrollView.setLayoutParams(relativeLayoutParams2);
+                scrollViewHeight = relativeLayoutParams2.height;
+                relativeLayoutParams.width = oriWidth;
+                relativeLayoutParams.height = Math.round(1f * oriWidth / oriRatio);
+                playerView.setLayoutParams(relativeLayoutParams);
                 //设置预览编辑界面
-                viewLayerRelativeLayout.setLayoutParams(RelativeLayoutParams2);
+                viewLayerRelativeLayout.setLayoutParams(relativeLayoutParams2);
             });
         } else {
             //横屏模式下切换到了竖屏
             scrollView.post(() -> {
-                RelativeLayout.LayoutParams RelativeLayoutParams2 = (RelativeLayout.LayoutParams) scrollView.getLayoutParams();
+                RelativeLayout.LayoutParams relativeLayoutParams2 = (RelativeLayout.LayoutParams) scrollView.getLayoutParams();
                 int height = ll_space.getHeight();
-                RelativeLayoutParams2.height = height;
-                RelativeLayoutParams2.width = Math.round(1f * height * oriRatio);
-                scrollView.setLayoutParams(RelativeLayoutParams2);
+                relativeLayoutParams2.height = height;
+                relativeLayoutParams2.width = Math.round(1f * height * oriRatio);
+                scrollView.setLayoutParams(relativeLayoutParams2);
                 scrollViewHeight = height;
-                RelativeLayoutParams.width = Math.round(1f * height * oriRatio);
-                RelativeLayoutParams.height = height;
-                playerView.setLayoutParams(RelativeLayoutParams);
+                relativeLayoutParams.width = Math.round(1f * height * oriRatio);
+                relativeLayoutParams.height = height;
+                playerView.setLayoutParams(relativeLayoutParams);
                 //设置预览编辑界面
-                viewLayerRelativeLayout.setLayoutParams(RelativeLayoutParams2);
+                viewLayerRelativeLayout.setLayoutParams(relativeLayoutParams2);
             });
         }
 
@@ -653,26 +648,26 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 //横屏的情况
                 iv_green_background.post(() -> {
                     int oriWidth = ll_space.getWidth();
-                    RelativeLayout.LayoutParams RelativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
-                    RelativeLayoutParams3.width = oriWidth;
-                    RelativeLayoutParams3.height = Math.round(1f * oriWidth * oriRatio);
-                    ll_green_background.setLayoutParams(RelativeLayoutParams3);
-                    RelativeLayout.LayoutParams RelativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
-                    RelativeLayoutParams4.width = oriWidth;
-                    RelativeLayoutParams4.height = Math.round(1f * oriWidth * oriRatio);
-                    iv_green_background.setLayoutParams(RelativeLayoutParams4);
+                    RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
+                    relativeLayoutParams3.width = oriWidth;
+                    relativeLayoutParams3.height = Math.round(1f * oriWidth * oriRatio);
+                    ll_green_background.setLayoutParams(relativeLayoutParams3);
+                    RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
+                    relativeLayoutParams4.width = oriWidth;
+                    relativeLayoutParams4.height = Math.round(1f * oriWidth * oriRatio);
+                    iv_green_background.setLayoutParams(relativeLayoutParams4);
                 });
             } else {
                 iv_green_background.post(() -> {
                     int oriHeight = ll_space.getHeight();
-                    RelativeLayout.LayoutParams RelativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
-                    RelativeLayoutParams3.width = Math.round(1f * oriHeight * oriRatio);
-                    RelativeLayoutParams3.height = oriHeight;
-                    ll_green_background.setLayoutParams(RelativeLayoutParams3);
-                    RelativeLayout.LayoutParams RelativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
-                    RelativeLayoutParams4.width = Math.round(1f * oriHeight * oriRatio);
-                    RelativeLayoutParams4.height = oriHeight;
-                    iv_green_background.setLayoutParams(RelativeLayoutParams4);
+                    RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
+                    relativeLayoutParams3.width = Math.round(1f * oriHeight * oriRatio);
+                    relativeLayoutParams3.height = oriHeight;
+                    ll_green_background.setLayoutParams(relativeLayoutParams3);
+                    RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
+                    relativeLayoutParams4.width = Math.round(1f * oriHeight * oriRatio);
+                    relativeLayoutParams4.height = oriHeight;
+                    iv_green_background.setLayoutParams(relativeLayoutParams4);
                 });
             }
         }
@@ -684,14 +679,20 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             LogUtil.d("OOM3", "percentageH" + percentageH);
         });
 
+        new Handler().postDelayed(() -> {
+            presenter.setAllStickerCenter();
+            if(isLandscape){
+                scrollView.scrollTo(0,ll_space.getHeight()/2);
+            }
+        },500);
 
-        new Handler().postDelayed(() -> presenter.setAllStickerCenter(), 500);
+//        new Handler().postDelayed(() -> presenter.setAllStickerCenter(), 500);
     }
 
 
     @Override
     protected void onPause() {
-        videoToPause();
+        videoToPause();//onPause
         isIntoPause = true;
         presenter.intoOnPause();
         super.onPause();
@@ -708,7 +709,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
         EventBus.getDefault().unregister(this);
         super.onDestroy();
-
     }
 
     @Override
@@ -762,7 +762,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     public void getVideoDuration(int allVideoDuration, int thumbCount) {
         this.allVideoDuration = allVideoDuration;
         LogUtil.d("OOM", "allVideoDuration=" + allVideoDuration);
-        tv_total.setText(timeUtils.timeParse(allVideoDuration) + "s");
+        tv_total.setText(TimeUtils.timeParse(allVideoDuration) + "s");
     }
 
     @Override
@@ -770,7 +770,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if (isPlaying) {
             isIntoPause = false;
             isPlayComplate = false;
-            videoToPause();
+            videoToPause();//interface needPauseVideo
             presenter.showGifAnim(false);
             isPlaying = false;
             nowStateIsPlaying(false);

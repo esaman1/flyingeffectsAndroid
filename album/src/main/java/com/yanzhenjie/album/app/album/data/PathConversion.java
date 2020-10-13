@@ -59,10 +59,12 @@ public class PathConversion {
         albumFile.setSize(file.length());
         int mediaType = 0;
         if (!TextUtils.isEmpty(mimeType)) {
-            if (mimeType.contains("video"))
+            if (mimeType.contains("video")) {
                 mediaType = AlbumFile.TYPE_VIDEO;
-            if (mimeType.contains("image"))
+            }
+            if (mimeType.contains("image")) {
                 mediaType = AlbumFile.TYPE_IMAGE;
+            }
         }
         albumFile.setMediaType(mediaType);
 

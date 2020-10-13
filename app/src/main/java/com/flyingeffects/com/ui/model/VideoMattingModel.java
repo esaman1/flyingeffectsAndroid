@@ -21,11 +21,10 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.LruCacheManage;
 import com.flyingeffects.com.manager.ThreadJudgeManage;
 import com.flyingeffects.com.manager.statisticsEventAffair;
-import com.flyingeffects.com.ui.view.activity.HomeMainActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
-import com.flyingeffects.com.utils.timeUtils;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;
@@ -35,7 +34,6 @@ import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.megvii.segjni.SegJni;
-import com.shixing.sxve.ui.util.BitmapCompress;
 import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
 
 import java.io.File;
@@ -43,7 +41,6 @@ import java.util.List;
 
 import rx.Observable;
 import rx.schedulers.Schedulers;
-import top.zibin.luban.Luban;
 
 /**
  * description ：视频抠图控制类
@@ -228,7 +225,7 @@ public class VideoMattingModel {
                     DataCleanManager.deleteFilesByDirectory(context.getExternalFilesDir("faceMattingFolder"));
                     DataCleanManager.deleteFilesByDirectory(context.getExternalFilesDir("faceFolder"));
                     long time = System.currentTimeMillis() - nowCurtime;
-                    String ss = timeUtils.timeParse(time);
+                    String ss = TimeUtils.timeParse(time);
                     LogUtil.d("OOM", "总共扣视频需要了" + ss);
                     //    requestLoginForSdk(ss);
                     statisticsEventAffair.getInstance().setFlag(context, "mattingVideoTime", templateName);

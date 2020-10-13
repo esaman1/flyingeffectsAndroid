@@ -66,7 +66,6 @@ public interface ApiService {
     @POST("/api/template/collectionList")
     Observable<HttpResult<List<new_fag_template_item>>> collectionList(@FieldMap Map<String, String> params);
 
-
     @FormUrlEncoded
     @POST("/api/message/systemessagelist")
     Observable<HttpResult<List<systemessagelist>>> systemessagelist(@FieldMap Map<String, String> params);
@@ -129,10 +128,6 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/message/addPraise")
     Observable<HttpResult<Object>> addPraise(@FieldMap Map<String, String> params);
-
-
-
-
 
     @FormUrlEncoded
     @POST("/api/template/templateLInfo")
@@ -236,8 +231,6 @@ public interface ApiService {
     @POST("/api/message/commentList")
     Observable<HttpResult<List<MineCommentEnity>>> commentList(@FieldMap Map<String, String> params);
 
-
-
     //删除我的评论列表
     @FormUrlEncoded
     @POST("/api/message/delComment")
@@ -250,7 +243,6 @@ public interface ApiService {
 
 
     //关注和取消关注
-
     @FormUrlEncoded
     @POST("/api/message/followUser")
     Observable<HttpResult<Object>> followUser(@FieldMap Map<String, String> params);
@@ -264,16 +256,11 @@ public interface ApiService {
     @POST("/api/message/commentcheck")
     Observable<HttpResult<Object>> commentcheck(@FieldMap Map<String, String> params);
 
-
-
     @FormUrlEncoded
     @POST("/api/message/musicList")
     Observable<HttpResult<List<ChooseMusic>>> musicList(@FieldMap Map<String, String> params);
 
-
-
     //音乐收藏和取消收藏
-
     @FormUrlEncoded
     @POST("/api/message/collectMusic")
     Observable<HttpResult<Object>> collectMusic(@FieldMap Map<String, String> params);

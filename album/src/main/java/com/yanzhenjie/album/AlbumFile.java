@@ -90,10 +90,11 @@ public class AlbumFile implements Parcelable, Comparable<AlbumFile> {
     @Override
     public int compareTo(AlbumFile o) {
         long time = o.getAddDate() - getAddDate();
-        if (time > Integer.MAX_VALUE)
+        if (time > Integer.MAX_VALUE) {
             return Integer.MAX_VALUE;
-        else if (time < -Integer.MAX_VALUE)
+        } else if (time < -Integer.MAX_VALUE) {
             return -Integer.MAX_VALUE;
+        }
         return (int) time;
     }
 

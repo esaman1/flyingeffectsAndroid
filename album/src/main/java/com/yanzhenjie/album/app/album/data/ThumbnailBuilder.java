@@ -47,8 +47,12 @@ public class ThumbnailBuilder {
 
     public ThumbnailBuilder(Context context) {
         this.mCacheDir = AlbumUtils.getAlbumRootPath(context);
-        if (mCacheDir.exists() && mCacheDir.isFile()) mCacheDir.delete();
-        if (!mCacheDir.exists()) mCacheDir.mkdirs();
+        if (mCacheDir.exists() && mCacheDir.isFile()) {
+            mCacheDir.delete();
+        }
+        if (!mCacheDir.exists()) {
+            mCacheDir.mkdirs();
+        }
     }
 
     /**
@@ -60,16 +64,24 @@ public class ThumbnailBuilder {
     @WorkerThread
     @Nullable
     public String createThumbnailForImage(String imagePath) {
-        if (TextUtils.isEmpty(imagePath)) return null;
+        if (TextUtils.isEmpty(imagePath)) {
+            return null;
+        }
 
         File inFile = new File(imagePath);
-        if (!inFile.exists()) return null;
+        if (!inFile.exists()) {
+            return null;
+        }
 
         File thumbnailFile = randomPath(imagePath);
-        if (thumbnailFile.exists()) return thumbnailFile.getAbsolutePath();
+        if (thumbnailFile.exists()) {
+            return thumbnailFile.getAbsolutePath();
+        }
 
         Bitmap inBitmap = readImageFromPath(imagePath, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
-        if (inBitmap == null) return null;
+        if (inBitmap == null) {
+            return null;
+        }
 
         ByteArrayOutputStream compressStream = new ByteArrayOutputStream();
         inBitmap.compress(Bitmap.CompressFormat.JPEG, THUMBNAIL_QUALITY, compressStream);
@@ -97,10 +109,14 @@ public class ThumbnailBuilder {
     @WorkerThread
     @Nullable
     public String createThumbnailForVideo(String videoPath) {
-        if (TextUtils.isEmpty(videoPath)) return null;
+        if (TextUtils.isEmpty(videoPath)) {
+            return null;
+        }
 
         File thumbnailFile = randomPath(videoPath);
-        if (thumbnailFile.exists()) return thumbnailFile.getAbsolutePath();
+        if (thumbnailFile.exists()) {
+            return thumbnailFile.getAbsolutePath();
+        }
 
         try {
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();

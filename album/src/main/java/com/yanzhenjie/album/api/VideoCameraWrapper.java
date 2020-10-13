@@ -66,6 +66,7 @@ public class VideoCameraWrapper extends BasicCameraWrapper<VideoCameraWrapper> {
         return this;
     }
 
+    @Override
     public void start() {
         CameraActivity.sResult = mResult;
         CameraActivity.sCancel = mCancel;

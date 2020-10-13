@@ -190,26 +190,28 @@ public class DrawPadView2 extends FrameLayout {
         return drawPadHeight;
     }
 
-    public boolean isTextureAvailable(){
-        return mSurfaceTexture!=null && isDrawPadSizeChanged;
+    public boolean isTextureAvailable() {
+        return mSurfaceTexture != null && isDrawPadSizeChanged;
     }
+
     /**
      * 此回调仅仅是作为演示: 当跳入到别的Activity后的返回时,会再次预览当前画面的功能.
      * 你完全可以重新按照你的界面需求来修改这个DrawPadView类.
      */
     public void setOnViewAvailable(onViewAvailable listener) {
         mViewAvailable = listener;
-        if(mSurfaceTexture!=null){
+        if (mSurfaceTexture != null) {
             mViewAvailable.viewAvailable(this);
         }
     }
+
     /**
      * 录制参数设置
      *
-     * @param encW    录制视频的宽度
-     * @param encH    录制视频的高度
-     * @param encBr   录制视频的bitrate,
-     * @param encFr   录制视频的 帧率
+     * @param encW  录制视频的宽度
+     * @param encH  录制视频的高度
+     * @param encBr 录制视频的bitrate,
+     * @param encFr 录制视频的 帧率
      */
     public void setRecordParams(int encW, int encH, int encBr, int encFr) {
         if (encW > 0 && encH > 0 && encBr > 0 && encFr > 0) {
@@ -217,14 +219,16 @@ public class DrawPadView2 extends FrameLayout {
             encHeight = encH;
             encBitRate = encBr;
             encFrameRate = encFr;
-            if(renderer!=null){
-                renderer.setEncoderEnable(encWidth,encHeight,encBitRate,encFrameRate);
+            if (renderer != null) {
+                renderer.setEncoderEnable(encWidth, encHeight, encBitRate, encFrameRate);
             }
         } else {
             Log.w(TAG, "enable real encode is error");
         }
     }
-    boolean isDrawPadSizeChanged=false;
+
+    boolean isDrawPadSizeChanged = false;
+
     /**
      * 调整当前DrawPadView的尺寸;
      *
@@ -242,26 +246,22 @@ public class DrawPadView2 extends FrameLayout {
      */
     public void setDrawPadSize(int width, int height, onDrawPadSizeChangedListener cb) {
 
-        isDrawPadSizeChanged=true;
+        isDrawPadSizeChanged = true;
         if (width != 0 && height != 0 && cb != null) {
 
-            if(drawPadWidth==0 || drawPadHeight==0){  //直接重新布局UI
+            if (drawPadWidth == 0 || drawPadHeight == 0) {  //直接重新布局UI
                 mTextureRenderView.setVideoSize(width, height);
                 mTextureRenderView.setVideoSampleAspectRatio(1, 1);
                 mSizeChangedCB = cb;
                 requestLayout();
-            }else{
+            } else {
                 float setAcpect = (float) width / (float) height;
                 float setViewacpect = (float) drawPadWidth / (float) drawPadHeight;
-
-                if (setAcpect == setViewacpect) { // 如果比例已经相等,不需要再调整,则直接显示.
-                    if (cb != null) {
-                        cb.onSizeChanged(width, height);
-                    }
+                // 如果比例已经相等,不需要再调整,则直接显示.
+                if (setAcpect == setViewacpect) {
+                    cb.onSizeChanged(width, height);
                 } else if (Math.abs(setAcpect - setViewacpect) * 1000 < 16.0f) {
-                    if (cb != null) {
-                        cb.onSizeChanged(width, height);
-                    }
+                    cb.onSizeChanged(width, height);
                 } else if (mTextureRenderView != null) {
                     mTextureRenderView.setVideoSize(width, height);
                     mTextureRenderView.setVideoSampleAspectRatio(1, 1);
@@ -274,12 +274,12 @@ public class DrawPadView2 extends FrameLayout {
 
     /**
      * 当前drawpad容器运行了多长时间, 每渲染一帧, 运行一次
-     *
-     *
+     * <p>
+     * <p>
      * listener回调单位是微秒, currentTimeUs; 此时间为即将渲染这一帧的时间,
-     *
+     * <p>
      * 比如你要在第3秒增加别的图层或调整指定图层的参数 则应该判断时间是否大于或等于3*1000*1000;
-     *
+     * <p>
      * 可复位这个时间.
      *
      * @param li
@@ -293,10 +293,11 @@ public class DrawPadView2 extends FrameLayout {
 
     /**
      * 把运行的时间复位到某一个值,
-     *
+     * <p>
      * 这样的话, drawpad继续显示, 就会以这个值为参考, 增加相对运行的时间. drawpad已经运行了10秒钟,
      * 你复位到2秒.则drawpad下一个onDrawPadRunTimeListener返回的值,就是2秒+相对运行的值,可能是2000*1000 +
      * 40*1000;
+     *
      * @param runtimeUs
      */
     public void resetDrawPadRunTime(long runtimeUs) {
@@ -304,6 +305,7 @@ public class DrawPadView2 extends FrameLayout {
             renderer.resetPadRunTime(runtimeUs);
         }
     }
+
     /**
      * 方法与 setOnDrawPadRunTimeListener不同的地方在于:
      *
@@ -319,6 +321,7 @@ public class DrawPadView2 extends FrameLayout {
 
     /**
      * 每录制一帧的回调;
+     *
      * @param listener
      */
     public void setOnDrawPadRecordProgressListener(onDrawPadProgressListener listener) {
@@ -360,6 +363,7 @@ public class DrawPadView2 extends FrameLayout {
 
     /**
      * 触发容器截图; 并设置截图后返回的图片宽高;
+     *
      * @param width
      * @param height
      */
@@ -373,7 +377,6 @@ public class DrawPadView2 extends FrameLayout {
     }
 
     /**
-     *
      * 抓取容器的图片流
      *
      * 建议在这里拿到数据后, 放到queue中, 然后在其他线程中来异步读取queue中的数据, 请注意queue中数据的总大小, 要及时处理和释放,
@@ -434,22 +437,23 @@ public class DrawPadView2 extends FrameLayout {
     public boolean setupDrawPad()
     {
         isPausePreviewDrawPad = true;
-        isPauseRefreshDrawPad=true;
-        isPauseRecord=true;
+        isPauseRefreshDrawPad = true;
+        isPauseRecord = true;
         return startDrawPad();
     }
 
     /**
      * 注销容器.
      * 如果容器正在录制,则先停止,并返回录制好的视频路径
+     *
      * @return
      */
-    public String releaseDrawPad(){
+    public String releaseDrawPad() {
 
-        String  ret=null;
+        String ret = null;
         if (renderer != null) {
-            if(renderer.isRecording()){
-                ret=renderer.segmentStop();
+            if (renderer.isRecording()) {
+                ret = renderer.segmentStop();
             }
             renderer.release();
             renderer = null;
@@ -460,19 +464,19 @@ public class DrawPadView2 extends FrameLayout {
     /**
      * 开始预览
      */
-    public void startPreview()
-    {
-        if(renderer!=null){
+    public void startPreview() {
+        if (renderer != null) {
             renderer.resumeRefreshDrawPad();
             renderer.resumePreviewDrawPad();
-        }else{
+        } else {
             LSOLog.e("当前容器没有创建或已经释放,请先调用setupDrawPad()建立容器,并增加图层.");
         }
         isPausePreviewDrawPad = false;
     }
+
     /**
      * 暂停预览,
-     *
+     * <p>
      * 停止预览后, 如果您的后台还在录制中,则会一直录制同一副画面.
      */
     public void pausePreview() {
@@ -486,7 +490,7 @@ public class DrawPadView2 extends FrameLayout {
      * 恢复预览;
      */
     public void resumePreview() {
-        if(renderer!=null){
+        if (renderer != null) {
             renderer.resumeRefreshDrawPad();
             renderer.resumePreviewDrawPad();
         }
@@ -495,31 +499,33 @@ public class DrawPadView2 extends FrameLayout {
 
 
     public boolean isRecording() {
-        if (renderer != null)
+        if (renderer != null) {
             return renderer.isRecording();
-        else
+        } else {
             return false;
+        }
     }
 
     /**
      * 当前DrawPad是否在工作.
-     *
+     * <p>
      * setupDrawPad后返回true,表示已经工作;
      * releaseDrawPad后,不再工作;
-     *
+     * <p>
      * 预览暂停时,这里依然返回true;,因为容器在工作,只是没有更新画面而已;
      */
     public boolean isRunning() {
-        if (renderer != null)
+        if (renderer != null) {
             return renderer.isRunning();
-        else
+        } else {
             return false;
+        }
     }
 
     /**
      * 开始录制
      */
-    public void startRecord(){
+    public void startRecord() {
         if (renderer != null && !renderer.isRecording()) {
             renderer.segmentStart();
         }
@@ -527,82 +533,80 @@ public class DrawPadView2 extends FrameLayout {
 
     /**
      * 录制一段结束.
-
-
+     * <p>
+     * <p>
      * 录制完成后, 返回当前录制这一段的视频文件完整路径名
      * 在低端手机上大概100ms,建议用Handler的 HandlerMessage的形式来处理
      */
-    public String stopRecord(){
+    public String stopRecord() {
         if (renderer != null && renderer.isRecording()) {
             return renderer.segmentStop();
         } else {
             return null;
         }
     }
+
     private boolean startDrawPad() {
         boolean ret = false;
-        if(renderer!=null){
+        if (renderer != null) {
             renderer.stopDrawPad();
-            renderer=null;
+            renderer = null;
         }
-        if (mSurfaceTexture != null && renderer == null && drawPadWidth > 0
-                && drawPadHeight > 0) {
-            renderer = new DrawPadViewRunnable2(getContext(), drawPadWidth,drawPadHeight);
-            if (renderer != null) {
-                renderer.setUseMainVideoPts(isUseMainPts);
-                renderer.setDisplaySurface(new Surface(mSurfaceTexture));
+        if (mSurfaceTexture != null && drawPadWidth > 0 && drawPadHeight > 0) {
+            renderer = new DrawPadViewRunnable2(getContext(), drawPadWidth, drawPadHeight);
+            renderer.setUseMainVideoPts(isUseMainPts);
+            renderer.setDisplaySurface(new Surface(mSurfaceTexture));
 
-                if (isCheckPadSize) {
-                    encWidth = LanSongUtil.make16Multi(encWidth); // 编码默认16字节对齐.
-                    encHeight = LanSongUtil.make16Multi(encHeight);
-                }
-                if (isCheckBitRate || encBitRate == 0) {
-                    encBitRate = LanSongUtil.checkSuggestBitRate(encHeight
-                            * encWidth, encBitRate);
-                }
-                if(encWidth>0 && encHeight>0){
-                    renderer.setEncoderEnable(encWidth, encHeight, encBitRate,encFrameRate);
-                }
-                if (isEditModeVideo) {
-                    renderer.setEditModeVideo(isEditModeVideo);
-                }
-                renderer.setUpdateMode(mUpdateMode, mAutoFlushFps);
+            if (isCheckPadSize) {
+                encWidth = LanSongUtil.make16Multi(encWidth); // 编码默认16字节对齐.
+                encHeight = LanSongUtil.make16Multi(encHeight);
+            }
+            if (isCheckBitRate || encBitRate == 0) {
+                encBitRate = LanSongUtil.checkSuggestBitRate(encHeight
+                        * encWidth, encBitRate);
+            }
+            if (encWidth > 0 && encHeight > 0) {
+                renderer.setEncoderEnable(encWidth, encHeight, encBitRate, encFrameRate);
+            }
+            if (isEditModeVideo) {
+                renderer.setEditModeVideo(isEditModeVideo);
+            }
+            renderer.setUpdateMode(mUpdateMode, mAutoFlushFps);
 
-                // 设置DrawPad处理的进度监听, 回传的currentTimeUs单位是微秒.
-                renderer.setDrawPadSnapShotListener(drawpadSnapShotListener);
-                renderer.setDrawpadOutFrameListener(previewFrameWidth,
-                        previewFrameHeight, previewFrameType,
-                        drawPadPreviewFrameListener);
-                renderer.setOutFrameInDrawPad(frameListenerInDrawPad);
+            // 设置DrawPad处理的进度监听, 回传的currentTimeUs单位是微秒.
+            renderer.setDrawPadSnapShotListener(drawpadSnapShotListener);
+            renderer.setDrawpadOutFrameListener(previewFrameWidth,
+                    previewFrameHeight, previewFrameType,
+                    drawPadPreviewFrameListener);
+            renderer.setOutFrameInDrawPad(frameListenerInDrawPad);
 
-                renderer.setDrawPadProgressListener(drawpadProgressListener);
-                renderer.setDrawPadCompletedListener(drawpadCompletedListener);
-                renderer.setDrawPadThreadProgressListener(drawPadThreadProgressListener);
-                renderer.setDrawPadErrorListener(drawPadErrorListener);
-                renderer.setDrawPadRunTimeListener(drawpadRunTimeListener);
+            renderer.setDrawPadProgressListener(drawpadProgressListener);
+            renderer.setDrawPadCompletedListener(drawpadCompletedListener);
+            renderer.setDrawPadThreadProgressListener(drawPadThreadProgressListener);
+            renderer.setDrawPadErrorListener(drawPadErrorListener);
+            renderer.setDrawPadRunTimeListener(drawpadRunTimeListener);
 
-                if (isPauseRecord) {
-                    renderer.pauseRecordDrawPad();
-                }
-                if (isPauseRefreshDrawPad) {
-                    renderer.pauseRefreshDrawPad();
-                }
-                if (isPausePreviewDrawPad) {
-                    renderer.pausePreviewDrawPad();
-                }
-                renderer.adjustEncodeSpeed(encodeSpeed);
+            if (isPauseRecord) {
+                renderer.pauseRecordDrawPad();
+            }
+            if (isPauseRefreshDrawPad) {
+                renderer.pauseRefreshDrawPad();
+            }
+            if (isPausePreviewDrawPad) {
+                renderer.pausePreviewDrawPad();
+            }
+            renderer.adjustEncodeSpeed(encodeSpeed);
 
-                ret = renderer.startDrawPad();
-                if (!ret) {
-                    Log.e(TAG,"开启 drawPad 失败, 或许是您之前的DrawPad没有Stop, 或者传递进去的surface对象已经被系统Destory!!,"
-                            + "请检测您 的代码或参考本文件中的SurfaceCallback 这个类中的注释;\n");
-                }else {
-                    Log.i(TAG,"DrawPadView2 is running...");
-                }
+            ret = renderer.startDrawPad();
+            if (!ret) {
+                Log.e(TAG, "开启 drawPad 失败, 或许是您之前的DrawPad没有Stop, 或者传递进去的surface对象已经被系统Destory!!,"
+                        + "请检测您 的代码或参考本文件中的SurfaceCallback 这个类中的注释;\n");
+            } else {
+                Log.i(TAG, "DrawPadView2 is running...");
             }
         } else {
             if (mSurfaceTexture == null) {
-                Log.e(TAG,"可能您的UI界面还没有完全启动,您就startDrawPad了, 建议oncreate后延迟300ms再调用");
+                Log.e(TAG, "可能您的UI界面还没有完全启动,您就startDrawPad了, 建议oncreate后延迟300ms再调用");
             } else {
                 Log.e(TAG, "无法开启DrawPad, 您当前的参数有问题,您对照下参数:宽度和高度是:"
                         + drawPadWidth + " x " + drawPadHeight
@@ -611,6 +615,7 @@ public class DrawPadView2 extends FrameLayout {
         }
         return ret;
     }
+
     /**
      * 直接设置容器的宽高, 不让他自动缩放.
      * 要在容器开始前调用.
@@ -619,12 +624,13 @@ public class DrawPadView2 extends FrameLayout {
         drawPadWidth = width;
         drawPadHeight = height;
         if (renderer != null) {
-            Log.w(TAG,"aeRenderer maybe is running. your setting is not available!!");
+            Log.w(TAG, "aeRenderer maybe is running. your setting is not available!!");
         }
     }
 
     /**
      * 把当前图层放到最里层, 里面有 一个handler-loop机制, 将会在下一次刷新后执行.
+     *
      * @param layer
      */
     public void bringLayerToBack(Layer layer) {
@@ -635,6 +641,7 @@ public class DrawPadView2 extends FrameLayout {
 
     /**
      * 把当前图层放到最外层, 里面有 一个handler-loop机制, 将会在下一次刷新后执行.
+     *
      * @param layer
      */
     public void bringLayerToFront(Layer layer) {
@@ -684,11 +691,12 @@ public class DrawPadView2 extends FrameLayout {
 
     /**
      * 获取一个主视频的 VideoLayer
-     *
+     * <p>
      * 主视频的意思是: 对一个完整的视频做操作, 从视频的0秒一直运行到视频的最后一帧,
      * 比如对一个视频做滤镜,增加图片图层, 增加mv图层等的场合.
-     *
+     * <p>
      * 如果你要先把一个视频add进来, 后面再增加另一个视频,则用 addVideoLayer(),不能用这个方法.
+     *
      * @param width  主视频的画面宽度 建议用 {@link MediaInfo#vWidth}来赋值
      * @param height 主视频的画面高度
      * @return
@@ -703,6 +711,7 @@ public class DrawPadView2 extends FrameLayout {
         }
         return ret;
     }
+
     /**
      * 增加双视频图层, 一个视频是内容,另一个视频是效果画面. 适用在把一个效果视频融合在当前视频中.
      *
@@ -722,6 +731,7 @@ public class DrawPadView2 extends FrameLayout {
     }
 
     /**
+     *
      */
     public VideoLayer addVideoLayer(int width, int height, LanSongFilter filter) {
         if (renderer != null)
@@ -731,9 +741,10 @@ public class DrawPadView2 extends FrameLayout {
             return null;
         }
     }
+
     /**
      * 获取一个BitmapLayer
-     *
+     * <p>
      * 在 startDrawPad之后调用;
      *
      * @param bmp 图片的bitmap对象,
@@ -755,6 +766,7 @@ public class DrawPadView2 extends FrameLayout {
 
     /**
      * 增加图片图层, 并设置一个滤镜;
+     *
      * @param bmp
      * @param filter
      * @return
@@ -836,7 +848,7 @@ public class DrawPadView2 extends FrameLayout {
 
     /**
      * 增加一个gif图层,
-     *
+     * <p>
      * resId 来自apk中drawable文件夹下的各种资源文件, 我们会在GifLayer中拷贝这个资源到默认文件夹下面,
      * 然后作为一个普通的gif文件来做处理,使用完后, 会在Giflayer 图层释放的时候, 删除.
      *
@@ -855,7 +867,7 @@ public class DrawPadView2 extends FrameLayout {
     /**
      * 增加一个mv图层,
      * mv图层分为两个视频文件, 一个是彩色的视频, 一个黑白视频
-     *
+     * <p>
      * [详见我们的MV原理和制作文件]
      *
      * @param colorPath
@@ -870,6 +882,7 @@ public class DrawPadView2 extends FrameLayout {
             return null;
         }
     }
+
     /**
      * 获得一个 ViewLayer,
      * 您可以在获取后,仿照我们的例子,来为视频增加各种UI控件.
@@ -888,6 +901,7 @@ public class DrawPadView2 extends FrameLayout {
     /**
      * 获得一个 CanvasLayer
      * 在 startDrawPad之后,在stopDrawPad之前调用.
+     *
      * @return
      */
     public CanvasLayer addCanvasLayer() {
@@ -913,6 +927,7 @@ public class DrawPadView2 extends FrameLayout {
             }
         }
     }
+
     /**
      * 是否在开始运行DrawPad的时候,检查您设置的码率和分辨率是否正常.
      * <p>
@@ -964,6 +979,7 @@ public class DrawPadView2 extends FrameLayout {
             releaseDrawPad(); // 可以在这里增加以下. 这样当Texture销毁的时候, 停止DrawPad
             return false;
         }
+
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
         }

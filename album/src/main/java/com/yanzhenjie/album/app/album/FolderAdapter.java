@@ -65,8 +65,9 @@ class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.FolderViewHolder>
 
                     @Override
                     public void onItemClick(View view, int position) {
-                        if (mItemClickListener != null)
+                        if (mItemClickListener != null) {
                             mItemClickListener.onItemClick(view, position);
+                        }
 
                         AlbumFolder albumFolder = mAlbumFolders.get(position);
                         if (!albumFolder.isChecked()) {
@@ -123,8 +124,9 @@ class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.FolderViewHolder>
 
         @Override
         public void onClick(View v) {
-            if (mItemClickListener != null)
+            if (mItemClickListener != null) {
                 mItemClickListener.onItemClick(v, getAdapterPosition());
+            }
         }
     }
 

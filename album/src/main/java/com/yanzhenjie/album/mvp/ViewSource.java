@@ -109,32 +109,37 @@ class ViewSource extends Source<View> {
     @Override
     void setHomeAsUpIndicator(Drawable icon) {
         this.mActionBarIcon = icon;
-        if (mActionBar != null)
+        if (mActionBar != null) {
             mActionBar.setNavigationIcon(icon);
+        }
     }
 
     @Override
     final void setTitle(CharSequence title) {
-        if (mActionBar != null)
+        if (mActionBar != null) {
             mActionBar.setTitle(title);
+        }
     }
 
     @Override
     final void setTitle(@StringRes int title) {
-        if (mActionBar != null)
+        if (mActionBar != null) {
             mActionBar.setTitle(title);
+        }
     }
 
     @Override
     final void setSubTitle(CharSequence title) {
-        if (mActionBar != null)
+        if (mActionBar != null) {
             mActionBar.setSubtitle(title);
+        }
     }
 
     @Override
     final void setSubTitle(@StringRes int title) {
-        if (mActionBar != null)
+        if (mActionBar != null) {
             mActionBar.setSubtitle(title);
+        }
     }
 
     @Override

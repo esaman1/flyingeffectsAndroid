@@ -1095,7 +1095,7 @@ public class TemplateAddStickerMvpModel {
                                             }
                                         });
                                     });
-                                    manage.ToMatting(paths);
+                                    manage.toMatting(paths);
 
                                     if (stickView.isFirstAddSticker()) {
                                         if (stickView.isOpenVoice()) {

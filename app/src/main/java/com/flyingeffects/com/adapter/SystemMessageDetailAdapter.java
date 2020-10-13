@@ -1,25 +1,19 @@
 package com.flyingeffects.com.adapter;
 
 import android.content.Context;
-import android.text.TextUtils;
-import android.util.TimeUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.bumptech.glide.request.RequestOptions;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.SystemMessageDetailEnity;
-import com.flyingeffects.com.utils.timeUtils;
-import com.google.android.exoplayer2.C;
+import com.flyingeffects.com.utils.TimeUtils;
 
 import java.util.List;
 
@@ -79,7 +73,7 @@ public class SystemMessageDetailAdapter extends BaseQuickAdapter<SystemMessageDe
         }
         String createTime = item.getCreate_time();
         long time = Long.parseLong(createTime);
-        tv_time.setText(timeUtils.GetSystemMessageTime(time));
+        tv_time.setText(TimeUtils.GetSystemMessageTime(time));
     }
 
 

@@ -3,13 +3,19 @@ package com.flyingeffects.com.manager;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.utils.LogUtil;
+import com.yanzhenjie.album.Action;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.AlbumFile;
 import com.yanzhenjie.album.Filter;
@@ -19,16 +25,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AlbumManager {
-
+    private static final String TAG = "AlbumManager";
 
     /**
      * description ：选择视频和图片
      * date: ：2019/5/29 10:41
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
-    public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String material_info) {
-
-
+    public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String materialInfo) {
 
         statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
         Album.album(context)
@@ -36,7 +40,7 @@ public class AlbumManager {
                 .columnCount(3)
                 .selectCount(selectNum)
                 .camera(false)
-                .material_info(material_info)
+                .materialInfo(materialInfo)
                 .filterSize(new Filter<Long>() {
                     @Override
                     public boolean filter(Long attributes) {
@@ -48,7 +52,6 @@ public class AlbumManager {
                     public boolean filter(String attributes) {
                         LogUtil.d("filter2222222", "attributes=" + attributes);
 //                        return attributes.equals("image/gif")||attributes.equals("image/svg+xml")||attributes.equals("image/x-icon");
-
                         return filterAlbum(attributes);
                     }
                 })
@@ -70,15 +73,24 @@ public class AlbumManager {
                                 )
                                 .build()
                 )
+                .onReturnView(new Action<LinearLayout>() {
+                    @Override
+                    public void onAction(@NonNull LinearLayout result) {
+                        requestAlbumAd(context, result);
+                    }
+                })
                 .onResult(result -> {
                     List<String> paths = new ArrayList<>();
                     for (AlbumFile albumFile : result) {
                         paths.add(albumFile.getPath());
                     }
                     callback.resultFilePath(tag, paths, false, result);
+                    AdManager.getInstance().releaseBannerManager();
                 })
-                .onCancel(result ->
-                        callback.resultFilePath(tag, new ArrayList<>(), true, new ArrayList<>()))
+                .onCancel(result -> {
+                    callback.resultFilePath(tag, new ArrayList<>(), true, new ArrayList<>());
+                    AdManager.getInstance().releaseBannerManager();
+                })
                 .start();
     }
 
@@ -88,14 +100,14 @@ public class AlbumManager {
      * date: ：2019/5/29 10:41
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
-    public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String material_info, long duration) {
+    public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String materialInfo, long duration) {
         statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
         Album.album(context)
                 .multipleChoice()
                 .columnCount(3)
                 .selectCount(selectNum)
                 .camera(false)
-                .material_info(material_info)
+                .materialInfo(materialInfo)
                 .setMineVideoTime(duration)
                 .filterSize(new Filter<Long>() {
                     @Override
@@ -111,7 +123,6 @@ public class AlbumManager {
                     }
                 })
                 .afterFilterVisibility(false)
-
                 .cameraVideoQuality(1)
                 .cameraVideoLimitDuration(Integer.MAX_VALUE)
                 .cameraVideoLimitBytes(Integer.MAX_VALUE)
@@ -129,16 +140,24 @@ public class AlbumManager {
                                 )
                                 .build()
                 )
+                .onReturnView(new Action<LinearLayout>() {
+                    @Override
+                    public void onAction(@NonNull LinearLayout result) {
+                        requestAlbumAd(context, result);
+                    }
+                })
                 .onResult(result -> {
                     List<String> paths = new ArrayList<>();
-                    for (AlbumFile albumFile : result
-                    ) {
+                    for (AlbumFile albumFile : result) {
                         paths.add(albumFile.getPath());
                     }
+                    AdManager.getInstance().releaseBannerManager();
                     callback.resultFilePath(tag, paths, false, result);
                 })
-                .onCancel(result ->
-                        callback.resultFilePath(tag, new ArrayList<>(), true, new ArrayList<>()))
+                .onCancel(result -> {
+                    callback.resultFilePath(tag, new ArrayList<>(), true, new ArrayList<>());
+                    AdManager.getInstance().releaseBannerManager();
+                })
                 .start();
     }
 
@@ -148,14 +167,14 @@ public class AlbumManager {
      * date: ：2019/5/29 10:41
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
-    public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String material_info, long duration, String title, String musicFolder) {
+    public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String materialInfo, long duration, String title, String musicFolder) {
         statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
         Album.album(context)
                 .multipleChoice()
                 .columnCount(3)
                 .selectCount(selectNum)
                 .camera(false)
-                .material_info(material_info)
+                .materialInfo(materialInfo)
                 .setMineVideoTime(duration)
                 .setModelTitle(title)
                 .setMusicPath(musicFolder)
@@ -191,16 +210,24 @@ public class AlbumManager {
                                 )
                                 .build()
                 )
+                .onReturnView(new Action<LinearLayout>() {
+                    @Override
+                    public void onAction(@NonNull LinearLayout result) {
+                        requestAlbumAd(context, result);
+                    }
+                })
                 .onResult(result -> {
                     List<String> paths = new ArrayList<>();
-                    for (AlbumFile albumFile : result
-                    ) {
+                    for (AlbumFile albumFile : result) {
                         paths.add(albumFile.getPath());
                     }
+                    AdManager.getInstance().releaseBannerManager();
                     callback.resultFilePath(tag, paths, false, result);
                 })
-                .onCancel(result ->
-                        callback.resultFilePath(tag, new ArrayList<>(), true, new ArrayList<>()))
+                .onCancel(result -> {
+                    callback.resultFilePath(tag, new ArrayList<>(), true, new ArrayList<>());
+                    AdManager.getInstance().releaseBannerManager();
+                })
                 .start();
     }
 
@@ -210,12 +237,12 @@ public class AlbumManager {
      * date: ：2019/5/29 10:41
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
-    public static void chooseImageAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String material_info) {
+    public static void chooseImageAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String materialInfo) {
         statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
         Album.image(context) // Image selection.
                 .multipleChoice()
                 .camera(false)
-                .material_info(material_info)
+                .materialInfo(materialInfo)
                 .columnCount(3)
                 .filterSize(new Filter<Long>() {
                     @Override
@@ -244,17 +271,25 @@ public class AlbumManager {
                                                 .build()
                                 )
                                 .build())
+                .onReturnView(new Action<LinearLayout>() {
+                    @Override
+                    public void onAction(@NonNull LinearLayout result) {
+                        requestAlbumAd(context, result);
+                    }
+                })
                 .onResult(result -> {
                     List<String> paths = new ArrayList<>();
-                    for (AlbumFile albumFile : result
-                    ) {
+                    for (AlbumFile albumFile : result) {
                         paths.add(albumFile.getPath());
                     }
+                    AdManager.getInstance().releaseBannerManager();
                     callback.resultFilePath(tag, paths, false, result);
                 })
-                .onCancel(result -> callback.resultFilePath(tag, new ArrayList<>(), true, new ArrayList<>()))
+                .onCancel(result -> {
+                    callback.resultFilePath(tag, new ArrayList<>(), true, new ArrayList<>());
+                    AdManager.getInstance().releaseBannerManager();
+                })
                 .start();
-
     }
 
 
@@ -263,13 +298,13 @@ public class AlbumManager {
      * date: ：2019/5/29 10:41
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
-    public static void chooseVideo(Activity act, int selectNum, int tag, AlbumChooseCallback callback, String material_info) {
+    public static void chooseVideo(Activity act, int selectNum, int tag, AlbumChooseCallback callback, String materialInfo) {
         statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
         Album.video(act) // Video selection.
                 .multipleChoice()
                 .camera(false)
                 .columnCount(3)
-                .material_info(material_info)
+                .materialInfo(materialInfo)
                 .selectCount(selectNum)
                 .filterSize(new Filter<Long>() {
                     @Override
@@ -297,38 +332,48 @@ public class AlbumManager {
                                                 .build()
                                 )
                                 .build())
+                .onReturnView(new Action<LinearLayout>() {
+                    @Override
+                    public void onAction(@NonNull LinearLayout result) {
+                        requestAlbumAd(act, result);
+                    }
+                })
                 .onResult(result -> {
                     List<String> paths = new ArrayList<>();
                     for (AlbumFile albumFile : result) {
                         paths.add(albumFile.getPath());
                     }
                     callback.resultFilePath(tag, paths, false, result);
+                    AdManager.getInstance().releaseBannerManager();
                 })
-                .onCancel(result -> callback.resultFilePath(tag, new ArrayList<>(), true, new ArrayList<>()))
+                .onCancel(result -> {
+                    callback.resultFilePath(tag, new ArrayList<>(), true, new ArrayList<>());
+                    AdManager.getInstance().releaseBannerManager();
+                })
                 .start();
     }
 
 
     /**
-     * description ： ChooseType  0 均可以选择  1：选择图片 2：选择视频
+     * description ： chooseType  0 均可以选择  1：选择图片 2：选择视频
      * date: ：2019/6/14 10:25
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
-    public static void chooseWhichAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, int ChooseType, String material_info) {
-
-
-        switch (ChooseType) {
+    public static void chooseWhichAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, int chooseType, String materialInfo) {
+        switch (chooseType) {
             case 0:
-                AlbumManager.chooseAlbum(context, selectNum, tag, callback, material_info);
+                AlbumManager.chooseAlbum(context, selectNum, tag, callback, materialInfo);
                 break;
             case 1:
-                AlbumManager.chooseImageAlbum(context, selectNum, tag, callback, material_info);
+                AlbumManager.chooseImageAlbum(context, selectNum, tag, callback, materialInfo);
                 break;
             case 2:
-                AlbumManager.chooseAlbum((Activity) context, selectNum, tag, callback, material_info);
+                AlbumManager.chooseAlbum((Activity) context, selectNum, tag, callback, materialInfo);
                 break;
             case 3:
-                AlbumManager.chooseVideo((Activity) context, selectNum, tag, callback, material_info);
+                AlbumManager.chooseVideo((Activity) context, selectNum, tag, callback, materialInfo);
+                break;
+            default:
                 break;
         }
     }
@@ -338,9 +383,7 @@ public class AlbumManager {
 
         LogUtil.d("xxxx", "attributes=" + attributes);
         String[] strList = {"image/gif", "image/svg+xml", "image/x-icon", "video/x-ms-wmv", "avi", "wmv", "WMV", "mov", "MOV", "mpg", "MPG", "3gp", "3GP", "lansongBox", "avi", "AVI", "gif", "mpeg", "svg+xml", "quicktime"};
-        for (String str : strList
-        ) {
-
+        for (String str : strList) {
             if (attributes.contains(str)) {
                 LogUtil.d("xxxx", "过滤的值为=" + attributes);
                 return true;
@@ -348,6 +391,13 @@ public class AlbumManager {
 
         }
         return false;
+    }
+
+    private static void requestAlbumAd(Context activity, LinearLayout llAdContainer) {
+        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+            Log.d(TAG, "showAd :" + llAdContainer);
+            AdManager.getInstance().showBannerAd((Activity) activity, AdConfigs.AD_ALBUM, llAdContainer);
+        }
     }
 
 }

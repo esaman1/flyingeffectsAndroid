@@ -55,7 +55,10 @@ public class AdConfigs {
     // 保存激励视频2
     public static final String AD_save_video2 = "415";
 
-
+    /**
+     * 相册广告
+     */
+    public static final String AD_ALBUM = "492";
 //
 //    // 激励视频背景
 //    public static final String AD_stimulate_video_bj = "281";
