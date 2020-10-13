@@ -201,7 +201,7 @@ public class BackgroundSearchActivity extends BaseActivity {
                         searchTemplateItemAdapter.setInquireWordColor(keywords);
                         searchTemplateItemAdapter.setNewData(datas);
                     }
-                }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+                }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
         searchTemplateItemAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
