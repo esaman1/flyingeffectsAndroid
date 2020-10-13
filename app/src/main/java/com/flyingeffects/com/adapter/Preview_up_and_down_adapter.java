@@ -147,7 +147,9 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             //关注按键
             if (item.getIs_follow() == 1 && BaseConstans.hasLogin()) {
                 tv_btn_follow.setText("取消关注");
+                tv_btn_follow.setVisibility(View.GONE);
             } else {
+                tv_btn_follow.setVisibility(View.VISIBLE);
                 tv_btn_follow.setText("关注");
             }
 
@@ -212,9 +214,11 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     public void setIsFollow(int isFollow){
         //关注按键
         if (isFollow == 1 && BaseConstans.hasLogin()) {
-            tv_btn_follow.setText("取消关注");
+//            tv_btn_follow.setText("取消关注");
+            tv_btn_follow.setVisibility(View.GONE);
         } else {
             tv_btn_follow.setText("关注");
+            tv_btn_follow.setVisibility(View.VISIBLE);
         }
     }
 
