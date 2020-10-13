@@ -74,6 +74,8 @@ import rx.functions.Action1;
  * user : zhangtongju
  */
 public class UploadMaterialActivity extends BaseActivity implements UploadMaterialMVPView {
+    //0 表示竖屏，1表示横屏
+    private int isLandscape;
     private UploadMaterialMVPPresenter Presenter;
     @BindView(R.id.crop_preivew_icon)
     ImageView playIcon;
@@ -393,8 +395,14 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     }
 
     @Override
-    public void finishCrop(String videoPath) {
+    public void finishCrop(String videoPath,boolean Landscape) {
 //        WaitingDialog.openPragressDialog(this);
+
+        if(Landscape){
+            isLandscape=1;
+        }else{
+            isLandscape=0;
+        }
         //分为3步 1 提取音频，2提取封面  3 ，提取头像
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -498,6 +506,8 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         params.put("auth_image", huaweiImagePath);
         params.put("audiourl", huaweiSound);
         params.put("image", coverImagePath);
+        LogUtil.d("OOM2","isLandscape="+isLandscape);
+        params.put("isLandscape", isLandscape+"");
         params.put("is_with_play", isChecked + ""); //1 表示可以合拍
         LogUtil.d("OOM", "is_with_play=" + isChecked);
         // 启动时间

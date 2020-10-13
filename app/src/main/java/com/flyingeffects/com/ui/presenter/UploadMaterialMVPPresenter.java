@@ -52,8 +52,8 @@ public class UploadMaterialMVPPresenter extends BasePresenter implements UploadM
     }
 
     @Override
-    public void finishCrop(String path) {
-        mvp_view.finishCrop(path);
+    public void finishCrop(String path,boolean isLandscape) {
+        mvp_view.finishCrop(path,isLandscape);
     }
 
     @Override

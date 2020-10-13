@@ -445,6 +445,17 @@ public class new_fag_template_item implements Serializable {
 
     private boolean hasShowAd=false;
 
+    public int getIsLandscape() {
+        return isLandscape;
+    }
+
+    public void setIsLandscape(int isLandscape) {
+        this.isLandscape = isLandscape;
+    }
+
+    //1 是横屏
+    private int isLandscape;
+
 
 //    public CommonNewsBean getNewBean() {
 //        return newBean;

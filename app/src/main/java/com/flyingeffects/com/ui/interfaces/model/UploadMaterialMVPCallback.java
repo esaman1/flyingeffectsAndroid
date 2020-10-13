@@ -12,7 +12,7 @@ public interface UploadMaterialMVPCallback {
 
     void showCursor();
 
-    void finishCrop(String path);
+    void finishCrop(String path,boolean isLandscape);
 
     void getRealCutTime(float RealCutTime);
 }

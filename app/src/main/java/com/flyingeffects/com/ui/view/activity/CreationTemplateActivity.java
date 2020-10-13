@@ -197,6 +197,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             isNeedCut = bundle.getBoolean("isNeedCut");
             title = bundle.getString("bjTemplateTitle");
             templateId = bundle.getInt("templateId");
+            nowUiIsLandscape = bundle.getBoolean("isLandscape", false);
+            LogUtil.d("OOM2", "nowUiIsLandscape=" + nowUiIsLandscape);
         }
         presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout, originalPath, null);
         LogUtil.d(TAG, "videoPath = " + videoPath);
@@ -218,6 +220,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
         presenter.requestStickersList();
         presenter.statisticsDuration(videoPath, this);
+        if (nowUiIsLandscape) {
+            new Handler().postDelayed(() -> setPlayerViewSize(nowUiIsLandscape), 500);
+        }
     }
 
     private MediaSource mediaSource;
@@ -463,9 +468,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             case R.id.iv_change_ui:
                 //横竖屏切换
                 nowUiIsLandscape = !nowUiIsLandscape;
-//                if(nowUiIsLandscape){
-//                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "13_horizontal");
-//                }
                 setPlayerViewSize(nowUiIsLandscape);
                 break;
             default:
@@ -492,7 +494,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 @Override
                 public void setText(String text) {
                     presenter.ChangeTextLabe(text);
-                    if(TextUtils.isEmpty(text)){
+                    if (TextUtils.isEmpty(text)) {
                         if (createViewForAddText != null) {
                             createViewForAddText.hideInputTextDialog();
                             createViewForAddText = null;
@@ -681,12 +683,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
         new Handler().postDelayed(() -> {
             presenter.setAllStickerCenter();
-            if(isLandscape){
-                scrollView.scrollTo(0,ll_space.getHeight()/2);
+            if (isLandscape) {
+                int height = Math.round(1f * ll_space.getWidth() / oriRatio);
+                scrollView.scrollTo(0, height / 2 - scrollView.getHeight() / 2);
             }
-        },500);
-
-//        new Handler().postDelayed(() -> presenter.setAllStickerCenter(), 500);
+        }, 500);
     }
 
 

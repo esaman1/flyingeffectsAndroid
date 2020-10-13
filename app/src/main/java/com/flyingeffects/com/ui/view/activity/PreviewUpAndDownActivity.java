@@ -190,6 +190,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         BaseConstans.TemplateHasWatchingAd = false;
         ListForUpAndDown listForUpAndDown = (ListForUpAndDown) getIntent().getSerializableExtra("person");
         allData = listForUpAndDown.getAllData();
+
         ondestroy = false;
         waitingDialog_progress = new WaitingDialog_progress(this);
         nowChoosePosition = getIntent().getIntExtra("position", 0);
@@ -1116,6 +1117,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         bundle.putSerializable("bjTemplateTitle", templateItem.getTitle());
         bundle.putString("originalPath", originalPath);
         bundle.putString("video_path", videoPath);
+        boolean isLandscape=templateItem.getIsLandscape()==1;
+        bundle.putBoolean("isLandscape", isLandscape);
         bundle.putBoolean("isNeedCut", isNeedCut);
         int id = templateItem.getTemplate_id();
         if (id == 0) {

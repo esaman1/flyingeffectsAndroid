@@ -644,7 +644,7 @@ public class UploadMaterialMVPModel {
     private boolean isSaving = false;
     private boolean is4kVideo = false;
     private WaitingDialog_progress dialog;
-
+    private MediaInfo videoInfo;
     public void saveVideo(boolean needCut) {
         if (!fullyInitiated || isSaving) {
             ToastUtil.showToast("还在加载请稍等");
@@ -653,7 +653,8 @@ public class UploadMaterialMVPModel {
 
         dialog = new WaitingDialog_progress(mContext);
         dialog.openProgressDialog();
-        MediaInfo videoInfo = new MediaInfo(videoPath);
+        videoInfo   = new MediaInfo(videoPath);
+
         MediaInfo.checkFile(videoPath);
         if (!videoInfo.prepare()) {
             return;
@@ -674,7 +675,12 @@ public class UploadMaterialMVPModel {
         }
         onPause();
         isSaving = true;
+        int videoHeight=videoInfo.getHeight();
 
+        int videoWidth=videoInfo.getWidth();
+        boolean isLandscape=videoWidth>videoHeight;
+        LogUtil.d("OOM2","videoWidth="+videoWidth);
+        LogUtil.d("OOM2","videoHeight="+videoHeight);
 //        long durationUs = getDuration() * 1000;
         long durationUs = getDuration();
         getUserChooseDuration(cropStartRatio, cropEndRatio);
@@ -708,8 +714,8 @@ public class UploadMaterialMVPModel {
                         String tempPath = getTempVideoPath(mContext) + video.getName();
                         try {
                             FileUtil.copyFile(video, tempPath);
-                            callback.finishCrop(tempPath);
-
+                            callback.finishCrop(tempPath,isLandscape);
+                            videoInfo.release();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
