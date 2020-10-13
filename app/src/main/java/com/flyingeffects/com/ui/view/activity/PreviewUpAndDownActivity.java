@@ -243,6 +243,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     toClickMake();
                     break;
 
+                case R.id.tv_title_music:
                 case R.id.iv_writer:
                 case R.id.tv_describe:
                     Intent intent = new Intent(PreviewUpAndDownActivity.this, UserHomepageActivity.class);

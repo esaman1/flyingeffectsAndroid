@@ -112,6 +112,8 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             helper.setText(R.id.tv_download_count, item.getShare());
             helper.addOnClickListener(R.id.iv_zan);
             helper.addOnClickListener(R.id.tv_make);
+            helper.addOnClickListener(R.id.tv_title_music);
+
             initVideoPlayer(item, offset);
             if (nowPreviewPosition == offset) {
                 videoPlayer.startPlayLogic();
