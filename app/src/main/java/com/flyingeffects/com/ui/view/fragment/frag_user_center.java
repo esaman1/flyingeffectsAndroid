@@ -48,6 +48,8 @@ import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 
 /**
@@ -333,7 +335,15 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
             public void isSuccess(String str) {
                 if (!TextUtils.isEmpty(str)) {
                     String path = str.substring(str.lastIndexOf("=") + 1, str.length() - 1);
-                    uploadUserSkin(path);
+                    Log.d("OOM2", "isSuccess" );
+                    Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+                        @Override
+                        public void call(String s) {
+                            WaitingDialog.closePragressDialog();
+                            uploadUserSkin(s);
+                        }
+                    });
+
                 }
             }
         })).start();
