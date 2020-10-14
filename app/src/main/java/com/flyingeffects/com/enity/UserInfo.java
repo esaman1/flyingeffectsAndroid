@@ -201,11 +201,11 @@ public class UserInfo implements Serializable {
     }
 
     public String getRemark() {
-        return remark;
+        return profile;
     }
 
     public void setRemark(String remark) {
-        this.remark = remark;
+        this.profile = remark;
     }
 
     public String getCreate_time() {
@@ -262,7 +262,7 @@ public class UserInfo implements Serializable {
     private String last_login_time;
     private String last_open_time;
     private String modified;
-    private String remark;
+    private String profile;
     private String create_time;
     private String enabled;
     private String is_test;

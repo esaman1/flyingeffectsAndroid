@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -96,6 +97,10 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     TextView tvIntroduction;
     @BindView(R.id.im_edit)
     ImageView imEdit;
+    @BindView(R.id.tv_edit_information)
+    TextView tvEditInformation;
+    @BindView(R.id.ll_edit_data)
+    LinearLayout llEditData;
 
 
     @Override
@@ -130,6 +135,8 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
             //未登陆
             if (BaseConstans.hasLogin()) {
                 tv_id.setText("飞友号：" + BaseConstans.GetUserId());
+                tvEditInformation.setVisibility(View.VISIBLE);
+                llEditData.setVisibility(View.VISIBLE);
                 requestUserInfo();
             } else {
                 Glide.with(this)
@@ -142,6 +149,11 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 tv_video_count.setText("");
                 tv_id.setText("未登录");
                 tv_name.setVisibility(View.GONE);
+                Glide.with(getActivity())
+                        .load(R.mipmap.home_page_bj)
+                        .into(imSkin);
+                tvEditInformation.setVisibility(View.GONE);
+                llEditData.setVisibility(View.GONE);
             }
         }
         super.onResume();
@@ -197,7 +209,8 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     }
 
 
-    @OnClick({R.id.iv_head,R.id.ll_fans_count,R.id.ll_attention_count,R.id.ll_video_count,R.id.iv_Peeling,R.id.tv_edit_information})
+    @OnClick({R.id.iv_head,R.id.ll_fans_count,R.id.ll_attention_count,R.id.ll_video_count,
+            R.id.iv_Peeling,R.id.tv_edit_information,R.id.ll_edit_data})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_head:
@@ -243,6 +256,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 AlbumManager.chooseImageAlbum(getContext(),1,SELECTALBUMFROMUSETCENTERBJ,this,"");
                 break;
             case R.id.tv_edit_information:
+            case R.id.ll_edit_data:
                 Intent intent = new Intent(getActivity(), EditInformationActivity.class);
                 startActivity(intent);
                 break;

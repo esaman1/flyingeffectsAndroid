@@ -96,11 +96,7 @@ public class EditInformationActivity extends BaseActivity implements AlbumChoose
                     return;
                 }
                 if(TextUtils.isEmpty(etName.getText().toString())){
-                    ToastUtil.showToast("请输入您要修改的名字");
-                    return;
-                }
-                if(TextUtils.isEmpty(etIntroduction.getText().toString())){
-                    ToastUtil.showToast("请输入您要修改的简介");
+                    ToastUtil.showToast("请填写昵称");
                     return;
                 }
                 submitEditInfo(etName.getText().toString(),etIntroduction.getText().toString(),avatarPath);
@@ -149,7 +145,7 @@ public class EditInformationActivity extends BaseActivity implements AlbumChoose
         HashMap<String, String> params = new HashMap<>();
         params.put("photourl", avatar);
         params.put("nickname",name);
-        params.put("remark",introduction);
+        params.put("profile",introduction);
         HttpUtil.getInstance().toSubscribe(Api.getDefault().memberEdit(BaseConstans.getRequestHead(params)),
                 new ProgressSubscriber<Object>(EditInformationActivity.this) {
                     @Override
