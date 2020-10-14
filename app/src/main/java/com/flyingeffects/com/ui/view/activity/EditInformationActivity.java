@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -22,6 +23,7 @@ import com.flyingeffects.com.manager.huaweiObs;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.utils.keyBordUtils;
 import com.orhanobut.hawk.Hawk;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.yanzhenjie.album.AlbumFile;
@@ -163,4 +165,20 @@ public class EditInformationActivity extends BaseActivity implements AlbumChoose
                     }
                 }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                View view = getCurrentFocus();
+                //调用方法判断是否需要隐藏键盘
+                keyBordUtils.hideKeyboard(ev, view, EditInformationActivity.this);
+                break;
+
+            default:
+                break;
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
 }
