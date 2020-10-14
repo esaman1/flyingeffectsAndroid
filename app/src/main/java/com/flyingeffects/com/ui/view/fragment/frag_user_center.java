@@ -23,6 +23,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AlbumManager;
+import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.huaweiObs;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
@@ -222,34 +223,38 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 break;
 
             case R.id.ll_fans_count:
-                if(BaseConstans.hasLogin()){
-                    Intent intentZan=new Intent(getActivity(), ZanActivity.class);
-                    intentZan.putExtra("from",1);
-                    startActivity(intentZan);
-                }else{
-                    ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
+                if(!DoubleClick.getInstance().isFastDoubleClick()){
+                    if(BaseConstans.hasLogin()){
+                        Intent intentZan=new Intent(getActivity(), ZanActivity.class);
+                        intentZan.putExtra("from",1);
+                        startActivity(intentZan);
+                    }else{
+                        ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
+                    }
                 }
-
                 break;
 
             case R.id.ll_attention_count:
-                if(BaseConstans.hasLogin()){
-                    Intent intentFoucs=new Intent(getActivity(), MineFocusActivity.class);
-                    intentFoucs.putExtra("to_user_id",BaseConstans.GetUserId());
-                    startActivity(intentFoucs);
-                }else{
-                    ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
+                if(!DoubleClick.getInstance().isFastDoubleClick()){
+                    if(BaseConstans.hasLogin()){
+                        Intent intentFoucs=new Intent(getActivity(), MineFocusActivity.class);
+                        intentFoucs.putExtra("to_user_id",BaseConstans.GetUserId());
+                        startActivity(intentFoucs);
+                    }else{
+                        ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
+                    }
                 }
-
                 break;
             case R.id.ll_video_count:
-                if(BaseConstans.hasLogin()){
-                    Intent intentFan=new Intent(getActivity(), FansActivity.class);
-                    intentFan.putExtra("to_user_id",BaseConstans.GetUserId());
-                    intentFan.putExtra("from",0);
-                    startActivity(intentFan);
-                }else{
-                    ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
+                if(!DoubleClick.getInstance().isFastDoubleClick()){
+                    if(BaseConstans.hasLogin()){
+                        Intent intentFan=new Intent(getActivity(), FansActivity.class);
+                        intentFan.putExtra("to_user_id",BaseConstans.GetUserId());
+                        intentFan.putExtra("from",0);
+                        startActivity(intentFan);
+                    }else{
+                        ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
+                    }
                 }
                 break;
             case R.id.iv_Peeling:
@@ -257,8 +262,10 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 break;
             case R.id.tv_edit_information:
             case R.id.ll_edit_data:
-                Intent intent = new Intent(getActivity(), EditInformationActivity.class);
-                startActivity(intent);
+                if(!DoubleClick.getInstance().isFastDoubleClick()){
+                    Intent intent = new Intent(getActivity(), EditInformationActivity.class);
+                    startActivity(intent);
+                }
                 break;
             default:
                 break;

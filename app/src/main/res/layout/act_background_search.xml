@@ -27,7 +27,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_toEndOf="@+id/iv_back"
-            android:layout_toStartOf="@+id/tv_cancel"
+            android:layout_toStartOf="@+id/tv_search"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:background="@drawable/strok_search"
@@ -56,10 +56,22 @@
                 android:layout_marginStart="15dp"
                 android:src="@mipmap/gray_search" />
 
+            <ImageView
+                android:id="@+id/iv_delete"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="15dp"
+                android:contentDescription="@string/app_name"
+                android:padding="5dp"
+                android:src="@mipmap/serach_delete"
+                android:visibility="gone" />
+
         </RelativeLayout>
 
         <TextView
-            android:id="@+id/tv_cancel"
+            android:id="@+id/tv_search"
             android:layout_width="wrap_content"
             android:layout_alignParentRight="true"
             android:gravity="center"
@@ -69,9 +81,10 @@
             android:paddingEnd="15dp"
             android:paddingTop="3dp"
             android:paddingBottom="3dp"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textColor="@color/white"
-            android:text="取消"
+            android:text="搜索"
+            android:background="@drawable/tv_make"
             android:layout_height="match_parent"/>
 
     </RelativeLayout>

@@ -5,9 +5,11 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -107,8 +109,10 @@ public class BackgroundSearchActivity extends BaseActivity {
     @BindView(R.id.ll_ad_content)
     LinearLayout ll_ad_content;
 
-    @BindView(R.id.tv_cancel)
-    TextView tv_cancel;
+    @BindView(R.id.tv_search)
+    TextView tv_search;
+    @BindView(R.id.iv_delete)
+    ImageView mIvDelete;
 
     SearchTemplateItemAdapter  searchTemplateItemAdapter;
 
@@ -129,6 +133,25 @@ public class BackgroundSearchActivity extends BaseActivity {
 
         searchTemplateItemAdapter = new SearchTemplateItemAdapter(R.layout.item_search_template_mohu);
         rcSearch.setAdapter(searchTemplateItemAdapter);
+        //键盘的搜索按钮
+        ed_text.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
+                if(!TextUtils.isEmpty(ed_text.getText().toString().trim())){
+                    requestServerTemplateFuzzyQuery(ed_text.getText().toString().trim());
+                }
+                return true;
+            }
+            return false;
+        });
+        mIvDelete.setOnClickListener(view -> {
+            rcSearch.setVisibility(View.GONE);
+            coordinatorLayout.setVisibility(View.VISIBLE);
+            ed_text.setText("");
+            hideResultView(true);
+            cancelFocus();
+            EventBus.getDefault().post(new SendSearchText(""));
+            viewPager.setCurrentItem(0);
+        });
         ed_text.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -145,6 +168,7 @@ public class BackgroundSearchActivity extends BaseActivity {
                 if (s.length() == 0) {
                     hideResultView(false);
                     rcSearch.setVisibility(View.GONE);
+                    mIvDelete.setVisibility(View.GONE);
                     coordinatorLayout.setVisibility(View.VISIBLE);
                     appbar.setExpanded(true);
                     hideResultView(true);
@@ -152,6 +176,7 @@ public class BackgroundSearchActivity extends BaseActivity {
                     rcSearch.setVisibility(View.VISIBLE);
                     coordinatorLayout.setVisibility(View.GONE);
                     requestServerTemplateFuzzyQuery(ed_text.getText().toString().trim());
+                    mIvDelete.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -171,14 +196,13 @@ public class BackgroundSearchActivity extends BaseActivity {
                 }
             });
         }
-
-        tv_cancel.setOnClickListener(view -> {
-            rcSearch.setVisibility(View.GONE);
-            coordinatorLayout.setVisibility(View.VISIBLE);
-            ed_text.setText("");
-            hideResultView(true);
-            EventBus.getDefault().post(new SendSearchText(""));
-            viewPager.setCurrentItem(0);
+        tv_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!TextUtils.isEmpty(ed_text.getText().toString().trim())){
+                    requestServerTemplateFuzzyQuery(ed_text.getText().toString().trim());
+                }
+            }
         });
     }
 
@@ -186,6 +210,8 @@ public class BackgroundSearchActivity extends BaseActivity {
     private void requestServerTemplateFuzzyQuery(String keywords){
         HashMap<String, String> params = new HashMap<>();
         params.put("keywords", keywords);
+        // 1模板2背景
+        params.put("template_type", isFrom == 1 ? "1" : "2");
         HttpUtil.getInstance().toSubscribe(Api.getDefault().templateKeywords(BaseConstans.getRequestHead(params)),
                 new ProgressSubscriber<List<SearchTemplateInfoEntity>>(BackgroundSearchActivity.this) {
                     @Override
@@ -208,6 +234,7 @@ public class BackgroundSearchActivity extends BaseActivity {
                 toTemplate(searchTemplateItemAdapter.getData().get(position).getName());
                 rcSearch.setVisibility(View.GONE);
                 coordinatorLayout.setVisibility(View.VISIBLE);
+                ed_text.setText(searchTemplateItemAdapter.getData().get(position).getName());
             }
         });
     }
