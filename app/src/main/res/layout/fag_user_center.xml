@@ -20,10 +20,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop" />
-            <TextView
+            <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_alignParentBottom="true"
                 android:background="@drawable/home_page_gradient" />
             <RelativeLayout
                 android:layout_width="match_parent"

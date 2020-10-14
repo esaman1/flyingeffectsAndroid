@@ -59,6 +59,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:maxLines="2"
                     android:textColor="#858A8D"
                     android:textSize="12sp" />
             </LinearLayout>

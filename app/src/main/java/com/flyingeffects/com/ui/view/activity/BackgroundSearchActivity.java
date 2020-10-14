@@ -200,7 +200,9 @@ public class BackgroundSearchActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if(!TextUtils.isEmpty(ed_text.getText().toString().trim())){
-                    requestServerTemplateFuzzyQuery(ed_text.getText().toString().trim());
+                    toTemplate(ed_text.getText().toString().trim());
+                    rcSearch.setVisibility(View.GONE);
+                    coordinatorLayout.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -301,9 +303,10 @@ public class BackgroundSearchActivity extends BaseActivity {
                         statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "4_recommend", listSearchKey.get(finalI).getName());
                         nowShowText = listSearchKey.get(finalI).getName();
                         ed_text.setText(nowShowText);
-                        hideResultView(false);
+                        rcSearch.setVisibility(View.GONE);
+                        coordinatorLayout.setVisibility(View.VISIBLE);
+                        toTemplate(nowShowText);
                         ll_ad_content.setVisibility(View.GONE);
-                        cancelFocus();
                         statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "10_searchfor", nowShowText);
                         EventBus.getDefault().post(new SendSearchText(nowShowText));
 
