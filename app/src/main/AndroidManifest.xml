@@ -157,6 +157,11 @@
             android:theme="@style/AllTransparentTheme" />
 
         <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <activity
             android:name="com.flyingeffects.com.ui.view.activity.MessageLongClickActivity"
             android:theme="@style/AllTransparentTheme" />
 

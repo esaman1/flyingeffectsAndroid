@@ -1,6 +1,8 @@
 package com.flyingeffects.com.ui.view.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -34,16 +36,23 @@ import com.flyingeffects.com.ui.view.activity.FansActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.MineFocusActivity;
 import com.flyingeffects.com.ui.view.activity.ZanActivity;
+import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.utils.UCropOption;
+import com.lansosdk.videoeditor.LanSongFileUtil;
 import com.orhanobut.hawk.Hawk;
 import com.shixing.sxve.ui.view.WaitingDialog;
+import com.yalantis.ucrop.UCrop;
 import com.yanzhenjie.album.AlbumFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
@@ -103,6 +112,8 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     @BindView(R.id.ll_edit_data)
     LinearLayout llEditData;
 
+    private UCrop.Options options;
+
 
     @Override
     protected int getContentLayout() {
@@ -112,6 +123,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
     @Override
     protected void initView() {
+        options = UCropOption.getInstance().getUcropOption();
         iv_about.setOnClickListener(view -> {
             statisticsEventAffair.getInstance().setFlag(getActivity(), "3_help");
             Intent intent = new Intent(getActivity(), AboutActivity.class);
@@ -339,14 +351,38 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel &&  paths != null && paths.size() > 0) {
-            String path = paths.get(0);
+            try {
+                File srcFile = new File(paths.get(0));
+                //中文路径无法识别问题，重命名
+                File srcEngfile = new File(getContext().getExternalFilesDir("runCatch/"), "skinPath." + LanSongFileUtil.getFileSuffix(srcFile.getPath()));
+                FileUtil.copyFile(srcFile, srcEngfile.getPath());
+                File destFile = new File(LanSongFileUtil.createFileInBox(LanSongFileUtil.getFileSuffix(srcFile.getPath())));
+                if (destFile.exists() && srcEngfile.exists()) {
+                    Uri sourceUri = Uri.fromFile(srcEngfile);
+                    Uri destinationUri = Uri.fromFile(destFile);
+                    UCrop.of(sourceUri, destinationUri)
+                            .withAspectRatio(16, 9)
+                            .withMaxResultSize( 1280,720)
+                            .withOptions(options)
+                            .start(getActivity());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (resultCode == Activity.RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+            final Uri resultUri = UCrop.getOutput(data);
+            String path = resultUri.getPath();
             String type = path.substring(path.length() - 4);
             String nowTime = StringUtil.getCurrentTimeymd();
             String huaweiSkinPath = "media/android/user_skin_img/" + nowTime + "/" + System.currentTimeMillis() + type;
             uploadFileToHuawei(path,huaweiSkinPath);
         }
     }
-
 
     private void uploadFileToHuawei(String videoPath, String copyName) {
         WaitingDialog.openPragressDialog(getContext());

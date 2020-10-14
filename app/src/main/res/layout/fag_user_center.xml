@@ -69,6 +69,7 @@
                             android:id="@+id/tv_Introduction"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:maxLines="2"
                             android:paddingRight="3dp"
                             android:textColor="#858A8D"
                             android:textSize="12sp" />
