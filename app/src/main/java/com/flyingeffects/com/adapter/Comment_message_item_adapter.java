@@ -95,7 +95,7 @@ public class Comment_message_item_adapter extends BaseAdapter {
         holder.tv_content_1.setText(data.getContent());
 
         if (SearchList.get(position).isReply()) {
-            holder.tv_user_0.setText(SearchList.get(position).getNickname() + "回复了用户" + SearchList.get(position).getTo_user_nickname());
+            holder.tv_user_0.setText(SearchList.get(position).getNickname() + " 回复 " + SearchList.get(position).getTo_user_nickname());
         } else {
             holder.tv_user_0.setText(SearchList.get(position).getNickname());
         }
