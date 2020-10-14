@@ -217,5 +217,20 @@ public class FansActivity extends BaseActivity {
 
     }
 
+    public void initSmartRefreshLayout() {
+        smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
+            isRefresh = true;
+            refreshLayout.setEnableLoadMore(true);
+            selectPage = 1;
+            requestMessageCount();
+        });
+        smartRefreshLayout.setOnLoadMoreListener(refresh -> {
+            isRefresh = false;
+            selectPage++;
+            requestMessageCount();
+        });
+    }
+
+
 
 }

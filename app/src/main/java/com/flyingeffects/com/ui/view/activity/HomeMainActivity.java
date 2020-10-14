@@ -679,6 +679,7 @@ public class HomeMainActivity extends FragmentActivity {
      */
     private void requestMessageCount() {
         HashMap<String, String> params = new HashMap<>();
+        params.put("user_id", BaseConstans.GetUserId());
         Observable ob = Api.getDefault().getAllMessageNum(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<messageCount>(this) {
             @Override

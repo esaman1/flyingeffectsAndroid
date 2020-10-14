@@ -59,6 +59,7 @@ import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.ChooseMusicActivity;
+import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -407,6 +408,7 @@ public class CreationTemplateMvpModel {
         View viewForChooseMusic = LayoutInflater.from(context).inflate(R.layout.view_choose_music, viewPager, false);
         TextView tv_add_music = viewForChooseMusic.findViewById(R.id.tv_add_music);
         tv_add_music.setOnClickListener(view -> {
+            statisticsEventAffair.getInstance().setFlag(context, "15_music_add");
             Intent intent = new Intent(context, ChooseMusicActivity.class);
             intent.putExtra("needDuration", getDuration());
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

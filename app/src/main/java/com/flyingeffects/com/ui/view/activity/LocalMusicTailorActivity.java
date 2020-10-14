@@ -12,6 +12,7 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.LocalMusicTailorMvpView;
 import com.flyingeffects.com.ui.presenter.LocalMusicTailorPresenter;
 import com.flyingeffects.com.utils.LogUtil;
@@ -76,6 +77,8 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
 
     private long nowPlayEndTime;
 
+    private String title;
+
 
     @Override
     protected int getLayoutId() {
@@ -86,7 +89,7 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     protected void initView() {
         tv_top_submit.setVisibility(View.VISIBLE);
         tv_top_submit.setText("下一步");
-
+        title=getIntent().getStringExtra("title");
         ((TextView) findViewById(R.id.tv_top_title)).setText("裁剪音乐");
         findViewById(R.id.iv_top_back).setOnClickListener(view -> finish());
         Presenter = new LocalMusicTailorPresenter(this, this);
@@ -218,6 +221,8 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
         switch (view.getId()) {
             case R.id.tv_top_submit:
                 //裁剪保存
+                statisticsEventAffair.getInstance().setFlag(LocalMusicTailorActivity.this, "16_pick music_apply",title);
+
                 Presenter.toSaveCutMusic(nowPlayStartTime, nowPlayEndTime);
                 break;
 

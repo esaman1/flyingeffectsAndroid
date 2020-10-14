@@ -144,15 +144,21 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             } else {
                 iv_zan.setImageResource(R.mipmap.zan);
             }
-            //关注按键
-            if (item.getIs_follow() == 1 && BaseConstans.hasLogin()) {
-                tv_btn_follow.setText("取消关注");
-                tv_btn_follow.setVisibility(View.GONE);
-            } else {
-                tv_btn_follow.setVisibility(View.VISIBLE);
-                tv_btn_follow.setText("关注");
-            }
 
+            if( BaseConstans.hasLogin()){
+                if(item.getAdmin_id().equals(BaseConstans.GetUserId())){
+                    tv_btn_follow.setVisibility(View.GONE);
+                }else{
+                    //关注按键
+                    if (item.getIs_follow() == 1 ) {
+                        tv_btn_follow.setText("取消关注");
+                        tv_btn_follow.setVisibility(View.GONE);
+                    } else {
+                        tv_btn_follow.setVisibility(View.VISIBLE);
+                        tv_btn_follow.setText("关注");
+                    }
+                }
+            }
             if (video_layout.getChildCount() != 0) {
                 video_layout.removeAllViews();
             }

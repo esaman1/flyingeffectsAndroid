@@ -162,6 +162,7 @@ public class frag_message extends BaseFragment {
 
     private void requestSystemMessageCount() {
         HashMap<String, String> params = new HashMap<>();
+        params.put("user_id", BaseConstans.GetUserId());
         Observable ob = Api.getDefault().systemTotal(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<SystemMessageCountAllEntiy>(getActivity()) {
             @Override
@@ -245,6 +246,7 @@ public class frag_message extends BaseFragment {
                     Intent intentFan = new Intent(getActivity(), FansActivity.class);
                     intentFan.putExtra("to_user_id", BaseConstans.GetUserId());
                     intentFan.putExtra("from", 1);
+                    intentFan.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intentFan);
                 } else {
                     ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
@@ -258,6 +260,7 @@ public class frag_message extends BaseFragment {
                     statisticsEventAffair.getInstance().setFlag(getActivity(), "12_awesome");
                     Intent intentZan = new Intent(getActivity(), ZanActivity.class);
                     intentZan.putExtra("from", 1);
+                    intentZan.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intentZan);
                 } else {
                     ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
@@ -270,6 +273,7 @@ public class frag_message extends BaseFragment {
                     statisticsEventAffair.getInstance().setFlag(getActivity(), "12_comment");
                     Intent intentComment = new Intent(getActivity(), LikeActivity.class);
                     intentComment.putExtra("from", 1);
+                    intentComment.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intentComment);
                 } else {
                     ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
