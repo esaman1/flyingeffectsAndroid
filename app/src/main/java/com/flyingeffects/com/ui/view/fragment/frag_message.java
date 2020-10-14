@@ -24,6 +24,7 @@ import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.activity.FansActivity;
 import com.flyingeffects.com.ui.view.activity.LikeActivity;
+import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.SystemMessageDetailActivity;
 import com.flyingeffects.com.ui.view.activity.ZanActivity;
 import com.flyingeffects.com.utils.LogUtil;
@@ -137,11 +138,6 @@ public class frag_message extends BaseFragment {
 //    }
 
 
-
-
-
-
-
     /**
      * description ：请求粉丝数，赞和评论数量
      * creation date: 2020/7/29
@@ -175,15 +171,13 @@ public class frag_message extends BaseFragment {
 
             @Override
             protected void _onNext(SystemMessageCountAllEntiy data) {
-                String str=StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM",str);
-                ArrayList<systemessagelist> list=data.getSystem_message();
+                String str = StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM", str);
+                ArrayList<systemessagelist> list = data.getSystem_message();
                 initRecyclerView(list);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
-
-
 
 
     private void showMessageCount(messageCount data) {
@@ -223,10 +217,16 @@ public class frag_message extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 statisticsEventAffair.getInstance().setFlag(getActivity(), "12_system");
-                Intent intent = new Intent(getActivity(), SystemMessageDetailActivity.class);
-                intent.putExtra("needId",systemessagelists.get(i).getId());
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                if (BaseConstans.hasLogin()) {
+                    Intent intent = new Intent(getActivity(), SystemMessageDetailActivity.class);
+                    intent.putExtra("needId", systemessagelists.get(i).getId());
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -282,13 +282,10 @@ public class frag_message extends BaseFragment {
     }
 
 
-
-
-
     @Subscribe
     public void onEventMainThread(RequestMessage event) {
         if (getActivity() != null) {
-            LogUtil.d("OOM","onEventMainThread");
+            LogUtil.d("OOM", "onEventMainThread");
             if (BaseConstans.hasLogin()) {
                 requestMessageCount();
                 requestSystemMessageCount();
