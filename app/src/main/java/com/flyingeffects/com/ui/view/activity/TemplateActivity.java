@@ -31,6 +31,7 @@ import com.flyingeffects.com.adapter.TemplateThumbAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.GetPathType;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.TabEntity;
@@ -892,27 +893,31 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         switch (v.getId()) {
             case R.id.tv_top_submit:
-                if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {
-                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "4_search_save", templateName);
-                }
-                statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_save", templateName);
-                if (isPlaying) {
-                    if (mPlayer != null) {
-                        mPlayer.pause();
-
-                        mPlayer = null;
-                        ivPlayButton.setImageResource(R.mipmap.iv_play);
-                        isPlaying = false;
-                        showPreview(true, false);
+                if(!DoubleClick.getInstance().isFastZDYDoubleClick(1000)){
+                    if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {
+                        statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "4_search_save", templateName);
                     }
-                }
-                if (nowChooseMusic != 0) {
-                    presenter.renderVideo(mFolder.getPath(), nowSpliteMusic, false);
-                } else {
-                    presenter.renderVideo(mFolder.getPath(), mAudio1Path, false);
+                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_save", templateName);
+                    if (isPlaying) {
+                        if (mPlayer != null) {
+                            mPlayer.pause();
+
+                            mPlayer = null;
+                            ivPlayButton.setImageResource(R.mipmap.iv_play);
+                            isPlaying = false;
+                            showPreview(true, false);
+                        }
+                    }
+                    if (nowChooseMusic != 0) {
+                        presenter.renderVideo(mFolder.getPath(), nowSpliteMusic, false);
+                    } else {
+                        presenter.renderVideo(mFolder.getPath(), mAudio1Path, false);
+                    }
+
+                    presenter.StatisticsToSave(templateId);
                 }
 
-                presenter.StatisticsToSave(templateId);
+
 
                 break;
 

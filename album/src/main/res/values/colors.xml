@@ -34,7 +34,7 @@
     <color name="albumSheetLayer">#EE2B2B2B</color>
 
     <color name="albumColorTabText">#A3A3A5</color>
-    <color name="albumColorTabBlack">#181818</color>
+    <color name="albumColorTabBlack">#90181818</color>
     <color name="albumColorWhite">#FFFFFF</color>
     <color name="albumColorBlack">#000000</color>
     <color name="albumColorBlue">#5496FF</color>

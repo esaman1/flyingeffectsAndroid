@@ -223,7 +223,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     }
 
 
-
+  
 
 
 
