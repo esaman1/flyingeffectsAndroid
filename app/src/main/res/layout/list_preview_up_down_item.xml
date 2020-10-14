@@ -185,6 +185,7 @@
             android:background="@drawable/tv_make_crice"
             android:paddingStart="@dimen/dp_10"
             android:paddingTop="@dimen/dp_5"
+            android:visibility="gone"
             android:paddingEnd="@dimen/dp_10"
             android:paddingBottom="@dimen/dp_5"
             android:text="@string/follow"

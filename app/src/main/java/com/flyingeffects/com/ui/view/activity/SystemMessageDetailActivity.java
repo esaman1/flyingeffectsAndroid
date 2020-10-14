@@ -171,6 +171,7 @@ public class SystemMessageDetailActivity extends BaseActivity {
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
+        params.put("user_id", BaseConstans.GetUserId());
         LogUtil.d("OOM",needId);
         params.put("id", needId);
         Observable ob = Api.getDefault().systemessageinfo(BaseConstans.getRequestHead(params));

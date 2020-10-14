@@ -30,13 +30,14 @@ import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.VideoManage;
 import com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity;
 import com.flyingeffects.com.ui.view.activity.UserHomepageActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
-import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.TimeUtils;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.io.File;
@@ -229,6 +230,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                     case R.id.tv_make:
                         Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra("title",listData.get(position).getTitle());
                         intent.putExtra("videoPath", listData.get(position).getAudio_url());
                         intent.putExtra("needDuration", needDuration);
                         intent.putExtra("isAudio", true);
@@ -238,7 +240,8 @@ public class frag_choose_music_recent_updates extends BaseFragment {
 
                     case R.id.iv_collect:
                         //收藏
-                        clickCollect(listData.get(position).getId(), listData.get(position).getIs_collection());
+                        clickCollect(listData.get(position).getId(), listData.get(position).getIs_collection(),listData.get(position).getTitle());
+
                         break;
 
                     case R.id.tv_user:
@@ -253,6 +256,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
 
                     case R.id.iv_play_music:
                         //播放音乐
+                        statisticsEventAffair.getInstance().setFlag(getActivity(), "16_paly",listData.get(position).getTitle());
                         playMusic(listData.get(position).getAudio_url(), position);
                         break;
 
@@ -437,7 +441,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
 }
 
 
-    public void clickCollect(String music_id, int isCollect) {
+    public void clickCollect(String music_id, int isCollect,String title) {
         HashMap<String, String> params = new HashMap<>();
         params.put("music_id", music_id);
         // 启动时间
@@ -452,13 +456,13 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             protected void _onNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "收藏音乐返回的值为" + str);
-                updateCollect(isCollect, music_id);
+                updateCollect(isCollect, music_id,title);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
 
-    private void updateCollect(int oldIsCollect, String music_id) {
+    private void updateCollect(int oldIsCollect, String music_id,String title) {
         if (id == 2) {
             //移除收藏item
             listData.remove(nowClickPosition);
@@ -466,8 +470,16 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             pauseMusic();
         } else {
             if (oldIsCollect == 0) {
+                //收藏
+                if(!TextUtils.isEmpty(title)){
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "16_pick music_keep",title);
+                }
                 oldIsCollect = 1;
             } else {
+                //取消了收藏
+                if(!TextUtils.isEmpty(title)){
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "16_pick music_keep_cancel",title);
+                }
                 oldIsCollect = 0;
             }
             ChooseMusic chooseMusic = listData.get(nowClickPosition);
@@ -516,7 +528,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                 String needId = listData.get(i).getId();
                 if (needId.equals(musicId)) {
                     nowClickPosition = i;
-                    updateCollect(listData.get(i).getIs_collection(), "");
+                    updateCollect(listData.get(i).getIs_collection(), "","");
                     return;
                 }
             }

@@ -122,6 +122,7 @@ public class AboutActivity extends BaseActivity {
 //                }, "");
                 break;
             case R.id.tv_notification_management:
+                statisticsEventAffair.getInstance().setFlag(AboutActivity.this, "3_notifications");
                 PermissionUtil.gotoPermission(AboutActivity.this);
                 break;
             default:

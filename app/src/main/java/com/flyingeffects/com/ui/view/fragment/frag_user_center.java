@@ -30,6 +30,7 @@ import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.AboutActivity;
 import com.flyingeffects.com.ui.view.activity.EditInformationActivity;
 import com.flyingeffects.com.ui.view.activity.FansActivity;
+import com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.MineFocusActivity;
 import com.flyingeffects.com.ui.view.activity.ZanActivity;
@@ -253,6 +254,8 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 }
                 break;
             case R.id.iv_Peeling:
+                statisticsEventAffair.getInstance().setFlag(getActivity(), "3_background");
+
                 AlbumManager.chooseImageAlbum(getContext(),1,SELECTALBUMFROMUSETCENTERBJ,this,"");
                 break;
             case R.id.tv_edit_information:
