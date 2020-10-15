@@ -241,7 +241,6 @@ public class frag_message extends BaseFragment {
             case R.id.iv_icon_fans:
 
                 if (BaseConstans.hasLogin()) {
-
                     statisticsEventAffair.getInstance().setFlag(getActivity(), "12_Fans");
                     Intent intentFan = new Intent(getActivity(), FansActivity.class);
                     intentFan.putExtra("to_user_id", BaseConstans.GetUserId());

@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageView;
@@ -43,6 +45,7 @@ import com.nineton.ntadsdk.manager.VideoAdManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -91,8 +94,10 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
     private boolean nowUiIsLandscape;
 
-    private  boolean isShowPreviewAd=false;
+    private boolean isShowPreviewAd = false;
 
+    private ArrayList<String> titleEffect;
+    private ArrayList<String> titleStyle;
 
     @Override
     protected int getLayoutId() {
@@ -102,8 +107,11 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
-        imagePath = getIntent().getStringExtra("path");
-        nowUiIsLandscape=getIntent().getBooleanExtra("nowUiIsLandscape",false);
+        Bundle bundle = getIntent().getBundleExtra("bundle");
+        imagePath = bundle.getString("path");
+        titleEffect = bundle.getStringArrayList("titleEffect");
+        titleStyle = bundle.getStringArrayList("titleStyle");
+        nowUiIsLandscape = bundle.getBoolean("nowUiIsLandscape", false);
         Presenter = new CreationTemplatePreviewPresenter(this, this, imagePath);
         VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
         LogUtil.d("OOM", "TimeUtils.timeParse(videoInfo.getDuration())=" + TimeUtils.timeParse(videoInfo.getDuration()));
@@ -155,7 +163,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
      * user : zhangtongju
      */
     private void saveToAlbum(String path, boolean hasShowStimulateAd) {
-        if(!isOndesTroy){
+        if (!isOndesTroy) {
             String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
             try {
                 FileUtil.copyFile(new File(path), albumPath);
@@ -201,8 +209,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     }
 
 
-
-
     @Override
     @OnClick({R.id.tv_back, R.id.tv_save, R.id.rela_parent_content})
     public void onClick(View v) {
@@ -219,6 +225,8 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                 break;
 
             case R.id.tv_save:
+
+                statisticsEventAffair();
                 if (UiStep.isFromDownBj) {
                     statisticsEventAffair.getInstance().setFlag(this, "7_save");
                 } else {
@@ -235,7 +243,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
                     videoPause();
                     Presenter.destroyTimer();
-                    Presenter.toSaveVideo(false,nowUiIsLandscape);
+                    Presenter.toSaveVideo(false, nowUiIsLandscape);
 
 
                 }
@@ -250,17 +258,46 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                 } else {
                     videoResume();
                 }
-                if(!isShowPreviewAd&& BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()){
+                if (!isShowPreviewAd && BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                     AdManager.getInstance().showCpAd(this, AdConfigs.AD_SCREEN_FOR_PREVIEW);
-                    isShowPreviewAd=true;
+                    isShowPreviewAd = true;
                 }
-
 
 
                 break;
 
         }
         super.onClick(v);
+    }
+
+
+    private void statisticsEventAffair() {
+        if (titleEffect != null && titleEffect.size() > 0) {
+
+            for (String str : titleEffect
+            ) {
+                statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_style_save", str);
+                LogUtil.d("OOM3", "titleEffect=" + str);
+            }
+        }
+
+
+        if (titleStyle != null && titleStyle.size() > 0) {
+
+            for (String str : titleStyle
+            ) {
+                statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_font_save", str);
+                LogUtil.d("OOM3", "titleStyle=" + str);
+            }
+        }
+
+
+        if ((titleStyle != null && titleStyle.size() > 0) || (titleEffect != null && titleEffect.size() > 0)) {
+            statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_save_save");
+
+        }
+
+
     }
 
 
@@ -421,12 +458,13 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 //    }
 
 
-    boolean isOndesTroy=false;
+    boolean isOndesTroy = false;
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         videoStop();
-        isOndesTroy=true;
+        isOndesTroy = true;
 //        destroyTimer();
         EventBus.getDefault().unregister(this);
     }
@@ -487,13 +525,13 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                     statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "video_ad_alert_request_fail");
                     LogUtil.d("OOM", "onVideoAdError" + s);
                     videoPause();
-                    Presenter.toSaveVideo(false,nowUiIsLandscape);
+                    Presenter.toSaveVideo(false, nowUiIsLandscape);
                 }
 
                 @Override
                 public void onVideoAdClose() {
                     videoPause();
-                    Presenter.toSaveVideo(true,nowUiIsLandscape);
+                    Presenter.toSaveVideo(true, nowUiIsLandscape);
                 }
 
                 @Override
@@ -541,7 +579,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
     @Override
     public void isSaveToAlbum(String path, boolean isAdSuccess) {
-        if(!isOndesTroy){
+        if (!isOndesTroy) {
             saveToAlbum(path, isAdSuccess);
         }
 

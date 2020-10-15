@@ -27,8 +27,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
-    public void ChangeTextStyle(String path, int type){
-        creationTemplatemodel.ChangeTextStyle(path,type);
+    public void ChangeTextStyle(String path, int type,String title){
+        creationTemplatemodel.ChangeTextStyle(path,type,title);
     }
 
 
@@ -37,8 +37,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
-    public void ChangeTextColor(String color0, String color1){
-        creationTemplatemodel.ChangeTextColor(color0,color1);
+    public void ChangeTextColor(String color0, String color1,String title){
+        creationTemplatemodel.ChangeTextColor(color0,color1,title);
     }
 
 

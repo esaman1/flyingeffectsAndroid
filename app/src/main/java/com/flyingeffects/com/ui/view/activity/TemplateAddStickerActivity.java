@@ -494,8 +494,8 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
             ll_add_text_style.setVisibility(View.VISIBLE);
             createViewForAddText = new CreateViewForAddText(this, ll_add_text_style, new CreateViewForAddText.downCallback() {
                 @Override
-                public void isSuccess(String path, int type) {
-                    presenter.ChangeTextStyle(path, type);
+                public void isSuccess(String path, int type,String title) {
+                    presenter.ChangeTextStyle(path, type,title);
                 }
 
                 @Override
@@ -512,8 +512,8 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                 }
 
                 @Override
-                public void setTextColor(String color0, String color1) {
-                    presenter.ChangeTextColor(color0, color1);
+                public void setTextColor(String color0, String color1,String title) {
+                    presenter.ChangeTextColor(color0, color1,title);
                 }
             });
             createViewForAddText.showBottomSheetDialog(inputText,"OneKey_template");
