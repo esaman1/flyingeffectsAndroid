@@ -59,17 +59,17 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
         helper.setText(R.id.tv_user_id, item.getNickname());
         ll_more_comment = helper.getView(R.id.ll_more_comment);
 //        //显示第一个预览评论
-        if (item.getReply() != null && item.getReply().size() > 0) {
-            ll_more_comment.setVisibility(View.VISIBLE);
-            ll_more_comment.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    clickCommentCallback.click(offset);
-                }
-            });
-        } else {
-            ll_more_comment.setVisibility(View.GONE);
-        }
+//        if (item.getReply() != null && item.getReply().size() > 0) {
+//            ll_more_comment.setVisibility(View.VISIBLE);
+//            ll_more_comment.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    clickCommentCallback.click(offset);
+//                }
+//            });
+//        } else {
+//            ll_more_comment.setVisibility(View.GONE);
+//        }
 
         if (item.isOpenComment()) {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

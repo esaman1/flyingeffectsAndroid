@@ -153,7 +153,7 @@ public class MessageEnity implements Serializable {
     }
 
     //是否展开评论
-    private boolean isOpenComment=false;
+    private boolean isOpenComment=true;
 
 
 

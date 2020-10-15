@@ -150,6 +150,7 @@ public class TemplateModel {
     @WorkerThread
     public String[] getReplaceableFilePaths(String folder) {
         String[] paths = new String[mAssets.size()];
+        Log.d("OOM","mAssets.size()="+mAssets.size());
         for (int i = 0; i < mAssets.size(); i++) {
             if (mAssets.get(0).ui.getIsAnim()) {
                 if (i == mAssets.size() - 1) {
