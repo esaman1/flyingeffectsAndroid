@@ -31,6 +31,7 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.AboutActivity;
+import com.flyingeffects.com.ui.view.activity.BackgroundSearchActivity;
 import com.flyingeffects.com.ui.view.activity.EditInformationActivity;
 import com.flyingeffects.com.ui.view.activity.FansActivity;
 import com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity;
@@ -272,12 +273,12 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 break;
             case R.id.iv_Peeling:
                 statisticsEventAffair.getInstance().setFlag(getActivity(), "3_background");
-
                 AlbumManager.chooseImageAlbum(getContext(),1,SELECTALBUMFROMUSETCENTERBJ,this,"");
                 break;
             case R.id.tv_edit_information:
             case R.id.ll_edit_data:
                 if(!DoubleClick.getInstance().isFastDoubleClick()){
+                    statisticsEventAffair.getInstance().setFlag(getContext(), "3_Information");
                     Intent intent = new Intent(getActivity(), EditInformationActivity.class);
                     startActivity(intent);
                 }
