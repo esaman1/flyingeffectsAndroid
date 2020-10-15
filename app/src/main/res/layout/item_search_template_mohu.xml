@@ -10,13 +10,12 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_centerVertical="true"
-           android:drawableLeft="@mipmap/gray_search"
            android:textSize="15sp"
            android:textColor="@color/white"
            android:maxLines="2"
-           android:layout_marginRight="25dp"
-           android:drawablePadding="10dp"/>
+           android:layout_marginRight="25dp" />
        <ImageView
+           android:id="@+id/im_arrow"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_centerVertical="true"
