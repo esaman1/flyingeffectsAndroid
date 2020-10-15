@@ -120,7 +120,7 @@ public class CreateViewForAddText {
         View gridViewLayout = LayoutInflater.from(context).inflate(R.layout.view_creat_template_effect_type, viewPager, false);
         GridView gridView = gridViewLayout.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view13, i, l) -> {
-            CreateViewForAddText.this.downFile(listEffect.get(i).getImage(), 0, listEffect.get(i).getType(), listEffect.get(i).getColor());
+            CreateViewForAddText.this.downFile(listEffect.get(i).getImage(), 0, listEffect.get(i).getType(), listEffect.get(i).getColor(),listEffect.get(i).getTitle());
             createTemplateTextEffectAdapterEffect.select(i);
             if ("bj_template".equals(type)) {
                 statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_style", listEffect.get(i).getTitle());
@@ -137,7 +137,7 @@ public class CreateViewForAddText {
         View gridViewLayoutFont = LayoutInflater.from(context).inflate(R.layout.view_creat_template_text_type, viewPager, false);
         GridView gridViewFont = gridViewLayoutFont.findViewById(R.id.gridView);
         gridViewFont.setOnItemClickListener((adapterView, view1, i, l) -> {
-            CreateViewForAddText.this.downFile(listFont.get(i).getFile(), 1, 1, "");
+            CreateViewForAddText.this.downFile(listFont.get(i).getFile(), 1, 1, "",listFont.get(i).getTitle());
             createTemplateTextEffectAdapterFont.select(i);
             if ("bj_template".equals(type)) {
                 statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_font", listFont.get(i).getTitle());
@@ -180,11 +180,11 @@ public class CreateViewForAddText {
      * param : type 0 热门效果或者 1字体   textType ：热门效果 2表示文字，1 表示图片
      * user : zhangtongju
      */
-    private void downFile(String path, int type,int textType,String color) {
+    private void downFile(String path, int type,int textType,String color,String title) {
 
         if(type==0&&textType==2){
             String[]str=color.split(",");
-            callback.setTextColor("#"+str[1],"#"+str[0]);
+            callback.setTextColor("#"+str[1],"#"+str[0],title);
         }else{
             LogUtil.d("OOM4", "downFilePath=" + path);
             int index = path.lastIndexOf("/");
@@ -196,13 +196,13 @@ public class CreateViewForAddText {
             if (file.exists()) {
                 LogUtil.d("OOM2", "已下载");
                 if (callback != null) {
-                    callback.isSuccess(name, type);
+                    callback.isSuccess(name, type,title);
                 }
             } else {
                 WaitingDialog.openPragressDialog(context);
                 Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
                     DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> {
-                        callback.isSuccess(name, type);
+                        callback.isSuccess(name, type,title);
                         WaitingDialog.closePragressDialog();
                     });
                     manage.DownloadVideo(path, name);
@@ -220,11 +220,11 @@ public class CreateViewForAddText {
      */
     public interface downCallback {
 
-        void isSuccess(String path, int type);
+        void isSuccess(String path, int type,String title);
 
         void setText(String text);
 
-        void setTextColor(String color0,String color1);
+        void setTextColor(String color0,String color1,String title);
 
     }
 

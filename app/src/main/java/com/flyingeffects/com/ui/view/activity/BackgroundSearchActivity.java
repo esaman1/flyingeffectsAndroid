@@ -200,7 +200,9 @@ public class BackgroundSearchActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if(!TextUtils.isEmpty(ed_text.getText().toString().trim())){
-                    requestServerTemplateFuzzyQuery(ed_text.getText().toString().trim());
+                    toTemplate(ed_text.getText().toString().trim());
+                    rcSearch.setVisibility(View.GONE);
+                    coordinatorLayout.setVisibility(View.VISIBLE);
                 }
             }
         });

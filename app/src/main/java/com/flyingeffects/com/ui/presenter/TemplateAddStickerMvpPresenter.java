@@ -45,13 +45,13 @@ public class TemplateAddStickerMvpPresenter extends BasePresenter implements Tem
         TemplateAddStickermodel.deleteAllTextSticker();
     }
 
-    public void ChangeTextStyle(String path, int type){
-        TemplateAddStickermodel.ChangeTextStyle(path,type);
+    public void ChangeTextStyle(String path, int type,String title){
+        TemplateAddStickermodel.ChangeTextStyle(path,type,title);
     }
 
 
-    public void ChangeTextColor(String color0, String color1){
-        TemplateAddStickermodel.ChangeTextColor(color0,color1);
+    public void ChangeTextColor(String color0, String color1,String title){
+        TemplateAddStickermodel.ChangeTextColor(color0,color1,title);
     }
 
 

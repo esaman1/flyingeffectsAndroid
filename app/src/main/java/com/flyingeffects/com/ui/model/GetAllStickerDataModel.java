@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.model;
 
 import android.text.TextUtils;
+import android.widget.ListView;
 
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
@@ -11,23 +12,33 @@ import com.flyingeffects.com.utils.ScreenCaptureUtil;
 import com.flyingeffects.com.view.StickerView;
 import com.shixing.sxve.ui.albumType;
 
+import java.util.ArrayList;
+
 public class GetAllStickerDataModel {
 
 
     private static GetAllStickerDataModel thisModel;
+
+    //字体
+    private ArrayList<String>titleStyle=new ArrayList<>();
+    //效果
+    private ArrayList<String>titleEffect=new ArrayList<>();
 
     public static GetAllStickerDataModel getInstance() {
         if (thisModel == null) {
             thisModel = new GetAllStickerDataModel();
         }
         return thisModel;
-
     }
 
 
     public AllStickerData getStickerData(StickerView stickerView, boolean isMatting, VideoInfo videoInfo) {
         AllStickerData stickerData = new AllStickerData();
+        titleEffect.clear();
+        titleStyle.clear();
         if (stickerView.getIsTextSticker()) {
+            titleEffect.add(stickerView.GetTextEffectTitle());
+            titleStyle.add(stickerView.GetTextStyleTitle());
             ScreenCaptureUtil screenCaptureUtil = new ScreenCaptureUtil(BaseApplication.getInstance());
             stickerData.setBoxH((int) stickerView.getmHelpBoxRectH());
             stickerData.setBoxW((int) stickerView.getmHelpBoxRectW());
@@ -87,6 +98,19 @@ public class GetAllStickerDataModel {
         stickerData.setChooseAnimId(stickerView.getChooseAnimId());
         return stickerData;
     }
+
+
+
+    public ArrayList<String>GetTitleStyle(){
+        return  titleStyle;
+    }
+
+
+
+    public ArrayList<String>GettitleEffect(){
+        return  titleEffect;
+    }
+
 
 
 }

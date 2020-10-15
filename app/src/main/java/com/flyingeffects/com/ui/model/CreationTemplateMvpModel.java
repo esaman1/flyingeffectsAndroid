@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
@@ -188,12 +189,12 @@ public class CreationTemplateMvpModel {
      * creation date: 2020/9/21
      * user : zhangtongju
      */
-    public void ChangeTextStyle(String path, int type) {
+    public void ChangeTextStyle(String path, int type,String title) {
         if (nowChooseStickerView.getIsTextSticker()) {
             if (type == 0) {
-                nowChooseStickerView.setTextBitmapStyle(path);
+                nowChooseStickerView.setTextBitmapStyle(path,title);
             } else {
-                nowChooseStickerView.setTextStyle(path);
+                nowChooseStickerView.setTextStyle(path,title);
             }
         }
     }
@@ -213,9 +214,9 @@ public class CreationTemplateMvpModel {
         }
     }
 
-    public void ChangeTextColor(String color0, String color1) {
+    public void ChangeTextColor(String color0, String color1,String title) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            nowChooseStickerView.setTextPaintColor(color0, color1);
+            nowChooseStickerView.setTextPaintColor(color0, color1,title);
         }
     }
 
@@ -1137,14 +1138,14 @@ public class CreationTemplateMvpModel {
                 //是否是图片文字效果
                 if (copyStickerView.GetIsChooseTextBjEffect()) {
                     if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
-                        stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath());
+                        stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath(),copyStickerView.GetTextEffectTitle());
                     }
                 } else {
                     ArrayList<String> colors = copyStickerView.GetTextColors();
-                    stickView.setTextPaintColor(colors.get(0), colors.get(1));
+                    stickView.setTextPaintColor(colors.get(0), colors.get(1),copyStickerView.GetTextEffectTitle());
                 }
                 if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
-                    stickView.setTextStyle(copyStickerView.getTypefacePath());
+                    stickView.setTextStyle(copyStickerView.getTypefacePath(),copyStickerView.GetTextStyleTitle());
                 }
                 stickView.setStickerText(copyStickerView.getStickerText());
                 stickView.SetTextAngle(copyStickerView.getRotateAngle());
@@ -1161,14 +1162,14 @@ public class CreationTemplateMvpModel {
                     if (isText) {
                         if (copyStickerView.GetIsChooseTextBjEffect()) {
                             if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
-                                stickView.setTextStyle(copyStickerView.getTypefacePath());
+                                stickView.setTextStyle(copyStickerView.getTypefacePath(),copyStickerView.GetTextStyleTitle());
                             }
                             if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
-                                stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath());
+                                stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath(),copyStickerView.GetTextEffectTitle());
                             }
                         } else {
                             ArrayList<String> colors = copyStickerView.GetTextColors();
-                            stickView.setTextPaintColor(colors.get(0), colors.get(1));
+                            stickView.setTextPaintColor(colors.get(0), colors.get(1),copyStickerView.GetTextEffectTitle());
                         }
                         stickView.setStickerText(copyStickerView.getStickerText());
                         stickView.SetTextAngle(copyStickerView.getRotateAngle());
@@ -1498,9 +1499,13 @@ public class CreationTemplateMvpModel {
                                     dialog.closePragressDialog();
                                     //成功后的回调
                                     Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
+                                    Bundle bundle=new Bundle();
+                                    bundle.putStringArrayList("titleEffect", (ArrayList<String>) GetAllStickerDataModel.getInstance().GettitleEffect());
+                                    bundle.putStringArrayList("titleStyle", (ArrayList<String>) GetAllStickerDataModel.getInstance().GetTitleStyle());
                                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                    intent.putExtra("path", path);
-                                    intent.putExtra("nowUiIsLandscape", nowUiIsLandscape);
+                                    bundle.putString("path", path);
+                                    bundle.putBoolean("nowUiIsLandscape", nowUiIsLandscape);
+                                    intent.putExtra("bundle", bundle);
                                     context.startActivity(intent);
                                     Observable.just(0).subscribeOn(AndroidSchedulers.mainThread())
                                             .subscribe(integer -> new Handler().postDelayed(() ->

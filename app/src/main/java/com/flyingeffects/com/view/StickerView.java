@@ -94,6 +94,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private float mMeasureWidth = 300;
     private float mMeasureHeight = 300;
     private String stickerText = "输入文本";
+    //选择字体的名字
+    private String textStyleTitle;
+    //选择字体效果名字
+    private String textEffectTitle;
+
     //文字格式地址
     private String TypefacePath;
     //文字图片地址
@@ -2143,7 +2148,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-    public void setTextStyle(String path) {
+
+    public void setTextStyle(String path,String textStyleTitle) {
+        this.textStyleTitle=textStyleTitle;
         TypefacePath = path;
         Typeface typeface = Typeface.createFromFile(path);
         Typeface typeface2 = Typeface.createFromFile(path);
@@ -2159,7 +2166,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-    public void setTextBitmapStyle(String path) {
+    public void setTextBitmapStyle(String path,String effectsTitle) {
+        textEffectTitle=effectsTitle;
         getTypefaceBitmapPath = path;
         isChooseTextBjEffect = true;
         bpForTextBj = BitmapFactory.decodeFile(path);
@@ -2191,7 +2199,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     private ArrayList<String> colors = new ArrayList<>();
 
-    public void setTextPaintColor(String paintColor1, String paintColor2) {
+    public void setTextPaintColor(String paintColor1, String paintColor2,String effectsTitle) {
+      textEffectTitle=effectsTitle;
         if (bpForTextBj != null) {
             bpForTextBj.recycle();
             bpForTextBj = null;
@@ -2203,6 +2212,16 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         colors.clear();
         colors.add(paintColor1);
         colors.add(paintColor2);
+    }
+
+
+    public String GetTextEffectTitle(){
+        return  textEffectTitle;
+    }
+
+
+    public String GetTextStyleTitle(){
+        return  textStyleTitle;
     }
 
 

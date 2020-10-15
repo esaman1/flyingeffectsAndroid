@@ -61,6 +61,7 @@ import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.TemplateAddStickerMvpCallback;
 import com.flyingeffects.com.ui.view.activity.AdHintActivity;
+import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -302,9 +303,9 @@ public class TemplateAddStickerMvpModel {
     }
 
 
-    public void ChangeTextColor(String color0, String color1) {
+    public void ChangeTextColor(String color0, String color1,String title) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            nowChooseStickerView.setTextPaintColor(color0, color1);
+            nowChooseStickerView.setTextPaintColor(color0, color1,title);
         }
     }
 
@@ -932,12 +933,12 @@ public class TemplateAddStickerMvpModel {
      * creation date: 2020/9/21
      * user : zhangtongju
      */
-    public void ChangeTextStyle(String path, int type) {
+    public void ChangeTextStyle(String path, int type,String title) {
         if (nowChooseStickerView.getIsTextSticker()) {
             if (type == 0) {
-                nowChooseStickerView.setTextBitmapStyle(path);
+                nowChooseStickerView.setTextBitmapStyle(path,title);
             } else {
-                nowChooseStickerView.setTextStyle(path);
+                nowChooseStickerView.setTextStyle(path,title);
             }
         }
     }
@@ -1219,14 +1220,14 @@ public class TemplateAddStickerMvpModel {
                 //是否是图片文字效果
                 if (copyStickerView.GetIsChooseTextBjEffect()) {
                     if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
-                        stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath());
+                        stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath(),copyStickerView.GetTextEffectTitle());
                     }
                 } else {
                     ArrayList<String> colors = copyStickerView.GetTextColors();
-                    stickView.setTextPaintColor(colors.get(0), colors.get(1));
+                    stickView.setTextPaintColor(colors.get(0), colors.get(1),copyStickerView.GetTextEffectTitle());
                 }
                 if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
-                    stickView.setTextStyle(copyStickerView.getTypefacePath());
+                    stickView.setTextStyle(copyStickerView.getTypefacePath(),copyStickerView.GetTextStyleTitle());
                 }
                 stickView.setStickerText(copyStickerView.getStickerText());
                 stickView.SetTextAngle(copyStickerView.getRotateAngle());
@@ -1424,6 +1425,7 @@ public class TemplateAddStickerMvpModel {
 //                                    try {
 //                                        String keepPath = getKeepOutput();
 //                                        FileUtil.copyFile(new File(path), keepPath);
+                                    statisticsEventAffair();
                                     saveToAlbum(path);
                                     Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> isIntoSaveVideo = false, 500));
 //                                    } catch (IOException e) {
@@ -1481,6 +1483,42 @@ public class TemplateAddStickerMvpModel {
                 }
             }, 200);
         }
+    }
+
+
+
+
+    private void statisticsEventAffair() {
+
+         ArrayList<String> titleEffect=GetAllStickerDataModel.getInstance().GettitleEffect();
+         ArrayList<String> titleStyle=GetAllStickerDataModel.getInstance().GetTitleStyle();
+
+        if (titleEffect != null && titleEffect.size() > 0) {
+
+            for (String str : titleEffect
+            ) {
+                statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_style_save", str);
+                LogUtil.d("OOM3", "titleEffect=" + str);
+            }
+        }
+
+
+        if (titleStyle != null && titleStyle.size() > 0) {
+
+            for (String str : titleStyle
+            ) {
+                statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_font_save", str);
+                LogUtil.d("OOM3", "titleStyle=" + str);
+            }
+        }
+
+
+        if ((titleStyle != null && titleStyle.size() > 0) || (titleEffect != null && titleEffect.size() > 0)) {
+            statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_save_save");
+
+        }
+
+
     }
 
 

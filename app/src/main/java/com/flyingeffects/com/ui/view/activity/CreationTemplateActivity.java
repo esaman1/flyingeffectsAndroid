@@ -487,8 +487,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             ll_add_text_style.setVisibility(View.VISIBLE);
             createViewForAddText = new CreateViewForAddText(this, ll_add_text_style, new CreateViewForAddText.downCallback() {
                 @Override
-                public void isSuccess(String path, int type) {
-                    presenter.ChangeTextStyle(path, type);
+                public void isSuccess(String path, int type,String title) {
+                    presenter.ChangeTextStyle(path, type,title);
                 }
 
                 @Override
@@ -503,9 +503,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 }
 
                 @Override
-                public void setTextColor(String color0, String color1) {
+                public void setTextColor(String color0, String color1,String title) {
                     LogUtil.d("OOM4", "color0=" + color0 + "color1=" + color1);
-                    presenter.ChangeTextColor(color0, color1);
+                    presenter.ChangeTextColor(color0, color1,title);
                 }
             });
             createViewForAddText.showBottomSheetDialog(inputText, "bj_template");
