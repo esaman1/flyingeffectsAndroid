@@ -51,6 +51,7 @@ public class EditInformationActivity extends BaseActivity implements AlbumChoose
     EditText etIntroduction;
 
     String avatarPath;
+    UserInfo userInfo;
 
     @Override
     protected int getLayoutId() {
@@ -59,7 +60,7 @@ public class EditInformationActivity extends BaseActivity implements AlbumChoose
 
     @Override
     protected void initView() {
-        UserInfo userInfo = Hawk.get("UserInfo");
+        userInfo = Hawk.get("UserInfo");
         etName.setText(userInfo.getNickname());
         etIntroduction.setText(userInfo.getRemark());
         if(TextUtils.isEmpty(userInfo.getPhotourl())){
@@ -99,6 +100,12 @@ public class EditInformationActivity extends BaseActivity implements AlbumChoose
                 }
                 if(TextUtils.isEmpty(etName.getText().toString())){
                     ToastUtil.showToast("请填写昵称");
+                    return;
+                }
+                if (TextUtils.equals(etName.getText().toString().trim(), userInfo.getNickname()) &&
+                        TextUtils.equals(avatarPath, userInfo.getPhotourl()) &&
+                        TextUtils.equals(etIntroduction.getText().toString().trim(), userInfo.getRemark())) {
+                    ToastUtil.showToast("未做任何修改");
                     return;
                 }
                 submitEditInfo(etName.getText().toString(),etIntroduction.getText().toString(),avatarPath);

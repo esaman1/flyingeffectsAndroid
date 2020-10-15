@@ -19,11 +19,11 @@ public class UCropOption {
 
     public com.yalantis.ucrop.UCrop.Options getUcropOption() {
         com.yalantis.ucrop.UCrop.Options options = new com.yalantis.ucrop.UCrop.Options();
-        options.setStatusBarColor(Color.parseColor("#FEE131"));
-        options.setCropFrameColor(Color.parseColor("#FEE131"));
-        options.setToolbarColor(Color.parseColor("#FEE131"));
-        options.setCropGridColor(Color.parseColor("#FEE131"));
-        options.setToolbarWidgetColor(Color.GRAY);
+        options.setStatusBarColor(Color.parseColor("#F01D1D1D"));
+        options.setCropFrameColor(Color.parseColor("#F01D1D1D"));
+        options.setToolbarColor(Color.parseColor("#F01D1D1D"));
+        options.setCropGridColor(Color.parseColor("#F01D1D1D"));
+        options.setToolbarWidgetColor(Color.WHITE);
         options.setHideBottomControls(true);
         return  options;
     }
