@@ -152,4 +152,9 @@ public class TemplateAddStickerMvpPresenter extends BasePresenter implements Tem
     public void hideTextDialog() {
         TemplateAddStickermvpView.hideTextDialog();
     }
+
+    @Override
+    public void stickerOnclickCallback(String title) {
+        TemplateAddStickermvpView.stickerOnclickCallback(title);
+    }
 }

@@ -442,6 +442,13 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     }
 
     @Override
+    public void stickerOnclickCallback(String str) {
+        if(!TextUtils.isEmpty(str)&&createViewForAddText!=null){
+            createViewForAddText.setInputText(str);
+        }
+    }
+
+    @Override
     @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_top_back, R.id.tv_add_text,R.id.iv_delete_all_text})
     public void onClick(View view) {
         switch (view.getId()) {

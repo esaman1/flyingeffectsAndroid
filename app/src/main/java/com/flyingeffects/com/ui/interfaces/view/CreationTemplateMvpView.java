@@ -11,6 +11,7 @@ public interface CreationTemplateMvpView {
 
     void deleteFirstSticker();
 
+    void stickerOnclickCallback(String str);
 
     void showTextDialog(String inputText);
 

@@ -1053,6 +1053,8 @@ public class CreationTemplateMvpModel {
                 callback.needPauseVideo();
                 viewLayerRelativeLayout.addView(stickView);
                 stickView.start();
+                nowChooseStickerView=stickView;
+                callback.stickerOnclickCallback(stickView.getStickerText());
 
             }
         });

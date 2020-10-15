@@ -144,6 +144,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
     @Override
+    public void stickerOnclickCallback(String title) {
+        creationTemplatemvpView.stickerOnclickCallback(title);
+    }
+
+    @Override
     public void animIsComplate() {
         creationTemplatemvpView.animIsComplate();
     }
