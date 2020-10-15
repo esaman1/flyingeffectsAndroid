@@ -137,7 +137,9 @@ public class BackgroundSearchActivity extends BaseActivity {
         ed_text.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
                 if(!TextUtils.isEmpty(ed_text.getText().toString().trim())){
-                    requestServerTemplateFuzzyQuery(ed_text.getText().toString().trim());
+                    toTemplate(ed_text.getText().toString().trim());
+                    rcSearch.setVisibility(View.GONE);
+                    coordinatorLayout.setVisibility(View.VISIBLE);
                 }
                 return true;
             }
@@ -172,12 +174,13 @@ public class BackgroundSearchActivity extends BaseActivity {
                     coordinatorLayout.setVisibility(View.VISIBLE);
                     appbar.setExpanded(true);
                     hideResultView(true);
-                } else {
+                } else if (!keywordQueryItemClickTag) {
                     rcSearch.setVisibility(View.VISIBLE);
                     coordinatorLayout.setVisibility(View.GONE);
                     requestServerTemplateFuzzyQuery(ed_text.getText().toString().trim());
                     mIvDelete.setVisibility(View.VISIBLE);
                 }
+                keywordQueryItemClickTag = false;
             }
         });
         hideResultView(true);
@@ -226,6 +229,9 @@ public class BackgroundSearchActivity extends BaseActivity {
                     @Override
                     protected void _onNext(List<SearchTemplateInfoEntity> datas) {
                         LogUtil.d("OOM", "模板模糊查询" + StringUtil.beanToJSONString(datas));
+                        SearchTemplateInfoEntity infoEntity = new SearchTemplateInfoEntity();
+                        infoEntity.setName(keywords);
+                        datas.add(0,infoEntity);
                         searchTemplateItemAdapter.setInquireWordColor(keywords);
                         searchTemplateItemAdapter.setNewData(datas);
                     }
@@ -236,10 +242,12 @@ public class BackgroundSearchActivity extends BaseActivity {
                 toTemplate(searchTemplateItemAdapter.getData().get(position).getName());
                 rcSearch.setVisibility(View.GONE);
                 coordinatorLayout.setVisibility(View.VISIBLE);
+                keywordQueryItemClickTag = true;
                 ed_text.setText(searchTemplateItemAdapter.getData().get(position).getName());
             }
         });
     }
+    boolean keywordQueryItemClickTag = false;
 
     private void toTemplate(String content){
         nowShowText = content;

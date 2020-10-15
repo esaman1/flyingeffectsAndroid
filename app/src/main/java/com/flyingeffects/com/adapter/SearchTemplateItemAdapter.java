@@ -1,15 +1,18 @@
 package com.flyingeffects.com.adapter;
 
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.SearchTemplateInfoEntity;
+import com.flyingeffects.com.utils.faceUtil.DensityUtil;
 
 /**
  * @author ZhouGang
@@ -25,15 +28,30 @@ public class SearchTemplateItemAdapter extends BaseQuickAdapter<SearchTemplateIn
 
     @Override
     protected void convert(BaseViewHolder helper,SearchTemplateInfoEntity item) {
-        if (!TextUtils.isEmpty(inquireWord) && item.getName().contains(inquireWord)) {
-            int index = item.getName().indexOf(inquireWord);
-            SpannableString spannableString = new SpannableString(item.getName());
-            spannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#5496FF")),
-                    index, index + inquireWord.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            helper.setText(R.id.tv_content, spannableString);
+        TextView textView = helper.getView(R.id.tv_content);
+        if (helper.getAdapterPosition() == 0) {
+            textView.setCompoundDrawables(null, null, null, null);
+            helper.setGone(R.id.im_arrow, false);
+            textView.setText("搜索\"" + item.getName() + "\"");
+            textView.setTextColor(Color.parseColor("#5496FF"));
         } else {
-            helper.setText(R.id.tv_content, item.getName());
+            Drawable drawable = mContext.getDrawable(R.mipmap.gray_search);
+            drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+            textView.setCompoundDrawablePadding(DensityUtil.dip2px(mContext, 10));
+            textView.setCompoundDrawables(drawable, null, null, null);
+            helper.setGone(R.id.im_arrow, true);
+            textView.setTextColor(mContext.getResources().getColor(R.color.white));
+            if (!TextUtils.isEmpty(inquireWord) && item.getName().contains(inquireWord)) {
+                int index = item.getName().indexOf(inquireWord);
+                SpannableString spannableString = new SpannableString(item.getName());
+                spannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#5496FF")),
+                        index, index + inquireWord.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                textView.setText(spannableString);
+            } else {
+                textView.setText(item.getName());
+            }
         }
+
     }
 
     /**
