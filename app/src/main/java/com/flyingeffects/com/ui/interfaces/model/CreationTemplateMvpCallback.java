@@ -13,6 +13,7 @@ public interface CreationTemplateMvpCallback {
 
     void deleteFirstSticker();
 
+    void stickerOnclickCallback(String title);
 
     void animIsComplate();
 

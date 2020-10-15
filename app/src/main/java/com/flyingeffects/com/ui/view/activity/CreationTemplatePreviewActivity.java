@@ -29,6 +29,7 @@ import com.flyingeffects.com.ui.model.ShowPraiseModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplatePreviewPresenter;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.RoundImageView;
@@ -110,6 +111,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         Bundle bundle = getIntent().getBundleExtra("bundle");
         imagePath = bundle.getString("path");
         titleEffect = bundle.getStringArrayList("titleEffect");
+        LogUtil.d("OOM3", StringUtil.beanToJSONString(titleEffect));
         titleStyle = bundle.getStringArrayList("titleStyle");
         nowUiIsLandscape = bundle.getBoolean("nowUiIsLandscape", false);
         Presenter = new CreationTemplatePreviewPresenter(this, this, imagePath);

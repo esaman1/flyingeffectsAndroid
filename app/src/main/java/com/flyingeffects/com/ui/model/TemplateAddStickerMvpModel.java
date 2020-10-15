@@ -1136,6 +1136,11 @@ public class TemplateAddStickerMvpModel {
                 callback.needPauseVideo();
                 viewLayerRelativeLayout.addView(stickView);
                 stickView.start();
+
+                nowChooseStickerView=stickView;
+                callback.stickerOnclickCallback(stickView.getStickerText());
+
+
             }
         });
 

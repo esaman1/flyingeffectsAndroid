@@ -78,6 +78,14 @@ public class CreateViewForAddText {
         }
     }
 
+
+    public void setInputText(String str){
+        if(inputTextDialog!=null&&inputTextDialog.isShowing()){
+            inputTextDialog.setInputText(str);
+        }
+
+    }
+
     public void showBottomSheetDialog(String text,String type) {
         inputText = text;
         inputTextDialog = new StickerInputTextDialog(context);

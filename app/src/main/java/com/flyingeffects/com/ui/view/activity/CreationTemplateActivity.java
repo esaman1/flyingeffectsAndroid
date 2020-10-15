@@ -730,6 +730,20 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }, 500);
     }
 
+
+
+    /**
+     * description ：贴纸点击事件，str 为如果为文字，为文字内容
+     * creation date: 2020/10/15
+     * user : zhangtongju
+     */
+    @Override
+    public void stickerOnclickCallback(String str) {
+        if(!TextUtils.isEmpty(str)&&createViewForAddText!=null){
+            createViewForAddText.setInputText(str);
+        }
+    }
+
     @Override
     public void showTextDialog(String inputText) {
         intoTextStyleDialog(inputText);
