@@ -68,6 +68,7 @@ public class FansActivity extends BaseActivity {
         to_user_id = getIntent().getStringExtra("to_user_id");
         from = getIntent().getIntExtra("from", 0);
         ShowData();
+        initSmartRefreshLayout();
     }
 
 
@@ -100,6 +101,7 @@ public class FansActivity extends BaseActivity {
         } else {
             ob = Api.getDefault().getFollowList(BaseConstans.getRequestHead(params));
         }
+        LogUtil.d("OOM2",StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<fansEnity>>(FansActivity.this) {
             @Override
             protected void _onError(String message) {
