@@ -331,6 +331,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     if (BaseConstans.hasLogin()) {
                         //主要用于刷新当前页面
                         LogUtil.d("OOM", "onPageSelected");
+
                         mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
                     }
                 }
