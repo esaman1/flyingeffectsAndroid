@@ -317,6 +317,7 @@ public class BackgroundSearchActivity extends BaseActivity {
                     if (listSearchKey.size() >= finalI + 1) {
                         statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "4_recommend", listSearchKey.get(finalI).getName());
                         nowShowText = listSearchKey.get(finalI).getName();
+                        keywordQueryItemClickTag = true;
                         ed_text.setText(nowShowText);
                         rcSearch.setVisibility(View.GONE);
                         coordinatorLayout.setVisibility(View.VISIBLE);

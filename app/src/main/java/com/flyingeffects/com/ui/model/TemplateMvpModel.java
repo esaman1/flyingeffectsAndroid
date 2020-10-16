@@ -36,6 +36,7 @@ import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.ChooseBackgroundTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.glidebitmappool.GlideBitmapPool;
@@ -69,7 +70,7 @@ import rx.subjects.PublishSubject;
 
 
 public class TemplateMvpModel {
-    private  MediaPlayer bgmPlayer;
+    private MediaPlayer bgmPlayer;
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private TemplateMvpCallback callback;
     private Context context;
@@ -89,7 +90,7 @@ public class TemplateMvpModel {
         cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
         backgroundPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "background");
         soundFolder = fileManager.getFileCachePath(context, "soundFolder");
-        saveVideoPath= fileManager.getFileCachePath(context, "saveVideoPath");
+        saveVideoPath = fileManager.getFileCachePath(context, "saveVideoPath");
         isOnDestroy = false;
     }
 
@@ -152,14 +153,14 @@ public class TemplateMvpModel {
 //                    @Override
 //                    public void run() {
 //                       SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
-                        CompressionCuttingManage manage = new CompressionCuttingManage(context, "0", false, tailorPaths -> {
-                            Bitmap mattingMp = BitmapFactory.decodeFile(tailorPaths.get(0));
-                            mattingMp = test(mattingMp, bp.getWidth(), bp.getHeight());
-                            callback.showMattingVideoCover(mattingMp, tailorPaths.get(0));
-                        });
-                        List<String> list = new ArrayList<>();
-                        list.add(savePath);
-                        manage.toMatting(list);
+                CompressionCuttingManage manage = new CompressionCuttingManage(context, "0", false, tailorPaths -> {
+                    Bitmap mattingMp = BitmapFactory.decodeFile(tailorPaths.get(0));
+                    mattingMp = test(mattingMp, bp.getWidth(), bp.getHeight());
+                    callback.showMattingVideoCover(mattingMp, tailorPaths.get(0));
+                });
+                List<String> list = new ArrayList<>();
+                list.add(savePath);
+                manage.toMatting(list);
 //                    }
 //                }).start();
 
@@ -220,16 +221,18 @@ public class TemplateMvpModel {
     }
 
 
-//    private String outputPathForVideoSaveToPhoto;
+    //    private String outputPathForVideoSaveToPhoto;
+    private String savePath;
 
     public void renderVideo(String mTemplateFolder, String mAudio1Path, Boolean isPreview) {
+
         WaitingDialog_progress waitingDialog_progress = new WaitingDialog_progress(context);
         waitingDialog_progress.openProgressDialog();
         waitingDialog_progress.setProgress("生成中...");
         Observable.create((Observable.OnSubscribe<Boolean>) subscriber -> {
-            LogUtil.d("OOM", "得到全部地址");
             SXTemplate template = new SXTemplate(mTemplateFolder, SXTemplate.TemplateUsage.kForRender); //模板对象类，需要传入模板路径和使用方式
             String[] paths = mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
+            LogUtil.d("OOM", "得到全部地址=" + StringUtil.beanToJSONString(paths));
             if (mTemplateModel.HasBj && !TextUtils.isEmpty(mTemplateModel.getBackgroundPath())) {
                 String[] newPaths = new String[paths.length + 1];
                 System.arraycopy(paths, 0, newPaths, 0, paths.length);
@@ -247,8 +250,9 @@ public class TemplateMvpModel {
             template.setFileForAsset("black", SxveConstans.default_bg_path); //控制默认颜色
             SXTemplateRender sxTemplateRender;
 //            outputPathForVideoSaveToPhoto = SaveAlbumPathModel.getInstance().getKeepOutput();
-            saveVideoPath=saveVideoPath+ File.separator + System.currentTimeMillis() + "synthetic.mp4";
-            sxTemplateRender = new SXTemplateRender(template, mAudio1Path, saveVideoPath);
+            savePath = saveVideoPath + File.separator + System.currentTimeMillis() + "synthetic.mp4";
+            sxTemplateRender = new SXTemplateRender(template, mAudio1Path, savePath);
+            LogUtil.d("OOM", "saveVideoPath=" + savePath);
 //            test()
 //            sxTemplateRender.setBitrateFactor();
 //            sxTemplateRender.setBitrateFactor(2f);
@@ -279,15 +283,13 @@ public class TemplateMvpModel {
                 }
 
 
-
-
                 @Override
                 public void onCancel() {
                     LogUtil.d("OOM", "onCancel");
                 }
             });
 
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(aBoolean -> renderFinish(aBoolean, isPreview, saveVideoPath));
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(aBoolean -> renderFinish(aBoolean, isPreview, savePath));
 
     }
 
@@ -312,8 +314,8 @@ public class TemplateMvpModel {
             callback.toPreview(outputPath);
         } else {
             if (isSucceed && !isOnDestroy) {
-                Intent intent =new Intent(context , TemplateAddStickerActivity.class);
-                intent.putExtra("videoPath",outputPath);
+                Intent intent = new Intent(context, TemplateAddStickerActivity.class);
+                intent.putExtra("videoPath", outputPath);
                 context.startActivity(intent);
 
 //                if(BaseConstans.getHasAdvertising() == 1 &&BaseConstans.getIncentiveVideo()&& !BaseConstans.getIsNewUser()&&BaseConstans.getSave_video_ad()&&!BaseConstans.TemplateHasWatchingAd){
@@ -357,7 +359,7 @@ public class TemplateMvpModel {
 
 
     private void showDialog(String path) {
-        if (!DoubleClick.getInstance().isFastDoubleClick()&&!isOnDestroy) {
+        if (!DoubleClick.getInstance().isFastDoubleClick() && !isOnDestroy) {
             ShowPraiseModel.keepAlbumCount();
             keepAlbumCount();
             LogUtil.d("showDialog", "showDialog");
@@ -375,7 +377,6 @@ public class TemplateMvpModel {
             builder.setNegativeButton(context.getString(R.string.got_it), (dialog, which) -> {
 
 
-
                 dialog.dismiss();
             });
             builder.setCancelable(true);
@@ -385,13 +386,11 @@ public class TemplateMvpModel {
         }
     }
 
-    private void keepAlbumCount(){
-        int num=Hawk.get("keepAlbumNum");
+    private void keepAlbumCount() {
+        int num = Hawk.get("keepAlbumNum");
         num++;
         Hawk.put("keepAlbumNum", num);
     }
-
-
 
 
     /**
