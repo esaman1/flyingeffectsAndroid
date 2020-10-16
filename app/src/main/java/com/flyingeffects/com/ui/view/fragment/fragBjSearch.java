@@ -142,19 +142,7 @@ public class fragBjSearch extends BaseFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (getUserVisibleHint()) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    isVisible = true;
-                    if (allData != null && allData.size() == 0) {
-                        if (hasSearch&& !TextUtils.isEmpty(searchText)) {
-                            ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
-                        }
-
-                    }
-                }
-            }, 1000);
-
+            isVisible = true;
         } else {
             isVisible = false;
         }

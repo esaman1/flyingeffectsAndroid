@@ -101,6 +101,15 @@ public class new_fag_template_item implements Serializable {
         this.reading2 = reading2;
     }
 
+    private String nickname;
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
     public String getMbsearch() {
         return mbsearch;

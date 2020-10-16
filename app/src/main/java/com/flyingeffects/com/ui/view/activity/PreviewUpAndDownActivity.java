@@ -85,6 +85,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @BindView(R.id.page2)
     ViewPager2 viewPage2;
 
+
+
     @BindView(R.id.refresh)
     SmartRefreshLayout smartRefreshLayout;
 
@@ -243,13 +245,19 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     toClickMake();
                     break;
 
-                case R.id.tv_title_music:
+
                 case R.id.iv_writer:
                 case R.id.tv_describe:
-                    Intent intent = new Intent(PreviewUpAndDownActivity.this, UserHomepageActivity.class);
-                    intent.putExtra("toUserId", allData.get(position).getAdmin_id());
-                    intent.putExtra("templateType", templateType);
-                    startActivity(intent);
+                    intoUserHome(position);
+                    break;
+
+                case R.id.tv_title_music:
+                    if (!TextUtils.isEmpty(OldfromTo) && OldfromTo.equals(FromToTemplate.ISBJ)) {
+                        statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "13_muisc", templateItem.getAuth());
+                    } else {
+                        statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "12_muisc", templateItem.getAuth());
+                    }
+                    intoUserHome(position);
                     break;
 
                 case R.id.iv_download_bj:
@@ -271,7 +279,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         mIsFollow = allData.get(position).getIs_follow() == 1;
                         LogUtil.d(TAG, "isfollow = " + mIsFollow);
                         LogUtil.d(TAG, "isfollow = " + allData.get(position).getIs_follow());
-                        isOnPause=true;
+                        isOnPause = true;
                         requestFollowThisUser(allData.get(position).getAdmin_id(), view, position);
                     } else {
                         goActivity(LoginActivity.class);
@@ -296,7 +304,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     //置空数据
 //                    fromTo=OldfromTo;
                     OldfromTo = keepOldFrom;
-                    LogUtil.d("OOM", "当前位置为" + position);
+                    LogUtil.d("OOM2", "当前位置为" + position);
                     adapter.NowPreviewChooseItem(position);
                     adapter.notifyItemChanged(position);
                     nowItemIsAd = allData.size() > 0 && allData.get(position).getAd() != null;
@@ -304,7 +312,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     //判断当前滑动状态
                     nowSlideOrientationIsUp = nowChoosePosition < lastChoosePosition;
                     refeshData();
-
                     if (!DoubleClick.getInstance().isFastZDYDoubleClick(2000)) {
                         if (position >= insertMaxNum || position <= insertMinNum) {
                             if (isSlideViewpager) {
@@ -349,6 +356,14 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         } else {
             rela_parent_show_alert.setVisibility(View.GONE);
         }
+    }
+
+
+    private void intoUserHome(int position) {
+        Intent intent = new Intent(PreviewUpAndDownActivity.this, UserHomepageActivity.class);
+        intent.putExtra("toUserId", allData.get(position).getAdmin_id());
+        intent.putExtra("templateType", templateType);
+        startActivity(intent);
     }
 
 
@@ -656,7 +671,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void showNewData(List<new_fag_template_item> newAllData, boolean isRefresh) {
         allData = newAllData;
-        templateItem = newAllData.get(0);
+        if(isRefresh){
+            templateItem = newAllData.get(0);
+        }
         if (isRefresh) {
             isNeedAddaD = false;
             randomPosition = 0;
@@ -768,7 +785,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             adapter.setCommentCount(data.getComment());
             is_with_play = templateItem.getIs_with_play();
             mIsFollow = data.getIs_follow() == 1;
-            adapter.setIsFollow(templateItem.getIs_follow());
+            adapter.setIsFollow(templateItem.getIs_follow(),templateItem.getAdmin_id());
             //更新页面数据，防止数据不全的情况
             if (!isOnPause) {
                 allData.set(nowChoosePosition, data);
@@ -825,8 +842,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * 现在修改为先下载视频，下载完成后在打开相册选择图片
      */
     private void hasLoginToNext() {
-
-        LogUtil.d("OOM", "hasLoginToNext");
         switch (OldfromTo) {
             case FromToTemplate.ISHOMEFROMBJ:
                 statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
@@ -855,7 +870,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             case FromToTemplate.ISSEARCHBJ:
             case FromToTemplate.ISSEARCHTEMPLATE:
                 if (templateType.equals("2")) {
-                    LogUtil.d("OOM", "来自背景");
                     statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
                     mMvpPresenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId() + "", false);
                 } else {
@@ -1123,7 +1137,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         bundle.putSerializable("bjTemplateTitle", templateItem.getTitle());
         bundle.putString("originalPath", originalPath);
         bundle.putString("video_path", videoPath);
-        boolean isLandscape=templateItem.getIsLandscape()==1;
+        boolean isLandscape = templateItem.getIsLandscape() == 1;
         bundle.putBoolean("isLandscape", isLandscape);
         bundle.putBoolean("isNeedCut", isNeedCut);
         int id = templateItem.getTemplate_id();
@@ -1199,13 +1213,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         if (BaseConstans.hasLogin()) {
             //主要用于刷新当前页面
             LogUtil.d("OOM", "ReplayMessageEvent");
-            isOnPause=true;
+            isOnPause = true;
             mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
         }
     }
-
-
-
 
 
 }
