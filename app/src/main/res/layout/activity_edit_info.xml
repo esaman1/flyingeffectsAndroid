@@ -102,7 +102,7 @@
             android:layout_marginLeft="70dp"
             android:layout_centerVertical="true"
             android:textColor="@color/white"
-            android:textColorHint="#FFD5D5D5"
+            android:textColorHint="#9E9E9E"
             android:hint="请填写昵称"
             android:gravity="right|center_vertical"
             android:layout_alignParentRight="true"
@@ -140,7 +140,7 @@
             android:gravity="right|center_vertical"
             android:layout_alignParentRight="true"
             android:hint="填写简介让更多的友友认识你"
-            android:textColorHint="#FFD5D5D5"
+            android:textColorHint="#9E9E9E"
             android:layout_marginRight="25dp"
             android:background="@null"
             android:textSize="14.5sp"/>

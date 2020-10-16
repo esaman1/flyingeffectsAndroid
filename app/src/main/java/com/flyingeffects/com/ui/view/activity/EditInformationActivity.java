@@ -105,8 +105,7 @@ public class EditInformationActivity extends BaseActivity implements AlbumChoose
                 if (TextUtils.equals(etName.getText().toString().trim(), userInfo.getNickname()) &&
                         TextUtils.equals(avatarPath, userInfo.getPhotourl()) &&
                         TextUtils.equals(etIntroduction.getText().toString().trim(), userInfo.getRemark())) {
-                    ToastUtil.showToast("未做任何修改");
-                    return;
+                    this.finish();
                 }
                 submitEditInfo(etName.getText().toString(),etIntroduction.getText().toString(),avatarPath);
                 break;

@@ -408,23 +408,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      */
     private void refeshData() {
         if (nowChoosePosition >= 0 && nowChoosePosition < allData.size()) {
-            LogUtil.d("OOM3","nowChoosePosition="+nowChoosePosition);
-
             templateItem = allData.get(nowChoosePosition);
-            if(templateItem!=null&&templateItem.getAd()==null){
-                LogUtil.d("OOM3","templateItem="+StringUtil.beanToJSONString(templateItem));
-            }else{
-                LogUtil.d("OOM3","templateItem=null");
-            }
-
             templateId = templateItem.getId() + "";
-            LogUtil.d("OOM3","getId="+templateId);
             defaultnum = templateItem.getDefaultnum();
             is_picout = templateItem.getIs_picout();
             nowPraise = templateItem.getIs_praise();
             is_with_play = templateItem.getIs_with_play();
-        }else{
-            LogUtil.d("OOM3","位置更新失败");
         }
     }
 
@@ -796,7 +785,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             adapter.setCommentCount(data.getComment());
             is_with_play = templateItem.getIs_with_play();
             mIsFollow = data.getIs_follow() == 1;
-            adapter.setIsFollow(templateItem.getIs_follow());
+            adapter.setIsFollow(templateItem.getIs_follow(),templateItem.getAdmin_id());
             //更新页面数据，防止数据不全的情况
             if (!isOnPause) {
                 allData.set(nowChoosePosition, data);
@@ -853,8 +842,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * 现在修改为先下载视频，下载完成后在打开相册选择图片
      */
     private void hasLoginToNext() {
-
-        LogUtil.d("OOM3", "hasLoginToNext=templateItem="+StringUtil.beanToJSONString(templateItem));
         switch (OldfromTo) {
             case FromToTemplate.ISHOMEFROMBJ:
                 statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
@@ -882,10 +869,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             case FromToTemplate.ISBJCOLLECT:
             case FromToTemplate.ISSEARCHBJ:
             case FromToTemplate.ISSEARCHTEMPLATE:
-
-                LogUtil.d("OOM3", "下载的时候名字为="+templateItem.getTitle());
                 if (templateType.equals("2")) {
-                    LogUtil.d("OOM3", "来自背景");
                     statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
                     mMvpPresenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId() + "", false);
                 } else {
