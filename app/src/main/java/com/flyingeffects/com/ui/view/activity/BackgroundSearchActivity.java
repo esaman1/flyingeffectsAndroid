@@ -203,6 +203,7 @@ public class BackgroundSearchActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if(!TextUtils.isEmpty(ed_text.getText().toString().trim())){
+                    statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "4_search_button");
                     toTemplate(ed_text.getText().toString().trim());
                     rcSearch.setVisibility(View.GONE);
                     coordinatorLayout.setVisibility(View.VISIBLE);
@@ -239,11 +240,17 @@ public class BackgroundSearchActivity extends BaseActivity {
         searchTemplateItemAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                toTemplate(searchTemplateItemAdapter.getData().get(position).getName());
+                String itemContent = searchTemplateItemAdapter.getData().get(position).getName();
+                toTemplate(itemContent);
                 rcSearch.setVisibility(View.GONE);
                 coordinatorLayout.setVisibility(View.VISIBLE);
                 keywordQueryItemClickTag = true;
-                ed_text.setText(searchTemplateItemAdapter.getData().get(position).getName());
+                ed_text.setText(itemContent);
+                if(position!=0){
+                    statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "4_search_query",itemContent);
+                }else {
+                    statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "4_search_query_first");
+                }
             }
         });
     }

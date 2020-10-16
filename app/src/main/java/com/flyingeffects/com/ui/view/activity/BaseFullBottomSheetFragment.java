@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,6 +71,10 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     private String templateType;
     //2级回复id ,如果这个id 不为""，那么表示一级回复，否则表示二级回复
     private String message_id;
+    /**一级回复信息ID*/
+    private String firstMessageId;
+    /**当前回复信息的位置*/
+    int messagePosition;
     private int lastOpenCommentPosition;
     private Comment_message_adapter adapter;
     private int nowFirstOpenClickPosition;
@@ -80,6 +85,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     private ArrayList<MessageEnity> allDataList = new ArrayList<>();
     private int selectPage = 1;
     private int perPageCount = 10;
+    boolean isComment = false;
 
     @NonNull
     @Override
@@ -126,6 +132,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         commentInputDialog.setCommentSuccessListener(new CommentInputDialog.OnCommentSuccessListener() {
             @Override
             public void commentSuccess() {
+                isComment = true;
                 requestComment();
             }
 
@@ -208,6 +215,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
             protected void _onError(String message) {
                 adapter.loadMoreFail();
                 ToastUtil.showToast(message);
+                isComment = false;
             }
 
             @Override
@@ -231,8 +239,19 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
                     if (dataList.size() < perPageCount) {
                         adapter.setEnableLoadMore(false);
                     }
-                    allDataList.addAll(dataList);
+                    //评论信息回复刷新逻辑
+                    if (isComment) {
+                        for (int i = 0; i < dataList.size(); i++) {
+                            if (TextUtils.equals(firstMessageId, dataList.get(i).getId())) {
+                                allDataList.set(messagePosition, dataList.get(i));
+                                break;
+                            }
+                        }
+                    }else {
+                        allDataList.addAll(dataList);
+                    }
                     adapter.notifyDataSetChanged();
+                    isComment = false;
                 }
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
@@ -265,7 +284,9 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
             }
 
             @Override
-            public void clickItemComment(String id) {
+            public void clickItemComment(String id,String firstMessageId,int position) {
+                BaseFullBottomSheetFragment.this.firstMessageId = firstMessageId;
+                messagePosition  = position;
                 message_id = id;
                 commentInputDialog.setMessage_id(message_id);
                 showInputTextDialog();
@@ -311,6 +332,8 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
 
                     case R.id.ll_parent:
                         LogUtil.d("OOM", "onItemClick");
+                        firstMessageId = allDataList.get(position).getId();
+                        messagePosition = position;
                         message_id = allDataList.get(position).getId();
                         commentInputDialog.setMessage_id(message_id);
                         showInputTextDialog();
