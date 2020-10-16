@@ -52,7 +52,7 @@ public class ChannelUtil {
 
 
         if (channel == null || channel.length() <= 0) {
-            channel = "douyin-AD-A-1";
+            channel = "360";
         }
         return channel;
 //        return  "360";

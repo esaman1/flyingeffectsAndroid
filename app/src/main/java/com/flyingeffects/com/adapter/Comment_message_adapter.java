@@ -107,11 +107,11 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
                     callback.clickItemComment(id,item.getId(),helper.getAdapterPosition());
                 }
             });
-            if (item.getReply().size() >= 10) {
-                ll_more_comment.setVisibility(View.VISIBLE);
-            } else {
-                ll_more_comment.setVisibility(View.GONE);
-            }
+//            if (item.getReply().size() >= 10) {
+//                ll_more_comment.setVisibility(View.VISIBLE);
+//            } else {
+//                ll_more_comment.setVisibility(View.GONE);
+//            }
             listView.setVisibility(View.VISIBLE);
         }else{
             listView.setVisibility(View.GONE);
