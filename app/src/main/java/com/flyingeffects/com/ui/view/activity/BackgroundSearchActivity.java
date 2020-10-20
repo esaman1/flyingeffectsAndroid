@@ -183,6 +183,17 @@ public class BackgroundSearchActivity extends BaseActivity {
                 keywordQueryItemClickTag = false;
             }
         });
+        ed_text.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus && !TextUtils.isEmpty(ed_text.getText().toString())) {
+                    rcSearch.setVisibility(View.VISIBLE);
+                    coordinatorLayout.setVisibility(View.GONE);
+                    mIvDelete.setVisibility(View.VISIBLE);
+                    requestServerTemplateFuzzyQuery(ed_text.getText().toString().trim());
+                }
+            }
+        });
         hideResultView(true);
         iv_back.setOnClickListener(new View.OnClickListener() {
             @Override
