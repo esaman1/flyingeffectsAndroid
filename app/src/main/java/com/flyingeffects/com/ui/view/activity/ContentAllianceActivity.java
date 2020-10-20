@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -8,10 +9,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.enity.fromKuaishou;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.utils.LogUtil;
 import com.nineton.ntadsdk.itr.ContentAllianceAdCallBack;
 import com.nineton.ntadsdk.manager.ContentAllianceAdManager;
+
+import de.greenrobot.event.EventBus;
 
 
 /**
@@ -44,5 +48,12 @@ public class ContentAllianceActivity extends AppCompatActivity {
             }
 
         });
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().post(new fromKuaishou());
+        super.onDestroy();
     }
 }
