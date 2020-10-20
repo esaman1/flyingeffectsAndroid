@@ -18,9 +18,12 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter2;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.RequestMessage;
 import com.flyingeffects.com.enity.TemplateType;
+import com.flyingeffects.com.enity.fromKuaishou;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
+import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.FagBjMvpView;
@@ -42,6 +45,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 
 
 /**
@@ -70,6 +75,9 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
 
     private List<TemplateType> data;
 
+
+    private int lastViewPagerChoosePosition;
+
     @Override
     protected int getContentLayout() {
         return R.layout.fag_bj;
@@ -79,6 +87,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     protected void initView() {
         presenter = new FagBjMvpPresenter(getActivity(), this);
         presenter.requestData();
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -139,7 +148,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                             LogUtil.d("OMM2", str);
                             try {
                                 int id = Integer.parseInt(templateType1.getId());
-                                LogUtil.d("OMM2","id="+id);
+                                LogUtil.d("OMM2", "id=" + id);
                                 if (id != 10000) {
                                     showWitchBtn(view.getId());
                                 } else {
@@ -179,28 +188,52 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                 viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
                     public void onPageScrolled(int i, float v, int i1) {
-
                     }
 
                     @Override
                     public void onPageSelected(int i) {
-                        if (i <= data.size() - 1) {
-                            showWitchBtn(i);
-                            statisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
+                        if (lastViewPagerChoosePosition != i) {
+                            try {
+                                String position = data.get(i).getId();
+                                int interPosition = Integer.parseInt(position);
+                                if (interPosition == 10000) {
+                                    if(!DoubleClick.getInstance().isFastZDYDoubleClick(1000)){
+                                        startActivity(new Intent(getActivity(), ContentAllianceActivity.class));
+                                    }
+                                } else {
+                                    selectedPage(i);
+                                    lastViewPagerChoosePosition = i;
+                                }
+                            } catch (Exception e) {
+                                selectedPage(i);
+                                lastViewPagerChoosePosition = i;
+                            }
                         }
                     }
 
                     @Override
                     public void onPageScrollStateChanged(int i) {
-
+                        LogUtil.d("OOM", "i=" + i);
                     }
                 });
 
                 if (data.size() > 0) {
                     new Handler().postDelayed(() -> showWitchBtn(0), 500);
                 }
+
             }
         }
+    }
+
+
+    private void selectedPage(int i) {
+        if (lastViewPagerChoosePosition != i) {
+            if (i <= data.size() - 1) {
+                showWitchBtn(i);
+                statisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
+            }
+        }
+
     }
 
     private void showWitchBtn(int showWitch) {
@@ -316,5 +349,17 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
             manage.toMatting(paths);
         }
     }
+
+
+
+
+    @Subscribe
+    public void onEventMainThread(fromKuaishou event) {
+        if(getActivity()!=null){
+            showWitchBtn(lastViewPagerChoosePosition);
+        }
+
+    }
+
 }
 
