@@ -86,6 +86,8 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     private int selectPage = 1;
     private int perPageCount = 10;
     boolean isComment = false;
+    //当前是一级评论
+    private int type=1;
 
     @NonNull
     @Override
@@ -131,8 +133,16 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         commentInputDialog = new CommentInputDialog(getActivity(), nowTemplateId, templateType, templateTitle);
         commentInputDialog.setCommentSuccessListener(new CommentInputDialog.OnCommentSuccessListener() {
             @Override
-            public void commentSuccess() {
-                isComment = true;
+            public void commentSuccess(int type) {
+//                isComment = true;
+                if(type==1){
+                    isComment = false;
+                    isRefresh=true;
+                    selectPage=1;
+                }else{
+                    isComment = true;
+                    isRefresh=false;
+                }
                 requestComment();
             }
 
@@ -203,7 +213,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
      * creation date: 2020/7/30
      * user : zhangtongju
      */
-    private void requestComment() {
+    private void requestComment( ) {
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", nowTemplateId);
         params.put("page", selectPage + "");

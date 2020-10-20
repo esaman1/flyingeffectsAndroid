@@ -76,7 +76,7 @@ public class TimeUtils {
     public static String GetSystemMessageTime(long time) {
         time = time * 1000;
         Date d = new Date(time);
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm");
         System.out.println(sdf.format(d));
         return sdf.format(d);
     }

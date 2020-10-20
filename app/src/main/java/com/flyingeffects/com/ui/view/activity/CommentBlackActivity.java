@@ -133,7 +133,7 @@ public class CommentBlackActivity extends Activity {
         commentInputDialog = new CommentInputDialog(this,nowTemplateId,templateType,templateTitle);
         commentInputDialog.setCommentSuccessListener(new CommentInputDialog.OnCommentSuccessListener() {
             @Override
-            public void commentSuccess() {
+            public void commentSuccess(int type) {
                 requestComment();
             }
 

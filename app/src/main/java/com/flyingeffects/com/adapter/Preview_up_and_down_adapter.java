@@ -1,6 +1,7 @@
 package com.flyingeffects.com.adapter;
 
 import android.content.Context;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,6 +100,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             tv_make.setText("马上制作");
         }
         if (ad == null) {
+            initVideoPlayer(item, offset);
             //无广告的情况
             tv_title_music.setVisibility(View.VISIBLE);
             videoPlayer.setVisibility(View.VISIBLE);
@@ -114,10 +116,8 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             helper.addOnClickListener(R.id.iv_zan);
             helper.addOnClickListener(R.id.tv_make);
             helper.addOnClickListener(R.id.tv_title_music);
-
-            initVideoPlayer(item, offset);
             if (nowPreviewPosition == offset) {
-                videoPlayer.startPlayLogic();
+                new Handler().postDelayed(() -> videoPlayer.startPlayLogic(),200);
             }
             if (needHideCreate) {
                 ll_down_bj.setVisibility(View.GONE);

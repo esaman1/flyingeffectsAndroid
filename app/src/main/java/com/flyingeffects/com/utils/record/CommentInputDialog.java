@@ -173,7 +173,7 @@ public class CommentInputDialog extends Dialog {
                 //评论成功后刷新评论列表
                 keyBordUtils.HideKeyboard(ed_search);
                 if (commentSuccessListener != null) {
-                    commentSuccessListener.commentSuccess();
+                    commentSuccessListener.commentSuccess(Integer.parseInt(type));
                     dismiss();
                 }
             }
@@ -248,7 +248,7 @@ public class CommentInputDialog extends Dialog {
         /**
          * 评论成功
          */
-        void commentSuccess();
+        void commentSuccess(int type);
 
         /**
          * 关闭评论弹框
