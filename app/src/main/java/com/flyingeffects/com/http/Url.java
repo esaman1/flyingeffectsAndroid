@@ -7,6 +7,7 @@ public class Url {
 
 
     private static final String FLY_PRODUCTION = "http://www.flyingeffect.com";
+    private static final String TEST_FLY_PRODUCTION = "http://test.flyingeffect.com";
 
 
     /**
@@ -14,7 +15,7 @@ public class Url {
      * 时间：2018/6/15
      **/
 
-    public static final String BASE_URL = FLY_PRODUCTION;
+    public static final String BASE_URL = TEST_FLY_PRODUCTION;
 
 
 }

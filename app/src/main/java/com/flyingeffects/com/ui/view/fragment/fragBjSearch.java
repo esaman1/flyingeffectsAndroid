@@ -92,7 +92,6 @@ public class fragBjSearch extends BaseFragment {
 
     @Override
     protected void initAction() {
-        requestFagData(true);
     }
 
     @Override
@@ -296,7 +295,6 @@ public class fragBjSearch extends BaseFragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.relative_add:
-
                 if(BaseConstans.hasLogin()){
                     AlbumManager.chooseVideo( getActivity(), 1, 1, (tag, paths, isCancel, albumFileList) -> {
                         if (!isCancel) {
@@ -312,13 +310,9 @@ public class fragBjSearch extends BaseFragment {
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 }
-
-
-
-
-
                 break;
-
+            default:
+                break;
         }
     }
 

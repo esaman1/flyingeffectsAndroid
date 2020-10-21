@@ -3,27 +3,42 @@ package com.flyingeffects.com.ui.view.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.viewpager.widget.ViewPager;
+import android.widget.TextView;
 
 import com.flyco.tablayout.SlidingTabLayout;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
+import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.TemplateType;
+import com.flyingeffects.com.http.Api;
+import com.flyingeffects.com.http.HttpUtil;
+import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.home_fagMvpView;
 import com.flyingeffects.com.ui.presenter.home_fagMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.BackgroundSearchActivity;
+import com.flyingeffects.com.utils.StringUtil;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Observable;
 
 
 /**
@@ -39,11 +54,15 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
     @BindView(R.id.viewpager_bj)
     ViewPager viewpager;
+    @BindView(R.id.tv_search_hint)
+    TextView tvSearchHint;
 
     private List<TemplateType> data;
     FragmentManager manager;
 
     private int nowChooseIndex;
+    private ArrayList<String> listSearchKey = new ArrayList<>();
+    int listSearchKeyIndex = 0;
 
 
     @Override
@@ -80,6 +99,9 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                 tabLayout.setCurrentTab(nowChooseIndex);
             }
         }
+        listSearchKeyIndex = 0;
+        listSearchKey.clear();
+        requestKeywordList();
     }
 
 
@@ -153,6 +175,60 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                 startActivity(intent);
                 break;
         }
+    }
+
+    /**
+     * 请求友友推荐
+     */
+    private void requestKeywordList() {
+        listSearchKey.clear();
+        HashMap<String, String> params = new HashMap<>();
+        params.put("template_type", "1");
+        Observable ob = Api.getDefault().keywordList(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(getContext()) {
+            @Override
+            protected void _onError(String message) {
+            }
+
+            @Override
+            protected void _onNext(Object data) {
+                String str = StringUtil.beanToJSONString(data);
+                try {
+                    JSONArray array = new JSONArray(str);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject ob = array.getJSONObject(i);
+                        listSearchKey.add(ob.getString("name"));
+                    }
+                    pollingSetSearchText();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+    /**
+     * 轮询设置搜索关键字
+     */
+    private void pollingSetSearchText() {
+        ScheduledExecutorService mScheduledExecutorService = new ScheduledThreadPoolExecutor(1);
+        mScheduledExecutorService.scheduleWithFixedDelay(new Runnable() {
+            @Override
+            public void run() {
+                if (listSearchKeyIndex >= listSearchKey.size()) {
+                    listSearchKeyIndex = 0;
+                }
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvSearchHint.setText("友友们都在搜\"" + listSearchKey.get(listSearchKeyIndex) + "\"");
+
+                        listSearchKeyIndex++;
+                    }
+                });
+            }
+        }, 0, 8, TimeUnit.SECONDS);
     }
 }
 

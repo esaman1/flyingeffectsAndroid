@@ -9,6 +9,7 @@ import com.flyingeffects.com.enity.MessageData;
 import com.flyingeffects.com.enity.MineCommentEnity;
 import com.flyingeffects.com.enity.MineZanEnity;
 import com.flyingeffects.com.enity.SearchTemplateInfoEntity;
+import com.flyingeffects.com.enity.SearchUserEntity;
 import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.enity.SystemMessageCountAllEntiy;
 import com.flyingeffects.com.enity.SystemMessageDetailAllEnity;
@@ -300,4 +301,14 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/template/keywords")
     Observable<HttpResult<List<SearchTemplateInfoEntity>>> templateKeywords(@FieldMap Map<String,String> params);
+
+    /**模板操作行为统计*/
+    @FormUrlEncoded
+    @POST("/api/message/shareFriend")
+    Observable<HttpResult<Object>> templateBehaviorStatistics(@FieldMap Map<String,String> params);
+
+    /**搜索用户列表*/
+    @FormUrlEncoded
+    @POST("/api/template/userList")
+    Observable<HttpResult<List<SearchUserEntity>>> getSearchUserList(@FieldMap Map<String,String> params);
 }

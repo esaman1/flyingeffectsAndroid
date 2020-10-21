@@ -34,6 +34,7 @@ import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.ColorCorrectionManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.ui.view.fragment.FragmentUser;
 import com.flyingeffects.com.ui.view.fragment.fragBjSearch;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
@@ -396,9 +397,9 @@ public class BackgroundSearchActivity extends BaseActivity {
     private void showHeadTitle() {
         String[] titles;
         if (isFrom == 0) {
-            titles = new String[]{"背景", "模板"};
+            titles = new String[]{"背景", "模板","用户"};
         } else {
-            titles = new String[]{"模板", "背景"};
+            titles = new String[]{"模板", "背景","用户"};
         }
         for (int i = 0; i < titles.length; i++) {
             View view = LayoutInflater.from(this).inflate(R.layout.view_bj_head, null);
@@ -426,16 +427,20 @@ public class BackgroundSearchActivity extends BaseActivity {
         bundle2.putSerializable("from", 0);
         fragBjSearch fragment2 = new fragBjSearch();
         fragment2.setArguments(bundle2);
+
         if(isFrom==0){
             list.add(fragment);
             list.add(fragment2);
+            list.add(new FragmentUser());
         }else{
             list.add(fragment2);
             list.add(fragment);
+            list.add(new FragmentUser());
         }
         FragmentManager manager = getSupportFragmentManager();
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
         viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(3);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
