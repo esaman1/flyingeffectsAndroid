@@ -764,7 +764,10 @@ public class AlbumActivity extends BaseActivity implements
     @Override
     public void returnAdContainer(LinearLayout flAdContainer) {
         Log.d(TAG,"returnAdContainer");
-        sActionView.onAction(flAdContainer);
+        if(sActionView!=null){
+            sActionView.onAction(flAdContainer);
+        }
+
     }
 
     private boolean isOnDestroy = false;
