@@ -1,10 +1,13 @@
 package com.flyingeffects.com.view.mine;
 
-import android.content.Context;
-import android.graphics.Color;
+import android.app.Activity;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,7 +27,7 @@ import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.record.StickerInputTextDialog;
+import com.flyingeffects.com.view.keyboard.KeyboardHeightProvider;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.io.File;
@@ -37,6 +40,8 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
+
 
 /**
  * description ：创作页面文字选择框
@@ -45,7 +50,7 @@ import rx.subjects.PublishSubject;
  */
 public class CreateViewForAddText {
     private ViewPager viewPager;
-    private Context context;
+    private Activity context;
     private ArrayList<FontEnity> listFont = new ArrayList<>();
     private ArrayList<FontEnity> listEffect = new ArrayList<>();
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
@@ -54,10 +59,17 @@ public class CreateViewForAddText {
     private String mTTFFolder;
     private downCallback callback;
     private LinearLayout view;
-    StickerInputTextDialog inputTextDialog;
-    String inputText = "";
+    private LinearLayout llAddText;
+    private View view_line_text;
+    private EditText editText;
+    private LinearLayout ll_add_child_text;
+    private String inputText;
 
-    public CreateViewForAddText(Context context,LinearLayout view, downCallback callback) {
+    private static ArrayList<TextView> listTv = new ArrayList<>();
+    private static ArrayList<View> listView = new ArrayList<>();
+
+
+    public CreateViewForAddText(Activity context, LinearLayout view, downCallback callback) {
         this.context = context;
         this.view=view;
         this.callback = callback;
@@ -66,45 +78,52 @@ public class CreateViewForAddText {
     }
 
     public void hideInput(){
-        inputTextDialog.dismiss();
+        view.setVisibility(View.GONE);
     }
 
-    private ArrayList<TextView> listTitle = new ArrayList<>();
+    private List<String> listTitle = new ArrayList<>();
 
     public void hideInputTextDialog(){
-        if(inputTextDialog!=null){
-            inputTextDialog.dismiss();
-            dismissDialog();
-        }
+        hideInput();
+        hideKeyboard();
     }
 
 
-    public void setInputText(String str){
-        if(inputTextDialog!=null&&inputTextDialog.isShowing()){
-            inputTextDialog.setInputText(str);
+    public void setInputText(String str) {
+        if (editText != null) {
+           editText.setText(str);
         }
-
     }
 
     public void showBottomSheetDialog(String text,String type) {
         inputText = text;
-        inputTextDialog = new StickerInputTextDialog(context);
-        inputTextDialog.show();
-        inputTextDialog.setInputText(text);
+        llAddText = view.findViewById(R.id.ll_add_text);
         ImageView iv_down = view.findViewById(R.id.iv_down);
-        inputTextDialog.setOnInputTextListener(new StickerInputTextDialog.OnInputTextListener() {
+        view_line_text = view.findViewById(R.id.view_line_text);
+        editText = view.findViewById(R.id.edit_text);
+        ll_add_child_text = view.findViewById(R.id.ll_add_child_text);
+        listView.clear();
+        listTv.clear();
+        listTitle.clear();
+        ll_add_child_text.removeAllViews();
+        listTitle.add("键盘");
+        listTitle.add("热门效果");
+        listTitle.add("字体");
+
+        editText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void inputText(String string) {
-                if (callback != null) {
-                    callback.setText(string);
-                }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
             @Override
-            public void afterTextChanged(String string) {
-                inputText = string;
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                inputText = editText.getText().toString().trim();
                 if (callback != null) {
-                    if( !TextUtils.isEmpty(string)){
+                    if( !TextUtils.isEmpty(inputText)){
                         callback.setText(inputText);
                     }else{
                         callback.setText("输入文本");
@@ -112,19 +131,26 @@ public class CreateViewForAddText {
                 }
             }
         });
+        editText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showWitchBtn(0);
+            }
+        });
         iv_down.setOnClickListener(view12 -> {
-            dismissDialog();
-            inputTextDialog.dismiss();
+            hideInput();
+            hideKeyboard();
             if (callback != null) {
                 callback.setText(inputText);
             }
         });
-        TextView tv_hot = view.findViewById(R.id.tv_hot);
-        tv_hot.setOnClickListener(listener);
-        TextView tv_font = view.findViewById(R.id.tv_font);
-        tv_font.setOnClickListener(listener);
+
         viewPager = view.findViewById(R.id.viewpager);
+
         ArrayList<View> list = new ArrayList<>();
+        View keyboardView = LayoutInflater.from(context).inflate(R.layout.fragment_input, viewPager, false);
+        list.add(keyboardView);
+
         View gridViewLayout = LayoutInflater.from(context).inflate(R.layout.view_creat_template_effect_type, viewPager, false);
         GridView gridView = gridViewLayout.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view13, i, l) -> {
@@ -160,27 +186,142 @@ public class CreateViewForAddText {
         list.add(gridViewLayoutFont);
         TemplateViewPager adapter = new TemplateViewPager(list);
         viewPager.setAdapter(adapter);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int i, float v, int i1) {
-            }
 
-            @Override
-            public void onPageSelected(int i) {
-                setTextColor(i);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int i) {
-            }
-        });
-        listTitle.add(tv_hot);
-        listTitle.add(tv_font);
-        setTextColor(0);
+        for (int i = 0; i < listTitle.size(); i++) {
+            View view = LayoutInflater.from(context).inflate(R.layout.view_keyboard_text, null);
+            TextView tv = view.findViewById(R.id.tv_name_bj_head);
+            View view_line = view.findViewById(R.id.view_line_head);
+            tv.setText(listTitle.get(i));
+            tv.setId(i);
+            tv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showWitchBtn(v.getId());
+                }
+            });
+            listTv.add(tv);
+            listView.add(view_line);
+            ll_add_child_text.addView(view);
+        }
         requestFontImage();
         requestFontList();
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (lastViewPagerChoosePosition != position) {
+                    selectedPage(position);
+                    lastViewPagerChoosePosition = position;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+
+        if (listTitle.size() > 0) {
+            showWitchBtn(0);
+        }
+        new KeyboardHeightProvider(context).init().setHeightListener(new KeyboardHeightProvider.HeightListener() {
+            @Override
+            public void onHeightChanged(int height) {
+                if (height > 0) {
+                    keyboardHeight = height;
+                    LinearLayout.LayoutParams layoutParams1 = (LinearLayout.LayoutParams) llAddText.getLayoutParams();
+                    layoutParams1.setMargins(0, 0, 0, keyboardHeight);
+                    llAddText.setLayoutParams(layoutParams1);
+                    view_line_text.setVisibility(View.GONE);
+                    viewPager.setVisibility(View.GONE);
+                    isKeyboardOpen = true;
+                }else {
+                    if (isKeyboardOpen) {
+                        showWitchBtn(1);
+                        isKeyboardOpen = false;
+                    }
+                }
+            }
+        });
     }
 
+    /**键盘是否打开*/
+    boolean isKeyboardOpen = false;
+
+    int keyboardHeight;
+    private void selectedTab(int position) {
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) viewPager.getLayoutParams();
+        LinearLayout.LayoutParams layoutParams1 = (LinearLayout.LayoutParams) llAddText.getLayoutParams();
+        if (position == 0) {
+            showInput();
+            if (keyboardHeight != 0) {
+                layoutParams1.setMargins(0, 0, 0, keyboardHeight);
+                llAddText.setLayoutParams(layoutParams1);
+            }
+            view_line_text.setVisibility(View.GONE);
+            viewPager.setVisibility(View.GONE);
+        } else {
+            hideKeyboard();
+            editText.setFocusable(false);
+            view_line_text.setVisibility(View.VISIBLE);
+            viewPager.setVisibility(View.VISIBLE);
+            if (keyboardHeight != 0) {
+                layoutParams1.setMargins(0, 0, 0, 0);
+                llAddText.setLayoutParams(layoutParams1);
+                layoutParams.height = keyboardHeight;
+                viewPager.setLayoutParams(layoutParams);
+            }
+        }
+    }
+
+    private void showWitchBtn(int showWitch) {
+        for (int i = 0; i < listTv.size(); i++) {
+            TextView tv = listTv.get(i);
+            View view = listView.get(i);
+            if (i == showWitch) {
+                tv.setTextSize(17);
+                view.setVisibility(View.VISIBLE);
+            } else {
+                tv.setTextSize(14);
+                view.setVisibility(View.INVISIBLE);
+            }
+        }
+        viewPager.setCurrentItem(showWitch);
+        selectedTab(showWitch);
+    }
+
+    private int lastViewPagerChoosePosition;
+    private void selectedPage(int i) {
+        if (lastViewPagerChoosePosition != i) {
+            if (i <= listTitle.size() - 1) {
+                showWitchBtn(i);
+            }
+        }
+    }
+
+    /**
+     * 隐藏键盘
+     */
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(INPUT_METHOD_SERVICE);
+        View v = context.getWindow().peekDecorView();
+        if (null != v) {
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        }
+    }
+
+    /**
+     * 显示键盘
+     */
+    private void showInput() {
+        editText.setFocusableInTouchMode(true);
+        editText.requestFocus();
+        InputMethodManager inputManager =
+                (InputMethodManager) editText.getContext().getSystemService(INPUT_METHOD_SERVICE);
+        inputManager.showSoftInput(editText, 0);
+    }
 
     /**
      * description ：
@@ -235,39 +376,6 @@ public class CreateViewForAddText {
         void setTextColor(String color0,String color1,String title);
 
     }
-
-
-    private void dismissDialog() {
-        if(view!=null){
-            view.setVisibility(View.GONE);
-        }
-    }
-
-
-    View.OnClickListener listener = view -> {
-        switch (view.getId()) {
-            case R.id.tv_hot:
-                viewPager.setCurrentItem(0);
-                setTextColor(0);
-
-                break;
-            case R.id.tv_font:
-                viewPager.setCurrentItem(1);
-                setTextColor(1);
-
-                break;
-            default:
-                break;
-        }
-    };
-
-    private void setTextColor(int chooseItem) {
-        for (int i = 0; i < 2; i++) {
-            listTitle.get(i).setTextColor(context.getResources().getColor(R.color.white));
-        }
-        listTitle.get(chooseItem).setTextColor(Color.parseColor("#5496FF"));
-    }
-
 
     /**
      * description ：请求文字

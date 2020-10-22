@@ -132,8 +132,8 @@
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity"
-            android:windowSoftInputMode="adjustNothing"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing"/>
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.ReportActivity"
@@ -211,8 +211,8 @@
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.CreationTemplateActivity"
-            android:windowSoftInputMode="adjustNothing"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing"/>
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.BackgroundSearchActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

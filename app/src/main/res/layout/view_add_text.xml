@@ -1,15 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="227dp"
+    android:layout_height="match_parent"
     android:id="@+id/ll_add_text_style"
-    android:visibility="gone"
     android:layout_alignParentBottom="true"
-    android:background="#181818"
+    android:visibility="gone"
     android:orientation="vertical">
+    <View
+        android:id="@+id/view_transparent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@android:color/transparent"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/ll_add_text"
+        android:background="#181818">
+
+    <EditText
+        android:id="@+id/edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:singleLine="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="5dp"
+        android:padding="5dp"
+        android:background="@drawable/stroke_editext_add_text"
+        android:textColor="@color/soft_gray"
+        android:hint="输入文本"
+        android:textColorHint="@color/soft_text"
+        android:textSize="14sp" />
 
     <LinearLayout
-        android:id="@+id/ll_content_top"
         android:layout_width="match_parent"
         android:layout_height="47dp"
         android:gravity="center_vertical"
@@ -17,66 +43,53 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp">
 
-
         <ImageView
             android:id="@+id/iv_delete_all_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:padding="5dp"
             android:src="@mipmap/text_delete_all" />
-
-
-        <TextView
-            android:id="@+id/tv_hot"
-            android:layout_width="100dp"
+        <HorizontalScrollView
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="热门效果"
-            android:textColor="#5496FF"
-            android:textSize="14sp" />
+            android:layout_weight="1"
+            android:layout_gravity="center">
 
-
-        <TextView
-            android:id="@+id/tv_font"
-            android:layout_width="100dp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="字体"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
-
-
-        <LinearLayout
+            <LinearLayout
+                android:id="@+id/ll_add_child_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+        <ImageView
+            android:id="@+id/iv_down"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="right"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-
-            <ImageView
-                android:contentDescription="@string/app_name"
-                android:id="@+id/iv_down"
-                android:padding="5dp"
-                android:layout_width="wrap_content"
-                android:src="@mipmap/down_arrow"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
+            android:layout_marginLeft="30dp"
+            android:contentDescription="@string/app_name"
+            android:padding="5dp"
+            android:src="@mipmap/correct" />
 
     </LinearLayout>
+    </LinearLayout>
 
-
-    <View
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#292929" />
+        android:layout_height="wrap_content"
+        android:background="#181818"
+        android:orientation="vertical">
 
+        <View
+            android:id="@+id/view_line_text"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#292929" />
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/viewpager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 </LinearLayout>

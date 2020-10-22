@@ -349,13 +349,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     boolean nowUiIsLandscape = false;
 
     @Override
-    @OnClick({R.id.tv_top_submit, R.id.ll_content_top, R.id.ll_play, R.id.iv_delete_all_text, R.id.iv_add_sticker, R.id.iv_top_back, R.id.iv_change_ui, R.id.tv_background, R.id.tv_music, R.id.tv_anim, R.id.tv_tiezhi, R.id.tv_add_text})
+    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_delete_all_text, R.id.iv_add_sticker, R.id.iv_top_back, R.id.iv_change_ui, R.id.tv_background, R.id.tv_music, R.id.tv_anim, R.id.tv_tiezhi, R.id.tv_add_text})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.ll_content_top:
-                LogUtil.d("OOM", "点击了顶部");
-                break;
-
             case R.id.tv_top_submit:
                 if (isPlaying) {
                     videoToPause();//submit
