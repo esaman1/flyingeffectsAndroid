@@ -13,6 +13,7 @@ import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Picture;
 import android.graphics.PixelFormat;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
@@ -105,6 +106,16 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private String getTypefaceBitmapPath;
     //文字图片
     private Bitmap bpForTextBj;
+    //是否设置花纹
+    private boolean OpenThePattern = true;
+    //测试的文字边纹
+    private Bitmap bpTestTextBj;
+    private Picture ptTestTextBj;
+
+    //有花纹情况下文字的间距
+    private int letterSpacingSize = 1;
+
+
     //选择的时背景效果
     private boolean isChooseTextBjEffect = false;
     // 文字背景矩形变阵
@@ -353,7 +364,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         initTextPainter(context);
         colors.add("#626262");
         colors.add("#000000");
-
+        bpTestTextBj = BitmapFactory.decodeResource(context.getResources(), R.mipmap.test);
+        ptTestTextBj = new Picture();
         //只有下面两个方法设置为true才能获取到输入的内容
 //        setFocusable(true);
 //        setFocusableInTouchMode(true);
@@ -832,10 +844,17 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      */
     private void drawContent(Canvas canvas) {
         if (mIsText) {
-            mMeasureWidth = MeasureTextUtils.getFontWidth(mTextPaint, stickerText);
-            mMeasureHeight = MeasureTextUtils.getFontHeight(mTextPaint);
-            mMeasureWidth = mMeasureWidth + 10;
-            mMeasureHeight = mMeasureHeight + 10;
+            if (OpenThePattern) {
+                mMeasureWidth = MeasureTextUtils.getFontWidth(mTextPaint, stickerText)*2;
+                int size = stickerText.length();
+                mMeasureHeight = mMeasureWidth / size;
+            } else {
+                mMeasureWidth = MeasureTextUtils.getFontWidth(mTextPaint, stickerText);
+                mMeasureHeight = MeasureTextUtils.getFontHeight(mTextPaint);
+            }
+
+//            mMeasureWidth = mMeasureWidth + 10;
+//            mMeasureHeight = mMeasureHeight + 10;
             RectF rectF = new RectF(0, 0, mMeasureWidth, mMeasureHeight);
             rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY());
             LogUtil.d("OOM4", "center.x=" + center.x + "----center.y=" + center.y + "----mHelpBoxRect.left=" + mHelpBoxRect.left + "----+mHelpBoxRect.width()=" + mHelpBoxRect.width());
@@ -849,7 +868,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             float needRectHeight = mHelpBoxRect.top + mHelpBoxRect.height() * 0.8f;
             float halfTextWidth = mMeasureWidth / (float) 2;
             LogUtil.d("OOM4", "halfTextWidth=" + halfTextWidth);
-//            if ( isChooseTextEffect) {
             if (bpForTextBj != null) {
                 BitmapShader bitmapShader = new BitmapShader(BitmapUtil.GetBitmapForScale(bpForTextBj, (int) mHelpBoxRect.width(),
                         (int) mHelpBoxRect.height()), Shader.TileMode.MIRROR, Shader.TileMode.MIRROR);
@@ -857,11 +875,27 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 bitmapShader.setLocalMatrix(matrixForBitmapShader);
                 mTextPaint.setShader(bitmapShader);
             }
-//            }
-
             canvas.save();
             canvas.scale(mScale, mScale, center.x, center.y);
             canvas.rotate(mRotateAngle, center.x, center.y);
+
+
+            if (OpenThePattern) {
+                //设置间距
+                mTextPaint.setLetterSpacing(letterSpacingSize);
+                mPaintShadow.setLetterSpacing(letterSpacingSize);
+                mTextPaint2.setLetterSpacing(letterSpacingSize);
+                float oneImageWith = MeasureTextUtils.getFontWidth(mTextPaint, "一") * 2;
+//                ptTestTextBj.beginRecording((int) mMeasureHeight, (int) mMeasureHeight);
+
+                bpTestTextBj= bitmapToCenter(bpTestTextBj,(int)mMeasureHeight,(int)mMeasureHeight);
+                canvas.drawBitmap(bpTestTextBj, mHelpBoxRect.left + 10, mHelpBoxRect.top, mTextPaint);
+//                ptTestTextBj.endRecording();
+//                canvas.drawPicture(ptTestTextBj,new RectF(oneImageWith, 0, 300, 300));
+
+
+            }
+
 
             for (int i = 1; i < 10; i++) {
                 canvas.drawText(stickerText, mHelpBoxRect.left + 10 - i, needRectHeight - 10 + i / (float) 2, mTextPaint);
@@ -2148,9 +2182,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-
-    public void setTextStyle(String path,String textStyleTitle) {
-        this.textStyleTitle=textStyleTitle;
+    public void setTextStyle(String path, String textStyleTitle) {
+        this.textStyleTitle = textStyleTitle;
         TypefacePath = path;
         Typeface typeface = Typeface.createFromFile(path);
         Typeface typeface2 = Typeface.createFromFile(path);
@@ -2166,8 +2199,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-    public void setTextBitmapStyle(String path,String effectsTitle) {
-        textEffectTitle=effectsTitle;
+    public void setTextBitmapStyle(String path, String effectsTitle) {
+        textEffectTitle = effectsTitle;
         getTypefaceBitmapPath = path;
         isChooseTextBjEffect = true;
         bpForTextBj = BitmapFactory.decodeFile(path);
@@ -2199,8 +2232,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     private ArrayList<String> colors = new ArrayList<>();
 
-    public void setTextPaintColor(String paintColor1, String paintColor2,String effectsTitle) {
-      textEffectTitle=effectsTitle;
+    public void setTextPaintColor(String paintColor1, String paintColor2, String effectsTitle) {
+        textEffectTitle = effectsTitle;
         if (bpForTextBj != null) {
             bpForTextBj.recycle();
             bpForTextBj = null;
@@ -2215,13 +2248,13 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-    public String GetTextEffectTitle(){
-        return  textEffectTitle;
+    public String GetTextEffectTitle() {
+        return textEffectTitle;
     }
 
 
-    public String GetTextStyleTitle(){
-        return  textStyleTitle;
+    public String GetTextStyleTitle() {
+        return textStyleTitle;
     }
 
 
@@ -2250,17 +2283,17 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public void changePositionToScreenShot() {
         if (mIsText) {
 //            if (mHelpBoxRect.left < 0 || mHelpBoxRect.right > getMeasuredWidth() || mHelpBoxRect.top < 0 || mHelpBoxRect.bottom > getMeasuredHeight()) {
-                keepToScreenScale = mScale;
-                hasChangeTextPosition = true;
-                keepToCenter[0] = center.x;
-                keepToCenter[1] = center.y;
-                setCenter(getMeasuredWidth() / (float) 2, getMeasuredHeight() / (float) 2);
-                float width = mHelpBoxRect.width();
-                if (width > getMeasuredWidth()) {
-                    hasChangeTextScale = true;
-                    float scale = getMeasuredWidth() / width;
-                    setScale(keepToScreenScale * scale);
-                }
+            keepToScreenScale = mScale;
+            hasChangeTextPosition = true;
+            keepToCenter[0] = center.x;
+            keepToCenter[1] = center.y;
+            setCenter(getMeasuredWidth() / (float) 2, getMeasuredHeight() / (float) 2);
+            float width = mHelpBoxRect.width();
+            if (width > getMeasuredWidth()) {
+                hasChangeTextScale = true;
+                float scale = getMeasuredWidth() / width;
+                setScale(keepToScreenScale * scale);
+            }
 //            }
         }
     }
@@ -2274,6 +2307,28 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 hasChangeTextScale = false;
             }
         }
+    }
+
+
+    public Bitmap bitmapToCenter(Bitmap bitmap, int width, int height) {
+        int bmpWidth = bitmap.getWidth();
+        int bmpHeight = bitmap.getHeight();
+        float scaleWidth = ((float) width) / bmpWidth;
+        Bitmap target = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas temp_canvas = new Canvas(target);
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleWidth);
+        int tranH = (int) (bmpHeight * scaleWidth - height);
+        if (tranH > 0) {
+            tranH = Math.abs(tranH) / 2;
+            tranH = -tranH;
+
+        } else {
+            tranH = Math.abs(tranH) / 2;
+        }
+        matrix.postTranslate(0, tranH);
+        temp_canvas.drawBitmap(bitmap, matrix, new Paint());
+        return target;
     }
 
 
