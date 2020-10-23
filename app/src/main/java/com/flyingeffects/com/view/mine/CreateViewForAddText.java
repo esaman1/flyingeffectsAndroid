@@ -1,6 +1,7 @@
 package com.flyingeffects.com.view.mine;
 
 import android.app.Activity;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -36,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import androidx.viewpager.widget.ViewPager;
+
 import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -71,19 +73,19 @@ public class CreateViewForAddText {
 
     public CreateViewForAddText(Activity context, LinearLayout view, downCallback callback) {
         this.context = context;
-        this.view=view;
+        this.view = view;
         this.callback = callback;
         FileManager fileManager = new FileManager();
         mTTFFolder = fileManager.getFileCachePath(context, "fontStyle");
     }
 
-    public void hideInput(){
+    public void hideInput() {
         view.setVisibility(View.GONE);
     }
 
     private List<String> listTitle = new ArrayList<>();
 
-    public void hideInputTextDialog(){
+    public void hideInputTextDialog() {
         hideInput();
         hideKeyboard();
     }
@@ -91,11 +93,11 @@ public class CreateViewForAddText {
 
     public void setInputText(String str) {
         if (editText != null) {
-           editText.setText(str);
+            editText.setText(str);
         }
     }
 
-    public void showBottomSheetDialog(String text,String type) {
+    public void showBottomSheetDialog(String text, String type) {
         inputText = text;
         llAddText = view.findViewById(R.id.ll_add_text);
         ImageView iv_down = view.findViewById(R.id.iv_down);
@@ -109,6 +111,7 @@ public class CreateViewForAddText {
         listTitle.add("键盘");
         listTitle.add("热门效果");
         listTitle.add("字体");
+        listTitle.add("边框");
 
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -123,9 +126,9 @@ public class CreateViewForAddText {
             public void afterTextChanged(Editable s) {
                 inputText = editText.getText().toString().trim();
                 if (callback != null) {
-                    if( !TextUtils.isEmpty(inputText)){
+                    if (!TextUtils.isEmpty(inputText)) {
                         callback.setText(inputText);
-                    }else{
+                    } else {
                         callback.setText("输入文本");
                     }
                 }
@@ -154,7 +157,7 @@ public class CreateViewForAddText {
         View gridViewLayout = LayoutInflater.from(context).inflate(R.layout.view_creat_template_effect_type, viewPager, false);
         GridView gridView = gridViewLayout.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view13, i, l) -> {
-            CreateViewForAddText.this.downFile(listEffect.get(i).getImage(), 0, listEffect.get(i).getType(), listEffect.get(i).getColor(),listEffect.get(i).getTitle());
+            CreateViewForAddText.this.downFile(listEffect.get(i).getImage(), 0, listEffect.get(i).getType(), listEffect.get(i).getColor(), listEffect.get(i).getTitle());
             createTemplateTextEffectAdapterEffect.select(i);
             if ("bj_template".equals(type)) {
                 statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_style", listEffect.get(i).getTitle());
@@ -171,7 +174,7 @@ public class CreateViewForAddText {
         View gridViewLayoutFont = LayoutInflater.from(context).inflate(R.layout.view_creat_template_text_type, viewPager, false);
         GridView gridViewFont = gridViewLayoutFont.findViewById(R.id.gridView);
         gridViewFont.setOnItemClickListener((adapterView, view1, i, l) -> {
-            CreateViewForAddText.this.downFile(listFont.get(i).getFile(), 1, 1, "",listFont.get(i).getTitle());
+            CreateViewForAddText.this.downFile(listFont.get(i).getFile(), 1, 1, "", listFont.get(i).getTitle());
             createTemplateTextEffectAdapterFont.select(i);
             if ("bj_template".equals(type)) {
                 statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_font", listFont.get(i).getTitle());
@@ -179,6 +182,8 @@ public class CreateViewForAddText {
                 statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_font", listFont.get(i).getTitle());
             }
         });
+
+
         createTemplateTextEffectAdapterFont = new CreateTemplateTextFontAdapter(listFont, context);
         gridViewFont.setAdapter(createTemplateTextEffectAdapterFont);
         createTemplateTextEffectAdapterFont.select(0);
@@ -223,9 +228,6 @@ public class CreateViewForAddText {
             }
         });
 
-        if (listTitle.size() > 0) {
-            showWitchBtn(0);
-        }
         new KeyboardHeightProvider(context).init().setHeightListener(new KeyboardHeightProvider.HeightListener() {
             @Override
             public void onHeightChanged(int height) {
@@ -237,7 +239,7 @@ public class CreateViewForAddText {
                     view_line_text.setVisibility(View.GONE);
                     viewPager.setVisibility(View.GONE);
                     isKeyboardOpen = true;
-                }else {
+                } else {
                     if (isKeyboardOpen) {
                         showWitchBtn(1);
                         isKeyboardOpen = false;
@@ -245,12 +247,23 @@ public class CreateViewForAddText {
                 }
             }
         });
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (listTitle.size() > 0) {
+                    showWitchBtn(0);
+                }
+            }
+        }, 150);
     }
 
-    /**键盘是否打开*/
+    /**
+     * 键盘是否打开
+     */
     boolean isKeyboardOpen = false;
 
     int keyboardHeight;
+
     private void selectedTab(int position) {
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) viewPager.getLayoutParams();
         LinearLayout.LayoutParams layoutParams1 = (LinearLayout.LayoutParams) llAddText.getLayoutParams();
@@ -293,6 +306,7 @@ public class CreateViewForAddText {
     }
 
     private int lastViewPagerChoosePosition;
+
     private void selectedPage(int i) {
         if (lastViewPagerChoosePosition != i) {
             if (i <= listTitle.size() - 1) {
@@ -329,12 +343,12 @@ public class CreateViewForAddText {
      * param : type 0 热门效果或者 1字体   textType ：热门效果 2表示文字，1 表示图片
      * user : zhangtongju
      */
-    private void downFile(String path, int type,int textType,String color,String title) {
+    private void downFile(String path, int type, int textType, String color, String title) {
 
-        if(type==0&&textType==2){
-            String[]str=color.split(",");
-            callback.setTextColor("#"+str[1],"#"+str[0],title);
-        }else{
+        if (type == 0 && textType == 2) {
+            String[] str = color.split(",");
+            callback.setTextColor("#" + str[1], "#" + str[0], title);
+        } else {
             LogUtil.d("OOM4", "downFilePath=" + path);
             int index = path.lastIndexOf("/");
             String newStr = path.substring(index);
@@ -345,13 +359,13 @@ public class CreateViewForAddText {
             if (file.exists()) {
                 LogUtil.d("OOM2", "已下载");
                 if (callback != null) {
-                    callback.isSuccess(name, type,title);
+                    callback.isSuccess(name, type, title);
                 }
             } else {
                 WaitingDialog.openPragressDialog(context);
                 Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
                     DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> {
-                        callback.isSuccess(name, type,title);
+                        callback.isSuccess(name, type, title);
                         WaitingDialog.closePragressDialog();
                     });
                     manage.DownloadVideo(path, name);
@@ -369,11 +383,11 @@ public class CreateViewForAddText {
      */
     public interface downCallback {
 
-        void isSuccess(String path, int type,String title);
+        void isSuccess(String path, int type, String title);
 
         void setText(String text);
 
-        void setTextColor(String color0,String color1,String title);
+        void setTextColor(String color0, String color1, String title);
 
     }
 
