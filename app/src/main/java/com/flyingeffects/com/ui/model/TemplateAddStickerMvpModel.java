@@ -309,6 +309,17 @@ public class TemplateAddStickerMvpModel {
         }
     }
 
+    /**
+     * description ：textBjPath 文字背景路径，textFramePath 文字边框
+     * creation date: 2020/10/23
+     * user : zhangtongju
+     */
+    public void  ChangeTextFrame(String textBjPath, String textFramePath){
+        if (nowChooseStickerView.getIsTextSticker()) {
+            nowChooseStickerView.ChangeTextFrame(textBjPath, textFramePath);
+        }
+    }
+
 
     public void showGifAnim(boolean isShow) {
         if (listForStickerModel != null && listForStickerModel.size() > 0) {

@@ -2218,6 +2218,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         getTypefaceBitmapPath = path;
         isChooseTextBjEffect = true;
         bpForTextBj = BitmapFactory.decodeFile(path);
+        OpenThePattern=false;
     }
 
     public boolean getIsTextSticker() {
@@ -2259,6 +2260,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         colors.clear();
         colors.add(paintColor1);
         colors.add(paintColor2);
+        OpenThePattern=false;
     }
 
 
@@ -2268,9 +2270,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         bpForTextBj = BitmapFactory.decodeFile(textBjPath);
         OpenThePattern=true;
         bpTestTextBj=BitmapFactory.decodeFile(textFramePath);;
-        mTextPaint.setTypeface(null);
-        mPaintShadow.setTypeface(null);
-        mTextPaint2.setTypeface(null);
     }
 
 
