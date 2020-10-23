@@ -82,8 +82,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      * 高光
      */
     private static final int[] COLORS = {Color.parseColor("#00000000"), Color.parseColor("#EEEEEE"),
-            Color.parseColor("#ffffff"), Color.parseColor("#EEEEEE"), Color.parseColor("#ffffff"),
-            Color.parseColor("#00000000"), Color.parseColor("#ffffff"), Color.parseColor("#EEEEEE"), Color.parseColor("#00000000")};
+            Color.parseColor("#00000000"), Color.parseColor("#EEEEEE"), Color.parseColor("#ffffff"),
+            Color.parseColor("#00000000"), Color.parseColor("#EEEEEE"), Color.parseColor("#EEEEEE"), Color.parseColor("#00000000")};
 
 
     private boolean isFromStickerAnim = false;
@@ -99,7 +99,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private String textStyleTitle;
     //选择字体效果名字
     private String textEffectTitle;
-
+    //定义对象依次存放每一个字符
+    private List<String> listFontList = new ArrayList<>();
     //文字格式地址
     private String TypefacePath;
     //文字图片地址
@@ -107,11 +108,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     //文字图片
     private Bitmap bpForTextBj;
     //是否设置花纹
-    private boolean OpenThePattern = true;
+    private boolean OpenThePattern = false;
     //测试的文字边纹
     private Bitmap bpTestTextBj;
-    private Picture ptTestTextBj;
-
     //有花纹情况下文字的间距
     private int letterSpacingSize = 1;
 
@@ -365,7 +364,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         colors.add("#626262");
         colors.add("#000000");
         bpTestTextBj = BitmapFactory.decodeResource(context.getResources(), R.mipmap.test);
-        ptTestTextBj = new Picture();
         //只有下面两个方法设置为true才能获取到输入的内容
 //        setFocusable(true);
 //        setFocusableInTouchMode(true);
@@ -845,29 +843,26 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private void drawContent(Canvas canvas) {
         if (mIsText) {
             if (OpenThePattern) {
-                mMeasureWidth = MeasureTextUtils.getFontWidth(mTextPaint, stickerText)*2;
+                listFontList = getFontList(stickerText);
+                mMeasureWidth = MeasureTextUtils.getFontWidth(mTextPaint, stickerText) * 2;
                 int size = stickerText.length();
                 mMeasureHeight = mMeasureWidth / size;
             } else {
                 mMeasureWidth = MeasureTextUtils.getFontWidth(mTextPaint, stickerText);
                 mMeasureHeight = MeasureTextUtils.getFontHeight(mTextPaint);
             }
-
-//            mMeasureWidth = mMeasureWidth + 10;
-//            mMeasureHeight = mMeasureHeight + 10;
             RectF rectF = new RectF(0, 0, mMeasureWidth, mMeasureHeight);
             rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY());
-            LogUtil.d("OOM4", "center.x=" + center.x + "----center.y=" + center.y + "----mHelpBoxRect.left=" + mHelpBoxRect.left + "----+mHelpBoxRect.width()=" + mHelpBoxRect.width());
             mHelpBoxRect.set(rectF);
-            LogUtil.d(TAG, "bottom = " + mHelpBoxRect.bottom);
-            LogUtil.d("sticker_size", "mHelpBoxRect.width() = " + mHelpBoxRect.width());
-            LogUtil.d("sticker_size", "mHelpBoxRect.height() = " + mHelpBoxRect.height());
             mTextScale = mMeasureWidth / (getMeasuredWidth() / 2f);
-            LogUtil.d(TAG, "text scale = " + mTextScale);
 
-            float needRectHeight = mHelpBoxRect.top + mHelpBoxRect.height() * 0.8f;
+            float needRectHeight;
+            if (OpenThePattern) {
+                needRectHeight = mHelpBoxRect.top + mHelpBoxRect.height() * 0.62f;
+            } else {
+                needRectHeight = mHelpBoxRect.top + mHelpBoxRect.height() * 0.8f;
+            }
             float halfTextWidth = mMeasureWidth / (float) 2;
-            LogUtil.d("OOM4", "halfTextWidth=" + halfTextWidth);
             if (bpForTextBj != null) {
                 BitmapShader bitmapShader = new BitmapShader(BitmapUtil.GetBitmapForScale(bpForTextBj, (int) mHelpBoxRect.width(),
                         (int) mHelpBoxRect.height()), Shader.TileMode.MIRROR, Shader.TileMode.MIRROR);
@@ -879,40 +874,59 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             canvas.scale(mScale, mScale, center.x, center.y);
             canvas.rotate(mRotateAngle, center.x, center.y);
 
-
             if (OpenThePattern) {
                 //设置间距
                 mTextPaint.setLetterSpacing(letterSpacingSize);
                 mPaintShadow.setLetterSpacing(letterSpacingSize);
                 mTextPaint2.setLetterSpacing(letterSpacingSize);
-                float oneImageWith = MeasureTextUtils.getFontWidth(mTextPaint, "一") * 2;
-//                ptTestTextBj.beginRecording((int) mMeasureHeight, (int) mMeasureHeight);
+                float oneImageWith = MeasureTextUtils.getFontWidth(mTextPaint, "一");
+                bpTestTextBj = bitmapToCenter(bpTestTextBj, (int) mMeasureHeight, (int) mMeasureHeight);
+                for (int i = 0; i < stickerText.length(); i++) {
+                    canvas.drawBitmap(bpTestTextBj, mHelpBoxRect.left + mMeasureHeight * i, mHelpBoxRect.top, mTextPaint);
+                }
 
-                bpTestTextBj= bitmapToCenter(bpTestTextBj,(int)mMeasureHeight,(int)mMeasureHeight);
-                canvas.drawBitmap(bpTestTextBj, mHelpBoxRect.left + 10, mHelpBoxRect.top, mTextPaint);
-//                ptTestTextBj.endRecording();
-//                canvas.drawPicture(ptTestTextBj,new RectF(oneImageWith, 0, 300, 300));
-
-
-            }
-
-
-            for (int i = 1; i < 10; i++) {
-                canvas.drawText(stickerText, mHelpBoxRect.left + 10 - i, needRectHeight - 10 + i / (float) 2, mTextPaint);
-            }
-            RadialGradient radialGradient4 = new RadialGradient(mHelpBoxRect.centerX(),
-                    mHelpBoxRect.centerY(), mHelpBoxRect.width(), COLORS, null, Shader.TileMode.CLAMP);
-            mPaintShadow.setShader(radialGradient4);
-            if (bpForTextBj == null) {
-                //只要没有选择图片背景
-                canvas.drawText(stickerText, mHelpBoxRect.left + 10, needRectHeight - 10, mTextPaint2);
+                for (int y = 0; y < stickerText.length(); y++) {
+                    for (int i = 1; i < 10; i++) {
+                        canvas.drawText(listFontList.get(y), mHelpBoxRect.left + mMeasureHeight / 2 - (oneImageWith / 2) - i+ mMeasureHeight * y, needRectHeight - 10 + i / (float) 2, mTextPaint);
+                    }
+                }
+                RadialGradient radialGradient4 = new RadialGradient(mHelpBoxRect.centerX(),
+                        mHelpBoxRect.centerY(), mHelpBoxRect.width(), COLORS, null, Shader.TileMode.CLAMP);
+                mPaintShadow.setShader(radialGradient4);
+                if (bpForTextBj == null) {
+                    //只要没有选择图片背景
+                    for (int i = 0; i < stickerText.length(); i++) {
+                        canvas.drawText(listFontList.get(i), mHelpBoxRect.left + mMeasureHeight / 2 - (oneImageWith / 2) + mMeasureHeight * i, needRectHeight - 10, mTextPaint2);
+                    }
+                } else {
+                    for (int i = 0; i < stickerText.length(); i++) {
+                        canvas.drawText(listFontList.get(i), mHelpBoxRect.left + mMeasureHeight / 2 - (oneImageWith / 2) - 5 + mMeasureHeight * i, needRectHeight - 7.5f, mPaintShadow);
+                        canvas.drawText(listFontList.get(i), mHelpBoxRect.left + mMeasureHeight / 2 - (oneImageWith / 2) + mMeasureHeight * i, needRectHeight - 10, mTextPaint);
+                    }
+                }
+                canvas.restore();
+                RectUtil.scaleRect(mHelpBoxRect, mScale);
+                drawFrame(canvas);
             } else {
-                canvas.drawText(stickerText, mHelpBoxRect.left + 10 - 5, needRectHeight - 7.5f, mPaintShadow);
-                canvas.drawText(stickerText, mHelpBoxRect.left + 10, needRectHeight - 10, mTextPaint);
+                for (int i = 1; i < 10; i++) {
+                    canvas.drawText(stickerText, mHelpBoxRect.left + 10 - i, needRectHeight - 10 + i / (float) 2, mTextPaint);
+                }
+                RadialGradient radialGradient4 = new RadialGradient(mHelpBoxRect.centerX(),
+                        mHelpBoxRect.centerY(), mHelpBoxRect.width(), COLORS, null, Shader.TileMode.CLAMP);
+                mPaintShadow.setShader(radialGradient4);
+                if (bpForTextBj == null) {
+                    //只要没有选择图片背景
+                    canvas.drawText(stickerText, mHelpBoxRect.left + 10, needRectHeight - 10, mTextPaint2);
+                } else {
+                    canvas.drawText(stickerText, mHelpBoxRect.left + 10 - 5, needRectHeight - 7.5f, mPaintShadow);
+                    canvas.drawText(stickerText, mHelpBoxRect.left + 10, needRectHeight - 10, mTextPaint);
+                }
+                canvas.restore();
+                RectUtil.scaleRect(mHelpBoxRect, mScale);
+                drawFrame(canvas);
             }
-            canvas.restore();
-            RectUtil.scaleRect(mHelpBoxRect, mScale);
-            drawFrame(canvas);
+
+
         } else if (currentDrawable != null) {
             RectF rectF = new RectF(0, 0, currentDrawable.getIntrinsicWidth(), currentDrawable.getIntrinsicHeight());
             rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY());
@@ -2331,5 +2345,14 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         return target;
     }
 
+
+    private List<String> getFontList(String str) {
+        listFontList.clear();
+        for (int i = 0; i < str.length(); i++) {
+            String ss = String.valueOf(str.charAt(i));
+            listFontList.add(ss);
+        }
+        return listFontList;
+    }
 
 }
