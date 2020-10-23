@@ -38,23 +38,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:background="@null"
-                android:hint="搜索背景、模板"
-                android:imeOptions="actionSearch"
+                android:hint="请输入视频关键字、用户昵称"
                 android:inputType="text"
                 android:paddingEnd="45dp"
                 android:textSize="14sp"
+                android:drawableLeft="@mipmap/gray_search"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
                 android:maxLines="1"
-                android:paddingStart="40dp"
+                android:paddingStart="15dp"
                 android:singleLine="true"
                 android:textColor="@color/white"
                 android:textColorHint="#515151" />
-
-            <ImageView
-                android:layout_width="21dp"
-                android:layout_height="21dp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="15dp"
-                android:src="@mipmap/gray_search" />
 
             <ImageView
                 android:id="@+id/iv_delete"

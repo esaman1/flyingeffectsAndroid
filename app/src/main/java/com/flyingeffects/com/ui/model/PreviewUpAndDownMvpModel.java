@@ -18,8 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
@@ -31,7 +29,6 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.enity.new_fag_template_item;
-import com.flyingeffects.com.enity.templateDataZanRefresh;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -71,6 +68,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -233,6 +231,8 @@ public class PreviewUpAndDownMvpModel {
             } else {
                 statisticsEventAffair.getInstance().setFlag(context, "10_bj_csave1");
             }
+            templateBehaviorStatistics(3,id);
+
             statisticsEventAffair.getInstance().setFlag(context, "save_back_template");
             downProgressDialog = new WaitingDialog_progress(context);
             downProgressDialog.openProgressDialog();
@@ -249,6 +249,7 @@ public class PreviewUpAndDownMvpModel {
                 } else {
                     statisticsEventAffair.getInstance().setFlag(context, "10_bj_WeChat");
                 }
+                templateBehaviorStatistics(2,id);
 
                 UMImage image = new UMImage(context, fag_template_item.getImage());//分享图标
                 UMWeb web = new UMWeb(getShareWeiXinCircleText(fag_template_item.getId() + "")); //切记切记 这里分享的链接必须是http开头
@@ -273,6 +274,7 @@ public class PreviewUpAndDownMvpModel {
                 } else {
                     statisticsEventAffair.getInstance().setFlag(context, "10_bj_circle");
                 }
+                templateBehaviorStatistics(1,id);
                 shareToApplet(fag_template_item);
             }
         });
@@ -313,6 +315,33 @@ public class PreviewUpAndDownMvpModel {
         params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
         parent.setLayoutParams(params);
         bottomSheetDialog.show();
+    }
+
+    /**
+     * 模板操作行为统计
+     * @param type 1=微信好友,2=朋友圈,3=保存到本地,4=其他
+     * @param templateId 模板ID
+     */
+    private void templateBehaviorStatistics(int type, String templateId) {
+        if (!TextUtils.isEmpty(templateId)) {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("template_id", templateId);
+            params.put("type", String.valueOf(type));
+            // 启动时间
+            Observable ob = Api.getDefault().templateBehaviorStatistics(BaseConstans.getRequestHead(params));
+            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
+                @Override
+                protected void _onError(String message) {
+                    LogUtil.d("OOM", "requestTemplateDetail-error=" + message);
+                }
+
+                @Override
+                protected void _onNext(Object data) {
+                    LogUtil.d("OOM", "行为统计上传成功");
+                }
+            }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+
+        }
     }
 
 

@@ -247,7 +247,44 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_close_account" />
+    <TextView
+        android:id="@+id/tv_version_number"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/dp_21"
+        android:paddingTop="@dimen/dp_20"
+        android:paddingEnd="@dimen/dp_16"
+        android:paddingBottom="@dimen/dp_18"
+        android:text="飞闪版本"
+        android:textColor="@color/font_color_about_us"
+        android:textSize="@dimen/sp_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_close_account" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dp_14"
+        android:contentDescription="@string/app_name"
+        android:drawableRight="@mipmap/right_more"
+        android:drawablePadding="5dp"
+        android:text="检查更新"
+        android:gravity="center_vertical"
+        android:textSize="12sp"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/tv_version_number"
+        app:layout_constraintEnd_toEndOf="@id/tv_version_number"
+        app:layout_constraintTop_toTopOf="@id/tv_version_number" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp_0_5"
+        android:layout_marginStart="@dimen/dp_21"
+        android:background="@color/color_about_us_line"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_version_number" />
     <TextView
         android:id="@+id/tv_test"
         android:layout_width="0dp"
@@ -261,7 +298,7 @@
         android:textSize="@dimen/sp_16"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_close_account" />
+        app:layout_constraintTop_toBottomOf="@id/tv_version_number" />
 
     <ImageView
         android:id="@+id/iv_test"

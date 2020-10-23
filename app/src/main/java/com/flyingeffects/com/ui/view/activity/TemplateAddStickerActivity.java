@@ -122,7 +122,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     protected void initView() {
         EventBus.getDefault().register(this);
         videoPath = getIntent().getStringExtra("videoPath");
-        LogUtil.d("OOM","path="+videoPath);
+        LogUtil.d("OOM", "path=" + videoPath);
         presenter = new TemplateAddStickerMvpPresenter(this, this, ll_space, viewLayerRelativeLayout, videoPath);
         if (!TextUtils.isEmpty(videoPath)) {
             //有视频的时候，初始化视频值
@@ -443,13 +443,13 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
     @Override
     public void stickerOnclickCallback(String str) {
-        if(!TextUtils.isEmpty(str)&&createViewForAddText!=null){
+        if (!TextUtils.isEmpty(str) && createViewForAddText != null) {
             createViewForAddText.setInputText(str);
         }
     }
 
     @Override
-    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_top_back, R.id.tv_add_text,R.id.iv_delete_all_text})
+    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_top_back, R.id.tv_add_text, R.id.iv_delete_all_text})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
@@ -467,7 +467,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
             case R.id.iv_delete_all_text:
                 presenter.deleteAllTextSticker();
-                if(createViewForAddText!=null){
+                if (createViewForAddText != null) {
                     createViewForAddText.hideInputTextDialog();
                 }
                 break;
@@ -481,7 +481,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
             case R.id.tv_add_text:
                 intoTextStyleDialog("");
                 presenter.addTextSticker();
-                statisticsEventAffair.getInstance().setFlag(this,"20_mb_text");
+                statisticsEventAffair.getInstance().setFlag(this, "20_mb_text");
                 break;
 
 
@@ -501,15 +501,15 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
             ll_add_text_style.setVisibility(View.VISIBLE);
             createViewForAddText = new CreateViewForAddText(this, ll_add_text_style, new CreateViewForAddText.downCallback() {
                 @Override
-                public void isSuccess(String path, int type,String title) {
-                    presenter.ChangeTextStyle(path, type,title);
+                public void isSuccess(String path, int type, String title) {
+                    presenter.ChangeTextStyle(path, type, title);
                 }
 
                 @Override
                 public void setText(String text) {
 
                     presenter.ChangeTextLabe(text);
-                    if(TextUtils.isEmpty(text)){
+                    if (TextUtils.isEmpty(text)) {
                         if (createViewForAddText != null) {
                             createViewForAddText.hideInputTextDialog();
                             createViewForAddText = null;
@@ -519,11 +519,11 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                 }
 
                 @Override
-                public void setTextColor(String color0, String color1,String title) {
-                    presenter.ChangeTextColor(color0, color1,title);
+                public void setTextColor(String color0, String color1, String title) {
+                    presenter.ChangeTextColor(color0, color1, title);
                 }
             });
-            createViewForAddText.showBottomSheetDialog(inputText,"OneKey_template");
+            createViewForAddText.showBottomSheetDialog(inputText, "OneKey_template");
         }
     }
 
@@ -598,7 +598,6 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     }
 
 
-
     @Override
     public final boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -613,5 +612,4 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
         }
         return true;
     }
-
 }
