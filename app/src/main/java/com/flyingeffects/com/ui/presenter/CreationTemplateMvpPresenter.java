@@ -41,6 +41,10 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.ChangeTextColor(color0,color1,title);
     }
 
+    public void  ChangeTextFrame(String textBjPath, String textFramePath){
+        creationTemplatemodel.ChangeTextFrame(textBjPath,textFramePath);
+    }
+
 
 
 

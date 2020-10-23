@@ -15,6 +15,16 @@ public class FontEnity implements Serializable {
     private String color;
     private boolean selected;
 
+    public String getFont_image() {
+        return font_image;
+    }
+
+    public void setFont_image(String font_image) {
+        this.font_image = font_image;
+    }
+
+    private String font_image;
+
     public String getId() {
         return id;
     }

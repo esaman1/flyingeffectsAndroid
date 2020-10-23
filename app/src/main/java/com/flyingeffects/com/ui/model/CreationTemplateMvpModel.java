@@ -221,6 +221,22 @@ public class CreationTemplateMvpModel {
     }
 
 
+    /**
+     * description ：textBjPath 文字背景路径，textFramePath 文字边框
+     * creation date: 2020/10/23
+     * user : zhangtongju
+     */
+    public void  ChangeTextFrame(String textBjPath, String textFramePath){
+
+        if (nowChooseStickerView.getIsTextSticker()) {
+            nowChooseStickerView.ChangeTextFrame(textBjPath, textFramePath);
+        }
+
+
+
+    }
+
+
     private void showVibrator() {
         if (vibrator.hasVibrator()) {
             vibrator.vibrate(5);  //设置手机振动

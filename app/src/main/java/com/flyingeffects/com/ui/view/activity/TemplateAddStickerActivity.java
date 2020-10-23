@@ -522,6 +522,11 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                 public void setTextColor(String color0, String color1, String title) {
                     presenter.ChangeTextColor(color0, color1, title);
                 }
+
+                @Override
+                public void isSuccess(String textBjPath, String textFramePath) {
+
+                }
             });
             createViewForAddText.showBottomSheetDialog(inputText, "OneKey_template");
         }

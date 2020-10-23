@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.CreateTemplateTextEffectAdapter;
 import com.flyingeffects.com.adapter.CreateTemplateTextFontAdapter;
+import com.flyingeffects.com.adapter.CreateTemplateTextFrameAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -55,9 +56,11 @@ public class CreateViewForAddText {
     private Activity context;
     private ArrayList<FontEnity> listFont = new ArrayList<>();
     private ArrayList<FontEnity> listEffect = new ArrayList<>();
+    private ArrayList<FontEnity> listFrame = new ArrayList<>();
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private CreateTemplateTextEffectAdapter createTemplateTextEffectAdapterEffect;
     private CreateTemplateTextFontAdapter createTemplateTextEffectAdapterFont;
+    private CreateTemplateTextFrameAdapter createTemplateTextEffectAdapterFrame;
     private String mTTFFolder;
     private downCallback callback;
     private LinearLayout view;
@@ -182,13 +185,42 @@ public class CreateViewForAddText {
                 statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_font", listFont.get(i).getTitle());
             }
         });
-
-
         createTemplateTextEffectAdapterFont = new CreateTemplateTextFontAdapter(listFont, context);
         gridViewFont.setAdapter(createTemplateTextEffectAdapterFont);
         createTemplateTextEffectAdapterFont.select(0);
-
         list.add(gridViewLayoutFont);
+
+        View gridViewLayoutFrame = LayoutInflater.from(context).inflate(R.layout.view_creat_template_text_type, viewPager, false);
+        GridView gridViewFrame = gridViewLayoutFrame.findViewById(R.id.gridView);
+        gridViewFrame.setOnItemClickListener((adapterView, view1, i, l) -> {
+            WaitingDialog.openPragressDialog(context);
+            downFileFrame(listFrame.get(i).getFont_image(), false, new downFameCallback() {
+                @Override
+                public void isSuccess(String path1) {
+                    downFileFrame(listFrame.get(i).getImage(), false, new downFameCallback() {
+                        @Override
+                        public void isSuccess(String path2) {
+                            WaitingDialog.closePragressDialog();
+                            if(callback!=null){
+                                callback.isSuccess(path1,path2);
+                            }
+                        }
+                    });
+                }
+            });
+
+            createTemplateTextEffectAdapterFont.select(i);
+            if ("bj_template".equals(type)) {
+                statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_font", listFont.get(i).getTitle());
+            } else if ("OneKey_template".equals(type)) {
+                statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_font", listFont.get(i).getTitle());
+            }
+
+        });
+        createTemplateTextEffectAdapterFrame = new CreateTemplateTextFrameAdapter(listFrame, context);
+        gridViewFrame.setAdapter(createTemplateTextEffectAdapterFrame);
+        createTemplateTextEffectAdapterFrame.select(0);
+        list.add(gridViewLayoutFrame);
         TemplateViewPager adapter = new TemplateViewPager(list);
         viewPager.setAdapter(adapter);
 
@@ -210,6 +242,7 @@ public class CreateViewForAddText {
         }
         requestFontImage();
         requestFontList();
+        requestFrameList();
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -340,11 +373,10 @@ public class CreateViewForAddText {
     /**
      * description ：
      * creation date: 2020/9/22
-     * param : type 0 热门效果或者 1字体   textType ：热门效果 2表示文字，1 表示图片
+     * param : type 0 热门效果或者 1字体   textType ：热门效果 2表示文字，1 表示图片 3 表示边框
      * user : zhangtongju
      */
     private void downFile(String path, int type, int textType, String color, String title) {
-
         if (type == 0 && textType == 2) {
             String[] str = color.split(",");
             callback.setTextColor("#" + str[1], "#" + str[0], title);
@@ -376,6 +408,37 @@ public class CreateViewForAddText {
 
 
     /**
+     * description ：
+     * creation date: 2020/9/22
+     * param : type 0 热门效果或者 1字体   textType ：热门效果 2表示文字，1 表示图片 3 表示边框
+     * user : zhangtongju
+     */
+    private void downFileFrame(String path, boolean isDone, downFameCallback callback) {
+
+        LogUtil.d("OOM4", "downFilePath=" + path);
+        int index = path.lastIndexOf("/");
+        String newStr = path.substring(index);
+        LogUtil.d("OOM2", "newStr=" + newStr);
+        String name = mTTFFolder + newStr;
+        File file = new File(name);
+        LogUtil.d("OOM2", "name=" + name);
+        if (file.exists()) {
+            LogUtil.d("OOM2", "已下载");
+            if (callback != null) {
+                callback.isSuccess(name);
+            }
+        } else {
+            Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
+                DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> {
+                    callback.isSuccess(name);
+                });
+                manage.DownloadVideo(path, name);
+            });
+        }
+    }
+
+
+    /**
      * description ：下载回调  ，path 下载后的地址
      * type  0表示热门效果，1 表示来自字体
      * creation date: 2020/9/17
@@ -388,6 +451,16 @@ public class CreateViewForAddText {
         void setText(String text);
 
         void setTextColor(String color0, String color1, String title);
+
+        void isSuccess(String textBjPath, String textFramePath);
+
+    }
+
+
+    public interface downFameCallback {
+
+        void isSuccess(String path);
+
 
     }
 
@@ -409,6 +482,30 @@ public class CreateViewForAddText {
                 listFont.clear();
                 listFont.addAll(data);
                 createTemplateTextEffectAdapterFont.notifyDataSetChanged();
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+
+    }
+
+
+    /**
+     * description ：请求边框
+     * creation date: 2020/9/17
+     * user : zhangtongju
+     */
+    private void requestFrameList() {
+        HashMap<String, String> params = new HashMap<>();
+        Observable ob = Api.getDefault().fontBorder(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<FontEnity>>(context) {
+            @Override
+            protected void _onError(String message) {
+            }
+
+            @Override
+            protected void _onNext(List<FontEnity> data) {
+                listFrame.clear();
+                listFrame.addAll(data);
+                createTemplateTextEffectAdapterFrame.notifyDataSetChanged();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
 

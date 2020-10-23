@@ -363,7 +363,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         initTextPainter(context);
         colors.add("#626262");
         colors.add("#000000");
-        bpTestTextBj = BitmapFactory.decodeResource(context.getResources(), R.mipmap.test);
+//        bpTestTextBj = BitmapFactory.decodeResource(context.getResources(), R.mipmap.test);
         //只有下面两个方法设置为true才能获取到输入的内容
 //        setFocusable(true);
 //        setFocusableInTouchMode(true);
@@ -862,7 +862,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             } else {
                 needRectHeight = mHelpBoxRect.top + mHelpBoxRect.height() * 0.8f;
             }
-            float halfTextWidth = mMeasureWidth / (float) 2;
+//            float halfTextWidth = mMeasureWidth / (float) 2;
             if (bpForTextBj != null) {
                 BitmapShader bitmapShader = new BitmapShader(BitmapUtil.GetBitmapForScale(bpForTextBj, (int) mHelpBoxRect.width(),
                         (int) mHelpBoxRect.height()), Shader.TileMode.MIRROR, Shader.TileMode.MIRROR);
@@ -2260,6 +2260,20 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         colors.add(paintColor1);
         colors.add(paintColor2);
     }
+
+
+    public void ChangeTextFrame(String textBjPath, String textFramePath) {
+        getTypefaceBitmapPath = textBjPath;
+        isChooseTextBjEffect = true;
+        bpForTextBj = BitmapFactory.decodeFile(textBjPath);
+        OpenThePattern=true;
+        bpTestTextBj=BitmapFactory.decodeFile(textFramePath);;
+        mTextPaint.setTypeface(null);
+        mPaintShadow.setTypeface(null);
+        mTextPaint2.setTypeface(null);
+    }
+
+
 
 
     public String GetTextEffectTitle() {

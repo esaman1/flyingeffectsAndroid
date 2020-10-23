@@ -277,6 +277,13 @@ public interface ApiService {
     @POST("/api/message/fontList")
     Observable<HttpResult<List<FontEnity>>> fontList(@FieldMap Map<String, String> params);
 
+
+    //请求边框
+    @FormUrlEncoded
+    @POST("/api/message/fontBorder")
+    Observable<HttpResult<List<FontEnity>>> fontBorder(@FieldMap Map<String, String> params);
+
+
     //收藏音乐列表
     @FormUrlEncoded
     @POST("/api/message/fontImage")
