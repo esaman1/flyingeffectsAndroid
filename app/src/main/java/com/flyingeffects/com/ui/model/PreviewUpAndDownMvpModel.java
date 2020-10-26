@@ -709,6 +709,7 @@ public class PreviewUpAndDownMvpModel {
                 callback.collectionResult(nowHasCollect);
                 if (nowHasCollect) {
                     iv_collect.setImageResource(R.mipmap.new_version_collect_ed);
+                    templateBehaviorStatistics(4,templateId);
                 } else {
                     iv_collect.setImageResource(R.mipmap.new_version_collect);
                 }

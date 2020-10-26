@@ -28,7 +28,6 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
-import com.flyingeffects.com.enity.FragUserCenterEvent;
 import com.flyingeffects.com.enity.RequestMessage;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.checkVersion;
@@ -711,11 +710,6 @@ public class HomeMainActivity extends FragmentActivity {
         if (BaseConstans.hasLogin()) {
             requestMessageCount();
         }
-    }
-
-    @Subscribe
-    public void onEventMainThread(FragUserCenterEvent event) {
-        whichMenuSelect(3);
     }
 
     @Override

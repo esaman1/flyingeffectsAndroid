@@ -9,6 +9,7 @@ import com.flyingeffects.com.adapter.SearchUserAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.AttentionChange;
 import com.flyingeffects.com.enity.SearchUserEntity;
 import com.flyingeffects.com.enity.SendSearchText;
 import com.flyingeffects.com.http.Api;
@@ -173,6 +174,11 @@ public class FragmentUser extends BaseFragment {
                 }
             }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
         }
+    }
+
+    @Subscribe
+    public void onEventMainThread(AttentionChange change){
+        requestFagData(true);
     }
 
     @Override

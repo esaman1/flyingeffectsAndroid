@@ -149,8 +149,6 @@ public class UserHomepageActivity extends BaseActivity {
                 break;
 
             case R.id.tv_focus:
-
-                EventBus.getDefault().post(new AttentionChange());
                 requestFocus();
                 break;
             default:
@@ -196,8 +194,8 @@ public class UserHomepageActivity extends BaseActivity {
                     tv_focus.setText("取消关注");
                     isFocus=true;
                 }
+                EventBus.getDefault().post(new AttentionChange());
                 requestUserInfo();
-
 
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);

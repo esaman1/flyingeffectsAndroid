@@ -36,6 +36,7 @@ import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.fragment.FragmentUser;
 import com.flyingeffects.com.ui.view.fragment.fragBjSearch;
+import com.flyingeffects.com.utils.KeyboardUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -152,6 +153,7 @@ public class BackgroundSearchActivity extends BaseActivity {
             ed_text.setText("");
             hideResultView(true);
             cancelFocus();
+            KeyboardUtil.closeInputKeyboard(this);
             EventBus.getDefault().post(new SendSearchText(""));
             viewPager.setCurrentItem(0);
         });
@@ -181,17 +183,20 @@ public class BackgroundSearchActivity extends BaseActivity {
                     requestServerTemplateFuzzyQuery(ed_text.getText().toString().trim());
                     mIvDelete.setVisibility(View.VISIBLE);
                 }
-                keywordQueryItemClickTag = false;
+
             }
         });
         ed_text.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus && !TextUtils.isEmpty(ed_text.getText().toString())) {
-                    rcSearch.setVisibility(View.VISIBLE);
-                    coordinatorLayout.setVisibility(View.GONE);
+                    if(!keywordQueryItemClickTag){
+                        rcSearch.setVisibility(View.VISIBLE);
+                        coordinatorLayout.setVisibility(View.GONE);
+                        requestServerTemplateFuzzyQuery(ed_text.getText().toString().trim());
+                    }
                     mIvDelete.setVisibility(View.VISIBLE);
-                    requestServerTemplateFuzzyQuery(ed_text.getText().toString().trim());
+                    keywordQueryItemClickTag = false;
                 }
             }
         });

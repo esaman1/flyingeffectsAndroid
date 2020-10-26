@@ -11,17 +11,14 @@ import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.FragUserCenterEvent;
 import com.flyingeffects.com.enity.SearchUserEntity;
 import com.flyingeffects.com.enity.UserInfo;
-import com.flyingeffects.com.ui.view.activity.HomeMainActivity;
 import com.flyingeffects.com.ui.view.activity.UserHomepageActivity;
 import com.orhanobut.hawk.Hawk;
 
 import java.util.List;
 
 import androidx.annotation.Nullable;
-import de.greenrobot.event.EventBus;
 
 /**
  * @author ZhouGang
@@ -69,20 +66,20 @@ public class SearchUserAdapter extends BaseQuickAdapter<SearchUserEntity,BaseVie
         helper.setOnClickListener(R.id.iv_user_avatar, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (TextUtils.equals(String.valueOf(item.getId()), userInfo.getId())) {
-                    EventBus.getDefault().post(new FragUserCenterEvent());
-                    Intent intent = new Intent(activity, HomeMainActivity.class);
+                if (!TextUtils.equals(String.valueOf(item.getId()), userInfo.getId())) {
+                    Intent intent = new Intent(activity, UserHomepageActivity.class);
+                    intent.putExtra("toUserId", String.valueOf(item.getId()));
                     activity.startActivity(intent);
-                } else {
-                    Intent intent1 = new Intent(activity, UserHomepageActivity.class);
-                    intent1.putExtra("toUserId", String.valueOf(item.getId()));
-                    activity.startActivity(intent1);
                 }
             }
         });
     }
 
     public interface OnAttentionListener{
+        /***
+         * 关注该用户
+         * @param id 用户ID
+         */
         void attention(int id);
     }
 
