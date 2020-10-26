@@ -27,6 +27,7 @@ import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
+import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
@@ -353,6 +354,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
+                DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("ExtractFrame"));
+                DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
                 if (isPlaying) {
                     videoToPause();//submit
                     pauseBgmMusic();

@@ -277,7 +277,9 @@ public class CreateViewForAddText {
                 } else {
                     if (isKeyboardOpen) {
                         LogUtil.d("OOM3","isKeyboardOpen="+isKeyboardOpen);
-                        showWitchBtn(lastSelect);
+                        if(lastSelect==0){
+                            showWitchBtn(1);
+                        }
                         isKeyboardOpen = false;
                     }
                 }
@@ -337,7 +339,7 @@ public class CreateViewForAddText {
                 view.setVisibility(View.INVISIBLE);
             }
         }
-        lastSelect=showWitch;
+            lastSelect=showWitch;
         LogUtil.d("OOM3","showWitch="+showWitch);
         viewPager.setCurrentItem(showWitch);
         selectedTab(showWitch);
