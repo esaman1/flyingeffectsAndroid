@@ -168,11 +168,11 @@ dependencies {
     //开屏广告
     implementation(name: 'GDTSDK.unionNormal.4.211.1081', ext: 'aar')
     // 广告sdk
-    implementation(name: 'NTADSDK-v2.4.3', ext: 'aar')
+    implementation(name: 'NTADSDK-v2.4.7', ext: 'aar')
     // 百度联盟
     implementation(name: 'Baidu_MobAds_SDK-release_v5.85', ext: 'aar')
     // 穿山甲
-    implementation(name: 'open_ad_sdk_3.2.0.2', ext: 'aar')
+    implementation(name: 'open_ad_sdk_3.2.5.1', ext: 'aar')
     //快手
     implementation(name: 'ks_adsdk-3.3.6', ext: 'aar')
     //oppo
@@ -200,6 +200,12 @@ dependencies {
 
     //中台导流
     implementation(name: 'Market-v1.2', ext: 'aar')
+
+
+    //铠甲sdk
+    implementation(name: 'oaid_sdk_1.0.23', ext: 'aar')
+    implementation(name: 'kaijia_ad_sdk_1.6.0.20', ext: 'aar')
+
 
 }
 

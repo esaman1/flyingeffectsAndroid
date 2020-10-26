@@ -287,6 +287,26 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
+
+
+        <!--铠甲广告配置Start-->
+        <activity
+            android:name="com.kaijia.adsdk.activity.AppActivity"
+            android:configChanges="screenSize|keyboard|keyboardHidden|orientation" />
+        <provider
+            android:name="com.kaijia.adsdk.provider.kjFileProvider"
+            android:authorities="${packageName}.kj.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/kj_file_paths" />
+        </provider>
+        <service android:name="com.kaijia.adsdk.service.DownloadService"/>
+        <!--铠甲广告配置End-->
+
+
+
 <!--        &lt;!&ndash; 广告开始  广点通配置Start&ndash;&gt;-->
 <!--        <uses-library-->
 <!--            android:name="org.apache.http.legacy"-->

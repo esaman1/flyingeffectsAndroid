@@ -92,6 +92,7 @@ public class BaseApplication extends MultiDexApplication {
                         .appChannel(ChannelUtil.getChannel(this))
                         .TTAppKey(AdConfigs.APP_ID_CSJ)
                         .KSAppKey("517200002")
+                        .KaiJiaAppKey("68662a49")
                         .GDTAppKey(AdConfigs.APP_ID_GDT)
                         .isDebug(true)
                         .build());

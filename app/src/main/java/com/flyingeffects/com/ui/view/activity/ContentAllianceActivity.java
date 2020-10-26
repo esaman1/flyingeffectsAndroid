@@ -47,6 +47,16 @@ public class ContentAllianceActivity extends AppCompatActivity {
                 LogUtil.d("OOM", "error=" + error);
             }
 
+            @Override
+            public void onContentAllianceAdPageEnter() {
+
+            }
+
+            @Override
+            public void onContentAllianceAdPageLeave() {
+
+            }
+
         });
     }
 
