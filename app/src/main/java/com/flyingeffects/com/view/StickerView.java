@@ -880,9 +880,14 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 mPaintShadow.setLetterSpacing(letterSpacingSize);
                 mTextPaint2.setLetterSpacing(letterSpacingSize);
                 float oneImageWith = MeasureTextUtils.getFontWidth(mTextPaint, "一");
-                bpTestTextBj = bitmapToCenter(bpTestTextBj, (int) mMeasureHeight, (int) mMeasureHeight);
-                for (int i = 0; i < stickerText.length(); i++) {
-                    canvas.drawBitmap(bpTestTextBj, mHelpBoxRect.left + mMeasureHeight * i, mHelpBoxRect.top, mTextPaint);
+
+                if(bpTestTextBj!=null){
+                    bpTestTextBj = bitmapToCenter(bpTestTextBj, (int) mMeasureHeight, (int) mMeasureHeight);
+                    for (int i = 0; i < stickerText.length(); i++) {
+                        canvas.drawBitmap(bpTestTextBj, mHelpBoxRect.left + mMeasureHeight * i, mHelpBoxRect.top, mTextPaint);
+                    }
+                }else{
+                    LogUtil.d("OOM4","bpTestTextBj==NULL");
                 }
 
                 for (int y = 0; y < stickerText.length(); y++) {
@@ -2269,7 +2274,14 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         isChooseTextBjEffect = true;
         bpForTextBj = BitmapFactory.decodeFile(textBjPath);
         OpenThePattern=true;
-        bpTestTextBj=BitmapFactory.decodeFile(textFramePath);;
+        bpTestTextBj=BitmapFactory.decodeFile(textFramePath);
+    }
+
+
+    public void ChangeTextFrame(String color0, String color1, String textFramePath) {
+        setTextPaintColor(color0,color1,"");
+        OpenThePattern=true;
+        bpTestTextBj=BitmapFactory.decodeFile(textFramePath);
     }
 
 

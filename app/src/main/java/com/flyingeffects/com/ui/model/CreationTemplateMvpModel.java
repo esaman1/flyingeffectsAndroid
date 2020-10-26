@@ -227,13 +227,16 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
     public void  ChangeTextFrame(String textBjPath, String textFramePath){
-
         if (nowChooseStickerView.getIsTextSticker()) {
             nowChooseStickerView.ChangeTextFrame(textBjPath, textFramePath);
         }
+    }
 
 
-
+    public void ChangeTextFrame(String color0, String color1, String textFramePath) {
+        if (nowChooseStickerView.getIsTextSticker()) {
+            nowChooseStickerView.ChangeTextFrame(color0,color1, textFramePath);
+        }
     }
 
 

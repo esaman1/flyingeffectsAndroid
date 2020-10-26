@@ -27,6 +27,7 @@ import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
+import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
@@ -353,6 +354,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
+                DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("ExtractFrame"));
+                DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
                 if (isPlaying) {
                     videoToPause();//submit
                     pauseBgmMusic();
@@ -508,6 +511,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 public void isSuccess(String textBjPath, String textFramePath) {
                     LogUtil.d("OOM4", "textBjPath=" + textBjPath + "textFramePath=" + textFramePath);
                     presenter.ChangeTextFrame(textBjPath, textFramePath);
+                }
+
+                @Override
+                public void isSuccess(String color0, String color1, String textFramePath) {
+                    LogUtil.d("OOM4","color0="+color0+"color1="+color1+"textFramePath"+textFramePath);
+                    presenter.ChangeTextFrame(color0,color1, textFramePath);
                 }
             });
             createViewForAddText.showBottomSheetDialog(inputText, "bj_template");

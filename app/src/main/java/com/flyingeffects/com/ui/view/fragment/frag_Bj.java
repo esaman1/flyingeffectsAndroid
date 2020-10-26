@@ -162,6 +162,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
 
                     listTv.add(tv);
                     listView.add(view_line);
+
                     ll_add_child.addView(view);
                     titles[i] = data.get(i).getName();
                     if (i == data.size() - 1) {
