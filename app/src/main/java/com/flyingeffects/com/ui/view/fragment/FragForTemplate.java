@@ -222,9 +222,13 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        tvSearchHint.setText("友友们都在搜\"" + listSearchKey.get(listSearchKeyIndex) + "\"");
-
-                        listSearchKeyIndex++;
+                        try {
+                            tvSearchHint.setText("友友们都在搜\"" + listSearchKey.get(listSearchKeyIndex) + "\"");
+                            listSearchKeyIndex++;
+                        }catch (Exception e){
+                            tvSearchHint.setText("请输入视频关键字");
+                            listSearchKeyIndex++;
+                        }
                     }
                 });
             }

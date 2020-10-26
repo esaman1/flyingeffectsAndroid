@@ -69,7 +69,7 @@ public class FragmentUser extends BaseFragment {
 
     @Override
     protected void initData() {
-       adapter = new SearchUserAdapter(R.layout.item_search_user,allData);
+       adapter = new SearchUserAdapter(R.layout.item_search_user,allData,getActivity());
        rcUser.setAdapter(adapter);
        adapter.setOnAttentionListener(new SearchUserAdapter.OnAttentionListener() {
            @Override
