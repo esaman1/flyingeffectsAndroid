@@ -69,6 +69,7 @@ public class CreateViewForAddText {
     private EditText editText;
     private LinearLayout ll_add_child_text;
     private String inputText;
+    private int lastSelect=1;
 
     private static ArrayList<TextView> listTv = new ArrayList<>();
     private static ArrayList<View> listView = new ArrayList<>();
@@ -233,6 +234,7 @@ public class CreateViewForAddText {
             tv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    LogUtil.d("OOM3","onClick="+v.getId());
                     showWitchBtn(v.getId());
                 }
             });
@@ -274,7 +276,8 @@ public class CreateViewForAddText {
                     isKeyboardOpen = true;
                 } else {
                     if (isKeyboardOpen) {
-                        showWitchBtn(1);
+                        LogUtil.d("OOM3","isKeyboardOpen="+isKeyboardOpen);
+                        showWitchBtn(lastSelect);
                         isKeyboardOpen = false;
                     }
                 }
@@ -334,6 +337,8 @@ public class CreateViewForAddText {
                 view.setVisibility(View.INVISIBLE);
             }
         }
+        lastSelect=showWitch;
+        LogUtil.d("OOM3","showWitch="+showWitch);
         viewPager.setCurrentItem(showWitch);
         selectedTab(showWitch);
     }
