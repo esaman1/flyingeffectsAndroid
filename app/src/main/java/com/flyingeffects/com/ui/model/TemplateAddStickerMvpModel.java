@@ -320,6 +320,12 @@ public class TemplateAddStickerMvpModel {
         }
     }
 
+    public void ChangeTextFrame(String color0, String color1, String textFramePath) {
+        if (nowChooseStickerView.getIsTextSticker()) {
+            nowChooseStickerView.ChangeTextFrame(color0,color1, textFramePath);
+        }
+    }
+
 
     public void showGifAnim(boolean isShow) {
         if (listForStickerModel != null && listForStickerModel.size() > 0) {
@@ -1312,7 +1318,7 @@ public class TemplateAddStickerMvpModel {
      * user : zhangtongju
      */
     public void ChangeTextLabe(String text) {
-        if (nowChooseStickerView.getIsTextSticker()) {
+        if (nowChooseStickerView!=null&&nowChooseStickerView.getIsTextSticker()) {
             if(TextUtils.isEmpty(text)){
                 deleteStickView(nowChooseStickerView);
             }else{
