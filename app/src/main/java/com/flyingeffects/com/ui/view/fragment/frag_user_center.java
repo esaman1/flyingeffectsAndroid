@@ -58,6 +58,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import rx.Observable;
@@ -73,7 +74,7 @@ import rx.functions.Action1;
 public class frag_user_center extends BaseFragment implements AlbumChooseCallback {
     public final static int SELECTALBUMFROMUSETCENTERBJ = 1;
 
-    private String[] titles = {"我上传的背景", "喜欢","模板收藏"};
+    private String[] titles = {"我上传的背景", "喜欢", "模板收藏"};
 
     @BindView(R.id.viewpager)
     ViewPager viewpager;
@@ -127,9 +128,11 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     protected void initView() {
         options = UCropOption.getInstance().getUcropOption();
         iv_about.setOnClickListener(view -> {
-            statisticsEventAffair.getInstance().setFlag(getActivity(), "3_help");
-            Intent intent = new Intent(getActivity(), AboutActivity.class);
-            startActivity(intent);
+            if (!DoubleClick.getInstance().isFastDoubleClick()) {
+                statisticsEventAffair.getInstance().setFlag(getActivity(), "3_help");
+                Intent intent = new Intent(getActivity(), AboutActivity.class);
+                startActivity(intent);
+            }
         });
     }
 
@@ -187,14 +190,13 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
         frag_user_upload_bj fag_1 = new frag_user_upload_bj();
         list.add(fag_1);
 
-        fragHomePage fag_like= new fragHomePage();
+        fragHomePage fag_like = new fragHomePage();
         Bundle bundle1 = new Bundle();
         bundle1.putSerializable("toUserId", BaseConstans.GetUserId());
         bundle1.putSerializable("isFrom", 2);
         bundle1.putSerializable("fromTo", FromToTemplate.ISHOMEMYLIKE);
         fag_like.setArguments(bundle1);
         list.add(fag_like);
-
 
 
         frag_user_collect fag_0 = new frag_user_collect();
@@ -224,8 +226,8 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     }
 
 
-    @OnClick({R.id.iv_head,R.id.ll_fans_count,R.id.ll_attention_count,R.id.ll_video_count,
-            R.id.iv_Peeling,R.id.tv_edit_information,R.id.ll_edit_data})
+    @OnClick({R.id.iv_head, R.id.ll_fans_count, R.id.ll_attention_count, R.id.ll_video_count,
+            R.id.iv_Peeling, R.id.tv_edit_information, R.id.ll_edit_data})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_head:
@@ -237,47 +239,52 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 break;
 
             case R.id.ll_fans_count:
-                if(!DoubleClick.getInstance().isFastDoubleClick()){
-                    if(BaseConstans.hasLogin()){
-                        Intent intentZan=new Intent(getActivity(), ZanActivity.class);
-                        intentZan.putExtra("from",1);
+                if (!DoubleClick.getInstance().isFastDoubleClick()) {
+                    if (BaseConstans.hasLogin()) {
+                        Intent intentZan = new Intent(getActivity(), ZanActivity.class);
+                        intentZan.putExtra("from", 1);
                         startActivity(intentZan);
-                    }else{
+                    } else {
                         ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
                     }
                 }
                 break;
 
             case R.id.ll_attention_count:
-                if(!DoubleClick.getInstance().isFastDoubleClick()){
-                    if(BaseConstans.hasLogin()){
-                        Intent intentFoucs=new Intent(getActivity(), MineFocusActivity.class);
-                        intentFoucs.putExtra("to_user_id",BaseConstans.GetUserId());
+                if (!DoubleClick.getInstance().isFastDoubleClick()) {
+                    if (BaseConstans.hasLogin()) {
+                        Intent intentFoucs = new Intent(getActivity(), MineFocusActivity.class);
+                        intentFoucs.putExtra("to_user_id", BaseConstans.GetUserId());
                         startActivity(intentFoucs);
-                    }else{
+                    } else {
                         ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
                     }
                 }
                 break;
             case R.id.ll_video_count:
-                if(!DoubleClick.getInstance().isFastDoubleClick()){
-                    if(BaseConstans.hasLogin()){
-                        Intent intentFan=new Intent(getActivity(), FansActivity.class);
-                        intentFan.putExtra("to_user_id",BaseConstans.GetUserId());
-                        intentFan.putExtra("from",0);
+                if (!DoubleClick.getInstance().isFastDoubleClick()) {
+                    if (BaseConstans.hasLogin()) {
+                        Intent intentFan = new Intent(getActivity(), FansActivity.class);
+                        intentFan.putExtra("to_user_id", BaseConstans.GetUserId());
+                        intentFan.putExtra("from", 0);
                         startActivity(intentFan);
-                    }else{
+                    } else {
                         ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
                     }
                 }
                 break;
             case R.id.iv_Peeling:
-                statisticsEventAffair.getInstance().setFlag(getActivity(), "3_background");
-                AlbumManager.chooseImageAlbum(getContext(),1,SELECTALBUMFROMUSETCENTERBJ,this,"");
+
+                if (!DoubleClick.getInstance().isFastDoubleClick()) {
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "3_background");
+                    AlbumManager.chooseImageAlbum(getContext(), 1, SELECTALBUMFROMUSETCENTERBJ, this, "");
+                }
+
+
                 break;
             case R.id.tv_edit_information:
             case R.id.ll_edit_data:
-                if(!DoubleClick.getInstance().isFastDoubleClick()){
+                if (!DoubleClick.getInstance().isFastDoubleClick()) {
                     statisticsEventAffair.getInstance().setFlag(getContext(), "3_Information");
                     Intent intent = new Intent(getActivity(), EditInformationActivity.class);
                     startActivity(intent);
@@ -305,13 +312,13 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
                 @Override
                 protected void _onNext(UserInfo data) {
-                    Hawk.put("UserInfo",data);
+                    Hawk.put("UserInfo", data);
                     if (getActivity() != null) {
                         tv_id.setText("飞友号：" + data.getId());
-                        if(!TextUtils.isEmpty(data.getNickname())){
+                        if (!TextUtils.isEmpty(data.getNickname())) {
                             tv_name.setText(data.getNickname());
                             tv_name.setVisibility(View.VISIBLE);
-                        }else{
+                        } else {
                             tv_name.setVisibility(View.GONE);
                         }
                         if (!TextUtils.isEmpty(data.getPhotourl())) {
@@ -329,11 +336,11 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                         fans_count.setText(data.getUser_praise());
                         attention_count.setText(data.getUser_watch());
                         tv_video_count.setText(data.getUser_follower());
-                        if(TextUtils.isEmpty(data.getSkin())){
+                        if (TextUtils.isEmpty(data.getSkin())) {
                             Glide.with(getActivity())
                                     .load(R.mipmap.home_page_bj)
                                     .into(imSkin);
-                        }else {
+                        } else {
                             Glide.with(getActivity())
                                     .load(data.getSkin())
                                     .into(imSkin);
@@ -341,12 +348,12 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                         if (!TextUtils.isEmpty(data.getRemark())) {
                             tvIntroduction.setText(data.getRemark());
                             imEdit.setVisibility(View.GONE);
-                        }else {
+                        } else {
                             tvIntroduction.setText("您还没有填写简介，点击编辑资料添加");
                             imEdit.setVisibility(View.VISIBLE);
                         }
                     }
-                    BaseConstans.SetUserId(data.getId(),data.getNickname(),data.getPhotourl());
+                    BaseConstans.SetUserId(data.getId(), data.getNickname(), data.getPhotourl());
                 }
             }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
         }
@@ -354,7 +361,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-        if (!isCancel &&  paths != null && paths.size() > 0) {
+        if (!isCancel && paths != null && paths.size() > 0) {
             try {
                 File srcFile = new File(paths.get(0));
                 //中文路径无法识别问题，重命名
@@ -366,7 +373,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                     Uri destinationUri = Uri.fromFile(destFile);
                     UCrop.of(sourceUri, destinationUri)
                             .withAspectRatio(16, 9)
-                            .withMaxResultSize( 1280,720)
+                            .withMaxResultSize(1280, 720)
                             .withOptions(options)
                             .start(getActivity());
                 }
@@ -384,7 +391,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
             String type = path.substring(path.length() - 4);
             String nowTime = StringUtil.getCurrentTimeymd();
             String huaweiSkinPath = "media/android/user_skin_img/" + nowTime + "/" + System.currentTimeMillis() + type;
-            uploadFileToHuawei(path,huaweiSkinPath);
+            uploadFileToHuawei(path, huaweiSkinPath);
         }
     }
 
@@ -396,7 +403,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
             public void isSuccess(String str) {
                 if (!TextUtils.isEmpty(str)) {
                     String path = str.substring(str.lastIndexOf("=") + 1, str.length() - 1);
-                    Log.d("OOM2", "isSuccess" );
+                    Log.d("OOM2", "isSuccess");
                     Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                         @Override
                         public void call(String s) {

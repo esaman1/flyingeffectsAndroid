@@ -47,6 +47,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
 
 
 
+    public void ChangeTextFrame(String color0, String color1, String textFramePath) {
+        creationTemplatemodel.ChangeTextFrame(color0,color1, textFramePath);
+    }
+
+
 
 
     public void addTextSticker(){

@@ -198,23 +198,29 @@ public class CreateViewForAddText {
         View gridViewLayoutFrame = LayoutInflater.from(context).inflate(R.layout.view_creat_template_text_type, viewPager, false);
         GridView gridViewFrame = gridViewLayoutFrame.findViewById(R.id.gridView);
         gridViewFrame.setOnItemClickListener((adapterView, view1, i, l) -> {
+            createTemplateTextEffectAdapterFont.select(i);
             WaitingDialog.openPragressDialog(context);
-            downFileFrame(listFrame.get(i).getFont_image(), false, new downFameCallback() {
+            downFileFrame(listFrame.get(i).getImage(),0, listFrame.get(i).getType(), listFrame.get(i).getColor(), listFrame.get(i).getTitle(), new downFameCallback() {
                 @Override
-                public void isSuccess(String path1) {
-                    downFileFrame(listFrame.get(i).getImage(), false, new downFameCallback() {
+                public void isSuccess(String path1,int type) {
+
+                    downFileFrame(listFrame.get(i).getBorder_image(),1, listFrame.get(i).getType(), listFrame.get(i).getColor(), listFrame.get(i).getTitle(), new downFameCallback() {
                         @Override
-                        public void isSuccess(String path2) {
+                        public void isSuccess(String path2,int type2) {
                             WaitingDialog.closePragressDialog();
                             if(callback!=null){
-                                callback.isSuccess(path1,path2);
+                                if(type==1){
+                                    callback.isSuccess(path1,path2);
+                                }else{
+                                    String[] str =  listFrame.get(i).getColor().split(",");
+                                    callback.isSuccess("#" + str[1], "#" + str[0],path2);
+
+                                }
                             }
                         }
                     });
                 }
             });
-
-            createTemplateTextEffectAdapterFont.select(i);
             if ("bj_template".equals(type)) {
                 statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_font", listFont.get(i).getTitle());
             } else if ("OneKey_template".equals(type)) {
@@ -424,28 +430,37 @@ public class CreateViewForAddText {
      * param : type 0 热门效果或者 1字体   textType ：热门效果 2表示文字，1 表示图片 3 表示边框
      * user : zhangtongju
      */
-    private void downFileFrame(String path, boolean isDone, downFameCallback callback) {
+    private void downFileFrame(String path,  int type, int textType, String color, String title ,downFameCallback callback) {
 
-        LogUtil.d("OOM4", "downFilePath=" + path);
-        int index = path.lastIndexOf("/");
-        String newStr = path.substring(index);
-        LogUtil.d("OOM2", "newStr=" + newStr);
-        String name = mTTFFolder + newStr;
-        File file = new File(name);
-        LogUtil.d("OOM2", "name=" + name);
-        if (file.exists()) {
-            LogUtil.d("OOM2", "已下载");
-            if (callback != null) {
-                callback.isSuccess(name);
-            }
+
+        if (type == 0 && textType == 2) {
+//            String[] str = color.split(",");
+//            callback.setTextColor("#" + str[1], "#" + str[0], title);
+            callback.isSuccess(title,2);
         } else {
-            Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
-                DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> {
-                    callback.isSuccess(name);
+            LogUtil.d("OOM4", "downFilePath=" + path);
+            int index = path.lastIndexOf("/");
+            String newStr = path.substring(index);
+            LogUtil.d("OOM2", "newStr=" + newStr);
+            String name = mTTFFolder + newStr;
+            File file = new File(name);
+            LogUtil.d("OOM2", "name=" + name);
+            if (file.exists()) {
+                LogUtil.d("OOM2", "已下载");
+                if (callback != null) {
+                    callback.isSuccess(name,1);
+                }
+            } else {
+                Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
+                    DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> {
+                        callback.isSuccess(name,1);
+                    });
+                    manage.DownloadVideo(path, name);
                 });
-                manage.DownloadVideo(path, name);
-            });
+            }
         }
+
+
     }
 
 
@@ -465,12 +480,19 @@ public class CreateViewForAddText {
 
         void isSuccess(String textBjPath, String textFramePath);
 
+        void isSuccess(String color0, String color1, String textFramePath);
+
     }
 
 
+    /**
+     * description ：0 是图片 1 是色值
+     * creation date: 2020/10/26
+     * user : zhangtongju
+     */
     public interface downFameCallback {
 
-        void isSuccess(String path);
+        void isSuccess(String path,int type);
 
 
     }

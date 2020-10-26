@@ -499,7 +499,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                 createViewForAddText = null;
             }
             ll_add_text_style.setVisibility(View.VISIBLE);
-            createViewForAddText = new CreateViewForAddText(this, ll_add_text_style, new CreateViewForAddText.downCallback() {
+            createViewForAddText = new CreateViewForAddText(this, ll_add_text_style, new CreateViewForAddText.downCallback(){
                 @Override
                 public void isSuccess(String path, int type, String title) {
                     presenter.ChangeTextStyle(path, type, title);
@@ -526,6 +526,11 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                 @Override
                 public void isSuccess(String textBjPath, String textFramePath) {
                     presenter.ChangeTextFrame(textBjPath, textFramePath);
+                }
+
+                @Override
+                public void isSuccess(String color0, String color1, String textFramePath) {
+
                 }
             });
             createViewForAddText.showBottomSheetDialog(inputText, "OneKey_template");

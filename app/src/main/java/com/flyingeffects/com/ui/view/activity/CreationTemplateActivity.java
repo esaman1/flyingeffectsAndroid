@@ -512,6 +512,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     LogUtil.d("OOM4", "textBjPath=" + textBjPath + "textFramePath=" + textFramePath);
                     presenter.ChangeTextFrame(textBjPath, textFramePath);
                 }
+
+                @Override
+                public void isSuccess(String color0, String color1, String textFramePath) {
+                    LogUtil.d("OOM4","color0="+color0+"color1="+color1+"textFramePath"+textFramePath);
+                    presenter.ChangeTextFrame(color0,color1, textFramePath);
+                }
             });
             createViewForAddText.showBottomSheetDialog(inputText, "bj_template");
         }

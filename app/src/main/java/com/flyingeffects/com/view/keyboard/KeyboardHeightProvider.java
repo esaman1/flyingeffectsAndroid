@@ -25,6 +25,7 @@ public class KeyboardHeightProvider extends PopupWindow implements OnGlobalLayou
         super(activity);
         this.mActivity = activity;
 
+
         // 基础配置
         rootView = new View(activity);
         setContentView(rootView);
@@ -46,12 +47,12 @@ public class KeyboardHeightProvider extends PopupWindow implements OnGlobalLayou
         if (!isShowing()) {
             final View view = mActivity.getWindow().getDecorView();
             // 延迟加载popupwindow，如果不加延迟就会报错
-            view.post(new Runnable() {
+            view.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     showAtLocation(view, Gravity.NO_GRAVITY, 0, 0);
                 }
-            });
+            },50);
         }
         return this;
     }
