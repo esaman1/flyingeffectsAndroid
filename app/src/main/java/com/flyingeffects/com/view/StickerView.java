@@ -2279,9 +2279,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
 
     public void ChangeTextFrame(String color0, String color1, String textFramePath) {
+        setTextPaintColor(color0,color1,"");
         OpenThePattern=true;
         bpTestTextBj=BitmapFactory.decodeFile(textFramePath);
-       // setTextPaintColor(color0,color1,"");
     }
 
 

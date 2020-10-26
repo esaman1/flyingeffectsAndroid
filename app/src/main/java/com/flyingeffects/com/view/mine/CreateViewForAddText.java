@@ -194,11 +194,13 @@ public class CreateViewForAddText {
         gridViewFont.setAdapter(createTemplateTextEffectAdapterFont);
         createTemplateTextEffectAdapterFont.select(0);
         list.add(gridViewLayoutFont);
-
         View gridViewLayoutFrame = LayoutInflater.from(context).inflate(R.layout.view_creat_template_text_type, viewPager, false);
         GridView gridViewFrame = gridViewLayoutFrame.findViewById(R.id.gridView);
+        createTemplateTextEffectAdapterFrame = new CreateTemplateTextFrameAdapter(listFrame, context);
+        gridViewFrame.setAdapter(createTemplateTextEffectAdapterFrame);
+        createTemplateTextEffectAdapterFrame.select(0);
         gridViewFrame.setOnItemClickListener((adapterView, view1, i, l) -> {
-            createTemplateTextEffectAdapterFont.select(i);
+            createTemplateTextEffectAdapterFrame.select(i);
             WaitingDialog.openPragressDialog(context);
             downFileFrame(listFrame.get(i).getImage(),0, listFrame.get(i).getType(), listFrame.get(i).getColor(), listFrame.get(i).getTitle(), new downFameCallback() {
                 @Override
@@ -228,9 +230,7 @@ public class CreateViewForAddText {
             }
 
         });
-        createTemplateTextEffectAdapterFrame = new CreateTemplateTextFrameAdapter(listFrame, context);
-        gridViewFrame.setAdapter(createTemplateTextEffectAdapterFrame);
-        createTemplateTextEffectAdapterFrame.select(0);
+
         list.add(gridViewLayoutFrame);
         TemplateViewPager adapter = new TemplateViewPager(list);
         viewPager.setAdapter(adapter);
