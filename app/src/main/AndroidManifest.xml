@@ -197,7 +197,8 @@
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.HomeMainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:launchMode="singleInstance"/>
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.UpdateApkActivity"

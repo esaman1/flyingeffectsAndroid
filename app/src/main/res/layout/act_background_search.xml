@@ -38,7 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:background="@null"
-                android:hint="请输入视频关键字、用户昵称"
+                android:hint="请输入视频关键字"
                 android:inputType="text"
                 android:paddingEnd="45dp"
                 android:textSize="14sp"

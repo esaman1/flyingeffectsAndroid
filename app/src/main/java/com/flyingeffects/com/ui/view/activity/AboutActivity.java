@@ -8,13 +8,9 @@ import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.view.ContextThemeWrapper;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
@@ -25,6 +21,7 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.PermissionUtil;
+import com.flyingeffects.com.utils.SystemUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 
 import butterknife.BindView;
@@ -46,7 +43,7 @@ public class AboutActivity extends BaseActivity {
     @Override
     protected void initView() {
         ((TextView) findViewById(R.id.tv_top_title)).setText("关于");
-        tvVersionNumber.setText("飞闪版本 "+getVersionCode(this));
+        tvVersionNumber.setText("飞闪版本 " + SystemUtil.getVersionCode(this));
     }
 
     @Override
@@ -134,7 +131,7 @@ public class AboutActivity extends BaseActivity {
                 PermissionUtil.gotoPermission(AboutActivity.this);
                 break;
             case R.id.tv_version_number:
-                openMarket();
+                SystemUtil.openMarket(this);
                 break;
             default:
                 break;
@@ -205,58 +202,4 @@ public class AboutActivity extends BaseActivity {
         }
     }
 
-    /**
-     * 获取版本号
-     *
-     * @param context
-     * @return
-     */
-    private static String getVersionCode(Context context) {
-        try {
-            PackageManager manager = context.getPackageManager();
-            PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
-            return info.versionName;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "";
-        }
-    }
-
-    /**
-     * 三星手机
-     */
-    static final String BUILD_SAMSUNG = "samsung";
-    private void openMarket() {
-        try {
-            if ((Build.MANUFACTURER.contains(BUILD_SAMSUNG))) {
-                goToSamsungMarket(this, getPackageName());
-            } else {
-                Uri uri = Uri.parse("market://details?id=" + getPackageName());
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
-        } catch (Exception e) {
-           ToastUtil.showToast("请先安装相关应用市场");
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 跳转三星应用商店
-     *
-     * @param context     {@link Context}
-     * @param packageName 包名
-     * @return {@code true} 跳转成功 <br> {@code false} 跳转失败
-     */
-    private void goToSamsungMarket(Context context, String packageName) {
-        Uri uri = Uri.parse("http://www.samsungapps.com/appquery/appDetail.as?appId=" + packageName);
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        try {
-            context.startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
 }
