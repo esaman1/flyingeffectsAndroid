@@ -140,7 +140,8 @@ public class CreateViewForAddText {
         });
 
         if(TextUtils.isEmpty(inputText)){
-            editText.setText("输入文本");
+            editText.setText("");
+            editText.setHint("输入文本");
         }
         editText.setOnClickListener(new View.OnClickListener() {
             @Override

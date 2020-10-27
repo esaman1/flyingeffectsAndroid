@@ -530,7 +530,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
                 @Override
                 public void isSuccess(String color0, String color1, String textFramePath) {
-
+                    presenter.ChangeTextFrame(color0,color1, textFramePath);
                 }
             });
             createViewForAddText.showBottomSheetDialog(inputText, "OneKey_template");

@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.View;
@@ -135,10 +136,14 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     }
 
     private void videoPlay() {
-        if (exoPlayer != null) {
-            LogUtil.d("video", "play");
-            exoPlayer.setPlayWhenReady(true);
-        }
+        new Handler().postDelayed(() -> {
+            if (exoPlayer != null) {
+                LogUtil.d("video", "play");
+                exoPlayer.setPlayWhenReady(true);
+            }
+        },200);
+
+
 //        startTimer();
     }
 
@@ -153,10 +158,22 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     }
 
 
+
+    private void videoPause2() {
+        if (exoPlayer != null) {
+            LogUtil.d("video", "videoPause");
+            exoPlayer.setPlayWhenReady(false);
+        }
+    }
+
+
     public void hideCursor() {
 //        playIcon.setVisibility(View.VISIBLE);
         progressCursor.setVisibility(View.INVISIBLE);
     }
+
+
+
 
 
     /**
@@ -351,7 +368,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 switch (playbackState) {
                     case Player.STATE_READY:
-//                        mEndDuration = exoPlayer.getContentDuration();
                         videoPlay();
                         if (!isIntoInitTrimmer) {
                             Presenter.setUpTrimmer(mRangeSeekBarView, mTimeLineView, progressCursor, exoPlayer.getDuration());
@@ -374,6 +390,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                 new DefaultDataSourceFactory(CreationTemplatePreviewActivity.this, "exoplayer-codelab")).
                 createMediaSource(Uri.fromFile(new File(imagePath)));
         exoPlayer.prepare(mediaSource, true, false);
+        videoPause2();
     }
 
 

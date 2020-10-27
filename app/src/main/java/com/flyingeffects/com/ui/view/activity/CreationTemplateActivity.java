@@ -693,7 +693,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         });
 
         new Handler().postDelayed(() -> {
-            presenter.setAllStickerCenter();
+           presenter.setAllStickerCenter();
             if (isLandscape) {
                 int height = Math.round(1f * ll_space.getWidth() / oriRatio);
                 scrollView.scrollTo(0, height / 2 - scrollView.getHeight() / 2);
