@@ -751,7 +751,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void stickerOnclickCallback(String str) {
         if(!TextUtils.isEmpty(str)&&createViewForAddText!=null){
-            createViewForAddText.setInputText(str);
+            if(!str.equals("输入文本")){
+                createViewForAddText.setInputText(str);
+            }
         }
     }
 

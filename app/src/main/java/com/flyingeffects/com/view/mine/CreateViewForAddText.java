@@ -25,6 +25,7 @@ import com.flyingeffects.com.enity.FontEnity;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
@@ -69,7 +70,7 @@ public class CreateViewForAddText {
     private EditText editText;
     private LinearLayout ll_add_child_text;
     private String inputText;
-    private int lastSelect=1;
+    private int lastSelect = 1;
 
     private static ArrayList<TextView> listTv = new ArrayList<>();
     private static ArrayList<View> listView = new ArrayList<>();
@@ -139,7 +140,7 @@ public class CreateViewForAddText {
             }
         });
 
-        if(TextUtils.isEmpty(inputText)){
+        if (TextUtils.isEmpty(inputText)||inputText.equals("输入文本")) {
             editText.setText("");
             editText.setHint("输入文本");
         }
@@ -183,12 +184,14 @@ public class CreateViewForAddText {
         View gridViewLayoutFont = LayoutInflater.from(context).inflate(R.layout.view_creat_template_text_type, viewPager, false);
         GridView gridViewFont = gridViewLayoutFont.findViewById(R.id.gridView);
         gridViewFont.setOnItemClickListener((adapterView, view1, i, l) -> {
-            CreateViewForAddText.this.downFile(listFont.get(i).getFile(), 1, 1, "", listFont.get(i).getTitle());
-            createTemplateTextEffectAdapterFont.select(i);
-            if ("bj_template".equals(type)) {
-                statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_font", listFont.get(i).getTitle());
-            } else if ("OneKey_template".equals(type)) {
-                statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_font", listFont.get(i).getTitle());
+            if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
+                CreateViewForAddText.this.downFile(listFont.get(i).getFile(), 1, 1, "", listFont.get(i).getTitle());
+                createTemplateTextEffectAdapterFont.select(i);
+                if ("bj_template".equals(type)) {
+                    statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_font", listFont.get(i).getTitle());
+                } else if ("OneKey_template".equals(type)) {
+                    statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_font", listFont.get(i).getTitle());
+                }
             }
         });
         createTemplateTextEffectAdapterFont = new CreateTemplateTextFontAdapter(listFont, context);
@@ -203,20 +206,20 @@ public class CreateViewForAddText {
         gridViewFrame.setOnItemClickListener((adapterView, view1, i, l) -> {
             createTemplateTextEffectAdapterFrame.select(i);
             WaitingDialog.openPragressDialog(context);
-            downFileFrame(listFrame.get(i).getImage(),0, listFrame.get(i).getType(), listFrame.get(i).getColor(), listFrame.get(i).getTitle(), new downFameCallback() {
+            downFileFrame(listFrame.get(i).getImage(), 0, listFrame.get(i).getType(), listFrame.get(i).getColor(), listFrame.get(i).getTitle(), new downFameCallback() {
                 @Override
-                public void isSuccess(String path1,int type) {
+                public void isSuccess(String path1, int type) {
 
-                    downFileFrame(listFrame.get(i).getBorder_image(),1, listFrame.get(i).getType(), listFrame.get(i).getColor(), listFrame.get(i).getTitle(), new downFameCallback() {
+                    downFileFrame(listFrame.get(i).getBorder_image(), 1, listFrame.get(i).getType(), listFrame.get(i).getColor(), listFrame.get(i).getTitle(), new downFameCallback() {
                         @Override
-                        public void isSuccess(String path2,int type2) {
+                        public void isSuccess(String path2, int type2) {
                             WaitingDialog.closePragressDialog();
-                            if(callback!=null){
-                                if(type==1){
-                                    callback.isSuccess(path1,path2);
-                                }else{
-                                    String[] str =  listFrame.get(i).getColor().split(",");
-                                    callback.isSuccess("#" + str[1], "#" + str[0],path2);
+                            if (callback != null) {
+                                if (type == 1) {
+                                    callback.isSuccess(path1, path2);
+                                } else {
+                                    String[] str = listFrame.get(i).getColor().split(",");
+                                    callback.isSuccess("#" + str[1], "#" + str[0], path2);
 
                                 }
                             }
@@ -245,7 +248,7 @@ public class CreateViewForAddText {
             tv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    LogUtil.d("OOM3","onClick="+v.getId());
+                    LogUtil.d("OOM3", "onClick=" + v.getId());
                     showWitchBtn(v.getId());
                 }
             });
@@ -287,8 +290,8 @@ public class CreateViewForAddText {
                     isKeyboardOpen = true;
                 } else {
                     if (isKeyboardOpen) {
-                        LogUtil.d("OOM3","isKeyboardOpen="+isKeyboardOpen);
-                        if(lastSelect==0){
+                        LogUtil.d("OOM3", "isKeyboardOpen=" + isKeyboardOpen);
+                        if (lastSelect == 0) {
                             showWitchBtn(1);
                         }
                         isKeyboardOpen = false;
@@ -350,8 +353,8 @@ public class CreateViewForAddText {
                 view.setVisibility(View.INVISIBLE);
             }
         }
-            lastSelect=showWitch;
-        LogUtil.d("OOM3","showWitch="+showWitch);
+        lastSelect = showWitch;
+        LogUtil.d("OOM3", "showWitch=" + showWitch);
         viewPager.setCurrentItem(showWitch);
         selectedTab(showWitch);
     }
@@ -409,6 +412,7 @@ public class CreateViewForAddText {
             if (file.exists()) {
                 LogUtil.d("OOM2", "已下载");
                 if (callback != null) {
+                    LogUtil.d("OOM5", "name=" + name);
                     callback.isSuccess(name, type, title);
                 }
             } else {
@@ -431,13 +435,13 @@ public class CreateViewForAddText {
      * param : type 0 热门效果或者 1字体   textType ：热门效果 2表示文字，1 表示图片 3 表示边框
      * user : zhangtongju
      */
-    private void downFileFrame(String path,  int type, int textType, String color, String title ,downFameCallback callback) {
+    private void downFileFrame(String path, int type, int textType, String color, String title, downFameCallback callback) {
 
 
         if (type == 0 && textType == 2) {
 //            String[] str = color.split(",");
 //            callback.setTextColor("#" + str[1], "#" + str[0], title);
-            callback.isSuccess(title,2);
+            callback.isSuccess(title, 2);
         } else {
             LogUtil.d("OOM4", "downFilePath=" + path);
             int index = path.lastIndexOf("/");
@@ -449,12 +453,12 @@ public class CreateViewForAddText {
             if (file.exists()) {
                 LogUtil.d("OOM2", "已下载");
                 if (callback != null) {
-                    callback.isSuccess(name,1);
+                    callback.isSuccess(name, 1);
                 }
             } else {
                 Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
                     DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> {
-                        callback.isSuccess(name,1);
+                        callback.isSuccess(name, 1);
                     });
                     manage.DownloadVideo(path, name);
                 });
@@ -493,7 +497,7 @@ public class CreateViewForAddText {
      */
     public interface downFameCallback {
 
-        void isSuccess(String path,int type);
+        void isSuccess(String path, int type);
 
 
     }

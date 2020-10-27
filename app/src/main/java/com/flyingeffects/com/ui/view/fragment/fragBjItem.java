@@ -16,6 +16,7 @@ import com.flyingeffects.com.adapter.main_recycler_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.AttentionChange;
 import com.flyingeffects.com.enity.CommonNewsBean;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.ListForUpAndDown;
@@ -109,6 +110,7 @@ public class fragBjItem extends BaseFragment {
         initRecycler();
         initSmartRefreshLayout();
         LogUtil.d("OOM", "fromType=" + fromType);
+        LogUtil.d("OOM", "templateId=" + templateId);
     }
 
     @Override
@@ -136,17 +138,17 @@ public class fragBjItem extends BaseFragment {
                 if (!TextUtils.isEmpty(cover) && position == 0) {
                     EventBus.getDefault().post(new DownVideoPath(""));
                 } else {
-                    if (allData.get(position).getIs_ad_recommend() ==1) {
-                      String url = allData.get(position).getRemark();
-                        boolean result =   AppMarketHelper.of(getActivity()).skipMarket(url);
-                        if(!result){
+                    if (allData.get(position).getIs_ad_recommend() == 1) {
+                        String url = allData.get(position).getRemark();
+                        boolean result = AppMarketHelper.of(getActivity()).skipMarket(url);
+                        if (!result) {
                             Intent intent = new Intent(getActivity(), webViewActivity.class);
                             intent.putExtra("webUrl", url);
                             startActivity(intent);
                         }
                     } else {
                         Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
-                        List<new_fag_template_item> data=  getFiltration(allData,position);;
+                        List<new_fag_template_item> data = getFiltration(allData, position);
                         ListForUpAndDown listForUpAndDown = new ListForUpAndDown(data);
                         intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
                         intent.putExtra("position", intoTiktokClickPosition);
@@ -167,23 +169,32 @@ public class fragBjItem extends BaseFragment {
     }
 
 
-    public List<new_fag_template_item> getFiltration(List<new_fag_template_item> allData,int position) {
-        intoTiktokClickPosition=position;
+    public List<new_fag_template_item> getFiltration(List<new_fag_template_item> allData, int position) {
+        intoTiktokClickPosition = position;
         List<new_fag_template_item> needData = new ArrayList<>();
         for (int i = 0; i < allData.size(); i++) {
             new_fag_template_item item = allData.get(i);
             if (item.getIs_ad_recommend() == 0) {
                 needData.add(item);
-            }else{
-                if(i<position){
+            } else {
+                if (i < position) {
                     intoTiktokClickPosition--;
                 }
             }
         }
-        return  needData;
+        return needData;
     }
 
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(getActivity()!=null&&templateId.equals("12")) {
+            isRefresh = true;
+            selectPage = 1;
+            requestFagData(false, false);
+        }
+    }
 
     public void initSmartRefreshLayout() {
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
@@ -241,7 +252,6 @@ public class fragBjItem extends BaseFragment {
             protected void _onNext(List<new_fag_template_item> data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "str=" + str);
-                LogUtil.d("OOM", "请求广告");
                 finishData();
                 if (isRefresh) {
                     listData.clear();
@@ -421,5 +431,20 @@ public class fragBjItem extends BaseFragment {
             }
         }
     }
+
+
+
+
+
+
+    @Subscribe
+    public void onEventMainThread(AttentionChange event) {
+        isRefresh = true;
+        selectPage = 1;
+        if (getActivity() != null && TextUtils.isEmpty(templateId) && templateId.equals("12")) {
+            requestFagData(false, false);
+        }
+    }
+
 
 }

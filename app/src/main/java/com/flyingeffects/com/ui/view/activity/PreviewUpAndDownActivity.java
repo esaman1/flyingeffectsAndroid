@@ -18,6 +18,7 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
+import com.flyingeffects.com.enity.AttentionChange;
 import com.flyingeffects.com.enity.CreateCutCallback;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.ListForUpAndDown;
@@ -1217,6 +1218,19 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             isOnPause = true;
             mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
         }
+    }
+
+
+
+    /**
+     * description ：关注和取消关注回调
+     * creation date: 2020/10/27
+     * user : zhangtongju
+     */
+
+    @Subscribe
+    public void onEventMainThread(AttentionChange event) {
+
     }
 
 

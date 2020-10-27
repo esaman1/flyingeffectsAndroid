@@ -76,7 +76,7 @@ public class fragBjSearch extends BaseFragment {
 
     @Override
     protected int getContentLayout() {
-        return R.layout.fag_bj_item;
+        return R.layout.fag_bj_search_item;
     }
 
     @Override
