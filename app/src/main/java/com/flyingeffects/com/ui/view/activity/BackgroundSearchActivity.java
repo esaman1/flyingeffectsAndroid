@@ -10,6 +10,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -153,7 +154,7 @@ public class BackgroundSearchActivity extends BaseActivity {
             ed_text.setText("");
             hideResultView(true);
             cancelFocus();
-            KeyboardUtil.closeInputKeyboard(this);
+            hideKeyboard();
             EventBus.getDefault().post(new SendSearchText(""));
             viewPager.setCurrentItem(0);
         });
@@ -227,6 +228,14 @@ public class BackgroundSearchActivity extends BaseActivity {
                 }
             }
         });
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        View v = getWindow().peekDecorView();
+        if (null != v) {
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        }
     }
 
     /**关键字模糊查询*/

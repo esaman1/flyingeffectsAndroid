@@ -50,7 +50,6 @@ public class FragmentUser extends BaseFragment {
     /**默认值肯定为""*/
     private String searchText;
     List<SearchUserEntity> allData = new ArrayList<>();
-    boolean isVisible = false;
 
     @Override
     protected int getContentLayout() {
@@ -75,6 +74,7 @@ public class FragmentUser extends BaseFragment {
        adapter.setOnAttentionListener(new SearchUserAdapter.OnAttentionListener() {
            @Override
            public void attention(int id) {
+               isRefresh=false;
                requestFocus(String.valueOf(id));
            }
        });
@@ -119,7 +119,6 @@ public class FragmentUser extends BaseFragment {
     private void requestFocus(String to_user_id) {
         HashMap<String, String> params = new HashMap<>();
         params.put("to_user_id", to_user_id);
-
         Observable ob = Api.getDefault().followUser(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(getContext()) {
             @Override
@@ -130,9 +129,18 @@ public class FragmentUser extends BaseFragment {
             @Override
             protected void _onNext(Object data) {
                 LogUtil.d("OOM", StringUtil.beanToJSONString(data));
-                requestFagData(false);
+                attentionUserRequestFagData();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+    }
+
+    /**关注用户刷新用户列表*/
+    private void attentionUserRequestFagData(){
+        isRefresh = true;
+        smartRefreshLayoutUser.setEnableLoadMore(true);
+        selectPage = 1;
+        rcUser.scrollToPosition(0);
+        requestFagData(false);
     }
 
     private void requestFagData(boolean isShowDialog) {
@@ -151,6 +159,7 @@ public class FragmentUser extends BaseFragment {
 
                 @Override
                 protected void _onNext(List<SearchUserEntity> datas) {
+                    LogUtil.d("OOM", StringUtil.beanToJSONString(datas));
                     smartRefreshLayoutUser.finishRefresh();
                     smartRefreshLayoutUser.finishLoadMore();
                     if (isRefresh) {
@@ -178,7 +187,7 @@ public class FragmentUser extends BaseFragment {
 
     @Subscribe
     public void onEventMainThread(AttentionChange change){
-        requestFagData(true);
+        attentionUserRequestFagData();
     }
 
     @Override
