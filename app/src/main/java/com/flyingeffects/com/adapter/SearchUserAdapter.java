@@ -42,7 +42,7 @@ public class SearchUserAdapter extends BaseQuickAdapter<SearchUserEntity,BaseVie
         TextView tvAttention = helper.getView(R.id.tv_attention);
         //搜索的用户是自己的话 不显示关注按钮
         // 1已关注 0 未关注
-        if (TextUtils.equals(String.valueOf(item.getId()), userInfo.getId())) {
+        if (userInfo != null && TextUtils.equals(String.valueOf(item.getId()), userInfo.getId())) {
             tvAttention.setVisibility(View.INVISIBLE);
         } else {
             tvAttention.setVisibility(View.VISIBLE);
