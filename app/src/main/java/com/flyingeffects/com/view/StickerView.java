@@ -108,12 +108,14 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     //文字图片
     private Bitmap bpForTextBj;
     //是否设置花纹
-    private boolean OpenThePattern = false;
+    public boolean OpenThePattern = false;
     //测试的文字边纹
     private Bitmap bpTestTextBj;
+    //测试的文字花纹边纹地址
+    private String textFramePath;
+
     //有花纹情况下文字的间距
     private int letterSpacingSize = 1;
-
 
     //选择的时背景效果
     private boolean isChooseTextBjEffect = false;
@@ -913,6 +915,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 RectUtil.scaleRect(mHelpBoxRect, mScale);
                 drawFrame(canvas);
             } else {
+                mTextPaint.setLetterSpacing(0);
+                mPaintShadow.setLetterSpacing(0);
+                mTextPaint2.setLetterSpacing(0);
                 for (int i = 1; i < 10; i++) {
                     canvas.drawText(stickerText, mHelpBoxRect.left + 10 - i, needRectHeight - 10 + i / (float) 2, mTextPaint);
                 }
@@ -2234,6 +2239,12 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         return getTypefaceBitmapPath;
     }
 
+    public String getBjFramePath() {
+        return textFramePath;
+    }
+
+
+
     public void disMissFrame() {
         handler.sendEmptyMessage(DISMISS_FRAME);
     }
@@ -2270,6 +2281,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
 
     public void ChangeTextFrame(String textBjPath, String textFramePath) {
+        this.textFramePath=textFramePath;
         getTypefaceBitmapPath = textBjPath;
         isChooseTextBjEffect = true;
         bpForTextBj = BitmapFactory.decodeFile(textBjPath);
@@ -2282,6 +2294,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         setTextPaintColor(color0,color1,"");
         OpenThePattern=true;
         bpTestTextBj=BitmapFactory.decodeFile(textFramePath);
+        this.textFramePath=textFramePath;
     }
 
 
@@ -2299,6 +2312,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     public boolean GetIsChooseTextBjEffect() {
         return isChooseTextBjEffect;
+    }
+
+
+    public boolean GetOpenThePattern(){
+        return  OpenThePattern;
     }
 
     public ArrayList<String> GetTextColors() {

@@ -404,8 +404,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 setTextColor(2);
                 break;
             case R.id.tv_add_text:
-                intoTextStyleDialog("");
                 presenter.addTextSticker();
+                intoTextStyleDialog("");
                 statisticsEventAffair.getInstance().setFlag(this, "20_bj_text");
                 break;
             case R.id.iv_top_back:
