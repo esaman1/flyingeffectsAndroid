@@ -2209,6 +2209,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public void setTextStyle(String path, String textStyleTitle) {
         this.textStyleTitle = textStyleTitle;
         TypefacePath = path;
+        LogUtil.d("OOM3","setTextStylepATH="+path);
         Typeface typeface = Typeface.createFromFile(path);
         Typeface typeface2 = Typeface.createFromFile(path);
         Typeface typeface1 = Typeface.createFromFile(path);
