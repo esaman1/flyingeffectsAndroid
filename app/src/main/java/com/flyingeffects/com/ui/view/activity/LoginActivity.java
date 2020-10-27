@@ -29,6 +29,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.LoginToAttentionUserEvent;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.WxLogin;
 import com.flyingeffects.com.http.Api;
@@ -427,6 +428,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 LogUtil.d("OOM", "requestLogin=" + str);
                 BaseConstans.SetUserToken(data.getToken());
                 BaseConstans.SetUserId(data.getId(), data.getNickname(), data.getPhotourl());
+                EventBus.getDefault().post(new LoginToAttentionUserEvent());
                 LoginActivity.this.finish();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
@@ -464,12 +466,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 @Override
                 protected void _onNext(UserInfo data) {
                     if (!isOnDestroy) {
+                        Hawk.put("UserInfo", data);
                         String str = StringUtil.beanToJSONString(data);
                         LogUtil.d("OOM", "setToken=" + data.getToken());
                         BaseConstans.SetUserToken(data.getToken());
                         BaseConstans.SetUserId(data.getId(), data.getNickname(), data.getPhotourl());
                         dissMissShanYanUi();
                         WaitingDialog.closePragressDialog();
+                        EventBus.getDefault().post(new LoginToAttentionUserEvent());
                         LoginActivity.this.finish();
                     }
                 }

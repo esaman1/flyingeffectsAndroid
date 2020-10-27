@@ -10,6 +10,7 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.AttentionChange;
+import com.flyingeffects.com.enity.LoginToAttentionUserEvent;
 import com.flyingeffects.com.enity.SearchUserEntity;
 import com.flyingeffects.com.enity.SendSearchText;
 import com.flyingeffects.com.http.Api;
@@ -18,6 +19,7 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.orhanobut.hawk.Hawk;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -70,11 +72,11 @@ public class FragmentUser extends BaseFragment {
     @Override
     protected void initData() {
        adapter = new SearchUserAdapter(R.layout.item_search_user,allData,getActivity());
+       adapter.setUserInfo(Hawk.get("UserInfo"));
        rcUser.setAdapter(adapter);
        adapter.setOnAttentionListener(new SearchUserAdapter.OnAttentionListener() {
            @Override
            public void attention(int id) {
-               isRefresh=false;
                requestFocus(String.valueOf(id));
            }
        });
@@ -188,6 +190,12 @@ public class FragmentUser extends BaseFragment {
     @Subscribe
     public void onEventMainThread(AttentionChange change){
         attentionUserRequestFagData();
+    }
+
+    @Subscribe
+    public void onEventMainThread(LoginToAttentionUserEvent event){
+        attentionUserRequestFagData();
+        adapter.setUserInfo(Hawk.get("UserInfo"));
     }
 
     @Override

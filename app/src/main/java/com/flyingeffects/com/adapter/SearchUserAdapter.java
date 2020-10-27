@@ -31,7 +31,6 @@ public class SearchUserAdapter extends BaseQuickAdapter<SearchUserEntity,BaseVie
 
     public SearchUserAdapter(int layoutResId, @Nullable List<SearchUserEntity> data,Activity activity) {
         super(layoutResId, data);
-        userInfo = Hawk.get("UserInfo");
         this.activity = activity;
     }
 
@@ -66,7 +65,7 @@ public class SearchUserAdapter extends BaseQuickAdapter<SearchUserEntity,BaseVie
         helper.setOnClickListener(R.id.iv_user_avatar, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!TextUtils.equals(String.valueOf(item.getId()), userInfo.getId())) {
+                if (userInfo != null && !TextUtils.equals(String.valueOf(item.getId()), userInfo.getId())) {
                     Intent intent = new Intent(activity, UserHomepageActivity.class);
                     intent.putExtra("toUserId", String.valueOf(item.getId()));
                     activity.startActivity(intent);
@@ -87,5 +86,9 @@ public class SearchUserAdapter extends BaseQuickAdapter<SearchUserEntity,BaseVie
 
     public void setOnAttentionListener(OnAttentionListener onAttentionListener) {
         this.onAttentionListener = onAttentionListener;
+    }
+
+    public void setUserInfo(UserInfo userInfo){
+        this.userInfo = userInfo;
     }
 }
