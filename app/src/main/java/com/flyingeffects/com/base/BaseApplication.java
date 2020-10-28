@@ -20,6 +20,7 @@ import com.flyingeffects.com.utils.ChannelUtil;
 import com.flyingeffects.com.utils.CrashHandler;
 import com.flyingeffects.com.utils.DateUtils;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.SystemUtil;
 import com.green.hand.library.EmojiManager;
 import com.lansosdk.box.OnLanSongLogOutListener;
 import com.lansosdk.videoeditor.LanSoEditor;
@@ -87,7 +88,7 @@ public class BaseApplication extends MultiDexApplication {
         NTAdSDK.init(this
                 , new NTAdConfig.Builder()
                         .appName("飞闪")
-                        .appVersion("3.6.0")
+                        .appVersion(SystemUtil.getVersionCode(this))
                         .appId("61074cddf23c0a8dd2b7e00996057e78")
                         .appChannel(ChannelUtil.getChannel(this))
                         .TTAppKey(AdConfigs.APP_ID_CSJ)

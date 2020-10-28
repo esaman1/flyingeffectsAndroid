@@ -438,13 +438,25 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
     @Override
     public void hideTextDialog() {
-        createViewForAddText.hideInputTextDialog();
+        if(createViewForAddText!=null){
+            createViewForAddText.hideInputTextDialog();
+        }
+
+    }
+
+    @Override
+    public void hideKeyBord() {
+        if (createViewForAddText != null) {
+            createViewForAddText.hideInputTextDialog();
+        }
     }
 
     @Override
     public void stickerOnclickCallback(String str) {
         if (!TextUtils.isEmpty(str) && createViewForAddText != null) {
-            createViewForAddText.setInputText(str);
+            if(!str.equals("输入文本")){
+                createViewForAddText.setInputText(str);
+            }
         }
     }
 
@@ -524,13 +536,13 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                 }
 
                 @Override
-                public void isSuccess(String textBjPath, String textFramePath) {
-                    presenter.ChangeTextFrame(textBjPath, textFramePath);
+                public void isSuccess(String textBjPath, String textFramePath,String Frametitle) {
+                    presenter.ChangeTextFrame(textBjPath, textFramePath,Frametitle);
                 }
 
                 @Override
-                public void isSuccess(String color0, String color1, String textFramePath) {
-                    presenter.ChangeTextFrame(color0,color1, textFramePath);
+                public void isSuccess(String color0, String color1, String textFramePath,String Frametitle) {
+                    presenter.ChangeTextFrame(color0,color1, textFramePath,Frametitle);
                 }
             });
             createViewForAddText.showBottomSheetDialog(inputText, "OneKey_template");

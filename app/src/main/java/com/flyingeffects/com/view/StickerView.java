@@ -97,6 +97,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private String stickerText = "输入文本";
     //选择字体的名字
     private String textStyleTitle;
+    //选择边框的的名字
+    private String textFrameTitle;
     //选择字体效果名字
     private String textEffectTitle;
     //定义对象依次存放每一个字符
@@ -2230,6 +2232,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         isChooseTextBjEffect = true;
         bpForTextBj = BitmapFactory.decodeFile(path);
         OpenThePattern=false;
+        textFrameTitle="";
     }
 
     public boolean getIsTextSticker() {
@@ -2278,12 +2281,14 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         colors.add(paintColor1);
         colors.add(paintColor2);
         OpenThePattern=false;
+        textFrameTitle="";
     }
 
 
-    public void ChangeTextFrame(String textBjPath, String textFramePath) {
+    public void ChangeTextFrame(String textBjPath, String textFramePath,String frameTitle) {
         this.textFramePath=textFramePath;
         getTypefaceBitmapPath = textBjPath;
+        this.textFrameTitle=frameTitle;
         isChooseTextBjEffect = true;
         bpForTextBj = BitmapFactory.decodeFile(textBjPath);
         OpenThePattern=true;
@@ -2291,11 +2296,12 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-    public void ChangeTextFrame(String color0, String color1, String textFramePath) {
+    public void ChangeTextFrame(String color0, String color1, String textFramePath,String frameTitle) {
         setTextPaintColor(color0,color1,"");
         OpenThePattern=true;
         bpTestTextBj=BitmapFactory.decodeFile(textFramePath);
         this.textFramePath=textFramePath;
+        this.textFrameTitle=frameTitle;
     }
 
 
@@ -2310,6 +2316,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         return textStyleTitle;
     }
 
+    public String GetTextFrameTitle() {
+        return textFrameTitle;
+    }
 
     public boolean GetIsChooseTextBjEffect() {
         return isChooseTextBjEffect;

@@ -1,13 +1,11 @@
 package com.flyingeffects.com.ui.model;
 
 import android.text.TextUtils;
-import android.widget.ListView;
 
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.enity.AllStickerData;
 import com.flyingeffects.com.enity.VideoInfo;
-import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ScreenCaptureUtil;
 import com.flyingeffects.com.view.StickerView;
 import com.shixing.sxve.ui.albumType;
@@ -24,6 +22,9 @@ public class GetAllStickerDataModel {
     //效果
     private ArrayList<String>titleEffect=new ArrayList<>();
 
+    //边框
+    private ArrayList<String>titleFrame=new ArrayList<>();
+
     public static GetAllStickerDataModel getInstance() {
         if (thisModel == null) {
             thisModel = new GetAllStickerDataModel();
@@ -35,10 +36,12 @@ public class GetAllStickerDataModel {
     public AllStickerData getStickerData(StickerView stickerView, boolean isMatting, VideoInfo videoInfo) {
         AllStickerData stickerData = new AllStickerData();
         titleEffect.clear();
+        titleFrame.clear();
         titleStyle.clear();
         if (stickerView.getIsTextSticker()) {
             titleEffect.add(stickerView.GetTextEffectTitle());
             titleStyle.add(stickerView.GetTextStyleTitle());
+            titleFrame.add(stickerView.GetTextFrameTitle());
             ScreenCaptureUtil screenCaptureUtil = new ScreenCaptureUtil(BaseApplication.getInstance());
             stickerData.setBoxH((int) stickerView.getmHelpBoxRectH());
             stickerData.setBoxW((int) stickerView.getmHelpBoxRectW());
@@ -103,6 +106,10 @@ public class GetAllStickerDataModel {
 
     public ArrayList<String>GetTitleStyle(){
         return  titleStyle;
+    }
+
+    public ArrayList<String>GetTitleFrame(){
+        return  titleFrame;
     }
 
 

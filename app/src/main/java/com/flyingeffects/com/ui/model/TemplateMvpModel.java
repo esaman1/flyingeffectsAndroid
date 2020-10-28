@@ -155,8 +155,10 @@ public class TemplateMvpModel {
 //                       SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
                 CompressionCuttingManage manage = new CompressionCuttingManage(context, "0", false, tailorPaths -> {
                     Bitmap mattingMp = BitmapFactory.decodeFile(tailorPaths.get(0));
-                    mattingMp = test(mattingMp, bp.getWidth(), bp.getHeight());
-                    callback.showMattingVideoCover(mattingMp, tailorPaths.get(0));
+                    if(mattingMp!=null&&bp!=null){
+                        mattingMp = test(mattingMp, bp.getWidth(), bp.getHeight());
+                        callback.showMattingVideoCover(mattingMp, tailorPaths.get(0));
+                    }
                 });
                 List<String> list = new ArrayList<>();
                 list.add(savePath);

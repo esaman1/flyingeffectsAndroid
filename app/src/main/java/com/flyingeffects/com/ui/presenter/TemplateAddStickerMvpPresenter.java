@@ -54,13 +54,13 @@ public class TemplateAddStickerMvpPresenter extends BasePresenter implements Tem
         TemplateAddStickermodel.ChangeTextColor(color0,color1,title);
     }
 
-    public void  ChangeTextFrame(String textBjPath, String textFramePath){
-        TemplateAddStickermodel.ChangeTextFrame(textBjPath,textFramePath);
+    public void  ChangeTextFrame(String textBjPath, String textFramePath,String Frametitle){
+        TemplateAddStickermodel.ChangeTextFrame(textBjPath,textFramePath,Frametitle);
     }
 
 
-    public void ChangeTextFrame(String color0, String color1, String textFramePath) {
-        TemplateAddStickermodel.ChangeTextFrame(color0,color1, textFramePath);
+    public void ChangeTextFrame(String color0, String color1, String textFramePath,String Frametitle) {
+        TemplateAddStickermodel.ChangeTextFrame(color0,color1, textFramePath,Frametitle);
     }
 
 
@@ -165,5 +165,10 @@ public class TemplateAddStickerMvpPresenter extends BasePresenter implements Tem
     @Override
     public void stickerOnclickCallback(String title) {
         TemplateAddStickermvpView.stickerOnclickCallback(title);
+    }
+
+    @Override
+    public void hideKeyBord() {
+        TemplateAddStickermvpView.hideKeyBord();
     }
 }

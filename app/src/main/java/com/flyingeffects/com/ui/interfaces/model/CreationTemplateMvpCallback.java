@@ -13,6 +13,8 @@ public interface CreationTemplateMvpCallback {
 
     void deleteFirstSticker();
 
+    void hideKeyBord();
+
     void stickerOnclickCallback(String title);
 
     void animIsComplate();

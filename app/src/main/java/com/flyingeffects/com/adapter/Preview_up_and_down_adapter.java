@@ -146,7 +146,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             }
 
             if( BaseConstans.hasLogin()){
-                if(item.getAdmin_id().equals(BaseConstans.GetUserId())){
+                if(item.getAdmin_id()!=null&&BaseConstans.GetUserId()!=null&&item.getAdmin_id().equals(BaseConstans.GetUserId())){
                     tv_btn_follow.setVisibility(View.GONE);
                 }else{
                     //关注按键

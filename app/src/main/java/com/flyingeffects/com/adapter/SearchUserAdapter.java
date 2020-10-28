@@ -47,12 +47,12 @@ public class SearchUserAdapter extends BaseQuickAdapter<SearchUserEntity,BaseVie
             tvAttention.setVisibility(View.INVISIBLE);
         } else {
             tvAttention.setVisibility(View.VISIBLE);
-            if (item.getIs_follow() == 0) {
-                tvAttention.setSelected(false);
-                tvAttention.setText("关注");
-            } else {
+            if (item.getIs_follow() == 1) {
                 tvAttention.setSelected(true);
                 tvAttention.setText("已关注");
+            } else {
+                tvAttention.setSelected(false);
+                tvAttention.setText("关注");
             }
         }
         Glide.with(mContext).load(item.getPhotourl()).into((ImageView) helper.getView(R.id.iv_user_avatar));

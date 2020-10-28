@@ -207,14 +207,19 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if (!TextUtils.isEmpty(videoPath)) {
             //有视频的时候，初始化视频
             //todo 改变默认横竖屏，需知视频宽高比 待验证
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            retriever.setDataSource(videoPath);
-            String width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
-            String height = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
-            int w = Integer.parseInt(width);
-            int h = Integer.parseInt(height);
-            LogUtil.d(TAG, "video width = " + width + " video height = " + height);
-            setPlayerViewSize(w > h);
+            try {
+                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                retriever.setDataSource(videoPath);
+                String width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
+                String height = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
+                int w = Integer.parseInt(width);
+                int h = Integer.parseInt(height);
+                LogUtil.d(TAG, "video width = " + width + " video height = " + height);
+                setPlayerViewSize(w > h);
+            } catch (Exception e) {
+                LogUtil.d("e", e.getMessage());
+                setPlayerViewSize(false);
+            }
             initExo(videoPath);
         } else {
             showGreenBj();
@@ -486,8 +491,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             ll_add_text_style.setVisibility(View.VISIBLE);
             createViewForAddText = new CreateViewForAddText(this, ll_add_text_style, new CreateViewForAddText.downCallback() {
                 @Override
-                public void isSuccess(String path, int type,String title) {
-                    presenter.ChangeTextStyle(path, type,title);
+                public void isSuccess(String path, int type, String title) {
+                    presenter.ChangeTextStyle(path, type, title);
                 }
 
                 @Override
@@ -502,21 +507,21 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 }
 
                 @Override
-                public void setTextColor(String color0, String color1,String title) {
+                public void setTextColor(String color0, String color1, String title) {
                     LogUtil.d("OOM4", "color0=" + color0 + "color1=" + color1);
-                    presenter.ChangeTextColor(color0, color1,title);
+                    presenter.ChangeTextColor(color0, color1, title);
                 }
 
                 @Override
-                public void isSuccess(String textBjPath, String textFramePath) {
-                    LogUtil.d("OOM4", "textBjPath=" + textBjPath + "textFramePath=" + textFramePath);
-                    presenter.ChangeTextFrame(textBjPath, textFramePath);
+                public void isSuccess(String textBjPath, String textFramePath,String frameTitle) {
+                    LogUtil.d("OOM4", "textBjPath=" + textBjPath + "textFramePath=" + textFramePath+ "frameTitle" + frameTitle);
+                    presenter.ChangeTextFrame(textBjPath, textFramePath,frameTitle);
                 }
 
                 @Override
-                public void isSuccess(String color0, String color1, String textFramePath) {
-                    LogUtil.d("OOM4","color0="+color0+"color1="+color1+"textFramePath"+textFramePath);
-                    presenter.ChangeTextFrame(color0,color1, textFramePath);
+                public void isSuccess(String color0, String color1, String textFramePath,String frameTitle) {
+                    LogUtil.d("OOM4", "color0=" + color0 + "color1=" + color1 + "textFramePath" + textFramePath+ "frameTitle" + frameTitle);
+                    presenter.ChangeTextFrame(color0, color1, textFramePath,frameTitle);
                 }
             });
             createViewForAddText.showBottomSheetDialog(inputText, "bj_template");
@@ -693,7 +698,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         });
 
         new Handler().postDelayed(() -> {
-           presenter.setAllStickerCenter();
+            presenter.setAllStickerCenter();
             if (isLandscape) {
                 int height = Math.round(1f * ll_space.getWidth() / oriRatio);
                 scrollView.scrollTo(0, height / 2 - scrollView.getHeight() / 2);
@@ -742,7 +747,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-
     /**
      * description ：贴纸点击事件，str 为如果为文字，为文字内容
      * creation date: 2020/10/15
@@ -750,8 +754,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     @Override
     public void stickerOnclickCallback(String str) {
-        if(!TextUtils.isEmpty(str)&&createViewForAddText!=null){
-            if(!str.equals("输入文本")){
+        if (!TextUtils.isEmpty(str) && createViewForAddText != null) {
+            if (!str.equals("输入文本")) {
                 createViewForAddText.setInputText(str);
             }
         }
@@ -765,7 +769,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void hideTextDialog() {
-        createViewForAddText.hideInputTextDialog();
+        if (createViewForAddText != null) {
+            createViewForAddText.hideInputTextDialog();
+        }
+
     }
 
     @Override
@@ -842,6 +849,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         } else {
             videoToStart();
         }
+    }
+
+    @Override
+    public void hideKeyBord() {
+
+        if (createViewForAddText != null) {
+            createViewForAddText.hideInputTextDialog();
+        }
+
     }
 
     @Override

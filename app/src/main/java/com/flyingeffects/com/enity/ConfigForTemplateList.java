@@ -107,5 +107,5 @@ private String id;
         private String douyinurl;
         private String thirdline;
         private String secondline;
-        private String firstline;
+        private String firstline="";
 }

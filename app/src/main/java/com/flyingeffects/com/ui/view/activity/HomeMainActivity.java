@@ -585,6 +585,8 @@ public class HomeMainActivity extends FragmentActivity {
                     "" +
                     "", Toast.LENGTH_SHORT).show();
             exitTime = System.currentTimeMillis();
+
+
         } else {
             finish();
         }

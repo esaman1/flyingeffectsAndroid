@@ -314,15 +314,15 @@ public class TemplateAddStickerMvpModel {
      * creation date: 2020/10/23
      * user : zhangtongju
      */
-    public void  ChangeTextFrame(String textBjPath, String textFramePath){
+    public void  ChangeTextFrame(String textBjPath, String textFramePath,String Frametitle){
         if (nowChooseStickerView.getIsTextSticker()) {
-            nowChooseStickerView.ChangeTextFrame(textBjPath, textFramePath);
+            nowChooseStickerView.ChangeTextFrame(textBjPath, textFramePath,Frametitle);
         }
     }
 
-    public void ChangeTextFrame(String color0, String color1, String textFramePath) {
+    public void ChangeTextFrame(String color0, String color1, String textFramePath,String Frametitle) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            nowChooseStickerView.ChangeTextFrame(color0,color1, textFramePath);
+            nowChooseStickerView.ChangeTextFrame(color0,color1, textFramePath,Frametitle);
         }
     }
 
@@ -1180,8 +1180,11 @@ public class TemplateAddStickerMvpModel {
 //                }else{
 //                    callback.showMusicBtn(false);
 //                }
-                nowChooseStickerView = stickView;
 
+                nowChooseStickerView = stickView;
+                if(!stickView.getIsTextSticker()){
+                    callback.hideKeyBord();
+                }
 
             }
         });
@@ -1241,12 +1244,21 @@ public class TemplateAddStickerMvpModel {
             if (copyStickerView.getIsTextSticker()) {
                 //是否是图片文字效果
                 if (copyStickerView.GetIsChooseTextBjEffect()) {
-                    if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
-                        stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath(),copyStickerView.GetTextEffectTitle());
+                    if(copyStickerView.GetOpenThePattern()){
+                        //当前有边框
+                        stickView.ChangeTextFrame(copyStickerView.getTypefaceBitmapPath(), copyStickerView.getBjFramePath(),copyStickerView.GetTextFrameTitle());
+                    }else{
+                        if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
+                            stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath(),copyStickerView.GetTextEffectTitle());
+                        }
                     }
                 } else {
                     ArrayList<String> colors = copyStickerView.GetTextColors();
-                    stickView.setTextPaintColor(colors.get(0), colors.get(1),copyStickerView.GetTextEffectTitle());
+                    if(copyStickerView.GetOpenThePattern()){
+                        nowChooseStickerView.ChangeTextFrame(colors.get(0), colors.get(1),copyStickerView.GetTextEffectTitle());
+                    }else{
+                        stickView.setTextPaintColor(colors.get(0), colors.get(1),copyStickerView.GetTextEffectTitle());
+                    }
                 }
                 if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
                     stickView.setTextStyle(copyStickerView.getTypefacePath(),copyStickerView.GetTextStyleTitle());
@@ -1514,7 +1526,7 @@ public class TemplateAddStickerMvpModel {
 
          ArrayList<String> titleEffect=GetAllStickerDataModel.getInstance().GettitleEffect();
          ArrayList<String> titleStyle=GetAllStickerDataModel.getInstance().GetTitleStyle();
-
+        ArrayList<String> titleFrame=GetAllStickerDataModel.getInstance().GetTitleFrame();
         if (titleEffect != null && titleEffect.size() > 0) {
 
             for (String str : titleEffect
@@ -1531,6 +1543,16 @@ public class TemplateAddStickerMvpModel {
             ) {
                 statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_font_save", str);
                 LogUtil.d("OOM3", "titleStyle=" + str);
+            }
+        }
+
+
+        if (titleFrame != null && titleFrame.size() > 0) {
+
+            for (String str : titleFrame
+            ) {
+                statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_border_save", str);
+                LogUtil.d("OOM3", "titleFrame=" + str);
             }
         }
 

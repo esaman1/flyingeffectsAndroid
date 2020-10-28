@@ -116,6 +116,7 @@ public class BaseConstans {
 
 
     static String GetUserUuid() {
+
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getString("uuid", "");
     }

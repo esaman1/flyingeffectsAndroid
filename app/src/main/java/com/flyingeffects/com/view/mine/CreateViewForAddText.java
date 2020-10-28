@@ -188,6 +188,11 @@ public class CreateViewForAddText {
         createTemplateTextEffectAdapterFrame.select(0);
         gridViewFrame.setOnItemClickListener((adapterView, view1, i, l) -> {
             createTemplateTextEffectAdapterFrame.select(i);
+            if ("bj_template".equals(type)) {
+                statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_border", listFrame.get(i).getTitle());
+            }else{
+                statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_border", listFrame.get(i).getTitle());
+            }
             WaitingDialog.openPragressDialog(context);
             downFileFrame(listFrame.get(i).getImage(), 0, listFrame.get(i).getType(), listFrame.get(i).getColor(), listFrame.get(i).getTitle(), new downFameCallback() {
                 @Override
@@ -199,10 +204,10 @@ public class CreateViewForAddText {
                             WaitingDialog.closePragressDialog();
                             if (callback != null) {
                                 if (type == 1) {
-                                    callback.isSuccess(path1, path2);
+                                    callback.isSuccess(path1, path2,listFrame.get(i).getTitle());
                                 } else {
                                     String[] str = listFrame.get(i).getColor().split(",");
-                                    callback.isSuccess("#" + str[1], "#" + str[0], path2);
+                                    callback.isSuccess("#" + str[1], "#" + str[0], path2,listFrame.get(i).getTitle());
 
                                 }
                             }
@@ -484,9 +489,9 @@ public class CreateViewForAddText {
 
         void setTextColor(String color0, String color1, String title);
 
-        void isSuccess(String textBjPath, String textFramePath);
+        void isSuccess(String textBjPath, String textFramePath,String frameTitle);
 
-        void isSuccess(String color0, String color1, String textFramePath);
+        void isSuccess(String color0, String color1, String textFramePath,String frameTitle);
 
     }
 

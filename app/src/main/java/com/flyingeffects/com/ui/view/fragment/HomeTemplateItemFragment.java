@@ -104,6 +104,8 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                 if(allData.get(position).getIs_ad_recommend()==1){
                     String url = allData.get(position).getRemark();
 //                    String url = "http://transaction.chucitech.cn//#/index/?appid=76&NTExchange=true";
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "21_dl_click", allData.get(position).getTitle());
+                    LogUtil.d("OOM",url);
                     boolean result =   AppMarketHelper.of(getActivity()).skipMarket(url);
                     if(!result){
                         Intent intent = new Intent(getActivity(), webViewActivity.class);

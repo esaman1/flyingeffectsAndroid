@@ -100,6 +100,9 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
     private ArrayList<String> titleEffect;
     private ArrayList<String> titleStyle;
+    private ArrayList<String> titleFrame;
+
+
 
     @Override
     protected int getLayoutId() {
@@ -114,6 +117,10 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         titleEffect = bundle.getStringArrayList("titleEffect");
         LogUtil.d("OOM3", StringUtil.beanToJSONString(titleEffect));
         titleStyle = bundle.getStringArrayList("titleStyle");
+        titleFrame= bundle.getStringArrayList("titleFrame");
+        if(titleFrame!=null&&titleFrame.size()>0){
+            LogUtil.d("OOM3","titleFrameSize="+titleFrame.get(0));
+        }
         nowUiIsLandscape = bundle.getBoolean("nowUiIsLandscape", false);
         Presenter = new CreationTemplatePreviewPresenter(this, this, imagePath);
         VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
@@ -295,8 +302,11 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
             for (String str : titleEffect
             ) {
-                statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_style_save", str);
-                LogUtil.d("OOM3", "titleEffect=" + str);
+                if(!TextUtils.isEmpty(str)){
+                    statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_style_save", str);
+                    LogUtil.d("OOM3", "titleEffect=" + str);
+                }
+
             }
         }
 
@@ -305,11 +315,30 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
             for (String str : titleStyle
             ) {
-                statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_font_save", str);
-                LogUtil.d("OOM3", "titleStyle=" + str);
+
+                if(!TextUtils.isEmpty(str)){
+                    statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_font_save", str);
+                    LogUtil.d("OOM3", "titleStyle=" + str);
+                }
+
+
             }
         }
 
+
+
+        if (titleFrame != null && titleFrame.size() > 0) {
+
+            for (String str : titleFrame
+            ) {
+
+                if(!TextUtils.isEmpty(str)){
+                    statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_border_save", str);
+                    LogUtil.d("OOM3", "titleFrame=" + str);
+                }
+
+            }
+        }
 
         if ((titleStyle != null && titleStyle.size() > 0) || (titleEffect != null && titleEffect.size() > 0)) {
             statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_save_save");
