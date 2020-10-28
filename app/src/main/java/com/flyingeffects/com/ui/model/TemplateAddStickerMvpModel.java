@@ -1552,7 +1552,7 @@ public class TemplateAddStickerMvpModel {
             for (String str : titleFrame
             ) {
                 statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_border_save", str);
-                LogUtil.d("OOM3", "titleStyle=" + str);
+                LogUtil.d("OOM3", "titleFrame=" + str);
             }
         }
 
