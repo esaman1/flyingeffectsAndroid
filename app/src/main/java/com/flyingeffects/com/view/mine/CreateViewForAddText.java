@@ -115,8 +115,8 @@ public class CreateViewForAddText {
         ll_add_child_text.removeAllViews();
         listTitle.add("键盘");
         listTitle.add("热门效果");
-        listTitle.add("字体");
         listTitle.add("边框");
+        listTitle.add("字体");
 
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -159,11 +159,11 @@ public class CreateViewForAddText {
         });
 
         viewPager = view.findViewById(R.id.viewpager);
-
+        //键盘
         ArrayList<View> list = new ArrayList<>();
         View keyboardView = LayoutInflater.from(context).inflate(R.layout.fragment_input, viewPager, false);
         list.add(keyboardView);
-
+        //特效
         View gridViewLayout = LayoutInflater.from(context).inflate(R.layout.view_creat_template_effect_type, viewPager, false);
         GridView gridView = gridViewLayout.findViewById(R.id.gridView);
         gridView.setOnItemClickListener((adapterView, view13, i, l) -> {
@@ -179,25 +179,8 @@ public class CreateViewForAddText {
         createTemplateTextEffectAdapterEffect = new CreateTemplateTextEffectAdapter(listEffect, context);
         gridView.setAdapter(createTemplateTextEffectAdapterEffect);
         createTemplateTextEffectAdapterEffect.select(0);
-
         list.add(gridViewLayout);
-        View gridViewLayoutFont = LayoutInflater.from(context).inflate(R.layout.view_creat_template_text_type, viewPager, false);
-        GridView gridViewFont = gridViewLayoutFont.findViewById(R.id.gridView);
-        gridViewFont.setOnItemClickListener((adapterView, view1, i, l) -> {
-            if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
-                CreateViewForAddText.this.downFile(listFont.get(i).getFile(), 1, 1, "", listFont.get(i).getTitle());
-                createTemplateTextEffectAdapterFont.select(i);
-                if ("bj_template".equals(type)) {
-                    statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_font", listFont.get(i).getTitle());
-                } else if ("OneKey_template".equals(type)) {
-                    statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_font", listFont.get(i).getTitle());
-                }
-            }
-        });
-        createTemplateTextEffectAdapterFont = new CreateTemplateTextFontAdapter(listFont, context);
-        gridViewFont.setAdapter(createTemplateTextEffectAdapterFont);
-        createTemplateTextEffectAdapterFont.select(0);
-        list.add(gridViewLayoutFont);
+        //边框
         View gridViewLayoutFrame = LayoutInflater.from(context).inflate(R.layout.view_creat_template_text_type, viewPager, false);
         GridView gridViewFrame = gridViewLayoutFrame.findViewById(R.id.gridView);
         createTemplateTextEffectAdapterFrame = new CreateTemplateTextFrameAdapter(listFrame, context);
@@ -234,8 +217,26 @@ public class CreateViewForAddText {
             }
 
         });
-
         list.add(gridViewLayoutFrame);
+        //字体
+        View gridViewLayoutFont = LayoutInflater.from(context).inflate(R.layout.view_creat_template_text_type, viewPager, false);
+        GridView gridViewFont = gridViewLayoutFont.findViewById(R.id.gridView);
+        gridViewFont.setOnItemClickListener((adapterView, view1, i, l) -> {
+            if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
+                CreateViewForAddText.this.downFile(listFont.get(i).getFile(), 1, 1, "", listFont.get(i).getTitle());
+                createTemplateTextEffectAdapterFont.select(i);
+                if ("bj_template".equals(type)) {
+                    statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_font", listFont.get(i).getTitle());
+                } else if ("OneKey_template".equals(type)) {
+                    statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_font", listFont.get(i).getTitle());
+                }
+            }
+        });
+        createTemplateTextEffectAdapterFont = new CreateTemplateTextFontAdapter(listFont, context);
+        gridViewFont.setAdapter(createTemplateTextEffectAdapterFont);
+        createTemplateTextEffectAdapterFont.select(0);
+        list.add(gridViewLayoutFont);
+
         TemplateViewPager adapter = new TemplateViewPager(list);
         viewPager.setAdapter(adapter);
 
