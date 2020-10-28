@@ -3,7 +3,6 @@ package com.flyingeffects.com.http;
 public class Url {
 
 
-    private static final String PRODUCTION = "http://kadian.nineton.cn/"; //正式环境
 
 
     private static final String FLY_PRODUCTION = "http://www.flyingeffect.com";
@@ -15,7 +14,7 @@ public class Url {
      * 时间：2018/6/15
      **/
 
-    public static final String BASE_URL = TEST_FLY_PRODUCTION;
+    public static final String BASE_URL = FLY_PRODUCTION;
 
 
 }

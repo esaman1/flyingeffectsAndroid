@@ -407,7 +407,7 @@ public class new_fag_template_item implements Serializable {
         this.admin_id = admin_id;
     }
 
-    private String admin_id;
+    private String admin_id="";
 
     public int getIs_with_play() {
         return is_with_play;
