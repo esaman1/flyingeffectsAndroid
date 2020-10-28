@@ -226,16 +226,16 @@ public class CreationTemplateMvpModel {
      * creation date: 2020/10/23
      * user : zhangtongju
      */
-    public void  ChangeTextFrame(String textBjPath, String textFramePath){
+    public void  ChangeTextFrame(String textBjPath, String textFramePath,String frameTitle){
         if (nowChooseStickerView.getIsTextSticker()) {
-            nowChooseStickerView.ChangeTextFrame(textBjPath, textFramePath);
+            nowChooseStickerView.ChangeTextFrame(textBjPath, textFramePath,frameTitle);
         }
     }
 
 
-    public void ChangeTextFrame(String color0, String color1, String textFramePath) {
+    public void ChangeTextFrame(String color0, String color1, String textFramePath,String frameTitle) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            nowChooseStickerView.ChangeTextFrame(color0,color1, textFramePath);
+            nowChooseStickerView.ChangeTextFrame(color0,color1, textFramePath,frameTitle);
         }
     }
 
@@ -1164,7 +1164,7 @@ public class CreationTemplateMvpModel {
                 if (copyStickerView.GetIsChooseTextBjEffect()) {
                     if(copyStickerView.GetOpenThePattern()){
                         //当前有边框
-                        stickView.ChangeTextFrame(copyStickerView.getTypefaceBitmapPath(), copyStickerView.getBjFramePath());
+                        stickView.ChangeTextFrame(copyStickerView.getTypefaceBitmapPath(), copyStickerView.getBjFramePath(),copyStickerView.GetTextFrameTitle());
                     }else{
                         if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
                             stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath(),copyStickerView.GetTextEffectTitle());
@@ -1537,6 +1537,8 @@ public class CreationTemplateMvpModel {
                                     Bundle bundle=new Bundle();
                                     bundle.putStringArrayList("titleEffect", (ArrayList<String>) GetAllStickerDataModel.getInstance().GettitleEffect());
                                     bundle.putStringArrayList("titleStyle", (ArrayList<String>) GetAllStickerDataModel.getInstance().GetTitleStyle());
+                                    bundle.putStringArrayList("titleFrame", (ArrayList<String>) GetAllStickerDataModel.getInstance().GetTitleFrame());
+
                                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     bundle.putString("path", path);
                                     bundle.putBoolean("nowUiIsLandscape", nowUiIsLandscape);

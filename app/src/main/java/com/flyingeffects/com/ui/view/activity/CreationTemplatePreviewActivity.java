@@ -100,6 +100,9 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
     private ArrayList<String> titleEffect;
     private ArrayList<String> titleStyle;
+    private ArrayList<String> titleFrame;
+
+
 
     @Override
     protected int getLayoutId() {
@@ -114,6 +117,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         titleEffect = bundle.getStringArrayList("titleEffect");
         LogUtil.d("OOM3", StringUtil.beanToJSONString(titleEffect));
         titleStyle = bundle.getStringArrayList("titleStyle");
+        titleFrame= bundle.getStringArrayList("titleFrame");
         nowUiIsLandscape = bundle.getBoolean("nowUiIsLandscape", false);
         Presenter = new CreationTemplatePreviewPresenter(this, this, imagePath);
         VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
@@ -310,6 +314,16 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
             }
         }
 
+
+
+        if (titleFrame != null && titleFrame.size() > 0) {
+
+            for (String str : titleFrame
+            ) {
+                statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_border_save", str);
+                LogUtil.d("OOM3", "titleStyle=" + str);
+            }
+        }
 
         if ((titleStyle != null && titleStyle.size() > 0) || (titleEffect != null && titleEffect.size() > 0)) {
             statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_save_save");
