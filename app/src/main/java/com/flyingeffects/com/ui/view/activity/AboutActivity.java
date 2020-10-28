@@ -131,6 +131,7 @@ public class AboutActivity extends BaseActivity {
                 PermissionUtil.gotoPermission(AboutActivity.this);
                 break;
             case R.id.tv_version_number:
+                statisticsEventAffair.getInstance().setFlag(mContext, "3_update");
                 SystemUtil.openMarket(this);
                 break;
             default:
