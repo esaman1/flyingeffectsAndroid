@@ -514,13 +514,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
                 @Override
                 public void isSuccess(String textBjPath, String textFramePath,String frameTitle) {
-                    LogUtil.d("OOM4", "textBjPath=" + textBjPath + "textFramePath=" + textFramePath);
+                    LogUtil.d("OOM4", "textBjPath=" + textBjPath + "textFramePath=" + textFramePath+ "frameTitle" + frameTitle);
                     presenter.ChangeTextFrame(textBjPath, textFramePath,frameTitle);
                 }
 
                 @Override
                 public void isSuccess(String color0, String color1, String textFramePath,String frameTitle) {
-                    LogUtil.d("OOM4", "color0=" + color0 + "color1=" + color1 + "textFramePath" + textFramePath);
+                    LogUtil.d("OOM4", "color0=" + color0 + "color1=" + color1 + "textFramePath" + textFramePath+ "frameTitle" + frameTitle);
                     presenter.ChangeTextFrame(color0, color1, textFramePath,frameTitle);
                 }
             });

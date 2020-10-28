@@ -118,6 +118,9 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         LogUtil.d("OOM3", StringUtil.beanToJSONString(titleEffect));
         titleStyle = bundle.getStringArrayList("titleStyle");
         titleFrame= bundle.getStringArrayList("titleFrame");
+        if(titleFrame!=null&&titleFrame.size()>0){
+            LogUtil.d("OOM3","titleFrameSize="+titleFrame.get(0));
+        }
         nowUiIsLandscape = bundle.getBoolean("nowUiIsLandscape", false);
         Presenter = new CreationTemplatePreviewPresenter(this, this, imagePath);
         VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
@@ -299,8 +302,11 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
             for (String str : titleEffect
             ) {
-                statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_style_save", str);
-                LogUtil.d("OOM3", "titleEffect=" + str);
+                if(!TextUtils.isEmpty(str)){
+                    statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_style_save", str);
+                    LogUtil.d("OOM3", "titleEffect=" + str);
+                }
+
             }
         }
 
@@ -309,8 +315,13 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
             for (String str : titleStyle
             ) {
-                statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_font_save", str);
-                LogUtil.d("OOM3", "titleStyle=" + str);
+
+                if(!TextUtils.isEmpty(str)){
+                    statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_font_save", str);
+                    LogUtil.d("OOM3", "titleStyle=" + str);
+                }
+
+
             }
         }
 
@@ -320,8 +331,12 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
             for (String str : titleFrame
             ) {
-                statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_border_save", str);
-                LogUtil.d("OOM3", "titleStyle=" + str);
+
+                if(!TextUtils.isEmpty(str)){
+                    statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_border_save", str);
+                    LogUtil.d("OOM3", "titleFrame=" + str);
+                }
+
             }
         }
 
