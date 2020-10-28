@@ -46,7 +46,7 @@ public class Frag_message_adapter extends BaseAdapter {
     @Override
     public View getView(final int position, View view, ViewGroup parent) {
         final ViewHold holder;
-        if (view == null) {
+        if (view == null&&context!=null) {
             holder = new ViewHold();
             view = LayoutInflater.from(context).inflate(R.layout.item_system_message, parent, false);
             holder.tv_point = view.findViewById(R.id.tv_point);

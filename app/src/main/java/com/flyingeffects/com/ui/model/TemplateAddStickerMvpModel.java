@@ -1181,10 +1181,11 @@ public class TemplateAddStickerMvpModel {
 //                    callback.showMusicBtn(false);
 //                }
 
-                nowChooseStickerView = stickView;
+
                 if(!stickView.getIsTextSticker()){
                     callback.hideKeyBord();
                 }
+                nowChooseStickerView = stickView;
 
             }
         });

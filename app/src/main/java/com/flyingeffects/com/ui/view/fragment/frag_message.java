@@ -212,24 +212,27 @@ public class frag_message extends BaseFragment {
 
     private void initRecyclerView(List<systemessagelist> systemessagelists) {
 
-        Frag_message_adapter adapter = new Frag_message_adapter(systemessagelists, getActivity());
-        swipeMenuListView.setAdapter(adapter);
-        swipeMenuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                statisticsEventAffair.getInstance().setFlag(getActivity(), "12_system");
-                if (BaseConstans.hasLogin()) {
-                    Intent intent = new Intent(getActivity(), SystemMessageDetailActivity.class);
-                    intent.putExtra("needId", systemessagelists.get(i).getId());
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                } else {
-                    Intent intent = new Intent(getActivity(), LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
+        if(getActivity()!=null){
+            Frag_message_adapter adapter = new Frag_message_adapter(systemessagelists, getActivity());
+            swipeMenuListView.setAdapter(adapter);
+            swipeMenuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "12_system");
+                    if (BaseConstans.hasLogin()) {
+                        Intent intent = new Intent(getActivity(), SystemMessageDetailActivity.class);
+                        intent.putExtra("needId", systemessagelists.get(i).getId());
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(getActivity(), LoginActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
                 }
-            }
-        });
+            });
+        }
+
 
     }
 

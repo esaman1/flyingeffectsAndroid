@@ -454,7 +454,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     @Override
     public void stickerOnclickCallback(String str) {
         if (!TextUtils.isEmpty(str) && createViewForAddText != null) {
-            if(!str.equals("输入文本")){
+            if (!str.equals("输入文本")) {
                 createViewForAddText.setInputText(str);
             }
         }
@@ -491,8 +491,9 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
 
             case R.id.tv_add_text:
-                intoTextStyleDialog("");
+
                 presenter.addTextSticker();
+                intoTextStyleDialog("");
                 statisticsEventAffair.getInstance().setFlag(this, "20_mb_text");
                 break;
 
