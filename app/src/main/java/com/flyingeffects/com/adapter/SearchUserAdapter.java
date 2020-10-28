@@ -11,8 +11,10 @@ import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.SearchUserEntity;
 import com.flyingeffects.com.enity.UserInfo;
+import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.UserHomepageActivity;
 import com.orhanobut.hawk.Hawk;
 
@@ -65,10 +67,14 @@ public class SearchUserAdapter extends BaseQuickAdapter<SearchUserEntity,BaseVie
         helper.setOnClickListener(R.id.iv_user_avatar, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (userInfo != null && !TextUtils.equals(String.valueOf(item.getId()), userInfo.getId())) {
-                    Intent intent = new Intent(activity, UserHomepageActivity.class);
-                    intent.putExtra("toUserId", String.valueOf(item.getId()));
-                    activity.startActivity(intent);
+                if(BaseConstans.hasLogin()){
+                    if (userInfo != null && !TextUtils.equals(String.valueOf(item.getId()), userInfo.getId())) {
+                        Intent intent = new Intent(activity, UserHomepageActivity.class);
+                        intent.putExtra("toUserId", String.valueOf(item.getId()));
+                        activity.startActivity(intent);
+                    }
+                }else {
+                    activity.startActivity(new Intent(activity,LoginActivity.class));
                 }
             }
         });
