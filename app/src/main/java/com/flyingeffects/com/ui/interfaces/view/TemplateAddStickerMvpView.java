@@ -7,6 +7,6 @@ public interface TemplateAddStickerMvpView {
     void setgsyVideoProgress(int progress);
     void showTextDialog(String inputText);
     void hideTextDialog();
-
+    void hideKeyBord();
     void stickerOnclickCallback(String str);
 }

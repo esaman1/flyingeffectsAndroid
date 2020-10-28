@@ -166,4 +166,9 @@ public class TemplateAddStickerMvpPresenter extends BasePresenter implements Tem
     public void stickerOnclickCallback(String title) {
         TemplateAddStickermvpView.stickerOnclickCallback(title);
     }
+
+    @Override
+    public void hideKeyBord() {
+        TemplateAddStickermvpView.hideKeyBord();
+    }
 }

@@ -27,6 +27,8 @@ public interface CreationTemplateMvpView {
 
     void getBgmPath(String path);
 
+    void hideKeyBord();
+
     void changFirstVideoSticker(String path);
 
     void isFirstAddSuccess();

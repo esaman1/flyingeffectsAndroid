@@ -1180,8 +1180,11 @@ public class TemplateAddStickerMvpModel {
 //                }else{
 //                    callback.showMusicBtn(false);
 //                }
-                nowChooseStickerView = stickView;
 
+                nowChooseStickerView = stickView;
+                if(!stickView.getIsTextSticker()){
+                    callback.hideKeyBord();
+                }
 
             }
         });
@@ -1241,12 +1244,21 @@ public class TemplateAddStickerMvpModel {
             if (copyStickerView.getIsTextSticker()) {
                 //是否是图片文字效果
                 if (copyStickerView.GetIsChooseTextBjEffect()) {
-                    if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
-                        stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath(),copyStickerView.GetTextEffectTitle());
+                    if(copyStickerView.GetOpenThePattern()){
+                        //当前有边框
+                        stickView.ChangeTextFrame(copyStickerView.getTypefaceBitmapPath(), copyStickerView.getBjFramePath());
+                    }else{
+                        if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
+                            stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath(),copyStickerView.GetTextEffectTitle());
+                        }
                     }
                 } else {
                     ArrayList<String> colors = copyStickerView.GetTextColors();
-                    stickView.setTextPaintColor(colors.get(0), colors.get(1),copyStickerView.GetTextEffectTitle());
+                    if(copyStickerView.GetOpenThePattern()){
+                        nowChooseStickerView.ChangeTextFrame(colors.get(0), colors.get(1),copyStickerView.GetTextEffectTitle());
+                    }else{
+                        stickView.setTextPaintColor(colors.get(0), colors.get(1),copyStickerView.GetTextEffectTitle());
+                    }
                 }
                 if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
                     stickView.setTextStyle(copyStickerView.getTypefacePath(),copyStickerView.GetTextStyleTitle());

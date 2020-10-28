@@ -16,4 +16,6 @@ public interface TemplateAddStickerMvpCallback {
 
     void stickerOnclickCallback(String title);
 
+    void hideKeyBord();
+
 }

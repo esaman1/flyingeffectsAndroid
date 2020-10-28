@@ -852,6 +852,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
     @Override
+    public void hideKeyBord() {
+
+        if (createViewForAddText != null) {
+            createViewForAddText.hideInputTextDialog();
+        }
+
+    }
+
+    @Override
     public void changFirstVideoSticker(String path) {
         if (TextUtils.isEmpty(videoPath)) {
             //如果还是绿屏。那么需要刷新底部的时长

@@ -445,6 +445,13 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     }
 
     @Override
+    public void hideKeyBord() {
+        if (createViewForAddText != null) {
+            createViewForAddText.hideInputTextDialog();
+        }
+    }
+
+    @Override
     public void stickerOnclickCallback(String str) {
         if (!TextUtils.isEmpty(str) && createViewForAddText != null) {
             if(!str.equals("输入文本")){

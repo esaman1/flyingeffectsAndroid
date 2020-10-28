@@ -153,6 +153,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
     @Override
+    public void hideKeyBord() {
+        creationTemplatemvpView.hideKeyBord();
+    }
+
+    @Override
     public void stickerOnclickCallback(String title) {
         creationTemplatemvpView.stickerOnclickCallback(title);
     }

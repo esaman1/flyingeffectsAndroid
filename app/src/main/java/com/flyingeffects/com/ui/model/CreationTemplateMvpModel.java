@@ -1097,6 +1097,10 @@ public class CreationTemplateMvpModel {
                 } else {
                     callback.showMusicBtn(false);
                 }
+                if(!stickView.getIsTextSticker()){
+                    callback.hideKeyBord();
+                }
+
                 nowChooseStickerView = stickView;
             }
         });
