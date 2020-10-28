@@ -64,6 +64,7 @@ import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TT_FEED
  */
 public class fragBjItem extends BaseFragment {
 
+
     private int perPageCount = 10;
     @BindView(R.id.RecyclerView)
     RecyclerView recyclerView;
