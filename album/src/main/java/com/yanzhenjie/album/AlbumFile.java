@@ -84,6 +84,19 @@ public class AlbumFile implements Parcelable, Comparable<AlbumFile> {
      */
     private boolean isDisable;
 
+    public int getNowChooseIndex() {
+        return nowChooseIndex;
+    }
+
+    public void setNowChooseIndex(int nowChooseIndex) {
+        this.nowChooseIndex = nowChooseIndex;
+    }
+
+    /**
+     * now choose photo index
+     */
+    private int nowChooseIndex;
+
     public AlbumFile() {
     }
 

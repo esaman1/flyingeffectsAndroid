@@ -511,7 +511,7 @@ public class backgroundDraw {
                     public void rotate(ArrayList<Float> angle) {
                         float needrotate = angle.get(0);
                         bpLayer.setRotate(needrotate);
-                        if (listForMattingSubLayer != null && listForMattingSubLayer.size() > 0) {
+                        if ( listForMattingSubLayer.size() > 0) {
                             for (int i = 1; i <= listForMattingSubLayer.size(); i++) {
                                 SubLayer subLayer = listForMattingSubLayer.get(i - 1);
                                 subLayer.setScale(angle.get(i));
@@ -524,7 +524,7 @@ public class backgroundDraw {
                     public void scale(ArrayList<Float> angle) {
                         float nowScale = layerScale * stickerScale;
                         bpLayer.setScale(nowScale + nowScale * angle.get(0));
-                        if (listForMattingSubLayer != null && listForMattingSubLayer.size() > 0) {
+                        if ( listForMattingSubLayer.size() > 0) {
                             for (int i = 1; i <= listForMattingSubLayer.size(); i++) {
                                 SubLayer subLayer = listForMattingSubLayer.get(i - 1);
                                 subLayer.setScale(nowScale + nowScale * angle.get(i));

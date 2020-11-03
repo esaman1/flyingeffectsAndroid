@@ -176,6 +176,8 @@ public final class Contract {
 
         public abstract void setSingleCompletion(boolean singleCompletion);
 
+
+
     }
 
     public interface NullPresenter extends BasePresenter {

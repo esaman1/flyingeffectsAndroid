@@ -249,6 +249,8 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
             } else {
                 tv.setTextSize(17);
                 view.setVisibility(View.INVISIBLE);
+
+
             }
         }
         if (titles != null) {
@@ -264,7 +266,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     }
 
 
-    @OnClick({R.id.iv_add, R.id.iv_cover, R.id.Toolbar, R.id.relative_top, R.id.iv_search})
+    @OnClick({R.id.iv_add, R.id.iv_cover, R.id.Toolbar, R.id.relative_top, R.id.iv_search,R.id.ll_crate_photograph_album})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_add:
@@ -288,6 +290,11 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                 intent.putExtra("isFrom", 0);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
+                break;
+
+            case R.id.ll_crate_photograph_album:
+                //创建影集
+                toPhotographAlbum();
                 break;
             default:
                 break;
@@ -325,6 +332,39 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
             }
         }, "");
     }
+
+
+
+    private void toPhotographAlbum() {
+        AlbumManager.chooseAlbum(getActivity(), 20, SELECTALBUM, new AlbumChooseCallback() {
+            @Override
+            public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
+                if (!isCancel) {
+                    if (!TextUtils.isEmpty(paths.get(0))) {
+                        MattingImage mattingImage = new MattingImage();
+                        mattingImage.createHandle(getActivity(), new MattingImage.InitSegJniStateCallback() {
+                            @Override
+                            public void isDone(boolean isDone) {
+                                if (isDone) {
+                                    String pathType = GetPathTypeModel.getInstance().getMediaType(paths.get(0));
+                                    if (albumType.isVideo(pathType)) {
+                                        Intent intent = new Intent(getActivity(), VideoCropActivity.class);
+                                        intent.putExtra("videoPath", paths.get(0));
+                                        intent.putExtra("comeFrom", "");
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(intent);
+                                    } else {
+                                        compressImage(paths.get(0));
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        }, "");
+    }
+
 
 
     private void compressImage(String path) {
