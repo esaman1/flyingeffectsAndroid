@@ -394,10 +394,11 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
                 }
             }
         }
-
-        //还原之前的
-        AlbumFile albumFile=albumFiles.get(lastPosition);
-        albumFile.setNowChooseIndex(0);
+        if(lastPosition!=-1){
+            //还原之前的
+            AlbumFile albumFile=albumFiles.get(lastPosition);
+            albumFile.setNowChooseIndex(-1);
+        }
         mAdapter.notifyDataSetChanged();
     }
 

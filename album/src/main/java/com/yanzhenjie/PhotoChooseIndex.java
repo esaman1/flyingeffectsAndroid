@@ -15,7 +15,7 @@ public class PhotoChooseIndex {
 
 
 
-    private int lastIntPosition;
+    private int lastIntPosition=-1;
 
     private ArrayList<Integer>listForKeepPhoto=new ArrayList<>();
 
@@ -75,7 +75,7 @@ public class PhotoChooseIndex {
      */
     public void ClearAllData(){
          listForKeepPhoto.clear();
-        lastIntPosition=0;
+        lastIntPosition=-1;
     }
 
 

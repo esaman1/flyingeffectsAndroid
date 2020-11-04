@@ -254,7 +254,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     .getAlbumLoader()
                     .load(mIvImage, albumFile);
 
-            if(albumFile.getNowChooseIndex()!=0){
+            if(albumFile.getNowChooseIndex()!=0&&albumFile.getNowChooseIndex()!=-1){
                 tv_count.setText(albumFile.getNowChooseIndex()+"");
                 tv_count.setVisibility(View.VISIBLE);
             }else{
@@ -321,7 +321,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 mTvDuration.setText(AlbumUtils.convertDuration(albumFile.getDuration()));
             }
 
-            if(albumFile.getNowChooseIndex()!=0){
+            if(albumFile.getNowChooseIndex()!=-1&&albumFile.getNowChooseIndex()!=0){
                 tv_count.setText(albumFile.getNowChooseIndex()+"");
                 tv_count.setVisibility(View.VISIBLE);
             }else{
