@@ -3,9 +3,6 @@ package com.yanzhenjie;
 import java.util.ArrayList;
 
 
-
-
-
 /**
  * description ：记录图片选中文案，每次添加/删除都刷新item
  * creation date: 2020/11/3
@@ -14,12 +11,12 @@ import java.util.ArrayList;
 public class PhotoChooseIndex {
 
 
+    private int lastIntPosition = -1;
 
-    private int lastIntPosition=-1;
-
-    private ArrayList<Integer>listForKeepPhoto=new ArrayList<>();
+    private ArrayList<Integer> listForKeepPhoto = new ArrayList<>();
 
     private static PhotoChooseIndex thisModel;
+
     public static PhotoChooseIndex getInstance() {
         if (thisModel == null) {
             thisModel = new PhotoChooseIndex();
@@ -28,19 +25,17 @@ public class PhotoChooseIndex {
     }
 
 
-
-
     /**
      * description ：存入相片位置
      * index 当前保存的次数   photoIndex 图片的位置
      * creation date: 2020/11/3
      * user : zhangtongju
      */
-    public void PutPhotoIndex(int  photoIndex ){
+    public void PutPhotoIndex(int photoIndex) {
         for (int j = 0; j < listForKeepPhoto.size(); j++) {
-            int nowIndex=listForKeepPhoto.get(j);
-            if(photoIndex==nowIndex){
-                lastIntPosition=nowIndex;
+            int nowIndex = listForKeepPhoto.get(j);
+            if (photoIndex == nowIndex) {
+                lastIntPosition = nowIndex;
                 listForKeepPhoto.remove(j);
                 return;
             }
@@ -49,23 +44,19 @@ public class PhotoChooseIndex {
     }
 
 
-
-
     /**
      * description ：返回保存的图片item
      * creation date: 2020/11/3
      * user : zhangtongju
      */
-    public ArrayList<Integer> GetPhotoIndexList(){
+    public ArrayList<Integer> GetPhotoIndexList() {
         return listForKeepPhoto;
     }
 
 
-    public int GetLastIndex(){
+    public int GetLastIndex() {
         return lastIntPosition;
     }
-
-
 
 
     /**
@@ -73,16 +64,12 @@ public class PhotoChooseIndex {
      * creation date: 2020/11/3
      * user : zhangtongju
      */
-    public void ClearAllData(){
-         listForKeepPhoto.clear();
-        lastIntPosition=-1;
+    public void ClearAllData() {
+
+
+        listForKeepPhoto.clear();
+        lastIntPosition = -1;
     }
-
-
-
-
-
-
 
 
 }
