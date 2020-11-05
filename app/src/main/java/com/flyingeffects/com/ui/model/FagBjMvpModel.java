@@ -106,6 +106,7 @@ public class FagBjMvpModel {
 
             @Override
             protected void _onNext(List<new_fag_template_item> data) {
+                LogUtil.d("OOM",StringUtil.beanToJSONString(data));
                 callback.PictureAlbum(data);
 
             }

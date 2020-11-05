@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -76,6 +77,7 @@ import com.yanzhenjie.album.AlbumFile;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -356,6 +358,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 AnimForViewShowAndHide.getInstance().show(mContainer);
             }
         });
+
+        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.PICTUREALBUM)) {
+            findViewById(R.id.ll_Matting).setVisibility(View.GONE);
+        }
 
 //        test();
     }
@@ -1272,6 +1278,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     } else {
                         viewPager.setCurrentItem(1);
                         statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "11_yj_muscle");
+
                     }
                     lastChooseCommonTabLayout = 2;
                 } else {
@@ -1288,9 +1295,33 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.PICTUREALBUM)) {
-
             View templateThumb = LayoutInflater.from(this).inflate(R.layout.view_choose_template, null);
-            ViewChooseTemplate viewChooseTemplate = new ViewChooseTemplate(TemplateActivity.this, templateThumb);
+            ViewChooseTemplate viewChooseTemplate = new ViewChooseTemplate(TemplateActivity.this, templateThumb, new ViewChooseTemplate.Callback() {
+                @Override
+                public void onItemClick(int position, String path,new_fag_template_item item) {
+                    //选择模板的回调时间
+                    Intent intent = getIntent();
+                    finish();
+                    Bundle bundle = new Bundle();
+                    String[] paths = mTemplateModel.getReplaceableOriginFilePaths(Objects.requireNonNull(getExternalCacheDir()).getPath());
+                    List<String> getAsset= Arrays.asList(paths);
+                    ArrayList<String> arrayList = new ArrayList<>(getAsset);
+                    bundle.putStringArrayList("paths",arrayList);
+                    bundle.putInt("isPicNum", 20);
+                    bundle.putString("fromTo", FromToTemplate.PICTUREALBUM);
+                    bundle.putInt("picout", 0);
+                    bundle.putInt("is_anime", 0);
+                    bundle.putString("templateName", item.getTitle());
+                    bundle.putString("templateId", item.getId() + "");
+                    bundle.putString("videoTime", "20");
+                    bundle.putStringArrayList("originalPath", arrayList);
+                    bundle.putString("templateFilePath", path);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.putExtra("Message", bundle);
+                    intent.putExtra("person", item);
+                    startActivity(intent);
+                }
+            });
             pagerList.add(templateThumb);
         }
 

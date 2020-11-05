@@ -208,6 +208,15 @@ public class MediaUiModel2 extends MediaUiModel {
     }
 
     @Override
+    public String getOriginPath(String folder) {
+        if (!mIsVideo) {
+            return path;
+        } else {
+            return mVideoPath;
+        }
+    }
+
+    @Override
     public void hasChooseBg(String path, boolean isVideo) {
         nowChooseBjPath = path;
         hasBg = path != null && !path.equals("");

@@ -67,24 +67,54 @@
 
         </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/ll_crate_photograph_album"
+        <RelativeLayout
             android:layout_width="122dp"
             android:layout_height="113dp"
-
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="122dp"
                 android:scaleType="fitCenter"
+                android:layout_centerInParent="true"
                 android:contentDescription="@string/app_name"
-                android:src="@mipmap/create_photo_graph_album" />
+                android:src="@mipmap/create_photo_graph_album"
+                android:layout_height="113dp"/>
 
 
-        </LinearLayout>
+            <LinearLayout
+                android:id="@+id/ll_crate_photograph_album"
+                android:layout_width="142dp"
+                android:orientation="vertical"
+                android:layout_centerInParent="true"
+                android:gravity="center_horizontal"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="37dp"
+                    android:layout_height="37dp"
+                    android:layout_gravity="center_horizontal"
+                    android:scaleType="fitXY"
+                    android:contentDescription="@string/app_name"
+                    android:src="@mipmap/create_photo_graph_album_icon"
+                    />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/iv_add"
+                    android:layout_marginTop="9dp"
+                    android:textStyle="bold"
+                    android:text="创作影集"
+                    android:gravity="center"
+                    android:textColor="#FFFFFF"
+                    android:textSize="17sp" />
+            </LinearLayout>
+
+
+
+        </RelativeLayout>
 
     </LinearLayout>
 

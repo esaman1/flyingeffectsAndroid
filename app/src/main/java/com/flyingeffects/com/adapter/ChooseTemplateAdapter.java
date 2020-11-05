@@ -36,5 +36,10 @@ public class ChooseTemplateAdapter extends BaseItemDraggableAdapter<new_fag_temp
     protected void convert(BaseViewHolder helper, new_fag_template_item item) {
         ImageView iv_cover=helper.getView(R.id.iv_logo);
         Glide.with(context).load(item.getImage()).load(iv_cover);
+        helper.setText(R.id.tv_name,item.getZipid());
+
+
+
+
     }
 }
