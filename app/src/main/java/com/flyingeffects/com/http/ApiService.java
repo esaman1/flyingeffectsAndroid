@@ -214,6 +214,13 @@ public interface ApiService {
     Observable<HttpResult<List<new_fag_template_item>>> getTemplate(@FieldMap Map<String, String> params);
 
 
+
+
+    @FormUrlEncoded
+    @POST("/api/photo/photoList")
+    Observable<HttpResult<List<new_fag_template_item>>> photoList(@FieldMap Map<String, String> params);
+
+
 //
 //    //用戶的关注数或者粉丝数
 //    @FormUrlEncoded

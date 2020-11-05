@@ -42,7 +42,8 @@ public class FromToTemplate {
     public static final String ISSEARCHBJ = "ISSEARCHBJ";
     //搜索模板
     public static final String ISSEARCHTEMPLATE = "ISSEARCHTEMPLATE";
-
+    //影集
+    public static final String PICTUREALBUM = "PICTUREALBUM";
 
 
 }

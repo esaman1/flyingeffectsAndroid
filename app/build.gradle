@@ -19,13 +19,13 @@ android {
     }
     aaptOptions.cruncherEnabled = false //解决分包后打relase 出现了问题
     aaptOptions.useNewCruncher = false
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId "com.flyingeffects.com"
         multiDexEnabled true  //分包支持
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 30
         versionCode 24
         versionName "3.7.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

@@ -4,10 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,28 +15,29 @@ import androidx.viewpager.widget.ViewPager;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter2;
 import com.flyingeffects.com.base.BaseFragment;
+import com.flyingeffects.com.commonlyModel.TemplateDown;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.RequestMessage;
 import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.enity.fromKuaishou;
+import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
-import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.FagBjMvpView;
+import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.ui.presenter.FagBjMvpPresenter;
-import com.flyingeffects.com.ui.view.activity.BackgroundSearchActivity;
 import com.flyingeffects.com.ui.view.activity.ContentAllianceActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
+import com.flyingeffects.com.ui.view.activity.TemplateActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.shixing.sxve.ui.albumType;
-import com.yanzhenjie.album.AlbumFile;
+import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +46,9 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 
 /**
@@ -63,9 +65,6 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     LinearLayout ll_add_child;
 
 
-    @BindView(R.id.iv_search)
-    ImageView iv_search;
-
     private FagBjMvpPresenter presenter;
     public final static int SELECTALBUM = 1;
 
@@ -78,6 +77,9 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
 
     private int lastViewPagerChoosePosition;
 
+    private new_fag_template_item template_item;
+    WaitingDialog_progress waitingDialog_progress;
+
     @Override
     protected int getContentLayout() {
         return R.layout.fag_bj;
@@ -88,6 +90,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
         presenter = new FagBjMvpPresenter(getActivity(), this);
         presenter.requestData();
         EventBus.getDefault().register(this);
+        waitingDialog_progress=new WaitingDialog_progress(getActivity());
     }
 
     @Override
@@ -132,7 +135,6 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                 listView.clear();
                 listTv.clear();
                 list.clear();
-//                FragmentManager manager = getFragmentManager();
                 titles = new String[data.size()];
                 for (int i = 0; i < data.size(); i++) {
                     View view = LayoutInflater.from(getActivity()).inflate(R.layout.view_bj_head, null);
@@ -140,23 +142,20 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                     View view_line = view.findViewById(R.id.view_line_head);
                     tv.setText(data.get(i).getName());
                     tv.setId(i);
-                    tv.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            TemplateType templateType1 = data.get(view.getId());
-                            String str = StringUtil.beanToJSONString(templateType1);
-                            LogUtil.d("OMM2", str);
-                            try {
-                                int id = Integer.parseInt(templateType1.getId());
-                                LogUtil.d("OMM2", "id=" + id);
-                                if (id != 10000) {
-                                    showWitchBtn(view.getId());
-                                } else {
-                                    startActivity(new Intent(getActivity(), ContentAllianceActivity.class));
-                                }
-                            } catch (Exception e) {
-                                showWitchBtn(view.getId());
+                    tv.setOnClickListener(view1 -> {
+                        TemplateType templateType1 = data.get(view1.getId());
+                        String str = StringUtil.beanToJSONString(templateType1);
+                        LogUtil.d("OMM2", str);
+                        try {
+                            int id = Integer.parseInt(templateType1.getId());
+                            LogUtil.d("OMM2", "id=" + id);
+                            if (id != 10000) {
+                                showWitchBtn(view1.getId());
+                            } else {
+                                startActivity(new Intent(getActivity(), ContentAllianceActivity.class));
                             }
+                        } catch (Exception e) {
+                            showWitchBtn(view1.getId());
                         }
                     });
 
@@ -198,7 +197,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                                 String position = data.get(i).getId();
                                 int interPosition = Integer.parseInt(position);
                                 if (interPosition == 10000) {
-                                    if(!DoubleClick.getInstance().isFastZDYDoubleClick(1000)){
+                                    if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
                                         startActivity(new Intent(getActivity(), ContentAllianceActivity.class));
                                     }
                                 } else {
@@ -223,6 +222,58 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                 }
 
             }
+        }
+    }
+
+    public void ShowProgress(int progress) {
+        if(getActivity()!=null&&waitingDialog_progress!=null){
+            Observable.just(progress).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+                @Override
+                public void call(Integer integer) {
+                    if(progress==0){
+                        waitingDialog_progress.openProgressDialog();
+                    }
+                    waitingDialog_progress.setProgress(integer+"");
+                }
+            });
+        }
+    }
+
+
+    /**
+     * description ：得到图片影集
+     * creation date: 2020/11/4
+     * user : zhangtongju
+     */
+    @Override
+    public void PictureAlbum(List<new_fag_template_item> data) {
+        if (getActivity() != null) {
+            if (data != null && data.size() > 0) {
+                template_item = data.get(0);
+                if (template_item != null) {
+                    TemplateDown templateDown=new TemplateDown(new TemplateDown.DownFileCallback() {
+                        @Override
+                        public void isSuccess(String filePath) {
+                            IntoTemplateActivity(filePath);
+                        }
+
+                        @Override
+                        public void showDownProgress(int progress) {
+                            ShowProgress(progress);
+                        }
+                    });
+                    templateDown.prepareDownZip(template_item.getTemplatefile(), template_item.getZipid());
+                }
+            }
+        }
+
+
+    }
+
+    public void IntoTemplateActivity(String path) {
+        if(getActivity()!=null){
+            Observable.just(path).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> toPhotographAlbum(template_item, path));
+
         }
     }
 
@@ -266,11 +317,10 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     }
 
 
-    @OnClick({R.id.iv_add, R.id.iv_cover, R.id.Toolbar, R.id.relative_top, R.id.iv_search,R.id.ll_crate_photograph_album})
+    @OnClick({R.id.iv_add,   R.id.ll_crate_photograph_album,R.id.ll_click_create_video})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.iv_add:
-            case R.id.Toolbar:
+            case R.id.ll_click_create_video:
                 if (BaseConstans.hasLogin()) {
                     toAddSticker();
                 } else {
@@ -279,22 +329,22 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                     startActivity(intent);
                 }
                 break;
-            case R.id.iv_cover:
-                toAddSticker();
-                statisticsEventAffair.getInstance().setFlag(getActivity(), "7_background");
-                break;
-            case R.id.relative_top:
-            case R.id.iv_search:
-                //搜索栏目
-                Intent intent = new Intent(getActivity(), BackgroundSearchActivity.class);
-                intent.putExtra("isFrom", 0);
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-                break;
+//            case R.id.iv_cover:
+//                toAddSticker();
+//                statisticsEventAffair.getInstance().setFlag(getActivity(), "7_background");
+//                break;
+//            case R.id.relative_top:
+//            case R.id.iv_search:
+//                //搜索栏目
+//                Intent intent = new Intent(getActivity(), BackgroundSearchActivity.class);
+//                intent.putExtra("isFrom", 0);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//                startActivity(intent);
+//                break;
 
             case R.id.ll_crate_photograph_album:
-                //创建影集
-                toPhotographAlbum();
+
+                presenter.requestPictureAlbumData();
                 break;
             default:
                 break;
@@ -304,67 +354,55 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
 
     private void toAddSticker() {
         statisticsEventAffair.getInstance().setFlag(getActivity(), "6_customize_bj");
-        AlbumManager.chooseAlbum(getActivity(), 1, SELECTALBUM, new AlbumChooseCallback() {
-            @Override
-            public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
-                if (!isCancel) {
-                    if (!TextUtils.isEmpty(paths.get(0))) {
-                        MattingImage mattingImage = new MattingImage();
-                        mattingImage.createHandle(getActivity(), new MattingImage.InitSegJniStateCallback() {
-                            @Override
-                            public void isDone(boolean isDone) {
-                                if (isDone) {
-                                    String pathType = GetPathTypeModel.getInstance().getMediaType(paths.get(0));
-                                    if (albumType.isVideo(pathType)) {
-                                        Intent intent = new Intent(getActivity(), VideoCropActivity.class);
-                                        intent.putExtra("videoPath", paths.get(0));
-                                        intent.putExtra("comeFrom", "");
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        startActivity(intent);
-                                    } else {
-                                        compressImage(paths.get(0));
-                                    }
-                                }
+        AlbumManager.chooseAlbum(getActivity(), 1, SELECTALBUM, (tag, paths, isCancel, albumFileList) -> {
+            if (!isCancel) {
+                if (!TextUtils.isEmpty(paths.get(0))) {
+                    MattingImage mattingImage = new MattingImage();
+                    mattingImage.createHandle(getActivity(), isDone -> {
+                        if (isDone) {
+                            String pathType = GetPathTypeModel.getInstance().getMediaType(paths.get(0));
+                            if (albumType.isVideo(pathType)) {
+                                Intent intent = new Intent(getActivity(), VideoCropActivity.class);
+                                intent.putExtra("videoPath", paths.get(0));
+                                intent.putExtra("comeFrom", "");
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                            } else {
+                                compressImage(paths.get(0));
                             }
-                        });
-                    }
+                        }
+                    });
                 }
             }
         }, "");
     }
 
 
-
-    private void toPhotographAlbum() {
-        AlbumManager.chooseAlbum(getActivity(), 20, SELECTALBUM, new AlbumChooseCallback() {
-            @Override
-            public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
+    private void toPhotographAlbum(new_fag_template_item item, String templateFilePath) {
+        waitingDialog_progress.closePragressDialog();
+        if(getActivity()!=null){
+            AlbumManager.chooseAlbum(getActivity(), 20, SELECTALBUM, (tag, paths, isCancel, albumFileList) -> {
                 if (!isCancel) {
-                    if (!TextUtils.isEmpty(paths.get(0))) {
-                        MattingImage mattingImage = new MattingImage();
-                        mattingImage.createHandle(getActivity(), new MattingImage.InitSegJniStateCallback() {
-                            @Override
-                            public void isDone(boolean isDone) {
-                                if (isDone) {
-                                    String pathType = GetPathTypeModel.getInstance().getMediaType(paths.get(0));
-                                    if (albumType.isVideo(pathType)) {
-                                        Intent intent = new Intent(getActivity(), VideoCropActivity.class);
-                                        intent.putExtra("videoPath", paths.get(0));
-                                        intent.putExtra("comeFrom", "");
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        startActivity(intent);
-                                    } else {
-                                        compressImage(paths.get(0));
-                                    }
-                                }
-                            }
-                        });
-                    }
+                    Intent intent = new Intent(getActivity(), TemplateActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putStringArrayList("paths", (ArrayList<String>) paths);
+                    bundle.putInt("isPicNum", 20);
+                    bundle.putString("fromTo", FromToTemplate.PICTUREALBUM);
+                    bundle.putInt("picout", 0);
+                    bundle.putInt("is_anime", 0);
+                    bundle.putString("templateName", item.getTitle());
+                    bundle.putString("templateId", item.getId() + "");
+                    bundle.putString("videoTime", "20");
+                    bundle.putStringArrayList("originalPath", (ArrayList<String>) paths);
+                    bundle.putString("templateFilePath", templateFilePath);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.putExtra("Message", bundle);
+                    intent.putExtra("person", item);
+                    startActivity(intent);
                 }
-            }
-        }, "");
+            }, "");
+        }
     }
-
 
 
     private void compressImage(String path) {
@@ -392,11 +430,9 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     }
 
 
-
-
     @Subscribe
     public void onEventMainThread(fromKuaishou event) {
-        if(getActivity()!=null){
+        if (getActivity() != null) {
             showWitchBtn(lastViewPagerChoosePosition);
         }
 

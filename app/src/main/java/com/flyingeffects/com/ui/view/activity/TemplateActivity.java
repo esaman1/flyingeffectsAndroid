@@ -49,6 +49,7 @@ import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
+import com.flyingeffects.com.ui.view.ViewChooseTemplate;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.TimeUtils;
@@ -100,6 +101,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     FrameLayout mContainer;
     //    @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+
     @BindView(R.id.seekBar)
     SeekBar seekBar;
     @BindView(R.id.iv_play)
@@ -267,10 +269,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             videoTime = bundle.getString("videoTime");
             primitivePath = bundle.getString("primitivePath");
             picout = bundle.getInt("picout");
-            LogUtil.d("OOM","picout="+picout);
+            LogUtil.d("OOM", "picout=" + picout);
             originalPath = bundle.getStringArrayList("originalPath");
             templateName = bundle.getString("templateName");
-            LogUtil.d("OOM","templateName="+templateName);
+            LogUtil.d("OOM", "templateName=" + templateName);
             nowTemplateIsAnim = bundle.getInt("is_anime");
         }
         templateItem = (new_fag_template_item) getIntent().getSerializableExtra("person");
@@ -894,7 +896,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         switch (v.getId()) {
             case R.id.tv_top_submit:
-                if(!DoubleClick.getInstance().isFastZDYDoubleClick(1000)){
+                if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
                     if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {
                         statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "4_search_save", templateName);
                     }
@@ -917,7 +919,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
                     presenter.StatisticsToSave(templateId);
                 }
-
 
 
                 break;
@@ -1230,11 +1231,21 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public void initBottomLayout() {
         ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
         if (mTemplateModel.HasBj) {
-            titlesHasBj = new String[]{getString(R.string.template_edit), getString(R.string.template_bj),
-                    getString(R.string.template_music)};
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.PICTUREALBUM)) {
+                titlesHasBj = new String[]{getString(R.string.template), getString(R.string.template_edit), getString(R.string.template_bj),
+                        getString(R.string.template_music)};
+            } else {
+                titlesHasBj = new String[]{getString(R.string.template_edit), getString(R.string.template_bj),
+                        getString(R.string.template_music)};
+            }
         } else {
-            titlesHasBj = new String[]{getString(R.string.template_edit),
-                    getString(R.string.template_music)};
+            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.PICTUREALBUM)) {
+                titlesHasBj = new String[]{getString(R.string.template), getString(R.string.template_edit),
+                        getString(R.string.template_music)};
+            } else {
+                titlesHasBj = new String[]{getString(R.string.template_edit),
+                        getString(R.string.template_music)};
+            }
         }
 
         for (String title : titlesHasBj) {
@@ -1256,9 +1267,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
                     }
                 } else if (position == 2) {
+                    if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.PICTUREALBUM)) {
+                        viewPager.setCurrentItem(2);
+                    } else {
+                        viewPager.setCurrentItem(1);
+                        statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "11_yj_muscle");
+                    }
                     lastChooseCommonTabLayout = 2;
-                    viewPager.setCurrentItem(1);
-                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "11_yj_muscle");
                 } else {
                     lastChooseCommonTabLayout = 0;
                     viewPager.setCurrentItem(0);
@@ -1270,8 +1285,17 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         });
         ArrayList<View> pagerList = new ArrayList<>();
-        View templateThumb = LayoutInflater.from(this).inflate(R.layout.view_template_bg, null);
-        recyclerView = templateThumb.findViewById(R.id.recyclerView);
+
+
+        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.PICTUREALBUM)) {
+
+            View templateThumb = LayoutInflater.from(this).inflate(R.layout.view_choose_template, null);
+            ViewChooseTemplate viewChooseTemplate = new ViewChooseTemplate(TemplateActivity.this, templateThumb);
+            pagerList.add(templateThumb);
+        }
+
+        View templateItemThumb = LayoutInflater.from(this).inflate(R.layout.view_template_bg, null);
+        recyclerView = templateItemThumb.findViewById(R.id.recyclerView);
         pagerList.add(recyclerView);
         initTemplateThumb(mTemplateModel.groupSize);
         templateThumbForMusic = LayoutInflater.from(this).inflate(R.layout.view_choose_music, null);
