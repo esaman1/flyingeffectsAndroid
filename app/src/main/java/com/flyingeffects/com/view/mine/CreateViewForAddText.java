@@ -64,6 +64,7 @@ public class CreateViewForAddText {
     private CreateTemplateTextFrameAdapter createTemplateTextEffectAdapterFrame;
     private String mTTFFolder;
     private downCallback callback;
+    public ImageView iv_down;
     private LinearLayout view;
     private LinearLayout llAddText;
     private View view_line_text;
@@ -105,7 +106,7 @@ public class CreateViewForAddText {
     public void showBottomSheetDialog(String text, String type) {
         inputText = text;
         llAddText = view.findViewById(R.id.ll_add_text);
-        ImageView iv_down = view.findViewById(R.id.iv_down);
+        iv_down = view.findViewById(R.id.iv_down);
         view_line_text = view.findViewById(R.id.view_line_text);
         editText = view.findViewById(R.id.edit_text);
         ll_add_child_text = view.findViewById(R.id.ll_add_child_text);
@@ -155,6 +156,7 @@ public class CreateViewForAddText {
             hideKeyboard();
             if (callback != null) {
                 callback.setText(inputText);
+                callback.hindAddTextStickerView();
             }
         });
 
@@ -493,6 +495,7 @@ public class CreateViewForAddText {
 
         void isSuccess(String color0, String color1, String textFramePath,String frameTitle);
 
+        default void hindAddTextStickerView(){};
     }
 
 

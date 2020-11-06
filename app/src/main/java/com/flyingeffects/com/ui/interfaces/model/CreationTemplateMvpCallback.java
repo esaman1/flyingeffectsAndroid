@@ -9,8 +9,6 @@ public interface CreationTemplateMvpCallback {
 
     void hasPlayingComplete();
 
-    void setgsyVideoProgress(int progress);
-
     void deleteFirstSticker();
 
     void hideKeyBord();
@@ -19,7 +17,7 @@ public interface CreationTemplateMvpCallback {
 
     void animIsComplate();
 
-    void getVideoDuration(int duration,int thumbCount );
+    void getVideoDuration(long duration);
 
     void needPauseVideo();
 

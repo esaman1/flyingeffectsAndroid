@@ -20,7 +20,7 @@ public class SystemUtil {
      * @param context 上下文
      * @return 版本名字
      */
-    public static String getVersionCode(Context context) {
+    public static String getVersionName(Context context) {
         try {
             PackageManager manager = context.getPackageManager();
             PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);

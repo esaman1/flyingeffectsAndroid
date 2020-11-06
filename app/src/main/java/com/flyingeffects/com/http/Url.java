@@ -1,21 +1,17 @@
 package com.flyingeffects.com.http;
 
+import com.flyingeffects.com.constans.BaseConstans;
+
 public class Url {
-
-
-
-
-    private static final String FLY_PRODUCTION = "http://www.flyingeffect.com";
-    private static final String TEST_FLY_PRODUCTION = "http://test.flyingeffect.com";
-
 
     /**
      * user :TongJu  ;描述：当前使用的地址
      * 时间：2018/6/15
+     * PRODUCTION true为正式服务器地址 false为测试服务器地址
      **/
 
-    public static final String BASE_URL = FLY_PRODUCTION;
-
+    public static final String BASE_URL = BaseConstans.PRODUCTION ?
+            "http://www.flyingeffect.com" : "http://test.flyingeffect.com";
 
 }
 

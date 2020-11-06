@@ -125,7 +125,7 @@ public class CreationTemplateMvpModel {
     private Vibrator vibrator;
     private String mImageCopyFolder;
     private boolean isCheckedMatting = true;
-    private HorizontalListView hListView;
+
     /**
      * 当前添加的音乐路径
      */
@@ -332,10 +332,6 @@ public class CreationTemplateMvpModel {
             manage.toMatting(mattingPath);
             GlideBitmapPool.putBitmap(mBitmap);
         });
-    }
-
-    public void scrollToPosition(int position) {
-        linearLayoutManager.scrollToPositionWithOffset(position, 0);
     }
 
     private TemplateGridViewAdapter gridAdapter;
@@ -1354,18 +1350,10 @@ public class CreationTemplateMvpModel {
         stopAllAnim();
     }
 
-    //    private TimelineAdapter mTimelineAdapter;
-    private int mScrollX;
-    private LinearLayoutManager linearLayoutManager;
-
-    public void initVideoProgressView(HorizontalListView hListView) {
-        this.hListView = hListView;
+    public void initVideoProgressView() {
         //动态设置距离左边的位置
-        if (videoInfo != null) {
-            initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), videoInfo.getDuration(), videoInfo.getDuration() / 2, mVideoPath);
-        } else {
+        if (videoInfo == null) {
             getPlayVideoDuration();
-            initSingleThumbSize(720, 1280, defaultVideoDuration, defaultVideoDuration / 2, "");
         }
     }
 
@@ -1414,83 +1402,8 @@ public class CreationTemplateMvpModel {
             LogUtil.d("OOM", "获得贴纸时长失败");
             defaultVideoDuration = 10 * 1000;
         }
-//        callback.showRenderVideoTime(defaultVideoDuration);
+        callback.getVideoDuration(defaultVideoDuration);
     }
-
-
-    private int mTotalWidth;
-
-    private void initSingleThumbSize(int width, int height, float duration, float mTemplateDuration, String mVideoPath) {
-        // 需要截取的listWidth宽度
-        int listWidth = hListView.getWidth() - hListView.getPaddingLeft() - hListView.getPaddingRight();
-        int listHeight = hListView.getHeight();
-        float scale = (float) listHeight / height;
-        int thumbWidth = (int) (scale * width);
-        //其中listWidth表示当前截取的大小
-        int thumbCount = (int) (listWidth * (duration / mTemplateDuration) / thumbWidth);
-        thumbCount = thumbCount > 0 ? thumbCount : 0;
-        //每帧所占的时间
-        final int interval = (int) (duration / thumbCount);
-        int[] mTimeUs = new int[thumbCount];
-        for (int i = 0; i < thumbCount; i++) {
-            mTimeUs[i] = i * interval * 1000;
-        }
-        mTotalWidth = thumbWidth * thumbCount;
-        callback.getVideoDuration((int) duration, thumbCount);
-        int dp40 = screenUtil.dip2px(context, 43);
-        int screenWidth = screenUtil.getScreenWidth((Activity) context);
-        listViewForVideoThumbAdapter adapter;
-        if (!TextUtils.isEmpty(mVideoPath)) {
-            adapter = new listViewForVideoThumbAdapter(context, mTimeUs, Uri.fromFile(new File(mVideoPath)), thumbWidth, listHeight, screenWidth / 2, screenWidth / 2 - dp40);
-        } else {
-            adapter = new listViewForVideoThumbAdapter(context, mTimeUs, null, thumbWidth, listHeight, screenWidth / 2, screenWidth / 2 - dp40);
-        }
-
-        hListView.setAdapter(adapter);
-        int realWidth = (screenWidth - screenUtil.dip2px(context, 43)) * 2;
-        LogUtil.d("OOM", "realWidth=" + realWidth);
-        hListView.setOnScrollListener(mNextX -> {
-            float preF = mNextX / realWidth;
-            int frame = (int) (duration * preF);
-            LogUtil.d("OOM", "preF=" + preF);
-            LogUtil.d("OOM", "frame=" + frame);
-            callback.setgsyVideoProgress(frame);
-        });
-
-
-    }
-
-
-    public void initVideoProgressView(RecyclerView list_thumb) {
-        //动态设置距离左边的位置
-        int screenWidth = screenUtil.getScreenWidth((Activity) context);
-        int dp40 = screenUtil.dip2px(context, 40);
-        list_thumb.setPadding(screenWidth / 2 - dp40, 0, 0, 0);
-//        this.list_thumb = list_thumb;
-        linearLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-        list_thumb.setLayoutManager(linearLayoutManager);
-        TimelineAdapter mTimelineAdapter = new TimelineAdapter();
-        mTimelineAdapter.marginRight(screenWidth / 2);
-        list_thumb.setAdapter(mTimelineAdapter);
-        list_thumb.setHasFixedSize(true);
-        list_thumb.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NotNull RecyclerView recyclerView, int newState) {
-            }
-
-            @Override
-            public void onScrolled(@NotNull RecyclerView recyclerView, int dx, int dy) {
-                mScrollX += dx;
-                float percent = (float) mScrollX / mTotalWidth;
-                LogUtil.d("oom", "percent=" + percent);
-                int progress = (int) (videoInfo.getDuration() * percent);
-                callback.setgsyVideoProgress(progress);
-            }
-        });
-        initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), videoInfo.getDuration(), videoInfo.getDuration() / 2, mVideoPath);
-
-    }
-
 
     private void disMissStickerFrame() {
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {

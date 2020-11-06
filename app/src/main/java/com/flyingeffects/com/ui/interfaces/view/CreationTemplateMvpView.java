@@ -17,9 +17,7 @@ public interface CreationTemplateMvpView {
 
     void hideTextDialog();
 
-    void setgsyVideoProgress(int progress);
-
-    void getVideoDuration(int duration,int thumbCount);
+    void getVideoDuration(long duration);
 
     void needPauseVideo();
 

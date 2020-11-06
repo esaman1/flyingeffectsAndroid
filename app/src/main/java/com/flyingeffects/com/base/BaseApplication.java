@@ -88,7 +88,7 @@ public class BaseApplication extends MultiDexApplication {
         NTAdSDK.init(this
                 , new NTAdConfig.Builder()
                         .appName("飞闪")
-                        .appVersion(SystemUtil.getVersionCode(this))
+                        .appVersion(SystemUtil.getVersionName(this))
                         .appId("61074cddf23c0a8dd2b7e00996057e78")
                         .appChannel(ChannelUtil.getChannel(this))
                         .TTAppKey(AdConfigs.APP_ID_CSJ)

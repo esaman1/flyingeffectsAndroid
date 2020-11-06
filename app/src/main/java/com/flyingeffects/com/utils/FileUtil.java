@@ -2,6 +2,7 @@ package com.flyingeffects.com.utils;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -25,6 +26,9 @@ import android.graphics.Matrix;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.constans.BaseConstans;
 
 
 public class FileUtil {
@@ -909,13 +913,94 @@ public class FileUtil {
 
 
 
+    public static String getFrameTempPath() {
+        String path = BaseConstans.FRAME_TEMP_PATH;
+        File file = new File(path);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        return path;
+    }
 
+    public static boolean deleteAllInDir(String str) {
+        return deleteAllInDir(getFileByPath(str));
+    }
 
+    private static boolean isSpace(String str) {
+        if (str == null) {
+            return true;
+        }
+        int length = str.length();
+        for (int i = 0; i < length; i++) {
+            if (!Character.isWhitespace(str.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
 
+    public static File getFileByPath(String str) {
+        return isSpace(str) ? null : new File(str);
+    }
 
+    public static boolean deleteAllInDir(File file) {
+        return deleteFilesInDirWithFilter(file, new FileFilter() {
+            public boolean accept(File file) {
+                return true;
+            }
+        });
+    }
 
+    public static boolean deleteFilesInDirWithFilter(File file, FileFilter fileFilter) {
+        if (file == null) {
+            return false;
+        }
+        if (!file.exists()) {
+            return true;
+        }
+        if (!file.isDirectory()) {
+            return false;
+        }
+        File[] listFiles = file.listFiles();
+        if (!(listFiles == null || listFiles.length == 0)) {
+            for (File file2 : listFiles) {
+                if (fileFilter.accept(file2)) {
+                    if (file2.isFile()) {
+                        if (!file2.delete()) {
+                            return false;
+                        }
+                    } else if (file2.isDirectory() && !deleteDir(file2)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
 
-
-
+    public static boolean deleteDir(File file) {
+        if (file == null) {
+            return false;
+        }
+        if (!file.exists()) {
+            return true;
+        }
+        if (!file.isDirectory()) {
+            return false;
+        }
+        File[] listFiles = file.listFiles();
+        if (!(listFiles == null || listFiles.length == 0)) {
+            for (File file2 : listFiles) {
+                if (file2.isFile()) {
+                    if (!file2.delete()) {
+                        return false;
+                    }
+                } else if (file2.isDirectory() && !deleteDir(file2)) {
+                    return false;
+                }
+            }
+        }
+        return file.delete();
+    }
 
 }

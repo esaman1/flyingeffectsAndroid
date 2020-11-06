@@ -1,14 +1,14 @@
-Executable : E:\Android\sdk\cmake\3.10.2.4988404\bin\cmake.exe
+                Executable : E:\Android\sdk\cmake\3.10.2.4988404\bin\cmake.exe
 arguments : 
 -HE:\NinetonProject\feishan_Android\segjni\src\main\cpp
 -DCMAKE_FIND_ROOT_PATH=E:\NinetonProject\feishan_Android\segjni\.cxx\cmake\release\prefab\arm64-v8a\prefab
 -DCMAKE_BUILD_TYPE=Release
--DCMAKE_TOOLCHAIN_FILE=E:\Android\sdk\ndk\21.0.6113669\build\cmake\android.toolchain.cmake
+-DCMAKE_TOOLCHAIN_FILE=E:\Android\sdk\ndk\21.1.6352462\build\cmake\android.toolchain.cmake
 -DANDROID_ABI=arm64-v8a
--DANDROID_NDK=E:\Android\sdk\ndk\21.0.6113669
+-DANDROID_NDK=E:\Android\sdk\ndk\21.1.6352462
 -DANDROID_PLATFORM=android-16
 -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a
--DCMAKE_ANDROID_NDK=E:\Android\sdk\ndk\21.0.6113669
+-DCMAKE_ANDROID_NDK=E:\Android\sdk\ndk\21.1.6352462
 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=E:\NinetonProject\feishan_Android\segjni\build\intermediates\cmake\release\obj\arm64-v8a
 -DCMAKE_MAKE_PROGRAM=E:\Android\sdk\cmake\3.10.2.4988404\bin\ninja.exe

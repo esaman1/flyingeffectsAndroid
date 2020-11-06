@@ -1,8 +1,8 @@
 {
   "buildFiles": [
-    "E:\\Android\\sdk\\ndk\\21.0.6113669\\build\\cmake\\android.toolchain.cmake",
-    "E:\\Android\\sdk\\ndk\\21.0.6113669\\build\\cmake\\platforms.cmake",
-    "E:\\NinetonProject\\feishan_Android\\segjni\\src\\main\\cpp\\CMakeLists.txt"
+    "E:\\NinetonProject\\feishan_Android\\segjni\\src\\main\\cpp\\CMakeLists.txt",
+    "E:\\Android\\sdk\\ndk\\21.1.6352462\\build\\cmake\\android.toolchain.cmake",
+    "E:\\Android\\sdk\\ndk\\21.1.6352462\\build\\cmake\\platforms.cmake"
   ],
   "cleanCommands": [
     "E:\\Android\\sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"E:\\NinetonProject\\feishan_Android\\segjni\\.cxx\\cmake\\release\\armeabi-v7a\" clean"

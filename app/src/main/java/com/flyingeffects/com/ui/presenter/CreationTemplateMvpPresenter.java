@@ -76,11 +76,6 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.GetVideoCover(path);
     }
 
-
-    public void scrollToPosition(int position){
-        creationTemplatemodel.scrollToPosition(position);
-    }
-
     public void addNewSticker(String path,String originalPath){
         creationTemplatemodel.addNewSticker(path,originalPath);
     }
@@ -111,12 +106,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.initStickerView(path,originalPath);
     }
 
-    public void initVideoProgressView(RecyclerView mTimeLineView){
-        creationTemplatemodel.initVideoProgressView(mTimeLineView);
-    }
-
-    public void initVideoProgressView(HorizontalListView mTimeLineView){
-        creationTemplatemodel.initVideoProgressView(mTimeLineView);
+    public void initVideoProgressView(){
+        creationTemplatemodel.initVideoProgressView();
     }
 
     public void requestStickersList(){
@@ -143,11 +134,6 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
     @Override
-    public void setgsyVideoProgress(int progress) {
-        creationTemplatemvpView.setgsyVideoProgress(progress);
-    }
-
-    @Override
     public void deleteFirstSticker() {
         creationTemplatemvpView.deleteFirstSticker();
     }
@@ -168,8 +154,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
     @Override
-    public void getVideoDuration(int duration,int thumbCount) {
-        creationTemplatemvpView.getVideoDuration(duration,thumbCount);
+    public void getVideoDuration(long duration) {
+        creationTemplatemvpView.getVideoDuration(duration);
     }
 
     @Override
