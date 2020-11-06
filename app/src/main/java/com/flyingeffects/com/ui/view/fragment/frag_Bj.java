@@ -29,6 +29,7 @@ import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.ui.presenter.FagBjMvpPresenter;
+import com.flyingeffects.com.ui.view.activity.BackgroundSearchActivity;
 import com.flyingeffects.com.ui.view.activity.ContentAllianceActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
@@ -317,7 +318,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     }
 
 
-    @OnClick({R.id.iv_add,   R.id.ll_crate_photograph_album,R.id.ll_click_create_video})
+    @OnClick({R.id.iv_add,   R.id.ll_crate_photograph_album,R.id.ll_click_create_video,R.id.iv_search})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_click_create_video:
@@ -334,13 +335,13 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
 //                statisticsEventAffair.getInstance().setFlag(getActivity(), "7_background");
 //                break;
 //            case R.id.relative_top:
-//            case R.id.iv_search:
-//                //搜索栏目
-//                Intent intent = new Intent(getActivity(), BackgroundSearchActivity.class);
-//                intent.putExtra("isFrom", 0);
-//                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//                startActivity(intent);
-//                break;
+            case R.id.iv_search:
+                //搜索栏目
+                Intent intent = new Intent(getActivity(), BackgroundSearchActivity.class);
+                intent.putExtra("isFrom", 0);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                break;
 
             case R.id.ll_crate_photograph_album:
 
