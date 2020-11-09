@@ -2,10 +2,12 @@ package com.flyingeffects.com.constans;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Environment;
 import android.text.TextUtils;
 
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
+import com.flyingeffects.com.http.Url;
 import com.flyingeffects.com.http.abc;
 import com.flyingeffects.com.manager.SPHelper;
 import com.flyingeffects.com.utils.ChannelUtil;
@@ -13,6 +15,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.OsUtils;
 import com.flyingeffects.com.utils.StringUtil;
 
+import java.io.File;
 import java.util.HashMap;
 
 /**
@@ -30,18 +33,22 @@ public class BaseConstans {
     public static boolean hasCreatingSegJni = true;
     public static String titok;
     public static String kuaishou;
-    public static final boolean PRODUCTION = false;
+    /**是否是正式环境*/
+    public static final boolean PRODUCTION = true;
     private static String channel = "";
     private static String versionCode = "";
     private static String uuid = "";
-    public static final String PRIVACYPOLICY = "http://www.flyingeffect.com/fly/FS-PrivacyPolicy.html";
+    public static final String PRIVACYPOLICY = Url.BASE_URL + "/fly/FS-PrivacyPolicy.html";
     public static String service_wxi;
     public static boolean TemplateHasWatchingAd=false;
     public static ConfigForTemplateList configList;
     private static int hasAdvertising = 0;  //是否有广告，0表示没得，1表示有，全局控制
     public static int showAgainKaipingAd = 60; //退出后台后多少秒后会重新显示插屏
     private static boolean isNewUserForAdvertising = false; //只是用前几次的新用户
-    public static final String PROTOCOL = "http://www.flyingeffect.com/fly/FS-Agreement.html";
+    public static final String PROTOCOL = Url.BASE_URL + "/fly/FS-Agreement.html";
+
+    public static final String FILE_PATH;
+    public static final String FRAME_TEMP_PATH;
 
     public static HashMap getRequestHead(HashMap<String, String> map) {
         String nowTimestamp = getTimestamp() + "";
@@ -437,7 +444,13 @@ public class BaseConstans {
 
 
 
-
+    static {
+        FILE_PATH = BaseApplication.getInstance().getCacheDir().getAbsolutePath() + File.separator + "FeiShan_Cache";
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(FILE_PATH);
+        stringBuilder.append("/frameTemp");
+        FRAME_TEMP_PATH = stringBuilder.toString();
+    }
 
 
 }

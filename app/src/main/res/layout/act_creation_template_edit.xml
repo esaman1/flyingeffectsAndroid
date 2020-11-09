@@ -218,7 +218,7 @@
         android:id="@+id/ll_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/viewPager"
+        android:layout_above="@+id/rl_seek_bar"
         android:background="@color/home_base_balk_color"
         android:orientation="vertical">
 
@@ -257,17 +257,9 @@
                 android:layout_toEndOf="@+id/ll_play"
                 android:gravity="center">
 
-                <!--                <android.support.v7.widget.RecyclerView-->
-                <!--                    android:id="@+id/list_thumb"-->
-                <!--                    android:layout_width="match_parent"-->
-                <!--                    android:layout_height="match_parent"-->
-                <!--                    android:layout_centerVertical="true"-->
-                <!--                    android:clipToPadding="false"-->
-                <!--                    />-->
 
-
-                <com.flyingeffects.com.view.HorizontalListView
-                    android:id="@+id/iv_list"
+                <com.flyingeffects.com.view.drag.CreationTemplateProgressBarView
+                    android:id="@+id/progressBarView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/home_base_balk_color" />
@@ -289,7 +281,7 @@
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
-                android:background="#FFFFFF" />
+                android:background="#5496FF" />
 
         </RelativeLayout>
 
@@ -301,9 +293,25 @@
         android:layout_width="match_parent"
         android:layout_height="170dp"
         android:layout_above="@+id/view_line"
+        android:visibility="gone"
         android:background="#000000" />
-
-
+    <RelativeLayout
+        android:id="@+id/rl_seek_bar"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:layout_above="@+id/view_line">
+        <com.flyingeffects.com.view.drag.TemplateMaterialSeekBarView
+            android:id="@+id/material_SeekBarView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="2dp"
+            android:background="#000000" />
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:background="#5496FF" />
+    </RelativeLayout>
     <View
         android:id="@+id/view_line"
         android:layout_width="match_parent"
@@ -336,7 +344,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="贴纸"
-            android:textColor="#5496FF" />
+            android:textColor="@color/white"  />
 
 
         <TextView
@@ -373,5 +381,15 @@
     </LinearLayout>
 
    <include layout="@layout/view_add_text" />
-
+   <TextView
+       android:id="@+id/tv_material_complete"
+       android:layout_width="@dimen/dp_170"
+       android:layout_height="@dimen/dp_34"
+       android:layout_centerHorizontal="true"
+       android:layout_alignParentBottom="true"
+       android:layout_marginBottom="@dimen/dp_66"
+       android:background="@drawable/shape_bule_rect_5"
+       android:text="完成"
+       android:gravity="center"
+       android:textColor="@color/white"/>
 </RelativeLayout>

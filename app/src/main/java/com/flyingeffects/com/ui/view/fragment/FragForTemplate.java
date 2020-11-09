@@ -174,6 +174,8 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 break;
+            default:
+                break;
         }
     }
 
