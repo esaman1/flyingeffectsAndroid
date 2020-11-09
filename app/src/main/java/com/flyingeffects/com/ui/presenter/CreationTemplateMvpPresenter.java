@@ -32,6 +32,12 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
+
+    public void getNowPlayingTime(long nowProgressTime){
+        creationTemplatemodel.getNowPlayingTime(nowProgressTime);
+    }
+
+
     public void ChangeTextLabe(String str){
         creationTemplatemodel.ChangeTextLabe(str);
     }
@@ -39,6 +45,10 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
 
     public void ChangeTextColor(String color0, String color1,String title){
         creationTemplatemodel.ChangeTextColor(color0,color1,title);
+    }
+
+    public void isEndTimer(){
+        creationTemplatemodel.isEndTimer();
     }
 
     public void  ChangeTextFrame(String textBjPath, String textFramePath,String frameTitle){

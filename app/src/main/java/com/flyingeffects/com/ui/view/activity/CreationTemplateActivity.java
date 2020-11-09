@@ -770,6 +770,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if (ll_green_background.getVisibility() == View.VISIBLE) {
             //可见的时候需要修稿这里
             if (isLandscape) {
+
+
                 //横屏的情况
                 iv_green_background.post(() -> {
                     int oriWidth = ll_space.getWidth();
@@ -1113,6 +1115,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                                 mProgressBarView.scrollToPosition(nowTime);
                             }
                         }
+                        presenter.getNowPlayingTime(totalPlayTime);
+
+
                     }
                 });
             }
@@ -1133,6 +1138,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private void endTimer() {
         LogUtil.d("playBGMMusic", "pauseBgmMusic---------------endTimer---------------");
         destroyTimer();
+        presenter.isEndTimer();
         if (bgmPlayer != null) {
             bgmPlayer.stop();
             bgmPlayer = null;
