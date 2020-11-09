@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
@@ -38,6 +39,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
+import com.yanzhenjie.PhotoChooseIndex;
 import com.yanzhenjie.album.AlbumFile;
 import com.yanzhenjie.album.AlbumFolder;
 import com.yanzhenjie.album.R;
@@ -53,6 +55,7 @@ import com.yanzhenjie.album.widget.ColorProgressBar;
 import com.yanzhenjie.album.widget.divider.Api21ItemDivider;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by YanZhenjie on 2018/4/7.
@@ -112,6 +115,7 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 getPresenter().reLoadAlbumData(tab);
+                ClearAllCountData();
             }
 
             @Override
@@ -348,6 +352,11 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
 
     }
 
+
+
+    /**
+     * description ：相册扫描后的回调
+     */
     @Override
     public void bindAlbumFolder(AlbumFolder albumFolder) {
         mTvSwitchFolder.setText(albumFolder.getName());
@@ -373,7 +382,50 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
     public void setCheckedCountAndTotal(int count, int total) {
         mBtnPreview.setText(" (" + count + ")");
         mTvCount.setText(String.format("已选择 %d/%d", count, total));
+        ArrayList<Integer>needShowNubList = PhotoChooseIndex.getInstance().GetPhotoIndexList();
+        int lastPosition=PhotoChooseIndex.getInstance().GetLastIndex();
+        List<AlbumFile>albumFiles= mAdapter.getAlbumFiles();
+        if(albumFiles!=null&&albumFiles.size()>0){
+            if(needShowNubList!=null&&needShowNubList.size()>0){
+                for(int i=1;i<=needShowNubList.size();i++){
+                    int needChoose=needShowNubList.get(i-1);
+                    AlbumFile albumFile=albumFiles.get(needChoose);
+                    albumFile.setNowChooseIndex(i);
+                }
+            }
+        }
+        if(lastPosition!=-1){
+            //还原之前的
+            AlbumFile albumFile=albumFiles.get(lastPosition);
+            albumFile.setNowChooseIndex(-1);
+        }
+        mAdapter.notifyDataSetChanged();
     }
+
+
+
+    /**
+     * description ：清除全部标记
+     * creation date: 2020/11/3
+     * user : zhangtongju
+     */
+    public void ClearAllCountData(){
+        ArrayList<Integer>needShowNubList = PhotoChooseIndex.getInstance().GetPhotoIndexList();
+        List<AlbumFile>albumFiles= mAdapter.getAlbumFiles();
+        if(albumFiles!=null&&albumFiles.size()>0){
+            if(needShowNubList!=null&&needShowNubList.size()>0){
+                for(int i=1;i<=needShowNubList.size();i++){
+                    int needChoose=needShowNubList.get(i-1);
+                    AlbumFile albumFile=albumFiles.get(needChoose);
+                    albumFile.setNowChooseIndex(0);
+
+                }
+            }
+        }
+        mAdapter.notifyDataSetChanged();
+        PhotoChooseIndex.getInstance().ClearAllData();
+    }
+
 
 
     @Override

@@ -218,9 +218,9 @@ public class CreateViewForAddText {
                 }
             });
             if ("bj_template".equals(type)) {
-                statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_font", listFont.get(i).getTitle());
+                statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_font", listFrame.get(i).getTitle());
             } else if ("OneKey_template".equals(type)) {
-                statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_font", listFont.get(i).getTitle());
+                statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_font", listFrame.get(i).getTitle());
             }
 
         });

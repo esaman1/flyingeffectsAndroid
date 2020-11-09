@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.LinearLayout;
 
+import com.yanzhenjie.PhotoChooseIndex;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.AlbumFile;
 import com.yanzhenjie.album.Filter;
@@ -68,6 +69,7 @@ public class AlbumSingleWrapper extends BasicChoiceAlbumWrapper<AlbumSingleWrapp
         intent.putExtra(Album.KEY_INPUT_CAMERA_QUALITY, mQuality);
         intent.putExtra(Album.KEY_INPUT_CAMERA_DURATION, mLimitDuration);
         intent.putExtra(Album.KEY_INPUT_CAMERA_BYTES, mLimitBytes);
+        PhotoChooseIndex.getInstance().ClearAllData();
         mContext.startActivity(intent);
     }
 }

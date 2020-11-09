@@ -33,6 +33,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 
 import com.google.android.material.tabs.TabLayout;
+import com.yanzhenjie.PhotoChooseIndex;
 import com.yanzhenjie.album.Action;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.AlbumFile;
@@ -343,6 +344,8 @@ public class AlbumActivity extends BaseActivity implements
             }
             mView.toast(getResources().getQuantityString(messageRes, mLimitCount, mLimitCount));
         } else {
+
+
             switch (mFunction) {
                 case Album.FUNCTION_CHOICE_IMAGE: {
                     takePicture();
@@ -490,6 +493,7 @@ public class AlbumActivity extends BaseActivity implements
 
     @Override
     public void tryCheckItem(CompoundButton button, int position) {
+        PhotoChooseIndex.getInstance().PutPhotoIndex(position);
         AlbumFile albumFile = mAlbumFolders.get(mCurrentFolder).getAlbumFiles().get(position);
         if (button.isChecked()) {
             if (mCheckedList.size() >= mLimitCount) {
@@ -526,6 +530,9 @@ public class AlbumActivity extends BaseActivity implements
     }
 
     private void setCheckedCount() {
+
+
+
         int count = mCheckedList.size();
         mView.setCheckedCountAndTotal(count, mLimitCount);
     }

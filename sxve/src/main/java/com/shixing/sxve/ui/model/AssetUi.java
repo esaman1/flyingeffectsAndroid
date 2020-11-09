@@ -81,6 +81,8 @@ public abstract class AssetUi {
 
     public abstract void singleTap(GroupModel groupModel);
 
+    public abstract String getOriginPath(String folder);
+
 
     public abstract void hasChooseBg(String path,boolean isVideo);
 

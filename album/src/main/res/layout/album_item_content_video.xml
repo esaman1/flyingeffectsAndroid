@@ -27,6 +27,18 @@
             android:contentDescription="@string/album_title"
             android:scaleType="centerCrop" />
 
+        <TextView
+            android:layout_alignParentEnd="true"
+            android:textColor="#FFFFFF"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:background="#90000000"
+            android:gravity="center"
+            android:id="@+id/tv_count"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+
         <com.yanzhenjie.album.widget.TransferLayout
             style="@style/Album.WrapContent.Transfer"
             android:layout_alignParentEnd="true"
@@ -34,9 +46,11 @@
 
             <CheckBox
                 android:id="@+id/check_box"
+                android:visibility="invisible"
                 style="@style/Album.CheckBox.WrapContent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+
                 android:layout_alignParentRight="true"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="5dp"
@@ -58,6 +72,10 @@
             android:gravity="center"
             android:maxLines="1"
             android:textColor="@color/albumFontLight" />
+
+
+
+
 
     </RelativeLayout>
 

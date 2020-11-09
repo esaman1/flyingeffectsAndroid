@@ -145,6 +145,11 @@ public class MediaUiModel1 extends MediaUiModel {
     }
 
     @Override
+    public String getOriginPath(String folder) {
+        return null;
+    }
+
+    @Override
     public void hasChooseBg(String path,boolean isVideo) {
 
     }

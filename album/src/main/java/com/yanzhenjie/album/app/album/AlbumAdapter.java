@@ -72,6 +72,11 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.mAlbumFiles = albumFiles;
     }
 
+
+    public List<AlbumFile> getAlbumFiles() {
+        return  mAlbumFiles;
+    }
+
     public void setAddClickListener(OnItemClickListener addPhotoClickListener) {
         this.mAddPhotoClickListener = addPhotoClickListener;
     }
@@ -221,7 +226,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         private ImageView mIvImage;
         private CheckBox mCheckBox;
-
+        private TextView tv_count;
         private FrameLayout mLayoutLayer;
         private SquareCardView squareCardView;
 
@@ -231,7 +236,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             this.hasCamera = hasCamera;
             this.mItemClickListener = itemClickListener;
             this.mCheckedClickListener = checkedClickListener;
-
+            tv_count=itemView.findViewById(R.id.tv_count);
             mIvImage = itemView.findViewById(R.id.iv_album_content_image);
             mCheckBox = itemView.findViewById(R.id.check_box);
             mLayoutLayer = itemView.findViewById(R.id.layout_layer);
@@ -249,6 +254,12 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     .getAlbumLoader()
                     .load(mIvImage, albumFile);
 
+            if(albumFile.getNowChooseIndex()!=0&&albumFile.getNowChooseIndex()!=-1){
+                tv_count.setText(albumFile.getNowChooseIndex()+"");
+                tv_count.setVisibility(View.VISIBLE);
+            }else{
+                tv_count.setVisibility(View.GONE);
+            }
             mLayoutLayer.setVisibility(albumFile.isDisable() ? View.VISIBLE : View.GONE);
         }
 
@@ -279,6 +290,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         private TextView mTvDuration;
         private SquareCardView squareCardView;
         private FrameLayout mLayoutLayer;
+        private TextView tv_count;
 
         VideoHolder(View itemView, boolean hasCamera,
                     OnItemClickListener itemClickListener, OnCheckedClickListener checkedClickListener, View.OnLongClickListener LongClickListener) {
@@ -286,7 +298,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             this.hasCamera = hasCamera;
             this.mItemClickListener = itemClickListener;
             this.mCheckedClickListener = checkedClickListener;
-
+            tv_count=itemView.findViewById(R.id.tv_count);
             mIvImage = itemView.findViewById(R.id.iv_album_content_image);
             mCheckBox = itemView.findViewById(R.id.check_box);
             mTvDuration = itemView.findViewById(R.id.tv_duration);
@@ -308,6 +320,14 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 mTvDuration.setVisibility(View.VISIBLE);
                 mTvDuration.setText(AlbumUtils.convertDuration(albumFile.getDuration()));
             }
+
+            if(albumFile.getNowChooseIndex()!=-1&&albumFile.getNowChooseIndex()!=0){
+                tv_count.setText(albumFile.getNowChooseIndex()+"");
+                tv_count.setVisibility(View.VISIBLE);
+            }else{
+                tv_count.setVisibility(View.GONE);
+            }
+
             mLayoutLayer.setVisibility(albumFile.isDisable() ? View.VISIBLE : View.GONE);
         }
 
