@@ -37,14 +37,14 @@ public class TemplateThumbAdapter extends BaseItemDraggableAdapter<TemplateThumb
     protected void convert(BaseViewHolder helper, TemplateThumbItem item) {
         helper.addOnClickListener(R.id.iv_show_un_select);
         RelativeLayout rela_parent=helper.getView(R.id.rela_parent);
-        LinearLayout ll_select=helper.getView(R.id.ll_select);
+//        LinearLayout ll_select=helper.getView(R.id.ll_select);
         TextView tv_compile=helper.getView(R.id.tv_compile);
 
-        if(item.isRedate()){
-            ll_select.setVisibility(View.VISIBLE);
-        }else {
-            ll_select.setVisibility(View.GONE);
-        }
+//        if(item.isRedate()){
+//            ll_select.setVisibility(View.VISIBLE);
+//        }else {
+//            ll_select.setVisibility(View.GONE);
+//        }
         int position = helper.getLayoutPosition();
         ImageView iv_show_un_select = helper.getView(R.id.iv_show_un_select);
         if (item.getPathUrl() != null && !item.getPathUrl().equals("")) {
@@ -57,10 +57,10 @@ public class TemplateThumbAdapter extends BaseItemDraggableAdapter<TemplateThumb
         }
         if(item.getIsCheck()==0){
             tv_compile.setVisibility(View.VISIBLE);
-            rela_parent.setBackground(context.getDrawable(R.drawable.template_adapter_item_bj));
+          //  rela_parent.setBackground(context.getDrawable(R.drawable.template_adapter_item_bj));
         }else{
             tv_compile.setVisibility(View.GONE);
-            rela_parent.setBackground(context.getDrawable(R.drawable.template_adapter_item_unselete_bj));
+         //   rela_parent.setBackground(context.getDrawable(R.drawable.template_adapter_item_unselete_bj));
         }
         helper.setText(R.id.tv_num, position + 1 + "");
 
