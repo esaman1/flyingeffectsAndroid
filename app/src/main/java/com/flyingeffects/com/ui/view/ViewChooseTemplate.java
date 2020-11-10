@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,6 +36,7 @@ public class ViewChooseTemplate {
     private Context context;
     private ChooseTemplateAdapter templateThumbAdapter;
     private List<new_fag_template_item> list = new ArrayList<>();
+    private int lastChooseItem;
 
     public ViewChooseTemplate(Context context, View templateThumb, Callback callback) {
         this.context = context;
@@ -50,15 +52,23 @@ public class ViewChooseTemplate {
         recyclerView = templateThumb.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(layoutManager);
         templateThumbAdapter = new ChooseTemplateAdapter(R.layout.item_choose_template, list, context);
-        templateThumbAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
 
-            }
-        });
 
         templateThumbAdapter.setOnItemClickListener((adapter, view, position) -> {
             WaitingDialog.openPragressDialog(context);
             new_fag_template_item items=list.get(position);
+            items.setCheckItem(true);
+            if(position!=lastChooseItem){
+                new_fag_template_item lastItem=list.get(lastChooseItem);
+                lastItem.setCheckItem(false);
+                adapter.notifyItemChanged(lastChooseItem);
+            }else{
+                if(callback!=null){
+                    callback.isNeedToCutVideo(position);
+                }
+            }
+            lastChooseItem=position;
+            adapter.notifyItemChanged(position);
             TemplateDown templateDown=new TemplateDown(new TemplateDown.DownFileCallback() {
                 @Override
                 public void isSuccess(String filePath) {
@@ -96,6 +106,8 @@ public class ViewChooseTemplate {
                 LogUtil.d("OOM2",test);
                 list.clear();
                 list.addAll(data);
+                new_fag_template_item items=list.get(0);
+                items.setCheckItem(true);
                 templateThumbAdapter.notifyDataSetChanged();
             }
         }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
@@ -108,6 +120,7 @@ public class ViewChooseTemplate {
 
         void onItemClick(int position,String  filePath, new_fag_template_item item);
 
+        void isNeedToCutVideo(int position);
 
     }
 

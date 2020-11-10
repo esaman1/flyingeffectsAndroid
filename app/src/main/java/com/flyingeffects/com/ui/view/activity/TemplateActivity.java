@@ -1298,15 +1298,15 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             View templateThumb = LayoutInflater.from(this).inflate(R.layout.view_choose_template, null);
             ViewChooseTemplate viewChooseTemplate = new ViewChooseTemplate(TemplateActivity.this, templateThumb, new ViewChooseTemplate.Callback() {
                 @Override
-                public void onItemClick(int position, String path,new_fag_template_item item) {
+                public void onItemClick(int position, String path, new_fag_template_item item) {
                     //选择模板的回调时间
                     Intent intent = getIntent();
                     finish();
                     Bundle bundle = new Bundle();
                     String[] paths = mTemplateModel.getReplaceableOriginFilePaths(Objects.requireNonNull(getExternalCacheDir()).getPath());
-                    List<String> getAsset= Arrays.asList(paths);
+                    List<String> getAsset = Arrays.asList(paths);
                     ArrayList<String> arrayList = new ArrayList<>(getAsset);
-                    bundle.putStringArrayList("paths",arrayList);
+                    bundle.putStringArrayList("paths", arrayList);
                     bundle.putInt("isPicNum", 20);
                     bundle.putString("fromTo", FromToTemplate.PICTUREALBUM);
                     bundle.putInt("picout", 0);
@@ -1320,6 +1320,30 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     intent.putExtra("Message", bundle);
                     intent.putExtra("person", item);
                     startActivity(intent);
+                }
+
+                @Override
+                public void isNeedToCutVideo(int position) {
+
+                    MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
+                    if (mediaUi2.isVideoType()) {
+
+                        //实际需要的时长
+                        float needCropDuration;
+                        boolean isNeedSlow;
+                        Intent intent = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
+                        needCropDuration = mediaUi2.getDuration() / mediaUi2.getFps();
+                        isNeedSlow = false;
+                        intent.putExtra("videoPath", mediaUi2.getOriginalPath());
+                        intent.putExtra("videoDuration", needCropDuration);
+                        intent.putExtra("isNeedSlow", isNeedSlow);
+                        intent.putExtra("videoFps",  mediaUi2.getFps());
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+
+                    }
+
+
                 }
             });
             pagerList.add(templateThumb);

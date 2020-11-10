@@ -477,6 +477,18 @@ public class new_fag_template_item implements Serializable {
 //    private CommonNewsBean newBean;
 
 
+    public boolean isCheckItem() {
+        return isCheckItem;
+    }
+
+    public void setCheckItem(boolean checkItem) {
+        isCheckItem = checkItem;
+    }
+
+    /**
+     * 一键模板里面的选中模板的状态
+     */
+    private boolean isCheckItem=false;
 
 
 

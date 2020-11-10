@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -16,6 +17,8 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.manager.GlideRoundTransform;
 import com.flyingeffects.com.utils.LogUtil;
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -35,6 +38,8 @@ public class TemplateThumbAdapter extends BaseItemDraggableAdapter<TemplateThumb
         helper.addOnClickListener(R.id.iv_show_un_select);
         RelativeLayout rela_parent=helper.getView(R.id.rela_parent);
         LinearLayout ll_select=helper.getView(R.id.ll_select);
+        TextView tv_compile=helper.getView(R.id.tv_compile);
+
         if(item.isRedate()){
             ll_select.setVisibility(View.VISIBLE);
         }else {
@@ -51,8 +56,10 @@ public class TemplateThumbAdapter extends BaseItemDraggableAdapter<TemplateThumb
             iv_show_un_select.setImageResource(R.mipmap.logo);
         }
         if(item.getIsCheck()==0){
+            tv_compile.setVisibility(View.VISIBLE);
             rela_parent.setBackground(context.getDrawable(R.drawable.template_adapter_item_bj));
         }else{
+            tv_compile.setVisibility(View.GONE);
             rela_parent.setBackground(context.getDrawable(R.drawable.template_adapter_item_unselete_bj));
         }
         helper.setText(R.id.tv_num, position + 1 + "");
