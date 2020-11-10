@@ -1,24 +1,15 @@
 package com.flyingeffects.com.ui.model;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
-
-import androidx.collection.SparseArrayCompat;
-import androidx.core.content.ContextCompat;
-import androidx.viewpager.widget.ViewPager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,7 +27,6 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateGridViewAdapter;
 import com.flyingeffects.com.adapter.TemplateGridViewAnimAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
-import com.flyingeffects.com.adapter.listViewForVideoThumbAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.GetPathType;
@@ -60,14 +50,11 @@ import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.ChooseMusicActivity;
-import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
-import com.flyingeffects.com.utils.screenUtil;
-import com.flyingeffects.com.view.HorizontalListView;
 import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.animations.CustomMove.AnimCollect;
 import com.flyingeffects.com.view.animations.CustomMove.AnimType;
@@ -78,12 +65,9 @@ import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.megvii.segjni.SegJni;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.shixing.sxve.ui.adapter.TimelineAdapter;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -94,6 +78,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
+import androidx.collection.SparseArrayCompat;
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.ViewPager;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -210,6 +197,7 @@ public class CreationTemplateMvpModel {
                 deleteStickView(nowChooseStickerView);
             }else{
                 nowChooseStickerView.setStickerText(text);
+                callback.updateTimeLineSickerText(text,String.valueOf(nowChooseStickerView.getId()));
             }
         }
     }
@@ -925,13 +913,12 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
 
-    private int stickerViewID;
+    private int stickerViewID=0;
     private boolean isIntoDragMove = false;
 
     private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim, boolean isText) {
         closeAllAnim();
         StickerView stickView = new StickerView(context, isText);
-        stickerViewID++;
         stickView.setId(stickerViewID);
         stickView.setOnitemClickListener(new StickerItemOnitemclick() {
             @Override
@@ -1018,7 +1005,7 @@ public class CreationTemplateMvpModel {
                                                 callback.changFirstVideoSticker(paths.get(0));
                                                 callback.getBgmPath("");
                                             }
-
+                                            callback.modifyTimeLineSickerPath(String.valueOf(stickView.getId()),paths.get(0));
                                         });
                                     });
                                 } else {
@@ -1031,6 +1018,7 @@ public class CreationTemplateMvpModel {
                                             } else {
                                                 stickView.changeImage(s, false);
                                             }
+                                            callback.modifyTimeLineSickerPath(String.valueOf(stickView.getId()),paths.get(0));
                                         });
                                     });
                                     manage.toMatting(paths);
@@ -1072,6 +1060,12 @@ public class CreationTemplateMvpModel {
                 callback.stickerOnclickCallback(stickView.getStickerText());
 
             }
+
+            @Override
+            public void stickerClickShowFrame(){
+                callback.showTimeLineSickerArrow(String.valueOf(stickView.getId()));
+            }
+
         });
 
         stickView.setOnItemDragListener(new StickerItemOnDragListener() {
@@ -1250,6 +1244,8 @@ public class CreationTemplateMvpModel {
             }
         }
         viewLayerRelativeLayout.addView(stickView);
+        callback.addStickerTimeLine(String.valueOf(stickerViewID), isText, isText ? stickView.getStickerText() : "",stickView);
+        stickerViewID++;
         if (isFirstAdd) {
             callback.isFirstAddSuccess();
         }
@@ -1269,6 +1265,7 @@ public class CreationTemplateMvpModel {
                 videoVoicePath = "";
             }
         }
+        callback.deleteTimeLineSicker(String.valueOf(nowId));
         deletedListForSticker(nowId);
     }
 
@@ -2031,5 +2028,25 @@ public class CreationTemplateMvpModel {
 
     }
 
+
+    public void bringStickerFront(String id){
+        for (int i = 0; i < listForStickerModel.size(); i++) {
+            AnimStickerModel model = listForStickerModel.get(i);
+            StickerView stickerView = model.getStickerView();
+            if (TextUtils.equals(id, String.valueOf(stickerView.getId()))) {
+                nowChooseStickerView = stickerView;
+                break;
+            }
+        }
+
+        if (nowChooseStickerView != null && nowChooseStickerView.getParent() != null) {
+            ViewGroup vp = (ViewGroup) nowChooseStickerView.getParent();
+            if (vp != null) {
+                vp.removeView(nowChooseStickerView);
+            }
+        }
+        nowChooseStickerView.showFrame();
+        viewLayerRelativeLayout.addView(nowChooseStickerView);
+    }
 }
 

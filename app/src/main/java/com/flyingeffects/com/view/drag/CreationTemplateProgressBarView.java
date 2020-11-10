@@ -21,7 +21,6 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
     /**每一像素所占的时长为15毫秒*/
     public static final long PER_MS_IN_PX = 15;
 
-
     ObserveHorizontalScrollView mCreationTemplateProgressBar;
     LinearLayout mLlDragItem;
     TemplateMaterialItemView materialItemView;
@@ -72,6 +71,13 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
                     mProgressListener.progress(l * PER_MS_IN_PX);
                 }
             }
+
+            @Override
+            public void onTouchEnd() {
+                if (mProgressListener != null) {
+                    mProgressListener.onTouchEnd();
+                }
+            }
         });
         mCreationTemplateProgressBar.setOnTouchListener(this);
         frameContainerHeight = screenUtil.dip2px(getContext(), 40);
@@ -86,7 +92,7 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
         materialItemView.setIdentityID(0);
 
         materialItemView.isShowArrow(false);
-        materialItemView.setResPathAndDuration(resPath,duration,frameContainerHeight);
+        materialItemView.setResPathAndDuration(resPath,duration,frameContainerHeight,false,"");
         materialItemView.setWidthAndHeight((int) (duration / PER_MS_IN_PX), frameContainerHeight);
         mLlDragItem.addView(materialItemView);
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) materialItemView.getLayoutParams();
@@ -102,7 +108,7 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
     }
 
     public void hindArrow() {
-        if(materialItemView!=null){
+        if (materialItemView != null) {
             materialItemView.isShowArrow(false);
         }
     }
@@ -211,6 +217,8 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
         void progress(long progress);
 
         void cutInterval(long starTime,long endTime);
+
+        void onTouchEnd();
     }
 
     SeekBarProgressListener mProgressListener;

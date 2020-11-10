@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -25,6 +26,7 @@ import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.utils.BitmapUtil;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.beans.VideoTrimmerFrameBean;
 import com.shixing.sxve.ui.albumType;
 
@@ -77,6 +79,7 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
     int identityID = 0;
     private long startTime;
     private long endTime;
+    private TextView mTvStickerView;
 
     public TouchDragListener dragListener;
 
@@ -302,9 +305,30 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
         mLlThumbnail.setLayoutParams(params);
     }
 
+    public int changeVideoPathWidth(long duration,int containerHeight){
+        int frameSingleWidth = (int) (containerHeight * TemplateMaterialSeekBarView.NOVIDEO_STAGE_WIDTH / TemplateMaterialSeekBarView.NOVIDEO_STAGE_HEIGHT);
+        long frameSingleMs = frameSingleWidth * TemplateMaterialSeekBarView.PER_MS_IN_PX;
+        int count = (int) (duration * 1.0f / frameSingleMs);
+        long reviseMs = duration - (frameSingleMs * count);
+        int frameReviseWidth = (int) (reviseMs / TemplateMaterialSeekBarView.PER_MS_IN_PX);
+        if (frameReviseWidth > frameSingleWidth) {
+            count -= frameReviseWidth / frameSingleWidth;
+            frameReviseWidth = frameReviseWidth % frameSingleWidth;
+        }
+        int reviseCount = frameReviseWidth > 0 ? 1 : 0;
+        int thumbnailTotalWidth = 0;
+        FrameParams params = new FrameParams("", count + reviseCount, reviseCount, frameSingleWidth, frameReviseWidth, containerHeight, containerHeight);
+        //设置初始化
+        for (int i = 0; i < params.count; i++) {
+            int currentWidth = i >= params.count - params.reviseCount ? params.reviseWidth : params.singleWidth;
+            thumbnailTotalWidth += currentWidth;
+        }
+        return thumbnailTotalWidth;
+    }
+
 
     /**此处重新计算绘制视频或者图片的帧图*/
-    public int setResPathAndDuration(String resPath,long duration,int containerHeight){
+    public int setResPathAndDuration(String resPath, long duration, int containerHeight, boolean isText, String text){
         mLlThumbnail.removeAllViews();
         //单张图片宽度
         int frameSingleWidth = (int) (containerHeight * TemplateMaterialSeekBarView.NOVIDEO_STAGE_WIDTH / TemplateMaterialSeekBarView.NOVIDEO_STAGE_HEIGHT);
@@ -322,72 +346,39 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
         //设置初始化
         for (int i = 0; i < params.count; i++) {
             int currentWidth = i >= params.count - params.reviseCount ? params.reviseWidth : params.singleWidth;
-            ImageView imgCenter = new ImageView(getContext());
-            imgCenter.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            mLlThumbnail.addView(imgCenter);
-            LinearLayout.LayoutParams parCenter = (LinearLayout.LayoutParams) imgCenter.getLayoutParams();
-            parCenter.width = currentWidth;
-            parCenter.height = params.singleHeight;
-            imgCenter.setLayoutParams(parCenter);
-            if (TextUtils.isEmpty(resPath)) {
-                imgCenter.setBackgroundColor(Color.parseColor("#43A400"));
-            } else {
-                imgCenter.setImageResource(R.mipmap.icon_img_default);
+            if(!isText){
+                ImageView imgCenter = new ImageView(getContext());
+                imgCenter.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                mLlThumbnail.addView(imgCenter);
+                LinearLayout.LayoutParams parCenter = (LinearLayout.LayoutParams) imgCenter.getLayoutParams();
+                parCenter.width = currentWidth;
+                parCenter.height = params.singleHeight;
+                imgCenter.setLayoutParams(parCenter);
+                if (TextUtils.isEmpty(resPath)) {
+                    imgCenter.setBackgroundColor(Color.parseColor("#43A400"));
+                } else {
+                    imgCenter.setImageResource(R.mipmap.icon_img_default);
+                }
             }
             thumbnailTotalWidth += currentWidth;
         }
+        if (!TextUtils.isEmpty(text)) {
+            mTvStickerView = new TextView(getContext());
+            mTvStickerView.setTextSize(10);
+            mTvStickerView.setTextColor(Color.WHITE);
+            mTvStickerView.setLines(1);
+            mTvStickerView.setGravity(Gravity.CENTER_VERTICAL);
+            mTvStickerView.setBackgroundColor(Color.parseColor("#E57B28"));
+            mTvStickerView.setText(text);
+            mTvStickerView.setPadding(screenUtil.dip2px(getContext(),10),0,0,0);
+            mLlThumbnail.addView(mTvStickerView);
+            LinearLayout.LayoutParams parCenter = (LinearLayout.LayoutParams) mTvStickerView.getLayoutParams();
+            parCenter.width = thumbnailTotalWidth;
+            parCenter.height = params.singleHeight;
+            mTvStickerView.setLayoutParams(parCenter);
+        }
 
         if (albumType.isVideo(GetPathType.getInstance().getPathType(resPath))) {
-            Observable.create(new Observable.OnSubscribe<VideoTrimmerFrameBean>() {
-                @Override
-                public void call(Subscriber<? super VideoTrimmerFrameBean> subscriber) {
-                    MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
-                    mediaMetadataRetriever.setDataSource(params.outPath);
-                    long duration1 = Long.parseLong(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
-                    long step = (long) (duration1 * 1.0f / params.count);
-                    String filePath = FileUtil.getFrameTempPath();
-                    FileUtil.deleteAllInDir(filePath);
-                    for (int i = 0; i < params.count; i++) {
-                        long current = i * step * 1000;
-                        Bitmap bitmap = mediaMetadataRetriever.getFrameAtTime(current);
-                        File file = new File(filePath, String.format("frame_%s", i));
-                        try (FileOutputStream fos = new FileOutputStream(file)) {
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 30, fos);
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } finally {
-                            BitmapUtil.recycleBitmap(bitmap);
-                        }
-                        VideoTrimmerFrameBean bean = new VideoTrimmerFrameBean();
-                        bean.setFramePath(file.getAbsolutePath());
-                        bean.setIndex(i);
-                        subscriber.onNext(bean);
-                    }
-                    mediaMetadataRetriever.release();
-                    subscriber.onCompleted();
-
-                }
-            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<VideoTrimmerFrameBean>() {
-                @Override
-                public void call(VideoTrimmerFrameBean bean) {
-                    if (bean != null && mLlThumbnail.getChildCount() > bean.getIndex()) {
-                        View view = mLlThumbnail.getChildAt(bean.getIndex());
-                        if (view instanceof ImageView) {
-                            Glide.with(BaseApplication.getInstance())
-                                    .load(bean.getFramePath())
-                                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE).skipMemoryCache(true))
-                                    .into((ImageView) view);
-                        }
-                    }
-                }
-            }, new Action1<Throwable>() {
-                @Override
-                public void call(Throwable throwable) {
-                    LogUtil.d("初始化frame错误:%s", throwable.getMessage());
-                }
-            });
             Observable.create(new Observable.OnSubscribe<VideoTrimmerFrameBean>() {
                 @Override
                 public void call(Subscriber<? super VideoTrimmerFrameBean> subscriber) {
@@ -455,6 +446,10 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
 
     public void setDragListener(TouchDragListener dragListener) {
         this.dragListener = dragListener;
+    }
+
+    public void setTvStickerViewText(String text) {
+        mTvStickerView.setText(text);
     }
 
     public interface TouchDragListener {

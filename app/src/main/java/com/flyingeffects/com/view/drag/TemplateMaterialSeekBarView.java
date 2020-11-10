@@ -1,6 +1,7 @@
 package com.flyingeffects.com.view.drag;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -78,23 +79,18 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                 }
                 //获取当前操作的字幕POS位置
                 long process = l * PER_MS_IN_PX;
-                for (int i = 0; mTemplateMaterialItemViews != null && i < mTemplateMaterialItemViews.size(); i++) {
-                    TemplateMaterialItemView materialItemView = mTemplateMaterialItemViews.get(i);
-                    if (process >= mTemplateMaterialItemViews.get(i).getStartTime() && process < mTemplateMaterialItemViews.get(i).getEndTime() &&
-                            i == materialItemView.getIdentityID()) {
-                        materialItemView.isShowArrow(true);
-                    } else {
-                        materialItemView.isShowArrow(false);
-                    }
-                }
+//                for (int i = 0; mTemplateMaterialItemViews != null && i < mTemplateMaterialItemViews.size(); i++) {
+//                    TemplateMaterialItemView materialItemView = mTemplateMaterialItemViews.get(i);
+//                    if (process >= mTemplateMaterialItemViews.get(i).getStartTime() && process < mTemplateMaterialItemViews.get(i).getEndTime() &&
+//                            i == materialItemView.getIdentityID()) {
+//                        materialItemView.isShowArrow(true);
+//                    } else {
+//                        materialItemView.isShowArrow(false);
+//                    }
+//                }
                 if(mProgressListener!=null){
                     mProgressListener.progress(process,dragScrollView);
                 }
-            }
-
-            @Override
-            public void onTouchStart() {
-
             }
 
             @Override
@@ -118,41 +114,83 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         cutStartTime = startTime;
         cutEndTime = endTime;
         for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
-            TemplateMaterialItemView itemView = mTemplateMaterialItemViews.get(i);
-            if (itemView.getStartTime() > cutStartTime && itemView.getEndTime() < cutEndTime) {
-                continue;
+            if (mTemplateMaterialItemViews.get(i) != null) {
+                TemplateMaterialItemView itemView = mTemplateMaterialItemViews.get(i);
+                if (itemView.getStartTime() > cutStartTime && itemView.getEndTime() < cutEndTime) {
+                    continue;
+                }
+                if (itemView.getStartTime() < cutStartTime && itemView.getEndTime() > cutEndTime) {
+                    itemView.setStartTime(cutStartTime);
+                    itemView.setEndTime(cutEndTime);
+                }
+                if (itemView.getStartTime() > cutStartTime && cutEndTime - itemView.getStartTime() < 1000) {
+                    itemView.setStartTime(cutStartTime);
+                }
+                if (itemView.getEndTime() < cutStartTime) {
+                    long offsetTime = cutStartTime - itemView.getStartTime();
+                    itemView.setStartTime(itemView.getStartTime() + offsetTime);
+                    itemView.setEndTime(itemView.getEndTime() + offsetTime);
+                }
+                if (itemView.getEndTime() > cutEndTime) {
+                    itemView.setEndTime(cutEndTime);
+                }
+                if (itemView.getStartTime() < cutStartTime) {
+                    itemView.setStartTime(cutStartTime);
+                }
+                if (itemView.getEndTime() > cutEndTime) {
+                    itemView.setEndTime(cutEndTime);
+                }
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) itemView.getLayoutParams();
+                itemView.setWidthAndHeight((int) ((itemView.getEndTime() - itemView.getStartTime()) / PER_MS_IN_PX), frameContainerHeight);
+                params.setMargins((int) (itemView.getStartTime() / PER_MS_IN_PX + frameListPadding - TemplateMaterialItemView.ARROW_WIDTH),
+                        screenUtil.dip2px(getContext(), 5), 0, 0);
+                itemView.setLayoutParams(params);
             }
-            if (itemView.getStartTime() < cutStartTime && itemView.getEndTime() > cutEndTime) {
-                itemView.setStartTime(cutStartTime);
-                itemView.setEndTime(cutEndTime);
-            }
-            if (itemView.getStartTime() > cutStartTime && cutEndTime - itemView.getStartTime() < 1000) {
-                itemView.setStartTime(cutStartTime);
-            }
-            if (itemView.getEndTime() < cutStartTime) {
-                long offsetTime = cutStartTime - itemView.getStartTime();
-                itemView.setStartTime(itemView.getStartTime() + offsetTime);
-                itemView.setEndTime(itemView.getEndTime() + offsetTime);
-            }
-            if (itemView.getEndTime() > cutEndTime) {
-                itemView.setEndTime(cutEndTime);
-            }
-            if (itemView.getStartTime() < cutStartTime) {
-                itemView.setStartTime(cutStartTime);
-            }
-            if (itemView.getEndTime() > cutEndTime) {
-                itemView.setEndTime(cutEndTime);
-            }
-            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) itemView.getLayoutParams();
-            itemView.setWidthAndHeight((int) ((itemView.getEndTime() - itemView.getStartTime()) / PER_MS_IN_PX), frameContainerHeight);
-            params.setMargins((int) (itemView.getStartTime() / PER_MS_IN_PX + frameListPadding - TemplateMaterialItemView.ARROW_WIDTH),
-                    screenUtil.dip2px(getContext(), 5), 0, 0);
-            itemView.setLayoutParams(params);
         }
     }
 
     public void scrollToPosition(long process) {
         mMaterialSeekBar.scrollTo((int) Math.ceil(process / (PER_MS_IN_PX * 1f)), 0);
+    }
+
+    /**点击当前贴纸后显示箭头*/
+    public void isCurrentMaterialShowArrow(String id) {
+        for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
+            if (mTemplateMaterialItemViews.get(i) != null) {
+                if (TextUtils.equals(String.valueOf(mTemplateMaterialItemViews.get(i).getIdentityID()), id)) {
+                    mTemplateMaterialItemViews.get(i).isShowArrow(true);
+                } else {
+                    mTemplateMaterialItemViews.get(i).isShowArrow(false);
+                }
+            }
+        }
+    }
+
+    /**重新选择了背景视频 时长改变宽度也随之改变 重新设置宽度*/
+    public void changeVideoPathViewFrameSetWidth(long duration) {
+        TemplateMaterialItemView itemView = null;
+        for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
+            if (mTemplateMaterialItemViews.get(i) != null) {
+                itemView = mTemplateMaterialItemViews.get(i);
+                break;
+            }
+        }
+        int thumbnailTotalWidth = itemView.changeVideoPathWidth(duration, frameContainerHeight);
+        RelativeLayout.LayoutParams reParams = (LayoutParams) mViewFrame.getLayoutParams();
+        reParams.width = thumbnailTotalWidth + frameListPadding * 2;
+        mViewFrame.setLayoutParams(reParams);
+    }
+
+    public void modifyMaterialThumbnail(String path,String id){
+        for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
+            if (mTemplateMaterialItemViews.get(i) != null) {
+                if (TextUtils.equals(String.valueOf(mTemplateMaterialItemViews.get(i).getIdentityID()), id)) {
+                    TemplateMaterialItemView itemView = mTemplateMaterialItemViews.get(i);
+                    itemView.setResPathAndDuration(path,mDuration,frameContainerHeight,false,"");
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -175,15 +213,15 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         return result;
     }
 
-    public void addTemplateMaterialItemView(long duration, String resPath,long startTime,long endTime) {
+    public void addTemplateMaterialItemView(long duration, String resPath,long startTime,long endTime,boolean isText,String text,String id) {
         this.mDuration = duration;
         this.cutStartTime =0;
         this.cutEndTime = duration;
         TemplateMaterialItemView materialItemView = new TemplateMaterialItemView(getContext());
         mTemplateMaterialItemViews.add(materialItemView);
-        materialItemView.setIdentityID(mTemplateMaterialItemViews.size() - 1);
+        materialItemView.setIdentityID(Integer.valueOf(id));
 
-        int thumbnailTotalWidth = materialItemView.setResPathAndDuration(resPath, duration, frameContainerHeight);
+        int thumbnailTotalWidth = materialItemView.setResPathAndDuration(resPath, duration, frameContainerHeight,isText,text);
         if (!isSetFrameWidth) {
             isSetFrameWidth = true;
             RelativeLayout.LayoutParams reParams = (LayoutParams) mViewFrame.getLayoutParams();
@@ -203,6 +241,31 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         params.setMargins((int) (intervalPX + startTime / PER_MS_IN_PX), screenUtil.dip2px(getContext(), 5), 0, 0);
         materialItemView.setLayoutParams(params);
         materialItemView.setDragListener(this);
+    }
+
+    /**删除当前贴纸时间轴的view*/
+    public void deleteTemplateMaterialItemView(String id){
+        for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
+            if (mTemplateMaterialItemViews.get(i) != null) {
+                if (TextUtils.equals(String.valueOf(mTemplateMaterialItemViews.get(i).getIdentityID()), id)) {
+                    mLlDragItem.removeView(mTemplateMaterialItemViews.get(i));
+                    mTemplateMaterialItemViews.set(i,null);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**更新文本贴纸时间轴上的文字*/
+    public void updateStickerViewText(String text, String id) {
+        for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
+            if (mTemplateMaterialItemViews.get(i) != null) {
+                if (TextUtils.equals(String.valueOf(mTemplateMaterialItemViews.get(i).getIdentityID()), id)) {
+                    mTemplateMaterialItemViews.get(i).setTvStickerViewText(text);
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -236,6 +299,9 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
             params.setMargins((int) (materialItemView.getStartTime() / PER_MS_IN_PX + frameListPadding - TemplateMaterialItemView.ARROW_WIDTH),
                     screenUtil.dip2px(getContext(), 5), 0, 0);
             materialItemView.setLayoutParams(params);
+            if (mProgressListener != null) {
+                mProgressListener.timelineChange(materialItemView.getStartTime(), materialItemView.getEndTime(), String.valueOf(materialItemView.getIdentityID()));
+            }
         }
     }
 
@@ -266,6 +332,9 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
             params.setMargins((int) (materialItemView.getStartTime() / PER_MS_IN_PX + frameListPadding - TemplateMaterialItemView.ARROW_WIDTH),
                     screenUtil.dip2px(getContext(), 5), 0, 0);
             materialItemView.setLayoutParams(params);
+            if (mProgressListener != null) {
+                mProgressListener.timelineChange(materialItemView.getStartTime(), materialItemView.getEndTime(), String.valueOf(materialItemView.getIdentityID()));
+            }
         }
     }
 
@@ -273,11 +342,13 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
     public void touchTextView(TemplateMaterialItemView view, boolean isDirection, float dragInterval, int position) {
         dragScrollView = false;
         for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
-            TemplateMaterialItemView dragSubtitleView = mTemplateMaterialItemViews.get(i);
-            if (view.getIdentityID() == dragSubtitleView.getIdentityID()) {
-                dragSubtitleView.isShowArrow(true);
-            } else {
-                dragSubtitleView.isShowArrow(false);
+            if (mTemplateMaterialItemViews.get(i) != null) {
+                TemplateMaterialItemView dragSubtitleView = mTemplateMaterialItemViews.get(i);
+                if (view.getIdentityID() == dragSubtitleView.getIdentityID()) {
+                    dragSubtitleView.isShowArrow(true);
+                } else {
+                    dragSubtitleView.isShowArrow(false);
+                }
             }
         }
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view.getLayoutParams();
@@ -302,12 +373,27 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
             params.setMargins((int) (view.getStartTime() / PER_MS_IN_PX + frameListPadding - TemplateMaterialItemView.ARROW_WIDTH),
                     screenUtil.dip2px(getContext(), 5), 0, 0);
             view.setLayoutParams(params);
+            if (mProgressListener != null) {
+                mProgressListener.timelineChange(view.getStartTime(), view.getEndTime(), String.valueOf(view.getIdentityID()));
+            }
         }
     }
 
     @Override
     public void onClickTextView(TemplateMaterialItemView view) {
-        //TODO 该方法暂时不使用   点击某个时间轴  进度条跳转到指定位置
+        for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
+            if (mTemplateMaterialItemViews.get(i) != null) {
+                TemplateMaterialItemView itemView = mTemplateMaterialItemViews.get(i);
+                if (TextUtils.equals(String.valueOf(view.getIdentityID()), String.valueOf(itemView.getIdentityID()))) {
+                    itemView.isShowArrow(true);
+                    if (mProgressListener != null) {
+                        mProgressListener.currentViewSelected(String.valueOf(view.getIdentityID()));
+                    }
+                } else {
+                    itemView.isShowArrow(false);
+                }
+            }
+        }
     }
 
     @Override
@@ -317,8 +403,10 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         }
         if (v == mLlDragItem) {
             for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
-                TemplateMaterialItemView materialItemView = mTemplateMaterialItemViews.get(i);
-                materialItemView.requestDisallowInterceptTouchEvent(false);
+                if (mTemplateMaterialItemViews.get(i) != null) {
+                    TemplateMaterialItemView itemView = mTemplateMaterialItemViews.get(i);
+                    itemView.requestDisallowInterceptTouchEvent(false);
+                }
             }
         }
         return false;
@@ -329,6 +417,10 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         void progress(long progress,boolean manualDrag);
 
         void manualDrag(boolean manualDrag);
+
+        void timelineChange(long startTime,long endTime,String id);
+
+        void currentViewSelected(String id);
     }
 
     SeekBarProgressListener mProgressListener;

@@ -39,6 +39,7 @@ import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.view.MyScrollView;
+import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.drag.CreationTemplateProgressBarView;
 import com.flyingeffects.com.view.drag.TemplateMaterialSeekBarView;
 import com.flyingeffects.com.view.mine.CreateViewForAddText;
@@ -75,7 +76,7 @@ import rx.android.schedulers.AndroidSchedulers;
  */
 
 
-public class CreationTemplateActivity extends BaseActivity implements CreationTemplateMvpView {
+public class CreationTemplateActivity extends BaseActivity implements CreationTemplateMvpView,TemplateMaterialSeekBarView.SeekBarProgressListener {
     private static final String TAG = "CreationTemplate";
     @BindView(R.id.viewPager)
     ViewPager viewPager;
@@ -237,22 +238,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 mCutStartTime = starTime;
                 mCutEndTime = endTime;
                 mSeekBarView.setCutStartAndEndTime(starTime, endTime);
-            }
-        });
-        mSeekBarView.setProgressListener(new TemplateMaterialSeekBarView.SeekBarProgressListener() {
-            @Override
-            public void progress(long progress, boolean manualDrag) {
-                if (manualDrag) {
-                    mProgressBarView.scrollToPosition(progress);
-                }
-                mSeekBarViewManualDrag = manualDrag;
+                stickerTimeLineOffset();
             }
 
             @Override
-            public void manualDrag(boolean manualDrag) {
-                mSeekBarViewManualDrag = manualDrag;
+            public void onTouchEnd() {
+                videoToPause();
             }
         });
+        mSeekBarView.setProgressListener(this);
     }
 
     private void seekBarViewIsShow(boolean isShow){
@@ -498,7 +492,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                             } else {
                                 //贴纸选择的视频
                                 intoVideoCropActivity(paths.get(0));
-                                statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Selectvideo\n");
+                                statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Selectvideo");
                             }
                         }
                     }, "");
@@ -656,30 +650,34 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         });
 
         if (!TextUtils.isEmpty(videoPath)) {
-            MediaInfo mediaInfo = new MediaInfo(videoPath);
-            mediaInfo.prepare();
-            allVideoDuration = (long) (mediaInfo.vDuration*1000);
-            mProgressBarView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    mProgressBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    mCutStartTime = 0;
-                    mCutEndTime = allVideoDuration;
-                    mProgressBarView.addProgressBarView(allVideoDuration,videoPath);
-                }
-            });
-            tv_total.setText(TimeUtils.timeParse(allVideoDuration) + "s");
-            mSeekBarView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    mSeekBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    mSeekBarView.addTemplateMaterialItemView(allVideoDuration, originalPath,0,allVideoDuration);
-                }
-            });
-            mediaInfo.release();
+            setBJVideoPath(false);
         }
     }
 
+    /**
+     * 设置背景视频时长
+     * @param isModifyMaterialTimeLine 是否修改贴纸时间轴
+     */
+    public void setBJVideoPath(boolean isModifyMaterialTimeLine){
+        MediaInfo mediaInfo = new MediaInfo(videoPath);
+        mediaInfo.prepare();
+        allVideoDuration = (long) (mediaInfo.vDuration*1000);
+        mProgressBarView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mProgressBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                mCutStartTime = 0;
+                mCutEndTime = allVideoDuration;
+                mProgressBarView.addProgressBarView(allVideoDuration,videoPath);
+                if (isModifyMaterialTimeLine) {
+                    mSeekBarView.setCutStartAndEndTime(mCutStartTime, mCutEndTime);
+                    mSeekBarView.changeVideoPathViewFrameSetWidth(allVideoDuration);
+                }
+            }
+        });
+        tv_total.setText(TimeUtils.timeParse(allVideoDuration) + "s");
+        mediaInfo.release();
+    }
 
     boolean isInitImageBj = false;
 
@@ -707,13 +705,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 mCutStartTime = 0;
                 mCutEndTime = allVideoDuration;
                 mProgressBarView.addProgressBarView(allVideoDuration,"");
-            }
-        });
-        mSeekBarView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                mSeekBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                mSeekBarView.addTemplateMaterialItemView(allVideoDuration, originalPath,0,allVideoDuration);
             }
         });
         tv_total.setText(TimeUtils.timeParse(allVideoDuration) + "s");
@@ -1056,7 +1047,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     }
 
-
     private Timer timer;
     private TimerTask task;
     private long nowTime = 5;
@@ -1184,6 +1174,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 initExo(videoPath);
                 presenter.setmVideoPath(videoPath);
                 presenter.initVideoProgressView();
+                setBJVideoPath(true);
             }
         });
     }
@@ -1255,5 +1246,97 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         return true;
     }
 
+    @Override
+    public void addStickerTimeLine(String id, boolean isText, String text,StickerView stickerView) {
+        mSeekBarView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mSeekBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                stickerView.showStickerStartTime = mCutStartTime;
+                stickerView.showStickerEndTime = allVideoDuration;
+                mSeekBarView.addTemplateMaterialItemView(allVideoDuration, stickerView.getResPath(),mCutStartTime,allVideoDuration,isText,text,id);
+            }
+        });
+    }
 
+    @Override
+    public void updateTimeLineSickerText(String text, String id) {
+        mSeekBarView.updateStickerViewText(text,id);
+    }
+
+    @Override
+    public void deleteTimeLineSicker(String id) {
+        mSeekBarView.deleteTemplateMaterialItemView(id);
+    }
+
+    @Override
+    public void showTimeLineSickerArrow(String id) {
+        mSeekBarView.isCurrentMaterialShowArrow(id);
+    }
+
+    @Override
+    public void modifyTimeLineSickerPath(String id,String path) {
+       mSeekBarView.modifyMaterialThumbnail(path,id);
+    }
+
+    @Override
+    public void progress(long progress, boolean manualDrag) {
+        if (manualDrag) {
+            mProgressBarView.scrollToPosition(progress);
+        }
+        mSeekBarViewManualDrag = manualDrag;
+    }
+
+    @Override
+    public void manualDrag(boolean manualDrag) {
+        mSeekBarViewManualDrag = manualDrag;
+        videoToPause();
+    }
+
+    @Override
+    public void timelineChange(long startTime, long endTime, String id) {
+        for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
+            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
+            if (TextUtils.equals(id, String.valueOf(stickerView.getId()))) {
+                stickerView.showStickerStartTime = startTime;
+                stickerView.showStickerEndTime = endTime;
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void currentViewSelected(String id) {
+        presenter.bringStickerFront(id);
+    }
+
+    private void stickerTimeLineOffset() {
+        for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
+            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
+            if (stickerView.showStickerStartTime > mCutStartTime && stickerView.showStickerEndTime < mCutEndTime) {
+                continue;
+            }
+            if (stickerView.showStickerStartTime < mCutStartTime && stickerView.showStickerEndTime > mCutEndTime) {
+                stickerView.showStickerStartTime = mCutStartTime;
+                stickerView.showStickerEndTime = mCutEndTime;
+            }
+            if (stickerView.showStickerStartTime > mCutStartTime && mCutEndTime - stickerView.showStickerStartTime < 1000) {
+                stickerView.showStickerStartTime = mCutStartTime;
+            }
+            if (stickerView.showStickerEndTime < mCutStartTime) {
+                long offsetTime = mCutStartTime - stickerView.showStickerStartTime;
+                stickerView.showStickerStartTime = stickerView.showStickerStartTime + offsetTime;
+                stickerView.showStickerEndTime = stickerView.showStickerEndTime + offsetTime;
+            }
+            if (stickerView.showStickerEndTime > mCutEndTime) {
+                stickerView.showStickerEndTime = mCutEndTime;
+            }
+            if (stickerView.showStickerStartTime < mCutStartTime) {
+                stickerView.showStickerStartTime = mCutStartTime;
+            }
+            if (stickerView.showStickerEndTime > mCutEndTime) {
+                stickerView.showStickerEndTime = mCutEndTime;
+            }
+        }
+    }
 }

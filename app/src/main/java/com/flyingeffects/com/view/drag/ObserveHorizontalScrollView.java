@@ -6,10 +6,10 @@ import android.view.MotionEvent;
 import android.widget.HorizontalScrollView;
 
 /**
- * @Author: savion
- * @Date: 2019/3/4 10:06
- * @Des:
- **/
+ * @author ZhouGang
+ * @date 2020/11/2
+ * ScrollView 横向滑动速度降低
+ */
 public class ObserveHorizontalScrollView extends HorizontalScrollView {
     private OnScrollChangeListener onScrollChangeListener;
     private boolean isOnDragChanged = false;

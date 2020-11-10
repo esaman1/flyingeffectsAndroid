@@ -38,5 +38,13 @@ public interface CreationTemplateMvpView {
 
     void animIsComplate();
 
-//    void showRenderVideoTime(int duration);
+    void addStickerTimeLine(String id,boolean isText,String text,StickerView stickerView);
+
+    void updateTimeLineSickerText(String text,String id);
+
+    void deleteTimeLineSicker(String id);
+
+    void showTimeLineSickerArrow(String id);
+
+    void modifyTimeLineSickerPath(String id,String path);
 }

@@ -346,7 +346,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private Paint mPaintShadow;
     private float mTextSize = 100;
     private float paintWidth = 50;
-
+    /**贴纸的时间轴 起止时间*/
+    public long showStickerStartTime;
+    public long showStickerEndTime;
 
 //    /**
 //     * 与输入法的连接
@@ -1197,6 +1199,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 //                    }
                     if (!frameShow) {
                         frameShow = true;
+                        callback.stickerClickShowFrame();
                         invalidate();
                     }
                     handler.removeMessages(DISMISS_FRAME);

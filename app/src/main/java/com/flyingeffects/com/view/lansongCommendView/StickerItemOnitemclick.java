@@ -6,4 +6,6 @@ public interface StickerItemOnitemclick {
 
     void stickerMove();
 
+    default void  stickerClickShowFrame(){}
+
 }

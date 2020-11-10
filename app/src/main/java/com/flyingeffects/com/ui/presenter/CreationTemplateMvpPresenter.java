@@ -1,17 +1,17 @@
 package com.flyingeffects.com.ui.presenter;
 
 import android.content.Context;
-import androidx.viewpager.widget.ViewPager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.model.CreationTemplateMvpModel;
-import com.flyingeffects.com.view.HorizontalListView;
+import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.lansosdk.videoeditor.DrawPadView2;
+
+import androidx.viewpager.widget.ViewPager;
 
 public class CreationTemplateMvpPresenter extends BasePresenter implements CreationTemplateMvpCallback {
     private CreationTemplateMvpView creationTemplatemvpView;
@@ -208,6 +208,31 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemvpView.hideTextDialog();
     }
 
+    @Override
+    public void addStickerTimeLine(String id, boolean isText, String text, StickerView stickerView) {
+        creationTemplatemvpView.addStickerTimeLine(id, isText, text,stickerView);
+    }
+
+    @Override
+    public void updateTimeLineSickerText(String text, String id) {
+        creationTemplatemvpView.updateTimeLineSickerText(text,id);
+    }
+
+    @Override
+    public void deleteTimeLineSicker(String id) {
+        creationTemplatemvpView.deleteTimeLineSicker(id);
+    }
+
+    @Override
+    public void showTimeLineSickerArrow(String id) {
+        creationTemplatemvpView.showTimeLineSickerArrow(id);
+    }
+
+    @Override
+    public void modifyTimeLineSickerPath(String id,String path) {
+        creationTemplatemvpView.modifyTimeLineSickerPath(id,path);
+    }
+
 
     public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH,int templateId){
         creationTemplatemodel.toSaveVideo(imageBjPath,nowUiIsLandscape,percentageH,templateId);
@@ -216,5 +241,9 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
 
     public void deleteAllTextSticker(){
         creationTemplatemodel.deleteAllTextSticker();
+    }
+
+    public void bringStickerFront(String id){
+        creationTemplatemodel.bringStickerFront(id);
     }
 }
