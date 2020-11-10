@@ -231,6 +231,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 if (!mSeekBarViewManualDrag) {
                     mSeekBarView.scrollToPosition(progress);
                 }
+                Log.d("GANG","    "+progress);
+                Log.d("GANG","    "+getCurrentPos());
             }
 
             @Override
@@ -1288,8 +1290,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void progress(long progress, boolean manualDrag) {
         if (manualDrag) {
+//            setgsyVideoProgress(progress);
             mProgressBarView.scrollToPosition(progress);
         }
+        Log.d("ZHOU","    "+progress);
+        Log.d("ZHOU","    "+getCurrentPos());
         mSeekBarViewManualDrag = manualDrag;
     }
 
