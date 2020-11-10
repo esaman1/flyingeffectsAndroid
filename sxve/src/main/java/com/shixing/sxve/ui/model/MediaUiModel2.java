@@ -75,10 +75,10 @@ public class MediaUiModel2 extends MediaUiModel {
 
     private float fps;
 
-    public MediaUiModel2(String folder, JSONObject ui, Bitmap bitmap, AssetDelegate delegate, Size size, Size temSize,float fps) throws JSONException {
+    public MediaUiModel2(String folder, JSONObject ui, Bitmap bitmap, AssetDelegate delegate, Size size, Size temSize, float fps) throws JSONException {
         super(folder, ui, delegate, size);
         mBitmap = bitmap;
-        this.fps=fps;
+        this.fps = fps;
         this.temSize = temSize;
         int[] editSize = getIntArray(ui.getJSONArray("editSize"));
         mClipWidth = editSize[0];
@@ -263,12 +263,15 @@ public class MediaUiModel2 extends MediaUiModel {
                 Matrix matrix = new Matrix(mMatrix);
                 matrix.postConcat(mInverseMatrix);
                 SXCompositor sxCompositor = new SXCompositor(mVideoPath, path, matrix, !mMute);
-                Log.d("OOM","mVideoPath="+mVideoPath);
+                Log.d("OOM", "mVideoPath=" + mVideoPath);
                 sxCompositor.setWidth(mClipWidth);
                 sxCompositor.setHeight(mClipHeight);
                 sxCompositor.setStartTime(mStartTime);
-                float test=mDuration/(float)fps;
-                Log.d("OOM","需要裁剪的时长为"+test+1);
+                float test = mDuration / (float) fps;
+                if (test < 0.5) {
+                    test = 0.5f;
+                }
+                Log.d("OOM", "需要裁剪的时长为" + test + 1);
                 sxCompositor.setDuration(test);
                 sxCompositor.setBitrateFactor(1f);
                 sxCompositor.setRenderListener(new SXRenderListener() {
@@ -350,6 +353,15 @@ public class MediaUiModel2 extends MediaUiModel {
         if (mGroupModel != null) {
             mGroupModel.notifyRedraw();
         }
+    }
+
+    public boolean isVideoType() {
+        return mIsVideo;
+    }
+
+
+    public float getFps() {
+        return fps;
     }
 
 
@@ -531,7 +543,7 @@ public class MediaUiModel2 extends MediaUiModel {
         countMatrixBj(bgBitmap);
 
 
-        if(bgBitmap!=null){
+        if (bgBitmap != null) {
             Bitmap bitmap = Bitmap.createBitmap(temSize.getWidth(), temSize.getHeight(), Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(bitmap);
             canvas.drawBitmap(bgBitmap, mMatrixBj, mInitPaint);
@@ -614,9 +626,9 @@ public class MediaUiModel2 extends MediaUiModel {
         }
     }
 
-    public String getOriginalPath() {
-        return path;
-    }
+//    public String getOriginalPath() {
+//        return path;
+//    }
 
 
     //把透明转换成白色
@@ -665,5 +677,14 @@ public class MediaUiModel2 extends MediaUiModel {
         }
     }
 
+
+
+    public String getOriginalPath() {
+        if (!mIsVideo) {
+            return mVideoPath;
+        } else {
+            return path;
+        }
+    }
 
 }
