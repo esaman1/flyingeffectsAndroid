@@ -98,6 +98,9 @@ public class GetAllStickerDataModel {
                 stickerData.setPath(stickerView.getResPath());
             }
         }
+
+        stickerData.setShowStickerStartTime(stickerView.getShowStickerStartTime());
+        stickerData.setShowStickerEndTime(stickerView.getShowStickerEndTime());
         stickerData.setChooseAnimId(stickerView.getChooseAnimId());
         return stickerData;
     }

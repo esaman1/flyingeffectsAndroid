@@ -133,6 +133,12 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         ChooseAnimId = chooseAnimId;
     }
 
+    public int showStickerStartTime=2000*1;
+
+
+
+    public int showStickerEndTime=1000*10;
+
     /**
      * 当前贴纸选择的动画
      */
@@ -2409,6 +2415,23 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             listFontList.add(ss);
         }
         return listFontList;
+    }
+
+
+    public int getShowStickerStartTime() {
+        return showStickerStartTime;
+    }
+
+    public void setShowStickerStartTime(int showStickerStartTime) {
+        this.showStickerStartTime = showStickerStartTime;
+    }
+
+    public int getShowStickerEndTime() {
+        return showStickerEndTime;
+    }
+
+    public void setShowStickerEndTime(int showStickerEndTime) {
+        this.showStickerEndTime = showStickerEndTime;
     }
 
 }

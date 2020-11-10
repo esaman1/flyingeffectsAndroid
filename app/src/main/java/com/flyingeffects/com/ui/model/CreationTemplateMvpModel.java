@@ -176,12 +176,12 @@ public class CreationTemplateMvpModel {
      * creation date: 2020/9/21
      * user : zhangtongju
      */
-    public void ChangeTextStyle(String path, int type,String title) {
+    public void ChangeTextStyle(String path, int type, String title) {
         if (nowChooseStickerView.getIsTextSticker()) {
             if (type == 0) {
-                nowChooseStickerView.setTextBitmapStyle(path,title);
+                nowChooseStickerView.setTextBitmapStyle(path, title);
             } else {
-                nowChooseStickerView.setTextStyle(path,title);
+                nowChooseStickerView.setTextStyle(path, title);
             }
         }
     }
@@ -193,18 +193,18 @@ public class CreationTemplateMvpModel {
      */
     public void ChangeTextLabe(String text) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            if(TextUtils.isEmpty(text)){
+            if (TextUtils.isEmpty(text)) {
                 deleteStickView(nowChooseStickerView);
-            }else{
+            } else {
                 nowChooseStickerView.setStickerText(text);
                 callback.updateTimeLineSickerText(text,String.valueOf(nowChooseStickerView.getId()));
             }
         }
     }
 
-    public void ChangeTextColor(String color0, String color1,String title) {
+    public void ChangeTextColor(String color0, String color1, String title) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            nowChooseStickerView.setTextPaintColor(color0, color1,title);
+            nowChooseStickerView.setTextPaintColor(color0, color1, title);
         }
     }
 
@@ -214,16 +214,16 @@ public class CreationTemplateMvpModel {
      * creation date: 2020/10/23
      * user : zhangtongju
      */
-    public void  ChangeTextFrame(String textBjPath, String textFramePath,String frameTitle){
+    public void ChangeTextFrame(String textBjPath, String textFramePath, String frameTitle) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            nowChooseStickerView.ChangeTextFrame(textBjPath, textFramePath,frameTitle);
+            nowChooseStickerView.ChangeTextFrame(textBjPath, textFramePath, frameTitle);
         }
     }
 
 
-    public void ChangeTextFrame(String color0, String color1, String textFramePath,String frameTitle) {
+    public void ChangeTextFrame(String color0, String color1, String textFramePath, String frameTitle) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            nowChooseStickerView.ChangeTextFrame(color0,color1, textFramePath,frameTitle);
+            nowChooseStickerView.ChangeTextFrame(color0, color1, textFramePath, frameTitle);
         }
     }
 
@@ -250,7 +250,7 @@ public class CreationTemplateMvpModel {
 
 
         } else {
-            if(nowChooseMusicId==2){
+            if (nowChooseMusicId == 2) {
                 clearCheckBox();
             }
             this.mVideoPath = null;
@@ -750,7 +750,7 @@ public class CreationTemplateMvpModel {
         if (listForStickerModel != null && listForStickerModel.size() > 0) {
             for (int i = 0; i < listForStickerModel.size(); i++) {
                 StickerView stickerView = listForStickerModel.get(i).getStickerView();
-                if (stickerView != null && !stickerView.getComeFrom()&&!stickerView.getIsTextSticker()) {
+                if (stickerView != null && !stickerView.getComeFrom() && !stickerView.getIsTextSticker()) {
                     needDeleteList.add(stickerView);
                 }
             }
@@ -804,10 +804,10 @@ public class CreationTemplateMvpModel {
             if (file.exists()) {
                 //如果已经下载了，就用已经下载的，但是如果已经展示了，就不能复用，需要类似于复制功能，只针对gif
 //                if (nowStickerHasChoose(imageId, path)) {
-                    String copyName = mGifFolder + File.separator + System.currentTimeMillis() + format;
-                    copyGif(fileName, copyName, false, null, fileName, false);
-                    WaitingDialog.closePragressDialog();
-                    return;
+                String copyName = mGifFolder + File.separator + System.currentTimeMillis() + format;
+                copyGif(fileName, copyName, false, null, fileName, false);
+                WaitingDialog.closePragressDialog();
+                return;
 //                } else {
 //                    addSticker(fileName, false, false, false, null, false, null, false, false);
 //                    WaitingDialog.closePragressDialog();
@@ -1056,7 +1056,7 @@ public class CreationTemplateMvpModel {
                 callback.needPauseVideo();
                 viewLayerRelativeLayout.addView(stickView);
                 stickView.start();
-                nowChooseStickerView=stickView;
+                nowChooseStickerView = stickView;
                 callback.stickerOnclickCallback(stickView.getStickerText());
 
             }
@@ -1087,7 +1087,7 @@ public class CreationTemplateMvpModel {
                 } else {
                     callback.showMusicBtn(false);
                 }
-                if(!stickView.getIsTextSticker()){
+                if (!stickView.getIsTextSticker()) {
                     callback.hideKeyBord();
                 }
 
@@ -1097,7 +1097,7 @@ public class CreationTemplateMvpModel {
         stickView.setRightTopBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_copy));
         stickView.setLeftTopBitmap(ContextCompat.getDrawable(context, R.drawable.sticker_delete));
         stickView.setRightBottomBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_redact));
-        if(!isText){
+        if (!isText) {
             stickView.setRightBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_updown));
         }
         stickView.setIsFromStickerAnim(isFromShowAnim);
@@ -1152,25 +1152,25 @@ public class CreationTemplateMvpModel {
             if (copyStickerView.getIsTextSticker()) {
                 //是否是图片文字效果
                 if (copyStickerView.GetIsChooseTextBjEffect()) {
-                    if(copyStickerView.GetOpenThePattern()){
+                    if (copyStickerView.GetOpenThePattern()) {
                         //当前有边框
-                        stickView.ChangeTextFrame(copyStickerView.getTypefaceBitmapPath(), copyStickerView.getBjFramePath(),copyStickerView.GetTextFrameTitle());
-                    }else{
+                        stickView.ChangeTextFrame(copyStickerView.getTypefaceBitmapPath(), copyStickerView.getBjFramePath(), copyStickerView.GetTextFrameTitle());
+                    } else {
                         if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
-                            stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath(),copyStickerView.GetTextEffectTitle());
+                            stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath(), copyStickerView.GetTextEffectTitle());
                         }
                     }
 
                 } else {
                     ArrayList<String> colors = copyStickerView.GetTextColors();
-                    if(copyStickerView.GetOpenThePattern()){
-                        nowChooseStickerView.ChangeTextFrame(colors.get(0), colors.get(1),copyStickerView.GetTextEffectTitle());
-                    }else{
-                        stickView.setTextPaintColor(colors.get(0), colors.get(1),copyStickerView.GetTextEffectTitle());
+                    if (copyStickerView.GetOpenThePattern()) {
+                        nowChooseStickerView.ChangeTextFrame(colors.get(0), colors.get(1), copyStickerView.GetTextEffectTitle());
+                    } else {
+                        stickView.setTextPaintColor(colors.get(0), colors.get(1), copyStickerView.GetTextEffectTitle());
                     }
                 }
                 if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
-                    stickView.setTextStyle(copyStickerView.getTypefacePath(),copyStickerView.GetTextStyleTitle());
+                    stickView.setTextStyle(copyStickerView.getTypefacePath(), copyStickerView.GetTextStyleTitle());
                 }
                 stickView.setStickerText(copyStickerView.getStickerText());
                 stickView.SetTextAngle(copyStickerView.getRotateAngle());
@@ -1187,14 +1187,14 @@ public class CreationTemplateMvpModel {
                     if (isText) {
                         if (copyStickerView.GetIsChooseTextBjEffect()) {
                             if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
-                                stickView.setTextStyle(copyStickerView.getTypefacePath(),copyStickerView.GetTextStyleTitle());
+                                stickView.setTextStyle(copyStickerView.getTypefacePath(), copyStickerView.GetTextStyleTitle());
                             }
                             if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
-                                stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath(),copyStickerView.GetTextEffectTitle());
+                                stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath(), copyStickerView.GetTextEffectTitle());
                             }
                         } else {
                             ArrayList<String> colors = copyStickerView.GetTextColors();
-                            stickView.setTextPaintColor(colors.get(0), colors.get(1),copyStickerView.GetTextEffectTitle());
+                            stickView.setTextPaintColor(colors.get(0), colors.get(1), copyStickerView.GetTextEffectTitle());
                         }
                         stickView.setStickerText(copyStickerView.getStickerText());
                         stickView.SetTextAngle(copyStickerView.getRotateAngle());
@@ -1297,7 +1297,7 @@ public class CreationTemplateMvpModel {
      */
     private void copyGif(String getResPath, String path, boolean isFromAubum, StickerView stickerView, String OriginalPath, boolean isFromShowAnim) {
 
-        if (stickerView!=null&&stickerView.getIsTextSticker()) {
+        if (stickerView != null && stickerView.getIsTextSticker()) {
             addSticker("", false, false, false, "", true, stickerView, isFromShowAnim, true);
         } else {
             try {
@@ -1444,7 +1444,7 @@ public class CreationTemplateMvpModel {
                                     dialog.closePragressDialog();
                                     //成功后的回调
                                     Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
-                                    Bundle bundle=new Bundle();
+                                    Bundle bundle = new Bundle();
                                     bundle.putStringArrayList("titleEffect", (ArrayList<String>) GetAllStickerDataModel.getInstance().GettitleEffect());
                                     bundle.putStringArrayList("titleStyle", (ArrayList<String>) GetAllStickerDataModel.getInstance().GetTitleStyle());
                                     bundle.putStringArrayList("titleFrame", (ArrayList<String>) GetAllStickerDataModel.getInstance().GetTitleFrame());
@@ -1854,10 +1854,7 @@ public class CreationTemplateMvpModel {
                 }
             }
         });
-
-
     }
-
 
     /**
      * description ：暂停全部动画
@@ -2025,8 +2022,49 @@ public class CreationTemplateMvpModel {
         for (StickerView stickerView : needDeleteTextList) {
             deleteStickView(stickerView);
         }
-
     }
+
+
+    /**
+     * description ：当前播放时间回调
+     * creation date: 2020/11/9
+     * user : zhangtongju
+     */
+    public void getNowPlayingTime(long progress) {
+        if (listForStickerModel != null && listForStickerModel.size() > 0) {
+            LogUtil.d("OOM4","progress="+progress);
+            for (int i = 0; i < listForStickerModel.size(); i++) {
+                AnimStickerModel model=listForStickerModel.get(i);
+                StickerView stickerView=model.getStickerView();
+                if(stickerView!=null){
+                    long startTime=stickerView.getShowStickerStartTime();
+                    long endTime=stickerView.getShowStickerEndTime();
+                    LogUtil.d("OOM4","endTime"+endTime);
+                    if(endTime!=0){
+                        if(startTime<=progress&&progress<=endTime){
+                            stickerView.setVisibility(View.VISIBLE);
+                            LogUtil.d("OOM4","setVisibility");
+                        }else{
+                            stickerView.setVisibility(View.GONE);
+                            LogUtil.d("OOM4","setVisibilityGONE");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    public void isEndTimer(){
+        for (int i = 0; i < listForStickerModel.size(); i++) {
+            AnimStickerModel model = listForStickerModel.get(i);
+            StickerView stickerView = model.getStickerView();
+            if(stickerView!=null){
+                stickerView.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
 
 
     public void bringStickerFront(String id){

@@ -171,4 +171,36 @@ public class AllStickerData implements Serializable {
      */
     private float textInterspace;
 
+
+    /**
+     * 贴纸开始显示时间
+     */
+    public long showStickerStartTime;
+
+    public long getShowStickerStartTime() {
+        return showStickerStartTime;
+    }
+
+    public void setShowStickerStartTime(long showStickerStartTime) {
+        this.showStickerStartTime = showStickerStartTime;
+    }
+
+    public long getShowStickerEndTime() {
+        return showStickerEndTime;
+    }
+
+    public void setShowStickerEndTime(long showStickerEndTime) {
+        this.showStickerEndTime = showStickerEndTime;
+    }
+
+    /**
+     * 贴纸显示结束时间
+     */
+    public long showStickerEndTime;
+
+
+
+
+
+
 }
