@@ -1258,8 +1258,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             @Override
             public void onGlobalLayout() {
                 mSeekBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                stickerView.showStickerStartTime = mCutStartTime;
-                stickerView.showStickerEndTime = allVideoDuration;
+                stickerView.setShowStickerStartTime(mCutStartTime);
+                stickerView.setShowStickerEndTime(allVideoDuration);
                 mSeekBarView.addTemplateMaterialItemView(allVideoDuration, stickerView.getResPath(),mCutStartTime,allVideoDuration,isText,text,id);
             }
         });
@@ -1304,8 +1304,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             if (TextUtils.equals(id, String.valueOf(stickerView.getId()))) {
-                stickerView.showStickerStartTime = startTime;
-                stickerView.showStickerEndTime = endTime;
+                stickerView.setShowStickerStartTime(startTime);
+                stickerView.setShowStickerEndTime(endTime);
                 break;
             }
         }
@@ -1319,29 +1319,29 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private void stickerTimeLineOffset() {
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
-            if (stickerView.showStickerStartTime > mCutStartTime && stickerView.showStickerEndTime < mCutEndTime) {
+            if (stickerView.getShowStickerStartTime() > mCutStartTime && stickerView.getShowStickerEndTime() < mCutEndTime) {
                 continue;
             }
-            if (stickerView.showStickerStartTime < mCutStartTime && stickerView.showStickerEndTime > mCutEndTime) {
-                stickerView.showStickerStartTime = mCutStartTime;
-                stickerView.showStickerEndTime = mCutEndTime;
+            if (stickerView.getShowStickerStartTime() < mCutStartTime && stickerView.getShowStickerEndTime() > mCutEndTime) {
+                stickerView.setShowStickerStartTime(mCutStartTime);
+                stickerView.setShowStickerEndTime(mCutEndTime);
             }
-            if (stickerView.showStickerStartTime > mCutStartTime && mCutEndTime - stickerView.showStickerStartTime < 1000) {
-                stickerView.showStickerStartTime = mCutStartTime;
+            if (stickerView.getShowStickerStartTime() > mCutStartTime && mCutEndTime - stickerView.getShowStickerStartTime() < 1000) {
+                stickerView.setShowStickerStartTime(mCutStartTime);
             }
-            if (stickerView.showStickerEndTime < mCutStartTime) {
-                long offsetTime = mCutStartTime - stickerView.showStickerStartTime;
-                stickerView.showStickerStartTime = stickerView.showStickerStartTime + offsetTime;
-                stickerView.showStickerEndTime = stickerView.showStickerEndTime + offsetTime;
+            if (stickerView.getShowStickerEndTime() < mCutStartTime) {
+                long offsetTime = mCutStartTime - stickerView.getShowStickerStartTime();
+                stickerView.setShowStickerStartTime(stickerView.getShowStickerStartTime() + offsetTime);
+                stickerView.setShowStickerEndTime(stickerView.getShowStickerEndTime() + offsetTime);
             }
-            if (stickerView.showStickerEndTime > mCutEndTime) {
-                stickerView.showStickerEndTime = mCutEndTime;
+            if (stickerView.getShowStickerEndTime() > mCutEndTime) {
+                stickerView.setShowStickerEndTime(mCutEndTime);
             }
-            if (stickerView.showStickerStartTime < mCutStartTime) {
-                stickerView.showStickerStartTime = mCutStartTime;
+            if (stickerView.getShowStickerStartTime() < mCutStartTime) {
+                stickerView.setShowStickerStartTime(mCutStartTime);
             }
-            if (stickerView.showStickerEndTime > mCutEndTime) {
-                stickerView.showStickerEndTime = mCutEndTime;
+            if (stickerView.getShowStickerEndTime() > mCutEndTime) {
+                stickerView.setShowStickerEndTime(mCutEndTime);
             }
         }
     }

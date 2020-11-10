@@ -133,12 +133,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         ChooseAnimId = chooseAnimId;
     }
 
-    public int showStickerStartTime=2000*1;
-
-
-
-    public int showStickerEndTime=1000*10;
-
     /**
      * 当前贴纸选择的动画
      */
@@ -353,8 +347,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private float mTextSize = 100;
     private float paintWidth = 50;
     /**贴纸的时间轴 起止时间*/
-    public long showStickerStartTime;
-    public long showStickerEndTime;
+    private long showStickerStartTime;
+    private long showStickerEndTime;
 
 //    /**
 //     * 与输入法的连接
@@ -2418,19 +2412,19 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-    public int getShowStickerStartTime() {
+    public long getShowStickerStartTime() {
         return showStickerStartTime;
     }
 
-    public void setShowStickerStartTime(int showStickerStartTime) {
+    public void setShowStickerStartTime(long showStickerStartTime) {
         this.showStickerStartTime = showStickerStartTime;
     }
 
-    public int getShowStickerEndTime() {
+    public long getShowStickerEndTime() {
         return showStickerEndTime;
     }
 
-    public void setShowStickerEndTime(int showStickerEndTime) {
+    public void setShowStickerEndTime(long showStickerEndTime) {
         this.showStickerEndTime = showStickerEndTime;
     }
 
