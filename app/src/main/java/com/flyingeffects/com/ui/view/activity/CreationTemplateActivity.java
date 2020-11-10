@@ -170,7 +170,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     boolean mSeekBarViewManualDrag = false;
     long mCutStartTime;
     long mCutEndTime;
-
+    private long progressBarProgress;
 
     @Override
     protected int getLayoutId() {
@@ -231,6 +231,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 if (!mSeekBarViewManualDrag) {
                     mSeekBarView.scrollToPosition(progress);
                 }
+                progressBarProgress=progress;
+                presenter.getNowPlayingTime(progressBarProgress);
             }
 
             @Override
@@ -1105,7 +1107,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                                 mProgressBarView.scrollToPosition(nowTime);
                             }
                         }
-                        presenter.getNowPlayingTime(totalPlayTime);
+
 
 
                     }
@@ -1291,12 +1293,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             mProgressBarView.scrollToPosition(progress);
         }
         mSeekBarViewManualDrag = manualDrag;
+
     }
 
     @Override
     public void manualDrag(boolean manualDrag) {
         mSeekBarViewManualDrag = manualDrag;
         videoToPause();
+
     }
 
     @Override
@@ -1309,6 +1313,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 break;
             }
         }
+        presenter.getNowPlayingTime(progressBarProgress);
     }
 
     @Override
