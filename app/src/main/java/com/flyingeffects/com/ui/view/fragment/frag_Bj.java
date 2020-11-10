@@ -393,7 +393,6 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                     bundle.putInt("is_anime", 0);
                     bundle.putString("templateName", item.getTitle());
                     bundle.putString("templateId", item.getId() + "");
-                    bundle.putString("videoTime", "20");
                     bundle.putStringArrayList("originalPath", (ArrayList<String>) paths);
                     bundle.putString("templateFilePath", templateFilePath);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

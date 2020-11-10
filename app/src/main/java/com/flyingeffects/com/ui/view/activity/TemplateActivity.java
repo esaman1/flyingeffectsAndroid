@@ -1,7 +1,6 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -32,7 +31,6 @@ import com.flyingeffects.com.adapter.TemplateThumbAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.GetPathType;
-import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.TabEntity;
@@ -99,11 +97,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @BindView(R.id.switch_button)
     SwitchButton switch_button;
+
     @BindView(R.id.edit_view_container)
     FrameLayout mContainer;
-    //    @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-
     @BindView(R.id.seekBar)
     SeekBar seekBar;
     @BindView(R.id.iv_play)
