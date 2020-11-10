@@ -842,7 +842,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         recyclerView.setLayoutManager(layoutManager);
         templateThumbAdapter = new TemplateThumbAdapter(R.layout.item_group_thumb, listItem, TemplateActivity.this);
         templateThumbAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
+            if (!DoubleClick.getInstance().isFastZDYDoubleClick(200)) {
                 if (view.getId() == R.id.iv_show_un_select) {
                     if (mPlayer != null) {
                         mPlayer.pause();
@@ -853,6 +853,22 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     if (nowChoosePosition != lastChoosePosition) {
                         selectGroup(position);
                         modificationThumbData(lastChoosePosition, position);
+                    }else{
+                        MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
+                        if (mediaUi2.isVideoType()) {
+                            //实际需要的时长
+                            float needCropDuration;
+                            boolean isNeedSlow;
+                            Intent intent = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
+                            needCropDuration = mediaUi2.getDuration() / mediaUi2.getFps();
+                            isNeedSlow = false;
+                            intent.putExtra("videoPath", mediaUi2.getOriginalPath());
+                            intent.putExtra("videoDuration", needCropDuration);
+                            intent.putExtra("isNeedSlow", isNeedSlow);
+                            intent.putExtra("videoFps",  mediaUi2.getFps());
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                        }
                     }
                     lastChoosePosition = nowChoosePosition;
                     showPreview(false, true);
@@ -1325,23 +1341,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 @Override
                 public void isNeedToCutVideo(int position) {
 
-                    MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
-                    if (mediaUi2.isVideoType()) {
 
-                        //实际需要的时长
-                        float needCropDuration;
-                        boolean isNeedSlow;
-                        Intent intent = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
-                        needCropDuration = mediaUi2.getDuration() / mediaUi2.getFps();
-                        isNeedSlow = false;
-                        intent.putExtra("videoPath", mediaUi2.getOriginalPath());
-                        intent.putExtra("videoDuration", needCropDuration);
-                        intent.putExtra("isNeedSlow", isNeedSlow);
-                        intent.putExtra("videoFps",  mediaUi2.getFps());
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-
-                    }
 
 
                 }
