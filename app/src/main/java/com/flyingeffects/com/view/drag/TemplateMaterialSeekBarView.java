@@ -181,6 +181,11 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         mViewFrame.setLayoutParams(reParams);
     }
 
+    /**
+     * 修改了素材 重新设置缩略图
+     * @param path 新的素材路径
+     * @param id 素材ID
+     */
     public void modifyMaterialThumbnail(String path,String id){
         for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
             if (mTemplateMaterialItemViews.get(i) != null) {
@@ -213,9 +218,19 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         return result;
     }
 
+    /***
+     * 添加一个素材 增加一个时间轴拖动条
+     * @param duration 时长
+     * @param resPath 素材路径
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @param isText 是否是文本
+     * @param text 文本内容
+     * @param id 素材ID
+     */
     public void addTemplateMaterialItemView(long duration, String resPath,long startTime,long endTime,boolean isText,String text,String id) {
         this.mDuration = duration;
-        this.cutStartTime =0;
+        this.cutStartTime = 0;
         this.cutEndTime = duration;
         TemplateMaterialItemView materialItemView = new TemplateMaterialItemView(getContext());
         mTemplateMaterialItemViews.add(materialItemView);
@@ -228,12 +243,12 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
             reParams.width = thumbnailTotalWidth + frameListPadding * 2;
             mViewFrame.setLayoutParams(reParams);
         }
-
         materialItemView.setStartTime(startTime);
         materialItemView.setEndTime(endTime);
         materialItemView.isShowArrow(false);
-
+        materialItemView.isNeedOverallDrag(true);
         materialItemView.setWidthAndHeight((int) ((endTime - startTime) / PER_MS_IN_PX), frameContainerHeight);
+
         mLlDragItem.addView(materialItemView);
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) materialItemView.getLayoutParams();
         long intervalPX = frameListPadding - TemplateMaterialItemView.ARROW_WIDTH;

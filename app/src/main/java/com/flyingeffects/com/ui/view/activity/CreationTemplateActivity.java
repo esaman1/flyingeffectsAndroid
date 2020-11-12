@@ -117,6 +117,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     MyScrollView scrollView;
     @BindView(R.id.exo_player)
     PlayerView playerView;
+    @BindView(R.id.tv_current_time)
+    TextView mTvCurrentTime;
 
     private int templateId;
     private boolean isIntoPause = false;
@@ -233,6 +235,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 }
                 progressBarProgress=progress;
                 presenter.getNowPlayingTime(progressBarProgress);
+                mTvCurrentTime.setText(TimeUtils.timeParse(progress) + "s");
             }
 
             @Override
@@ -251,14 +254,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         mSeekBarView.setProgressListener(this);
     }
 
-    private void seekBarViewIsShow(boolean isShow){
+    private void seekBarViewIsShow(boolean isShow) {
         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mLlProgress.getLayoutParams();
-        if(isShow){
+        if (isShow) {
             layoutParams.addRule(RelativeLayout.ABOVE, R.id.rl_seek_bar);
             viewPager.setVisibility(View.GONE);
             mRlSeekBar.setVisibility(View.VISIBLE);
             mTvMaterialComplete.setVisibility(View.GONE);
-        }else {
+        } else {
             layoutParams.addRule(RelativeLayout.ABOVE, R.id.viewPager);
             viewPager.setVisibility(View.VISIBLE);
             mRlSeekBar.setVisibility(View.GONE);
@@ -396,7 +399,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_delete_all_text, R.id.iv_add_sticker, R.id.iv_top_back,
             R.id.iv_change_ui, R.id.tv_background, R.id.tv_music, R.id.tv_anim, R.id.tv_tiezhi, R.id.tv_add_text,
-            R.id.tv_material_complete})
+            R.id.tv_material_complete,R.id.rl_creation_container})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
@@ -534,6 +537,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 nowUiIsLandscape = !nowUiIsLandscape;
                 setPlayerViewSize(nowUiIsLandscape);
                 break;
+            case R.id.rl_creation_container:
+                mProgressBarView.hindArrow();
+                break;
             default:
                 break;
         }
@@ -660,17 +666,17 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 设置背景视频时长
      * @param isModifyMaterialTimeLine 是否修改贴纸时间轴
      */
-    public void setBJVideoPath(boolean isModifyMaterialTimeLine){
+    public void setBJVideoPath(boolean isModifyMaterialTimeLine) {
         MediaInfo mediaInfo = new MediaInfo(videoPath);
         mediaInfo.prepare();
-        allVideoDuration = (long) (mediaInfo.vDuration*1000);
+        allVideoDuration = (long) (mediaInfo.vDuration * 1000);
         mProgressBarView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 mProgressBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 mCutStartTime = 0;
                 mCutEndTime = allVideoDuration;
-                mProgressBarView.addProgressBarView(allVideoDuration,videoPath);
+                mProgressBarView.addProgressBarView(allVideoDuration, videoPath);
                 if (isModifyMaterialTimeLine) {
                     mSeekBarView.setCutStartAndEndTime(mCutStartTime, mCutEndTime);
                     mSeekBarView.changeVideoPathViewFrameSetWidth(allVideoDuration);
@@ -719,7 +725,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * creation date: 2020/8/10
      * user : zhangtongju
      */
-    private int scrollViewHeight;
     private float percentageH = 0;
 
     private void setPlayerViewSize(boolean isLandscape) {
@@ -735,7 +740,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 relativeLayoutParams2.width = oriWidth;
                 relativeLayoutParams2.height = Math.round(1f * oriWidth * oriRatio);
                 scrollView.setLayoutParams(relativeLayoutParams2);
-                scrollViewHeight = relativeLayoutParams2.height;
                 relativeLayoutParams.width = oriWidth;
                 relativeLayoutParams.height = Math.round(1f * oriWidth / oriRatio);
                 playerView.setLayoutParams(relativeLayoutParams);
@@ -750,7 +754,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 relativeLayoutParams2.height = height;
                 relativeLayoutParams2.width = Math.round(1f * height * oriRatio);
                 scrollView.setLayoutParams(relativeLayoutParams2);
-                scrollViewHeight = height;
                 relativeLayoutParams.width = Math.round(1f * height * oriRatio);
                 relativeLayoutParams.height = height;
                 playerView.setLayoutParams(relativeLayoutParams);
@@ -953,11 +956,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void hideKeyBord() {
-
         if (createViewForAddText != null) {
             createViewForAddText.hideInputTextDialog();
         }
-
     }
 
     @Override
@@ -1107,9 +1108,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                                 mProgressBarView.scrollToPosition(nowTime);
                             }
                         }
-
-
-
                     }
                 });
             }
@@ -1293,14 +1291,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             mProgressBarView.scrollToPosition(progress);
         }
         mSeekBarViewManualDrag = manualDrag;
-
     }
 
     @Override
     public void manualDrag(boolean manualDrag) {
         mSeekBarViewManualDrag = manualDrag;
         videoToPause();
-
     }
 
     @Override

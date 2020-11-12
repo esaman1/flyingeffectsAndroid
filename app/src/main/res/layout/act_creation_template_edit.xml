@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black">
+    android:background="@color/black"
+    android:id="@+id/rl_creation_container">
 
 
     <RelativeLayout
@@ -201,6 +202,16 @@
         android:contentDescription="@string/app_name"
         android:src="@mipmap/change_ui" />
 
+
+    <TextView
+        android:id="@+id/tv_current_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_progress"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="10dp"
+        android:text="00:00s"
+        android:textColor="@color/white" />
 
     <TextView
         android:id="@+id/tv_total"

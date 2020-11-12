@@ -1,5 +1,7 @@
 package com.flyingeffects.com.adapter;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -9,8 +11,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
@@ -23,6 +23,7 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.model.FromToTemplate;
+import com.flyingeffects.com.utils.ButtonJitterAnimatorUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.view.MarqueTextView;
@@ -31,6 +32,8 @@ import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 
 import java.util.List;
+
+import androidx.annotation.Nullable;
 
 
 /**
@@ -93,6 +96,10 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         helper.addOnClickListener(R.id.iv_download_bj);
         helper.addOnClickListener(R.id.ll_comment);
         helper.addOnClickListener(R.id.tv_btn_follow);
+
+        ObjectAnimator animator = ButtonJitterAnimatorUtil.jitter(tv_make);
+        animator.setRepeatCount(ValueAnimator.INFINITE);
+        animator.start();
 
         if (OldFromTo.equals(FromToTemplate.ISCHOOSEBJ)) {
             tv_make.setText("使用背景");
@@ -332,7 +339,6 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     public void onDestroy() {
         videoPlayer.release();
     }
-
 }
 
 

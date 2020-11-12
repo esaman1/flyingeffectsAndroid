@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.os.Build;
+import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.text.TextUtils;
@@ -35,8 +36,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -72,9 +71,17 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
      */
     float llViewDownX = 0;
 
-    boolean isLongClickModule = false;
+    private boolean isLongClickModule = false;
+    private boolean isNeedOverallDrag = false;
+    private Runnable mLongPressRunnable =  new Runnable() {
+        @Override
+        public void run() {
+            isLongClickModule = true;
+            vibrator(50);
+        }
+    };;
+    private Handler handler = new Handler();
     long lastTime = 0;
-    Timer timer = null;
     Vibrator vibrator;
     int identityID = 0;
     private long startTime;
@@ -98,7 +105,7 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
         initView();
     }
 
-    public void initView(){
+    private void initView() {
         setGravity(Gravity.CENTER_VERTICAL);
         setOrientation(LinearLayout.HORIZONTAL);
 
@@ -189,22 +196,13 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
         if (v == mLlThumbnail) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    timer = new Timer();
                     llViewDownX = event.getX();
                     lastTime = System.currentTimeMillis();
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            isLongClickModule = true;
-                            vibrator(50);
-                        }
-                    }, 500);
+                    if (isNeedOverallDrag) {
+                        handler.postDelayed(mLongPressRunnable, 500);
+                    }
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    if (timer != null) {
-                        timer.cancel();
-                        timer = null;
-                    }
                     if (isLongClickModule) {
                         v.getParent().requestDisallowInterceptTouchEvent(true);
                         if (llViewDownX < event.getX()) {
@@ -218,7 +216,6 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
                                 dragListener.touchTextView(this, true, llViewDownX - event.getX(), identityID);
                             }
                         }
-                        timer = null;
                     }
                     break;
                 case MotionEvent.ACTION_UP:
@@ -232,9 +229,8 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
                         }
                     }
                     isLongClickModule = false;
-                    if (timer != null) {
-                        timer.cancel();
-                        timer = null;
+                    if (isNeedOverallDrag) {
+                        handler.removeCallbacks(mLongPressRunnable);
                     }
                     v.getParent().requestDisallowInterceptTouchEvent(false);
                     break;
@@ -293,6 +289,11 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
         }
     }
 
+    /**是否需要整体拖动*/
+    public void isNeedOverallDrag(boolean isNeedOverallDrag){
+        this.isNeedOverallDrag = isNeedOverallDrag;
+    }
+
     /***
      * 设置显示的textview的宽度和高度
      * @param width
@@ -305,6 +306,12 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
         mLlThumbnail.setLayoutParams(params);
     }
 
+    /***
+     * 重新选择了视频或者改变了预览视频的时长  得到新的宽度设置给拖动条
+     * @param duration 时长
+     * @param containerHeight 拖动条高度
+     * @return 返回高度
+     */
     public int changeVideoPathWidth(long duration,int containerHeight){
         int frameSingleWidth = (int) (containerHeight * TemplateMaterialSeekBarView.NOVIDEO_STAGE_WIDTH / TemplateMaterialSeekBarView.NOVIDEO_STAGE_HEIGHT);
         long frameSingleMs = frameSingleWidth * TemplateMaterialSeekBarView.PER_MS_IN_PX;
