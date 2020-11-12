@@ -127,6 +127,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     private List<String> originalPath;
     private String templateFilePath;
+    /**
+     * 模板选择位置
+     */
+    private int changeTemplatePosition;
 
 
     /**
@@ -267,6 +271,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             templateFilePath = bundle.getString("templateFilePath");
             imgPath = bundle.getStringArrayList("paths");
             videoTime = bundle.getString("videoTime");
+            changeTemplatePosition=bundle.getInt("changeTemplatePosition");
             primitivePath = bundle.getString("primitivePath");
             picout = bundle.getInt("picout");
             LogUtil.d("OOM", "picout=" + picout);
@@ -1318,7 +1323,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.PICTUREALBUM)) {
             View templateThumb = LayoutInflater.from(this).inflate(R.layout.view_choose_template, null);
-            ViewChooseTemplate viewChooseTemplate = new ViewChooseTemplate(TemplateActivity.this, templateThumb, new ViewChooseTemplate.Callback() {
+            ViewChooseTemplate viewChooseTemplate = new ViewChooseTemplate(TemplateActivity.this, templateThumb,changeTemplatePosition, new ViewChooseTemplate.Callback() {
                 @Override
                 public void onItemClick(int position, String path, new_fag_template_item item) {
                     //选择模板的回调时间
@@ -1331,6 +1336,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     bundle.putStringArrayList("paths", arrayList);
                     bundle.putInt("isPicNum", 20);
                     bundle.putString("fromTo", FromToTemplate.PICTUREALBUM);
+                    bundle.putInt("changeTemplatePosition", position);
                     bundle.putInt("picout", 0);
                     bundle.putInt("is_anime", 0);
                     bundle.putString("templateName", item.getTitle());
