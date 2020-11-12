@@ -139,6 +139,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private int needAssetsCount;
     private String templateName;
     private String fromTo;
+    private int cutVideoTag;
 
     @BindView(R.id.Real_time_preview)
     FrameLayout real_time_preview;
@@ -850,7 +851,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     if (nowChoosePosition != lastChoosePosition) {
                         selectGroup(position);
                         modificationThumbData(lastChoosePosition, position);
-                    }else{
+                    } else {
                         MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
                         if (mediaUi2.isVideoType()) {
                             //实际需要的时长
@@ -859,10 +860,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                             Intent intent = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
                             needCropDuration = mediaUi2.getDuration() / mediaUi2.getFps();
                             isNeedSlow = false;
+                            intent.putExtra("isFrom", cutVideoTag);
                             intent.putExtra("videoPath", mediaUi2.getOriginalPath());
                             intent.putExtra("videoDuration", needCropDuration);
                             intent.putExtra("isNeedSlow", isNeedSlow);
-                            intent.putExtra("videoFps",  mediaUi2.getFps());
+                            intent.putExtra("videoFps", mediaUi2.getFps());
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
                         }
@@ -1177,44 +1179,51 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     @Subscribe
     public void onEventMainThread(MattingVideoEnity event) {
-        mTemplateModel.resetUi();
-        if (event.getTag() == 1) {
-            //点击了切换按钮且没扣过视频
-            ChangeMaterialCallbackForVideo(event.getOriginalPath(), event.getMattingPath(), true);
-        } else if (event.getTag() == 2) {
-            nowTemplateIsMattingVideo = 1;
-            mTemplateModel.mAssets.get(0).setIsAnim(true);
-            //替换素材
-            if (event.getOriginalPath() == null || !nowIsChooseMatting) {
-                if (event.getOriginalPath() == null
-                ) {
-                    //用户没有选择抠图
-                    ChangeMaterialCallbackForVideo(null, event.getMattingPath(), false);
-                    //这里需要重新设置底部图，但是glide 视频路径相同。所以glide 不会刷新
-                    presenter.getButtomIcon(event.getMattingPath());
-                    switch_button.setChecked(false);
-                    changeMaterialMusic(event.getMattingPath());
 
-                } else {
-                    //用户选择了抠图但是没有切换抠图
-                    ChangeMaterialCallbackForVideo(null, event.getOriginalPath(), false);
-                    //这里需要重新设置底部图，但是glide 视频路径相同。所以glide 不会刷新
-                    presenter.getButtomIcon(event.getOriginalPath());
-                    changeMaterialMusic(event.getOriginalPath());
-                }
-            } else {
-                //用户选择了抠图
+        if (event.getTag() == cutVideoTag) {
+            getSingleCatVideoPath(event.getMattingPath());
+        } else {
+            mTemplateModel.resetUi();
+            if (event.getTag() == 1) {
+                //点击了切换按钮且没扣过视频
                 ChangeMaterialCallbackForVideo(event.getOriginalPath(), event.getMattingPath(), true);
-                presenter.getButtomIcon(event.getOriginalPath());
-                changeMaterialMusic(event.getMattingPath());
+            } else if (event.getTag() == 2) {
+                nowTemplateIsMattingVideo = 1;
+                mTemplateModel.mAssets.get(0).setIsAnim(true);
+                //替换素材
+                if (event.getOriginalPath() == null || !nowIsChooseMatting) {
+                    if (event.getOriginalPath() == null
+                    ) {
+                        //用户没有选择抠图
+                        ChangeMaterialCallbackForVideo(null, event.getMattingPath(), false);
+                        //这里需要重新设置底部图，但是glide 视频路径相同。所以glide 不会刷新
+                        presenter.getButtomIcon(event.getMattingPath());
+                        switch_button.setChecked(false);
+                        changeMaterialMusic(event.getMattingPath());
+
+                    } else {
+                        //用户选择了抠图但是没有切换抠图
+                        ChangeMaterialCallbackForVideo(null, event.getOriginalPath(), false);
+                        //这里需要重新设置底部图，但是glide 视频路径相同。所以glide 不会刷新
+                        presenter.getButtomIcon(event.getOriginalPath());
+                        changeMaterialMusic(event.getOriginalPath());
+                    }
+                } else {
+                    //用户选择了抠图
+                    ChangeMaterialCallbackForVideo(event.getOriginalPath(), event.getMattingPath(), true);
+                    presenter.getButtomIcon(event.getOriginalPath());
+                    changeMaterialMusic(event.getMattingPath());
 //                if(!switch_button.isChecked()){
 //                    new Handler().postDelayed(() -> switch_button.setChecked(true),500);
 //                }
 //                LogUtil.d("OOM","重新选择了抠图");
+                }
             }
+            templateThumbForMusic.findViewById(R.id.ll_choose_0).setVisibility(View.VISIBLE);
+            primitivePath = event.getPrimitivePath();
         }
-        templateThumbForMusic.findViewById(R.id.ll_choose_0).setVisibility(View.VISIBLE);
-        primitivePath = event.getPrimitivePath();
+
+
     }
 
     private void changeMaterialMusic(String musicPath) {
@@ -1326,7 +1335,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     bundle.putInt("is_anime", 0);
                     bundle.putString("templateName", item.getTitle());
                     bundle.putString("templateId", item.getId() + "");
-                    bundle.putString("videoTime", "20");
                     bundle.putStringArrayList("originalPath", arrayList);
                     bundle.putString("templateFilePath", path);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -1337,8 +1345,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
                 @Override
                 public void isNeedToCutVideo(int position) {
-
-
 
 
                 }
@@ -1547,6 +1553,19 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         nowSpliteMusic = downMusicPath;
         setBjMusic();
         ll_choose_3.setVisibility(View.VISIBLE);
+    }
+
+
+    public void getSingleCatVideoPath(String path) {
+        MediaUiModel2 mModel = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
+//        mModel.isVideoSlide = true;
+        mModel.setVideoPath(path, false, 0);
+//        mModel.recycleBitmap();
+        mTemplateViews.get(lastChoosePosition).invalidate();
+        //提示更新缩略图
+//        mModel.setIsConversion(true);
+        templateThumbAdapter.notifyItemChanged(lastChoosePosition);
+//        mTemplateViews.get(nowChooseIndex).invalidate();
     }
 
 }
