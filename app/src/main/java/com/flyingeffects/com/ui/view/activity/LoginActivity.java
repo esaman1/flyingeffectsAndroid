@@ -458,8 +458,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     if (!isOnDestroy) {
                         WaitingDialog.closePragressDialog();
                         ToastUtil.showToast(message);
-                        dissMissShanYanUi();
-                        LoginActivity.this.finish();
+//                        dissMissShanYanUi();
+//                        LoginActivity.this.finish();
                     }
                 }
 

@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -37,6 +38,8 @@ import com.flyingeffects.com.ui.view.activity.TemplateActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
+import com.flyingeffects.com.utils.ToastUtil;
+import com.google.android.material.appbar.AppBarLayout;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
@@ -57,13 +60,29 @@ import rx.functions.Action1;
  * 时间：2018/4/24
  **/
 
-public class frag_Bj extends BaseFragment implements FagBjMvpView {
+public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.OnOffsetChangedListener {
 
     @BindView(R.id.viewpager)
     ViewPager viewPager;
 
     @BindView(R.id.ll_add_child)
     LinearLayout ll_add_child;
+
+
+    @BindView(R.id.ll_expand)
+    RelativeLayout ll_expand;
+
+    @BindView(R.id.ll_close)
+    RelativeLayout ll_close;
+
+
+    @BindView(R.id.view_top)
+    TextView view_top;
+
+
+    @BindView(R.id.appbar)
+    AppBarLayout appbar;
+
 
 
     private FagBjMvpPresenter presenter;
@@ -91,12 +110,13 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
         presenter = new FagBjMvpPresenter(getActivity(), this);
         presenter.requestData();
         EventBus.getDefault().register(this);
-        waitingDialog_progress=new WaitingDialog_progress(getActivity());
+        waitingDialog_progress = new WaitingDialog_progress(getActivity());
+        appbar.addOnOffsetChangedListener(this);
+
     }
 
     @Override
     protected void initAction() {
-
     }
 
     @Override
@@ -227,14 +247,14 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     }
 
     public void ShowProgress(int progress) {
-        if(getActivity()!=null&&waitingDialog_progress!=null){
+        if (getActivity() != null && waitingDialog_progress != null) {
             Observable.just(progress).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
                 @Override
                 public void call(Integer integer) {
-                    if(progress==0){
+                    if (progress == 0) {
                         waitingDialog_progress.openProgressDialog();
                     }
-                    waitingDialog_progress.setProgress(integer+"");
+                    waitingDialog_progress.setProgress(integer + "");
                 }
             });
         }
@@ -252,7 +272,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
             if (data != null && data.size() > 0) {
                 template_item = data.get(0);
                 if (template_item != null) {
-                    TemplateDown templateDown=new TemplateDown(new TemplateDown.DownFileCallback() {
+                    TemplateDown templateDown = new TemplateDown(new TemplateDown.DownFileCallback() {
                         @Override
                         public void isSuccess(String filePath) {
                             IntoTemplateActivity(filePath);
@@ -272,7 +292,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     }
 
     public void IntoTemplateActivity(String path) {
-        if(getActivity()!=null){
+        if (getActivity() != null) {
             Observable.just(path).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> toPhotographAlbum(template_item, path));
 
         }
@@ -318,10 +338,12 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
     }
 
 
-    @OnClick({R.id.iv_add,   R.id.ll_crate_photograph_album,R.id.ll_click_create_video,R.id.iv_search})
+    @OnClick({R.id.ll_crate_photograph_album,R.id.iv_add,R.id.ll_click_create_video_2,R.id.ll_crate_photograph_album_2, R.id.ll_click_create_video, R.id.iv_search})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.iv_add:
             case R.id.ll_click_create_video:
+            case R.id.ll_click_create_video_2:
                 if (BaseConstans.hasLogin()) {
                     toAddSticker();
                 } else {
@@ -330,11 +352,6 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                     startActivity(intent);
                 }
                 break;
-//            case R.id.iv_cover:
-//                toAddSticker();
-//                statisticsEventAffair.getInstance().setFlag(getActivity(), "7_background");
-//                break;
-//            case R.id.relative_top:
             case R.id.iv_search:
                 //搜索栏目
                 Intent intent = new Intent(getActivity(), BackgroundSearchActivity.class);
@@ -344,8 +361,13 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                 break;
 
             case R.id.ll_crate_photograph_album:
+            case R.id.ll_crate_photograph_album_2:
+                if(BaseConstans.hasLogin()){
+                    presenter.requestPictureAlbumData();
+                }else{
+                    ToastUtil.showToast("请先登录");
+                }
 
-                presenter.requestPictureAlbumData();
                 break;
             default:
                 break;
@@ -381,7 +403,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
 
     private void toPhotographAlbum(new_fag_template_item item, String templateFilePath) {
         waitingDialog_progress.closePragressDialog();
-        if(getActivity()!=null){
+        if (getActivity() != null) {
             AlbumManager.chooseAlbum(getActivity(), 20, SELECTALBUM, (tag, paths, isCancel, albumFileList) -> {
                 if (!isCancel) {
                     Intent intent = new Intent(getActivity(), TemplateActivity.class);
@@ -393,7 +415,6 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
                     bundle.putInt("is_anime", 0);
                     bundle.putString("templateName", item.getTitle());
                     bundle.putString("templateId", item.getId() + "");
-                    bundle.putString("videoTime", "20");
                     bundle.putStringArrayList("originalPath", (ArrayList<String>) paths);
                     bundle.putString("templateFilePath", templateFilePath);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -437,6 +458,27 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView {
             showWitchBtn(lastViewPagerChoosePosition);
         }
 
+    }
+
+    @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+        int offset = Math.abs(verticalOffset);
+        int total = appBarLayout.getTotalScrollRange();
+        int alphaOut = (total - offset) < 0 ? 0 : total - offset;
+        float percentagef = alphaOut / (float) total ;
+        float percentage = percentagef* 100;
+        int percent = (int) percentage;
+        int topPercent = 100 - percent;
+        view_top.getBackground().setAlpha(topPercent+30);
+        if (offset <= total * 2 / 3) {
+            ll_expand.setScaleY(percentagef);
+            ll_expand.setVisibility(View.VISIBLE);
+            ll_close.setVisibility(View.GONE);
+        } else {
+            ll_expand.setScaleY(1);
+            ll_expand.setVisibility(View.GONE);
+            ll_close.setVisibility(View.VISIBLE);
+        }
     }
 
 }

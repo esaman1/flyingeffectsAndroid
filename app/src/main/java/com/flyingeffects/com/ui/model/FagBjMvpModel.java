@@ -97,7 +97,6 @@ public class FagBjMvpModel {
         params.put("page",   "1");
         params.put("pageSize",  "10");
         Observable ob = Api.getDefault().photoList(BaseConstans.getRequestHead(params));
-//        LogUtil.d("sigin",BaseConstans.getRequestHead(params).toString());
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
             @Override
             protected void _onError(String message) {

@@ -680,7 +680,7 @@ public class MediaUiModel2 extends MediaUiModel {
 
 
     public String getOriginalPath() {
-        if (!mIsVideo) {
+        if (mIsVideo) {
             return mVideoPath;
         } else {
             return path;
