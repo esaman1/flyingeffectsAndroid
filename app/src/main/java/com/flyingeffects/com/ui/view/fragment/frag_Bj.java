@@ -38,6 +38,7 @@ import com.flyingeffects.com.ui.view.activity.TemplateActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.google.android.material.appbar.AppBarLayout;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
@@ -75,9 +76,6 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
     RelativeLayout ll_close;
 
 
-//    @BindView(R.id.view_bottom)
-//    TextView view_bottom;
-
     @BindView(R.id.view_top)
     TextView view_top;
 
@@ -85,7 +83,6 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
     @BindView(R.id.appbar)
     AppBarLayout appbar;
 
-    private int appbarHeight;
 
 
     private FagBjMvpPresenter presenter;
@@ -115,11 +112,11 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
         EventBus.getDefault().register(this);
         waitingDialog_progress = new WaitingDialog_progress(getActivity());
         appbar.addOnOffsetChangedListener(this);
+
     }
 
     @Override
     protected void initAction() {
-        appbarHeight = StringUtil.dip2px(getActivity(), 114);
     }
 
     @Override
@@ -341,10 +338,12 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
     }
 
 
-    @OnClick({R.id.iv_add, R.id.ll_crate_photograph_album, R.id.ll_click_create_video, R.id.iv_search})
+    @OnClick({R.id.ll_crate_photograph_album,R.id.iv_add,R.id.ll_click_create_video_2,R.id.ll_crate_photograph_album_2, R.id.ll_click_create_video, R.id.iv_search})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.iv_add:
             case R.id.ll_click_create_video:
+            case R.id.ll_click_create_video_2:
                 if (BaseConstans.hasLogin()) {
                     toAddSticker();
                 } else {
@@ -362,7 +361,13 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
                 break;
 
             case R.id.ll_crate_photograph_album:
-                presenter.requestPictureAlbumData();
+            case R.id.ll_crate_photograph_album_2:
+                if(BaseConstans.hasLogin()){
+                    presenter.requestPictureAlbumData();
+                }else{
+                    ToastUtil.showToast("请先登录");
+                }
+
                 break;
             default:
                 break;
