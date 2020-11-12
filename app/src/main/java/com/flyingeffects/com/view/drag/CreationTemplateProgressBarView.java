@@ -35,8 +35,8 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
     /**视频原始时长*/
     long originalDuration;
 
-    long startTime =0;
-    long endTime =0;
+    long startTime = 0;
+    long endTime = 0;
 
     public CreationTemplateProgressBarView(Context context) {
         super(context);
@@ -53,8 +53,8 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
         initView();
     }
 
-    private void initView(){
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.view_creation_template_progress_bar,null);
+    private void initView() {
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.view_creation_template_progress_bar, null);
         mCreationTemplateProgressBar = view.findViewById(R.id.creation_template_progressbar);
         mLlDragItem = view.findViewById(R.id.ll_item_drag);
         addView(view);
@@ -83,6 +83,11 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
         frameContainerHeight = screenUtil.dip2px(getContext(), 40);
     }
 
+    /***
+     * 添加一个模板进度条
+     * @param duration 时长
+     * @param resPath 资源路径
+     */
     public void addProgressBarView(long duration, String resPath) {
         mLlDragItem.removeAllViews();
         this.originalDuration = duration;
@@ -90,10 +95,11 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
         this.endTime = duration;
         materialItemView = new TemplateMaterialItemView(getContext());
         materialItemView.setIdentityID(0);
-
         materialItemView.isShowArrow(false);
         materialItemView.setResPathAndDuration(resPath,duration,frameContainerHeight,false,"");
         materialItemView.setWidthAndHeight((int) (duration / PER_MS_IN_PX), frameContainerHeight);
+        materialItemView.isNeedOverallDrag(false);
+
         mLlDragItem.addView(materialItemView);
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) materialItemView.getLayoutParams();
         long intervalPX = frameListPadding - screenUtil.dip2px(getContext(), 43) - TemplateMaterialItemView.ARROW_WIDTH;

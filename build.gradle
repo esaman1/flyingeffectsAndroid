@@ -11,7 +11,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.0'
+        classpath 'com.android.tools.build:gradle:4.1.1'
         // 引入插件库 百度统计0埋点应用分析sdk
         //classpath 'com.baidu.mobstat:mtj-circle-plugin:1.4.0'
     }
