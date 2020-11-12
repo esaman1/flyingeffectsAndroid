@@ -107,6 +107,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
 
     @Override
     protected void initView() {
+
         presenter = new FagBjMvpPresenter(getActivity(), this);
         presenter.requestData();
         EventBus.getDefault().register(this);
