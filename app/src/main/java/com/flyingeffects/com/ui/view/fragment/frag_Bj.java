@@ -474,10 +474,12 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
             ll_expand.setScaleY(percentagef);
             ll_expand.setVisibility(View.VISIBLE);
             ll_close.setVisibility(View.GONE);
+            ll_expand.bringToFront();
         } else {
             ll_expand.setScaleY(1);
             ll_expand.setVisibility(View.GONE);
             ll_close.setVisibility(View.VISIBLE);
+            ll_close.bringToFront();
         }
     }
 
