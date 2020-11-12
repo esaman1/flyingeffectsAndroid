@@ -464,8 +464,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
         float percentage = percentagef* 100;
         int percent = (int) percentage;
         int topPercent = 100 - percent;
-        LogUtil.d("OOM", "topPercent=" + topPercent);
-        view_top.getBackground().setAlpha(topPercent);
+        view_top.getBackground().setAlpha(topPercent+30);
         if (offset <= total * 2 / 3) {
             ll_expand.setScaleY(percentagef);
             ll_expand.setVisibility(View.VISIBLE);
