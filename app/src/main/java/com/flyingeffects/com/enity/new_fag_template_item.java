@@ -490,6 +490,17 @@ public class new_fag_template_item implements Serializable {
      */
     private boolean isCheckItem=false;
 
+    public int getIs_pic() {
+        return is_pic;
+    }
+
+    public void setIs_pic(int is_pic) {
+        this.is_pic = is_pic;
+    }
+
+    //1 表示是影集 0 不是
+    private int is_pic;
+
 
 
 

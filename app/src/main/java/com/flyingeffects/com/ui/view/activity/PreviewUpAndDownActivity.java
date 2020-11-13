@@ -182,6 +182,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     private String keepOldFrom;
 
+    //0 表示不是影集，1表示影集
+    private int is_pic;
+
 
     private boolean isSlideViewpager = false;
     boolean isCanLoadMore;
@@ -205,6 +208,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         insertMinNum = nowChoosePosition;
         templateItem = allData.get(nowChoosePosition);
         is_picout = templateItem.getIs_picout();
+        is_pic=templateItem.getIs_pic();
         is_with_play = templateItem.getIs_with_play();
         templateType = templateItem.getTemplate_type();
         String searchText = getIntent().getStringExtra("searchText");
@@ -780,6 +784,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             setIsZan(data.getIs_praise() == 1);
             nowPraise = data.getIs_praise();
             templateType = data.getTemplate_type();
+            is_pic=templateItem.getIs_pic();
             //如果模板是来自一键模板，但是模板类型是背景，那么修改状态值
             if (!TextUtils.isEmpty(templateItem.getPre_url())) {
                 OldfromTo = FromToTemplate.ISBJ;
@@ -946,54 +951,62 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         new Thread(() -> {
                             originalImagePath = paths;
                             //如果是视频，就不抠图了
-                            String path = paths.get(0);
-                            String pathType = GetPathTypeModel.getInstance().getMediaType(path);
-                            if (albumType.isImage(pathType)) {
-                                //选择的时图片
-                                if (OldfromTo.equals(FromToTemplate.ISBJ)) {
-                                    statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "8_SelectImage");
-                                }
-                                if (templateItem.getIs_anime() != 1) {
-                                    compressImage(paths, templateItem.getId() + "");
-                                } else {
-                                    //漫画需要去服务器请求
-                                    compressImageForServers(paths, templateItem.getId() + "");
-                                }
-                            } else {
-                                //选择的时视频
-//                                if (OldfromTo.equals(FromToTemplate.ISBJ) || OldfromTo.equals(FromToTemplate.ISHOMEFROMBJ)) {
-                                if (templateType.equals("2")) {
-                                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                                        toCloseProgressDialog();
-                                        if (originalImagePath.get(0).equals(paths.get(0))) {
-                                            createDownVideoPath = videoPath;
-                                            //源图地址和剪切之后的地址完全一样，那说明只有一个情况，就是当前选择的素材是视频的情况，那么需要去得到视频的第一针，然后传过去
-                                            Intent intent = new Intent(PreviewUpAndDownActivity.this, VideoCropActivity.class);
-                                            intent.putExtra("videoPath", paths.get(0));
-                                            intent.putExtra("comeFrom", FromToTemplate.ISCHOOSEBJ);
-                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                            startActivity(intent);
-                                        } else {
-                                            intoCreationTemplateActivity(paths.get(0), videoPath, originalImagePath.get(0), true);
-                                        }
-                                    });
-                                } else {
-                                    toCloseProgressDialog();
-                                    String videoTime = templateItem.getVideotime();
-                                    if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
-                                        float needVideoTime = Float.parseFloat(videoTime);
-                                        LogUtil.d("OOM", "needVideoTime=" + needVideoTime);
-                                        Intent intoCutVideo = new Intent(PreviewUpAndDownActivity.this, TemplateCutVideoActivity.class);
-                                        intoCutVideo.putExtra("needCropDuration", needVideoTime);
-                                        intoCutVideo.putExtra("templateName", templateItem.getTitle());
-                                        intoCutVideo.putExtra("videoPath", paths.get(0));
-                                        intoCutVideo.putExtra("picout", templateItem.getIs_picout());
-                                        startActivity(intoCutVideo);
+                            if(is_pic==0){
+                                LogUtil.d("OOM6","is_pic==0");
+                                String path = paths.get(0);
+                                String pathType = GetPathTypeModel.getInstance().getMediaType(path);
+                                if (albumType.isImage(pathType)) {
+                                    //选择的时图片
+                                    if (OldfromTo.equals(FromToTemplate.ISBJ)) {
+                                        statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "8_SelectImage");
+                                    }
+                                    if (templateItem.getIs_anime() != 1) {
+                                        compressImage(paths, templateItem.getId() + "");
                                     } else {
-                                        intoTemplateActivity(paths, TemplateFilePath);
+                                        //漫画需要去服务器请求
+                                        compressImageForServers(paths, templateItem.getId() + "");
+                                    }
+                                } else {
+                                    //选择的时视频
+//                                if (OldfromTo.equals(FromToTemplate.ISBJ) || OldfromTo.equals(FromToTemplate.ISHOMEFROMBJ)) {
+                                    if (templateType.equals("2")) {
+                                        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+                                            toCloseProgressDialog();
+                                            if (originalImagePath.get(0).equals(paths.get(0))) {
+                                                createDownVideoPath = videoPath;
+                                                //源图地址和剪切之后的地址完全一样，那说明只有一个情况，就是当前选择的素材是视频的情况，那么需要去得到视频的第一针，然后传过去
+                                                Intent intent = new Intent(PreviewUpAndDownActivity.this, VideoCropActivity.class);
+                                                intent.putExtra("videoPath", paths.get(0));
+                                                intent.putExtra("comeFrom", FromToTemplate.ISCHOOSEBJ);
+                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                startActivity(intent);
+                                            } else {
+                                                intoCreationTemplateActivity(paths.get(0), videoPath, originalImagePath.get(0), true);
+                                            }
+                                        });
+                                    } else {
+                                        toCloseProgressDialog();
+                                        String videoTime = templateItem.getVideotime();
+                                        if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
+                                            float needVideoTime = Float.parseFloat(videoTime);
+                                            LogUtil.d("OOM", "needVideoTime=" + needVideoTime);
+                                            Intent intoCutVideo = new Intent(PreviewUpAndDownActivity.this, TemplateCutVideoActivity.class);
+                                            intoCutVideo.putExtra("needCropDuration", needVideoTime);
+                                            intoCutVideo.putExtra("templateName", templateItem.getTitle());
+                                            intoCutVideo.putExtra("videoPath", paths.get(0));
+                                            intoCutVideo.putExtra("picout", templateItem.getIs_picout());
+                                            startActivity(intoCutVideo);
+                                        } else {
+                                            intoTemplateActivity(paths, TemplateFilePath);
+                                        }
                                     }
                                 }
+                            }else{
+                                LogUtil.d("OOM6","进入到了intoTemplate");
+                                intoTemplateActivity(paths, TemplateFilePath);
                             }
+
+
                         }).start();
                     });
                 }

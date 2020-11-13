@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +48,7 @@ import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
+import com.flyingeffects.com.ui.model.repairRandomPaths;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
 import com.flyingeffects.com.ui.view.ViewChooseTemplate;
 import com.flyingeffects.com.utils.LogUtil;
@@ -78,6 +80,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -1013,6 +1016,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private int mDuration;
 
     private void switchTemplate(String folder, String[] mSources) {
+        mSources = repairRandomPaths.randomPaths(mSources);
         final SXTemplate template = new SXTemplate(folder, SXTemplate.TemplateUsage.kForPreview);
         for (String mSource : mSources) {
             LogUtil.d("OOM", "路徑為" + mSource);
@@ -1046,6 +1050,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         }.start();
     }
+
+
 
 
     private SXTemplatePlayer.PlayStateListener mListener = new SXTemplatePlayer.PlayStateListener() {
