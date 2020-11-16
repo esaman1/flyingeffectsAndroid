@@ -10,7 +10,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.utils.screenUtil;
+import com.shixing.sxve.ui.albumType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -155,14 +157,17 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
             if (mTemplateMaterialItemViews.get(i) != null) {
                 TemplateMaterialItemView itemView = mTemplateMaterialItemViews.get(i);
-                itemView.setStartTime(startTime);
-                itemView.setEndTime(endTime);
-                itemView.setResPathAndDuration(itemView.resPath, endTime - startTime, frameContainerHeight, itemView.isText, itemView.text);
+                itemView.setStartTime(0);
+                itemView.setEndTime(itemView.getDuration());
+                int thumbnailTotalWidth =  itemView.setResPathAndDuration(itemView.resPath, endTime - startTime, frameContainerHeight, itemView.isText, itemView.text);
                 LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) itemView.getLayoutParams();
                 itemView.setWidthAndHeight((int) ((itemView.getEndTime() - itemView.getStartTime()) / PER_MS_IN_PX), frameContainerHeight);
                 params.setMargins((int) (itemView.getStartTime() / PER_MS_IN_PX + frameListPadding - TemplateMaterialItemView.ARROW_WIDTH),
                         screenUtil.dip2px(getContext(), 5), 0, 0);
                 itemView.setLayoutParams(params);
+                RelativeLayout.LayoutParams reParams = (LayoutParams) mViewFrame.getLayoutParams();
+                reParams.width = thumbnailTotalWidth + frameListPadding * 2;
+                mViewFrame.setLayoutParams(reParams);
             }
         }
     }
@@ -190,7 +195,6 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
             if (mTemplateMaterialItemViews.get(i) != null) {
                 itemView = mTemplateMaterialItemViews.get(i);
-
             }
         }
         int thumbnailTotalWidth = itemView.changeVideoPathWidth(duration, frameContainerHeight);
@@ -248,8 +252,8 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
      */
     public void addTemplateMaterialItemView(long duration, String resPath,long startTime,long endTime,boolean isText,String text,String id) {
         this.mDuration = duration;
-        this.cutStartTime = startTime;
-        this.cutEndTime = endTime;
+        this.cutStartTime = 0;
+        this.cutEndTime = duration;
         TemplateMaterialItemView materialItemView = new TemplateMaterialItemView(getContext());
         materialItemView.setDuration(duration);
         mTemplateMaterialItemViews.add(materialItemView);
@@ -308,10 +312,21 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
             if (position == materialItemView.getIdentityID()) {
                 //左拖动
                 if (isDirection) {
-                    if (materialItemView.getStartTime() <= cutStartTime) {
-                        return;
-                    } else {
-                        materialItemView.setStartTime((long) (materialItemView.getStartTime() - PER_MS_IN_PX * dragInterval));
+                    if (albumType.isVideo(GetPathType.getInstance().getPathType(materialItemView.resPath))) {
+                        long st = (long) (materialItemView.getStartTime() - (PER_MS_IN_PX * dragInterval));
+                        if (st <= cutStartTime) {
+                            return;
+                        } else if (materialItemView.getEndTime() - materialItemView.getStartTime() >= materialItemView.originalVideoDuration) {
+                            return;
+                        }else {
+                            materialItemView.setStartTime(st);
+                        }
+                    }else {
+                        if (materialItemView.getStartTime() <= cutStartTime) {
+                            return;
+                        } else {
+                            materialItemView.setStartTime((long) (materialItemView.getStartTime() - PER_MS_IN_PX * dragInterval));
+                        }
                     }
                 } else {
                     //右拖动
@@ -353,10 +368,20 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                 } else {
                     //右拖动
                     long et = (long) (materialItemView.getEndTime() + (PER_MS_IN_PX * dragInterval));
-                    if (et > cutEndTime) {
-                        return;
+                    if (albumType.isVideo(GetPathType.getInstance().getPathType(materialItemView.resPath))) {
+                        if (et > cutEndTime) {
+                            return;
+                        }else if (materialItemView.getEndTime() - materialItemView.getStartTime() >= materialItemView.originalVideoDuration) {
+                            return;
+                        }else {
+                            materialItemView.setEndTime(et);
+                        }
                     } else {
-                        materialItemView.setEndTime(et);
+                        if (et > cutEndTime) {
+                            return;
+                        } else {
+                            materialItemView.setEndTime(et);
+                        }
                     }
                 }
             }
@@ -467,5 +492,9 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
      */
     public List<TemplateMaterialItemView> getTemplateMaterialItemViews() {
         return mTemplateMaterialItemViews;
+    }
+
+    public void setCutEndTime(long cutEndTime) {
+        this.cutEndTime = cutEndTime;
     }
 }

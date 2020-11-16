@@ -42,6 +42,7 @@ import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.view.MyScrollView;
 import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.drag.CreationTemplateProgressBarView;
+import com.flyingeffects.com.view.drag.TemplateMaterialItemView;
 import com.flyingeffects.com.view.drag.TemplateMaterialSeekBarView;
 import com.flyingeffects.com.view.mine.CreateViewForAddText;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -681,6 +682,18 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 if (isModifyMaterialTimeLine) {
                     mSeekBarView.resetStartAndEndTime(mCutStartTime, mCutEndTime);
                     mSeekBarView.changeVideoPathViewFrameSetWidth(allVideoDuration);
+                    for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
+                        for (int j = 0; j < mSeekBarView.getTemplateMaterialItemViews().size(); j++) {
+                            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
+                            TemplateMaterialItemView itemView = mSeekBarView.getTemplateMaterialItemViews().get(j);
+                            if (itemView != null) {
+                                if (TextUtils.equals(String.valueOf(itemView.getIdentityID()), String.valueOf(stickerView.getId()))) {
+                                    stickerView.setShowStickerStartTime(itemView.getStartTime());
+                                    stickerView.setShowStickerEndTime(itemView.getEndTime());
+                                }
+                            }
+                        }
+                    }
                 }
             }
         });
@@ -1275,10 +1288,36 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     }
                     if (modify) {
                         modificationDuration(videoDuration);
+                        mSeekBarView.addTemplateMaterialItemView(videoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
+                                stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, mCutEndTime, isText, text, id);
+                    }else {
+                        mSeekBarView.addTemplateMaterialItemView(mCutEndTime - mCutStartTime, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
+                                stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, videoDuration, isText, text, id);
+                        stickerView.setShowStickerEndTime(videoDuration);
                     }
+                }else if(albumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath())) && !TextUtils.isEmpty(videoPath)){
+                    MediaInfo mainMediaInfo = new MediaInfo(videoPath);
+                    mainMediaInfo.prepare();
+                    long videoDuration = (long) (mainMediaInfo.vDuration * 1000);
+                    mainMediaInfo.release();
+                    MediaInfo materialMediaInfo = new MediaInfo(stickerView.getOriginalPath());
+                    materialMediaInfo.prepare();
+                    long materialDuration = (long) (materialMediaInfo.vDuration * 1000);
+                    materialMediaInfo.release();
+
+                    if (materialDuration < mCutEndTime) {
+                        mSeekBarView.addTemplateMaterialItemView(videoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
+                                stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, Math.min(materialDuration,mCutEndTime), isText, text, id);
+                        stickerView.setShowStickerEndTime(Math.min(materialDuration,mCutEndTime));
+                    }else {
+                        mSeekBarView.addTemplateMaterialItemView(videoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
+                                stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, mCutEndTime, isText, text, id);
+                    }
+                    mSeekBarView.setCutEndTime(mCutEndTime);
+                }else {
+                    mSeekBarView.addTemplateMaterialItemView(allVideoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
+                            stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, mCutEndTime, isText, text, id);
                 }
-                mSeekBarView.addTemplateMaterialItemView(mCutEndTime - mCutStartTime, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
-                        stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, mCutEndTime, isText, text, id);
             }
         });
     }
@@ -1394,7 +1433,18 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 mProgressBarView.addProgressBarView(allVideoDuration, videoPath);
                 mSeekBarView.resetStartAndEndTime(mCutStartTime, mCutEndTime);
                 mSeekBarView.changeVideoPathViewFrameSetWidth(allVideoDuration);
-
+                for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
+                    for (int j = 0; j < mSeekBarView.getTemplateMaterialItemViews().size(); j++) {
+                        StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
+                        TemplateMaterialItemView itemView = mSeekBarView.getTemplateMaterialItemViews().get(j);
+                        if (itemView != null) {
+                            if (TextUtils.equals(String.valueOf(itemView.getIdentityID()), String.valueOf(stickerView.getId()))) {
+                                stickerView.setShowStickerStartTime(itemView.getStartTime());
+                                stickerView.setShowStickerEndTime(itemView.getEndTime());
+                            }
+                        }
+                    }
+                }
             }
         });
         tv_total.setText(TimeUtils.timeParse(allVideoDuration) + "s");
