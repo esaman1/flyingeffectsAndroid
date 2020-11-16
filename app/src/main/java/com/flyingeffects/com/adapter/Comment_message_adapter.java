@@ -103,8 +103,8 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
             listView.setAdapter(adapter);
             adapter.setCommentListener(new Comment_message_item_adapter.OnItemCommentListener() {
                 @Override
-                public void clickComment(String id) {
-                    callback.clickItemComment(id,item.getId(),helper.getAdapterPosition());
+                public void clickComment(String id,String nickName) {
+                    callback.clickItemComment(id,item.getId(),helper.getAdapterPosition(),nickName);
                 }
             });
 //            if (item.getReply().size() >= 10) {
@@ -121,7 +121,7 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
 
     public interface CommentOnItemClick {
         void clickPosition(int position, String message_id);
-        void clickItemComment(String id,String firstMessageId,int position);
+        void clickItemComment(String id,String firstMessageId,int position,String nickname);
     }
 
     public interface click2Comment {

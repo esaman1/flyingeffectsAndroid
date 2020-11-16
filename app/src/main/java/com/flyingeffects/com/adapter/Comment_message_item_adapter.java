@@ -87,7 +87,7 @@ public class Comment_message_item_adapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 if (commentListener != null) {
-                    commentListener.clickComment(SearchList.get(position).getId());
+                    commentListener.clickComment(SearchList.get(position).getId(),SearchList.get(position).getNickname());
                 }
             }
         });
@@ -113,7 +113,7 @@ public class Comment_message_item_adapter extends BaseAdapter {
     }
 
     public interface OnItemCommentListener{
-        void clickComment(String id);
+        void clickComment(String id,String nickName);
     }
 
     OnItemCommentListener commentListener;
