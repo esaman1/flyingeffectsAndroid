@@ -234,6 +234,7 @@ public class TemplateMvpModel {
         Observable.create((Observable.OnSubscribe<Boolean>) subscriber -> {
             SXTemplate template = new SXTemplate(mTemplateFolder, SXTemplate.TemplateUsage.kForRender); //模板对象类，需要传入模板路径和使用方式
             String[] paths = mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
+            paths = repairRandomPaths.randomPaths(paths);
             LogUtil.d("OOM", "得到全部地址=" + StringUtil.beanToJSONString(paths));
             if (mTemplateModel.HasBj && !TextUtils.isEmpty(mTemplateModel.getBackgroundPath())) {
                 String[] newPaths = new String[paths.length + 1];

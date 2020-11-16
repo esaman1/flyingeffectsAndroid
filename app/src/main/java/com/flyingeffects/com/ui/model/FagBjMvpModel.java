@@ -109,7 +109,7 @@ public class FagBjMvpModel {
                 callback.PictureAlbum(data);
 
             }
-        }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+        }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
 
 
     }

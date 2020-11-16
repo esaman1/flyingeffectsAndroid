@@ -48,6 +48,7 @@ import com.flyingeffects.com.ui.view.fragment.frag_Bj;
 import com.flyingeffects.com.ui.view.fragment.frag_message;
 import com.flyingeffects.com.ui.view.fragment.frag_user_center;
 import com.flyingeffects.com.utils.AssetsUtils;
+import com.flyingeffects.com.utils.ChannelUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NoDoubleClickListener;
 import com.flyingeffects.com.utils.StringUtil;
@@ -59,6 +60,8 @@ import com.lansosdk.videoeditor.LanSongFileUtil;
 import com.megvii.segjni.SegJni;
 import com.orhanobut.hawk.Hawk;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.commonsdk.UMConfigure;
+import com.umeng.socialize.PlatformConfig;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -142,7 +145,17 @@ public class HomeMainActivity extends FragmentActivity {
         SegJni.nativeCreateSegHandler(HomeMainActivity.this, ConUtil.getFileContent(HomeMainActivity.this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
         situationTimer = new SituationTimer();
         situationTimer.startTimer(30);
+        initYouMeng();
+    }
 
+
+    private void initYouMeng() {
+//        MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_MANUAL);  //页面采集模式
+//        MobclickAgent.setCatchUncaughtExceptions(true);
+        UMConfigure.setProcessEvent(true); // 支持在子进程中统计自定义事件
+        UMConfigure.setLogEnabled(false);
+        UMConfigure.init(this, BaseConstans.UMENGAPPID, ChannelUtil.getChannel(this), UMConfigure.DEVICE_TYPE_PHONE, "");
+        PlatformConfig.setWeixin("wx7cb3c7ece8461be7", "6eed0ad743c6026b10b7e036f22aa762");
     }
 
 

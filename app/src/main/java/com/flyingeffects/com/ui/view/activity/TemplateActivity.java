@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +48,7 @@ import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
+import com.flyingeffects.com.ui.model.repairRandomPaths;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
 import com.flyingeffects.com.ui.view.ViewChooseTemplate;
 import com.flyingeffects.com.utils.LogUtil;
@@ -78,6 +80,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -127,6 +130,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     private List<String> originalPath;
     private String templateFilePath;
+    /**
+     * 模板选择位置
+     */
+    private int changeTemplatePosition;
 
 
     /**
@@ -267,6 +274,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             templateFilePath = bundle.getString("templateFilePath");
             imgPath = bundle.getStringArrayList("paths");
             videoTime = bundle.getString("videoTime");
+            changeTemplatePosition=bundle.getInt("changeTemplatePosition");
             primitivePath = bundle.getString("primitivePath");
             picout = bundle.getInt("picout");
             LogUtil.d("OOM", "picout=" + picout);
@@ -751,6 +759,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 listItem.set(0, templateThumbItem);
             } else {
                 for (int i = 0; i < list_all.size(); i++) {  //合成底部缩略图
+                    MediaUiModel2 mediaUiModel2= (MediaUiModel2) mTemplateModel.mAssets.get(i).ui;
+                    mediaUiModel2.setPathOrigin(list_all.get(i));
                     TemplateThumbItem templateThumbItem = new TemplateThumbItem();
                     templateThumbItem.setPathUrl(list_all.get(i));
                     if (i == 0) {
@@ -858,11 +868,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                             float needCropDuration;
                             boolean isNeedSlow;
                             Intent intent = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
-                            needCropDuration = mediaUi2.getDuration() / mediaUi2.getFps();
+                            needCropDuration = mediaUi2.getDuration() /(float) mediaUi2.getFps();
                             isNeedSlow = false;
                             intent.putExtra("isFrom", cutVideoTag);
-                            intent.putExtra("videoPath", mediaUi2.getOriginalPath());
-                            intent.putExtra("videoDuration", needCropDuration);
+                            intent.putExtra("videoPath", mediaUi2.getPathOrigin());
+                            intent.putExtra("needCropDuration", needCropDuration);
                             intent.putExtra("isNeedSlow", isNeedSlow);
                             intent.putExtra("videoFps", mediaUi2.getFps());
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -1008,6 +1018,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private int mDuration;
 
     private void switchTemplate(String folder, String[] mSources) {
+//        mSources = repairRandomPaths.randomPaths(mSources);
         final SXTemplate template = new SXTemplate(folder, SXTemplate.TemplateUsage.kForPreview);
         for (String mSource : mSources) {
             LogUtil.d("OOM", "路徑為" + mSource);
@@ -1041,6 +1052,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         }.start();
     }
+
+
 
 
     private SXTemplatePlayer.PlayStateListener mListener = new SXTemplatePlayer.PlayStateListener() {
@@ -1318,7 +1331,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.PICTUREALBUM)) {
             View templateThumb = LayoutInflater.from(this).inflate(R.layout.view_choose_template, null);
-            ViewChooseTemplate viewChooseTemplate = new ViewChooseTemplate(TemplateActivity.this, templateThumb, new ViewChooseTemplate.Callback() {
+            ViewChooseTemplate viewChooseTemplate = new ViewChooseTemplate(TemplateActivity.this, templateThumb,changeTemplatePosition, new ViewChooseTemplate.Callback() {
                 @Override
                 public void onItemClick(int position, String path, new_fag_template_item item) {
                     //选择模板的回调时间
@@ -1331,6 +1344,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     bundle.putStringArrayList("paths", arrayList);
                     bundle.putInt("isPicNum", 20);
                     bundle.putString("fromTo", FromToTemplate.PICTUREALBUM);
+                    bundle.putInt("changeTemplatePosition", position);
                     bundle.putInt("picout", 0);
                     bundle.putInt("is_anime", 0);
                     bundle.putString("templateName", item.getTitle());

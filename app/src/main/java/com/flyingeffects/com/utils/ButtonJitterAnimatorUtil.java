@@ -61,7 +61,7 @@ public class ButtonJitterAnimatorUtil {
 //                Keyframe.ofFloat(1f, 0)
 //        );
 
-        return ObjectAnimator.ofPropertyValuesHolder(view, pvhScaleX, pvhScaleY).setDuration(1500);
+        return ObjectAnimator.ofPropertyValuesHolder(view, pvhScaleX, pvhScaleY).setDuration(2500);
 
     }
 }

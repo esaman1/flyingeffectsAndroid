@@ -70,6 +70,8 @@ public class MediaUiModel2 extends MediaUiModel {
 
     private Matrix mMatrixBj;
 
+    private String PathOrigin;//视频的源文件
+
     //最后渲染出来模板大小
     private Size temSize;
 
@@ -685,6 +687,16 @@ public class MediaUiModel2 extends MediaUiModel {
         } else {
             return path;
         }
+    }
+
+
+    public void setPathOrigin(String path) {
+        PathOrigin = path;
+    }
+
+
+    public String getPathOrigin() {
+        return PathOrigin;
     }
 
 }

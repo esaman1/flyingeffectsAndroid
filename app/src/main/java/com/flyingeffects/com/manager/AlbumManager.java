@@ -3,6 +3,7 @@ package com.flyingeffects.com.manager;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -384,7 +385,7 @@ public class AlbumManager {
         LogUtil.d("xxxx", "attributes=" + attributes);
         String[] strList = {"image/gif", "image/svg+xml", "image/x-icon", "video/x-ms-wmv", "avi", "wmv", "WMV", "mov", "MOV", "mpg", "MPG", "3gp", "3GP", "lansongBox", "avi", "AVI", "gif", "mpeg", "svg+xml", "quicktime"};
         for (String str : strList) {
-            if (attributes.contains(str)) {
+            if (!TextUtils.isEmpty(attributes)&&attributes.contains(str)) {
                 LogUtil.d("xxxx", "过滤的值为=" + attributes);
                 return true;
             }

@@ -16,7 +16,7 @@
     <color name="soft_gray">#E1E1E1</color>
     <color name="soft_gray_solid">#F2F2F2</color>
     <color name="transparent">#00000000</color>
-    <color name="black">#000000</color>
+    <color name="black">#010101</color>
     <color name="soft_text">#999999</color>
     <color name="video_detail_black">#828A9A</color>
     <color name="home_item_select">#009cFF</color>

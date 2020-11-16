@@ -57,6 +57,7 @@ import com.yanzhenjie.mediascanner.MediaScanner;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * <p>Responsible for controlling the album data and the overall logic.</p>
@@ -641,7 +642,15 @@ public class AlbumActivity extends BaseActivity implements
             }
             mView.toast(messageRes);
         } else {
-            callbackResult();
+            if(!TextUtils.isEmpty(material_info)&&material_info.equals("pictureAlbum")){
+                if(mCheckedList.size()<20){
+                    showMaterialCountDialog();
+                }else{
+                    callbackResult();
+                }
+            }else{
+                callbackResult();
+            }
         }
     }
 
@@ -715,6 +724,63 @@ public class AlbumActivity extends BaseActivity implements
         mDialog.setCanceledOnTouchOutside(false);
         mDialog.show();
     }
+
+
+
+
+
+
+
+
+
+    public void showMaterialCountDialog() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(AlbumActivity.this);
+        builder.setTitle("提示");
+        int needTime = (int) (mMineVideoTime / (float) 1000);
+        builder.setMessage("少于20张素材最佳\n" +
+                "会随机铺满哟");
+        builder.setNegativeButton("取消", (dialog, which) -> {
+            mView.setSingleCompletion(false);
+            dialog.dismiss();
+        });
+        builder.setPositiveButton("确定", (dialog, which) -> {
+            mCheckedList=toBespreadMaterial();
+            ThumbnailBuildTask task = new ThumbnailBuildTask(this, mCheckedList, this);
+            task.execute();
+            dialog.dismiss();
+        });
+        builder.setCancelable(true);
+        Dialog mDialog = builder.show();
+        mDialog.setCanceledOnTouchOutside(false);
+        mDialog.show();
+    }
+
+
+
+    /**
+     * description ：铺满素材
+     * creation date: 2020/11/16
+     * user : zhangtongju
+     */
+    private ArrayList<AlbumFile> toBespreadMaterial(){
+        if(mCheckedList!=null&&mCheckedList.size()>0){
+            int CheckListSize=mCheckedList.size();
+            if(CheckListSize<20){
+               Random r = new Random(1);
+                int needAddSize=20-mCheckedList.size();
+                for(int i=0;i<needAddSize;i++){
+                    mCheckedList.add(mCheckedList.get(r.nextInt(CheckListSize)));
+                }
+            }
+        }
+
+        return  mCheckedList;
+
+
+    }
+
+
+
 
     @Override
     public void onThumbnailStart() {

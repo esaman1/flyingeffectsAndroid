@@ -36,11 +36,12 @@ public class ViewChooseTemplate {
     private Context context;
     private ChooseTemplateAdapter templateThumbAdapter;
     private List<new_fag_template_item> list = new ArrayList<>();
-    private int lastChooseItem;
+    private int changeTemplatePosition;
 
-    public ViewChooseTemplate(Context context, View templateThumb, Callback callback) {
+    public ViewChooseTemplate(Context context, View templateThumb,int changeTemplatePosition, Callback callback) {
         this.context = context;
         this.callback = callback;
+        this.changeTemplatePosition=changeTemplatePosition;
         initAllView(templateThumb);
         requestPictureAlbumData();
     }
@@ -57,18 +58,6 @@ public class ViewChooseTemplate {
         templateThumbAdapter.setOnItemClickListener((adapter, view, position) -> {
             WaitingDialog.openPragressDialog(context);
             new_fag_template_item items=list.get(position);
-            items.setCheckItem(true);
-            if(position!=lastChooseItem){
-                new_fag_template_item lastItem=list.get(lastChooseItem);
-                lastItem.setCheckItem(false);
-                adapter.notifyItemChanged(lastChooseItem);
-            }else{
-                if(callback!=null){
-                    callback.isNeedToCutVideo(position);
-                }
-            }
-            lastChooseItem=position;
-            adapter.notifyItemChanged(position);
             TemplateDown templateDown=new TemplateDown(new TemplateDown.DownFileCallback() {
                 @Override
                 public void isSuccess(String filePath) {
@@ -106,7 +95,7 @@ public class ViewChooseTemplate {
                 LogUtil.d("OOM2",test);
                 list.clear();
                 list.addAll(data);
-                new_fag_template_item items=list.get(0);
+                new_fag_template_item items=list.get(changeTemplatePosition);
                 items.setCheckItem(true);
                 templateThumbAdapter.notifyDataSetChanged();
             }

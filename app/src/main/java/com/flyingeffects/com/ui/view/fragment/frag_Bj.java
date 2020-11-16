@@ -107,6 +107,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
 
     @Override
     protected void initView() {
+
         presenter = new FagBjMvpPresenter(getActivity(), this);
         presenter.requestData();
         EventBus.getDefault().register(this);
@@ -251,10 +252,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
             Observable.just(progress).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
                 @Override
                 public void call(Integer integer) {
-                    if (progress == 0) {
-                        waitingDialog_progress.openProgressDialog();
-                    }
-                    waitingDialog_progress.setProgress(integer + "");
+                    waitingDialog_progress.setProgress(integer + "%");
                 }
             });
         }
@@ -293,6 +291,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
 
     public void IntoTemplateActivity(String path) {
         if (getActivity() != null) {
+            waitingDialog_progress.closePragressDialog();
             Observable.just(path).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> toPhotographAlbum(template_item, path));
 
         }
@@ -363,9 +362,12 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
             case R.id.ll_crate_photograph_album:
             case R.id.ll_crate_photograph_album_2:
                 if(BaseConstans.hasLogin()){
+                    waitingDialog_progress.openProgressDialog();
                     presenter.requestPictureAlbumData();
                 }else{
-                    ToastUtil.showToast("请先登录");
+                    Intent intentToLogin = new Intent(getActivity(), LoginActivity.class);
+                    intentToLogin.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intentToLogin);
                 }
 
                 break;
@@ -422,7 +424,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
                     intent.putExtra("person", item);
                     startActivity(intent);
                 }
-            }, "");
+            }, "pictureAlbum");
         }
     }
 
