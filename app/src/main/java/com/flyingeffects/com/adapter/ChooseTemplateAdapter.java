@@ -1,5 +1,6 @@
 package com.flyingeffects.com.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -34,12 +35,14 @@ public class ChooseTemplateAdapter extends BaseItemDraggableAdapter<new_fag_temp
     }
 
 
+    @SuppressLint("CheckResult")
     @Override
     protected void convert(BaseViewHolder helper, new_fag_template_item item) {
         ImageView iv_cover = helper.getView(R.id.iv_logo);
-        Glide.with(context).load(item.getImage()).load(iv_cover);
+        LogUtil.d("OOM","iamge="+item.getImage());
+        Glide.with(context).load(item.getImage()).apply(new RequestOptions().placeholder(R.mipmap.placeholder)).into(iv_cover);
         TextView tvTitle= helper.getView(R.id.tv_name);
-        tvTitle.setText( item.getZipid());
+        tvTitle.setText( item.getTitle());
         FrameLayout fl_frame = helper.getView(R.id.fl_frame);
         if (item.isCheckItem()) {
             tvTitle.setVisibility(View.VISIBLE);

@@ -385,6 +385,12 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
         ArrayList<Integer>needShowNubList = PhotoChooseIndex.getInstance().GetPhotoIndexList();
         int lastPosition=PhotoChooseIndex.getInstance().GetLastIndex();
         List<AlbumFile>albumFiles= mAdapter.getAlbumFiles();
+        if(lastPosition!=-1){
+            //还原之前的
+            AlbumFile albumFile=albumFiles.get(lastPosition);
+            albumFile.setNowChooseIndex(-1);
+            PhotoChooseIndex.getInstance().SetLastIndex();
+        }
         if(albumFiles!=null&&albumFiles.size()>0){
             if(needShowNubList!=null&&needShowNubList.size()>0){
                 for(int i=1;i<=needShowNubList.size();i++){
@@ -394,11 +400,7 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
                 }
             }
         }
-        if(lastPosition!=-1){
-            //还原之前的
-            AlbumFile albumFile=albumFiles.get(lastPosition);
-            albumFile.setNowChooseIndex(-1);
-        }
+
         mAdapter.notifyDataSetChanged();
     }
 

@@ -1,5 +1,7 @@
 package com.yanzhenjie;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 
@@ -32,6 +34,7 @@ public class PhotoChooseIndex {
      * user : zhangtongju
      */
     public void PutPhotoIndex(int photoIndex) {
+        Log.d("OOM5","存入的位置为"+photoIndex);
         for (int j = 0; j < listForKeepPhoto.size(); j++) {
             int nowIndex = listForKeepPhoto.get(j);
             if (photoIndex == nowIndex) {
@@ -56,6 +59,11 @@ public class PhotoChooseIndex {
 
     public int GetLastIndex() {
         return lastIntPosition;
+    }
+
+
+    public int SetLastIndex() {
+        return -1;
     }
 
 
