@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.ChooseVideoAddSticker;
 import com.flyingeffects.com.enity.CutSuccess;
@@ -678,7 +679,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 mCutEndTime = allVideoDuration;
                 mProgressBarView.addProgressBarView(allVideoDuration, videoPath);
                 if (isModifyMaterialTimeLine) {
-                    mSeekBarView.setCutStartAndEndTime(mCutStartTime, mCutEndTime);
+                    mSeekBarView.resetStartAndEndTime(mCutStartTime, mCutEndTime);
                     mSeekBarView.changeVideoPathViewFrameSetWidth(allVideoDuration);
                 }
             }
@@ -1259,8 +1260,25 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             public void onGlobalLayout() {
                 mSeekBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 stickerView.setShowStickerStartTime(mCutStartTime);
-                stickerView.setShowStickerEndTime(allVideoDuration);
-                mSeekBarView.addTemplateMaterialItemView(allVideoDuration, stickerView.getResPath(),mCutStartTime,allVideoDuration,isText,text,id);
+                stickerView.setShowStickerEndTime(mCutEndTime);
+                //是绿幕视频并且添加的素材是视频 遍历出所有素材的最长时长  为当前主轨道的时长
+                if (albumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath())) && TextUtils.isEmpty(videoPath)) {
+                    MediaInfo mediaInfo = new MediaInfo(stickerView.getOriginalPath());
+                    mediaInfo.prepare();
+                    long videoDuration = (long) (mediaInfo.vDuration * 1000);
+                    mediaInfo.release();
+                    boolean modify = false;
+                    for (int i = 0; i < mSeekBarView.getTemplateMaterialItemViews().size(); i++) {
+                        if (videoDuration > mSeekBarView.getTemplateMaterialItemViews().get(i).getDuration()) {
+                            modify = true;
+                        }
+                    }
+                    if (modify) {
+                        modificationDuration(videoDuration);
+                    }
+                }
+                mSeekBarView.addTemplateMaterialItemView(mCutEndTime - mCutStartTime, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
+                        stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, mCutEndTime, isText, text, id);
             }
         });
     }
@@ -1282,7 +1300,24 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void modifyTimeLineSickerPath(String id,String path) {
-       mSeekBarView.modifyMaterialThumbnail(path,id);
+        if (albumType.isVideo(GetPathType.getInstance().getPathType(path)) && TextUtils.isEmpty(videoPath)) {
+            //重新设置进度条的长度
+            MediaInfo mediaInfo = new MediaInfo(path);
+            mediaInfo.prepare();
+            long videoDuration = (long) (mediaInfo.vDuration * 1000);
+            mediaInfo.release();
+            boolean modify = false;
+            for (int i = 0; i < mSeekBarView.getTemplateMaterialItemViews().size(); i++) {
+                if (videoDuration > mSeekBarView.getTemplateMaterialItemViews().get(i).getDuration()) {
+                    modify = true;
+                }
+            }
+            if (modify) {
+                modificationDuration(videoDuration);
+            }
+        }else {
+            mSeekBarView.modifyMaterialThumbnail(path,id);
+        }
     }
 
     @Override
@@ -1327,6 +1362,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 stickerView.setShowStickerStartTime(mCutStartTime);
                 stickerView.setShowStickerEndTime(mCutEndTime);
             }
+            if (stickerView.getShowStickerStartTime() > mCutStartTime && stickerView.getShowStickerEndTime() > mCutEndTime) {
+                stickerView.setShowStickerStartTime(mCutEndTime - (stickerView.getShowStickerEndTime() - stickerView.getShowStickerStartTime()));
+                stickerView.setShowStickerEndTime(mCutEndTime);
+            }
             if (stickerView.getShowStickerStartTime() > mCutStartTime && mCutEndTime - stickerView.getShowStickerStartTime() < 1000) {
                 stickerView.setShowStickerStartTime(mCutStartTime);
             }
@@ -1341,9 +1380,23 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             if (stickerView.getShowStickerStartTime() < mCutStartTime) {
                 stickerView.setShowStickerStartTime(mCutStartTime);
             }
-            if (stickerView.getShowStickerEndTime() > mCutEndTime) {
-                stickerView.setShowStickerEndTime(mCutEndTime);
-            }
         }
+    }
+
+    private void modificationDuration(long duration) {
+        allVideoDuration = duration;
+        mProgressBarView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mProgressBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                mCutStartTime = 0;
+                mCutEndTime = allVideoDuration;
+                mProgressBarView.addProgressBarView(allVideoDuration, videoPath);
+                mSeekBarView.resetStartAndEndTime(mCutStartTime, mCutEndTime);
+                mSeekBarView.changeVideoPathViewFrameSetWidth(allVideoDuration);
+
+            }
+        });
+        tv_total.setText(TimeUtils.timeParse(allVideoDuration) + "s");
     }
 }

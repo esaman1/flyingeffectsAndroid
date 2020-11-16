@@ -86,6 +86,7 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
     int identityID = 0;
     private long startTime;
     private long endTime;
+    private long mDuration;
     private TextView mTvStickerView;
 
     public TouchDragListener dragListener;
@@ -333,9 +334,15 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
         return thumbnailTotalWidth;
     }
 
+    public String resPath;
+    public boolean isText;
+    public String text;
 
     /**此处重新计算绘制视频或者图片的帧图*/
     public int setResPathAndDuration(String resPath, long duration, int containerHeight, boolean isText, String text){
+        this.resPath =resPath;
+        this.isText = isText;
+        this.text = text;
         mLlThumbnail.removeAllViews();
         //单张图片宽度
         int frameSingleWidth = (int) (containerHeight * TemplateMaterialSeekBarView.NOVIDEO_STAGE_WIDTH / TemplateMaterialSeekBarView.NOVIDEO_STAGE_HEIGHT);
@@ -495,5 +502,13 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
             this.singleHeight = singleHeight;
             this.reviseHeight = reviseHeight;
         }
+    }
+
+    public long getDuration() {
+        return mDuration;
+    }
+
+    public void setDuration(long duration) {
+        mDuration = duration;
     }
 }
