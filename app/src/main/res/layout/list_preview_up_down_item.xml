@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -8,7 +9,16 @@
     <com.flyingeffects.com.view.SampleCoverVideo
         android:id="@+id/video_item_player"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" >
+
+        <FrameLayout
+            android:id="@+id/video_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="false"
+            android:focusable="false"
+            android:visibility="invisible" />
+    </com.flyingeffects.com.view.SampleCoverVideo>
 
 
     <ImageView
@@ -55,25 +65,60 @@
         app:layout_constraintVertical_bias="0" />
 
 
+    <RelativeLayout
+        android:id="@+id/relative_head_image"
+        android:layout_width="57dp"
+        android:layout_height="57dp"
+        android:layout_marginEnd="6dp"
+        android:gravity="center_horizontal"
+        app:layout_constraintHorizontal_bias="0.94"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.50">
+
+
+        <ImageView
+            android:id="@+id/iv_writer"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_centerInParent="true" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_btn_follow"
+            android:layout_width="41dp"
+            android:layout_centerHorizontal="true"
+            android:layout_height="19dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/tv_make_crice"
+            android:gravity="center"
+            android:text="@string/follow"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_11"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+
+    </RelativeLayout>
+
+
     <LinearLayout
         android:id="@+id/ll_zan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.94"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.50">
+        app:layout_constraintTop_toBottomOf="@+id/relative_head_image">
 
         <ImageView
             android:id="@+id/iv_zan"
-            android:layout_width="53dp"
-            android:layout_height="53dp"
+            android:layout_width="33dp"
+            android:layout_height="33dp"
             android:contentDescription="@string/app_name"
-            android:padding="10dp"
             android:scaleType="fitCenter"
             android:src="@mipmap/zan" />
 
@@ -92,7 +137,7 @@
         android:id="@+id/ll_comment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="18dp"
         android:layout_marginEnd="20dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
@@ -101,9 +146,8 @@
 
         <ImageView
             android:id="@+id/iv_comment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
+            android:layout_width="33dp"
+            android:layout_height="33dp"
             android:src="@mipmap/iv_comment" />
 
 
@@ -122,7 +166,7 @@
         android:id="@+id/ll_down_bj"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="18dp"
         android:layout_marginEnd="20dp"
         android:gravity="center"
         android:orientation="vertical"
@@ -132,8 +176,8 @@
 
         <ImageView
             android:id="@+id/iv_download_bj"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="33dp"
+            android:layout_height="33dp"
             android:contentDescription="@string/app_name"
             android:src="@mipmap/down_bj" />
 
@@ -145,144 +189,104 @@
             android:textSize="12sp" />
     </LinearLayout>
 
-    <LinearLayout
+
+    <com.flyingeffects.com.view.MarqueTextView
+        android:id="@+id/tv_writer_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/strok_tiktok_title_bj"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingStart="25dp"
-        android:layout_marginStart="20dp"
-        android:paddingTop="2dp"
-        android:paddingEnd="2dp"
-        android:paddingBottom="2dp"
-        app:layout_constraintBottom_toBottomOf="@id/relative_writer"
+        android:layout_marginStart="15dp"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:maxWidth="120dp"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="@+id/relative_writer"
-        app:layout_constraintTop_toTopOf="@id/relative_writer">
-
-
-        <com.flyingeffects.com.view.MarqueTextView
-            android:id="@+id/tv_writer_name"
-            android:layout_width="wrap_content"
-            android:maxWidth="120dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:textColor="@color/white"
-            android:textSize="15sp" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_btn_follow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dp_5"
-            android:background="@drawable/tv_make_crice"
-            android:paddingStart="@dimen/dp_10"
-            android:paddingTop="@dimen/dp_5"
-            android:visibility="gone"
-            android:paddingEnd="@dimen/dp_10"
-            android:paddingBottom="@dimen/dp_5"
-            android:text="@string/follow"
-            android:textColor="@color/white"
-            android:textSize="@dimen/sp_12"
-            android:textStyle="bold" />
-
-
-    </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/relative_writer"
-        android:layout_width="47dp"
-        android:layout_height="47dp"
-        android:background="@drawable/strok_tiktok_image_bj"
-        app:layout_constraintBottom_toTopOf="@+id/tv_title"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="16dp">
+        app:layout_constraintTop_toBottomOf="@+id/ll_comment" />
 
-        <ImageView
-            android:id="@+id/iv_writer"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_centerInParent="true" />
 
-    </RelativeLayout>
 
 
     <com.flyingeffects.com.view.MarqueTextView
         android:id="@+id/tv_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/iv_music"
-        app:layout_constraintStart_toStartOf="parent" />
-
-
-    <ImageView
-        android:id="@+id/iv_music"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
-        android:contentDescription="@string/app_name"
-        android:src="@mipmap/music_icon"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_describe" />
-
-
-    <com.flyingeffects.com.view.MarqueTextView
-        android:id="@+id/tv_title_music"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="8dp"
-        android:ellipsize="marquee"
-        android:focusableInTouchMode="true"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:scrollHorizontally="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:ellipsize="end"
         android:singleLine="true"
         android:textColor="@color/white"
         android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_describe"
-        app:layout_constraintStart_toStartOf="@+id/iv_music"/>
-
-    <com.flyingeffects.com.view.MarqueTextView
-        android:id="@+id/tv_describe"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/preview_video_time_bj"
-        android:ellipsize="end"
-        android:focusableInTouchMode="true"
-        android:paddingStart="10dp"
-        android:paddingTop="3dp"
-        android:paddingEnd="5dp"
-        android:paddingBottom="3dp"
-        android:scrollHorizontally="true"
-        android:singleLine="true"
-        android:textColor="@color/white"
-        android:textSize="@dimen/sp_11"
-        android:layout_marginLeft="16dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/tv_make"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="40dp"/>
+        app:layout_constraintTop_toBottomOf="@id/tv_writer_name" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="16dp"
+        android:padding="6dp"
+        android:layout_marginEnd="100dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/preview_video_time_bj"
+        app:layout_constraintTop_toBottomOf="@id/tv_title">
+
+
+        <com.flyingeffects.com.view.MarqueTextView
+            android:id="@+id/tv_describe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:focusableInTouchMode="true"
+
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_11"
+            android:visibility="gone" />
+
+
+        <ImageView
+            android:id="@+id/iv_music"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="13dp"
+            android:contentDescription="@string/app_name"
+            android:src="@mipmap/music_icon" />
+
+
+        <com.flyingeffects.com.view.MarqueTextView
+            android:id="@+id/tv_title_music"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:ellipsize="marquee"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textSize="11sp" />
+
+
+    </LinearLayout>
+
 
     <com.flyingeffects.com.view.MarqueTextView
         android:id="@+id/tv_make"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="56dp"
+        android:layout_marginRight="56dp"
+        android:layout_marginBottom="25dp"
         android:background="@drawable/tv_make"
         android:ellipsize="end"
         android:focusable="true"
@@ -296,18 +300,7 @@
         android:textSize="17sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="25dp"
-        android:layout_marginLeft="56dp"
-        android:layout_marginRight="56dp"
         app:layout_constraintLeft_toRightOf="parent"
-        app:layout_constraintRight_toLeftOf="parent"/>
-
-    <FrameLayout
-        android:id="@+id/video_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="false"
-        android:focusable="false"
-        android:visibility="invisible" />
+        app:layout_constraintRight_toLeftOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
