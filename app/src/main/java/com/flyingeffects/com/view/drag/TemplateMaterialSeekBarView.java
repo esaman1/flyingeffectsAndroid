@@ -31,7 +31,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
     ObserveHorizontalScrollView mMaterialSeekBar;
     LinearLayout mLlDragItem;
     View mViewFrame;
-    List<TemplateMaterialItemView> mTemplateMaterialItemViews = new ArrayList<>();
+    private List<TemplateMaterialItemView> mTemplateMaterialItemViews = new ArrayList<>();
 
     /**
      * 左右边距
@@ -40,7 +40,6 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
     int frameContainerWidth;
     int frameContainerHeight;
     long mDuration;
-    boolean isSetFrameWidth = false;
     public boolean dragScrollView;
     long cutStartTime;
     long cutEndTime;
@@ -123,6 +122,10 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                     itemView.setStartTime(cutStartTime);
                     itemView.setEndTime(cutEndTime);
                 }
+                if (itemView.getStartTime() > cutStartTime && itemView.getEndTime() > cutEndTime) {
+                    itemView.setStartTime(cutEndTime - (itemView.getEndTime() - itemView.getStartTime()));
+                    itemView.setEndTime(cutEndTime);
+                }
                 if (itemView.getStartTime() > cutStartTime && cutEndTime - itemView.getStartTime() < 1000) {
                     itemView.setStartTime(cutStartTime);
                 }
@@ -137,9 +140,24 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                 if (itemView.getStartTime() < cutStartTime) {
                     itemView.setStartTime(cutStartTime);
                 }
-                if (itemView.getEndTime() > cutEndTime) {
-                    itemView.setEndTime(cutEndTime);
-                }
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) itemView.getLayoutParams();
+                itemView.setWidthAndHeight((int) ((itemView.getEndTime() - itemView.getStartTime()) / PER_MS_IN_PX), frameContainerHeight);
+                params.setMargins((int) (itemView.getStartTime() / PER_MS_IN_PX + frameListPadding - TemplateMaterialItemView.ARROW_WIDTH),
+                        screenUtil.dip2px(getContext(), 5), 0, 0);
+                itemView.setLayoutParams(params);
+            }
+        }
+    }
+
+    public void resetStartAndEndTime(long startTime, long endTime) {
+        cutStartTime = startTime;
+        cutEndTime = endTime;
+        for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
+            if (mTemplateMaterialItemViews.get(i) != null) {
+                TemplateMaterialItemView itemView = mTemplateMaterialItemViews.get(i);
+                itemView.setStartTime(startTime);
+                itemView.setEndTime(endTime);
+                itemView.setResPathAndDuration(itemView.resPath, endTime - startTime, frameContainerHeight, itemView.isText, itemView.text);
                 LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) itemView.getLayoutParams();
                 itemView.setWidthAndHeight((int) ((itemView.getEndTime() - itemView.getStartTime()) / PER_MS_IN_PX), frameContainerHeight);
                 params.setMargins((int) (itemView.getStartTime() / PER_MS_IN_PX + frameListPadding - TemplateMaterialItemView.ARROW_WIDTH),
@@ -172,7 +190,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
             if (mTemplateMaterialItemViews.get(i) != null) {
                 itemView = mTemplateMaterialItemViews.get(i);
-                break;
+
             }
         }
         int thumbnailTotalWidth = itemView.changeVideoPathWidth(duration, frameContainerHeight);
@@ -186,12 +204,12 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
      * @param path 新的素材路径
      * @param id 素材ID
      */
-    public void modifyMaterialThumbnail(String path,String id){
+    public void modifyMaterialThumbnail(String path, String id) {
         for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
             if (mTemplateMaterialItemViews.get(i) != null) {
                 if (TextUtils.equals(String.valueOf(mTemplateMaterialItemViews.get(i).getIdentityID()), id)) {
                     TemplateMaterialItemView itemView = mTemplateMaterialItemViews.get(i);
-                    itemView.setResPathAndDuration(path,mDuration,frameContainerHeight,false,"");
+                    itemView.setResPathAndDuration(path, cutEndTime - cutStartTime, frameContainerHeight, false, "");
                     break;
                 }
             }
@@ -230,19 +248,18 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
      */
     public void addTemplateMaterialItemView(long duration, String resPath,long startTime,long endTime,boolean isText,String text,String id) {
         this.mDuration = duration;
-        this.cutStartTime = 0;
-        this.cutEndTime = duration;
+        this.cutStartTime = startTime;
+        this.cutEndTime = endTime;
         TemplateMaterialItemView materialItemView = new TemplateMaterialItemView(getContext());
+        materialItemView.setDuration(duration);
         mTemplateMaterialItemViews.add(materialItemView);
         materialItemView.setIdentityID(Integer.valueOf(id));
 
         int thumbnailTotalWidth = materialItemView.setResPathAndDuration(resPath, duration, frameContainerHeight,isText,text);
-        if (!isSetFrameWidth) {
-            isSetFrameWidth = true;
-            RelativeLayout.LayoutParams reParams = (LayoutParams) mViewFrame.getLayoutParams();
-            reParams.width = thumbnailTotalWidth + frameListPadding * 2;
-            mViewFrame.setLayoutParams(reParams);
-        }
+        RelativeLayout.LayoutParams reParams = (LayoutParams) mViewFrame.getLayoutParams();
+        reParams.width = thumbnailTotalWidth + frameListPadding * 2;
+        mViewFrame.setLayoutParams(reParams);
+
         materialItemView.setStartTime(startTime);
         materialItemView.setEndTime(endTime);
         materialItemView.isShowArrow(false);
@@ -442,5 +459,13 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
 
     public void setProgressListener(SeekBarProgressListener progressListener) {
         mProgressListener = progressListener;
+    }
+
+    /***
+     * 得到所有素材
+     * @return
+     */
+    public List<TemplateMaterialItemView> getTemplateMaterialItemViews() {
+        return mTemplateMaterialItemViews;
     }
 }
