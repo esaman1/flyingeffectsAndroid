@@ -10,14 +10,6 @@
         android:id="@+id/video_item_player"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
-
-        <FrameLayout
-            android:id="@+id/video_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clickable="false"
-            android:focusable="false"
-            android:visibility="invisible" />
     </com.flyingeffects.com.view.SampleCoverVideo>
 
 
@@ -302,5 +294,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="parent"
         app:layout_constraintRight_toLeftOf="parent" />
+
+
+
+    <FrameLayout
+        android:id="@+id/video_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:focusable="false"
+        android:visibility="invisible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

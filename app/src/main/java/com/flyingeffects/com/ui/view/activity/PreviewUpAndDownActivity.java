@@ -335,9 +335,11 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     lastChoosePosition = position;
                     if (BaseConstans.hasLogin()) {
                         //主要用于刷新当前页面
-                        LogUtil.d("OOM", "onPageSelected");
+                        LogUtil.d("OOM", "onPageSelected-----templateItem.getId()"+templateItem.getId() );
+                        if(templateItem.getId()!=0){
+                            mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
+                        }
 
-                        mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
                     }
                 }
                 isSlideViewpager = true;
