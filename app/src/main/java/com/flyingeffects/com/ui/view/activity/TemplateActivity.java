@@ -759,6 +759,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 listItem.set(0, templateThumbItem);
             } else {
                 for (int i = 0; i < list_all.size(); i++) {  //合成底部缩略图
+                    MediaUiModel2 mediaUiModel2= (MediaUiModel2) mTemplateModel.mAssets.get(i).ui;
+                    mediaUiModel2.setPathOrigin(list_all.get(i));
                     TemplateThumbItem templateThumbItem = new TemplateThumbItem();
                     templateThumbItem.setPathUrl(list_all.get(i));
                     if (i == 0) {
@@ -866,11 +868,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                             float needCropDuration;
                             boolean isNeedSlow;
                             Intent intent = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
-                            needCropDuration = mediaUi2.getDuration() / mediaUi2.getFps();
+                            needCropDuration = mediaUi2.getDuration() /(float) mediaUi2.getFps();
                             isNeedSlow = false;
                             intent.putExtra("isFrom", cutVideoTag);
-                            intent.putExtra("videoPath", mediaUi2.getOriginalPath());
-                            intent.putExtra("videoDuration", needCropDuration);
+                            intent.putExtra("videoPath", mediaUi2.getPathOrigin());
+                            intent.putExtra("needCropDuration", needCropDuration);
                             intent.putExtra("isNeedSlow", isNeedSlow);
                             intent.putExtra("videoFps", mediaUi2.getFps());
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -1016,7 +1018,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private int mDuration;
 
     private void switchTemplate(String folder, String[] mSources) {
-        mSources = repairRandomPaths.randomPaths(mSources);
+//        mSources = repairRandomPaths.randomPaths(mSources);
         final SXTemplate template = new SXTemplate(folder, SXTemplate.TemplateUsage.kForPreview);
         for (String mSource : mSources) {
             LogUtil.d("OOM", "路徑為" + mSource);

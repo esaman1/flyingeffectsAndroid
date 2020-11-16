@@ -424,7 +424,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
                     intent.putExtra("person", item);
                     startActivity(intent);
                 }
-            }, "");
+            }, "pictureAlbum");
         }
     }
 
