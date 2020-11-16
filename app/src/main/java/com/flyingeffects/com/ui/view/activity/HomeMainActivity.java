@@ -39,6 +39,7 @@ import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.MediaLoader;
 import com.flyingeffects.com.manager.SPHelper;
 import com.flyingeffects.com.manager.SituationTimer;
 import com.flyingeffects.com.manager.statisticsEventAffair;
@@ -62,6 +63,8 @@ import com.orhanobut.hawk.Hawk;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
+import com.yanzhenjie.album.Album;
+import com.yanzhenjie.album.AlbumConfig;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,6 +73,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -93,14 +97,14 @@ import static com.flyingeffects.com.constans.BaseConstans.getChannel;
  */
 public class HomeMainActivity extends FragmentActivity {
     //    private ImageView[] mIvMenu = new ImageView[4];
-    private ImageView[] mIvMenuBack = new ImageView[4];
-    private TextView[] tv_main = new TextView[4];
+    private final ImageView[] mIvMenuBack = new ImageView[4];
+    private final TextView[] tv_main = new TextView[4];
     //    private int[] img_Id = {R.id.iv_menu_0, R.id.iv_menu_1, R.id.iv_menu_2, R.id.iv_menu_3};
-    private int[] mImBackId = {R.id.iv_back_menu_0, R.id.iv_back_menu_1, R.id.iv_back_menu_2, R.id.iv_back_menu_3};
+    private final int[] mImBackId = {R.id.iv_back_menu_0, R.id.iv_back_menu_1, R.id.iv_back_menu_2, R.id.iv_back_menu_3};
     public HomeMainActivity ThisMain;
-    private int[] tv_main_button = {R.id.tv_main_0, R.id.tv_main_1, R.id.tv_main_2, R.id.tv_main_3};
-    private int[] selectIconArr = {R.mipmap.home_bj, R.mipmap.moban, R.mipmap.chazhao, R.mipmap.wode};
-    private int[] unSelectIconArr = {R.mipmap.home_bj_unselect, R.mipmap.moban_unslect, R.mipmap.chazhao_unselect, R.mipmap.wode_unselect};
+    private final int[] tv_main_button = {R.id.tv_main_0, R.id.tv_main_1, R.id.tv_main_2, R.id.tv_main_3};
+//    private int[] selectIconArr = {R.mipmap.home_bj, R.mipmap.moban, R.mipmap.chazhao, R.mipmap.wode};
+//    private int[] unSelectIconArr = {R.mipmap.home_bj_unselect, R.mipmap.moban_unslect, R.mipmap.chazhao_unselect, R.mipmap.wode_unselect};
     private FragmentManager fragmentManager;
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private Timer timer;
@@ -146,6 +150,18 @@ public class HomeMainActivity extends FragmentActivity {
         situationTimer = new SituationTimer();
         situationTimer.startTimer(30);
         initYouMeng();
+
+        initAlbum();
+    }
+
+
+
+    private void initAlbum() {
+        Album.initialize(AlbumConfig.newBuilder(this)
+                .setAlbumLoader(new MediaLoader())
+                .setLocale(Locale.getDefault())
+                .build()
+        );
     }
 
 
@@ -156,6 +172,7 @@ public class HomeMainActivity extends FragmentActivity {
         UMConfigure.setLogEnabled(false);
         UMConfigure.init(this, BaseConstans.UMENGAPPID, ChannelUtil.getChannel(this), UMConfigure.DEVICE_TYPE_PHONE, "");
         PlatformConfig.setWeixin("wx7cb3c7ece8461be7", "6eed0ad743c6026b10b7e036f22aa762");
+
     }
 
 
@@ -201,12 +218,9 @@ public class HomeMainActivity extends FragmentActivity {
         task = new TimerTask() {
             @Override
             public void run() {
-                AdManager.getInstance().showCpAd(HomeMainActivity.this, AdConfigs.AD_SCREEN, new AdManager.Callback() {
-                    @Override
-                    public void adClose() {
-                        if (ShowPraiseModel.canShowAlert() && !ShowPraiseModel.getHasComment() && !ShowPraiseModel.getIsNewUser() && !ShowPraiseModel.ToDayHasShowAd()) {
-                            checkCommentcheck();
-                        }
+                AdManager.getInstance().showCpAd(HomeMainActivity.this, AdConfigs.AD_SCREEN, () -> {
+                    if (ShowPraiseModel.canShowAlert() && !ShowPraiseModel.getHasComment() && !ShowPraiseModel.getIsNewUser() && !ShowPraiseModel.ToDayHasShowAd()) {
+                        checkCommentcheck();
                     }
                 });
                 destroyTimer();
@@ -279,12 +293,9 @@ public class HomeMainActivity extends FragmentActivity {
 
 
     public void getUserPhoneInfo() {
-        OneKeyLoginManager.getInstance().getPhoneInfo(new GetPhoneInfoListener() {
-            @Override
-            public void getPhoneInfoStatus(int code, String result) {
-                //预取号回调
-                Log.e("VVV", "预取号： code==" + code + "   result==" + result);
-            }
+        OneKeyLoginManager.getInstance().getPhoneInfo((code, result) -> {
+            //预取号回调
+            Log.e("VVV", "预取号： code==" + code + "   result==" + result);
         });
     }
 
@@ -442,7 +453,7 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-    private NoDoubleClickListener listener = new NoDoubleClickListener() {
+    private final NoDoubleClickListener listener = new NoDoubleClickListener() {
         @Override
         public void onNoDoubleClick(View v) {
             switch (v.getId()) {

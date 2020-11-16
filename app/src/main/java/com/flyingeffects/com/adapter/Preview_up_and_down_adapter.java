@@ -141,7 +141,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
                     .load(item.getAuth_image())
                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                     .into(iv_writer);
-            tv_writer_name.setText(item.getAuth());
+            tv_writer_name.setText("@"+item.getAuth());
             tv_title.setText(item.getTitle());
             String str = item.getAuth() + "的原创音乐                        "+item.getAuth() + "的原创音乐                        ";
             tv_title_music.setText(str);
@@ -158,7 +158,6 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
                 }else{
                     //关注按键
                     if (item.getIs_follow() == 1 ) {
-                        tv_btn_follow.setText("取消关注");
                         tv_btn_follow.setVisibility(View.GONE);
                     } else {
                         tv_btn_follow.setVisibility(View.VISIBLE);
@@ -301,7 +300,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             @Override
             public void onPrepared(boolean onPrepared) {
                 tv_describe.setVisibility(View.VISIBLE);
-                tv_describe.setText("时长" + TimeUtils.timeParse(videoPlayer.getDuration()) + "        上传" + item.getDefaultnum() + "个素材即可制作");
+                tv_describe.setText("时长" + TimeUtils.timeParse(videoPlayer.getDuration()) + "  上传" + item.getDefaultnum() + "个素材");
             }
         }));
         GSYVideoType.setShowType(GSYVideoType.SCREEN_TYPE_FULL);

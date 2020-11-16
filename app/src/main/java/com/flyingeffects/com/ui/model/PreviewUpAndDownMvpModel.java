@@ -171,6 +171,7 @@ public class PreviewUpAndDownMvpModel {
             params.put("template_id", templateId);
             // 启动时间
             Observable ob = Api.getDefault().templateLInfo(BaseConstans.getRequestHead(params));
+            LogUtil.d("OOM",StringUtil.beanToJSONString(params));
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<new_fag_template_item>(context) {
                 @Override
                 protected void _onError(String message) {

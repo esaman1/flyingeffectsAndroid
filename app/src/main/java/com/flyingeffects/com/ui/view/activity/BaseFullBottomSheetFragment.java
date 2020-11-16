@@ -294,12 +294,13 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
             }
 
             @Override
-            public void clickItemComment(String id,String firstMessageId,int position) {
+            public void clickItemComment(String id,String firstMessageId,int position,String nickName) {
                 BaseFullBottomSheetFragment.this.firstMessageId = firstMessageId;
                 messagePosition  = position;
                 message_id = id;
                 commentInputDialog.setMessage_id(message_id);
                 showInputTextDialog();
+                commentInputDialog.setEdittextHint(nickName);
             }
 
         }, new Comment_message_adapter.click2Comment() {
@@ -347,7 +348,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
                         message_id = allDataList.get(position).getId();
                         commentInputDialog.setMessage_id(message_id);
                         showInputTextDialog();
-                        commentInputDialog.setEdittextHint(allDataList.get(position).getUser_id());
+                        commentInputDialog.setEdittextHint(allDataList.get(position).getNickname());
                         break;
 
 
