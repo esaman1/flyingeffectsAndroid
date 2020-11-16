@@ -1,47 +1,39 @@
-package com.flyingeffects.com.base;
+ package com.flyingeffects.com.base;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
+ import android.app.Activity;
+ import android.content.Context;
+ import android.content.Intent;
+ import android.os.Bundle;
 
-import androidx.multidex.MultiDex;
-import androidx.multidex.MultiDexApplication;
+ import androidx.multidex.MultiDex;
+ import androidx.multidex.MultiDexApplication;
 
+ import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
+ import com.flyingeffects.com.R;
+ import com.flyingeffects.com.constans.BaseConstans;
+ import com.flyingeffects.com.manager.AdConfigs;
+ import com.flyingeffects.com.manager.TTAdManagerHolder;
+ import com.flyingeffects.com.ui.view.activity.WelcomeActivity;
+ import com.flyingeffects.com.utils.ChannelUtil;
+ import com.flyingeffects.com.utils.CrashHandler;
+ import com.flyingeffects.com.utils.DateUtils;
+ import com.flyingeffects.com.utils.LogUtil;
+ import com.flyingeffects.com.utils.SystemUtil;
+ import com.green.hand.library.EmojiManager;
+ import com.lansosdk.box.OnLanSongLogOutListener;
+ import com.lansosdk.videoeditor.LanSoEditor;
+ import com.nineton.ntadsdk.NTAdConfig;
+ import com.nineton.ntadsdk.NTAdSDK;
+ import com.orhanobut.hawk.Hawk;
+ import com.scwang.smartrefresh.header.MaterialHeader;
+ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+ import com.shixing.sxvideoengine.License;
+ import com.shixing.sxvideoengine.SXLog;
+ import com.umeng.commonsdk.UMConfigure;
 
-import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
-import com.flyingeffects.com.R;
-import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.manager.AdConfigs;
-import com.flyingeffects.com.manager.MediaLoader;
-import com.flyingeffects.com.manager.TTAdManagerHolder;
-import com.flyingeffects.com.ui.view.activity.WelcomeActivity;
-import com.flyingeffects.com.utils.ChannelUtil;
-import com.flyingeffects.com.utils.CrashHandler;
-import com.flyingeffects.com.utils.DateUtils;
-import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.SystemUtil;
-import com.green.hand.library.EmojiManager;
-import com.lansosdk.box.OnLanSongLogOutListener;
-import com.lansosdk.videoeditor.LanSoEditor;
-import com.nineton.ntadsdk.NTAdConfig;
-import com.nineton.ntadsdk.NTAdSDK;
-import com.orhanobut.hawk.Hawk;
-import com.scwang.smartrefresh.header.MaterialHeader;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.shixing.sxvideoengine.License;
-import com.shixing.sxvideoengine.SXLog;
-import com.umeng.analytics.MobclickAgent;
-import com.umeng.commonsdk.UMConfigure;
-import com.umeng.socialize.PlatformConfig;
-import com.yanzhenjie.album.Album;
-import com.yanzhenjie.album.AlbumConfig;
-
-import java.util.Locale;
-
-import cn.jpush.android.api.JPushInterface;
-import cn.nt.lib.analytics.NTAnalytics;
-import rx.subjects.PublishSubject;
+ import cn.jpush.android.api.JPushInterface;
+ import cn.nt.lib.analytics.NTAnalytics;
+ import rx.subjects.PublishSubject;
 
 /**
  * Created by 张同举
@@ -59,11 +51,8 @@ public class BaseApplication extends MultiDexApplication {
         baseApp = this;
         //分包支持
         MultiDex.install(this);
-        //initBaiduAnalysis();
         initLansong();
         Hawk.init(this).build();
-        //registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
-        initAlbum();
         initLicense();
         initYouMeng();
         initJPush();
@@ -77,11 +66,6 @@ public class BaseApplication extends MultiDexApplication {
         EmojiManager.init(this);
     }
 
-    private void initBaiduAnalysis() {
-        // 通过该接口可以控制隐私权限策略的数据采集，true表示可以采集，false表示不可以采集，请在Application里优先调用
-        // 建议有用户隐私策略弹窗的App，用户未同意前设置false,同意之后设置true
-        //StatService.setAuthorizedState(this,false);
-    }
 
 
     private void initNTAdSDK() {
@@ -245,13 +229,7 @@ public class BaseApplication extends MultiDexApplication {
         return baseApp;
     }
 
-    private void initAlbum() {
-        Album.initialize(AlbumConfig.newBuilder(this)
-                .setAlbumLoader(new MediaLoader())
-                .setLocale(Locale.getDefault())
-                .build()
-        );
-    }
+
 
 }
 
