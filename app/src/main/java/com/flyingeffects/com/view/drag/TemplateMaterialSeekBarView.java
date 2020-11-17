@@ -250,6 +250,8 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
      * @param text 文本内容
      * @param id 素材ID
      */
+
+    int  oldThumbnailTotalWidth=0;
     public void addTemplateMaterialItemView(long duration, String resPath,long startTime,long endTime,boolean isText,String text,String id) {
         this.mDuration = duration;
         this.cutStartTime = 0;
@@ -259,10 +261,13 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         mTemplateMaterialItemViews.add(materialItemView);
         materialItemView.setIdentityID(Integer.valueOf(id));
 
-        int thumbnailTotalWidth = materialItemView.setResPathAndDuration(resPath, duration, frameContainerHeight,isText,text);
-        RelativeLayout.LayoutParams reParams = (LayoutParams) mViewFrame.getLayoutParams();
-        reParams.width = thumbnailTotalWidth + frameListPadding * 2;
-        mViewFrame.setLayoutParams(reParams);
+        int thumbnailTotalWidth = materialItemView.setResPathAndDuration(resPath, duration, frameContainerHeight, isText, text);
+        if (thumbnailTotalWidth > oldThumbnailTotalWidth) {
+            RelativeLayout.LayoutParams reParams = (LayoutParams) mViewFrame.getLayoutParams();
+            reParams.width = thumbnailTotalWidth + frameListPadding * 2;
+            mViewFrame.setLayoutParams(reParams);
+            oldThumbnailTotalWidth = thumbnailTotalWidth;
+        }
 
         materialItemView.setStartTime(startTime);
         materialItemView.setEndTime(endTime);

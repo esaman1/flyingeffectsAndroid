@@ -1282,8 +1282,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     mediaInfo.release();
                     boolean modify = false;
                     for (int i = 0; i < mSeekBarView.getTemplateMaterialItemViews().size(); i++) {
-                        if (videoDuration > mSeekBarView.getTemplateMaterialItemViews().get(i).getDuration()) {
-                            modify = true;
+                        if(mSeekBarView.getTemplateMaterialItemViews().get(i)!=null){
+                            if (videoDuration > mSeekBarView.getTemplateMaterialItemViews().get(i).getDuration()) {
+                                modify = true;
+                            }
                         }
                     }
                     if (modify) {
@@ -1291,9 +1293,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         mSeekBarView.addTemplateMaterialItemView(videoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
                                 stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, mCutEndTime, isText, text, id);
                     }else {
-                        mSeekBarView.addTemplateMaterialItemView(mCutEndTime - mCutStartTime, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
-                                stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, videoDuration, isText, text, id);
-                        stickerView.setShowStickerEndTime(videoDuration);
+                        mSeekBarView.addTemplateMaterialItemView(allVideoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
+                                stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, Math.min(videoDuration, mCutEndTime), isText, text, id);
+                        stickerView.setShowStickerEndTime(Math.min(videoDuration, mCutEndTime));
+                        mSeekBarView.setCutEndTime(mCutEndTime);
                     }
                 }else if(albumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath())) && !TextUtils.isEmpty(videoPath)){
                     MediaInfo mainMediaInfo = new MediaInfo(videoPath);
@@ -1315,7 +1318,40 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     }
                     mSeekBarView.setCutEndTime(mCutEndTime);
                 }else {
-                    mSeekBarView.addTemplateMaterialItemView(allVideoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
+                    //如果素材全是图片的话默认为10秒   如果素材有视频的话以最长素材视频的时长为主轨道的时长
+                    long materialDuration;
+                    if (TextUtils.isEmpty(videoPath)) {
+                        materialDuration = 10 * 1000;
+                        long maxVideoDuration = 0;
+                        for (int i = 0; i < mSeekBarView.getTemplateMaterialItemViews().size(); i++) {
+                            if (mSeekBarView.getTemplateMaterialItemViews().get(i) != null) {
+                                if (albumType.isVideo(GetPathType.getInstance().getPathType(mSeekBarView.getTemplateMaterialItemViews().get(i).resPath))) {
+                                    for (int j = 0; j < mSeekBarView.getTemplateMaterialItemViews().size(); j++) {
+                                        if (mSeekBarView.getTemplateMaterialItemViews().get(j) != null &&
+                                                mSeekBarView.getTemplateMaterialItemViews().get(j).getDuration() >= maxVideoDuration &&
+                                                albumType.isVideo(GetPathType.getInstance().getPathType(mSeekBarView.getTemplateMaterialItemViews().get(j).resPath))
+                                        ) {
+                                            maxVideoDuration = mSeekBarView.getTemplateMaterialItemViews().get(j).getDuration();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        //有视频素材  取最长的素材视频时长为主轨道的时长  走此逻辑判断
+                        if (maxVideoDuration > 0) {
+                            materialDuration = maxVideoDuration;
+                            modificationDuration(materialDuration);
+                        } else {
+                            //全是图片素材  主轨道时长为10秒 走此逻辑判断
+                            if (allVideoDuration != materialDuration) {
+                                modificationDuration(materialDuration);
+                            }
+                        }
+                        stickerView.setShowStickerEndTime(materialDuration);
+                    } else {
+                        materialDuration = allVideoDuration;
+                    }
+                    mSeekBarView.addTemplateMaterialItemView(materialDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
                             stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, mCutEndTime, isText, text, id);
                 }
             }
