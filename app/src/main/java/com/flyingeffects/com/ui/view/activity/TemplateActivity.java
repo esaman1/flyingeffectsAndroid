@@ -1120,6 +1120,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     } else {
                         //如果是视频.就进入裁剪页面
                         float needVideoTime = Float.parseFloat(videoTime);
+                        MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
+                        mediaUi2.setPathOrigin(paths.get(0));
                         Intent intoCutVideo = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
                         intoCutVideo.putExtra("needCropDuration", needVideoTime);
                         intoCutVideo.putExtra("videoPath", paths.get(0));

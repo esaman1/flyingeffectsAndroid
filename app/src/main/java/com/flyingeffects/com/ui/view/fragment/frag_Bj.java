@@ -362,6 +362,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
             case R.id.ll_crate_photograph_album:
             case R.id.ll_crate_photograph_album_2:
                 if(BaseConstans.hasLogin()){
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "21_yj_click");
                     waitingDialog_progress.openProgressDialog();
                     presenter.requestPictureAlbumData();
                 }else{

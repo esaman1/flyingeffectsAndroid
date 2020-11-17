@@ -222,6 +222,8 @@ public class BackgroundSearchActivity extends BaseActivity {
             public void onClick(View v) {
                 if(!TextUtils.isEmpty(ed_text.getText().toString().trim())){
                     statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "4_search_button");
+                    statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "4_search_new",ed_text.getText().toString());
+
                     toTemplate(ed_text.getText().toString().trim());
                     rcSearch.setVisibility(View.GONE);
                     coordinatorLayout.setVisibility(View.VISIBLE);
