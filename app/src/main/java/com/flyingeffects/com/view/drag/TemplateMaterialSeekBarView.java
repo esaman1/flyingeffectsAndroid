@@ -151,14 +151,22 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         }
     }
 
-    public void resetStartAndEndTime(long startTime, long endTime) {
+    public void resetStartAndEndTime(long startTime, long endTime,boolean isModifyEndTime) {
         cutStartTime = startTime;
         cutEndTime = endTime;
         for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
             if (mTemplateMaterialItemViews.get(i) != null) {
                 TemplateMaterialItemView itemView = mTemplateMaterialItemViews.get(i);
                 itemView.setStartTime(0);
-                itemView.setEndTime(itemView.getDuration());
+                if (isModifyEndTime) {
+                    if (endTime > itemView.getDuration()) {
+                        itemView.setEndTime(itemView.getDuration());
+                    } else {
+                        itemView.setEndTime(endTime);
+                    }
+                } else {
+                    itemView.setEndTime(itemView.getDuration());
+                }
                 int thumbnailTotalWidth =  itemView.setResPathAndDuration(itemView.resPath, endTime - startTime, frameContainerHeight, itemView.isText, itemView.text);
                 LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) itemView.getLayoutParams();
                 itemView.setWidthAndHeight((int) ((itemView.getEndTime() - itemView.getStartTime()) / PER_MS_IN_PX), frameContainerHeight);
