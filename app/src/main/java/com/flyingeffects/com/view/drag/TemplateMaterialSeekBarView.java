@@ -159,7 +159,11 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                 TemplateMaterialItemView itemView = mTemplateMaterialItemViews.get(i);
                 itemView.setStartTime(0);
                 if (isModifyEndTime) {
-                    itemView.setEndTime(endTime);
+                    if (endTime > itemView.getDuration()) {
+                        itemView.setEndTime(itemView.getDuration());
+                    } else {
+                        itemView.setEndTime(endTime);
+                    }
                 } else {
                     itemView.setEndTime(itemView.getDuration());
                 }
