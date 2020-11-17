@@ -680,7 +680,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 mCutEndTime = allVideoDuration;
                 mProgressBarView.addProgressBarView(allVideoDuration, videoPath);
                 if (isModifyMaterialTimeLine) {
-                    mSeekBarView.resetStartAndEndTime(mCutStartTime, mCutEndTime);
+                    mSeekBarView.resetStartAndEndTime(mCutStartTime, mCutEndTime,true);
                     mSeekBarView.changeVideoPathViewFrameSetWidth(allVideoDuration);
                     for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
                         for (int j = 0; j < mSeekBarView.getTemplateMaterialItemViews().size(); j++) {
@@ -1281,22 +1281,28 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     long videoDuration = (long) (mediaInfo.vDuration * 1000);
                     mediaInfo.release();
                     boolean modify = false;
+                    //循环得到最长的视频时长
+                    long maxVideoDuration = 0;
                     for (int i = 0; i < mSeekBarView.getTemplateMaterialItemViews().size(); i++) {
                         if(mSeekBarView.getTemplateMaterialItemViews().get(i)!=null){
-                            if (videoDuration > mSeekBarView.getTemplateMaterialItemViews().get(i).getDuration()) {
-                                modify = true;
+                            if (mSeekBarView.getTemplateMaterialItemViews().get(i).getDuration() >= maxVideoDuration &&
+                                    albumType.isVideo(GetPathType.getInstance().getPathType(mSeekBarView.getTemplateMaterialItemViews().get(i).resPath))) {
+                                maxVideoDuration = mSeekBarView.getTemplateMaterialItemViews().get(i).getDuration();
                             }
                         }
+                    }
+                    if (videoDuration > maxVideoDuration) {
+                        modify = true;
                     }
                     if (modify) {
                         modificationDuration(videoDuration);
                         mSeekBarView.addTemplateMaterialItemView(videoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
                                 stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, mCutEndTime, isText, text, id);
                     }else {
-                        mSeekBarView.addTemplateMaterialItemView(allVideoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
-                                stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, Math.min(videoDuration, mCutEndTime), isText, text, id);
-                        stickerView.setShowStickerEndTime(Math.min(videoDuration, mCutEndTime));
-                        mSeekBarView.setCutEndTime(mCutEndTime);
+                        mSeekBarView.addTemplateMaterialItemView(maxVideoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
+                                stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, videoDuration, isText, text, id);
+                        stickerView.setShowStickerEndTime(videoDuration);
+                        mSeekBarView.setCutEndTime(maxVideoDuration);
                     }
                 }else if(albumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath())) && !TextUtils.isEmpty(videoPath)){
                     MediaInfo mainMediaInfo = new MediaInfo(videoPath);
@@ -1308,11 +1314,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     long materialDuration = (long) (materialMediaInfo.vDuration * 1000);
                     materialMediaInfo.release();
 
-                    if (materialDuration < mCutEndTime) {
+                    if (mCutEndTime > materialDuration) {
                         mSeekBarView.addTemplateMaterialItemView(videoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
-                                stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, Math.min(materialDuration,mCutEndTime), isText, text, id);
-                        stickerView.setShowStickerEndTime(Math.min(materialDuration,mCutEndTime));
-                    }else {
+                                stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, materialDuration, isText, text, id);
+                        stickerView.setShowStickerEndTime(materialDuration);
+                    } else if (materialDuration > mCutEndTime) {
+                        mSeekBarView.addTemplateMaterialItemView(videoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
+                                stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, mCutEndTime, isText, text, id);
+                        stickerView.setShowStickerEndTime(mCutEndTime);
+                    } else {
                         mSeekBarView.addTemplateMaterialItemView(videoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
                                 stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, mCutEndTime, isText, text, id);
                     }
@@ -1320,9 +1330,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 }else {
                     //如果素材全是图片的话默认为10秒   如果素材有视频的话以最长素材视频的时长为主轨道的时长
                     long materialDuration;
+                    long maxVideoDuration = 0;
+                    boolean  isMaxVideoDurationChange = false;
                     if (TextUtils.isEmpty(videoPath)) {
                         materialDuration = 10 * 1000;
-                        long maxVideoDuration = 0;
                         for (int i = 0; i < mSeekBarView.getTemplateMaterialItemViews().size(); i++) {
                             if (mSeekBarView.getTemplateMaterialItemViews().get(i) != null) {
                                 if (albumType.isVideo(GetPathType.getInstance().getPathType(mSeekBarView.getTemplateMaterialItemViews().get(i).resPath))) {
@@ -1340,7 +1351,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         //有视频素材  取最长的素材视频时长为主轨道的时长  走此逻辑判断
                         if (maxVideoDuration > 0) {
                             materialDuration = maxVideoDuration;
-                            modificationDuration(materialDuration);
+                            if (allVideoDuration < materialDuration) {
+                                modificationDuration(materialDuration);
+                            }
+                            isMaxVideoDurationChange = true;
                         } else {
                             //全是图片素材  主轨道时长为10秒 走此逻辑判断
                             if (allVideoDuration != materialDuration) {
@@ -1353,6 +1367,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     }
                     mSeekBarView.addTemplateMaterialItemView(materialDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
                             stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, mCutEndTime, isText, text, id);
+                    if (isMaxVideoDurationChange) {
+                        allVideoDuration = maxVideoDuration;
+                        mSeekBarView.setCutEndTime(allVideoDuration);
+                        mProgressBarView.addProgressBarView(allVideoDuration,"");
+                        tv_total.setText(TimeUtils.timeParse(allVideoDuration) + "s");
+                    }
                 }
             }
         });
@@ -1467,7 +1487,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 mCutStartTime = 0;
                 mCutEndTime = allVideoDuration;
                 mProgressBarView.addProgressBarView(allVideoDuration, videoPath);
-                mSeekBarView.resetStartAndEndTime(mCutStartTime, mCutEndTime);
+                mSeekBarView.resetStartAndEndTime(mCutStartTime, mCutEndTime,false);
                 mSeekBarView.changeVideoPathViewFrameSetWidth(allVideoDuration);
                 for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
                     for (int j = 0; j < mSeekBarView.getTemplateMaterialItemViews().size(); j++) {

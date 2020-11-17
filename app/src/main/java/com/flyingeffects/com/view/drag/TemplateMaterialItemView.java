@@ -411,7 +411,7 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
                     for (int i = 0; i < params.count; i++) {
                         long current = i * step * 1000;
                         Bitmap bitmap = mediaMetadataRetriever.getFrameAtTime(current);
-                        File file = new File(filePath, String.format("frame_%s", i));
+                        File file = new File(filePath, String.format("frame_%s", System.currentTimeMillis()));
                         try (FileOutputStream fos = new FileOutputStream(file)) {
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 30, fos);
                         } catch (FileNotFoundException e) {
@@ -438,7 +438,7 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
                         if (view instanceof ImageView) {
                             Glide.with(BaseApplication.getInstance())
                                     .load(bean.getFramePath())
-                                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE).skipMemoryCache(true))
+                                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
                                     .into((ImageView) view);
                         }
                     }
@@ -455,7 +455,7 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
                 if (view instanceof ImageView) {
                     Glide.with(BaseApplication.getInstance())
                             .load(resPath)
-                            .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE).skipMemoryCache(true))
+                            .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL))
                             .into((ImageView) view);
                 }
             }
