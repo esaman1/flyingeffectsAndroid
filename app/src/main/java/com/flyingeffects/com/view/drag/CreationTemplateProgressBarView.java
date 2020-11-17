@@ -198,8 +198,8 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
 
     @Override
     public void onTouchEnd(TemplateMaterialItemView view, boolean isDirection){
-//        scrollToPosition(isDirection ? startTime : endTime);
-        scrollToPosition(startTime);
+        scrollToPosition(isDirection ? startTime : endTime);
+//        scrollToPosition(startTime);
         if (mProgressListener != null) {
             mProgressListener.cutInterval(startTime, endTime);
         }

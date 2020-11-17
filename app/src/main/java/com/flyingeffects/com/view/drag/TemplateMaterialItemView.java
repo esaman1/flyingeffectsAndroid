@@ -29,6 +29,7 @@ import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.beans.VideoTrimmerFrameBean;
+import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.albumType;
 
 import java.io.File;
@@ -337,6 +338,7 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
     public String resPath;
     public boolean isText;
     public String text;
+    public long originalVideoDuration;
 
     /**此处重新计算绘制视频或者图片的帧图*/
     public int setResPathAndDuration(String resPath, long duration, int containerHeight, boolean isText, String text){
@@ -393,6 +395,10 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
         }
 
         if (albumType.isVideo(GetPathType.getInstance().getPathType(resPath))) {
+            MediaInfo mediaInfo = new MediaInfo(resPath);
+            mediaInfo.prepare();
+            originalVideoDuration = (long) (mediaInfo.vDuration*1000);
+            mediaInfo.release();
             Observable.create(new Observable.OnSubscribe<VideoTrimmerFrameBean>() {
                 @Override
                 public void call(Subscriber<? super VideoTrimmerFrameBean> subscriber) {
