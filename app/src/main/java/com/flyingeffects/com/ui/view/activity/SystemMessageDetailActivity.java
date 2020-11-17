@@ -22,6 +22,7 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -84,6 +85,7 @@ public class SystemMessageDetailActivity extends BaseActivity {
 
             switch (view.getId()){
                 case R.id.tv_make:
+                    statisticsEventAffair.getInstance().setFlag(this, "12_system_click",dataList.get(position).getContent());
                     requestTemplateDetail(dataList.get(position).getTemplate_id());
                     break;
 
@@ -143,6 +145,7 @@ public class SystemMessageDetailActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
+        statisticsEventAffair.getInstance().setFlag(this, "12_system_screen");
 
     }
 

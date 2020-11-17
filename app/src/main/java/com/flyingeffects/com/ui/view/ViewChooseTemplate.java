@@ -17,6 +17,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -62,6 +63,10 @@ public class ViewChooseTemplate {
                 @Override
                 public void isSuccess(String filePath) {
                     WaitingDialog.closePragressDialog();
+
+                    statisticsEventAffair.getInstance().setFlag(context, "21_yj_mb_click",list.get(position).getTitle());
+
+
                     if(callback!=null){
                         callback.onItemClick(position,filePath,items);
                     }
