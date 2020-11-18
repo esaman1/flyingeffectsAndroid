@@ -644,7 +644,10 @@ public class AlbumActivity extends BaseActivity implements
         } else {
             if(!TextUtils.isEmpty(material_info)&&material_info.equals("pictureAlbum")){
                 if(mCheckedList.size()<20){
-                    showMaterialCountDialog();
+//                    showMaterialCountDialog();
+                    mCheckedList=toBespreadMaterial();
+                    ThumbnailBuildTask task = new ThumbnailBuildTask(this, mCheckedList, this);
+                    task.execute();
                 }else{
                     callbackResult();
                 }

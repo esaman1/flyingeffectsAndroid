@@ -9,6 +9,8 @@ public interface CreationTemplateMvpView {
 
     void hasPlayingComplete();
 
+    void ChooseMusicIndex(int index);
+
     void deleteFirstSticker();
 
     void stickerOnclickCallback(String str);

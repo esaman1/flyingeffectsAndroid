@@ -772,6 +772,7 @@ public class DrawPadAllExecute2 {
     public AudioLayer addAudioLayer(String srcPath, boolean isLoop) {
         if(commonRunnable !=null){
             AudioLayer layer= commonRunnable.addAudioLayer(srcPath,0,0, Long.MAX_VALUE);
+
             if(layer!=null){
                 layer.setLooping(isLoop);
             }
