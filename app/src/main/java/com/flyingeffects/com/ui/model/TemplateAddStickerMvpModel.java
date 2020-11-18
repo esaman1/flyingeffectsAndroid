@@ -1451,7 +1451,7 @@ public class TemplateAddStickerMvpModel {
                     listAllSticker.clear();
                     cutSuccessNum = 0;
                     cutVideoPathList.clear();
-                    backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, "", new backgroundDraw.saveCallback() {
+                    backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, "",0,0, new backgroundDraw.saveCallback() {
                         @Override
                         public void saveSuccessPath(String path, int progress) {
                             if (!isDestroy) {

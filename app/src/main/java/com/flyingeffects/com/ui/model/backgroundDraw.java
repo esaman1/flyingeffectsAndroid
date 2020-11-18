@@ -82,18 +82,23 @@ public class backgroundDraw {
     private boolean nowUiIsLandscape;
     private long nowCurtime;
 
+    private long musicStartTime;
+    private long musicEndTime;
+
     /**
      * description ：后台绘制，如果videoVoice不为null,那么需要把主视频图层的声音替换为用户选择的背景声音
      * imagePath 如果videoPath没有且imagePath 有的情况，需要把绿幕背景替换为图片背景
      * creation date: 2020/4/23
      * user : zhangtongju
      */
-    public backgroundDraw(Context context, String videoPath, String videoVoice, String imagePath, saveCallback callback, AnimCollect animCollect) {
+    public backgroundDraw(Context context, String videoPath, String videoVoice, String imagePath, long musicStartTime,long musicEndTime, saveCallback callback, AnimCollect animCollect) {
         this.context = context;
         this.videoPath = videoPath;
         this.videoVoice = videoVoice;
         this.imagePath = imagePath;
         this.animCollect = animCollect;
+        this.musicStartTime=musicStartTime;
+        this.musicEndTime=musicEndTime;
         this.callback = callback;
 //        waitingProgress = new WaitingDialog_progress(context);
         if (!TextUtils.isEmpty(videoPath)) {
@@ -191,8 +196,13 @@ public class backgroundDraw {
 
             addMainCanversLayer(list, isMatting);
             if (!TextUtils.isEmpty(videoVoice)) {
-                //如果有videoVoice 字段，那么需要设置在对应的主图层上面去
-                execute.addAudioLayer(videoVoice, false);
+                if(musicEndTime==0){
+                    //如果有videoVoice 字段，那么需要设置在对应的主图层上面去
+                    execute.addAudioLayer(videoVoice,false);
+                }else{
+                    //如果有videoVoice 字段，那么需要设置在对应的主图层上面去
+                    execute.addAudioLayer(videoVoice,musicStartTime*1000,0,(musicEndTime-musicStartTime)*1000);
+                }
             }
             execute.start();
         } catch (Exception e) {
@@ -242,7 +252,7 @@ public class backgroundDraw {
             long endTime = stickerItem.getShowStickerEndTime() * 1000;
             VideoFrameLayer videoLayer;
             if (endTime != 0) {
-                videoLayer = execute.addVideoLayer(option, stickerItem.getShowStickerStartTime() * 1000, stickerItem.getShowStickerEndTime(),true,false);
+                videoLayer = execute.addVideoLayer(option, stickerItem.getShowStickerStartTime() * 1000, stickerItem.getShowStickerEndTime()* 1000,false,false);
             } else {
                 videoLayer =execute.addVideoLayer(option);
             }
@@ -299,7 +309,7 @@ public class backgroundDraw {
         long endTime = stickerItem.getShowStickerEndTime() * 1000;
         GifLayer gifLayer;
         if (endTime != 0) {
-            gifLayer = execute.addGifLayer(stickerItem.getPath(), stickerItem.getShowStickerStartTime() * 1000, stickerItem.getShowStickerEndTime());
+            gifLayer = execute.addGifLayer(stickerItem.getPath(), stickerItem.getShowStickerStartTime() * 1000, stickerItem.getShowStickerEndTime()* 1000);
         } else {
             gifLayer = execute.addGifLayer(stickerItem.getPath());
         }

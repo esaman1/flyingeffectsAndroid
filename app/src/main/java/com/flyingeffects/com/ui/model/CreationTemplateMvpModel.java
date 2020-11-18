@@ -506,24 +506,26 @@ public class CreationTemplateMvpModel {
                 case R.id.tv_0:
 
                     chooseMaterialMusic(nowChooseStickerView.getOriginalPath());
+                    callback.ChooseMusicIndex(0);
                     break;
 
                 case R.id.tv_1:
                 case R.id.iv_check_box_1:
-
+                    callback.ChooseMusicIndex(1);
                     chooseTemplateMusic(true);
 
                     break;
 
                 case R.id.tv_2:
                 case R.id.iv_check_box_2:
-
+                    callback.ChooseMusicIndex(2);
                     nowChooseMusicId = 3;
                     chooseAddChooseBjPath();
                     break;
 
                 case R.id.iv_check_box_3:
                 case R.id.tv_3:
+                    callback.ChooseMusicIndex(3);
                     clearCheckBox();
                     check_box_3.setImageResource(R.mipmap.template_btn_selected);
                     break;
@@ -1419,7 +1421,7 @@ public class CreationTemplateMvpModel {
     private boolean isIntoSaveVideo = false;
     private float percentageH;
 
-    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH, int templateId) {
+    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH, int templateId,long musicStartTime,long musicEndTime) {
         disMissStickerFrame();
         if (templateId != 0) {
             LogUtil.d("OOM", "toSaveVideo-templateId=" + templateId);
@@ -1436,7 +1438,7 @@ public class CreationTemplateMvpModel {
                     listAllSticker.clear();
                     cutSuccessNum = 0;
                     cutVideoPathList.clear();
-                    backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, new backgroundDraw.saveCallback() {
+                    backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath,musicStartTime,musicEndTime, new backgroundDraw.saveCallback() {
                         @Override
                         public void saveSuccessPath(String path, int progress) {
                             if (!isDestroy) {

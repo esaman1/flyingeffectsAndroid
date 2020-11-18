@@ -9,6 +9,8 @@ public interface CreationTemplateMvpCallback {
 
     void hasPlayingComplete();
 
+    void ChooseMusicIndex(int index);
+
     void deleteFirstSticker();
 
     void hideKeyBord();
