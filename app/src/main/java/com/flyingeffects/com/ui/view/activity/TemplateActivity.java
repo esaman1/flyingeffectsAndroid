@@ -298,14 +298,16 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 }
             }
         }
-        if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0") && albumType.isVideo(GetPathType.getInstance().
-                getMediaType(imgPath.get(0)))) {
-            nowTemplateIsMattingVideo = 1;
-            //不需要抠图就不需要扣第一帧页面
-            if (originalPath != null && originalPath.size() != 0) {
-                handler.sendEmptyMessage(1);
-                new Thread(() -> presenter.getMattingVideoCover(originalPath.get(0))).start();
 
+        if(templateItem.getIs_pic()!=1){
+            if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0") && albumType.isVideo(GetPathType.getInstance().
+                    getMediaType(imgPath.get(0)))) {
+                nowTemplateIsMattingVideo = 1;
+                //不需要抠图就不需要扣第一帧页面
+                if (originalPath != null && originalPath.size() != 0) {
+                    handler.sendEmptyMessage(1);
+                    new Thread(() -> presenter.getMattingVideoCover(originalPath.get(0))).start();
+                }
             }
         }
 
@@ -328,13 +330,16 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         seekBar.setOnSeekBarChangeListener(seekBarListener);
         switch_button.setOnCheckedChangeListener((view, isChecked) ->
         {
+
+            LogUtil.d("OOM5","进入到了CheckedChangeListener");
             if (!isFastDoubleClick()) {
                 mTemplateModel.resetUi();
                 if (!isChecked) {
                     nowIsChooseMatting = false;
                     if (nowTemplateIsMattingVideo == 1 && !albumType.isImage(GetPathType.getInstance().getPathType(imgPath.get(0)))) {
                         if (originalPath != null && originalPath.size() != 0) {
-                            ChangeMaterialCallbackForVideo(null, originalPath.get(0), false);
+                            ChangeMaterialCallbackForVideo(null, originalPath.get(0),
+                                    false);
                         } else {
                             ChangeMaterialCallbackForVideo(null, imgPath.get(0), false);
                         }
@@ -367,8 +372,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.PICTUREALBUM)) {
             findViewById(R.id.ll_Matting).setVisibility(View.GONE);
+        }else{
+            int is_pic=templateItem.getIs_pic();
+            if(is_pic==1){
+                findViewById(R.id.ll_Matting).setVisibility(View.GONE);
+            }
         }
-
 //        test();
     }
 
@@ -578,8 +587,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @Override
     public void ChangeMaterialCallbackForVideo(String originalVideoPath, String path, boolean needMatting) {
         //可能之前没勾选抠图，所以originalPath 为null，这里需要null 判断
-        LogUtil.d("OOM", "进度到了ChangeMaterialCallbackForVideo" + "needMatting=" + needMatting);
         if (needMatting) {
+            LogUtil.d("OOM5", "抠图" );
             if (originalPath == null) {
                 originalPath = new ArrayList<>();
             }
@@ -612,6 +621,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
         } else {
+            LogUtil.d("OOM5", "不抠图" );
             //不需要抠图
             originalPath = null;
             imgPath.clear();

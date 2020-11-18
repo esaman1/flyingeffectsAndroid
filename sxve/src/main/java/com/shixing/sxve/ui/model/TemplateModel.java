@@ -198,6 +198,8 @@ public class TemplateModel {
     private List<AssetModel> textUIModelList;
 
     public void setReplaceAllFiles(List<String> paths, isFirstReplaceComplete firstReplaceComplete) {  //批量选择图片,视频的替换方法
+
+
         List<AssetModel> mediaUIModelList = new ArrayList<>();
         textUIModelList = new ArrayList<>();
 
@@ -249,6 +251,7 @@ public class TemplateModel {
 
 
     public void setReplaceAllMaterial(List<String> list) {
+        Log.d("OOM5","size="+list.size());
         if (mReplaceableAssets != null && mReplaceableAssets.size() > 0) {
             for (int i = 0; i < mReplaceableAssets.size(); i++) {
                 if (mReplaceableAssets.get(i) != null) {

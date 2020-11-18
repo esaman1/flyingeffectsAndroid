@@ -34,7 +34,7 @@ public class PhotoChooseIndex {
      * user : zhangtongju
      */
     public void PutPhotoIndex(int photoIndex) {
-        Log.d("OOM5","存入的位置为"+photoIndex);
+//        Log.d("OOM5","存入的位置为"+photoIndex);
         for (int j = 0; j < listForKeepPhoto.size(); j++) {
             int nowIndex = listForKeepPhoto.get(j);
             if (photoIndex == nowIndex) {
