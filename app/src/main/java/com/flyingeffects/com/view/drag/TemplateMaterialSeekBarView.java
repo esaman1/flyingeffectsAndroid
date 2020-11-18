@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.commonlyModel.GetPathType;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.screenUtil;
 import com.shixing.sxve.ui.albumType;
 
@@ -35,6 +36,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
     View mViewFrame;
     private List<TemplateMaterialItemView> mTemplateMaterialItemViews = new ArrayList<>();
 
+    public boolean dragScrollView;
     /**
      * 左右边距
      */
@@ -42,9 +44,10 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
     int frameContainerWidth;
     int frameContainerHeight;
     long mDuration;
-    public boolean dragScrollView;
     long cutStartTime;
     long cutEndTime;
+    boolean isGreenScreen;
+    int oldThumbnailTotalWidth = 0;
 
 
     public TemplateMaterialSeekBarView(Context context) {
@@ -62,7 +65,6 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         initView();
     }
 
-
     private void initView() {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.view_template_material_seekbar, null);
         mMaterialSeekBar = view.findViewById(R.id.material_seekbar);
@@ -79,7 +81,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                     scrollToPosition(cutEndTime);
                 }
                 //获取当前操作的字幕POS位置
-                long process = l * PER_MS_IN_PX;
+                long  process = l * PER_MS_IN_PX;
 //                for (int i = 0; mTemplateMaterialItemViews != null && i < mTemplateMaterialItemViews.size(); i++) {
 //                    TemplateMaterialItemView materialItemView = mTemplateMaterialItemViews.get(i);
 //                    if (process >= mTemplateMaterialItemViews.get(i).getStartTime() && process < mTemplateMaterialItemViews.get(i).getEndTime() &&
@@ -104,6 +106,11 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         });
         mMaterialSeekBar.setOnTouchListener(this);
         frameContainerHeight = screenUtil.dip2px(getContext(), 40);
+    }
+
+
+    public void setGreenScreen(boolean isGreenScreen){
+        this.isGreenScreen = isGreenScreen;
     }
 
     /***
@@ -258,8 +265,6 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
      * @param text 文本内容
      * @param id 素材ID
      */
-
-    int  oldThumbnailTotalWidth=0;
     public void addTemplateMaterialItemView(long duration, String resPath,long startTime,long endTime,boolean isText,String text,String id) {
         this.mDuration = duration;
         this.cutStartTime = 0;
@@ -404,6 +409,47 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
             materialItemView.setLayoutParams(params);
             if (mProgressListener != null) {
                 mProgressListener.timelineChange(materialItemView.getStartTime(), materialItemView.getEndTime(), String.valueOf(materialItemView.getIdentityID()));
+            }
+        }
+    }
+
+    @Override
+    public void editStatistics(TemplateMaterialItemView view, boolean isOverallMove) {
+        if (isOverallMove) {
+            if (isGreenScreen) {
+                if (albumType.isVideo(GetPathType.getInstance().getPathType(view.resPath))) {
+                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd1_move");
+                } else if (TextUtils.isEmpty(view.text)) {
+                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd3_move");
+                } else {
+                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd2_move");
+                }
+            } else {
+                if (albumType.isVideo(GetPathType.getInstance().getPathType(view.resPath))) {
+                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd1_move");
+                } else if (TextUtils.isEmpty(view.text)) {
+                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd3_move");
+                } else {
+                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd2_move");
+                }
+            }
+        } else {
+            if (isGreenScreen) {
+                if (albumType.isVideo(GetPathType.getInstance().getPathType(view.resPath))) {
+                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd1_clip");
+                } else if (TextUtils.isEmpty(view.text)) {
+                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd3_clip");
+                } else {
+                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd2_clip");
+                }
+            } else {
+                if (albumType.isVideo(GetPathType.getInstance().getPathType(view.resPath))) {
+                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd1_clip");
+                } else if (TextUtils.isEmpty(view.text)) {
+                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd3_clip");
+                } else {
+                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd2_clip");
+                }
             }
         }
     }

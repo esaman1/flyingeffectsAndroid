@@ -241,16 +241,22 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             }
 
             @Override
-            public void cutInterval(long starTime, long endTime) {
+            public void cutInterval(long starTime, long endTime,boolean isDirection) {
                 mCutStartTime = starTime;
                 mCutEndTime = endTime;
                 mSeekBarView.setCutStartAndEndTime(starTime, endTime);
                 stickerTimeLineOffset();
+                if (isDirection) {
+                    mSeekBarView.scrollToPosition(starTime);
+                } else {
+                    mSeekBarView.scrollToPosition(endTime);
+                }
             }
 
             @Override
             public void onTouchEnd() {
                 videoToPause();
+                presenter.getNowPlayingTime(progressBarProgress);
             }
         });
         mSeekBarView.setProgressListener(this);
@@ -557,6 +563,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 createViewForAddText = null;
             }
             ll_add_text_style.setVisibility(View.VISIBLE);
+            mTvMaterialComplete.setVisibility(View.VISIBLE);
             createViewForAddText = new CreateViewForAddText(this, ll_add_text_style, new CreateViewForAddText.downCallback() {
                 @Override
                 public void isSuccess(String path, int type, String title) {
@@ -699,6 +706,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         });
         tv_total.setText(TimeUtils.timeParse(allVideoDuration) + "s");
         mediaInfo.release();
+        mSeekBarView.setGreenScreen(false);
     }
 
     boolean isInitImageBj = false;
@@ -730,6 +738,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             }
         });
         tv_total.setText(TimeUtils.timeParse(allVideoDuration) + "s");
+        mSeekBarView.setGreenScreen(true);
     }
 
 
@@ -1012,9 +1021,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         } else {
             tv_music.setVisibility(View.GONE);
             viewPager.setCurrentItem(0);
-            setTextColor(0);
         }
-
+        for (int i = 0; i < lin_Id.length; i++) {
+            ((TextView) findViewById(lin_Id[i])).setTextColor(getResources().getColor(R.color.white));
+        }
     }
 
 
@@ -1095,9 +1105,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                             if (isPlaying) {
                                 if (getCurrentPos() >= mCutEndTime) {
                                     exoPlayer.seekTo(mCutStartTime);
+                                    if (bgmPlayer != null) {
+                                        bgmPlayer.seekTo((int) mCutStartTime);
+                                    }
                                     videoToPause();
                                 } else if (getCurrentPos() < mCutStartTime) {
                                     exoPlayer.seekTo(mCutStartTime);
+                                    if (bgmPlayer != null) {
+                                        bgmPlayer.seekTo((int) mCutStartTime);
+                                    }
                                     videoToPause();
                                 }
                             }
@@ -1410,23 +1426,23 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             if (modify) {
                 modificationDuration(videoDuration);
             }
-        }else {
-            mSeekBarView.modifyMaterialThumbnail(path,id);
         }
+        mSeekBarView.modifyMaterialThumbnail(path,id);
     }
 
     @Override
     public void progress(long progress, boolean manualDrag) {
+        mSeekBarViewManualDrag = manualDrag;
         if (manualDrag) {
             mProgressBarView.scrollToPosition(progress);
         }
-        mSeekBarViewManualDrag = manualDrag;
     }
 
     @Override
     public void manualDrag(boolean manualDrag) {
         mSeekBarViewManualDrag = manualDrag;
         videoToPause();
+        presenter.getNowPlayingTime(progressBarProgress);
     }
 
     @Override
