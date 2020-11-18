@@ -993,12 +993,17 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @Override
     public void onDestroy() {
         super.onDestroy();
+        clearAllData();
+        EventBus.getDefault().unregister(this);
+    }
+
+
+    private void clearAllData(){
         presenter.onDestroy();
         videoPlayer.release();
         if (mPlayer != null) {
             mPlayer.stop();
         }
-        EventBus.getDefault().unregister(this);
     }
 
 
@@ -1346,6 +1351,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             ViewChooseTemplate viewChooseTemplate = new ViewChooseTemplate(TemplateActivity.this, templateThumb,changeTemplatePosition, new ViewChooseTemplate.Callback() {
                 @Override
                 public void onItemClick(int position, String path, new_fag_template_item item) {
+                    clearAllData();
                     //选择模板的回调时间
                     Intent intent = getIntent();
                     finish();
