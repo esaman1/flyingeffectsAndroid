@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -102,6 +103,11 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
         this.mProgressBar = activity.findViewById(R.id.progress_bar);
         this.mTabLayout = activity.findViewById(R.id.tl_index);
         this.mTvCount = activity.findViewById(R.id.tv_count);
+        if(!TextUtils.isEmpty(material_info)&&material_info.equals("pictureAlbum")){
+            this.mTvCount.setVisibility(View.INVISIBLE);
+        }else{
+            this.mTvCount.setVisibility(View.VISIBLE);
+        }
         this.mIvBack = activity.findViewById(R.id.iv_back);
         this.mTvNext = activity.findViewById(R.id.tv_next);
 
