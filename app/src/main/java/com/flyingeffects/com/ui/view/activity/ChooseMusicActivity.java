@@ -3,7 +3,6 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.RelativeLayout;
 
 import androidx.fragment.app.Fragment;
@@ -15,11 +14,9 @@ import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseActivity;
-import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.FragmentHasSlide;
-import com.flyingeffects.com.enity.ReplayMessageEvent;
-import com.flyingeffects.com.ui.view.fragment.frag_choose_music_local_music;
+import com.flyingeffects.com.ui.view.fragment.frag_choose_music_extract_audio;
 import com.flyingeffects.com.ui.view.fragment.frag_choose_music_recent_updates;
 
 import java.util.ArrayList;
@@ -76,7 +73,7 @@ public class ChooseMusicActivity extends BaseActivity {
         fragment_1.setArguments(bundle_1);
         list.add(fragment_1);
 
-        frag_choose_music_local_music fragment_local_music = new frag_choose_music_local_music();
+        frag_choose_music_extract_audio fragment_local_music = new frag_choose_music_extract_audio();
         Bundle bundle_local_music = new Bundle();
         bundle_local_music.putSerializable("needDuration",needDuration);
         fragment_local_music.setArguments(bundle_local_music);

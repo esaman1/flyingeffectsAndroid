@@ -249,8 +249,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
-    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH,int templateId,long musicStartTime,long musicEndTime){
-        creationTemplatemodel.toSaveVideo(imageBjPath,nowUiIsLandscape,percentageH,templateId,musicStartTime,musicEndTime);
+    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH,int templateId,long musicStartTime,long musicEndTime,long needKeepDuration){
+        creationTemplatemodel.toSaveVideo(imageBjPath,nowUiIsLandscape,percentageH,templateId,musicStartTime,musicEndTime,needKeepDuration);
     }
 
 

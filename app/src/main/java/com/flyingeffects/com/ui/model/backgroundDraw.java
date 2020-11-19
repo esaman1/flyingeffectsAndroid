@@ -56,7 +56,7 @@ public class backgroundDraw {
     /**
      * 渲染视频时长，默认为10s
      */
-    private int duration;
+    private long duration;
     private int intoCanvesCount;
     private String ExtractFramegFolder;
 
@@ -91,18 +91,21 @@ public class backgroundDraw {
      * creation date: 2020/4/23
      * user : zhangtongju
      */
-    public backgroundDraw(Context context, String videoPath, String videoVoice, String imagePath, long musicStartTime,long musicEndTime, saveCallback callback, AnimCollect animCollect) {
+    public backgroundDraw(Context context, String videoPath, String videoVoice, String imagePath, long musicStartTime, long musicEndTime, long needKeepDuration, saveCallback callback, AnimCollect animCollect) {
         this.context = context;
         this.videoPath = videoPath;
         this.videoVoice = videoVoice;
         this.imagePath = imagePath;
         this.animCollect = animCollect;
-        this.musicStartTime=musicStartTime;
-        this.musicEndTime=musicEndTime;
+        this.musicStartTime = musicStartTime;
+        this.musicEndTime = musicEndTime;
         this.callback = callback;
 //        waitingProgress = new WaitingDialog_progress(context);
-        if (!TextUtils.isEmpty(videoPath)) {
-            duration = getRingDuring(videoPath);
+        duration = needKeepDuration;
+        if (duration == 0) {
+            if (!TextUtils.isEmpty(videoPath)) {
+                duration = getRingDuring(videoPath);
+            }
         }
         LogUtil.d("OOM", "backgroundDrawdurationF=" + duration);
         LogUtil.d("OOM", "videoVoice=" + videoVoice);
@@ -132,7 +135,7 @@ public class backgroundDraw {
             duration = 10000;
         }
         LogUtil.d("OOM2", "进入到了最后渲染");
-        totleRenderTime = duration * 1000;
+        totleRenderTime = duration*1000;
         try {
             if (nowUiIsLandscape) {
                 DRAWPADWIDTH = 1280;
@@ -196,12 +199,12 @@ public class backgroundDraw {
 
             addMainCanversLayer(list, isMatting);
             if (!TextUtils.isEmpty(videoVoice)) {
-                if(musicEndTime==0){
+                if (musicEndTime == 0) {
                     //如果有videoVoice 字段，那么需要设置在对应的主图层上面去
-                    execute.addAudioLayer(videoVoice,false);
-                }else{
+                    execute.addAudioLayer(videoVoice, false);
+                } else {
                     //如果有videoVoice 字段，那么需要设置在对应的主图层上面去
-                    execute.addAudioLayer(videoVoice,musicStartTime*1000,0,(musicEndTime-musicStartTime)*1000);
+                    execute.addAudioLayer(videoVoice, musicStartTime * 1000, 0, (musicEndTime - musicStartTime) * 1000);
                 }
             }
             execute.start();
@@ -247,14 +250,13 @@ public class backgroundDraw {
             option = new LSOVideoOption(stickerItem.getPath());
 
 
-
             option.setAudioMute();
             long endTime = stickerItem.getShowStickerEndTime() * 1000;
             VideoFrameLayer videoLayer;
             if (endTime != 0) {
-                videoLayer = execute.addVideoLayer(option, stickerItem.getShowStickerStartTime() * 1000, stickerItem.getShowStickerEndTime()* 1000,false,false);
+                videoLayer = execute.addVideoLayer(option, stickerItem.getShowStickerStartTime() * 1000, stickerItem.getShowStickerEndTime() * 1000, false, false);
             } else {
-                videoLayer =execute.addVideoLayer(option);
+                videoLayer = execute.addVideoLayer(option);
             }
 
             videoLayer.setId(i);
@@ -309,7 +311,7 @@ public class backgroundDraw {
         long endTime = stickerItem.getShowStickerEndTime() * 1000;
         GifLayer gifLayer;
         if (endTime != 0) {
-            gifLayer = execute.addGifLayer(stickerItem.getPath(), stickerItem.getShowStickerStartTime() * 1000, stickerItem.getShowStickerEndTime()* 1000);
+            gifLayer = execute.addGifLayer(stickerItem.getPath(), stickerItem.getShowStickerStartTime() * 1000, stickerItem.getShowStickerEndTime() * 1000);
         } else {
             gifLayer = execute.addGifLayer(stickerItem.getPath());
         }
@@ -358,14 +360,14 @@ public class backgroundDraw {
         Bitmap bp = BitmapFactory.decodeFile(stickerItem.getPath());
         LogUtil.d("OOM", "Path" + stickerItem.getPath());
 
-        long endTime = stickerItem.getShowStickerEndTime() ;
+        long endTime = stickerItem.getShowStickerEndTime();
         LogUtil.d("OOM4", "endTime" + endTime);
 
-        long STARTTime = stickerItem.getShowStickerStartTime() ;
+        long STARTTime = stickerItem.getShowStickerStartTime();
         LogUtil.d("OOM4", "STARTTime" + STARTTime);
         BitmapLayer bpLayer;
         if (endTime != 0) {
-            bpLayer = execute.addBitmapLayer(bp, stickerItem.getShowStickerStartTime() * 1000, stickerItem.getShowStickerEndTime()*1000);
+            bpLayer = execute.addBitmapLayer(bp, stickerItem.getShowStickerStartTime() * 1000, stickerItem.getShowStickerEndTime() * 1000);
         } else {
             bpLayer = execute.addBitmapLayer(bp);
         }
@@ -473,12 +475,12 @@ public class backgroundDraw {
         LogUtil.d("OOM", "图片宽为" + bp.getWidth());
 
 
-        long startTime = stickerItem.getShowStickerStartTime()*1000;
-        long endTime = stickerItem.getShowStickerEndTime() ;
+        long startTime = stickerItem.getShowStickerStartTime() * 1000;
+        long endTime = stickerItem.getShowStickerEndTime();
         BitmapLayer bpLayer;
         LogUtil.d("OOM4", "endTime" + endTime);
         if (endTime != 0) {
-            bpLayer = execute.addBitmapLayer(bp, stickerItem.getShowStickerStartTime() * 1000, stickerItem.getShowStickerEndTime()*1000);
+            bpLayer = execute.addBitmapLayer(bp, stickerItem.getShowStickerStartTime() * 1000, stickerItem.getShowStickerEndTime() * 1000);
         } else {
             bpLayer = execute.addBitmapLayer(bp);
         }
@@ -520,12 +522,13 @@ public class backgroundDraw {
         CanvasLayer canvasLayer = execute.addCanvasLayer();
         float finalNeedDt = needDt;
         canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
-            if(startTime!=0){
-                currentTime=   currentTime-startTime;
-                if(currentTime<0) {
-                    currentTime=0;
+            if (startTime != 0) {
+                currentTime = currentTime - startTime;
+                if (currentTime < 0) {
+                    currentTime = 0;
                 }
-            };
+            }
+            ;
             if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
                 float percentage;
                 if (stickerItem.getChooseAnimId() == AnimType.BOTTOMTOCENTER2 || stickerItem.getChooseAnimId() == AnimType.SUPERSTAR2) {

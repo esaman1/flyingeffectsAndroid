@@ -1246,7 +1246,10 @@ public class CreationTemplateMvpModel {
             }
         }
         viewLayerRelativeLayout.addView(stickView);
-        callback.addStickerTimeLine(String.valueOf(stickerViewID), isText, isText ? stickView.getStickerText() : "",stickView);
+
+        if(!isFromShowAnim){
+            callback.addStickerTimeLine(String.valueOf(stickerViewID), isText, isText ? stickView.getStickerText() : "",stickView);
+        }
         stickerViewID++;
         if (isFirstAdd) {
             callback.isFirstAddSuccess();
@@ -1421,7 +1424,7 @@ public class CreationTemplateMvpModel {
     private boolean isIntoSaveVideo = false;
     private float percentageH;
 
-    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH, int templateId,long musicStartTime,long musicEndTime) {
+    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH, int templateId,long musicStartTime,long musicEndTime,long needKeepDuration) {
         disMissStickerFrame();
         if (templateId != 0) {
             LogUtil.d("OOM", "toSaveVideo-templateId=" + templateId);
@@ -1438,7 +1441,7 @@ public class CreationTemplateMvpModel {
                     listAllSticker.clear();
                     cutSuccessNum = 0;
                     cutVideoPathList.clear();
-                    backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath,musicStartTime,musicEndTime, new backgroundDraw.saveCallback() {
+                    backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath,musicStartTime,musicEndTime, needKeepDuration,new backgroundDraw.saveCallback() {
                         @Override
                         public void saveSuccessPath(String path, int progress) {
                             if (!isDestroy) {

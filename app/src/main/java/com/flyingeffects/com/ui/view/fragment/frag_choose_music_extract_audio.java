@@ -49,7 +49,7 @@ import static com.flyingeffects.com.utils.BlogFileResource.FileManager.isLansong
  * creation date: 2020/8/26
  * user : zhangtongju
  */
-public class frag_choose_music_local_music extends BaseFragment {
+public class frag_choose_music_extract_audio extends BaseFragment {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
