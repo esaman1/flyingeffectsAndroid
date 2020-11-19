@@ -70,8 +70,6 @@ public class searchMusicActivity extends BaseActivity {
     private int selectPage = 1;
     private int perPageCount = 10;
 
-    @BindView(R.id.lin_show_nodata)
-    LinearLayout lin_show_nodata;
 
     @BindView(R.id.RecyclerView)
     RecyclerView recyclerView;
@@ -397,10 +395,7 @@ public class searchMusicActivity extends BaseActivity {
                     listData.clear();
                 }
                 if (isRefresh && data.size() == 0) {
-                    showNoData(true);
                     ToastUtil.showToast("没有找到相关内容");
-                } else {
-                    showNoData(false);
                 }
 
                 if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
@@ -414,15 +409,6 @@ public class searchMusicActivity extends BaseActivity {
 
             }
         }, "fagBjItem", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
-    }
-
-
-    public void showNoData(boolean isShowNoData) {
-        if (isShowNoData) {
-            lin_show_nodata.setVisibility(View.VISIBLE);
-        } else {
-            lin_show_nodata.setVisibility(View.GONE);
-        }
     }
 
 
