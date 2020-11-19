@@ -43,12 +43,12 @@ public class ChooseTemplateAdapter extends BaseItemDraggableAdapter<new_fag_temp
         Glide.with(context).load(item.getImage()).apply(new RequestOptions().placeholder(R.mipmap.placeholder)).into(iv_cover);
         TextView tvTitle= helper.getView(R.id.tv_name);
         tvTitle.setText( item.getTitle());
+
         FrameLayout fl_frame = helper.getView(R.id.fl_frame);
         if (item.isCheckItem()) {
-            tvTitle.setVisibility(View.VISIBLE);
+
             fl_frame.setVisibility(View.VISIBLE);
         } else {
-            tvTitle.setVisibility(View.GONE);
             fl_frame.setVisibility(View.GONE);
         }
 

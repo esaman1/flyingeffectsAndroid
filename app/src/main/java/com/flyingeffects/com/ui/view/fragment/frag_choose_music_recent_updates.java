@@ -384,6 +384,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
 
     private void startQuery() {
         if (getActivity() != null) {
+            smartRefreshLayout.setEnableLoadMore(false);
             handler = new QueryHandler(getActivity().getContentResolver());
             Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
             String[] projection = {MediaStore.Audio.AudioColumns.DATA, MediaStore.Audio.AudioColumns.TITLE, MediaStore.Audio.AudioColumns.ALBUM, MediaStore.Audio.ArtistColumns.ARTIST,};
@@ -434,6 +435,12 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             }
             //倒序
             Collections.reverse(listData);
+                if(listData.size()==0){
+                    showNoData(true);
+                }else{
+                    showNoData(false);
+                }
+
             adapter.notifyDataSetChanged();
             finishData();
         }
