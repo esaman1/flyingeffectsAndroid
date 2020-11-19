@@ -33,8 +33,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
 
 
 
-    public void getNowPlayingTime(long nowProgressTime){
-        creationTemplatemodel.getNowPlayingTime(nowProgressTime);
+    public void getNowPlayingTime(long nowProgressTime,long totalTime){
+        creationTemplatemodel.getNowPlayingTime(nowProgressTime,totalTime);
     }
 
 

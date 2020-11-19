@@ -2032,23 +2032,25 @@ public class CreationTemplateMvpModel {
      * creation date: 2020/11/9
      * user : zhangtongju
      */
-    public void getNowPlayingTime(long progress) {
+    public void getNowPlayingTime(long progress, long totalTime) {
         if (listForStickerModel != null && listForStickerModel.size() > 0) {
-            LogUtil.d("OOM4","progress="+progress);
+            LogUtil.d("OOM4", "progress=" + progress);
             for (int i = 0; i < listForStickerModel.size(); i++) {
-                AnimStickerModel model=listForStickerModel.get(i);
-                StickerView stickerView=model.getStickerView();
-                if(stickerView!=null){
-                    long startTime=stickerView.getShowStickerStartTime();
-                    long endTime=stickerView.getShowStickerEndTime();
-                    LogUtil.d("OOM4","endTime"+endTime);
-                    if(endTime!=0){
-                        if(startTime<=progress&&progress<=endTime){
+                AnimStickerModel model = listForStickerModel.get(i);
+                StickerView stickerView = model.getStickerView();
+                if (stickerView != null) {
+                    long startTime = stickerView.getShowStickerStartTime();
+                    long endTime = stickerView.getShowStickerEndTime();
+                    LogUtil.d("OOM4", "endTime" + endTime);
+                    if (endTime != 0) {
+                        if (startTime <= progress && progress <= endTime) {
                             stickerView.setVisibility(View.VISIBLE);
-                            LogUtil.d("OOM4","setVisibility");
-                        }else{
+                            LogUtil.d("OOM4", "setVisibility");
+                        } else if (totalTime - endTime <= 50) {
+                            stickerView.setVisibility(View.VISIBLE);
+                        } else {
                             stickerView.setVisibility(View.GONE);
-                            LogUtil.d("OOM4","setVisibilityGONE");
+                            LogUtil.d("OOM4", "setVisibilityGONE");
                         }
                     }
                 }

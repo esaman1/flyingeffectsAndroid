@@ -6,8 +6,10 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.commonlyModel.GetPathType;
@@ -34,6 +36,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
     ObserveHorizontalScrollView mMaterialSeekBar;
     LinearLayout mLlDragItem;
     View mViewFrame;
+    ScrollView mScrollViewMaterialSeekbar;
     private List<TemplateMaterialItemView> mTemplateMaterialItemViews = new ArrayList<>();
 
     public boolean dragScrollView;
@@ -67,6 +70,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
 
     private void initView() {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.view_template_material_seekbar, null);
+        mScrollViewMaterialSeekbar = view.findViewById(R.id.scrollView_material_seekbar);
         mMaterialSeekBar = view.findViewById(R.id.material_seekbar);
         mLlDragItem = view.findViewById(R.id.ll_item_drag);
         mViewFrame = view.findViewById(R.id.view_frame);
@@ -91,8 +95,15 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
 //                        materialItemView.isShowArrow(false);
 //                    }
 //                }
-                if(mProgressListener!=null){
-                    mProgressListener.progress(process,dragScrollView);
+                if (mProgressListener != null) {
+                    mProgressListener.progress(process, dragScrollView);
+                }
+            }
+
+            @Override
+            public void onTouchStart() {
+                if (mProgressListener != null) {
+                    mProgressListener.trackPause();
                 }
             }
 
@@ -167,7 +178,11 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                 itemView.setStartTime(0);
                 if (isModifyEndTime) {
                     if (endTime > itemView.getDuration()) {
-                        itemView.setEndTime(itemView.getDuration());
+                        if (albumType.isImage(GetPathType.getInstance().getPathType(itemView.resPath))) {
+                            itemView.setEndTime(endTime);
+                        } else {
+                            itemView.setEndTime(itemView.getDuration());
+                        }
                     } else {
                         itemView.setEndTime(endTime);
                     }
@@ -295,6 +310,18 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         params.setMargins((int) (intervalPX + startTime / PER_MS_IN_PX), screenUtil.dip2px(getContext(), 5), 0, 0);
         materialItemView.setLayoutParams(params);
         materialItemView.setDragListener(this);
+        mScrollViewMaterialSeekbar.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mScrollViewMaterialSeekbar.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                mScrollViewMaterialSeekbar.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mScrollViewMaterialSeekbar.fullScroll(View.FOCUS_DOWN);
+                    }
+                });
+            }
+        });
     }
 
     /**删除当前贴纸时间轴的view*/
@@ -537,6 +564,8 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         void timelineChange(long startTime,long endTime,String id);
 
         void currentViewSelected(String id);
+
+        void trackPause();
     }
 
     SeekBarProgressListener mProgressListener;
@@ -555,5 +584,9 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
 
     public void setCutEndTime(long cutEndTime) {
         this.cutEndTime = cutEndTime;
+    }
+
+    public void setCutStartTime(long cutStartTime) {
+        this.cutStartTime = cutStartTime;
     }
 }

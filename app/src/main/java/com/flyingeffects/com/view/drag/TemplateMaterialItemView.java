@@ -1,5 +1,6 @@
 package com.flyingeffects.com.view.drag;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -107,6 +108,7 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
         initView();
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void initView() {
         setGravity(Gravity.CENTER_VERTICAL);
         setOrientation(LinearLayout.HORIZONTAL);
@@ -122,6 +124,9 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
         mLlThumbnail = new LinearLayout(getContext());
         mLlThumbnail.setOrientation(LinearLayout.HORIZONTAL);
         mLlThumbnail.setGravity(Gravity.CENTER_VERTICAL);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mLlThumbnail.setForeground(getResources().getDrawable(R.drawable.selector_dragsubtitleview_bg,null));
+        }
         addView(mLlThumbnail);
 
         mRightView = new ImageView(getContext());
@@ -288,9 +293,15 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
         if (isShow) {
             mLeftView.setVisibility(VISIBLE);
             mRightView.setVisibility(VISIBLE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mLlThumbnail.setSelected(true);
+            }
         } else {
             mLeftView.setVisibility(INVISIBLE);
             mRightView.setVisibility(INVISIBLE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mLlThumbnail.setSelected(false);
+            }
         }
     }
 
