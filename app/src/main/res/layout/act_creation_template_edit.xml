@@ -289,7 +289,7 @@
 
 
             <View
-                android:layout_width="1dp"
+                android:layout_width="2.5dp"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:background="#5496FF" />
@@ -318,7 +318,7 @@
             android:paddingBottom="2dp"
             android:background="#000000" />
         <View
-            android:layout_width="1dp"
+            android:layout_width="2.5dp"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
             android:background="#5496FF" />

@@ -1199,9 +1199,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 //                    }
                     if (!frameShow) {
                         frameShow = true;
-                        callback.stickerClickShowFrame();
                         invalidate();
                     }
+                    callback.stickerClickShowFrame();
                     handler.removeMessages(DISMISS_FRAME);
                     break;
                 case MotionEvent.ACTION_POINTER_DOWN:
