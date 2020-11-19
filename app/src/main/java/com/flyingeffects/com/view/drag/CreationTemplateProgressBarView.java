@@ -1,6 +1,7 @@
 package com.flyingeffects.com.view.drag;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -9,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.screenUtil;
 
 /**
@@ -88,11 +90,13 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
      * @param duration 时长
      * @param resPath 资源路径
      */
+    String resPath;
     public void addProgressBarView(long duration, String resPath) {
         mLlDragItem.removeAllViews();
         this.originalDuration = duration;
         this.startTime = 0;
         this.endTime = duration;
+        this.resPath = resPath;
         materialItemView = new TemplateMaterialItemView(getContext());
         materialItemView.setIdentityID(0);
         materialItemView.isShowArrow(false);
@@ -193,6 +197,7 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
                             TemplateMaterialItemView.ARROW_WIDTH), 0,
                     (int) ((originalDuration - endTime) / PER_MS_IN_PX + frameListPadding - TemplateMaterialItemView.ARROW_WIDTH), 0);
             materialItemView.setLayoutParams(params);
+
         }
     }
 
@@ -201,7 +206,18 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
         scrollToPosition(isDirection ? startTime : endTime);
 //        scrollToPosition(startTime);
         if (mProgressListener != null) {
-            mProgressListener.cutInterval(startTime, endTime);
+            mProgressListener.cutInterval(startTime, endTime,isDirection);
+        }
+    }
+
+    @Override
+    public void editStatistics(TemplateMaterialItemView view, boolean isOverallMove) {
+        if (!isOverallMove) {
+            if (TextUtils.isEmpty(resPath)) {
+                statisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd_clip");
+            } else {
+                statisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd_clip");
+            }
         }
     }
 
@@ -218,11 +234,11 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
         }
     }
 
-    public interface SeekBarProgressListener{
+    public interface SeekBarProgressListener {
 
         void progress(long progress);
 
-        void cutInterval(long starTime,long endTime);
+        void cutInterval(long starTime, long endTime, boolean isDirection);
 
         void onTouchEnd();
     }

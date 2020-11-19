@@ -161,6 +161,7 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
                 case MotionEvent.ACTION_UP:
                     if (dragListener != null) {
                         dragListener.onTouchEnd(this, true);
+                        dragListener.editStatistics(this,false);
                     }
                     break;
                 default:
@@ -188,6 +189,7 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
                 case MotionEvent.ACTION_UP:
                     if (dragListener != null) {
                         dragListener.onTouchEnd(this, false);
+                        dragListener.editStatistics(this,false);
                     }
                     break;
                 default:
@@ -222,7 +224,8 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
                     break;
                 case MotionEvent.ACTION_UP:
                     if (dragListener != null) {
-//                        dragListener.onTouchEnd(this, llViewDownX < event.getX());
+//                        dragListener.onTouchEnd(this, false);
+                        dragListener.editStatistics(this,true);
                     }
                     long currentTime = System.currentTimeMillis();
                     if (currentTime - lastTime <= 100) {
@@ -484,10 +487,18 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
         void onClickTextView(TemplateMaterialItemView view);
 
         /***
-         *
+         * 触摸事件结束
+         * @param view 当前view
          * @param isDirection 为true时是左边的箭头拖动 false右边的箭头拖动
          */
-        default void onTouchEnd(TemplateMaterialItemView view,boolean isDirection){};
+        default void onTouchEnd(TemplateMaterialItemView view,boolean isDirection){}
+
+        /**
+         * 编辑统计
+         * @param view 当前view
+         * @param isOverallMove 是否是整体拖动
+         */
+        default void editStatistics(TemplateMaterialItemView view,boolean isOverallMove){}
     }
 
     public static class FrameParams implements Serializable {
