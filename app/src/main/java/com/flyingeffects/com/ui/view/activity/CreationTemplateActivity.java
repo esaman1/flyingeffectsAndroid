@@ -64,6 +64,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import androidx.viewpager.widget.ViewPager;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -122,6 +123,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @BindView(R.id.tv_current_time)
     TextView mTvCurrentTime;
 
+    private boolean isEndDestroy = false;
+
     private int templateId;
     private boolean isIntoPause = false;
     public final static int SELECTALBUM = 0;
@@ -177,10 +180,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     boolean mSeekBarViewManualDrag = false;
     /**
-     *当前播放的进度
+     * 当前播放的进度
      */
-   private  long mCutStartTime;
-    long mCutEndTime;
+    private long mCutStartTime;
+    /**
+     * 整个视频的结束时间
+     */
+    private long mCutEndTime;
+
     private long progressBarProgress;
     /**
      * 背景音乐播放的开始位置
@@ -259,19 +266,19 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         mProgressBarView.setProgressListener(new CreationTemplateProgressBarView.SeekBarProgressListener() {
             @Override
             public void progress(long progress) {
-                mCutStartTime=progress;
+//                mCutStartTime=progress;
                 setgsyVideoProgress(progress);
                 if (!mSeekBarViewManualDrag) {
                     mSeekBarView.scrollToPosition(progress);
                 }
                 progressBarProgress = progress;
-                presenter.getNowPlayingTime(progressBarProgress,mCutEndTime);
+                presenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
                 mTvCurrentTime.setText(TimeUtils.timeParse(progress) + "s");
             }
 
             @Override
-            public void cutInterval(long starTime, long endTime,boolean isDirection) {
-              mCutStartTime = starTime;
+            public void cutInterval(long starTime, long endTime, boolean isDirection) {
+                mCutStartTime = starTime;
                 mCutEndTime = endTime;
                 mSeekBarView.setCutStartAndEndTime(starTime, endTime);
                 stickerTimeLineOffset();
@@ -285,7 +292,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             @Override
             public void onTouchEnd() {
                 videoToPause();
-                presenter.getNowPlayingTime(progressBarProgress,mCutEndTime);
+                presenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
             }
         });
         mSeekBarView.setProgressListener(this);
@@ -378,6 +385,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     bgmPlayer.start();
                 } else {
                     seekTo(mCutStartTime);
+                    LogUtil.d("playBGMMusic", "videoPlay");
                     playBGMMusic();
                 }
                 exoPlayer.setVolume(0f);
@@ -462,7 +470,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 } else {
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
                 }
-                presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId,musicStartTime,musicEndTime,mCutEndTime-mCutStartTime);
+                presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId, musicStartTime, musicEndTime, mCutEndTime - mCutStartTime);
                 break;
 
             case R.id.iv_delete_all_text:
@@ -474,6 +482,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             case R.id.ll_play:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
                     if (isPlaying) {
+                        nowTime = 5;
+                        pauseBgmMusic();
                         isIntoPause = false;
                         isPlayComplate = false;
                         videoToPause();//点击播放暂定
@@ -481,7 +491,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         isPlaying = false;
                         nowStateIsPlaying(false);
                         presenter.showAllAnim(false);
-                        pauseBgmMusic();
                     } else {
                         statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, " 14_preview_video_bj");
                         WaitingDialog.openPragressDialog(this);
@@ -665,7 +674,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
     private void videoToPause() {
-        isNeedPlayBjMusci=false;
+        isNeedPlayBjMusci = false;
         videoPause();
         isPlaying = false;
         endTimer();
@@ -980,6 +989,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void getVideoDuration(long allVideoDuration) {
         this.allVideoDuration = allVideoDuration;
+        musicEndTime = allVideoDuration;
         Log.d("OOM", "allVideoDuration=" + allVideoDuration);
     }
 
@@ -1015,6 +1025,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     exoPlayer.setVolume(0f);
                 }
                 pauseBgmMusic();
+                LogUtil.d("playBGMMusic", "getBgmPath");
                 playBGMMusic();
                 if (bgmPlayer != null) {
                     if (exoPlayer != null) {
@@ -1116,12 +1127,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 }
             } else {
                 //如果有背景还是播放背景音乐,如果有背景音乐且是第一次初始化
-                if (!TextUtils.isEmpty(bgmPath)&&musicEndTime==0) {
+                if (!TextUtils.isEmpty(bgmPath) && musicEndTime == 0) {
                     if (bgmPlayer != null) {
                         //继续播放
                         bgmPlayer.start();
                     } else {
                         seekTo(mCutStartTime);
+                        LogUtil.d("playBGMMusic", "animIsComplate");
                         playBGMMusic();
                     }
                 }
@@ -1138,9 +1150,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private long nowTime = 5;
     //自己计算的播放时间
     private long totalPlayTime;
-    private boolean isNeedPlayBjMusci=false;
+    private boolean isNeedPlayBjMusci = false;
 
     private void startTimer() {
+        isEndDestroy=false;
+        LogUtil.d("OOM4", "startTimer:musicEndTime=" + musicEndTime + "musicStartTime=" + musicStartTime);
         totalPlayTime = 0;
         if (timer != null) {
             timer.purge();
@@ -1159,14 +1173,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
-
                         if (!TextUtils.isEmpty(videoPath)) {
+
                             if (isPlaying) {
                                 if (getCurrentPos() >= mCutEndTime) {
+                                    LogUtil.d("OOM5", "getCurrentPos() >= mCutEndTime");
                                     exoPlayer.seekTo(mCutStartTime);
                                     videoToPause();
                                 } else if (getCurrentPos() < mCutStartTime) {
+                                    LogUtil.d("OOM5", "getCurrentPos() < mCutStartTime");
                                     exoPlayer.seekTo(mCutStartTime);
                                     videoToPause();
                                 }
@@ -1175,28 +1190,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                                 mProgressBarView.scrollToPosition(getCurrentPos());
                             }
                         } else {
-                            if(!TextUtils.isEmpty(bgmPath)){
-                                if (musicEndTime != 0) {
-                                    if (totalPlayTime > musicEndTime || totalPlayTime < musicStartTime) {
-                                        isNeedPlayBjMusci=false;
-                                        if (bgmPlayer != null) {
-                                            bgmPlayer.setVolume(0, 0);
-                                        }
-                                    } else {
-                                        if(!isNeedPlayBjMusci){
-                                            LogUtil.d("OOM5","播放音乐");
-                                            playBjMusic();
-                                        }
-                                        isNeedPlayBjMusci=true;
-                                    }
-                                } else {
-                                    musicEndTime=allVideoDuration;
-                                    if (bgmPlayer != null) {
-                                        bgmPlayer.setVolume(1, 1);
-                                    }
-                                }
-                            }
-
+                            bjMusicControl();
                             //没有选择背景
                             nowTime = nowTime + 5;
                             if (nowTime >= mCutEndTime) {
@@ -1222,18 +1216,50 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
-    private void playBjMusic(){
+    /**
+     * description ：拖动后时候可以播放音乐
+     * creation date: 2020/11/19
+     * user : zhangtongju
+     */
+
+    private void bjMusicControl() {
+
+        if (!isEndDestroy) {
+            LogUtil.d("playBGMMusic", "bjMusicControl");
+            if (!TextUtils.isEmpty(bgmPath)) {
+                if (musicEndTime != 0) {
+                    if (totalPlayTime > musicEndTime || totalPlayTime < musicStartTime) {
+                        LogUtil.d("OOM5", "需要暂停音乐");
+                        isNeedPlayBjMusci = false;
+                        pauseBgmMusic();
+                    } else {
+                        if (!isNeedPlayBjMusci) {
+                            LogUtil.d("OOM5", "播放音乐");
+                            playBjMusic();
+                        }
+                        isNeedPlayBjMusci = true;
+                    }
+                }
+//            else {
+//                musicEndTime=allVideoDuration;
+//                if (bgmPlayer != null) {
+//                    bgmPlayer.setVolume(1, 1);
+//                }
+//            }
+            }
+        }
+
+
+    }
+
+
+    private void playBjMusic() {
+        LogUtil.d("playBGMMusic", "playBjMusic");
         if (!TextUtils.isEmpty(bgmPath)) {
-            LogUtil.d("OOM5", "musicStartTime=" + musicStartTime);
-            LogUtil.d("OOM5", "musicEndTime=" + musicEndTime);
             if (bgmPlayer != null) {
                 bgmPlayer.start();
-                //继续播放
-                LogUtil.d("OOM5","继续播放mCutStartTime="+mCutStartTime);
                 seekTo(mCutStartTime);
             } else {
-                LogUtil.d("OOM5","bgmPlayer == null"+"mCutStartTime="+mCutStartTime);
-                //跳转到开始位置
                 seekTo(mCutStartTime);
                 playBGMMusic();
             }
@@ -1253,6 +1279,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     private void endTimer() {
         LogUtil.d("playBGMMusic", "pauseBgmMusic---------------endTimer---------------");
+        isEndDestroy=true;
         destroyTimer();
         presenter.isEndTimer();
         if (bgmPlayer != null) {
@@ -1338,7 +1365,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
     private void playBGMMusic() {
-        LogUtil.d("playBGMMusic", "playBGMMusic");
         bgmPlayer = new MediaPlayer();
         try {
             bgmPlayer.setDataSource(bgmPath);
@@ -1537,7 +1563,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 modificationDuration(videoDuration);
             }
         }
-        mSeekBarView.modifyMaterialThumbnail(path,id);
+        mSeekBarView.modifyMaterialThumbnail(path, id);
     }
 
     @Override
@@ -1552,7 +1578,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     public void manualDrag(boolean manualDrag) {
         mSeekBarViewManualDrag = manualDrag;
         videoToPause();
-        presenter.getNowPlayingTime(progressBarProgress,mCutEndTime);
+        LogUtil.d("OOM4", "progressBarProgress=" + progressBarProgress);
+        presenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
     }
 
     @Override
@@ -1572,12 +1599,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         musicEndTime = musicEndFirstTime;
                     }
                 }
+                LogUtil.d("oom4", "赋值startTime=" + startTime);
                 stickerView.setShowStickerStartTime(startTime);
+                LogUtil.d("oom4", "赋值endTime=" + endTime);
                 stickerView.setShowStickerEndTime(endTime);
                 break;
             }
         }
-        presenter.getNowPlayingTime(progressBarProgress,mCutEndTime);
+        presenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
     }
 
     @Override
