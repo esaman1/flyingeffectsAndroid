@@ -208,11 +208,12 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     }
 
     public void setIsZanCount(int zanCount) {
-
         if (tv_zan_count != null) {
+            if(zanCount<0){
+                zanCount=0;
+            }
             tv_zan_count.setText(zanCount + "");
         }
-
     }
 
     public void setCommentCount(String commentCount) {

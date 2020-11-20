@@ -596,7 +596,18 @@ public class AlbumActivity extends BaseActivity implements
 
     @Override
     public void onPreviewComplete() {
-        callbackResult();
+        if(!TextUtils.isEmpty(material_info)&&material_info.equals("pictureAlbum")){
+            if(mCheckedList.size()<20){
+                mCheckedList=toBespreadMaterial();
+                ThumbnailBuildTask task = new ThumbnailBuildTask(this, mCheckedList, this);
+                task.execute();
+            }else{
+                callbackResult();
+            }
+        }else{
+            callbackResult();
+        }
+
     }
 
     @Override
