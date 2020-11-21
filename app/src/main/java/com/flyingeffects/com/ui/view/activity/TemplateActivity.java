@@ -224,6 +224,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private long needDuration;
 
+    private boolean nowIsPhotographAlbum=false;
+
     /**
      * 只针对预览显示的文案
      */
@@ -371,6 +373,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         });
 
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.PICTUREALBUM)) {
+            nowIsPhotographAlbum=true;
             findViewById(R.id.ll_Matting).setVisibility(View.GONE);
         }else{
             int is_pic=templateItem.getIs_pic();
@@ -694,9 +697,15 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             pickIndex = model.getNowIndex();
             pickGroupIndex = model.getNowGroup();
             LogUtil.d("OOM", "当前的点击位置为" + pickIndex);
-            if (isCanChooseVideo) {
+            if (isCanChooseVideo||nowIsPhotographAlbum) {
                 // 只有是否选择视频的区别
-                float videoTimeF = Float.parseFloat(videoTime);
+                float videoTimeF;
+                if(nowIsPhotographAlbum){
+                    MediaUiModel2 mModel = (MediaUiModel2) mTemplateModel.getAssets().get(pickGroupIndex).ui;
+                    videoTimeF=mModel.getDuration() / mModel.getFps();
+                }else{
+                    videoTimeF  = Float.parseFloat(videoTime);
+                }
                 AlbumManager.chooseAlbum(TemplateActivity.this, 1, REQUEST_SINGLE_MEDIA, this, "", (long) (videoTimeF * 1000));
             } else {
                 AlbumManager.chooseWhichAlbum(TemplateActivity.this, 1, REQUEST_SINGLE_MEDIA, this, 1, "");
@@ -841,6 +850,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 Observable.from(mTemplateViews).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(templateView -> {
                     if (templateView != nowChooseTemplateView && templateView.getVisibility() != View.GONE) {
                         templateView.setVisibility(View.GONE);
+//                        templateView.setIsShow();
                     }
                 });
             } catch (Exception e) {

@@ -283,6 +283,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 mSeekBarView.setCutStartAndEndTime(starTime, endTime);
                 stickerTimeLineOffset();
                 if (isDirection) {
+
+
+
+
                     mSeekBarView.scrollToPosition(starTime);
                 } else {
                     mSeekBarView.scrollToPosition(endTime);
