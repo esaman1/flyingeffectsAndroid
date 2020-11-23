@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.subjects.PublishSubject;
 
 public class ViewChooseTemplate {
@@ -62,14 +64,17 @@ public class ViewChooseTemplate {
             TemplateDown templateDown=new TemplateDown(new TemplateDown.DownFileCallback() {
                 @Override
                 public void isSuccess(String filePath) {
-                    WaitingDialog.closePragressDialog();
+                    Observable.just(filePath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+                        @Override
+                        public void call(String s) {
+                            WaitingDialog.closePragressDialog();
+                            statisticsEventAffair.getInstance().setFlag(context, "21_yj_mb_click",list.get(position).getTitle());
+                            if(callback!=null){
+                                callback.onItemClick(position,filePath,items);
+                            }
+                        }
+                    });
 
-                    statisticsEventAffair.getInstance().setFlag(context, "21_yj_mb_click",list.get(position).getTitle());
-
-
-                    if(callback!=null){
-                        callback.onItemClick(position,filePath,items);
-                    }
                 }
 
                 @Override

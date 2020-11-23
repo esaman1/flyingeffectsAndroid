@@ -1144,11 +1144,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         templateThumbForMusic.findViewById(R.id.ll_choose_0).setVisibility(View.INVISIBLE);
                     } else {
                         MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(nowChoosePosition).ui;
-                        float needVideoTime=mediaUi2.getDuration();
+                        float needVideoTime=mediaUi2.getDuration()/(float)mediaUi2.getFps();
                         if (needVideoTime < 0.5) {
                             needVideoTime = 0.5f;
                         }
-                        LogUtil.d("OOM","needVideoTime="+needVideoTime+"getFps="+mediaUi2.getFps()+"mediaUi2.getDuration()="+mediaUi2.getDuration());
                         mediaUi2.setPathOrigin(paths.get(0));
                         Intent intoCutVideo = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
                         intoCutVideo.putExtra("needCropDuration", needVideoTime);
