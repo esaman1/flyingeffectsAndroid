@@ -505,10 +505,10 @@ public class HomeMainActivity extends FragmentActivity {
     private void changeBottomTab() {
         for (int i = 0; i < mIvMenuBack.length; i++) {
 //            mIvMenu[i].setImageResource(unSelectIconArr[i]);
-            tv_main[i].setTextColor(ContextCompat.getColor(this, R.color.home_navigation_dark_gray));
+            tv_main[i].setTextColor(ContextCompat.getColor(this, R.color.white));
         }
 //        mIvMenu[LastWhichMenu].setImageResource(selectIconArr[LastWhichMenu]);
-        tv_main[LastWhichMenu].setTextColor(ContextCompat.getColor(this, R.color.white));
+        tv_main[LastWhichMenu].setTextColor(ContextCompat.getColor(this, R.color.new_base_blue));
     }
 
     /**

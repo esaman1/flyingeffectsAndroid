@@ -90,6 +90,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         helper.addOnClickListener(R.id.tv_describe);
 
         MarqueTextView tv_writer_name = helper.getView(R.id.tv_writer_name);
+        helper.addOnClickListener(R.id.tv_writer_name);
         TextView tv_title = helper.getView(R.id.tv_title);
         tv_describe = helper.getView(R.id.tv_describe);
         tv_describe.setVisibility(View.GONE);

@@ -285,8 +285,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 if (isDirection) {
 
 
-
-
                     mSeekBarView.scrollToPosition(starTime);
                 } else {
                     mSeekBarView.scrollToPosition(endTime);
@@ -1157,7 +1155,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private boolean isNeedPlayBjMusci = false;
 
     private void startTimer() {
-        isEndDestroy=false;
+        isEndDestroy = false;
         LogUtil.d("OOM4", "startTimer:musicEndTime=" + musicEndTime + "musicStartTime=" + musicStartTime);
         totalPlayTime = 0;
         if (timer != null) {
@@ -1283,7 +1281,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     private void endTimer() {
         LogUtil.d("playBGMMusic", "pauseBgmMusic---------------endTimer---------------");
-        isEndDestroy=true;
+        isEndDestroy = true;
         destroyTimer();
         presenter.isEndTimer();
         if (bgmPlayer != null) {
@@ -1416,6 +1414,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             @Override
             public void onGlobalLayout() {
                 mSeekBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
                 stickerView.setShowStickerStartTime(mCutStartTime);
                 stickerView.setShowStickerEndTime(mCutEndTime);
                 //是绿幕视频并且添加的素材是视频 遍历出所有素材的最长时长  为当前主轨道的时长
@@ -1528,6 +1527,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         mSeekBarView.setCutEndTime(mCutEndTime);
                     }
                 }
+                if(!TextUtils.isEmpty(id)){
+                    showTimeLineSickerArrow(id);
+                }
+
             }
         });
     }

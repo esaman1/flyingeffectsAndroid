@@ -25,7 +25,7 @@
     <color name="baseBackground">#FBFBFB</color>
     <color name="cityBaseColor">#F0F4FD</color>
     <color name="shadow_color">#FF000000</color>
-
+    <color name="new_base_blue">#46AAFF</color>
 
 
     <!--水波纹或5.0以下选择器颜色-->

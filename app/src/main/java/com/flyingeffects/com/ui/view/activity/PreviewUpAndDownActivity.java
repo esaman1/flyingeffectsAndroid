@@ -253,6 +253,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
                 case R.id.iv_writer:
                 case R.id.tv_describe:
+                case R.id.tv_writer_name:
                     intoUserHome(position);
                     break;
 
