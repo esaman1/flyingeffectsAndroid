@@ -676,7 +676,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
     private void videoToPause() {
-        isNeedPlayBjMusci = false;
         videoPause();
         isPlaying = false;
         endTimer();
@@ -1243,13 +1242,16 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         }
                         isNeedPlayBjMusci = true;
                     }
+                }else{
+                    LogUtil.d("playBGMMusic", "musicEndTime="+musicEndTime);
+                    if (!isNeedPlayBjMusci) {
+                        LogUtil.d("playBGMMusic", "播放音乐");
+                        playBjMusic();
+                    }
+                    isNeedPlayBjMusci = true;
                 }
-//            else {
-//                musicEndTime=allVideoDuration;
-//                if (bgmPlayer != null) {
-//                    bgmPlayer.setVolume(1, 1);
-//                }
-//            }
+            }else{
+                LogUtil.d("playBGMMusic", "bgmPath==null");
             }
         }
 
@@ -1282,6 +1284,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 关闭timer 和task
      */
     private void endTimer() {
+        isNeedPlayBjMusci=false;
         LogUtil.d("playBGMMusic", "pauseBgmMusic---------------endTimer---------------");
         isEndDestroy = true;
         destroyTimer();
