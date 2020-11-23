@@ -733,7 +733,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 mCutEndTime = allVideoDuration;
                 mProgressBarView.addProgressBarView(allVideoDuration, videoPath);
                 if (isModifyMaterialTimeLine) {
-                    mSeekBarView.resetStartAndEndTime(mCutStartTime, mCutEndTime, true);
+                    mSeekBarView.resetStartAndEndTime(mCutStartTime, mCutEndTime);
                     mSeekBarView.changeVideoPathViewFrameSetWidth(allVideoDuration);
                     for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
                         for (int j = 0; j < mSeekBarView.getTemplateMaterialItemViews().size(); j++) {
@@ -1668,7 +1668,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 mCutStartTime = 0;
                 mCutEndTime = allVideoDuration;
                 mProgressBarView.addProgressBarView(allVideoDuration, videoPath);
-                mSeekBarView.resetStartAndEndTime(mCutStartTime, mCutEndTime, false);
+                mSeekBarView.resetStartAndEndTime(mCutStartTime, mCutEndTime);
                 mSeekBarView.changeVideoPathViewFrameSetWidth(allVideoDuration);
                 for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
                     for (int j = 0; j < mSeekBarView.getTemplateMaterialItemViews().size(); j++) {

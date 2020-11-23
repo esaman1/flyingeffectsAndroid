@@ -169,36 +169,40 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         }
     }
 
-    public void resetStartAndEndTime(long startTime, long endTime,boolean isModifyEndTime) {
+    /**重置素材时间轴的起止时间*/
+    public void resetStartAndEndTime(long startTime, long endTime) {
         cutStartTime = startTime;
         cutEndTime = endTime;
+        TemplateMaterialItemView materialItemView = null;
         for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
             if (mTemplateMaterialItemViews.get(i) != null) {
                 TemplateMaterialItemView itemView = mTemplateMaterialItemViews.get(i);
                 itemView.setStartTime(0);
-                if (isModifyEndTime) {
-                    if (endTime > itemView.getDuration()) {
-                        if (albumType.isImage(GetPathType.getInstance().getPathType(itemView.resPath))) {
-                            itemView.setEndTime(endTime);
-                        } else {
-                            itemView.setEndTime(itemView.getDuration());
-                        }
-                    } else {
+                if (endTime > itemView.getDuration()) {
+                    if (albumType.isImage(GetPathType.getInstance().getPathType(itemView.resPath))) {
                         itemView.setEndTime(endTime);
+                    } else if (!TextUtils.isEmpty(itemView.text)) {
+                        itemView.setEndTime(endTime);
+                    } else {
+                        itemView.setEndTime(itemView.getDuration());
                     }
                 } else {
-                    itemView.setEndTime(itemView.getDuration());
+                    itemView.setEndTime(endTime);
                 }
-                int thumbnailTotalWidth =  itemView.setResPathAndDuration(itemView.resPath, endTime - startTime, frameContainerHeight, itemView.isText, itemView.text);
+                materialItemView = itemView;
                 LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) itemView.getLayoutParams();
                 itemView.setWidthAndHeight((int) ((itemView.getEndTime() - itemView.getStartTime()) / PER_MS_IN_PX), frameContainerHeight);
                 params.setMargins((int) (itemView.getStartTime() / PER_MS_IN_PX + frameListPadding - TemplateMaterialItemView.ARROW_WIDTH),
                         screenUtil.dip2px(getContext(), 5), 0, 0);
                 itemView.setLayoutParams(params);
-                RelativeLayout.LayoutParams reParams = (LayoutParams) mViewFrame.getLayoutParams();
-                reParams.width = thumbnailTotalWidth + frameListPadding * 2;
-                mViewFrame.setLayoutParams(reParams);
             }
+        }
+        if (materialItemView != null) {
+            int thumbnailTotalWidth = materialItemView.setResPathAndDuration(materialItemView.resPath, endTime - startTime,
+                    frameContainerHeight, materialItemView.isText, materialItemView.text);
+            RelativeLayout.LayoutParams reParams = (LayoutParams) mViewFrame.getLayoutParams();
+            reParams.width = thumbnailTotalWidth + frameListPadding * 2;
+            mViewFrame.setLayoutParams(reParams);
         }
     }
 
@@ -310,11 +314,11 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         params.setMargins((int) (intervalPX + startTime / PER_MS_IN_PX), screenUtil.dip2px(getContext(), 5), 0, 0);
         materialItemView.setLayoutParams(params);
         materialItemView.setDragListener(this);
-        mScrollViewMaterialSeekbar.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                mScrollViewMaterialSeekbar.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                if (mLlDragItem.getChildCount() >= 3) {
+        if (mLlDragItem.getChildCount() >= 3) {
+            mScrollViewMaterialSeekbar.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    mScrollViewMaterialSeekbar.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     mScrollViewMaterialSeekbar.post(new Runnable() {
                         @Override
                         public void run() {
@@ -322,17 +326,17 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                         }
                     });
                 }
-            }
-        });
+            });
+        }
     }
 
     /**删除当前贴纸时间轴的view*/
-    public void deleteTemplateMaterialItemView(String id){
+    public void deleteTemplateMaterialItemView(String id) {
         for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
             if (mTemplateMaterialItemViews.get(i) != null) {
                 if (TextUtils.equals(String.valueOf(mTemplateMaterialItemViews.get(i).getIdentityID()), id)) {
                     mLlDragItem.removeView(mTemplateMaterialItemViews.get(i));
-                    mTemplateMaterialItemViews.set(i,null);
+                    mTemplateMaterialItemViews.set(i, null);
                     break;
                 }
             }
