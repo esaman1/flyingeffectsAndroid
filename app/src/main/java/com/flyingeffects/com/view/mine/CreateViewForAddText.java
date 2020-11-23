@@ -1,12 +1,18 @@
 package com.flyingeffects.com.view.mine;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
+import android.os.Build;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -34,12 +40,12 @@ import com.flyingeffects.com.view.keyboard.KeyboardHeightProvider;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import androidx.viewpager.widget.ViewPager;
-
 import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -289,7 +295,12 @@ public class CreateViewForAddText {
             @Override
             public void onHeightChanged(int height) {
                 if (height > 0) {
-                    keyboardHeight = height;
+                    //针对OPPO PADM00型号的手机做导航栏处理
+                    if (TextUtils.equals("OPPO", Build.BRAND) && TextUtils.equals("PADM00", Build.MODEL)) {
+                        keyboardHeight = (int) (height - getVirtualBarHeight(context) * 0.62);
+                    } else {
+                        keyboardHeight = height;
+                    }
                     LinearLayout.LayoutParams layoutParams1 = (LinearLayout.LayoutParams) llAddText.getLayoutParams();
                     layoutParams1.setMargins(0, 0, 0, keyboardHeight);
                     llAddText.setLayoutParams(layoutParams1);
@@ -580,6 +591,29 @@ public class CreateViewForAddText {
                 createTemplateTextEffectAdapterEffect.notifyDataSetChanged();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+    /**
+     * 获取虚拟功能键高度
+     * @param context
+     * @return
+     */
+    public int getVirtualBarHeight(Context context) {
+        int vh = 0;
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+        DisplayMetrics dm = new DisplayMetrics();
+        try {
+            @SuppressWarnings("rawtypes")
+            Class c = Class.forName("android.view.Display");
+            @SuppressWarnings("unchecked")
+            Method method = c.getMethod("getRealMetrics", DisplayMetrics.class);
+            method.invoke(display, dm);
+            vh = dm.heightPixels - windowManager.getDefaultDisplay().getHeight();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return vh;
     }
 
 }
