@@ -494,7 +494,7 @@ public class AlbumActivity extends BaseActivity implements
 
     @Override
     public void tryCheckItem(CompoundButton button, int position) {
-        PhotoChooseIndex.getInstance().PutPhotoIndex(position);
+
         AlbumFile albumFile = mAlbumFolders.get(mCurrentFolder).getAlbumFiles().get(position);
         if (button.isChecked()) {
             if (mCheckedList.size() >= mLimitCount) {
@@ -519,11 +519,13 @@ public class AlbumActivity extends BaseActivity implements
                 mView.toast(getResources().getQuantityString(messageRes, mLimitCount, mLimitCount));
                 button.setChecked(false);
             } else {
+                PhotoChooseIndex.getInstance().PutPhotoIndex(position);
                 albumFile.setChecked(true);
                 mCheckedList.add(albumFile);
                 setCheckedCount();
             }
         } else {
+            PhotoChooseIndex.getInstance().PutPhotoIndex(position);
             albumFile.setChecked(false);
             mCheckedList.remove(albumFile);
             setCheckedCount();
