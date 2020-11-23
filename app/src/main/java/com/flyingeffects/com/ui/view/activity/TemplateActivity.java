@@ -1143,9 +1143,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         chooseTemplateMusic();
                         templateThumbForMusic.findViewById(R.id.ll_choose_0).setVisibility(View.INVISIBLE);
                     } else {
-                        //如果是视频.就进入裁剪页面
-                        float needVideoTime = Float.parseFloat(videoTime);
-                        MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
+                        MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(nowChoosePosition).ui;
+                        float needVideoTime=mediaUi2.getDuration();
+                        if (needVideoTime < 0.5) {
+                            needVideoTime = 0.5f;
+                        }
+                        LogUtil.d("OOM","needVideoTime="+needVideoTime+"getFps="+mediaUi2.getFps()+"mediaUi2.getDuration()="+mediaUi2.getDuration());
                         mediaUi2.setPathOrigin(paths.get(0));
                         Intent intoCutVideo = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
                         intoCutVideo.putExtra("needCropDuration", needVideoTime);

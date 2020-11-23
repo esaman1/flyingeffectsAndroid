@@ -92,7 +92,7 @@ public class MediaUiModel2 extends MediaUiModel {
         double t = ui.getDouble("t"); //transparent
         mR = ui.getDouble("r");//rotation
         mDuration = ui.getInt("duration");
-
+        Log.d("OOM","mDuration="+mDuration);
         mInitPaint = new Paint();
         mInitPaint.setAntiAlias(true);
         mInitPaint.setFilterBitmap(true);

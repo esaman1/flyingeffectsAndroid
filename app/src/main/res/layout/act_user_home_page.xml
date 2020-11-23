@@ -9,54 +9,57 @@
         android:layout_height="210dp">
 
         <ImageView
+            android:id="@+id/im_user_skin_other"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:id="@+id/im_user_skin_other" />
+            android:scaleType="centerCrop" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:background="@drawable/home_page_gradient" />
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingRight="12dp"
+            android:layout_centerVertical="true"
             android:paddingLeft="12dp"
-            android:layout_centerVertical="true">
+            android:paddingRight="12dp">
+
             <ImageView
                 android:id="@+id/iv_head"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:layout_centerVertical="true"
-                android:src="@mipmap/logo" />
+                android:layout_centerVertical="true" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/iv_head"
-                android:layout_marginLeft="10dp"
-                android:layout_toLeftOf="@+id/tv_focus"
-                android:layout_marginRight="5dp"
                 android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="5dp"
+                android:layout_toLeftOf="@+id/tv_focus"
+                android:layout_toRightOf="@+id/iv_head"
                 android:orientation="vertical">
+
                 <TextView
                     android:id="@+id/tv_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="隔壁家的吴阿姨"
                     android:textColor="#858A8D"
                     android:textSize="12sp" />
+
                 <TextView
                     android:id="@+id/tv_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="隔壁家的吴阿姨"
                     android:layout_marginTop="4dp"
-                    android:textColor="@color/white"
                     android:maxLines="2"
+                    android:textColor="@color/white"
                     android:textSize="20sp"
                     android:textStyle="bold" />
+
                 <TextView
                     android:id="@+id/tv_Introduction"
                     android:layout_width="wrap_content"
@@ -66,93 +69,105 @@
                     android:textColor="#858A8D"
                     android:textSize="12sp" />
             </LinearLayout>
+
             <TextView
                 android:id="@+id/tv_focus"
                 android:layout_width="74dp"
                 android:layout_height="27dp"
-                android:background="@drawable/message_focus_20"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
+                android:background="@drawable/message_focus_20"
                 android:gravity="center"
                 android:text="关注"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold" />
         </RelativeLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="20dp">
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_weight="1"
                 android:gravity="center"
-                android:layout_weight="1">
+                android:orientation="horizontal">
+
                 <TextView
                     android:id="@+id/fans_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="粉丝"
                     android:layout_marginLeft="2dp"
+                    android:text="粉丝"
                     android:textColor="@color/white"
                     android:textSize="12sp" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_weight="1"
                 android:gravity="center"
-                android:layout_weight="1">
+                android:orientation="horizontal">
+
                 <TextView
                     android:id="@+id/attention_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="关注"
                     android:layout_marginLeft="2dp"
+                    android:text="关注"
                     android:textColor="@color/white"
                     android:textSize="12sp" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_weight="1"
                 android:gravity="center"
-                android:layout_weight="1">
+                android:orientation="horizontal">
+
                 <TextView
                     android:id="@+id/tv_video_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="视频"
                     android:layout_marginLeft="2dp"
+                    android:text="视频"
                     android:textColor="@color/white"
                     android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>
+
         <ImageView
             android:id="@+id/iv_back"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:padding="10dp"
-            android:layout_marginTop="10dp"
             android:layout_marginStart="10dp"
-            android:src="@mipmap/back"/>
+            android:layout_marginTop="10dp"
+            android:padding="10dp"
+            android:src="@mipmap/back" />
     </RelativeLayout>
 
     <LinearLayout
@@ -230,10 +245,10 @@
                 <View
                     android:id="@+id/view_line_head_1"
                     android:layout_width="30dp"
-                    android:visibility="invisible"
                     android:layout_height="3dp"
                     android:layout_marginBottom="10dp"
-                    android:background="@color/base_blue" />
+                    android:background="@color/base_blue"
+                    android:visibility="invisible" />
             </LinearLayout>
 
             <TextView
