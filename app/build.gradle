@@ -168,9 +168,9 @@ dependencies {
     implementation 'com.googlecode.mp4parser:isoparser:1.1.21'
 
     //开屏广告
-    implementation(name: 'GDTSDK.unionNoPlugin.4.270.1140', ext: 'aar')
+    implementation(name: 'GDTSDK.unionNoPlugin.4.294.1164', ext: 'aar')
     // 广告sdk
-    implementation(name: 'NTADSDK-v2.4.8', ext: 'aar')
+    implementation(name: 'NTADSDK-v2.5.2', ext: 'aar')
     // 百度联盟
     implementation(name: 'Baidu_MobAds_SDK-release_v5.85', ext: 'aar')
     // 穿山甲
