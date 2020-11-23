@@ -1300,7 +1300,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     public void initBottomLayout() {
         ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
-        if (mTemplateModel.HasBj) {
+        if (mTemplateModel.HasBj!=null&&mTemplateModel.HasBj) {
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.PICTUREALBUM)) {
                 titlesHasBj = new String[]{getString(R.string.template), getString(R.string.template_edit), getString(R.string.template_bj),
                         getString(R.string.template_music)};
