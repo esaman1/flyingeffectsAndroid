@@ -238,7 +238,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:paddingEnd="80dp">
+               >
 
                 <LinearLayout
                     android:id="@+id/ll_add_child"
@@ -251,6 +251,7 @@
 
             <ImageView
                 android:layout_width="match_parent"
+                android:layout_marginStart="200dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/search_gradient" />
 
