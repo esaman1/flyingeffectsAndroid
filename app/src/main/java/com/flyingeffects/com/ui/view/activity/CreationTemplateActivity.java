@@ -1105,6 +1105,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     @Override
     public void animIsComplate() {
+        LogUtil.d("OOM","animIsComplate");
         WaitingDialog.closePragressDialog();
         Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
             nowStateIsPlaying(true);
@@ -1133,6 +1134,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     if (bgmPlayer != null) {
                         //继续播放
                         bgmPlayer.start();
+                        LogUtil.d("playBGMMusic", " bgmPlayer.start()");
                     } else {
                         seekTo(mCutStartTime);
                         LogUtil.d("playBGMMusic", "animIsComplate");
@@ -1231,12 +1233,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             if (!TextUtils.isEmpty(bgmPath)) {
                 if (musicEndTime != 0) {
                     if (totalPlayTime > musicEndTime || totalPlayTime < musicStartTime) {
-                        LogUtil.d("OOM5", "需要暂停音乐");
+                        LogUtil.d("playBGMMusic", "需要暂停音乐");
                         isNeedPlayBjMusci = false;
                         pauseBgmMusic();
                     } else {
                         if (!isNeedPlayBjMusci) {
-                            LogUtil.d("OOM5", "播放音乐");
+                            LogUtil.d("playBGMMusic", "播放音乐");
                             playBjMusic();
                         }
                         isNeedPlayBjMusci = true;
