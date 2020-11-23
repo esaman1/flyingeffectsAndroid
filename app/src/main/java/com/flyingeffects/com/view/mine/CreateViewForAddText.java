@@ -295,12 +295,7 @@ public class CreateViewForAddText {
             @Override
             public void onHeightChanged(int height) {
                 if (height > 0) {
-                    //针对OPPO PADM00型号的手机做导航栏处理
-                    if (TextUtils.equals("OPPO", Build.BRAND) && TextUtils.equals("PADM00", Build.MODEL)) {
-                        keyboardHeight = (int) (height - getVirtualBarHeight(context) * 0.62);
-                    } else {
-                        keyboardHeight = height;
-                    }
+                    keyboardHeight = height;
                     LinearLayout.LayoutParams layoutParams1 = (LinearLayout.LayoutParams) llAddText.getLayoutParams();
                     layoutParams1.setMargins(0, 0, 0, keyboardHeight);
                     llAddText.setLayoutParams(layoutParams1);
@@ -592,28 +587,4 @@ public class CreateViewForAddText {
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
-
-    /**
-     * 获取虚拟功能键高度
-     * @param context
-     * @return
-     */
-    public int getVirtualBarHeight(Context context) {
-        int vh = 0;
-        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = windowManager.getDefaultDisplay();
-        DisplayMetrics dm = new DisplayMetrics();
-        try {
-            @SuppressWarnings("rawtypes")
-            Class c = Class.forName("android.view.Display");
-            @SuppressWarnings("unchecked")
-            Method method = c.getMethod("getRealMetrics", DisplayMetrics.class);
-            method.invoke(display, dm);
-            vh = dm.heightPixels - windowManager.getDefaultDisplay().getHeight();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return vh;
-    }
-
 }
