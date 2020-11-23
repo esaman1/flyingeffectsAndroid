@@ -314,12 +314,14 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
             @Override
             public void onGlobalLayout() {
                 mScrollViewMaterialSeekbar.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                mScrollViewMaterialSeekbar.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mScrollViewMaterialSeekbar.fullScroll(View.FOCUS_DOWN);
-                    }
-                });
+                if (mLlDragItem.getChildCount() >= 3) {
+                    mScrollViewMaterialSeekbar.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mScrollViewMaterialSeekbar.fullScroll(View.FOCUS_DOWN);
+                        }
+                    });
+                }
             }
         });
     }
