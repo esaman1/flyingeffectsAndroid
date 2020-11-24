@@ -361,14 +361,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         videoToPause();
         seekToVideo(mCutStartTime);
         seekToMusic(mCutStartTime);
-
         nowStateIsPlaying(false);
         presenter.showAllAnim(false);
     }
 
 
     private void videoPause() {
-        nowTime = 5;
         if (exoPlayer != null) {
             LogUtil.d("video", "videoPause");
             exoPlayer.setPlayWhenReady(false);
@@ -487,7 +485,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             case R.id.ll_play:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
                     if (isPlaying) {
-                        nowTime = 5;
                         pauseBgmMusic();
                         isIntoPause = false;
                         isPlayComplate = false;
@@ -680,7 +677,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private void videoToPause() {
 
-        nowTime = 5;
         videoPause();
         isPlaying = false;
         endTimer();
@@ -1179,9 +1175,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private void startTimer() {
         isEndDestroy = false;
-//        mProgressBarView.scrollToPosition(mCutStartTime);
         LogUtil.d("OOM4", "startTimer:musicEndTime=" + musicEndTime + "musicStartTime=" + musicStartTime);
-
+        nowTime = 5;
         totalPlayTime= mCutStartTime;
         if (timer != null) {
             timer.purge();
@@ -1626,9 +1621,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         LogUtil.d("playBGMMusic","timelineChange---id="+id);
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
-
             if (TextUtils.equals(id, String.valueOf(stickerView.getId()))) {
-                if (!TextUtils.isEmpty(id) && id.equals("0") && musicChooseIndex == 0) {
+                if (!TextUtils.isEmpty(id) && id.equals("0") ) {
                     //需要改变开始时间和结束时间
                     musicStartFirstTime = startTime;
                     musicEndFirstTime = endTime;
@@ -1639,9 +1633,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         musicEndTime = musicEndFirstTime;
                     }
                 }
-                LogUtil.d("oom4", "赋值startTime=" + startTime);
                 stickerView.setShowStickerStartTime(startTime);
-                LogUtil.d("oom4", "赋值endTime=" + endTime);
                 stickerView.setShowStickerEndTime(endTime);
                 break;
             }
