@@ -1,18 +1,12 @@
 package com.flyingeffects.com.view.mine;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.res.Resources;
-import android.os.Build;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -36,11 +30,11 @@ import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.keyboard.KeyboardHeightProvider;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -110,6 +104,8 @@ public class CreateViewForAddText {
     }
 
     public void showBottomSheetDialog(String text, String type) {
+        status = 0;
+        oldKeyboardHeight = 0;
         inputText = text;
         llAddText = view.findViewById(R.id.ll_add_text);
         iv_down = view.findViewById(R.id.iv_down);
@@ -296,15 +292,34 @@ public class CreateViewForAddText {
             public void onHeightChanged(int height) {
                 if (height > 0) {
                     keyboardHeight = height;
+                    if (keyboardHeight <= 300) {
+                        keyboardHeight = oldKeyboardHeight;
+                        view_line_text.setVisibility(View.VISIBLE);
+                        viewPager.setVisibility(View.VISIBLE);
+                        showWitchBtn(1);
+                    } else {
+                        oldKeyboardHeight = keyboardHeight;
+                    }
+                    LogUtil.d("OOM3", "keyboardHeight=" + keyboardHeight);
                     LinearLayout.LayoutParams layoutParams1 = (LinearLayout.LayoutParams) llAddText.getLayoutParams();
-                    layoutParams1.setMargins(0, 0, 0, keyboardHeight);
+                    if (status != 0) {
+                        //隐藏导航栏变显示
+                        if (status < 0) {
+                            layoutParams1.setMargins(0, 0, 0, keyboardHeight - screenUtil.dip2px(context, 45));
+                        } else {
+                            //显示导航栏变隐藏
+                            layoutParams1.setMargins(0, 0, 0, keyboardHeight);
+                        }
+                    } else {
+                        layoutParams1.setMargins(0, 0, 0, keyboardHeight);
+                    }
+
                     llAddText.setLayoutParams(layoutParams1);
                     view_line_text.setVisibility(View.GONE);
                     viewPager.setVisibility(View.GONE);
                     isKeyboardOpen = true;
                 } else {
                     if (isKeyboardOpen) {
-                        LogUtil.d("OOM3", "isKeyboardOpen=" + isKeyboardOpen);
                         if (lastSelect == 0) {
                             showWitchBtn(1);
                         }
@@ -321,6 +336,12 @@ public class CreateViewForAddText {
                 }
             }
         }, 150);
+    }
+
+    int status = 0;
+    int oldKeyboardHeight=0;
+    public void setShowHeight(int status) {
+        this.status = status;
     }
 
     /**
