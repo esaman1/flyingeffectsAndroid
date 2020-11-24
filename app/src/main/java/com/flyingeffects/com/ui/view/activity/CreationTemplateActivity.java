@@ -676,6 +676,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
     private void videoToPause() {
+
+
         videoPause();
         isPlaying = false;
         endTimer();
@@ -1104,7 +1106,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     @Override
     public void animIsComplate() {
-        LogUtil.d("OOM","animIsComplate");
+        LogUtil.d("OOM", "animIsComplate");
         WaitingDialog.closePragressDialog();
         Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
             nowStateIsPlaying(true);
@@ -1157,6 +1159,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private void startTimer() {
         isEndDestroy = false;
+//        mProgressBarView.scrollToPosition(mCutStartTime);
         LogUtil.d("OOM4", "startTimer:musicEndTime=" + musicEndTime + "musicStartTime=" + musicStartTime);
         totalPlayTime = 0;
         if (timer != null) {
@@ -1226,31 +1229,40 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
 
     private void bjMusicControl() {
-
         if (!isEndDestroy) {
             LogUtil.d("playBGMMusic", "bjMusicControl");
             if (!TextUtils.isEmpty(bgmPath)) {
                 if (musicEndTime != 0) {
-                    if (totalPlayTime > musicEndTime || totalPlayTime < musicStartTime) {
-                        LogUtil.d("playBGMMusic", "需要暂停音乐");
+                    float needMusicStartTime=musicStartTime-mCutStartTime;
+                    if(needMusicStartTime<0){
+                        needMusicStartTime=mCutStartTime;
+                    }
+                    float needTime = totalPlayTime;
+                    if(needTime<0){
+                        needTime=mCutStartTime;
+                    }
+                    LogUtil.d("playBGMMusic", "totalPlayTime="+totalPlayTime+"mCutStartTime="+mCutStartTime+"needTime="+needTime+"musicStartTime=" + musicStartTime+"needMusicStartTime="+needMusicStartTime);
+                    if (needTime > musicEndTime || needTime < needMusicStartTime) {
+                        LogUtil.d("playBGMMusic2", "需要暂停音乐");
                         isNeedPlayBjMusci = false;
                         pauseBgmMusic();
                     } else {
                         if (!isNeedPlayBjMusci) {
-                            LogUtil.d("playBGMMusic", "播放音乐");
+                            LogUtil.d("playBGMMusic2", "播放音乐");
+                            LogUtil.d("playBGMMusic2", "totalPlayTime="+totalPlayTime+"mCutStartTime="+mCutStartTime+"needTime="+needTime+"musicStartTime=" + musicStartTime+"needMusicStartTime="+needMusicStartTime);
                             playBjMusic();
                         }
                         isNeedPlayBjMusci = true;
                     }
-                }else{
-                    LogUtil.d("playBGMMusic", "musicEndTime="+musicEndTime);
+                } else {
+                    LogUtil.d("playBGMMusic", "musicEndTime=" + musicEndTime);
                     if (!isNeedPlayBjMusci) {
                         LogUtil.d("playBGMMusic", "播放音乐");
                         playBjMusic();
                     }
                     isNeedPlayBjMusci = true;
                 }
-            }else{
+            } else {
                 LogUtil.d("playBGMMusic", "bgmPath==null");
             }
         }
@@ -1284,7 +1296,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 关闭timer 和task
      */
     private void endTimer() {
-        isNeedPlayBjMusci=false;
+        isNeedPlayBjMusci = false;
         LogUtil.d("playBGMMusic", "pauseBgmMusic---------------endTimer---------------");
         isEndDestroy = true;
         destroyTimer();
@@ -1532,7 +1544,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         mSeekBarView.setCutEndTime(mCutEndTime);
                     }
                 }
-                if(!TextUtils.isEmpty(id)){
+                if (!TextUtils.isEmpty(id)) {
                     showTimeLineSickerArrow(id);
                 }
 
@@ -1596,6 +1608,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void timelineChange(long startTime, long endTime, String id) {
+        LogUtil.d("playBGMMusic","timelineChange---id="+id);
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
 
