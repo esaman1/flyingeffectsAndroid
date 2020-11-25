@@ -282,9 +282,9 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                 if (isPlaying()) {
                     videoPause();
                 }
-//                else {
-//                    videoResume();
-//                }
+                else {
+                    videoResume();
+                }
                 if (!isShowPreviewAd && BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                     AdManager.getInstance().showCpAd(this, AdConfigs.AD_SCREEN_FOR_PREVIEW);
                     isShowPreviewAd = true;
