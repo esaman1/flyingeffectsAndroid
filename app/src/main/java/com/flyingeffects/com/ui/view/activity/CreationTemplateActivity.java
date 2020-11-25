@@ -39,6 +39,7 @@ import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;
+import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.MyScrollView;
 import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.drag.CreationTemplateProgressBarView;
@@ -64,7 +65,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import androidx.viewpager.widget.ViewPager;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -79,8 +79,11 @@ import rx.android.schedulers.AndroidSchedulers;
  */
 
 
-public class CreationTemplateActivity extends BaseActivity implements CreationTemplateMvpView, TemplateMaterialSeekBarView.SeekBarProgressListener {
+public class CreationTemplateActivity extends BaseActivity implements CreationTemplateMvpView, TemplateMaterialSeekBarView.SeekBarProgressListener
+    ,ViewTreeObserver.OnGlobalLayoutListener{
     private static final String TAG = "CreationTemplate";
+    @BindView(R.id.rl_creation_container)
+    RelativeLayout mRLContainer;
     @BindView(R.id.viewPager)
     ViewPager viewPager;
     @BindView(R.id.ll_progress)
@@ -210,6 +213,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private int musicChooseIndex = 0;
 
+    private int initHeight = 0;//屏幕初始高度
+    private int currentHeight;//调用onGlobalLayout()后，当前屏幕高度
+    private int firstFlag = 0;//虚拟导航栏状态的**首次**变化情况
+    private int status = 0;//虚拟导航栏状态的变化情况
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_creation_template_edit;
@@ -254,7 +262,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             }
             initExo(videoPath);
         } else {
-            showGreenBj();
+            showGreenBj(true);
         }
         presenter.requestStickersList();
         presenter.statisticsDuration(videoPath, this);
@@ -298,6 +306,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             }
         });
         mSeekBarView.setProgressListener(this);
+        mRLContainer.post(new Runnable() {
+            @Override
+            public void run() {
+                initHeight = mRLContainer.getHeight();
+            }
+        });
+        mRLContainer.getViewTreeObserver().addOnGlobalLayoutListener(this);
     }
 
     private void seekBarViewIsShow(boolean isShow) {
@@ -757,21 +772,25 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     boolean isInitImageBj = false;
 
-    private void showGreenBj() {
+    private void showGreenBj(boolean isInitialize) {
         ll_green_background.setVisibility(View.VISIBLE);
         iv_green_background.setVisibility(View.VISIBLE);
-        if (!isInitImageBj) {
-            float oriRatio = 9f / 16f;
-            //保证获得mContainer大小不为0
-            RelativeLayout.LayoutParams RelativeLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-            //如果没有选择下载视频，那么就是自定义视频入口进来，那么默认为绿布
-            iv_green_background.post(() -> {
-                int oriHeight = iv_green_background.getHeight();
-                RelativeLayoutParams.width = Math.round(1f * oriHeight * oriRatio);
-                RelativeLayoutParams.height = oriHeight;
-                iv_green_background.setLayoutParams(RelativeLayoutParams);
-            });
-            isInitImageBj = true;
+        if (isInitialize) {
+            if (!isInitImageBj) {
+                float oriRatio = 9f / 16f;
+                //保证获得mContainer大小不为0
+                RelativeLayout.LayoutParams RelativeLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+                //如果没有选择下载视频，那么就是自定义视频入口进来，那么默认为绿布
+                iv_green_background.post(() -> {
+                    int oriHeight = iv_green_background.getHeight();
+                    RelativeLayoutParams.width = Math.round(1f * oriHeight * oriRatio);
+                    RelativeLayoutParams.height = oriHeight;
+                    iv_green_background.setLayoutParams(RelativeLayoutParams);
+                });
+                isInitImageBj = true;
+            }
+        } else {
+            setPlayerViewSize(nowUiIsLandscape);
         }
         presenter.initVideoProgressView();
         mProgressBarView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -899,6 +918,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             bgmPlayer.release();
         }
         EventBus.getDefault().unregister(this);
+        mRLContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
         super.onDestroy();
     }
 
@@ -1349,7 +1369,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 ll_green_background.setVisibility(View.VISIBLE);
                 presenter.setmVideoPath("");
                 videoPath = "";
-                showGreenBj();
+                showGreenBj(false);
                 imageBjPath = event.getPath();
                 //图片背景和绿幕背景默认都是10秒
                 modificationDuration(10 * 1000);
@@ -1708,5 +1728,54 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             }
         });
         tv_total.setText(TimeUtils.timeParse(allVideoDuration) + "s");
+    }
+
+    @Override
+    public void onGlobalLayout() {
+        //如果为0，说明获取高度失败，跳出
+        if(initHeight == 0){
+            return;
+        }
+        currentHeight = mRLContainer.getHeight();
+        if(initHeight > currentHeight){
+            //初始高度大于当前高度，说明虚拟导航栏由隐藏变为显示
+            //此时，首次变化firstFlag设置为-1，说明首次进入时无导航栏
+            status = -1;
+            firstFlag = -1;
+
+        }else if(initHeight < currentHeight){
+            //初始高度小于当前高度，说明虚拟导航栏由显示变为隐藏
+            //此时，首次变化firstFlag设置为1，说明首次进入时有导航栏
+            status = 1;
+            firstFlag = 1;
+
+        }else{
+            //虚拟导航栏状态未改变
+            //此时，status设置为0
+            status = 0;
+        }
+        //当虚拟导航栏状态发生改变时
+        if(status != 0){
+            //虚拟导航栏由隐藏变为显示，首次进入时无导航栏
+            if(firstFlag == -1){
+                //由隐藏变为显示，H需减去48dp；由显示变为隐藏，即回复初始状态，H不变
+                if(status < 0){
+                    if (createViewForAddText != null) {
+                        createViewForAddText.setShowHeight(-1);
+                    }
+                }
+            }
+            //虚拟导航栏由显示变为隐藏，首次进入时有导航栏
+            if(firstFlag == 1){
+                //由显示变为隐藏，H需加上48dp；由隐藏变为显示，即回复初始状态，H不变
+                if(status > 0){
+                    if (createViewForAddText != null) {
+                        createViewForAddText.setShowHeight(1);
+                    }
+                }
+            }
+        }
+        //当前高度currentHeight作为下一次变化前的初始高度initHeight
+        initHeight = currentHeight;
     }
 }

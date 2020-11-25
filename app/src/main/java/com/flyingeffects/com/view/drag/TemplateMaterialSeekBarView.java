@@ -173,7 +173,6 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
     public void resetStartAndEndTime(long startTime, long endTime) {
         cutStartTime = startTime;
         cutEndTime = endTime;
-        TemplateMaterialItemView materialItemView = null;
         for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
             if (mTemplateMaterialItemViews.get(i) != null) {
                 TemplateMaterialItemView itemView = mTemplateMaterialItemViews.get(i);
@@ -189,20 +188,17 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                 } else {
                     itemView.setEndTime(endTime);
                 }
-                materialItemView = itemView;
                 LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) itemView.getLayoutParams();
                 itemView.setWidthAndHeight((int) ((itemView.getEndTime() - itemView.getStartTime()) / PER_MS_IN_PX), frameContainerHeight);
                 params.setMargins((int) (itemView.getStartTime() / PER_MS_IN_PX + frameListPadding - TemplateMaterialItemView.ARROW_WIDTH),
                         screenUtil.dip2px(getContext(), 5), 0, 0);
                 itemView.setLayoutParams(params);
+                int thumbnailTotalWidth = itemView.setResPathAndDuration(itemView.resPath, endTime - startTime,
+                        frameContainerHeight, itemView.isText, itemView.text);
+                RelativeLayout.LayoutParams reParams = (LayoutParams) mViewFrame.getLayoutParams();
+                reParams.width = thumbnailTotalWidth + frameListPadding * 2;
+                mViewFrame.setLayoutParams(reParams);
             }
-        }
-        if (materialItemView != null) {
-            int thumbnailTotalWidth = materialItemView.setResPathAndDuration(materialItemView.resPath, endTime - startTime,
-                    frameContainerHeight, materialItemView.isText, materialItemView.text);
-            RelativeLayout.LayoutParams reParams = (LayoutParams) mViewFrame.getLayoutParams();
-            reParams.width = thumbnailTotalWidth + frameListPadding * 2;
-            mViewFrame.setLayoutParams(reParams);
         }
     }
 
