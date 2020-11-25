@@ -268,23 +268,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         } else {
             videoPlayer.loadCoverImage(item.getImage(), R.mipmap.black_lucency);
         }
-//        videoPlayer.setAnimation(null);
         videoPlayer.getStartButton().setVisibility(View.GONE);
-
-        if (!TextUtils.isEmpty(item.getPre_url())) {
-            videoPlayer.setUpLazy(item.getPre_url(), true, null, null, "这是title");
-        } else {
-            videoPlayer.setUpLazy(item.getVidoefile(), true, null, null, "这是title");
-        }
-
-
-//        if(item.isNeedChangeVideoPath()){
-//            videoPlayer.setUpLazy(item.getPre_url(), true, null, null, "这是title");
-//            LogUtil.d("OOM","播放的地址为"+item.getPre_url());
-//        }else{
-//            videoPlayer.setUpLazy(item.getVidoefile(), true, null, null, "这是title");
-//            LogUtil.d("OOM","播放的地址为"+item.getVidoefile());
-//        }
         videoPlayer.setPlayPosition(offset);
         videoPlayer.clearAnimation();
         videoPlayer.getTitleTextView().setVisibility(View.GONE);
@@ -307,6 +291,11 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         }));
         GSYVideoType.setShowType(GSYVideoType.SCREEN_TYPE_FULL);
         videoPlayer.setLooping(true);
+        if (!TextUtils.isEmpty(item.getPre_url())) {
+            videoPlayer.setUpLazy(item.getPre_url(), true, null, null, "这是title");
+        } else {
+            videoPlayer.setUpLazy(item.getVidoefile(), true, null, null, "这是title");
+        }
     }
 
     public float getVideoDuration() {
