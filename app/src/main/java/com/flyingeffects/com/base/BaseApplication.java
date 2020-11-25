@@ -79,7 +79,7 @@ public class BaseApplication extends MultiDexApplication {
                         .KSAppKey("517200002")
                         .KaiJiaAppKey("68662a49")
                         .GDTAppKey(AdConfigs.APP_ID_GDT)
-                        .isDebug(false)
+                        .isDebug(true)
                         .build());
     }
 

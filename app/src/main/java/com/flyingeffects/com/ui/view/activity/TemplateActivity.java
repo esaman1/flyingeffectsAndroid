@@ -881,21 +881,23 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         selectGroup(position);
                         modificationThumbData(lastChoosePosition, position);
                     } else {
-                        MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
-                        if (mediaUi2.isVideoType()) {
-                            //实际需要的时长
-                            float needCropDuration;
-                            boolean isNeedSlow;
-                            Intent intent = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
-                            needCropDuration = mediaUi2.getDuration() / (float) mediaUi2.getFps();
-                            isNeedSlow = false;
-                            intent.putExtra("isFrom", cutVideoTag);
-                            intent.putExtra("videoPath", mediaUi2.getPathOrigin());
-                            intent.putExtra("needCropDuration", needCropDuration);
-                            intent.putExtra("isNeedSlow", isNeedSlow);
-                            intent.putExtra("videoFps", mediaUi2.getFps());
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
+                        if(nowIsPhotographAlbum){
+                            MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
+                            if (mediaUi2.isVideoType()) {
+                                //实际需要的时长
+                                float needCropDuration;
+                                boolean isNeedSlow;
+                                Intent intent = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
+                                needCropDuration = mediaUi2.getDuration() / (float) mediaUi2.getFps();
+                                isNeedSlow = false;
+                                intent.putExtra("isFrom", cutVideoTag);
+                                intent.putExtra("videoPath", mediaUi2.getPathOrigin());
+                                intent.putExtra("needCropDuration", needCropDuration);
+                                intent.putExtra("isNeedSlow", isNeedSlow);
+                                intent.putExtra("videoFps", mediaUi2.getFps());
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                            }
                         }
                     }
                     lastChoosePosition = nowChoosePosition;
