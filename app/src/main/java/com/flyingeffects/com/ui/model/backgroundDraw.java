@@ -219,7 +219,7 @@ public class backgroundDraw {
         LSOVideoOption option;
         try {
             option = new LSOVideoOption(videoPath);
-            option.setLooping(true);
+            option.setLooping(false);
             if (!TextUtils.isEmpty(videoVoice)) {
                 option.setAudioMute();
             }

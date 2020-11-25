@@ -59,29 +59,30 @@ public class ViewChooseTemplate {
 
 
         templateThumbAdapter.setOnItemClickListener((adapter, view, position) -> {
-            WaitingDialog.openPragressDialog(context);
-            new_fag_template_item items=list.get(position);
-            TemplateDown templateDown=new TemplateDown(new TemplateDown.DownFileCallback() {
-                @Override
-                public void isSuccess(String filePath) {
-                    Observable.just(filePath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
-                        @Override
-                        public void call(String s) {
-                            WaitingDialog.closePragressDialog();
-                            statisticsEventAffair.getInstance().setFlag(context, "21_yj_mb_click",list.get(position).getTitle());
-                            if(callback!=null){
-                                callback.onItemClick(position,filePath,items);
+            if(!DoubleClick.getInstance().isFastZDYDoubleClick(1000)){
+                WaitingDialog.openPragressDialog(context);
+                new_fag_template_item items=list.get(position);
+                TemplateDown templateDown=new TemplateDown(new TemplateDown.DownFileCallback() {
+                    @Override
+                    public void isSuccess(String filePath) {
+                        Observable.just(filePath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+                            @Override
+                            public void call(String s) {
+                                WaitingDialog.closePragressDialog();
+                                statisticsEventAffair.getInstance().setFlag(context, "21_yj_mb_click",list.get(position).getTitle());
+                                if(callback!=null){
+                                    callback.onItemClick(position,filePath,items);
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
 
-                }
-
-                @Override
-                public void showDownProgress(int progress) {
-                }
-            });
-            templateDown.prepareDownZip(items.getTemplatefile(), items.getZipid());
+                    @Override
+                    public void showDownProgress(int progress) {
+                    }
+                });
+                templateDown.prepareDownZip(items.getTemplatefile(), items.getZipid());
+            }
         });
 
         recyclerView.setAdapter(templateThumbAdapter);

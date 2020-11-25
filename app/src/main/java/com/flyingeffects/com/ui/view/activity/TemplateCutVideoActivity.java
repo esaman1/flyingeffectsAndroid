@@ -126,7 +126,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
     private ExoPlayer exoPlayer;
 
 
-    private boolean isIntoOnpause=false;
+    private boolean isIntoOnpause = false;
 
 
     private boolean nowActivityIsDestroy = false;
@@ -138,7 +138,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        isIntoOnpause=false;
+        isIntoOnpause = false;
         progressNowAnim = new WaitingDialogProgressNowAnim(this);
         DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
         videoPath = getIntent().getStringExtra("videoPath");
@@ -183,7 +183,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 switch (playbackState) {
                     case Player.STATE_READY:
-                        if(!isIntoOnpause){
+                        if (!isIntoOnpause) {
                             videoPlay();
                         }
 
@@ -262,11 +262,11 @@ public class TemplateCutVideoActivity extends BaseActivity {
             case R.id.tv_no_kt:
                 videoStop();
                 endTimer();
-                if(!nowActivityIsDestroy){
+                if (!nowActivityIsDestroy) {
                     progressNowAnim.openProgressDialog();
                 }
-                LogUtil.d("OOM","needDuration"+needDuration);
-                new Thread(() -> videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(TemplateCutVideoActivity.this, false,needDuration * 1000, videoPath, mStartDuration, new videoCutDurationForVideoOneDo.isSuccess() {
+                LogUtil.d("OOM", "needDuration" + needDuration);
+                new Thread(() -> videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(TemplateCutVideoActivity.this, false, needDuration * 1000, videoPath, mStartDuration, new videoCutDurationForVideoOneDo.isSuccess() {
                     @Override
                     public void progresss(int progress) {
                         if (!nowActivityIsDestroy) {
@@ -277,7 +277,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
                     @Override
                     public void isSuccess(boolean isSuccess, String path) {
-                LogUtil.d("OOM","裁剪的后地址为"+path);
+                        LogUtil.d("OOM", "裁剪的后地址为" + path);
                         if (isSuccess) {
                             if (v.getId() == R.id.tv_kt) {
                                 gotoMattingVideo(path);
@@ -286,13 +286,14 @@ public class TemplateCutVideoActivity extends BaseActivity {
                                     if (!nowActivityIsDestroy) {
                                         progressNowAnim.closePragressDialog();
                                     }
-                                },500));
+                                }, 500));
 
                             } else {
                                 if (!nowActivityIsDestroy) {
                                     progressNowAnim.closePragressDialog();
                                 }
-                                EventBus.getDefault().post(new MattingVideoEnity(null, path,path, isFrom));
+                                LogUtil.d("OOM","MattingVideoEnityisFrom="+isFrom);
+                                EventBus.getDefault().post(new MattingVideoEnity(null, path, path, isFrom));
                                 TemplateCutVideoActivity.this.finish();
                             }
                         }
@@ -309,11 +310,8 @@ public class TemplateCutVideoActivity extends BaseActivity {
         super.onPause();
         videoStop();
         endTimer();
-        isIntoOnpause=true;
+        isIntoOnpause = true;
     }
-
-
-
 
 
     /**
@@ -325,12 +323,14 @@ public class TemplateCutVideoActivity extends BaseActivity {
             exoPlayer.release();
         }
     }
+
     private VideoMattingModel videoMattingModel;
+
     private void gotoMattingVideo(String originalPath) {
 //        SegJni.nativeCreateSegHandler(this, ConUtil.getFileContent(this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
         Observable.just(originalPath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
-            videoMattingModel  = new VideoMattingModel(originalPath, TemplateCutVideoActivity.this, (isSuccess, path,noMakingPath) -> {
-                EventBus.getDefault().post(new MattingVideoEnity(noMakingPath, path,originalPath, isFrom));
+            videoMattingModel = new VideoMattingModel(originalPath, TemplateCutVideoActivity.this, (isSuccess, path, noMakingPath) -> {
+                EventBus.getDefault().post(new MattingVideoEnity(noMakingPath, path, originalPath, isFrom));
                 TemplateCutVideoActivity.this.finish();
             });
             videoMattingModel.ToExtractFrame(templateName);
@@ -475,7 +475,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
     public void onDestroy() {
         super.onDestroy();
 
-        if(videoMattingModel!=null){
+        if (videoMattingModel != null) {
             videoMattingModel.nowActivityIsDestroy(true);
         }
 
