@@ -95,13 +95,19 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
 //                        materialItemView.isShowArrow(false);
 //                    }
 //                }
+                if(dragScrollView){
+                    isDrag = true;
+                }else {
+                    isDrag = false;
+                }
                 if (mProgressListener != null) {
-                    mProgressListener.progress(process, dragScrollView);
+                    mProgressListener.progress(process, isDrag);
                 }
             }
 
             @Override
             public void onTouchStart() {
+                dragScrollView = true;
                 if (mProgressListener != null) {
                     mProgressListener.trackPause();
                 }
@@ -109,9 +115,9 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
 
             @Override
             public void onTouchEnd() {
-                dragScrollView = false;
+                dragScrollView = true;
                 if (mProgressListener != null) {
-                    mProgressListener.manualDrag(dragScrollView);
+                    mProgressListener.manualDrag(true);
                 }
             }
         });
@@ -119,7 +125,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         frameContainerHeight = screenUtil.dip2px(getContext(), 40);
     }
 
-
+    boolean isDrag = false;
     public void setGreenScreen(boolean isGreenScreen){
         this.isGreenScreen = isGreenScreen;
     }
@@ -395,6 +401,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
             materialItemView.setLayoutParams(params);
             if (mProgressListener != null) {
                 mProgressListener.timelineChange(materialItemView.getStartTime(), materialItemView.getEndTime(), String.valueOf(materialItemView.getIdentityID()));
+                mProgressListener.trackPause();
             }
         }
     }
@@ -438,6 +445,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
             materialItemView.setLayoutParams(params);
             if (mProgressListener != null) {
                 mProgressListener.timelineChange(materialItemView.getStartTime(), materialItemView.getEndTime(), String.valueOf(materialItemView.getIdentityID()));
+                mProgressListener.trackPause();
             }
         }
     }
@@ -520,6 +528,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
             view.setLayoutParams(params);
             if (mProgressListener != null) {
                 mProgressListener.timelineChange(view.getStartTime(), view.getEndTime(), String.valueOf(view.getIdentityID()));
+                mProgressListener.trackPause();
             }
         }
     }
@@ -543,9 +552,9 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if (v == mMaterialSeekBar) {
-            dragScrollView = true;
-        }
+//        if (v == mMaterialSeekBar) {
+//            dragScrollView = true;
+//        }
         if (v == mLlDragItem) {
             for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
                 if (mTemplateMaterialItemViews.get(i) != null) {

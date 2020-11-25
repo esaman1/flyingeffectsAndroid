@@ -63,6 +63,7 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -273,9 +274,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         mProgressBarView.setProgressListener(new CreationTemplateProgressBarView.SeekBarProgressListener() {
             @Override
             public void progress(long progress) {
-//                mCutStartTime=progress;
                 setgsyVideoProgress(progress);
                 if (!mSeekBarViewManualDrag) {
+                    mSeekBarView.dragScrollView = false;
                     mSeekBarView.scrollToPosition(progress);
                 }
                 progressBarProgress = progress;
@@ -290,8 +291,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 mSeekBarView.setCutStartAndEndTime(starTime, endTime);
                 stickerTimeLineOffset();
                 if (isDirection) {
-
-
                     mSeekBarView.scrollToPosition(starTime);
                 } else {
                     mSeekBarView.scrollToPosition(endTime);
@@ -512,6 +511,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         WaitingDialog.openPragressDialog(this);
                         new Thread(() -> presenter.showAllAnim(true)).start();
                     }
+                    mSeekBarViewManualDrag = false;
                 }
                 break;
             case R.id.tv_music:
@@ -528,7 +528,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 statisticsEventAffair.getInstance().setFlag(this, "20_bj_text");
                 break;
             case R.id.iv_top_back:
-                this.finish();
+                onBackPressed();
                 break;
             case R.id.iv_add_sticker:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
@@ -1371,7 +1371,21 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 showGreenBj(false);
                 imageBjPath = event.getPath();
                 //图片背景和绿幕背景默认都是10秒
-                modificationDuration(10 * 1000);
+                //循环得到最长的视频时长
+                long maxVideoDuration = 0;
+                for (int i = 0; i < mSeekBarView.getTemplateMaterialItemViews().size(); i++) {
+                    if (mSeekBarView.getTemplateMaterialItemViews().get(i) != null) {
+                        if (mSeekBarView.getTemplateMaterialItemViews().get(i).getDuration() >= maxVideoDuration &&
+                                albumType.isVideo(GetPathType.getInstance().getPathType(mSeekBarView.getTemplateMaterialItemViews().get(i).resPath))) {
+                            maxVideoDuration = mSeekBarView.getTemplateMaterialItemViews().get(i).getDuration();
+                        }
+                    }
+                }
+                if (maxVideoDuration > 0) {
+                    modificationDuration(maxVideoDuration);
+                } else {
+                    modificationDuration(10 * 1000);
+                }
                 new Handler().postDelayed(() ->
                         Glide.with(CreationTemplateActivity.this)
                                 .load(s).into(iv_green_background), 500);
@@ -1448,7 +1462,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 }
                 ll_add_text_style.setVisibility(View.GONE);
             } else {
-                finish();
+                onBackPressed();
             }
         }
         return true;
@@ -1487,6 +1501,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         modificationDuration(videoDuration);
                         mSeekBarView.addTemplateMaterialItemView(videoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
                                 stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, mCutEndTime, isText, text, id);
+                    } else if (videoDuration >= mCutEndTime) {
+                        mSeekBarView.addTemplateMaterialItemView(maxVideoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
+                                stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, mCutEndTime, isText, text, id);
+                        stickerView.setShowStickerEndTime(mCutEndTime);
+                        mSeekBarView.setCutStartTime(mCutStartTime);
+                        mSeekBarView.setCutEndTime(mCutEndTime);
                     } else {
                         mSeekBarView.addTemplateMaterialItemView(maxVideoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
                                 stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, videoDuration, isText, text, id);
@@ -1543,18 +1563,18 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         }
                         //有视频素材  取最长的素材视频时长为主轨道的时长  走此逻辑判断
                         if (maxVideoDuration > 0) {
-                            materialDuration = maxVideoDuration;
-                            if (allVideoDuration < materialDuration) {
-                                modificationDuration(materialDuration);
+                            if (oldMaxVideoDuration == 0) {
+                                oldMaxVideoDuration = maxVideoDuration;
                             }
+                            materialDuration = maxVideoDuration;
                             isMaxVideoDurationChange = true;
                         } else {
                             //全是图片素材  主轨道时长为10秒 走此逻辑判断
                             if (allVideoDuration != materialDuration) {
                                 modificationDuration(materialDuration);
                             }
+                            stickerView.setShowStickerEndTime(materialDuration);
                         }
-                        stickerView.setShowStickerEndTime(materialDuration);
                     } else {
                         materialDuration = allVideoDuration;
                         isAfreshSetEndCutEnd = true;
@@ -1562,11 +1582,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     mSeekBarView.addTemplateMaterialItemView(materialDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
                             stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, mCutEndTime, isText, text, id);
                     if (isMaxVideoDurationChange) {
-                        allVideoDuration = maxVideoDuration;
+                        allVideoDuration = materialDuration;
                         mSeekBarView.setCutStartTime(mCutStartTime);
-                        mSeekBarView.setCutEndTime(allVideoDuration);
-                        mProgressBarView.addProgressBarView(allVideoDuration, "");
-                        tv_total.setText(TimeUtils.timeParse(allVideoDuration) + "s");
+                        mSeekBarView.setCutEndTime(mCutEndTime);
+                        stickerView.setShowStickerEndTime(mCutEndTime);
+                        if (oldMaxVideoDuration != materialDuration) {
+                            mProgressBarView.addProgressBarView(allVideoDuration, "");
+                            tv_total.setText(TimeUtils.timeParse(allVideoDuration) + "s");
+                            oldMaxVideoDuration = materialDuration;
+                        }
                     }
                     if (isAfreshSetEndCutEnd) {
                         mSeekBarView.setCutStartTime(mCutStartTime);
@@ -1580,6 +1604,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             }
         });
     }
+
+    long oldMaxVideoDuration =0;
 
     @Override
     public void updateTimeLineSickerText(String text, String id) {
@@ -1732,33 +1758,31 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void onGlobalLayout() {
         //如果为0，说明获取高度失败，跳出
-        if(initHeight == 0){
+        if (initHeight == 0) {
             return;
         }
         currentHeight = mRLContainer.getHeight();
-        if(initHeight > currentHeight){
+        if (initHeight > currentHeight) {
             //初始高度大于当前高度，说明虚拟导航栏由隐藏变为显示
             //此时，首次变化firstFlag设置为-1，说明首次进入时无导航栏
             status = -1;
             firstFlag = -1;
-
-        }else if(initHeight < currentHeight){
+        } else if (initHeight < currentHeight) {
             //初始高度小于当前高度，说明虚拟导航栏由显示变为隐藏
             //此时，首次变化firstFlag设置为1，说明首次进入时有导航栏
             status = 1;
             firstFlag = 1;
-
-        }else{
+        } else {
             //虚拟导航栏状态未改变
             //此时，status设置为0
             status = 0;
         }
         //当虚拟导航栏状态发生改变时
-        if(status != 0){
+        if (status != 0) {
             //虚拟导航栏由隐藏变为显示，首次进入时无导航栏
-            if(firstFlag == -1){
+            if (firstFlag == -1) {
                 //由隐藏变为显示，H需减去48dp；由显示变为隐藏，即回复初始状态，H不变
-                if(status < 0){
+                if (status < 0) {
                     if (createViewForAddText != null) {
                         createViewForAddText.setShowHeight(-1,
                                 Math.max(initHeight, currentHeight) - Math.min(initHeight, currentHeight));
@@ -1766,16 +1790,29 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 }
             }
             //虚拟导航栏由显示变为隐藏，首次进入时有导航栏
-            if(firstFlag == 1){
+            if (firstFlag == 1) {
                 //由显示变为隐藏，
-                if(status > 0){
+                if (status > 0) {
                     if (createViewForAddText != null) {
-                        createViewForAddText.setShowHeight(1,0);
+                        createViewForAddText.setShowHeight(1, 0);
                     }
                 }
             }
         }
         //当前高度currentHeight作为下一次变化前的初始高度initHeight
         initHeight = currentHeight;
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("确定要退出吗?");
+        builder.setTitle("提示");
+        builder.setPositiveButton("确定", (dialog, which) -> {
+            dialog.dismiss();
+            finish();
+        });
+        builder.setNegativeButton("取消", (dialog, which) -> dialog.dismiss());
+        builder.create().show();
     }
 }
