@@ -105,7 +105,6 @@ public class CreateViewForAddText {
 
     public void showBottomSheetDialog(String text, String type) {
         status = 0;
-        oldKeyboardHeight = 0;
         inputText = text;
         llAddText = view.findViewById(R.id.ll_add_text);
         iv_down = view.findViewById(R.id.iv_down);
@@ -290,22 +289,15 @@ public class CreateViewForAddText {
         new KeyboardHeightProvider(context).init().setHeightListener(new KeyboardHeightProvider.HeightListener() {
             @Override
             public void onHeightChanged(int height) {
-                if (height > 0) {
+                //小于200的高度是返回的虚拟导航栏的高度
+                if (height >200) {
                     keyboardHeight = height;
-                    if (keyboardHeight <= 300) {
-                        keyboardHeight = oldKeyboardHeight;
-                        view_line_text.setVisibility(View.VISIBLE);
-                        viewPager.setVisibility(View.VISIBLE);
-                        showWitchBtn(1);
-                    } else {
-                        oldKeyboardHeight = keyboardHeight;
-                    }
-                    LogUtil.d("OOM3", "keyboardHeight=" + keyboardHeight);
+                    LogUtil.d("OOM3", "keyboardHeight=" + keyboardHeight+"  status "+status);
                     LinearLayout.LayoutParams layoutParams1 = (LinearLayout.LayoutParams) llAddText.getLayoutParams();
                     if (status != 0) {
                         //隐藏导航栏变显示
                         if (status < 0) {
-                            layoutParams1.setMargins(0, 0, 0, keyboardHeight - screenUtil.dip2px(context, 45));
+                            layoutParams1.setMargins(0, 0, 0, keyboardHeight - navigationBarHeight);
                         } else {
                             //显示导航栏变隐藏
                             layoutParams1.setMargins(0, 0, 0, keyboardHeight);
@@ -339,9 +331,12 @@ public class CreateViewForAddText {
     }
 
     int status = 0;
-    int oldKeyboardHeight=0;
-    public void setShowHeight(int status) {
+    int navigationBarHeight;
+    public void setShowHeight(int status,int navigationBarHeight) {
         this.status = status;
+        if (status < 0) {
+            this.navigationBarHeight = navigationBarHeight;
+        }
     }
 
     /**
