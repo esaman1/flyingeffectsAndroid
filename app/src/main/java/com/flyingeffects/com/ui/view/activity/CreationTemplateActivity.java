@@ -39,7 +39,6 @@ import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;
-import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.MyScrollView;
 import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.drag.CreationTemplateProgressBarView;
@@ -1320,7 +1319,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         LogUtil.d("playBGMMusic", "pauseBgmMusic---------------endTimer---------------");
         isEndDestroy = true;
         destroyTimer();
-        presenter.isEndTimer();
+//        presenter.isEndTimer();
         if (bgmPlayer != null) {
             bgmPlayer.stop();
             bgmPlayer = null;
@@ -1754,16 +1753,17 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 //由隐藏变为显示，H需减去48dp；由显示变为隐藏，即回复初始状态，H不变
                 if(status < 0){
                     if (createViewForAddText != null) {
-                        createViewForAddText.setShowHeight(-1);
+                        createViewForAddText.setShowHeight(-1,
+                                Math.max(initHeight, currentHeight) - Math.min(initHeight, currentHeight));
                     }
                 }
             }
             //虚拟导航栏由显示变为隐藏，首次进入时有导航栏
             if(firstFlag == 1){
-                //由显示变为隐藏，H需加上48dp；由隐藏变为显示，即回复初始状态，H不变
+                //由显示变为隐藏，
                 if(status > 0){
                     if (createViewForAddText != null) {
-                        createViewForAddText.setShowHeight(1);
+                        createViewForAddText.setShowHeight(1,0);
                     }
                 }
             }
