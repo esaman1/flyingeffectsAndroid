@@ -465,10 +465,12 @@ public class CreationTemplateMvpModel {
                 //模板音乐
                 nowChooseMusicId = 2;
                 chooseTemplateMusic(true);
+                callback.ChooseMusicIndex(1);
             } else if (albumType.isVideo(GetPathType.getInstance().getPathType(originalPath))) {
                 LogUtil.d("OOM", "当前素材是视频");
                 nowChooseMusicId = 1;
                 chooseMaterialMusic(originalPath);
+                callback.ChooseMusicIndex(0);
             }
         }, 500);
     }

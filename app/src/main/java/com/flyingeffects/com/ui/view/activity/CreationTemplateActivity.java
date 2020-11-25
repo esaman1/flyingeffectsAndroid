@@ -372,7 +372,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         isPlaying = false;
         presenter.showGifAnim(false);
         videoPause();
-        seekTo(mCutStartTime);
+        videoToPause();
+        seekToVideo(mCutStartTime);
+        seekToMusic(mCutStartTime);
         nowStateIsPlaying(false);
         presenter.showAllAnim(false);
     }
@@ -387,23 +389,22 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     /**
      * 开始播放
+     * 背景音乐的逻辑全部放在了保存的时候去了
+     * 这里只控制是否播放背景视频
      */
     private void videoPlay() {
         if (exoPlayer != null) {
             LogUtil.d("video", "play");
             if (!TextUtils.isEmpty(bgmPath)) {
-
-                LogUtil.d("OOM5", "musicStartTime=" + musicStartTime);
-                LogUtil.d("OOM5", "musicEndTime=" + musicEndTime);
-
-                if (bgmPlayer != null) {
-                    //继续播放
-                    bgmPlayer.start();
-                } else {
-                    seekTo(mCutStartTime);
-                    LogUtil.d("playBGMMusic", "videoPlay");
-                    playBGMMusic();
-                }
+//                LogUtil.d("OOM5", "musicStartTime=" + musicStartTime);
+//                LogUtil.d("OOM5", "musicEndTime=" + musicEndTime);
+//                if (bgmPlayer != null) {
+//                    //继续播放
+//                    bgmPlayer.start();
+//                } else {
+//                    seekTo(mCutStartTime);
+//                    playBGMMusic();
+//                }
                 exoPlayer.setVolume(0f);
             } else {
                 exoPlayer.setVolume(1f);
@@ -498,7 +499,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             case R.id.ll_play:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
                     if (isPlaying) {
-                        nowTime = 5;
                         pauseBgmMusic();
                         isIntoPause = false;
                         isPlayComplate = false;
@@ -690,7 +690,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
     private void videoToPause() {
-
 
         videoPause();
         isPlaying = false;
@@ -994,19 +993,32 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private void setgsyVideoProgress(long progress) {
         LogUtil.d("OOM", "videoProgress=" + progress);
         if (!isPlaying) {
-            seekTo(progress);
+            seekToVideo(progress);
+            seekToMusic(progress);
         }
     }
 
-    private void seekTo(long to) {
+    private void seekToVideo(long to) {
         if (exoPlayer != null) {
             exoPlayer.seekTo(to);
         }
 
+
+
+    }
+
+
+    private void seekToMusic(long to) {
+
+
         if (bgmPlayer != null) {
             bgmPlayer.seekTo((int) to);
         }
+
+
     }
+
+
 
     @Override
     public void getVideoDuration(long allVideoDuration) {
@@ -1130,6 +1142,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
             nowStateIsPlaying(true);
             if (!TextUtils.isEmpty(videoPath)) {
+                //只要不是素材音乐
+                LogUtil.d("playBGMMusic", "IsComplatePlay");
                 if (isPlayComplate) {
                     videoPlay();
                     isIntoPause = false;
@@ -1156,7 +1170,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         bgmPlayer.start();
                         LogUtil.d("playBGMMusic", " bgmPlayer.start()");
                     } else {
-                        seekTo(mCutStartTime);
+
+                        seekToVideo(mCutStartTime);
+                        seekToMusic(mCutStartTime);
                         LogUtil.d("playBGMMusic", "animIsComplate");
                         playBGMMusic();
                     }
@@ -1178,9 +1194,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private void startTimer() {
         isEndDestroy = false;
-//        mProgressBarView.scrollToPosition(mCutStartTime);
         LogUtil.d("OOM4", "startTimer:musicEndTime=" + musicEndTime + "musicStartTime=" + musicStartTime);
-        totalPlayTime = 0;
+        nowTime = 5;
+        totalPlayTime= mCutStartTime;
         if (timer != null) {
             timer.purge();
             timer.cancel();
@@ -1199,7 +1215,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     @Override
                     public void run() {
                         if (!TextUtils.isEmpty(videoPath)) {
-
+                           bjMusicControl();
                             if (isPlaying) {
                                 if (getCurrentPos() >= mCutEndTime) {
                                     LogUtil.d("OOM5", "getCurrentPos() >= mCutEndTime");
@@ -1252,14 +1268,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             LogUtil.d("playBGMMusic", "bjMusicControl");
             if (!TextUtils.isEmpty(bgmPath)) {
                 if (musicEndTime != 0) {
-                    float needMusicStartTime=musicStartTime-mCutStartTime;
-                    if(needMusicStartTime<0){
-                        needMusicStartTime=mCutStartTime;
-                    }
+                    float needMusicStartTime=musicStartTime;
                     float needTime = totalPlayTime;
-                    if(needTime<0){
-                        needTime=mCutStartTime;
-                    }
                     LogUtil.d("playBGMMusic", "totalPlayTime="+totalPlayTime+"mCutStartTime="+mCutStartTime+"needTime="+needTime+"musicStartTime=" + musicStartTime+"needMusicStartTime="+needMusicStartTime);
                     if (needTime > musicEndTime || needTime < needMusicStartTime) {
                         LogUtil.d("playBGMMusic2", "需要暂停音乐");
@@ -1295,9 +1305,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if (!TextUtils.isEmpty(bgmPath)) {
             if (bgmPlayer != null) {
                 bgmPlayer.start();
-                seekTo(mCutStartTime);
+                seekToMusic(mCutStartTime);
             } else {
-                seekTo(mCutStartTime);
+                seekToMusic(mCutStartTime);
                 playBGMMusic();
             }
         }
@@ -1630,9 +1640,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         LogUtil.d("playBGMMusic","timelineChange---id="+id);
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
-
             if (TextUtils.equals(id, String.valueOf(stickerView.getId()))) {
-                if (!TextUtils.isEmpty(id) && id.equals("0") && musicChooseIndex == 0) {
+                if (!TextUtils.isEmpty(id) && id.equals("0") ) {
                     //需要改变开始时间和结束时间
                     musicStartFirstTime = startTime;
                     musicEndFirstTime = endTime;
@@ -1643,9 +1652,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         musicEndTime = musicEndFirstTime;
                     }
                 }
-                LogUtil.d("oom4", "赋值startTime=" + startTime);
                 stickerView.setShowStickerStartTime(startTime);
-                LogUtil.d("oom4", "赋值endTime=" + endTime);
                 stickerView.setShowStickerEndTime(endTime);
                 break;
             }
