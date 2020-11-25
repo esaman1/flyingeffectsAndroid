@@ -456,12 +456,12 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private void initTextPainter(Context context) {
         mTextPaint = new Paint();
         mPaintShadow = new Paint();
-        mTextPaint.setColor(Color.parseColor("#626262"));
+        mTextPaint.setColor(Color.parseColor("#F4F4F4"));
         mTextPaint.setTextSize(mTextSize);
         mTextPaint.setStrokeWidth(paintWidth);
         mTextPaint.setAntiAlias(true);
         mTextPaint2 = new Paint();
-        mTextPaint2.setColor(Color.parseColor("#000000"));
+        mTextPaint2.setColor(Color.parseColor("#ffffff"));
         mTextPaint2.setTextSize(mTextSize);
         mTextPaint2.setStrokeWidth(paintWidth);
         mTextPaint2.setAntiAlias(true);
@@ -470,7 +470,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 //        Typeface typeface1 = Typeface.createFromAsset(BaseApplication.getInstance().getAssets(), "ktjt.ttf");
 //        mTextPaint.setTypeface(typeface);
 //        mPaintShadow.setTypeface(typeface1);
-        mPaintShadow.setColor(Color.parseColor("#000000"));
+        mPaintShadow.setColor(Color.parseColor("#ffffff"));
         mPaintShadow.setTextSize(mTextSize);
         mPaintShadow.setStrokeWidth(paintWidth / (float) 3);
         mPaintShadow.setAntiAlias(true);

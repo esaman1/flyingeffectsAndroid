@@ -145,7 +145,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private int needAssetsCount;
     private String templateName;
     private String fromTo;
-    private int cutVideoTag;
+    private int cutVideoTag=2;
 
     @BindView(R.id.Real_time_preview)
     FrameLayout real_time_preview;
@@ -284,6 +284,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             LogUtil.d("OOM", "templateName=" + templateName);
             nowTemplateIsAnim = bundle.getInt("is_anime");
         }
+
+
+
+
         templateItem = (new_fag_template_item) getIntent().getSerializableExtra("person");
         if (originalPath != null && originalPath.size() > 0) {
             int totalMaterial = needAssetsCount;
@@ -810,7 +814,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
             new Thread(() -> {
                 mTemplateModel.setReplaceAllFiles(listAssets, complete -> TemplateActivity.this.runOnUiThread(() -> {
-                    WaitingDialog.closePragressDialog();
                     selectGroup(0);
                     nowChoosePosition = 0;
                     templateThumbAdapter.notifyDataSetChanged();
@@ -825,8 +828,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     if (mTemplateViews != null && mTemplateViews.size() > 0) {
                         mTemplateViews.get(nowChoosePosition).invalidate(); //提示重新绘制预览图
                     }
-
-
+                    WaitingDialog.closePragressDialog();
                 }));  //批量替换图片
             }).start();
         }
@@ -879,21 +881,23 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         selectGroup(position);
                         modificationThumbData(lastChoosePosition, position);
                     } else {
-                        MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
-                        if (mediaUi2.isVideoType()) {
-                            //实际需要的时长
-                            float needCropDuration;
-                            boolean isNeedSlow;
-                            Intent intent = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
-                            needCropDuration = mediaUi2.getDuration() / (float) mediaUi2.getFps();
-                            isNeedSlow = false;
-                            intent.putExtra("isFrom", cutVideoTag);
-                            intent.putExtra("videoPath", mediaUi2.getPathOrigin());
-                            intent.putExtra("needCropDuration", needCropDuration);
-                            intent.putExtra("isNeedSlow", isNeedSlow);
-                            intent.putExtra("videoFps", mediaUi2.getFps());
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
+                        if(nowIsPhotographAlbum){
+                            MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
+                            if (mediaUi2.isVideoType()) {
+                                //实际需要的时长
+                                float needCropDuration;
+                                boolean isNeedSlow;
+                                Intent intent = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
+                                needCropDuration = mediaUi2.getDuration() / (float) mediaUi2.getFps();
+                                isNeedSlow = false;
+                                intent.putExtra("isFrom", cutVideoTag);
+                                intent.putExtra("videoPath", mediaUi2.getPathOrigin());
+                                intent.putExtra("needCropDuration", needCropDuration);
+                                intent.putExtra("isNeedSlow", isNeedSlow);
+                                intent.putExtra("videoFps", mediaUi2.getFps());
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                            }
                         }
                     }
                     lastChoosePosition = nowChoosePosition;
@@ -934,6 +938,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             item1.setPathUrl(path);
             listItem.set(lastChoosePosition, item1);
             templateThumbAdapter.notifyItemChanged(lastChoosePosition);
+            LogUtil.d("OOM","ModificationSingleThumbItempath2222="+path);
         }
     }
 
@@ -1127,7 +1132,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                                 } else {
                                     imgPath.add(paths.get(0));
                                 }
+
+
                                 MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
+                                LogUtil.d("OOM","lastChoosePosition="+lastChoosePosition+"原来的path 为"+mediaUi2.getOriginalPath());
                                 mediaUi2.setImageAsset(paths.get(0));
                                 mTemplateViews.get(lastChoosePosition).invalidate();
                                 ModificationSingleThumbItem(paths.get(0));
@@ -1218,6 +1226,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public void onEventMainThread(MattingVideoEnity event) {
 
         if (event.getTag() == cutVideoTag) {
+            LogUtil.d("OOM","进入到了onEventMainThread");
             getSingleCatVideoPath(event.getMattingPath());
         } else {
             mTemplateModel.resetUi();
@@ -1365,6 +1374,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     String[] paths = mTemplateModel.getReplaceableOriginFilePaths(Objects.requireNonNull(getExternalCacheDir()).getPath());
                     List<String> getAsset = Arrays.asList(paths);
                     ArrayList<String> arrayList = new ArrayList<>(getAsset);
+                    boolean hasDefaultBj= hasDefaultBj(paths);
                     bundle.putInt("isPicNum", 20);
                     bundle.putString("fromTo", FromToTemplate.PICTUREALBUM);
                     bundle.putInt("changeTemplatePosition", position);
@@ -1372,8 +1382,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     bundle.putInt("is_anime", 0);
                     bundle.putString("templateName", item.getTitle());
                     bundle.putString("templateId", item.getId() + "");
-                    bundle.putStringArrayList("originalPath", arrayList);
-                    bundle.putStringArrayList("paths", arrayList);
+                    if(hasDefaultBj){
+                        bundle.putStringArrayList("originalPath", new ArrayList<>(originalPath) );
+                        bundle.putStringArrayList("paths", new ArrayList<>(originalPath));
+                    }else{
+                        bundle.putStringArrayList("originalPath", arrayList);
+                        bundle.putStringArrayList("paths", arrayList);
+                    }
                     bundle.putString("templateFilePath", path);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra("Message", bundle);
@@ -1427,6 +1442,19 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         pagerList.add(templateThumbForMusic);
         TemplateViewPager adapter = new TemplateViewPager(pagerList);
         viewPager.setAdapter(adapter);
+    }
+
+
+    private boolean hasDefaultBj(String[]paths){
+        for (String str:paths
+        ) {
+            if(str.equals( SxveConstans.default_bg_path)){
+                return  true;
+            }
+        }
+
+        return  false;
+
     }
 
 
@@ -1596,15 +1624,18 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     public void getSingleCatVideoPath(String path) {
-        MediaUiModel2 mModel = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
-//        mModel.isVideoSlide = true;
-        mModel.setVideoPath(path, false, 0);
-//        mModel.recycleBitmap();
-        mTemplateViews.get(lastChoosePosition).invalidate();
-        //提示更新缩略图
-//        mModel.setIsConversion(true);
-        templateThumbAdapter.notifyItemChanged(lastChoosePosition);
-//        mTemplateViews.get(nowChooseIndex).invalidate();
+        LogUtil.d("OOM","ModificationSingleThumbItempath2222="+path);
+        for (int i = 0; i < mTemplateModel.getAssets().size(); i++) {
+            MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(i).ui;
+            if (pickGroupIndex == mediaUi2.getNowGroup()) {
+                if (pickIndex == mediaUi2.getNowIndex()) {
+                    mediaUi2.setVideoPath(path, false, 0);
+                    break;
+                }
+            }
+            mTemplateViews.get(lastChoosePosition).invalidate();
+        }
+        ModificationSingleThumbItem(path);
     }
 
 }
