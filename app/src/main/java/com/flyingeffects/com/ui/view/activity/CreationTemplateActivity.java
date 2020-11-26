@@ -956,7 +956,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     public void deleteFirstSticker() {
         new Handler().postDelayed(() -> {
             viewPager.setCurrentItem(0);
-            tv_music.setVisibility(View.GONE);
+          //  tv_music.setVisibility(View.GONE);
             setTextColor(0);
         }, 500);
     }
@@ -1119,9 +1119,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void showMusicBtn(boolean isShow) {
         if (isShow) {
-            tv_music.setVisibility(View.VISIBLE);
+            //tv_music.setVisibility(View.VISIBLE);
         } else {
-            tv_music.setVisibility(View.GONE);
+           // tv_music.setVisibility(View.GONE);
             viewPager.setCurrentItem(0);
         }
         for (int i = 0; i < lin_Id.length; i++) {
