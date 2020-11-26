@@ -1441,6 +1441,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             bgmPlayer.setDataSource(bgmPath);
             bgmPlayer.prepare();
             bgmPlayer.start();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
