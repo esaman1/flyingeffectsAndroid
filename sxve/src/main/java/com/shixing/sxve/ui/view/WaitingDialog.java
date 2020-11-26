@@ -31,7 +31,7 @@ public class WaitingDialog {
             WaitingDialog.closePragressDialog();
         }
         loadingDialog = createLoadingDialog(context, "", true);
-        if (loadingDialog != null) {
+        if (loadingDialog != null&&context!=null) {
             loadingDialog.show();
         }
     }
