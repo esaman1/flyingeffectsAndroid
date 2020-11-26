@@ -116,18 +116,16 @@ public class fragBjSearch extends BaseFragment {
             intent.putExtra("position", position);
             intent.putExtra("nowSelectPage", selectPage);
             intent.putExtra("searchText", searchText);
-
-
             if (isFrom == 0) {
                 //模板页面
                 intent.putExtra("fromTo", FromToTemplate.ISSEARCHTEMPLATE);
+                statisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_mb_click", allData.get(position).getTitle());
             } else {
                 //背景页面
                 intent.putExtra("fromTo", FromToTemplate.ISSEARCHBJ);
+                statisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_bj_click", allData.get(position).getTitle());
             }
             startActivity(intent);
-
-
         });
     }
 
@@ -243,9 +241,16 @@ public class fragBjSearch extends BaseFragment {
                         allData.clear();
                     }
                     if (isRefresh && data.size() == 0) {
+
+
                         statisticsEventAffair.getInstance().setFlag(getActivity(), "10_Noresults", searchText);
                         showNoData(true);
                         if (isVisible) {
+                            if (isFrom == 1) {//背景无内容
+                                statisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_bj", searchText);
+                            } else {//模板无内容
+                                statisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_mb", searchText);
+                            }
                             ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
                         }
                         if (isVisible) {
@@ -255,7 +260,7 @@ public class fragBjSearch extends BaseFragment {
                                 statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none_bj", searchText);
                             }
                         }
-                    }else{
+                    } else {
                         showNoData(false);
                     }
                     if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
@@ -280,7 +285,7 @@ public class fragBjSearch extends BaseFragment {
             LogUtil.d("OOM", event.getText());
             //搜索了内容
             searchText = event.getText();
-            if(!TextUtils.isEmpty(searchText)){
+            if (!TextUtils.isEmpty(searchText)) {
                 isRefresh = true;
                 selectPage = 1;
                 smartRefreshLayout.setEnableLoadMore(true);
@@ -295,18 +300,18 @@ public class fragBjSearch extends BaseFragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.relative_add:
-                if(BaseConstans.hasLogin()){
-                    AlbumManager.chooseVideo( getActivity(), 1, 1, (tag, paths, isCancel, albumFileList) -> {
+                if (BaseConstans.hasLogin()) {
+                    AlbumManager.chooseVideo(getActivity(), 1, 1, (tag, paths, isCancel, albumFileList) -> {
                         if (!isCancel) {
                             Intent intent = new Intent(getActivity(), UploadMaterialActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             intent.putExtra("videoPath", paths.get(0));
-                            intent.putExtra("isFrom",1);
+                            intent.putExtra("isFrom", 1);
                             startActivity(intent);
                         }
                     }, "");
-                }else{
-                    Intent intent=new Intent(getActivity(), LoginActivity.class);
+                } else {
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 }
@@ -315,7 +320,6 @@ public class fragBjSearch extends BaseFragment {
                 break;
         }
     }
-
 
 
 }
