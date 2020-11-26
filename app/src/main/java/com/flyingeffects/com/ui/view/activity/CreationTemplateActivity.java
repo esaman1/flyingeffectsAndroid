@@ -1144,6 +1144,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             if (!TextUtils.isEmpty(videoPath)) {
                 //只要不是素材音乐
                 LogUtil.d("playBGMMusic", "IsComplatePlay");
+                seekToVideo(mCutStartTime);
+                seekToMusic(mCutStartTime);
                 if (isPlayComplate) {
                     videoPlay();
                     isIntoPause = false;

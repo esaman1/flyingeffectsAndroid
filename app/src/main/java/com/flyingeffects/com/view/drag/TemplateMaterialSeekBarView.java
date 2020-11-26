@@ -86,18 +86,9 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                 }
                 //获取当前操作的字幕POS位置
                 long  process = l * PER_MS_IN_PX;
-//                for (int i = 0; mTemplateMaterialItemViews != null && i < mTemplateMaterialItemViews.size(); i++) {
-//                    TemplateMaterialItemView materialItemView = mTemplateMaterialItemViews.get(i);
-//                    if (process >= mTemplateMaterialItemViews.get(i).getStartTime() && process < mTemplateMaterialItemViews.get(i).getEndTime() &&
-//                            i == materialItemView.getIdentityID()) {
-//                        materialItemView.isShowArrow(true);
-//                    } else {
-//                        materialItemView.isShowArrow(false);
-//                    }
-//                }
-                if(dragScrollView){
+                if (dragScrollView) {
                     isDrag = true;
-                }else {
+                } else {
                     isDrag = false;
                 }
                 if (mProgressListener != null) {
@@ -359,6 +350,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
 
     @Override
     public void leftTouch(boolean isDirection, float dragInterval, int position) {
+        dragScrollView = false;
         if (mTemplateMaterialItemViews != null && mTemplateMaterialItemViews.size() > 0) {
             TemplateMaterialItemView materialItemView = mTemplateMaterialItemViews.get(position);
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) materialItemView.getLayoutParams();
@@ -408,6 +400,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
 
     @Override
     public void rightTouch(boolean isDirection, float dragInterval, int position) {
+        dragScrollView = false;
         if (mTemplateMaterialItemViews != null && mTemplateMaterialItemViews.size() > 0) {
             TemplateMaterialItemView materialItemView = mTemplateMaterialItemViews.get(position);
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) materialItemView.getLayoutParams();
@@ -552,9 +545,9 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-//        if (v == mMaterialSeekBar) {
-//            dragScrollView = true;
-//        }
+        if (v == mMaterialSeekBar) {
+            dragScrollView = true;
+        }
         if (v == mLlDragItem) {
             for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
                 if (mTemplateMaterialItemViews.get(i) != null) {
