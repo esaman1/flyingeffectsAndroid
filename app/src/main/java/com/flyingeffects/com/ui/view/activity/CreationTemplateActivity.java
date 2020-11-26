@@ -917,6 +917,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         videoStop();
         if (bgmPlayer != null) {
             bgmPlayer.pause();
+
+
+
             bgmPlayer.release();
         }
         EventBus.getDefault().unregister(this);

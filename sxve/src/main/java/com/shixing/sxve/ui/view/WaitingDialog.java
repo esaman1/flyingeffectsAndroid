@@ -3,6 +3,7 @@ package com.shixing.sxve.ui.view;
 import android.app.Dialog;
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -67,6 +68,7 @@ public class WaitingDialog {
      * 关闭Loading
      */
     public static void closePragressDialog() {
+        Log.d("OOM4","closePragressDialog");
         if (loadingDialog != null && loadingDialog.isShowing()) {
             loadingDialog.dismiss();
             loadingDialog = null;
