@@ -55,6 +55,8 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
         initView();
     }
 
+
+    boolean isDrag = false;
     private void initView() {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.view_creation_template_progress_bar, null);
         mCreationTemplateProgressBar = view.findViewById(R.id.creation_template_progressbar);
@@ -70,12 +72,13 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
                     scrollToPosition(endTime);
                 }
                 if (mProgressListener != null) {
-                    mProgressListener.progress(l * PER_MS_IN_PX);
+                    mProgressListener.progress(l * PER_MS_IN_PX,isDrag);
                 }
             }
 
             @Override
             public void onTouchEnd() {
+                isDrag = false;
                 if (mProgressListener != null) {
                     mProgressListener.onTouchEnd();
                 }
@@ -224,6 +227,7 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
     @Override
     public void touchTextView(TemplateMaterialItemView view, boolean isDirection, float dragInterval, int position) {
        //TODO 该类不使用此方法
+        isDrag = true;
     }
 
     @Override
@@ -236,7 +240,7 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
 
     public interface SeekBarProgressListener {
 
-        void progress(long progress);
+        void progress(long progress,boolean isDrag);
 
         void cutInterval(long starTime, long endTime, boolean isDirection);
 

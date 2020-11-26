@@ -273,8 +273,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         seekBarViewIsShow(true);
         mProgressBarView.setProgressListener(new CreationTemplateProgressBarView.SeekBarProgressListener() {
             @Override
-            public void progress(long progress) {
+            public void progress(long progress,boolean isDrag) {
                 setgsyVideoProgress(progress);
+                if (isDrag) {
+                    mSeekBarViewManualDrag = false;
+                }
                 if (!mSeekBarViewManualDrag) {
                     mSeekBarView.dragScrollView = false;
                     mSeekBarView.scrollToPosition(progress);

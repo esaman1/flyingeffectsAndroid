@@ -15,6 +15,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.screenUtil;
+import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.albumType;
 
 import java.util.ArrayList;
@@ -282,7 +283,14 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         this.cutStartTime = 0;
         this.cutEndTime = duration;
         TemplateMaterialItemView materialItemView = new TemplateMaterialItemView(getContext());
-        materialItemView.setDuration(duration);
+        if (albumType.isVideo(GetPathType.getInstance().getPathType(resPath))) {
+            MediaInfo mediaInfo = new MediaInfo(resPath);
+            mediaInfo.prepare();
+            materialItemView.setDuration((long) (mediaInfo.vDuration * 1000));
+            mediaInfo.release();
+        } else {
+            materialItemView.setDuration(duration);
+        }
         mTemplateMaterialItemViews.add(materialItemView);
         materialItemView.setIdentityID(Integer.valueOf(id));
 

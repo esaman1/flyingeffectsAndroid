@@ -212,20 +212,27 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
                     }
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    if (isLongClickModule) {
-                        v.getParent().requestDisallowInterceptTouchEvent(true);
-                        if (llViewDownX < event.getX()) {
-                            //整体往右移动
-                            if (dragListener != null) {
-                                dragListener.touchTextView(this, false, event.getX() - llViewDownX, identityID);
-                            }
-                        } else {
-                            //整体往左移动
-                            if (dragListener != null) {
-                                dragListener.touchTextView(this, true, llViewDownX - event.getX(), identityID);
+                    if (isNeedOverallDrag) {
+                        if (isLongClickModule) {
+                            v.getParent().requestDisallowInterceptTouchEvent(true);
+                            if (llViewDownX < event.getX()) {
+                                //整体往右移动
+                                if (dragListener != null) {
+                                    dragListener.touchTextView(this, false, event.getX() - llViewDownX, identityID);
+                                }
+                            } else {
+                                //整体往左移动
+                                if (dragListener != null) {
+                                    dragListener.touchTextView(this, true, llViewDownX - event.getX(), identityID);
+                                }
                             }
                         }
+                    }else {
+                        if (dragListener != null) {
+                            dragListener.touchTextView(this, false, 0, identityID);
+                        }
                     }
+
                     break;
                 case MotionEvent.ACTION_UP:
                     if (dragListener != null) {
