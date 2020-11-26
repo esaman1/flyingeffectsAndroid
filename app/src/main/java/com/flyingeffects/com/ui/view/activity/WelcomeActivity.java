@@ -26,6 +26,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AdConfigs;
+import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.PermissionUtil;
@@ -238,36 +239,39 @@ public class WelcomeActivity extends BaseActivity {
      * 展示开屏广告
      */
     private void showSplashAd() {
-        statisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request");
-        NTAdSDK.getInstance().showSplashAd(this, rlAdContainer, tvSkip, ScreenUtil.dip2px(this, 0), AdConfigs.AD_SPLASH, new SplashAdCallBack() {
-            @Override
-            public void onAdSuccess() {
-                isShow = true;
-                statisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request_success");
-            }
+        if(!DoubleClick.getInstance().isFastDoubleClick()){
+            statisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request");
+            NTAdSDK.getInstance().showSplashAd(this, rlAdContainer, tvSkip, ScreenUtil.dip2px(this, 0), AdConfigs.AD_SPLASH, new SplashAdCallBack() {
+                @Override
+                public void onAdSuccess() {
+                    isShow = true;
+                    statisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request_success");
+                }
 
-            @Override
-            public void onAdError(String errorMsg) {
-                isShow = false;
-                intoMain();
-                finish();
-            }
+                @Override
+                public void onAdError(String errorMsg) {
+                    isShow = false;
+                    intoMain();
+                    finish();
+                }
 
-            @Override
-            public boolean onAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
-                return false;
-            }
+                @Override
+                public boolean onAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
+                    return false;
+                }
 
-            @Override
-            public void onAdTick(long millisUntilFinished) {
-                tvSkip.setText(String.format("跳过 %d", Math.round(millisUntilFinished / 1000f)));
-            }
+                @Override
+                public void onAdTick(long millisUntilFinished) {
+                    tvSkip.setText(String.format("跳过 %d", Math.round(millisUntilFinished / 1000f)));
+                }
 
-            @Override
-            public void onAdDismissed() {
-                next();
-            }
-        });
+                @Override
+                public void onAdDismissed() {
+                    next();
+                }
+            });
+
+        }
 
 
     }

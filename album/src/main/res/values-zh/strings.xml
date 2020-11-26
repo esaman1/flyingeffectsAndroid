@@ -61,7 +61,7 @@
         <item quantity="other">您只能选择%1$d个视频文件，不能使用相机</item>
     </plurals>
     <plurals name="album_check_album_limit">
-        <item quantity="other">您只能选择%1$d个媒体文件</item>
+        <item quantity="other">您只能选择%1$d个素材</item>
     </plurals>
 
     <plurals name="album_check_album_limit_camera">
