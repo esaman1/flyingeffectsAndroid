@@ -81,7 +81,6 @@ import java.util.UUID;
 import androidx.collection.SparseArrayCompat;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
-
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -2055,7 +2054,7 @@ public class CreationTemplateMvpModel {
                         if (startTime <= progress && progress <= endTime) {
                             stickerView.setVisibility(View.VISIBLE);
                             LogUtil.d("OOM4", "setVisibility");
-                        } else if (startTime <= progress && (totalTime - endTime <= 100 || progress > totalTime)) {
+                        } else if (startTime <= progress && (totalTime - endTime <= 100 || (progress > totalTime && progress - totalTime < 10))) {
                             stickerView.setVisibility(View.VISIBLE);
                         } else {
                             stickerView.setVisibility(View.GONE);
