@@ -81,6 +81,7 @@ import java.util.UUID;
 import androidx.collection.SparseArrayCompat;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
+
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -197,7 +198,7 @@ public class CreationTemplateMvpModel {
                 deleteStickView(nowChooseStickerView);
             } else {
                 nowChooseStickerView.setStickerText(text);
-                callback.updateTimeLineSickerText(text,String.valueOf(nowChooseStickerView.getId()));
+                callback.updateTimeLineSickerText(text, String.valueOf(nowChooseStickerView.getId()));
             }
         }
     }
@@ -917,7 +918,7 @@ public class CreationTemplateMvpModel {
      * user : zhangtongju
      */
 
-    private int stickerViewID=0;
+    private int stickerViewID = 0;
     private boolean isIntoDragMove = false;
 
     private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim, boolean isText) {
@@ -1009,7 +1010,7 @@ public class CreationTemplateMvpModel {
                                                 callback.changFirstVideoSticker(paths.get(0));
                                                 callback.getBgmPath("");
                                             }
-                                            callback.modifyTimeLineSickerPath(String.valueOf(stickView.getId()),paths.get(0));
+                                            callback.modifyTimeLineSickerPath(String.valueOf(stickView.getId()), paths.get(0));
                                         });
                                     });
                                 } else {
@@ -1022,7 +1023,7 @@ public class CreationTemplateMvpModel {
                                             } else {
                                                 stickView.changeImage(s, false);
                                             }
-                                            callback.modifyTimeLineSickerPath(String.valueOf(stickView.getId()),paths.get(0));
+                                            callback.modifyTimeLineSickerPath(String.valueOf(stickView.getId()), paths.get(0));
                                         });
                                     });
                                     manage.toMatting(paths);
@@ -1066,7 +1067,7 @@ public class CreationTemplateMvpModel {
             }
 
             @Override
-            public void stickerClickShowFrame(){
+            public void stickerClickShowFrame() {
                 callback.showTimeLineSickerArrow(String.valueOf(stickView.getId()));
             }
 
@@ -1188,8 +1189,6 @@ public class CreationTemplateMvpModel {
                 fromCopy.setScale(copyStickerView.getScale());
 
 
-
-
                 LogUtil.d("OOM", "isCopy=Scale" + copyStickerView.getScale());
                 fromCopy.setDegree(copyStickerView.getRotateAngle());
                 fromCopy.setRightOffsetPercent(copyStickerView.getRightOffsetPercent());
@@ -1254,8 +1253,8 @@ public class CreationTemplateMvpModel {
         }
         viewLayerRelativeLayout.addView(stickView);
 
-        if(!isFromShowAnim){
-            callback.addStickerTimeLine(String.valueOf(stickerViewID), isText, isText ? stickView.getStickerText() : "",stickView);
+        if (!isFromShowAnim) {
+            callback.addStickerTimeLine(String.valueOf(stickerViewID), isText, isText ? stickView.getStickerText() : "", stickView);
         }
         stickerViewID++;
         if (isFirstAdd) {
@@ -1431,7 +1430,7 @@ public class CreationTemplateMvpModel {
     private boolean isIntoSaveVideo = false;
     private float percentageH;
 
-    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH, int templateId,long musicStartTime,long musicEndTime,long needKeepDuration) {
+    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH, int templateId, long musicStartTime, long musicEndTime, long needKeepDuration) {
         disMissStickerFrame();
         if (templateId != 0) {
             LogUtil.d("OOM", "toSaveVideo-templateId=" + templateId);
@@ -1448,7 +1447,7 @@ public class CreationTemplateMvpModel {
                     listAllSticker.clear();
                     cutSuccessNum = 0;
                     cutVideoPathList.clear();
-                    backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath,musicStartTime,musicEndTime, needKeepDuration,new backgroundDraw.saveCallback() {
+                    backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, musicStartTime, musicEndTime, needKeepDuration, new backgroundDraw.saveCallback() {
                         @Override
                         public void saveSuccessPath(String path, int progress) {
                             if (!isDestroy) {
@@ -2069,19 +2068,18 @@ public class CreationTemplateMvpModel {
     }
 
 
-    public void isEndTimer(){
+    public void isEndTimer() {
         for (int i = 0; i < listForStickerModel.size(); i++) {
             AnimStickerModel model = listForStickerModel.get(i);
             StickerView stickerView = model.getStickerView();
-            if(stickerView!=null){
+            if (stickerView != null) {
                 stickerView.setVisibility(View.VISIBLE);
             }
         }
     }
 
 
-
-    public void bringStickerFront(String id){
+    public void bringStickerFront(String id) {
         for (int i = 0; i < listForStickerModel.size(); i++) {
             AnimStickerModel model = listForStickerModel.get(i);
             StickerView stickerView = model.getStickerView();
@@ -2099,6 +2097,7 @@ public class CreationTemplateMvpModel {
         }
         nowChooseStickerView.showFrame();
         viewLayerRelativeLayout.addView(nowChooseStickerView);
+        callback.showMusicBtn(nowChooseStickerView.isFirstAddSticker());
     }
 }
 
