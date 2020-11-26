@@ -202,7 +202,7 @@ public class TemplateModel {
 
         List<AssetModel> mediaUIModelList = new ArrayList<>();
         textUIModelList = new ArrayList<>();
-
+        Log.d("OOM4", "setReplaceAllFiles");
 
         if (mReplaceableAssets.size() > 0) {
             for (int i = 0; i < mReplaceableAssets.size(); i++) {
@@ -219,6 +219,8 @@ public class TemplateModel {
             }
         }
 
+        Log.d("OOM4", "mReplaceableAssetsSize");
+
 
         for (int i = 0; i < mReplaceableAssets.size(); i++) {
             if (paths.get(i) != null && !paths.get(i).equals("")) {
@@ -232,18 +234,26 @@ public class TemplateModel {
                 } else {  //有些手机获取不到，比如vivo 是中文目录
                     mimeType = getPathType(paths.get(i));
                 }
+
+
                 if (!mediaUIModelList.isEmpty() && mediaUIModelList.size() > i && mediaUIModelList.get(i) != null) {
                     AssetModel assetModel = mediaUIModelList.get(i);
 
                     if (albumType.isImage(mimeType)) {
+                        Log.d("OOM4", "isImage"+i);
                         ((MediaUiModel) assetModel.ui).setImageAsset(paths.get(i));//, context
                     } else if (albumType.isVideo(mimeType)) {
+                        Log.d("OOM4", "isVideo"+i);
                         String VideoPathOrigin = paths.get(i);
                         ((MediaUiModel) assetModel.ui).setVideoPath(VideoPathOrigin, true, 0);//, context
+                        Log.d("OOM4", "setVideoPath"+i);
                     }
                 }
             }
+
+            Log.d("OOM4", "mReplaceableAssetsSize"+i);
             if (i == paths.size() - 1) {
+                Log.d("OOM4", " paths.size() - 1");
                 firstReplaceComplete.isComplete(true);
             }
         }

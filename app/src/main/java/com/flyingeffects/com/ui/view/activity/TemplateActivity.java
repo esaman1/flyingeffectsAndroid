@@ -728,6 +728,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      * date: ：2019/11/28 14:10
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
+    WaitingDialog_progress progress;
     private void initTemplateViews(TemplateModel templateModel) {
         for (int i = 1; i <= templateModel.groupSize; i++) {
             TemplateView templateView = new TemplateView(TemplateActivity.this);
@@ -744,7 +745,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             mTemplateViews.add(templateView);
             mContainer.addView(templateView, params);
         }
-        WaitingDialog.openPragressDialog(this);
+        progress=new WaitingDialog_progress(this);
+        progress.openProgressDialog();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -763,6 +765,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      * user : zhangtongju
      */
     private void isFirstReplace(List<String> paths) {
+        LogUtil.d("OOM4", "isFirstReplace");
         if (mTemplateViews != null && mTemplateViews.size() > 0) {
             //这里只是为了底部按钮
             List<String> list_all = new ArrayList<>();
@@ -824,6 +827,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
             mTemplateModel.setReplaceAllFiles(listAssets, complete -> TemplateActivity.this.runOnUiThread(() -> {
                 LogUtil.d("OOM4", "替换图片isCOMPALTE");
+                WaitingDialog.openPragressDialog(this);
                 selectGroup(0);
                 nowChoosePosition = 0;
                 templateThumbAdapter.notifyDataSetChanged();
@@ -840,6 +844,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 }
 
                 LogUtil.d("OOM4", "关闭加载框");
+                progress.closePragressDialog();
                 WaitingDialog.closePragressDialog();
             }));  //批量替换图片
 
