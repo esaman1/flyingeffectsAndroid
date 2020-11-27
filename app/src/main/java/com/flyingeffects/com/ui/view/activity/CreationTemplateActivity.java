@@ -1507,6 +1507,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     }
                     if (videoDuration > maxVideoDuration) {
                         modify = true;
+                        oldMaxVideoDuration = videoDuration;
                     }
                     if (modify) {
                         modificationDuration(videoDuration);
@@ -1524,6 +1525,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         stickerView.setShowStickerEndTime(videoDuration);
                         mSeekBarView.setCutStartTime(mCutStartTime);
                         mSeekBarView.setCutEndTime(maxVideoDuration);
+                        oldMaxVideoDuration = maxVideoDuration;
                     }
                 } else if (albumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath())) && !TextUtils.isEmpty(videoPath)) {
                     MediaInfo mainMediaInfo = new MediaInfo(videoPath);
@@ -1597,13 +1599,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                             if (TextUtils.isEmpty(oldMaxVideoResPath) || !TextUtils.equals(maxVideoResPath, oldMaxVideoResPath)) {
                                 mProgressBarView.addProgressBarView(allVideoDuration, "");
                                 oldMaxVideoResPath = maxVideoResPath;
-                                if(materialDuration>mCutEndTime){
+                                if (materialDuration > mCutEndTime) {
                                     mCutEndTime = materialDuration;
                                 }
                             }
                             tv_total.setText(TimeUtils.timeParse(allVideoDuration) + "s");
-                            oldMaxVideoDuration = materialDuration;
+
                         }
+                        oldMaxVideoDuration = materialDuration;
                         mSeekBarView.setCutEndTime(mCutEndTime);
                         stickerView.setShowStickerEndTime(mCutEndTime);
                     }
