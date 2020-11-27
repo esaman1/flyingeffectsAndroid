@@ -71,6 +71,8 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
     private TimelineAdapterForCutVideo mTimelineAdapter;
 
+    private boolean nowIsPhotographAlbum;
+
 
     @BindView(R.id.relative_select_duration)
     RelativeLayout relative_select_duration;
@@ -145,11 +147,12 @@ public class TemplateCutVideoActivity extends BaseActivity {
         needDuration = getIntent().getFloatExtra("needCropDuration", 1);
         templateName = getIntent().getStringExtra("templateName");
         isFrom = getIntent().getIntExtra("isFrom", 0);
+        nowIsPhotographAlbum=getIntent().getBooleanExtra("nowIsPhotographAlbum",false);
         picout = getIntent().getIntExtra("picout", 0);
         videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
         mEndDuration = (int) (needDuration * 1000);
         tv_duration.setText("模板时长 " + needDuration + "s");
-        if (picout == 0) {
+        if (picout == 0||nowIsPhotographAlbum) {
             tv_kt.setVisibility(View.GONE);
             tv_no_kt.setText("下一步");
         }

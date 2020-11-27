@@ -145,7 +145,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private int needAssetsCount;
     private String templateName;
     private String fromTo;
-    private int cutVideoTag = 2;
+    private int cutVideoTag = 3;
 
     @BindView(R.id.Real_time_preview)
     FrameLayout real_time_preview;
@@ -1179,9 +1179,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         Intent intoCutVideo = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
                         intoCutVideo.putExtra("needCropDuration", needVideoTime);
                         intoCutVideo.putExtra("videoPath", paths.get(0));
+                        intoCutVideo.putExtra("nowIsPhotographAlbum",nowIsPhotographAlbum);
                         intoCutVideo.putExtra("picout", 1);
                         intoCutVideo.putExtra("templateName", templateName);
-                        intoCutVideo.putExtra("isFrom", 2);
+                        if(nowIsPhotographAlbum){
+                            intoCutVideo.putExtra("isFrom", cutVideoTag);
+                        }else{
+                            intoCutVideo.putExtra("isFrom", 2);
+                        }
                         startActivity(intoCutVideo);
                     }
                 }
@@ -1250,7 +1255,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public void onEventMainThread(MattingVideoEnity event) {
 
         if (event.getTag() == cutVideoTag) {
-            LogUtil.d("OOM", "进入到了onEventMainThread");
+            LogUtil.d("OOM2", "进入到了onEventMainThread");
             getSingleCatVideoPath(event.getMattingPath());
         } else {
             mTemplateModel.resetUi();
