@@ -59,7 +59,7 @@ public class ViewChooseTemplate {
 
 
         templateThumbAdapter.setOnItemClickListener((adapter, view, position) -> {
-            if(!DoubleClick.getInstance().isFastZDYDoubleClick(1000)){
+            if(!DoubleClick.getInstance().isFastZDYDoubleClick(1000)&&context!=null){
                 WaitingDialog.openPragressDialog(context);
                 new_fag_template_item items=list.get(position);
                 TemplateDown templateDown=new TemplateDown(new TemplateDown.DownFileCallback() {

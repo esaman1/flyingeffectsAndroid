@@ -145,7 +145,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private int needAssetsCount;
     private String templateName;
     private String fromTo;
-    private int cutVideoTag = 2;
+    private int cutVideoTag = 3;
 
     @BindView(R.id.Real_time_preview)
     FrameLayout real_time_preview;
@@ -827,25 +827,28 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
             mTemplateModel.setReplaceAllFiles(listAssets, complete -> TemplateActivity.this.runOnUiThread(() -> {
                 LogUtil.d("OOM4", "替换图片isCOMPALTE");
-                WaitingDialog.openPragressDialog(this);
-                selectGroup(0);
-                nowChoosePosition = 0;
-                templateThumbAdapter.notifyDataSetChanged();
-                if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
-                    if (videoMattingCaver != null) {
-                        for (int i = 0; i < mTemplateModel.mAssets.size(); i++) {
-                            MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.mAssets.get(i).ui;
-                            mediaUiModel2.setVideoCover(videoMattingCaver);
+                if(!isOndestroy){
+                    WaitingDialog.openPragressDialog(this);
+                    selectGroup(0);
+                    nowChoosePosition = 0;
+                    templateThumbAdapter.notifyDataSetChanged();
+                    if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
+                        if (videoMattingCaver != null) {
+                            for (int i = 0; i < mTemplateModel.mAssets.size(); i++) {
+                                MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.mAssets.get(i).ui;
+                                mediaUiModel2.setVideoCover(videoMattingCaver);
+                            }
                         }
                     }
-                }
-                if (mTemplateViews != null && mTemplateViews.size() > 0) {
-                    mTemplateViews.get(nowChoosePosition).invalidate(); //提示重新绘制预览图
+                    if (mTemplateViews != null && mTemplateViews.size() > 0) {
+                        mTemplateViews.get(nowChoosePosition).invalidate(); //提示重新绘制预览图
+                    }
+
+                    LogUtil.d("OOM4", "关闭加载框");
+                    progress.closePragressDialog();
+                    WaitingDialog.closePragressDialog();
                 }
 
-                LogUtil.d("OOM4", "关闭加载框");
-                progress.closePragressDialog();
-                WaitingDialog.closePragressDialog();
             }));  //批量替换图片
 
         }
@@ -1020,11 +1023,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
+    private boolean isOndestroy=false;
     @Override
     public void onDestroy() {
         super.onDestroy();
         clearAllData();
+        isOndestroy=true;
         EventBus.getDefault().unregister(this);
+
     }
 
 
@@ -1173,9 +1179,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         Intent intoCutVideo = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
                         intoCutVideo.putExtra("needCropDuration", needVideoTime);
                         intoCutVideo.putExtra("videoPath", paths.get(0));
+                        intoCutVideo.putExtra("nowIsPhotographAlbum",nowIsPhotographAlbum);
                         intoCutVideo.putExtra("picout", 1);
                         intoCutVideo.putExtra("templateName", templateName);
-                        intoCutVideo.putExtra("isFrom", 2);
+                        if(nowIsPhotographAlbum){
+                            intoCutVideo.putExtra("isFrom", cutVideoTag);
+                        }else{
+                            intoCutVideo.putExtra("isFrom", 2);
+                        }
                         startActivity(intoCutVideo);
                     }
                 }
@@ -1244,7 +1255,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public void onEventMainThread(MattingVideoEnity event) {
 
         if (event.getTag() == cutVideoTag) {
-            LogUtil.d("OOM", "进入到了onEventMainThread");
+            LogUtil.d("OOM2", "进入到了onEventMainThread");
             getSingleCatVideoPath(event.getMattingPath());
         } else {
             mTemplateModel.resetUi();
@@ -1413,7 +1424,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     intent.putExtra("Message", bundle);
                     intent.putExtra("person", item);
                     startActivity(intent);
-                    finish();
                 }
 
                 @Override

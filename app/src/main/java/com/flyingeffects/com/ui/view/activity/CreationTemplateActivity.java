@@ -1395,6 +1395,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 } else {
                     modificationDuration(10 * 1000);
                 }
+                musicStartTime=mCutStartTime;
                 new Handler().postDelayed(() ->
                         Glide.with(CreationTemplateActivity.this)
                                 .load(s).into(iv_green_background), 500);
@@ -1441,6 +1442,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             bgmPlayer.setDataSource(bgmPath);
             bgmPlayer.prepare();
             bgmPlayer.start();
+
         } catch (IOException e) {
             e.printStackTrace();
         }

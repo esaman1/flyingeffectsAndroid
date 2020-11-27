@@ -144,7 +144,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
                     .into(iv_writer);
             tv_writer_name.setText("@"+item.getAuth());
             tv_title.setText(item.getTitle());
-            String str = item.getAuth() + "的原创音乐                        "+item.getAuth() + "的原创音乐                        ";
+            String str = item.getAuth() + "的原声音乐                        "+item.getAuth() + "的原声音乐                        ";
             tv_title_music.setText(str);
             //点赞功能
             if (item.getIs_praise() == 1 && BaseConstans.hasLogin()) {
