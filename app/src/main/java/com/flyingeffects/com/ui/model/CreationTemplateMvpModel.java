@@ -2054,7 +2054,7 @@ public class CreationTemplateMvpModel {
                         if (startTime <= progress && progress <= endTime) {
                             stickerView.setVisibility(View.VISIBLE);
                             LogUtil.d("OOM4", "setVisibility");
-                        } else if (startTime <= progress && (totalTime - endTime <= 100 || (progress > totalTime && progress - totalTime < 10))) {
+                        } else if (startTime <= progress && (totalTime - endTime <= 100 || (progress > totalTime && progress - totalTime <= 1))) {
                             stickerView.setVisibility(View.VISIBLE);
                         } else {
                             stickerView.setVisibility(View.GONE);
