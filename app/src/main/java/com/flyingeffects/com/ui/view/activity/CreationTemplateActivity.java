@@ -751,6 +751,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 mCutEndTime = allVideoDuration;
                 mProgressBarView.addProgressBarView(allVideoDuration, videoPath);
                 if (isModifyMaterialTimeLine) {
+                    musicStartTime=mCutStartTime;
+                    musicEndTime=mCutEndTime;
                     mSeekBarView.resetStartAndEndTime(mCutStartTime, mCutEndTime);
                     mSeekBarView.changeVideoPathViewFrameSetWidth(allVideoDuration);
                     for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
@@ -1395,7 +1397,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 } else {
                     modificationDuration(10 * 1000);
                 }
-                musicStartTime=mCutStartTime;
+                musicStartTime=0;
+                musicEndTime=mCutEndTime;
+
                 new Handler().postDelayed(() ->
                         Glide.with(CreationTemplateActivity.this)
                                 .load(s).into(iv_green_background), 500);
