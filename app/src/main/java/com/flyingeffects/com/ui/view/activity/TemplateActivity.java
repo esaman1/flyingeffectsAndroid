@@ -912,7 +912,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                                 needCropDuration = nowClickMediaUi2.getDuration() / (float) nowClickMediaUi2.getFps();
                                 isNeedSlow = false;
                                 intent.putExtra("isFrom", cutVideoTag);
-                                intent.putExtra("videoPath", nowClickMediaUi2.getPathOrigin());
+                                intent.putExtra("videoPath", nowClickMediaUi2.getOriginalPath());
                                 intent.putExtra("needCropDuration", needCropDuration);
                                 intent.putExtra("isNeedSlow", isNeedSlow);
                                 intent.putExtra("videoFps", nowClickMediaUi2.getFps());
