@@ -1407,7 +1407,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     LogUtil.d("OOM4", "");
                     List<String> getAsset = Arrays.asList(paths);
                     ArrayList<String> arrayList = new ArrayList<>(getAsset);
-                    boolean hasDefaultBj = hasDefaultBj(paths);
+//                    boolean hasDefaultBj = hasDefaultBj(paths);
                     bundle.putInt("isPicNum", 20);
                     bundle.putString("fromTo", FromToTemplate.PICTUREALBUM);
                     bundle.putInt("changeTemplatePosition", position);
@@ -1415,13 +1415,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     bundle.putInt("is_anime", 0);
                     bundle.putString("templateName", item.getTitle());
                     bundle.putString("templateId", item.getId() + "");
-                    if (hasDefaultBj) {
-                        bundle.putStringArrayList("originalPath", new ArrayList<>(originalPath));
-                        bundle.putStringArrayList("paths", new ArrayList<>(originalPath));
-                    } else {
+//                    if (hasDefaultBj) {
+//                        bundle.putStringArrayList("originalPath", new ArrayList<>(originalPath));
+//                        bundle.putStringArrayList("paths", new ArrayList<>(originalPath));
+//                    } else {
                         bundle.putStringArrayList("originalPath", arrayList);
                         bundle.putStringArrayList("paths", arrayList);
-                    }
+//                    }
                     bundle.putString("templateFilePath", path);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra("Message", bundle);
@@ -1444,6 +1444,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         initTemplateThumb(mTemplateModel.groupSize);
         templateThumbForMusic = LayoutInflater.from(this).inflate(R.layout.view_choose_music, null);
         LinearLayout ll_choose_0 = templateThumbForMusic.findViewById(R.id.ll_choose_0);
+        if(nowIsPhotographAlbum){
+            ll_choose_0.setVisibility(View.GONE);
+        }
         LinearLayout ll_choose_1 = templateThumbForMusic.findViewById(R.id.ll_choose_1);
         LinearLayout ll_choose_2 = templateThumbForMusic.findViewById(R.id.ll_choose_2);
         ll_choose_3 = templateThumbForMusic.findViewById(R.id.ll_choose_3);
@@ -1452,7 +1455,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         TextView tv_add_music = templateThumbForMusic.findViewById(R.id.tv_add_music);
         tv_add_music.setOnClickListener(tvMusicListener);
         if (!mTemplateModel.HasBj) {
-            ll_choose_1.setVisibility(View.INVISIBLE);
+            ll_choose_1.setVisibility(View.GONE);
         }
         ll_choose_0.setOnClickListener(tvMusicListener);
         ll_choose_1.setOnClickListener(tvMusicListener);
