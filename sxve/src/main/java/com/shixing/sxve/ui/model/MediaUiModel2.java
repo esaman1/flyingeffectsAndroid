@@ -344,6 +344,7 @@ public class MediaUiModel2 extends MediaUiModel {
     public void setVideoPath(String path, boolean mute, float startTime) {
         mVideoPath = path;
         mMute = mute;
+        isVideoSlide=true;
         mStartTime = startTime;
         mIsVideo = true;
         mInitPaint.setAlpha(255);
@@ -691,6 +692,7 @@ public class MediaUiModel2 extends MediaUiModel {
 
 
     public void setPathOrigin(String path) {
+        Log.d("oom2","setPathOrigin="+path);
         PathOrigin = path;
     }
 
