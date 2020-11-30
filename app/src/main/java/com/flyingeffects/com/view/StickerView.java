@@ -367,8 +367,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         this(context);
         mIsText = isText;
         initTextPainter(context);
-        colors.add("#626262");
-        colors.add("#000000");
+        colors.add("#F4F4F4");
+        colors.add("#FFFFFF");
 //        bpTestTextBj = BitmapFactory.decodeResource(context.getResources(), R.mipmap.test);
         //只有下面两个方法设置为true才能获取到输入的内容
 //        setFocusable(true);
