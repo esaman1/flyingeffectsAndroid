@@ -188,9 +188,18 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                     ll_relative_1.setVisibility(View.VISIBLE);
                     ll_relative_0.setVisibility(View.VISIBLE);
                     ConstraintLayout_addVideo.setVisibility(View.VISIBLE);
-                    helper.setText(R.id.firstline, BaseConstans.configList.getFirstline());
-                    helper.setText(R.id.secondline, BaseConstans.configList.getSecondline());
-                    helper.setText(R.id.thirdline, BaseConstans.configList.getThirdline());
+                    if(!TextUtils.isEmpty(BaseConstans.configList.getFirstline())){
+                        helper.setText(R.id.firstline, BaseConstans.configList.getFirstline());
+                    }
+
+                    if(!TextUtils.isEmpty(BaseConstans.configList.getSecondline())){
+                        helper.setText(R.id.secondline, BaseConstans.configList.getSecondline());
+                    }
+
+                    if(!TextUtils.isEmpty(BaseConstans.configList.getThirdline())){
+                        helper.setText(R.id.thirdline, BaseConstans.configList.getThirdline());
+                    }
+
                     ConstraintLayout_addVideo.setOnClickListener(v -> {
                         Intent intent = new Intent(context, intoOtherAppActivity.class);
                         intent.putExtra("wx", "");
@@ -264,9 +273,15 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                     ll_relative_1.setVisibility(View.VISIBLE);
                     ll_relative_0.setVisibility(View.VISIBLE);
                     ll_relative_2.setVisibility(View.GONE);
-                    helper.setText(R.id.firstline, BaseConstans.configList.getFirstline());
-                    helper.setText(R.id.secondline, BaseConstans.configList.getSecondline());
-                    helper.setText(R.id.thirdline, BaseConstans.configList.getThirdline());
+                    if(!TextUtils.isEmpty(BaseConstans.configList.getFirstline())){
+                        helper.setText(R.id.firstline, BaseConstans.configList.getFirstline());
+                    }
+                    if(!TextUtils.isEmpty(BaseConstans.configList.getSecondline())){
+                        helper.setText(R.id.secondline, BaseConstans.configList.getSecondline());
+                    }
+                    if(!TextUtils.isEmpty(BaseConstans.configList.getThirdline())){
+                        helper.setText(R.id.thirdline, BaseConstans.configList.getThirdline());
+                    }
                     ConstraintLayout_addVideo.setVisibility(View.VISIBLE);
                     ConstraintLayout_addVideo.setOnClickListener(v -> {
                         Intent intent = new Intent(context, intoOtherAppActivity.class);
