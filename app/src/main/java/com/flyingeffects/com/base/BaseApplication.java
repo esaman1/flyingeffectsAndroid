@@ -12,6 +12,7 @@
  import com.flyingeffects.com.R;
  import com.flyingeffects.com.constans.BaseConstans;
  import com.flyingeffects.com.manager.AdConfigs;
+ import com.flyingeffects.com.manager.MediaLoader;
  import com.flyingeffects.com.manager.TTAdManagerHolder;
  import com.flyingeffects.com.ui.view.activity.WelcomeActivity;
  import com.flyingeffects.com.utils.ChannelUtil;
@@ -30,6 +31,10 @@
  import com.shixing.sxvideoengine.License;
  import com.shixing.sxvideoengine.SXLog;
  import com.umeng.commonsdk.UMConfigure;
+ import com.yanzhenjie.album.Album;
+ import com.yanzhenjie.album.AlbumConfig;
+
+ import java.util.Locale;
 
  import cn.jpush.android.api.JPushInterface;
  import cn.nt.lib.analytics.NTAnalytics;
@@ -64,8 +69,17 @@ public class BaseApplication extends MultiDexApplication {
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
         TTAdManagerHolder.init(this);
         EmojiManager.init(this);
+        initAlbum();
     }
 
+
+    private void initAlbum() {
+        Album.initialize(AlbumConfig.newBuilder(this)
+                .setAlbumLoader(new MediaLoader())
+                .setLocale(Locale.getDefault())
+                .build()
+        );
+    }
 
 
     private void initNTAdSDK() {

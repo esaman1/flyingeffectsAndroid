@@ -150,19 +150,10 @@ public class HomeMainActivity extends FragmentActivity {
         situationTimer = new SituationTimer();
         situationTimer.startTimer(30);
         initYouMeng();
-
-        initAlbum();
     }
 
 
 
-    private void initAlbum() {
-        Album.initialize(AlbumConfig.newBuilder(this)
-                .setAlbumLoader(new MediaLoader())
-                .setLocale(Locale.getDefault())
-                .build()
-        );
-    }
 
 
     private void initYouMeng() {

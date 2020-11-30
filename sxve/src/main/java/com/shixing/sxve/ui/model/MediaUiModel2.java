@@ -692,7 +692,6 @@ public class MediaUiModel2 extends MediaUiModel {
 
 
     public void setPathOrigin(String path) {
-        Log.d("oom2","setPathOrigin="+path);
         PathOrigin = path;
     }
 
