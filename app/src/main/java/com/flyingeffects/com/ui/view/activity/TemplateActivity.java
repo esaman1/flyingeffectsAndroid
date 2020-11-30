@@ -1136,12 +1136,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     };
 
 
+    private String lastChooseFilePath;
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel) {
             if (tag == REQUEST_SINGLE_MEDIA) {
-
-                nowClickMediaUi2.setPathOrigin(paths.get(0));
+                lastChooseFilePath=paths.get(0);
+//                nowClickMediaUi2.setPathOrigin(paths.get(0));
                 LogUtil.d("oom2","nowClickMediaUi2O="+paths.get(0)+"iddd="+nowClickMediaUi2.getNowGroup());
                 if (paths != null && paths.size() > 0) {
                     String mimeType;
@@ -1262,6 +1263,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @Subscribe
     public void onEventMainThread(MattingVideoEnity event) {
 
+        nowClickMediaUi2.setPathOrigin(lastChooseFilePath);
         if (event.getTag() == cutVideoTag) {
             LogUtil.d("OOM2", "进入到了onEventMainThread");
             getSingleCatVideoPath(event.getMattingPath());
