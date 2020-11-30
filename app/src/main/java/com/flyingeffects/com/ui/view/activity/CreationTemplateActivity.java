@@ -1397,7 +1397,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 } else {
                     modificationDuration(10 * 1000);
                 }
+                musicStartFirstTime=0;
                 musicStartTime=0;
+                musicEndFirstTime=mCutEndTime;
                 musicEndTime=mCutEndTime;
 
                 new Handler().postDelayed(() ->
@@ -1412,6 +1414,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 presenter.setmVideoPath(videoPath);
                 presenter.initVideoProgressView();
                 setBJVideoPath(true);
+                musicStartFirstTime=0;
+                musicStartTime=0;
+                musicEndFirstTime=mCutEndTime;
+                musicEndTime=mCutEndTime;
             }
         });
     }
@@ -1692,6 +1698,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             if (TextUtils.equals(id, String.valueOf(stickerView.getId()))) {
                 if (!TextUtils.isEmpty(id) && id.equals("0") ) {
+                    LogUtil.d("playBGMMusic","需要改变开始时间和结束时间---musicStartFirstTime="+startTime);
                     //需要改变开始时间和结束时间
                     musicStartFirstTime = startTime;
                     musicEndFirstTime = endTime;
