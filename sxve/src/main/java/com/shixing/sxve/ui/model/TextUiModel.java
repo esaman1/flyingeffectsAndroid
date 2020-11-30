@@ -85,6 +85,11 @@ public class TextUiModel extends AssetUi {
     }
 
     @Override
+    public String getPathOrigin() {
+        return null;
+    }
+
+    @Override
     public void hasChooseBg(String path,boolean isVideo) {
 
     }

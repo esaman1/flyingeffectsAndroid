@@ -318,6 +318,14 @@ public class TemplateModel {
         return paths;
     }
 
+    public String[] getOriginFilePaths() { //未设置占位图
+        String[] paths = new String[mAssets.size()];
+        for (int i = 0; i < mAssets.size(); i++) {
+            paths[i] = mAssets.get(i).ui.getPathOrigin();
+        }
+        return paths;
+    }
+
 
     public void resetUi() {
         if (mReplaceableAssets != null && mReplaceableAssets.size() > 0) {

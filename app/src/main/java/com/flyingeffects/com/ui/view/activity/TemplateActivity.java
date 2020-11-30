@@ -702,7 +702,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
             pickIndex = model.getNowIndex();
             pickGroupIndex = model.getNowGroup();
-            LogUtil.d("OOM", "当前的点击位置为" + pickIndex);
+            LogUtil.d("OOM", "当前的点击位置为" + pickIndex+"pickGroupIndex="+pickGroupIndex);
             if (isCanChooseVideo || nowIsPhotographAlbum) {
                 // 只有是否选择视频的区别
                 float videoTimeF;
@@ -894,14 +894,16 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         templateThumbAdapter = new TemplateThumbAdapter(R.layout.item_group_thumb, listItem, TemplateActivity.this);
         templateThumbAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             if (!DoubleClick.getInstance().isFastZDYDoubleClick(200)) {
+                nowChoosePosition = position;
                 getNowChooseIndexMidiaUi();
+
                 if (view.getId() == R.id.iv_show_un_select) {
                     if (mPlayer != null) {
                         mPlayer.pause();
                         ivPlayButton.setImageResource(R.mipmap.iv_play);
                         isPlaying = false;
                     }
-                    nowChoosePosition = position;
+
                     if (nowChoosePosition != lastChoosePosition) {
                         selectGroup(position);
                         modificationThumbData(lastChoosePosition, position);
@@ -916,7 +918,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                                 needCropDuration = nowClickMediaUi2.getDuration() / (float) nowClickMediaUi2.getFps();
                                 isNeedSlow = false;
                                 intent.putExtra("isFrom", cutVideoTag);
-                                intent.putExtra("videoPath", nowClickMediaUi2.getOriginalPath());
+                                intent.putExtra("videoPath", nowClickMediaUi2.getPathOrigin());
+                                LogUtil.d("oom2","nowClickMediaUi2gROUPID="+nowClickMediaUi2.getNowGroup()+"nowClickMediaUi2.getPathOrigin()="+nowClickMediaUi2.getPathOrigin());
                                 intent.putExtra("needCropDuration", needCropDuration);
                                 intent.putExtra("isNeedSlow", isNeedSlow);
                                 intent.putExtra("videoFps", nowClickMediaUi2.getFps());
@@ -1137,6 +1140,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel) {
             if (tag == REQUEST_SINGLE_MEDIA) {
+
+                nowClickMediaUi2.setPathOrigin(paths.get(0));
+                LogUtil.d("oom2","nowClickMediaUi2O="+paths.get(0)+"iddd="+nowClickMediaUi2.getNowGroup());
                 if (paths != null && paths.size() > 0) {
                     String mimeType;
                     String path = paths.get(0);
@@ -1163,7 +1169,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 //                                MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
 //                                LogUtil.d("OOM", "lastChoosePosition=" + lastChoosePosition + "原来的path 为" + mediaUi2.getOriginalPath());
                                 nowClickMediaUi2.setImageAsset(paths.get(0));
-                                nowClickMediaUi2.setPathOrigin(paths.get(0));
                                 mTemplateViews.get(lastChoosePosition).invalidate();
                                 ModificationSingleThumbItem(paths.get(0));
                             }
@@ -1178,7 +1183,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         if (needVideoTime < 0.5) {
                             needVideoTime = 0.5f;
                         }
-                        nowClickMediaUi2.setPathOrigin(paths.get(0));
+
                         Intent intoCutVideo = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
                         intoCutVideo.putExtra("needCropDuration", needVideoTime);
                         intoCutVideo.putExtra("videoPath", paths.get(0));
@@ -1403,7 +1408,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     //选择模板的回调时间
                     Intent intent = getIntent();
                     Bundle bundle = new Bundle();
-                    String[] paths = mTemplateModel.getReplaceableOriginFilePaths(Objects.requireNonNull(getExternalCacheDir()).getPath());
+                    String[] paths = mTemplateModel.getOriginFilePaths();
                     LogUtil.d("OOM4", "");
                     List<String> getAsset = Arrays.asList(paths);
                     ArrayList<String> arrayList = new ArrayList<>(getAsset);
@@ -1662,10 +1667,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private MediaUiModel2 nowClickMediaUi2;
 
     public void getNowChooseIndexMidiaUi() {
-        int position = lastChoosePosition + 1;
+        int position = nowChoosePosition + 1;
         for (int i = 0; i < mTemplateModel.getAssets().size(); i++) {
             nowClickMediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(i).ui;
             if (position == nowClickMediaUi2.getNowGroup()) {
+                pickIndex = nowClickMediaUi2.getNowIndex();
+                pickGroupIndex = nowClickMediaUi2.getNowGroup();
+                LogUtil.d("oom2", "刷新id--pickGroupIndex=" + pickGroupIndex);
                 break;
             }
         }
@@ -1675,9 +1683,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public void getSingleCatVideoPath(String path) {
         LogUtil.d("OOM", "ModificationSingleThumbItempath2222=" + path);
         for (int i = 0; i < mTemplateModel.getAssets().size(); i++) {
-            MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(i).ui;
+             MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(i).ui;
+            LogUtil.d("OOM",  "mediaUi2.getNowGroup()=pickGroupIndex="+pickGroupIndex+"pickIndex="+pickIndex+"mediaUi2.getNowIndex()="+mediaUi2.getNowIndex());
             if (pickGroupIndex == mediaUi2.getNowGroup()) {
                 if (pickIndex == mediaUi2.getNowIndex()) {
+                    LogUtil.d("OOM", "设置进去path" + path);
                     mediaUi2.setVideoPath(path, false, 0);
                     break;
                 }

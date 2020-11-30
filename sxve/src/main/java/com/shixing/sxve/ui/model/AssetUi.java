@@ -83,6 +83,8 @@ public abstract class AssetUi {
 
     public abstract String getOriginPath(String folder);
 
+    public abstract String getPathOrigin();
+
 
     public abstract void hasChooseBg(String path,boolean isVideo);
 
