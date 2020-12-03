@@ -126,7 +126,7 @@ public class SecondaryTypeFragment extends BaseFragment {
             } else if (type == 2) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("id", category_id);
-                bundle.putInt("tc_id",mTypeEntities.get(i).getId());
+                bundle.putString("tc_id",mTypeEntities.get(i).getId());
                 bundle.putSerializable("num", i);
                 bundle.putSerializable("from", 4);
                 HomeTemplateItemFragment fragment = new HomeTemplateItemFragment();
