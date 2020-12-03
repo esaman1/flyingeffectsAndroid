@@ -85,6 +85,7 @@ public class DressUpFragment extends BaseFragment  implements DressUpMvpView {
                 for (int i = 0; i < data.size(); i++) {
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
+                    bundle.putSerializable("id", data.get(i).getId());
                     bundle.putInt("type",2);
                     titles[i] = data.get(i).getName();
                     SecondaryTypeFragment fragment = new SecondaryTypeFragment();

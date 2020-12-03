@@ -38,10 +38,12 @@ public class home_fag_itemMvpModel {
      * 1是模板 2是背景
      */
     private int template_type;
+    private int fromType;
 
     public home_fag_itemMvpModel(Context context, homeItemMvpCallback callback,int fromType) {
         this.context = context;
         this.callback = callback;
+        this.fromType=fromType;
         template_type=template_type==0?1:2;
     }
 
@@ -89,12 +91,17 @@ public class home_fag_itemMvpModel {
         HashMap<String, String> params = new HashMap<>();
         LogUtil.d("templateId", "templateId=" + templateId);
         params.put("category_id", templateId);
-        params.put("template_type","1");
+        if(fromType==4){
+            params.put("template_type","3");
+        }else{
+            params.put("template_type","1");
+        }
         params.put("tc_id", tc_id);
         params.put("search","");
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
         Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
+        LogUtil.d("OOM",StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
             @Override
             protected void _onError(String message) {
