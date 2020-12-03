@@ -3,6 +3,7 @@ package com.flyingeffects.com.ui.view.fragment;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -123,7 +124,14 @@ public class SecondaryTypeFragment extends BaseFragment {
                 fragment.setArguments(bundle);
                 fragments.add(fragment);
             } else if (type == 2) {
-
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("id", category_id);
+                bundle.putInt("tc_id",mTypeEntities.get(i).getId());
+                bundle.putSerializable("num", i);
+                bundle.putSerializable("from", 4);
+                HomeTemplateItemFragment fragment = new HomeTemplateItemFragment();
+                fragment.setArguments(bundle);
+                fragments.add(fragment);
             }
         }
         if (!fragments.isEmpty()&& !mTextViews.isEmpty()) {
