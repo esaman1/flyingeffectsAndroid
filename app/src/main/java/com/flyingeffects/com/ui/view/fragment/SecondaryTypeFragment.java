@@ -35,6 +35,7 @@ public class SecondaryTypeFragment extends BaseFragment {
     List<TextView> mTextViews = new ArrayList<>();
     /** 0是模板 1是背景  2是换脸*/
     int type;
+    String category_id;
 
     @Override
     protected int getContentLayout() {
@@ -45,6 +46,7 @@ public class SecondaryTypeFragment extends BaseFragment {
     protected void initView() {
         mTypeEntities = (List<SecondaryTypeEntity>) getArguments().getSerializable("secondaryType");
         type = getArguments().getInt("type");
+        category_id = getArguments().getString("id");
     }
 
     @Override
@@ -101,7 +103,8 @@ public class SecondaryTypeFragment extends BaseFragment {
             textView.setLayoutParams(layoutParams);
             if (type == 0) {
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("id", mTypeEntities.get(i).getId());
+                bundle.putSerializable("id", category_id);
+                bundle.putInt("tc_id",mTypeEntities.get(i).getId());
                 bundle.putSerializable("num", i);
                 bundle.putSerializable("from", 0);
                 HomeTemplateItemFragment fragment = new HomeTemplateItemFragment();
