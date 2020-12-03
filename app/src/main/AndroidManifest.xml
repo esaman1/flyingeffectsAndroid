@@ -437,6 +437,16 @@
             </intent-filter>
         </receiver>
 
+        <!--  抖音分享相关 -->
+        <activity
+            android:name=".bdopen.BdEntryActivity"
+            android:exported="true" />
+        <receiver android:name=".bdopen.DouYingBroadcast">
+            <intent-filter>
+                <action android:name="com.aweme.opensdk.action.stay.in.dy" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

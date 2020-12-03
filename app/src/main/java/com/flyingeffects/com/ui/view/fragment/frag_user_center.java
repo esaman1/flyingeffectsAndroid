@@ -20,7 +20,10 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.RequestMessage;
+import com.flyingeffects.com.enity.SystemMessageCountAllEntiy;
 import com.flyingeffects.com.enity.UserInfo;
+import com.flyingeffects.com.enity.messageCount;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -31,14 +34,15 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.AboutActivity;
-import com.flyingeffects.com.ui.view.activity.BackgroundSearchActivity;
 import com.flyingeffects.com.ui.view.activity.EditInformationActivity;
 import com.flyingeffects.com.ui.view.activity.FansActivity;
-import com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity;
+import com.flyingeffects.com.ui.view.activity.LikeActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.MineFocusActivity;
+import com.flyingeffects.com.ui.view.activity.SystemMessageDetailActivity;
 import com.flyingeffects.com.ui.view.activity.ZanActivity;
 import com.flyingeffects.com.utils.FileUtil;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.UCropOption;
@@ -58,9 +62,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
-
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -78,30 +83,20 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
     @BindView(R.id.viewpager)
     ViewPager viewpager;
-
-
     @BindView(R.id.tl_tabs)
     SlidingTabLayout tabLayout;
-
     @BindView(R.id.iv_about)
     ImageView iv_about;
-
     @BindView(R.id.iv_head)
     ImageView iv_head;
-
     @BindView(R.id.tv_id)
     TextView tv_id;
-
     @BindView(R.id.tv_name)
     TextView tv_name;
-
     @BindView(R.id.fans_count)
     TextView fans_count;
-
     @BindView(R.id.attention_count)
     TextView attention_count;
-
-
     @BindView(R.id.tv_video_count)
     TextView tv_video_count;
     @BindView(R.id.im_user_skin)
@@ -112,10 +107,26 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     ImageView imEdit;
     @BindView(R.id.tv_edit_information)
     TextView tvEditInformation;
-    @BindView(R.id.ll_edit_data)
-    LinearLayout llEditData;
+    @BindView(R.id.tv_private_message)
+    TextView mTVPrivateMessage;
+    @BindView(R.id.tv_comment_count)
+    TextView mTVCommentCount;
+    @BindView(R.id.tv_zan)
+    TextView mTVZan;
+    @BindView(R.id.tv_comment_count_add)
+    TextView mTVCommentCountAdd;
+    @BindView(R.id.tv_go_login)
+    TextView mTVGoLogin;
+    @BindView(R.id.ll_info)
+    LinearLayout mLLInfo;
+    @BindView(R.id.ll_info_Related)
+    LinearLayout mLLInfoRelated;
+    @BindView(R.id.ll_no_login_info)
+    LinearLayout mLLNoLoginInfo;
+
 
     private UCrop.Options options;
+    String systemMessageId ="";
 
 
     @Override
@@ -126,6 +137,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         options = UCropOption.getInstance().getUcropOption();
         iv_about.setOnClickListener(view -> {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
@@ -148,30 +160,31 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
     @Override
     public void onResume() {
-
         if (getActivity() != null) {
             //未登陆
             if (BaseConstans.hasLogin()) {
                 tv_id.setText("飞友号：" + BaseConstans.GetUserId());
                 tvEditInformation.setVisibility(View.VISIBLE);
-                llEditData.setVisibility(View.VISIBLE);
+                mLLInfo.setVisibility(View.VISIBLE);
+                mLLInfoRelated.setVisibility(View.VISIBLE);
+                mTVGoLogin.setVisibility(View.GONE);
+                mLLNoLoginInfo.setVisibility(View.GONE);
                 requestUserInfo();
+                requestMessageCount();
+                requestSystemMessageCount();
             } else {
                 Glide.with(this)
                         .load(R.mipmap.head)
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                         .into(iv_head);
-
-                fans_count.setText("");
-                attention_count.setText("");
-                tv_video_count.setText("");
-                tv_id.setText("未登录");
-                tv_name.setVisibility(View.GONE);
+                mLLInfo.setVisibility(View.GONE);
                 Glide.with(getActivity())
                         .load(R.mipmap.home_page_bj)
                         .into(imSkin);
                 tvEditInformation.setVisibility(View.GONE);
-                llEditData.setVisibility(View.GONE);
+                mLLInfoRelated.setVisibility(View.GONE);
+                mTVGoLogin.setVisibility(View.VISIBLE);
+                mLLNoLoginInfo.setVisibility(View.VISIBLE);
             }
         }
         super.onResume();
@@ -226,19 +239,11 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     }
 
 
-    @OnClick({R.id.iv_head, R.id.ll_fans_count, R.id.ll_attention_count, R.id.ll_video_count,
-            R.id.iv_Peeling, R.id.tv_edit_information, R.id.ll_edit_data})
+    @OnClick({R.id.ll_icon_zan, R.id.ll_comment,R.id.ll_private_message,R.id.ll_attention_count,
+            R.id.ll_video_count, R.id.iv_Peeling, R.id.tv_edit_information, R.id.ll_edit_data,R.id.tv_go_login})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.iv_head:
-                if (!BaseConstans.hasLogin()) {
-                    Intent intent = new Intent(getActivity(), LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(intent);
-                }
-                break;
-
-            case R.id.ll_fans_count:
+            case R.id.ll_icon_zan:
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
                     if (BaseConstans.hasLogin()) {
                         Intent intentZan = new Intent(getActivity(), ZanActivity.class);
@@ -249,7 +254,34 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                     }
                 }
                 break;
-
+            case R.id.ll_comment:
+                if (BaseConstans.hasLogin()) {
+                    statisticsEventAffair.getInstance().setFlag(getActivity(), "12_comment");
+                    Intent intentComment = new Intent(getActivity(), LikeActivity.class);
+                    intentComment.putExtra("from", 1);
+                    intentComment.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intentComment);
+                } else {
+                    ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
+                }
+                break;
+            case R.id.ll_private_message:
+                statisticsEventAffair.getInstance().setFlag(getActivity(), "12_system");
+                if (BaseConstans.hasLogin()) {
+                    if (!TextUtils.isEmpty(systemMessageId)) {
+                        Intent intent = new Intent(getActivity(), SystemMessageDetailActivity.class);
+                        intent.putExtra("needId", systemMessageId);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    } else {
+                        ToastUtil.showToast("没有私信哦~");
+                    }
+                } else {
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
+                break;
             case R.id.ll_attention_count:
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
                     if (BaseConstans.hasLogin()) {
@@ -279,8 +311,6 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                     statisticsEventAffair.getInstance().setFlag(getActivity(), "3_background");
                     AlbumManager.chooseImageAlbum(getContext(), 1, SELECTALBUMFROMUSETCENTERBJ, this, "");
                 }
-
-
                 break;
             case R.id.tv_edit_information:
             case R.id.ll_edit_data:
@@ -290,12 +320,43 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                     startActivity(intent);
                 }
                 break;
+            case R.id.tv_go_login:
+                if (!BaseConstans.hasLogin()) {
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                }
+                break;
             default:
                 break;
 
         }
     }
 
+    private void requestSystemMessageCount() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("user_id", BaseConstans.GetUserId());
+        Observable ob = Api.getDefault().systemTotal(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<SystemMessageCountAllEntiy>(getActivity()) {
+            @Override
+            protected void _onError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(SystemMessageCountAllEntiy data) {
+                String str = StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM", str);
+                systemMessageId = data.getSystem_message().get(0).getId();
+                if (data.getSystem_message().get(0).getTotal() == 0) {
+                    mTVPrivateMessage.setVisibility(View.GONE);
+                } else {
+                    mTVPrivateMessage.setVisibility(View.VISIBLE);
+                    mTVPrivateMessage.setText(String.valueOf(data.getSystem_message().get(0).getTotal()));
+                }
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
 
     private void requestUserInfo() {
         if (getActivity() != null) {
@@ -332,9 +393,11 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                                     .into(iv_head);
                         }
-
-                        fans_count.setText(data.getUser_praise());
+                        //创作的视频数量
+                        fans_count.setText(data.getUser_video());
+                        //我关注的数量
                         attention_count.setText(data.getUser_watch());
+                        //关注我的数量
                         tv_video_count.setText(data.getUser_follower());
                         if (TextUtils.isEmpty(data.getSkin())) {
                             Glide.with(getActivity())
@@ -434,6 +497,71 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                                 .into(imSkin);
                     }
                 }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+    }
+
+    private void requestMessageCount() {
+        HashMap<String, String> params = new HashMap<>();
+        Observable ob = Api.getDefault().getAllMessageNum(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<messageCount>(getActivity()) {
+            @Override
+            protected void _onError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(messageCount data) {
+                showMessageCount(data);
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+    private void showMessageCount(messageCount data) {
+        String follow_num = data.getFollow_num();
+        int followNum = Integer.parseInt(follow_num);
+        if (followNum == 0) {
+            mTVCommentCountAdd.setVisibility(View.GONE);
+
+        } else {
+            mTVCommentCountAdd.setVisibility(View.VISIBLE);
+            mTVCommentCountAdd.setText(followNum + "");
+        }
+        String praise_num = data.getPraise_num();
+        int praiseNum = Integer.parseInt(praise_num);
+        if (praiseNum == 0) {
+            mTVZan.setVisibility(View.GONE);
+        } else {
+            mTVZan.setVisibility(View.VISIBLE);
+            mTVZan.setText(praiseNum + "");
+        }
+        String comment_num = data.getComment_num();
+        int commentNum = Integer.parseInt(comment_num);
+        if (commentNum == 0) {
+            mTVCommentCount.setVisibility(View.GONE);
+        } else {
+            mTVCommentCount.setVisibility(View.VISIBLE);
+            mTVCommentCount.setText(commentNum + "");
+        }
+    }
+
+    @Subscribe
+    public void onEventMainThread(RequestMessage event) {
+        if (getActivity() != null) {
+            LogUtil.d("OOM", "onEventMainThread");
+            if (BaseConstans.hasLogin()) {
+                requestMessageCount();
+                requestSystemMessageCount();
+            } else {
+                mTVCommentCountAdd.setVisibility(View.GONE);
+                mTVZan.setVisibility(View.GONE);
+                mTVCommentCount.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }
 

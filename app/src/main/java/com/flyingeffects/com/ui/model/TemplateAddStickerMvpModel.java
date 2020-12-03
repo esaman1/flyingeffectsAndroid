@@ -17,6 +17,7 @@ import android.os.Vibrator;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +66,7 @@ import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.utils.record.SaveShareDialog;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.HorizontalListView;
 import com.flyingeffects.com.view.StickerView;
@@ -1636,24 +1638,10 @@ public class TemplateAddStickerMvpModel {
             ShowPraiseModel.keepAlbumCount();
             keepAlbumCount();
             LogUtil.d("showDialog", "showDialog");
-            AlertDialog.Builder builder = new AlertDialog.Builder(
-                    //去除黑边
-                    new ContextThemeWrapper(context, R.style.Theme_Transparent));
-            builder.setTitle(context.getString(R.string.notification));
-//            builder.setMessage(context.getString(R.string.have_saved_to_sdcard) +
-//                    "【" + path + context.getString(R.string.folder) + "】");
-
-            builder.setMessage("已为你保存到相册,多多分享给友友\n" + "【" + path + context.getString(R.string.folder) + "】"
-            );
-
-
-            builder.setNegativeButton(context.getString(R.string.got_it), (dialog, which) -> {
-                dialog.dismiss();
-            });
-            builder.setCancelable(true);
-            Dialog mDialog = builder.show();
-            mDialog.setCanceledOnTouchOutside(false);
-            mDialog.show();
+            SaveShareDialog dialog = new SaveShareDialog(context);
+            dialog.setVideoPath(path);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
         }
     }
 

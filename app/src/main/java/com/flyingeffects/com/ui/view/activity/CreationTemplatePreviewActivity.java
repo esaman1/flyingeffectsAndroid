@@ -32,6 +32,7 @@ import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.TimeUtils;
+import com.flyingeffects.com.utils.record.SaveShareDialog;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.RoundImageView;
 import com.flyingeffects.com.view.VideoFrameRecycler;
@@ -221,14 +222,8 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     private void showKeepSuccessDialog(String path) {
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             ShowPraiseModel.keepAlbumCount();
-            AlertDialog.Builder builder = new AlertDialog.Builder( //去除黑边
-                    new ContextThemeWrapper(CreationTemplatePreviewActivity.this, R.style.Theme_Transparent));
-            builder.setTitle(R.string.notification);
-            builder.setMessage("已为你保存到相册,多多分享给友友\n" + "【" + path + this.getString(R.string.folder) + "】"
-            );
-            builder.setNegativeButton(this.getString(R.string.got_it), (dialog, which) -> dialog.dismiss());
-            builder.setCancelable(true);
-            Dialog dialog = builder.show();
+            SaveShareDialog dialog = new SaveShareDialog(this);
+            dialog.setVideoPath(path);
             dialog.setCanceledOnTouchOutside(false);
             dialog.show();
         }
@@ -251,14 +246,12 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                 break;
 
             case R.id.tv_save:
-
                 statisticsEventAffair();
                 if (UiStep.isFromDownBj) {
                     statisticsEventAffair.getInstance().setFlag(this, "7_save");
                 } else {
                     statisticsEventAffair.getInstance().setFlag(this, "8_save");
                 }
-
                 StimulateControlManage.getInstance().InitRefreshStimulate();
                 if (BaseConstans.getHasAdvertising() == 1 && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser() && BaseConstans.getSave_video_ad() && !BaseConstans.TemplateHasWatchingAd) {
                     Intent intent = new Intent(CreationTemplatePreviewActivity.this, AdHintActivity.class);
@@ -273,11 +266,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
 
                 }
-
-
                 break;
-
-
             case R.id.rela_parent_content:
                 if (isPlaying()) {
                     videoPause();
@@ -289,10 +278,9 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                     AdManager.getInstance().showCpAd(this, AdConfigs.AD_SCREEN_FOR_PREVIEW);
                     isShowPreviewAd = true;
                 }
-
-
                 break;
-
+            default:
+              break;
         }
         super.onClick(v);
     }

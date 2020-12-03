@@ -26,7 +26,7 @@ allprojects {
         maven { url "https://maven.google.com" }
         maven { url "https://jitpack.io" }
         maven { url 'https://dl.bintray.com/umsdk/release' }
-
+        maven { url 'https://dl.bintray.com/aweme-open-sdk-team/public' }
 
         maven {
             url 'http://mirrors.huaweicloud.com/repository/maven/huaweicloudsdk/'

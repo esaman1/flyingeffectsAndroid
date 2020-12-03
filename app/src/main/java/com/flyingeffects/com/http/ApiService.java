@@ -3,6 +3,7 @@ package com.flyingeffects.com.http;
 import com.flyingeffects.com.enity.ChooseMusic;
 import com.flyingeffects.com.enity.Config;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
+import com.flyingeffects.com.enity.FirstLevelTypeEntity;
 import com.flyingeffects.com.enity.FontEnity;
 import com.flyingeffects.com.enity.HttpResult;
 import com.flyingeffects.com.enity.MessageData;
@@ -191,10 +192,10 @@ public interface ApiService {
     Observable<HttpResult<Object>> getOOS(@FieldMap Map<String, String> params);
 
 
-    //模板类型
+    //模板 背景 换脸  一二级分类类型
     @FormUrlEncoded
-    @POST("/api/template/temcategoryList")
-    Observable<HttpResult<List<TemplateType>>> getTemplateType(@FieldMap Map<String, String> params);
+    @POST("/api/mearge/categoryList")
+    Observable<HttpResult<List<FirstLevelTypeEntity>>> getCategoryList(@FieldMap Map<String, String> params);
 
 
     //背景类型

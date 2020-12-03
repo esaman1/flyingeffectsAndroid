@@ -12,6 +12,7 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.FirstLevelTypeEntity;
 import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -26,6 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +59,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
     @BindView(R.id.tv_search_hint)
     TextView tvSearchHint;
 
-    private List<TemplateType> data;
+    private List<FirstLevelTypeEntity> data;
     FragmentManager manager;
 
     private int nowChooseIndex;
@@ -106,7 +108,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
 
     @Override
-    public void setFragmentList(List<TemplateType> data) {
+    public void setFragmentList(List<FirstLevelTypeEntity> data) {
         if (getActivity() != null) {
             if (data != null && data.size() > 0) {
                 this.data = data;
@@ -117,11 +119,10 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                 String[] titles = new String[data.size()];
                 for (int i = 0; i < data.size(); i++) {
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("id", data.get(i).getId());
-                    bundle.putSerializable("num", i);
-                    bundle.putSerializable("from", 0);
+                    bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
+                    bundle.putInt("type",0);
                     titles[i] = data.get(i).getName();
-                    HomeTemplateItemFragment fragment = new HomeTemplateItemFragment();
+                    SecondaryTypeFragment fragment = new SecondaryTypeFragment();
                     fragment.setArguments(bundle);
                     list.add(fragment);
                 }

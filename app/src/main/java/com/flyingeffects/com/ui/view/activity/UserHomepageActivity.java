@@ -229,9 +229,12 @@ public class UserHomepageActivity extends BaseActivity {
                         .load(data.getPhotourl())
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                         .into(iv_head);
-                fans_count.setText(data.getUser_follower());
+                //点赞数
+                fans_count.setText(data.getUser_praise());
+                //我关注的数量
                 attention_count.setText(data.getUser_watch());
-                tv_video_count.setText(data.getUser_video());
+                //关注我的数量
+                tv_video_count.setText(data.getUser_follower());
                 tvNumber.setText("飞友号：" + data.getId());
                 String is_has_follow=data.getIs_has_follow();
                 if(!TextUtils.isEmpty(is_has_follow)&&is_has_follow.equals("0")){

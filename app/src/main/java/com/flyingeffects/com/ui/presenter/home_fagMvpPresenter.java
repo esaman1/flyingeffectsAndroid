@@ -3,6 +3,7 @@ package com.flyingeffects.com.ui.presenter;
 import android.content.Context;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
+import com.flyingeffects.com.enity.FirstLevelTypeEntity;
 import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.ui.interfaces.model.home_fagMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.home_fagMvpView;
@@ -24,7 +25,7 @@ public class home_fagMvpPresenter extends BasePresenter implements home_fagMvpCa
     }
 
     @Override
-    public void setFragmentList(List<TemplateType> data) {
+    public void setFragmentList(List<FirstLevelTypeEntity> data) {
         home_mvpView.setFragmentList(data);
     }
 }

@@ -26,6 +26,8 @@ import java.util.HashMap;
 
 public class BaseConstans {
     public static final String UMENGAPPID = "5e5c68a2570df3d6930002b4";
+    /**抖音分享ClientKey*/
+    public static final String DOUYINSHARE_CLIENTKEY ="awikd2g333hd0ien";
     //当前抠图是用sdk 还是用服务器
     public static final boolean UserFaceSdk=true;
 //    public static final boolean isTitokChannel=true;
@@ -34,7 +36,7 @@ public class BaseConstans {
     public static String titok;
     public static String kuaishou;
     /**是否是正式环境*/
-    public static final boolean PRODUCTION = true;
+    public static final boolean PRODUCTION = false;
     private static String channel = "";
     private static String versionCode = "";
     private static String uuid = "";

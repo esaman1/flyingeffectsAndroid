@@ -8,6 +8,8 @@
  import androidx.multidex.MultiDex;
  import androidx.multidex.MultiDexApplication;
 
+ import com.bytedance.sdk.account.bdopen.impl.BDOpenConfig;
+ import com.bytedance.sdk.open.aweme.impl.TikTokOpenApiFactory;
  import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
  import com.flyingeffects.com.R;
  import com.flyingeffects.com.constans.BaseConstans;
@@ -64,6 +66,7 @@ public class BaseApplication extends MultiDexApplication {
         initZt();
         //闪验SDK初始化（建议放在Application的onCreate方法中执行）
         initShanyanSDK(this);
+        initByteDanceShare();
 //        keepCrash();
         initNTAdSDK();
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
@@ -148,6 +151,14 @@ public class BaseApplication extends MultiDexApplication {
 
         UMConfigure.preInit(this, BaseConstans.UMENGAPPID, ChannelUtil.getChannel(this));
 
+    }
+
+    /**
+     * 初始化抖音分享
+     */
+    private void initByteDanceShare() {
+        //抖音分享
+        TikTokOpenApiFactory.init(new BDOpenConfig(BaseConstans.DOUYINSHARE_CLIENTKEY));
     }
 
     /**
