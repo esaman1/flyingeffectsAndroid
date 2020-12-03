@@ -178,6 +178,7 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
             ImageView iv_show_author = helper.getView(R.id.iv_show_author);
             RelativeLayout ConstraintLayout_addVideo = helper.getView(R.id.ConstraintLayout_addVideo);
             RelativeLayout ll_relative_2 = helper.getView(R.id.ll_relative_2);
+            RelativeLayout add_image=helper.getView(R.id.add_image);
             LinearLayout ll_relative_1 = helper.getView(R.id.ll_relative_1);
             RelativeLayout ll_relative_0 = helper.getView(R.id.ll_relative_0);
             TextView tv_name = helper.getView(R.id.tv_name);
@@ -222,9 +223,10 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                 ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
                 iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
             } else if (fromType == 3) {
-                //背景下载
+                //换脸
                 if (offset == 0) {
-                    ll_relative_2.setVisibility(View.VISIBLE);
+                    ll_relative_2.setVisibility(View.GONE);
+
                     ll_relative_1.setVisibility(View.GONE);
                     ll_relative_0.setVisibility(View.GONE);
                     ConstraintLayout_addVideo.setVisibility(View.VISIBLE);
@@ -254,6 +256,26 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                     });
                 } else {
                     ConstraintLayout_addVideo.setVisibility(View.GONE);
+                }
+                helper.setText(R.id.tv_name2, item.getAuth());
+                ImageView iv_show_author_template = helper.getView(R.id.iv_show_author_template);
+                Glide.with(context)
+                        .load(item.getAuth_image())
+                        .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                        .into(iv_show_author_template);
+                iv_show_author.setVisibility(View.GONE);
+                helper.setText(R.id.tv_zan_count, item.getPraise());
+                tv_name.setVisibility(View.VISIBLE);
+                ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
+                iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
+                iv_show_author.setVisibility(View.GONE);
+            }else if(fromType == 4){
+                //背景下载
+                if (offset == 0) {
+                    add_image.setVisibility(View.VISIBLE);
+                    ConstraintLayout_addVideo.setVisibility(View.GONE);
+                } else {
+                    add_image.setVisibility(View.GONE);
                 }
                 helper.setText(R.id.tv_name2, item.getAuth());
                 ImageView iv_show_author_template = helper.getView(R.id.iv_show_author_template);

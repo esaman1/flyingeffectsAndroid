@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="#000000"
+    android:visibility="gone"
+    android:orientation="vertical"
+    android:padding="5dp"
+    android:id="@+id/add_image"
+    android:layout_height="@dimen/dp_179">
+
+
+    <LinearLayout
+        android:id="@+id/ll_upload_image"
+        android:layout_width="120dp"
+        android:background="@drawable/tv_make_crice"
+        android:layout_centerInParent="true"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_height="44dp">
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:src="@mipmap/upload_image"
+            android:layout_height="wrap_content"/>
+
+
+        <TextView
+            android:textSize="18sp"
+            android:layout_marginStart="8dp"
+            android:textColor="#FFFFFF"
+            android:layout_width="wrap_content"
+            android:text="上传"
+            android:layout_height="wrap_content"/>
+
+
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_below="@+id/ll_upload_image"
+        android:layout_width="wrap_content"
+        android:id="@+id/tv_0"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:text="上传精美人物图片"
+        android:textColor="@color/white"
+        android:layout_height="wrap_content"/>
+
+
+    <TextView
+        android:layout_below="@+id/tv_0"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:text="大家一起玩"
+        android:textColor="@color/white"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>

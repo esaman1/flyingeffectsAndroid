@@ -44,6 +44,7 @@ import com.flyingeffects.com.manager.SPHelper;
 import com.flyingeffects.com.manager.SituationTimer;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.ShowPraiseModel;
+import com.flyingeffects.com.ui.view.fragment.DressUpFragment;
 import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
 import com.flyingeffects.com.ui.view.fragment.frag_Bj;
 import com.flyingeffects.com.ui.view.fragment.frag_message;
@@ -533,7 +534,7 @@ public class HomeMainActivity extends FragmentActivity {
     private frag_Bj menu0F = null;
     private FragForTemplate menu1F = null;
     //    private frag_search menu2F = null;
-    private frag_message menu2F = null;
+    private DressUpFragment menu2F = null;
     private frag_user_center menu3F = null;
 
     private void openMenu(int which) {
@@ -562,7 +563,7 @@ public class HomeMainActivity extends FragmentActivity {
                 }
                 case 2: {
                     if (menu2F == null) {
-                        menu2F = new frag_message();
+                        menu2F = new DressUpFragment();
                     }
                     fragmentTransaction.replace(R.id.fl_show, menu2F, menu2F.getClass().getName()).commitAllowingStateLoss();
                     break;

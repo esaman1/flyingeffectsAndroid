@@ -57,7 +57,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     @BindView(R.id.lin_show_nodata)
     LinearLayout lin_show_nodata;
     /**
-     * 0 表示来做模板，1表示来自背景 3表示来自背景下载
+     * 0 表示来做模板，1表示来自背景 3表示来自背景下载  4表示换脸
      */
     private int fromType;
     private int intoTiktokClickPosition;

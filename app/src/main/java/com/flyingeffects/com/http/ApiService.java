@@ -217,9 +217,6 @@ public interface ApiService {
 
 
 
-    @FormUrlEncoded
-    @POST("/api/mearge/categoryList")
-    Observable<HttpResult<List<new_fag_template_item>>> meargeList(@FieldMap Map<String, String> params);
 
 
 

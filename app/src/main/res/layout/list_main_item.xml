@@ -19,6 +19,9 @@
 
         <include layout="@layout/view_join_us" />
 
+
+        <include layout="@layout/view_add_image" />
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

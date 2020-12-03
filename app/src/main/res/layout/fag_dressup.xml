@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/home_base_balk_color"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:background="@color/home_base_balk_color"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/relative_top"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/strok_search"
+            android:focusable="false"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_search_hint"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:background="@null"
+                android:text="请输入视频关键字"
+                android:gravity="center_vertical"
+                android:paddingStart="40dp"
+                android:textColor="#515151"
+                android:textColorHint="#515151" />
+
+            <ImageView
+                android:layout_width="21dp"
+                android:layout_marginStart="15dp"
+                android:layout_height="21dp"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/search" />
+
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/iv_delete"
+                android:contentDescription="@string/app_name"
+                android:padding="5dp"
+                android:layout_width="30dp"
+                android:layout_marginEnd="15dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/serach_delete" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+
+    <com.flyco.tablayout.SlidingTabLayout
+        android:id="@+id/tl_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginBottom="7dp"
+        app:tl_indicator_color="#5694FA"
+        app:tl_indicator_corner_radius="@dimen/dp_5"
+        app:tl_indicator_height="@dimen/dp_4"
+        app:tl_indicator_margin_left="6dp"
+        app:tl_indicator_margin_right="6dp"
+        app:tl_tab_padding="10dp"
+        app:tl_textAllCaps="true"
+        app:tl_textBold="BOTH"
+        app:tl_textSelectColor="#FFFFFF"
+        app:tl_textUnselectColor="#BBBBBB"
+        app:tl_textsize="@dimen/sp_16" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewpager_bj"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp" />
+
+</LinearLayout>
