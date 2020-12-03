@@ -32,7 +32,7 @@ public class home_fag_itemMvpModel {
     private boolean isRefresh = true;
     private ArrayList<new_fag_template_item> listData = new ArrayList<>();
     private int selectPage = 1;
-    private String templateId;
+    private String templateId,tc_id;
     private int perPageCount=10;
     /**
      * 1是模板 2是背景
@@ -52,19 +52,12 @@ public class home_fag_itemMvpModel {
 
 
 
-    public void requestData(String templateId, int num) {
+    public void requestData(String templateId, String tc_id,int num) {
         this.templateId = templateId;
-//        if (num == 0) {
-//            List<new_fag_template_item> data = Hawk.get("FagData"); //得到banner缓存数据
-//            if (data != null && data.size() > 0) {
-//                listData.addAll(data);
-//                callback.showData(listData);
-//            }
-//            requestFagData(false, true); //首页杂数据
-//        } else {
-            requestFagData(false, true); //首页杂数据
-        }
-//    }
+        this.tc_id = tc_id;
+        //首页杂数据
+        requestFagData(false, true);
+    }
 
 
 
@@ -96,11 +89,12 @@ public class home_fag_itemMvpModel {
         HashMap<String, String> params = new HashMap<>();
         LogUtil.d("templateId", "templateId=" + templateId);
         params.put("category_id", templateId);
-        params.put("template_type", template_type+"");
+        params.put("template_type","1");
+        params.put("tc_id", tc_id);
+        params.put("search","");
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
         Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
-//        LogUtil.d("sigin",BaseConstans.getRequestHead(params).toString());
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
             @Override
             protected void _onError(String message) {

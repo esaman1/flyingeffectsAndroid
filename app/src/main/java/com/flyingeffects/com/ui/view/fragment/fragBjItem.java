@@ -2,10 +2,6 @@ package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -46,6 +42,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import butterknife.BindView;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
@@ -92,6 +90,7 @@ public class fragBjItem extends BaseFragment {
     private FeedAdManager mAdManager;
 
     private int intoTiktokClickPosition;
+    String tc_id ="";
 
 
     @Override
@@ -106,6 +105,7 @@ public class fragBjItem extends BaseFragment {
             templateId = bundle.getString("id");
             fromType = bundle.getInt("from");
             cover = bundle.getString("cover");
+            tc_id = bundle.getString("tc_id");
         }
         EventBus.getDefault().register(this);
         initRecycler();
@@ -237,6 +237,9 @@ public class fragBjItem extends BaseFragment {
         HashMap<String, String> params = new HashMap<>();
         LogUtil.d("templateId", "templateId=" + templateId);
         params.put("category_id", templateId);
+        if (!TextUtils.isEmpty(tc_id)) {
+            params.put("tc_id", tc_id);
+        }
         params.put("template_type", "2");
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");

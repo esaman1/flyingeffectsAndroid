@@ -27,8 +27,8 @@ public class home_fag_itemMvpPresenter extends BasePresenter implements homeItem
     }
 
 
-    public void requestData(String templateId, int num) {
-        homeItemModel.requestData(templateId, num);
+    public void requestData(String templateId, String tc_id,int num) {
+        homeItemModel.requestData(templateId,tc_id, num);
     }
 
     public void initSmartRefreshLayout(SmartRefreshLayout smartRefreshLayout) {

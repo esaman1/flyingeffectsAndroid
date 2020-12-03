@@ -10,14 +10,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
-
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter2;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.commonlyModel.TemplateDown;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.FirstLevelTypeEntity;
 import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.enity.fromKuaishou;
 import com.flyingeffects.com.enity.new_fag_template_item;
@@ -38,14 +36,16 @@ import com.flyingeffects.com.ui.view.activity.TemplateActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
-import com.flyingeffects.com.utils.ToastUtil;
 import com.google.android.material.appbar.AppBarLayout;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -92,7 +92,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
     private static ArrayList<View> listView = new ArrayList<>();
 
 
-    private List<TemplateType> data;
+    private List<FirstLevelTypeEntity> data;
 
 
     private int lastViewPagerChoosePosition;
@@ -144,13 +144,13 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
     String[] titles;
 
     @Override
-    public void setFragmentList(List<TemplateType> data) {
+    public void setFragmentList(List<FirstLevelTypeEntity> data) {
 
         if (getActivity() != null) {
             this.data = data;
             if (data != null && data.size() > 0) {
                 ll_add_child.removeAllViews();
-                TemplateType templateType = new TemplateType();
+                FirstLevelTypeEntity templateType = new FirstLevelTypeEntity();
                 templateType.setId("collect");
                 templateType.setName("收藏");
                 data.add(templateType);
@@ -165,7 +165,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
                     tv.setText(data.get(i).getName());
                     tv.setId(i);
                     tv.setOnClickListener(view1 -> {
-                        TemplateType templateType1 = data.get(view1.getId());
+                        FirstLevelTypeEntity templateType1 = data.get(view1.getId());
                         String str = StringUtil.beanToJSONString(templateType1);
                         LogUtil.d("OMM2", str);
                         try {
@@ -195,14 +195,25 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
                         fragUserCollect.setArguments(bundle);
                         list.add(fragUserCollect);
                     } else {
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("id", data.get(i).getId());
-                        bundle.putSerializable("from", 1);
-                        bundle.putSerializable("num", i);
-                        titles[i] = data.get(i).getName();
-                        fragBjItem fragment = new fragBjItem();
-                        fragment.setArguments(bundle);
-                        list.add(fragment);
+                        if (TextUtils.equals("关注", data.get(i).getName())) {
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("id", data.get(i).getId());
+                            bundle.putSerializable("from", 1);
+                            bundle.putSerializable("num", i);
+                            titles[i] = data.get(i).getName();
+                            fragBjItem fragment = new fragBjItem();
+                            fragment.setArguments(bundle);
+                            list.add(fragment);
+                        } else {
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
+                            bundle.putInt("type",1);
+                            bundle.putSerializable("id",data.get(i).getId());
+                            titles[i] = data.get(i).getName();
+                            SecondaryTypeFragment fragment = new SecondaryTypeFragment();
+                            fragment.setArguments(bundle);
+                            list.add(fragment);
+                        }
                     }
                 }
                 home_vp_frg_adapter2 adapter = new home_vp_frg_adapter2(getFragmentManager(), list);

@@ -73,19 +73,19 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
 
 
     private void requestMainData() {
-        HashMap<String, String> params = new HashMap<>();
-        Observable ob = Api.getDefault().getbackCategoryType(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<TemplateType>>(this) {
-            @Override
-            protected void _onError(String message) {
-                ToastUtil.showToast(message);
-            }
-
-            @Override
-            protected void _onNext(List<TemplateType> data) {
-                setFragmentList(data);
-            }
-        }, "mainData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, true, true, false);
+//        HashMap<String, String> params = new HashMap<>();
+//        Observable ob = Api.getDefault().getbackCategoryType(BaseConstans.getRequestHead(params));
+//        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<TemplateType>>(this) {
+//            @Override
+//            protected void _onError(String message) {
+//                ToastUtil.showToast(message);
+//            }
+//
+//            @Override
+//            protected void _onNext(List<TemplateType> data) {
+//                setFragmentList(data);
+//            }
+//        }, "mainData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, true, true, false);
     }
 
 

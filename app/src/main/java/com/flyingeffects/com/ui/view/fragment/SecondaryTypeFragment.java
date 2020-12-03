@@ -36,6 +36,7 @@ public class SecondaryTypeFragment extends BaseFragment {
     /** 0是模板 1是背景  2是换脸*/
     int type;
     String category_id;
+    int secondaryIndex;
 
     @Override
     protected int getContentLayout() {
@@ -47,6 +48,7 @@ public class SecondaryTypeFragment extends BaseFragment {
         mTypeEntities = (List<SecondaryTypeEntity>) getArguments().getSerializable("secondaryType");
         type = getArguments().getInt("type");
         category_id = getArguments().getString("id");
+        secondaryIndex = getArguments().getInt("secondaryIndex");
     }
 
     @Override
@@ -57,6 +59,8 @@ public class SecondaryTypeFragment extends BaseFragment {
     @Override
     protected void initData() {
         mLLType.removeAllViews();
+        fragments.clear();
+        mTextViews.clear();
         transaction = getChildFragmentManager().beginTransaction();
         //把两种状态一次性添加
         int[][] states = new int[][]{new int[]{-android.R.attr.state_selected}, new int[]{android.R.attr.state_selected}};
@@ -70,11 +74,7 @@ public class SecondaryTypeFragment extends BaseFragment {
             textView.setTextSize(screenUtil.dip2px(getContext(), 4));
             textView.setBackground(getResources().getDrawable(R.drawable.secondary_type_selecrot));
             textView.setGravity(Gravity.CENTER);
-            if (i == 0) {
-                textView.setSelected(true);
-            } else {
-                textView.setSelected(false);
-            }
+            textView.setSelected(false);
             textView.setPadding(screenUtil.dip2px(getContext(), 10), screenUtil.dip2px(getContext(), 3),
                     screenUtil.dip2px(getContext(), 10), screenUtil.dip2px(getContext(), 3));
             textView.setTag(i);
@@ -92,6 +92,9 @@ public class SecondaryTypeFragment extends BaseFragment {
                             mTextViews.get(i).setSelected(false);
                         }
                     }
+                    if (mSelectedListener != null) {
+                        mSelectedListener.typeSelected(index);
+                    }
                 }
             });
             mLLType.addView(textView);
@@ -104,21 +107,43 @@ public class SecondaryTypeFragment extends BaseFragment {
             if (type == 0) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("id", category_id);
-                bundle.putInt("tc_id",mTypeEntities.get(i).getId());
+                bundle.putString("tc_id",mTypeEntities.get(i).getId());
                 bundle.putSerializable("num", i);
                 bundle.putSerializable("from", 0);
                 HomeTemplateItemFragment fragment = new HomeTemplateItemFragment();
                 fragment.setArguments(bundle);
                 fragments.add(fragment);
             } else if (type == 1) {
-
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("id", category_id);
+                bundle.putString("tc_id",mTypeEntities.get(i).getId());
+                bundle.putSerializable("from", 1);
+                bundle.putSerializable("num", i);
+                fragBjItem fragment = new fragBjItem();
+                fragment.setArguments(bundle);
+                fragments.add(fragment);
             } else if (type == 2) {
 
             }
         }
-        if (!fragments.isEmpty()) {
-            transaction.replace(R.id.fl_container, fragments.get(0));
+        if (!fragments.isEmpty()&& !mTextViews.isEmpty()) {
+            transaction.replace(R.id.fl_container, fragments.get(secondaryIndex));
             transaction.commitAllowingStateLoss();
+            mTextViews.get(secondaryIndex).setSelected(true);
         }
+    }
+
+    public interface SecondaryTypeSelectedListener{
+        /**
+         * 选中二级分类的下标
+         * @param pos 位置
+         */
+        void typeSelected(int pos);
+    }
+
+    SecondaryTypeSelectedListener mSelectedListener;
+
+    public void setSelectedListener(SecondaryTypeSelectedListener selectedListener) {
+        mSelectedListener = selectedListener;
     }
 }

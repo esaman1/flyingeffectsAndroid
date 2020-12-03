@@ -90,14 +90,14 @@ public class PreviewUpAndDownMvpModel {
     private SmartRefreshLayout smartRefreshLayout;
     private List<new_fag_template_item> allData;
     private String fromTo;
-    private String category_id;
+    private String category_id,tc_id;
     private TTAdNative mTTAdNative;
     private String soundFolder;
     private String toUserID;
     private String searchText;
     private boolean isCanLoadMore;
 
-    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage, String fromTo, String category_id, String toUserID, String searchText, boolean isCanLoadMore) {
+    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage, String fromTo, String category_id, String toUserID, String searchText, boolean isCanLoadMore,String tc_id) {
         this.context = context;
         this.isCanLoadMore = isCanLoadMore;
         this.selectPage = nowSelectPage;
@@ -109,6 +109,7 @@ public class PreviewUpAndDownMvpModel {
         this.searchText = searchText;
         this.fromTo = fromTo;
         this.category_id = category_id;
+        this.tc_id = tc_id;
         mTTAdNative = TTAdManagerHolder.get().createAdNative(context);
         //在合适的时机申请权限，如read_phone_state,防止获取不了imei时候，下载类广告没有填充的问题
         TTAdManagerHolder.get().requestPermissionIfNecessary(context);
@@ -560,6 +561,9 @@ public class PreviewUpAndDownMvpModel {
         if (!TextUtils.isEmpty(category_id)) {
             params.put("category_id", category_id);
         }
+        if (!TextUtils.isEmpty(tc_id)) {
+            params.put("tc_id", tc_id);
+        }
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
         switch (fromTo) {
@@ -607,13 +611,12 @@ public class PreviewUpAndDownMvpModel {
                 break;
 
             case FromToTemplate.ISSEARCHBJ:
-                params.put("searchText", searchText);
-                params.put("searchText",  searchText);
+                params.put("search", searchText);
                 params.put("template_type", "2");
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
                 break;
             case FromToTemplate.ISSEARCHTEMPLATE:
-                params.put("searchText", searchText);
+                params.put("search", searchText);
                 params.put("template_type", "1");
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
                 break;

@@ -197,13 +197,6 @@ public interface ApiService {
     @POST("/api/mearge/categoryList")
     Observable<HttpResult<List<FirstLevelTypeEntity>>> getCategoryList(@FieldMap Map<String, String> params);
 
-
-    //背景类型
-    @FormUrlEncoded
-    @POST("/api/template/backCategoryList")
-    Observable<HttpResult<List<TemplateType>>> getbackCategoryType(@FieldMap Map<String, String> params);
-
-
     //贴纸列表
     @FormUrlEncoded
     @POST("/api/template/stickerslist")
@@ -211,17 +204,8 @@ public interface ApiService {
 
 
     @FormUrlEncoded
-    @POST("/api/template/templateList")
+    @POST("/api/template/templateListNew")
     Observable<HttpResult<List<new_fag_template_item>>> getTemplate(@FieldMap Map<String, String> params);
-
-
-
-
-    @FormUrlEncoded
-    @POST("/api/mearge/categoryList")
-    Observable<HttpResult<List<new_fag_template_item>>> meargeList(@FieldMap Map<String, String> params);
-
-
 
 
     @FormUrlEncoded

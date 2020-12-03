@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
+import com.flyingeffects.com.enity.FirstLevelTypeEntity;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AdConfigs;
@@ -71,15 +72,16 @@ public class FagBjMvpModel {
 
     private void requestMainData(boolean isShowDialog) {
         HashMap<String, String> params = new HashMap<>();
-        Observable ob = Api.getDefault().getbackCategoryType(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<TemplateType>>(context) {
+        params.put("type","2");
+        Observable ob = Api.getDefault().getCategoryList(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<FirstLevelTypeEntity>>(context) {
             @Override
             protected void _onError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(List<TemplateType> data) {
+            protected void _onNext(List<FirstLevelTypeEntity> data) {
                 callback.setFragmentList(data);
             }
         }, "bjHeadData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, true, true, isShowDialog);

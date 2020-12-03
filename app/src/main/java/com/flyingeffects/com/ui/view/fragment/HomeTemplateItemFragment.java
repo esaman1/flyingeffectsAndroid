@@ -49,7 +49,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     RecyclerView recyclerView;
     private main_recycler_adapter adapter;
     private List<new_fag_template_item> allData = new ArrayList<>();
-    private String category_id = "";
+    private String category_id = "",tc_id ="";
     private StaggeredGridLayoutManager layoutManager;
     private int actTag;
     @BindView(R.id.smart_refresh_layout)
@@ -74,6 +74,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             category_id = bundle.getString("id");
+            tc_id = bundle.getString("tc_id");
             actTag = bundle.getInt("num");
             fromType = bundle.getInt("from");
         }
@@ -85,7 +86,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
 
         if (getActivity() != null) {
             if (NetworkUtils.isNetworkAvailable(getActivity())) {
-                Presenter.requestData(category_id, actTag);
+                Presenter.requestData(category_id, tc_id,actTag);
             }
         }
     }
@@ -119,6 +120,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                     ListForUpAndDown listForUpAndDown = new ListForUpAndDown(data);
                     intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
                     intent.putExtra("category_id", category_id);//直接存入被序列化的对象实例
+                    intent.putExtra("tc_id",tc_id);
                     intent.putExtra("position", intoTiktokClickPosition);
                     int selectPage = Presenter.getselectPage();
                     intent.putExtra("nowSelectPage", selectPage);
@@ -147,14 +149,6 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     }
 
 
-
-
-
-
-
-
-
-
     @Override
     protected void initAction() {
     }
@@ -172,7 +166,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
         if (getActivity() != null) {
             if (allData == null || allData.size() == 0) {
                 LogUtil.d("OOM", "allData==null");
-                Presenter.requestData(category_id, actTag);
+                Presenter.requestData(category_id,tc_id, actTag);
             } else {
                 LogUtil.d("OOM", "allData!=null");
             }

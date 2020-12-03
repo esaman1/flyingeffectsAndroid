@@ -223,11 +223,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
         //种类
         String category_id = getIntent().getStringExtra("category_id");
+        String tc_id = getIntent().getStringExtra("tc_id");
         templateId = templateItem.getId() + "";
         //需要得到之前allData 已经滑到的页数和分类的类别以及是模板页面或者背景页面等
         int nowSelectPage = getIntent().getIntExtra("nowSelectPage", 1);
         nowPraise = templateItem.getIs_praise();
-        mMvpPresenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, keepOldFrom, category_id, toUserID, searchText, isCanLoadMore);
+        mMvpPresenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, keepOldFrom, category_id, toUserID, searchText, isCanLoadMore,tc_id);
         mMvpPresenter.initSmartRefreshLayout(smartRefreshLayout);
         if (isCanLoadMore) {
             if (nowChoosePosition >= allData.size() - 2) {

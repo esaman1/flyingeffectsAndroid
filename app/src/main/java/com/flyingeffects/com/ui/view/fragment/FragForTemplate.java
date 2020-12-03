@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.TextView;
 
@@ -28,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +50,7 @@ import rx.Observable;
  * 时间：2018/4/24
  **/
 
-public class FragForTemplate extends BaseFragment implements home_fagMvpView {
+public class FragForTemplate extends BaseFragment implements home_fagMvpView, SecondaryTypeFragment.SecondaryTypeSelectedListener {
 
     home_fagMvpPresenter Presenter;
     @BindView(R.id.tl_tabs)
@@ -65,6 +67,8 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
     private int nowChooseIndex;
     private ArrayList<String> listSearchKey = new ArrayList<>();
     int listSearchKeyIndex = 0;
+    /**二级分类选中的下标*/
+    int secondaryIndex =0;
 
 
     @Override
@@ -121,12 +125,31 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
                     bundle.putInt("type",0);
+                    bundle.putSerializable("id",data.get(i).getId());
+                    bundle.putInt("secondaryIndex",secondaryIndex);
                     titles[i] = data.get(i).getName();
                     SecondaryTypeFragment fragment = new SecondaryTypeFragment();
+                    fragment.setSelectedListener(this);
                     fragment.setArguments(bundle);
                     list.add(fragment);
                 }
                 home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
+                viewpager.setOffscreenPageLimit(data.size());
+                if (viewpager.getAdapter() != null) {
+                    Class<? extends FragmentManager> aClass = getChildFragmentManager().getClass();
+                    try {
+                        Field f = aClass.getDeclaredField("mAdded");
+                        f.setAccessible(true);
+                        ArrayList<Fragment> list1 = (ArrayList) f.get(getChildFragmentManager());
+                        list1.clear();
+                        f = aClass.getDeclaredField("mActive");
+                        f.setAccessible(true);
+                        SparseArray<Fragment> array = (SparseArray) f.get(getChildFragmentManager());
+                        array.clear();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 viewpager.setAdapter(adapter);
                 viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
@@ -236,6 +259,11 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                 });
             }
         }, 0, 8, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public void typeSelected(int pos) {
+        secondaryIndex = pos;
     }
 }
 
