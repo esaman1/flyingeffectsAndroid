@@ -217,6 +217,13 @@ public interface ApiService {
 
 
     @FormUrlEncoded
+    @POST("/api/mearge/categoryList")
+    Observable<HttpResult<List<new_fag_template_item>>> meargeList(@FieldMap Map<String, String> params);
+
+
+
+
+    @FormUrlEncoded
     @POST("/api/photo/photoList")
     Observable<HttpResult<List<new_fag_template_item>>> photoList(@FieldMap Map<String, String> params);
 
