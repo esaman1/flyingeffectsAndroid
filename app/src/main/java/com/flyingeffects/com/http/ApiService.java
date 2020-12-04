@@ -6,6 +6,7 @@ import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.enity.FirstLevelTypeEntity;
 import com.flyingeffects.com.enity.FontEnity;
 import com.flyingeffects.com.enity.HttpResult;
+import com.flyingeffects.com.enity.HumanMerageResult;
 import com.flyingeffects.com.enity.MessageData;
 import com.flyingeffects.com.enity.MineCommentEnity;
 import com.flyingeffects.com.enity.MineZanEnity;
@@ -324,4 +325,18 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/template/userList")
     Observable<HttpResult<List<SearchUserEntity>>> getSearchUserList(@FieldMap Map<String,String> params);
+
+
+
+    /**融合api*/
+    @FormUrlEncoded
+    @POST("/api/mearge/meargeHuman")
+    Observable<HttpResult<String>> meargeHuman(@FieldMap Map<String,String> params);
+
+
+    /**融合api*/
+    @FormUrlEncoded
+    @POST("/api/mearge/humanMerageResult")
+    Observable<HttpResult<List<HumanMerageResult>>> humanMerageResult(@FieldMap Map<String,String> params);
+
 }
