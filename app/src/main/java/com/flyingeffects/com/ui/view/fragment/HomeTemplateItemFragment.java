@@ -101,7 +101,6 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
-
                 if(allData.get(position).getIs_ad_recommend()==1){
                     String url = allData.get(position).getRemark();
 //                    String url = "http://transaction.chucitech.cn//#/index/?appid=76&NTExchange=true";
@@ -124,7 +123,11 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                     intent.putExtra("position", intoTiktokClickPosition);
                     int selectPage = Presenter.getselectPage();
                     intent.putExtra("nowSelectPage", selectPage);
-                    intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
+                    if(fromType==4){
+                        intent.putExtra("fromTo", FromToTemplate.DRESSUP);
+                    }else{
+                        intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
+                    }
                     startActivity(intent);
                 }
             }

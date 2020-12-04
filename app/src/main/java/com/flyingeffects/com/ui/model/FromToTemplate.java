@@ -44,6 +44,8 @@ public class FromToTemplate {
     public static final String ISSEARCHTEMPLATE = "ISSEARCHTEMPLATE";
     //影集
     public static final String PICTUREALBUM = "PICTUREALBUM";
+    //换装
+    public static final String DRESSUP = "DRESSUP";
 
 
 }

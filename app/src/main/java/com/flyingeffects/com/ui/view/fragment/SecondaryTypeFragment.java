@@ -19,6 +19,7 @@ import java.util.List;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+
 import butterknife.BindView;
 
 /**
@@ -34,7 +35,9 @@ public class SecondaryTypeFragment extends BaseFragment {
     FragmentTransaction transaction;
     ArrayList<Fragment> fragments = new ArrayList<>();
     List<TextView> mTextViews = new ArrayList<>();
-    /** 0是模板 1是背景  2是换脸*/
+    /**
+     * 0是模板 1是背景  2是换脸
+     */
     int type;
     String category_id;
 
@@ -64,7 +67,7 @@ public class SecondaryTypeFragment extends BaseFragment {
         //把两种状态一次性添加
         int[][] states = new int[][]{new int[]{-android.R.attr.state_selected}, new int[]{android.R.attr.state_selected}};
         //把两种颜色一次性添加
-        int[] colors = new int[]{Color.parseColor("#787878"),Color.parseColor("#46AAFF")};
+        int[] colors = new int[]{Color.parseColor("#787878"), Color.parseColor("#46AAFF")};
         ColorStateList colorStateList = new ColorStateList(states, colors);
         for (int i = 0; i < mTypeEntities.size(); i++) {
             TextView textView = new TextView(getContext());

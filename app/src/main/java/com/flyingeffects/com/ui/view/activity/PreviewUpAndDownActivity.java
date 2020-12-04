@@ -248,6 +248,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     break;
 
                 case R.id.tv_make:
+
+
                     toClickMake();
                     break;
 
@@ -891,6 +893,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     adapter.pauseVideo();
                     mMvpPresenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
                 }
+                break;
+            case FromToTemplate.DRESSUP:
+                mMvpPresenter.toDressUp();
+
                 break;
             default:
                 break;

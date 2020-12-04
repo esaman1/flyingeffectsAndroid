@@ -214,6 +214,7 @@ public interface ApiService {
 
 
 
+
     @FormUrlEncoded
     @POST("/api/photo/photoList")
     Observable<HttpResult<List<new_fag_template_item>>> photoList(@FieldMap Map<String, String> params);
