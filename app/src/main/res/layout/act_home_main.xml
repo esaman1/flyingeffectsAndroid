@@ -5,10 +5,10 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <FrameLayout
-        android:id="@+id/fl_show"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+    <com.flyingeffects.com.view.NoSlidingViewPager
+        android:id="@+id/viewpager_home"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginBottom="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,7 +23,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/iv_back_menu_1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fl_show" />
+        app:layout_constraintTop_toBottomOf="@id/viewpager_home" />
 
 <!--    <ImageView-->
 <!--        android:id="@+id/iv_menu_0"-->
@@ -47,7 +47,7 @@
         app:layout_constraintBottom_toBottomOf="@id/iv_back_menu_0"
         app:layout_constraintEnd_toEndOf="@id/iv_back_menu_0"
         app:layout_constraintStart_toStartOf="@id/iv_back_menu_0"
-        app:layout_constraintTop_toBottomOf="@id/fl_show"
+        app:layout_constraintTop_toBottomOf="@id/viewpager_home"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <ImageView
@@ -59,7 +59,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/iv_back_menu_2"
         app:layout_constraintStart_toEndOf="@id/iv_back_menu_0"
-        app:layout_constraintTop_toBottomOf="@id/fl_show" />
+        app:layout_constraintTop_toBottomOf="@id/viewpager_home" />
 
 <!--    <ImageView-->
 <!--        android:id="@+id/iv_menu_1"-->
@@ -83,7 +83,7 @@
         app:layout_constraintBottom_toBottomOf="@id/iv_back_menu_1"
         app:layout_constraintEnd_toEndOf="@id/iv_back_menu_1"
         app:layout_constraintStart_toStartOf="@id/iv_back_menu_1"
-        app:layout_constraintTop_toBottomOf="@id/fl_show"
+        app:layout_constraintTop_toBottomOf="@id/viewpager_home"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <ImageView
@@ -95,7 +95,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/iv_back_menu_3"
         app:layout_constraintStart_toEndOf="@id/iv_back_menu_1"
-        app:layout_constraintTop_toBottomOf="@id/fl_show" />
+        app:layout_constraintTop_toBottomOf="@id/viewpager_home" />
 
 <!--    <ImageView-->
 <!--        android:id="@+id/iv_menu_2"-->
@@ -119,7 +119,7 @@
         app:layout_constraintBottom_toBottomOf="@id/iv_back_menu_2"
         app:layout_constraintEnd_toEndOf="@id/iv_back_menu_2"
         app:layout_constraintStart_toStartOf="@id/iv_back_menu_2"
-        app:layout_constraintTop_toBottomOf="@id/fl_show"
+        app:layout_constraintTop_toBottomOf="@id/viewpager_home"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <ImageView
@@ -131,7 +131,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/iv_back_menu_2"
-        app:layout_constraintTop_toBottomOf="@id/fl_show" />
+        app:layout_constraintTop_toBottomOf="@id/viewpager_home" />
 
 <!--    <ImageView-->
 <!--        android:id="@+id/iv_menu_3"-->
@@ -155,14 +155,14 @@
         app:layout_constraintBottom_toBottomOf="@id/iv_back_menu_3"
         app:layout_constraintEnd_toEndOf="@id/iv_back_menu_3"
         app:layout_constraintStart_toStartOf="@id/iv_back_menu_3"
-        app:layout_constraintTop_toBottomOf="@id/fl_show"
+        app:layout_constraintTop_toBottomOf="@id/viewpager_home"
         app:layout_constraintVertical_chainStyle="packed" />
 
 
     <View
         android:id="@+id/view_line"
         android:background="#1D1D1D"
-        app:layout_constraintBottom_toBottomOf="@id/fl_show"
+        app:layout_constraintBottom_toBottomOf="@id/viewpager_home"
         app:layout_constraintLeft_toRightOf="@+id/tv_main_2"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_width="match_parent"

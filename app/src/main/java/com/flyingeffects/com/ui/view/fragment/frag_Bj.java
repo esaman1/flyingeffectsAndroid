@@ -10,13 +10,14 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.flyco.tablayout.SlidingTabLayout;
+import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter2;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.commonlyModel.TemplateDown;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.FirstLevelTypeEntity;
-import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.enity.fromKuaishou;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
@@ -65,8 +66,8 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
     @BindView(R.id.viewpager)
     ViewPager viewPager;
 
-    @BindView(R.id.ll_add_child)
-    LinearLayout ll_add_child;
+    @BindView(R.id.tl_tabs_bj)
+    SlidingTabLayout tl_tabs_bj;
 
 
     @BindView(R.id.ll_expand)
@@ -87,9 +88,6 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
 
     private FagBjMvpPresenter presenter;
     public final static int SELECTALBUM = 1;
-
-    private static ArrayList<TextView> listTv = new ArrayList<>();
-    private static ArrayList<View> listView = new ArrayList<>();
 
 
     private List<FirstLevelTypeEntity> data;
@@ -149,71 +147,26 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
         if (getActivity() != null) {
             this.data = data;
             if (data != null && data.size() > 0) {
-                ll_add_child.removeAllViews();
-                FirstLevelTypeEntity templateType = new FirstLevelTypeEntity();
-                templateType.setId("collect");
-                templateType.setName("收藏");
-                data.add(templateType);
-                listView.clear();
-                listTv.clear();
                 list.clear();
                 titles = new String[data.size()];
                 for (int i = 0; i < data.size(); i++) {
-                    View view = LayoutInflater.from(getActivity()).inflate(R.layout.view_bj_head, null);
-                    TextView tv = view.findViewById(R.id.tv_name_bj_head);
-                    View view_line = view.findViewById(R.id.view_line_head);
-                    tv.setText(data.get(i).getName());
-                    tv.setId(i);
-                    tv.setOnClickListener(view1 -> {
-                        FirstLevelTypeEntity templateType1 = data.get(view1.getId());
-                        String str = StringUtil.beanToJSONString(templateType1);
-                        LogUtil.d("OMM2", str);
-                        try {
-                            int id = Integer.parseInt(templateType1.getId());
-                            LogUtil.d("OMM2", "id=" + id);
-                            if (id != 10000) {
-                                showWitchBtn(view1.getId());
-                            } else {
-                                startActivity(new Intent(getActivity(), ContentAllianceActivity.class));
-                            }
-                        } catch (Exception e) {
-                            showWitchBtn(view1.getId());
-                        }
-                    });
-
-                    listTv.add(tv);
-                    listView.add(view_line);
-
-                    ll_add_child.addView(view);
                     titles[i] = data.get(i).getName();
-                    if (i == data.size() - 1) {
-                        //手动添加收藏模板
+                    if (TextUtils.equals("关注", data.get(i).getName()) || TextUtils.equals("收藏", data.get(i).getName())) {
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable("template_type", "2");
-                        titles[i] = data.get(i).getName();
-                        frag_user_collect fragUserCollect = new frag_user_collect();
-                        fragUserCollect.setArguments(bundle);
-                        list.add(fragUserCollect);
+                        bundle.putSerializable("id", data.get(i).getId());
+                        bundle.putSerializable("from", 1);
+                        bundle.putSerializable("num", i);
+                        fragBjItem fragment = new fragBjItem();
+                        fragment.setArguments(bundle);
+                        list.add(fragment);
                     } else {
-                        if (TextUtils.equals("关注", data.get(i).getName())) {
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable("id", data.get(i).getId());
-                            bundle.putSerializable("from", 1);
-                            bundle.putSerializable("num", i);
-                            titles[i] = data.get(i).getName();
-                            fragBjItem fragment = new fragBjItem();
-                            fragment.setArguments(bundle);
-                            list.add(fragment);
-                        } else {
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
-                            bundle.putInt("type",1);
-                            bundle.putSerializable("id",data.get(i).getId());
-                            titles[i] = data.get(i).getName();
-                            SecondaryTypeFragment fragment = new SecondaryTypeFragment();
-                            fragment.setArguments(bundle);
-                            list.add(fragment);
-                        }
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
+                        bundle.putInt("type", 1);
+                        bundle.putSerializable("id", data.get(i).getId());
+                        SecondaryTypeFragment fragment = new SecondaryTypeFragment();
+                        fragment.setArguments(bundle);
+                        list.add(fragment);
                     }
                 }
                 home_vp_frg_adapter2 adapter = new home_vp_frg_adapter2(getFragmentManager(), list);
@@ -249,11 +202,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
                         LogUtil.d("OOM", "i=" + i);
                     }
                 });
-
-                if (data.size() > 0) {
-                    new Handler().postDelayed(() -> showWitchBtn(0), 500);
-                }
-
+                tl_tabs_bj.setViewPager(viewPager, titles);
             }
         }
     }
@@ -320,21 +269,6 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
     }
 
     private void showWitchBtn(int showWitch) {
-        for (int i = 0; i < listTv.size(); i++) {
-            TextView tv = listTv.get(i);
-            View view = listView.get(i);
-            if (i == showWitch) {
-                tv.setTextSize(21);
-                int width = tv.getWidth();
-                view.setVisibility(View.VISIBLE);
-                setViewWidth(view, width);
-            } else {
-                tv.setTextSize(17);
-                view.setVisibility(View.INVISIBLE);
-
-
-            }
-        }
         if (titles != null) {
             statisticsEventAffair.getInstance().setFlag(getActivity(), "13_back_tab_click", titles[showWitch]);
         }

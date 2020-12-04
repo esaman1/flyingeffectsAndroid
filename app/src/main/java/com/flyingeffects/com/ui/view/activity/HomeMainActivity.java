@@ -24,6 +24,7 @@ import com.bytedance.applog.util.UriConfig;
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
 import com.chuanglan.shanyan_sdk.listener.GetPhoneInfoListener;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -56,6 +57,7 @@ import com.flyingeffects.com.utils.NoDoubleClickListener;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
+import com.flyingeffects.com.view.NoSlidingViewPager;
 import com.githang.statusbar.StatusBarCompat;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.videoeditor.LanSongFileUtil;
@@ -81,6 +83,7 @@ import java.util.TimerTask;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -106,12 +109,13 @@ public class HomeMainActivity extends FragmentActivity {
     private final int[] tv_main_button = {R.id.tv_main_0, R.id.tv_main_1, R.id.tv_main_2, R.id.tv_main_3};
 //    private int[] selectIconArr = {R.mipmap.home_bj, R.mipmap.moban, R.mipmap.chazhao, R.mipmap.wode};
 //    private int[] unSelectIconArr = {R.mipmap.home_bj_unselect, R.mipmap.moban_unslect, R.mipmap.chazhao_unselect, R.mipmap.wode_unselect};
-    private FragmentManager fragmentManager;
+
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private Timer timer;
     private TimerTask task;
     private SituationTimer situationTimer;
     private TextView message_count;
+    private NoSlidingViewPager viewpager_home;
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -124,13 +128,13 @@ public class HomeMainActivity extends FragmentActivity {
         setContentView(R.layout.act_home_main);
         EventBus.getDefault().register(this);
         message_count = findViewById(R.id.message_count);
+        viewpager_home = findViewById(R.id.viewpager_home);
         StatusBarCompat.setStatusBarColor(this, Color.parseColor("#181818"));
         ThisMain = this;
         final ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
-        fragmentManager = getSupportFragmentManager();
         clearAllData();
         initView();
         copyFile("default_bj.png");
@@ -394,13 +398,19 @@ public class HomeMainActivity extends FragmentActivity {
 
     public void initView() {
         for (int i = 0; i < mIvMenuBack.length; i++) {
-//            mIvMenu[i] = findViewById(img_Id[i]);
             mIvMenuBack[i] = findViewById(mImBackId[i]);
             tv_main[i] = findViewById(tv_main_button[i]);
-            //lin_menu[i] = findViewById(lin_Id[i]);
-//            mIvMenu[i].setOnClickListener(listener);
             mIvMenuBack[i].setOnClickListener(listener);
         }
+        List<Fragment> fragments = new ArrayList<>();
+        fragments.add(new frag_Bj());
+        fragments.add(new FragForTemplate());
+        fragments.add(new DressUpFragment());
+        menu3F = new frag_user_center();
+        fragments.add(menu3F);
+        home_vp_frg_adapter adapter = new home_vp_frg_adapter(getSupportFragmentManager(),fragments);
+        viewpager_home.setAdapter(adapter);
+        viewpager_home.setOffscreenPageLimit(3);
         whichMenuSelect(1);
     }
 
@@ -531,56 +541,11 @@ public class HomeMainActivity extends FragmentActivity {
         MobclickAgent.onPause(this);
     }
 
-    private frag_Bj menu0F = null;
-    private FragForTemplate menu1F = null;
-    //    private frag_search menu2F = null;
-    private DressUpFragment menu2F = null;
     private frag_user_center menu3F = null;
 
     private void openMenu(int which) {
         setStatusBar();
-        if (fragmentManager != null) {
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            switch (which) {
-                case 0: {
-                    if (menu0F == null) {
-                        menu0F = new frag_Bj();
-                    }
-                    if (!menu0F.isAdded() && !menu0F.isVisible() && !menu0F.isRemoving()) {
-                        fragmentTransaction.replace(R.id.fl_show, menu0F, menu0F.getClass().getName()).commitAllowingStateLoss();
-                    }
-                    break;
-                }
-                case 1: {
-                    if (menu1F == null) {
-                        menu1F = new FragForTemplate();
-                    }
-
-                    if (!menu1F.isAdded() && !menu1F.isVisible() && !menu1F.isRemoving()) {
-                        fragmentTransaction.replace(R.id.fl_show, menu1F, menu1F.getClass().getName()).commitAllowingStateLoss();
-                    }
-                    break;
-                }
-                case 2: {
-                    if (menu2F == null) {
-                        menu2F = new DressUpFragment();
-                    }
-                    fragmentTransaction.replace(R.id.fl_show, menu2F, menu2F.getClass().getName()).commitAllowingStateLoss();
-                    break;
-                }
-                case 3: {
-                    if (menu3F == null) {
-                        menu3F = new frag_user_center();
-                    }
-                    fragmentTransaction.replace(R.id.fl_show, menu3F, menu3F.getClass().getName()).commitAllowingStateLoss();
-                    break;
-                }
-                default:
-                    break;
-            }
-        }
-
-
+        viewpager_home.setCurrentItem(which);
     }
 
     @Override

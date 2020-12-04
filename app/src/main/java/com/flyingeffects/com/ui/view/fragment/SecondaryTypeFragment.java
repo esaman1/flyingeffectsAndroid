@@ -37,7 +37,6 @@ public class SecondaryTypeFragment extends BaseFragment {
     /** 0是模板 1是背景  2是换脸*/
     int type;
     String category_id;
-    int secondaryIndex;
 
     @Override
     protected int getContentLayout() {
@@ -49,7 +48,6 @@ public class SecondaryTypeFragment extends BaseFragment {
         mTypeEntities = (List<SecondaryTypeEntity>) getArguments().getSerializable("secondaryType");
         type = getArguments().getInt("type");
         category_id = getArguments().getString("id");
-        secondaryIndex = getArguments().getInt("secondaryIndex");
     }
 
     @Override
@@ -93,9 +91,6 @@ public class SecondaryTypeFragment extends BaseFragment {
                             mTextViews.get(i).setSelected(false);
                         }
                     }
-                    if (mSelectedListener != null) {
-                        mSelectedListener.typeSelected(index);
-                    }
                 }
             });
             mLLType.addView(textView);
@@ -135,23 +130,9 @@ public class SecondaryTypeFragment extends BaseFragment {
             }
         }
         if (!fragments.isEmpty()&& !mTextViews.isEmpty()) {
-            transaction.replace(R.id.fl_container, fragments.get(secondaryIndex));
+            transaction.replace(R.id.fl_container, fragments.get(0));
             transaction.commitAllowingStateLoss();
-            mTextViews.get(secondaryIndex).setSelected(true);
+            mTextViews.get(0).setSelected(true);
         }
-    }
-
-    public interface SecondaryTypeSelectedListener{
-        /**
-         * 选中二级分类的下标
-         * @param pos 位置
-         */
-        void typeSelected(int pos);
-    }
-
-    SecondaryTypeSelectedListener mSelectedListener;
-
-    public void setSelectedListener(SecondaryTypeSelectedListener selectedListener) {
-        mSelectedListener = selectedListener;
     }
 }

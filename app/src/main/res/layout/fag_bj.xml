@@ -231,22 +231,27 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="50dp"
             android:background="#181818">
 
-            <HorizontalScrollView
+            <com.flyco.tablayout.SlidingTabLayout
+                android:id="@+id/tl_tabs_bj"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="center"
-               >
-
-                <LinearLayout
-                    android:id="@+id/ll_add_child"
-                    android:layout_width="wrap_content"
-                    android:layout_height="80dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal" />
-            </HorizontalScrollView>
+                android:layout_marginStart="8dp"
+                android:paddingRight="20dp"
+                app:tl_indicator_color="#5694FA"
+                app:tl_indicator_corner_radius="@dimen/dp_5"
+                app:tl_indicator_height="@dimen/dp_4"
+                app:tl_indicator_margin_left="6dp"
+                app:tl_indicator_margin_right="6dp"
+                app:tl_indicator_margin_bottom="8dp"
+                app:tl_tab_padding="10dp"
+                app:tl_textAllCaps="true"
+                app:tl_textBold="BOTH"
+                app:tl_textSelectColor="#FFFFFF"
+                app:tl_textUnselectColor="#BBBBBB"
+                app:tl_textsize="@dimen/sp_16" />
 
 
             <ImageView

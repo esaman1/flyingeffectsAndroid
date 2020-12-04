@@ -16,7 +16,7 @@ public class home_vp_frg_adapter extends FragmentPagerAdapter {
     private FragmentManager fm;
 
     public home_vp_frg_adapter(FragmentManager fm, List<Fragment> list) {
-        super(fm);
+        super(fm,FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         this.fm = fm;
         this.list = list;
     }
