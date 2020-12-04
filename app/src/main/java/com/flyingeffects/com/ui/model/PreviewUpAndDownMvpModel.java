@@ -43,12 +43,14 @@ import com.flyingeffects.com.manager.ZipFileHelperManager;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
+import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.ReportActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.utils.UpdateFileUtils;
 import com.flyingeffects.com.utils.screenUtil;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -620,6 +622,14 @@ public class PreviewUpAndDownMvpModel {
                 params.put("template_type", "1");
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
                 break;
+
+            case FromToTemplate.DRESSUP:
+                params.put("search", searchText);
+                params.put("template_type", "3");
+                ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
+                break;
+
+
             default:
                 break;
         }
@@ -697,6 +707,7 @@ public class PreviewUpAndDownMvpModel {
         params.put("template_type", template_type);
         // 启动时间
         Observable ob = Api.getDefault().newCollection(BaseConstans.getRequestHead(params));
+        LogUtil.d("OOM2","xx="+StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
             @Override
             protected void _onError(String message) {
@@ -1144,4 +1155,20 @@ public class PreviewUpAndDownMvpModel {
 //            recyclerViewComment.setAdapter(adapter);
 //        }
 //    }
+
+
+
+    /**
+     * description ：换装
+     * creation date: 2020/12/3
+     * user : zhangtongju
+     */
+    public void toDressUp(){
+
+
+
+
+//        UpdateFileUtils.uploadFile();
+
+    }
 }

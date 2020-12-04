@@ -22,6 +22,10 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
         previewUpAndDownMvpModel = new PreviewUpAndDownMvpModel(context, this,allData,nowSelectPage,fromTo,templateId,toUserID,searchText,isCanLoadMore,tc_id);
     }
 
+    public void toDressUp(){
+        previewUpAndDownMvpModel.toDressUp();
+    }
+
 
     public void downZip(String url,String zipPid){
         previewUpAndDownMvpModel.prepareDownZip(url,zipPid);
