@@ -3,12 +3,14 @@ package com.flyingeffects.com.ui.view.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -46,6 +48,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.UCropOption;
+import com.flyingeffects.com.utils.screenUtil;
 import com.lansosdk.videoeditor.LanSongFileUtil;
 import com.orhanobut.hawk.Hawk;
 import com.shixing.sxve.ui.view.WaitingDialog;
@@ -123,6 +126,8 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     LinearLayout mLLInfoRelated;
     @BindView(R.id.ll_no_login_info)
     LinearLayout mLLNoLoginInfo;
+    @BindView(R.id.scrollView_user)
+    ScrollView mScrollViewUser;
 
 
     private UCrop.Options options;
@@ -150,7 +155,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
     @Override
     protected void initAction() {
-        initTabData();
+       initTabData();
     }
 
     @Override
@@ -196,7 +201,6 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
         super.onPause();
     }
 
-
     private void initTabData() {
         FragmentManager manager = getChildFragmentManager();
         ArrayList<Fragment> list = new ArrayList<>();
@@ -235,6 +239,16 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
             }
         });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mScrollViewUser.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+                @Override
+                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                    if (scrollY >= screenUtil.dip2px(getContext(), 142)) {
+                        mScrollViewUser.scrollTo(0, screenUtil.dip2px(getContext(), 142));
+                    }
+                }
+            });
+        }
         tabLayout.setViewPager(viewpager, titles);
     }
 

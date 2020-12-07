@@ -2,16 +2,13 @@ package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.flyco.tablayout.SlidingTabLayout;
-import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter2;
 import com.flyingeffects.com.base.BaseFragment;
@@ -36,7 +33,6 @@ import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.StringUtil;
 import com.google.android.material.appbar.AppBarLayout;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
@@ -151,8 +147,8 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
                 titles = new String[data.size()];
                 for (int i = 0; i < data.size(); i++) {
                     titles[i] = data.get(i).getName();
+                    Bundle bundle = new Bundle();
                     if (TextUtils.equals("关注", data.get(i).getName()) || TextUtils.equals("收藏", data.get(i).getName())) {
-                        Bundle bundle = new Bundle();
                         bundle.putSerializable("id", data.get(i).getId());
                         bundle.putSerializable("from", 1);
                         bundle.putSerializable("num", i);
@@ -160,13 +156,23 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
                         fragment.setArguments(bundle);
                         list.add(fragment);
                     } else {
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
-                        bundle.putInt("type", 1);
-                        bundle.putSerializable("id", data.get(i).getId());
-                        SecondaryTypeFragment fragment = new SecondaryTypeFragment();
-                        fragment.setArguments(bundle);
-                        list.add(fragment);
+                        if (data.get(i).getCategory() != null && !data.get(i).getCategory().isEmpty()) {
+                            bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
+                            bundle.putInt("type", 1);
+                            bundle.putSerializable("id", data.get(i).getId());
+                            bundle.putInt("from", 1);
+                            SecondaryTypeFragment fragment = new SecondaryTypeFragment();
+                            fragment.setArguments(bundle);
+                            list.add(fragment);
+                        } else {
+                            bundle.putSerializable("id", data.get(i).getId());
+                            bundle.putString("tc_id", "-1");
+                            bundle.putSerializable("from", 1);
+                            bundle.putSerializable("num", i);
+                            fragBjItem fragment = new fragBjItem();
+                            fragment.setArguments(bundle);
+                            list.add(fragment);
+                        }
                     }
                 }
                 home_vp_frg_adapter2 adapter = new home_vp_frg_adapter2(getFragmentManager(), list);

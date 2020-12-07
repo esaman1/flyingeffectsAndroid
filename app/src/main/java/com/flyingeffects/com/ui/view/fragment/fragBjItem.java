@@ -237,7 +237,7 @@ public class fragBjItem extends BaseFragment {
         HashMap<String, String> params = new HashMap<>();
         LogUtil.d("templateId", "templateId=" + templateId);
         params.put("category_id", templateId);
-        if (!TextUtils.isEmpty(tc_id)) {
+        if (!TextUtils.isEmpty(tc_id) && Integer.parseInt(tc_id) >= 0) {
             params.put("tc_id", tc_id);
         }
         params.put("template_type", "2");

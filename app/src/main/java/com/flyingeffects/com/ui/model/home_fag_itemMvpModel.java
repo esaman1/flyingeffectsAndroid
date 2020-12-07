@@ -13,7 +13,6 @@ import com.flyingeffects.com.ui.interfaces.model.homeItemMvpCallback;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.orhanobut.hawk.Hawk;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -96,7 +95,9 @@ public class home_fag_itemMvpModel {
         }else{
             params.put("template_type","1");
         }
-        params.put("tc_id", tc_id);
+        if (Integer.parseInt(tc_id) >= 0) {
+            params.put("tc_id", tc_id);
+        }
         params.put("search","");
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
