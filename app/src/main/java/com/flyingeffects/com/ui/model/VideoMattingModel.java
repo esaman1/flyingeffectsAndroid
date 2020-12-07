@@ -189,8 +189,8 @@ public class VideoMattingModel {
     private float nowProgressTime;
 
     private void addFrameCompoundVideo() {
-        boolean isMainThread = ThreadJudgeManage.isMainThread();
-        LogUtil.d("OOM2", "当前线程运行在主线程吗？" + isMainThread);
+//        boolean isMainThread = ThreadJudgeManage.isMainThread();
+//        LogUtil.d("OOM2", "当前线程运行在主线程吗？" + isMainThread);
         LogUtil.d("OOM2", "开始合成mask视频");
         nowChooseImageIndex = 0;
         List<File> getMattingList = FileManager.listFileSortByModifyTime(faceMattingFolder);

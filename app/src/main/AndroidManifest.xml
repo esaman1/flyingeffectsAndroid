@@ -109,6 +109,11 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name="com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity"
+            android:screenOrientation="portrait" />
+
+
+        <activity
             android:name="com.flyingeffects.com.ui.view.activity.AdHintActivity"
             android:theme="@style/AllTransparentTheme" />
 

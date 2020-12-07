@@ -1,7 +1,12 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
+
+import butterknife.BindView;
 
 
 /**
@@ -11,6 +16,8 @@ import com.flyingeffects.com.base.BaseActivity;
  */
 public class DressUpPreviewActivity extends BaseActivity {
 
+    @BindView(R.id.iv_show_content)
+    ImageView iv_show_content;
 
 
     @Override
@@ -20,6 +27,8 @@ public class DressUpPreviewActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        String url=getIntent().getStringExtra("url");
+        Glide.with(this).load(url).into(iv_show_content);
 
     }
 

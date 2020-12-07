@@ -17,6 +17,8 @@ import android.provider.MediaStore;
 
 import com.glidebitmappool.GlideBitmapPool;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -168,7 +170,7 @@ public class BitmapUtils
      * creation date: 2020/9/29
      * user : zhangtongju
      */
-    public Bitmap zoomImg2(Bitmap bitmap, int width, int height) {
+    public static Bitmap zoomImg2(Bitmap bitmap, int width, int height) {
         int bmpWidth = bitmap.getWidth();
         int bmpHeight = bitmap.getHeight();
         float needScale;
@@ -200,6 +202,32 @@ public class BitmapUtils
         matrix.postTranslate(tranW, tranH);
         temp_canvas.drawBitmap(bitmap, matrix, new Paint());
         return target;
+    }
+
+
+
+
+    /**
+     * description ：图片压缩 不能超过的大小
+     * creation date: 2020/12/7
+     * user : zhangtongju
+     */
+    public static Bitmap compressBitmap(Bitmap bitmap, long sizeLimit) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        int quality = 100;
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+
+        // 循环判断压缩后图片是否超过限制大小
+        while(baos.toByteArray().length / 1024 > sizeLimit) {
+            // 清空baos
+            baos.reset();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+            quality -= 10;
+        }
+
+        Bitmap newBitmap = BitmapFactory.decodeStream(new ByteArrayInputStream(baos.toByteArray()), null, null);
+
+        return newBitmap;
     }
 
 
