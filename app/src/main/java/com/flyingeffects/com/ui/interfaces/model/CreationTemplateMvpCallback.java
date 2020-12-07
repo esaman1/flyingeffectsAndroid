@@ -51,4 +51,6 @@ public interface CreationTemplateMvpCallback {
 
     void modifyTimeLineSickerPath(String id,String path);
 
+    void stickerFragmentClose();
+
 }

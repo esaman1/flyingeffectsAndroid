@@ -13,6 +13,7 @@ import com.flyingeffects.com.enity.MineZanEnity;
 import com.flyingeffects.com.enity.SearchTemplateInfoEntity;
 import com.flyingeffects.com.enity.SearchUserEntity;
 import com.flyingeffects.com.enity.StickerList;
+import com.flyingeffects.com.enity.StickerTypeEntity;
 import com.flyingeffects.com.enity.SystemMessageCountAllEntiy;
 import com.flyingeffects.com.enity.SystemMessageDetailAllEnity;
 import com.flyingeffects.com.enity.SystemMessageDetailEnity;
@@ -200,20 +201,13 @@ public interface ApiService {
 
     //贴纸列表
     @FormUrlEncoded
-    @POST("/api/template/stickerslist")
+    @POST("/api/media/stickerList")
     Observable<HttpResult<List<StickerList>>> getStickerslist(@FieldMap Map<String, String> params);
 
 
     @FormUrlEncoded
     @POST("/api/template/templateListNew")
     Observable<HttpResult<List<new_fag_template_item>>> getTemplate(@FieldMap Map<String, String> params);
-
-
-
-
-
-
-
 
 
     @FormUrlEncoded
@@ -338,5 +332,10 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/mearge/humanMerageResult")
     Observable<HttpResult<List<HumanMerageResult>>> humanMerageResult(@FieldMap Map<String,String> params);
+
+    /**贴纸分类列表*/
+    @FormUrlEncoded
+    @POST("/api/media/stickerCategory")
+    Observable<HttpResult<List<StickerTypeEntity>>> getStickerTypeList(@FieldMap Map<String,String> params);
 
 }

@@ -2,13 +2,11 @@ package com.flyingeffects.com.ui.model;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -16,26 +14,17 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 import android.widget.Toast;
 
-import androidx.collection.SparseArrayCompat;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.viewpager.widget.ViewPager;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.FutureTarget;
-import com.bumptech.glide.request.target.Target;
+import com.flyco.tablayout.SlidingTabLayout;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateGridViewAdapter;
 import com.flyingeffects.com.adapter.TemplateGridViewAnimAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
+import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.adapter.listViewForVideoThumbAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
@@ -46,7 +35,7 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.AllStickerData;
 import com.flyingeffects.com.enity.StickerAnim;
-import com.flyingeffects.com.enity.StickerList;
+import com.flyingeffects.com.enity.StickerTypeEntity;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -55,14 +44,13 @@ import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
-import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.StimulateControlManage;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.TemplateAddStickerMvpCallback;
 import com.flyingeffects.com.ui.view.activity.AdHintActivity;
-import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
+import com.flyingeffects.com.ui.view.fragment.StickerFragment;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -77,7 +65,6 @@ import com.flyingeffects.com.view.lansongCommendView.StickerItemOnDragListener;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.orhanobut.hawk.Hawk;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
@@ -90,16 +77,19 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import androidx.collection.SparseArrayCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.viewpager.widget.ViewPager;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
-import static com.flyingeffects.com.manager.FileManager.saveBitmapToPath;
 
-
-public class TemplateAddStickerMvpModel {
+public class TemplateAddStickerMvpModel implements StickerFragment.StickerListener{
     private StickerView nowChooseStickerView;
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private TemplateAddStickerMvpCallback callback;
@@ -123,11 +113,7 @@ public class TemplateAddStickerMvpModel {
      */
     private String videoVoicePath;
     private String soundFolder;
-    private int selectPage = 1;
-    private int perPageCount = 20;
-    private SmartRefreshLayout smartRefreshLayout;
-    private boolean isRefresh = true;
-    private List<StickerList> listForSticker = new ArrayList<>();
+
     private TemplateGridViewAdapter gridAdapter;
     private ViewPager viewPager;
     private backgroundDraw backgroundDraw;
@@ -350,106 +336,31 @@ public class TemplateAddStickerMvpModel {
         isDestroy = true;
         stopAllAnim();
         closeAllAnim();
-        deleteAllSticker();
+        deleteSticker();
     }
 
 
-    public void requestStickersList(boolean isShowDialog) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("page", selectPage + "");
-        params.put("pageSize", perPageCount + "");
-        // 启动时间
-        Observable ob = Api.getDefault().getStickerslist(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ArrayList<StickerList>>(context) {
-            @Override
-            protected void _onError(String message) {
-                ToastUtil.showToast(message);
-            }
-
-            @Override
-            protected void _onNext(ArrayList<StickerList> list) {
-                finishData();
-                if (isRefresh) {
-                    listForSticker.clear();
-                    StickerList item1 = new StickerList();
-                    item1.setClearSticker(true);
-                    listForSticker.add(item1);
-                }
-
-                if (!isRefresh && list.size() < perPageCount) {  //因为可能默认只请求8条数据
-                    ToastUtil.showToast(context.getResources().getString(R.string.no_more_data));
-                }
-                if (list.size() < perPageCount) {
-                    smartRefreshLayout.setEnableLoadMore(false);
-                }
-
-                listForSticker.addAll(list);
-                modificationAllData(list);
-            }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
-    }
-
-
-    private void modificationAllData(ArrayList<StickerList> list) {
-        for (int i = 0; i < list.size(); i++) {
-            String fileName = mGifFolder + File.separator + list.get(i).getId() + ".gif";
-            File file = new File(fileName);
-            if (file.exists()) {
-                StickerList item1 = list.get(i);
-                item1.setIsDownload(1);
-                list.set(i, item1);
-            }
-        }
-        gridAdapter.notifyDataSetChanged();
-    }
-
-
-    public void initBottomLayout(ViewPager viewPager) {
+    public void initBottomLayout(ViewPager viewPager, FragmentManager fragmentManager) {
         this.viewPager = viewPager;
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager, false);
-        smartRefreshLayout = templateThumbView.findViewById(R.id.smart_refresh_layout);
-        smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
-            isRefresh = true;
-            refreshLayout.setEnableLoadMore(true);
-            selectPage = 1;
-            requestStickersList(true);
-        });
-        smartRefreshLayout.setOnLoadMoreListener(refresh -> {
-            isRefresh = false;
-            selectPage++;
-            requestStickersList(false);
-        });
-
-        GridView gridView = templateThumbView.findViewById(R.id.gridView);
-        gridView.setOnItemClickListener((adapterView, view, i, l) -> {
-            if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
-
-                showAllAnim(false);
-                callback.needPauseVideo();
-                modificationSingleItemIsChecked(i);
-                if (i == 0) {
-                    //删除选择的帖子
-                    stopAllAnim();
-                    closeAllAnim();
-                    deleteSticker();
-                    if (UiStep.isFromDownBj) {
-                        statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Stickeroff");
-                    } else {
-                        statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_Stickeroff");
-                    }
+        ViewPager stickerViewPager = templateThumbView.findViewById(R.id.viewpager_sticker);
+        templateThumbView.findViewById(R.id.iv_delete_sticker).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopAllAnim();
+                closeAllAnim();
+                deleteSticker();
+                if (UiStep.isFromDownBj) {
+                    statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Stickeroff");
                 } else {
-                    if (UiStep.isFromDownBj) {
-                        statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Sticker", listForSticker.get(i).getTitle());
-                    } else {
-                        statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_Sticker", listForSticker.get(i).getTitle());
-                    }
-                    downSticker(listForSticker.get(i).getImage(), listForSticker.get(i).getId(), i);
+                    statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_Stickeroff");
                 }
             }
-
         });
-        gridAdapter = new TemplateGridViewAdapter(listForSticker, context);
-        gridView.setAdapter(gridAdapter);
+        templateThumbView.findViewById(R.id.iv_down_sticker).setVisibility(View.GONE);
+        SlidingTabLayout stickerTab = templateThumbView.findViewById(R.id.tb_sticker);
+        getStickerTypeList(fragmentManager,stickerViewPager,stickerTab);
+
 
         listForInitBottom.add(templateThumbView);
 
@@ -475,165 +386,35 @@ public class TemplateAddStickerMvpModel {
         });
     }
 
-    /**
-     * 下载帖子功能
-     *
-     * @param path     下载地址
-     * @param imageId  gif 保存的图片id
-     * @param position 当前点击的那个item ，主要用来更新数据
-     */
-    private void downSticker(String path, String imageId, int position) {
-        if (!isDestroy) {
-            WaitingDialog.openPragressDialog(context);
-            if (path.endsWith(".gif")) {
-//            String finalPath = path;
-                String format = path.substring(path.length() - 4);
-                String fileName = mGifFolder + File.separator + imageId + format;
-                File file = new File(fileName);
-                if (file.exists()) {  //todo  临时解决bug ,和自定义不一样
-                    //如果已经下载了，就用已经下载的，但是如果已经展示了，就不能复用，需要类似于复制功能，只针对gif
-//                    if (nowStickerHasChoose(imageId, path)) {
-                    LogUtil.d("OOM2", "已经下载过贴纸了");
-                    String copyName = mGifFolder + File.separator + System.currentTimeMillis() + format;
-                    copyGif(fileName, copyName, false, null, fileName, false);
-                    WaitingDialog.closePragressDialog();
-                    return;
-//                    } else {
-//                        LogUtil.d("OOM2", "新下载贴纸了");
-//                        addSticker(fileName, false, false, false, null, false, null, false, false);
-//                        WaitingDialog.closePragressDialog();
-//                        return;
-//                    }
-
-                }
-                Observable.just(path).map(s -> {
-                    File file1 = null;
-                    try {
-                        file1 = Glide.with(context)
-                                .load(path)
-                                .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                                .get();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    return file1;
-                }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> {
-                    try {
-                        if (path1 != null) {
-                            FileUtil.copyFile(path1, fileName);
-                            addSticker(fileName, false, false, false, null, false, null, false, false);
-                            WaitingDialog.closePragressDialog();
-                            modificationSingleItem(position);
-                        } else {
-                            WaitingDialog.closePragressDialog();
-                            ToastUtil.showToast("请重试");
-                        }
-
-                    } catch (IOException e) {
-                        WaitingDialog.closePragressDialog();
-                        e.printStackTrace();
-                    }
-                });
-
-            } else {
-                new Thread(() -> {
-                    Bitmap originalBitmap = null;
-                    FutureTarget<Bitmap> futureTarget =
-                            Glide.with(BaseApplication.getInstance())
-                                    .asBitmap()
-                                    .load(path)
-                                    .submit();
-                    try {
-                        originalBitmap = futureTarget.get();
-                        Bitmap finalOriginalBitmap = originalBitmap;
-                        Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                            WaitingDialog.closePragressDialog();
-                            String aa = path.substring(path.length() - 4);
-                            String copyName = mGifFolder + File.separator + System.currentTimeMillis() + aa;
-                            saveBitmapToPath(finalOriginalBitmap, copyName, isSucceed -> {
-                                modificationSingleItem(position);
-                                addSticker(copyName, false, false, false, null, false, null, false, false);
-                            });
-                        });
-                    } catch (Exception e) {
-                        LogUtil.d("oom", e.getMessage());
-                    }
-                    Glide.with(BaseApplication.getInstance()).clear(futureTarget);
-                }).start();
+    private void getStickerTypeList(FragmentManager fragmentManager, ViewPager stickerViewPager, SlidingTabLayout stickerTab) {
+        HashMap<String, String> params = new HashMap<>();
+        Observable ob = Api.getDefault().getStickerTypeList(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ArrayList<StickerTypeEntity>>(context) {
+            @Override
+            protected void _onError(String message) {
+                ToastUtil.showToast(message);
             }
-        }
 
-    }
-
-
-    /**
-     * 当前的item 是否已经被选中上了预览页面
-     */
-    private boolean nowStickerHasChoose(String id, String imagePath) {
-        for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
-            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
-            String path = stickerView.getResPath();
-            if (!TextUtils.isEmpty(path)) {
-                String format = imagePath.substring(imagePath.length() - 4);
-                if (imagePath.endsWith(".gif")) {
-                    String copyName = mGifFolder + File.separator + id + format;
-                    if (path.equals(copyName)) {
-                        return true;
-                    }
+            @Override
+            protected void _onNext(ArrayList<StickerTypeEntity> list) {
+                List<Fragment> fragments = new ArrayList<>();
+                String[] titles = new String[list.size()];
+                for (int i = 0; i < list.size(); i++) {
+                    titles[i] = list.get(i).getName();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("stickerType", list.get(i).getId());
+                    StickerFragment fragment = new StickerFragment();
+                    fragment.setStickerListener(TemplateAddStickerMvpModel.this);
+                    fragment.setArguments(bundle);
+                    fragments.add(fragment);
                 }
+                home_vp_frg_adapter vp_frg_adapter = new home_vp_frg_adapter(fragmentManager, fragments);
+                stickerViewPager.setOffscreenPageLimit(list.size() - 1);
+                stickerViewPager.setAdapter(vp_frg_adapter);
+                stickerTab.setViewPager(stickerViewPager, titles);
             }
-        }
-        return false;
-
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
-
-
-    private void modificationSingleAnimItemIsChecked(int position) {
-        for (StickerAnim item : listAllAnima
-        ) {
-            item.setChecked(false);
-        }
-        StickerAnim item1 = listAllAnima.get(position);
-        item1.setChecked(true);
-        listAllAnima.set(position, item1);//修改对应的元素
-        templateGridViewAnimAdapter.notifyDataSetChanged();
-    }
-
-    private void modificationSingleItem(int position) {
-        StickerList item1 = listForSticker.get(position);
-        item1.setIsDownload(1);
-        listForSticker.set(position, item1);//修改对应的元素
-        gridAdapter.notifyDataSetChanged();
-    }
-
-    private void modificationSingleItemIsChecked(int position) {
-        for (StickerList item : listForSticker
-        ) {
-            item.setChecked(false);
-        }
-        StickerList item1 = listForSticker.get(position);
-        item1.setChecked(true);
-        listForSticker.set(position, item1);//修改对应的元素
-        gridAdapter.notifyDataSetChanged();
-    }
-
-    private void deleteAllSticker() {
-        needDeleteList.clear();
-        if (listForStickerModel != null && listForStickerModel.size() > 0) {
-            for (int i = 0; i < listForStickerModel.size(); i++) {
-                StickerView stickerView = listForStickerModel.get(i).getStickerView();
-                if (stickerView != null && !stickerView.getComeFrom()) {
-                    needDeleteList.add(stickerView);
-                }
-            }
-        }
-
-        for (StickerView stickerView : needDeleteList
-        ) {
-            deleteStickView(stickerView);
-        }
-    }
-
 
     private void deleteSticker() {
         needDeleteList.clear();
@@ -651,13 +432,6 @@ public class TemplateAddStickerMvpModel {
             deleteStickView(stickerView);
         }
     }
-
-
-    private void finishData() {
-        smartRefreshLayout.finishRefresh();
-        smartRefreshLayout.finishLoadMore();
-    }
-
 
     /**
      * description ：显示全部动画，在预览的时候
@@ -1650,6 +1424,22 @@ public class TemplateAddStickerMvpModel {
         int num = Hawk.get("keepAlbumNum");
         num++;
         Hawk.put("keepAlbumNum", num);
+    }
+
+    @Override
+    public void addSticker(String stickerPath) {
+        addSticker(stickerPath, false, false, false, null, false, null, false, false);
+    }
+
+    @Override
+    public void copyGif(String fileName, String copyName) {
+        copyGif(fileName, copyName, false, null, fileName, false);
+    }
+
+    @Override
+    public void clickItemSelected(int position) {
+        showAllAnim(false);
+        callback.needPauseVideo();
     }
 
     class videoType {

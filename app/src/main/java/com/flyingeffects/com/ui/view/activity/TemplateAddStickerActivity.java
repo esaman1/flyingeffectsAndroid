@@ -10,8 +10,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.viewpager.widget.ViewPager;
-
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -43,6 +41,7 @@ import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -129,8 +128,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
             presenter.setPlayerViewSize(playerView, scrollView, viewLayerRelativeLayout);
             initExo(videoPath);
         }
-        presenter.initBottomLayout(viewPager);
-        presenter.requestStickersList();
+        presenter.initBottomLayout(viewPager,getSupportFragmentManager());
         initViewLayerRelative();
         ((TextView) findViewById(R.id.tv_top_submit)).setText("保存");
     }

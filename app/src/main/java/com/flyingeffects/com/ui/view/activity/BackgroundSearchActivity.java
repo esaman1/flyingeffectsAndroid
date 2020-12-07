@@ -37,7 +37,6 @@ import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.fragment.FragmentUser;
 import com.flyingeffects.com.ui.view.fragment.fragBjSearch;
-import com.flyingeffects.com.utils.KeyboardUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -119,7 +118,7 @@ public class BackgroundSearchActivity extends BaseActivity {
 
     SearchTemplateItemAdapter  searchTemplateItemAdapter;
 
-    /**0表示 背景过来，1表示 模板进来*/
+    /**0表示 背景过来，1表示 模板进来 3表示换脸进来*/
     private int isFrom;
 
     @Override
@@ -413,9 +412,11 @@ public class BackgroundSearchActivity extends BaseActivity {
     private void showHeadTitle() {
         String[] titles;
         if (isFrom == 0) {
-            titles = new String[]{"背景", "模板","用户"};
+            titles = new String[]{"背景", "模板", "换装", "用户"};
+        } else if (isFrom == 3) {
+            titles = new String[]{"换装", "背景", "模板", "用户"};
         } else {
-            titles = new String[]{"模板", "背景","用户"};
+            titles = new String[]{"模板", "背景", "换装", "用户"};
         }
         for (int i = 0; i < titles.length; i++) {
             View view = LayoutInflater.from(this).inflate(R.layout.view_bj_head, null);
@@ -444,13 +445,25 @@ public class BackgroundSearchActivity extends BaseActivity {
         fragBjSearch fragment2 = new fragBjSearch();
         fragment2.setArguments(bundle2);
 
-        if(isFrom==0){
+        Bundle bundle3 = new Bundle();
+        bundle3.putSerializable("from", 3);
+        fragBjSearch fragment3 = new fragBjSearch();
+        fragment3.setArguments(bundle3);
+
+        if (isFrom == 0) {
             list.add(fragment);
             list.add(fragment2);
+            list.add(fragment3);
             list.add(new FragmentUser());
-        }else{
+        } else if (isFrom == 1) {
             list.add(fragment2);
             list.add(fragment);
+            list.add(fragment3);
+            list.add(new FragmentUser());
+        } else if (isFrom == 3) {
+            list.add(fragment3);
+            list.add(fragment);
+            list.add(fragment2);
             list.add(new FragmentUser());
         }
         FragmentManager manager = getSupportFragmentManager();

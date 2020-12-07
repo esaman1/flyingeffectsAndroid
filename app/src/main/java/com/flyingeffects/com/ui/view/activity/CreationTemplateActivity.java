@@ -264,7 +264,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         } else {
             showGreenBj(true);
         }
-        presenter.requestStickersList();
         presenter.statisticsDuration(videoPath, this);
 
         if (nowUiIsLandscape) {
@@ -442,7 +441,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     protected void initAction() {
         presenter.initStickerView(imgPath, originalPath);
-        presenter.initBottomLayout(viewPager);
+        presenter.initBottomLayout(viewPager,getSupportFragmentManager());
         initViewLayerRelative();
         switchButton.setOnCheckedChangeListener((view, isChecked) -> {
             if (isChecked) {
@@ -1673,6 +1672,18 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             }
         }
         mSeekBarView.modifyMaterialThumbnail(path, id);
+    }
+
+    @Override
+    public void stickerFragmentClose() {
+        for (int i = 0; i < lin_Id.length; i++) {
+            ((TextView) findViewById(lin_Id[i])).setTextColor(getResources().getColor(R.color.white));
+        }
+        if (isClickAddTextTag && createViewForAddText != null) {
+            createViewForAddText.iv_down.performClick();
+        } else {
+            seekBarViewIsShow(true);
+        }
     }
 
     @Override
