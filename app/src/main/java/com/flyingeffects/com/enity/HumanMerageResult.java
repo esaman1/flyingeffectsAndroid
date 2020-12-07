@@ -2,7 +2,10 @@ package com.flyingeffects.com.enity;
 
 import java.io.Serializable;
 
-public class fromKuaishou implements Serializable {
+public class HumanMerageResult implements Serializable {
+
+    private String id;
+
     public String getId() {
         return id;
     }
@@ -131,7 +134,6 @@ public class fromKuaishou implements Serializable {
         this.feature_rate = feature_rate;
     }
 
-    private String id;
     private String user_id;
     private String image;
     private String result_image;
@@ -147,6 +149,5 @@ public class fromKuaishou implements Serializable {
     private String template_url;
     private String merge_rate;
     private String feature_rate;
-
 
 }

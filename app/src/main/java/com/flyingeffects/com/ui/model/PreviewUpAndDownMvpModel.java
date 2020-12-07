@@ -26,6 +26,8 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.HumanMerageResult;
+import com.flyingeffects.com.enity.LoginToAttentionUserEvent;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.enity.new_fag_template_item;
@@ -34,12 +36,15 @@ import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
+import com.flyingeffects.com.manager.Calculagraph;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.SituationTimer;
 import com.flyingeffects.com.manager.TTAdManagerHolder;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
+import com.flyingeffects.com.manager.huaweiObs;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
@@ -54,6 +59,7 @@ import com.flyingeffects.com.utils.UpdateFileUtils;
 import com.flyingeffects.com.utils.screenUtil;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.orhanobut.hawk.Hawk;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
@@ -71,6 +77,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -92,14 +100,14 @@ public class PreviewUpAndDownMvpModel {
     private SmartRefreshLayout smartRefreshLayout;
     private List<new_fag_template_item> allData;
     private String fromTo;
-    private String category_id,tc_id;
+    private String category_id, tc_id;
     private TTAdNative mTTAdNative;
     private String soundFolder;
     private String toUserID;
     private String searchText;
     private boolean isCanLoadMore;
 
-    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage, String fromTo, String category_id, String toUserID, String searchText, boolean isCanLoadMore,String tc_id) {
+    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage, String fromTo, String category_id, String toUserID, String searchText, boolean isCanLoadMore, String tc_id) {
         this.context = context;
         this.isCanLoadMore = isCanLoadMore;
         this.selectPage = nowSelectPage;
@@ -168,13 +176,13 @@ public class PreviewUpAndDownMvpModel {
 
 
     public void requestTemplateDetail(String templateId) {
-        LogUtil.d("OOM","requestTemplateDetail");
+        LogUtil.d("OOM", "requestTemplateDetail");
         if (!TextUtils.isEmpty(templateId)) {
             HashMap<String, String> params = new HashMap<>();
             params.put("template_id", templateId);
             // 启动时间
             Observable ob = Api.getDefault().templateLInfo(BaseConstans.getRequestHead(params));
-            LogUtil.d("OOM",StringUtil.beanToJSONString(params));
+            LogUtil.d("OOM", StringUtil.beanToJSONString(params));
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<new_fag_template_item>(context) {
                 @Override
                 protected void _onError(String message) {
@@ -235,7 +243,7 @@ public class PreviewUpAndDownMvpModel {
             } else {
                 statisticsEventAffair.getInstance().setFlag(context, "10_bj_csave1");
             }
-            templateBehaviorStatistics(3,id);
+            templateBehaviorStatistics(3, id);
 
             statisticsEventAffair.getInstance().setFlag(context, "save_back_template");
             downProgressDialog = new WaitingDialog_progress(context);
@@ -253,7 +261,7 @@ public class PreviewUpAndDownMvpModel {
                 } else {
                     statisticsEventAffair.getInstance().setFlag(context, "10_bj_WeChat");
                 }
-                templateBehaviorStatistics(2,id);
+                templateBehaviorStatistics(2, id);
 
                 UMImage image = new UMImage(context, fag_template_item.getImage());//分享图标
                 UMWeb web = new UMWeb(getShareWeiXinCircleText(fag_template_item.getId() + "")); //切记切记 这里分享的链接必须是http开头
@@ -278,7 +286,7 @@ public class PreviewUpAndDownMvpModel {
                 } else {
                     statisticsEventAffair.getInstance().setFlag(context, "10_bj_circle");
                 }
-                templateBehaviorStatistics(1,id);
+                templateBehaviorStatistics(1, id);
                 shareToApplet(fag_template_item);
             }
         });
@@ -323,7 +331,8 @@ public class PreviewUpAndDownMvpModel {
 
     /**
      * 模板操作行为统计
-     * @param type 1=微信好友,2=朋友圈,3=保存到本地,4=其他
+     *
+     * @param type       1=微信好友,2=朋友圈,3=保存到本地,4=其他
      * @param templateId 模板ID
      */
     private void templateBehaviorStatistics(int type, String templateId) {
@@ -549,7 +558,6 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-
     /**
      * description ：
      * creation date: 2020/3/11
@@ -660,7 +668,7 @@ public class PreviewUpAndDownMvpModel {
                 if (data.size() < perPageCount) {
                     smartRefreshLayout.setEnableLoadMore(false);
                 }
-                List<new_fag_template_item> needData=getFiltration(data);
+                List<new_fag_template_item> needData = getFiltration(data);
                 allData.addAll(needData);
                 callback.showNewData(allData, isRefresh);
             }
@@ -675,7 +683,7 @@ public class PreviewUpAndDownMvpModel {
                 needData.add(item);
             }
         }
-        return  needData;
+        return needData;
     }
 
 
@@ -707,7 +715,6 @@ public class PreviewUpAndDownMvpModel {
         params.put("template_type", template_type);
         // 启动时间
         Observable ob = Api.getDefault().newCollection(BaseConstans.getRequestHead(params));
-        LogUtil.d("OOM2","xx="+StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
             @Override
             protected void _onError(String message) {
@@ -724,7 +731,7 @@ public class PreviewUpAndDownMvpModel {
                 callback.collectionResult(nowHasCollect);
                 if (nowHasCollect) {
                     iv_collect.setImageResource(R.mipmap.new_version_collect_ed);
-                    templateBehaviorStatistics(4,templateId);
+                    templateBehaviorStatistics(4, templateId);
                 } else {
                     iv_collect.setImageResource(R.mipmap.new_version_collect);
                 }
@@ -992,183 +999,125 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-//    private MyBottomSheetDialog bottomSheetDialogForComment;
-
-
-//    /**
-//     * description ：
-//     * creation date: 2020/7/30
-//     * user : zhangtongju
-//     */
-//    private EditText ed_search;
-//    private RecyclerView recyclerViewComment;
-//    private TextView no_comment;
-//
-//    public void showBottomSheetDialogForComment() {
-//        requestComment();
-//        bottomSheetDialogForComment = new MyBottomSheetDialog(context, R.style.gaussianDialog);
-//        View view = LayoutInflater.from(context).inflate(R.layout.comment_bottom_sheet_doalog, null);
-//        bottomSheetDialogForComment.setContentView(view);
-//        ImageView iv_cancle = view.findViewById(R.id.iv_cancle);
-//        iv_cancle.setOnClickListener(view1 -> {
-//            bottomSheetDialog.dismiss();
-//        });
-//        recyclerViewComment = view.findViewById(R.id.recyclerView);
-//        no_comment = view.findViewById(R.id.no_comment);
-//        ed_search = view.findViewById(R.id.ed_search);
-//        ed_search.setOnEditorActionListener((v, actionId, event) -> {
-//            LogUtil.d("OOM", "setOnEditorActionListener");
-//            if (actionId == EditorInfo.IME_ACTION_SEND) { //键盘的搜索按钮
-//                String reply = ed_search.getText().toString().trim();
-//                if (!reply.equals("")) {
-//                    replyMessage(reply, "1","0");
-//                    cancelFocus();
-//                }
-//                return true;
-//            }
-//            return false;
-//        });
-//
-//
-//        bottomSheetDialogForComment.setCancelable(true);
-//        bottomSheetDialogForComment.setCanceledOnTouchOutside(true);
-//        View parent = (View) view.getParent();     //处理高度显示完全  https://www.jianshu.com/p/38af0cf77352
-//        parent.setBackgroundResource(android.R.color.transparent);
-//        BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);
-//        view.measure(0, 0);
-//        behavior.setPeekHeight(view.getMeasuredHeight());
-//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) parent.getLayoutParams();
-//        params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
-//        parent.setLayoutParams(params);
-//        bottomSheetDialogForComment.show();
-//    }
-
-
-//    /**
-//     * description ：回复消息
-//     * type 1表示一级评论，2 表示二级回复
-//     * creation date: 2020/7/30
-//     * user : zhangtongju
-//     */
-//    private void replyMessage(String content, String type,String message_id) {
-//        HashMap<String, String> params = new HashMap<>();
-//        params.put("template_id", nowTemplateId);
-//        params.put("content", content);
-//        params.put("message_id", message_id);
-//
-//        params.put("type", type);
-//        // 启动时间
-//        Observable ob = Api.getDefault().addComment(BaseConstans.getRequestHead(params));
-//        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
-//            @Override
-//            protected void _onError(String message) {
-//                ToastUtil.showToast(message);
-//            }
-//
-//            @Override
-//            protected void _onNext(Object data) {
-//                String aa = StringUtil.beanToJSONString(data);
-//                LogUtil.d("OOM", aa);
-//                cancelFocus();
-//                hideShowKeyboard();
-////                requestComment();
-//            }
-//        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
-//    }
-
-
-//    /**
-//     * description ：显示或影藏键盘
-//     * creation date: 2020/7/31
-//     * user : zhangtongju
-//     */
-//    public void hideShowKeyboard() {
-//        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE); //得到InputMethodManager的实例
-//        if (imm.isActive()) {//如果开启
-//            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_NOT_ALWAYS);//关闭软键盘，开启方法相同，这个方法是切换开启与关闭状态的
-//        }else{
-//            ed_search.requestFocus();
-//            imm.showSoftInput(ed_search, InputMethodManager.SHOW_IMPLICIT);
-//        }
-//    }
-//
-//
-//    private void cancelFocus() {
-//        if (ed_search != null && ed_search.hasFocus()) {
-//            ed_search.setText("");
-//            ed_search.setFocusable(true);
-//            ed_search.setFocusableInTouchMode(true);
-//            ed_search.requestFocus();
-//            ed_search.clearFocus();//失去焦点
-//        }
-//    }
-
-
-//    /**
-//     * description ：请求评论列表
-//     * creation date: 2020/7/30
-//     * user : zhangtongju
-//     */
-//    private void requestComment() {
-//        HashMap<String, String> params = new HashMap<>();
-//        params.put("template_id", nowTemplateId);
-//        // 启动时间
-//        Observable ob = Api.getDefault().templateComment(BaseConstans.getRequestHead(params));
-//        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<MessageData>(context) {
-//            @Override
-//            protected void _onError(String message) {
-//                ToastUtil.showToast(message);
-//            }
-//
-//            @Override
-//            protected void _onNext(MessageData data) {
-//                String str=StringUtil.beanToJSONString(data);
-//                LogUtil.d("OOM","requestComment="+str);
-//                initRecyclerView(data);
-//            }
-//        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
-//    }
-
-
-//    /**
-//     * description ：
-//     * creation date: 2020/7/31
-//     * user : zhangtongju
-//     */
-//   private  String message_id;
-//    private void initRecyclerView(MessageData data) {
-//        if (data.getList() == null || data.getList().size() == 0) {
-//            no_comment.setVisibility(View.VISIBLE);
-//        } else {
-//            no_comment.setVisibility(View.GONE);
-//            LinearLayoutManager linearLayoutManager =
-//                    new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
-//            recyclerViewComment.setLayoutManager(linearLayoutManager);
-//            recyclerViewComment.setHasFixedSize(true);
-//            Comment_message_adapter adapter = new Comment_message_adapter(R.layout.item_comment_preview, data.getList(), context, new Comment_message_adapter.CommentOnItemClick() {
-//                @Override
-//                public void clickPosition(int position,String id) {
-//                    hideShowKeyboard();
-//                    message_id=id;
-//                }
-//            });
-//            recyclerViewComment.setAdapter(adapter);
-//        }
-//    }
-
-
-
     /**
      * description ：换装
      * creation date: 2020/12/3
      * user : zhangtongju
      */
-    public void toDressUp(){
-
-
-
-
-//        UpdateFileUtils.uploadFile();
-
+    public void toDressUp(String path,String templateId) {
+        uploadFileToHuawei(path,templateId);
     }
+
+
+    /**
+     * description ：上传换装图片到华为云
+     * creation date: 2020/12/4
+     * user : zhangtongju
+     */
+    private void uploadFileToHuawei(String path,String template_id) {
+        String type = path.substring(path.length() - 4);
+        String nowTime = StringUtil.getCurrentTimeymd();
+        String copyName = "media/android/dressUp/" + nowTime + "/" + System.currentTimeMillis() + type;
+       String uploadPath= "http://cdn.flying.flyingeffect.com/" + copyName;
+        Log.d("OOM3", "uploadFileToHuawei" + "当前上传的地址为" + path + "当前的名字为" + copyName);
+        new Thread(() -> huaweiObs.getInstance().uploadFileToHawei(path, copyName, str -> Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                LogUtil.d("OOM3", "上传华为云成功,地址为" + s);
+                informServers(uploadPath,template_id);
+            }
+        }))).start();
+    }
+
+
+    /**
+     * description ：通知后台,告诉后台已经上传了图片了
+     * creation date: 2020/12/4
+     * user : zhangtongju
+     */
+    private void informServers(String path,String template_id) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("image",path);
+        params.put("template_id",template_id);
+        Observable ob = Api.getDefault().meargeHuman(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<String>(context) {
+            @Override
+            protected void _onError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void _onNext(String id) {
+                LogUtil.d("OOM3","informServers");
+                startTimer(id);
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+    }
+
+
+    /***
+     * 开启轮训
+     */
+  private Calculagraph calculagraph;
+    private void startTimer(String id){
+        calculagraph=new Calculagraph();
+        calculagraph.startTimer(3f,3, new Calculagraph.Callback() {
+            @Override
+            public void isTimeUp() {
+                LogUtil.d("OOM3","开始请求融合结果");
+                Observable.just(id).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        requestDressUpCallback(s);
+                    }
+                });
+            }
+
+            @Override
+            public void isDone() {
+                String str="超时，请稍后再试";
+                Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        ToastUtil.showToast(s);
+                    }
+                });
+            }
+        });
+    }
+
+
+
+    /**
+     * description ：通知后台,请求换装接口
+     * creation date: 2020/12/4
+     * user : zhangtongju
+     */
+    private void requestDressUpCallback(String request_id) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("request_id",request_id);
+        Observable ob = Api.getDefault().humanMerageResult(BaseConstans.getRequestHead(params));
+        LogUtil.d("OOM3","requestDressUpCallback的请求参数为"+StringUtil.beanToJSONString(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<HumanMerageResult>>(context) {
+            @Override
+            protected void _onError(String message) {
+                LogUtil.d("OOM3","message="+message);
+            }
+
+            @Override
+            protected void _onNext(List<HumanMerageResult> data) {
+                String str=StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM3",str);
+                if(calculagraph!=null){
+                    calculagraph.destroyTimer();
+                }
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+    }
+
+
+
+
+
+
 }
