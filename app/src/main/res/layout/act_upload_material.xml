@@ -91,6 +91,14 @@
                     android:src="@mipmap/cut_preview_play"
                     android:visibility="gone" />
 
+
+
+                <ImageView
+                    android:id="@+id/iv_show_cover"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+
             </RelativeLayout>
 
             <RelativeLayout

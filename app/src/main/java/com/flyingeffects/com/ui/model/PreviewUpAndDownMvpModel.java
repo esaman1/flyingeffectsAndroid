@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -36,6 +38,7 @@ import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
+import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.Calculagraph;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.DownloadVideoManage;
@@ -48,8 +51,10 @@ import com.flyingeffects.com.manager.huaweiObs;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
+import com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.ReportActivity;
+import com.flyingeffects.com.utils.BitmapUtils;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
@@ -75,6 +80,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
@@ -96,6 +102,7 @@ public class PreviewUpAndDownMvpModel {
     private Context context;
     private int selectPage = 1;
     private String mVideoFolder;
+    private String mUploadDressUpFolder;
     private int perPageCount = 10;
     private SmartRefreshLayout smartRefreshLayout;
     private List<new_fag_template_item> allData;
@@ -115,6 +122,7 @@ public class PreviewUpAndDownMvpModel {
         this.toUserID = toUserID;
         FileManager fileManager = new FileManager();
         mVideoFolder = fileManager.getFileCachePath(context, "downVideo");
+        mUploadDressUpFolder = fileManager.getFileCachePath(context, "DressUpFolder");
         this.allData = allData;
         this.searchText = searchText;
         this.fromTo = fromTo;
@@ -1004,8 +1012,25 @@ public class PreviewUpAndDownMvpModel {
      * creation date: 2020/12/3
      * user : zhangtongju
      */
-    public void toDressUp(String path,String templateId) {
-        uploadFileToHuawei(path,templateId);
+    WaitingDialog_progress progress;
+    public void toDressUp(String path, String templateId) {
+        progress=new WaitingDialog_progress(context);
+        progress.openProgressDialog();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Bitmap bpResoruse = BitmapFactory.decodeFile(path);
+                Bitmap bp = BitmapUtils.compressBitmap(bpResoruse, 500);
+                String fileName = mUploadDressUpFolder + File.separator + UUID.randomUUID() + ".png";
+                LogUtil.d("OOM3", "fileName=" + fileName);
+                BitmapManager.getInstance().saveBitmapToPath(bp, fileName, new BitmapManager.saveToFileCallback() {
+                    @Override
+                    public void isSuccess(boolean isSuccess) {
+                        uploadFileToHuawei(fileName, templateId);
+                    }
+                });
+            }
+        }).start();
     }
 
 
@@ -1014,19 +1039,19 @@ public class PreviewUpAndDownMvpModel {
      * creation date: 2020/12/4
      * user : zhangtongju
      */
-    private void uploadFileToHuawei(String path,String template_id) {
+    private void uploadFileToHuawei(String path, String template_id) {
         String type = path.substring(path.length() - 4);
         String nowTime = StringUtil.getCurrentTimeymd();
         String copyName = "media/android/dressUp/" + nowTime + "/" + System.currentTimeMillis() + type;
-       String uploadPath= "http://cdn.flying.flyingeffect.com/" + copyName;
+        String uploadPath = "http://cdn.flying.flyingeffect.com/" + copyName;
         Log.d("OOM3", "uploadFileToHuawei" + "当前上传的地址为" + path + "当前的名字为" + copyName);
-        new Thread(() -> huaweiObs.getInstance().uploadFileToHawei(path, copyName, str -> Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+        huaweiObs.getInstance().uploadFileToHawei(path, copyName, str -> Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
                 LogUtil.d("OOM3", "上传华为云成功,地址为" + s);
-                informServers(uploadPath,template_id);
+                informServers(uploadPath, template_id);
             }
-        }))).start();
+        }));
     }
 
 
@@ -1035,10 +1060,10 @@ public class PreviewUpAndDownMvpModel {
      * creation date: 2020/12/4
      * user : zhangtongju
      */
-    private void informServers(String path,String template_id) {
+    private void informServers(String path, String template_id) {
         HashMap<String, String> params = new HashMap<>();
-        params.put("image",path);
-        params.put("template_id",template_id);
+        params.put("image", path);
+        params.put("template_id", template_id);
         Observable ob = Api.getDefault().meargeHuman(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<String>(context) {
             @Override
@@ -1048,23 +1073,24 @@ public class PreviewUpAndDownMvpModel {
 
             @Override
             protected void _onNext(String id) {
-                LogUtil.d("OOM3","informServers");
+                LogUtil.d("OOM3", "informServers");
                 startTimer(id);
             }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
 
     /***
      * 开启轮训
      */
-  private Calculagraph calculagraph;
-    private void startTimer(String id){
-        calculagraph=new Calculagraph();
-        calculagraph.startTimer(3f,3, new Calculagraph.Callback() {
+    private Calculagraph calculagraph;
+
+    private void startTimer(String id) {
+        calculagraph = new Calculagraph();
+        calculagraph.startTimer(3f, 5, new Calculagraph.Callback() {
             @Override
             public void isTimeUp() {
-                LogUtil.d("OOM3","开始请求融合结果");
+                LogUtil.d("OOM3", "开始请求融合结果");
                 Observable.just(id).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                     @Override
                     public void call(String s) {
@@ -1075,17 +1101,10 @@ public class PreviewUpAndDownMvpModel {
 
             @Override
             public void isDone() {
-                String str="超时，请稍后再试";
-                Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        ToastUtil.showToast(s);
-                    }
-                });
+                progress.closePragressDialog();
             }
         });
     }
-
 
 
     /**
@@ -1095,29 +1114,35 @@ public class PreviewUpAndDownMvpModel {
      */
     private void requestDressUpCallback(String request_id) {
         HashMap<String, String> params = new HashMap<>();
-        params.put("request_id",request_id);
+        params.put("request_id", request_id);
         Observable ob = Api.getDefault().humanMerageResult(BaseConstans.getRequestHead(params));
-        LogUtil.d("OOM3","requestDressUpCallback的请求参数为"+StringUtil.beanToJSONString(params));
+        LogUtil.d("OOM3", "requestDressUpCallback的请求参数为" + StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<HumanMerageResult>>(context) {
             @Override
             protected void _onError(String message) {
-                LogUtil.d("OOM3","message="+message);
+                LogUtil.d("OOM3", "message=" + message);
+                ToastUtil.showToast(message);
+                progress.closePragressDialog();
+                if (calculagraph != null) {
+                    calculagraph.destroyTimer();
+                }
             }
 
             @Override
             protected void _onNext(List<HumanMerageResult> data) {
-                String str=StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM3",str);
-                if(calculagraph!=null){
-                    calculagraph.destroyTimer();
+                if (data != null && data.size() > 0) {
+                    progress.closePragressDialog();
+                    String str = StringUtil.beanToJSONString(data);
+                    LogUtil.d("OOM3", str);
+                    Intent intent = new Intent(context, DressUpPreviewActivity.class);
+                    intent.putExtra("url", data.get(0).getResult_image());
+                    context.startActivity(intent);
+                }else{
+                    LogUtil.d("OOM3", "data=null");
                 }
             }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
-
-
-
-
 
 
 }

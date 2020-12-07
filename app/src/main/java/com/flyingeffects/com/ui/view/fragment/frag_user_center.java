@@ -3,14 +3,12 @@ package com.flyingeffects.com.ui.view.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -48,7 +46,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.UCropOption;
-import com.flyingeffects.com.utils.screenUtil;
+import com.google.android.material.appbar.AppBarLayout;
 import com.lansosdk.videoeditor.LanSongFileUtil;
 import com.orhanobut.hawk.Hawk;
 import com.shixing.sxve.ui.view.WaitingDialog;
@@ -79,7 +77,7 @@ import rx.functions.Action1;
  * 时间：2018/4/24
  **/
 
-public class frag_user_center extends BaseFragment implements AlbumChooseCallback {
+public class frag_user_center extends BaseFragment implements AlbumChooseCallback, AppBarLayout.OnOffsetChangedListener  {
     public final static int SELECTALBUMFROMUSETCENTERBJ = 1;
 
     private String[] titles = {"我上传的背景", "喜欢", "模板收藏"};
@@ -126,8 +124,17 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     LinearLayout mLLInfoRelated;
     @BindView(R.id.ll_no_login_info)
     LinearLayout mLLNoLoginInfo;
-    @BindView(R.id.scrollView_user)
-    ScrollView mScrollViewUser;
+
+
+    @BindView(R.id.tv_top_name)
+    TextView tv_top_name;
+
+
+    @BindView(R.id.appbar)
+    AppBarLayout appbar;
+
+//    @BindView(R.id.scrollView_user)
+//    ScrollView mScrollViewUser;
 
 
     private UCrop.Options options;
@@ -160,6 +167,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
     @Override
     protected void initData() {
+        appbar.addOnOffsetChangedListener(this);
 
     }
 
@@ -174,10 +182,12 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 mLLInfoRelated.setVisibility(View.VISIBLE);
                 mTVGoLogin.setVisibility(View.GONE);
                 mLLNoLoginInfo.setVisibility(View.GONE);
+
                 requestUserInfo();
                 requestMessageCount();
                 requestSystemMessageCount();
             } else {
+                tv_top_name.setText("未登录");
                 Glide.with(this)
                         .load(R.mipmap.head)
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
@@ -239,16 +249,16 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
             }
         });
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mScrollViewUser.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-                @Override
-                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                    if (scrollY >= screenUtil.dip2px(getContext(), 142)) {
-                        mScrollViewUser.scrollTo(0, screenUtil.dip2px(getContext(), 142));
-                    }
-                }
-            });
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            mScrollViewUser.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+//                @Override
+//                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+//                    if (scrollY >= screenUtil.dip2px(getContext(), 142)) {
+//                        mScrollViewUser.scrollTo(0, screenUtil.dip2px(getContext(), 142));
+//                    }
+//                }
+//            });
+//        }
         tabLayout.setViewPager(viewpager, titles);
     }
 
@@ -396,6 +406,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                         } else {
                             tv_name.setVisibility(View.GONE);
                         }
+                        tv_top_name.setText(data.getNickname());
                         if (!TextUtils.isEmpty(data.getPhotourl())) {
                             Glide.with(getActivity())
                                     .load(data.getPhotourl())
@@ -576,6 +587,20 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+    }
+
+
+
+    @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+        int offset = Math.abs(verticalOffset);
+        int total = appBarLayout.getTotalScrollRange();
+        LogUtil.d("OOM2","offset="+offset+"total="+total);
+//        if (offset < total ) {
+//            tv_top_name.setVisibility(View.GONE);
+//        } else {
+//            tv_top_name.setVisibility(View.VISIBLE);
+//        }
     }
 }
 
