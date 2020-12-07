@@ -715,7 +715,6 @@ public class PreviewUpAndDownMvpModel {
         params.put("template_type", template_type);
         // 启动时间
         Observable ob = Api.getDefault().newCollection(BaseConstans.getRequestHead(params));
-        LogUtil.d("OOM2", "xx=" + StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
             @Override
             protected void _onError(String message) {
@@ -1019,12 +1018,13 @@ public class PreviewUpAndDownMvpModel {
         String type = path.substring(path.length() - 4);
         String nowTime = StringUtil.getCurrentTimeymd();
         String copyName = "media/android/dressUp/" + nowTime + "/" + System.currentTimeMillis() + type;
-        Log.d("OOM2", "uploadFileToHuawei" + "当前上传的地址为" + path + "当前的名字为" + copyName);
+       String uploadPath= "http://cdn.flying.flyingeffect.com/" + copyName;
+        Log.d("OOM3", "uploadFileToHuawei" + "当前上传的地址为" + path + "当前的名字为" + copyName);
         new Thread(() -> huaweiObs.getInstance().uploadFileToHawei(path, copyName, str -> Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
-                LogUtil.d("OOM2", "上传华为云成功,地址为" + s);
-                informServers(s,template_id);
+                LogUtil.d("OOM3", "上传华为云成功,地址为" + s);
+                informServers(uploadPath,template_id);
             }
         }))).start();
     }
@@ -1048,7 +1048,7 @@ public class PreviewUpAndDownMvpModel {
 
             @Override
             protected void _onNext(String id) {
-                LogUtil.d("OOM2","informServers");
+                LogUtil.d("OOM3","informServers");
                 startTimer(id);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
@@ -1061,16 +1061,27 @@ public class PreviewUpAndDownMvpModel {
   private Calculagraph calculagraph;
     private void startTimer(String id){
         calculagraph=new Calculagraph();
-        calculagraph.startTimer(2f,5, new Calculagraph.Callback() {
+        calculagraph.startTimer(3f,3, new Calculagraph.Callback() {
             @Override
             public void isTimeUp() {
-                LogUtil.d("OOM2","开始请求融合结果");
-                requestDressUpCallback(id);
+                LogUtil.d("OOM3","开始请求融合结果");
+                Observable.just(id).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        requestDressUpCallback(s);
+                    }
+                });
             }
 
             @Override
             public void isDone() {
-                calculagraph.destroyTimer();
+                String str="超时，请稍后再试";
+                Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        ToastUtil.showToast(s);
+                    }
+                });
             }
         });
     }
@@ -1086,16 +1097,17 @@ public class PreviewUpAndDownMvpModel {
         HashMap<String, String> params = new HashMap<>();
         params.put("request_id",request_id);
         Observable ob = Api.getDefault().humanMerageResult(BaseConstans.getRequestHead(params));
+        LogUtil.d("OOM3","requestDressUpCallback的请求参数为"+StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<HumanMerageResult>>(context) {
             @Override
             protected void _onError(String message) {
-                ToastUtil.showToast(message);
+                LogUtil.d("OOM3","message="+message);
             }
 
             @Override
             protected void _onNext(List<HumanMerageResult> data) {
                 String str=StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM2",str);
+                LogUtil.d("OOM3",str);
                 if(calculagraph!=null){
                     calculagraph.destroyTimer();
                 }

@@ -1,11 +1,9 @@
 package com.flyingeffects.com.manager;
 
-import com.flyingeffects.com.enity.RequestMessage;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-import de.greenrobot.event.EventBus;
 
 
 /**
@@ -48,6 +46,7 @@ public class Calculagraph {
                 if (maxRequestsTime != 0) {
                     if (nowExecuteCount > maxRequests) {
                         if (callback != null) {
+                            destroyTimer();
                             callback.isDone();
                         }
                     } else {
