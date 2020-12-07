@@ -61,10 +61,8 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
     private List<FirstLevelTypeEntity> data;
     FragmentManager manager;
 
-    private int nowChooseIndex;
     private ArrayList<String> listSearchKey = new ArrayList<>();
     int listSearchKeyIndex = 0;
-    int secondaryIndex =0;
 
 
     @Override
@@ -113,13 +111,23 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                 String[] titles = new String[data.size()];
                 for (int i = 0; i < data.size(); i++) {
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
-                    bundle.putInt("type",0);
-                    bundle.putSerializable("id",data.get(i).getId());
+                    if (data.get(i).getCategory() != null && !data.get(i).getCategory().isEmpty()) {
+                        bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
+                        bundle.putInt("type", 0);
+                        bundle.putSerializable("id", data.get(i).getId());
+                        SecondaryTypeFragment fragment = new SecondaryTypeFragment();
+                        fragment.setArguments(bundle);
+                        list.add(fragment);
+                    } else {
+                        bundle.putSerializable("id", data.get(i).getId());
+                        bundle.putString("tc_id", "-1");
+                        bundle.putSerializable("num", i);
+                        bundle.putSerializable("from", 0);
+                        HomeTemplateItemFragment fragment = new HomeTemplateItemFragment();
+                        fragment.setArguments(bundle);
+                        list.add(fragment);
+                    }
                     titles[i] = data.get(i).getName();
-                    SecondaryTypeFragment fragment = new SecondaryTypeFragment();
-                    fragment.setArguments(bundle);
-                    list.add(fragment);
                 }
                 home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
                 viewpager.setAdapter(adapter);
@@ -131,7 +139,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
                     @Override
                     public void onPageSelected(int i) {
-                        nowChooseIndex = i;
+
                         if (i <= data.size() - 1) {
                             statisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
                         }

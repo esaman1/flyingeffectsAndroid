@@ -3,7 +3,6 @@ package com.flyingeffects.com.ui.view.fragment;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -12,6 +11,7 @@ import android.widget.TextView;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.enity.SecondaryTypeEntity;
+import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.utils.screenUtil;
 
 import java.util.ArrayList;
@@ -19,7 +19,6 @@ import java.util.List;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-
 import butterknife.BindView;
 
 /**
@@ -39,7 +38,9 @@ public class SecondaryTypeFragment extends BaseFragment {
      * 0是模板 1是背景  2是换脸
      */
     int type;
+    int from;
     String category_id;
+    private new_fag_template_item templateItem;
 
     @Override
     protected int getContentLayout() {
@@ -51,6 +52,11 @@ public class SecondaryTypeFragment extends BaseFragment {
         mTypeEntities = (List<SecondaryTypeEntity>) getArguments().getSerializable("secondaryType");
         type = getArguments().getInt("type");
         category_id = getArguments().getString("id");
+        from = getArguments().getInt("from");
+        templateItem = (new_fag_template_item) getArguments().getSerializable("templateItem");
+        if (mTypeEntities == null) {
+            mTypeEntities = new ArrayList<>();
+        }
     }
 
     @Override
@@ -116,8 +122,11 @@ public class SecondaryTypeFragment extends BaseFragment {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("id", category_id);
                 bundle.putString("tc_id",mTypeEntities.get(i).getId());
-                bundle.putSerializable("from", 1);
+                bundle.putSerializable("from", from);
                 bundle.putSerializable("num", i);
+                if (templateItem != null) {
+                    bundle.putSerializable("cover", templateItem.getImage());
+                }
                 fragBjItem fragment = new fragBjItem();
                 fragment.setArguments(bundle);
                 fragments.add(fragment);
