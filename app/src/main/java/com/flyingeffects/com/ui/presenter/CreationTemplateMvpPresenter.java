@@ -11,6 +11,7 @@ import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.lansosdk.videoeditor.DrawPadView2;
 
+import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
 public class CreationTemplateMvpPresenter extends BasePresenter implements CreationTemplateMvpCallback {
@@ -108,8 +109,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
-    public void initBottomLayout(ViewPager viewPager){
-        creationTemplatemodel.initBottomLayout(viewPager);
+    public void initBottomLayout(ViewPager viewPager,FragmentManager fragmentManager){
+        creationTemplatemodel.initBottomLayout(viewPager,fragmentManager);
     }
 
     public void initStickerView(String path,String originalPath){
@@ -118,10 +119,6 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
 
     public void initVideoProgressView(){
         creationTemplatemodel.initVideoProgressView();
-    }
-
-    public void requestStickersList(){
-        creationTemplatemodel.requestStickersList(true);
     }
 
     public void onDestroy(){
@@ -246,6 +243,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     @Override
     public void modifyTimeLineSickerPath(String id,String path) {
         creationTemplatemvpView.modifyTimeLineSickerPath(id,path);
+    }
+
+    @Override
+    public void stickerFragmentClose() {
+        creationTemplatemvpView.stickerFragmentClose();
     }
 
 

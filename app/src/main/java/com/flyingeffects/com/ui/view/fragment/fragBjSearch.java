@@ -2,14 +2,10 @@ package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.main_recycler_adapter;
@@ -37,6 +33,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -222,6 +220,8 @@ public class fragBjSearch extends BaseFragment {
             params.put("pageSize", perPageCount + "");
             if (isFrom == 0) {
                 params.put("template_type", "1");
+            } else if (isFrom == 3) {
+                params.put("template_type", "3");
             } else {
                 params.put("template_type", "2");
             }

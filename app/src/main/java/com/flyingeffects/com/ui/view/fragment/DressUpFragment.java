@@ -1,6 +1,8 @@
 package com.flyingeffects.com.ui.view.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -16,7 +18,7 @@ import com.flyingeffects.com.enity.FirstLevelTypeEntity;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.DressUpMvpView;
 import com.flyingeffects.com.ui.presenter.DressUpMvpPresenter;
-import com.flyingeffects.com.ui.presenter.home_fagMvpPresenter;
+import com.flyingeffects.com.ui.view.activity.BackgroundSearchActivity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -39,6 +41,9 @@ public class DressUpFragment extends BaseFragment  implements DressUpMvpView {
 
     @BindView(R.id.tv_search_hint)
     TextView tvSearchHint;
+
+    @BindView(R.id.relative_top)
+    RelativeLayout mRelativeSearch;
 
     private List<FirstLevelTypeEntity> data;
 
@@ -69,6 +74,12 @@ public class DressUpFragment extends BaseFragment  implements DressUpMvpView {
     @Override
     protected void initData() {
         manager = getChildFragmentManager();
+        mRelativeSearch.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), BackgroundSearchActivity.class);
+            intent.putExtra("isFrom",3);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+        });
     }
 
 

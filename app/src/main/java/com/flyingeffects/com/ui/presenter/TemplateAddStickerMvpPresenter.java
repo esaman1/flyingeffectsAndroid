@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
@@ -90,12 +91,9 @@ public class TemplateAddStickerMvpPresenter extends BasePresenter implements Tem
         TemplateAddStickermodel.initVideoProgressView(mTimeLineView);
     }
 
-    public void requestStickersList(){
-        TemplateAddStickermodel.requestStickersList(true);
-    }
 
-    public void initBottomLayout(ViewPager viewPager){
-        TemplateAddStickermodel.initBottomLayout(viewPager);
+    public void initBottomLayout(ViewPager viewPager ,FragmentManager fragmentManager){
+        TemplateAddStickermodel.initBottomLayout(viewPager,fragmentManager);
     }
 
 
