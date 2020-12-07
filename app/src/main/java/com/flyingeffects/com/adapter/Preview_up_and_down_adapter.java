@@ -70,10 +70,13 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         FrameLayout video_layout = helper.getView(R.id.video_layout);
         videoPlayer = helper.getView(R.id.video_item_player);
         LinearLayout ll_down_bj = helper.getView(R.id.ll_down_bj);
+        ImageView iv_show_cover=helper.getView(R.id.iv_show_cover);
         tv_title_music=helper.getView(R.id.tv_title_music);
         LinearLayout ll_zan = helper.getView(R.id.ll_zan);
         TextView tv_make = helper.getView(R.id.tv_make);
         LinearLayout ll_comment = helper.getView(R.id.ll_comment);
+        LinearLayout ll_describe=helper.getView(R.id.ll_describe);
+
         tv_btn_follow=helper.getView(R.id.tv_btn_follow);
         tv_comment_count=helper.getView(R.id.tv_comment_count);
         tv_zan_count = helper.getView(R.id.tv_zan_count);
@@ -108,7 +111,17 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             tv_make.setText("马上制作");
         }
         if (ad == null) {
-            initVideoPlayer(item, offset);
+            if(OldFromTo.equals(FromToTemplate.DRESSUP)){
+                videoPlayer.setVisibility(View.GONE);
+                iv_show_cover.setVisibility(View.VISIBLE);
+                Glide.with(context)
+                        .load(item.getImage())
+                        .into(iv_writer);
+            }else{
+                videoPlayer.setVisibility(View.VISIBLE);
+                initVideoPlayer(item, offset);
+                iv_show_cover.setVisibility(View.GONE);
+            }
             //无广告的情况
             tv_title_music.setVisibility(View.VISIBLE);
             videoPlayer.setVisibility(View.VISIBLE);
@@ -171,6 +184,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             }
             video_layout.setVisibility(View.GONE);
         } else {
+            iv_show_cover.setVisibility(View.GONE);
             pauseVideo();
             //有广告的情况下，显示广告页面
             video_layout.setVisibility(View.VISIBLE);
@@ -190,6 +204,13 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             }
             video_layout.addView(view);
         }
+
+        if (OldFromTo.equals(FromToTemplate.DRESSUP)) {
+            ll_describe.setVisibility(View.GONE);
+        } else {
+            ll_describe.setVisibility(View.VISIBLE);
+        }
+
 
     }
 
