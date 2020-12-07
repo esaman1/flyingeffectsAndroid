@@ -100,6 +100,9 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     @BindView(R.id.crop_show_end)
     TextView endMs;
 
+    @BindView(R.id.iv_show_cover)
+    ImageView iv_show_cover;
+
     @BindView(R.id.tv_choose_pic)
     TextView tv_choose_pic;
 
@@ -135,7 +138,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
 
     private String huaweiFolder;
 
-    //1 是来自搜索的提交 0 表示来自我的页面
+    //1 是来自搜索的提交 0 表示来自我的页面  2表示来自换装上传图片页面
     private int isFrom;
 
     //0 表示不允许合拍，1表示允许合拍
@@ -149,6 +152,8 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
 
     private int isChecked = 1;
 
+    private String videoPath;
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_upload_material;
@@ -158,9 +163,18 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     protected void initView() {
         Presenter = new UploadMaterialMVPPresenter(this, this);
         //点击进入视频剪切界面
-        String videoPath = getIntent().getStringExtra("videoPath");
+        videoPath = getIntent().getStringExtra("videoPath");
         isFrom = getIntent().getIntExtra("isFrom", 0);
-        initVideoDrawPad(videoPath, false);
+        if (isFrom != 2) {
+            initVideoDrawPad(videoPath, false);
+            iv_show_cover.setVisibility(View.GONE);
+            videocontainer.setVisibility(View.VISIBLE);
+        } else {
+            drawPadView.setVisibility(View.GONE);
+            videocontainer.setVisibility(View.GONE);
+            iv_show_cover.setVisibility(View.VISIBLE);
+            Glide.with(this).load(videoPath).into(iv_show_cover);
+        }
         UiStep.nowUiTag = "";
         UiStep.isFromDownBj = false;
         FileManager fileManager = new FileManager();
@@ -244,7 +258,14 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                     ToastUtil.showToast("请填写描述");
                     return;
                 }
-                saveVideo();
+
+                if (isFrom != 2) {
+                    saveVideo();
+                } else {
+                    uploadDressUpImage(videoPath);
+                }
+
+
                 break;
 
             case R.id.add_head:
@@ -395,13 +416,13 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     }
 
     @Override
-    public void finishCrop(String videoPath,boolean Landscape) {
+    public void finishCrop(String videoPath, boolean Landscape) {
 //        WaitingDialog.openPragressDialog(this);
 
-        if(Landscape){
-            isLandscape=1;
-        }else{
-            isLandscape=0;
+        if (Landscape) {
+            isLandscape = 1;
+        } else {
+            isLandscape = 0;
         }
         //分为3步 1 提取音频，2提取封面  3 ，提取头像
         new Handler().postDelayed(new Runnable() {
@@ -506,14 +527,16 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         params.put("auth_image", huaweiImagePath);
         params.put("audiourl", huaweiSound);
         params.put("image", coverImagePath);
-        LogUtil.d("OOM2","isLandscape="+isLandscape);
-        params.put("isLandscape", isLandscape+"");
+        LogUtil.d("OOM2", "isLandscape=" + isLandscape);
+        params.put("isLandscape", isLandscape + "");
         params.put("is_with_play", isChecked + ""); //1 表示可以合拍
         LogUtil.d("OOM", "is_with_play=" + isChecked);
         // 启动时间
         LogUtil.d("OOM2", params.toString());
         Observable ob;
-        if (isFrom != 0) {
+        if (isFrom == 1) {
+            ob = Api.getDefault().uploadSearchResult(BaseConstans.getRequestHead(params));
+        } else if (isFrom == 2) {
             ob = Api.getDefault().uploadSearchResult(BaseConstans.getRequestHead(params));
         } else {
             ob = Api.getDefault().toLoadTemplate(BaseConstans.getRequestHead(params));
@@ -624,5 +647,35 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         return super.dispatchTouchEvent(ev);
     }
 
+
+    /**
+     * description ：换装接口对接
+     * creation date: 2020/12/7
+     * user : zhangtongju
+     */
+    private void uploadDressUpImage(String path) {
+        String type = path.substring(path.length() - 4);
+        String nowTime = StringUtil.getCurrentTimeymd();
+        String copyPath = "media/android/dressUpImage/" + nowTime + "/" + System.currentTimeMillis() + type;
+        coverImagePath = "http://cdn.flying.flyingeffect.com/" + copyPath;
+        uploadImage(path, coverImagePath);
+    }
+
+
+    private void uploadImage(String videoPath, String copyName) {
+        huaweiObs.getInstance().uploadFileToHawei(videoPath, copyName, new huaweiObs.Callback() {
+            @Override
+            public void isSuccess(String str) {
+
+                Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        requestData();
+                    }
+                });
+
+            }
+        });
+    }
 
 }

@@ -33,10 +33,13 @@ import com.flyingeffects.com.enity.CommonNewsBean;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
+import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.GlideRoundTransform;
 import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
+import com.flyingeffects.com.ui.view.activity.UploadMaterialActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.flyingeffects.com.ui.view.activity.intoOtherAppActivity;
 import com.flyingeffects.com.utils.LogUtil;
@@ -50,6 +53,7 @@ import com.qq.e.ads.nativ.widget.NativeAdContainer;
 import com.qq.e.comm.constants.AdPatternType;
 import com.qq.e.comm.util.AdError;
 import com.shixing.sxve.ui.albumType;
+import com.yanzhenjie.album.AlbumFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -277,6 +281,26 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                 } else {
                     add_image.setVisibility(View.GONE);
                 }
+                add_image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        if(!DoubleClick.getInstance().isFastDoubleClick()){
+                            AlbumManager.chooseImageAlbum(context, 1, 0, new AlbumChooseCallback() {
+                                @Override
+                                public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
+                                  if(!isCancel){
+                                      intoUploadMaterialActivity(paths.get(0));
+                                  }
+                                }
+                            },"");
+                        }
+
+
+
+
+                    }
+                });
                 helper.setText(R.id.tv_name2, item.getAuth());
                 ImageView iv_show_author_template = helper.getView(R.id.iv_show_author_template);
                 Glide.with(context)
@@ -530,6 +554,22 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
         this.listCommentBean=listCommentBean;
     }
 
+
+
+
+
+    /**
+     * description ：跳转到上传页面
+     * creation date: 2020/12/7
+     * user : zhangtongju
+     */
+    private void intoUploadMaterialActivity(String path){
+        Intent intent=new Intent(context, UploadMaterialActivity.class);
+        intent.putExtra("isFrom",2);
+        intent.putExtra("videoPath",path);
+        context.startActivity(intent);
+
+    }
 
 }
 
