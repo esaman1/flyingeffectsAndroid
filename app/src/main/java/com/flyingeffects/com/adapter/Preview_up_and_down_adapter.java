@@ -116,7 +116,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
                 iv_show_cover.setVisibility(View.VISIBLE);
                 Glide.with(context)
                         .load(item.getImage())
-                        .into(iv_writer);
+                        .into(iv_show_cover);
             }else{
                 videoPlayer.setVisibility(View.VISIBLE);
                 initVideoPlayer(item, offset);

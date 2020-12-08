@@ -111,7 +111,7 @@ public class PreviewUpAndDownMvpModel {
     private TTAdNative mTTAdNative;
     private String soundFolder;
     private String toUserID;
-    private String searchText;
+    private String searchText="";
     private boolean isCanLoadMore;
 
     public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage, String fromTo, String category_id, String toUserID, String searchText, boolean isCanLoadMore, String tc_id) {
@@ -579,7 +579,7 @@ public class PreviewUpAndDownMvpModel {
         if (!TextUtils.isEmpty(category_id)) {
             params.put("category_id", category_id);
         }
-        if (!TextUtils.isEmpty(tc_id)) {
+        if (!TextUtils.isEmpty(tc_id)&&Integer.parseInt(tc_id) >= 0) {
             params.put("tc_id", tc_id);
         }
         params.put("page", selectPage + "");
@@ -640,7 +640,6 @@ public class PreviewUpAndDownMvpModel {
                 break;
 
             case FromToTemplate.DRESSUP:
-                params.put("search", searchText);
                 params.put("template_type", "3");
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
                 break;
@@ -651,11 +650,11 @@ public class PreviewUpAndDownMvpModel {
         }
 
         String str = StringUtil.beanToJSONString(params);
-        LogUtil.d("OOM", "总请求的参数为------" + str);
+        LogUtil.d("OOM3", "总请求的参数为------" + str);
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
             @Override
             protected void _onError(String message) {
-                LogUtil.d("OOM", "下一页数据请求" + message);
+                LogUtil.d("OOM3", "下一页数据请求" + message);
                 finishData();
                 ToastUtil.showToast("错误为" + message);
             }
@@ -663,7 +662,7 @@ public class PreviewUpAndDownMvpModel {
             @Override
             protected void _onNext(List<new_fag_template_item> data) {
                 String str = StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM", "下一页数据请求" + str);
+                LogUtil.d("OOM3", "下一页数据请求" + str);
                 finishData();
                 boolean isRefresh = false;
                 if (sIsRefresh == 0) {
@@ -1012,137 +1011,18 @@ public class PreviewUpAndDownMvpModel {
      * creation date: 2020/12/3
      * user : zhangtongju
      */
-    WaitingDialog_progress progress;
     public void toDressUp(String path, String templateId) {
-        progress=new WaitingDialog_progress(context);
-        progress.openProgressDialog();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Bitmap bpResoruse = BitmapFactory.decodeFile(path);
-                Bitmap bp = BitmapUtils.compressBitmap(bpResoruse, 500);
-                String fileName = mUploadDressUpFolder + File.separator + UUID.randomUUID() + ".png";
-                LogUtil.d("OOM3", "fileName=" + fileName);
-                BitmapManager.getInstance().saveBitmapToPath(bp, fileName, new BitmapManager.saveToFileCallback() {
-                    @Override
-                    public void isSuccess(boolean isSuccess) {
-                        uploadFileToHuawei(fileName, templateId);
-                    }
-                });
-            }
-        }).start();
-    }
+        DressUpModel dressUpModel = new DressUpModel(context, url -> {
+            LogUtil.d("OOM3", "融合结果的url为" + url);
+            Intent intent = new Intent(context, DressUpPreviewActivity.class);
+            intent.putExtra("url", url);
+            intent.putExtra("template_id", templateId);
+            intent.putExtra("localImage", path);
 
 
-    /**
-     * description ：上传换装图片到华为云
-     * creation date: 2020/12/4
-     * user : zhangtongju
-     */
-    private void uploadFileToHuawei(String path, String template_id) {
-        String type = path.substring(path.length() - 4);
-        String nowTime = StringUtil.getCurrentTimeymd();
-        String copyName = "media/android/dressUp/" + nowTime + "/" + System.currentTimeMillis() + type;
-        String uploadPath = "http://cdn.flying.flyingeffect.com/" + copyName;
-        Log.d("OOM3", "uploadFileToHuawei" + "当前上传的地址为" + path + "当前的名字为" + copyName);
-        huaweiObs.getInstance().uploadFileToHawei(path, copyName, str -> Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
-            @Override
-            public void call(String s) {
-                LogUtil.d("OOM3", "上传华为云成功,地址为" + s);
-                informServers(uploadPath, template_id);
-            }
-        }));
-    }
-
-
-    /**
-     * description ：通知后台,告诉后台已经上传了图片了
-     * creation date: 2020/12/4
-     * user : zhangtongju
-     */
-    private void informServers(String path, String template_id) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("image", path);
-        params.put("template_id", template_id);
-        Observable ob = Api.getDefault().meargeHuman(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<String>(context) {
-            @Override
-            protected void _onError(String message) {
-                ToastUtil.showToast(message);
-            }
-
-            @Override
-            protected void _onNext(String id) {
-                LogUtil.d("OOM3", "informServers");
-                startTimer(id);
-            }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
-    }
-
-
-    /***
-     * 开启轮训
-     */
-    private Calculagraph calculagraph;
-
-    private void startTimer(String id) {
-        calculagraph = new Calculagraph();
-        calculagraph.startTimer(3f, 5, new Calculagraph.Callback() {
-            @Override
-            public void isTimeUp() {
-                LogUtil.d("OOM3", "开始请求融合结果");
-                Observable.just(id).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        requestDressUpCallback(s);
-                    }
-                });
-            }
-
-            @Override
-            public void isDone() {
-                progress.closePragressDialog();
-            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            context.startActivity(intent);
         });
+        dressUpModel.toDressUp(path, templateId);
     }
-
-
-    /**
-     * description ：通知后台,请求换装接口
-     * creation date: 2020/12/4
-     * user : zhangtongju
-     */
-    private void requestDressUpCallback(String request_id) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("request_id", request_id);
-        Observable ob = Api.getDefault().humanMerageResult(BaseConstans.getRequestHead(params));
-        LogUtil.d("OOM3", "requestDressUpCallback的请求参数为" + StringUtil.beanToJSONString(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<HumanMerageResult>>(context) {
-            @Override
-            protected void _onError(String message) {
-                LogUtil.d("OOM3", "message=" + message);
-                ToastUtil.showToast(message);
-                progress.closePragressDialog();
-                if (calculagraph != null) {
-                    calculagraph.destroyTimer();
-                }
-            }
-
-            @Override
-            protected void _onNext(List<HumanMerageResult> data) {
-                if (data != null && data.size() > 0) {
-                    progress.closePragressDialog();
-                    String str = StringUtil.beanToJSONString(data);
-                    LogUtil.d("OOM3", str);
-                    Intent intent = new Intent(context, DressUpPreviewActivity.class);
-                    intent.putExtra("url", data.get(0).getResult_image());
-                    context.startActivity(intent);
-                }else{
-                    LogUtil.d("OOM3", "data=null");
-                }
-            }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
-    }
-
-
 }
