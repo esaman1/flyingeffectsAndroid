@@ -28,6 +28,7 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.HumanMerageResult;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.enity.new_fag_template_item;
@@ -996,17 +997,19 @@ public class PreviewUpAndDownMvpModel {
      * user : zhangtongju
      */
     public void toDressUp(String path, String templateId) {
-        DressUpModel dressUpModel = new DressUpModel(context, url -> {
-            LogUtil.d("OOM3", "融合结果的url为" + url);
-            Intent intent = new Intent(context, DressUpPreviewActivity.class);
-            intent.putExtra("url", url);
-            intent.putExtra("template_id", templateId);
-            intent.putExtra("localImage", path);
 
-
-            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            context.startActivity(intent);
+        DressUpModel dressUpModel = new DressUpModel(context, new DressUpModel.DressUpCallback() {
+            @Override
+            public void isSuccess(List<HumanMerageResult> paths) {
+                Intent intent = new Intent(context, DressUpPreviewActivity.class);
+                intent.putExtra("url", paths.get(0).getResult_image());
+                intent.putExtra("template_id", templateId);
+                intent.putExtra("localImage", path);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                context.startActivity(intent);
+            }
         });
+
         dressUpModel.toDressUp(path, templateId);
     }
 }

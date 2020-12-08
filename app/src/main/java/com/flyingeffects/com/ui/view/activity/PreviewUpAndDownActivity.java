@@ -21,6 +21,7 @@ import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.AttentionChange;
 import com.flyingeffects.com.enity.CreateCutCallback;
 import com.flyingeffects.com.enity.DownVideoPath;
+import com.flyingeffects.com.enity.HumanMerageResult;
 import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.ReplayMessageEvent;
 import com.flyingeffects.com.enity.new_fag_template_item;
@@ -38,6 +39,7 @@ import com.flyingeffects.com.manager.StimulateControlManage;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.PreviewUpAndDownMvpView;
+import com.flyingeffects.com.ui.model.DressUpModel;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.model.MattingImage;
@@ -941,7 +943,21 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel && !ondestroy && paths != null && paths.size() > 0) {
             if (OldfromTo.equals(FromToTemplate.DRESSUP)) {
-                mMvpPresenter.toDressUp(paths.get(0),templateId);
+                //来自换装页面
+                mMvpPresenter.toDressUp(paths.get(0), templateId);
+            } else if (templateItem.getIs_anime() == 1) {
+                //模板换装新逻辑
+                DressUpModel dressUpModel = new DressUpModel(this, new DressUpModel.DressUpCallback() {
+                    @Override
+                    public void isSuccess(List<HumanMerageResult> paths) {
+
+                        ArrayList<String> needPath = getDressUpdate(paths);
+                        intoTemplateActivity(needPath, TemplateFilePath);
+
+                    }
+                });
+                dressUpModel.toDressUp(paths.get(0), templateId);
+
             } else {
                 chooseAlbumStatistics(paths);
                 LogUtil.d("OOM", "pathsSize=" + paths.size());
@@ -976,12 +992,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                                         if (OldfromTo.equals(FromToTemplate.ISBJ)) {
                                             statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "8_SelectImage");
                                         }
-                                        if (templateItem.getIs_anime() != 1) {
-                                            compressImage(paths, templateItem.getId() + "");
-                                        } else {
-                                            //漫画需要去服务器请求
-                                            compressImageForServers(paths, templateItem.getId() + "");
-                                        }
+//                                        if (templateItem.getIs_anime() != 1) {
+                                        compressImage(paths, templateItem.getId() + "");
+//                                        } else {
+//                                            //漫画需要去服务器请求
+//                                            compressImageForServers(paths, templateItem.getId() + "");
+//                                        }
                                     } else {
                                         //选择的时视频
 //                                if (OldfromTo.equals(FromToTemplate.ISBJ) || OldfromTo.equals(FromToTemplate.ISHOMEFROMBJ)) {
@@ -1263,6 +1279,16 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Subscribe
     public void onEventMainThread(AttentionChange event) {
 
+    }
+
+
+    private ArrayList<String> getDressUpdate(List<HumanMerageResult> paths) {
+
+        ArrayList<String> list = new ArrayList<>();
+        for (int i = 0; i < paths.size(); i++) {
+            list.add(paths.get(i).getResult_image());
+        }
+        return list;
     }
 
 

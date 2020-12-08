@@ -185,7 +185,7 @@ public class DressUpModel {
                     String str = StringUtil.beanToJSONString(data);
                     LogUtil.d("OOM3", str);
                     if (callback != null) {
-                        callback.isSuccess(data.get(0).getResult_image());
+                        callback.isSuccess(data);
                         callback = null;
                     }
                     if (calculagraph != null) {
@@ -201,7 +201,7 @@ public class DressUpModel {
 
     public interface DressUpCallback {
 
-        void isSuccess(String url);
+        void isSuccess(List<HumanMerageResult>paths);
 
     }
 

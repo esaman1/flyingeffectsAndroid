@@ -16,6 +16,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.HumanMerageResult;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -212,8 +213,8 @@ public class DressUpPreviewActivity extends BaseActivity {
     private void ToNextDressUp(String templateId) {
         DressUpModel dressUpModel = new DressUpModel(this, new DressUpModel.DressUpCallback() {
             @Override
-            public void isSuccess(String url) {
-                showAndSaveImage(url);
+            public void isSuccess(List<HumanMerageResult>paths) {
+                showAndSaveImage(paths.get(0).getResult_image());
             }
         });
         dressUpModel.toDressUp(localImage, templateId);
