@@ -124,17 +124,11 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     LinearLayout mLLInfoRelated;
     @BindView(R.id.ll_no_login_info)
     LinearLayout mLLNoLoginInfo;
-
-
     @BindView(R.id.tv_top_name)
     TextView tv_top_name;
-
-
     @BindView(R.id.appbar)
     AppBarLayout appbar;
 
-//    @BindView(R.id.scrollView_user)
-//    ScrollView mScrollViewUser;
 
 
     private UCrop.Options options;
@@ -233,32 +227,6 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
         list.add(fag_0);
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
         viewpager.setAdapter(adapter);
-        viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int i, float v, int i1) {
-
-            }
-
-            @Override
-            public void onPageSelected(int i) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int i) {
-
-            }
-        });
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            mScrollViewUser.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-//                @Override
-//                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-//                    if (scrollY >= screenUtil.dip2px(getContext(), 142)) {
-//                        mScrollViewUser.scrollTo(0, screenUtil.dip2px(getContext(), 142));
-//                    }
-//                }
-//            });
-//        }
         tabLayout.setViewPager(viewpager, titles);
     }
 

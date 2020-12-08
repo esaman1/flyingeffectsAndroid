@@ -6,14 +6,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
-
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 
 import com.bigkoo.convenientbanner.utils.ScreenUtil;
 import com.flyingeffects.com.R;
@@ -45,6 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import butterknife.BindView;
 import rx.Observable;
 
@@ -402,17 +398,18 @@ public class WelcomeActivity extends BaseActivity {
                             //上传的时候
                             int second = Integer.parseInt(config.getValue());
                             BaseConstans.setMaxuploadTime(second);
-                        }else if(id==32){
+                        } else if (id == 32) {
                             String second = config.getValue();
                             BaseConstans.setminapp_share_title(second);
-                        }
-
-                        else if(id==33){
+                        } else if (id == 33) {
                             //feed 自渲染信息流 上线和下限
                             String second = config.getValue();
                             BaseConstans.setFeedShowPositionNum(second);
+                        } else if (id == 53) {
+                            //相册加载广告间隔次数
+                            String albumADIntervalNumber = config.getValue();
+                            BaseConstans.setIntervalNumShowAD(Integer.parseInt(albumADIntervalNumber));
                         }
-
                     }
                 }
             }

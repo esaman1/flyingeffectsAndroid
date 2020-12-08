@@ -1,14 +1,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
-
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/main_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/base_black">
+        android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar"
@@ -24,11 +22,11 @@
                 android:minHeight="40dp"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:background="@color/black">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -303,7 +301,6 @@
                             </LinearLayout>
                         </LinearLayout>
 
-
                         <TextView
                             android:id="@+id/tv_id"
                             android:layout_width="wrap_content"
@@ -312,7 +309,6 @@
                             android:layout_marginTop="15dp"
                             android:text="飞闪号："
                             android:textColor="#858A8D" />
-
 
                     </RelativeLayout>
 
@@ -396,14 +392,12 @@
                                     android:layout_width="50dp"
                                     android:layout_height="wrap_content">
 
-
                                     <ImageView
                                         android:id="@+id/iv_icon_comment"
                                         android:layout_width="40dp"
                                         android:layout_height="40dp"
                                         android:layout_marginTop="10dp"
                                         android:src="@mipmap/comment" />
-
 
                                     <TextView
                                         android:layout_width="40dp"
@@ -413,7 +407,6 @@
                                         android:gravity="center_horizontal"
                                         android:text="评论"
                                         android:textColor="@color/white" />
-
 
                                     <TextView
                                         android:id="@+id/tv_comment_count"
@@ -444,14 +437,12 @@
                                     android:layout_width="50dp"
                                     android:layout_height="wrap_content">
 
-
                                     <ImageView
                                         android:id="@+id/iv_private_message"
                                         android:layout_width="40dp"
                                         android:layout_height="40dp"
                                         android:layout_marginTop="10dp"
                                         android:src="@mipmap/private_message" />
-
 
                                     <TextView
                                         android:layout_width="40dp"
@@ -461,7 +452,6 @@
                                         android:gravity="center_horizontal"
                                         android:text="私信"
                                         android:textColor="@color/white" />
-
 
                                     <TextView
                                         android:id="@+id/tv_private_message"
@@ -484,26 +474,18 @@
                         </LinearLayout>
                     </LinearLayout>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="12dp"
-                        android:background="@color/black" />
-
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
                         android:orientation="vertical"
+                        android:background="@drawable/shape_top_half_12_rect_gray"
                         app:layout_collapseMode="pin">
-
-
 
                         <com.flyco.tablayout.SlidingTabLayout
                             android:id="@+id/tl_tabs"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/dp_40"
-                            android:layout_marginBottom="7dp"
-                            android:background="#232323"
                             app:tl_divider_padding="@dimen/dp_5"
                             app:tl_indicator_color="#5496FF"
                             app:tl_indicator_corner_radius="@dimen/dp_5"
@@ -518,31 +500,24 @@
 
                     </LinearLayout>
 
-
                 </LinearLayout>
-
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-
         </com.google.android.material.appbar.AppBarLayout>
-
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#232323"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-
-
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
 
         <TextView
             android:id="@+id/tv_top_name"
@@ -558,11 +533,7 @@
             android:textSize="20sp"
            />
 
-
-
     </RelativeLayout>
-
-
 
 </RelativeLayout>
 
