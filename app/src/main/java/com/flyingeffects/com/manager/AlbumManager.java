@@ -5,18 +5,13 @@ import android.content.Context;
 import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.utils.LogUtil;
-import com.yanzhenjie.album.Action;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.AlbumFile;
 import com.yanzhenjie.album.Filter;
@@ -24,6 +19,8 @@ import com.yanzhenjie.album.api.widget.Widget;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.core.content.ContextCompat;
 
 public class AlbumManager {
     private static final String TAG = "AlbumManager";
@@ -34,7 +31,12 @@ public class AlbumManager {
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String materialInfo) {
-
+        int num = BaseConstans.getOpenPhotoAlbumNum();
+        if (num > Integer.MAX_VALUE - 1) {
+            num = -1;
+        }
+        num++;
+        BaseConstans.setOpenPhotoAlbumNum(num);
         statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
         Album.album(context)
                 .multipleChoice()
@@ -74,9 +76,8 @@ public class AlbumManager {
                                 )
                                 .build()
                 )
-                .onReturnView(new Action<LinearLayout>() {
-                    @Override
-                    public void onAction(@NonNull LinearLayout result) {
+                .onReturnView(result -> {
+                    if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         requestAlbumAd(context, result);
                     }
                 })
@@ -86,11 +87,15 @@ public class AlbumManager {
                         paths.add(albumFile.getPath());
                     }
                     callback.resultFilePath(tag, paths, false, result);
-                    AdManager.getInstance().releaseBannerManager();
+                    if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
+                        AdManager.getInstance().releaseBannerManager();
+                    }
                 })
                 .onCancel(result -> {
                     callback.resultFilePath(tag, new ArrayList<>(), true, new ArrayList<>());
-                    AdManager.getInstance().releaseBannerManager();
+                    if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
+                        AdManager.getInstance().releaseBannerManager();
+                    }
                 })
                 .start();
     }
@@ -102,6 +107,12 @@ public class AlbumManager {
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String materialInfo, long duration) {
+        int num = BaseConstans.getOpenPhotoAlbumNum();
+         if (num > Integer.MAX_VALUE - 1) {
+            num = -1;
+        }
+        num++;
+        BaseConstans.setOpenPhotoAlbumNum(num);
         statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
         Album.album(context)
                 .multipleChoice()
@@ -141,9 +152,8 @@ public class AlbumManager {
                                 )
                                 .build()
                 )
-                .onReturnView(new Action<LinearLayout>() {
-                    @Override
-                    public void onAction(@NonNull LinearLayout result) {
+                .onReturnView(result -> {
+                    if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         requestAlbumAd(context, result);
                     }
                 })
@@ -152,12 +162,16 @@ public class AlbumManager {
                     for (AlbumFile albumFile : result) {
                         paths.add(albumFile.getPath());
                     }
-                    AdManager.getInstance().releaseBannerManager();
+                    if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
+                        AdManager.getInstance().releaseBannerManager();
+                    }
                     callback.resultFilePath(tag, paths, false, result);
                 })
                 .onCancel(result -> {
                     callback.resultFilePath(tag, new ArrayList<>(), true, new ArrayList<>());
-                    AdManager.getInstance().releaseBannerManager();
+                    if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
+                        AdManager.getInstance().releaseBannerManager();
+                    }
                 })
                 .start();
     }
@@ -169,6 +183,12 @@ public class AlbumManager {
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String materialInfo, long duration, String title, String musicFolder) {
+        int num = BaseConstans.getOpenPhotoAlbumNum();
+         if (num > Integer.MAX_VALUE - 1) {
+            num = -1;
+        }
+        num++;
+        BaseConstans.setOpenPhotoAlbumNum(num);
         statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
         Album.album(context)
                 .multipleChoice()
@@ -211,9 +231,8 @@ public class AlbumManager {
                                 )
                                 .build()
                 )
-                .onReturnView(new Action<LinearLayout>() {
-                    @Override
-                    public void onAction(@NonNull LinearLayout result) {
+                .onReturnView(result -> {
+                    if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         requestAlbumAd(context, result);
                     }
                 })
@@ -222,12 +241,16 @@ public class AlbumManager {
                     for (AlbumFile albumFile : result) {
                         paths.add(albumFile.getPath());
                     }
-                    AdManager.getInstance().releaseBannerManager();
+                    if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
+                        AdManager.getInstance().releaseBannerManager();
+                    }
                     callback.resultFilePath(tag, paths, false, result);
                 })
                 .onCancel(result -> {
                     callback.resultFilePath(tag, new ArrayList<>(), true, new ArrayList<>());
-                    AdManager.getInstance().releaseBannerManager();
+                    if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
+                        AdManager.getInstance().releaseBannerManager();
+                    }
                 })
                 .start();
     }
@@ -239,6 +262,12 @@ public class AlbumManager {
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     public static void chooseImageAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String materialInfo) {
+        int num = BaseConstans.getOpenPhotoAlbumNum();
+         if (num > Integer.MAX_VALUE - 1) {
+            num = -1;
+        }
+        num++;
+        BaseConstans.setOpenPhotoAlbumNum(num);
         statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
         Album.image(context) // Image selection.
                 .multipleChoice()
@@ -272,9 +301,8 @@ public class AlbumManager {
                                                 .build()
                                 )
                                 .build())
-                .onReturnView(new Action<LinearLayout>() {
-                    @Override
-                    public void onAction(@NonNull LinearLayout result) {
+                .onReturnView(result -> {
+                    if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         requestAlbumAd(context, result);
                     }
                 })
@@ -283,12 +311,16 @@ public class AlbumManager {
                     for (AlbumFile albumFile : result) {
                         paths.add(albumFile.getPath());
                     }
-                    AdManager.getInstance().releaseBannerManager();
+                    if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
+                        AdManager.getInstance().releaseBannerManager();
+                    }
                     callback.resultFilePath(tag, paths, false, result);
                 })
                 .onCancel(result -> {
                     callback.resultFilePath(tag, new ArrayList<>(), true, new ArrayList<>());
-                    AdManager.getInstance().releaseBannerManager();
+                    if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
+                        AdManager.getInstance().releaseBannerManager();
+                    }
                 })
                 .start();
     }
@@ -300,6 +332,12 @@ public class AlbumManager {
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     public static void chooseVideo(Activity act, int selectNum, int tag, AlbumChooseCallback callback, String materialInfo) {
+        int num = BaseConstans.getOpenPhotoAlbumNum();
+         if (num > Integer.MAX_VALUE - 1) {
+            num = -1;
+        }
+        num++;
+        BaseConstans.setOpenPhotoAlbumNum(num);
         statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
         Album.video(act) // Video selection.
                 .multipleChoice()
@@ -333,9 +371,8 @@ public class AlbumManager {
                                                 .build()
                                 )
                                 .build())
-                .onReturnView(new Action<LinearLayout>() {
-                    @Override
-                    public void onAction(@NonNull LinearLayout result) {
+                .onReturnView(result -> {
+                    if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         requestAlbumAd(act, result);
                     }
                 })
@@ -345,11 +382,15 @@ public class AlbumManager {
                         paths.add(albumFile.getPath());
                     }
                     callback.resultFilePath(tag, paths, false, result);
-                    AdManager.getInstance().releaseBannerManager();
+                    if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
+                        AdManager.getInstance().releaseBannerManager();
+                    }
                 })
                 .onCancel(result -> {
                     callback.resultFilePath(tag, new ArrayList<>(), true, new ArrayList<>());
-                    AdManager.getInstance().releaseBannerManager();
+                    if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
+                        AdManager.getInstance().releaseBannerManager();
+                    }
                 })
                 .start();
     }

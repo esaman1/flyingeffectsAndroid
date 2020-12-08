@@ -377,27 +377,51 @@ public class BaseConstans {
         spUtil.putLong("lastShowAdvertisingTime", time);
     }
 
-    //设置打开app的次数
+    /**设置打开app的次数*/
     public static void setOpenAppNum(int num) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putInt("OpenAppNum", num);
     }
 
 
-    //得到打开app的次数
+    /**得到打开app的次数*/
     public static int getOpenAppNum() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getInt("OpenAppNum", 0);
     }
 
-    //启动APP多少秒后显示插屏广告
+    /**设置间隔多少次加载广告*/
+    public static void setIntervalNumShowAD(int num) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putInt("IntervalNumShowAD", num);
+    }
+
+    /**得到间隔多少次加载广告  默认间隔10次显示一次广告*/
+    public static int getIntervalNumShowAD() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getInt("IntervalNumShowAD", 10);
+    }
+
+    /**设置打开选择图片或视频的activity的次数*/
+    public static void setOpenPhotoAlbumNum(int num) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putInt("OpenPhotoAlbumNum", num);
+    }
+
+    /**得到打开选择图片或视频的activity的次数*/
+    public static int getOpenPhotoAlbumNum() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getInt("OpenPhotoAlbumNum", -1);
+    }
+
+    /**启动APP多少秒后显示插屏广告*/
     public static void setInterstitial(int num) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putInt("interstitial", num);
     }
 
 
-    //启动APP多少秒后显示插屏广告
+    /**启动APP多少秒后显示插屏广告*/
     public static int getInterstitial() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getInt("interstitial", 5);
