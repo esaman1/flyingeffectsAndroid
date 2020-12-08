@@ -338,4 +338,12 @@ public interface ApiService {
     @POST("/api/media/stickerCategory")
     Observable<HttpResult<List<StickerTypeEntity>>> getStickerTypeList(@FieldMap Map<String,String> params);
 
+
+    /**贴纸分类列表*/
+    @FormUrlEncoded
+    @POST("/api/mearge/template_ids")
+    Observable<HttpResult<List<String>>> template_ids(@FieldMap Map<String,String> params);
+
+
+
 }

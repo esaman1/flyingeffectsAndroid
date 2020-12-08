@@ -1,18 +1,27 @@
 package com.flyingeffects.com.manager;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.media.MediaMetadataRetriever;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.bumptech.glide.Glide;
+
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class BitmapManager {
 
@@ -139,10 +148,6 @@ public class BitmapManager {
     }
 
 
-
-
-
-
     public Bitmap saveBitmapToPath(Bitmap bitmap, String path, saveToFileCallback callback) {
         if (!path.endsWith(".png") && !path.endsWith(".PNG")) {
             throw new IllegalArgumentException();
@@ -163,7 +168,7 @@ public class BitmapManager {
         } catch (Exception e) {
             callback.isSuccess(false);
             e.printStackTrace();
-        }  finally {
+        } finally {
             if (out != null) {
                 try {
                     out.close();
@@ -214,7 +219,6 @@ public class BitmapManager {
     }
 
 
-
     public interface saveToFileCallback {
         void isSuccess(boolean isSuccess);
     }
@@ -224,7 +228,7 @@ public class BitmapManager {
      * creation date: 2020/4/27
      * user : zhangtongju
      */
-    public Bitmap getOrientationBitmap(String imagePath){
+    public Bitmap getOrientationBitmap(String imagePath) {
         Matrix mat = new Matrix();
         Bitmap bitmap = BitmapFactory.decodeFile(imagePath, new BitmapFactory.Options());
         ExifInterface ei = null;
@@ -246,9 +250,31 @@ public class BitmapManager {
             e.printStackTrace();
         }
 
-        return  null;
+        return null;
     }
 
+
+    public Bitmap GetBitmapForHttp(String url) {
+        Bitmap bm = null;
+        try {
+            URL iconUrl = new URL(url);
+            URLConnection conn = iconUrl.openConnection();
+            HttpURLConnection http = (HttpURLConnection) conn;
+
+            int length = http.getContentLength();
+
+            conn.connect();
+            // 获得图像的字符流
+            InputStream is = conn.getInputStream();
+            BufferedInputStream bis = new BufferedInputStream(is, length);
+            bm = BitmapFactory.decodeStream(bis);
+            bis.close();
+            is.close();// 关闭流
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bm;
+    }
 
 
 }
