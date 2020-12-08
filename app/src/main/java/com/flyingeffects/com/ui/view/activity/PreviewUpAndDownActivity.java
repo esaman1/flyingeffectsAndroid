@@ -1037,6 +1037,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private void chooseAlbumStatistics(List<String> paths) {
         if (paths != null && paths.size() > 0) {
             for (String path : paths
+
             ) {
                 if (albumType.isImage(GetPathTypeModel.getInstance().getMediaType(path))) {
                     {
@@ -1199,36 +1200,38 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     @Override
                     public void onVideoAdSuccess() {
                         statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_sucess");
-                        LogUtil.d("OOM", "onVideoAdSuccess");
+                        LogUtil.d("OOM4", "onVideoAdSuccess");
                     }
 
                     @Override
                     public void onVideoAdError(String s) {
                         statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_fail");
-                        LogUtil.d("OOM", "onVideoAdError" + s);
+                        LogUtil.d("OOM4", "onVideoAdError" + s);
                         BaseConstans.TemplateHasWatchingAd = true;
                         hasLoginToNext();
                     }
 
                     @Override
                     public void onVideoAdClose() {
-                        LogUtil.d("OOM", "onVideoAdClose");
+                        LogUtil.d("OOM4", "onVideoAdClose");
                         BaseConstans.TemplateHasWatchingAd = true;
+                        ToastUtil.showToast("看完广告才可获取权益");
                         hasLoginToNext();
                     }
 
                     @Override
                     public void onVideoAdSkip() {
-                        LogUtil.d("OOM", "onVideoAdSkip");
+                        LogUtil.d("OOM4", "onVideoAdSkip");
                     }
 
                     @Override
                     public void onVideoAdComplete() {
+                        LogUtil.d("OOM4", "onVideoAdComplete");
                     }
 
                     @Override
                     public void onVideoAdClicked() {
-                        LogUtil.d("OOM", "onVideoAdClicked");
+                        LogUtil.d("OOM4", "onVideoAdClicked");
                     }
                 });
             } else {
