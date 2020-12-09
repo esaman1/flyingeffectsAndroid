@@ -851,6 +851,15 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         mMvpPresenter.collectTemplate(needId, templateItem.getTitle(), templateType);
     }
 
+    @Override
+    public void GetDressUpPathResult(List<String> paths) {
+
+        for (int i = 0; i < paths.size(); i++) {
+            LogUtil.d("OOM4", "换装之后保存本地的地址" + paths.get(i));
+        }
+        intoTemplateActivity(paths, TemplateFilePath);
+    }
+
 
     /**
      * 这里逻辑优化下,背景页面是选择图片后在去下载背景
@@ -950,10 +959,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 DressUpModel dressUpModel = new DressUpModel(this, new DressUpModel.DressUpCallback() {
                     @Override
                     public void isSuccess(List<HumanMerageResult> paths) {
-
-                        ArrayList<String> needPath = getDressUpdate(paths);
-                        intoTemplateActivity(needPath, TemplateFilePath);
-
+                        mMvpPresenter.GetDressUpPath(paths);
                     }
                 });
                 dressUpModel.toDressUp(paths.get(0), templateId);
@@ -1279,16 +1285,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Subscribe
     public void onEventMainThread(AttentionChange event) {
 
-    }
-
-
-    private ArrayList<String> getDressUpdate(List<HumanMerageResult> paths) {
-
-        ArrayList<String> list = new ArrayList<>();
-        for (int i = 0; i < paths.size(); i++) {
-            list.add(paths.get(i).getResult_image());
-        }
-        return list;
     }
 
 

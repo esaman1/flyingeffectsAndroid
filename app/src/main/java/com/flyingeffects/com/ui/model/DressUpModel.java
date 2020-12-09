@@ -22,8 +22,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import rx.Observable;
+import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import top.zibin.luban.Luban;
 import top.zibin.luban.OnCompressListener;
@@ -62,21 +64,7 @@ public class DressUpModel {
         progress = new WaitingDialog_progress(context);
         progress.openProgressDialog();
         toCompressImg(ImagePath,templateId);
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                Bitmap bpResoruse = BitmapFactory.decodeFile(ImagePath);
-//                Bitmap bp = BitmapUtils.compressBitmap(bpResoruse, 500);
-//                String fileName = mUploadDressUpFolder + File.separator + UUID.randomUUID() + ".png";
-//                LogUtil.d("OOM3", "fileName=" + fileName);
-//                BitmapManager.getInstance().saveBitmapToPath(bp, fileName, new BitmapManager.saveToFileCallback() {
-//                    @Override
-//                    public void isSuccess(boolean isSuccess) {
-//                        uploadFileToHuawei(fileName, templateId);
-//                    }
-//                });
-//            }
-//        }).start();
+
     }
 
 
@@ -217,16 +205,27 @@ public class DressUpModel {
 
                     @Override
                     public void onSuccess(File file) {
-                        if (file != null) {
-                            uploadFileToHuawei(file.getPath(), templateId);
-                        }else{
-                            uploadFileToHuawei(path, templateId);
-                        }
+                        Observable.just(file).subscribeOn(Schedulers.io()).subscribe(new Action1<File>() {
+                            @Override
+                            public void call(File file) {
+                                if (file != null) {
+                                    uploadFileToHuawei(file.getPath(), templateId);
+                                }else{
+                                    uploadFileToHuawei(path, templateId);
+                                }
+                            }
+                        });
+
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        uploadFileToHuawei(path, templateId);
+                        Observable.just(path).subscribeOn(Schedulers.io()).subscribe(new Action1<String>() {
+                            @Override
+                            public void call(String path) {
+                                uploadFileToHuawei(path, templateId);
+                            }
+                        });
                     }
                 }).launch();    //启动压缩
     }

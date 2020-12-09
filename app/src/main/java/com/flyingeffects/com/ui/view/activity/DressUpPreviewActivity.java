@@ -191,16 +191,18 @@ public class DressUpPreviewActivity extends BaseActivity {
 
     private void showDressUp() {
         LogUtil.d("OOM3","nowChooseIndex="+nowChooseIndex);
-        if (listForKeep.size() - 1 <= nowChooseIndex) {
+
+        
+        if (listForKeep.size() - 1 >= nowChooseIndex) {
+            String needShowPath = listForKeep.get(nowChooseIndex);
+            Glide.with(this).load(needShowPath).apply(new RequestOptions().placeholder(R.mipmap.placeholder)).into(iv_show_content);
+        } else {
             if (TemplateIdList.size() >= nowChooseIndex) {
                 String id = TemplateIdList.get(nowChooseIndex);
                 ToNextDressUp(id);
             } else {
                 ToastUtil.showToast("没有更多换装了");
             }
-        } else {
-            String needShowPath = listForKeep.get(nowChooseIndex);
-            Glide.with(this).load(needShowPath).apply(new RequestOptions().placeholder(R.mipmap.placeholder)).into(iv_show_content);
         }
     }
 
