@@ -1,25 +1,37 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.HumanMerageResult;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.BitmapManager;
+import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.ui.model.DressUpModel;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.media.UMWeb;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,6 +41,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 
 /**
@@ -45,11 +61,16 @@ public class DressUpPreviewActivity extends BaseActivity {
     @BindView(R.id.dress_up_next)
     ImageView dress_up_next;
 
+
+    @BindView(R.id.iv_back)
+    ImageView iv_back;
+
     private ArrayList<String> listForKeep = new ArrayList<>();
     private int nowChooseIndex;
     private String template_id;
     private List<String> TemplateIdList = new ArrayList<>();
     private String localImage;
+    private String mUploadDressUpFolder;
 
     @Override
     protected int getLayoutId() {
@@ -61,8 +82,11 @@ public class DressUpPreviewActivity extends BaseActivity {
         String urlPath = getIntent().getStringExtra("url");
         template_id = getIntent().getStringExtra("template_id");
         localImage = getIntent().getStringExtra("localImage");
+        findViewById(R.id.iv_top_back).setOnClickListener(this);
         showAndSaveImage(urlPath);
         requestAllTemplateId();
+        FileManager fileManager = new FileManager();
+        mUploadDressUpFolder = fileManager.getFileCachePath(this, "DressUpFolder");
     }
 
     @Override
@@ -72,25 +96,40 @@ public class DressUpPreviewActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.dress_up_next, R.id.iv_back, R.id.keep_to_album})
+    @OnClick({R.id.dress_up_next, R.id.iv_back, R.id.keep_to_album,R.id.share})
     public void onClick(View v) {
 
         switch (v.getId()) {
             case R.id.dress_up_next:
-                nowChooseIndex++;
-                showDressUp();
+                if(!DoubleClick.getInstance().isFastDoubleClick()){
+                    nowChooseIndex++;
+                    showDressUp();
+                    iv_back.setVisibility(View.VISIBLE);
+                }
+
                 break;
 
 
             case R.id.iv_back:
-                nowChooseIndex--;
-                showDressUp();
+                if(!DoubleClick.getInstance().isFastDoubleClick()){
+                    if(nowChooseIndex>=1){
+                        nowChooseIndex--;
+                        showDressUp();
+                        iv_back.setVisibility(View.VISIBLE);
+                    }else{
+                        iv_back.setVisibility(View.GONE);
+                    }
+                }
+
                 break;
 
             case R.id.keep_to_album:
                 String path = listForKeep.get(nowChooseIndex);
                 keepImageToAlbum(path);
+                break;
 
+            case R.id.share:
+                share(listForKeep.get(nowChooseIndex));
                 break;
         }
         super.onClick(v);
@@ -98,17 +137,72 @@ public class DressUpPreviewActivity extends BaseActivity {
     }
 
 
+
+    private void share(String downPath){
+        UMWeb umMin = new
+                UMWeb(downPath);
+        umMin.setTitle("123");
+        new ShareAction(this)
+                .withMedia(umMin)
+                .setPlatform(SHARE_MEDIA.WEIXIN)
+                .setCallback(shareListener).share();
+    }
+
+    private UMShareListener shareListener = new UMShareListener() {
+        /**
+         * @descrption 分享开始的回调
+         * @param platform 平台类型
+         */
+        @Override
+        public void onStart(SHARE_MEDIA platform) {
+        }
+
+        /**
+         * @descrption 分享成功的回调
+         * @param platform 平台类型
+         */
+        @Override
+        public void onResult(SHARE_MEDIA platform) {
+//            ToastUtil.showToast("分享成功");
+        }
+
+        /**
+         * @descrption 分享失败的回调
+         * @param platform 平台类型
+         * @param t 错误原因
+         */
+        @Override
+        public void onError(SHARE_MEDIA platform, Throwable t) {
+            ToastUtil.showToast("失败");
+        }
+
+        /**
+         * @descrption 分享取消的回调
+         * @param platform 平台类型
+         */
+        @Override
+        public void onCancel(SHARE_MEDIA platform) {
+            ToastUtil.showToast("取消了");
+        }
+    };
+
+
+
+
     private void showDressUp() {
-        if (listForKeep.size() - 1 <= nowChooseIndex) {
+        LogUtil.d("OOM3","nowChooseIndex="+nowChooseIndex);
+
+        
+        if (listForKeep.size() - 1 >= nowChooseIndex) {
+            String needShowPath = listForKeep.get(nowChooseIndex);
+            Glide.with(this).load(needShowPath).apply(new RequestOptions().placeholder(R.mipmap.placeholder)).into(iv_show_content);
+        } else {
             if (TemplateIdList.size() >= nowChooseIndex) {
                 String id = TemplateIdList.get(nowChooseIndex);
                 ToNextDressUp(id);
             } else {
                 ToastUtil.showToast("没有更多换装了");
             }
-        } else {
-            String needShowPath = TemplateIdList.get(nowChooseIndex);
-            Glide.with(this).load(needShowPath).into(iv_show_content);
         }
     }
 
@@ -121,8 +215,8 @@ public class DressUpPreviewActivity extends BaseActivity {
     private void ToNextDressUp(String templateId) {
         DressUpModel dressUpModel = new DressUpModel(this, new DressUpModel.DressUpCallback() {
             @Override
-            public void isSuccess(String url) {
-                showAndSaveImage(url);
+            public void isSuccess(List<HumanMerageResult>paths) {
+                showAndSaveImage(paths.get(0).getResult_image());
             }
         });
         dressUpModel.toDressUp(localImage, templateId);
@@ -171,14 +265,38 @@ public class DressUpPreviewActivity extends BaseActivity {
      * user : zhangtongju
      */
     private void keepImageToAlbum(String url) {
-        Bitmap bp = BitmapManager.getInstance().GetBitmapForHttp(url);
-        String path = getKeepOutput();
-        BitmapManager.getInstance().saveBitmapToPath(bp, path, new BitmapManager.saveToFileCallback() {
+        Observable.just(url).map(new Func1<String, Bitmap>() {
             @Override
-            public void isSuccess(boolean isSuccess) {
-                albumBroadcast(path);
+            public Bitmap call(String s) {
+                return  BitmapManager.getInstance().GetBitmapForHttp(url);
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
+            @Override
+            public void call(Bitmap bitmap) {
+                String path = getKeepOutput();
+                BitmapManager.getInstance().saveBitmapToPath(bitmap, path, new BitmapManager.saveToFileCallback() {
+                    @Override
+                    public void isSuccess(boolean isSuccess) {
+                        albumBroadcast(path);
+                        showKeepSuccessDialog(path);
+                    }
+                });
             }
         });
+    }
+
+    private void showKeepSuccessDialog(String path) {
+        if (!DoubleClick.getInstance().isFastDoubleClick()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder( //去除黑边
+                    new ContextThemeWrapper(this, R.style.Theme_Transparent));
+            builder.setTitle(R.string.notification);
+            builder.setMessage("已为你保存到相册,多多分享给友友\n" + "【" + path + getString(R.string.folder) + "】");
+            builder.setNegativeButton(getString(R.string.got_it), (dialog, which) -> dialog.dismiss());
+            builder.setCancelable(true);
+            Dialog dialog = builder.show();
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+        }
     }
 
 

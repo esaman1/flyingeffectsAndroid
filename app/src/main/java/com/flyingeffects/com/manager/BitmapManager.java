@@ -276,5 +276,9 @@ public class BitmapManager {
         return bm;
     }
 
+    public interface  downCallback{
+        void isSuccess(boolean isTrue);
+
+    }
 
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 import com.bytedance.sdk.openadsdk.TTFeedAd;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
+import com.flyingeffects.com.enity.HumanMerageResult;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.PreviewUpAndDownMvpView;
@@ -34,6 +35,11 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
 
     public void showBottomSheetDialog(String path,String imagePath,String id,new_fag_template_item templateItem){
         previewUpAndDownMvpModel.showBottomSheetDialog(path,imagePath,id,templateItem);
+    }
+
+
+    public void GetDressUpPath(List<HumanMerageResult> paths){
+        previewUpAndDownMvpModel.GetDressUpPath(paths);
     }
 
 
@@ -97,6 +103,11 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
     @Override
     public void onclickCollect() {
         previewUpAndDownMvpView.onclickCollect();
+    }
+
+    @Override
+    public void GetDressUpPathResult(List<String> paths) {
+        previewUpAndDownMvpView.GetDressUpPathResult(paths);
     }
 
     @Override

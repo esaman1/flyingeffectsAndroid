@@ -1,8 +1,6 @@
 package com.flyingeffects.com.ui.model;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
@@ -11,11 +9,9 @@ import com.flyingeffects.com.enity.HumanMerageResult;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.Calculagraph;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.huaweiObs;
-import com.flyingeffects.com.utils.BitmapUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -24,12 +20,15 @@ import com.shixing.sxve.ui.view.WaitingDialog_progress;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 import rx.Observable;
+import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
+import top.zibin.luban.Luban;
+import top.zibin.luban.OnCompressListener;
 
 
 /**
@@ -42,12 +41,14 @@ public class DressUpModel {
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private Context context;
     private String mUploadDressUpFolder;
+    private String mCatchFolder;
     private DressUpCallback callback;
 
-    public DressUpModel(Context context,DressUpCallback callback) {
-        this.callback=callback;
-        this.context=context;
+    public DressUpModel(Context context, DressUpCallback callback) {
+        this.callback = callback;
+        this.context = context;
         FileManager fileManager = new FileManager();
+        mCatchFolder = fileManager.getFileCachePath(context, "runCatch");
         mUploadDressUpFolder = fileManager.getFileCachePath(context, "DressUpFolder");
     }
 
@@ -58,24 +59,12 @@ public class DressUpModel {
      * user : zhangtongju
      */
     WaitingDialog_progress progress;
+
     public void toDressUp(String ImagePath, String templateId) {
         progress = new WaitingDialog_progress(context);
         progress.openProgressDialog();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Bitmap bpResoruse = BitmapFactory.decodeFile(ImagePath);
-                Bitmap bp = BitmapUtils.compressBitmap(bpResoruse, 500);
-                String fileName = mUploadDressUpFolder + File.separator + UUID.randomUUID() + ".png";
-                LogUtil.d("OOM3", "fileName=" + fileName);
-                BitmapManager.getInstance().saveBitmapToPath(bp, fileName, new BitmapManager.saveToFileCallback() {
-                    @Override
-                    public void isSuccess(boolean isSuccess) {
-                        uploadFileToHuawei(fileName, templateId);
-                    }
-                });
-            }
-        }).start();
+        toCompressImg(ImagePath,templateId);
+
     }
 
 
@@ -95,6 +84,10 @@ public class DressUpModel {
             public void call(String s) {
                 LogUtil.d("OOM3", "上传华为云成功,地址为" + s);
                 informServers(uploadPath, template_id);
+                File file=new File(path);
+                if(file.exists()){
+                    file.delete();
+                }
             }
         }));
     }
@@ -179,8 +172,12 @@ public class DressUpModel {
                     progress.closePragressDialog();
                     String str = StringUtil.beanToJSONString(data);
                     LogUtil.d("OOM3", str);
-                    if(callback!=null){
-                        callback.isSuccess(data.get(0).getResult_image());
+                    if (callback != null) {
+                        callback.isSuccess(data);
+                        callback = null;
+                    }
+                    if (calculagraph != null) {
+                        calculagraph.destroyTimer();
                     }
                 } else {
                     LogUtil.d("OOM3", "data=null");
@@ -190,17 +187,48 @@ public class DressUpModel {
     }
 
 
+    public interface DressUpCallback {
 
-
-    public interface  DressUpCallback{
-
-        void isSuccess(String url);
+        void isSuccess(List<HumanMerageResult>paths);
 
     }
 
 
+    public void toCompressImg(String path, String templateId) {
+        Luban.with(context)
+                .load(path)
+                .setTargetDir(mCatchFolder)
+                .setCompressListener(new OnCompressListener() { //设置回调
+                    @Override
+                    public void onStart() {
+                    }
 
+                    @Override
+                    public void onSuccess(File file) {
+                        Observable.just(file).subscribeOn(Schedulers.io()).subscribe(new Action1<File>() {
+                            @Override
+                            public void call(File file) {
+                                if (file != null) {
+                                    uploadFileToHuawei(file.getPath(), templateId);
+                                }else{
+                                    uploadFileToHuawei(path, templateId);
+                                }
+                            }
+                        });
 
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Observable.just(path).subscribeOn(Schedulers.io()).subscribe(new Action1<String>() {
+                            @Override
+                            public void call(String path) {
+                                uploadFileToHuawei(path, templateId);
+                            }
+                        });
+                    }
+                }).launch();    //启动压缩
+    }
 
 
 }

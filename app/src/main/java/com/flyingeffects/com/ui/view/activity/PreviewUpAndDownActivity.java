@@ -21,6 +21,7 @@ import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.AttentionChange;
 import com.flyingeffects.com.enity.CreateCutCallback;
 import com.flyingeffects.com.enity.DownVideoPath;
+import com.flyingeffects.com.enity.HumanMerageResult;
 import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.ReplayMessageEvent;
 import com.flyingeffects.com.enity.new_fag_template_item;
@@ -38,6 +39,7 @@ import com.flyingeffects.com.manager.StimulateControlManage;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.PreviewUpAndDownMvpView;
+import com.flyingeffects.com.ui.model.DressUpModel;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.model.MattingImage;
@@ -849,6 +851,15 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         mMvpPresenter.collectTemplate(needId, templateItem.getTitle(), templateType);
     }
 
+    @Override
+    public void GetDressUpPathResult(List<String> paths) {
+
+        for (int i = 0; i < paths.size(); i++) {
+            LogUtil.d("OOM4", "换装之后保存本地的地址" + paths.get(i));
+        }
+        intoTemplateActivity(paths, TemplateFilePath);
+    }
+
 
     /**
      * 这里逻辑优化下,背景页面是选择图片后在去下载背景
@@ -941,7 +952,18 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel && !ondestroy && paths != null && paths.size() > 0) {
             if (OldfromTo.equals(FromToTemplate.DRESSUP)) {
-                mMvpPresenter.toDressUp(paths.get(0),templateId);
+                //来自换装页面
+                mMvpPresenter.toDressUp(paths.get(0), templateId);
+            } else if (templateItem.getIs_anime() == 1) {
+                //模板换装新逻辑
+                DressUpModel dressUpModel = new DressUpModel(this, new DressUpModel.DressUpCallback() {
+                    @Override
+                    public void isSuccess(List<HumanMerageResult> paths) {
+                        mMvpPresenter.GetDressUpPath(paths);
+                    }
+                });
+                dressUpModel.toDressUp(paths.get(0), templateId);
+
             } else {
                 chooseAlbumStatistics(paths);
                 LogUtil.d("OOM", "pathsSize=" + paths.size());
@@ -976,12 +998,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                                         if (OldfromTo.equals(FromToTemplate.ISBJ)) {
                                             statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "8_SelectImage");
                                         }
-                                        if (templateItem.getIs_anime() != 1) {
-                                            compressImage(paths, templateItem.getId() + "");
-                                        } else {
-                                            //漫画需要去服务器请求
-                                            compressImageForServers(paths, templateItem.getId() + "");
-                                        }
+//                                        if (templateItem.getIs_anime() != 1) {
+                                        compressImage(paths, templateItem.getId() + "");
+//                                        } else {
+//                                            //漫画需要去服务器请求
+//                                            compressImageForServers(paths, templateItem.getId() + "");
+//                                        }
                                     } else {
                                         //选择的时视频
 //                                if (OldfromTo.equals(FromToTemplate.ISBJ) || OldfromTo.equals(FromToTemplate.ISHOMEFROMBJ)) {
@@ -1037,6 +1059,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private void chooseAlbumStatistics(List<String> paths) {
         if (paths != null && paths.size() > 0) {
             for (String path : paths
+
             ) {
                 if (albumType.isImage(GetPathTypeModel.getInstance().getMediaType(path))) {
                     {
@@ -1199,36 +1222,38 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     @Override
                     public void onVideoAdSuccess() {
                         statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_sucess");
-                        LogUtil.d("OOM", "onVideoAdSuccess");
+                        LogUtil.d("OOM4", "onVideoAdSuccess");
                     }
 
                     @Override
                     public void onVideoAdError(String s) {
                         statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_fail");
-                        LogUtil.d("OOM", "onVideoAdError" + s);
+                        LogUtil.d("OOM4", "onVideoAdError" + s);
                         BaseConstans.TemplateHasWatchingAd = true;
                         hasLoginToNext();
                     }
 
                     @Override
                     public void onVideoAdClose() {
-                        LogUtil.d("OOM", "onVideoAdClose");
+                        LogUtil.d("OOM4", "onVideoAdClose");
                         BaseConstans.TemplateHasWatchingAd = true;
+                        ToastUtil.showToast("看完广告才可获取权益");
                         hasLoginToNext();
                     }
 
                     @Override
                     public void onVideoAdSkip() {
-                        LogUtil.d("OOM", "onVideoAdSkip");
+                        LogUtil.d("OOM4", "onVideoAdSkip");
                     }
 
                     @Override
                     public void onVideoAdComplete() {
+                        LogUtil.d("OOM4", "onVideoAdComplete");
                     }
 
                     @Override
                     public void onVideoAdClicked() {
-                        LogUtil.d("OOM", "onVideoAdClicked");
+                        LogUtil.d("OOM4", "onVideoAdClicked");
                     }
                 });
             } else {

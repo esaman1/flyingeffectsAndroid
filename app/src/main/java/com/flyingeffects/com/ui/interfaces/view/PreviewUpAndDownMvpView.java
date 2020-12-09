@@ -28,4 +28,6 @@ public interface PreviewUpAndDownMvpView {
     void  returnSpliteMusic(String path,String videoPath);
 
     void onclickCollect();
+
+    void GetDressUpPathResult(List<String>paths);
 }

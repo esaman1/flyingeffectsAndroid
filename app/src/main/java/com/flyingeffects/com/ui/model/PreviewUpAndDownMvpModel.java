@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -20,6 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
@@ -29,7 +30,6 @@ import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.HumanMerageResult;
-import com.flyingeffects.com.enity.LoginToAttentionUserEvent;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.enity.new_fag_template_item;
@@ -39,32 +39,25 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.BitmapManager;
-import com.flyingeffects.com.manager.Calculagraph;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
-import com.flyingeffects.com.manager.SituationTimer;
 import com.flyingeffects.com.manager.TTAdManagerHolder;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
-import com.flyingeffects.com.manager.huaweiObs;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
 import com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity;
-import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.ReportActivity;
-import com.flyingeffects.com.utils.BitmapUtils;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.utils.UpdateFileUtils;
 import com.flyingeffects.com.utils.screenUtil;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.orhanobut.hawk.Hawk;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
@@ -82,12 +75,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
-import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -102,7 +94,7 @@ public class PreviewUpAndDownMvpModel {
     private Context context;
     private int selectPage = 1;
     private String mVideoFolder;
-    private String mUploadDressUpFolder;
+    private String mRunCatchFolder;
     private int perPageCount = 10;
     private SmartRefreshLayout smartRefreshLayout;
     private List<new_fag_template_item> allData;
@@ -111,7 +103,7 @@ public class PreviewUpAndDownMvpModel {
     private TTAdNative mTTAdNative;
     private String soundFolder;
     private String toUserID;
-    private String searchText="";
+    private String searchText = "";
     private boolean isCanLoadMore;
 
     public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage, String fromTo, String category_id, String toUserID, String searchText, boolean isCanLoadMore, String tc_id) {
@@ -122,7 +114,8 @@ public class PreviewUpAndDownMvpModel {
         this.toUserID = toUserID;
         FileManager fileManager = new FileManager();
         mVideoFolder = fileManager.getFileCachePath(context, "downVideo");
-        mUploadDressUpFolder = fileManager.getFileCachePath(context, "DressUpFolder");
+
+        mRunCatchFolder = fileManager.getFileCachePath(context, "runCatch");
         this.allData = allData;
         this.searchText = searchText;
         this.fromTo = fromTo;
@@ -579,7 +572,7 @@ public class PreviewUpAndDownMvpModel {
         if (!TextUtils.isEmpty(category_id)) {
             params.put("category_id", category_id);
         }
-        if (!TextUtils.isEmpty(tc_id)&&Integer.parseInt(tc_id) >= 0) {
+        if (!TextUtils.isEmpty(tc_id) && Integer.parseInt(tc_id) >= 0) {
             params.put("tc_id", tc_id);
         }
         params.put("page", selectPage + "");
@@ -1012,17 +1005,58 @@ public class PreviewUpAndDownMvpModel {
      * user : zhangtongju
      */
     public void toDressUp(String path, String templateId) {
-        DressUpModel dressUpModel = new DressUpModel(context, url -> {
-            LogUtil.d("OOM3", "融合结果的url为" + url);
-            Intent intent = new Intent(context, DressUpPreviewActivity.class);
-            intent.putExtra("url", url);
-            intent.putExtra("template_id", templateId);
-            intent.putExtra("localImage", path);
 
-
-            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            context.startActivity(intent);
+        DressUpModel dressUpModel = new DressUpModel(context, new DressUpModel.DressUpCallback() {
+            @Override
+            public void isSuccess(List<HumanMerageResult> paths) {
+                Intent intent = new Intent(context, DressUpPreviewActivity.class);
+                intent.putExtra("url", paths.get(0).getResult_image());
+                intent.putExtra("template_id", templateId);
+                intent.putExtra("localImage", path);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                context.startActivity(intent);
+            }
         });
+
         dressUpModel.toDressUp(path, templateId);
     }
+
+
+    /**
+     * description ：保存图片在相册
+     * creation date: 2020/12/8
+     * user : zhangtongju
+     */
+    public void GetDressUpPath(List<HumanMerageResult> paths) {
+        ArrayList<String> list = new ArrayList<>();
+        Observable.from(paths).map(new Func1<HumanMerageResult, Bitmap>() {
+            @Override
+            public Bitmap call(HumanMerageResult humanMerageResult) {
+                return BitmapManager.getInstance().GetBitmapForHttp(humanMerageResult.getResult_image());
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
+            @Override
+            public void call(Bitmap bitmap) {
+                String fileName = mRunCatchFolder + File.separator + UUID.randomUUID() + ".png";
+                BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName);
+                list.add(fileName);
+                if (list.size() == paths.size()) {
+
+
+                    callback.GetDressUpPathResult(list);
+                }
+            }
+        });
+    }
+
+
+    private ArrayList<String> getDressUpdate(List<HumanMerageResult> paths) {
+        ArrayList<String> list = new ArrayList<>();
+        for (int i = 0; i < paths.size(); i++) {
+            list.add(paths.get(i).getResult_image());
+        }
+        return list;
+    }
+
+
 }

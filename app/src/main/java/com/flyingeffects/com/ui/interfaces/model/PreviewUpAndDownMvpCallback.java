@@ -16,6 +16,8 @@ public interface PreviewUpAndDownMvpCallback {
 
     void onclickCollect();
 
+    void GetDressUpPathResult(List<String>paths);
+
 
     void downVideoSuccess(String path,String imagePath);
 
