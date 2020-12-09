@@ -230,14 +230,12 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                 //换脸
                 if (offset == 0) {
                     ll_relative_2.setVisibility(View.GONE);
-
                     ll_relative_1.setVisibility(View.GONE);
                     ll_relative_0.setVisibility(View.GONE);
                     ConstraintLayout_addVideo.setVisibility(View.VISIBLE);
                     ConstraintLayout_addVideo.setOnClickListener(v -> {
                         AlbumManager.chooseAlbum(context, 1, 1, (tag, paths, isCancel, albumFileList) -> {
                             if (!isCancel) {
-
                                 if (UiStep.isFromDownBj) {
                                     statisticsEventAffair.getInstance().setFlag(context, "7_local");
                                 } else {

@@ -1028,6 +1028,7 @@ public class PreviewUpAndDownMvpModel {
      * user : zhangtongju
      */
     public void GetDressUpPath(List<HumanMerageResult> paths) {
+        LogUtil.d("OOM3","整合数据");
         ArrayList<String> list = new ArrayList<>();
         Observable.from(paths).map(new Func1<HumanMerageResult, Bitmap>() {
             @Override
@@ -1041,9 +1042,10 @@ public class PreviewUpAndDownMvpModel {
                 BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName);
                 list.add(fileName);
                 if (list.size() == paths.size()) {
-
-
+                    LogUtil.d("OOM3","整合数据完成");
                     callback.GetDressUpPathResult(list);
+                }else{
+                    LogUtil.d("OOM3","list.size()="+list.size()+"paths.size()="+paths.size());
                 }
             }
         });

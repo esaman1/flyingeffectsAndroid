@@ -262,6 +262,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                 if (isFrom != 2) {
                     saveVideo();
                 } else {
+                    LogUtil.d("oom3","换装开始上传");
                     uploadDressUpImage(videoPath);
                 }
 
@@ -519,7 +520,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
      * user : zhangtongju
      */
     private void requestData() {
-        LogUtil.d("OOM2", "requestData");
+        LogUtil.d("OOM3", "requestData");
         HashMap<String, String> params = new HashMap<>();
         params.put("videofile", huaweiVideoPath);
         params.put("auth", ed_nickname.getText().toString());
@@ -537,25 +538,28 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         if (isFrom == 1) {
             ob = Api.getDefault().uploadSearchResult(BaseConstans.getRequestHead(params));
         } else if (isFrom == 2) {
-            ob = Api.getDefault().uploadSearchResult(BaseConstans.getRequestHead(params));
+            ob = Api.getDefault().uploadHumanTemplate(BaseConstans.getRequestHead(params));
         } else {
             ob = Api.getDefault().toLoadTemplate(BaseConstans.getRequestHead(params));
         }
+
+        LogUtil.d("OOM3", "params="+StringUtil.beanToJSONString(params));
 
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(UploadMaterialActivity.this) {
 
             @Override
             protected void _onError(String message) {
+                LogUtil.d("OOM3", "_onError=" + message);
                 WaitingDialog.closePragressDialog();
                 ToastUtil.showToast(message);
             }
 
             @Override
             protected void _onNext(UserInfo data) {
+                String str = StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM3", "requestLogin=" + str);
                 statisticsEventAffair.getInstance().setFlag(UploadMaterialActivity.this, "13_video");
                 WaitingDialog.closePragressDialog();
-                String str = StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM2", "requestLogin=" + str);
                 UploadMaterialActivity.this.finish();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
@@ -654,11 +658,14 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
      * user : zhangtongju
      */
     private void uploadDressUpImage(String path) {
-        String type = path.substring(path.length() - 4);
-        String nowTime = StringUtil.getCurrentTimeymd();
-        String copyPath = "media/android/dressUpImage/" + nowTime + "/" + System.currentTimeMillis() + type;
-        coverImagePath = "http://cdn.flying.flyingeffect.com/" + copyPath;
-        uploadImage(path, coverImagePath);
+        WaitingDialog.openPragressDialog(this);
+        new Thread(() -> {
+            String type = path.substring(path.length() - 4);
+            String nowTime = StringUtil.getCurrentTimeymd();
+            String copyPath = "media/android/dressUpImage/" + nowTime + "/" + System.currentTimeMillis() + type;
+            coverImagePath = "http://cdn.flying.flyingeffect.com/" + copyPath;
+            uploadImage(path, coverImagePath);
+        }).start();
     }
 
 
@@ -670,6 +677,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                 Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                     @Override
                     public void call(String s) {
+                        LogUtil.d("oom3","华为上传成功");
                         requestData();
                     }
                 });

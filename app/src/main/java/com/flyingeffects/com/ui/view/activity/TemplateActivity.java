@@ -282,7 +282,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             originalPath = bundle.getStringArrayList("originalPath");
             templateName = bundle.getString("templateName");
             LogUtil.d("OOM", "templateName=" + templateName);
-//            nowTemplateIsAnim = bundle.getInt("is_anime");
+         nowTemplateIsAnim = bundle.getInt("is_anime");
         }
 
 

@@ -855,7 +855,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void GetDressUpPathResult(List<String> paths) {
 
         for (int i = 0; i < paths.size(); i++) {
-            LogUtil.d("OOM4", "换装之后保存本地的地址" + paths.get(i));
+            LogUtil.d("OOM3", "换装之后保存本地的地址" + paths.get(i));
         }
         intoTemplateActivity(paths, TemplateFilePath);
     }

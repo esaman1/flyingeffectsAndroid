@@ -171,7 +171,7 @@ public class DressUpModel {
                 if (data != null && data.size() > 0) {
                     progress.closePragressDialog();
                     String str = StringUtil.beanToJSONString(data);
-                    LogUtil.d("OOM3", str);
+                    LogUtil.d("OOM3", "请求的结果为："+str);
                     if (callback != null) {
                         callback.isSuccess(data);
                         callback = null;
