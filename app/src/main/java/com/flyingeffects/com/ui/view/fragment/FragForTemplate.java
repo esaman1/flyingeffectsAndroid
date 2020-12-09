@@ -19,7 +19,7 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.home_fagMvpView;
 import com.flyingeffects.com.ui.presenter.home_fagMvpPresenter;
-import com.flyingeffects.com.ui.view.activity.BackgroundSearchActivity;
+import com.flyingeffects.com.ui.view.activity.TemplateSearchActivity;
 import com.flyingeffects.com.utils.StringUtil;
 
 import org.json.JSONArray;
@@ -173,7 +173,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
         switch (view.getId()) {
             case R.id.relative_top:
                 //搜索栏目
-                Intent intent = new Intent(getActivity(), BackgroundSearchActivity.class);
+                Intent intent = new Intent(getActivity(), TemplateSearchActivity.class);
                 intent.putExtra("isFrom",1);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);

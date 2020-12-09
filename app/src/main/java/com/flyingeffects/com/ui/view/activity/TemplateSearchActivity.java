@@ -63,58 +63,40 @@ import rx.Observable;
 /**
  * @author ZhouGang
  * @date 2020/10/12
- * 模板搜索
+ * 背景、一键模板、换装搜索
  */
-public class BackgroundSearchActivity extends BaseActivity {
-
+public class TemplateSearchActivity extends BaseActivity {
 
     @BindView(R.id.AutoNewLineLayout)
     WarpLinearLayout autoNewLineLayout;
-
     @BindView(R.id.ed_search)
     EditText ed_text;
-
-    @BindView(R.id.tv_youyou)
-    TextView tv_youyou;
-
-
     @BindView(R.id.ll_add_child)
     LinearLayout ll_add_child;
-
-
     @BindView(R.id.viewpager)
     ViewPager viewPager;
-
-
     @BindView(R.id.horizontal_scrollView)
     HorizontalScrollView horizontalScrollView;
-
-
     @BindView(R.id.iv_back)
     ImageView iv_back;
     @BindView(R.id.rc_search)
     RecyclerView rcSearch;
     @BindView(R.id.main_content)
     CoordinatorLayout coordinatorLayout;
-
-
-    private ArrayList<Fragment> list = new ArrayList<>();
-    private ArrayList<TextView> listTv = new ArrayList<>();
-    private ArrayList<View> listView = new ArrayList<>();
-
-
-    private ArrayList<SearchKeyWord> listSearchKey = new ArrayList<>();
-    private String nowShowText;
     @BindView(R.id.appbar)
     AppBarLayout appbar;
-
     @BindView(R.id.ll_ad_content)
     LinearLayout ll_ad_content;
-
     @BindView(R.id.tv_search)
     TextView tv_search;
     @BindView(R.id.iv_delete)
     ImageView mIvDelete;
+
+    private ArrayList<Fragment> list = new ArrayList<>();
+    private ArrayList<TextView> listTv = new ArrayList<>();
+    private ArrayList<View> listView = new ArrayList<>();
+    private ArrayList<SearchKeyWord> listSearchKey = new ArrayList<>();
+    private String nowShowText;
 
     SearchTemplateItemAdapter  searchTemplateItemAdapter;
 
@@ -123,13 +105,13 @@ public class BackgroundSearchActivity extends BaseActivity {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.act_background_search;
+        return R.layout.act_template_search;
     }
 
     @Override
     protected void initView() {
 
-        statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "14_go_to_search");
+        statisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "14_go_to_search");
         isFrom = getIntent().getIntExtra("isFrom", 0);
 
 
@@ -220,8 +202,8 @@ public class BackgroundSearchActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if(!TextUtils.isEmpty(ed_text.getText().toString().trim())){
-                    statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "4_search_button");
-                    statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "4_search_new",ed_text.getText().toString());
+                    statisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "4_search_button");
+                    statisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "4_search_new",ed_text.getText().toString());
 
                     toTemplate(ed_text.getText().toString().trim());
                     rcSearch.setVisibility(View.GONE);
@@ -240,13 +222,19 @@ public class BackgroundSearchActivity extends BaseActivity {
     }
 
     /**关键字模糊查询*/
-    private void requestServerTemplateFuzzyQuery(String keywords){
+    private void requestServerTemplateFuzzyQuery(String keywords) {
         HashMap<String, String> params = new HashMap<>();
         params.put("keywords", keywords);
-        // 1模板2背景
-        params.put("template_type", isFrom == 1 ? "1" : "2");
+        // 1模板2背景3换装
+        if (isFrom == 0) {
+            params.put("template_type", "2");
+        } else if (isFrom == 1) {
+            params.put("template_type", "1");
+        } else {
+            params.put("template_type", "3");
+        }
         HttpUtil.getInstance().toSubscribe(Api.getDefault().templateKeywords(BaseConstans.getRequestHead(params)),
-                new ProgressSubscriber<List<SearchTemplateInfoEntity>>(BackgroundSearchActivity.this) {
+                new ProgressSubscriber<List<SearchTemplateInfoEntity>>(TemplateSearchActivity.this) {
                     @Override
                     protected void _onError(String message) {
                         ToastUtil.showToast(message);
@@ -259,7 +247,7 @@ public class BackgroundSearchActivity extends BaseActivity {
                         LogUtil.d("OOM", "模板模糊查询" + StringUtil.beanToJSONString(datas));
                         SearchTemplateInfoEntity infoEntity = new SearchTemplateInfoEntity();
                         infoEntity.setName(keywords);
-                        datas.add(0,infoEntity);
+                        datas.add(0, infoEntity);
                         searchTemplateItemAdapter.setInquireWordColor(keywords);
                         searchTemplateItemAdapter.setNewData(datas);
                     }
@@ -273,21 +261,22 @@ public class BackgroundSearchActivity extends BaseActivity {
                 coordinatorLayout.setVisibility(View.VISIBLE);
                 keywordQueryItemClickTag = true;
                 ed_text.setText(itemContent);
-                if(position!=0){
-                    statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "4_search_query",itemContent);
-                }else {
-                    statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "4_search_query_first");
+                if (position != 0) {
+                    statisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "4_search_query", itemContent);
+                } else {
+                    statisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "4_search_query_first");
                 }
             }
         });
     }
+
     boolean keywordQueryItemClickTag = false;
 
-    private void toTemplate(String content){
+    private void toTemplate(String content) {
         nowShowText = content;
         if (!nowShowText.equals("")) {
             cancelFocus();
-            statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "10_searchfor", nowShowText);
+            statisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "10_searchfor", nowShowText);
             EventBus.getDefault().post(new SendSearchText(nowShowText));
             hideResultView(false);
             ll_ad_content.setVisibility(View.GONE);
@@ -335,14 +324,14 @@ public class BackgroundSearchActivity extends BaseActivity {
         autoNewLineLayout.removeAllViews();
         for (int i = 0; i < listSearchKey.size(); i++) {
             String nowChooseColor = ColorCorrectionManager.getInstance().getChooseColor(i);
-            TextView tv = (TextView) LayoutInflater.from(BackgroundSearchActivity.this).inflate(R.layout.textview_recommend, null);
+            TextView tv = (TextView) LayoutInflater.from(TemplateSearchActivity.this).inflate(R.layout.textview_recommend, null);
             tv.setText(listSearchKey.get(i).getName());
             tv.setTextColor(Color.parseColor(nowChooseColor));
             int finalI = i;
             tv.setOnClickListener(view -> {
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
                     if (listSearchKey.size() >= finalI + 1) {
-                        statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "4_recommend", listSearchKey.get(finalI).getName());
+                        statisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "4_recommend", listSearchKey.get(finalI).getName());
                         nowShowText = listSearchKey.get(finalI).getName();
                         keywordQueryItemClickTag = true;
                         ed_text.setText(nowShowText);
@@ -350,7 +339,7 @@ public class BackgroundSearchActivity extends BaseActivity {
                         coordinatorLayout.setVisibility(View.VISIBLE);
                         toTemplate(nowShowText);
                         ll_ad_content.setVisibility(View.GONE);
-                        statisticsEventAffair.getInstance().setFlag(BackgroundSearchActivity.this, "10_searchfor", nowShowText);
+                        statisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "10_searchfor", nowShowText);
                         EventBus.getDefault().post(new SendSearchText(nowShowText));
 
                     }
@@ -371,15 +360,19 @@ public class BackgroundSearchActivity extends BaseActivity {
     private void requestKeywordList() {
         listSearchKey.clear();
         HashMap<String, String> params = new HashMap<>();
-        //0 表示背景
+        //isFrom为0 表示背景
         if (isFrom == 0) {
             params.put("template_type", "2");
+        } else if (isFrom == 3) {
+            //isFrom为3 表示换装
+            params.put("template_type", "3");
         } else {
+            //isFrom为1 表示模板
             params.put("template_type", "1");
         }
         // 启动时间
         Observable ob = Api.getDefault().keywordList(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(BackgroundSearchActivity.this) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(TemplateSearchActivity.this) {
             @Override
             protected void _onError(String message) {
             }

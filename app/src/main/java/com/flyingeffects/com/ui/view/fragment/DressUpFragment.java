@@ -18,7 +18,7 @@ import com.flyingeffects.com.enity.FirstLevelTypeEntity;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.DressUpMvpView;
 import com.flyingeffects.com.ui.presenter.DressUpMvpPresenter;
-import com.flyingeffects.com.ui.view.activity.BackgroundSearchActivity;
+import com.flyingeffects.com.ui.view.activity.TemplateSearchActivity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -75,7 +75,7 @@ public class DressUpFragment extends BaseFragment  implements DressUpMvpView {
     protected void initData() {
         manager = getChildFragmentManager();
         mRelativeSearch.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), BackgroundSearchActivity.class);
+            Intent intent = new Intent(getActivity(), TemplateSearchActivity.class);
             intent.putExtra("isFrom",3);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
