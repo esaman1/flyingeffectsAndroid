@@ -537,7 +537,7 @@ public class HomeMainActivity extends FragmentActivity {
 
     private void openMenu(int which) {
         setStatusBar();
-        viewpager_home.setCurrentItem(which);
+        viewpager_home.setCurrentItem(which,false);
     }
 
     @Override

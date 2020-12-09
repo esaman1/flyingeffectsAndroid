@@ -3,7 +3,6 @@ package com.flyingeffects.com.ui.view.activity;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -12,12 +11,12 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.flyco.tablayout.SlidingTabLayout;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.SearchTemplateItemAdapter;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
@@ -53,7 +52,6 @@ import java.util.List;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
@@ -71,12 +69,10 @@ public class TemplateSearchActivity extends BaseActivity {
     WarpLinearLayout autoNewLineLayout;
     @BindView(R.id.ed_search)
     EditText ed_text;
-    @BindView(R.id.ll_add_child)
-    LinearLayout ll_add_child;
+    @BindView(R.id.tl_tabs_search)
+    SlidingTabLayout tabSearch;
     @BindView(R.id.viewpager)
     ViewPager viewPager;
-    @BindView(R.id.horizontal_scrollView)
-    HorizontalScrollView horizontalScrollView;
     @BindView(R.id.iv_back)
     ImageView iv_back;
     @BindView(R.id.rc_search)
@@ -92,9 +88,7 @@ public class TemplateSearchActivity extends BaseActivity {
     @BindView(R.id.iv_delete)
     ImageView mIvDelete;
 
-    private ArrayList<Fragment> list = new ArrayList<>();
-    private ArrayList<TextView> listTv = new ArrayList<>();
-    private ArrayList<View> listView = new ArrayList<>();
+    private ArrayList<Fragment> list = new ArrayList<>();;
     private ArrayList<SearchKeyWord> listSearchKey = new ArrayList<>();
     private String nowShowText;
 
@@ -287,10 +281,10 @@ public class TemplateSearchActivity extends BaseActivity {
     private void hideResultView(boolean isHide) {
         if (isHide) {
             viewPager.setVisibility(View.INVISIBLE);
-            horizontalScrollView.setVisibility(View.INVISIBLE);
+            tabSearch.setVisibility(View.INVISIBLE);
         } else {
             viewPager.setVisibility(View.VISIBLE);
-            horizontalScrollView.setVisibility(View.VISIBLE);
+            tabSearch.setVisibility(View.VISIBLE);
         }
     }
 
@@ -411,23 +405,6 @@ public class TemplateSearchActivity extends BaseActivity {
         } else {
             titles = new String[]{"模板", "背景", "换装", "用户"};
         }
-        for (int i = 0; i < titles.length; i++) {
-            View view = LayoutInflater.from(this).inflate(R.layout.view_bj_head, null);
-            TextView tv = view.findViewById(R.id.tv_name_bj_head);
-            View view_line = view.findViewById(R.id.view_line_head);
-            tv.setText(titles[i]);
-            tv.setId(i);
-            tv.setOnClickListener(v -> showWitchBtn(v.getId()));
-            listTv.add(tv);
-            listView.add(view_line);
-            ll_add_child.addView(view);
-            setViewpager();
-        }
-    }
-
-
-    private void setViewpager() {
-        list.clear();
         Bundle bundle = new Bundle();
         bundle.putSerializable("from", 1);
         fragBjSearch fragment = new fragBjSearch();
@@ -459,45 +436,11 @@ public class TemplateSearchActivity extends BaseActivity {
             list.add(fragment2);
             list.add(new FragmentUser());
         }
-        FragmentManager manager = getSupportFragmentManager();
-        home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
+        home_vp_frg_adapter adapter = new home_vp_frg_adapter(getSupportFragmentManager(), list);
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(3);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int i, float v, int i1) {
-
-            }
-
-            @Override
-            public void onPageSelected(int i) {
-                showWitchBtn(i);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int i) {
-
-            }
-        });
-        new Handler().postDelayed(() -> showWitchBtn(0), 500);
+        tabSearch.setViewPager(viewPager, titles);
     }
-
-
-    private void showWitchBtn(int showWitch) {
-        for (int i = 0; i < listTv.size(); i++) {
-            TextView tv = listTv.get(i);
-            View view = listView.get(i);
-            if (i == showWitch) {
-                tv.setTextSize(21);
-                view.setVisibility(View.VISIBLE);
-            } else {
-                tv.setTextSize(17);
-                view.setVisibility(View.INVISIBLE);
-            }
-        }
-        viewPager.setCurrentItem(showWitch);
-    }
-
 
     private void cancelFocus() {
         ed_text.setFocusable(true);
