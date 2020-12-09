@@ -26,7 +26,7 @@ import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.ui.presenter.FagBjMvpPresenter;
-import com.flyingeffects.com.ui.view.activity.BackgroundSearchActivity;
+import com.flyingeffects.com.ui.view.activity.TemplateSearchActivity;
 import com.flyingeffects.com.ui.view.activity.ContentAllianceActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
@@ -304,7 +304,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
                 break;
             case R.id.iv_search:
                 //搜索栏目
-                Intent intent = new Intent(getActivity(), BackgroundSearchActivity.class);
+                Intent intent = new Intent(getActivity(), TemplateSearchActivity.class);
                 intent.putExtra("isFrom", 0);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
