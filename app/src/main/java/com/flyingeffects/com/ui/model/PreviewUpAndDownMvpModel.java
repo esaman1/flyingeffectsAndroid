@@ -1008,9 +1008,9 @@ public class PreviewUpAndDownMvpModel {
 
         DressUpModel dressUpModel = new DressUpModel(context, new DressUpModel.DressUpCallback() {
             @Override
-            public void isSuccess(List<HumanMerageResult> paths) {
+            public void isSuccess(List<String> paths) {
                 Intent intent = new Intent(context, DressUpPreviewActivity.class);
-                intent.putExtra("url", paths.get(0).getResult_image());
+                intent.putExtra("url", paths.get(0));
                 intent.putExtra("template_id", templateId);
                 intent.putExtra("localImage", path);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -1027,28 +1027,8 @@ public class PreviewUpAndDownMvpModel {
      * creation date: 2020/12/8
      * user : zhangtongju
      */
-    public void GetDressUpPath(List<HumanMerageResult> paths) {
-        LogUtil.d("OOM3","整合数据");
-        ArrayList<String> list = new ArrayList<>();
-        Observable.from(paths).map(new Func1<HumanMerageResult, Bitmap>() {
-            @Override
-            public Bitmap call(HumanMerageResult humanMerageResult) {
-                return BitmapManager.getInstance().GetBitmapForHttp(humanMerageResult.getResult_image());
-            }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
-            @Override
-            public void call(Bitmap bitmap) {
-                String fileName = mRunCatchFolder + File.separator + UUID.randomUUID() + ".png";
-                BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName);
-                list.add(fileName);
-                if (list.size() == paths.size()) {
-                    LogUtil.d("OOM3","整合数据完成");
-                    callback.GetDressUpPathResult(list);
-                }else{
-                    LogUtil.d("OOM3","list.size()="+list.size()+"paths.size()="+paths.size());
-                }
-            }
-        });
+    public void GetDressUpPath(List<String> paths) {
+        callback.GetDressUpPathResult(paths);
     }
 
 

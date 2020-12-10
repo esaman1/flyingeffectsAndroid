@@ -958,7 +958,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 //模板换装新逻辑
                 DressUpModel dressUpModel = new DressUpModel(this, new DressUpModel.DressUpCallback() {
                     @Override
-                    public void isSuccess(List<HumanMerageResult> paths) {
+                    public void isSuccess(List<String> paths) {
                         mMvpPresenter.GetDressUpPath(paths);
                     }
                 });

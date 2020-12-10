@@ -38,7 +38,7 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
     }
 
 
-    public void GetDressUpPath(List<HumanMerageResult> paths){
+    public void GetDressUpPath(List<String> paths){
         previewUpAndDownMvpModel.GetDressUpPath(paths);
     }
 

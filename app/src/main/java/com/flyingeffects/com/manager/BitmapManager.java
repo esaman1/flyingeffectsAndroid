@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
+import com.flyingeffects.com.utils.LogUtil;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -99,8 +100,10 @@ public class BitmapManager {
             out.flush();
             out.close();
         } catch (FileNotFoundException e) {
+            LogUtil.d("OOM3","FileNotFoundException"+e.getMessage());
             e.printStackTrace();
         } catch (IOException e) {
+            LogUtil.d("OOM3","saveBitmapToPath"+e.getMessage());
             e.printStackTrace();
         } finally {
             if (out != null) {

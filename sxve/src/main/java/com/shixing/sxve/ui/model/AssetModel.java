@@ -22,7 +22,7 @@ public class AssetModel {
 
 
 
-    public AssetModel(String folder, JSONObject asset, AssetDelegate delegate, float uiVersionMajor,Size temSize,float fps) throws JSONException {
+    public AssetModel(String folder, JSONObject asset, AssetDelegate delegate, float uiVersionMajor,Size temSize,float fps ,int nowTemplateIsAnim) throws JSONException {
         String name = folder + "/assets/" + asset.getString("name");
         mBitmap = BitmapFactory.decodeFile(name);
 
@@ -39,7 +39,7 @@ public class AssetModel {
             }
         } else {
             if (uiVersionMajor > 1) {
-                this.ui = new MediaUiModel2(folder, ui, mBitmap, delegate, size,temSize,fps);
+                this.ui = new MediaUiModel2(folder, ui, mBitmap, delegate, size,temSize,fps,nowTemplateIsAnim);
             } else {
                 this.ui = new MediaUiModel1(folder, ui, mBitmap, delegate, size);
             }

@@ -26,4 +26,6 @@ public interface TemplateMvpView {
     void ChangeMaterialCallbackForVideo(String originalPath,String path,boolean needMatting);
 
     void getSpliteMusic(String path);
+
+    void GetChangeDressUpData(List<String> paths);
 }

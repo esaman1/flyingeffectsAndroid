@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.view.ContextThemeWrapper;
@@ -27,13 +28,20 @@ import com.flyingeffects.com.ui.model.DressUpModel;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.shixing.sxve.ui.view.WaitingDialog;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.media.UMImage;
-import com.umeng.socialize.media.UMWeb;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -96,12 +104,12 @@ public class DressUpPreviewActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.dress_up_next, R.id.iv_back, R.id.keep_to_album,R.id.share})
+    @OnClick({R.id.dress_up_next, R.id.iv_back, R.id.keep_to_album, R.id.share})
     public void onClick(View v) {
 
         switch (v.getId()) {
             case R.id.dress_up_next:
-                if(!DoubleClick.getInstance().isFastDoubleClick()){
+                if (!DoubleClick.getInstance().isFastDoubleClick()) {
                     nowChooseIndex++;
                     showDressUp();
                     iv_back.setVisibility(View.VISIBLE);
@@ -111,12 +119,12 @@ public class DressUpPreviewActivity extends BaseActivity {
 
 
             case R.id.iv_back:
-                if(!DoubleClick.getInstance().isFastDoubleClick()){
-                    if(nowChooseIndex>=1){
+                if (!DoubleClick.getInstance().isFastDoubleClick()) {
+                    if (nowChooseIndex >= 1) {
                         nowChooseIndex--;
                         showDressUp();
                         iv_back.setVisibility(View.VISIBLE);
-                    }else{
+                    } else {
                         iv_back.setVisibility(View.GONE);
                     }
                 }
@@ -137,15 +145,57 @@ public class DressUpPreviewActivity extends BaseActivity {
     }
 
 
+    public static Bitmap GetLocalOrNetBitmap(String url) {
+        Bitmap bitmap = null;
+        InputStream in = null;
+        BufferedOutputStream out = null;
+        try {
+            in = new BufferedInputStream(new URL(url).openStream(), 1024);
+            final ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
+            out = new BufferedOutputStream(dataStream, 1024);
+            copy(in, out);
+            out.flush();
+            byte[] data = dataStream.toByteArray();
+            bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+            data = null;
+            return bitmap;
 
-    private void share(String downPath){
-        UMWeb umMin = new
-                UMWeb(downPath);
-        umMin.setTitle("123");
-        new ShareAction(this)
-                .withMedia(umMin)
-                .setPlatform(SHARE_MEDIA.WEIXIN)
-                .setCallback(shareListener).share();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    private static void copy(InputStream in, OutputStream out)
+            throws IOException {
+        byte[] b = new byte[1024];
+        int read;
+        while ((read = in.read(b)) != -1) {
+            out.write(b, 0, read);
+        }
+    }
+
+
+    private void share(String downPath) {
+        WaitingDialog.openPragressDialog(this);
+        Observable.just(downPath).map(new Func1<String, Bitmap>() {
+            @Override
+            public Bitmap call(String s) {
+                return GetLocalOrNetBitmap(downPath);
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
+            @Override
+            public void call(Bitmap bitmap) {
+                WaitingDialog.closePragressDialog();
+                UMImage umImage = new UMImage(DressUpPreviewActivity.this, bitmap);
+                new ShareAction(DressUpPreviewActivity.this)
+                        .withMedia(umImage)
+                        .setPlatform(SHARE_MEDIA.WEIXIN)
+                        .setCallback(shareListener).share();
+            }
+        });
+
     }
 
     private UMShareListener shareListener = new UMShareListener() {
@@ -187,12 +237,10 @@ public class DressUpPreviewActivity extends BaseActivity {
     };
 
 
-
-
     private void showDressUp() {
-        LogUtil.d("OOM3","nowChooseIndex="+nowChooseIndex);
+        LogUtil.d("OOM3", "nowChooseIndex=" + nowChooseIndex);
 
-        
+
         if (listForKeep.size() - 1 >= nowChooseIndex) {
             String needShowPath = listForKeep.get(nowChooseIndex);
             Glide.with(this).load(needShowPath).apply(new RequestOptions().placeholder(R.mipmap.placeholder)).into(iv_show_content);
@@ -215,8 +263,8 @@ public class DressUpPreviewActivity extends BaseActivity {
     private void ToNextDressUp(String templateId) {
         DressUpModel dressUpModel = new DressUpModel(this, new DressUpModel.DressUpCallback() {
             @Override
-            public void isSuccess(List<HumanMerageResult>paths) {
-                showAndSaveImage(paths.get(0).getResult_image());
+            public void isSuccess(List<String> paths) {
+                showAndSaveImage(paths.get(0));
             }
         });
         dressUpModel.toDressUp(localImage, templateId);
@@ -268,7 +316,7 @@ public class DressUpPreviewActivity extends BaseActivity {
         Observable.just(url).map(new Func1<String, Bitmap>() {
             @Override
             public Bitmap call(String s) {
-                return  BitmapManager.getInstance().GetBitmapForHttp(url);
+                return BitmapManager.getInstance().GetBitmapForHttp(url);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
             @Override
