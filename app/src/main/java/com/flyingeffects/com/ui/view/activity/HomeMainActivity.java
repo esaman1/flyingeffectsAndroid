@@ -161,7 +161,7 @@ public class HomeMainActivity extends FragmentActivity {
 //        MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_MANUAL);  //页面采集模式
 //        MobclickAgent.setCatchUncaughtExceptions(true);
         UMConfigure.setProcessEvent(true); // 支持在子进程中统计自定义事件
-        UMConfigure.setLogEnabled(true);
+        UMConfigure.setLogEnabled(!BaseConstans.PRODUCTION);
         UMConfigure.init(this, BaseConstans.UMENGAPPID, ChannelUtil.getChannel(this), UMConfigure.DEVICE_TYPE_PHONE, "");
         PlatformConfig.setWeixin("wx7cb3c7ece8461be7", "6eed0ad743c6026b10b7e036f22aa762");
         PlatformConfig.setWXFileProvider("com.flyingeffects.com.fileprovider");
