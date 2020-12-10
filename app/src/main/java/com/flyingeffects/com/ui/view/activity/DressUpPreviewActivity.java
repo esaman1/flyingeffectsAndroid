@@ -187,7 +187,7 @@ public class DressUpPreviewActivity extends BaseActivity {
     private void share(String downPath) {
         UMImage image = new UMImage(this, new File(downPath));
         //推荐使用网络图片和资源文件的方式，平台兼容性更高。 对于微信QQ的那个平台，分享的图片需要设置缩略图，缩略图的设置规则为：
-        UMImage thumb =  new UMImage(DressUpPreviewActivity.this, R.mipmap.logo);
+        UMImage thumb =  new UMImage(DressUpPreviewActivity.this,new File(downPath));
         image.setThumb(thumb);
         //分享图片
         new ShareAction(DressUpPreviewActivity.this).withText(templateTitle)
