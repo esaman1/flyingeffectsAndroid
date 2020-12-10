@@ -148,6 +148,12 @@ public interface ApiService {
     @POST("/api/sms/smsCode")
     Observable<HttpResult<Object>> toSms(@FieldMap Map<String, String> params);
 
+    @FormUrlEncoded
+    @POST("/api/index/add_active")
+    Observable<HttpResult<Object>> add_active(@FieldMap Map<String, String> params);
+
+
+
 
     @FormUrlEncoded
     @POST("/api/template/saveTemplate")
@@ -349,6 +355,14 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/mearge/template_ids")
     Observable<HttpResult<List<String>>> template_ids(@FieldMap Map<String,String> params);
+
+
+    /**统计消息*/
+    @FormUrlEncoded
+    @POST("/api/message/addTimes")
+    Observable<HttpResult<Object>> addTimes(@FieldMap Map<String,String> params);
+
+
 
 
 

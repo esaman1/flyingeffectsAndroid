@@ -1054,7 +1054,7 @@ public class PreviewUpAndDownMvpModel {
         params.put("template_id", template_id);
         params.put("type", type);
         params.put("message_id", message_id );
-        Observable ob = Api.getDefault().systemessageinfo(BaseConstans.getRequestHead(params));
+        Observable ob = Api.getDefault().addTimes(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<SystemMessageDetailAllEnity>(context) {
             @Override
             protected void _onError(String message) {
