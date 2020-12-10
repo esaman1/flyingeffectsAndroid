@@ -953,7 +953,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         if (!isCancel && !ondestroy && paths != null && paths.size() > 0) {
             if (OldfromTo.equals(FromToTemplate.DRESSUP)) {
                 //来自换装页面
-                mMvpPresenter.toDressUp(paths.get(0), templateId);
+                mMvpPresenter.toDressUp(paths.get(0), templateId,templateItem.getTitle());
             } else if (templateItem.getIs_anime() == 1) {
                 //模板换装新逻辑
                 DressUpModel dressUpModel = new DressUpModel(this, new DressUpModel.DressUpCallback() {

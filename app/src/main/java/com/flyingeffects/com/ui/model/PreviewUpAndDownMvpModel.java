@@ -19,8 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
@@ -75,8 +73,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import rx.Observable;
-import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -1004,7 +1002,7 @@ public class PreviewUpAndDownMvpModel {
      * creation date: 2020/12/3
      * user : zhangtongju
      */
-    public void toDressUp(String path, String templateId) {
+    public void toDressUp(String path, String templateId,String templateTitle) {
 
         DressUpModel dressUpModel = new DressUpModel(context, new DressUpModel.DressUpCallback() {
             @Override
@@ -1013,6 +1011,7 @@ public class PreviewUpAndDownMvpModel {
                 intent.putExtra("url", paths.get(0).getResult_image());
                 intent.putExtra("template_id", templateId);
                 intent.putExtra("localImage", path);
+                intent.putExtra("templateTitle",templateTitle);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 context.startActivity(intent);
             }

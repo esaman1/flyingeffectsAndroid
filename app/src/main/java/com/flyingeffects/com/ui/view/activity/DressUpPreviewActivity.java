@@ -4,8 +4,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageView;
@@ -22,17 +25,18 @@ import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.ui.model.DressUpModel;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.media.UMImage;
-import com.umeng.socialize.media.UMWeb;
+import com.umeng.socialize.media.UMediaObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,7 +74,7 @@ public class DressUpPreviewActivity extends BaseActivity {
     private String template_id;
     private List<String> TemplateIdList = new ArrayList<>();
     private String localImage;
-    private String mUploadDressUpFolder;
+    private String templateTitle;
 
     @Override
     protected int getLayoutId() {
@@ -82,11 +86,10 @@ public class DressUpPreviewActivity extends BaseActivity {
         String urlPath = getIntent().getStringExtra("url");
         template_id = getIntent().getStringExtra("template_id");
         localImage = getIntent().getStringExtra("localImage");
+        templateTitle = getIntent().getStringExtra("templateTitle");
         findViewById(R.id.iv_top_back).setOnClickListener(this);
         showAndSaveImage(urlPath);
         requestAllTemplateId();
-        FileManager fileManager = new FileManager();
-        mUploadDressUpFolder = fileManager.getFileCachePath(this, "DressUpFolder");
     }
 
     @Override
@@ -96,6 +99,7 @@ public class DressUpPreviewActivity extends BaseActivity {
     }
 
 
+    @Override
     @OnClick({R.id.dress_up_next, R.id.iv_back, R.id.keep_to_album,R.id.share})
     public void onClick(View v) {
 
@@ -131,19 +135,26 @@ public class DressUpPreviewActivity extends BaseActivity {
             case R.id.share:
                 share(listForKeep.get(nowChooseIndex));
                 break;
+            default:
+                break;
         }
         super.onClick(v);
 
     }
 
 
+    private void share(String downPath) {
 
-    private void share(String downPath){
-        UMWeb umMin = new
-                UMWeb(downPath);
-        umMin.setTitle("123");
+        UMImage umImage = new UMImage(this, downPath);
+        umImage.setThumb(new UMImage(this,R.mipmap.head));
+
+        //质量压缩，适合长图的分享
+//        umImage.compressStyle = UMImage.CompressStyle.QUALITY;
+//        umImage.setTitle("来自飞闪的换装模板");
+//        umImage.setDescription(TextUtils.isEmpty(templateTitle) ? "飞闪换装模板" : templateTitle);
         new ShareAction(this)
-                .withMedia(umMin)
+                .withMedia(umImage)
+//                .withText(TextUtils.isEmpty(templateTitle) ? "飞闪换装模板" : templateTitle)
                 .setPlatform(SHARE_MEDIA.WEIXIN)
                 .setCallback(shareListener).share();
     }
