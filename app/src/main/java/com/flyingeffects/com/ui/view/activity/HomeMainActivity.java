@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -38,6 +39,7 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DataCleanManager;
+import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.SPHelper;
 import com.flyingeffects.com.manager.SituationTimer;
@@ -52,6 +54,7 @@ import com.flyingeffects.com.utils.ChannelUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NoDoubleClickListener;
 import com.flyingeffects.com.utils.StringUtil;
+import com.flyingeffects.com.utils.SystemUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.view.NoSlidingViewPager;
@@ -147,6 +150,7 @@ public class HomeMainActivity extends FragmentActivity {
         situationTimer = new SituationTimer();
         situationTimer.startTimer(30);
         initYouMeng();
+        statisticsUpgradeApp();
     }
 
 
@@ -703,8 +707,41 @@ public class HomeMainActivity extends FragmentActivity {
      * user : zhangtongju
      */
     private void statisticsUpgradeApp(){
-
+        String  appCode = SystemUtil.getVersionCode(this);
+        String lastCode=Hawk.get("lastAppCode");
+        if(TextUtils.isEmpty(lastCode)||!lastCode.equals(appCode)){
+            if(!DoubleClick.getInstance().isFastDoubleClick()){
+                statisticsPhoneInfo();
+            }
+        }
     }
+
+
+
+
+    /**
+     * description ：统计手机信息
+     * creation date: 2020/12/10
+     * user : zhangtongju
+     */
+    private void statisticsPhoneInfo() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("ip",SystemUtil.getIPAddress(this));
+        // 启动时间
+        Observable ob = Api.getDefault().add_active(BaseConstans.getRequestHead(params));
+        LogUtil.d("OOM","用户ip="+StringUtil.beanToJSONString(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(HomeMainActivity.this) {
+            @Override
+            protected void _onError(String message) {
+            }
+
+            @Override
+            protected void _onNext(Object data) {
+
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
 
 
 }
