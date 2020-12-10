@@ -30,6 +30,7 @@ import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.HumanMerageResult;
+import com.flyingeffects.com.enity.SystemMessageDetailAllEnity;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.enity.new_fag_template_item;
@@ -50,6 +51,7 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
 import com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity;
 import com.flyingeffects.com.ui.view.activity.ReportActivity;
+import com.flyingeffects.com.ui.view.activity.SystemMessageDetailActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
@@ -1038,6 +1040,32 @@ public class PreviewUpAndDownMvpModel {
             list.add(paths.get(i).getResult_image());
         }
         return list;
+    }
+
+
+
+    /**
+     * description ：消息页面后台统计
+     * type 1=模板制作次数,2=消息已读次数3=消息点击次数,
+     * creation date: 2020/8/6
+     * user : zhangtongju
+     */
+    public void requestMessageStatistics(String type,String message_id,String template_id) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("template_id", template_id);
+        params.put("type", type);
+        params.put("message_id", message_id );
+        Observable ob = Api.getDefault().systemessageinfo(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<SystemMessageDetailAllEnity>(context) {
+            @Override
+            protected void _onError(String message) {
+            }
+
+            @Override
+            protected void _onNext(SystemMessageDetailAllEnity AllData) {
+
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
 

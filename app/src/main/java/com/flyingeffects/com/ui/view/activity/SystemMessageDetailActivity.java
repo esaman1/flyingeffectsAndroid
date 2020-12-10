@@ -76,17 +76,15 @@ public class SystemMessageDetailActivity extends BaseActivity {
         needId =getIntent().getStringExtra("needId");
         adapter = new SystemMessageDetailAdapter(R.layout.item_system_message_detail, dataList,this);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-
-
         });
 
 
         adapter.setOnItemChildClickListener((adapter, view, position) -> {
-
             switch (view.getId()){
                 case R.id.tv_make:
                     statisticsEventAffair.getInstance().setFlag(this, "12_system_click",dataList.get(position).getContent());
                     requestTemplateDetail(dataList.get(position).getTemplate_id());
+                    requestMessageStatistics("3",dataList.get(position).getId(),dataList.get(position).getTemplate_id());
                     break;
 
                 default:
@@ -100,7 +98,7 @@ public class SystemMessageDetailActivity extends BaseActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         requestSystemDetail(true);
-
+        requestMessageStatistics("2","","");
     }
 
 
@@ -203,6 +201,37 @@ public class SystemMessageDetailActivity extends BaseActivity {
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
     }
+
+
+
+
+
+    /**
+     * description ：消息页面后台统计
+     * type 1=模板制作次数,2=消息已读次数3=消息点击次数,
+     * creation date: 2020/8/6
+     * user : zhangtongju
+     */
+    private void requestMessageStatistics(String type,String message_id,String template_id) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("template_id", template_id);
+        params.put("type", type);
+        params.put("message_id", message_id );
+        Observable ob = Api.getDefault().systemessageinfo(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<SystemMessageDetailAllEnity>(SystemMessageDetailActivity.this) {
+            @Override
+            protected void _onError(String message) {
+            }
+
+            @Override
+            protected void _onNext(SystemMessageDetailAllEnity AllData) {
+
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+
+
 
 
 
