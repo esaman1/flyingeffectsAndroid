@@ -179,6 +179,19 @@ public class DressUpPreviewActivity extends BaseActivity {
 
     private void share(String downPath) {
         WaitingDialog.openPragressDialog(this);
+//
+//        UMImage image = new UMImage(DressUpPreviewActivity.this, downPath);//网络图片
+//        //推荐使用网络图片和资源文件的方式，平台兼容性更高。 对于微信QQ的那个平台，分享的图片需要设置缩略图，缩略图的设置规则为：
+//        UMImage thumb =  new UMImage(DressUpPreviewActivity.this, R.mipmap.logo);
+//        image.setThumb(thumb);
+//
+//        new ShareAction(DressUpPreviewActivity.this).withText("飞闪换装，你也来试下吧")//分享内容
+//                .withMedia(image)//分享图片
+//                .setPlatform(SHARE_MEDIA.WEIXIN)
+//                .setCallback(shareListener).share();
+
+
+
         Observable.just(downPath).map(new Func1<String, Bitmap>() {
             @Override
             public Bitmap call(String s) {
@@ -189,6 +202,9 @@ public class DressUpPreviewActivity extends BaseActivity {
             public void call(Bitmap bitmap) {
                 WaitingDialog.closePragressDialog();
                 UMImage umImage = new UMImage(DressUpPreviewActivity.this, bitmap);
+                umImage.setTitle("飞闪换装，你也来试下吧");
+                UMImage thumb = new UMImage(DressUpPreviewActivity.this, R.mipmap.logo_circle);
+                umImage.setThumb(thumb);
                 new ShareAction(DressUpPreviewActivity.this)
                         .withMedia(umImage)
                         .setPlatform(SHARE_MEDIA.WEIXIN)
@@ -223,6 +239,7 @@ public class DressUpPreviewActivity extends BaseActivity {
          */
         @Override
         public void onError(SHARE_MEDIA platform, Throwable t) {
+            LogUtil.d("OOM","友盟错误日志"+t.getMessage());
             ToastUtil.showToast("失败");
         }
 
