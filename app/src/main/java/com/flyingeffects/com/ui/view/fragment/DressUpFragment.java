@@ -2,12 +2,9 @@ package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.viewpager.widget.ViewPager;
 
 import com.flyco.tablayout.SlidingTabLayout;
 import com.flyco.tablayout.listener.OnTabSelectListener;
@@ -24,6 +21,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 
 /**
@@ -95,13 +95,24 @@ public class DressUpFragment extends BaseFragment  implements DressUpMvpView {
                 String[] titles = new String[data.size()];
                 for (int i = 0; i < data.size(); i++) {
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
-                    bundle.putSerializable("id", data.get(i).getId());
-                    bundle.putInt("type",2);
                     titles[i] = data.get(i).getName();
-                    SecondaryTypeFragment fragment = new SecondaryTypeFragment();
-                    fragment.setArguments(bundle);
-                    list.add(fragment);
+                    if (TextUtils.equals("收藏", data.get(i).getName())) {
+                        bundle.putSerializable("id", data.get(i).getId());
+                        bundle.putString("tc_id","-1");
+                        bundle.putSerializable("num", i);
+                        bundle.putSerializable("from", 4);
+                        bundle.putString("tabName", data.get(i).getName());
+                        HomeTemplateItemFragment fragment = new HomeTemplateItemFragment();
+                        fragment.setArguments(bundle);
+                        list.add(fragment);
+                    } else {
+                        bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
+                        bundle.putSerializable("id", data.get(i).getId());
+                        bundle.putInt("type",2);
+                        SecondaryTypeFragment fragment = new SecondaryTypeFragment();
+                        fragment.setArguments(bundle);
+                        list.add(fragment);
+                    }
                 }
                 home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
                 viewpager.setAdapter(adapter);

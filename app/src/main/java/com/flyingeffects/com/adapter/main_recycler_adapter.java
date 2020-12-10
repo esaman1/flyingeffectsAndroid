@@ -3,10 +3,6 @@ package com.flyingeffects.com.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-
-import androidx.annotation.Nullable;
-
-import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -43,7 +39,6 @@ import com.flyingeffects.com.ui.view.activity.UploadMaterialActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.flyingeffects.com.ui.view.activity.intoOtherAppActivity;
 import com.flyingeffects.com.utils.LogUtil;
-import com.nineton.ntadsdk.utils.DeviceUtil;
 import com.qq.e.ads.cfg.VideoOption;
 import com.qq.e.ads.nativ.MediaView;
 import com.qq.e.ads.nativ.NativeADEventListener;
@@ -58,9 +53,9 @@ import com.yanzhenjie.album.AlbumFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import de.greenrobot.event.EventBus;
 
-import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.BAIDU_FEED_AD_EVENT;
 import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.GDT_FEED_AD_EVENT;
 import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TT_FEED_AD_EVENT;
 
@@ -74,7 +69,7 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
 
     private Context context;
     public final static String TAG = "main_recycler_adapter";
-    //0 模板  1 背景 2 搜索/我的收藏 3 表示背景模板下载
+    //0 模板  1 背景 2 搜索/我的收藏 3 表示背景模板下载 4 换装
     private int fromType;
     private TextView tv_advertising_title;
     private TextView csjTitle;
@@ -271,9 +266,9 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                 ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
                 iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
                 iv_show_author.setVisibility(View.GONE);
-            }else if(fromType == 4){
-                //背景下载
-                if (offset == 0) {
+            } else if (fromType == 4) {
+                //换装
+                if (offset == 0 && TextUtils.isEmpty(tabName)) {
                     add_image.setVisibility(View.VISIBLE);
                     ConstraintLayout_addVideo.setVisibility(View.GONE);
                 } else {
@@ -567,6 +562,12 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
         intent.putExtra("videoPath",path);
         context.startActivity(intent);
 
+    }
+
+    String tabName;
+    /**设置换装收藏tab没有上传功能*/
+    public void setDressUPTabNameFavorites(String tabName){
+        this.tabName = tabName;
     }
 
 }

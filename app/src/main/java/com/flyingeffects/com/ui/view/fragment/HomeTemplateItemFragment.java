@@ -49,7 +49,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     RecyclerView recyclerView;
     private main_recycler_adapter adapter;
     private List<new_fag_template_item> allData = new ArrayList<>();
-    private String category_id = "",tc_id ="";
+    private String category_id = "",tc_id ="",tabName = "";
     private StaggeredGridLayoutManager layoutManager;
     private int actTag;
     @BindView(R.id.smart_refresh_layout)
@@ -77,6 +77,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
             tc_id = bundle.getString("tc_id");
             actTag = bundle.getInt("num");
             fromType = bundle.getInt("from");
+            tabName = bundle.getString("tabName");
         }
         EventBus.getDefault().register(this);
         LogUtil.d("OOM", "2222fromType=" + fromType);
@@ -94,8 +95,8 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
 
     private void initRecycler() {
         adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), fromType);
-        layoutManager =
-                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        adapter.setDressUPTabNameFavorites(tabName);
+        layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
