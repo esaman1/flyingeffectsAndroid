@@ -28,6 +28,11 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
     }
 
 
+    public void requestMessageStatistics(String type,String message_id,String template_id){
+        previewUpAndDownMvpModel.requestMessageStatistics(type,message_id,template_id);
+    }
+
+
     public void downZip(String url,String zipPid){
         previewUpAndDownMvpModel.prepareDownZip(url,zipPid);
     }
@@ -38,7 +43,7 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
     }
 
 
-    public void GetDressUpPath(List<HumanMerageResult> paths){
+    public void GetDressUpPath(List<String> paths){
         previewUpAndDownMvpModel.GetDressUpPath(paths);
     }
 

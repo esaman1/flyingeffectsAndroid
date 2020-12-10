@@ -69,8 +69,8 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     }
 
 
-    public void renderVideo(String mTemplateFolder,String mAudio1Path,boolean isPreview){
-        home_model.renderVideo(mTemplateFolder,mAudio1Path,isPreview);
+    public void renderVideo(String mTemplateFolder,String mAudio1Path,boolean isPreview,int nowTemplateIsAnim,List<String> originalPath){
+        home_model.renderVideo(mTemplateFolder,mAudio1Path,isPreview,nowTemplateIsAnim,originalPath);
     }
 
 
@@ -113,12 +113,6 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
 
     @Override
     public void showMattingVideoCover(Bitmap bitmap,String path) {
-
-
-
-
-
-
         home_mvpView.showMattingVideoCover(bitmap,path);
     }
 
@@ -137,10 +131,20 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
         home_mvpView.getSpliteMusic(path);
     }
 
+    @Override
+    public void GetChangeDressUpData(List<String> paths) {
+        home_mvpView.GetChangeDressUpData(paths);
+    }
+
 
     public void StatisticsToSave(String templateId){
         home_model.StatisticsToSave(templateId);
 
+    }
+
+
+    public void toDressUp(String path,String templateId){
+        home_model.toDressUp(path,templateId);
     }
 
 

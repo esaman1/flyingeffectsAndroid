@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
@@ -30,6 +31,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
+import com.shixing.sxve.ui.view.WaitingDialog;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -37,7 +39,14 @@ import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.media.UMediaObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -105,7 +114,7 @@ public class DressUpPreviewActivity extends BaseActivity {
 
         switch (v.getId()) {
             case R.id.dress_up_next:
-                if(!DoubleClick.getInstance().isFastDoubleClick()){
+                if (!DoubleClick.getInstance().isFastDoubleClick()) {
                     nowChooseIndex++;
                     showDressUp();
                     iv_back.setVisibility(View.VISIBLE);
@@ -115,12 +124,12 @@ public class DressUpPreviewActivity extends BaseActivity {
 
 
             case R.id.iv_back:
-                if(!DoubleClick.getInstance().isFastDoubleClick()){
-                    if(nowChooseIndex>=1){
+                if (!DoubleClick.getInstance().isFastDoubleClick()) {
+                    if (nowChooseIndex >= 1) {
                         nowChooseIndex--;
                         showDressUp();
                         iv_back.setVisibility(View.VISIBLE);
-                    }else{
+                    } else {
                         iv_back.setVisibility(View.GONE);
                     }
                 }
@@ -143,20 +152,73 @@ public class DressUpPreviewActivity extends BaseActivity {
     }
 
 
+    public static Bitmap GetLocalOrNetBitmap(String url) {
+        Bitmap bitmap = null;
+        InputStream in = null;
+        BufferedOutputStream out = null;
+        try {
+            in = new BufferedInputStream(new URL(url).openStream(), 1024);
+            final ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
+            out = new BufferedOutputStream(dataStream, 1024);
+            copy(in, out);
+            out.flush();
+            byte[] data = dataStream.toByteArray();
+            bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+            data = null;
+            return bitmap;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    private static void copy(InputStream in, OutputStream out)
+            throws IOException {
+        byte[] b = new byte[1024];
+        int read;
+        while ((read = in.read(b)) != -1) {
+            out.write(b, 0, read);
+        }
+    }
+
+
     private void share(String downPath) {
+        WaitingDialog.openPragressDialog(this);
+//
+//        UMImage image = new UMImage(DressUpPreviewActivity.this, downPath);//网络图片
+//        //推荐使用网络图片和资源文件的方式，平台兼容性更高。 对于微信QQ的那个平台，分享的图片需要设置缩略图，缩略图的设置规则为：
+//        UMImage thumb =  new UMImage(DressUpPreviewActivity.this, R.mipmap.logo);
+//        image.setThumb(thumb);
+//
+//        new ShareAction(DressUpPreviewActivity.this).withText("飞闪换装，你也来试下吧")//分享内容
+//                .withMedia(image)//分享图片
+//                .setPlatform(SHARE_MEDIA.WEIXIN)
+//                .setCallback(shareListener).share();
 
-        UMImage umImage = new UMImage(this, downPath);
-        umImage.setThumb(new UMImage(this,R.mipmap.head));
 
-        //质量压缩，适合长图的分享
-//        umImage.compressStyle = UMImage.CompressStyle.QUALITY;
-//        umImage.setTitle("来自飞闪的换装模板");
-//        umImage.setDescription(TextUtils.isEmpty(templateTitle) ? "飞闪换装模板" : templateTitle);
-        new ShareAction(this)
-                .withMedia(umImage)
-//                .withText(TextUtils.isEmpty(templateTitle) ? "飞闪换装模板" : templateTitle)
-                .setPlatform(SHARE_MEDIA.WEIXIN)
-                .setCallback(shareListener).share();
+
+        Observable.just(downPath).map(new Func1<String, Bitmap>() {
+            @Override
+            public Bitmap call(String s) {
+                return GetLocalOrNetBitmap(downPath);
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
+            @Override
+            public void call(Bitmap bitmap) {
+                WaitingDialog.closePragressDialog();
+                UMImage umImage = new UMImage(DressUpPreviewActivity.this, bitmap);
+                umImage.setTitle("飞闪换装，你也来试下吧");
+                UMImage thumb = new UMImage(DressUpPreviewActivity.this, R.mipmap.logo_circle);
+                umImage.setThumb(thumb);
+                new ShareAction(DressUpPreviewActivity.this)
+                        .withMedia(umImage)
+                        .setPlatform(SHARE_MEDIA.WEIXIN)
+                        .setCallback(shareListener).share();
+            }
+        });
+
     }
 
     private UMShareListener shareListener = new UMShareListener() {
@@ -184,6 +246,7 @@ public class DressUpPreviewActivity extends BaseActivity {
          */
         @Override
         public void onError(SHARE_MEDIA platform, Throwable t) {
+            LogUtil.d("OOM","友盟错误日志"+t.getMessage());
             ToastUtil.showToast("失败");
         }
 
@@ -198,12 +261,10 @@ public class DressUpPreviewActivity extends BaseActivity {
     };
 
 
-
-
     private void showDressUp() {
-        LogUtil.d("OOM3","nowChooseIndex="+nowChooseIndex);
+        LogUtil.d("OOM3", "nowChooseIndex=" + nowChooseIndex);
 
-        
+
         if (listForKeep.size() - 1 >= nowChooseIndex) {
             String needShowPath = listForKeep.get(nowChooseIndex);
             Glide.with(this).load(needShowPath).apply(new RequestOptions().placeholder(R.mipmap.placeholder)).into(iv_show_content);
@@ -226,8 +287,8 @@ public class DressUpPreviewActivity extends BaseActivity {
     private void ToNextDressUp(String templateId) {
         DressUpModel dressUpModel = new DressUpModel(this, new DressUpModel.DressUpCallback() {
             @Override
-            public void isSuccess(List<HumanMerageResult>paths) {
-                showAndSaveImage(paths.get(0).getResult_image());
+            public void isSuccess(List<String> paths) {
+                showAndSaveImage(paths.get(0));
             }
         });
         dressUpModel.toDressUp(localImage, templateId);
@@ -279,7 +340,7 @@ public class DressUpPreviewActivity extends BaseActivity {
         Observable.just(url).map(new Func1<String, Bitmap>() {
             @Override
             public Bitmap call(String s) {
-                return  BitmapManager.getInstance().GetBitmapForHttp(url);
+                return BitmapManager.getInstance().GetBitmapForHttp(url);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
             @Override

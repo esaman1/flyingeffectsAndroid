@@ -77,7 +77,10 @@ public class MediaUiModel2 extends MediaUiModel {
 
     private float fps;
 
-    public MediaUiModel2(String folder, JSONObject ui, Bitmap bitmap, AssetDelegate delegate, Size size, Size temSize, float fps) throws JSONException {
+    //1 表示换装
+    private int nowTemplateIsAnim;
+
+    public MediaUiModel2(String folder, JSONObject ui, Bitmap bitmap, AssetDelegate delegate, Size size, Size temSize, float fps,int nowTemplateIsAnim) throws JSONException {
         super(folder, ui, delegate, size);
         mBitmap = bitmap;
         this.fps = fps;
@@ -85,7 +88,7 @@ public class MediaUiModel2 extends MediaUiModel {
         int[] editSize = getIntArray(ui.getJSONArray("editSize"));
         mClipWidth = editSize[0];
         mClipHeight = editSize[1];
-
+        this.nowTemplateIsAnim=nowTemplateIsAnim;
         int[] p = getIntArray(ui.getJSONArray("p")); //position
         int[] a = getIntArray(ui.getJSONArray("a")); //anchor
         float[] s = getFloatArray(ui.getJSONArray("s")); //scale
@@ -178,23 +181,35 @@ public class MediaUiModel2 extends MediaUiModel {
 
     @Override
     public void scroll(float distanceX, float distanceY) {
-        isVideoSlide = true;
-        isMaskSlide = true;
-        mMatrix.postTranslate(-distanceX, -distanceY);
+        if(nowTemplateIsAnim!=1){
+            isVideoSlide = true;
+            isMaskSlide = true;
+            mMatrix.postTranslate(-distanceX, -distanceY);
+        }
+
     }
 
     @Override
     public void scale(float sx, float sy, float px, float py) {
-        isVideoSlide = true;
-        isMaskSlide = true;
-        mMatrix.postScale(sx, sy, px, py);
+
+        if(nowTemplateIsAnim!=1){
+            isVideoSlide = true;
+            isMaskSlide = true;
+            mMatrix.postScale(sx, sy, px, py);
+        }
+
     }
 
     @Override
     public void rotate(float degrees, float px, float py) {
-        isVideoSlide = true;
-        isMaskSlide = true;
-        mMatrix.postRotate(degrees, px, py);
+        if(nowTemplateIsAnim!=1){
+            isVideoSlide = true;
+            isMaskSlide = true;
+            mMatrix.postRotate(degrees, px, py);
+        }
+
+
+
     }
 
     @Override

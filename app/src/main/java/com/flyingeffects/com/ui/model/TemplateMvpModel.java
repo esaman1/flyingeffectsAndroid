@@ -23,6 +23,7 @@ import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.DoubleClick;
 import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.HumanMerageResult;
 import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
@@ -34,6 +35,7 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.ChooseBackgroundTemplateActivity;
+import com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -119,6 +121,25 @@ public class TemplateMvpModel {
     }
 
 
+
+    /**
+     * description ：换装
+     * creation date: 2020/12/3
+     * user : zhangtongju
+     */
+    public void toDressUp(String path, String templateId) {
+        DressUpModel dressUpModel = new DressUpModel(context, new DressUpModel.DressUpCallback() {
+            @Override
+            public void isSuccess(List<String> paths) {
+                callback.GetChangeDressUpData(paths);
+            }
+        });
+
+        dressUpModel.toDressUp(path, templateId);
+    }
+
+
+
     public void getBjMusic(String videoPath) {
         mediaManager manager = new mediaManager(context);
         manager.splitMp4(videoPath, new File(soundFolder), new mediaManager.splitMp4Callback() {
@@ -154,7 +175,7 @@ public class TemplateMvpModel {
 //                       SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
                 CompressionCuttingManage manage = new CompressionCuttingManage(context, "0", false, tailorPaths -> {
                     Bitmap mattingMp = BitmapFactory.decodeFile(tailorPaths.get(0));
-                    if(mattingMp!=null&&bp!=null){
+                    if (mattingMp != null && bp != null) {
                         mattingMp = test(mattingMp, bp.getWidth(), bp.getHeight());
                         callback.showMattingVideoCover(mattingMp, tailorPaths.get(0));
                     }
@@ -217,6 +238,7 @@ public class TemplateMvpModel {
 //                    Bitmap.Config.ARGB_8888);
 //            bitmap.eraseColor(Color.parseColor("#FFFFFF"));//填充颜色
 //            BitmapManager.getInstance().saveBitmapToPath(bitmap, path);
+            LogUtil.d("OOM3", "completeTemplate");
             callback.completeTemplate(templateModel);
         });
     }
@@ -225,14 +247,19 @@ public class TemplateMvpModel {
     //    private String outputPathForVideoSaveToPhoto;
     private String savePath;
 
-    public void renderVideo(String mTemplateFolder, String mAudio1Path, Boolean isPreview) {
+    public void renderVideo(String mTemplateFolder, String mAudio1Path, Boolean isPreview, int nowTemplateIsAnim, List<String> originalPath) {
 
         WaitingDialog_progress waitingDialog_progress = new WaitingDialog_progress(context);
         waitingDialog_progress.openProgressDialog();
         waitingDialog_progress.setProgress("生成中...");
         Observable.create((Observable.OnSubscribe<Boolean>) subscriber -> {
             SXTemplate template = new SXTemplate(mTemplateFolder, SXTemplate.TemplateUsage.kForRender); //模板对象类，需要传入模板路径和使用方式
-            String[] paths = mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
+            String[] paths;
+            if (nowTemplateIsAnim == 1) {
+                paths = originalPath.toArray(new String[originalPath.size()]);
+            } else {
+                paths = mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
+            }
             paths = repairRandomPaths.randomPaths(paths);
             if (mTemplateModel.HasBj && !TextUtils.isEmpty(mTemplateModel.getBackgroundPath())) {
                 String[] newPaths = new String[paths.length + 1];

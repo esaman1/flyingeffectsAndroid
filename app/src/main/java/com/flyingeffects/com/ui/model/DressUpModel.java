@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.model;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
@@ -9,6 +10,7 @@ import com.flyingeffects.com.enity.HumanMerageResult;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.Calculagraph;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.huaweiObs;
@@ -18,13 +20,16 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import rx.Observable;
 import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import top.zibin.luban.Luban;
@@ -43,6 +48,7 @@ public class DressUpModel {
     private String mUploadDressUpFolder;
     private String mCatchFolder;
     private DressUpCallback callback;
+    private String mRunCatchFolder;
 
     public DressUpModel(Context context, DressUpCallback callback) {
         this.callback = callback;
@@ -50,6 +56,7 @@ public class DressUpModel {
         FileManager fileManager = new FileManager();
         mCatchFolder = fileManager.getFileCachePath(context, "runCatch");
         mUploadDressUpFolder = fileManager.getFileCachePath(context, "DressUpFolder");
+        mRunCatchFolder = fileManager.getFileCachePath(context, "runCatch");
     }
 
 
@@ -169,13 +176,14 @@ public class DressUpModel {
             @Override
             protected void _onNext(List<HumanMerageResult> data) {
                 if (data != null && data.size() > 0) {
-                    progress.closePragressDialog();
+
                     String str = StringUtil.beanToJSONString(data);
                     LogUtil.d("OOM3", "请求的结果为："+str);
-                    if (callback != null) {
-                        callback.isSuccess(data);
-                        callback = null;
-                    }
+                    GetDressUpPath(data);
+//                    if (callback != null) {
+//                        callback.isSuccess(data);
+//                        callback = null;
+//                    }
                     if (calculagraph != null) {
                         calculagraph.destroyTimer();
                     }
@@ -189,7 +197,7 @@ public class DressUpModel {
 
     public interface DressUpCallback {
 
-        void isSuccess(List<HumanMerageResult>paths);
+        void isSuccess(List<String>paths);
 
     }
 
@@ -229,6 +237,49 @@ public class DressUpModel {
                     }
                 }).launch();    //启动压缩
     }
+
+
+
+
+
+    /**
+     * description ：剥离出来有用的数据
+     * creation date: 2020/12/10
+     * user : zhangtongju
+     */
+    public void GetDressUpPath(List<HumanMerageResult> paths) {
+        LogUtil.d("OOM3","整合数据");
+        ArrayList<String> list = new ArrayList<>();
+        Observable.from(paths).map(new Func1<HumanMerageResult, Bitmap>() {
+            @Override
+            public Bitmap call(HumanMerageResult humanMerageResult) {
+                return BitmapManager.getInstance().GetBitmapForHttp(humanMerageResult.getResult_image());
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
+            @Override
+            public void call(Bitmap bitmap) {
+                LogUtil.d("OOM3","整合bitmap");
+                String fileName = mRunCatchFolder + File.separator + UUID.randomUUID() + ".png";
+                BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName);
+                list.add(fileName);
+                if (list.size() == paths.size()) {
+                    LogUtil.d("OOM3","整合数据完成");
+                    if (callback != null) {
+                        callback.isSuccess(list);
+                        callback = null;
+                        progress.closePragressDialog();
+                    }
+                }else{
+                    LogUtil.d("OOM3","list.size()="+list.size()+"paths.size()="+paths.size());
+                }
+            }
+        });
+    }
+
+
+
+
+
 
 
 }

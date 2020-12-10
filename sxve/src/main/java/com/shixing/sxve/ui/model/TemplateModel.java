@@ -79,12 +79,12 @@ public class TemplateModel {
                 //可以替换背景功能
                 if (!TextUtils.isEmpty(ui_extra) && ui_extra.equals("BG")) {
                     HasBj = true;
-                    bgModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor,null,fps);
+                    bgModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor,null,fps,nowTemplateIsAnim);
                     int group = bgModel.ui.group;
                     if (groupSize < group)
                         groupSize = group; //得到最大的group 的值，group 就是位置，但这里最大值是没包括背景的
                 } else {
-                    AssetModel assetModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor,temSize, fps);
+                    AssetModel assetModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor,temSize, fps,nowTemplateIsAnim);
                     mAssets.add(assetModel);
 
                     //单独针对mask 图层
@@ -95,7 +95,7 @@ public class TemplateModel {
                         }
 
                     } catch (Exception e) {
-                        Log.d("OOM", e.getMessage());
+                        Log.d("OOM3", e.getMessage());
                     }
 
                     //单独针对漫画
@@ -120,7 +120,7 @@ public class TemplateModel {
             }
         }
 
-
+        Log.d("OOM3", "------------------");
 
 
         //一个GroupModel 里面可能包含多个同组不同index
@@ -141,8 +141,10 @@ public class TemplateModel {
                 JSONArray size = obj.getJSONArray("size");
                 int width = size.getInt(0);
                 int height = size.getInt(1);
-
-                groups.get(i + 1).setSize(new Size(width, height));
+                int position=i + 1;
+                if(groups.size()>=position){
+                    groups.get(i + 1).setSize(new Size(width, height));
+                }
             }
         }
     }

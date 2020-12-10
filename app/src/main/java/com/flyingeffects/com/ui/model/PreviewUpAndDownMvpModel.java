@@ -28,6 +28,7 @@ import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.HumanMerageResult;
+import com.flyingeffects.com.enity.SystemMessageDetailAllEnity;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.enity.new_fag_template_item;
@@ -48,6 +49,7 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
 import com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity;
 import com.flyingeffects.com.ui.view.activity.ReportActivity;
+import com.flyingeffects.com.ui.view.activity.SystemMessageDetailActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
@@ -1006,9 +1008,9 @@ public class PreviewUpAndDownMvpModel {
 
         DressUpModel dressUpModel = new DressUpModel(context, new DressUpModel.DressUpCallback() {
             @Override
-            public void isSuccess(List<HumanMerageResult> paths) {
+            public void isSuccess(List<String> paths) {
                 Intent intent = new Intent(context, DressUpPreviewActivity.class);
-                intent.putExtra("url", paths.get(0).getResult_image());
+                intent.putExtra("url", paths.get(0));
                 intent.putExtra("template_id", templateId);
                 intent.putExtra("localImage", path);
                 intent.putExtra("templateTitle",templateTitle);
@@ -1026,28 +1028,8 @@ public class PreviewUpAndDownMvpModel {
      * creation date: 2020/12/8
      * user : zhangtongju
      */
-    public void GetDressUpPath(List<HumanMerageResult> paths) {
-        LogUtil.d("OOM3","整合数据");
-        ArrayList<String> list = new ArrayList<>();
-        Observable.from(paths).map(new Func1<HumanMerageResult, Bitmap>() {
-            @Override
-            public Bitmap call(HumanMerageResult humanMerageResult) {
-                return BitmapManager.getInstance().GetBitmapForHttp(humanMerageResult.getResult_image());
-            }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
-            @Override
-            public void call(Bitmap bitmap) {
-                String fileName = mRunCatchFolder + File.separator + UUID.randomUUID() + ".png";
-                BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName);
-                list.add(fileName);
-                if (list.size() == paths.size()) {
-                    LogUtil.d("OOM3","整合数据完成");
-                    callback.GetDressUpPathResult(list);
-                }else{
-                    LogUtil.d("OOM3","list.size()="+list.size()+"paths.size()="+paths.size());
-                }
-            }
-        });
+    public void GetDressUpPath(List<String> paths) {
+        callback.GetDressUpPathResult(paths);
     }
 
 
@@ -1057,6 +1039,32 @@ public class PreviewUpAndDownMvpModel {
             list.add(paths.get(i).getResult_image());
         }
         return list;
+    }
+
+
+
+    /**
+     * description ：消息页面后台统计
+     * type 1=模板制作次数,2=消息已读次数3=消息点击次数,
+     * creation date: 2020/8/6
+     * user : zhangtongju
+     */
+    public void requestMessageStatistics(String type,String message_id,String template_id) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("template_id", template_id);
+        params.put("type", type);
+        params.put("message_id", message_id );
+        Observable ob = Api.getDefault().systemessageinfo(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<SystemMessageDetailAllEnity>(context) {
+            @Override
+            protected void _onError(String message) {
+            }
+
+            @Override
+            protected void _onNext(SystemMessageDetailAllEnity AllData) {
+
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
 

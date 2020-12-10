@@ -50,6 +50,7 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.github.penfeizhou.animation.apng.APNGDrawable;
 import com.github.penfeizhou.animation.loader.ResourceStreamLoader;
+import com.kwad.sdk.mvp.Presenter;
 import com.nineton.ntadsdk.itr.VideoAdCallBack;
 import com.nineton.ntadsdk.manager.VideoAdManager;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -866,6 +867,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * 现在修改为先下载视频，下载完成后在打开相册选择图片
      */
     private void hasLoginToNext() {
+        mMvpPresenter.requestMessageStatistics("1","",templateId);
         switch (OldfromTo) {
             case FromToTemplate.ISHOMEFROMBJ:
                 statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
@@ -913,6 +915,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             default:
                 break;
         }
+
+
     }
 
 
@@ -958,7 +962,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 //模板换装新逻辑
                 DressUpModel dressUpModel = new DressUpModel(this, new DressUpModel.DressUpCallback() {
                     @Override
-                    public void isSuccess(List<HumanMerageResult> paths) {
+                    public void isSuccess(List<String> paths) {
                         mMvpPresenter.GetDressUpPath(paths);
                     }
                 });

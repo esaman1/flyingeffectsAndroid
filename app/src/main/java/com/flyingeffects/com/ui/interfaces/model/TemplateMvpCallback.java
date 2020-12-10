@@ -29,5 +29,7 @@ public interface TemplateMvpCallback {
 
     void getSpliteMusic(String path);
 
+    void GetChangeDressUpData(List<String> paths);
+
 
 }
