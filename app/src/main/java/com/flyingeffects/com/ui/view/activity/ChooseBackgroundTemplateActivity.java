@@ -117,6 +117,7 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
                         bundle.putInt("type", 1);
                         bundle.putSerializable("id", data.get(i).getId());
                         bundle.putInt("from",3);
+                        bundle.putString("categoryTabName",data.get(i).getName());
                         if (templateItem != null) {
                             //一键模板选择背景
                             bundle.putSerializable("cover", templateItem.getImage());

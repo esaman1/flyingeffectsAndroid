@@ -49,12 +49,6 @@ public class DressUpFragment extends BaseFragment  implements DressUpMvpView {
 
     private FragmentManager manager;
 
-    private int nowChooseIndex;
-
-    private ArrayList<String> listSearchKey = new ArrayList<>();
-
-    private  int listSearchKeyIndex = 0;
-
     private  DressUpMvpPresenter Presenter;
 
     @Override
@@ -109,6 +103,7 @@ public class DressUpFragment extends BaseFragment  implements DressUpMvpView {
                         bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
                         bundle.putSerializable("id", data.get(i).getId());
                         bundle.putInt("type",2);
+                        bundle.putString("categoryTabName",data.get(i).getName());
                         SecondaryTypeFragment fragment = new SecondaryTypeFragment();
                         fragment.setArguments(bundle);
                         list.add(fragment);
@@ -124,7 +119,6 @@ public class DressUpFragment extends BaseFragment  implements DressUpMvpView {
 
                     @Override
                     public void onPageSelected(int i) {
-                        nowChooseIndex = i;
                         if (i <= data.size() - 1) {
                             statisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
                         }
@@ -156,14 +150,6 @@ public class DressUpFragment extends BaseFragment  implements DressUpMvpView {
         super.onResume();
         if (data == null || data.size() == 0) {
             Presenter.getFragmentList();
-        } else {
-            setFragmentList(data);
-            if (viewpager != null && tabLayout != null) {
-                viewpager.setCurrentItem(nowChooseIndex);
-                tabLayout.setCurrentTab(nowChooseIndex);
-            }
         }
-        listSearchKeyIndex = 0;
-        listSearchKey.clear();
     }
 }

@@ -243,7 +243,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
                         allDataList.clear();
                     }
                     if (!isRefresh && dataList.size() < perPageCount) {  //因为可能默认只请求8条数据
-                        ToastUtil.showToast(getResources().getString(R.string.no_more_data));
+//                        ToastUtil.showToast(getResources().getString(R.string.no_more_data));
                         adapter.loadMoreEnd();
                     }
                     if (dataList.size() < perPageCount) {

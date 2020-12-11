@@ -17,6 +17,7 @@ import com.bytedance.sdk.open.aweme.impl.TikTokOpenApiFactory;
 import com.bytedance.sdk.open.aweme.share.Share;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.view.activity.UploadMaterialActivity;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.umeng.socialize.ShareAction;
@@ -71,6 +72,8 @@ public class SaveShareDialog extends Dialog {
             } else {
                 dismiss();
             }
+
+            statisticsEventAffair.getInstance().setFlag(mContext, "21_save_douying");
         });
         findViewById(R.id.bt_share_wx).setOnClickListener(v -> {
             //分享小程序
@@ -87,6 +90,8 @@ public class SaveShareDialog extends Dialog {
                     .setCallback(shareListener).share();
         });
         findViewById(R.id.bt_upload_feishan).setOnClickListener(v -> {
+            statisticsEventAffair.getInstance().setFlag(mContext, "21_save_flyingfighting");
+
             Intent intent = new Intent(mContext, UploadMaterialActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("videoPath", videoPaths.get(0));
@@ -117,6 +122,7 @@ public class SaveShareDialog extends Dialog {
         @Override
         public void onResult(SHARE_MEDIA platform) {
 //            ToastUtil.showToast("分享成功");
+            statisticsEventAffair.getInstance().setFlag(mContext, "21_save_wechat");
             dismiss();
         }
 

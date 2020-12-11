@@ -60,6 +60,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
     private List<FirstLevelTypeEntity> data;
     FragmentManager manager;
+    ScheduledExecutorService mScheduledExecutorService;
 
     private ArrayList<String> listSearchKey = new ArrayList<>();
     int listSearchKeyIndex = 0;
@@ -94,8 +95,15 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
             Presenter.getFragmentList();
         }
         listSearchKeyIndex = 0;
-        listSearchKey.clear();
-        requestKeywordList();
+        if (!listSearchKey.isEmpty()) {
+            if (mScheduledExecutorService != null) {
+                mScheduledExecutorService.shutdownNow();
+                mScheduledExecutorService = null;
+            }
+            pollingSetSearchText();
+        } else {
+            requestKeywordList();
+        }
     }
 
 
@@ -115,6 +123,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                         bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
                         bundle.putInt("type", 0);
                         bundle.putSerializable("id", data.get(i).getId());
+                        bundle.putString("categoryTabName",data.get(i).getName());
                         SecondaryTypeFragment fragment = new SecondaryTypeFragment();
                         fragment.setArguments(bundle);
                         list.add(fragment);
@@ -214,31 +223,30 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
+
     /**
      * 轮询设置搜索关键字
      */
     private void pollingSetSearchText() {
-        ScheduledExecutorService mScheduledExecutorService = new ScheduledThreadPoolExecutor(1);
-        mScheduledExecutorService.scheduleWithFixedDelay(new Runnable() {
-            @Override
-            public void run() {
-                if (listSearchKeyIndex >= listSearchKey.size()) {
-                    listSearchKeyIndex = 0;
-                }
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            tvSearchHint.setText("友友们都在搜\"" + listSearchKey.get(listSearchKeyIndex) + "\"");
-                            listSearchKeyIndex++;
-                        }catch (Exception e){
-                            tvSearchHint.setText("请输入视频关键字");
-                            listSearchKeyIndex++;
-                        }
-                    }
-                });
+        mScheduledExecutorService = new ScheduledThreadPoolExecutor(1);
+        mScheduledExecutorService.scheduleWithFixedDelay(() -> {
+            if (listSearchKeyIndex >= listSearchKey.size()) {
+                listSearchKeyIndex = 0;
             }
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        tvSearchHint.setText("友友们都在搜\"" + listSearchKey.get(listSearchKeyIndex) + "\"");
+                        listSearchKeyIndex++;
+                    }catch (Exception e){
+                        tvSearchHint.setText("请输入视频关键字");
+                        listSearchKeyIndex++;
+                    }
+                }
+            });
         }, 0, 8, TimeUnit.SECONDS);
+
     }
 }
 
