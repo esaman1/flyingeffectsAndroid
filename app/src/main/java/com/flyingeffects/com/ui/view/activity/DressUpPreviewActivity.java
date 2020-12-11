@@ -27,6 +27,7 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.ui.model.DressUpModel;
+import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -312,25 +313,39 @@ public class DressUpPreviewActivity extends BaseActivity {
      * creation date: 2020/12/8
      * user : zhangtongju
      */
-    private void keepImageToAlbum(String url) {
-        Observable.just(url).map(new Func1<String, Bitmap>() {
-            @Override
-            public Bitmap call(String s) {
-                return BitmapManager.getInstance().GetBitmapForHttp(url);
-            }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
-            @Override
-            public void call(Bitmap bitmap) {
-                String path = getKeepOutput();
-                BitmapManager.getInstance().saveBitmapToPath(bitmap, path, new BitmapManager.saveToFileCallback() {
-                    @Override
-                    public void isSuccess(boolean isSuccess) {
-                        albumBroadcast(path);
-                        showKeepSuccessDialog(path);
-                    }
-                });
-            }
-        });
+    private void keepImageToAlbum(String path) {
+        String path2 = getKeepOutput();
+        try {
+            FileUtil.copyFile(new File(path), path2, new FileUtil.copySucceed() {
+
+                        @Override
+                        public void isSucceed() {
+                            showKeepSuccessDialog(path2);
+                            albumBroadcast(path2);
+                        }
+                    });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+//        Observable.just(url).map(new Func1<String, Bitmap>() {
+//            @Override
+//            public Bitmap call(String s) {
+//                return BitmapManager.getInstance().GetBitmapForHttp(url);
+//            }
+//        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
+//            @Override
+//            public void call(Bitmap bitmap) {
+//                String path = getKeepOutput();
+//                BitmapManager.getInstance().saveBitmapToPath(bitmap, path, new BitmapManager.saveToFileCallback() {
+//                    @Override
+//                    public void isSuccess(boolean isSuccess) {
+//                        albumBroadcast(path);
+//                        showKeepSuccessDialog(path);
+//                    }
+//                });
+//            }
+//        });
     }
 
     private void showKeepSuccessDialog(String path) {
