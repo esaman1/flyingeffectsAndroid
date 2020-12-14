@@ -274,7 +274,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
                 case R.id.iv_download_bj:
                     statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "10_bj_arrow");
-                    mMvpPresenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId() + "", templateItem);
+                    mMvpPresenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId() + "", templateItem,OldfromTo);
                     break;
 
                 case R.id.ll_comment:

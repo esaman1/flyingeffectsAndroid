@@ -118,6 +118,8 @@ public class fragBjSearch extends BaseFragment {
                 //模板页面
                 intent.putExtra("fromTo", FromToTemplate.ISSEARCHTEMPLATE);
                 statisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_mb_click", allData.get(position).getTitle());
+            } else if (isFrom == 3) {
+                intent.putExtra("fromTo", FromToTemplate.DRESSUP);
             } else {
                 //背景页面
                 intent.putExtra("fromTo", FromToTemplate.ISSEARCHBJ);

@@ -27,6 +27,8 @@ import com.flyingeffects.com.enity.messageCount;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.AdConfigs;
+import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.huaweiObs;
@@ -128,6 +130,8 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     TextView tv_top_name;
     @BindView(R.id.appbar)
     AppBarLayout appbar;
+    @BindView(R.id.ll_ad_content)
+    LinearLayout mLLADContent;
 
 
 
@@ -152,6 +156,13 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 startActivity(intent);
             }
         });
+        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+            AdManager.getInstance().showImageAd(getActivity(), AdConfigs.AD_IMAGE_message, mLLADContent, new AdManager.Callback() {
+                @Override
+                public void adClose() {
+                }
+            });
+        }
     }
 
     @Override

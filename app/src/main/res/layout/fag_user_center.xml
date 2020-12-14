@@ -475,9 +475,15 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:orientation="vertical"
+                        android:id="@+id/ll_ad_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
                         android:orientation="vertical"
                         android:background="@drawable/shape_top_half_12_rect_gray"
                         app:layout_collapseMode="pin">

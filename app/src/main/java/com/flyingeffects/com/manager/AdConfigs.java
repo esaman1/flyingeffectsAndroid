@@ -11,6 +11,8 @@ public class AdConfigs {
 
     // 保存后的插屏广告
     public static final String AD_SCREEN_FOR_keep = "374";
+    /**换装预览页面保存的广告ID*/
+    public static final String AD_PREVIEW_SCREEN_AD_ID = "697";
 
     // 预览后的插屏广告
     public static final String AD_SCREEN_FOR_PREVIEW = "493";

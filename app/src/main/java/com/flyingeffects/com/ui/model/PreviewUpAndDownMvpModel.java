@@ -49,7 +49,6 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
 import com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity;
 import com.flyingeffects.com.ui.view.activity.ReportActivity;
-import com.flyingeffects.com.ui.view.activity.SystemMessageDetailActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
@@ -207,7 +206,7 @@ public class PreviewUpAndDownMvpModel {
     private boolean nowHasCollect;
     private ImageView iv_collect;
 
-    public void showBottomSheetDialog(String path, String imagePath, String id, new_fag_template_item fag_template_item) {
+    public void showBottomSheetDialog(String path, String imagePath, String id, new_fag_template_item fag_template_item,String fromTo) {
         bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
         View view = LayoutInflater.from(context).inflate(R.layout.preview_bottom_sheet_dialog, null);
         bottomSheetDialog.setContentView(view);
@@ -249,8 +248,36 @@ public class PreviewUpAndDownMvpModel {
             statisticsEventAffair.getInstance().setFlag(context, "save_back_template");
             downProgressDialog = new WaitingDialog_progress(context);
             downProgressDialog.openProgressDialog();
-            DownVideo(path, imagePath, id, true, false);
-            dismissDialog();
+            //换装保存的是图片
+            if (TextUtils.equals(FromToTemplate.DRESSUP, fromTo)) {
+                Observable.just(imagePath).map(new Func1<String, Bitmap>() {
+                    @Override
+                    public Bitmap call(String humanMerageResult) {
+                        return BitmapManager.getInstance().GetBitmapForHttp(humanMerageResult);
+                    }
+                }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
+                    @Override
+                    public void call(Bitmap bitmap) {
+                        downProgressDialog.closePragressDialog();
+                        LogUtil.d("OOM3","整合bitmap");
+                        String fileName = mRunCatchFolder + File.separator + UUID.randomUUID() + ".png";
+                        BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, new BitmapManager.saveToFileCallback() {
+                            @Override
+                            public void isSuccess(boolean isSuccess) {
+
+                                saveToAlbum(fileName);
+                                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                                    AdManager.getInstance().showCpAd(context, AdConfigs.AD_PREVIEW_SCREEN_AD_ID);
+                                }
+                            }
+                        });
+                    }
+                });
+            } else {
+             //保存的是视频
+                DownVideo(path, imagePath, id, true, false);
+                dismissDialog();
+            }
         });
         LinearLayout ll_friend_circle = view.findViewById(R.id.ll_friend_circle);
         ll_friend_circle.setOnClickListener(new View.OnClickListener() {
