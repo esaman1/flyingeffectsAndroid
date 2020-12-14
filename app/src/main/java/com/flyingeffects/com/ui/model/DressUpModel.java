@@ -69,6 +69,7 @@ public class DressUpModel {
 
     public void toDressUp(String ImagePath, String templateId) {
         progress = new WaitingDialog_progress(context);
+        progress.setProgress("正在换装中...");
         progress.openProgressDialog();
         toCompressImg(ImagePath,templateId);
 

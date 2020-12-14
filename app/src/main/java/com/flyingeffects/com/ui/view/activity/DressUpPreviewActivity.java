@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -55,10 +56,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 
 /**
@@ -75,6 +72,8 @@ public class DressUpPreviewActivity extends BaseActivity {
     @BindView(R.id.dress_up_next)
     ImageView dress_up_next;
 
+    @BindView(R.id.tv_top_title)
+    TextView tv_top_title;
 
     @BindView(R.id.iv_back)
     ImageView iv_back;
@@ -97,6 +96,7 @@ public class DressUpPreviewActivity extends BaseActivity {
         template_id = getIntent().getStringExtra("template_id");
         localImage = getIntent().getStringExtra("localImage");
         templateTitle = getIntent().getStringExtra("templateTitle");
+        tv_top_title.setText("上传清晰正脸照片最佳");
         findViewById(R.id.iv_top_back).setOnClickListener(this);
         showAndSaveImage(urlPath);
         requestAllTemplateId();

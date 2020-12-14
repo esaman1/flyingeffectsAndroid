@@ -530,12 +530,15 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
             params.put("videofile", huaweiVideoPath);
             params.put("audiourl", huaweiSound);
             params.put("isLandscape", isLandscape + "");
-
         }
+
+//        params.put("videofile", huaweiVideoPath);
+//        params.put("audiourl", huaweiSound);
+//        params.put("isLandscape", isLandscape + "");
         params.put("is_with_play", isChecked + ""); //1 表示可以合拍
         params.put("auth", ed_nickname.getText().toString());
         params.put("title", ed_describe.getText().toString());
-        params.put("auth_image", huaweiImagePath);
+        params.put("auth_image", imageHeadPath);
         params.put("image", coverImagePath);
         Observable ob;
         if (isFrom == 1) {
@@ -664,7 +667,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
             String nowTime = StringUtil.getCurrentTimeymd();
             String copyPath = "media/android/dressUpImage/" + nowTime + "/" + System.currentTimeMillis() + type;
             coverImagePath = "http://cdn.flying.flyingeffect.com/" + copyPath;
-            uploadImage(path, coverImagePath);
+            uploadImage(path, copyPath);
         }).start();
     }
 
