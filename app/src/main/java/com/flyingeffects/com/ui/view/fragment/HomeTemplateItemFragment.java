@@ -174,7 +174,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     public void onResume() {
         super.onResume();
         if (getActivity() != null) {
-            if (allData == null || allData.size() == 0) {
+            if (allData == null || allData.size() == 0||category_id.equals("110")) {
                 LogUtil.d("OOM", "allData==null");
                 Presenter.requestData(category_id,tc_id, actTag);
             } else {
