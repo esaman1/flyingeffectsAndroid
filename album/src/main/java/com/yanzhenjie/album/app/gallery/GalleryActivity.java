@@ -139,7 +139,7 @@ public class GalleryActivity extends BaseActivity implements Contract.GalleryPre
                     checkedList.add(entry.getKey());
                 }
             }
-            sResult.onAction(checkedList);
+            sResult.onAction(checkedList,false);
         }
         finish();
     }
@@ -147,7 +147,7 @@ public class GalleryActivity extends BaseActivity implements Contract.GalleryPre
     @Override
     public void onBackPressed() {
         if (sCancel != null) {
-            sCancel.onAction("User canceled.");
+            sCancel.onAction("User canceled.",false);
         }
         finish();
     }

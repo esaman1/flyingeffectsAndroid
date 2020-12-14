@@ -111,7 +111,7 @@ public class NullActivity extends BaseActivity implements Contract.NullPresenter
 
     private Action<String> mCameraAction = new Action<String>() {
         @Override
-        public void onAction(@NonNull String result) {
+        public void onAction(@NonNull String result,boolean isFromCamera) {
             Intent intent = new Intent();
             intent.putExtra(KEY_OUTPUT_IMAGE_PATH, result);
             setResult(RESULT_OK, intent);

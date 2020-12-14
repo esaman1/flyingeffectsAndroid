@@ -28,6 +28,9 @@ public interface Action<T> {
      *
      * @param result the result of the action.
      */
-    void onAction(@NonNull T result);
+    void onAction(@NonNull T result,boolean isFromCamera);
+
+
+
 
 }
