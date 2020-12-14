@@ -268,7 +268,7 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                 iv_show_author.setVisibility(View.GONE);
             } else if (fromType == 4) {
                 //换装
-                if (offset == 0 && TextUtils.isEmpty(tabName)) {
+                if (offset == 1 && TextUtils.isEmpty(tabName)) {
                     add_image.setVisibility(View.VISIBLE);
                     ConstraintLayout_addVideo.setVisibility(View.GONE);
                 } else {
