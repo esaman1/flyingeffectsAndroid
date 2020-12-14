@@ -5,11 +5,8 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
-import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageView;
@@ -21,27 +18,27 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.HumanMerageResult;
+import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.BitmapManager;
+import com.flyingeffects.com.manager.AdConfigs;
+import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.StimulateControlManage;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.DressUpModel;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
-import com.shixing.sxve.ui.view.WaitingDialog;
+import com.nineton.ntadsdk.itr.VideoAdCallBack;
+import com.nineton.ntadsdk.manager.VideoAdManager;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.media.UMImage;
-import com.umeng.socialize.media.UMediaObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -56,6 +53,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import rx.Observable;
 
 
@@ -98,6 +97,7 @@ public class DressUpPreviewActivity extends BaseActivity {
         localImage = getIntent().getStringExtra("localImage");
         templateTitle = getIntent().getStringExtra("templateTitle");
         tv_top_title.setText("上传清晰正脸照片最佳");
+        EventBus.getDefault().register(this);
         findViewById(R.id.iv_top_back).setOnClickListener(this);
         showAndSaveImage(urlPath);
         requestAllTemplateId();
@@ -111,7 +111,7 @@ public class DressUpPreviewActivity extends BaseActivity {
 
 
     @Override
-    @OnClick({R.id.dress_up_next, R.id.iv_back, R.id.keep_to_album,R.id.share})
+    @OnClick({R.id.dress_up_next, R.id.iv_back, R.id.keep_to_album, R.id.share})
     public void onClick(View v) {
 
         switch (v.getId()) {
@@ -139,9 +139,17 @@ public class DressUpPreviewActivity extends BaseActivity {
                 break;
 
             case R.id.keep_to_album:
-                String path = listForKeep.get(nowChooseIndex);
-                statisticsEventAffair.getInstance().setFlag(this,"21_face_save",template_id);
-                keepImageToAlbum(path);
+                StimulateControlManage.getInstance().InitRefreshStimulate();
+                if (BaseConstans.getHasAdvertising() == 1 && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser() && BaseConstans.getSave_video_ad() && !BaseConstans.TemplateHasWatchingAd) {
+                    Intent intent = new Intent(this, AdHintActivity.class);
+                    intent.putExtra("from", "isFormDressUp");
+                    intent.putExtra("templateTitle", "");
+                    startActivity(intent);
+                } else {
+                    String path = listForKeep.get(nowChooseIndex);
+                    keepImageToAlbum(path);
+                }
+                statisticsEventAffair.getInstance().setFlag(this, "21_face_save", template_id);
                 break;
 
             case R.id.share:
@@ -190,7 +198,7 @@ public class DressUpPreviewActivity extends BaseActivity {
     private void share(String downPath) {
         UMImage image = new UMImage(this, new File(downPath));
         //推荐使用网络图片和资源文件的方式，平台兼容性更高。 对于微信QQ的那个平台，分享的图片需要设置缩略图，缩略图的设置规则为：
-        UMImage thumb =  new UMImage(DressUpPreviewActivity.this,new File(downPath));
+        UMImage thumb = new UMImage(DressUpPreviewActivity.this, new File(downPath));
         image.setThumb(thumb);
         //分享图片
         new ShareAction(DressUpPreviewActivity.this).withText(templateTitle)
@@ -225,7 +233,7 @@ public class DressUpPreviewActivity extends BaseActivity {
          */
         @Override
         public void onError(SHARE_MEDIA platform, Throwable t) {
-            LogUtil.d("OOM","友盟错误日志"+t.getMessage());
+            LogUtil.d("OOM", "友盟错误日志" + t.getMessage());
             ToastUtil.showToast("失败");
         }
 
@@ -320,12 +328,12 @@ public class DressUpPreviewActivity extends BaseActivity {
         try {
             FileUtil.copyFile(new File(path), path2, new FileUtil.copySucceed() {
 
-                        @Override
-                        public void isSucceed() {
-                            showKeepSuccessDialog(path2);
-                            albumBroadcast(path2);
-                        }
-                    });
+                @Override
+                public void isSucceed() {
+                    showKeepSuccessDialog(path2);
+                    albumBroadcast(path2);
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -356,7 +364,8 @@ public class DressUpPreviewActivity extends BaseActivity {
                     new ContextThemeWrapper(this, R.style.Theme_Transparent));
             builder.setTitle(R.string.notification);
             builder.setMessage("已为你保存到相册,多多分享给友友\n" + "【" + path + getString(R.string.folder) + "】");
-            builder.setNegativeButton(getString(R.string.got_it), (dialog, which) -> dialog.dismiss());
+            builder.setNegativeButton(getString(R.string.got_it), (dialog, which) ->
+                    dialog.dismiss());
             builder.setCancelable(true);
             Dialog dialog = builder.show();
             dialog.setCanceledOnTouchOutside(false);
@@ -391,6 +400,61 @@ public class DressUpPreviewActivity extends BaseActivity {
         Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         intent.setData(Uri.fromFile(new File(outputFile)));
         sendBroadcast(intent);
+    }
+
+
+    @Subscribe
+    public void onEventMainThread(showAdCallback event) {
+        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+            VideoAdManager videoAdManager = new VideoAdManager();
+
+            videoAdManager.showVideoAd(this, AdConfigs.AD_save_video_dressUp, new VideoAdCallBack() {
+                @Override
+                public void onVideoAdSuccess() {
+                    statisticsEventAffair.getInstance().setFlag(DressUpPreviewActivity.this, "video_ad_alert_request_sucess");
+                    LogUtil.d("OOM", "onVideoAdSuccess");
+                }
+
+                @Override
+                public void onVideoAdError(String s) {
+                    statisticsEventAffair.getInstance().setFlag(DressUpPreviewActivity.this, "video_ad_alert_request_fail");
+                    LogUtil.d("OOM", "onVideoAdError" + s);
+                    alertAlbumUpdate(false);
+                }
+
+                @Override
+                public void onVideoAdClose() {
+                    alertAlbumUpdate(true);
+                }
+
+                @Override
+                public void onVideoAdSkip() {
+                    LogUtil.d("OOM", "onVideoAdSkip");
+                }
+
+                @Override
+                public void onVideoAdComplete() {
+                }
+
+                @Override
+                public void onVideoAdClicked() {
+                    LogUtil.d("OOM", "onVideoAdClicked");
+                }
+            });
+        } else {
+            alertAlbumUpdate(true);
+        }
+    }
+
+
+    public void alertAlbumUpdate(boolean isSuccess) {
+        if (!isSuccess) {
+            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                AdManager.getInstance().showCpAd(this, AdConfigs.AD_SCREEN_FOR_DRESSUP);
+            }
+        }
+        String path = listForKeep.get(nowChooseIndex);
+        keepImageToAlbum(path);
     }
 
 

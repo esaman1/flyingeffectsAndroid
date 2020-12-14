@@ -12,6 +12,10 @@ public class AdConfigs {
     // 保存后的插屏广告
     public static final String AD_SCREEN_FOR_keep = "374";
 
+
+    // 换装保存后的插屏广告
+    public static final String AD_SCREEN_FOR_DRESSUP = "696";
+
     // 预览后的插屏广告
     public static final String AD_SCREEN_FOR_PREVIEW = "493";
 
@@ -54,6 +58,9 @@ public class AdConfigs {
     public static final String AD_save_video = "414";
     // 保存激励视频2
     public static final String AD_save_video2 = "415";
+
+    // 保存激励换装
+    public static final String AD_save_video_dressUp = "415";
 
     /**
      * 相册广告

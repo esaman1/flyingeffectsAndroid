@@ -1357,8 +1357,6 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
             intent.putExtra("templateTitle", "");
             context.startActivity(intent);
         } else {
-
-
             try {
                 String keepPath = getKeepOutput();
                 FileUtil.copyFile(new File(path), keepPath);
