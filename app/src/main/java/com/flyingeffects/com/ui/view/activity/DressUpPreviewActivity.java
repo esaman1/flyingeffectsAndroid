@@ -146,8 +146,7 @@ public class DressUpPreviewActivity extends BaseActivity {
                     intent.putExtra("templateTitle", "");
                     startActivity(intent);
                 } else {
-                    String path = listForKeep.get(nowChooseIndex);
-                    keepImageToAlbum(path);
+                    alertAlbumUpdate(false);
                 }
                 statisticsEventAffair.getInstance().setFlag(this, "21_face_save", template_id);
                 break;
@@ -184,6 +183,12 @@ public class DressUpPreviewActivity extends BaseActivity {
         }
     }
 
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 
     private static void copy(InputStream in, OutputStream out)
             throws IOException {
