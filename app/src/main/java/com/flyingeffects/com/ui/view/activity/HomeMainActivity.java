@@ -180,6 +180,8 @@ public class HomeMainActivity extends FragmentActivity {
 
             @Override
             protected void _onNext(UserInfo data) {
+                String str=StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM2","requestUserInfo="+str);
                 Hawk.put("UserInfo", data);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
