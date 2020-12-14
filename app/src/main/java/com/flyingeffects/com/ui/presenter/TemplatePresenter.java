@@ -19,9 +19,9 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     private TemplateMvpView home_mvpView;
     private TemplateMvpModel home_model;
 
-    public TemplatePresenter(Context context, TemplateMvpView mvp_view) {
+    public TemplatePresenter(Context context, TemplateMvpView mvp_view,String fromTo,String templateName) {
         this.home_mvpView = mvp_view;
-        home_model = new TemplateMvpModel(context, this);
+        home_model = new TemplateMvpModel(context, this,fromTo,templateName);
     }
 
     public void intoMattingVideo(String path,String name){

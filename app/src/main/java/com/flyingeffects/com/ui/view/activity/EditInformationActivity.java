@@ -139,7 +139,7 @@ public class EditInformationActivity extends BaseActivity implements AlbumChoose
     }
 
     @Override
-    public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
+    public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera,ArrayList<AlbumFile> albumFileList) {
         if (!isCancel &&  paths != null && paths.size() > 0) {
             String path = paths.get(0);
             String type = path.substring(path.length() - 4);

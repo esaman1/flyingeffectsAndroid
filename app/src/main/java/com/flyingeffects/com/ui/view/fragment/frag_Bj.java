@@ -334,7 +334,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
 
     private void toAddSticker() {
         statisticsEventAffair.getInstance().setFlag(getActivity(), "6_customize_bj");
-        AlbumManager.chooseAlbum(getActivity(), 1, SELECTALBUM, (tag, paths, isCancel, albumFileList) -> {
+        AlbumManager.chooseAlbum(getActivity(), 1, SELECTALBUM, (tag, paths, isCancel,  isFromCamera,albumFileList) -> {
             if (!isCancel) {
                 if (!TextUtils.isEmpty(paths.get(0))) {
                     MattingImage mattingImage = new MattingImage();
@@ -361,7 +361,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
     private void toPhotographAlbum(new_fag_template_item item, String templateFilePath) {
         waitingDialog_progress.closePragressDialog();
         if (getActivity() != null) {
-            AlbumManager.chooseAlbum(getActivity(), 20, SELECTALBUM, (tag, paths, isCancel, albumFileList) -> {
+            AlbumManager.chooseAlbum(getActivity(), 20, SELECTALBUM, (tag, paths, isCancel,  isFromCamera,albumFileList) -> {
                 if (!isCancel) {
                     Intent intent = new Intent(getActivity(), TemplateActivity.class);
                     Bundle bundle = new Bundle();

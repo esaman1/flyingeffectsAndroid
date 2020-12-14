@@ -854,7 +854,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                             statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_replace");
                         }
                         //切換素材
-                        AlbumManager.chooseAlbum(context, 1, 0, (tag, paths, isCancel, albumFileList) -> {
+                        AlbumManager.chooseAlbum(context, 1, 0, (tag, paths, isCancel,  isFromCamera,albumFileList) -> {
                             if (!isCancel) {
                                 if (albumType.isVideo(GetPathType.getInstance().getPathType(paths.get(0)))) {
                                     GetVideoCover getVideoCover = new GetVideoCover(context);
@@ -1357,8 +1357,6 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
             intent.putExtra("templateTitle", "");
             context.startActivity(intent);
         } else {
-
-
             try {
                 String keepPath = getKeepOutput();
                 FileUtil.copyFile(new File(path), keepPath);

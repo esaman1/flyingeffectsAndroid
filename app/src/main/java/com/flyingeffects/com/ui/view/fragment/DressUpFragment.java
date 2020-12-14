@@ -133,7 +133,7 @@ public class DressUpFragment extends BaseFragment  implements DressUpMvpView {
                 tabLayout.setOnTabSelectListener(new OnTabSelectListener() {
                     @Override
                     public void onTabSelect(int position) {
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "13_template_tab_click", titles[position]);
+                        statisticsEventAffair.getInstance().setFlag(getActivity(), "21_fece_tab", titles[position]);
                     }
 
                     @Override

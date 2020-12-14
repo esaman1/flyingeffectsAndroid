@@ -427,7 +427,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     }
 
     @Override
-    public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
+    public void resultFilePath(int tag, List<String> paths, boolean isCancel,boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel && paths != null && paths.size() > 0) {
             try {
                 File srcFile = new File(paths.get(0));

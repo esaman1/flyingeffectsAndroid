@@ -235,7 +235,11 @@ public class frag_user_upload_bj extends BaseFragment {
                     intent.putExtra("fromToMineCollect", true);
                     intent.putExtra("isTest", allData.get(position-1).getTest());
                     intent.putExtra("nowSelectPage", selectPage);
-                    intent.putExtra("fromTo", FromToTemplate.ISHOMEFROMBJ);
+                    if(allData.get(position-1).getTemplate_type().equals("3")){
+                        intent.putExtra("fromTo", FromToTemplate.DRESSUP);
+                    }else{
+                        intent.putExtra("fromTo", FromToTemplate.ISHOMEFROMBJ);
+                    }
                     startActivity(intent);
                 }
 

@@ -19,6 +19,7 @@ import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.TemplateAddStickerMvpView;
+import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.presenter.TemplateAddStickerMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
@@ -42,6 +43,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import androidx.viewpager.widget.ViewPager;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -112,6 +114,9 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
     private boolean isShowPreviewAd = false;
 
+    private String IsFrom;
+    private String title;
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_template_add_sticker;
@@ -121,14 +126,16 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     protected void initView() {
         EventBus.getDefault().register(this);
         videoPath = getIntent().getStringExtra("videoPath");
+        title=getIntent().getStringExtra("title");
         LogUtil.d("OOM", "path=" + videoPath);
+        IsFrom = getIntent().getStringExtra("IsFrom");
         presenter = new TemplateAddStickerMvpPresenter(this, this, ll_space, viewLayerRelativeLayout, videoPath);
         if (!TextUtils.isEmpty(videoPath)) {
             //有视频的时候，初始化视频值
             presenter.setPlayerViewSize(playerView, scrollView, viewLayerRelativeLayout);
             initExo(videoPath);
         }
-        presenter.initBottomLayout(viewPager,getSupportFragmentManager());
+        presenter.initBottomLayout(viewPager, getSupportFragmentManager());
         initViewLayerRelative();
         ((TextView) findViewById(R.id.tv_top_submit)).setText("保存");
     }
@@ -436,7 +443,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
     @Override
     public void hideTextDialog() {
-        if(createViewForAddText!=null){
+        if (createViewForAddText != null) {
             createViewForAddText.hideInputTextDialog();
         }
 
@@ -467,12 +474,15 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                     videoToPause();
                     endTimer();
                 }
+                if (!TextUtils.isEmpty("IsFrom") && IsFrom.equals(FromToTemplate.PICTUREALBUM)) {
+                    LogUtil.d("OOM","保存的模板名字为"+title);
+                    statisticsEventAffair.getInstance().setFlag(this, "21_yj_save",title );
+                }
                 presenter.toSaveVideo(0);
                 break;
 
             case R.id.ll_play:
                 toPlay();
-
                 break;
 
             case R.id.iv_delete_all_text:
@@ -510,7 +520,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                 createViewForAddText = null;
             }
             ll_add_text_style.setVisibility(View.VISIBLE);
-            createViewForAddText = new CreateViewForAddText(this, ll_add_text_style, new CreateViewForAddText.downCallback(){
+            createViewForAddText = new CreateViewForAddText(this, ll_add_text_style, new CreateViewForAddText.downCallback() {
                 @Override
                 public void isSuccess(String path, int type, String title) {
                     presenter.ChangeTextStyle(path, type, title);
@@ -535,13 +545,13 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                 }
 
                 @Override
-                public void isSuccess(String textBjPath, String textFramePath,String Frametitle) {
-                    presenter.ChangeTextFrame(textBjPath, textFramePath,Frametitle);
+                public void isSuccess(String textBjPath, String textFramePath, String Frametitle) {
+                    presenter.ChangeTextFrame(textBjPath, textFramePath, Frametitle);
                 }
 
                 @Override
-                public void isSuccess(String color0, String color1, String textFramePath,String Frametitle) {
-                    presenter.ChangeTextFrame(color0,color1, textFramePath,Frametitle);
+                public void isSuccess(String color0, String color1, String textFramePath, String Frametitle) {
+                    presenter.ChangeTextFrame(color0, color1, textFramePath, Frametitle);
                 }
             });
             createViewForAddText.showBottomSheetDialog(inputText, "OneKey_template");

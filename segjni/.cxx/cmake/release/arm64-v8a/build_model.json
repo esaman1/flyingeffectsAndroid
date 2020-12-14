@@ -16,7 +16,7 @@
         "ndk"
       ],
       "buildRoot": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\.cxx\\cmake\\release\\arm64-v8a",
-      "cmakeToolchain": "E:\\Sdk\\ndk\\21.1.6352462\\build\\cmake\\android.toolchain.cmake",
+      "cmakeToolchain": "E:\\Sdk\\ndk\\21.0.6113669\\build\\cmake\\android.toolchain.cmake",
       "cmakeExecutable": "E:\\Sdk\\cmake\\3.10.2.4988404\\bin\\cmake.exe",
       "variables": [
         {
@@ -29,7 +29,7 @@
         },
         {
           "name": "CMAKE_TOOLCHAIN_FILE",
-          "value": "E:\\Sdk\\ndk\\21.1.6352462\\build\\cmake\\android.toolchain.cmake"
+          "value": "E:\\Sdk\\ndk\\21.0.6113669\\build\\cmake\\android.toolchain.cmake"
         },
         {
           "name": "ANDROID_ABI",
@@ -37,7 +37,7 @@
         },
         {
           "name": "ANDROID_NDK",
-          "value": "E:\\Sdk\\ndk\\21.1.6352462"
+          "value": "E:\\Sdk\\ndk\\21.0.6113669"
         },
         {
           "name": "ANDROID_PLATFORM",
@@ -49,7 +49,7 @@
         },
         {
           "name": "CMAKE_ANDROID_NDK",
-          "value": "E:\\Sdk\\ndk\\21.1.6352462"
+          "value": "E:\\Sdk\\ndk\\21.0.6113669"
         },
         {
           "name": "CMAKE_EXPORT_COMPILE_COMMANDS",
@@ -108,7 +108,7 @@
         "minimumCmakeVersion": "3.10.2",
         "ninjaExe": "E:\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe"
       },
-      "cmakeToolchainFile": "E:\\Sdk\\ndk\\21.1.6352462\\build\\cmake\\android.toolchain.cmake",
+      "cmakeToolchainFile": "E:\\Sdk\\ndk\\21.0.6113669\\build\\cmake\\android.toolchain.cmake",
       "cxxFolder": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\.cxx",
       "gradleModulePathName": ":segjni",
       "intermediatesFolder": "D:\\githubSpace\\flyingeffectsAndroid\\segjni\\build\\intermediates",
@@ -121,7 +121,7 @@
         "X86",
         "X86_64"
       ],
-      "ndkFolder": "E:\\Sdk\\ndk\\21.1.6352462",
+      "ndkFolder": "E:\\Sdk\\ndk\\21.0.6113669",
       "ndkMetaAbiList": [
         {
           "abi": "ARMEABI_V7A",
@@ -176,7 +176,7 @@
         "X86_64"
       ],
       "ndkDefaultStl": "LIBCXX_STATIC",
-      "ndkVersion": "21.1.6352462",
+      "ndkVersion": "21.0.6113669",
       "project": {
         "compilerSettingsCacheFolder": "D:\\githubSpace\\flyingeffectsAndroid\\.cxx",
         "cxxFolder": "D:\\githubSpace\\flyingeffectsAndroid\\.cxx",
@@ -190,10 +190,10 @@
       "splitsAbiFilterSet": [],
       "stlSharedObjectMap": {
         "LIBCXX_SHARED": {
-          "ARMEABI_V7A": "E:\\Sdk\\ndk\\21.1.6352462\\toolchains\\llvm\\prebuilt\\windows-x86_64\\sysroot\\usr\\lib\\arm-linux-androideabi\\libc++_shared.so",
-          "ARM64_V8A": "E:\\Sdk\\ndk\\21.1.6352462\\toolchains\\llvm\\prebuilt\\windows-x86_64\\sysroot\\usr\\lib\\aarch64-linux-android\\libc++_shared.so",
-          "X86": "E:\\Sdk\\ndk\\21.1.6352462\\toolchains\\llvm\\prebuilt\\windows-x86_64\\sysroot\\usr\\lib\\i686-linux-android\\libc++_shared.so",
-          "X86_64": "E:\\Sdk\\ndk\\21.1.6352462\\toolchains\\llvm\\prebuilt\\windows-x86_64\\sysroot\\usr\\lib\\x86_64-linux-android\\libc++_shared.so"
+          "ARMEABI_V7A": "E:\\Sdk\\ndk\\21.0.6113669\\toolchains\\llvm\\prebuilt\\windows-x86_64\\sysroot\\usr\\lib\\arm-linux-androideabi\\libc++_shared.so",
+          "ARM64_V8A": "E:\\Sdk\\ndk\\21.0.6113669\\toolchains\\llvm\\prebuilt\\windows-x86_64\\sysroot\\usr\\lib\\aarch64-linux-android\\libc++_shared.so",
+          "X86": "E:\\Sdk\\ndk\\21.0.6113669\\toolchains\\llvm\\prebuilt\\windows-x86_64\\sysroot\\usr\\lib\\i686-linux-android\\libc++_shared.so",
+          "X86_64": "E:\\Sdk\\ndk\\21.0.6113669\\toolchains\\llvm\\prebuilt\\windows-x86_64\\sysroot\\usr\\lib\\x86_64-linux-android\\libc++_shared.so"
         },
         "LIBCXX_STATIC": {},
         "NONE": {},

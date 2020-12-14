@@ -150,6 +150,9 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     @BindView(R.id.switch_button)
     SwitchButton switch_button;
 
+    @BindView(R.id.tv_is_can_in_step)
+    TextView tv_is_can_in_step;
+
     private int isChecked = 1;
 
     private String videoPath;
@@ -170,8 +173,10 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
             iv_show_cover.setVisibility(View.GONE);
             videocontainer.setVisibility(View.VISIBLE);
         } else {
+            ed_describe.setHint("一句话描述你的图片");
             drawPadView.setVisibility(View.GONE);
             videocontainer.setVisibility(View.GONE);
+            tv_is_can_in_step.setText("上传模特，是否允许合拍");
             iv_show_cover.setVisibility(View.VISIBLE);
             Glide.with(this).load(videoPath).into(iv_show_cover);
         }
@@ -272,7 +277,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
             case R.id.add_head:
                 AlbumManager.chooseImageAlbum(UploadMaterialActivity.this, 1, 0, new AlbumChooseCallback() {
                     @Override
-                    public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
+                    public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera,ArrayList<AlbumFile> albumFileList) {
                         if (!isCancel) {
                             Glide.with(UploadMaterialActivity.this).load(paths.get(0)).into(add_head);
                             imageHeadPath = huaweiFolder + File.separator + "head.png";
@@ -520,20 +525,21 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
      * user : zhangtongju
      */
     private void requestData() {
-        LogUtil.d("OOM3", "requestData");
         HashMap<String, String> params = new HashMap<>();
-        params.put("videofile", huaweiVideoPath);
+        if(isFrom != 2){
+            params.put("videofile", huaweiVideoPath);
+            params.put("audiourl", huaweiSound);
+            params.put("isLandscape", isLandscape + "");
+        }
+
+//        params.put("videofile", huaweiVideoPath);
+//        params.put("audiourl", huaweiSound);
+//        params.put("isLandscape", isLandscape + "");
+        params.put("is_with_play", isChecked + ""); //1 表示可以合拍
         params.put("auth", ed_nickname.getText().toString());
         params.put("title", ed_describe.getText().toString());
-        params.put("auth_image", huaweiImagePath);
-        params.put("audiourl", huaweiSound);
+        params.put("auth_image", imageHeadPath);
         params.put("image", coverImagePath);
-        LogUtil.d("OOM2", "isLandscape=" + isLandscape);
-        params.put("isLandscape", isLandscape + "");
-        params.put("is_with_play", isChecked + ""); //1 表示可以合拍
-        LogUtil.d("OOM", "is_with_play=" + isChecked);
-        // 启动时间
-        LogUtil.d("OOM2", params.toString());
         Observable ob;
         if (isFrom == 1) {
             ob = Api.getDefault().uploadSearchResult(BaseConstans.getRequestHead(params));
@@ -542,11 +548,8 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         } else {
             ob = Api.getDefault().toLoadTemplate(BaseConstans.getRequestHead(params));
         }
-
         LogUtil.d("OOM3", "params="+StringUtil.beanToJSONString(params));
-
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(UploadMaterialActivity.this) {
-
             @Override
             protected void _onError(String message) {
                 LogUtil.d("OOM3", "_onError=" + message);
@@ -664,7 +667,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
             String nowTime = StringUtil.getCurrentTimeymd();
             String copyPath = "media/android/dressUpImage/" + nowTime + "/" + System.currentTimeMillis() + type;
             coverImagePath = "http://cdn.flying.flyingeffect.com/" + copyPath;
-            uploadImage(path, coverImagePath);
+            uploadImage(path, copyPath);
         }).start();
     }
 
@@ -673,7 +676,6 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         huaweiObs.getInstance().uploadFileToHawei(videoPath, copyName, new huaweiObs.Callback() {
             @Override
             public void isSuccess(String str) {
-
                 Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                     @Override
                     public void call(String s) {

@@ -69,6 +69,7 @@ public class DressUpModel {
 
     public void toDressUp(String ImagePath, String templateId) {
         progress = new WaitingDialog_progress(context);
+        progress.setProgress("正在换装中...");
         progress.openProgressDialog();
         toCompressImg(ImagePath,templateId);
 
@@ -90,7 +91,10 @@ public class DressUpModel {
             @Override
             public void call(String s) {
                 LogUtil.d("OOM3", "上传华为云成功,地址为" + s);
-                informServers(uploadPath, template_id);
+//                informServers(uploadPath, template_id);
+                requestDressUpCallback(uploadPath,template_id);
+
+
                 File file=new File(path);
                 if(file.exists()){
                     file.delete();
@@ -113,6 +117,7 @@ public class DressUpModel {
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<String>(context) {
             @Override
             protected void _onError(String message) {
+                LogUtil.d("OOM3", "_onError");
                 ToastUtil.showToast(message);
             }
 
@@ -132,14 +137,14 @@ public class DressUpModel {
 
     private void startTimer(String id) {
         calculagraph = new Calculagraph();
-        calculagraph.startTimer(3f, 5, new Calculagraph.Callback() {
+        calculagraph.startTimer(3f, 1, new Calculagraph.Callback() {
             @Override
             public void isTimeUp() {
                 LogUtil.d("OOM3", "开始请求融合结果");
                 Observable.just(id).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                     @Override
                     public void call(String s) {
-                        requestDressUpCallback(s);
+//                        requestDressUpCallback(s);
                     }
                 });
             }
@@ -157,9 +162,12 @@ public class DressUpModel {
      * creation date: 2020/12/4
      * user : zhangtongju
      */
-    private void requestDressUpCallback(String request_id) {
+    private void requestDressUpCallback(String path,String template_id) {
         HashMap<String, String> params = new HashMap<>();
-        params.put("request_id", request_id);
+        params.put("image", path);
+        params.put("template_id", template_id);
+
+//        params.put("request_id", request_id);
         Observable ob = Api.getDefault().humanMerageResult(BaseConstans.getRequestHead(params));
         LogUtil.d("OOM3", "requestDressUpCallback的请求参数为" + StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<HumanMerageResult>>(context) {

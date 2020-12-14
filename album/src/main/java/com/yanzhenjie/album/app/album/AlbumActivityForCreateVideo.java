@@ -223,7 +223,7 @@ public class AlbumActivityForCreateVideo extends BaseActivity implements
                     String imagePath = NullActivity.parsePath(data);
                     String mimeType = AlbumUtils.getMimeType(imagePath);
                     if (!TextUtils.isEmpty(mimeType)) {
-                        mCameraAction.onAction(imagePath);
+                        mCameraAction.onAction(imagePath,false);
                     }
                 } else {
                     callbackCancel();
@@ -353,7 +353,7 @@ public class AlbumActivityForCreateVideo extends BaseActivity implements
 
     private Action<String> mCameraAction = new Action<String>() {
         @Override
-        public void onAction(@NonNull String result) {
+        public void onAction(@NonNull String result,boolean isFromCamera) {
             if (mMediaScanner == null) {
                 mMediaScanner = new MediaScanner(AlbumActivityForCreateVideo.this);
             }
@@ -608,7 +608,7 @@ public class AlbumActivityForCreateVideo extends BaseActivity implements
     @Override
     public void onThumbnailCallback(ArrayList<AlbumFile> albumFiles) {
         if (sResult != null) {
-            sResult.onAction(albumFiles);
+            sResult.onAction(albumFiles,false);
         }
         dismissLoadingDialog();
         finish();
@@ -619,7 +619,7 @@ public class AlbumActivityForCreateVideo extends BaseActivity implements
      */
     private void callbackCancel() {
         if (sCancel != null) {
-            sCancel.onAction("User canceled.");
+            sCancel.onAction("User canceled.",false);
         }
         finish();
     }

@@ -269,7 +269,7 @@ public class AlbumActivity extends BaseActivity implements
                     String imagePath = NullActivity.parsePath(data);
                     String mimeType = AlbumUtils.getMimeType(imagePath);
                     if (!TextUtils.isEmpty(mimeType)) {
-                        mCameraAction.onAction(imagePath);
+                        mCameraAction.onAction(imagePath,false);
                     }
                 } else {
                     callbackCancel();
@@ -286,7 +286,7 @@ public class AlbumActivity extends BaseActivity implements
                     albumFileList.add(albumFile);
                     Log.d(TAG, "onActivityResult: " + captureUrl);
                     if (sResult != null) {
-                        sResult.onAction(albumFileList);
+                        sResult.onAction(albumFileList,true);
                     }
                     finish();
                 }
@@ -419,7 +419,7 @@ public class AlbumActivity extends BaseActivity implements
 
     private Action<String> mCameraAction = new Action<String>() {
         @Override
-        public void onAction(@NonNull String result) {
+        public void onAction(@NonNull String result,boolean isFromCamera) {
             if (mMediaScanner == null) {
                 mMediaScanner = new MediaScanner(AlbumActivity.this);
             }
@@ -807,7 +807,7 @@ public class AlbumActivity extends BaseActivity implements
     @Override
     public void onThumbnailCallback(ArrayList<AlbumFile> albumFiles) {
         if (sResult != null) {
-            sResult.onAction(albumFiles);
+            sResult.onAction(albumFiles,false);
         }
         dismissLoadingDialog();
         finish();
@@ -818,7 +818,7 @@ public class AlbumActivity extends BaseActivity implements
      */
     private void callbackCancel() {
         if (sCancel != null) {
-            sCancel.onAction("User canceled.");
+            sCancel.onAction("User canceled.",false);
         }
         finish();
     }
@@ -854,7 +854,7 @@ public class AlbumActivity extends BaseActivity implements
     public void returnAdContainer(LinearLayout flAdContainer) {
         Log.d(TAG,"returnAdContainer");
         if(sActionView!=null){
-            sActionView.onAction(flAdContainer);
+            sActionView.onAction(flAdContainer,false);
         }
 
     }

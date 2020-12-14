@@ -114,7 +114,13 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                         startActivity(intent);
                     }
                 }else{
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
+                    if(fromType==4){
+                        statisticsEventAffair.getInstance().setFlag(getActivity(), "21_face_click", allData.get(position).getTitle());
+                    }else{
+                        statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
+                    }
+
+
                     Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
                     List<new_fag_template_item> data=  getFiltration(allData,position);
                     ListForUpAndDown listForUpAndDown = new ListForUpAndDown(data);
@@ -168,7 +174,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     public void onResume() {
         super.onResume();
         if (getActivity() != null) {
-            if (allData == null || allData.size() == 0) {
+            if (allData == null || allData.size() == 0||category_id.equals("110")) {
                 LogUtil.d("OOM", "allData==null");
                 Presenter.requestData(category_id,tc_id, actTag);
             } else {
@@ -243,7 +249,12 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
             for (int i = start; i <= end; i++) {
                 nowData.add(i);
                 if (!hasIncludeNum(i)) {
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_screen", allData.get(i).getTitle());
+                    if(fromType==4){
+                        statisticsEventAffair.getInstance().setFlag(getActivity(), "21_face", allData.get(i).getTitle());
+                    }else{
+                        statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_screen", allData.get(i).getTitle());
+                    }
+
                 }
             }
             lastData.clear();

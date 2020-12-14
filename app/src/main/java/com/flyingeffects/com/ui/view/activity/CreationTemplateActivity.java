@@ -551,7 +551,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_material");
                     }
                     //添加新的贴纸，这里的贴纸就是用户选择的贴纸
-                    AlbumManager.chooseAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel, albumFileList) -> {
+                    AlbumManager.chooseAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel,  isFromCamera,albumFileList) -> {
                         Log.d("OOM", "isCancel=" + isCancel);
                         if (!isCancel) {
                             //如果是选择的视频，就需要得到封面，然后设置在matting里面去，然后吧原图设置为视频地址

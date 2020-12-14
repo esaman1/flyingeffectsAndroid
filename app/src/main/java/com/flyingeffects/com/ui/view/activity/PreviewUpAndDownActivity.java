@@ -867,7 +867,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * 现在修改为先下载视频，下载完成后在打开相册选择图片
      */
     private void hasLoginToNext() {
-        mMvpPresenter.requestMessageStatistics("1","",templateId);
+        mMvpPresenter.requestMessageStatistics("1", "", templateId);
         switch (OldfromTo) {
             case FromToTemplate.ISHOMEFROMBJ:
                 statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
@@ -938,6 +938,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             if (OldfromTo.equals(FromToTemplate.ISBJ) || OldfromTo.equals(FromToTemplate.ISHOMEFROMBJ)) {
                 statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "5_bj_Make", templateItem.getTitle());
                 UiStep.isFromDownBj = true;
+            } else if (OldfromTo.equals(FromToTemplate.DRESSUP)) {
+                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "21_face_made", templateItem.getTitle());
             } else {
                 statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "1_mb_make", templateItem.getTitle());
             }
@@ -953,11 +955,20 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
 
     @Override
-    public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
+    public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel && !ondestroy && paths != null && paths.size() > 0) {
+            if (isFromCamera) {
+                if (OldfromTo.equals(FromToTemplate.ISBJ) || OldfromTo.equals(FromToTemplate.ISHOMEFROMBJ)) {
+                    LogUtil.d("OOM2","背景页面自己拍摄");
+                    statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "10_bj_success");
+                } else {
+                    LogUtil.d("OOM2","模板页面自己拍摄");
+                    statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "11_mb_success");
+                }
+            }
             if (OldfromTo.equals(FromToTemplate.DRESSUP)) {
                 //来自换装页面
-                mMvpPresenter.toDressUp(paths.get(0), templateId,templateItem.getTitle());
+                mMvpPresenter.toDressUp(paths.get(0), templateId, templateItem.getTitle());
             } else if (templateItem.getIs_anime() == 1) {
                 //模板换装新逻辑
                 DressUpModel dressUpModel = new DressUpModel(this, new DressUpModel.DressUpCallback() {

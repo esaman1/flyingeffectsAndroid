@@ -342,7 +342,7 @@ public interface ApiService {
 
     /**融合api*/
     @FormUrlEncoded
-    @POST("/api/mearge/humanMerageResult")
+    @POST("/api/mearge/meargePicture")
     Observable<HttpResult<List<HumanMerageResult>>> humanMerageResult(@FieldMap Map<String,String> params);
 
     /**贴纸分类列表*/

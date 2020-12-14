@@ -141,7 +141,7 @@ public class GalleryAlbumActivity extends BaseActivity implements Contract.Galle
                     checkedList.add(albumFile);
                 }
             }
-            sResult.onAction(checkedList);
+            sResult.onAction(checkedList,false);
         }
         finish();
     }
@@ -149,7 +149,7 @@ public class GalleryAlbumActivity extends BaseActivity implements Contract.Galle
     @Override
     public void onBackPressed() {
         if (sCancel != null) {
-            sCancel.onAction("User canceled.");
+            sCancel.onAction("User canceled.",false);
         }
         finish();
     }
