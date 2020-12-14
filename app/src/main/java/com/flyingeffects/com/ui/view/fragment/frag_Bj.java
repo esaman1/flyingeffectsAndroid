@@ -161,6 +161,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
                             bundle.putInt("type", 1);
                             bundle.putSerializable("id", data.get(i).getId());
                             bundle.putInt("from", 1);
+                            bundle.putString("categoryTabName",data.get(i).getName());
                             SecondaryTypeFragment fragment = new SecondaryTypeFragment();
                             fragment.setArguments(bundle);
                             list.add(fragment);
@@ -304,6 +305,8 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
                 break;
             case R.id.iv_search:
                 //搜索栏目
+                statisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_bj");
+
                 Intent intent = new Intent(getActivity(), TemplateSearchActivity.class);
                 intent.putExtra("isFrom", 0);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

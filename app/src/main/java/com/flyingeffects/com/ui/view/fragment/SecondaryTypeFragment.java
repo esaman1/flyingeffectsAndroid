@@ -12,6 +12,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.enity.SecondaryTypeEntity;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.screenUtil;
 
 import java.util.ArrayList;
@@ -37,9 +38,8 @@ public class SecondaryTypeFragment extends BaseFragment {
     /**
      * 0是模板 1是背景  2是换脸
      */
-    int type;
-    int from;
-    String category_id;
+    int type,from;
+    String category_id,categoryTabName;
     private new_fag_template_item templateItem;
 
     @Override
@@ -54,6 +54,7 @@ public class SecondaryTypeFragment extends BaseFragment {
         category_id = getArguments().getString("id");
         from = getArguments().getInt("from");
         templateItem = (new_fag_template_item) getArguments().getSerializable("templateItem");
+        categoryTabName = getArguments().getString("categoryTabName");
         if (mTypeEntities == null) {
             mTypeEntities = new ArrayList<>();
         }
@@ -99,6 +100,13 @@ public class SecondaryTypeFragment extends BaseFragment {
                         } else {
                             mTextViews.get(i).setSelected(false);
                         }
+                    }
+                    if (type == 0) {
+                        statisticsEventAffair.getInstance().setFlag(getActivity(), "21_mb_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
+                    } else if (type == 1) {
+                        statisticsEventAffair.getInstance().setFlag(getActivity(), "21_bj_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
+                    } else if (type == 2) {
+                        statisticsEventAffair.getInstance().setFlag(getActivity(), "21_fece_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
                     }
                 }
             });
