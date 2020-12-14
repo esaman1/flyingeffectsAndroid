@@ -27,6 +27,7 @@ import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.DressUpModel;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -139,6 +140,7 @@ public class DressUpPreviewActivity extends BaseActivity {
 
             case R.id.keep_to_album:
                 String path = listForKeep.get(nowChooseIndex);
+                statisticsEventAffair.getInstance().setFlag(this,"21_face_save",template_id);
                 keepImageToAlbum(path);
                 break;
 

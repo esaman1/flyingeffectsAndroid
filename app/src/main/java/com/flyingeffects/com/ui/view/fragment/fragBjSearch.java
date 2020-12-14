@@ -301,7 +301,7 @@ public class fragBjSearch extends BaseFragment {
         switch (view.getId()) {
             case R.id.relative_add:
                 if (BaseConstans.hasLogin()) {
-                    AlbumManager.chooseVideo(getActivity(), 1, 1, (tag, paths, isCancel, albumFileList) -> {
+                    AlbumManager.chooseVideo(getActivity(), 1, 1, (tag, paths, isCancel,  isFromCamera,albumFileList) -> {
                         if (!isCancel) {
                             Intent intent = new Intent(getActivity(), UploadMaterialActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

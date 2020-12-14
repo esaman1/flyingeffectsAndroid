@@ -277,7 +277,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
             case R.id.add_head:
                 AlbumManager.chooseImageAlbum(UploadMaterialActivity.this, 1, 0, new AlbumChooseCallback() {
                     @Override
-                    public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
+                    public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera,ArrayList<AlbumFile> albumFileList) {
                         if (!isCancel) {
                             Glide.with(UploadMaterialActivity.this).load(paths.get(0)).into(add_head);
                             imageHeadPath = huaweiFolder + File.separator + "head.png";

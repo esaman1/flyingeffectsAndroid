@@ -117,7 +117,7 @@ public class Upload_bj_list_adapter extends BaseQuickAdapter<new_fag_template_it
     }
 
     private void uploadVideo(new_fag_template_item item) {
-        AlbumManager.chooseVideo((Activity) context, 1, 1, (tag, paths, isCancel, albumFileList) -> {
+        AlbumManager.chooseVideo((Activity) context, 1, 1, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
             if (!isCancel) {
                 Intent intent = new Intent(context, UploadMaterialActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

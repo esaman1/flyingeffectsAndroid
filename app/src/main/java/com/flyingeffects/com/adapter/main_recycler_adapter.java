@@ -229,7 +229,7 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                     ll_relative_0.setVisibility(View.GONE);
                     ConstraintLayout_addVideo.setVisibility(View.VISIBLE);
                     ConstraintLayout_addVideo.setOnClickListener(v -> {
-                        AlbumManager.chooseAlbum(context, 1, 1, (tag, paths, isCancel, albumFileList) -> {
+                        AlbumManager.chooseAlbum(context, 1, 1, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
                             if (!isCancel) {
                                 if (UiStep.isFromDownBj) {
                                     statisticsEventAffair.getInstance().setFlag(context, "7_local");
@@ -267,6 +267,9 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                 iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
                 iv_show_author.setVisibility(View.GONE);
             } else if (fromType == 4) {
+
+                statisticsEventAffair.getInstance().setFlag(context,"21_fece_up");
+
                 //换装
                 if (offset == 1 && TextUtils.isEmpty(tabName)) {
                     add_image.setVisibility(View.VISIBLE);
@@ -281,7 +284,7 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                         if(!DoubleClick.getInstance().isFastDoubleClick()){
                             AlbumManager.chooseImageAlbum(context, 1, 0, new AlbumChooseCallback() {
                                 @Override
-                                public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
+                                public void resultFilePath(int tag, List<String> paths, boolean isCancel,boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
                                   if(!isCancel){
                                       intoUploadMaterialActivity(paths.get(0));
                                   }

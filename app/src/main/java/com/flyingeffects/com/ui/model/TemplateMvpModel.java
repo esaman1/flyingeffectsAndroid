@@ -81,11 +81,16 @@ public class TemplateMvpModel {
     private String cacheCutVideoPath;
     private String backgroundPath;
     private String soundFolder;
+    private String fromTo;
     private String saveVideoPath;
+    private String templateName;
 
-    public TemplateMvpModel(Context context, TemplateMvpCallback callback) {
+
+    public TemplateMvpModel(Context context, TemplateMvpCallback callback,String fromTo,String templateName) {
         this.context = context;
         this.callback = callback;
+        this.fromTo=fromTo;
+        this.templateName=templateName;
         keepUunCatchPath = context.getExternalFilesDir("runCatch/");
         FileManager fileManager = new FileManager();
         cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
@@ -344,6 +349,8 @@ public class TemplateMvpModel {
             if (isSucceed && !isOnDestroy) {
                 Intent intent = new Intent(context, TemplateAddStickerActivity.class);
                 intent.putExtra("videoPath", outputPath);
+                intent.putExtra("title",templateName);
+                intent.putExtra("IsFrom",fromTo);
                 context.startActivity(intent);
 
 //                if(BaseConstans.getHasAdvertising() == 1 &&BaseConstans.getIncentiveVideo()&& !BaseConstans.getIsNewUser()&&BaseConstans.getSave_video_ad()&&!BaseConstans.TemplateHasWatchingAd){

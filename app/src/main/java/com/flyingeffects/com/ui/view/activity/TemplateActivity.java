@@ -145,6 +145,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     private int needAssetsCount;
     private String templateName;
+
     private String fromTo;
     private int cutVideoTag = 3;
 
@@ -266,7 +267,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         findViewById(R.id.iv_top_back).setOnClickListener(this);
         findViewById(R.id.tv_top_submit).setVisibility(View.VISIBLE);
         ((TextView) findViewById(R.id.tv_top_submit)).setText("下一步");
-        presenter = new TemplatePresenter(this, this);
+
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("Message");
         if (bundle != null) {
@@ -285,7 +286,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             LogUtil.d("OOM", "templateName=" + templateName);
          nowTemplateIsAnim = bundle.getInt("is_anime");
         }
-
+        presenter = new TemplatePresenter(this, this,fromTo,templateName);
         LogUtil.d("OOM3","initView");
 
         templateItem = (new_fag_template_item) getIntent().getSerializableExtra("person");
@@ -1156,7 +1157,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private  String lastChooseFilePath;
 
     @Override
-    public void resultFilePath(int tag, List<String> paths, boolean isCancel, ArrayList<AlbumFile> albumFileList) {
+    public void resultFilePath(int tag, List<String> paths, boolean isCancel,boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel) {
             if (tag == REQUEST_SINGLE_MEDIA) {
                 if (paths != null && paths.size() > 0) {

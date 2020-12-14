@@ -90,6 +90,10 @@ public class SecondaryTypeFragment extends BaseFragment {
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+
+
+
                     int index = (int) v.getTag();
                     transaction = getChildFragmentManager().beginTransaction();
                     transaction.replace(R.id.fl_container, fragments.get(index));
