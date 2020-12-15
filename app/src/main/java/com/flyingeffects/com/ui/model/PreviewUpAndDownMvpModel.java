@@ -250,12 +250,7 @@ public class PreviewUpAndDownMvpModel {
             downProgressDialog.openProgressDialog();
             //换装保存的是图片
             if (TextUtils.equals(FromToTemplate.DRESSUP, fromTo)) {
-                Observable.just(imagePath).map(new Func1<String, Bitmap>() {
-                    @Override
-                    public Bitmap call(String humanMerageResult) {
-                        return BitmapManager.getInstance().GetBitmapForHttp(humanMerageResult);
-                    }
-                }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
+                Observable.just(fag_template_item.getImage()).map(needImagePath -> BitmapManager.getInstance().GetBitmapForHttp(needImagePath)).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
                     @Override
                     public void call(Bitmap bitmap) {
                         downProgressDialog.closePragressDialog();
@@ -264,7 +259,6 @@ public class PreviewUpAndDownMvpModel {
                         BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, new BitmapManager.saveToFileCallback() {
                             @Override
                             public void isSuccess(boolean isSuccess) {
-
                                 saveToAlbum(fileName);
                                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                                     AdManager.getInstance().showCpAd(context, AdConfigs.AD_PREVIEW_SCREEN_AD_ID);
@@ -891,12 +885,13 @@ public class PreviewUpAndDownMvpModel {
 
 
     private void saveToAlbum(String path) {
-        String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
+        String albumPath = SaveAlbumPathModel.getInstance().getKeepOutputForImage();
         try {
             FileUtil.copyFile(new File(path), albumPath);
             albumBroadcast(albumPath);
             showKeepSuccessDialog(albumPath);
         } catch (IOException e) {
+            LogUtil.d("OOM",e.getMessage());
             e.printStackTrace();
         }
     }
