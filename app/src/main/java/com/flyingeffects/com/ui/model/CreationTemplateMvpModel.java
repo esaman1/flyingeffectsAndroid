@@ -350,6 +350,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 }
             }
         });
+        templateThumbView.findViewById(R.id.iv_down_sticker).setOnClickListener(v -> callback.stickerFragmentClose());
         SlidingTabLayout stickerTab = templateThumbView.findViewById(R.id.tb_sticker);
         getStickerTypeList(fragmentManager,stickerViewPager,stickerTab);
 
@@ -359,6 +360,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         animTab.setText("默认");
         animTab.setTextSize(17);
 
+        viewForChooseAnim.findViewById(R.id.iv_down_anim).setOnClickListener(v -> callback.stickerFragmentClose());
         viewForChooseAnim.findViewById(R.id.iv_delete_anim).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -384,6 +386,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         //添加音乐
         View viewForChooseMusic = LayoutInflater.from(context).inflate(R.layout.view_choose_music, viewPager, false);
         TextView tv_add_music = viewForChooseMusic.findViewById(R.id.tv_add_music);
+        viewForChooseMusic.findViewById(R.id.iv_down_music).setOnClickListener(v -> callback.stickerFragmentClose());
         tv_add_music.setOnClickListener(view -> {
             statisticsEventAffair.getInstance().setFlag(context, "15_music_add");
             Intent intent = new Intent(context, ChooseMusicActivity.class);

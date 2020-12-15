@@ -362,6 +362,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                 }
             }
         });
+        templateThumbView.findViewById(R.id.iv_down_sticker).setVisibility(View.GONE);
         SlidingTabLayout stickerTab = templateThumbView.findViewById(R.id.tb_sticker);
         getStickerTypeList(fragmentManager,stickerViewPager,stickerTab);
 
