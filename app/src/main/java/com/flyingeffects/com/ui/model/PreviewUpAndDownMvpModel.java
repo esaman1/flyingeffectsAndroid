@@ -48,6 +48,7 @@ import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
 import com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity;
+import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.ReportActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -75,6 +76,7 @@ import java.util.List;
 import java.util.UUID;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -206,7 +208,7 @@ public class PreviewUpAndDownMvpModel {
     private boolean nowHasCollect;
     private ImageView iv_collect;
 
-    public void showBottomSheetDialog(String path, String imagePath, String id, new_fag_template_item fag_template_item,String fromTo) {
+    public void showBottomSheetDialog(String path, String imagePath, String id, new_fag_template_item fag_template_item, String fromTo) {
         bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
         View view = LayoutInflater.from(context).inflate(R.layout.preview_bottom_sheet_dialog, null);
         bottomSheetDialog.setContentView(view);
@@ -229,48 +231,50 @@ public class PreviewUpAndDownMvpModel {
                 } else {
                     ToastUtil.showToast(context.getResources().getString(R.string.need_login));
                 }
-
-
             }
         });
-
-
         LinearLayout iv_download = view.findViewById(R.id.ll_download);
         iv_download.setOnClickListener(view12 -> {
 
-            if (fromTo.equals(FromToTemplate.ISTEMPLATE)) {
-                statisticsEventAffair.getInstance().setFlag(context, "11_yj_save1");
-            } else {
-                statisticsEventAffair.getInstance().setFlag(context, "10_bj_csave1");
-            }
-            templateBehaviorStatistics(3, id);
+            if (BaseConstans.hasLogin()) {
+                if (fromTo.equals(FromToTemplate.ISTEMPLATE)) {
+                    statisticsEventAffair.getInstance().setFlag(context, "11_yj_save1");
+                } else {
+                    statisticsEventAffair.getInstance().setFlag(context, "10_bj_csave1");
+                }
+                templateBehaviorStatistics(3, id);
 
-            statisticsEventAffair.getInstance().setFlag(context, "save_back_template");
-            downProgressDialog = new WaitingDialog_progress(context);
-            downProgressDialog.openProgressDialog();
-            //换装保存的是图片
-            if (TextUtils.equals(FromToTemplate.DRESSUP, fromTo)) {
-                Observable.just(fag_template_item.getImage()).map(needImagePath -> BitmapManager.getInstance().GetBitmapForHttp(needImagePath)).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
-                    @Override
-                    public void call(Bitmap bitmap) {
-                        downProgressDialog.closePragressDialog();
-                        LogUtil.d("OOM3","整合bitmap");
-                        String fileName = mRunCatchFolder + File.separator + UUID.randomUUID() + ".png";
-                        BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, new BitmapManager.saveToFileCallback() {
-                            @Override
-                            public void isSuccess(boolean isSuccess) {
-                                saveToAlbum(fileName);
-                                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-                                    AdManager.getInstance().showCpAd(context, AdConfigs.AD_PREVIEW_SCREEN_AD_ID);
+                statisticsEventAffair.getInstance().setFlag(context, "save_back_template");
+                downProgressDialog = new WaitingDialog_progress(context);
+                downProgressDialog.openProgressDialog();
+                //换装保存的是图片
+                if (TextUtils.equals(FromToTemplate.DRESSUP, fromTo)) {
+                    Observable.just(fag_template_item.getImage()).map(needImagePath -> BitmapManager.getInstance().GetBitmapForHttp(needImagePath)).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
+                        @Override
+                        public void call(Bitmap bitmap) {
+                            downProgressDialog.closePragressDialog();
+                            LogUtil.d("OOM3", "整合bitmap");
+                            String fileName = mRunCatchFolder + File.separator + UUID.randomUUID() + ".png";
+                            BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, new BitmapManager.saveToFileCallback() {
+                                @Override
+                                public void isSuccess(boolean isSuccess) {
+                                    saveToAlbum(fileName);
+                                    if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                                        AdManager.getInstance().showCpAd(context, AdConfigs.AD_PREVIEW_SCREEN_AD_ID);
+                                    }
                                 }
-                            }
-                        });
-                    }
-                });
+                            });
+                        }
+                    });
+                } else {
+                    //保存的是视频
+                    DownVideo(path, imagePath, id, true, false);
+                    dismissDialog();
+                }
             } else {
-             //保存的是视频
-                DownVideo(path, imagePath, id, true, false);
-                dismissDialog();
+                Intent intent = new Intent(context, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                context.startActivity(intent);
             }
         });
         LinearLayout ll_friend_circle = view.findViewById(R.id.ll_friend_circle);
@@ -885,13 +889,15 @@ public class PreviewUpAndDownMvpModel {
 
 
     private void saveToAlbum(String path) {
+
         String albumPath = SaveAlbumPathModel.getInstance().getKeepOutputForImage();
         try {
             FileUtil.copyFile(new File(path), albumPath);
             albumBroadcast(albumPath);
             showKeepSuccessDialog(albumPath);
+            dismissDialog();
         } catch (IOException e) {
-            LogUtil.d("OOM",e.getMessage());
+            LogUtil.d("OOM", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -1026,7 +1032,7 @@ public class PreviewUpAndDownMvpModel {
      * creation date: 2020/12/3
      * user : zhangtongju
      */
-    public void toDressUp(String path, String templateId,String templateTitle) {
+    public void toDressUp(String path, String templateId, String templateTitle) {
 
         DressUpModel dressUpModel = new DressUpModel(context, new DressUpModel.DressUpCallback() {
             @Override
@@ -1035,7 +1041,7 @@ public class PreviewUpAndDownMvpModel {
                 intent.putExtra("url", paths.get(0));
                 intent.putExtra("template_id", templateId);
                 intent.putExtra("localImage", path);
-                intent.putExtra("templateTitle",templateTitle);
+                intent.putExtra("templateTitle", templateTitle);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 context.startActivity(intent);
             }
@@ -1064,18 +1070,17 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-
     /**
      * description ：消息页面后台统计
      * type 1=模板制作次数,2=消息已读次数3=消息点击次数,
      * creation date: 2020/8/6
      * user : zhangtongju
      */
-    public void requestMessageStatistics(String type,String message_id,String template_id) {
+    public void requestMessageStatistics(String type, String message_id, String template_id) {
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", template_id);
         params.put("type", type);
-        params.put("message_id", message_id );
+        params.put("message_id", message_id);
         Observable ob = Api.getDefault().addTimes(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<SystemMessageDetailAllEnity>(context) {
             @Override
