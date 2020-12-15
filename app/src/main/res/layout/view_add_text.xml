@@ -63,14 +63,21 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal" />
         </HorizontalScrollView>
-        <ImageView
-            android:id="@+id/iv_down"
+
+        <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:contentDescription="@string/app_name"
-            android:padding="5dp"
-            android:src="@mipmap/correct" />
+            android:textColor="@color/capture_btn_blue"
+            android:id="@+id/iv_down"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:textStyle="bold"
+            android:text="完成"
+            android:layout_gravity="right|center_vertical"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
     </LinearLayout>

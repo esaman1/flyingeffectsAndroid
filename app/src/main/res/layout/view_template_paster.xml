@@ -34,6 +34,21 @@
             app:tl_textSelectColor="@color/white"
             app:tl_textUnselectColor="#A3A3A5"
             app:tl_textsize="@dimen/sp_16" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:textColor="@color/capture_btn_blue"
+            android:id="@+id/iv_down_sticker"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:layout_marginRight="5dp"
+            android:textStyle="bold"
+            android:text="完成"
+            android:layout_gravity="right|center_vertical"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewpager_sticker"

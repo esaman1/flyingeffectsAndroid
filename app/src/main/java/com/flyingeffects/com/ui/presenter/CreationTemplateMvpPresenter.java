@@ -241,6 +241,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
     @Override
+    public void stickerFragmentClose() {
+        creationTemplatemvpView.stickerFragmentClose();
+    }
+
+    @Override
     public void modifyTimeLineSickerPath(String id,String path) {
         creationTemplatemvpView.modifyTimeLineSickerPath(id,path);
     }

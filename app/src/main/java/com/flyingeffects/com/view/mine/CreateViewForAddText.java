@@ -64,7 +64,7 @@ public class CreateViewForAddText {
     private CreateTemplateTextFrameAdapter createTemplateTextEffectAdapterFrame;
     private String mTTFFolder;
     private downCallback callback;
-    public ImageView iv_down;
+    public TextView iv_down;
     private LinearLayout view;
     private LinearLayout llAddText;
     private View view_line_text;

@@ -90,8 +90,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     LinearLayout mLlProgress;
     @BindView(R.id.material_SeekBarView)
     TemplateMaterialSeekBarView mSeekBarView;
-    @BindView(R.id.tv_material_complete)
-    TextView mTvMaterialComplete;
     @BindView(R.id.rl_seek_bar)
     RelativeLayout mRlSeekBar;
     @BindView(R.id.progressBarView)
@@ -322,12 +320,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             layoutParams.addRule(RelativeLayout.ABOVE, R.id.rl_seek_bar);
             viewPager.setVisibility(View.GONE);
             mRlSeekBar.setVisibility(View.VISIBLE);
-            mTvMaterialComplete.setVisibility(View.GONE);
         } else {
             layoutParams.addRule(RelativeLayout.ABOVE, R.id.viewPager);
             viewPager.setVisibility(View.VISIBLE);
             mRlSeekBar.setVisibility(View.GONE);
-            mTvMaterialComplete.setVisibility(View.VISIBLE);
         }
         mLlProgress.setLayoutParams(layoutParams);
     }
@@ -467,7 +463,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_delete_all_text, R.id.iv_add_sticker, R.id.iv_top_back,
             R.id.iv_change_ui, R.id.tv_background, R.id.tv_music, R.id.tv_anim, R.id.tv_tiezhi, R.id.tv_add_text,
-            R.id.tv_material_complete, R.id.rl_creation_container})
+            R.id.rl_creation_container})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
@@ -591,16 +587,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 setTextColor(0);
                 isClickAddTextTag = false;
                 break;
-            case R.id.tv_material_complete:
-                for (int i = 0; i < lin_Id.length; i++) {
-                    ((TextView) findViewById(lin_Id[i])).setTextColor(getResources().getColor(R.color.white));
-                }
-                if (isClickAddTextTag && createViewForAddText != null) {
-                    createViewForAddText.iv_down.performClick();
-                } else {
-                    seekBarViewIsShow(true);
-                }
-                break;
             case R.id.iv_change_ui:
                 //横竖屏切换
                 nowUiIsLandscape = !nowUiIsLandscape;
@@ -624,7 +610,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 createViewForAddText = null;
             }
             ll_add_text_style.setVisibility(View.VISIBLE);
-            mTvMaterialComplete.setVisibility(View.VISIBLE);
             createViewForAddText = new CreateViewForAddText(this, ll_add_text_style, new CreateViewForAddText.downCallback() {
                 @Override
                 public void isSuccess(String path, int type, String title) {
@@ -1672,6 +1657,18 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             }
         }
         mSeekBarView.modifyMaterialThumbnail(path, id);
+    }
+
+    @Override
+    public void stickerFragmentClose() {
+        for (int i = 0; i < lin_Id.length; i++) {
+            ((TextView) findViewById(lin_Id[i])).setTextColor(getResources().getColor(R.color.white));
+        }
+        if (isClickAddTextTag && createViewForAddText != null) {
+            createViewForAddText.iv_down.performClick();
+        } else {
+            seekBarViewIsShow(true);
+        }
     }
 
     @Override
