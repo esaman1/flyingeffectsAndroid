@@ -409,6 +409,10 @@ public class WelcomeActivity extends BaseActivity {
                             //相册加载广告间隔次数
                             String albumADIntervalNumber = config.getValue();
                             BaseConstans.setIntervalNumShowAD(Integer.parseInt(albumADIntervalNumber));
+                        } else if (id == 56) {
+                            //自定义模板分享到抖音的话题
+                            String douyingTopic = config.getValue();
+                            BaseConstans.setDouyingTopic(douyingTopic);
                         }
                     }
                 }

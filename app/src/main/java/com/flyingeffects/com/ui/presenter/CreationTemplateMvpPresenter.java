@@ -245,14 +245,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemvpView.modifyTimeLineSickerPath(id,path);
     }
 
-    @Override
-    public void stickerFragmentClose() {
-        creationTemplatemvpView.stickerFragmentClose();
-    }
-
-
-    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH,int templateId,long musicStartTime,long musicEndTime,long needKeepDuration){
-        creationTemplatemodel.toSaveVideo(imageBjPath,nowUiIsLandscape,percentageH,templateId,musicStartTime,musicEndTime,needKeepDuration);
+    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH,int templateId,long musicStartTime,long musicEndTime,long needKeepDuration,String title){
+        creationTemplatemodel.toSaveVideo(imageBjPath,nowUiIsLandscape,percentageH,templateId,musicStartTime,musicEndTime,needKeepDuration,title);
     }
 
 

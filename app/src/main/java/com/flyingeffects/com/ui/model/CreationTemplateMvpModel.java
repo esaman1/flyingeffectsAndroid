@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -349,25 +350,30 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 }
             }
         });
-        templateThumbView.findViewById(R.id.iv_down_sticker).setOnClickListener(v -> callback.stickerFragmentClose());
         SlidingTabLayout stickerTab = templateThumbView.findViewById(R.id.tb_sticker);
         getStickerTypeList(fragmentManager,stickerViewPager,stickerTab);
 
-        View viewForChooseAnim = LayoutInflater.from(context).inflate(R.layout.view_create_template_anim, viewPager, false);
+        View viewForChooseAnim = LayoutInflater.from(context).inflate(R.layout.view_create_template_anim_creation, viewPager, false);
         GridView gridViewAnim = viewForChooseAnim.findViewById(R.id.gridView_anim);
+        TextView animTab = viewForChooseAnim.findViewById(R.id.tv_name_bj_head);
+        animTab.setText("默认");
+        animTab.setTextSize(17);
+
+        viewForChooseAnim.findViewById(R.id.iv_delete_anim).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callback.needPauseVideo();
+                startPlayAnim(0, true, null, 0, false);
+                statisticsEventAffair.getInstance().setFlag(context, "9_Animation2");
+                statisticsEventAffair.getInstance().setFlag(context, "9_Animation4");
+            }
+        });
         gridViewAnim.setOnItemClickListener((adapterView, view, i, l) -> {
             if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
-                LogUtil.d("OOM", "111111111111111111");
                 modificationSingleAnimItemIsChecked(i);
                 callback.needPauseVideo();
-                if (i == 0) {
-                    startPlayAnim(i, true, null, 0, false);
-                    statisticsEventAffair.getInstance().setFlag(context, "9_Animation2");
-                    statisticsEventAffair.getInstance().setFlag(context, "9_Animation4");
-                } else {
-                    WaitingDialog.openPragressDialog(context);
-                    startPlayAnim(i, false, null, 0, false);
-                }
+                WaitingDialog.openPragressDialog(context);
+                startPlayAnim(i, false, null, 0, false);
             }
         });
         templateGridViewAnimAdapter = new TemplateGridViewAnimAdapter(listAllAnima, context);
@@ -406,7 +412,6 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         check_box_3.setOnClickListener(tvMusicListener);
         listForInitBottom.add(viewForChooseMusic);
 
-//        View viewForChooseAddText= LayoutInflater.from(context).inflate(R.layout.view_choose_music, viewPager, false);
         TemplateViewPager adapter = new TemplateViewPager(listForInitBottom);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -1338,7 +1343,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     private boolean isIntoSaveVideo = false;
     private float percentageH;
 
-    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH, int templateId, long musicStartTime, long musicEndTime, long needKeepDuration) {
+    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH, int templateId, long musicStartTime, long musicEndTime, long needKeepDuration,String title) {
         disMissStickerFrame();
         if (templateId != 0) {
             LogUtil.d("OOM", "toSaveVideo-templateId=" + templateId);
@@ -1371,6 +1376,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     bundle.putString("path", path);
                                     bundle.putBoolean("nowUiIsLandscape", nowUiIsLandscape);
+                                    bundle.putString("templateTitle",title);
                                     intent.putExtra("bundle", bundle);
                                     context.startActivity(intent);
                                     Observable.just(0).subscribeOn(AndroidSchedulers.mainThread())
@@ -1606,7 +1612,6 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         showAllAnim(false);
         callback.needPauseVideo();
     }
-
 
     class videoType {
 

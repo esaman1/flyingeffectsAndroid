@@ -100,13 +100,25 @@ public class DressUpFragment extends BaseFragment  implements DressUpMvpView {
                         fragment.setArguments(bundle);
                         list.add(fragment);
                     } else {
-                        bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
-                        bundle.putSerializable("id", data.get(i).getId());
-                        bundle.putInt("type",2);
-                        bundle.putString("categoryTabName",data.get(i).getName());
-                        SecondaryTypeFragment fragment = new SecondaryTypeFragment();
-                        fragment.setArguments(bundle);
-                        list.add(fragment);
+                        if (data.get(i).getCategory() != null && !data.get(i).getCategory().isEmpty()) {
+                            bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
+                            bundle.putSerializable("id", data.get(i).getId());
+                            bundle.putInt("type",2);
+                            bundle.putString("categoryTabName",data.get(i).getName());
+                            SecondaryTypeFragment fragment = new SecondaryTypeFragment();
+                            fragment.setArguments(bundle);
+                            list.add(fragment);
+                        }else {
+                            bundle.putSerializable("id", data.get(i).getId());
+                            bundle.putString("tc_id","-1");
+                            bundle.putSerializable("num", i);
+                            bundle.putSerializable("from", 4);
+                            bundle.putString("tabName", data.get(i).getName());
+                            HomeTemplateItemFragment fragment = new HomeTemplateItemFragment();
+                            fragment.setArguments(bundle);
+                            list.add(fragment);
+                        }
+
                     }
                 }
                 home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);

@@ -169,5 +169,6 @@
 
     </LinearLayout>
 
+    <include layout="@layout/dialog_save_share"/>
 
 </RelativeLayout>

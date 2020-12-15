@@ -58,11 +58,7 @@ public class TemplateGridViewAnimAdapter extends BaseAdapter {
             holder = (ViewHold) view.getTag();
         }
 
-        if(position==0){
-            Glide.with(context).load(R.mipmap.sticker_clear).into( holder.image);
-        }else{
-            Glide.with(context).load(list.get(position).getIcon()).into( holder.image);
-        }
+        Glide.with(context).load(list.get(position).getIcon()).into( holder.image);
         holder.tv_name.setText(list.get(position).getName());
 
         if (list.get(position).isChecked() ) {

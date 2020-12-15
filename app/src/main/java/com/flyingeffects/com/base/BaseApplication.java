@@ -8,8 +8,8 @@
  import androidx.multidex.MultiDex;
  import androidx.multidex.MultiDexApplication;
 
- import com.bytedance.sdk.account.bdopen.impl.BDOpenConfig;
- import com.bytedance.sdk.open.aweme.impl.TikTokOpenApiFactory;
+ import com.bytedance.sdk.open.douyin.DouYinOpenApiFactory;
+ import com.bytedance.sdk.open.douyin.DouYinOpenConfig;
  import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
  import com.flyingeffects.com.R;
  import com.flyingeffects.com.constans.BaseConstans;
@@ -158,7 +158,7 @@ public class BaseApplication extends MultiDexApplication {
      */
     private void initByteDanceShare() {
         //抖音分享
-        TikTokOpenApiFactory.init(new BDOpenConfig(BaseConstans.DOUYINSHARE_CLIENTKEY));
+        DouYinOpenApiFactory.init(new DouYinOpenConfig(BaseConstans.DOUYINSHARE_CLIENTKEY));
     }
 
     /**

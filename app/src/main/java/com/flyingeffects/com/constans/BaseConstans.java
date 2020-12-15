@@ -427,6 +427,19 @@ public class BaseConstans {
         return spUtil.getInt("interstitial", 5);
     }
 
+    /**设置自定义模板分享到抖音的话题*/
+    public static void setDouyingTopic(String topic) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putString("DouyingTopic", topic);
+    }
+
+
+    /**获取自定义模板分享到抖音的话题*/
+    public static String getDouyingTopic() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getString("DouyingTopic", "飞闪视频");
+    }
+
 
     public static int getAppVersion() {
         try {

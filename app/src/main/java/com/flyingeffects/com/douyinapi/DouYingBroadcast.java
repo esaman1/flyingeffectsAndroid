@@ -1,4 +1,4 @@
-package com.flyingeffects.com.bdopen;
+package com.flyingeffects.com.douyinapi;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

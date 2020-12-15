@@ -80,7 +80,7 @@ public class SecondaryTypeFragment extends BaseFragment {
             TextView textView = new TextView(getContext());
             textView.setText(mTypeEntities.get(i).getName());
             textView.setTextColor(colorStateList);
-            textView.setTextSize(screenUtil.dip2px(getContext(), 4));
+            textView.setTextSize(14);
             textView.setBackground(getResources().getDrawable(R.drawable.secondary_type_selecrot));
             textView.setGravity(Gravity.CENTER);
             textView.setSelected(false);
@@ -90,10 +90,6 @@ public class SecondaryTypeFragment extends BaseFragment {
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-
-
-
                     int index = (int) v.getTag();
                     transaction = getChildFragmentManager().beginTransaction();
                     transaction.replace(R.id.fl_container, fragments.get(index));

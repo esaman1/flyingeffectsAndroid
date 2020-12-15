@@ -270,5 +270,6 @@
 
 
     <include layout="@layout/view_add_text"/>
+    <include layout="@layout/dialog_save_share" />
 
 </RelativeLayout>

@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.presenter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
@@ -35,10 +36,11 @@ public class TemplateAddStickerMvpPresenter extends BasePresenter implements Tem
     private TemplateAddStickerMvpModel TemplateAddStickermodel;
     private LinearLayout ll_space;
 
-    public TemplateAddStickerMvpPresenter(Context context, TemplateAddStickerMvpView mvp_view,LinearLayout ll_space,ViewLayerRelativeLayout viewLayerRelativeLayout,  String mVideoPath) {
+    public TemplateAddStickerMvpPresenter(Activity context, TemplateAddStickerMvpView mvp_view, LinearLayout ll_space, ViewLayerRelativeLayout viewLayerRelativeLayout,
+                                          String mVideoPath, LinearLayout dialogShare,String title) {
         this.TemplateAddStickermvpView = mvp_view;
         this.ll_space=ll_space;
-        TemplateAddStickermodel = new TemplateAddStickerMvpModel(context, this,viewLayerRelativeLayout,mVideoPath);
+        TemplateAddStickermodel = new TemplateAddStickerMvpModel(context, this,viewLayerRelativeLayout,mVideoPath,dialogShare,title);
     }
 
 

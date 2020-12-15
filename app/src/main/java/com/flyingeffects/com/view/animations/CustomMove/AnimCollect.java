@@ -462,10 +462,6 @@ public class AnimCollect {
 
     public ArrayList<StickerAnim> getAnimList() {
         ArrayList<StickerAnim> list = new ArrayList<>();
-        StickerAnim delected = new StickerAnim();
-        delected.setName("删除动画");
-        delected.setAnimType(AnimType.LEFTTORIGHT);
-        list.add(delected);
 
         StickerAnim stickerAnim9 = new StickerAnim();
         stickerAnim9.setName("下往上停");

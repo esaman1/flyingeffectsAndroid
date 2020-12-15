@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.flyingeffects.com.R;
@@ -92,6 +93,8 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
     @BindView(R.id.tv_duration)
     TextView tv_duration;
+    @BindView(R.id.dialog_share)
+    LinearLayout dialogShare;
 
     boolean isIntoInitTrimmer = false;
 
@@ -102,7 +105,8 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     private ArrayList<String> titleEffect;
     private ArrayList<String> titleStyle;
     private ArrayList<String> titleFrame;
-
+    SaveShareDialog mShareDialog;
+    String templateTitle;
 
 
     @Override
@@ -119,6 +123,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         LogUtil.d("OOM3", StringUtil.beanToJSONString(titleEffect));
         titleStyle = bundle.getStringArrayList("titleStyle");
         titleFrame= bundle.getStringArrayList("titleFrame");
+        templateTitle = bundle.getString("templateTitle");
         if(titleFrame!=null&&titleFrame.size()>0){
             LogUtil.d("OOM3","titleFrameSize="+titleFrame.get(0));
         }
@@ -128,6 +133,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         LogUtil.d("OOM", "TimeUtils.timeParse(videoInfo.getDuration())=" + TimeUtils.timeParse(videoInfo.getDuration()));
         tv_duration.setText(TimeUtils.timeParse(videoInfo.getDuration()));
         initExo();
+        mShareDialog = new SaveShareDialog(this,dialogShare);
     }
 
     @Override
@@ -193,14 +199,14 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         if (!isOndesTroy) {
             String albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
             try {
-                FileUtil.copyFile(new File(path), albumPath);
-                albumBroadcast(albumPath);
-                showKeepSuccessDialog(albumPath);
                 if (!hasShowStimulateAd) {
                     if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                         AdManager.getInstance().showCpAd(CreationTemplatePreviewActivity.this, AdConfigs.AD_SCREEN_FOR_keep);
                     }
                 }
+                FileUtil.copyFile(new File(path), albumPath);
+                albumBroadcast(albumPath);
+                showKeepSuccessDialog(albumPath);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -222,10 +228,8 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     private void showKeepSuccessDialog(String path) {
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             ShowPraiseModel.keepAlbumCount();
-            SaveShareDialog dialog = new SaveShareDialog(this);
-            dialog.setVideoPath(path);
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.show();
+            mShareDialog.createDialog(templateTitle);
+            mShareDialog.setVideoPath(path);
         }
     }
 

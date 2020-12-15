@@ -1,20 +1,17 @@
 package com.flyingeffects.com.utils.record;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.view.Gravity;
-import android.view.WindowManager;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.bytedance.sdk.open.aweme.DYOpenConstants;
-import com.bytedance.sdk.open.aweme.api.TiktokOpenApi;
-import com.bytedance.sdk.open.aweme.base.DYMediaContent;
-import com.bytedance.sdk.open.aweme.base.DYVideoObject;
-import com.bytedance.sdk.open.aweme.impl.TikTokOpenApiFactory;
+import com.bytedance.sdk.open.aweme.base.MediaContent;
+import com.bytedance.sdk.open.aweme.base.VideoObject;
 import com.bytedance.sdk.open.aweme.share.Share;
+import com.bytedance.sdk.open.douyin.DouYinOpenApiFactory;
+import com.bytedance.sdk.open.douyin.api.DouYinOpenApi;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.statisticsEventAffair;
@@ -35,47 +32,46 @@ import androidx.annotation.NonNull;
  * @date 2020/12/2
  * 保存视频时底部弹出对话框
  */
-public class SaveShareDialog extends Dialog {
+public class SaveShareDialog  {
     ArrayList<String> videoPaths = new ArrayList<>();
-    TiktokOpenApi bdOpenApi;
-    Context mContext;
+    DouYinOpenApi bdOpenApi;
+    Activity mContext;
+    LinearLayout dialogShare;
 
-    public SaveShareDialog(@NonNull Context context) {
-        super(context,R.style.BottomDialog_Animation);
+    public SaveShareDialog(@NonNull Activity context, LinearLayout dialogShare) {
         mContext = context;
+        this.dialogShare = dialogShare;
+        bdOpenApi = DouYinOpenApiFactory.create(mContext);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_save_share);
-        getWindow().setGravity(Gravity.BOTTOM);
-        WindowManager.LayoutParams params = getWindow().getAttributes();
-        params.width = WindowManager.LayoutParams.MATCH_PARENT;
-        params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        getWindow().setAttributes(params);
-        bdOpenApi = TikTokOpenApiFactory.create(mContext);
-
-        findViewById(R.id.bt_publish_Douyin).setOnClickListener(v -> {
+    public void createDialog(String topic) {
+        dialogShare.setVisibility(View.VISIBLE);
+        dialogShare.findViewById(R.id.bt_publish_Douyin).setOnClickListener(v -> {
             Share.Request request = new Share.Request();
-            DYVideoObject videoObject = new DYVideoObject();
+            VideoObject videoObject = new VideoObject ();
             videoObject.mVideoPaths = videoPaths;
-            DYMediaContent content = new DYMediaContent();
+            MediaContent content = new MediaContent();
             content.mMediaObject = videoObject;
             request.mMediaContent = content;
+            ArrayList<String> hashTags = new ArrayList<>();
+            request.mHashTagList =hashTags;
+            if (TextUtils.isEmpty(topic)) {
+                hashTags.add(BaseConstans.getDouyingTopic());
+            } else {
+                hashTags.add(topic);
+            }
             request.mState = "ss";
-            request.mTargetApp = DYOpenConstants.TARGET_APP.AWEME;
-            request.callerLocalEntry = "com.flyingeffects.com.bdopen.BdEntryActivity";
+            request.callerLocalEntry = "com.flyingeffects.com.douyinapi.DouYinEntryActivity";
             boolean isShared = bdOpenApi.share(request);
             if (!isShared) {
                 ToastUtil.showToast("未分享成功，可能是未安装抖音，请安装后重试");
             } else {
-                dismiss();
+                dialogShare.setVisibility(View.GONE);
             }
 
             statisticsEventAffair.getInstance().setFlag(mContext, "21_save_douying");
         });
-        findViewById(R.id.bt_share_wx).setOnClickListener(v -> {
+        dialogShare.findViewById(R.id.bt_share_wx).setOnClickListener(v -> {
             //分享小程序
             UMImage image = new UMImage(mContext, "http://cdn.flying.flyingeffect.com/admin/20200702/5efd9be4f075bshare.png");
             String url = "pages/background/background?path=detail&from_path=app&id=5";
@@ -89,16 +85,16 @@ public class SaveShareDialog extends Dialog {
                     .setPlatform(SHARE_MEDIA.WEIXIN)
                     .setCallback(shareListener).share();
         });
-        findViewById(R.id.bt_upload_feishan).setOnClickListener(v -> {
+        dialogShare.findViewById(R.id.bt_upload_feishan).setOnClickListener(v -> {
             statisticsEventAffair.getInstance().setFlag(mContext, "21_save_flyingfighting");
 
             Intent intent = new Intent(mContext, UploadMaterialActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("videoPath", videoPaths.get(0));
             mContext.startActivity(intent);
-            dismiss();
+            dialogShare.setVisibility(View.GONE);
         });
-        findViewById(R.id.bt_cancel).setOnClickListener(v -> dismiss());
+        dialogShare.findViewById(R.id.bt_cancel).setOnClickListener(v -> dialogShare.setVisibility(View.GONE));
     }
 
     public void setVideoPath(String videoPath) {
@@ -123,7 +119,7 @@ public class SaveShareDialog extends Dialog {
         public void onResult(SHARE_MEDIA platform) {
 //            ToastUtil.showToast("分享成功");
             statisticsEventAffair.getInstance().setFlag(mContext, "21_save_wechat");
-            dismiss();
+            dialogShare.setVisibility(View.GONE);
         }
 
         /**

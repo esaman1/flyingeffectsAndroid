@@ -208,7 +208,8 @@ dependencies {
     implementation(name: 'oaid_sdk_1.0.23', ext: 'aar')
     implementation(name: 'kaijia_ad_sdk_1.7.1.22', ext: 'aar')
     //抖音分享
-    implementation 'com.bytedance.ies.ugc.aweme:open-sdk:0.0.1.1'
+    implementation 'com.bytedance.ies.ugc.aweme:opensdk-china-external:0.1.1.0'
+    implementation 'com.bytedance.ies.ugc.aweme:opensdk-common:0.1.1.0'
 
 }
 

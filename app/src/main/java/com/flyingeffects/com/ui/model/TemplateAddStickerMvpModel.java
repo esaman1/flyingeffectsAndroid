@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.flyco.tablayout.SlidingTabLayout;
@@ -123,7 +124,6 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
     private int defaultVideoDuration = 0;
     private WaitingDialogProgressNowAnim dialog;
     private ArrayList<StickerView> needDeleteList = new ArrayList<>();
-    TemplateGridViewAnimAdapter templateGridViewAnimAdapter;
     private int dialogProgress;
     private List<View> listForInitBottom = new ArrayList<>();
     /**
@@ -131,6 +131,8 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
      */
     private ArrayList<videoType> cutVideoPathList = new ArrayList<>();
     private HorizontalListView hListView;
+    SaveShareDialog mShareDialog;
+    String templateTitle;
 
     /***
      * originalPath  初始化第一张的时长
@@ -138,11 +140,13 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
     private String originalPath;
 
 
-    public TemplateAddStickerMvpModel(Context context, TemplateAddStickerMvpCallback callback, ViewLayerRelativeLayout viewLayerRelativeLayout, String mVideoPath) {
+    public TemplateAddStickerMvpModel(Activity context, TemplateAddStickerMvpCallback callback, ViewLayerRelativeLayout viewLayerRelativeLayout,
+                                      String mVideoPath, LinearLayout dialogShare,String title) {
         this.context = context;
         this.callback = callback;
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
         this.mVideoPath = mVideoPath;
+        this.templateTitle = title;
         dialog = new WaitingDialogProgressNowAnim(context);
         this.originalPath = mVideoPath;
         FileManager fileManager = new FileManager();
@@ -150,6 +154,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
         videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
         mGifFolder = fileManager.getFileCachePath(context, "gifFolder");
         soundFolder = fileManager.getFileCachePath(context, "soundFolder");
+        mShareDialog= new SaveShareDialog(context,dialogShare);
     }
 
 
@@ -357,7 +362,6 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                 }
             }
         });
-        templateThumbView.findViewById(R.id.iv_down_sticker).setVisibility(View.GONE);
         SlidingTabLayout stickerTab = templateThumbView.findViewById(R.id.tb_sticker);
         getStickerTypeList(fragmentManager,stickerViewPager,stickerTab);
 
@@ -1358,14 +1362,14 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
             context.startActivity(intent);
         } else {
             try {
+                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                    AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
+                }
                 String keepPath = getKeepOutput();
                 FileUtil.copyFile(new File(path), keepPath);
                 LogUtil.d("OOM", "保存的地址为" + keepPath);
                 albumBroadcast(keepPath);
                 showDialog(keepPath);
-                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-                    AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
-                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -1410,10 +1414,8 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
             ShowPraiseModel.keepAlbumCount();
             keepAlbumCount();
             LogUtil.d("showDialog", "showDialog");
-            SaveShareDialog dialog = new SaveShareDialog(context);
-            dialog.setVideoPath(path);
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.show();
+            mShareDialog.createDialog(templateTitle);
+            mShareDialog.setVideoPath(path);
         }
     }
 

@@ -111,6 +111,8 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
     @BindView(R.id.ll_add_text_style)
     LinearLayout ll_add_text_style;
+    @BindView(R.id.dialog_share)
+    LinearLayout dialogShare;
 
     private boolean isShowPreviewAd = false;
 
@@ -129,7 +131,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
         title=getIntent().getStringExtra("title");
         LogUtil.d("OOM", "path=" + videoPath);
         IsFrom = getIntent().getStringExtra("IsFrom");
-        presenter = new TemplateAddStickerMvpPresenter(this, this, ll_space, viewLayerRelativeLayout, videoPath);
+        presenter = new TemplateAddStickerMvpPresenter(this, this, ll_space, viewLayerRelativeLayout, videoPath,dialogShare,title);
         if (!TextUtils.isEmpty(videoPath)) {
             //有视频的时候，初始化视频值
             presenter.setPlayerViewSize(playerView, scrollView, viewLayerRelativeLayout);

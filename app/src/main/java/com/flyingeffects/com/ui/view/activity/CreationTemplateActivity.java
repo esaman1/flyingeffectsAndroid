@@ -489,7 +489,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 } else {
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
                 }
-                presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId, musicStartTime, musicEndTime, mCutEndTime - mCutStartTime);
+                presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId, musicStartTime, musicEndTime, mCutEndTime - mCutStartTime,title);
                 break;
 
             case R.id.iv_delete_all_text:
@@ -1672,18 +1672,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             }
         }
         mSeekBarView.modifyMaterialThumbnail(path, id);
-    }
-
-    @Override
-    public void stickerFragmentClose() {
-        for (int i = 0; i < lin_Id.length; i++) {
-            ((TextView) findViewById(lin_Id[i])).setTextColor(getResources().getColor(R.color.white));
-        }
-        if (isClickAddTextTag && createViewForAddText != null) {
-            createViewForAddText.iv_down.performClick();
-        } else {
-            seekBarViewIsShow(true);
-        }
     }
 
     @Override
