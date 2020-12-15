@@ -286,6 +286,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             LogUtil.d("OOM", "templateName=" + templateName);
          nowTemplateIsAnim = bundle.getInt("is_anime");
         }
+        if(nowTemplateIsAnim==1){
+            needAssetsCount=imgPath.size();
+        }
         presenter = new TemplatePresenter(this, this,fromTo,templateName);
         LogUtil.d("OOM3","initView");
 
@@ -518,12 +521,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         waitingDialogProgress.setProgress("生成中~\n" +
                 "如预览卡顿\n" +
                 "保存效果最佳");
-        if(nowTemplateIsAnim==1){
-            String [] strArray = imgPath.toArray(new String[imgPath.size()]);
-            returnReplaceableFilePath(strArray);
-        }else{
+//        if(nowTemplateIsAnim==1){
+//            String [] strArray = imgPath.toArray(new String[imgPath.size()]);
+//            returnReplaceableFilePath(strArray);
+//        }else{
             new Thread(() -> presenter.getReplaceableFilePath()).start();
-        }
+//        }
     }
 
     @Override
@@ -907,6 +910,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(layoutManager);
+        if (nowTemplateIsAnim==1&&listItem.size()>1){
+            ArrayList<TemplateThumbItem> newTem=new ArrayList<>();
+            newTem.add(listItem.get(1));
+            listItem.clear();
+            listItem.addAll(newTem);
+        }
         templateThumbAdapter = new TemplateThumbAdapter(R.layout.item_group_thumb, listItem, TemplateActivity.this);
         templateThumbAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             if (!DoubleClick.getInstance().isFastZDYDoubleClick(200)) {

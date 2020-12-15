@@ -154,21 +154,21 @@ public class TemplateModel {
         String[] paths = new String[mAssets.size()];
         Log.d("OOM","mAssets.size()="+mAssets.size());
         for (int i = 0; i < mAssets.size(); i++) {
-            if (mAssets.get(0).ui.getIsAnim()) {
-                if (i == mAssets.size() - 1) {
-                    //最后一个的时候
-                    if (i - 1 != -1) {
-                        MediaUiModel2 model2 = (MediaUiModel2) mAssets.get(i - 1).ui;
-                        paths[i] = model2.getpathForThisMatrix(folder, cartoonPath);
-                    } else {
-                        paths[i] = mAssets.get(i).ui.getSnapPath(folder);
-                    }
-                } else {
-                    paths[i] = mAssets.get(i).ui.getSnapPath(folder);
-                }
-            } else {
+//            if (mAssets.get(0).ui.getIsAnim()) {
+//                if (i == mAssets.size() - 1) {
+//                    //最后一个的时候
+//                    if (i - 1 != -1) {
+//                        MediaUiModel2 model2 = (MediaUiModel2) mAssets.get(i - 1).ui;
+//                        paths[i] = model2.getpathForThisMatrix(folder, cartoonPath);
+//                    } else {
+//                        paths[i] = mAssets.get(i).ui.getSnapPath(folder);
+//                    }
+//                } else {
+//                    paths[i] = mAssets.get(i).ui.getSnapPath(folder);
+//                }
+//            } else {
                 paths[i] = mAssets.get(i).ui.getSnapPath(folder);
-            }
+//            }
         }
         return paths;
     }
@@ -221,10 +221,10 @@ public class TemplateModel {
             }
         }
 
-        Log.d("OOM4", "mReplaceableAssetsSize");
-
+        Log.d("OOM4", "mReplaceableAssets="+mReplaceableAssets.size());
 
         for (int i = 0; i < mReplaceableAssets.size(); i++) {
+
             if (paths.get(i) != null && !paths.get(i).equals("")) {
                 String mimeType;
                 String extension = MimeTypeMap.getFileExtensionFromUrl(paths.get(i)); //获得格式
