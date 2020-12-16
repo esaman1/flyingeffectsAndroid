@@ -81,6 +81,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
+
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -93,7 +94,7 @@ import rx.subjects.PublishSubject;
  * param :
  * user : zhangtongju
  */
-public class CreationTemplateMvpModel implements StickerFragment.StickerListener{
+public class CreationTemplateMvpModel implements StickerFragment.StickerListener {
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private CreationTemplateMvpCallback callback;
     private Context context;
@@ -278,7 +279,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     }
 
     public void initStickerView(String imagePath, String originalPath) {
-        new Handler().postDelayed(() -> addSticker(imagePath, true, true, true, originalPath, false, null, false, false), 500);
+        new Handler().postDelayed(() -> addSticker(imagePath, true, true, true, originalPath, false, null, false, false, null), 500);
     }
 
 
@@ -333,7 +334,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     TextView tv_2;
     TextView tv_3;
 
-    public void initBottomLayout(ViewPager viewPager,FragmentManager fragmentManager) {
+    public void initBottomLayout(ViewPager viewPager, FragmentManager fragmentManager) {
         this.viewPager = viewPager;
         View templateThumbView = LayoutInflater.from(context).inflate(R.layout.view_template_paster, viewPager, false);
         ViewPager stickerViewPager = templateThumbView.findViewById(R.id.viewpager_sticker);
@@ -352,7 +353,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         });
         templateThumbView.findViewById(R.id.iv_down_sticker).setOnClickListener(v -> callback.stickerFragmentClose());
         SlidingTabLayout stickerTab = templateThumbView.findViewById(R.id.tb_sticker);
-        getStickerTypeList(fragmentManager,stickerViewPager,stickerTab);
+        getStickerTypeList(fragmentManager, stickerViewPager, stickerTab);
 
         View viewForChooseAnim = LayoutInflater.from(context).inflate(R.layout.view_create_template_anim_creation, viewPager, false);
         GridView gridViewAnim = viewForChooseAnim.findViewById(R.id.gridView_anim);
@@ -791,9 +792,6 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     }
 
 
-
-
-
     /**
      * 当前的item 是否已经被选中上了预览页面
      *
@@ -837,7 +835,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     private int stickerViewID = 0;
     private boolean isIntoDragMove = false;
 
-    private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim, boolean isText) {
+    private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim, boolean isText, String title) {
         closeAllAnim();
         StickerView stickView = new StickerView(context, isText);
         stickView.setId(stickerViewID);
@@ -1069,6 +1067,10 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
             }
         }
 
+
+        if (title != null) {
+            stickView.setDownStickerTitle(title);
+        }
         if (isCopy && copyStickerView != null) {
             if (copyStickerView.getIsTextSticker()) {
                 //是否是图片文字效果
@@ -1225,7 +1227,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     private void copyGif(String getResPath, String path, boolean isFromAubum, StickerView stickerView, String OriginalPath, boolean isFromShowAnim) {
 
         if (stickerView != null && stickerView.getIsTextSticker()) {
-            addSticker("", false, false, false, "", true, stickerView, isFromShowAnim, true);
+            addSticker("", false, false, false, "", true, stickerView, isFromShowAnim, true, null);
         } else {
             try {
                 String copyName = null;
@@ -1240,7 +1242,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                     FileUtil.copyFile(new File(getResPath), copyName, new FileUtil.copySucceed() {
                         @Override
                         public void isSucceed() {
-                            addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, false);
+                            addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, false, stickerView.getDownStickerTitle());
                         }
                     });
                 } else {
@@ -1256,9 +1258,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                         @Override
                         public void isSucceed() {
                             if (isFromShowAnim) {
-                                addSticker(getResPath, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, false);
+                                addSticker(getResPath, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, false, null);
                             } else {
-                                addSticker(finalCopyName1, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, false);
+                                addSticker(finalCopyName1, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, false, null);
                             }
                         }
                     });
@@ -1346,7 +1348,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     private boolean isIntoSaveVideo = false;
     private float percentageH;
 
-    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH, int templateId, long musicStartTime, long musicEndTime, long needKeepDuration,String title) {
+    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH, int templateId, long musicStartTime, long musicEndTime, long needKeepDuration, String title) {
         disMissStickerFrame();
         if (templateId != 0) {
             LogUtil.d("OOM", "toSaveVideo-templateId=" + templateId);
@@ -1379,7 +1381,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     bundle.putString("path", path);
                                     bundle.putBoolean("nowUiIsLandscape", nowUiIsLandscape);
-                                    bundle.putString("templateTitle",title);
+                                    bundle.putString("templateTitle", title);
                                     intent.putExtra("bundle", bundle);
                                     context.startActivity(intent);
                                     Observable.just(0).subscribeOn(AndroidSchedulers.mainThread())
@@ -1405,6 +1407,11 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                         if (stickerView.getIsTextSticker()) {
                             stickerView.disMissFrame();
                         }
+
+                        if (!TextUtils.isEmpty(stickerView.getDownStickerTitle())) {
+                            statisticsEventAffair.getInstance().setFlag(context, "mb_bj_Sticker",stickerView.getDownStickerTitle() );
+                        }
+
                         listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
                     }
 
@@ -1572,7 +1579,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
      * user : zhangtongju
      */
     public void addNewSticker(String path, String originalPath) {
-        Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> addSticker(path1, false, true, true, originalPath, false, null, false, false));
+        Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> addSticker(path1, false, true, true, originalPath, false, null, false, false, null));
     }
 
 
@@ -1601,8 +1608,8 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     }
 
     @Override
-    public void addSticker(String stickerPath) {
-        addSticker(stickerPath, false, false, false, null, false, null, false, false);
+    public void addSticker(String stickerPath, String title) {
+        addSticker(stickerPath, false, false, false, null, false, null, false, false, title);
     }
 
     @Override
@@ -1864,7 +1871,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
 
     public void addTextSticker() {
-        addSticker("", false, false, false, "", false, null, false, true);
+        addSticker("", false, false, false, "", false, null, false, true, null);
     }
 
 

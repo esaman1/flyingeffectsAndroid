@@ -125,6 +125,17 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     Matrix matrixForBitmapShader = new Matrix();
     private float mTextScale;
 
+    public String getDownStickerTitle() {
+        return downStickerTitle;
+    }
+
+    public void setDownStickerTitle(String downStickerTitle) {
+        this.downStickerTitle = downStickerTitle;
+    }
+
+    //贴纸名字
+    private String downStickerTitle;
+
     public AnimType getChooseAnimId() {
         return ChooseAnimId;
     }

@@ -108,7 +108,7 @@ public class StickerFragment extends BaseFragment {
                 } else {
                     statisticsEventAffair.getInstance().setFlag(getContext(), " 6_customize_bj_Sticker", listForSticker.get(position).getTitle());
                 }
-                downSticker(listForSticker.get(position).getImage(), listForSticker.get(position).getId(), position);
+                downSticker(listForSticker.get(position).getImage(), listForSticker.get(position).getId(), position,listForSticker.get(position).getTitle());
             }
         });
     }
@@ -168,7 +168,7 @@ public class StickerFragment extends BaseFragment {
      * @param imageId  gif 保存的图片id
      * @param position 当前点击的那个item ，主要用来更新数据
      */
-    private void downSticker(String path, String imageId, int position) {
+    private void downSticker(String path, String imageId, int position,String title) {
         WaitingDialog.openPragressDialog(getContext());
         if (path.endsWith(".gif")) {
             String format = path.substring(path.length() - 4);
@@ -199,7 +199,7 @@ public class StickerFragment extends BaseFragment {
                     if (path1 != null) {
                         FileUtil.copyFile(path1, fileName);
                         if (mStickerListener != null) {
-                            mStickerListener.addSticker(fileName);
+                            mStickerListener.addSticker(fileName,title);
                         }
                         WaitingDialog.closePragressDialog();
                         modificationSingleItem(position);
@@ -232,7 +232,7 @@ public class StickerFragment extends BaseFragment {
                         saveBitmapToPath(finalOriginalBitmap, copyName, isSucceed -> {
                             modificationSingleItem(position);
                             if (mStickerListener != null) {
-                                mStickerListener.addSticker(copyName);
+                                mStickerListener.addSticker(copyName,title);
                             }
                         });
                     });
@@ -268,7 +268,7 @@ public class StickerFragment extends BaseFragment {
     }
 
     public interface StickerListener {
-        void addSticker(String stickerPath);
+        void addSticker(String stickerPath,String name);
 
         void copyGif(String fileName, String copyName);
 

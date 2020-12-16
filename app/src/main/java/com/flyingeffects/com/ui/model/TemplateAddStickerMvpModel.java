@@ -751,7 +751,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
     private void copyGif(String getResPath, String path, boolean isFromAubum, StickerView stickerView, String OriginalPath, boolean isFromShowAnim) {
 
         if (stickerView != null && stickerView.getIsTextSticker()) {
-            addSticker("", false, false, false, "", true, stickerView, isFromShowAnim, true);
+            addSticker("", false, false, false, "", true, stickerView, isFromShowAnim, true,null);
         } else {
 
             try {
@@ -767,7 +767,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                     FileUtil.copyFile(new File(getResPath), copyName, new FileUtil.copySucceed() {
                         @Override
                         public void isSucceed() {
-                            addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, false);
+                            addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, false,stickerView.getDownStickerTitle());
                         }
                     });
                 } else {
@@ -782,7 +782,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                     FileUtil.copyFile(new File(path), copyName, new FileUtil.copySucceed() {
                         @Override
                         public void isSucceed() {
-                            addSticker(getResPath, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, false);
+                            addSticker(getResPath, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, false,null);
                         }
                     });
                 }
@@ -797,7 +797,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
     private int stickerViewID;
     private boolean isIntoDragMove = false;
 
-    private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim, boolean isText) {
+    private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim, boolean isText,String title) {
         closeAllAnim();
         StickerView stickView = new StickerView(BaseApplication.getInstance(), isText);
         stickerViewID++;
@@ -1266,6 +1266,11 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                     for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
                         StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
                         listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, false, videoInfo));
+
+                        if (!TextUtils.isEmpty(stickerView.getDownStickerTitle())) {
+                            statisticsEventAffair.getInstance().setFlag(context, "11_yj_Sticker",stickerView.getDownStickerTitle() );
+                        }
+
                     }
 
                     if (listAllSticker.size() == 0) {
@@ -1428,8 +1433,8 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
     }
 
     @Override
-    public void addSticker(String stickerPath) {
-        addSticker(stickerPath, false, false, false, null, false, null, false, false);
+    public void addSticker(String stickerPath,String title) {
+        addSticker(stickerPath, false, false, false, null, false, null, false, false,title);
     }
 
     @Override
@@ -1568,7 +1573,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
 
 
     public void addTextSticker() {
-        addSticker("", false, false, false, "", false, null, false, true);
+        addSticker("", false, false, false, "", false, null, false, true,null);
     }
 
 

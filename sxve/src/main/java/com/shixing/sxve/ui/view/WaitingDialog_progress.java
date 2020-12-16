@@ -73,8 +73,8 @@ public class WaitingDialog_progress {
                     tv_progress = null;
                 }
                 if (loadingDialog != null && loadingDialog.isShowing()) {
-                        loadingDialog.dismiss();
-                        loadingDialog = null;
+                    loadingDialog.dismiss();
+                    loadingDialog = null;
                 }
             }
         } catch (Exception e) {
