@@ -225,10 +225,13 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                 itemView = mTemplateMaterialItemViews.get(i);
             }
         }
-        int thumbnailTotalWidth = itemView.changeVideoPathWidth(duration, frameContainerHeight);
-        RelativeLayout.LayoutParams reParams = (LayoutParams) mViewFrame.getLayoutParams();
-        reParams.width = thumbnailTotalWidth + frameListPadding * 2;
-        mViewFrame.setLayoutParams(reParams);
+        if(itemView!=null){
+            int thumbnailTotalWidth = itemView.changeVideoPathWidth(duration, frameContainerHeight);
+            RelativeLayout.LayoutParams reParams = (LayoutParams) mViewFrame.getLayoutParams();
+            reParams.width = thumbnailTotalWidth + frameListPadding * 2;
+            mViewFrame.setLayoutParams(reParams);
+        }
+
     }
 
     /**

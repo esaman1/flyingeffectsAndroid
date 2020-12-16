@@ -17,7 +17,9 @@ import com.flyingeffects.com.manager.huaweiObs;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
+import com.shixing.sxve.ui.view.WatingDialogProgressForTime;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -65,12 +67,15 @@ public class DressUpModel {
      * creation date: 2020/12/3
      * user : zhangtongju
      */
-    WaitingDialog_progress progress;
+//    WaitingDialog_progress progress;
 
     public void toDressUp(String ImagePath, String templateId) {
-        progress = new WaitingDialog_progress(context);
-        progress.setProgress("正在换装中...");
-        progress.openProgressDialog();
+//        progress = new WaitingDialog_progress(context);
+//        progress.setProgress("正在换装中...");
+//        progress.openProgressDialog();
+
+
+        WaitingDialog.openPragressDialog(context,"正在换装中...");
         toCompressImg(ImagePath,templateId);
 
     }
@@ -151,7 +156,7 @@ public class DressUpModel {
 
             @Override
             public void isDone() {
-                progress.closePragressDialog();
+                WaitingDialog.closePragressDialog();
             }
         });
     }
@@ -175,7 +180,7 @@ public class DressUpModel {
             protected void _onError(String message) {
                 LogUtil.d("OOM3", "message=" + message);
                 ToastUtil.showToast(message);
-                progress.closePragressDialog();
+                WaitingDialog.closePragressDialog();
                 if (calculagraph != null) {
                     calculagraph.destroyTimer();
                 }
@@ -277,7 +282,7 @@ public class DressUpModel {
                     if (callback != null) {
                         callback.isSuccess(list);
                         callback = null;
-                        progress.closePragressDialog();
+                        WaitingDialog.closePragressDialog();
                     }
                 }else{
                     LogUtil.d("OOM3","list.size()="+list.size()+"paths.size()="+paths.size());

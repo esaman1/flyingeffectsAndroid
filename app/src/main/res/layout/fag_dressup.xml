@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:background="@null"
-                android:text="请输入视频关键字"
+                android:text="请输入关键词"
                 android:gravity="center_vertical"
                 android:paddingStart="40dp"
                 android:textColor="#515151"
