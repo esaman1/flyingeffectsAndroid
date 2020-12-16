@@ -889,8 +889,12 @@ public class PreviewUpAndDownMvpModel {
 
 
     private void saveToAlbum(String path) {
-
-        String albumPath = SaveAlbumPathModel.getInstance().getKeepOutputForImage();
+        String albumPath;
+        if(TextUtils.equals(FromToTemplate.DRESSUP, fromTo)){
+            albumPath = SaveAlbumPathModel.getInstance().getKeepOutputForImage();
+        }else{
+            albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
+        }
         try {
             FileUtil.copyFile(new File(path), albumPath);
             albumBroadcast(albumPath);
@@ -1037,13 +1041,15 @@ public class PreviewUpAndDownMvpModel {
         DressUpModel dressUpModel = new DressUpModel(context, new DressUpModel.DressUpCallback() {
             @Override
             public void isSuccess(List<String> paths) {
-                Intent intent = new Intent(context, DressUpPreviewActivity.class);
-                intent.putExtra("url", paths.get(0));
-                intent.putExtra("template_id", templateId);
-                intent.putExtra("localImage", path);
-                intent.putExtra("templateTitle", templateTitle);
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                context.startActivity(intent);
+                if(paths!=null){
+                    Intent intent = new Intent(context, DressUpPreviewActivity.class);
+                    intent.putExtra("url", paths.get(0));
+                    intent.putExtra("template_id", templateId);
+                    intent.putExtra("localImage", path);
+                    intent.putExtra("templateTitle", templateTitle);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    context.startActivity(intent);
+                }
             }
         });
 

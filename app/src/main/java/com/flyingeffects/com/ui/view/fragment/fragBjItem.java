@@ -127,7 +127,7 @@ public class fragBjItem extends BaseFragment {
 
 
     private void initRecycler() {
-        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), fromType);
+        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), fromType,false);
         StaggeredGridLayoutManager layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.
                         VERTICAL);
@@ -245,6 +245,8 @@ public class fragBjItem extends BaseFragment {
         params.put("pageSize", perPageCount + "");
 
         Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
+
+        LogUtil.d("OOM2","requestFagData背景模板请求的数据为"+StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override
             protected void _onError(String message) {
@@ -260,10 +262,13 @@ public class fragBjItem extends BaseFragment {
                 if (isRefresh) {
                     listData.clear();
                     if (!TextUtils.isEmpty(cover)) {
-                        new_fag_template_item item = new new_fag_template_item();
-                        item.setImage(cover);
-                        item.setTitle("默认背景");
-                        listData.add(item);
+                        if(!(templateId.equals("11")||templateId.equals("12"))){
+                            //关注和收藏
+                            new_fag_template_item item = new new_fag_template_item();
+                            item.setImage(cover);
+                            item.setTitle("默认背景");
+                            listData.add(item);
+                        }
                     }
                 }
                 if (isRefresh && data.size() == 0) {

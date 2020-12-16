@@ -36,5 +36,13 @@ public class ReportActivity extends Activity {
             }
         });
 
+        LinearLayout ll_parent=findViewById(R.id.ll_parent);
+        ll_parent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
     }
 }

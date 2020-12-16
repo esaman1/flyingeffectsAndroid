@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TimelineAdapterForCutVideo;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.DataCleanManager;
@@ -30,9 +31,11 @@ import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
 
@@ -171,11 +174,12 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
 
     private void initExo(String videoPath, float duration) {
+        LogUtil.d("OOM2","STATE_READY-videoPath="+videoPath);
         tv_duration.setText(String.format(Locale.US, "%.1fs", duration));
         if (TextUtils.isEmpty(videoPath)) {
             return;
         }
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(TemplateCutVideoActivity.this, new DefaultRenderersFactory(this), new DefaultTrackSelector(), new DefaultLoadControl());
+        exoPlayer = ExoPlayerFactory.newSimpleInstance(BaseApplication.getInstance(), new DefaultRenderersFactory(this), new DefaultTrackSelector(), new DefaultLoadControl());
         playerView.setPlayer(exoPlayer);
 
         //不使用控制器
@@ -186,16 +190,19 @@ public class TemplateCutVideoActivity extends BaseActivity {
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 switch (playbackState) {
                     case Player.STATE_READY:
+                        LogUtil.d("OOM2","STATE_READY");
                         if (!isIntoOnpause) {
                             videoPlay();
                         }
 
                         break;
                     case Player.STATE_ENDED:
+                        LogUtil.d("OOM2","STATE_ENDED");
                         seekTo(0);
                         break;
                     case Player.STATE_BUFFERING:
                     case Player.STATE_IDLE:
+                        LogUtil.d("OOM2","STATE_BUFFERING-STATE_IDLE");
                     default:
                         break;
                 }
@@ -205,7 +212,15 @@ public class TemplateCutVideoActivity extends BaseActivity {
                 new DefaultDataSourceFactory(TemplateCutVideoActivity.this, "exoplayer-codelab")).
                 createMediaSource(Uri.fromFile(new File(videoPath)));
         exoPlayer.prepare(mediaSource, true, false);
+
+//
+//        ProgressiveMediaSource.Factory factory = new ProgressiveMediaSource.Factory(new DefaultDataSourceFactory(this, Util.getUserAgent(this, getPackageName())));
+//        MediaSource    mediaSource = factory.createMediaSource(Uri.fromFile(new File(videoPath)));
+//        exoPlayer.prepare(mediaSource);
+
+
         videoPause();
+        LogUtil.d("OOM2","initEnd--");
     }
 
     /**
@@ -221,7 +236,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
     private void videoPause() {
         if (exoPlayer != null) {
-            LogUtil.d("video", "videoPause");
+            LogUtil.d("OOM2", "videoPause");
             exoPlayer.setPlayWhenReady(false);
             endTimer();
         }

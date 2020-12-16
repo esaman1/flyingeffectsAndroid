@@ -95,10 +95,10 @@ public class DressUpModel {
                 requestDressUpCallback(uploadPath,template_id);
 
 
-                File file=new File(path);
-                if(file.exists()){
-                    file.delete();
-                }
+//                File file=new File(path);
+//                if(file.exists()){
+//                    file.delete();
+//                }
             }
         }));
     }
@@ -179,12 +179,14 @@ public class DressUpModel {
                 if (calculagraph != null) {
                     calculagraph.destroyTimer();
                 }
+                if (callback != null) {
+                    callback.isSuccess(null);
+                }
             }
 
             @Override
             protected void _onNext(List<HumanMerageResult> data) {
                 if (data != null && data.size() > 0) {
-
                     String str = StringUtil.beanToJSONString(data);
                     LogUtil.d("OOM3", "请求的结果为："+str);
                     GetDressUpPath(data);

@@ -81,12 +81,14 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
     private ImageView csj_listitem_image;
     private FrameLayout videoView;// 穿山甲的视频
     private ArrayList<CommonNewsBean>listCommentBean;
+    boolean isFromSearch;
 
 
-    public main_recycler_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, int fromType) {
+    public main_recycler_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, int fromType,boolean isFromSearch) {
         super(layoutResId, allData);
         this.context = context;
         this.fromType = fromType;
+        this.isFromSearch=isFromSearch;
         SetVideoOption();
     }
 
@@ -222,9 +224,9 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                 ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
                 iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
             } else if (fromType == 3) {
-                //换脸
-                if (offset == 0) {
-                    ll_relative_2.setVisibility(View.GONE);
+                //背景下载
+                if (offset == 0&&!isFromSearch) {
+                    ll_relative_2.setVisibility(View.VISIBLE);
                     ll_relative_1.setVisibility(View.GONE);
                     ll_relative_0.setVisibility(View.GONE);
                     ConstraintLayout_addVideo.setVisibility(View.VISIBLE);

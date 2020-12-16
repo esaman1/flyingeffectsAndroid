@@ -94,7 +94,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
 
 
     private void initRecycler() {
-        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), fromType);
+        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), fromType,false);
         adapter.setDressUPTabNameFavorites(tabName);
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -174,7 +174,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     public void onResume() {
         super.onResume();
         if (getActivity() != null) {
-            if (allData == null || allData.size() == 0||category_id.equals("110")) {
+            if (allData == null || allData.size() == 0||category_id.equals("11")||category_id.equals("12")) {
                 LogUtil.d("OOM", "allData==null");
                 Presenter.requestData(category_id,tc_id, actTag);
             } else {

@@ -117,8 +117,7 @@ public class DressUpPreviewActivity extends BaseActivity {
         switch (v.getId()) {
             case R.id.dress_up_next:
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                    nowChooseIndex++;
-                    showDressUp();
+                    showDressUp(true);
                     iv_back.setVisibility(View.VISIBLE);
                 }
 
@@ -128,8 +127,7 @@ public class DressUpPreviewActivity extends BaseActivity {
             case R.id.iv_back:
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
                     if (nowChooseIndex >= 1) {
-                        nowChooseIndex--;
-                        showDressUp();
+                        showDressUp(false);
                         iv_back.setVisibility(View.VISIBLE);
                     } else {
                         iv_back.setVisibility(View.GONE);
@@ -253,19 +251,29 @@ public class DressUpPreviewActivity extends BaseActivity {
     };
 
 
-    private void showDressUp() {
+    private void showDressUp(boolean isNext) {
         LogUtil.d("OOM3", "nowChooseIndex=" + nowChooseIndex);
-
-
-        if (listForKeep.size() - 1 >= nowChooseIndex) {
-            String needShowPath = listForKeep.get(nowChooseIndex);
+        int needChooseIndex;
+        if (isNext) {
+            needChooseIndex = nowChooseIndex+1;
+        } else {
+            needChooseIndex = nowChooseIndex-1;
+        }
+        if (listForKeep.size() > needChooseIndex) {
+            LogUtil.d("OOM3", "有过缓存" );
+            //有过缓存
+            String needShowPath = listForKeep.get(needChooseIndex);
+            nowChooseIndex = needChooseIndex;
             Glide.with(this).load(needShowPath).apply(new RequestOptions().placeholder(R.mipmap.placeholder)).into(iv_show_content);
         } else {
-            if (TemplateIdList.size() >= nowChooseIndex) {
-                String id = TemplateIdList.get(nowChooseIndex);
+            LogUtil.d("OOM3", "没得缓存" );
+            //没有缓存
+            if (TemplateIdList.size() >= needChooseIndex) {
+                String id = TemplateIdList.get(needChooseIndex);
                 ToNextDressUp(id);
             } else {
                 ToastUtil.showToast("没有更多换装了");
+                LogUtil.d("OOM3", "没有更多换装了" );
             }
         }
     }
@@ -280,7 +288,13 @@ public class DressUpPreviewActivity extends BaseActivity {
         DressUpModel dressUpModel = new DressUpModel(this, new DressUpModel.DressUpCallback() {
             @Override
             public void isSuccess(List<String> paths) {
-                showAndSaveImage(paths.get(0));
+                if (paths != null && paths.size() > 0) {
+                    showAndSaveImage(paths.get(0));
+                    nowChooseIndex = nowChooseIndex + 1;
+                }else{
+                    TemplateIdList.remove(nowChooseIndex);
+                    showDressUp(true);
+                }
             }
         });
         dressUpModel.toDressUp(localImage, templateId);
@@ -458,8 +472,10 @@ public class DressUpPreviewActivity extends BaseActivity {
                 AdManager.getInstance().showCpAd(this, AdConfigs.AD_SCREEN_FOR_DRESSUP);
             }
         }
-        String path = listForKeep.get(nowChooseIndex);
-        keepImageToAlbum(path);
+        if (listForKeep.size() > nowChooseIndex) {
+            String path = listForKeep.get(nowChooseIndex);
+            keepImageToAlbum(path);
+        }
     }
 
 

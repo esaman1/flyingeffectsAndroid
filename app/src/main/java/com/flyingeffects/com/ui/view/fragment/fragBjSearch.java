@@ -86,6 +86,7 @@ public class fragBjSearch extends BaseFragment {
         }
         initRecycler();
         initSmartRefreshLayout();
+        LogUtil.d("OOM2","isFrom="+isFrom);
     }
 
     @Override
@@ -99,7 +100,7 @@ public class fragBjSearch extends BaseFragment {
 
 
     private void initRecycler() {
-        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), isFrom);
+        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), isFrom,true);
         StaggeredGridLayoutManager layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);

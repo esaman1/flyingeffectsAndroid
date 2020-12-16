@@ -284,13 +284,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             originalPath = bundle.getStringArrayList("originalPath");
             templateName = bundle.getString("templateName");
             LogUtil.d("OOM", "templateName=" + templateName);
-         nowTemplateIsAnim = bundle.getInt("is_anime");
+            nowTemplateIsAnim = bundle.getInt("is_anime");
         }
-        if(nowTemplateIsAnim==1){
-            needAssetsCount=imgPath.size();
+        //换装的话需要的素材数量就是后台返回的素材数量
+        if (nowTemplateIsAnim == 1) {
+            needAssetsCount = imgPath.size();
         }
-        presenter = new TemplatePresenter(this, this,fromTo,templateName);
-        LogUtil.d("OOM3","initView");
+        presenter = new TemplatePresenter(this, this, fromTo, templateName);
+        LogUtil.d("OOM3", "initView");
 
         templateItem = (new_fag_template_item) getIntent().getSerializableExtra("person");
         if (originalPath != null && originalPath.size() > 0) {
@@ -439,7 +440,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public void completeTemplate(TemplateModel templateModel) {
         mTemplateModel = templateModel;
         findViewById(R.id.ll_viewpager_container).setVisibility(View.VISIBLE);
-        LogUtil.d("OOM3","initBottomLayout");
+        LogUtil.d("OOM3", "initBottomLayout");
         initBottomLayout();
         if (nowTemplateIsAnim == 1 || nowTemplateIsMattingVideo == 1) {
             mTemplateModel.cartoonPath = imgPath.get(0);  //设置灰度图
@@ -449,7 +450,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         needDuration = (long) (duration / mTemplateModel.fps);
         tv_end_time.setText(TimeUtils.secondToTime((needDuration)));
         getNowChooseIndexMidiaUi();
-        LogUtil.d("OOM3","initTemplateViews");
+        LogUtil.d("OOM3", "initTemplateViews");
         initTemplateViews(mTemplateModel);
         //设置切换按钮
         new Handler().postDelayed(this::setMattingBtnState, 500);
@@ -525,7 +526,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 //            String [] strArray = imgPath.toArray(new String[imgPath.size()]);
 //            returnReplaceableFilePath(strArray);
 //        }else{
-            new Thread(() -> presenter.getReplaceableFilePath()).start();
+        new Thread(() -> presenter.getReplaceableFilePath()).start();
 //        }
     }
 
@@ -663,11 +664,39 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         setBjMusic();
     }
 
+
+
+    /**
+     * description ：换装完成后的回调
+     * creation date: 2020/12/15
+     * user : zhangtongju
+     */
     @Override
     public void GetChangeDressUpData(List<String> paths) {
         imgPath.clear();
         imgPath.addAll(paths);
         resultFileDispose(paths.get(0));
+        if(nowTemplateIsAnim==1){
+            refreshAllData();
+        }
+    }
+
+
+    /**
+     * description ：图片替换全部mediaUiModel2
+     * creation date: 2020/12/15
+     * user : zhangtongju
+     */
+    private void refreshAllData() {
+        for (int x = 1; x <= needAssetsCount; x++) {
+            for (int i = 0; i < mTemplateModel.getAssets().size(); i++) {
+                MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.getAssets().get(i).ui;
+                if (x == mediaUiModel2.getNowGroup()) {
+                    mediaUiModel2.setImageAsset(imgPath.get(x-1));
+                    break;
+                }
+            }
+        }
     }
 
 
@@ -910,8 +939,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(layoutManager);
-        if (nowTemplateIsAnim==1&&listItem.size()>1){
-            ArrayList<TemplateThumbItem> newTem=new ArrayList<>();
+        if (nowTemplateIsAnim == 1 && listItem.size() > 1) {
+            ArrayList<TemplateThumbItem> newTem = new ArrayList<>();
             newTem.add(listItem.get(1));
             listItem.clear();
             listItem.addAll(newTem);
@@ -933,13 +962,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         selectGroup(position);
                         modificationThumbData(lastChoosePosition, position);
                     } else {
-                        if (nowIsPhotographAlbum) {
+                        if (nowIsPhotographAlbum&&!DoubleClick.getInstance().isFastDoubleClick()) {
 //                            MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
                             if (nowClickMediaUi2.isVideoType()) {
                                 //实际需要的时长
                                 float needCropDuration;
                                 boolean isNeedSlow;
-                                lastChooseFilePath=nowClickMediaUi2.getPathOrigin();
+                                lastChooseFilePath = nowClickMediaUi2.getPathOrigin();
                                 Intent intent = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
                                 needCropDuration = nowClickMediaUi2.getDuration() / (float) nowClickMediaUi2.getFps();
                                 isNeedSlow = false;
@@ -1008,6 +1037,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "4_search_save", templateName);
                     }
                     statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_save", templateName);
+
+
                     if (isPlaying) {
                         if (mPlayer != null) {
                             mPlayer.pause();
@@ -1019,9 +1050,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         }
                     }
                     if (nowChooseMusic != 0) {
-                        presenter.renderVideo(mFolder.getPath(), nowSpliteMusic, false,nowTemplateIsAnim,imgPath);
+                        presenter.renderVideo(mFolder.getPath(), nowSpliteMusic, false, nowTemplateIsAnim, imgPath);
                     } else {
-                        presenter.renderVideo(mFolder.getPath(), mAudio1Path, false,nowTemplateIsAnim,imgPath);
+                        presenter.renderVideo(mFolder.getPath(), mAudio1Path, false, nowTemplateIsAnim, imgPath);
                     }
 
                     presenter.StatisticsToSave(templateId);
@@ -1163,18 +1194,18 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     };
 
 
-    private  String lastChooseFilePath;
+    private String lastChooseFilePath;
 
     @Override
-    public void resultFilePath(int tag, List<String> paths, boolean isCancel,boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
+    public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel) {
             if (tag == REQUEST_SINGLE_MEDIA) {
                 if (paths != null && paths.size() > 0) {
                     //重新生成换装
-                    if(nowTemplateIsAnim==1){
+                    if (nowTemplateIsAnim == 1) {
                         presenter.toDressUp(paths.get(0), templateId);
 
-                    }else{
+                    } else {
                         resultFileDispose(paths.get(0));
                     }
                 }
@@ -1183,14 +1214,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
-
-
     /**
      * description ：切换素材后的回调
      * creation date: 2020/12/10
      * user : zhangtongju
      */
-    private void resultFileDispose( String path){
+    private void resultFileDispose(String path) {
         lastChooseFilePath = path;
         String mimeType;
 //        String path = paths.get(0);
@@ -1291,7 +1320,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 }
             });
         });
-        List<String>list=new ArrayList<>();
+        List<String> list = new ArrayList<>();
         list.add(path);
         manage.toMatting(list);
     }
@@ -1386,7 +1415,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public void initBottomLayout() {
         ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
         if (mTemplateModel.HasBj != null && mTemplateModel.HasBj) {
-            LogUtil.d("OOM3","0000");
+            LogUtil.d("OOM3", "0000");
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.PICTUREALBUM)) {
                 titlesHasBj = new String[]{getString(R.string.template), getString(R.string.template_edit), getString(R.string.template_bj),
                         getString(R.string.template_music)};
@@ -1399,20 +1428,20 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 titlesHasBj = new String[]{getString(R.string.template), getString(R.string.template_edit),
                         getString(R.string.template_music)};
             } else {
-                LogUtil.d("OOM3","0000+");
+                LogUtil.d("OOM3", "0000+");
                 titlesHasBj = new String[]{getString(R.string.template_edit),
                         getString(R.string.template_music)};
             }
         }
 
 
-        LogUtil.d("OOM3","1111");
+        LogUtil.d("OOM3", "1111");
 
         for (String title : titlesHasBj) {
             mTabEntities.add(new TabEntity(title, 0, 0));
         }
 
-        LogUtil.d("OOM3","2222");
+        LogUtil.d("OOM3", "2222");
         commonTabLayout.setTabData(mTabEntities);
         commonTabLayout.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
@@ -1448,7 +1477,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         });
 
-        LogUtil.d("OOM3","--------------");
+        LogUtil.d("OOM3", "--------------");
 
         ArrayList<View> pagerList = new ArrayList<>();
 
@@ -1537,7 +1566,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         TemplateViewPager adapter = new TemplateViewPager(pagerList);
         viewPager.setAdapter(adapter);
 
-        LogUtil.d("OOM3","底部初始化完成");
+        LogUtil.d("OOM3", "底部初始化完成");
     }
 
 
@@ -1571,9 +1600,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 //                        cb_0.setChecked(true);
                         nowChooseMusic = 1;
                     } else {
-                        cb_2.setImageResource(R.mipmap.template_btn_selected);
-                        nowChooseMusic = 0;
-//                        cb_2.setChecked(true);
+
+                        chooseTemplateMusic();
+
+//                        cb_2.setImageResource(R.mipmap.template_btn_selected);
+//                        nowChooseMusic = 0;
                         ToastUtil.showToast("当前素材不是视频");
                     }
                     break;

@@ -31,35 +31,33 @@ public class home_fag_itemMvpModel {
     private boolean isRefresh = true;
     private ArrayList<new_fag_template_item> listData = new ArrayList<>();
     private int selectPage = 1;
-    private String templateId,tc_id;
-    private int perPageCount=10;
+    private String templateId, tc_id;
+    private int perPageCount = 10;
     /**
      * 1是模板 2是背景
      */
     private int template_type;
     private int fromType;
 
-    public home_fag_itemMvpModel(Context context, homeItemMvpCallback callback,int fromType) {
+    public home_fag_itemMvpModel(Context context, homeItemMvpCallback callback, int fromType) {
         this.context = context;
         this.callback = callback;
-        this.fromType=fromType;
-        template_type=template_type==0?1:2;
+        this.fromType = fromType;
+        template_type = template_type == 0 ? 1 : 2;
     }
 
 
-    public int  getselectPage(){
+    public int getselectPage() {
         return selectPage;
     }
 
 
-
-    public void requestData(String templateId, String tc_id,int num) {
+    public void requestData(String templateId, String tc_id, int num) {
         this.templateId = templateId;
         this.tc_id = tc_id;
         //首页杂数据
-        requestFagData(false, true);
+        requestFagData(true, true);
     }
-
 
 
     public void initSmartRefreshLayout(SmartRefreshLayout smartRefreshLayout) {
@@ -86,23 +84,27 @@ public class home_fag_itemMvpModel {
      * param : template_type  1是模板 2是背景
      * user : zhangtongju
      */
-    private void requestFagData(boolean isCanRefresh, boolean isSave) {
+    private void requestFagData(boolean needRefresh, boolean isSave) {
         HashMap<String, String> params = new HashMap<>();
         LogUtil.d("templateId", "templateId=" + templateId);
         params.put("category_id", templateId);
-        if(fromType==4){
-            params.put("template_type","3");
-        }else{
-            params.put("template_type","1");
+        if (needRefresh) {
+            selectPage = 1;
+            perPageCount = 10;
+        }
+        if (fromType == 4) {
+            params.put("template_type", "3");
+        } else {
+            params.put("template_type", "1");
         }
         if (Integer.parseInt(tc_id) >= 0) {
             params.put("tc_id", tc_id);
         }
-        params.put("search","");
+        params.put("search", "");
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
         Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
-        LogUtil.d("OOM",StringUtil.beanToJSONString(params));
+        LogUtil.d("OOM", StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
             @Override
             protected void _onError(String message) {
@@ -112,8 +114,8 @@ public class home_fag_itemMvpModel {
 
             @Override
             protected void _onNext(List<new_fag_template_item> data) {
-                String str= StringUtil.beanToJSONString(data);
-                LogUtil.dLong("OOM","_onNext="+str);
+                String str = StringUtil.beanToJSONString(data);
+                LogUtil.dLong("OOM", "_onNext=" + str);
                 finishData();
                 if (isRefresh) {
                     listData.clear();
@@ -134,7 +136,7 @@ public class home_fag_itemMvpModel {
                 listData.addAll(data);
                 callback.showData(listData);
             }
-        }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, isSave, true, isCanRefresh);
+        }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, isSave, true, false);
     }
 
 
@@ -142,8 +144,6 @@ public class home_fag_itemMvpModel {
         smartRefreshLayout.finishRefresh();
         smartRefreshLayout.finishLoadMore();
     }
-
-
 
 
 }

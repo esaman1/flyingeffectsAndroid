@@ -274,7 +274,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
                 case R.id.iv_download_bj:
                     statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "10_bj_arrow");
-                    mMvpPresenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId() + "", templateItem,OldfromTo);
+                    mMvpPresenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId() + "", templateItem, OldfromTo);
                     break;
 
                 case R.id.ll_comment:
@@ -854,11 +854,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     @Override
     public void GetDressUpPathResult(List<String> paths) {
-
-        for (int i = 0; i < paths.size(); i++) {
-            LogUtil.d("OOM3", "换装之后保存本地的地址" + paths.get(i));
+        if (paths != null) {
+            for (int i = 0; i < paths.size(); i++) {
+                LogUtil.d("OOM3", "换装之后保存本地的地址" + paths.get(i));
+            }
+            intoTemplateActivity(paths, TemplateFilePath);
         }
-        intoTemplateActivity(paths, TemplateFilePath);
     }
 
 
@@ -959,10 +960,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         if (!isCancel && !ondestroy && paths != null && paths.size() > 0) {
             if (isFromCamera) {
                 if (OldfromTo.equals(FromToTemplate.ISBJ) || OldfromTo.equals(FromToTemplate.ISHOMEFROMBJ)) {
-                    LogUtil.d("OOM2","背景页面自己拍摄");
+                    LogUtil.d("OOM2", "背景页面自己拍摄");
                     statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "10_bj_success");
                 } else {
-                    LogUtil.d("OOM2","模板页面自己拍摄");
+                    LogUtil.d("OOM2", "模板页面自己拍摄");
                     statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "11_mb_success");
                 }
             }
