@@ -673,12 +673,15 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     @Override
     public void GetChangeDressUpData(List<String> paths) {
-        imgPath.clear();
-        imgPath.addAll(paths);
-        resultFileDispose(paths.get(0));
-        if(nowTemplateIsAnim==1){
-            refreshAllData();
+        if(paths!=null&&paths.size()>0){
+            imgPath.clear();
+            imgPath.addAll(paths);
+            resultFileDispose(paths.get(0));
+            if(nowTemplateIsAnim==1){
+                refreshAllData();
+            }
         }
+
     }
 
 

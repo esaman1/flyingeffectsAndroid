@@ -53,7 +53,7 @@
             android:textColor="@color/white"
             android:textSize="20dp"
             android:layout_marginBottom="27dp"
-            android:text="「 上下滑动 」查看下一个视频"
+            android:text="「 上下滑动 」查看下一个模板"
             android:layout_height="wrap_content"/>
 
 
