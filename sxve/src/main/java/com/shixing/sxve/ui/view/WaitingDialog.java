@@ -25,8 +25,10 @@ public class WaitingDialog {
     /**
      * 打开Loading
      */
+   static Context mContext;
     public static void openPragressDialog(Context context
     ) {
+        mContext=context;
         if (loadingDialog != null) {
             WaitingDialog.closePragressDialog();
         }
@@ -69,7 +71,7 @@ public class WaitingDialog {
      */
     public static void closePragressDialog() {
         Log.d("OOM4","closePragressDialog");
-        if (loadingDialog != null && loadingDialog.isShowing()) {
+        if (loadingDialog != null && loadingDialog.isShowing()&&mContext!=null) {
             loadingDialog.dismiss();
             loadingDialog = null;
         }
