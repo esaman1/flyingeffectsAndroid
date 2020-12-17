@@ -42,7 +42,6 @@ import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.SPHelper;
-import com.flyingeffects.com.manager.SituationTimer;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.ShowPraiseModel;
 import com.flyingeffects.com.ui.view.fragment.DressUpFragment;
@@ -108,7 +107,6 @@ public class HomeMainActivity extends FragmentActivity {
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private Timer timer;
     private TimerTask task;
-    private SituationTimer situationTimer;
     private TextView message_count;
     private NoSlidingViewPager viewpager_home;
 
@@ -147,8 +145,6 @@ public class HomeMainActivity extends FragmentActivity {
             requestMessageCount();
         }
         SegJni.nativeCreateSegHandler(HomeMainActivity.this, ConUtil.getFileContent(HomeMainActivity.this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
-        situationTimer = new SituationTimer();
-        situationTimer.startTimer(30);
         initYouMeng();
         statisticsUpgradeApp();
     }
@@ -416,7 +412,6 @@ public class HomeMainActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        situationTimer.destroyTimer();
         EventBus.getDefault().unregister(this);
     }
 
@@ -533,7 +528,10 @@ public class HomeMainActivity extends FragmentActivity {
         super.onResume();
         MobclickAgent.onResume(this);
         if (BaseConstans.hasLogin()) {
-            requestMessageCount();
+            if (!BaseApplication.getInstance().isBackHome) {
+                requestMessageCount();
+                BaseApplication.getInstance().isBackHome = true;
+            }
         } else {
             message_count.setVisibility(View.GONE);
         }
@@ -550,6 +548,7 @@ public class HomeMainActivity extends FragmentActivity {
     private void openMenu(int which) {
         setStatusBar();
         viewpager_home.setCurrentItem(which,false);
+        EventBus.getDefault().post(new RequestMessage());
     }
 
     @Override

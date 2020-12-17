@@ -336,7 +336,12 @@ public class CreateViewForAddText {
         this.status = status;
         if (status < 0) {
             this.navigationBarHeight = navigationBarHeight;
+            if (isKeyboardOpen) {
+                showWitchBtn(1);
+                isKeyboardOpen = false;
+            }
         }
+
     }
 
     /**

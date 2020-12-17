@@ -51,6 +51,8 @@ public class BaseApplication extends MultiDexApplication {
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private static BaseApplication baseApp;
     private boolean isActive = true;
+    /**默认从APP退到后台值为true*/
+    public boolean isBackHome = true;
 
     @Override
     public void onCreate() {
@@ -193,6 +195,7 @@ public class BaseApplication extends MultiDexApplication {
             if (!isActive && BaseConstans.getHasAdvertising() == 1) {
                 isActive = true;
                 LogUtil.d("BASEACTIVITY2", "进入了前台");
+                isBackHome = false;
                 intoKaiPing(System.currentTimeMillis() - onStopTime);
                 //  EventBus.getDefault().post(new isIntoBackground(false));  //消息通知
             }
@@ -209,6 +212,7 @@ public class BaseApplication extends MultiDexApplication {
                 // EventBus.getDefault().post(new isIntoBackground(true));  //消息通知
                 onStopTime = System.currentTimeMillis();
                 isActive = false;
+                isBackHome = true;
                 LogUtil.d("BASEACTIVITY2", "进入了后台");
             }
         }
