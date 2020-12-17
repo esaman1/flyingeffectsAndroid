@@ -41,6 +41,22 @@ public class WaitingDialog_progress {
         }
     }
 
+
+    /**
+     * 打开Loading
+     */
+    public void openProgressDialog(String title
+    ) {
+        if (loadingDialog != null) {
+            loadingDialog.dismiss();
+            loadingDialog = null;
+        }
+        loadingDialog = createLoadingDialog(context,title);
+        if (loadingDialog != null) {
+            loadingDialog.show();
+        }
+    }
+
     private TextView tv_progress;
 
     private Dialog createLoadingDialog(Context context) {
@@ -55,6 +71,24 @@ public class WaitingDialog_progress {
         loadingDialog.setCancelable(false);
         return loadingDialog;
     }
+
+
+
+    private Dialog createLoadingDialog(Context context,String title) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View v = inflater.inflate(R.layout.waitdialog, null, false);// 得到加载view
+        RelativeLayout layout = v.findViewById(R.id.loading);
+        tv_progress = v.findViewById(R.id.tv_show_alert);
+        tv_progress.setText(title);
+        loadingDialog = new Dialog(context, R.style.loading_dialog);// 创建自定义样式dialog
+        loadingDialog.setContentView(layout, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));// 设置布局
+        loadingDialog.setCanceledOnTouchOutside(false);
+        loadingDialog.setCancelable(false);
+        return loadingDialog;
+    }
+
+
 
     public void setProgress(String progress) {
         if (tv_progress != null) {

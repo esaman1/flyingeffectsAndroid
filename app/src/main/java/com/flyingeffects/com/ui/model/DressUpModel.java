@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.HumanMerageResult;
@@ -17,6 +18,9 @@ import com.flyingeffects.com.manager.huaweiObs;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.utils.faceUtil.ConUtil;
+import com.glidebitmappool.GlideBitmapPool;
+import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 import com.shixing.sxve.ui.view.WatingDialogProgressForTime;
@@ -50,15 +54,22 @@ public class DressUpModel {
     private String mUploadDressUpFolder;
     private String mCatchFolder;
     private DressUpCallback callback;
-    private String mRunCatchFolder;
+    private int downSuccessNum;
+    private boolean isNeedMatting;
 
-    public DressUpModel(Context context, DressUpCallback callback) {
+    public DressUpModel(Context context, DressUpCallback callback, Boolean isNeedMatting) {
         this.callback = callback;
         this.context = context;
+        mattingImage = new MattingImage();
+        downSuccessNum = 0;
         FileManager fileManager = new FileManager();
         mCatchFolder = fileManager.getFileCachePath(context, "runCatch");
         mUploadDressUpFolder = fileManager.getFileCachePath(context, "DressUpFolder");
-        mRunCatchFolder = fileManager.getFileCachePath(context, "runCatch");
+        this.isNeedMatting = isNeedMatting;
+        if (isNeedMatting) {
+            SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
+
+        }
     }
 
 
@@ -67,16 +78,19 @@ public class DressUpModel {
      * creation date: 2020/12/3
      * user : zhangtongju
      */
-//    WaitingDialog_progress progress;
+    WaitingDialog_progress progress;
 
     public void toDressUp(String ImagePath, String templateId) {
-//        progress = new WaitingDialog_progress(context);
-//        progress.setProgress("正在换装中...");
-//        progress.openProgressDialog();
+        progress = new WaitingDialog_progress(context);
+        progress.openProgressDialog("正在换装中...");
+//        WaitingDialog.openPragressDialog(context,"正在换装中...");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                toCompressImg(ImagePath, templateId);
+            }
+        }).start();
 
-
-        WaitingDialog.openPragressDialog(context,"正在换装中...");
-        toCompressImg(ImagePath,templateId);
 
     }
 
@@ -97,7 +111,7 @@ public class DressUpModel {
             public void call(String s) {
                 LogUtil.d("OOM3", "上传华为云成功,地址为" + s);
 //                informServers(uploadPath, template_id);
-                requestDressUpCallback(uploadPath,template_id);
+                requestDressUpCallback(uploadPath, template_id);
 
 
 //                File file=new File(path);
@@ -156,7 +170,7 @@ public class DressUpModel {
 
             @Override
             public void isDone() {
-                WaitingDialog.closePragressDialog();
+                progress.closePragressDialog();
             }
         });
     }
@@ -167,7 +181,7 @@ public class DressUpModel {
      * creation date: 2020/12/4
      * user : zhangtongju
      */
-    private void requestDressUpCallback(String path,String template_id) {
+    private void requestDressUpCallback(String path, String template_id) {
         HashMap<String, String> params = new HashMap<>();
         params.put("image", path);
         params.put("template_id", template_id);
@@ -180,7 +194,7 @@ public class DressUpModel {
             protected void _onError(String message) {
                 LogUtil.d("OOM3", "message=" + message);
                 ToastUtil.showToast(message);
-                WaitingDialog.closePragressDialog();
+                progress.closePragressDialog();
                 if (calculagraph != null) {
                     calculagraph.destroyTimer();
                 }
@@ -193,7 +207,7 @@ public class DressUpModel {
             protected void _onNext(List<HumanMerageResult> data) {
                 if (data != null && data.size() > 0) {
                     String str = StringUtil.beanToJSONString(data);
-                    LogUtil.d("OOM3", "请求的结果为："+str);
+                    LogUtil.d("OOM3", "请求的结果为：" + str);
                     GetDressUpPath(data);
 //                    if (callback != null) {
 //                        callback.isSuccess(data);
@@ -212,7 +226,7 @@ public class DressUpModel {
 
     public interface DressUpCallback {
 
-        void isSuccess(List<String>paths);
+        void isSuccess(List<String> paths);
 
     }
 
@@ -233,7 +247,7 @@ public class DressUpModel {
                             public void call(File file) {
                                 if (file != null) {
                                     uploadFileToHuawei(file.getPath(), templateId);
-                                }else{
+                                } else {
                                     uploadFileToHuawei(path, templateId);
                                 }
                             }
@@ -254,17 +268,17 @@ public class DressUpModel {
     }
 
 
-
-
-
     /**
      * description ：剥离出来有用的数据
      * creation date: 2020/12/10
      * user : zhangtongju
      */
+    ArrayList<String> listForKeepPath;
+
     public void GetDressUpPath(List<HumanMerageResult> paths) {
-        LogUtil.d("OOM3","整合数据");
-        ArrayList<String> list = new ArrayList<>();
+        LogUtil.d("OOM3", "整合数据");
+        int allSize = paths.size();
+        listForKeepPath = new ArrayList<>();
         Observable.from(paths).map(new Func1<HumanMerageResult, Bitmap>() {
             @Override
             public Bitmap call(HumanMerageResult humanMerageResult) {
@@ -273,28 +287,52 @@ public class DressUpModel {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
             @Override
             public void call(Bitmap bitmap) {
-                LogUtil.d("OOM3","整合bitmap");
-                String fileName = mRunCatchFolder + File.separator + UUID.randomUUID() + ".png";
-                BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName);
-                list.add(fileName);
-                if (list.size() == paths.size()) {
-                    LogUtil.d("OOM3","整合数据完成");
-                    if (callback != null) {
-                        callback.isSuccess(list);
-                        callback = null;
-                        WaitingDialog.closePragressDialog();
+                LogUtil.d("OOM3", "整合bitmap");
+                if (isNeedMatting) {
+                    toKeepFace(bitmap, allSize);
+                } else {
+                    String fileName = mCatchFolder + File.separator + UUID.randomUUID() + ".png";
+                    BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName);
+                    listForKeepPath.add(fileName);
+                    if (listForKeepPath.size() == allSize) {
+                        LogUtil.d("OOM3", "整合数据完成");
+                        if (callback != null) {
+                            callback.isSuccess(listForKeepPath);
+                            callback = null;
+                            progress.closePragressDialog();
+                        }
+                    } else {
+                        LogUtil.d("OOM3", "list.size()=" + listForKeepPath.size() + "paths.size()=" + allSize);
                     }
-                }else{
-                    LogUtil.d("OOM3","list.size()="+list.size()+"paths.size()="+paths.size());
                 }
             }
         });
     }
 
 
+    private MattingImage mattingImage;
 
+    private void toKeepFace(Bitmap path, int allSize) {
+        mattingImage.mattingImageForBitmap(path, (isSuccess, bp) -> {
+            downSuccessNum++;
+            LogUtil.d("OOM", "正在抠图" + downSuccessNum);
+            String fileName = mCatchFolder + File.separator + UUID.randomUUID() + ".png";
+            BitmapManager.getInstance().saveBitmapToPath(bp, fileName);
+            listForKeepPath.add(fileName);
+            GlideBitmapPool.putBitmap(bp);
+            if (listForKeepPath.size() == allSize) {
+                LogUtil.d("OOM3", "整合数据完成");
+                if (callback != null) {
+                    callback.isSuccess(listForKeepPath);
+                    callback = null;
+                    progress.closePragressDialog();
+                }
+            } else {
+                LogUtil.d("OOM3", "list.size()=" + listForKeepPath.size() + "paths.size()=" + allSize);
+            }
 
-
+        });
+    }
 
 
 }

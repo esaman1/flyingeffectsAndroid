@@ -268,7 +268,7 @@ public class DressUpPreviewActivity extends BaseActivity {
         } else {
             LogUtil.d("OOM3", "没得缓存" );
             //没有缓存
-            if (TemplateIdList.size() >= needChooseIndex) {
+            if (TemplateIdList.size() > needChooseIndex) {
                 String id = TemplateIdList.get(needChooseIndex);
                 ToNextDressUp(id);
             } else {
@@ -296,7 +296,7 @@ public class DressUpPreviewActivity extends BaseActivity {
                     showDressUp(true);
                 }
             }
-        });
+        },false);
         dressUpModel.toDressUp(localImage, templateId);
     }
 
