@@ -222,6 +222,12 @@ public interface ApiService {
     Observable<HttpResult<List<new_fag_template_item>>> getTemplate(@FieldMap Map<String, String> params);
 
 
+
+    @FormUrlEncoded
+    @POST("/api/mearge/templateList")
+    Observable<HttpResult<List<new_fag_template_item>>> getMeargeTemplate(@FieldMap Map<String, String> params);
+
+
     @FormUrlEncoded
     @POST("/api/photo/photoList")
     Observable<HttpResult<List<new_fag_template_item>>> photoList(@FieldMap Map<String, String> params);

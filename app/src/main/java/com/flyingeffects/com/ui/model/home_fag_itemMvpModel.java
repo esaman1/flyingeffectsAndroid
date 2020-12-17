@@ -103,7 +103,12 @@ public class home_fag_itemMvpModel {
         params.put("search", "");
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
-        Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
+        Observable ob;
+        if(fromType == 4){
+            ob = Api.getDefault().getMeargeTemplate(BaseConstans.getRequestHead(params));
+        }else{
+            ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
+        }
         LogUtil.d("OOM", StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
             @Override

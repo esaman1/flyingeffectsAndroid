@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.model;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Handler;
 import android.util.Log;
 
 import com.flyingeffects.com.R;
@@ -81,15 +82,24 @@ public class DressUpModel {
     WaitingDialog_progress progress;
 
     public void toDressUp(String ImagePath, String templateId) {
-        progress = new WaitingDialog_progress(context);
-        progress.openProgressDialog("正在换装中...");
-//        WaitingDialog.openPragressDialog(context,"正在换装中...");
-        new Thread(new Runnable() {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                toCompressImg(ImagePath, templateId);
+                progress = new WaitingDialog_progress(context);
+                progress.openProgressDialog("正在换装中...");
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        toCompressImg(ImagePath, templateId);
+                    }
+                }).start();
+
             }
-        }).start();
+        },200);
+
+
+
+
 
 
     }
