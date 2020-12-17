@@ -26,6 +26,7 @@ import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.ui.view.activity.UploadMaterialActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -35,6 +36,7 @@ import java.util.List;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -86,7 +88,7 @@ public class fragBjSearch extends BaseFragment {
         }
         initRecycler();
         initSmartRefreshLayout();
-        LogUtil.d("OOM2","isFrom="+isFrom);
+        LogUtil.d("OOM2", "isFrom=" + isFrom);
     }
 
     @Override
@@ -100,7 +102,7 @@ public class fragBjSearch extends BaseFragment {
 
 
     private void initRecycler() {
-        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), isFrom,true);
+        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), isFrom, true);
         StaggeredGridLayoutManager layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -228,7 +230,13 @@ public class fragBjSearch extends BaseFragment {
             } else {
                 params.put("template_type", "2");
             }
-            Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
+            Observable ob;
+            if (isFrom == 3) {
+                ob = Api.getDefault().getMeargeTemplate(BaseConstans.getRequestHead(params));
+            } else {
+                ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
+            }
+            LogUtil.d("oom3", "搜索" + StringUtil.beanToJSONString(params));
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
                 @Override
                 protected void _onError(String message) {
@@ -238,6 +246,7 @@ public class fragBjSearch extends BaseFragment {
 
                 @Override
                 protected void _onNext(List<new_fag_template_item> data) {
+                    LogUtil.d("oom3", "搜索结果" + StringUtil.beanToJSONString(data));
 
                     finishData();
                     if (isRefresh) {
@@ -304,7 +313,7 @@ public class fragBjSearch extends BaseFragment {
         switch (view.getId()) {
             case R.id.relative_add:
                 if (BaseConstans.hasLogin()) {
-                    AlbumManager.chooseVideo(getActivity(), 1, 1, (tag, paths, isCancel,  isFromCamera,albumFileList) -> {
+                    AlbumManager.chooseVideo(getActivity(), 1, 1, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
                         if (!isCancel) {
                             Intent intent = new Intent(getActivity(), UploadMaterialActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

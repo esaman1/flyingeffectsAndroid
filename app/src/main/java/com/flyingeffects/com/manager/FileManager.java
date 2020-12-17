@@ -26,7 +26,11 @@ public class FileManager {
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
                 || !Environment.isExternalStorageRemovable()) {
             //外部存储可用
-            cachePath = context.getExternalCacheDir().getPath();
+            if(context.getExternalCacheDir()!=null){
+                cachePath = context.getExternalCacheDir().getPath();
+            }else{
+                cachePath= context.getCacheDir().getPath();
+            }
         } else {
             //外部存储不可用
             cachePath = context.getCacheDir().getPath();

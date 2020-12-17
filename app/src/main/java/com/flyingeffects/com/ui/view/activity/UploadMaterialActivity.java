@@ -67,6 +67,7 @@ import butterknife.OnClick;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * description ：上傳背景頁面
@@ -530,6 +531,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
             params.put("videofile", huaweiVideoPath);
             params.put("audiourl", huaweiSound);
             params.put("isLandscape", isLandscape + "");
+
         }
 
 //        params.put("videofile", huaweiVideoPath);
@@ -538,7 +540,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         params.put("is_with_play", isChecked + ""); //1 表示可以合拍
         params.put("auth", ed_nickname.getText().toString());
         params.put("title", ed_describe.getText().toString());
-        params.put("auth_image", imageHeadPath);
+        params.put("auth_image", huaweiImagePath);
         params.put("image", coverImagePath);
         Observable ob;
         if (isFrom == 1) {
@@ -667,23 +669,33 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
             String nowTime = StringUtil.getCurrentTimeymd();
             String copyPath = "media/android/dressUpImage/" + nowTime + "/" + System.currentTimeMillis() + type;
             coverImagePath = "http://cdn.flying.flyingeffect.com/" + copyPath;
-            uploadImage(path, copyPath);
+            uploadImage(path, copyPath,false);
         }).start();
     }
 
 
-    private void uploadImage(String videoPath, String copyName) {
+    private void uploadImage(String videoPath, String copyName,boolean isUploadImage) {
         huaweiObs.getInstance().uploadFileToHawei(videoPath, copyName, new huaweiObs.Callback() {
             @Override
             public void isSuccess(String str) {
                 Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                     @Override
                     public void call(String s) {
-                        LogUtil.d("oom3","华为上传成功");
-                        requestData();
+
+                        Observable.just(s).observeOn(Schedulers.io()).subscribe(new Action1<String>() {
+                            @Override
+                            public void call(String s) {
+                                LogUtil.d("oom3","华为上传成功");
+                                if(isUploadImage){
+                                    requestData();
+                                }else{
+                                    uploadImage(imageHeadPath,getPathName(1,imageHeadPath),true);
+                                }
+
+                            }
+                        });
                     }
                 });
-
             }
         });
     }
