@@ -1220,56 +1220,65 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      * user : zhangtongju
      */
     private void resultFileDispose(String path) {
-        lastChooseFilePath = path;
-        String mimeType;
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                lastChooseFilePath = path;
+                String mimeType;
 //        String path = paths.get(0);
-        String extension = MimeTypeMap.getFileExtensionFromUrl(path);
-        if (!TextUtils.isEmpty(extension)) {
-            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-            if (mimeType == null) {
-                mimeType = GetPathType.getInstance().getPathType(path);
-            }
-        } else {
-            mimeType = GetPathType.getInstance().getPathType(path);
-        }
-        if (albumType.isImage(mimeType)) {
-            if (originalPath == null || originalPath.size() == 0) {
-                if (nowTemplateIsMattingVideo == 1) {
-                    mattingImage(path);
-                } else {
-                    //不需要抠图
-                    if (imgPath.size() > lastChoosePosition) {
-                        imgPath.set(lastChoosePosition, path);
-                    } else {
-                        imgPath.add(path);
+                String extension = MimeTypeMap.getFileExtensionFromUrl(path);
+                if (!TextUtils.isEmpty(extension)) {
+                    mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+                    if (mimeType == null) {
+                        mimeType = GetPathType.getInstance().getPathType(path);
                     }
-                    nowClickMediaUi2.setImageAsset(path);
-                    mTemplateViews.get(lastChoosePosition).invalidate();
-                    ModificationSingleThumbItem(path);
+                } else {
+                    mimeType = GetPathType.getInstance().getPathType(path);
                 }
-            } else {
-                mattingImage(path);
+                if (albumType.isImage(mimeType)) {
+                    if (originalPath == null || originalPath.size() == 0) {
+                        if (nowTemplateIsMattingVideo == 1) {
+                            mattingImage(path);
+                        } else {
+                            //不需要抠图
+                            if (imgPath.size() > lastChoosePosition) {
+                                imgPath.set(lastChoosePosition, path);
+                            } else {
+                                imgPath.add(path);
+                            }
+                            nowClickMediaUi2.setImageAsset(path);
+                            mTemplateViews.get(lastChoosePosition).invalidate();
+                            ModificationSingleThumbItem(path);
+
+                        }
+                    } else {
+                        mattingImage(path);
+                    }
+                    chooseTemplateMusic();
+                    templateThumbForMusic.findViewById(R.id.ll_choose_0).setVisibility(View.INVISIBLE);
+                } else {
+                    float needVideoTime = nowClickMediaUi2.getDuration() / (float) nowClickMediaUi2.getFps();
+                    if (needVideoTime < 0.5) {
+                        needVideoTime = 0.5f;
+                    }
+                    Intent intoCutVideo = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
+                    intoCutVideo.putExtra("needCropDuration", needVideoTime);
+                    intoCutVideo.putExtra("videoPath", path);
+                    intoCutVideo.putExtra("nowIsPhotographAlbum", nowIsPhotographAlbum);
+                    intoCutVideo.putExtra("picout", 1);
+                    intoCutVideo.putExtra("templateName", templateName);
+                    if (nowIsPhotographAlbum) {
+                        intoCutVideo.putExtra("isFrom", cutVideoTag);
+                    } else {
+                        intoCutVideo.putExtra("isFrom", 2);
+                    }
+                    startActivity(intoCutVideo);
+                }
             }
-            chooseTemplateMusic();
-            templateThumbForMusic.findViewById(R.id.ll_choose_0).setVisibility(View.INVISIBLE);
-        } else {
-            float needVideoTime = nowClickMediaUi2.getDuration() / (float) nowClickMediaUi2.getFps();
-            if (needVideoTime < 0.5) {
-                needVideoTime = 0.5f;
-            }
-            Intent intoCutVideo = new Intent(TemplateActivity.this, TemplateCutVideoActivity.class);
-            intoCutVideo.putExtra("needCropDuration", needVideoTime);
-            intoCutVideo.putExtra("videoPath", path);
-            intoCutVideo.putExtra("nowIsPhotographAlbum", nowIsPhotographAlbum);
-            intoCutVideo.putExtra("picout", 1);
-            intoCutVideo.putExtra("templateName", templateName);
-            if (nowIsPhotographAlbum) {
-                intoCutVideo.putExtra("isFrom", cutVideoTag);
-            } else {
-                intoCutVideo.putExtra("isFrom", 2);
-            }
-            startActivity(intoCutVideo);
-        }
+        });
+
+
     }
 
 
