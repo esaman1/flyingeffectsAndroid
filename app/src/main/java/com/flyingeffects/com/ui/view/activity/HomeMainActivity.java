@@ -443,6 +443,12 @@ public class HomeMainActivity extends FragmentActivity {
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("downSoundForMusic"));
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("downCutSoundForMusic"));
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("fontStyle"));
+
+
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("DressUpFolder"));
+
+
+
         }
 
     }

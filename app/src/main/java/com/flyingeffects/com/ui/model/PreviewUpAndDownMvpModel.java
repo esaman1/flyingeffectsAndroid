@@ -1037,7 +1037,6 @@ public class PreviewUpAndDownMvpModel {
      * user : zhangtongju
      */
     public void toDressUp(String path, String templateId, String templateTitle) {
-
         DressUpModel dressUpModel = new DressUpModel(context, new DressUpModel.DressUpCallback() {
             @Override
             public void isSuccess(List<String> paths) {
@@ -1051,7 +1050,7 @@ public class PreviewUpAndDownMvpModel {
                     context.startActivity(intent);
                 }
             }
-        });
+        },false);
 
         dressUpModel.toDressUp(path, templateId);
     }

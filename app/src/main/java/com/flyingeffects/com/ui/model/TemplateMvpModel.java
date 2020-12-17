@@ -138,7 +138,7 @@ public class TemplateMvpModel {
             public void isSuccess(List<String> paths) {
                 callback.GetChangeDressUpData(paths);
             }
-        });
+        },true);
 
         dressUpModel.toDressUp(path, templateId);
     }
@@ -260,11 +260,7 @@ public class TemplateMvpModel {
         Observable.create((Observable.OnSubscribe<Boolean>) subscriber -> {
             SXTemplate template = new SXTemplate(mTemplateFolder, SXTemplate.TemplateUsage.kForRender); //模板对象类，需要传入模板路径和使用方式
             String[] paths;
-            if (nowTemplateIsAnim == 1) {
-                paths = originalPath.toArray(new String[originalPath.size()]);
-            } else {
                 paths = mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
-            }
             paths = repairRandomPaths.randomPaths(paths);
             if (mTemplateModel.HasBj && !TextUtils.isEmpty(mTemplateModel.getBackgroundPath())) {
                 String[] newPaths = new String[paths.length + 1];

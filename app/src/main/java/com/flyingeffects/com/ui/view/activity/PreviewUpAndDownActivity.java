@@ -977,7 +977,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     public void isSuccess(List<String> paths) {
                         mMvpPresenter.GetDressUpPath(paths);
                     }
-                });
+                },true);
                 dressUpModel.toDressUp(paths.get(0), templateId);
 
             } else {
