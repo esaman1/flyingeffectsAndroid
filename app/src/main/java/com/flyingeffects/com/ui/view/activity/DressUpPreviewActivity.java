@@ -56,6 +56,8 @@ import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 
 /**
@@ -258,6 +260,17 @@ public class DressUpPreviewActivity extends BaseActivity {
             needChooseIndex = nowChooseIndex+1;
         } else {
             needChooseIndex = nowChooseIndex-1;
+        }
+
+        if(needChooseIndex==0){
+            LogUtil.d("OOM3", "隐藏" );
+            Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+                @Override
+                public void call(Integer integer) {
+                    iv_back.setVisibility(View.GONE);
+                }
+            });
+
         }
         if (listForKeep.size() > needChooseIndex) {
             LogUtil.d("OOM3", "有过缓存" );
