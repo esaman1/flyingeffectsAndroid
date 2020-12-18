@@ -561,8 +561,8 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
 
             @Override
             protected void _onNext(UserInfo data) {
-                String str = StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM3", "requestLogin=" + str);
+//                String str = StringUtil.beanToJSONString(data);
+//                LogUtil.d("OOM3", "requestLogin=" + str);
                 statisticsEventAffair.getInstance().setFlag(UploadMaterialActivity.this, "13_video");
                 WaitingDialog.closePragressDialog();
                 UploadMaterialActivity.this.finish();
@@ -689,7 +689,14 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                                 if(isUploadImage){
                                     requestData();
                                 }else{
-                                    uploadImage(imageHeadPath,getPathName(1,imageHeadPath),true);
+                                    if (imageHeadPath.contains("http")) {
+                                        huaweiImagePath=imageHeadPath;
+                                        LogUtil.d("OOM3", "huaweiImagePath="+huaweiImagePath);
+                                        requestData();
+                                    }else{
+                                        uploadImage(imageHeadPath,getPathName(1,imageHeadPath),true);
+                                    }
+
                                 }
 
                             }

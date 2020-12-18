@@ -577,7 +577,7 @@ public class StringUtil {
         // 计算缩放比例
         float scaleWidth = ((float) newWidth) / width;
         float scaleHeight = ((float) newHeight) / height;
-        scaleWidth=scaleWidth>scaleHeight?scaleWidth:scaleHeight;
+        scaleWidth = scaleWidth > scaleHeight ? scaleWidth : scaleHeight;
         // 取得想要缩放的matrix参数
         Matrix matrix = new Matrix();
         matrix.postScale(scaleWidth, scaleWidth);
@@ -1007,12 +1007,12 @@ public class StringUtil {
 
     /**
      * 把onject 转成json
+     *
      * @param bean
      * @return
      */
     public static String beanToJSONString(Object bean) {
-        return new Gson().toJson(bean);
-
+        return bean != null ? new Gson().toJson(bean) : "";
     }
 
 
