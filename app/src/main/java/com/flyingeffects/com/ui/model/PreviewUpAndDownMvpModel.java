@@ -659,7 +659,7 @@ public class PreviewUpAndDownMvpModel {
 
             case FromToTemplate.DRESSUP:
                 params.put("template_type", "3");
-                ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
+                ob = Api.getDefault().getMeargeTemplate(BaseConstans.getRequestHead(params));
                 break;
 
 
