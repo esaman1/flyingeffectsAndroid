@@ -104,20 +104,22 @@ public class fragHomePage extends BaseFragment {
             intent.putExtra("fromToMineCollect", false);
             intent.putExtra("nowSelectPage", selectPage);
             intent.putExtra("templateId", allData.get(position).getTemplate_id());
-
             intent.putExtra("toUserID", toUserId);
-            intent.putExtra("fromTo", FromToTemplate.ISMESSAGEMYLIKE);
-            if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISHOMEMYLIKE)) {
-                intent.putExtra("fromTo", FromToTemplate.ISHOMEMYLIKE);
-            } else {
-                if (isFrom == 1) {
-                    //我的作品
-                    intent.putExtra("fromTo", FromToTemplate.ISMESSAGEMYPRODUCTION);
-                    intent.putExtra("isTest", allData.get(position).getTest());
+            if(allData.get(position).getTemplate_type().equals("3")){
+                intent.putExtra("fromTo", FromToTemplate.DRESSUP);
+            }else{
+                if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISHOMEMYLIKE)) {
+                    intent.putExtra("fromTo", FromToTemplate.ISHOMEMYLIKE);
+                } else {
+                    if (isFrom == 1) {
+                        //我的作品
+                        intent.putExtra("fromTo", FromToTemplate.ISMESSAGEMYPRODUCTION);
+                        intent.putExtra("isTest", allData.get(position).getTest());
 
-                } else if (isFrom == 2) {
-                    //我的喜欢
-                    intent.putExtra("fromTo", FromToTemplate.ISMESSAGEMYLIKE);
+                    } else if (isFrom == 2) {
+                        //我的喜欢
+                        intent.putExtra("fromTo", FromToTemplate.ISMESSAGEMYLIKE);
+                    }
                 }
             }
             startActivity(intent);
