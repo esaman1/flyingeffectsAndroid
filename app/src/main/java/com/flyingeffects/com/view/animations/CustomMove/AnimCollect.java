@@ -29,26 +29,26 @@ public class AnimCollect {
     public int getAnimid(AnimType type) {
         switch (type) {
             case LEFTTORIGHT:
-                return 6;
-            case EIGHTBORTHER:
-                return 9;
-            case BOTTOMTOCENTER:
-                return 4;
-            case SWINGUPANDDOWN:
-                return 2;
-            case ROATION:
-                return 8;
-            case BOTTOMTOUP:
                 return 5;
-            case LEFTANDRIGHTDISSMISS:
+            case EIGHTBORTHER:
+                return 8;
+            case BOTTOMTOCENTER:
                 return 3;
-            case SUPERSTAR:
-                return 7;
-            case BOTTOMTOCENTER2:
+            case SWINGUPANDDOWN:
                 return 1;
+            case ROATION:
+                return 7;
+            case BOTTOMTOUP:
+                return 4;
+            case LEFTANDRIGHTDISSMISS:
+                return 2;
+            case SUPERSTAR:
+                return 6;
+            case BOTTOMTOCENTER2:
+                return 0;
 
             case SUPERSTAR2:
-                return 10;
+                return 9;
             case NULL:
                 return 0;
         }
