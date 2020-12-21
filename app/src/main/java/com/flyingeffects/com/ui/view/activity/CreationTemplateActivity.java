@@ -744,7 +744,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
                             TemplateMaterialItemView itemView = mSeekBarView.getTemplateMaterialItemViews().get(j);
                             if (itemView != null) {
-                                if (TextUtils.equals(String.valueOf(itemView.getIdentityID()), String.valueOf(stickerView.getId()))) {
+                                if (TextUtils.equals(String.valueOf(itemView.getIdentityID()), String.valueOf(stickerView.getStickerNoIncludeAnimId()))) {
                                     stickerView.setShowStickerStartTime(itemView.getStartTime());
                                     stickerView.setShowStickerEndTime(itemView.getEndTime());
                                 }
@@ -1692,7 +1692,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         LogUtil.d("playBGMMusic","timelineChange---id="+id);
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
-            if (TextUtils.equals(id, String.valueOf(stickerView.getId()))) {
+            if (TextUtils.equals(id, String.valueOf(stickerView.getStickerNoIncludeAnimId()))) {
                 if (!TextUtils.isEmpty(id) && id.equals("0") ) {
                     LogUtil.d("playBGMMusic","需要改变开始时间和结束时间---musicStartFirstTime="+startTime);
                     //需要改变开始时间和结束时间
@@ -1770,7 +1770,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
                         TemplateMaterialItemView itemView = mSeekBarView.getTemplateMaterialItemViews().get(j);
                         if (itemView != null) {
-                            if (TextUtils.equals(String.valueOf(itemView.getIdentityID()), String.valueOf(stickerView.getId()))) {
+                            if (TextUtils.equals(String.valueOf(itemView.getIdentityID()), String.valueOf(stickerView.getStickerNoIncludeAnimId()))) {
                                 stickerView.setShowStickerStartTime(itemView.getStartTime());
                                 stickerView.setShowStickerEndTime(itemView.getEndTime());
                             }

@@ -655,9 +655,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                         LogUtil.d("startPlayAnim", "当前动画复制的主id为" + targetStickerView.getId());
                         if (!TextUtils.isEmpty(targetStickerView.getClipPath())) {
                             //gif 贴纸，没得抠图
-                            copyGif(targetStickerView.getClipPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true,targetStickerView.getDownStickerTitle());
+                            copyGif(targetStickerView.getClipPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true, targetStickerView.getDownStickerTitle());
                         } else {
-                            copyGif(targetStickerView.getResPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true,targetStickerView.getDownStickerTitle());
+                            copyGif(targetStickerView.getResPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true, targetStickerView.getDownStickerTitle());
                         }
                         if (x == animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType())) {
                             LogUtil.d("OOM", "sublayerListPosition" + sublayerListPosition);
@@ -833,6 +833,8 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
      */
 
     private int stickerViewID = 0;
+    //不包含动画的id
+    private int stickerId=0;
     private boolean isIntoDragMove = false;
 
     private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim, boolean isText, String title) {
@@ -860,7 +862,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     stickView.dismissFrame();
                     //copy
-                    copyGif(stickView.getResPath(), path, stickView.getComeFrom(), stickView, stickView.getOriginalPath(), false,stickView.getDownStickerTitle());
+                    copyGif(stickView.getResPath(), path, stickView.getComeFrom(), stickView, stickView.getOriginalPath(), false, stickView.getDownStickerTitle());
                     if (!TextUtils.isEmpty(stickView.getOriginalPath())) {
                         if (albumType.isVideo(GetPathType.getInstance().getMediaType(stickView.getOriginalPath()))) {
                             if (UiStep.isFromDownBj) {
@@ -1172,7 +1174,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         viewLayerRelativeLayout.addView(stickView);
 
         if (!isFromShowAnim) {
-            callback.addStickerTimeLine(String.valueOf(stickerViewID), isText, isText ? stickView.getStickerText() : "", stickView);
+            callback.addStickerTimeLine(String.valueOf(stickerId), isText, isText ? stickView.getStickerText() : "", stickView);
+            stickView.setStickerNoIncludeAnimId(stickerId);
+            stickerId++;
         }
         stickerViewID++;
         if (isFirstAdd) {
@@ -1245,7 +1249,11 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                             if (stickerView == null) {
                                 addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, null, isFromShowAnim, false, title);
                             } else {
-                                addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, false, stickerView.getDownStickerTitle());
+                                if (stickerView != null) {
+                                    addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, false, stickerView.getDownStickerTitle());
+                                }else{
+                                    addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, false, null);
+                                }
                             }
                         }
                     });
