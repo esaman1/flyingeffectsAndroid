@@ -96,13 +96,32 @@ public class DressUpModel {
 
             }
         },200);
-
-
-
-
-
-
     }
+
+
+
+
+
+
+    private DressUpCatchCallback dressUpCatchCallback;
+    public void toDressUp(String ImagePath, String templateId,DressUpCatchCallback dressUpCatchCallback) {
+        this.dressUpCatchCallback=dressUpCatchCallback;
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                progress = new WaitingDialog_progress(context);
+                progress.openProgressDialog("正在换装中...");
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        toCompressImg(ImagePath, templateId);
+                    }
+                }).start();
+
+            }
+        },200);
+    }
+
 
 
     /**
@@ -121,6 +140,10 @@ public class DressUpModel {
             public void call(String s) {
                 LogUtil.d("OOM3", "上传华为云成功,地址为" + s);
 //                informServers(uploadPath, template_id);
+                if(dressUpCatchCallback!=null){
+                    dressUpCatchCallback.isSuccess(uploadPath);
+                }
+
                 requestDressUpCallback(uploadPath, template_id);
 
 
@@ -186,12 +209,25 @@ public class DressUpModel {
     }
 
 
+
+
+
+
+
+    public void RequestDressUp(String uploadPath,String template_id){
+        progress = new WaitingDialog_progress(context);
+        progress.openProgressDialog("正在换装中...");
+
+        requestDressUpCallback(uploadPath, template_id);
+    }
+
+
     /**
      * description ：通知后台,请求换装接口
      * creation date: 2020/12/4
      * user : zhangtongju
      */
-    private void requestDressUpCallback(String path, String template_id) {
+    private   void requestDressUpCallback(String path, String template_id) {
         HashMap<String, String> params = new HashMap<>();
         params.put("image", path);
         params.put("template_id", template_id);
@@ -235,9 +271,12 @@ public class DressUpModel {
 
 
     public interface DressUpCallback {
-
         void isSuccess(List<String> paths);
+    }
 
+
+    public interface DressUpCatchCallback {
+        void isSuccess(String uploadPath);
     }
 
 
