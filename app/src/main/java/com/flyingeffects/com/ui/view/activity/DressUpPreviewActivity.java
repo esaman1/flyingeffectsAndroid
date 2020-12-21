@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageView;
@@ -257,13 +258,13 @@ public class DressUpPreviewActivity extends BaseActivity {
         LogUtil.d("OOM3", "nowChooseIndex=" + nowChooseIndex);
         int needChooseIndex;
         if (isNext) {
-            needChooseIndex = nowChooseIndex+1;
+            needChooseIndex = nowChooseIndex + 1;
         } else {
-            needChooseIndex = nowChooseIndex-1;
+            needChooseIndex = nowChooseIndex - 1;
         }
 
-        if(needChooseIndex==0){
-            LogUtil.d("OOM3", "隐藏" );
+        if (needChooseIndex == 0) {
+            LogUtil.d("OOM3", "隐藏");
             Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
                 @Override
                 public void call(Integer integer) {
@@ -273,24 +274,27 @@ public class DressUpPreviewActivity extends BaseActivity {
 
         }
         if (listForKeep.size() > needChooseIndex) {
-            LogUtil.d("OOM3", "有过缓存" );
+            LogUtil.d("OOM3", "有过缓存");
             //有过缓存
             String needShowPath = listForKeep.get(needChooseIndex);
             nowChooseIndex = needChooseIndex;
             Glide.with(this).load(needShowPath).apply(new RequestOptions().placeholder(R.mipmap.placeholder)).into(iv_show_content);
         } else {
-            LogUtil.d("OOM3", "没得缓存" );
+            LogUtil.d("OOM3", "没得缓存");
             //没有缓存
             if (TemplateIdList.size() > needChooseIndex) {
                 String id = TemplateIdList.get(needChooseIndex);
                 ToNextDressUp(id);
             } else {
                 ToastUtil.showToast("没有更多换装了");
-                LogUtil.d("OOM3", "没有更多换装了" );
+                LogUtil.d("OOM3", "没有更多换装了");
             }
         }
     }
 
+
+    private String keepUploadPath;
+    private String keepTemplate_id;
 
     /**
      * description ：请求下一条数据
@@ -304,13 +308,22 @@ public class DressUpPreviewActivity extends BaseActivity {
                 if (paths != null && paths.size() > 0) {
                     showAndSaveImage(paths.get(0));
                     nowChooseIndex = nowChooseIndex + 1;
-                }else{
+                } else {
                     TemplateIdList.remove(nowChooseIndex);
                     showDressUp(true);
                 }
             }
-        },false);
-        dressUpModel.toDressUp(localImage, templateId);
+        }, false);
+        if(!TextUtils.isEmpty(keepUploadPath)){
+            dressUpModel.RequestDressUp(keepUploadPath,templateId);
+        }else{
+            dressUpModel.toDressUp(localImage, templateId, new DressUpModel.DressUpCatchCallback() {
+                @Override
+                public void isSuccess(String uploadPath) {
+                    keepUploadPath = uploadPath;
+                }
+            });
+        }
     }
 
 
