@@ -77,6 +77,18 @@ import java.util.List;
  * @date 2019/12/19
  */
 public class StickerView<D extends Drawable> extends View implements TickerAnimated {
+
+
+    public int getStickerNoIncludeAnimId() {
+        return stickerNoIncludeAnimId;
+    }
+
+    public void setStickerNoIncludeAnimId(int stickerNoIncludeAnimId) {
+        this.stickerNoIncludeAnimId = stickerNoIncludeAnimId;
+    }
+
+    private int stickerNoIncludeAnimId;
+
     private static final String TAG = "StickerView";
     /**
      * 高光
