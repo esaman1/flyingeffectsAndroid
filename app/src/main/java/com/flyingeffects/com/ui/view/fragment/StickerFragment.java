@@ -178,7 +178,7 @@ public class StickerFragment extends BaseFragment {
                 //如果已经下载了，就用已经下载的，但是如果已经展示了，就不能复用，需要类似于复制功能，只针对gif
                 String copyName = mGifFolder + File.separator + System.currentTimeMillis() + format;
                 if (mStickerListener != null) {
-                    mStickerListener.copyGif(fileName, copyName);
+                    mStickerListener.copyGif(fileName, copyName,title);
                 }
                 WaitingDialog.closePragressDialog();
                 return;
@@ -270,7 +270,7 @@ public class StickerFragment extends BaseFragment {
     public interface StickerListener {
         void addSticker(String stickerPath,String name);
 
-        void copyGif(String fileName, String copyName);
+        void copyGif(String fileName, String copyName,String title);
 
         void clickItemSelected(int position);
     }

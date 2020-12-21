@@ -658,9 +658,9 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                         LogUtil.d("startPlayAnim", "当前动画复制的主id为" + targetStickerView.getId());
                         if (!TextUtils.isEmpty(targetStickerView.getClipPath())) {
                             //gif 贴纸，没得抠图
-                            copyGif(targetStickerView.getClipPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true);
+                            copyGif(targetStickerView.getClipPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true,targetStickerView.getDownStickerTitle());
                         } else {
-                            copyGif(targetStickerView.getResPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true);
+                            copyGif(targetStickerView.getResPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true,targetStickerView.getDownStickerTitle());
                         }
                         if (x == animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType())) {
                             ArrayList<StickerView> list = new ArrayList<>();
@@ -748,7 +748,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
      * param :  getResPath 图片地址，path  isFromAubum 是否来自相册 stickerView 原贴纸 OriginalPath 原图地址 isFromShowAnim 是否是因为来自动画分身
      * user : zhangtongju
      */
-    private void copyGif(String getResPath, String path, boolean isFromAubum, StickerView stickerView, String OriginalPath, boolean isFromShowAnim) {
+    private void copyGif(String getResPath, String path, boolean isFromAubum, StickerView stickerView, String OriginalPath, boolean isFromShowAnim,String title) {
 
         if (stickerView != null && stickerView.getIsTextSticker()) {
             addSticker("", false, false, false, "", true, stickerView, isFromShowAnim, true,null);
@@ -767,7 +767,13 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                     FileUtil.copyFile(new File(getResPath), copyName, new FileUtil.copySucceed() {
                         @Override
                         public void isSucceed() {
-                            addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, false,stickerView.getDownStickerTitle());
+
+                            if (stickerView == null) {
+                                addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, null, isFromShowAnim, false, title);
+                            } else {
+                                addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, false, stickerView.getDownStickerTitle());
+                            }
+
                         }
                     });
                 } else {
@@ -814,7 +820,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     stickView.dismissFrame();
                     //copy
-                    copyGif(stickView.getResPath(), path, stickView.getComeFrom(), stickView, stickView.getOriginalPath(), false);
+                    copyGif(stickView.getResPath(), path, stickView.getComeFrom(), stickView, stickView.getOriginalPath(), false,title);
                     if (!TextUtils.isEmpty(stickView.getOriginalPath())) {
                         if (albumType.isVideo(GetPathType.getInstance().getMediaType(stickView.getOriginalPath()))) {
                             if (UiStep.isFromDownBj) {
@@ -1438,8 +1444,8 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
     }
 
     @Override
-    public void copyGif(String fileName, String copyName) {
-        copyGif(fileName, copyName, false, null, fileName, false);
+    public void copyGif(String fileName, String copyName,String title) {
+        copyGif(fileName, copyName, false, null, fileName, false,title);
     }
 
     @Override
