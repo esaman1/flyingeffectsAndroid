@@ -72,6 +72,8 @@ public class AnimCollect {
             case BOTTOMTOUP:
             case LEFTANDRIGHTDISSMISS:
                 return 1;
+            case CIRCLECLONED:
+                return 10;
         }
         return 0;
     }
@@ -176,6 +178,12 @@ public class AnimCollect {
                 ItemCloned2 itemCloned2 = new ItemCloned2();
                 itemCloned2.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(itemCloned2);
+                break;
+
+
+            case  CIRCLECLONED:
+
+
                 break;
         }
     }
@@ -416,6 +424,29 @@ public class AnimCollect {
                     listForKeepBaseAnimMode.add(itemBottomToCenter2);
                 }
                 break;
+
+
+            case CIRCLECLONED:
+//                nowMainLayerId = mainStickerView.getId();
+//                ItemBottomToCenter2 itemBottomToCenter2 = null;
+//                for (baseAnimModel model : listForKeepBaseAnimMode
+//                ) {
+//                    if (model.getLayerId()== nowMainLayerId) {
+//                        itemBottomToCenter2 = (ItemBottomToCenter2) model;
+//                        break;
+//                    }
+//                }
+//                if (itemBottomToCenter2 != null) {
+//                    (itemBottomToCenter2).toChangeSubLayer(callback, percentage);
+//                } else {
+//                    itemBottomToCenter2 = new ItemBottomToCenter2();
+//                    itemBottomToCenter2.setLayerId(mainStickerView.getId());
+//                    itemBottomToCenter2.initToChangeSubLayer(mainStickerView, callback, percentage);
+//                    listForKeepBaseAnimMode.add(itemBottomToCenter2);
+//                }
+//
+                break;
+
         }
     }
 
