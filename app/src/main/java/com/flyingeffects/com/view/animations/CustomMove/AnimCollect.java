@@ -533,6 +533,11 @@ public class AnimCollect {
 
 
 
+        StickerAnim stickerAnim11 = new StickerAnim();
+        stickerAnim11.setName("圆圈分身");
+        stickerAnim11.setIcon(R.mipmap.anim_ybs);
+        stickerAnim11.setAnimType(AnimType.CIRCLECLONED);
+        list.add(stickerAnim11);
 
 
 
