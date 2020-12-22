@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -81,7 +80,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
-
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -192,10 +190,10 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     public void ChangeTextLabe(String text) {
         if (nowChooseStickerView.getIsTextSticker()) {
             if (TextUtils.isEmpty(text)) {
-                deleteStickView(nowChooseStickerView);
+                deleteStickView(nowChooseStickerView,false);
             } else {
                 nowChooseStickerView.setStickerText(text);
-                callback.updateTimeLineSickerText(text, String.valueOf(nowChooseStickerView.getId()));
+                callback.updateTimeLineSickerText(text, String.valueOf(nowChooseStickerView.getStickerNoIncludeAnimId()));
             }
         }
     }
@@ -735,7 +733,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 //删除动画贴纸
                 if (nowChooseSubLayerAnimList != null && nowChooseSubLayerAnimList.size() > 0) {
                     for (StickerView stickerView : nowChooseSubLayerAnimList) {
-                        deleteStickView(stickerView);
+                        deleteStickView(stickerView,true);
                     }
                 }
             }
@@ -762,7 +760,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         }
 
         for (StickerView stickerView : needDeleteList) {
-            deleteStickView(stickerView);
+            deleteStickView(stickerView,false);
         }
 
     }
@@ -833,6 +831,8 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
      */
 
     private int stickerViewID = 0;
+    //不包含动画的id
+    private int stickerId=0;
     private boolean isIntoDragMove = false;
 
     private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim, boolean isText, String title) {
@@ -855,7 +855,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                     if (stickView.getIsTextSticker()) {
                         callback.hineTextDialog();
                     }
-                    deleteStickView(stickView);
+                    deleteStickView(stickView,false);
 
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     stickView.dismissFrame();
@@ -924,7 +924,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                                 callback.changFirstVideoSticker(paths.get(0));
                                                 callback.getBgmPath("");
                                             }
-                                            callback.modifyTimeLineSickerPath(String.valueOf(stickView.getId()), paths.get(0));
+                                            callback.modifyTimeLineSickerPath(String.valueOf(stickView.getStickerNoIncludeAnimId()), paths.get(0));
                                         });
                                     });
                                 } else {
@@ -937,7 +937,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                             } else {
                                                 stickView.changeImage(s, false);
                                             }
-                                            callback.modifyTimeLineSickerPath(String.valueOf(stickView.getId()), paths.get(0));
+                                            callback.modifyTimeLineSickerPath(String.valueOf(stickView.getStickerNoIncludeAnimId()), paths.get(0));
                                         });
                                     });
                                     manage.toMatting(paths);
@@ -982,7 +982,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
             @Override
             public void stickerClickShowFrame() {
-                callback.showTimeLineSickerArrow(String.valueOf(stickView.getId()));
+                callback.showTimeLineSickerArrow(String.valueOf(stickView.getStickerNoIncludeAnimId()));
             }
 
         });
@@ -1172,7 +1172,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         viewLayerRelativeLayout.addView(stickView);
 
         if (!isFromShowAnim) {
-            callback.addStickerTimeLine(String.valueOf(stickerViewID), isText, isText ? stickView.getStickerText() : "", stickView);
+            callback.addStickerTimeLine(String.valueOf(stickerId), isText, isText ? stickView.getStickerText() : "", stickView);
+            stickView.setStickerNoIncludeAnimId(stickerId);
+            stickerId++;
         }
         stickerViewID++;
         if (isFirstAdd) {
@@ -1184,9 +1186,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         }
     }
 
-    private void deleteStickView(StickerView stickView) {
+    private void deleteStickView(StickerView stickView,boolean isAnimDelete) {
         viewLayerRelativeLayout.removeView(stickView);
-        int nowId = stickView.getId();
+        int nowId = stickView.getStickerNoIncludeAnimId();
         if (stickView.isFirstAddSticker()) {
             if (stickView.isOpenVoice()) {
                 stickView.setOpenVoice(false);
@@ -1194,8 +1196,10 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 videoVoicePath = "";
             }
         }
-        callback.deleteTimeLineSicker(String.valueOf(nowId));
-        deletedListForSticker(nowId);
+        if (!isAnimDelete) {
+            callback.deleteTimeLineSicker(String.valueOf(nowId));
+        }
+        deletedListForSticker(stickView.getId());
     }
 
 
@@ -1907,7 +1911,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         }
 
         for (StickerView stickerView : needDeleteTextList) {
-            deleteStickView(stickerView);
+            deleteStickView(stickerView,false);
         }
     }
 
@@ -1959,7 +1963,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         for (int i = 0; i < listForStickerModel.size(); i++) {
             AnimStickerModel model = listForStickerModel.get(i);
             StickerView stickerView = model.getStickerView();
-            if (TextUtils.equals(id, String.valueOf(stickerView.getId()))) {
+            if (TextUtils.equals(id, String.valueOf(stickerView.getStickerNoIncludeAnimId()))) {
                 nowChooseStickerView = stickerView;
                 break;
             }
