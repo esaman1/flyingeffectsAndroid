@@ -73,6 +73,7 @@ public class AnimCollect {
             case LEFTANDRIGHTDISSMISS:
                 return 1;
             case CIRCLECLONED:
+            case CIRCLECLONED2:
                 return 10;
         }
         return 0;
@@ -182,9 +183,17 @@ public class AnimCollect {
 
 
             case  CIRCLECLONED:
-
-
+                CircleCloned  circleCloned = new CircleCloned();
+                circleCloned.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(circleCloned);
                 break;
+
+            case  CIRCLECLONED2:
+                CircleCloned2  circleCloned2 = new CircleCloned2();
+                circleCloned2.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(circleCloned2);
+                break;
+
         }
     }
 
@@ -565,10 +574,18 @@ public class AnimCollect {
 
 
         StickerAnim stickerAnim11 = new StickerAnim();
-        stickerAnim11.setName("圆圈分身");
+        stickerAnim11.setName("圆圈");
         stickerAnim11.setIcon(R.mipmap.anim_ybs);
         stickerAnim11.setAnimType(AnimType.CIRCLECLONED);
         list.add(stickerAnim11);
+
+
+        StickerAnim stickerAnim12 = new StickerAnim();
+        stickerAnim12.setName("圆圈分身");
+        stickerAnim12.setIcon(R.mipmap.anim_ybs);
+        stickerAnim12.setAnimType(AnimType.CIRCLECLONED2);
+        list.add(stickerAnim12);
+
 
 
 

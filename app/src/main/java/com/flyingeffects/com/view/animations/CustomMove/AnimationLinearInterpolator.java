@@ -27,9 +27,9 @@ public class AnimationLinearInterpolator {
     private int nowDuration;
 
     /**
-     *差值类型  0表示匀速， 1 表示正弦函数
+     * 差值类型  0表示匀速， 1 表示正弦函数
      */
-    private int interpolatorType=0;
+    private int interpolatorType = 0;
 
 
     /**
@@ -43,12 +43,9 @@ public class AnimationLinearInterpolator {
         this.callback = callback;
     }
 
-    public void setInterpolatorType(int interpolatorType){
-        this.interpolatorType=interpolatorType;
+    public void setInterpolatorType(int interpolatorType) {
+        this.interpolatorType = interpolatorType;
     }
-
-
-
 
 
     /**
@@ -72,19 +69,26 @@ public class AnimationLinearInterpolator {
 
 
     public void setNowDuration(int duration) {
-      this.nowDuration=duration;
+        this.nowDuration = duration;
     }
 
 
-      private  boolean isCirculation=true;
-    public void SetCirculation(boolean isCirculation){
-        this.isCirculation=isCirculation;
+    private boolean isCirculation = true;
+
+
+    /**
+     * description ：是否循环
+     * creation date: 2020/12/22
+     * user : zhangtongju
+     */
+    public void SetCirculation(boolean isCirculation) {
+        this.isCirculation = isCirculation;
     }
 
     public void PlayAnimationNoTimer(float percentage) {
-        if(interpolatorType==0){
+        if (interpolatorType == 0) {
             callback.progress(getNowInterpolatorProgress(percentage), isDone);
-        }else{
+        } else {
             callback.progress(getNowCycleInterpolatorProgress(percentage), isDone);
         }
     }
@@ -94,7 +98,7 @@ public class AnimationLinearInterpolator {
      * 匀速运动
      */
     public float getNowInterpolatorProgress(float progress) {
-        LogUtil.d("InterpolatorProgress","当前动画没消失匀速运动");
+        LogUtil.d("InterpolatorProgress", "当前动画没消失匀速运动");
         LinearInterpolator linearInterpolator = new LinearInterpolator();
         return linearInterpolator.getInterpolation(progress);
     }
@@ -107,12 +111,10 @@ public class AnimationLinearInterpolator {
      */
 
     public float getNowCycleInterpolatorProgress(float progress) {
-        LogUtil.d("InterpolatorProgress","当前动画没消失正玄函数");
+        LogUtil.d("InterpolatorProgress", "当前动画没消失正玄函数");
         CycleInterpolator cycleInterpolator = new CycleInterpolator(1);
         return cycleInterpolator.getInterpolation(progress);
     }
-
-
 
 
     /**
@@ -167,20 +169,20 @@ public class AnimationLinearInterpolator {
                 @Override
                 public void run() {
                     if (nowDuration >= totalDuration) {
-                        if(!isCirculation){
+                        if (!isCirculation) {
                             StopAnimation();
                             callback.progress(1, isDone);
-                        }else{
+                        } else {
                             nowDuration = 0;
                         }
                     }
                     nowDuration += 5;
                     float nowFloatTime = nowDuration / (float) totalDuration;
                     float progress;
-                    if(interpolatorType==0){
-                        progress= getNowInterpolatorProgress(nowFloatTime);
-                    }else{
-                        progress= getNowCycleInterpolatorProgress(nowFloatTime);
+                    if (interpolatorType == 0) {
+                        progress = getNowInterpolatorProgress(nowFloatTime);
+                    } else {
+                        progress = getNowCycleInterpolatorProgress(nowFloatTime);
                     }
                     callback.progress(progress, isDone);
 

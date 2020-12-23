@@ -14,12 +14,12 @@ import java.util.List;
 
 
 /**
- * description ：圆圈
+ * description ：圆圈分身
  * creation date: 2020/5/25
  * user : zhangtongju
  */
 
-public class CircleCloned extends baseAnimModel {
+public class CircleCloned2 extends baseAnimModel {
 
 
 
@@ -32,29 +32,44 @@ public class CircleCloned extends baseAnimModel {
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
         float[] pos = new float[2];
         float[] tan = new float[2];
+
+
         PathMeasure mPathMeasure = setPathMeasure(mainStickerView.getmHelpBoxRectH(), mainStickerView.getMBoxCenterX(), mainStickerView.getMBoxCenterY());
         float totalDistancePathMeasure = mPathMeasure.getLength();
-        float perDistance = totalDistancePathMeasure / (float) 10;
         //第一个参数为总时长
         animationLinearInterpolator = new AnimationLinearInterpolator(5000, (progress, isDone) -> {
             //主图层应该走的位置
             float nowDistance = totalDistancePathMeasure * progress;
+
+            LogUtil.d("OOM5","progress=="+progress);
             mPathMeasure.getPosTan(nowDistance, pos, tan);
+            //第一个一直在动
             mainStickerView.toTranMoveXY(pos[0], pos[1]);
+
             if(subLayer!=null){
+                int x= (int) (progress*100);
+                LogUtil.d("OOM5","x=="+x);
+                if(x>9){
+                    x=9;
+                }
+                int flashback=9-x;
+
+                if(subLayer.size()>flashback){
+                    StickerView subNowChoose = subLayer.get(flashback);
+                    if(subNowChoose!=null){
+                        subLayer.remove(flashback);
+                    }
+                }
+
                 for (int i = 0; i < subLayer.size(); i++) {
                     StickerView sub = subLayer.get(i);
                     if (sub != null) {
-                        float needDistance = perDistance * i + nowDistance;
-                        if (needDistance > totalDistancePathMeasure) {
-                            needDistance = needDistance - totalDistancePathMeasure;
-                        }
-                        mPathMeasure.getPosTan(needDistance, pos, tan);
                         sub.toTranMoveXY(pos[0], pos[1]);
                     }
                 }
             }
         });
+        animationLinearInterpolator.SetCirculation(false);
         animationLinearInterpolator.PlayAnimation();
     }
 
