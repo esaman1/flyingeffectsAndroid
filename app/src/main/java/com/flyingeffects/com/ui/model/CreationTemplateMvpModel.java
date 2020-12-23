@@ -833,6 +833,8 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
      */
 
     private int stickerViewID = 0;
+    //不包含动画的id
+    private int stickerId=0;
     private boolean isIntoDragMove = false;
 
     private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim, boolean isText, String title) {
@@ -1172,7 +1174,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         viewLayerRelativeLayout.addView(stickView);
 
         if (!isFromShowAnim) {
-            callback.addStickerTimeLine(String.valueOf(stickerViewID), isText, isText ? stickView.getStickerText() : "", stickView);
+            callback.addStickerTimeLine(String.valueOf(stickerId), isText, isText ? stickView.getStickerText() : "", stickView);
+            stickView.setStickerNoIncludeAnimId(stickerId);
+            stickerId++;
         }
         stickerViewID++;
         if (isFirstAdd) {
