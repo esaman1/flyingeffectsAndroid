@@ -62,7 +62,7 @@ public class CreationTemplatePreviewModel {
     //每100毫秒更新一次进度指针
     private static final int updateCursorIntervalMs = 100;
     private float videoRatio = 1;
-    private int realityDuration;
+    private long realityDuration;
 
     public CreationTemplatePreviewModel(Context context, CreationTemplatePreviewMvpCallback callback, String videoPath) {
         this.mContext = context;

@@ -11,8 +11,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.MineCommentEnity;
 import com.flyingeffects.com.enity.MineZanEnity;
+import com.flyingeffects.com.utils.TimeUtils;
 
 import java.util.List;
 
@@ -38,14 +38,13 @@ public class Mine_zan_adapter extends BaseQuickAdapter<MineZanEnity, BaseViewHol
 
     @Override
     protected void convert(final BaseViewHolder helper, final MineZanEnity item) {
-//        int offset = helper.getLayoutPosition();
-
         if(isFrom==1){
             helper.setText(R.id.tv_title,item.getNickname());
         }else{
             helper.setText(R.id.tv_title,item.getAuth());
         }
-
+        helper.setGone(R.id.tv_content,false);
+        helper.setText(R.id.tv_time, TimeUtils.getNewChatTime(item.getCreate_time()));
         helper.addOnClickListener(R.id.iv_icon);
         helper.addOnClickListener(R.id.tv_title);
 

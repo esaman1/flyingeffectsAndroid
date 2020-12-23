@@ -121,7 +121,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
     /**
      * 默认视频时长,如果没选择背景的时候会用到
      */
-    private int defaultVideoDuration = 0;
+    private long defaultVideoDuration = 0;
     private WaitingDialogProgressNowAnim dialog;
     private ArrayList<StickerView> needDeleteList = new ArrayList<>();
     private int dialogProgress;
@@ -174,7 +174,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
     }
 
 
-    private List<Integer> perSticker = new ArrayList<>();
+    private List<Long> perSticker = new ArrayList<>();
 
     private void getPlayVideoDuration() {
         defaultVideoDuration = 0;
@@ -207,7 +207,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
             if (perSticker.size() == 1) {
                 defaultVideoDuration = perSticker.get(0);
             } else {
-                for (int duration : perSticker
+                for (long duration : perSticker
                 ) {
                     if (defaultVideoDuration < duration) {
                         defaultVideoDuration = duration;

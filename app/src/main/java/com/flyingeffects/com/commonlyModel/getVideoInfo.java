@@ -4,6 +4,7 @@ import android.media.MediaPlayer;
 
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.utils.LogUtil;
+import com.lansosdk.videoeditor.MediaInfo;
 
 import java.io.IOException;
 
@@ -26,13 +27,16 @@ public class getVideoInfo {
     public VideoInfo getRingDuring(String videoPath) {
         VideoInfo info=new VideoInfo();
         MediaPlayer mediaPlayer = new MediaPlayer();
+        MediaInfo mediaInfo = new MediaInfo(videoPath);
         try {
             info  =new VideoInfo();
             mediaPlayer.setDataSource(videoPath);
             mediaPlayer.prepare();
-            info.setDuration(mediaPlayer.getDuration());
             info.setVideoHeight(mediaPlayer.getVideoHeight());
             info.setVideoWidth(mediaPlayer.getVideoWidth());
+            mediaInfo.prepare();
+            info.setDuration((long) (mediaInfo.vDuration*1000));
+            mediaInfo.release();
         } catch (IOException e) {
             e.printStackTrace();
         }

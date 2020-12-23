@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +18,7 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.BitmapUtils;
 import com.flyingeffects.com.utils.FilterUtils;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.animations.CustomMove.AnimCollect;
 import com.flyingeffects.com.view.animations.CustomMove.AnimType;
 import com.flyingeffects.com.view.animations.CustomMove.LayerAnimCallback;
@@ -32,13 +32,19 @@ import com.lansosdk.box.Layer;
 import com.lansosdk.box.SubLayer;
 import com.lansosdk.box.VideoFrameLayer;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
+import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.albumType;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * 蓝松后台绘制方法
@@ -72,11 +78,6 @@ public class backgroundDraw {
      */
     private ArrayList<hasAnimLayer> hasAnimLayerList = new ArrayList<>();
 
-    /**
-     * 总时间,微秒 1=1000=1000*1000
-     */
-    private long totleRenderTime;
-
     private AnimCollect animCollect;
 
     private boolean nowUiIsLandscape;
@@ -104,7 +105,10 @@ public class backgroundDraw {
         duration = needKeepDuration;
         if (duration == 0) {
             if (!TextUtils.isEmpty(videoPath)) {
-                duration = getRingDuring(videoPath);
+                MediaInfo mediaInfo = new MediaInfo(videoPath);
+                mediaInfo.prepare();
+                duration = (long) (mediaInfo.vDuration * 1000);
+                mediaInfo.release();
             }
         }
         LogUtil.d("OOM", "backgroundDrawdurationF=" + duration);
@@ -135,7 +139,6 @@ public class backgroundDraw {
             duration = 10000;
         }
         LogUtil.d("OOM2", "进入到了最后渲染");
-        totleRenderTime = duration*1000;
         try {
             if (nowUiIsLandscape) {
                 DRAWPADWIDTH = 1280;
@@ -144,10 +147,10 @@ public class backgroundDraw {
                 DRAWPADWIDTH = 720;
                 DRAWPADHEIGHT = 1280;
             }
-            execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, (long) (duration * 1000));
+            execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, duration * 1000);
             execute.setFrameRate(FRAME_RATE);
 
-            LogUtil.d("OOM2", "时长为" + FRAME_RATE);
+            LogUtil.d("OOM25", "时长为" + duration * 1000);
             execute.setEncodeBitrate(5 * 1024 * 1024);
             execute.setOnLanSongSDKErrorListener(message -> {
                 LogUtil.d("OOM2", "错误信息为" + message);
@@ -178,36 +181,53 @@ public class backgroundDraw {
                 callback.saveSuccessPath(exportPath, 100);
                 long time = System.currentTimeMillis() - nowCurtime;
                 statisticsSaveDuration(time, context);
-
                 //todo 需要移除全部的子图层
                 execute.release();
                 Log.d("OOM", "exportPath=" + exportPath);
             });
-            //设置背景
-            if (!TextUtils.isEmpty(videoPath)) {
-                setMainLayer();
-            } else {
-                if (!TextUtils.isEmpty(imagePath)) {
-                    Bitmap bt_nj = BitmapManager.getInstance().getOrientationBitmap(imagePath);
-                    BitmapUtils bpUtils = new BitmapUtils();
-                    bt_nj = bpUtils.zoomImg2(bt_nj, execute.getPadWidth() / 16 * 16, execute.getPadHeight() / 16 * 16);
-                    execute.addBitmapLayer(bt_nj);
-                } else {
-                    execute.setBackgroundColor(Color.parseColor("#1FA400"));
+            Observable.create(new Observable.OnSubscribe<Boolean>() {
+                @Override
+                public void call(Subscriber<? super Boolean> subscriber) {
+                    //设置背景
+                    if (!TextUtils.isEmpty(videoPath)) {
+                        setMainLayer();
+                    } else {
+                        if (!TextUtils.isEmpty(imagePath)) {
+                            Bitmap bt_nj = BitmapManager.getInstance().getOrientationBitmap(imagePath);
+                            BitmapUtils bpUtils = new BitmapUtils();
+                            bt_nj = bpUtils.zoomImg2(bt_nj, execute.getPadWidth() / 16 * 16, execute.getPadHeight() / 16 * 16);
+                            execute.addBitmapLayer(bt_nj);
+                        } else {
+                            execute.setBackgroundColor(Color.parseColor("#1FA400"));
+                        }
+                    }
+                    if (!TextUtils.isEmpty(videoVoice)) {
+                        if (musicEndTime == 0) {
+                            //如果有videoVoice 字段，那么需要设置在对应的主图层上面去
+                            execute.addAudioLayer(videoVoice, false);
+                        } else {
+                            //如果有videoVoice 字段，那么需要设置在对应的主图层上面去
+                            execute.addAudioLayer(videoVoice, musicStartTime * 1000, 0, (musicEndTime - musicStartTime) * 1000);
+                        }
+                    }
+                    addMainCanversLayer(list, isMatting);
+                    boolean started = execute.start();
+                    subscriber.onNext(started);
+                    subscriber.onCompleted();
                 }
-            }
-
-            addMainCanversLayer(list, isMatting);
-            if (!TextUtils.isEmpty(videoVoice)) {
-                if (musicEndTime == 0) {
-                    //如果有videoVoice 字段，那么需要设置在对应的主图层上面去
-                    execute.addAudioLayer(videoVoice, false);
-                } else {
-                    //如果有videoVoice 字段，那么需要设置在对应的主图层上面去
-                    execute.addAudioLayer(videoVoice, musicStartTime * 1000, 0, (musicEndTime - musicStartTime) * 1000);
+            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Boolean>() {
+                @Override
+                public void call(Boolean aBoolean) {
+                    if (!aBoolean) {
+                        ToastUtil.showToast("导出失败");
+                    }
                 }
-            }
-            execute.start();
+            }, new Action1<Throwable>() {
+                @Override
+                public void call(Throwable throwable) {
+                    throwable.printStackTrace();
+                }
+            });
         } catch (Exception e) {
             callback.saveSuccessPath("", 10000);
             LogUtil.d("OOM", e.getMessage());
@@ -223,7 +243,7 @@ public class backgroundDraw {
             if (!TextUtils.isEmpty(videoVoice)) {
                 option.setAudioMute();
             }
-            Layer bgLayer = execute.addVideoLayer(option);
+            Layer bgLayer = execute.addVideoLayer(option,0, duration * 1000,false,false);
             if (!nowUiIsLandscape) {
                 bgLayer.setScaledToPadSize();
                 bgLayer.setScaleType(LSOScaleType.VIDEO_SCALE_TYPE);
@@ -367,7 +387,7 @@ public class backgroundDraw {
         LogUtil.d("OOM4", "STARTTime" + STARTTime);
         BitmapLayer bpLayer;
         if (endTime != 0) {
-            bpLayer = execute.addBitmapLayer(bp, stickerItem.getShowStickerStartTime() * 1000, stickerItem.getShowStickerEndTime() * 1000);
+            bpLayer = execute.addBitmapLayer(bp, STARTTime*1000, endTime * 1000);
         } else {
             bpLayer = execute.addBitmapLayer(bp);
         }
@@ -720,22 +740,6 @@ public class backgroundDraw {
     public interface saveCallback {
         void saveSuccessPath(String path, int progress);
     }
-
-
-    private int getRingDuring(String videoPath) {
-        int duration = 0;
-        MediaPlayer mediaPlayer = new MediaPlayer();
-        try {
-            mediaPlayer.setDataSource(videoPath);
-            mediaPlayer.prepare();
-            duration = mediaPlayer.getDuration();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mediaPlayer.release();
-        return duration;
-    }
-
 
     class hasAnimLayer implements Serializable {
 

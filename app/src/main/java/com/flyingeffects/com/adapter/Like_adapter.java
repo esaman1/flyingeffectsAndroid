@@ -12,6 +12,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.MineCommentEnity;
+import com.flyingeffects.com.utils.TimeUtils;
 
 import java.util.List;
 
@@ -45,6 +46,7 @@ public class Like_adapter extends BaseQuickAdapter<MineCommentEnity, BaseViewHol
         helper.addOnClickListener(R.id.iv_icon);
 
         helper.setText(R.id.tv_title,item.getNickname());
+        helper.setText(R.id.tv_time, TimeUtils.getNewChatTime(Long.parseLong(item.getCreate_time())));
         ImageView iv_cover=helper.getView(R.id.iv_cover);
 
         Glide.with(context)

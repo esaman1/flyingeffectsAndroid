@@ -1,18 +1,14 @@
 package com.flyingeffects.com.manager;
 
 import android.content.Context;
-import android.media.MediaPlayer;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.lansosdk.LanSongFilter.LanSongBlurFilter;
-import com.lansosdk.LanSongFilter.LanSongFilter;
 import com.lansosdk.box.LSOVideoOption;
-import com.lansosdk.box.VideoFrameLayer;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
-import com.shixing.sxve.ui.view.WaitingDialog;
+import com.lansosdk.videoeditor.MediaInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,11 +52,11 @@ public class VideoTranscodeManage {
             callback.isSuccess(true, fileName);
             return;
         }
-        int duration =getRingDuring(path);
+        long duration =getRingDuring(path);
         LogUtil.d("OOM","duration="+duration*1000);
         DrawPadAllExecute2 execute = null;
         try {
-            execute = new DrawPadAllExecute2(context, DRAWPAD_WIDTH, DRAWPAD_HEIGHT,duration*1000);
+            execute = new DrawPadAllExecute2(context, DRAWPAD_WIDTH, DRAWPAD_HEIGHT, duration * 1000);
             execute.setFrameRate(FRAME_RATE);
             execute.setEncodeBitrate(5 * 1024 * 1024);
             execute.setOnLanSongSDKErrorListener(message -> {
@@ -112,17 +108,12 @@ public class VideoTranscodeManage {
     }
 
 
-    private int getRingDuring(String videoPath) {
-        int duration = 0;
-        MediaPlayer mediaPlayer = new MediaPlayer();
-        try {
-            mediaPlayer.setDataSource(videoPath);
-            mediaPlayer.prepare();
-            duration = mediaPlayer.getDuration();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mediaPlayer.release();
+    private long getRingDuring(String videoPath) {
+        long duration = 0;
+        MediaInfo mediaInfo = new MediaInfo(videoPath);
+        mediaInfo.prepare();
+        duration = (long) (mediaInfo.vDuration * 1000);
+        mediaInfo.release();
         return duration;
     }
 

@@ -1,17 +1,21 @@
 package com.flyingeffects.com.ui.model;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +32,7 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.commonlyModel.GetVideoCover;
+import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
@@ -38,6 +43,8 @@ import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.AdConfigs;
+import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
@@ -132,7 +139,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     /**
      * 默认视频时长,如果没选择背景的时候会用到
      */
-    private int defaultVideoDuration = 0;
+    private long defaultVideoDuration = 0;
 
     /***
      * originalPath  初始化第一张的时长
@@ -956,6 +963,10 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                     } else {
                         callback.showTextDialog(nowChooseStickerView.getStickerText());
                     }
+                } else if (type == StickerView.LEFT_MODE) {
+                    if (!TextUtils.isEmpty(stickView.getResPath())) {
+                        saveToAlbum(stickView.getResPath());
+                    }
                 }
             }
 
@@ -1018,6 +1029,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         stickView.setRightBottomBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_redact));
         if (!isText) {
             stickView.setRightBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_updown));
+            stickView.setLeftBitmap(ContextCompat.getDrawable(context, R.mipmap.icon_pic_save));
         }
         stickView.setIsFromStickerAnim(isFromShowAnim);
         stickView.setComeFromAlbum(isFromAubum);
@@ -1172,8 +1184,8 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         viewLayerRelativeLayout.addView(stickView);
 
         if (!isFromShowAnim) {
-            callback.addStickerTimeLine(String.valueOf(stickerId), isText, isText ? stickView.getStickerText() : "", stickView);
             stickView.setStickerNoIncludeAnimId(stickerId);
+            callback.addStickerTimeLine(String.valueOf(stickerId), isText, isText ? stickView.getStickerText() : "", stickView);
             stickerId++;
         }
         stickerViewID++;
@@ -1183,6 +1195,46 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         if (isFromShowAnim) {
             stickView.setIsfromAnim(true);
             nowChooseSubLayerAnimList.add(stickView);
+        }
+    }
+
+    /**保存到相册*/
+    private void saveToAlbum(String path) {
+        String albumPath = SaveAlbumPathModel.getInstance().getKeepOutputForImage();
+        try {
+            FileUtil.copyFile(new File(path), albumPath);
+            albumBroadcast(albumPath);
+            showKeepSuccessDialog(albumPath);
+
+            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_SAVE_PIC);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**通知相册更新*/
+    private void albumBroadcast(String outputFile) {
+        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        intent.setData(Uri.fromFile(new File(outputFile)));
+        context.sendBroadcast(intent);
+    }
+
+    private void showKeepSuccessDialog(String path) {
+        if (!DoubleClick.getInstance().isFastDoubleClick()) {
+            ShowPraiseModel.keepAlbumCount();
+            //去除黑边
+            AlertDialog.Builder builder = new AlertDialog.Builder(
+                    new ContextThemeWrapper(context, R.style.Theme_Transparent));
+            builder.setTitle(R.string.notification);
+            builder.setMessage("已为你保存到相册,多多分享给友友\n" + "【" + path + context.getString(R.string.folder) + "】"
+            );
+            builder.setNegativeButton(context.getString(R.string.got_it), (dialog, which) -> dialog.dismiss());
+            builder.setCancelable(true);
+            Dialog dialog = builder.show();
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
         }
     }
 
@@ -1296,7 +1348,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     }
 
 
-    private List<Integer> perSticker = new ArrayList<>();
+    private List<Long> perSticker = new ArrayList<>();
 
     private void getPlayVideoDuration() {
         defaultVideoDuration = 0;
@@ -1329,7 +1381,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
             if (perSticker.size() == 1) {
                 defaultVideoDuration = perSticker.get(0);
             } else {
-                for (int duration : perSticker) {
+                for (long duration : perSticker) {
                     if (defaultVideoDuration < duration) {
                         defaultVideoDuration = duration;
                     }
@@ -1843,7 +1895,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
 
     public void statisticsDuration(String path, Context context) {
-        int duration;
+        long duration;
         if (!TextUtils.isEmpty(path) && albumType.isImage(GetPathType.getInstance().getPathType(path))) {
             VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(path);
             duration = videoInfo.getDuration();

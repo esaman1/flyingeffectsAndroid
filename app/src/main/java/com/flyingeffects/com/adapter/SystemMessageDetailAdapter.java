@@ -71,9 +71,7 @@ public class SystemMessageDetailAdapter extends BaseQuickAdapter<SystemMessageDe
                     .load(item.getImage()).into(iv_cover);
             tv_template_content.setText(item.getContent());
         }
-        String createTime = item.getCreate_time();
-        long time = Long.parseLong(createTime);
-        tv_time.setText(TimeUtils.GetSystemMessageTime(time));
+        tv_time.setText(TimeUtils.getNewChatTime(Long.parseLong(item.getCreate_time())));
     }
 
 

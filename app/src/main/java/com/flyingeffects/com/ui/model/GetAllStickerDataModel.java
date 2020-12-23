@@ -81,8 +81,8 @@ public class GetAllStickerDataModel {
                     stickerData.setPath(stickerView.getOriginalPath());
                     stickerData.setOriginalPath(stickerView.getOriginalPath());
                     VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
-                    int materialDuration = materialVideoInfo.getDuration();
-                    int needDuration = 0;
+                    long materialDuration = materialVideoInfo.getDuration();
+                    long needDuration = 0;
                     if (videoInfo != null) {
                         if (videoInfo.getDuration() < materialDuration) {
                             needDuration = videoInfo.getDuration();

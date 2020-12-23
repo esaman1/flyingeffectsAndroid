@@ -12,6 +12,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.fansEnity;
+import com.flyingeffects.com.utils.TimeUtils;
 
 import java.util.List;
 
@@ -35,6 +36,7 @@ public class MineFocusAdapter extends BaseQuickAdapter<fansEnity, BaseViewHolder
     @Override
     protected void convert(final BaseViewHolder helper, final fansEnity item) {
         helper.setText(R.id.nickname,item.getNickname());
+        helper.setText(R.id.tv_time, TimeUtils.getNewChatTime(item.getCreate_time()));
         ImageView iv_icon=helper.getView(R.id.iv_icon);
         Glide.with(context)
                 .load(item.getPhotourl())
