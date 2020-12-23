@@ -75,8 +75,8 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
 
 
 
-    public void loadTemplate(String filePath, AssetDelegate delegate,int nowTemplateIsAnim){
-        home_model.loadTemplate(filePath,delegate,nowTemplateIsAnim);
+    public void loadTemplate(String filePath, AssetDelegate delegate,int nowTemplateIsAnim,int nowTemplateIsMattingVideo){
+        home_model.loadTemplate(filePath,delegate,nowTemplateIsAnim,nowTemplateIsMattingVideo);
     }
 
 

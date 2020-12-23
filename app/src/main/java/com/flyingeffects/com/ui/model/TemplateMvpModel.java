@@ -229,10 +229,10 @@ public class TemplateMvpModel {
     }
 
 
-    public void loadTemplate(String filePath, AssetDelegate delegate, int nowTemplateIsAnim) {
+    public void loadTemplate(String filePath, AssetDelegate delegate, int nowTemplateIsAnim,int nowTemplateIsMattingVideo) {
         Observable.just(filePath).map(s -> {
             try {
-                mTemplateModel = new TemplateModel(filePath, delegate, context, nowTemplateIsAnim);
+                mTemplateModel = new TemplateModel(filePath, delegate, context, nowTemplateIsAnim,nowTemplateIsMattingVideo);
             } catch (Exception e) {
                 e.printStackTrace();
             }
