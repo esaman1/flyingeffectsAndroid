@@ -47,8 +47,8 @@ public class AssetModel {
     }
 
 
-    public void setIsAnim(boolean isAnim){
-        ui.setIsAnim(isAnim);
+    public void setNeedMatting(boolean isAnim){
+        ui.setNeedMating(isAnim);
 
     }
 

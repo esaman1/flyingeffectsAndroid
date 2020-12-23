@@ -25,7 +25,16 @@ public abstract class AssetUi {
     public final Size size;
     protected final Bitmap f;
     protected  Bitmap b;
-    public boolean IsAnim=false;
+
+    public boolean isNeedMating() {
+        return needMating;
+    }
+
+    public void setNeedMating(boolean needMating) {
+        this.needMating = needMating;
+    }
+
+    public boolean needMating=false;
 
     public AssetUi(String folder, JSONObject ui, AssetDelegate delegate, Size size) throws JSONException {
         group = ui.getInt("group");
@@ -123,13 +132,6 @@ public abstract class AssetUi {
         return bitmap;
     }
 
-    public void  setIsAnim(boolean IsAnim){
-        this.IsAnim=IsAnim;
-    }
-
-    public boolean  getIsAnim(){
-        return  IsAnim;
-    }
 
 
 

@@ -428,11 +428,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @Override
     protected void initAction() {
         //漫画逻辑和视频抠图逻辑大体差不多
-        if (nowTemplateIsMattingVideo == 1 || nowTemplateIsAnim == 1) {
-            presenter.loadTemplate(mFolder.getPath(), this, 1);
-        } else {
-            presenter.loadTemplate(mFolder.getPath(), this, 0);
-        }
+//        if (nowTemplateIsMattingVideo == 1 || nowTemplateIsAnim == 1) {
+//            presenter.loadTemplate(mFolder.getPath(), this, 1);
+//        } else {
+//            presenter.loadTemplate(mFolder.getPath(), this, 0);
+//        }
+
+        presenter.loadTemplate(mFolder.getPath(), this, nowTemplateIsAnim,nowTemplateIsMattingVideo);
+
         mPlayerView.setPlayCallback(mListener);
     }
 
@@ -1357,7 +1360,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 ChangeMaterialCallbackForVideo(event.getOriginalPath(), event.getMattingPath(), true);
             } else if (event.getTag() == 2) {
                 nowTemplateIsMattingVideo = 1;
-                mTemplateModel.mAssets.get(0).setIsAnim(true);
+                mTemplateModel.mAssets.get(0).setNeedMatting(true);
                 //替换素材
                 if (event.getOriginalPath() == null || !nowIsChooseMatting) {
                     if (event.getOriginalPath() == null
