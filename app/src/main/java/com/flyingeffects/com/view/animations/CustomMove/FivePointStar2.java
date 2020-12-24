@@ -14,64 +14,45 @@ import java.util.List;
 
 
 /**
- * description ：圆圈分身
- * creation date: 2020/5/25
+ * description ：五角星路径动画停
+ * creation date: 2020/12/23
  * user : zhangtongju
  */
 
-public class CircleCloned2 extends baseAnimModel {
-
-
+public class FivePointStar2 extends baseAnimModel {
 
     private StickerView mainStickerView;
 
 
     void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
-
-        ArrayList<StickerView>listAllSticker=new ArrayList<>();
-        listAllSticker.addAll(subLayer);
         this.mainStickerView = mainStickerView;
         setRotate(mainStickerView.getRotateAngle());
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
         float[] pos = new float[2];
         float[] tan = new float[2];
-
-
         PathMeasure mPathMeasure = setPathMeasure(mainStickerView.getmHelpBoxRectH(), mainStickerView.getMBoxCenterX(), mainStickerView.getMBoxCenterY());
         float totalDistancePathMeasure = mPathMeasure.getLength();
+        float perDistance = totalDistancePathMeasure / (float) 20;
         //第一个参数为总时长
-        animationLinearInterpolator = new AnimationLinearInterpolator(3000, (progress, isDone) -> {
+        animationLinearInterpolator = new AnimationLinearInterpolator(10000, (progress, isDone) -> {
             //主图层应该走的位置
             float nowDistance = totalDistancePathMeasure * progress;
-
-//            LogUtil.d("OOM5","progress=="+progress);
             mPathMeasure.getPosTan(nowDistance, pos, tan);
-            //第一个一直在动
             mainStickerView.toTranMoveXY(pos[0], pos[1]);
-
-            if(listAllSticker!=null){
-                int x= (int) (progress*10);
-                LogUtil.d("OOM5","x=="+x);
-                if(x>9){
-                    x=9;
-                }
-                int flashback=9-x;
-                if(listAllSticker.size()>flashback){
-                    StickerView subNowChoose = listAllSticker.get(flashback);
-                    if(subNowChoose!=null){
-                        listAllSticker.remove(flashback);
-                    }
-                }
-
-                for (int i = 0; i < listAllSticker.size(); i++) {
-                    StickerView sub = listAllSticker.get(i);
+            if(subLayer!=null){
+                for (int i = 0; i < subLayer.size(); i++) {
+                    StickerView sub = subLayer.get(i);
                     if (sub != null) {
+                        float needDistance = perDistance * i + nowDistance;
+                        if (needDistance > totalDistancePathMeasure) {
+                            needDistance = needDistance - totalDistancePathMeasure;
+                        }
+                        mPathMeasure.getPosTan(needDistance, pos, tan);
                         sub.toTranMoveXY(pos[0], pos[1]);
                     }
                 }
             }
         });
-        animationLinearInterpolator.SetCirculation(false);
         animationLinearInterpolator.PlayAnimation();
     }
 
@@ -93,7 +74,7 @@ public class CircleCloned2 extends baseAnimModel {
         LansongPathMeasure = setPathMeasure(mainStickerView.getScaleHeight(), mainStickerView.getPositionX(), mainStickerView.getPositionY());
         //总长度
         lansongTotalDistancePathMeasure = LansongPathMeasure.getLength();
-        perDistance = lansongTotalDistancePathMeasure / (float) 10;
+        perDistance = lansongTotalDistancePathMeasure / (float) 20;
         getLansongTranslation(callback, percentage, listForSubLayer);
         LogUtil.d("translationalXY", "当前的事件为percentage=" + percentage);
     }
@@ -101,7 +82,7 @@ public class CircleCloned2 extends baseAnimModel {
 
     void getLansongTranslation(LayerAnimCallback callback, float percentage, ArrayList<SubLayer> listForSubLayer) {
         listForTranslaptionPosition.clear();
-        AnimationLinearInterpolator animationLinearInterpolator = new AnimationLinearInterpolator(5000, (progress, isDone) -> {
+        AnimationLinearInterpolator animationLinearInterpolator = new AnimationLinearInterpolator(10000, (progress, isDone) -> {
             //主图层应该走的位置
             if (LansongPathMeasure != null) {
                 float nowDistance = lansongTotalDistancePathMeasure * progress;
@@ -146,16 +127,49 @@ public class CircleCloned2 extends baseAnimModel {
     /**
      * description ：路径动画
      * creation date: 2020/5/28
-     * layerH 自身的高
      * user : zhangtongju
      */
     private PathMeasure setPathMeasure(float layerH, float layerCenterX, float layerCenterY) {
-        float diameter = layerH / 3 * 2;
         Path mAnimPath = new Path();
-
-        mAnimPath.addCircle(layerCenterX,layerCenterY,diameter*2 ,Path.Direction.CCW);
+        float haltX=layerCenterX/(float)2;
+        float haltY=layerCenterY/(float)2;
+        drawStar(mAnimPath,layerCenterX,layerCenterY,haltX-10,haltX*2-10,0);
         PathMeasure mPathMeasure = new PathMeasure();
         mPathMeasure.setPath(mAnimPath, true);
         return mPathMeasure;
     }
+
+
+
+    /**
+     * description ：或者五角星
+     * creation date: 2020/12/23
+     *      *cxt:画笔
+     *       *x,y:圆心坐标
+     *       *r:小圆半径
+     *       *R:大圆半径
+     *       *rot:旋转角度
+     * user : zhangtongju
+     */
+    public void drawStar(Path cxt, float x, float y, float r, float R, float rot){
+        //path默认开始点为（0，0），所以要先移动到第一个点上
+        cxt.moveTo((float) Math.cos( (18-rot)/180 * Math.PI) * R + x,(float) -Math.sin( (18-rot)/180 * Math.PI) * R + y); //改变接下来操作的起点位置为（x,y）
+        for(int i = 0; i < 5; i ++){
+            //R：外圆半径
+            float f=(float) Math.cos( (18 + i*72 - rot)/180 * Math.PI) * R + x;//Math.cos余弦，返回值在 -1.0 到 1.0 之间；
+            float f1=(float) -Math.sin( (18 + i*72 - rot)/180 * Math.PI) * R + y;//Math.sin正弦，返回值在 -1.0 到 1.0 之间；
+            cxt.lineTo(f,f1 );
+
+            //r:内圆半径
+            float f2=(float) Math.cos( (54 + i*72 - rot)/180 * Math.PI) * r + x;
+            float f3=(float) -Math.sin( (54 + i*72 - rot)/180 * Math.PI) * r + y;
+            LogUtil.d(f+"   ,"+f1+"","      -" +f2+"   ,"+f3+"");
+            cxt.lineTo(f2,f3) ;
+        }
+        cxt.close();//闭合path，如果path的终点和起始点不是同一个点的话，close()连接这两个点，形成一个封闭的图形
+    }
+
+
+
+
 }

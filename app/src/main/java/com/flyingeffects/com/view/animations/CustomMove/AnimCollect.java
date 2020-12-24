@@ -47,8 +47,22 @@ public class AnimCollect {
             case BOTTOMTOCENTER2:
                 return 0;
 
+
             case SUPERSTAR2:
                 return 9;
+
+            case CIRCLECLONED:
+                return 10;
+            case CIRCLECLONED2:
+                return 11;
+
+
+            case FIVEPOINTSTART:
+            case FIVEPOINTSTART2:
+                return 12;
+
+
+
             case NULL:
                 return 0;
         }
@@ -75,6 +89,9 @@ public class AnimCollect {
             case CIRCLECLONED:
             case CIRCLECLONED2:
                 return 10;
+            case FIVEPOINTSTART:
+            case FIVEPOINTSTART2:
+                return 20;
         }
         return 0;
     }
@@ -91,6 +108,8 @@ public class AnimCollect {
                 return 10000;
             case LEFTTORIGHT:
             case LEFTANDRIGHTDISSMISS:
+            case FIVEPOINTSTART:
+            case FIVEPOINTSTART2:
                 return 3000;
             case BOTTOMTOCENTER:
             case BOTTOMTOCENTER2:
@@ -193,6 +212,18 @@ public class AnimCollect {
                 circleCloned2.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(circleCloned2);
                 break;
+
+            case  FIVEPOINTSTART:
+                FivePointStar  fivePointStar = new FivePointStar();
+                fivePointStar.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(fivePointStar);
+                break;
+            case  FIVEPOINTSTART2:
+                FivePointStar2  fivePointStar2 = new FivePointStar2();
+                fivePointStar2.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(fivePointStar2);
+                break;
+
 
         }
     }
@@ -587,6 +618,17 @@ public class AnimCollect {
         list.add(stickerAnim12);
 
 
+        StickerAnim stickerAnim13 = new StickerAnim();
+        stickerAnim13.setName("五角星");
+        stickerAnim13.setIcon(R.mipmap.anim_ybs);
+        stickerAnim13.setAnimType(AnimType.FIVEPOINTSTART);
+        list.add(stickerAnim13);
+
+        StickerAnim stickerAnim14 = new StickerAnim();
+        stickerAnim14.setName("五角星2");
+        stickerAnim14.setIcon(R.mipmap.anim_ybs);
+        stickerAnim14.setAnimType(AnimType.FIVEPOINTSTART);
+        list.add(stickerAnim14);
 
 
         return list;
