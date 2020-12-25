@@ -22,5 +22,6 @@ public enum AnimType {
     FIVEPOINTSTART2,
     Z,
     FOUNDER,
-    MAKEMOVEONE
+    MAKEMOVEONE,
+    LOVE
 }

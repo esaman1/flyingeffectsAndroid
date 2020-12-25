@@ -72,6 +72,9 @@ public class AnimCollect {
             case MAKEMOVEONE:
                 return 16;
 
+            case LOVE:
+
+                return 17;
 
             case NULL:
                 return 0;
@@ -107,6 +110,8 @@ public class AnimCollect {
                 return 15;
             case FOUNDER:
                 return 36;
+            case LOVE:
+                return 28;
 
         }
         return 0;
@@ -137,6 +142,7 @@ public class AnimCollect {
                 return 4000;
             case SUPERSTAR:
             case SUPERSTAR2:
+            case LOVE:
                 return 2000;
             case FOUNDER:
                 return 1000;
@@ -265,6 +271,16 @@ public class AnimCollect {
                 makeMoveOneAnim.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(makeMoveOneAnim);
                 break;
+
+
+            case LOVE:
+
+//                MakeMoveOneAnim makeMoveOneAnim=new MakeMoveOneAnim();
+//                makeMoveOneAnim.toChangeStickerView(mainStickerView, subLayer);
+//                listForBaseAnimMode.add(makeMoveOneAnim);
+
+                break;
+
 
         }
     }
