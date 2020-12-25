@@ -47,8 +47,22 @@ public class AnimCollect {
             case BOTTOMTOCENTER2:
                 return 0;
 
+
             case SUPERSTAR2:
                 return 9;
+
+            case CIRCLECLONED:
+                return 10;
+            case CIRCLECLONED2:
+                return 11;
+
+
+            case FIVEPOINTSTART:
+            case FIVEPOINTSTART2:
+                return 12;
+
+
+
             case NULL:
                 return 0;
         }
@@ -72,6 +86,12 @@ public class AnimCollect {
             case BOTTOMTOUP:
             case LEFTANDRIGHTDISSMISS:
                 return 1;
+            case CIRCLECLONED:
+            case CIRCLECLONED2:
+                return 10;
+            case FIVEPOINTSTART:
+            case FIVEPOINTSTART2:
+                return 20;
         }
         return 0;
     }
@@ -88,6 +108,8 @@ public class AnimCollect {
                 return 10000;
             case LEFTTORIGHT:
             case LEFTANDRIGHTDISSMISS:
+            case FIVEPOINTSTART:
+            case FIVEPOINTSTART2:
                 return 3000;
             case BOTTOMTOCENTER:
             case BOTTOMTOCENTER2:
@@ -177,6 +199,32 @@ public class AnimCollect {
                 itemCloned2.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(itemCloned2);
                 break;
+
+
+            case  CIRCLECLONED:
+                CircleCloned  circleCloned = new CircleCloned();
+                circleCloned.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(circleCloned);
+                break;
+
+            case  CIRCLECLONED2:
+                CircleCloned2  circleCloned2 = new CircleCloned2();
+                circleCloned2.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(circleCloned2);
+                break;
+
+            case  FIVEPOINTSTART:
+                FivePointStar  fivePointStar = new FivePointStar();
+                fivePointStar.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(fivePointStar);
+                break;
+            case  FIVEPOINTSTART2:
+                FivePointStar2  fivePointStar2 = new FivePointStar2();
+                fivePointStar2.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(fivePointStar2);
+                break;
+
+
         }
     }
 
@@ -416,6 +464,29 @@ public class AnimCollect {
                     listForKeepBaseAnimMode.add(itemBottomToCenter2);
                 }
                 break;
+
+
+            case CIRCLECLONED:
+//                nowMainLayerId = mainStickerView.getId();
+//                ItemBottomToCenter2 itemBottomToCenter2 = null;
+//                for (baseAnimModel model : listForKeepBaseAnimMode
+//                ) {
+//                    if (model.getLayerId()== nowMainLayerId) {
+//                        itemBottomToCenter2 = (ItemBottomToCenter2) model;
+//                        break;
+//                    }
+//                }
+//                if (itemBottomToCenter2 != null) {
+//                    (itemBottomToCenter2).toChangeSubLayer(callback, percentage);
+//                } else {
+//                    itemBottomToCenter2 = new ItemBottomToCenter2();
+//                    itemBottomToCenter2.setLayerId(mainStickerView.getId());
+//                    itemBottomToCenter2.initToChangeSubLayer(mainStickerView, callback, percentage);
+//                    listForKeepBaseAnimMode.add(itemBottomToCenter2);
+//                }
+//
+                break;
+
         }
     }
 
@@ -533,7 +604,31 @@ public class AnimCollect {
 
 
 
+        StickerAnim stickerAnim11 = new StickerAnim();
+        stickerAnim11.setName("圆圈");
+        stickerAnim11.setIcon(R.mipmap.anim_ybs);
+        stickerAnim11.setAnimType(AnimType.CIRCLECLONED);
+        list.add(stickerAnim11);
 
+
+        StickerAnim stickerAnim12 = new StickerAnim();
+        stickerAnim12.setName("圆圈分身");
+        stickerAnim12.setIcon(R.mipmap.anim_ybs);
+        stickerAnim12.setAnimType(AnimType.CIRCLECLONED2);
+        list.add(stickerAnim12);
+
+
+        StickerAnim stickerAnim13 = new StickerAnim();
+        stickerAnim13.setName("五角星");
+        stickerAnim13.setIcon(R.mipmap.anim_ybs);
+        stickerAnim13.setAnimType(AnimType.FIVEPOINTSTART);
+        list.add(stickerAnim13);
+
+        StickerAnim stickerAnim14 = new StickerAnim();
+        stickerAnim14.setName("五角星2");
+        stickerAnim14.setIcon(R.mipmap.anim_ybs);
+        stickerAnim14.setAnimType(AnimType.FIVEPOINTSTART);
+        list.add(stickerAnim14);
 
 
         return list;

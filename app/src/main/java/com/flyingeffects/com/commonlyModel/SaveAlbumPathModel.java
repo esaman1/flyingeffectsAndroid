@@ -39,7 +39,7 @@ public class SaveAlbumPathModel {
         if (product != null && product.equals("vivo")) {
             File file_camera = new File(Environment.getExternalStorageDirectory() + "/相机");
             if (file_camera.exists()) {
-                return file_camera.getPath() + File.separator + System.currentTimeMillis();
+                return file_camera.getPath() + File.separator + System.currentTimeMillis() + "synthetic.png";
             }
         }
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();

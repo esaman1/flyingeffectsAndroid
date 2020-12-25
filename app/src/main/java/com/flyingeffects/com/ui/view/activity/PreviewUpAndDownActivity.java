@@ -1186,6 +1186,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             bundle.putString("fromTo", OldfromTo);
             bundle.putString("primitivePath", event.getPrimitivePath());
             bundle.putInt("is_anime", templateItem.getIs_anime());
+            LogUtil.d("OOM55","is_anime="+templateItem.getIs_anime());
+            LogUtil.d("OOM55","is_animeaLLdATA="+StringUtil.beanToJSONString(templateItem));
             bundle.putString("templateName", templateItem.getTitle());
             intent.putExtra("person", templateItem);//直接存入被序列化的对象实例
             bundle.putString("templateId", templateItem.getId() + "");

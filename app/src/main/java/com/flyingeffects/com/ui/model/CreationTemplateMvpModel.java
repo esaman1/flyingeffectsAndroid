@@ -148,6 +148,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
     private StickerView nowChooseStickerView;
 
+    /**所有动画集合*/
     private ArrayList<StickerAnim> listAllAnima;
     private ArrayList<StickerView> nowChooseSubLayerAnimList = new ArrayList<>();
     private SparseArrayCompat<ArrayList<StickerView>> sublayerListForBitmapLayer = new SparseArrayCompat<>();
