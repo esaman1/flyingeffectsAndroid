@@ -4,7 +4,6 @@ import android.graphics.Path;
 import android.graphics.PathMeasure;
 
 import com.flyingeffects.com.enity.TransplationPos;
-import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.box.Layer;
 import com.lansosdk.box.SubLayer;
@@ -14,60 +13,53 @@ import java.util.List;
 
 
 /**
- * description ：圆圈分身
+ * description ：动起来1
+ * 0-3秒表示放大动画   3-4 拉开 4-7秒旋转 7-8秒水平回位
  * creation date: 2020/5/25
  * user : zhangtongju
  */
 
-public class CircleCloned2 extends baseAnimModel {
-
-
+public class MakeMoveOneAnim extends baseAnimModel {
 
     private StickerView mainStickerView;
-
+    private StickerView subStickerView;
 
     void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
-
-        ArrayList<StickerView>listAllSticker=new ArrayList<>();
-        listAllSticker.addAll(subLayer);
         this.mainStickerView = mainStickerView;
+        subStickerView = subLayer.get(0);
+        float mScale = mainStickerView.GetHelpBoxRectScale();
         setRotate(mainStickerView.getRotateAngle());
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
+        LansongPathMeasure = setPathMeasureOne(mainStickerView.getmHelpBoxRectH(),mainStickerView.getCenterX(),mainStickerView.getCenterY());
+        LansongPathMeasure2=setPathMeasureTwo(mainStickerView.getmHelpBoxRectH(),mainStickerView.getCenterX(),mainStickerView.getCenterY());
+        float totalDistancePathMeasure = LansongPathMeasure.getLength();
+        float needTranslationWidth = mainStickerView.getWidth();
+        float nowCentX = mainStickerView.getCenterX();
+        float haftCentX = mainStickerView.getCenterX()/(float) 2;
         float[] pos = new float[2];
         float[] tan = new float[2];
-
-
-        PathMeasure mPathMeasure = setPathMeasure(mainStickerView.getmHelpBoxRectH(), mainStickerView.getMBoxCenterX(), mainStickerView.getMBoxCenterY());
-        float totalDistancePathMeasure = mPathMeasure.getLength();
+        float[] pos2 = new float[2];
+        float[] tan2 = new float[2];
         //第一个参数为总时长
-        animationLinearInterpolator = new AnimationLinearInterpolator(3000, (progress, isDone) -> {
-            //主图层应该走的位置
-            float nowDistance = totalDistancePathMeasure * progress;
+        animationLinearInterpolator = new AnimationLinearInterpolator(8000, (progress, isDone) -> {
+            //progress  0-1
+            if (progress <= 0.35) {
+                //放大动画  *4.16 意味着0-2.24可以看做0-1完整来看
+                float x = progress * 2.85f;
+                subStickerView.toScale(x, mScale, isDone);
+                mainStickerView.toScale(x, mScale, isDone);
+            }
+            else {
+                //旋转
+                float needProgress = progress - 0.35f;
+                float x = needProgress * 1.53f;
+                float nowDistance = totalDistancePathMeasure * x;
+                LansongPathMeasure.getPosTan(nowDistance, pos, tan);
+                LansongPathMeasure2.getPosTan(nowDistance, pos2, tan2);
+                mainStickerView.toTranMoveXY(pos[0], pos[1]);
+                subStickerView.toTranMoveXY(pos2[0], pos2[1]);
+            }
 
-//            LogUtil.d("OOM5","progress=="+progress);
-            mPathMeasure.getPosTan(nowDistance, pos, tan);
-            //第一个一直在动
-            mainStickerView.toTranMoveXY(pos[0], pos[1]);
-
-                int x= (int) (progress*10);
-                LogUtil.d("OOM5","x=="+x);
-                if(x>9){
-                    x=9;
-                }
-                int flashback=9-x;
-                if(listAllSticker.size()>flashback){
-                    StickerView subNowChoose = listAllSticker.get(flashback);
-                    if(subNowChoose!=null){
-                        listAllSticker.remove(flashback);
-                    }
-                }
-
-                for (int i = 0; i < listAllSticker.size(); i++) {
-                    StickerView sub = listAllSticker.get(i);
-                    if (sub != null) {
-                        sub.toTranMoveXY(pos[0], pos[1]);
-                    }
-                }
         });
         animationLinearInterpolator.SetCirculation(false);
         animationLinearInterpolator.PlayAnimation();
@@ -75,6 +67,7 @@ public class CircleCloned2 extends baseAnimModel {
 
 
     private PathMeasure LansongPathMeasure;
+    private PathMeasure LansongPathMeasure2;
     private float lansongTotalDistancePathMeasure;
     private float[] LanSongPos;
     private float[] LanSongTan;
@@ -86,14 +79,6 @@ public class CircleCloned2 extends baseAnimModel {
         LanSongPos = new float[2];
         LanSongTan = new float[2];
         listForTranslaptionPosition.clear();
-        this.mainLayer = mainStickerView;
-        LogUtil.d("OOOM","主图层中间的位置X为"+ mainStickerView.getPositionX()+",Y的位置为"+mainStickerView.getPositionY());
-        LansongPathMeasure = setPathMeasure(mainStickerView.getScaleHeight(), mainStickerView.getPositionX(), mainStickerView.getPositionY());
-        //总长度
-        lansongTotalDistancePathMeasure = LansongPathMeasure.getLength();
-        perDistance = lansongTotalDistancePathMeasure / (float) 10;
-        getLansongTranslation(callback, percentage, listForSubLayer);
-        LogUtil.d("translationalXY", "当前的事件为percentage=" + percentage);
     }
 
 
@@ -147,13 +132,31 @@ public class CircleCloned2 extends baseAnimModel {
      * layerH 自身的高
      * user : zhangtongju
      */
-    private PathMeasure setPathMeasure(float layerH, float layerCenterX, float layerCenterY) {
-        float diameter = layerH / 3 * 2;
+    private PathMeasure setPathMeasureOne(float halfWidth,float centerX,float centerY) {
         Path mAnimPath = new Path();
-
-        mAnimPath.addCircle(layerCenterX,layerCenterY,diameter*2 ,Path.Direction.CCW);
+        mAnimPath.moveTo(centerX,centerY);
+        mAnimPath.lineTo(centerX-halfWidth,centerY);
+        mAnimPath.lineTo(centerX,centerY+halfWidth*2);
+        mAnimPath.lineTo(centerX+halfWidth,centerY);
         PathMeasure mPathMeasure = new PathMeasure();
         mPathMeasure.setPath(mAnimPath, true);
         return mPathMeasure;
     }
+
+
+
+    private PathMeasure setPathMeasureTwo(float halfWidth,float centerX,float centerY) {
+        Path mAnimPath = new Path();
+        mAnimPath.moveTo(centerX,centerY);
+        mAnimPath.lineTo(centerX+halfWidth,centerY);
+        mAnimPath.lineTo(centerX,centerY-halfWidth*2);
+        mAnimPath.lineTo(centerX-halfWidth,centerY);
+        PathMeasure mPathMeasure = new PathMeasure();
+        mPathMeasure.setPath(mAnimPath, true);
+        return mPathMeasure;
+    }
+
+
+
+
 }

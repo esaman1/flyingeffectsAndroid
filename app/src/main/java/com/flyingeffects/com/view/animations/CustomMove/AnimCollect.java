@@ -58,9 +58,19 @@ public class AnimCollect {
 
 
             case FIVEPOINTSTART:
-            case FIVEPOINTSTART2:
-                return 12;
 
+
+                return 12;
+            case FIVEPOINTSTART2:
+                return 13;
+
+            case Z:
+                return 14;
+            case FOUNDER:
+                return 15;
+
+            case MAKEMOVEONE:
+                return 16;
 
 
             case NULL:
@@ -85,6 +95,7 @@ public class AnimCollect {
                 return 2;
             case BOTTOMTOUP:
             case LEFTANDRIGHTDISSMISS:
+            case MAKEMOVEONE:
                 return 1;
             case CIRCLECLONED:
             case CIRCLECLONED2:
@@ -92,6 +103,11 @@ public class AnimCollect {
             case FIVEPOINTSTART:
             case FIVEPOINTSTART2:
                 return 20;
+            case Z:
+                return 15;
+            case FOUNDER:
+                return 36;
+
         }
         return 0;
     }
@@ -110,6 +126,7 @@ public class AnimCollect {
             case LEFTANDRIGHTDISSMISS:
             case FIVEPOINTSTART:
             case FIVEPOINTSTART2:
+            case Z:
                 return 3000;
             case BOTTOMTOCENTER:
             case BOTTOMTOCENTER2:
@@ -121,6 +138,11 @@ public class AnimCollect {
             case SUPERSTAR:
             case SUPERSTAR2:
                 return 2000;
+            case FOUNDER:
+                return 1000;
+
+            case MAKEMOVEONE:
+                return 8000;
 
         }
         return 0;
@@ -201,29 +223,48 @@ public class AnimCollect {
                 break;
 
 
-            case  CIRCLECLONED:
-                CircleCloned  circleCloned = new CircleCloned();
+            case CIRCLECLONED:
+                CircleCloned circleCloned = new CircleCloned();
                 circleCloned.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(circleCloned);
                 break;
 
-            case  CIRCLECLONED2:
-                CircleCloned2  circleCloned2 = new CircleCloned2();
+            case CIRCLECLONED2:
+                CircleCloned2 circleCloned2 = new CircleCloned2();
                 circleCloned2.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(circleCloned2);
                 break;
 
-            case  FIVEPOINTSTART:
-                FivePointStar  fivePointStar = new FivePointStar();
+            case FIVEPOINTSTART:
+                FivePointStar fivePointStar = new FivePointStar();
                 fivePointStar.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(fivePointStar);
                 break;
-            case  FIVEPOINTSTART2:
-                FivePointStar2  fivePointStar2 = new FivePointStar2();
+            case FIVEPOINTSTART2:
+                FivePointStar2 fivePointStar2 = new FivePointStar2();
                 fivePointStar2.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(fivePointStar2);
                 break;
 
+            case Z:
+                ZAnim zAnim = new ZAnim();
+                zAnim.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(zAnim);
+                break;
+
+
+            case FOUNDER:
+                FounderAnim founderAnim = new FounderAnim();
+                founderAnim.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(founderAnim);
+                break;
+
+
+            case MAKEMOVEONE:
+                MakeMoveOneAnim makeMoveOneAnim=new MakeMoveOneAnim();
+                makeMoveOneAnim.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(makeMoveOneAnim);
+                break;
 
         }
     }
@@ -235,7 +276,7 @@ public class AnimCollect {
      * user : zhangtongju
      */
     public void startAnimForChooseAnim(AnimType type, Layer mainStickerView, ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
-       int  nowMainLayerId;
+        int nowMainLayerId;
         switch (type) {
             //8个动画飞天效果
             case EIGHTBORTHER:
@@ -292,7 +333,7 @@ public class AnimCollect {
                 ItemBottomToCenter itemBottomToCenter = null;
                 for (baseAnimModel model : listForKeepBaseAnimMode
                 ) {
-                    if (model.getLayerId()== nowMainLayerId) {
+                    if (model.getLayerId() == nowMainLayerId) {
                         itemBottomToCenter = (ItemBottomToCenter) model;
                         break;
                     }
@@ -316,8 +357,8 @@ public class AnimCollect {
                 for (baseAnimModel model : listForKeepBaseAnimMode
                 ) {
                     if (model.getLayerId() == id) {
-                         swingUpAndDownToCenter = (SwingUpAndDownToCenter) model;
-                         break;
+                        swingUpAndDownToCenter = (SwingUpAndDownToCenter) model;
+                        break;
                     }
                 }
                 if (swingUpAndDownToCenter != null) {
@@ -450,7 +491,7 @@ public class AnimCollect {
                 ItemBottomToCenter2 itemBottomToCenter2 = null;
                 for (baseAnimModel model : listForKeepBaseAnimMode
                 ) {
-                    if (model.getLayerId()== nowMainLayerId) {
+                    if (model.getLayerId() == nowMainLayerId) {
                         itemBottomToCenter2 = (ItemBottomToCenter2) model;
                         break;
                     }
@@ -546,7 +587,6 @@ public class AnimCollect {
         stickerAnim4.setAnimType(AnimType.SWINGUPANDDOWN);
         list.add(stickerAnim4);
 
-
         StickerAnim stickerAnim7 = new StickerAnim();
         stickerAnim7.setName("左右分身");
         stickerAnim7.setIcon(R.mipmap.anim_zyfs);
@@ -571,22 +611,17 @@ public class AnimCollect {
         stickerAnim.setAnimType(AnimType.LEFTTORIGHT);
         list.add(stickerAnim);
 
-
         StickerAnim stickerAnim8 = new StickerAnim();
         stickerAnim8.setName("一变三");
         stickerAnim8.setIcon(R.mipmap.anim_ybs);
         stickerAnim8.setAnimType(AnimType.SUPERSTAR);
         list.add(stickerAnim8);
 
-
-
-
         StickerAnim stickerAnim5 = new StickerAnim();
         stickerAnim5.setName("圆心旋转");
         stickerAnim5.setIcon(R.mipmap.anim_yxxx);
         stickerAnim5.setAnimType(AnimType.ROATION);
         list.add(stickerAnim5);
-
 
         StickerAnim stickerAnim2 = new StickerAnim();
         stickerAnim2.setName("多人旋转");
@@ -601,22 +636,17 @@ public class AnimCollect {
         stickerAnim10.setAnimType(AnimType.SUPERSTAR2);
         list.add(stickerAnim10);
 
-
-
-
         StickerAnim stickerAnim11 = new StickerAnim();
         stickerAnim11.setName("圆圈");
         stickerAnim11.setIcon(R.mipmap.anim_ybs);
         stickerAnim11.setAnimType(AnimType.CIRCLECLONED);
         list.add(stickerAnim11);
 
-
         StickerAnim stickerAnim12 = new StickerAnim();
         stickerAnim12.setName("圆圈分身");
         stickerAnim12.setIcon(R.mipmap.anim_ybs);
         stickerAnim12.setAnimType(AnimType.CIRCLECLONED2);
         list.add(stickerAnim12);
-
 
         StickerAnim stickerAnim13 = new StickerAnim();
         stickerAnim13.setName("五角星");
@@ -627,9 +657,26 @@ public class AnimCollect {
         StickerAnim stickerAnim14 = new StickerAnim();
         stickerAnim14.setName("五角星2");
         stickerAnim14.setIcon(R.mipmap.anim_ybs);
-        stickerAnim14.setAnimType(AnimType.FIVEPOINTSTART);
+        stickerAnim14.setAnimType(AnimType.FIVEPOINTSTART2);
         list.add(stickerAnim14);
 
+        StickerAnim stickerAnim15 = new StickerAnim();
+        stickerAnim15.setName("Z形");
+        stickerAnim15.setIcon(R.mipmap.anim_ybs);
+        stickerAnim15.setAnimType(AnimType.Z);
+        list.add(stickerAnim15);
+
+        StickerAnim stickerAnim16 = new StickerAnim();
+        stickerAnim16.setName("方正");
+        stickerAnim16.setIcon(R.mipmap.anim_ybs);
+        stickerAnim16.setAnimType(AnimType.FOUNDER);
+        list.add(stickerAnim16);
+
+        StickerAnim stickerAnim17 = new StickerAnim();
+        stickerAnim17.setName("动起来1");
+        stickerAnim17.setIcon(R.mipmap.anim_ybs);
+        stickerAnim17.setAnimType(AnimType.MAKEMOVEONE);
+        list.add(stickerAnim17);
 
         return list;
     }

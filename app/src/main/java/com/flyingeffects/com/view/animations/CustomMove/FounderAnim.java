@@ -14,13 +14,12 @@ import java.util.List;
 
 
 /**
- * description ：圆圈分身
+ * description ：方正分身o
  * creation date: 2020/5/25
  * user : zhangtongju
  */
 
-public class CircleCloned2 extends baseAnimModel {
-
+public class FounderAnim extends baseAnimModel {
 
 
     private StickerView mainStickerView;
@@ -28,7 +27,7 @@ public class CircleCloned2 extends baseAnimModel {
 
     void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
 
-        ArrayList<StickerView>listAllSticker=new ArrayList<>();
+        ArrayList<StickerView> listAllSticker = new ArrayList<>();
         listAllSticker.addAll(subLayer);
         this.mainStickerView = mainStickerView;
         setRotate(mainStickerView.getRotateAngle());
@@ -36,38 +35,34 @@ public class CircleCloned2 extends baseAnimModel {
         float[] pos = new float[2];
         float[] tan = new float[2];
 
+        float frameScreenWidth = mainStickerView.getWidth();
+        float needWidth = frameScreenWidth / (float) 6;
+        float frameScreenHeight = mainStickerView.getHeight();
+        float needStartHeight = (frameScreenHeight - frameScreenWidth) / (float) 2;
+        float hafStickerH = mainStickerView.getmHelpBoxRectH() / (float) 2;
+        float haltStickerW = mainStickerView.getmHelpBoxRectW() / (float) 2;
+        for (int i = 0; i < subLayer.size(); i++) {
+            int row = i / 6;
+            int xx = i % 6;
+            LogUtil.d("OOM5", "row=" + row);
+            StickerView stickerView = subLayer.get(i);
+            stickerView.toTranMoveXY(needWidth * xx - haltStickerW, needStartHeight + hafStickerH * row);
+//            stickerView.setVisibility(View.g);
+        }
 
-        PathMeasure mPathMeasure = setPathMeasure(mainStickerView.getmHelpBoxRectH(), mainStickerView.getMBoxCenterX(), mainStickerView.getMBoxCenterY());
-        float totalDistancePathMeasure = mPathMeasure.getLength();
+
         //第一个参数为总时长
         animationLinearInterpolator = new AnimationLinearInterpolator(3000, (progress, isDone) -> {
-            //主图层应该走的位置
-            float nowDistance = totalDistancePathMeasure * progress;
-
-//            LogUtil.d("OOM5","progress=="+progress);
-            mPathMeasure.getPosTan(nowDistance, pos, tan);
-            //第一个一直在动
-            mainStickerView.toTranMoveXY(pos[0], pos[1]);
-
-                int x= (int) (progress*10);
-                LogUtil.d("OOM5","x=="+x);
-                if(x>9){
-                    x=9;
+            for (int i = 0; i < subLayer.size(); i++) {
+                int xx = i % 6;
+                StickerView stickerView = subLayer.get(i);
+                float needScale = progress * xx*0.5f;
+                if (needScale > 0.5) {
+                    needScale = 0.5f;
                 }
-                int flashback=9-x;
-                if(listAllSticker.size()>flashback){
-                    StickerView subNowChoose = listAllSticker.get(flashback);
-                    if(subNowChoose!=null){
-                        listAllSticker.remove(flashback);
-                    }
-                }
-
-                for (int i = 0; i < listAllSticker.size(); i++) {
-                    StickerView sub = listAllSticker.get(i);
-                    if (sub != null) {
-                        sub.toTranMoveXY(pos[0], pos[1]);
-                    }
-                }
+                stickerView.setScale(needScale);
+//            stickerView.setVisibility(View.g);
+            }
         });
         animationLinearInterpolator.SetCirculation(false);
         animationLinearInterpolator.PlayAnimation();
@@ -87,7 +82,7 @@ public class CircleCloned2 extends baseAnimModel {
         LanSongTan = new float[2];
         listForTranslaptionPosition.clear();
         this.mainLayer = mainStickerView;
-        LogUtil.d("OOOM","主图层中间的位置X为"+ mainStickerView.getPositionX()+",Y的位置为"+mainStickerView.getPositionY());
+        LogUtil.d("OOOM", "主图层中间的位置X为" + mainStickerView.getPositionX() + ",Y的位置为" + mainStickerView.getPositionY());
         LansongPathMeasure = setPathMeasure(mainStickerView.getScaleHeight(), mainStickerView.getPositionX(), mainStickerView.getPositionY());
         //总长度
         lansongTotalDistancePathMeasure = LansongPathMeasure.getLength();
@@ -151,9 +146,10 @@ public class CircleCloned2 extends baseAnimModel {
         float diameter = layerH / 3 * 2;
         Path mAnimPath = new Path();
 
-        mAnimPath.addCircle(layerCenterX,layerCenterY,diameter*2 ,Path.Direction.CCW);
+        mAnimPath.addCircle(layerCenterX, layerCenterY, diameter * 2, Path.Direction.CCW);
         PathMeasure mPathMeasure = new PathMeasure();
         mPathMeasure.setPath(mAnimPath, true);
         return mPathMeasure;
     }
+
 }
