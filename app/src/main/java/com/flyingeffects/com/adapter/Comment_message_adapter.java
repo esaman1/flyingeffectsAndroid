@@ -32,19 +32,17 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
     private Comment_message_item_adapter adapter;
     private LinearLayout ll_more_comment;
     private CommentOnItemClick callback;
-    private click2Comment clickCommentCallback;
 
-    public Comment_message_adapter(int layoutResId, List<MessageEnity> data, Context context, CommentOnItemClick callback, click2Comment clickCommentCallback) {
+
+    public Comment_message_adapter(int layoutResId, List<MessageEnity> data, Context context, CommentOnItemClick callback) {
         super(layoutResId, data);
         this.context = context;
         this.callback = callback;
-        this.clickCommentCallback = clickCommentCallback;
     }
 
 
     @Override
     protected void convert(final BaseViewHolder helper, final MessageEnity item) {
-        int offset = helper.getLayoutPosition();
         ImageView iv_comment_head = helper.getView(R.id.iv_comment_head);
         MyListView listView = helper.getView(R.id.listView);
         //主层用户头像
@@ -72,33 +70,6 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
 //        }
 
         if (item.isOpenComment()) {
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                            callback.clickPosition(i, item.getId());
-
-
-                }
-            });
-
-            listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                @Override
-                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                    callback.longClickPosition(i, item.getId());
-                    Intent intent = new Intent(context, MessageLongClickActivity.class);
-                    intent.putExtra("user_id", item.getReply().get(i).getUser_id());
-                    intent.putExtra("message_id", item.getReply().get(i).getId());
-                    intent.putExtra("templateId", item.getReply().get(i).getTemplate_id());
-                    intent.putExtra("position", i);
-                    intent.putExtra("isFirstComment", false);
-                     context.startActivity(intent);
-                    return false;
-                }
-            });
-
-
-
             adapter = new Comment_message_item_adapter(item.getReply(), context);
             listView.setAdapter(adapter);
             adapter.setCommentListener(new Comment_message_item_adapter.OnItemCommentListener() {
@@ -106,12 +77,18 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
                 public void clickComment(String id,String nickName) {
                     callback.clickItemComment(id,item.getId(),helper.getAdapterPosition(),nickName);
                 }
+
+                @Override
+                public void clickLongDelete(int position) {
+                    Intent intent = new Intent(context, MessageLongClickActivity.class);
+                    intent.putExtra("user_id", item.getReply().get(position).getUser_id());
+                    intent.putExtra("message_id", item.getReply().get(position).getId());
+                    intent.putExtra("templateId", item.getReply().get(position).getTemplate_id());
+                    intent.putExtra("position", position);
+                    intent.putExtra("isFirstComment", false);
+                    context.startActivity(intent);
+                }
             });
-//            if (item.getReply().size() >= 10) {
-//                ll_more_comment.setVisibility(View.VISIBLE);
-//            } else {
-//                ll_more_comment.setVisibility(View.GONE);
-//            }
             listView.setVisibility(View.VISIBLE);
         }else{
             listView.setVisibility(View.GONE);
@@ -120,16 +97,8 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
 
 
     public interface CommentOnItemClick {
-        void clickPosition(int position, String message_id);
         void clickItemComment(String id,String firstMessageId,int position,String nickname);
     }
-
-    public interface click2Comment {
-
-        void click(int position);
-    }
-
-
 }
 
 

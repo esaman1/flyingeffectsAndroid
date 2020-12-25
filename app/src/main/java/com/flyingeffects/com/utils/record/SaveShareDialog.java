@@ -129,7 +129,9 @@ public class SaveShareDialog  {
          */
         @Override
         public void onError(SHARE_MEDIA platform, Throwable t) {
-            Toast.makeText(mContext, "失败" + t.getMessage(), Toast.LENGTH_LONG).show();
+            String string = t.getMessage();
+            String str = string.substring(string.lastIndexOf("："));
+            Toast.makeText(mContext, "失败" + str, Toast.LENGTH_LONG).show();
         }
 
         /**

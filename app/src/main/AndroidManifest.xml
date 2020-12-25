@@ -147,11 +147,6 @@
             android:theme="@style/AllTransparentTheme" />
 
         <activity
-            android:name="com.flyingeffects.com.ui.view.activity.CommentBlackActivity"
-            android:windowSoftInputMode="adjustNothing"
-            android:theme="@style/AllTransparentTheme" />
-
-        <activity
             android:name="com.flyingeffects.com.ui.view.activity.ChooseMusicActivity"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/AllTransparentTheme" />

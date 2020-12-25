@@ -57,6 +57,7 @@
             android:textSize="17sp" />
 
         <TextView
+            android:id="@+id/tv_hint_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -101,7 +102,6 @@
                     android:id="@+id/tv_add_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-
                     android:text="上传视频模板"
                     android:textColor="#5496FF"
                     android:textSize="16sp" />

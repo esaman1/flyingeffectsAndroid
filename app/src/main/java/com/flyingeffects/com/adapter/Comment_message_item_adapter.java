@@ -91,6 +91,15 @@ public class Comment_message_item_adapter extends BaseAdapter {
                 }
             }
         });
+        holder.llComment.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (commentListener != null) {
+                    commentListener.clickLongDelete(position);
+                }
+                return false;
+            }
+        });
 
         holder.tv_content_1.setText(data.getContent());
 
@@ -114,6 +123,7 @@ public class Comment_message_item_adapter extends BaseAdapter {
 
     public interface OnItemCommentListener{
         void clickComment(String id,String nickName);
+        void clickLongDelete(int position);
     }
 
     OnItemCommentListener commentListener;

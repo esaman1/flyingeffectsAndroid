@@ -3,8 +3,6 @@ package com.flyingeffects.com.ui.view.activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
@@ -12,6 +10,7 @@ import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -19,14 +18,12 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.StimulateControlManage;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.DressUpModel;
 import com.flyingeffects.com.utils.FileUtil;
@@ -40,22 +37,14 @@ import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.media.UMImage;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import de.greenrobot.event.EventBus;
-import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -87,6 +76,8 @@ public class DressUpPreviewActivity extends BaseActivity {
     private List<String> TemplateIdList = new ArrayList<>();
     private String localImage;
     private String templateTitle;
+    /**换装切换次数*/
+    int dressupSwitchNumber = 0;
 
     @Override
     protected int getLayoutId() {
@@ -100,7 +91,6 @@ public class DressUpPreviewActivity extends BaseActivity {
         localImage = getIntent().getStringExtra("localImage");
         templateTitle = getIntent().getStringExtra("templateTitle");
         tv_top_title.setText("上传清晰正脸照片最佳");
-        EventBus.getDefault().register(this);
         findViewById(R.id.iv_top_back).setOnClickListener(this);
         showAndSaveImage(urlPath);
         requestAllTemplateId();
@@ -116,17 +106,55 @@ public class DressUpPreviewActivity extends BaseActivity {
     @Override
     @OnClick({R.id.dress_up_next, R.id.iv_back, R.id.keep_to_album, R.id.share})
     public void onClick(View v) {
-
         switch (v.getId()) {
             case R.id.dress_up_next:
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                    showDressUp(true);
-                    iv_back.setVisibility(View.VISIBLE);
+                    if (dressupSwitchNumber != 0 && dressupSwitchNumber % BaseConstans.getDressupIntervalsNumber() == 0 &&
+                            BaseConstans.getIncentiveVideo() && BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                        VideoAdManager videoAdManager = new VideoAdManager();
+                        videoAdManager.showVideoAd(this, AdConfigs.AD_DRESSUP_SCREEN_VIDEO, new VideoAdCallBack() {
+                            @Override
+                            public void onVideoAdSuccess() {
+//                                statisticsEventAffair.getInstance().setFlag(DressUpPreviewActivity.this, "video_ad_alert_request_sucess");
+                                LogUtil.d("OOM4", "onVideoAdSuccess");
+                            }
+
+                            @Override
+                            public void onVideoAdError(String s) {
+//                                statisticsEventAffair.getInstance().setFlag(DressUpPreviewActivity.this, "video_ad_alert_request_fail");
+                                LogUtil.d("OOM4", "onVideoAdError" + s);
+                                showDressUp(true);
+                                iv_back.setVisibility(View.VISIBLE);
+                            }
+
+                            @Override
+                            public void onVideoAdClose() {
+                                LogUtil.d("OOM4", "onVideoAdClose");
+                                showDressUp(true);
+                                iv_back.setVisibility(View.VISIBLE);
+                            }
+
+                            @Override
+                            public void onVideoAdSkip() {
+                                LogUtil.d("OOM4", "onVideoAdSkip");
+                            }
+
+                            @Override
+                            public void onVideoAdComplete() {
+                                LogUtil.d("OOM4", "onVideoAdComplete");
+                            }
+
+                            @Override
+                            public void onVideoAdClicked() {
+                                LogUtil.d("OOM4", "onVideoAdClicked");
+                            }
+                        });
+                    } else {
+                        showDressUp(true);
+                        iv_back.setVisibility(View.VISIBLE);
+                    }
                 }
-
                 break;
-
-
             case R.id.iv_back:
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
                     if (nowChooseIndex >= 1) {
@@ -136,22 +164,11 @@ public class DressUpPreviewActivity extends BaseActivity {
                         iv_back.setVisibility(View.GONE);
                     }
                 }
-
                 break;
-
             case R.id.keep_to_album:
-                StimulateControlManage.getInstance().InitRefreshStimulate();
-                if (BaseConstans.getHasAdvertising() == 1 && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser() && BaseConstans.getSave_video_ad() && !BaseConstans.TemplateHasWatchingAd) {
-                    Intent intent = new Intent(this, AdHintActivity.class);
-                    intent.putExtra("from", "isFormDressUp");
-                    intent.putExtra("templateTitle", "");
-                    startActivity(intent);
-                } else {
-                    alertAlbumUpdate(false);
-                }
+                alertAlbumUpdate(false);
                 statisticsEventAffair.getInstance().setFlag(this, "21_face_save", template_id);
                 break;
-
             case R.id.share:
                 share(listForKeep.get(nowChooseIndex));
                 break;
@@ -161,45 +178,6 @@ public class DressUpPreviewActivity extends BaseActivity {
         super.onClick(v);
 
     }
-
-
-    public static Bitmap GetLocalOrNetBitmap(String url) {
-        Bitmap bitmap = null;
-        InputStream in = null;
-        BufferedOutputStream out = null;
-        try {
-            in = new BufferedInputStream(new URL(url).openStream(), 1024);
-            final ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
-            out = new BufferedOutputStream(dataStream, 1024);
-            copy(in, out);
-            out.flush();
-            byte[] data = dataStream.toByteArray();
-            bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-            data = null;
-            return bitmap;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
-    }
-
-    private static void copy(InputStream in, OutputStream out)
-            throws IOException {
-        byte[] b = new byte[1024];
-        int read;
-        while ((read = in.read(b)) != -1) {
-            out.write(b, 0, read);
-        }
-    }
-
 
     private void share(String downPath) {
         UMImage image = new UMImage(this, new File(downPath));
@@ -230,6 +208,9 @@ public class DressUpPreviewActivity extends BaseActivity {
         @Override
         public void onResult(SHARE_MEDIA platform) {
 //            ToastUtil.showToast("分享成功");
+            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                AdManager.getInstance().showCpAd(DressUpPreviewActivity.this, AdConfigs.AD_SCREEN_FOR_DRESSUP_SAVE_OR_SHARE);
+            }
         }
 
         /**
@@ -240,7 +221,12 @@ public class DressUpPreviewActivity extends BaseActivity {
         @Override
         public void onError(SHARE_MEDIA platform, Throwable t) {
             LogUtil.d("OOM", "友盟错误日志" + t.getMessage());
-            ToastUtil.showToast("失败");
+            String string = t.getMessage();
+            String str = string.substring(string.lastIndexOf("："));
+            Toast.makeText(mContext, "失败" + str, Toast.LENGTH_LONG).show();
+            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                AdManager.getInstance().showCpAd(DressUpPreviewActivity.this, AdConfigs.AD_SCREEN_FOR_DRESSUP_SAVE_OR_SHARE);
+            }
         }
 
         /**
@@ -250,6 +236,9 @@ public class DressUpPreviewActivity extends BaseActivity {
         @Override
         public void onCancel(SHARE_MEDIA platform) {
             ToastUtil.showToast("取消了");
+            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                AdManager.getInstance().showCpAd(DressUpPreviewActivity.this, AdConfigs.AD_SCREEN_FOR_DRESSUP_SAVE_OR_SHARE);
+            }
         }
     };
 
@@ -285,6 +274,7 @@ public class DressUpPreviewActivity extends BaseActivity {
             if (TemplateIdList.size() > needChooseIndex) {
                 String id = TemplateIdList.get(needChooseIndex);
                 ToNextDressUp(id);
+                dressupSwitchNumber++;
             } else {
                 ToastUtil.showToast("没有更多换装了");
                 LogUtil.d("OOM3", "没有更多换装了");
@@ -294,7 +284,6 @@ public class DressUpPreviewActivity extends BaseActivity {
 
 
     private String keepUploadPath;
-    private String keepTemplate_id;
 
     /**
      * description ：请求下一条数据
@@ -382,25 +371,6 @@ public class DressUpPreviewActivity extends BaseActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-//        Observable.just(url).map(new Func1<String, Bitmap>() {
-//            @Override
-//            public Bitmap call(String s) {
-//                return BitmapManager.getInstance().GetBitmapForHttp(url);
-//            }
-//        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
-//            @Override
-//            public void call(Bitmap bitmap) {
-//                String path = getKeepOutput();
-//                BitmapManager.getInstance().saveBitmapToPath(bitmap, path, new BitmapManager.saveToFileCallback() {
-//                    @Override
-//                    public void isSuccess(boolean isSuccess) {
-//                        albumBroadcast(path);
-//                        showKeepSuccessDialog(path);
-//                    }
-//                });
-//            }
-//        });
     }
 
     private void showKeepSuccessDialog(String path) {
@@ -447,55 +417,10 @@ public class DressUpPreviewActivity extends BaseActivity {
         sendBroadcast(intent);
     }
 
-
-    @Subscribe
-    public void onEventMainThread(showAdCallback event) {
-        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-            VideoAdManager videoAdManager = new VideoAdManager();
-
-            videoAdManager.showVideoAd(this, AdConfigs.AD_save_video_dressUp, new VideoAdCallBack() {
-                @Override
-                public void onVideoAdSuccess() {
-                    statisticsEventAffair.getInstance().setFlag(DressUpPreviewActivity.this, "video_ad_alert_request_sucess");
-                    LogUtil.d("OOM", "onVideoAdSuccess");
-                }
-
-                @Override
-                public void onVideoAdError(String s) {
-                    statisticsEventAffair.getInstance().setFlag(DressUpPreviewActivity.this, "video_ad_alert_request_fail");
-                    LogUtil.d("OOM", "onVideoAdError" + s);
-                    alertAlbumUpdate(false);
-                }
-
-                @Override
-                public void onVideoAdClose() {
-                    alertAlbumUpdate(true);
-                }
-
-                @Override
-                public void onVideoAdSkip() {
-                    LogUtil.d("OOM", "onVideoAdSkip");
-                }
-
-                @Override
-                public void onVideoAdComplete() {
-                }
-
-                @Override
-                public void onVideoAdClicked() {
-                    LogUtil.d("OOM", "onVideoAdClicked");
-                }
-            });
-        } else {
-            alertAlbumUpdate(true);
-        }
-    }
-
-
     public void alertAlbumUpdate(boolean isSuccess) {
         if (!isSuccess) {
             if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-                AdManager.getInstance().showCpAd(this, AdConfigs.AD_SCREEN_FOR_DRESSUP);
+                AdManager.getInstance().showCpAd(this, AdConfigs.AD_SCREEN_FOR_DRESSUP_SAVE_OR_SHARE);
             }
         }
         if (listForKeep.size() > nowChooseIndex) {
@@ -503,6 +428,4 @@ public class DressUpPreviewActivity extends BaseActivity {
             keepImageToAlbum(path);
         }
     }
-
-
 }

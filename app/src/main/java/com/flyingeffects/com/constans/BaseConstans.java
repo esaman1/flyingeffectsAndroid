@@ -28,7 +28,7 @@ public class BaseConstans {
     public static final String UMENGAPPID = "5e5c68a2570df3d6930002b4";
     /**抖音分享ClientKey*/
     public static final String DOUYINSHARE_CLIENTKEY ="awikd2g333hd0ien";
-    //当前抠图是用sdk 还是用服务器
+    /**当前抠图是用sdk 还是用服务器*/
     public static final boolean UserFaceSdk=true;
 //    public static final boolean isTitokChannel=true;
     public static final int  THREADCOUNT=4;
@@ -44,9 +44,12 @@ public class BaseConstans {
     public static String service_wxi;
     public static boolean TemplateHasWatchingAd=false;
     public static ConfigForTemplateList configList;
-    private static int hasAdvertising = 0;  //是否有广告，0表示没得，1表示有，全局控制
-    public static int showAgainKaipingAd = 60; //退出后台后多少秒后会重新显示插屏
-    private static boolean isNewUserForAdvertising = false; //只是用前几次的新用户
+    /**是否有广告，0表示没得，1表示有，全局控制*/
+    private static int hasAdvertising = 0;
+    /**退出后台后多少秒后会重新显示插屏*/
+    public static int showAgainKaipingAd = 60;
+    /**只是用前几次的新用户*/
+    private static boolean isNewUserForAdvertising = false;
     public static final String PROTOCOL = Url.BASE_URL + "/fly/FS-Agreement.html";
 
     public static final String FILE_PATH;
@@ -56,9 +59,11 @@ public class BaseConstans {
         String nowTimestamp = getTimestamp() + "";
         map.put("app_id", "10000");
         map.put("platform", "android");
-        map.put("channel", getChannel()); //getChannel()  test
+        //getChannel()  test
+        map.put("channel", getChannel());
         map.put("version", getVersionCode());
-        map.put("timestamp", nowTimestamp);//getTimestamp()+""
+        //getTimestamp()+""
+        map.put("timestamp", nowTimestamp);
         map.put("imei", getUuid());
         map.put("uuid", GetUserUuid());
         map.put("token", GetUserToken());
@@ -72,7 +77,8 @@ public class BaseConstans {
         map.put("platform", "android");
         map.put("channel", getChannel());
         map.put("version", getVersionCode());
-        map.put("timestamp", nowTimestamp);//getTimestamp()+""
+        //getTimestamp()+""
+        map.put("timestamp", nowTimestamp);
         map.put("imei", getUuid());
         map.put("uuid", GetUserUuid());
         map.put("token", GetUserToken());
@@ -438,6 +444,19 @@ public class BaseConstans {
     public static String getDouyingTopic() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getString("DouyingTopic", "飞闪视频");
+    }
+
+    /**设置换装制作页面切换模板按钮加载视频广告的间隔次数*/
+    public static void setDressupIntervalsNumber(int intervalsNumber) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putInt("IntervalsNumber", intervalsNumber);
+    }
+
+
+    /**获取换装制作页面切换模板按钮加载视频广告的间隔次数*/
+    public static int getDressupIntervalsNumber() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getInt("IntervalsNumber", 5);
     }
 
 

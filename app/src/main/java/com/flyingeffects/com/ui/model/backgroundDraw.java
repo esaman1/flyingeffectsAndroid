@@ -196,7 +196,7 @@ public class backgroundDraw {
                             Bitmap bt_nj = BitmapManager.getInstance().getOrientationBitmap(imagePath);
                             BitmapUtils bpUtils = new BitmapUtils();
                             bt_nj = bpUtils.zoomImg2(bt_nj, execute.getPadWidth() / 16 * 16, execute.getPadHeight() / 16 * 16);
-                            execute.addBitmapLayer(bt_nj);
+                            execute.addBitmapLayer(bt_nj,0, Long.MAX_VALUE);
                         } else {
                             execute.setBackgroundColor(Color.parseColor("#1FA400"));
                         }
@@ -243,7 +243,7 @@ public class backgroundDraw {
             if (!TextUtils.isEmpty(videoVoice)) {
                 option.setAudioMute();
             }
-            Layer bgLayer = execute.addVideoLayer(option,0, duration * 1000,false,false);
+            Layer bgLayer = execute.addVideoLayer(option,0, duration * 1000,false,true);
             if (!nowUiIsLandscape) {
                 bgLayer.setScaledToPadSize();
                 bgLayer.setScaleType(LSOScaleType.VIDEO_SCALE_TYPE);
@@ -274,7 +274,8 @@ public class backgroundDraw {
             long endTime = stickerItem.getShowStickerEndTime() * 1000;
             VideoFrameLayer videoLayer;
             if (endTime != 0) {
-                videoLayer = execute.addVideoLayer(option, stickerItem.getShowStickerStartTime() * 1000, stickerItem.getShowStickerEndTime() * 1000, false, false);
+                videoLayer = execute.addVideoLayer(option, stickerItem.getShowStickerStartTime() * 1000,
+                        endTime >= duration * 1000 ? Long.MAX_VALUE : endTime, false, false);
             } else {
                 videoLayer = execute.addVideoLayer(option);
             }
@@ -331,7 +332,8 @@ public class backgroundDraw {
         long endTime = stickerItem.getShowStickerEndTime() * 1000;
         GifLayer gifLayer;
         if (endTime != 0) {
-            gifLayer = execute.addGifLayer(stickerItem.getPath(), stickerItem.getShowStickerStartTime() * 1000, stickerItem.getShowStickerEndTime() * 1000);
+            gifLayer = execute.addGifLayer(stickerItem.getPath(), stickerItem.getShowStickerStartTime() * 1000,
+                    endTime >= duration * 1000 ? Long.MAX_VALUE : endTime);
         } else {
             gifLayer = execute.addGifLayer(stickerItem.getPath());
         }
@@ -387,7 +389,7 @@ public class backgroundDraw {
         LogUtil.d("OOM4", "STARTTime" + STARTTime);
         BitmapLayer bpLayer;
         if (endTime != 0) {
-            bpLayer = execute.addBitmapLayer(bp, STARTTime*1000, endTime * 1000);
+            bpLayer = execute.addBitmapLayer(bp, STARTTime * 1000, endTime * 1000 >= duration * 1000 ? Long.MAX_VALUE : endTime * 1000);
         } else {
             bpLayer = execute.addBitmapLayer(bp);
         }

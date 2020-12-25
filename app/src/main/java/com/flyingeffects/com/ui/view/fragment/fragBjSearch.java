@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.main_recycler_adapter;
@@ -20,6 +21,7 @@ import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
@@ -29,6 +31,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.yanzhenjie.album.AlbumFile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +39,6 @@ import java.util.List;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -53,25 +55,30 @@ import rx.Observable;
 
 public class fragBjSearch extends BaseFragment {
 
-    private int perPageCount = 10;
     @BindView(R.id.RecyclerView)
     RecyclerView recyclerView;
-    private main_recycler_adapter adapter;
-    private List<new_fag_template_item> allData = new ArrayList<>();
     @BindView(R.id.smart_refresh_layout_bj)
     SmartRefreshLayout smartRefreshLayout;
     @BindView(R.id.lin_show_nodata_bj)
     LinearLayout lin_show_nodata;
-    private boolean isRefresh = true;
-    private int selectPage = 1;
-    //默认值肯定为""
-    private String searchText;
-    //0 表示搜索出来模板 1表示搜索内容为背景
-    private int isFrom;
-    private boolean hasSearch = false;
-
     @BindView(R.id.relative_add)
     RelativeLayout relative_add;
+    @BindView(R.id.tv_hint_search)
+    TextView mTVHintSearch;
+    @BindView(R.id.tv_add_title)
+    TextView mAddTitle;
+
+    private int perPageCount = 10;
+    private main_recycler_adapter adapter;
+    private List<new_fag_template_item> allData = new ArrayList<>();
+
+    private boolean isRefresh = true;
+    private int selectPage = 1;
+    /**默认值肯定为""*/
+    private String searchText;
+    /**0 表示搜索出来模板 1表示搜索内容为背景  3代表换装*/
+    private int isFrom;
+    private boolean hasSearch = false;
 
 
     @Override
@@ -187,6 +194,13 @@ public class fragBjSearch extends BaseFragment {
     public void showNoData(boolean isShowNoData) {
         if (isShowNoData) {
             lin_show_nodata.setVisibility(View.VISIBLE);
+            if (isFrom == 3) {
+                mTVHintSearch.setText("请上传需要的换装模板");
+                mAddTitle.setText("上传换装模板");
+            } else {
+                mTVHintSearch.setText("请上传需要的视频模板");
+                mAddTitle.setText("上传视频模板");
+            }
         } else {
             lin_show_nodata.setVisibility(View.GONE);
         }
@@ -313,15 +327,26 @@ public class fragBjSearch extends BaseFragment {
         switch (view.getId()) {
             case R.id.relative_add:
                 if (BaseConstans.hasLogin()) {
-                    AlbumManager.chooseVideo(getActivity(), 1, 1, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
-                        if (!isCancel) {
-                            Intent intent = new Intent(getActivity(), UploadMaterialActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            intent.putExtra("videoPath", paths.get(0));
-                            intent.putExtra("isFrom", 1);
-                            startActivity(intent);
-                        }
-                    }, "");
+                    Intent intent = new Intent(getActivity(), UploadMaterialActivity.class);
+                    if (isFrom == 3) {
+                        AlbumManager.chooseImageAlbum(getContext(), 1, 0, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
+                            if (!isCancel) {
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.putExtra("videoPath", paths.get(0));
+                                intent.putExtra("isFrom", 2);
+                                startActivity(intent);
+                            }
+                        }, "");
+                    } else {
+                        AlbumManager.chooseVideo(getActivity(), 1, 1, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
+                            if (!isCancel) {
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.putExtra("videoPath", paths.get(0));
+                                intent.putExtra("isFrom", 1);
+                                startActivity(intent);
+                            }
+                        }, "");
+                    }
                 } else {
                     Intent intent = new Intent(getActivity(), LoginActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -332,6 +357,4 @@ public class fragBjSearch extends BaseFragment {
                 break;
         }
     }
-
-
 }
