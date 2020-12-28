@@ -528,7 +528,6 @@ public class backgroundDraw {
                     currentTime = 0;
                 }
             }
-            ;
             if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
                 float percentage;
                 if (stickerItem.getChooseAnimId() == AnimType.BOTTOMTOCENTER2 || stickerItem.getChooseAnimId() == AnimType.SUPERSTAR2) {
@@ -651,7 +650,7 @@ public class backgroundDraw {
                     hasAnimLayer animLayer = hasAnimLayerList.get(i);
                     float needDurationTime = animCollect.getAnimNeedSubLayerTime(animLayer.ChooseAnimId);
                     float percentage;
-                    if (animLayer.ChooseAnimId == AnimType.BOTTOMTOCENTER2 || animLayer.ChooseAnimId == AnimType.SUPERSTAR2) {
+                    if (animLayer.ChooseAnimId == AnimType.BOTTOMTOCENTER2 || animLayer.ChooseAnimId == AnimType.SUPERSTAR2 || animLayer.ChooseAnimId == AnimType.CIRCLECLONED2) {
                         float needDt = needDurationTime * 1000;
                         if (currentTime > needDt) {
                             percentage = 1;

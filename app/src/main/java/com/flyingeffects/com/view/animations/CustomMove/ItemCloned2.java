@@ -50,7 +50,6 @@ public class ItemCloned2 extends baseAnimModel {
     private float centerX;
     private float centerY;
     private float paddingHeight;
-
     private float paddingWidth;
 
     public void initToChangeSubLayer(Layer mainLayer, LayerAnimCallback callback, float percentage) {

@@ -10,7 +10,10 @@ import com.lansosdk.box.Layer;
 import com.lansosdk.box.SubLayer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -61,32 +64,40 @@ public class CircleCloned2 extends baseAnimModel {
     }
 
 
+    //--------------------------------适配蓝松---------------------------------------
+
+
     private PathMeasure LansongPathMeasure;
     private float lansongTotalDistancePathMeasure;
     private float[] LanSongPos;
     private float[] LanSongTan;
     private Layer mainLayer;
-    private float perDistance;
     private ArrayList<TransplationPos> listForTranslaptionPosition = new ArrayList<>();
+    //保存不需要走的点
+    private HashMap<Integer, float[]> hashMap = new HashMap<>();
+//    private int LastFlashBack = 9;
 
-    void toChangeSubLayer(Layer mainStickerView, ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
+    public void initToChangeSubLayer(Layer mainLayer, ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
+        hashMap.clear();
         LanSongPos = new float[2];
         LanSongTan = new float[2];
-        listForTranslaptionPosition.clear();
-        this.mainLayer = mainStickerView;
-        LogUtil.d("OOOM", "主图层中间的位置X为" + mainStickerView.getPositionX() + ",Y的位置为" + mainStickerView.getPositionY());
-        LansongPathMeasure = setPathMeasure(mainStickerView.getScaleHeight(), mainStickerView.getPositionX(), mainStickerView.getPositionY());
-        //总长度
+        this.mainLayer = mainLayer;
+        LansongPathMeasure = setPathMeasure(mainLayer.getScaleHeight(), mainLayer.getPositionX(), mainLayer.getPositionY());
         lansongTotalDistancePathMeasure = LansongPathMeasure.getLength();
-        perDistance = lansongTotalDistancePathMeasure / (float) 10;
+//        perDistance = lansongTotalDistancePathMeasure / (float) 10;
+        toChangeSubLayer(listForSubLayer, callback, percentage);
+    }
+
+
+    void toChangeSubLayer(ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
+        listForTranslaptionPosition.clear();
         getLansongTranslation(callback, percentage, listForSubLayer);
-        LogUtil.d("translationalXY", "当前的事件为percentage=" + percentage);
     }
 
 
     void getLansongTranslation(LayerAnimCallback callback, float percentage, ArrayList<SubLayer> listForSubLayer) {
         listForTranslaptionPosition.clear();
-        AnimationLinearInterpolator animationLinearInterpolator = new AnimationLinearInterpolator(5000, (progress, isDone) -> {
+        AnimationLinearInterpolator animationLinearInterpolator = new AnimationLinearInterpolator(3000, (progress, isDone) -> {
             //主图层应该走的位置
             if (LansongPathMeasure != null) {
                 float nowDistance = lansongTotalDistancePathMeasure * progress;
@@ -98,18 +109,40 @@ public class CircleCloned2 extends baseAnimModel {
                 transplationPos.setToX(translateionalX);
                 transplationPos.setToY(translateionalY);
                 listForTranslaptionPosition.add(transplationPos);
+
+                ///-------
+                int interProgress = (int) (progress * 9);
+                if (interProgress > 9) {
+                    interProgress = 9;
+                }
+                int flashBack = 9 - interProgress;
+//                if (flashBack != LastFlashBack) {
+//                    LastFlashBack = flashBack;
+//                }
+
                 for (int i = 0; i < listForSubLayer.size(); i++) {
                     SubLayer sub = listForSubLayer.get(i);
                     if (sub != null) {
-                        float needDistance = perDistance * i + nowDistance;
-                        if (needDistance > lansongTotalDistancePathMeasure) {
-                            needDistance = needDistance - lansongTotalDistancePathMeasure;
-                        }
-                        LansongPathMeasure.getPosTan(needDistance, LanSongPos, LanSongTan);
                         TransplationPos newTransplationPos = new TransplationPos();
-                        newTransplationPos.setToX(LanSongPos[0] / mainLayer.getPadWidth());
-                        newTransplationPos.setToY(LanSongPos[1] / mainLayer.getPadHeight());
-                        listForTranslaptionPosition.add(newTransplationPos);
+                        if (hashMap.get(i) == null) {
+                            LansongPathMeasure.getPosTan(nowDistance, LanSongPos, LanSongTan);
+                            float toX = LanSongPos[0] / mainLayer.getPadWidth();
+                            float toY = LanSongPos[1] / mainLayer.getPadHeight();
+                            newTransplationPos.setToX(toX);
+                            newTransplationPos.setToY(toY);
+                            listForTranslaptionPosition.add(newTransplationPos);
+                            if (listForSubLayer.size() > flashBack && flashBack == i) {
+                                LogUtil.d("OOM5", "保存的点为" + "flashBack=" + flashBack + "点===toX:" + toX + "点===toY：" + toY);
+                                hashMap.put(flashBack, new float[]{toX, toY});
+                            }
+                        } else {
+                            float data[] = hashMap.get(i);
+                            LogUtil.d("OOM55", "得到保存的点为X" + data[0] + "YY==" + data[1]);
+                            newTransplationPos.setToX(Objects.requireNonNull(data[0]));
+                            newTransplationPos.setToY(Objects.requireNonNull(data[1]));
+                            listForTranslaptionPosition.add(newTransplationPos);
+
+                        }
                     }
                 }
                 callback.translationalXY(listForTranslaptionPosition);
@@ -137,7 +170,6 @@ public class CircleCloned2 extends baseAnimModel {
     private PathMeasure setPathMeasure(float layerH, float layerCenterX, float layerCenterY) {
         float diameter = layerH / 3 * 2;
         Path mAnimPath = new Path();
-
         mAnimPath.addCircle(layerCenterX, layerCenterY, diameter * 2, Path.Direction.CCW);
         PathMeasure mPathMeasure = new PathMeasure();
         mPathMeasure.setPath(mAnimPath, true);

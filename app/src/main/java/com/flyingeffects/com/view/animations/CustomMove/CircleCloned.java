@@ -59,6 +59,58 @@ public class CircleCloned extends baseAnimModel {
     }
 
 
+
+
+
+
+
+    @Override
+    public void StopAnim() {
+        if (animationLinearInterpolator != null) {
+            animationLinearInterpolator.endTimer();
+            resetAnimState(mainStickerView);
+        }
+    }
+
+
+    /**
+     * description ：路径动画
+     * creation date: 2020/5/28
+     * layerH 自身的高
+     * user : zhangtongju
+     */
+    private PathMeasure setPathMeasure(float layerH, float layerCenterX, float layerCenterY) {
+        float diameter = layerH / 3 * 2;
+        Path mAnimPath = new Path();
+
+        mAnimPath.addCircle(layerCenterX,layerCenterY,diameter*2 ,Path.Direction.CCW);
+        PathMeasure mPathMeasure = new PathMeasure();
+        mPathMeasure.setPath(mAnimPath, true);
+        return mPathMeasure;
+    }
+
+
+
+
+
+
+
+    //--------------------------------适配蓝松---------------------------------------
+
+
+
+    public void initToChangeSubLayer(Layer mainLayer,ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
+        LanSongPos = new float[2];
+        LanSongTan = new float[2];
+        this.mainLayer = mainLayer;
+        LansongPathMeasure = setPathMeasure(mainLayer.getScaleHeight(), mainLayer.getPositionX(), mainLayer.getPositionY());
+        lansongTotalDistancePathMeasure = LansongPathMeasure.getLength();
+        perDistance = lansongTotalDistancePathMeasure / (float) 10;
+        toChangeSubLayer(listForSubLayer,callback,percentage);
+    }
+
+
+
     private PathMeasure LansongPathMeasure;
     private float lansongTotalDistancePathMeasure;
     private float[] LanSongPos;
@@ -67,19 +119,13 @@ public class CircleCloned extends baseAnimModel {
     private float perDistance;
     private ArrayList<TransplationPos> listForTranslaptionPosition = new ArrayList<>();
 
-    void toChangeSubLayer(Layer mainStickerView, ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
-        LanSongPos = new float[2];
-        LanSongTan = new float[2];
-        listForTranslaptionPosition.clear();
-        this.mainLayer = mainStickerView;
-        LogUtil.d("OOOM","主图层中间的位置X为"+ mainStickerView.getPositionX()+",Y的位置为"+mainStickerView.getPositionY());
-        LansongPathMeasure = setPathMeasure(mainStickerView.getScaleHeight(), mainStickerView.getPositionX(), mainStickerView.getPositionY());
-        //总长度
-        lansongTotalDistancePathMeasure = LansongPathMeasure.getLength();
-        perDistance = lansongTotalDistancePathMeasure / (float) 10;
+   public void toChangeSubLayer( ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
         getLansongTranslation(callback, percentage, listForSubLayer);
         LogUtil.d("translationalXY", "当前的事件为percentage=" + percentage);
     }
+
+
+
 
 
     void getLansongTranslation(LayerAnimCallback callback, float percentage, ArrayList<SubLayer> listForSubLayer) {
@@ -117,28 +163,6 @@ public class CircleCloned extends baseAnimModel {
     }
 
 
-    @Override
-    public void StopAnim() {
-        if (animationLinearInterpolator != null) {
-            animationLinearInterpolator.endTimer();
-            resetAnimState(mainStickerView);
-        }
-    }
 
 
-    /**
-     * description ：路径动画
-     * creation date: 2020/5/28
-     * layerH 自身的高
-     * user : zhangtongju
-     */
-    private PathMeasure setPathMeasure(float layerH, float layerCenterX, float layerCenterY) {
-        float diameter = layerH / 3 * 2;
-        Path mAnimPath = new Path();
-
-        mAnimPath.addCircle(layerCenterX,layerCenterY,diameter*2 ,Path.Direction.CCW);
-        PathMeasure mPathMeasure = new PathMeasure();
-        mPathMeasure.setPath(mAnimPath, true);
-        return mPathMeasure;
-    }
 }

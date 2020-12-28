@@ -131,12 +131,13 @@ public class AnimCollect {
     public int getAnimNeedSubLayerTime(AnimType type) {
         switch (type) {
             case EIGHTBORTHER:
+            case FIVEPOINTSTART:
                 return 10000;
             case LEFTTORIGHT:
             case LEFTANDRIGHTDISSMISS:
-            case FIVEPOINTSTART:
             case FIVEPOINTSTART2:
             case Z:
+            case CIRCLECLONED2:
                 return 3000;
             case BOTTOMTOCENTER:
             case BOTTOMTOCENTER2:
@@ -156,7 +157,8 @@ public class AnimCollect {
             case SUPERLOVE:
                 return 2000;
 
-
+            case CIRCLECLONED:
+                return 5000;
         }
         return 0;
     }
@@ -537,25 +539,47 @@ public class AnimCollect {
 
 
             case CIRCLECLONED:
-//                nowMainLayerId = mainStickerView.getId();
-//                ItemBottomToCenter2 itemBottomToCenter2 = null;
-//                for (baseAnimModel model : listForKeepBaseAnimMode
-//                ) {
-//                    if (model.getLayerId()== nowMainLayerId) {
-//                        itemBottomToCenter2 = (ItemBottomToCenter2) model;
-//                        break;
-//                    }
-//                }
-//                if (itemBottomToCenter2 != null) {
-//                    (itemBottomToCenter2).toChangeSubLayer(callback, percentage);
-//                } else {
-//                    itemBottomToCenter2 = new ItemBottomToCenter2();
-//                    itemBottomToCenter2.setLayerId(mainStickerView.getId());
-//                    itemBottomToCenter2.initToChangeSubLayer(mainStickerView, callback, percentage);
-//                    listForKeepBaseAnimMode.add(itemBottomToCenter2);
-//                }
-//
+                nowMainLayerId = mainStickerView.getId();
+                CircleCloned CircleCloned = null;
+                for (baseAnimModel model : listForKeepBaseAnimMode
+                ) {
+                    if (model.getLayerId() == nowMainLayerId) {
+                        CircleCloned = (CircleCloned) model;
+                        break;
+                    }
+                }
+                if (CircleCloned != null) {
+                    (CircleCloned).toChangeSubLayer(listForSubLayer, callback, percentage);
+                } else {
+                    CircleCloned = new CircleCloned();
+                    CircleCloned.setLayerId(mainStickerView.getId());
+                    CircleCloned.initToChangeSubLayer(mainStickerView, listForSubLayer, callback, percentage);
+                    listForKeepBaseAnimMode.add(CircleCloned);
+                }
                 break;
+
+
+
+            case CIRCLECLONED2:
+                nowMainLayerId = mainStickerView.getId();
+                CircleCloned2 CircleCloned2 = null;
+                for (baseAnimModel model : listForKeepBaseAnimMode
+                ) {
+                    if (model.getLayerId() == nowMainLayerId) {
+                        CircleCloned2 = (CircleCloned2) model;
+                        break;
+                    }
+                }
+                if (CircleCloned2 != null) {
+                    (CircleCloned2).toChangeSubLayer(listForSubLayer, callback, percentage);
+                } else {
+                    CircleCloned2 = new CircleCloned2();
+                    CircleCloned2.setLayerId(mainStickerView.getId());
+                    CircleCloned2.initToChangeSubLayer(mainStickerView, listForSubLayer, callback, percentage);
+                    listForKeepBaseAnimMode.add(CircleCloned2);
+                }
+                break;
+
 
         }
     }
