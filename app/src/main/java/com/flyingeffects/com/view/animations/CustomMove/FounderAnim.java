@@ -26,42 +26,40 @@ public class FounderAnim extends baseAnimModel {
 
 
     void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
-
         ArrayList<StickerView> listAllSticker = new ArrayList<>();
         listAllSticker.addAll(subLayer);
         this.mainStickerView = mainStickerView;
         setRotate(mainStickerView.getRotateAngle());
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
-        float[] pos = new float[2];
-        float[] tan = new float[2];
-
-        float frameScreenWidth = mainStickerView.getWidth();
-        float needWidth = frameScreenWidth / (float) 6;
-        float frameScreenHeight = mainStickerView.getHeight();
-        float needStartHeight = (frameScreenHeight - frameScreenWidth) / (float) 2;
-        float hafStickerH = mainStickerView.getmHelpBoxRectH() / (float) 2;
-        float haltStickerW = mainStickerView.getmHelpBoxRectW() / (float) 2;
+        float singleWidth = mainStickerView.getmHelpBoxRectW() / 2;
+        float centerX = mainStickerView.getCenterX();
+        float centerY = mainStickerView.getCenterY();
+        float firstWidth = centerX - singleWidth * 2 - singleWidth / (float) 2;
+        float firstHeight = centerY - singleWidth * 2 - singleWidth / (float) 2;
         for (int i = 0; i < subLayer.size(); i++) {
             int row = i / 6;
             int xx = i % 6;
             LogUtil.d("OOM5", "row=" + row);
             StickerView stickerView = subLayer.get(i);
-            stickerView.toTranMoveXY(needWidth * xx - haltStickerW, needStartHeight + hafStickerH * row);
-//            stickerView.setVisibility(View.g);
+            stickerView.toTranMoveXY(firstWidth + singleWidth * xx, firstHeight + singleWidth * row);
+            if (i == subLayer.size() - 1) {
+                mainStickerView.toTranMoveXY(firstWidth + singleWidth * xx, firstHeight + singleWidth * row);
+            }
+
         }
-
-
         //第一个参数为总时长
         animationLinearInterpolator = new AnimationLinearInterpolator(3000, (progress, isDone) -> {
             for (int i = 0; i < subLayer.size(); i++) {
                 int xx = i % 6;
                 StickerView stickerView = subLayer.get(i);
-                float needScale = progress * xx*0.5f;
+                float needScale = progress * (xx + 1) * 0.5f;
                 if (needScale > 0.5) {
                     needScale = 0.5f;
                 }
+                if (xx == 5) {
+                    mainStickerView.setScale(needScale);
+                }
                 stickerView.setScale(needScale);
-//            stickerView.setVisibility(View.g);
             }
         });
         animationLinearInterpolator.SetCirculation(false);

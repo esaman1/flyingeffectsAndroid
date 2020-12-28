@@ -22,7 +22,7 @@ import java.util.List;
 public class ZAnim extends baseAnimModel {
 
     private StickerView mainStickerView;
-
+    private boolean hasMainStickerAnim=false;
 
     void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
         ArrayList<StickerView> listAllSticker = new ArrayList<>();
@@ -34,13 +34,15 @@ public class ZAnim extends baseAnimModel {
         float[] tan = new float[2];
         PathMeasure mPathMeasure = setPathMeasure(mainStickerView.getmHelpBoxRectH(), mainStickerView.getMBoxCenterX(), mainStickerView.getMBoxCenterY());
         float totalDistancePathMeasure = mPathMeasure.getLength();
-        float perDistance = totalDistancePathMeasure / (float) 15;
         //第一个参数为总时长
         animationLinearInterpolator = new AnimationLinearInterpolator(3000, (progress, isDone) -> {
             //主图层应该走的位置
             float nowDistance = totalDistancePathMeasure * progress;
             mPathMeasure.getPosTan(nowDistance, pos, tan);
-            mainStickerView.toTranMoveXY(pos[0],  pos[1]);
+            if(!hasMainStickerAnim){
+                mainStickerView.toTranMoveXY(pos[0],  pos[1]);
+                hasMainStickerAnim=true;
+            }
             int x = (int) (progress * 15);
             LogUtil.d("OOM5", "x==" + x);
             if (x > 15) {

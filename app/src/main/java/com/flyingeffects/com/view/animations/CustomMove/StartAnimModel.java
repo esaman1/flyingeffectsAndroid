@@ -10,8 +10,6 @@ public class StartAnimModel {
 
 
     public StartAnimModel(  AnimCollect animCollect) {
-
-
         this.animCollect = animCollect;
     }
 

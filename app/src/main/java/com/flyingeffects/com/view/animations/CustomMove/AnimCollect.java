@@ -73,8 +73,10 @@ public class AnimCollect {
                 return 16;
 
             case LOVE:
-
                 return 17;
+
+            case SUPERLOVE:
+                return 18;
 
             case NULL:
                 return 0;
@@ -101,8 +103,10 @@ public class AnimCollect {
             case MAKEMOVEONE:
                 return 1;
             case CIRCLECLONED:
-            case CIRCLECLONED2:
                 return 10;
+            case CIRCLECLONED2:
+                return 9;
+
             case FIVEPOINTSTART:
             case FIVEPOINTSTART2:
                 return 20;
@@ -111,6 +115,7 @@ public class AnimCollect {
             case FOUNDER:
                 return 36;
             case LOVE:
+            case SUPERLOVE:
                 return 28;
 
         }
@@ -148,7 +153,9 @@ public class AnimCollect {
                 return 1000;
 
             case MAKEMOVEONE:
-                return 8000;
+            case SUPERLOVE:
+                return 2000;
+
 
         }
         return 0;
@@ -267,17 +274,23 @@ public class AnimCollect {
 
 
             case MAKEMOVEONE:
-                MakeMoveOneAnim makeMoveOneAnim=new MakeMoveOneAnim();
+                MakeMoveOneAnim makeMoveOneAnim = new MakeMoveOneAnim();
                 makeMoveOneAnim.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(makeMoveOneAnim);
                 break;
 
 
             case LOVE:
+                LoveAnim loveAnim = new LoveAnim();
+                loveAnim.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(loveAnim);
+                break;
 
-//                MakeMoveOneAnim makeMoveOneAnim=new MakeMoveOneAnim();
-//                makeMoveOneAnim.toChangeStickerView(mainStickerView, subLayer);
-//                listForBaseAnimMode.add(makeMoveOneAnim);
+
+            case SUPERLOVE:
+                SuperLoveAnim superLoveAnim = new SuperLoveAnim();
+                superLoveAnim.toChangeStickerView(mainStickerView, subLayer);
+                listForBaseAnimMode.add(superLoveAnim);
 
                 break;
 
@@ -693,6 +706,21 @@ public class AnimCollect {
         stickerAnim17.setIcon(R.mipmap.anim_ybs);
         stickerAnim17.setAnimType(AnimType.MAKEMOVEONE);
         list.add(stickerAnim17);
+
+
+        StickerAnim stickerAnim18 = new StickerAnim();
+        stickerAnim18.setName("桃心分身");
+        stickerAnim18.setIcon(R.mipmap.anim_ybs);
+        stickerAnim18.setAnimType(AnimType.LOVE);
+        list.add(stickerAnim18);
+
+
+        StickerAnim stickerAnim19 = new StickerAnim();
+        stickerAnim19.setName("超级桃心");
+        stickerAnim19.setIcon(R.mipmap.anim_ybs);
+        stickerAnim19.setAnimType(AnimType.SUPERLOVE);
+        list.add(stickerAnim19);
+
 
         return list;
     }

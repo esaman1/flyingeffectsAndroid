@@ -14,7 +14,7 @@ import java.util.List;
 
 
 /**
- * description ：圆圈分身
+ * description ：圆圈分身，一个一个显示
  * creation date: 2020/5/25
  * user : zhangtongju
  */
@@ -22,52 +22,39 @@ import java.util.List;
 public class CircleCloned2 extends baseAnimModel {
 
 
-
     private StickerView mainStickerView;
 
-
     void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
-
-        ArrayList<StickerView>listAllSticker=new ArrayList<>();
+        ArrayList<StickerView> listAllSticker = new ArrayList<>();
         listAllSticker.addAll(subLayer);
         this.mainStickerView = mainStickerView;
         setRotate(mainStickerView.getRotateAngle());
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
         float[] pos = new float[2];
         float[] tan = new float[2];
-
-
         PathMeasure mPathMeasure = setPathMeasure(mainStickerView.getmHelpBoxRectH(), mainStickerView.getMBoxCenterX(), mainStickerView.getMBoxCenterY());
         float totalDistancePathMeasure = mPathMeasure.getLength();
-        //第一个参数为总时长
         animationLinearInterpolator = new AnimationLinearInterpolator(3000, (progress, isDone) -> {
-            //主图层应该走的位置
             float nowDistance = totalDistancePathMeasure * progress;
-
-//            LogUtil.d("OOM5","progress=="+progress);
             mPathMeasure.getPosTan(nowDistance, pos, tan);
-            //第一个一直在动
             mainStickerView.toTranMoveXY(pos[0], pos[1]);
-
-                int x= (int) (progress*10);
-                LogUtil.d("OOM5","x=="+x);
-                if(x>9){
-                    x=9;
+            int interProgress = (int) (progress * 9);
+            if (interProgress > 9) {
+                interProgress = 9;
+            }
+            int flashBack = 9 - interProgress;
+            if (listAllSticker.size() > flashBack) {
+                StickerView subNowChoose = listAllSticker.get(flashBack);
+                if (subNowChoose != null) {
+                    listAllSticker.remove(flashBack);
                 }
-                int flashback=9-x;
-                if(listAllSticker.size()>flashback){
-                    StickerView subNowChoose = listAllSticker.get(flashback);
-                    if(subNowChoose!=null){
-                        listAllSticker.remove(flashback);
-                    }
+            }
+            for (int i = 0; i < listAllSticker.size(); i++) {
+                StickerView sub = listAllSticker.get(i);
+                if (sub != null) {
+                    sub.toTranMoveXY(pos[0], pos[1]);
                 }
-
-                for (int i = 0; i < listAllSticker.size(); i++) {
-                    StickerView sub = listAllSticker.get(i);
-                    if (sub != null) {
-                        sub.toTranMoveXY(pos[0], pos[1]);
-                    }
-                }
+            }
         });
         animationLinearInterpolator.SetCirculation(false);
         animationLinearInterpolator.PlayAnimation();
@@ -87,7 +74,7 @@ public class CircleCloned2 extends baseAnimModel {
         LanSongTan = new float[2];
         listForTranslaptionPosition.clear();
         this.mainLayer = mainStickerView;
-        LogUtil.d("OOOM","主图层中间的位置X为"+ mainStickerView.getPositionX()+",Y的位置为"+mainStickerView.getPositionY());
+        LogUtil.d("OOOM", "主图层中间的位置X为" + mainStickerView.getPositionX() + ",Y的位置为" + mainStickerView.getPositionY());
         LansongPathMeasure = setPathMeasure(mainStickerView.getScaleHeight(), mainStickerView.getPositionX(), mainStickerView.getPositionY());
         //总长度
         lansongTotalDistancePathMeasure = LansongPathMeasure.getLength();
@@ -151,7 +138,7 @@ public class CircleCloned2 extends baseAnimModel {
         float diameter = layerH / 3 * 2;
         Path mAnimPath = new Path();
 
-        mAnimPath.addCircle(layerCenterX,layerCenterY,diameter*2 ,Path.Direction.CCW);
+        mAnimPath.addCircle(layerCenterX, layerCenterY, diameter * 2, Path.Direction.CCW);
         PathMeasure mPathMeasure = new PathMeasure();
         mPathMeasure.setPath(mAnimPath, true);
         return mPathMeasure;

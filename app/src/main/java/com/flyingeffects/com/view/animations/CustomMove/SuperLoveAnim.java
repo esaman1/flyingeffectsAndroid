@@ -2,93 +2,111 @@ package com.flyingeffects.com.view.animations.CustomMove;
 
 import android.graphics.Path;
 import android.graphics.PathMeasure;
-import android.view.View;
 
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.StickerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 /**
- * description ：桃心
- * <p>
+ * description ：超级桃心
  * creation date: 2020/5/25
  * user : zhangtongju
  */
 
-public class LoveAnim extends baseAnimModel {
+public class SuperLoveAnim extends baseAnimModel {
 
     private StickerView mainStickerView;
     private PathMeasure LansongPathMeasure;
     private PathMeasure LansongPathMeasure2;
-    private List<StickerView> subLayer1 = new ArrayList<>();
-    private List<StickerView> subLayer2 = new ArrayList<>();
+    private int maxHeight;
+    private int maxWidth;
+    private int subLayerSize;
+    /**
+     * 当前位置在桃心的点
+     */
+    private final ArrayList<float[]> pointList = new ArrayList<>();
+    private final ArrayList<Integer> randomHeightList = new ArrayList<>();
+    private final ArrayList<Integer> randomWidthList = new ArrayList<>();
+    private final ArrayList<PathMeasure> listForMeasure = new ArrayList<>();
+
 
     void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
-        for (int i = 0; i < subLayer.size(); i++) {
-            if (i < 8) {
-                subLayer1.add(subLayer.get(i));
-            } else {
-                subLayer2.add(subLayer.get(i));
-            }
-        }
         this.mainStickerView = mainStickerView;
+        if (subLayer != null) {
+            subLayerSize = subLayer.size();
+        }
+        pointList.clear();
+        maxWidth = mainStickerView.getWidth();
+        maxHeight = mainStickerView.getHeight();
+        randomPoint();
         setRotate(mainStickerView.getRotateAngle());
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
-        float[] pos = new float[2];
+
         float[] tan = new float[2];
-        float[] pos2 = new float[2];
         float[] tan2 = new float[2];
+        float[] LanSongPos = new float[2];
+        float[] LanSongTan = new float[2];
         LansongPathMeasure = setPathMeasureOne(mainStickerView.getWidth(), mainStickerView.getHeight());
         LansongPathMeasure2 = setPathMeasureTwo(mainStickerView.getWidth(), mainStickerView.getHeight());
         float totalDistancePathMeasure = LansongPathMeasure.getLength();
-        float perDistance = totalDistancePathMeasure / (float) 8;
-        //第一个参数为总时长
-        animationLinearInterpolator = new AnimationLinearInterpolator(2000, (progress, isDone) -> {
-            float nowDistance = totalDistancePathMeasure * progress;
-            LansongPathMeasure.getPosTan(nowDistance, pos, tan);
-            for (int i = 0; i < subLayer1.size(); i++) {
-                StickerView sub = subLayer1.get(i);
+        float perDistance = totalDistancePathMeasure / (float) 14;
+        for (int i = 0; i < subLayer.size(); i++) {
+            if (i < 14) {
+                StickerView sub = subLayer.get(i);
                 if (sub != null) {
-                    float needDistance = perDistance * i + nowDistance;
+                    float needDistance = perDistance * i;
                     if (needDistance > totalDistancePathMeasure) {
                         needDistance = needDistance - totalDistancePathMeasure;
                     }
+                    float[] pos = new float[2];
                     LansongPathMeasure.getPosTan(needDistance, pos, tan);
                     sub.toTranMoveXY(pos[0], pos[1]);
+                    pointList.add(pos);
                 }
-
-                if(i==0){
-                    mainStickerView.toTranMoveXY(pos[0], pos[1]);
-                }
-            }
-        });
-        animationLinearInterpolator.PlayAnimation();
-
-
-        //第一个参数为总时长
-        AnimationLinearInterpolator animationLinearInterpolator2 = new AnimationLinearInterpolator(2000, (progress, isDone) -> {
-            float nowDistance = totalDistancePathMeasure * progress;
-            LansongPathMeasure2.getPosTan(nowDistance, pos2, tan2);
-            for (int i = 0; i < subLayer2.size(); i++) {
-                StickerView sub = subLayer2.get(i);
+            } else {
+                StickerView sub = subLayer.get(i);
                 if (sub != null) {
-                    float needDistance = perDistance * i + nowDistance;
+                    float needDistance = perDistance * i;
                     if (needDistance > totalDistancePathMeasure) {
                         needDistance = needDistance - totalDistancePathMeasure;
                     }
+                    float[] pos2 = new float[2];
                     LansongPathMeasure2.getPosTan(needDistance, pos2, tan2);
                     sub.toTranMoveXY(pos2[0], pos2[1]);
-//                    if (i == subLayer2.size() -2) {
-//                        mainStickerView.toTranMoveXY(pos2[0], tan2[1]);
-//                    }
+                    pointList.add(pos2);
+                }
+            }
+        }
 
+        for (int i = 0; i < pointList.size(); i++) {
+            LogUtil.d("OOM5", "pointList.size()=" + pointList.size());
+            float[] data = new float[2];
+            data[0] = randomWidthList.get(i);
+            data[1] = randomHeightList.get(i);
+            listForMeasure.add(setPathMeasureLine(data, pointList.get(i)));
+        }
+
+
+        //第一个参数为总时长
+        animationLinearInterpolator = new AnimationLinearInterpolator(2000, (progress, isDone) -> {
+            for (int i = 0; i < listForMeasure.size(); i++) {
+                PathMeasure pathMeasure = listForMeasure.get(i);
+                float TotalDistance = pathMeasure.getLength();
+                float nowDistance = TotalDistance * progress;
+                pathMeasure.getPosTan(nowDistance, LanSongPos, LanSongTan);
+                StickerView stickerView = subLayer.get(i);
+                stickerView.toTranMoveXY(LanSongPos[0], LanSongPos[1]);
+                if (i == listForMeasure.size() - 1) {
+                    mainStickerView.toTranMoveXY(LanSongPos[0], LanSongPos[1]);
                 }
             }
         });
-        animationLinearInterpolator2.PlayAnimation();
-
+        animationLinearInterpolator.SetCirculation(false);
+        animationLinearInterpolator.PlayAnimation();
     }
 
 
@@ -151,9 +169,8 @@ public class LoveAnim extends baseAnimModel {
 
 
     /**
-     * description ：路径动画
+     * description ：路径动画 ,左边桃心
      * creation date: 2020/5/28
-     * layerH 自身的高
      * user : zhangtongju
      */
     private PathMeasure setPathMeasureOne(float width, float height) {
@@ -166,7 +183,11 @@ public class LoveAnim extends baseAnimModel {
         return mPathMeasure;
     }
 
-
+    /**
+     * description ：路径动画 ,右边桃心
+     * creation date: 2020/5/28
+     * user : zhangtongju
+     */
     private PathMeasure setPathMeasureTwo(float width, float height) {
         Path mAnimPath = new Path();
         mAnimPath.moveTo(width / 2, height / 4);
@@ -174,6 +195,37 @@ public class LoveAnim extends baseAnimModel {
         PathMeasure mPathMeasure = new PathMeasure();
         mPathMeasure.setPath(mAnimPath, false);
         return mPathMeasure;
+    }
+
+
+    /**
+     * description ：连接线，随机数和桃心的连接线
+     * creation date: 2020/12/28
+     * user : zhangtongju
+     */
+    private PathMeasure setPathMeasureLine(float[] start, float[] end) {
+        Path mAnimPath = new Path();
+        mAnimPath.moveTo(start[0], start[1]);
+        mAnimPath.lineTo(end[0], end[1]);
+        PathMeasure mPathMeasure = new PathMeasure();
+        mPathMeasure.setPath(mAnimPath, false);
+        return mPathMeasure;
+    }
+
+
+    /**
+     * description ：获取到随机
+     * creation date: 2020/12/28
+     * user : zhangtongju
+     */
+    private void randomPoint() {
+        Random random = new Random();
+        for (int i = 0; i < subLayerSize; i++) {
+            int randomHeight = random.nextInt(maxHeight);
+            randomHeightList.add(randomHeight);
+            int randomWidth = random.nextInt(maxWidth);
+            randomWidthList.add(randomWidth);
+        }
     }
 
 

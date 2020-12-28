@@ -23,5 +23,6 @@ public enum AnimType {
     Z,
     FOUNDER,
     MAKEMOVEONE,
-    LOVE
+    LOVE,
+    SUPERLOVE
 }
