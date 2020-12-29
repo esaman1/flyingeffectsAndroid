@@ -650,7 +650,7 @@ public class backgroundDraw {
                     hasAnimLayer animLayer = hasAnimLayerList.get(i);
                     float needDurationTime = animCollect.getAnimNeedSubLayerTime(animLayer.ChooseAnimId);
                     float percentage;
-                    if (animLayer.ChooseAnimId == AnimType.BOTTOMTOCENTER2 || animLayer.ChooseAnimId == AnimType.SUPERSTAR2 || animLayer.ChooseAnimId == AnimType.CIRCLECLONED2) {
+                    if (animLayer.ChooseAnimId == AnimType.BOTTOMTOCENTER2 || animLayer.ChooseAnimId == AnimType.SUPERSTAR2 || animLayer.ChooseAnimId == AnimType.CIRCLECLONED2 || animLayer.ChooseAnimId == AnimType.FIVEPOINTSTART2|| animLayer.ChooseAnimId == AnimType.Z|| animLayer.ChooseAnimId == AnimType.FOUNDER) {
                         float needDt = needDurationTime * 1000;
                         if (currentTime > needDt) {
                             percentage = 1;

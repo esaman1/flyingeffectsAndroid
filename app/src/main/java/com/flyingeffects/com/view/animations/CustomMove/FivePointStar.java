@@ -57,62 +57,10 @@ public class FivePointStar extends baseAnimModel {
     }
 
 
-    private PathMeasure LansongPathMeasure;
-    private float lansongTotalDistancePathMeasure;
-    private float[] LanSongPos;
-    private float[] LanSongTan;
-    private Layer mainLayer;
-    private float perDistance;
-    private ArrayList<TransplationPos> listForTranslaptionPosition = new ArrayList<>();
-
-    void toChangeSubLayer(Layer mainStickerView, ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
-        LanSongPos = new float[2];
-        LanSongTan = new float[2];
-        listForTranslaptionPosition.clear();
-        this.mainLayer = mainStickerView;
-        LogUtil.d("OOOM","主图层中间的位置X为"+ mainStickerView.getPositionX()+",Y的位置为"+mainStickerView.getPositionY());
-        LansongPathMeasure = setPathMeasure(mainStickerView.getScaleHeight(), mainStickerView.getPositionX(), mainStickerView.getPositionY());
-        //总长度
-        lansongTotalDistancePathMeasure = LansongPathMeasure.getLength();
-        perDistance = lansongTotalDistancePathMeasure / (float) 20;
-        getLansongTranslation(callback, percentage, listForSubLayer);
-        LogUtil.d("translationalXY", "当前的事件为percentage=" + percentage);
-    }
 
 
-    void getLansongTranslation(LayerAnimCallback callback, float percentage, ArrayList<SubLayer> listForSubLayer) {
-        listForTranslaptionPosition.clear();
-        AnimationLinearInterpolator animationLinearInterpolator = new AnimationLinearInterpolator(10000, (progress, isDone) -> {
-            //主图层应该走的位置
-            if (LansongPathMeasure != null) {
-                float nowDistance = lansongTotalDistancePathMeasure * progress;
-                LansongPathMeasure.getPosTan(nowDistance, LanSongPos, LanSongTan);
-                //这里获得的时一个具体的值，而蓝松sdk 这边需要的时一个0-1之间的值，及0.5 表示居中
-                float translateionalX = LanSongPos[0] / mainLayer.getPadWidth();
-                float translateionalY = LanSongPos[1] / mainLayer.getPadHeight();
-                TransplationPos transplationPos = new TransplationPos();
-                transplationPos.setToX(translateionalX);
-                transplationPos.setToY(translateionalY);
-                listForTranslaptionPosition.add(transplationPos);
-                for (int i = 0; i < listForSubLayer.size(); i++) {
-                    SubLayer sub = listForSubLayer.get(i);
-                    if (sub != null) {
-                        float needDistance = perDistance * i + nowDistance;
-                        if (needDistance > lansongTotalDistancePathMeasure) {
-                            needDistance = needDistance - lansongTotalDistancePathMeasure;
-                        }
-                        LansongPathMeasure.getPosTan(needDistance, LanSongPos, LanSongTan);
-                        TransplationPos newTransplationPos = new TransplationPos();
-                        newTransplationPos.setToX(LanSongPos[0] / mainLayer.getPadWidth());
-                        newTransplationPos.setToY(LanSongPos[1] / mainLayer.getPadHeight());
-                        listForTranslaptionPosition.add(newTransplationPos);
-                    }
-                }
-                callback.translationalXY(listForTranslaptionPosition);
-            }
-        });
-        animationLinearInterpolator.PlayAnimationNoTimer(percentage);
-    }
+
+
 
 
     @Override
@@ -167,6 +115,76 @@ public class FivePointStar extends baseAnimModel {
             cxt.lineTo(f2,f3) ;
         }
         cxt.close();//闭合path，如果path的终点和起始点不是同一个点的话，close()连接这两个点，形成一个封闭的图形
+    }
+
+
+
+
+    //--------------------------------适配蓝松---------------------------------------
+
+
+
+    public void initToChangeSubLayer(Layer mainLayer,ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
+        LanSongPos = new float[2];
+        LanSongTan = new float[2];
+        this.mainLayer = mainLayer;
+        LansongPathMeasure = setPathMeasure(mainLayer.getScaleHeight(), mainLayer.getPositionX(), mainLayer.getPositionY());
+        lansongTotalDistancePathMeasure = LansongPathMeasure.getLength();
+        perDistance = lansongTotalDistancePathMeasure / (float) 20;
+        toChangeSubLayer(listForSubLayer,callback,percentage);
+    }
+
+
+
+    private PathMeasure LansongPathMeasure;
+    private float lansongTotalDistancePathMeasure;
+    private float[] LanSongPos;
+    private float[] LanSongTan;
+    private Layer mainLayer;
+    private float perDistance;
+    private ArrayList<TransplationPos> listForTranslaptionPosition = new ArrayList<>();
+
+    public void toChangeSubLayer( ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
+        getLansongTranslation(callback, percentage, listForSubLayer);
+        LogUtil.d("translationalXY", "当前的事件为percentage=" + percentage);
+    }
+
+
+
+
+
+    void getLansongTranslation(LayerAnimCallback callback, float percentage, ArrayList<SubLayer> listForSubLayer) {
+        listForTranslaptionPosition.clear();
+        AnimationLinearInterpolator animationLinearInterpolator = new AnimationLinearInterpolator(10000, (progress, isDone) -> {
+            //主图层应该走的位置
+            if (LansongPathMeasure != null) {
+                float nowDistance = lansongTotalDistancePathMeasure * progress;
+                LansongPathMeasure.getPosTan(nowDistance, LanSongPos, LanSongTan);
+                //这里获得的时一个具体的值，而蓝松sdk 这边需要的时一个0-1之间的值，及0.5 表示居中
+                float translateionalX = LanSongPos[0] / mainLayer.getPadWidth();
+                float translateionalY = LanSongPos[1] / mainLayer.getPadHeight();
+                TransplationPos transplationPos = new TransplationPos();
+                transplationPos.setToX(translateionalX);
+                transplationPos.setToY(translateionalY);
+                listForTranslaptionPosition.add(transplationPos);
+                for (int i = 0; i < listForSubLayer.size(); i++) {
+                    SubLayer sub = listForSubLayer.get(i);
+                    if (sub != null) {
+                        float needDistance = perDistance * i + nowDistance;
+                        if (needDistance > lansongTotalDistancePathMeasure) {
+                            needDistance = needDistance - lansongTotalDistancePathMeasure;
+                        }
+                        LansongPathMeasure.getPosTan(needDistance, LanSongPos, LanSongTan);
+                        TransplationPos newTransplationPos = new TransplationPos();
+                        newTransplationPos.setToX(LanSongPos[0] / mainLayer.getPadWidth());
+                        newTransplationPos.setToY(LanSongPos[1] / mainLayer.getPadHeight());
+                        listForTranslaptionPosition.add(newTransplationPos);
+                    }
+                }
+                callback.translationalXY(listForTranslaptionPosition);
+            }
+        });
+        animationLinearInterpolator.PlayAnimationNoTimer(percentage);
     }
 
 

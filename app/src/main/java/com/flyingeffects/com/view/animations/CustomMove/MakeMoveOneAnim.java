@@ -8,6 +8,8 @@ import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.box.Layer;
 import com.lansosdk.box.SubLayer;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,12 +32,9 @@ public class MakeMoveOneAnim extends baseAnimModel {
         float mScale = mainStickerView.GetHelpBoxRectScale();
         setRotate(mainStickerView.getRotateAngle());
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
-        LansongPathMeasure = setPathMeasureOne(mainStickerView.getmHelpBoxRectH(),mainStickerView.getCenterX(),mainStickerView.getCenterY());
-        LansongPathMeasure2=setPathMeasureTwo(mainStickerView.getmHelpBoxRectH(),mainStickerView.getCenterX(),mainStickerView.getCenterY());
+        LansongPathMeasure = setPathMeasureOne(mainStickerView.getmHelpBoxRectH(), mainStickerView.getCenterX(), mainStickerView.getCenterY());
+        LansongPathMeasure2 = setPathMeasureTwo(mainStickerView.getmHelpBoxRectH(), mainStickerView.getCenterX(), mainStickerView.getCenterY());
         float totalDistancePathMeasure = LansongPathMeasure.getLength();
-        float needTranslationWidth = mainStickerView.getWidth();
-        float nowCentX = mainStickerView.getCenterX();
-        float haftCentX = mainStickerView.getCenterX()/(float) 2;
         float[] pos = new float[2];
         float[] tan = new float[2];
         float[] pos2 = new float[2];
@@ -48,8 +47,7 @@ public class MakeMoveOneAnim extends baseAnimModel {
                 float x = progress * 2.85f;
                 subStickerView.toScale(x, mScale, isDone);
                 mainStickerView.toScale(x, mScale, isDone);
-            }
-            else {
+            } else {
                 //旋转
                 float needProgress = progress - 0.35f;
                 float x = needProgress * 1.53f;
@@ -59,62 +57,13 @@ public class MakeMoveOneAnim extends baseAnimModel {
                 mainStickerView.toTranMoveXY(pos[0], pos[1]);
                 subStickerView.toTranMoveXY(pos2[0], pos2[1]);
             }
-
         });
-        animationLinearInterpolator.SetCirculation(false);
         animationLinearInterpolator.PlayAnimation();
     }
 
 
     private PathMeasure LansongPathMeasure;
     private PathMeasure LansongPathMeasure2;
-    private float lansongTotalDistancePathMeasure;
-    private float[] LanSongPos;
-    private float[] LanSongTan;
-    private Layer mainLayer;
-    private float perDistance;
-    private ArrayList<TransplationPos> listForTranslaptionPosition = new ArrayList<>();
-
-    void toChangeSubLayer(Layer mainStickerView, ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
-        LanSongPos = new float[2];
-        LanSongTan = new float[2];
-        listForTranslaptionPosition.clear();
-    }
-
-
-    void getLansongTranslation(LayerAnimCallback callback, float percentage, ArrayList<SubLayer> listForSubLayer) {
-        listForTranslaptionPosition.clear();
-        AnimationLinearInterpolator animationLinearInterpolator = new AnimationLinearInterpolator(5000, (progress, isDone) -> {
-            //主图层应该走的位置
-            if (LansongPathMeasure != null) {
-                float nowDistance = lansongTotalDistancePathMeasure * progress;
-                LansongPathMeasure.getPosTan(nowDistance, LanSongPos, LanSongTan);
-                //这里获得的时一个具体的值，而蓝松sdk 这边需要的时一个0-1之间的值，及0.5 表示居中
-                float translateionalX = LanSongPos[0] / mainLayer.getPadWidth();
-                float translateionalY = LanSongPos[1] / mainLayer.getPadHeight();
-                TransplationPos transplationPos = new TransplationPos();
-                transplationPos.setToX(translateionalX);
-                transplationPos.setToY(translateionalY);
-                listForTranslaptionPosition.add(transplationPos);
-                for (int i = 0; i < listForSubLayer.size(); i++) {
-                    SubLayer sub = listForSubLayer.get(i);
-                    if (sub != null) {
-                        float needDistance = perDistance * i + nowDistance;
-                        if (needDistance > lansongTotalDistancePathMeasure) {
-                            needDistance = needDistance - lansongTotalDistancePathMeasure;
-                        }
-                        LansongPathMeasure.getPosTan(needDistance, LanSongPos, LanSongTan);
-                        TransplationPos newTransplationPos = new TransplationPos();
-                        newTransplationPos.setToX(LanSongPos[0] / mainLayer.getPadWidth());
-                        newTransplationPos.setToY(LanSongPos[1] / mainLayer.getPadHeight());
-                        listForTranslaptionPosition.add(newTransplationPos);
-                    }
-                }
-                callback.translationalXY(listForTranslaptionPosition);
-            }
-        });
-        animationLinearInterpolator.PlayAnimationNoTimer(percentage);
-    }
 
 
     @Override
@@ -126,37 +75,96 @@ public class MakeMoveOneAnim extends baseAnimModel {
     }
 
 
+    //--------------------------------适配蓝松---------------------------------------
+
+
+    private float lansongTotalDistancePathMeasure;
+    private final ArrayList<Float> listForScale = new ArrayList<>();
+    private final ArrayList<TransplationPos> listForTranslaptionPosition = new ArrayList<>();
+    private Layer mainLayer;
+    float[] lansongPos = new float[2];
+    float[] lansongTan = new float[2];
+    float[] lansongPos2 = new float[2];
+    float[] lansongtan2 = new float[2];
+
+
+    public void initToChangeSubLayer(Layer mainLayer, @NotNull ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
+        this.mainLayer = mainLayer;
+        LansongPathMeasure = setPathMeasureOne(mainLayer.getScaleHeight(), mainLayer.getPositionX(), mainLayer.getPositionY());
+        LansongPathMeasure2 = setPathMeasureTwo(mainLayer.getScaleHeight(), mainLayer.getPositionX(), mainLayer.getPositionY());
+        lansongTotalDistancePathMeasure = LansongPathMeasure.getLength();
+        toChangeSubLayer(listForSubLayer, callback, percentage);
+    }
+
+
+    public void toChangeSubLayer(ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
+        getLansongTranslation(callback, percentage, listForSubLayer);
+    }
+
+
+    void getLansongTranslation(LayerAnimCallback callback, float percentage, ArrayList<SubLayer> listForSubLayer) {
+        listForScale.clear();
+        listForTranslaptionPosition.clear();
+        AnimationLinearInterpolator animationLinearInterpolator = new AnimationLinearInterpolator(8000, (progress, isDone) -> {
+            //主图层应该走的位置
+            if (progress <= 0.35) {
+                //放大动画  *4.16 意味着0-2.24可以看做0-1完整来看
+                float x = progress * 2.85f*0.5f;
+                listForScale.add(x);
+                listForScale.add(x);
+                callback.scale(listForScale);
+            } else {
+                //旋转
+                float needProgress = progress - 0.35f;
+                float x = needProgress * 1.53f;
+                float nowDistance = lansongTotalDistancePathMeasure * x;
+                LansongPathMeasure.getPosTan(nowDistance, lansongPos, lansongTan);
+                LansongPathMeasure2.getPosTan(nowDistance, lansongPos2, lansongtan2);
+                int paddingW = mainLayer.getPadWidth();
+                int paddingH = mainLayer.getPadHeight();
+                TransplationPos newTransplationPos = new TransplationPos();
+                newTransplationPos.setToX((lansongPos[0]) / paddingW);
+                newTransplationPos.setToY((lansongPos[1] / paddingH));
+                TransplationPos newTransplationPos2 = new TransplationPos();
+                newTransplationPos2.setToX((lansongPos2[0]) / paddingW);
+                newTransplationPos2.setToY((lansongPos2[1] / paddingH));
+                listForTranslaptionPosition.add(newTransplationPos);
+                listForTranslaptionPosition.add(newTransplationPos2);
+                callback.translationalXY(listForTranslaptionPosition);
+            }
+        });
+        animationLinearInterpolator.PlayAnimationNoTimer(percentage);
+    }
+
+
     /**
      * description ：路径动画
      * creation date: 2020/5/28
      * layerH 自身的高
      * user : zhangtongju
      */
-    private PathMeasure setPathMeasureOne(float halfWidth,float centerX,float centerY) {
+    private PathMeasure setPathMeasureOne(float halfWidth, float centerX, float centerY) {
         Path mAnimPath = new Path();
-        mAnimPath.moveTo(centerX,centerY);
-        mAnimPath.lineTo(centerX-halfWidth,centerY);
-        mAnimPath.lineTo(centerX,centerY+halfWidth*2);
-        mAnimPath.lineTo(centerX+halfWidth,centerY);
+        mAnimPath.moveTo(centerX, centerY);
+        mAnimPath.lineTo(centerX - halfWidth, centerY);
+        mAnimPath.lineTo(centerX, centerY + halfWidth * 2);
+        mAnimPath.lineTo(centerX + halfWidth, centerY);
         PathMeasure mPathMeasure = new PathMeasure();
         mPathMeasure.setPath(mAnimPath, true);
         return mPathMeasure;
     }
 
 
-
-    private PathMeasure setPathMeasureTwo(float halfWidth,float centerX,float centerY) {
+    private PathMeasure setPathMeasureTwo(float halfWidth, float centerX, float centerY) {
         Path mAnimPath = new Path();
-        mAnimPath.moveTo(centerX,centerY);
-        mAnimPath.lineTo(centerX+halfWidth,centerY);
-        mAnimPath.lineTo(centerX,centerY-halfWidth*2);
-        mAnimPath.lineTo(centerX-halfWidth,centerY);
+        mAnimPath.moveTo(centerX, centerY);
+        mAnimPath.lineTo(centerX + halfWidth, centerY);
+        mAnimPath.lineTo(centerX, centerY - halfWidth * 2);
+        mAnimPath.lineTo(centerX - halfWidth, centerY);
         PathMeasure mPathMeasure = new PathMeasure();
         mPathMeasure.setPath(mAnimPath, true);
         return mPathMeasure;
     }
-
-
 
 
 }

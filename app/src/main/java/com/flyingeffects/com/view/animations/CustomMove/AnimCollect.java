@@ -116,7 +116,7 @@ public class AnimCollect {
                 return 36;
             case LOVE:
             case SUPERLOVE:
-                return 28;
+                return 16;
 
         }
         return 0;
@@ -559,7 +559,6 @@ public class AnimCollect {
                 break;
 
 
-
             case CIRCLECLONED2:
                 nowMainLayerId = mainStickerView.getId();
                 CircleCloned2 CircleCloned2 = null;
@@ -579,6 +578,137 @@ public class AnimCollect {
                     listForKeepBaseAnimMode.add(CircleCloned2);
                 }
                 break;
+
+
+            case FIVEPOINTSTART:
+                nowMainLayerId = mainStickerView.getId();
+                FivePointStar fivePointStar = null;
+                for (baseAnimModel model : listForKeepBaseAnimMode
+                ) {
+                    if (model.getLayerId() == nowMainLayerId) {
+                        fivePointStar = (FivePointStar) model;
+                        break;
+                    }
+                }
+                if (fivePointStar != null) {
+                    (fivePointStar).toChangeSubLayer(listForSubLayer, callback, percentage);
+                } else {
+                    fivePointStar = new FivePointStar();
+                    fivePointStar.setLayerId(mainStickerView.getId());
+                    fivePointStar.initToChangeSubLayer(mainStickerView, listForSubLayer, callback, percentage);
+                    listForKeepBaseAnimMode.add(fivePointStar);
+                }
+                break;
+
+
+            case FIVEPOINTSTART2:
+                nowMainLayerId = mainStickerView.getId();
+                FivePointStar2 fivePointStar2 = null;
+                for (baseAnimModel model : listForKeepBaseAnimMode
+                ) {
+                    if (model.getLayerId() == nowMainLayerId) {
+                        fivePointStar2 = (FivePointStar2) model;
+                        break;
+                    }
+                }
+                if (fivePointStar2 != null) {
+                    fivePointStar2.toChangeSubLayer(listForSubLayer, callback, percentage);
+                } else {
+                    fivePointStar2 = new FivePointStar2();
+                    fivePointStar2.setLayerId(mainStickerView.getId());
+                    fivePointStar2.initToChangeSubLayer(mainStickerView, listForSubLayer, callback, percentage);
+                    listForKeepBaseAnimMode.add(fivePointStar2);
+                }
+                break;
+
+
+
+            case Z:
+                nowMainLayerId = mainStickerView.getId();
+                ZAnim zAnim = null;
+                for (baseAnimModel model : listForKeepBaseAnimMode
+                ) {
+                    if (model.getLayerId() == nowMainLayerId) {
+                        zAnim = (ZAnim) model;
+                        break;
+                    }
+                }
+                if (zAnim != null) {
+                    zAnim.toChangeSubLayer(listForSubLayer, callback, percentage);
+                } else {
+                    zAnim = new ZAnim();
+                    zAnim.setLayerId(mainStickerView.getId());
+                    zAnim.initToChangeSubLayer(mainStickerView, listForSubLayer, callback, percentage);
+                    listForKeepBaseAnimMode.add(zAnim);
+                }
+                break;
+
+
+
+            case FOUNDER:
+                nowMainLayerId = mainStickerView.getId();
+                FounderAnim founderAnim = null;
+                for (baseAnimModel model : listForKeepBaseAnimMode
+                ) {
+                    if (model.getLayerId() == nowMainLayerId) {
+                        founderAnim = (FounderAnim) model;
+                        break;
+                    }
+                }
+                if (founderAnim != null) {
+                    founderAnim.toChangeSubLayer(listForSubLayer, callback, percentage);
+                } else {
+                    founderAnim = new FounderAnim();
+                    founderAnim.setLayerId(mainStickerView.getId());
+                    founderAnim.initToChangeSubLayer(mainStickerView, listForSubLayer, callback, percentage);
+                    listForKeepBaseAnimMode.add(founderAnim);
+                }
+                break;
+
+
+
+
+            case MAKEMOVEONE:
+                nowMainLayerId = mainStickerView.getId();
+                MakeMoveOneAnim makeMoveOneAnim = null;
+                for (baseAnimModel model : listForKeepBaseAnimMode
+                ) {
+                    if (model.getLayerId() == nowMainLayerId) {
+                        makeMoveOneAnim = (MakeMoveOneAnim) model;
+                        break;
+                    }
+                }
+                if (makeMoveOneAnim != null) {
+                    makeMoveOneAnim.toChangeSubLayer(listForSubLayer, callback, percentage);
+                } else {
+                    makeMoveOneAnim = new MakeMoveOneAnim();
+                    makeMoveOneAnim.setLayerId(mainStickerView.getId());
+                    makeMoveOneAnim.initToChangeSubLayer(mainStickerView, listForSubLayer, callback, percentage);
+                    listForKeepBaseAnimMode.add(makeMoveOneAnim);
+                }
+                break;
+
+
+            case LOVE:
+                nowMainLayerId = mainStickerView.getId();
+                LoveAnim loveAnim = null;
+                for (baseAnimModel model : listForKeepBaseAnimMode
+                ) {
+                    if (model.getLayerId() == nowMainLayerId) {
+                        loveAnim = (LoveAnim) model;
+                        break;
+                    }
+                }
+                if (loveAnim != null) {
+                    loveAnim.toChangeSubLayer(listForSubLayer, callback, percentage);
+                } else {
+                    loveAnim = new LoveAnim();
+                    loveAnim.setLayerId(mainStickerView.getId());
+                    loveAnim.initToChangeSubLayer(mainStickerView, listForSubLayer, callback, percentage);
+                    listForKeepBaseAnimMode.add(loveAnim);
+                }
+                break;
+
 
 
         }
