@@ -20,7 +20,6 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.glidebitmappool.GlideBitmapPool;
-import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
@@ -63,10 +62,6 @@ public class DressUpModel {
         mCatchFolder = fileManager.getFileCachePath(context, "runCatch");
         mUploadDressUpFolder = fileManager.getFileCachePath(context, "DressUpFolder");
         this.isNeedMatting = isNeedMatting;
-        if (isNeedMatting) {
-            SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
-
-        }
     }
 
 
@@ -91,17 +86,14 @@ public class DressUpModel {
                 }).start();
 
             }
-        },200);
+        }, 200);
     }
 
 
-
-
-
-
     private DressUpCatchCallback dressUpCatchCallback;
-    public void toDressUp(String ImagePath, String templateId,DressUpCatchCallback dressUpCatchCallback) {
-        this.dressUpCatchCallback=dressUpCatchCallback;
+
+    public void toDressUp(String ImagePath, String templateId, DressUpCatchCallback dressUpCatchCallback) {
+        this.dressUpCatchCallback = dressUpCatchCallback;
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -115,9 +107,8 @@ public class DressUpModel {
                 }).start();
 
             }
-        },200);
+        }, 200);
     }
-
 
 
     /**
@@ -136,7 +127,7 @@ public class DressUpModel {
             public void call(String s) {
                 LogUtil.d("OOM3", "上传华为云成功,地址为" + s);
 //                informServers(uploadPath, template_id);
-                if(dressUpCatchCallback!=null){
+                if (dressUpCatchCallback != null) {
                     dressUpCatchCallback.isSuccess(uploadPath);
                 }
 
@@ -205,12 +196,7 @@ public class DressUpModel {
     }
 
 
-
-
-
-
-
-    public void RequestDressUp(String uploadPath,String template_id){
+    public void RequestDressUp(String uploadPath, String template_id) {
         progress = new WaitingDialog_progress(context);
         progress.openProgressDialog("正在换装中...");
 
@@ -223,7 +209,7 @@ public class DressUpModel {
      * creation date: 2020/12/4
      * user : zhangtongju
      */
-    private   void requestDressUpCallback(String path, String template_id) {
+    private void requestDressUpCallback(String path, String template_id) {
         HashMap<String, String> params = new HashMap<>();
         params.put("image", path);
         params.put("template_id", template_id);
@@ -358,7 +344,7 @@ public class DressUpModel {
     private MattingImage mattingImage;
 
     private void toKeepFace(Bitmap path, int allSize) {
-        mattingImage.mattingImageForBitmap(path, (isSuccess, bp) -> {
+        mattingImage.mattingImageForMultiple(path, 0, (isSuccess, bp) -> {
             downSuccessNum++;
             LogUtil.d("OOM", "正在抠图" + downSuccessNum);
             String fileName = mCatchFolder + File.separator + UUID.randomUUID() + ".png";

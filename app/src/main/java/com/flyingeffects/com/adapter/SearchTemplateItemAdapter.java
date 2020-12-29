@@ -12,6 +12,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.SearchTemplateInfoEntity;
+import com.flyingeffects.com.utils.StringUtil;
 
 /**
  * @author ZhouGang
@@ -36,7 +37,7 @@ public class SearchTemplateItemAdapter extends BaseQuickAdapter<SearchTemplateIn
         } else {
             Drawable drawable = mContext.getDrawable(R.mipmap.gray_search);
             drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
-            textView.setCompoundDrawablePadding(DensityUtil.dip2px(mContext, 10));
+            textView.setCompoundDrawablePadding(StringUtil.dip2px(mContext, 10));
             textView.setCompoundDrawables(drawable, null, null, null);
             helper.setGone(R.id.im_arrow, true);
             textView.setTextColor(mContext.getResources().getColor(R.color.white));

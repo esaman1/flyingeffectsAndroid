@@ -108,7 +108,6 @@ public class MattingImage {
         FacePPImage facePPImage = new FacePPImage.Builder()
                 .setData(imageBgr)
                 .setWidth(mOriginBitmap.getWidth())
-
                 .setHeight(mOriginBitmap.getHeight())
                 .setMode(FacePPImage.IMAGE_MODE_BGR)
                 .setRotation(FacePPImage.FACE_UP).build();
@@ -126,7 +125,7 @@ public class MattingImage {
      * creation date: 2020/7/13
      * user : zhangtongju
      */
-    public static final Bitmap mattingSingleImg(Bitmap bitmap) {
+    public   Bitmap mattingSingleImg(Bitmap bitmap) {
         byte[] imageBgr = ImageTransformUtils.bitmap2BGR(bitmap);
         FacePPImage facePPImage = new FacePPImage.Builder()
                 .setData(imageBgr)
@@ -175,6 +174,10 @@ public class MattingImage {
 
 
     }
+
+
+
+
 
 
 

@@ -32,7 +32,6 @@ import com.lansosdk.box.LSOBitmapAsset;
 import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.lansosdk.videoeditor.MediaInfo;
-import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
 
 import java.io.File;
@@ -110,7 +109,6 @@ public class VideoMattingModel {
     private String templateName;
 
     public void ToExtractFrame(String templateName) {
-        SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
         this.templateName = templateName;
         nowCurtime = System.currentTimeMillis();
         MediaInfo mInfo = new MediaInfo(videoPath);
@@ -144,16 +142,16 @@ public class VideoMattingModel {
         //设置提取多少帧
         mExtractFrame.setExtractSomeFrame(allFrame);
         mExtractFrame.setOnExtractCompletedListener(v -> {
-            for (int i = 1; i < BaseConstans.THREADCOUNT; i++) {
-                //最后需要补的帧
-                frameCount++;
-                downImageForBitmap(null, frameCount);
-            }
-            LogUtil.d("OOM2", "frameCount的值为" + frameCount);
-            SegJni.nativeReleaseImageBuffer();
-            SegJni.nativeReleaseSegHandler();
-            boolean isMainThread = ThreadJudgeManage.isMainThread();
-            LogUtil.d("OOM", "当前线程运行在主线程吗？" + isMainThread);
+//            for (int i = 1; i < BaseConstans.THREADCOUNT; i++) {
+//                //最后需要补的帧
+//                frameCount++;
+//                downImageForBitmap(null, frameCount);
+//            }
+//            LogUtil.d("OOM2", "frameCount的值为" + frameCount);
+//            SegJni.nativeReleaseImageBuffer();
+//            SegJni.nativeReleaseSegHandler();
+//            boolean isMainThread = ThreadJudgeManage.isMainThread();
+//            LogUtil.d("OOM", "当前线程运行在主线程吗？" + isMainThread);
             Observable.just(0).subscribeOn(Schedulers.io()).subscribe(integer -> addFrameCompoundVideoNoMatting());
 
 
@@ -392,8 +390,6 @@ public class VideoMattingModel {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
 

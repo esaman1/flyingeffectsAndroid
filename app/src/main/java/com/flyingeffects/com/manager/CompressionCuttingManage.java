@@ -8,6 +8,7 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.DownImg;
 import com.flyingeffects.com.enity.DownImgDataList;
 import com.flyingeffects.com.ui.model.MattingImage;
+import com.flyingeffects.com.ui.model.initFaceSdkModel;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.UpdateFileUtils;
 import com.glidebitmappool.GlideBitmapPool;
@@ -116,29 +117,29 @@ public class CompressionCuttingManage {
     private int downSuccessNum;
 
     public void compressImgForFace(List<String> allPaths) {
-
-        if (hasCache) {
-            if (allPaths != null && allPaths.size() == 1) {
-                String localCacheName = allPaths.get(0);
-                localCacheName = fileManager.getFileNameWithSuffix(localCacheName);
-                File file = new File(mTailtoFolder + "/" + localCacheName);
-                if (file.exists()) {
-                    List<String> list = new ArrayList<>();
-                    list.add(file.getPath());
-                    callback.imgList(list);
-                    return;
+        initFaceSdkModel.getHasLoadSdkOk(() -> {
+            if (hasCache) {
+                if (allPaths != null && allPaths.size() == 1) {
+                    String localCacheName = allPaths.get(0);
+                    localCacheName = fileManager.getFileNameWithSuffix(localCacheName);
+                    File file = new File(mTailtoFolder + "/" + localCacheName);
+                    if (file.exists()) {
+                        List<String> list = new ArrayList<>();
+                        list.add(file.getPath());
+                        callback.imgList(list);
+                        return;
+                    }
                 }
             }
-        }
 
-        localImagePaths = allPaths;
-        this.allPaths = allPaths;
-        downSuccessNum = 0;
-        listForFaceMatting.clear();
-        if(allPaths!=null&&allPaths.size()>0){
-            downImage(allPaths.get(0));
-        }
-
+            localImagePaths = allPaths;
+            this.allPaths = allPaths;
+            downSuccessNum = 0;
+            listForFaceMatting.clear();
+            if(allPaths!=null&&allPaths.size()>0){
+                downImage(allPaths.get(0));
+            }
+        },context);
     }
 
    private List<String> listForFaceMatting = new ArrayList<>();

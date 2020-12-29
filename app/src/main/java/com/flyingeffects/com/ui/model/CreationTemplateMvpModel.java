@@ -60,7 +60,6 @@ import com.flyingeffects.com.view.lansongCommendView.StickerItemOnDragListener;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.ViewLayerRelativeLayout;
-import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
@@ -1520,7 +1519,6 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 if (cutSuccessNum == cutVideoPathList.size()) {
                     if (isMatting) {
                         LogUtil.d("OOM2", "裁剪完成，准备抠图");
-                        SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
                         //全部裁剪完成之后需要去把视频裁剪成全部帧
                         videoGetFrameModel getFrameModel = new videoGetFrameModel(context, cutList, (isSuccess1, progress) -> {
                             if (isSuccess1) {
