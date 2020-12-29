@@ -115,8 +115,10 @@ public class AnimCollect {
             case FOUNDER:
                 return 36;
             case LOVE:
-            case SUPERLOVE:
                 return 16;
+
+            case SUPERLOVE:
+                return 28;
 
         }
         return 0;
@@ -293,8 +295,9 @@ public class AnimCollect {
                 SuperLoveAnim superLoveAnim = new SuperLoveAnim();
                 superLoveAnim.toChangeStickerView(mainStickerView, subLayer);
                 listForBaseAnimMode.add(superLoveAnim);
-
                 break;
+
+
 
 
         }
@@ -710,7 +713,25 @@ public class AnimCollect {
                 break;
 
 
-
+            case SUPERLOVE:
+                nowMainLayerId = mainStickerView.getId();
+                SuperLoveAnim superLoveAnim = null;
+                for (baseAnimModel model : listForKeepBaseAnimMode
+                ) {
+                    if (model.getLayerId() == nowMainLayerId) {
+                        superLoveAnim = (SuperLoveAnim) model;
+                        break;
+                    }
+                }
+                if (superLoveAnim != null) {
+                    superLoveAnim.toChangeSubLayer(listForSubLayer, callback, percentage);
+                } else {
+                    superLoveAnim = new SuperLoveAnim();
+                    superLoveAnim.setLayerId(mainStickerView.getId());
+                    superLoveAnim.initToChangeSubLayer(mainStickerView, listForSubLayer, callback, percentage);
+                    listForKeepBaseAnimMode.add(superLoveAnim);
+                }
+                break;
         }
     }
 

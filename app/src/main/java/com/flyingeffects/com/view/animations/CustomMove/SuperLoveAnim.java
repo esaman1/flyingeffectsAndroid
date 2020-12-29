@@ -3,8 +3,11 @@ package com.flyingeffects.com.view.animations.CustomMove;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 
+import com.flyingeffects.com.enity.TransplationPos;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.StickerView;
+import com.lansosdk.box.Layer;
+import com.lansosdk.box.SubLayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +48,6 @@ public class SuperLoveAnim extends baseAnimModel {
         randomPoint();
         setRotate(mainStickerView.getRotateAngle());
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
-
         float[] tan = new float[2];
         float[] tan2 = new float[2];
         float[] LanSongPos = new float[2];
@@ -110,53 +112,103 @@ public class SuperLoveAnim extends baseAnimModel {
     }
 
 
-//    private float lansongTotalDistancePathMeasure;
-//    private float[] LanSongPos;
-//    private float[] LanSongTan;
-//    private Layer mainLayer;
-//    private float perDistance;
-//    private ArrayList<TransplationPos> listForTranslaptionPosition = new ArrayList<>();
-//
-//    void toChangeSubLayer(Layer mainStickerView, ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
-//        LanSongPos = new float[2];
-//        LanSongTan = new float[2];
-//        listForTranslaptionPosition.clear();
-//    }
-//
-//
-//    void getLansongTranslation(LayerAnimCallback callback, float percentage, ArrayList<SubLayer> listForSubLayer) {
-//        listForTranslaptionPosition.clear();
-//        AnimationLinearInterpolator animationLinearInterpolator = new AnimationLinearInterpolator(5000, (progress, isDone) -> {
-//            //主图层应该走的位置
-//            if (LansongPathMeasure != null) {
-//                float nowDistance = lansongTotalDistancePathMeasure * progress;
-//                LansongPathMeasure.getPosTan(nowDistance, LanSongPos, LanSongTan);
-//                //这里获得的时一个具体的值，而蓝松sdk 这边需要的时一个0-1之间的值，及0.5 表示居中
-//                float translateionalX = LanSongPos[0] / mainLayer.getPadWidth();
-//                float translateionalY = LanSongPos[1] / mainLayer.getPadHeight();
-//                TransplationPos transplationPos = new TransplationPos();
-//                transplationPos.setToX(translateionalX);
-//                transplationPos.setToY(translateionalY);
-//                listForTranslaptionPosition.add(transplationPos);
-//                for (int i = 0; i < listForSubLayer.size(); i++) {
-//                    SubLayer sub = listForSubLayer.get(i);
-//                    if (sub != null) {
-//                        float needDistance = perDistance * i + nowDistance;
-//                        if (needDistance > lansongTotalDistancePathMeasure) {
-//                            needDistance = needDistance - lansongTotalDistancePathMeasure;
-//                        }
-//                        LansongPathMeasure.getPosTan(needDistance, LanSongPos, LanSongTan);
-//                        TransplationPos newTransplationPos = new TransplationPos();
-//                        newTransplationPos.setToX(LanSongPos[0] / mainLayer.getPadWidth());
-//                        newTransplationPos.setToY(LanSongPos[1] / mainLayer.getPadHeight());
-//                        listForTranslaptionPosition.add(newTransplationPos);
-//                    }
-//                }
-//                callback.translationalXY(listForTranslaptionPosition);
-//            }
-//        });
-//        animationLinearInterpolator.PlayAnimationNoTimer(percentage);
-//    }
+    //--------------------------------适配蓝松---------------------------------------
+
+
+    private Layer mainLayer;
+    private final ArrayList<TransplationPos> listForTranslaptionPosition = new ArrayList<>();
+    float[] LanSongPos = new float[2];
+    float[] LanSongTan = new float[2];
+
+
+    public void initToChangeSubLayer(Layer mainLayer, ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
+        this.mainLayer = mainLayer;
+        subLayerSize = listForSubLayer.size();
+        randomHeightList.clear();
+        randomWidthList.clear();
+        pointList.clear();
+        maxWidth = mainLayer.getPadWidth();
+        maxHeight = mainLayer.getPadHeight();
+        randomPoint();
+        LansongPathMeasure = setPathMeasureOne(mainLayer.getPadWidth(), mainLayer.getPadHeight());
+        LansongPathMeasure2 = setPathMeasureTwo(mainLayer.getPadWidth(), mainLayer.getPadHeight());
+        float totalDistancePathMeasure = LansongPathMeasure.getLength();
+        float perDistance = totalDistancePathMeasure / (float) 14;
+        for (int i = 0; i < subLayerSize; i++) {
+            if (i < 14) {
+                SubLayer sub = listForSubLayer.get(i);
+                if (sub != null) {
+                    float needDistance = perDistance * i;
+                    if (needDistance > totalDistancePathMeasure) {
+                        needDistance = needDistance - totalDistancePathMeasure;
+                    }
+                    float[] pos = new float[2];
+                    LansongPathMeasure.getPosTan(needDistance, pos, LanSongTan);
+                    TransplationPos newTransplationPos = new TransplationPos();
+                    newTransplationPos.setToX(pos[0] / maxWidth);
+                    newTransplationPos.setToY(pos[1] / maxHeight);
+                    listForTranslaptionPosition.add(newTransplationPos);
+                    pointList.add(pos);
+                    if (i == 0) {
+                        listForTranslaptionPosition.add(newTransplationPos);
+                    }
+                }
+            } else {
+                SubLayer sub = listForSubLayer.get(i);
+                if (sub != null) {
+                    float needDistance = perDistance * i;
+                    if (needDistance > totalDistancePathMeasure) {
+                        needDistance = needDistance - totalDistancePathMeasure;
+                    }
+                    float[] pos2 = new float[2];
+                    LansongPathMeasure2.getPosTan(needDistance, pos2, LanSongTan);
+                    TransplationPos newTransplationPos = new TransplationPos();
+                    newTransplationPos.setToX(pos2[0] / maxWidth);
+                    newTransplationPos.setToY(pos2[1] / maxHeight);
+                    listForTranslaptionPosition.add(newTransplationPos);
+                    pointList.add(pos2);
+                }
+            }
+        }
+        callback.translationalXY(listForTranslaptionPosition);
+        for (int i = 0; i < pointList.size(); i++) {
+            LogUtil.d("OOM5", "pointList.size()=" + pointList.size());
+            float[] data = new float[2];
+            data[0] = randomWidthList.get(i);
+            data[1] = randomHeightList.get(i);
+            listForMeasure.add(setPathMeasureLine(data, pointList.get(i)));
+        }
+        toChangeSubLayer(listForSubLayer, callback, percentage);
+    }
+
+
+    public void toChangeSubLayer(ArrayList<SubLayer> listForSubLayer, LayerAnimCallback callback, float percentage) {
+        getLansongTranslation(callback, percentage, listForSubLayer);
+        LogUtil.d("translationalXY", "当前的事件为percentage=" + percentage);
+    }
+
+
+    void getLansongTranslation(LayerAnimCallback callback, float percentage, ArrayList<SubLayer> listForSubLayer) {
+        listForTranslaptionPosition.clear();
+        AnimationLinearInterpolator animationLinearInterpolator = new AnimationLinearInterpolator(2000, (progress, isDone) -> {
+            for (int i = 0; i < listForMeasure.size(); i++) {
+                PathMeasure pathMeasure = listForMeasure.get(i);
+                float TotalDistance = pathMeasure.getLength();
+                float nowDistance = TotalDistance * progress;
+                pathMeasure.getPosTan(nowDistance, LanSongPos, LanSongTan);
+                TransplationPos newTransplationPos = new TransplationPos();
+                newTransplationPos.setToX(LanSongPos[0] / mainLayer.getPadWidth());
+                newTransplationPos.setToY(LanSongPos[1] / mainLayer.getPadHeight());
+                listForTranslaptionPosition.add(newTransplationPos);
+                if (i == listForMeasure.size() - 1) {
+                    listForTranslaptionPosition.add(newTransplationPos);
+                }
+            }
+            callback.translationalXY(listForTranslaptionPosition);
+        });
+        animationLinearInterpolator.PlayAnimationNoTimer(percentage);
+        callback.translationalXY(listForTranslaptionPosition);
+    }
 
 
     @Override

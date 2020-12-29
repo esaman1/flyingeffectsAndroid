@@ -185,9 +185,11 @@ public class LoveAnim extends baseAnimModel {
                     listForTranslaptionPosition.add(newTransplationPos);
                 }
             }
+            callback.translationalXY(listForTranslaptionPosition);
         });
-        callback.translationalXY(listForTranslaptionPosition);
+
         animationLinearInterpolator2.PlayAnimationNoTimer(percentage);
+
     }
 
 
