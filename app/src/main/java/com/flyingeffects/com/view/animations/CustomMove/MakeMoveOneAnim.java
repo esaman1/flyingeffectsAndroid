@@ -47,6 +47,11 @@ public class MakeMoveOneAnim extends baseAnimModel {
                 float x = progress * 2.85f;
                 subStickerView.toScale(x, mScale, isDone);
                 mainStickerView.toScale(x, mScale, isDone);
+                subStickerView.toTranMoveXY(mainStickerView.getCenterX(),mainStickerView.getCenterY());
+                mainStickerView.toTranMoveXY(mainStickerView.getCenterX(),mainStickerView.getCenterY());
+
+
+
             } else {
                 //旋转
                 float needProgress = progress - 0.35f;
@@ -105,6 +110,8 @@ public class MakeMoveOneAnim extends baseAnimModel {
     void getLansongTranslation(LayerAnimCallback callback, float percentage, ArrayList<SubLayer> listForSubLayer) {
         listForScale.clear();
         listForTranslaptionPosition.clear();
+        int paddingW = mainLayer.getPadWidth();
+        int paddingH = mainLayer.getPadHeight();
         AnimationLinearInterpolator animationLinearInterpolator = new AnimationLinearInterpolator(8000, (progress, isDone) -> {
             //主图层应该走的位置
             if (progress <= 0.35) {
@@ -113,15 +120,17 @@ public class MakeMoveOneAnim extends baseAnimModel {
                 listForScale.add(x);
                 listForScale.add(x);
                 callback.scale(listForScale);
+                TransplationPos newTransplationPos = new TransplationPos();
+                newTransplationPos.setToX(mainLayer.getPositionX()/paddingW);
+                newTransplationPos.setToY(mainLayer.getPositionY()/paddingH);
+                listForTranslaptionPosition.add(newTransplationPos);
+                listForTranslaptionPosition.add(newTransplationPos);
             } else {
-                //旋转
                 float needProgress = progress - 0.35f;
                 float x = needProgress * 1.53f;
                 float nowDistance = lansongTotalDistancePathMeasure * x;
                 LansongPathMeasure.getPosTan(nowDistance, lansongPos, lansongTan);
                 LansongPathMeasure2.getPosTan(nowDistance, lansongPos2, lansongtan2);
-                int paddingW = mainLayer.getPadWidth();
-                int paddingH = mainLayer.getPadHeight();
                 TransplationPos newTransplationPos = new TransplationPos();
                 newTransplationPos.setToX((lansongPos[0]) / paddingW);
                 newTransplationPos.setToY((lansongPos[1] / paddingH));
@@ -130,9 +139,11 @@ public class MakeMoveOneAnim extends baseAnimModel {
                 newTransplationPos2.setToY((lansongPos2[1] / paddingH));
                 listForTranslaptionPosition.add(newTransplationPos);
                 listForTranslaptionPosition.add(newTransplationPos2);
-                callback.translationalXY(listForTranslaptionPosition);
             }
+            callback.translationalXY(listForTranslaptionPosition);
         });
+
+
         animationLinearInterpolator.PlayAnimationNoTimer(percentage);
     }
 
@@ -149,6 +160,7 @@ public class MakeMoveOneAnim extends baseAnimModel {
         mAnimPath.lineTo(centerX - halfWidth, centerY);
         mAnimPath.lineTo(centerX, centerY + halfWidth * 2);
         mAnimPath.lineTo(centerX + halfWidth, centerY);
+        mAnimPath.lineTo(centerX , centerY);
         PathMeasure mPathMeasure = new PathMeasure();
         mPathMeasure.setPath(mAnimPath, true);
         return mPathMeasure;
@@ -161,6 +173,7 @@ public class MakeMoveOneAnim extends baseAnimModel {
         mAnimPath.lineTo(centerX + halfWidth, centerY);
         mAnimPath.lineTo(centerX, centerY - halfWidth * 2);
         mAnimPath.lineTo(centerX - halfWidth, centerY);
+        mAnimPath.lineTo(centerX , centerY);
         PathMeasure mPathMeasure = new PathMeasure();
         mPathMeasure.setPath(mAnimPath, true);
         return mPathMeasure;

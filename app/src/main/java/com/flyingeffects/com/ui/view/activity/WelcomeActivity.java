@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+
 import butterknife.BindView;
 import rx.Observable;
 
@@ -73,7 +74,7 @@ public class WelcomeActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        LogUtil.d("OOM","WelcomeActivity");
+        LogUtil.d("OOM", "WelcomeActivity");
         BaseConstans.setOddNum();
         //解决广告bug ,点击图标后广告爆款广告不弹出来
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, //去掉状态栏
@@ -93,7 +94,7 @@ public class WelcomeActivity extends BaseActivity {
             int openAppNum = BaseConstans.getOpenAppNum();
             openAppNum++;
             BaseConstans.setOpenAppNum(openAppNum); //打开app的次数为1
-            LogUtil.d("OOM","openAppNum="+openAppNum);
+            LogUtil.d("OOM", "openAppNum=" + openAppNum);
         }
 //        }
 
@@ -236,7 +237,7 @@ public class WelcomeActivity extends BaseActivity {
      * 展示开屏广告
      */
     private void showSplashAd() {
-        if(!DoubleClick.getInstance().isFastDoubleClick()){
+        if (!DoubleClick.getInstance().isFastDoubleClick()) {
             statisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request");
             NTAdSDK.getInstance().showSplashAd(this, rlAdContainer, tvSkip, ScreenUtil.dip2px(this, 0), AdConfigs.AD_SPLASH, new SplashAdCallBack() {
                 @Override
@@ -349,14 +350,14 @@ public class WelcomeActivity extends BaseActivity {
             @Override
             protected void _onNext(List<Config> data) {
 
-                StringBuilder sb=new StringBuilder();
+                StringBuilder sb = new StringBuilder();
 
-                for(int i=0;i<data.size();i++){
-                    String tet= StringUtil.beanToJSONString(data.get(i));
+                for (int i = 0; i < data.size(); i++) {
+                    String tet = StringUtil.beanToJSONString(data.get(i));
                     sb.append(tet);
-                    LogUtil.d("_onNext","i-"+i+"Config="+tet);
+                    LogUtil.d("_onNext", "i-" + i + "Config=" + tet);
                 }
-                LogUtil.d("_onNext","str="+sb.toString());
+                LogUtil.d("_onNext", "str=" + sb.toString());
 
                 if (data.size() > 0) {
                     for (int i = 0; i < data.size(); i++) {
@@ -376,11 +377,11 @@ public class WelcomeActivity extends BaseActivity {
                         } else if (id == 24) {
                             //首次安装前几次无广告
                             int newUserIsVip = Integer.parseInt(config.getValue());
-                           if(BaseConstans.getOpenAppNum() <newUserIsVip-1){
-                               BaseConstans.setNextNewUser(true);
-                           }else{
-                               BaseConstans.setNextNewUser(false);
-                           }
+                            if (BaseConstans.getOpenAppNum() < newUserIsVip - 1) {
+                                BaseConstans.setNextNewUser(true);
+                            } else {
+                                BaseConstans.setNextNewUser(false);
+                            }
                             if (BaseConstans.getOpenAppNum() < newUserIsVip) { //新用户没广告
                                 BaseConstans.setIsNewUser(true);
                             } else {
@@ -447,9 +448,11 @@ public class WelcomeActivity extends BaseActivity {
     }
 
 
+    int isVideoadvertisingId;
+
     private void AuditModeConfig(String str) {
         LogUtil.d("AuditModeConfig", "AuditModeConfig=" + str);
-        Hawk.put("AuditModeConfig",str);
+        Hawk.put("AuditModeConfig", str);
         JSONArray jsonArray;
         try {
             jsonArray = new JSONArray(str);
@@ -458,16 +461,12 @@ public class WelcomeActivity extends BaseActivity {
                     JSONObject obArray = jsonArray.getJSONObject(i);
                     String Channel = obArray.getString("channel");
                     if (Channel.equals("isVideoadvertising")) { //控制了版本号
-                        int id = obArray.getInt("id");
-                        int NowVersion = Integer.parseInt(BaseConstans.getVersionCode());
-                        if (NowVersion != id) {//不是最新版本，都默认开启广告
-                            BaseConstans.setHasAdvertising(1);
-                            break;
-                        }
+                        isVideoadvertisingId = obArray.getInt("id");
                     }
                     if (Channel.equals(BaseConstans.getChannel())) { //最新版的审核模式
                         boolean audit_on = obArray.getBoolean("audit_on");
-                        if (audit_on) {
+                        int NowVersion = Integer.parseInt(BaseConstans.getVersionCode());
+                        if (audit_on || NowVersion != isVideoadvertisingId) {
                             BaseConstans.setHasAdvertising(1);
                         } else {
                             BaseConstans.setHasAdvertising(0);

@@ -156,7 +156,9 @@ public class AnimCollect {
                 return 1000;
 
             case MAKEMOVEONE:
+                return 8000;
             case SUPERLOVE:
+
                 return 2000;
 
             case CIRCLECLONED:
