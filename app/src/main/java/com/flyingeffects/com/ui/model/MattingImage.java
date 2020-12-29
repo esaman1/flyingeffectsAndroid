@@ -1,24 +1,19 @@
 package com.flyingeffects.com.ui.model;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
-import android.os.Message;
 
-import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.manager.SegResultHandleManage;
 import com.flyingeffects.com.manager.statisticsEventAffair;
-import com.flyingeffects.com.ui.view.activity.HomeMainActivity;
-import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
-import com.flyingeffects.com.utils.DateUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
-import com.megvii.segjni.SegJni;
+import com.flyingeffects.com.utils.faceUtil.SegResultHandleUtils;
+import com.megvii.facepp.multi.sdk.BodySegmentApi;
+import com.megvii.facepp.multi.sdk.FacePPImage;
+import com.megvii.facepp.multi.sdk.utils.ImageTransformUtils;
 import com.shixing.sxve.ui.util.PhotoBitmapUtils;
 import com.shixing.sxve.ui.view.WaitingDialog;
-import com.shuyu.gsyvideoplayer.GSYVideoManager;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -26,6 +21,7 @@ import java.util.TimerTask;
 
 
 public class MattingImage {
+
 
     private int mBitmapH;
     private int mBitmapW;
@@ -44,20 +40,6 @@ public class MattingImage {
             new Handler().postDelayed(() -> {
                 WaitingDialog.openPragressDialog(context, "正在上传中...");
             }, 200);
-
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    nowNeedDuration = 1;
-//                    startTimer(context);
-//                    LogUtil.d("OOM", "开始加载模型------------------------------------------- " + DateUtils.getCurrentTime_m(System.currentTimeMillis()));
-//                    int aa = SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
-//                    LogUtil.d("OOM", "模型加载完成--------------------------------------------" + aa + DateUtils.getCurrentTime_m(System.currentTimeMillis()));
-//                    BaseConstans.hasCreatingSegJni = true;
-//                    WaitingDialog.closePragressDialog();
-//                }
-//            }).start();
-
         } else {
             WaitingDialog.closePragressDialog();
             callback.isDone(true);
@@ -74,36 +56,6 @@ public class MattingImage {
     private Timer timer;
     private TimerTask task;
 
-    /***
-     * 倒计时60s
-     */
-    private void startTimer(Context context) {
-
-        if (timer != null) {
-            timer.purge();
-            timer.cancel();
-            timer = null;
-        }
-        if (task != null) {
-            task.cancel();
-            task = null;
-        }
-        timer = new Timer();
-        task = new TimerTask() {
-            @Override
-            public void run() {
-                if (BaseConstans.hasCreatingSegJni) {
-                    updateDuration(nowNeedDuration * 500, context);
-                    endTimer();
-                    WaitingDialog.closePragressDialog();
-                    callback.isDone(true);
-                }else{
-                    nowNeedDuration++;
-                }
-            }
-        };
-        timer.schedule(task, 0, 500);
-    }
 
 
     private void updateDuration(float duration, Context context) {
@@ -143,70 +95,54 @@ public class MattingImage {
     }
 
 
+
+    /**
+     * description ：普通抠图
+     * creation date: 2020/10/20
+     * user : zhangtongju
+     */
     public void mattingImage(String path, mattingStatus callback) {
-        new Thread(() -> {
-            mOriginBitmap = ConUtil.getImage(path);
-            mOriginBitmap = PhotoBitmapUtils.amendRotatePhoto(path, mOriginBitmap);
-            if (mOriginBitmap != null) {
-                mBitmapW = mOriginBitmap.getWidth();
-                mBitmapH = mOriginBitmap.getHeight();
-                SegJni.nativeCreateImageBuffer(mBitmapW, mBitmapH);
-                byte segs[] = new byte[mBitmapH * mBitmapW];
-                byte[] rgba = ConUtil.getPixelsRGBA(mOriginBitmap);
-                SegJni.nativeSegImage(rgba, mBitmapW, mBitmapH, segs, false);
-                SegJni.nativeReleaseImageBuffer();
-                mOriginBitmap = ConUtil.setBitmapAlpha(mOriginBitmap, segs);
-                callback.isSuccess(true, mOriginBitmap);
-            }
-        }).start();
+        mOriginBitmap = ConUtil.getImage(path);
+        mOriginBitmap = PhotoBitmapUtils.amendRotatePhoto(path, mOriginBitmap);
+        byte[] imageBgr = ImageTransformUtils.bitmap2BGR(mOriginBitmap);
+        FacePPImage facePPImage = new FacePPImage.Builder()
+                .setData(imageBgr)
+                .setWidth(mOriginBitmap.getWidth())
+
+                .setHeight(mOriginBitmap.getHeight())
+                .setMode(FacePPImage.IMAGE_MODE_BGR)
+                .setRotation(FacePPImage.FACE_UP).build();
+        float[] alpha = BodySegmentApi.getInstance().bodySegment(facePPImage);//抠像
+        mOriginBitmap= SegResultHandleUtils.setBitmapAlpha(mOriginBitmap, alpha);
+      //  BodySegmentApi.getInstance().releaseBodySegment();//释放人体抠像
+        callback.isSuccess(true, mOriginBitmap);
     }
 
-    public void mattingImageForBitmap(Bitmap mOriginBitmap, mattingStatus callback) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                mBitmapW = mOriginBitmap.getWidth();
-                mBitmapH = mOriginBitmap.getHeight();
-                SegJni.nativeCreateImageBuffer(mBitmapW, mBitmapH);
-                byte segs[] = new byte[mBitmapH * mBitmapW];
-                byte[] rgba = ConUtil.getPixelsRGBA(mOriginBitmap);
-                SegJni.nativeSegImage(rgba, mBitmapW, mBitmapH, segs, false);
-                SegJni.nativeReleaseImageBuffer();
-                callback.isSuccess(true, ConUtil.setBitmapAlpha(mOriginBitmap, segs));
-            }
-        }).start();
 
-    }
 
 
     /**
-     * 单线程抠图
+     * description ：自己写的自定义抠图
+     * creation date: 2020/7/13
+     * user : zhangtongju
      */
-    public void mattingImage(final Bitmap OriginBitmap, mattingStatus callback) {
-        new Thread(() -> {
-            mBitmapW = OriginBitmap.getWidth();
-            mBitmapH = OriginBitmap.getHeight();
-            SegJni.nativeCreateImageBuffer(mBitmapW, mBitmapH);
-            byte segs[] = new byte[mBitmapH * mBitmapW];
-            byte[] rgba = ConUtil.getPixelsRGBA(OriginBitmap);
-            SegJni.nativeSegImage(rgba, mBitmapW, mBitmapH, segs, false);
-            SegJni.nativeReleaseImageBuffer();
-            Bitmap newBitmap = ConUtil.setBitmapAlpha(OriginBitmap, segs);
-            callback.isSuccess(true, newBitmap);
-        }).start();
+    public static final Bitmap mattingSingleImg(Bitmap bitmap) {
+        byte[] imageBgr = ImageTransformUtils.bitmap2BGR(bitmap);
+        FacePPImage facePPImage = new FacePPImage.Builder()
+                .setData(imageBgr)
+                .setWidth(bitmap.getWidth())
+                .setHeight(bitmap.getHeight())
+                .setMode(FacePPImage.IMAGE_MODE_BGR)
+                .setRotation(FacePPImage.FACE_UP).build();
+        float[] alpha = BodySegmentApi.getInstance().bodySegment(facePPImage);//抠像
+//        bitmap= SegResultHandleUtils.setBitmapAlpha(bitmap, alpha);
+//        BodySegmentApi.getInstance().releaseBodySegment();//释放人体抠像
+//        callback.isSuccess(true, mOriginBitmap);
+        return SegResultHandleUtils.setBitmapAlpha(bitmap, alpha);
     }
 
 
-    private byte TestSegs[];
 
-    public byte[] test(int index, int mBitmapW, int mBitmapH, byte[] rgba) {
-        if (index == 0) {
-            SegJni.nativeCreateImageBuffer(mBitmapW, mBitmapH);
-            TestSegs = new byte[mBitmapH * mBitmapW];
-        }
-        SegJni.nativeSegImage(rgba, mBitmapW, mBitmapH, TestSegs, false);
-        return TestSegs;
-    }
 
 
     /**
@@ -220,101 +156,27 @@ public class MattingImage {
     private ArrayList<Bitmap> bpList = new ArrayList<>();
 
     public void mattingImageForMultiple(Bitmap OriginBitmap, int index, mattingStatus callback) {
-        if (bpList.size() >= BaseConstans.THREADCOUNT) {
-            bpList.remove(0);
-            LogUtil.d("mattingImage", "队列只有" + bpList.size());
-        }
-        bpList.add(OriginBitmap);
-        if (index == 1) {
-            BitmapW = OriginBitmap.getWidth();
-            BitmapH = OriginBitmap.getHeight();
-            SegJni.nativeCreateImageBuffer(BitmapW, BitmapH);
-            bitmapWH = new int[2];
-            bitmapWH[0] = BitmapW;
-            bitmapWH[1] = BitmapH;
-        }
+        LogUtil.d("OOM4","开始抠图"+System.currentTimeMillis());
+        byte[] imageBgr = ImageTransformUtils.bitmap2BGR(OriginBitmap);
+        FacePPImage facePPImage = new FacePPImage.Builder()
+                .setData(imageBgr)
+                .setWidth(OriginBitmap.getWidth())
+                .setHeight(OriginBitmap.getHeight())
+                .setMode(FacePPImage.IMAGE_MODE_BGR)
+                .setRotation(FacePPImage.FACE_UP).build();
+        float[] alpha = BodySegmentApi.getInstance().bodySegment(facePPImage);//抠像
+//        bitmap= SegResultHandleUtils.setBitmapAlpha(bitmap, alpha);
+//        BodySegmentApi.getInstance().releaseBodySegment();//释放人体抠像
+//        callback.isSuccess(true, mOriginBitmap);
+        OriginBitmap=  SegResultHandleUtils.setBlackWhite(OriginBitmap, alpha);
+        callback.isSuccess(true, OriginBitmap);
 
-        byte[] imageByte;
-        if (OriginBitmap != null) {
-            LogUtil.d("mattingImage", "渲染图片地址为index=" + OriginBitmap);
-            imageByte = SegJni.nativeSegCamera(getYUVByBitmap(OriginBitmap), BitmapW, BitmapH, 0, 0, 0, bitmapWH);
-        } else {
-            imageByte = SegJni.nativeSegCamera(getYUVByBitmap(bpList.get(0)), BitmapW, BitmapH, 0, 0, 0, bitmapWH);
-        }
+        LogUtil.d("OOM4","结束抠图"+System.currentTimeMillis());
 
-        if (index >= BaseConstans.THREADCOUNT - 1) {
-            if (imageByte != null) {
-                Bitmap newBitmap = SegResultHandleManage.setBlackWhite(bpList.get(0), imageByte);//setBlackWhite
-                LogUtil.d("mattingImage", "接受源图片地址" + bpList.get(0));
-                callback.isSuccess(true, newBitmap);
-            } else {
-                LogUtil.d("mattingImage", "不接受");
-                callback.isSuccess(false, OriginBitmap);
-                LogUtil.d("oom", "IMAGEBYTE==NULL");
-            }
-        } else {
-            LogUtil.d("mattingImage", "不接受");
-        }
 
     }
 
 
-    /**
-     * description ：爱字幕的单线抠图
-     * creation date: 2020/7/13
-     * user : zhangtongju
-     */
-    public static final Bitmap mattingSingleImg(Bitmap bitmap) {
-        int mBitmapW = bitmap.getWidth();
-        int mBitmapH = bitmap.getHeight();
-        SegJni.nativeCreateImageBuffer(mBitmapW, mBitmapH);
-
-        byte segs[] = new byte[mBitmapH * mBitmapW];
-        byte[] rgba = ConUtil.getPixelsRGBA(bitmap);
-
-        SegJni.nativeSegImage(rgba, mBitmapW, mBitmapH, segs, false);
-        SegJni.nativeReleaseImageBuffer();
-        return SegResultHandleManage.setBitmapAlpha(bitmap, segs);
-    }
-
-
-    public void mattingImageForMultipleForLucency(Bitmap OriginBitmap, int index, mattingStatus callback) {
-        if (bpList.size() >= BaseConstans.THREADCOUNT) {
-            bpList.remove(0);
-            LogUtil.d("mattingImage", "队列只有" + bpList.size());
-        }
-        bpList.add(OriginBitmap);
-        if (index == 1) {
-            BitmapW = OriginBitmap.getWidth();
-            BitmapH = OriginBitmap.getHeight();
-            SegJni.nativeCreateImageBuffer(BitmapW, BitmapH);
-            bitmapWH = new int[2];
-            bitmapWH[0] = BitmapW;
-            bitmapWH[1] = BitmapH;
-        }
-
-        byte[] imageByte;
-        if (OriginBitmap != null) {
-            LogUtil.d("mattingImage", "渲染图片地址为index=" + OriginBitmap);
-            imageByte = SegJni.nativeSegCamera(getYUVByBitmap(OriginBitmap), BitmapW, BitmapH, 0, 0, 0, bitmapWH);
-        } else {
-            imageByte = SegJni.nativeSegCamera(getYUVByBitmap(bpList.get(0)), BitmapW, BitmapH, 0, 0, 0, bitmapWH);
-        }
-
-        if (index >= BaseConstans.THREADCOUNT - 1) {
-            if (imageByte != null&&bpList.get(0)!=null) {
-                Bitmap newBitmap = SegResultHandleManage.setBitmapAlpha(bpList.get(0), imageByte);//setBlackWhite
-                LogUtil.d("mattingImage", "接收源图片地址" + bpList.get(0));
-                callback.isSuccess(true, newBitmap);
-            } else {
-                LogUtil.d("mattingImage", "不接收");
-                callback.isSuccess(false, OriginBitmap);
-                LogUtil.d("oom", "IMAGEBYTE==NULL");
-            }
-        } else {
-            LogUtil.d("mattingImage", "不接受");
-        }
-    }
 
 
     public interface mattingStatus {

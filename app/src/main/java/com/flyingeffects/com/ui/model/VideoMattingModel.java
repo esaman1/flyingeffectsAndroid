@@ -24,7 +24,6 @@ import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;
-import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.CanvasLayer;

@@ -3,18 +3,15 @@ package com.flyingeffects.com.manager;
 
 import android.content.Context;
 
-import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.DownImg;
 import com.flyingeffects.com.enity.DownImgDataList;
 import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.utils.UpdateFileUtils;
 import com.glidebitmappool.GlideBitmapPool;
 import com.google.gson.Gson;
-import com.megvii.segjni.SegJni;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.io.File;
@@ -83,7 +80,7 @@ public class CompressionCuttingManage {
 
     public void toMatting(List<String> paths){
         if(BaseConstans.UserFaceSdk){
-           SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
+//           SegJni.nativeCreateSegHandler(context, ConUtil.getFileContent(context, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
             compressImgForFace(paths);
         }else{
             compressImgAndCache(paths);

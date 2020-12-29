@@ -12,7 +12,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.SearchTemplateInfoEntity;
-import com.flyingeffects.com.utils.faceUtil.DensityUtil;
 
 /**
  * @author ZhouGang

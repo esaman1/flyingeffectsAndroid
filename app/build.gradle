@@ -162,7 +162,7 @@ dependencies {
     implementation project(':album')
     implementation project(':LanSongSDK')
 //    implementation project(':DownAndUpLibrary')
-    implementation project(path: ':segjni')
+//    implementation project(path: ':segjni')
 
     //mp4 声音和视频分离
     implementation 'com.googlecode.mp4parser:isoparser:1.1.21'
@@ -200,7 +200,7 @@ dependencies {
 
     implementation 'com.airbnb.android:lottie:2.8.0'
 
-    //中台导流
+    //中台导流megviisegment_model
     implementation(name: 'Market-v1.2', ext: 'aar')
 
 
@@ -210,6 +210,10 @@ dependencies {
     //抖音分享
     implementation 'com.bytedance.ies.ugc.aweme:opensdk-china-external:0.1.1.0'
     implementation 'com.bytedance.ies.ugc.aweme:opensdk-common:0.1.1.0'
+
+
+    //face sdk
+    implementation(name: 'faceSdk', ext: 'aar')
 
 }
 

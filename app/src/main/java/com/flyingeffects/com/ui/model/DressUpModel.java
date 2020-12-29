@@ -19,12 +19,9 @@ import com.flyingeffects.com.manager.huaweiObs;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.glidebitmappool.GlideBitmapPool;
 import com.megvii.segjni.SegJni;
-import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
-import com.shixing.sxve.ui.view.WatingDialogProgressForTime;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,7 +30,6 @@ import java.util.List;
 import java.util.UUID;
 
 import rx.Observable;
-import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;

@@ -52,7 +52,6 @@ import com.flyingeffects.com.ui.view.fragment.StickerFragment;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.animations.CustomMove.AnimCollect;
 import com.flyingeffects.com.view.animations.CustomMove.AnimType;

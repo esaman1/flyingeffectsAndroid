@@ -19,6 +19,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+
 import com.bytedance.applog.AppLog;
 import com.bytedance.applog.InitConfig;
 import com.bytedance.applog.util.UriConfig;
@@ -44,6 +50,7 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.SPHelper;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.model.ShowPraiseModel;
+import com.flyingeffects.com.ui.model.initFaceSdkModel;
 import com.flyingeffects.com.ui.view.fragment.DressUpFragment;
 import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
 import com.flyingeffects.com.ui.view.fragment.frag_Bj;
@@ -55,12 +62,10 @@ import com.flyingeffects.com.utils.NoDoubleClickListener;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.SystemUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.view.NoSlidingViewPager;
 import com.githang.statusbar.StatusBarCompat;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.videoeditor.LanSongFileUtil;
-import com.megvii.segjni.SegJni;
 import com.orhanobut.hawk.Hawk;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
@@ -76,11 +81,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
@@ -144,9 +144,9 @@ public class HomeMainActivity extends FragmentActivity {
             requestUserInfo();
             requestMessageCount();
         }
-        SegJni.nativeCreateSegHandler(HomeMainActivity.this, ConUtil.getFileContent(HomeMainActivity.this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
         initYouMeng();
         statisticsUpgradeApp();
+        initFaceSdkModel.initFaceSdk();
     }
 
 

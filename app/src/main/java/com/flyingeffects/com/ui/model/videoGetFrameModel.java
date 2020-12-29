@@ -9,18 +9,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
-import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.faceUtil.ConUtil;
-import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.ExtractVideoFrame;
 import com.lansosdk.videoeditor.MediaInfo;
-import com.megvii.segjni.SegJni;
-import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -190,20 +184,20 @@ public class videoGetFrameModel {
     private MattingImage mattingImage = new MattingImage();
 
     private void downImageForBitmap(Bitmap OriginBitmap, int frameCount) {
-        downSuccessNum++;
-        String fileName = nowUseFile + File.separator + frameCount + ".png";
-        LogUtil.d("OOM2", "正在抠图" + downSuccessNum);
-        mattingImage.mattingImageForMultipleForLucency(OriginBitmap, frameCount, (isSuccess, bitmap) -> {
-            if (isSuccess) {
-                BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, isSuccess1 -> GlideBitmapPool.putBitmap(
-                        bitmap));
-            } else {
-                LogUtil.d("OOM2", "bitmap=null");
-            }
-
-        });
-
-        LogUtil.d("OOM2", "allFrame-1=" + allFrame + "downSuccessNum=?" + downSuccessNum);
+//        downSuccessNum++;
+//        String fileName = nowUseFile + File.separator + frameCount + ".png";
+//        LogUtil.d("OOM2", "正在抠图" + downSuccessNum);
+//        mattingImage.mattingImageForMultipleForLucency(OriginBitmap, frameCount, (isSuccess, bitmap) -> {
+//            if (isSuccess) {
+//                BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, isSuccess1 -> GlideBitmapPool.putBitmap(
+//                        bitmap));
+//            } else {
+//                LogUtil.d("OOM2", "bitmap=null");
+//            }
+//
+//        });
+//
+//        LogUtil.d("OOM2", "allFrame-1=" + allFrame + "downSuccessNum=?" + downSuccessNum);
     }
 
     interface isSuccess {
