@@ -1388,7 +1388,6 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                     bundle.putStringArrayList("titleEffect", (ArrayList<String>) GetAllStickerDataModel.getInstance().GettitleEffect());
                                     bundle.putStringArrayList("titleStyle", (ArrayList<String>) GetAllStickerDataModel.getInstance().GetTitleStyle());
                                     bundle.putStringArrayList("titleFrame", (ArrayList<String>) GetAllStickerDataModel.getInstance().GetTitleFrame());
-
                                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     bundle.putString("path", path);
                                     bundle.putBoolean("nowUiIsLandscape", nowUiIsLandscape);

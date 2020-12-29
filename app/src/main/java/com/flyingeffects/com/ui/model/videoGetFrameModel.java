@@ -9,10 +9,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
+import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.LogUtil;
+import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.ExtractVideoFrame;
 import com.lansosdk.videoeditor.MediaInfo;
 
@@ -58,7 +61,7 @@ public class videoGetFrameModel {
         nowExtractVideoNum = 0;
         allVideoPathCount = videoPath.size();
         //逻辑修改为 抠图为5-25
-        perAllTime = 95 / allVideoPathCount + 1;
+        perAllTime = 25 / allVideoPathCount + 1;
     }
 
 
@@ -135,13 +138,13 @@ public class videoGetFrameModel {
             mExtractFrame.setExtractSomeFrame(allFrame);
             mExtractFrame.setOnExtractCompletedListener(v -> {
                 LogUtil.d("OOM2", "提取完成" + allFrame);
-                for (int i = 1; i < BaseConstans.THREADCOUNT; i++) {
-                    //最后需要补的帧
-                    LogUtil.d("OOM2", "正在补" + frameCount);
-                    frameCount++;
-                    downImageForBitmap(null, frameCount);
-                }
-                LogUtil.d("OOM2", "frameCount的值为" + frameCount);
+//                for (int i = 1; i < BaseConstans.THREADCOUNT; i++) {
+//                    //最后需要补的帧
+//                    LogUtil.d("OOM2", "正在补" + frameCount);
+//                    frameCount++;
+//                    downImageForBitmap(null, frameCount);
+//                }
+//                LogUtil.d("OOM2", "frameCount的值为" + frameCount);
 //                SegJni.nativeReleaseImageBuffer();
                 startExecute();
             });
@@ -184,8 +187,8 @@ public class videoGetFrameModel {
     private MattingImage mattingImage = new MattingImage();
 
     private void downImageForBitmap(Bitmap OriginBitmap, int frameCount) {
-//        downSuccessNum++;
-//        String fileName = nowUseFile + File.separator + frameCount + ".png";
+        downSuccessNum++;
+   String fileName = nowUseFile + File.separator + frameCount + ".png";
 //        LogUtil.d("OOM2", "正在抠图" + downSuccessNum);
 //        mattingImage.mattingImageForMultipleForLucency(OriginBitmap, frameCount, (isSuccess, bitmap) -> {
 //            if (isSuccess) {
@@ -196,8 +199,12 @@ public class videoGetFrameModel {
 //            }
 //
 //        });
-//
-//        LogUtil.d("OOM2", "allFrame-1=" + allFrame + "downSuccessNum=?" + downSuccessNum);
+
+
+        BitmapManager.getInstance().saveBitmapToPathForJpg(OriginBitmap, fileName, isSuccess1 -> GlideBitmapPool.putBitmap(
+                OriginBitmap));
+
+        LogUtil.d("OOM2", "allFrame-1=" + allFrame + "downSuccessNum=?" + downSuccessNum);
     }
 
     interface isSuccess {

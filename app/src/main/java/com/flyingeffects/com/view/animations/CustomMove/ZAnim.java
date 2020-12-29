@@ -191,6 +191,11 @@ public class ZAnim extends baseAnimModel {
                         }
                     }
                 }
+
+
+
+
+
                 callback.translationalXY(listForTranslaptionPosition);
             }
         });

@@ -125,12 +125,28 @@ public class MattingImage {
      * creation date: 2020/7/13
      * user : zhangtongju
      */
-    public   Bitmap mattingSingleImg(Bitmap bitmap) {
+    public static   Bitmap mattingSingleImg(Bitmap bitmap) {
         byte[] imageBgr = ImageTransformUtils.bitmap2BGR(bitmap);
         FacePPImage facePPImage = new FacePPImage.Builder()
                 .setData(imageBgr)
                 .setWidth(bitmap.getWidth())
                 .setHeight(bitmap.getHeight())
+                .setMode(FacePPImage.IMAGE_MODE_BGR)
+                .setRotation(FacePPImage.FACE_UP).build();
+        float[] alpha = BodySegmentApi.getInstance().bodySegment(facePPImage);//抠像
+//        bitmap= SegResultHandleUtils.setBitmapAlpha(bitmap, alpha);
+//        BodySegmentApi.getInstance().releaseBodySegment();//释放人体抠像
+//        callback.isSuccess(true, mOriginBitmap);
+        return SegResultHandleUtils.setBitmapAlpha(bitmap, alpha);
+    }
+
+
+    public static   Bitmap mattingSingleImg(Bitmap bitmap,int width,int height) {
+        byte[] imageBgr = ImageTransformUtils.bitmap2BGR(bitmap);
+        FacePPImage facePPImage = new FacePPImage.Builder()
+                .setData(imageBgr)
+                .setWidth(width)
+                .setHeight(height)
                 .setMode(FacePPImage.IMAGE_MODE_BGR)
                 .setRotation(FacePPImage.FACE_UP).build();
         float[] alpha = BodySegmentApi.getInstance().bodySegment(facePPImage);//抠像

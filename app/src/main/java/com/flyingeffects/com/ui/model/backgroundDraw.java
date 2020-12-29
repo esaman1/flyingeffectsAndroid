@@ -158,10 +158,10 @@ public class backgroundDraw {
                 if (noVideo) {
                     callback.saveSuccessPath("", i);
                 } else {
-                    float f_progress = (i / (float) 100) * 5;
+                    float f_progress = (i / (float) 100) * 75;
                     int progress;
                     if (isMatting) {
-                        progress = (int) (95 + f_progress);
+                        progress = (int) (25 + f_progress);
                     } else {
                         progress = (int) (5 + f_progress);
                     }
@@ -459,6 +459,8 @@ public class backgroundDraw {
     }
 
 
+    private int imageCoverWidth;
+    private int imageCoverHeight;
     private void addCanversLayer(AllStickerData stickerItem, int i) {
         ArrayList<SubLayer> listForMattingSubLayer = new ArrayList<>();
         float needDt = 0;
@@ -472,9 +474,10 @@ public class backgroundDraw {
         List<File> getMattingList = FileManager.listFileSortByModifyTime(path);
         LogUtil.d("OOM", "第一张图片地址为" + getMattingList.get(0).getPath());
         Bitmap bp = BitmapFactory.decodeFile(getMattingList.get(0).getPath());
+        imageCoverWidth=bp.getWidth();
+        imageCoverHeight=bp.getHeight();
+        bp= MattingImage.mattingSingleImg(bp,imageCoverWidth,imageCoverHeight);
         LogUtil.d("OOM", "图片宽为" + bp.getWidth());
-
-
         long startTime = stickerItem.getShowStickerStartTime() * 1000;
         long endTime = stickerItem.getShowStickerEndTime();
         BitmapLayer bpLayer;
@@ -600,6 +603,7 @@ public class backgroundDraw {
                     LogUtil.d("CanvasRunnable", "addCanvasRunnable=" + preTime + "currentTime=" + currentTime + "nowChooseImageIndex=" + nowChooseImageIndex);
                     nowProgressTime[0] = preTime + nowProgressTime[0];
                     Bitmap firstBitmap1 = BitmapFactory.decodeFile(getMattingList.get(nowChooseImageIndex[0]).getPath());
+                    firstBitmap1= MattingImage.mattingSingleImg(firstBitmap1,imageCoverWidth,imageCoverHeight);
                     bpLayer.switchBitmap(firstBitmap1);
                 } else {
                     LogUtil.d("OOM", "隐藏当前图层");
