@@ -286,75 +286,10 @@ public class fragBjItem extends BaseFragment {
                     smartRefreshLayout.setEnableLoadMore(false);
                 }
                 listData.addAll(data);
-//                int allPosition = listData.size();
-//                if (data.size() >= 5) {
-//                    int needPosition = allPosition - 5;
-//                    new_fag_template_item item = new new_fag_template_item();
-//                    item.setHasShowAd(true);
-//                    listData.add(needPosition, item);
-//                    requestAd(needPosition);
-//                }
                 isShowData(listData);
             }
         }, "fagBjItem", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, isSave, true, isCanRefresh);
     }
-
-
-    ArrayList<CommonNewsBean> listCommentBean = new ArrayList<>();
-
-    private void requestAd(int position) {
-        LogUtil.d("OOM", "请求广告");
-        if (getActivity() != null) {
-            mAdManager.getFeedAd(getActivity(), AdConfigs.AD_FEED, new FeedAdCallBack() {
-                @Override
-                public void onFeedAdShow(int typeId, FeedAdConfigBean.FeedAdResultBean feedAdResultBean) {
-                    CommonNewsBean bean = new CommonNewsBean();
-                    bean.setTitle(feedAdResultBean.getTitle());
-                    bean.setImageUrl(feedAdResultBean.getImageUrl());
-                    bean.setEventType(feedAdResultBean.getEventType());
-                    Log.d("OOM", "EventType=" + feedAdResultBean.getEventType());
-                    bean.setChannel(feedAdResultBean.getChannel());
-                    bean.setReadCounts(feedAdResultBean.getAdReadCount());
-                    //根据类型设置对应的属性
-                    switch (typeId) {
-                        case BAIDU_FEED_AD_EVENT:
-                            bean.setNativeResponse(feedAdResultBean.getNativeResponse());
-                            break;
-                        case GDT_FEED_AD_EVENT:
-                            bean.setGdtAdData(feedAdResultBean.getGdtAdData());
-                            break;
-                        case TT_FEED_AD_EVENT:
-                            bean.setTtFeedAd(feedAdResultBean.getTtFeedAd());
-                            break;
-                    }
-                    listCommentBean.add(bean);
-                    adapter.setAdList(listCommentBean);
-                    adapter.notifyItemChanged(position);
-                }
-
-                @Override
-                public void onFeedAdError(String error) {
-                    LogUtil.d("OOM", "onFeedAdError=" + error);
-                }
-
-                @Override
-                public void onFeedAdClose() {
-
-                }
-
-                @Override
-                public void onFeedAdExposed() {
-
-                }
-
-                @Override
-                public boolean onFeedAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
-                    return false;
-                }
-            });
-        }
-    }
-
 
     private void finishData() {
         smartRefreshLayout.finishRefresh();

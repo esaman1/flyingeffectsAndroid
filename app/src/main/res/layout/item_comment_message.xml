@@ -34,7 +34,8 @@
         <LinearLayout
             android:id="@+id/ll_item_comment"
             android:layout_width="match_parent"
-            android:layout_height="68dp"
+            android:layout_height="wrap_content"
+            android:minHeight="68dp"
             android:background="@drawable/message_content_bk"
             android:orientation="vertical"
             android:paddingStart="11dp"

@@ -20,17 +20,17 @@ public class VideoInfo {
         this.videoWidth = videoWidth;
     }
 
-    public int getDuration() {
+    public long getDuration() {
         return duration;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(long duration) {
         this.duration = duration;
     }
 
     private int videoHeight;
     private int videoWidth;
-    private int duration;
+    private long duration;
 
 
 }

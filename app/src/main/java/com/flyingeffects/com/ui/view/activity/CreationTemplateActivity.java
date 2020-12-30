@@ -82,6 +82,7 @@ import rx.android.schedulers.AndroidSchedulers;
 public class CreationTemplateActivity extends BaseActivity implements CreationTemplateMvpView, TemplateMaterialSeekBarView.SeekBarProgressListener
     ,ViewTreeObserver.OnGlobalLayoutListener{
     private static final String TAG = "CreationTemplate";
+
     @BindView(R.id.rl_creation_container)
     RelativeLayout mRLContainer;
     @BindView(R.id.viewPager)
@@ -904,9 +905,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         videoStop();
         if (bgmPlayer != null) {
             bgmPlayer.pause();
-
-
-
             bgmPlayer.release();
         }
         EventBus.getDefault().unregister(this);
@@ -941,8 +939,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             musicStartTime = 0;
             musicEndTime = allVideoDuration;
         }
-
-
     }
 
     @Override
@@ -980,7 +976,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if (createViewForAddText != null) {
             createViewForAddText.hideInputTextDialog();
         }
-
     }
 
     private void setgsyVideoProgress(long progress) {
@@ -995,23 +990,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if (exoPlayer != null) {
             exoPlayer.seekTo(to);
         }
-
-
-
     }
 
-
     private void seekToMusic(long to) {
-
-
         if (bgmPlayer != null) {
             bgmPlayer.seekTo((int) to);
         }
-
-
     }
-
-
 
     @Override
     public void getVideoDuration(long allVideoDuration) {
@@ -1381,10 +1366,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 } else {
                     modificationDuration(10 * 1000);
                 }
-                musicStartFirstTime=0;
-                musicStartTime=0;
-                musicEndFirstTime=mCutEndTime;
-                musicEndTime=mCutEndTime;
+                musicStartFirstTime = 0;
+                musicStartTime = 0;
+                musicEndFirstTime = mCutEndTime;
+                musicEndTime = mCutEndTime;
 
                 new Handler().postDelayed(() ->
                         Glide.with(CreationTemplateActivity.this)
@@ -1398,10 +1383,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 presenter.setmVideoPath(videoPath);
                 presenter.initVideoProgressView();
                 setBJVideoPath(true);
-                musicStartFirstTime=0;
-                musicStartTime=0;
-                musicEndFirstTime=mCutEndTime;
-                musicEndTime=mCutEndTime;
+                musicStartFirstTime = 0;
+                musicStartTime = 0;
+                musicEndFirstTime = mCutEndTime;
+                musicEndTime = mCutEndTime;
             }
         });
     }
@@ -1655,8 +1640,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             if (modify) {
                 modificationDuration(videoDuration);
             }
+            mSeekBarView.modifyMaterialThumbnail(path, id,true);
+        } else if (!TextUtils.isEmpty(videoPath)) {
+            //背景模板
+            mSeekBarView.modifyMaterialThumbnail(path, id, false);
+            mSeekBarView.setCutStartTime(mCutStartTime);
+            mSeekBarView.setCutEndTime(mCutEndTime);
         }
-        mSeekBarView.modifyMaterialThumbnail(path, id);
+
     }
 
     @Override

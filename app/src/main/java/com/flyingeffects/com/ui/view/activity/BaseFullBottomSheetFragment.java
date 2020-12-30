@@ -287,11 +287,6 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         recyclerViewComment.setLayoutManager(linearLayoutManager);
         recyclerViewComment.setHasFixedSize(true);
         adapter = new Comment_message_adapter(R.layout.item_comment_preview, allDataList, getActivity(), new Comment_message_adapter.CommentOnItemClick() {
-            @Override
-            public void clickPosition(int position, String id) {
-                message_id = id;
-                commentInputDialog.setMessage_id(message_id);
-            }
 
             @Override
             public void clickItemComment(String id,String firstMessageId,int position,String nickName) {
@@ -303,15 +298,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
                 commentInputDialog.setEdittextHint(nickName);
             }
 
-        }, new Comment_message_adapter.click2Comment() {
-            @Override
-            public void click(int position) {
-                //点击了展开更多
-                nowFirstOpenClickPosition = position;
-                updateDataComment(position);
-            }
-        }
-        );
+        });
 
 
         adapter.setOnItemChildLongClickListener(new BaseQuickAdapter.OnItemChildLongClickListener() {
@@ -460,6 +447,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         if (allDataList != null) {
             if (isFirstComment && allDataList.size() > deletePosition) {
                 allDataList.remove(deletePosition);
+                tv_comment_count.setText(allDataList.size() + "条评论");
             } else {
                 MessageEnity messageEnity = allDataList.get(nowFirstOpenClickPosition);
                 ArrayList<MessageReply> reply = messageEnity.getReply();

@@ -323,7 +323,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
     private Timer mTimer;
     TimerTask mTimerTask;
 
-    private void startTimer(int allDuration) {
+    private void startTimer(long allDuration) {
         mTimer = new Timer();
         mTimerTask = new TimerTask() {
             @Override

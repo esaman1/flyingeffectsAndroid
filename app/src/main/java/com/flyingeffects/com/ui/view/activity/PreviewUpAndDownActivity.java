@@ -21,7 +21,6 @@ import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.AttentionChange;
 import com.flyingeffects.com.enity.CreateCutCallback;
 import com.flyingeffects.com.enity.DownVideoPath;
-import com.flyingeffects.com.enity.HumanMerageResult;
 import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.ReplayMessageEvent;
 import com.flyingeffects.com.enity.new_fag_template_item;
@@ -50,7 +49,6 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.github.penfeizhou.animation.apng.APNGDrawable;
 import com.github.penfeizhou.animation.loader.ResourceStreamLoader;
-import com.kwad.sdk.mvp.Presenter;
 import com.nineton.ntadsdk.itr.VideoAdCallBack;
 import com.nineton.ntadsdk.manager.VideoAdManager;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -68,7 +66,6 @@ import java.util.Random;
 
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.viewpager2.widget.ViewPager2;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -1236,7 +1233,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             //需要激励视频
             if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                 VideoAdManager videoAdManager = new VideoAdManager();
-                videoAdManager.showVideoAd(this, AdConfigs.AD_stimulate_video, new VideoAdCallBack() {
+                videoAdManager.showVideoAd(this, TextUtils.equals(OldfromTo, FromToTemplate.DRESSUP) ?
+                        AdConfigs.AD_DRESSUP_video : AdConfigs.AD_stimulate_video, new VideoAdCallBack() {
                     @Override
                     public void onVideoAdSuccess() {
                         statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_sucess");

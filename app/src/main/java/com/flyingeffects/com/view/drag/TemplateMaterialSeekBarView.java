@@ -241,13 +241,33 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
      * 修改了素材 重新设置缩略图
      * @param path 新的素材路径
      * @param id 素材ID
+     * @param isBackgroundVideo 是否有背景视频
      */
-    public void modifyMaterialThumbnail(String path, String id) {
+    public void modifyMaterialThumbnail(String path, String id,boolean isBackgroundVideo) {
         for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
             if (mTemplateMaterialItemViews.get(i) != null) {
                 if (TextUtils.equals(String.valueOf(mTemplateMaterialItemViews.get(i).getIdentityID()), id)) {
                     TemplateMaterialItemView itemView = mTemplateMaterialItemViews.get(i);
-                    itemView.setResPathAndDuration(path, cutEndTime - cutStartTime, frameContainerHeight, false, "");
+                    if (isBackgroundVideo) {
+                        itemView.setResPathAndDuration(path, cutEndTime - cutStartTime, frameContainerHeight, false, "");
+                    } else {
+                        if (albumType.isVideo(GetPathType.getInstance().getPathType(path))) {
+                            MediaInfo mediaInfo = new MediaInfo(path);
+                            mediaInfo.prepare();
+                            long duration = (long) (mediaInfo.vDuration * 1000);
+                            mediaInfo.release();
+                            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) itemView.getLayoutParams();
+                            itemView.setResPathAndDuration(path, duration, frameContainerHeight, itemView.isText, itemView.text);
+                            itemView.setStartTime(0);
+                            itemView.setEndTime(duration);
+                            itemView.setWidthAndHeight((int) (duration / PER_MS_IN_PX), frameContainerHeight);
+                            params.setMargins((int) (itemView.getStartTime() / PER_MS_IN_PX + frameListPadding - TemplateMaterialItemView.ARROW_WIDTH),
+                                    screenUtil.dip2px(getContext(), 5), 0, 0);
+                            itemView.setLayoutParams(params);
+                        } else {
+                            itemView.setResPathAndDuration(path, cutEndTime - cutStartTime, frameContainerHeight, false, "");
+                        }
+                    }
                     break;
                 }
             }
@@ -298,7 +318,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
             materialItemView.setDuration(duration);
         }
         mTemplateMaterialItemViews.add(materialItemView);
-        materialItemView.setIdentityID(Integer.valueOf(id));
+        materialItemView.setIdentityID(Integer.parseInt(id));
 
         int thumbnailTotalWidth = materialItemView.setResPathAndDuration(resPath, duration, frameContainerHeight, isText, text);
         if (thumbnailTotalWidth > oldThumbnailTotalWidth) {

@@ -1,9 +1,8 @@
 package com.flyingeffects.com.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.widget.ImageView;
-
-import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
@@ -12,8 +11,11 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.fansEnity;
+import com.flyingeffects.com.utils.TimeUtils;
 
 import java.util.List;
+
+import androidx.annotation.Nullable;
 
 
 /**
@@ -35,6 +37,8 @@ public class MineFocusAdapter extends BaseQuickAdapter<fansEnity, BaseViewHolder
     @Override
     protected void convert(final BaseViewHolder helper, final fansEnity item) {
         helper.setText(R.id.nickname,item.getNickname());
+        helper.setText(R.id.tv_time, TimeUtils.getNewChatTime(item.getUpdate_time() == null || TextUtils.isEmpty(item.getUpdate_time()) ?
+                item.getCreate_time() : Long.parseLong(item.getUpdate_time())));
         ImageView iv_icon=helper.getView(R.id.iv_icon);
         Glide.with(context)
                 .load(item.getPhotourl())

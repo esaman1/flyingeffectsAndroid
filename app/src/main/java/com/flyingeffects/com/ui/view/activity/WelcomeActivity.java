@@ -414,6 +414,10 @@ public class WelcomeActivity extends BaseActivity {
                             //自定义模板分享到抖音的话题
                             String douyingTopic = config.getValue();
                             BaseConstans.setDouyingTopic(douyingTopic);
+                        } else if (id == 61) {
+                            //换装制作页面切换模板按钮加载视频广告的间隔次数
+                            int dressupIntervalsNumber = Integer.parseInt(config.getValue());
+                            BaseConstans.setDressupIntervalsNumber(dressupIntervalsNumber);
                         }
                     }
                 }
