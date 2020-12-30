@@ -133,6 +133,7 @@ public class ZAnim extends baseAnimModel {
         this.mainLayer = mainLayer;
         LansongPathMeasure = setPathMeasure(mainLayer.getScaleHeight(), mainLayer.getPositionX(), mainLayer.getPositionY());
         lansongTotalDistancePathMeasure = LansongPathMeasure.getLength();
+        hasMainStickerAnim=false;
         toChangeSubLayer(listForSubLayer, callback, percentage);
     }
 
@@ -157,6 +158,25 @@ public class ZAnim extends baseAnimModel {
                 transplationPos.setToX(translateionalX);
                 transplationPos.setToY(translateionalY);
                 listForTranslaptionPosition.add(transplationPos);
+
+//                if(!hasMainStickerAnim){
+//                    TransplationPos newTransplationPos = new TransplationPos();
+//                    LansongPathMeasure.getPosTan(nowDistance, LanSongPos, LanSongTan);
+//                    float toX = LanSongPos[0] / mainLayer.getPadWidth();
+//                    float toY = LanSongPos[1] / mainLayer.getPadHeight();
+//                    newTransplationPos.setToX(toX);
+//                    newTransplationPos.setToY(toY);
+//                    listForTranslaptionPosition.add(newTransplationPos);
+//                    hasMainStickerAnim=true;
+//                    hashMap.put(100, new float[]{toX, toY});
+//                }else{
+//                    TransplationPos newTransplationPos = new TransplationPos();
+//                    float data[] = hashMap.get(100);
+//                    LogUtil.d("OOM55", "得到保存的点为X" + data[0] + "YY==" + data[1]);
+//                    newTransplationPos.setToX(Objects.requireNonNull(data[0]));
+//                    newTransplationPos.setToY(Objects.requireNonNull(data[1]));
+//                    listForTranslaptionPosition.add(newTransplationPos);
+//                }
 
                 ///-------
                 int interProgress = (int) (progress * 15);
