@@ -23,12 +23,8 @@ import java.util.TimerTask;
 public class MattingImage {
 
 
-    private int mBitmapH;
-    private int mBitmapW;
     private Bitmap mOriginBitmap;
-    private InitSegJniStateCallback callback;
 
-    private float nowNeedDuration;
 
     public MattingImage() {
     }
@@ -36,7 +32,6 @@ public class MattingImage {
 
     public void createHandle(Context context, InitSegJniStateCallback callback) {
         if (!BaseConstans.hasCreatingSegJni) {
-            this.callback = callback;
             new Handler().postDelayed(() -> {
                 WaitingDialog.openPragressDialog(context, "正在上传中...");
             }, 200);
@@ -113,7 +108,6 @@ public class MattingImage {
                 .setRotation(FacePPImage.FACE_UP).build();
         float[] alpha = BodySegmentApi.getInstance().bodySegment(facePPImage);//抠像
         mOriginBitmap= SegResultHandleUtils.setBitmapAlpha(mOriginBitmap, alpha);
-      //  BodySegmentApi.getInstance().releaseBodySegment();//释放人体抠像
         callback.isSuccess(true, mOriginBitmap);
     }
 
@@ -134,9 +128,6 @@ public class MattingImage {
                 .setMode(FacePPImage.IMAGE_MODE_BGR)
                 .setRotation(FacePPImage.FACE_UP).build();
         float[] alpha = BodySegmentApi.getInstance().bodySegment(facePPImage);//抠像
-//        bitmap= SegResultHandleUtils.setBitmapAlpha(bitmap, alpha);
-//        BodySegmentApi.getInstance().releaseBodySegment();//释放人体抠像
-//        callback.isSuccess(true, mOriginBitmap);
         return SegResultHandleUtils.setBitmapAlpha(bitmap, alpha);
     }
 
@@ -150,9 +141,6 @@ public class MattingImage {
                 .setMode(FacePPImage.IMAGE_MODE_BGR)
                 .setRotation(FacePPImage.FACE_UP).build();
         float[] alpha = BodySegmentApi.getInstance().bodySegment(facePPImage);//抠像
-//        bitmap= SegResultHandleUtils.setBitmapAlpha(bitmap, alpha);
-//        BodySegmentApi.getInstance().releaseBodySegment();//释放人体抠像
-//        callback.isSuccess(true, mOriginBitmap);
         return SegResultHandleUtils.setBitmapAlpha(bitmap, alpha);
     }
 
@@ -160,17 +148,14 @@ public class MattingImage {
 
 
 
+
+
     /**
-     * 多线程抠图，這樣做的目的有 ，正常情况下，如果线程开启第4的时候，那么4个的时候返回第一个的数据，
-     * 5,2 如果是8的时候，那么8返回第一个数据，这里的多线程抠图扣得是灰度图
+     * description ：返回黑白抠像
+     * creation date: 2020/12/30
+     * user : zhangtongju
      */
-
-    private int BitmapW;
-    private int BitmapH;
-    private int bitmapWH[];
-    private ArrayList<Bitmap> bpList = new ArrayList<>();
-
-    public void mattingImageForMultiple(Bitmap OriginBitmap, int index, mattingStatus callback) {
+    public void mattingImageForMultiple(Bitmap OriginBitmap, mattingStatus callback) {
         LogUtil.d("OOM4","开始抠图"+System.currentTimeMillis());
         byte[] imageBgr = ImageTransformUtils.bitmap2BGR(OriginBitmap);
         FacePPImage facePPImage = new FacePPImage.Builder()
@@ -180,19 +165,32 @@ public class MattingImage {
                 .setMode(FacePPImage.IMAGE_MODE_BGR)
                 .setRotation(FacePPImage.FACE_UP).build();
         float[] alpha = BodySegmentApi.getInstance().bodySegment(facePPImage);//抠像
-//        bitmap= SegResultHandleUtils.setBitmapAlpha(bitmap, alpha);
-//        BodySegmentApi.getInstance().releaseBodySegment();//释放人体抠像
-//        callback.isSuccess(true, mOriginBitmap);
         OriginBitmap=  SegResultHandleUtils.setBlackWhite(OriginBitmap, alpha);
         callback.isSuccess(true, OriginBitmap);
-
         LogUtil.d("OOM4","结束抠图"+System.currentTimeMillis());
-
-
     }
 
 
 
+    /**
+     * description ：返回正常抠像
+     * creation date: 2020/12/30
+     * user : zhangtongju
+     */
+    public void mattingImageForMultiple2(Bitmap OriginBitmap, mattingStatus callback) {
+        LogUtil.d("OOM4","开始抠图"+System.currentTimeMillis());
+        byte[] imageBgr = ImageTransformUtils.bitmap2BGR(OriginBitmap);
+        FacePPImage facePPImage = new FacePPImage.Builder()
+                .setData(imageBgr)
+                .setWidth(OriginBitmap.getWidth())
+                .setHeight(OriginBitmap.getHeight())
+                .setMode(FacePPImage.IMAGE_MODE_BGR)
+                .setRotation(FacePPImage.FACE_UP).build();
+        float[] alpha = BodySegmentApi.getInstance().bodySegment(facePPImage);//抠像
+        SegResultHandleUtils.setBitmapAlpha(OriginBitmap, alpha);
+        callback.isSuccess(true, OriginBitmap);
+        LogUtil.d("OOM4","结束抠图"+System.currentTimeMillis());
+    }
 
 
 

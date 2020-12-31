@@ -100,7 +100,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @BindView(R.id.switch_button)
     SwitchButton switch_button;
 
-
     @BindView(R.id.edit_view_container)
     FrameLayout mContainer;
     RecyclerView recyclerView;
@@ -147,6 +146,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private String templateName;
 
     private String fromTo;
+    //影集
     private int cutVideoTag = 3;
 
     @BindView(R.id.Real_time_preview)
@@ -434,7 +434,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 //            presenter.loadTemplate(mFolder.getPath(), this, 0);
 //        }
 
-        presenter.loadTemplate(mFolder.getPath(), this, nowTemplateIsAnim,nowTemplateIsMattingVideo);
+        presenter.loadTemplate(mFolder.getPath(), this, nowTemplateIsAnim, nowTemplateIsMattingVideo);
 
         mPlayerView.setPlayCallback(mListener);
     }
@@ -613,8 +613,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @Override
     public void ChangeMaterialCallbackForVideo(String originalVideoPath, String path, boolean needMatting) {
         //可能之前没勾选抠图，所以originalPath 为null，这里需要null 判断
+
+
         if (needMatting) {
-            LogUtil.d("OOM5", "抠图");
+            LogUtil.d("OOM2", "抠图");
             if (originalPath == null) {
                 originalPath = new ArrayList<>();
             }
@@ -624,9 +626,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             imgPath.add(path);
             List<String> list = new ArrayList<>();
             if (!TextUtils.isEmpty(originalVideoPath)) {
+                LogUtil.d("OOM2", "originalVideoPath=" + originalVideoPath);
                 list.add(originalVideoPath);
                 mTemplateModel.setReplaceAllMaterial(list);
             } else {
+                LogUtil.d("OOM2", "originalVideoPath=null");
                 list.add(path);
                 mTemplateModel.setReplaceAllMaterial(list);
             }
@@ -634,18 +638,16 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             if (originalPath != null && originalPath.size() != 0) {
                 presenter.getMattingVideoCover(originalPath.get(0));
                 mTemplateModel.cartoonPath = imgPath.get(0);  //设置灰度图
-//
-//                //todo  2020-7-10
-//                if(!switch_button.isChecked()){
-//                    new Handler().postDelayed(() -> switch_button.setChecked(true),500);
-//                }
-
-
+                LogUtil.d("OOM2", "switch_button.isChecked()=" + switch_button.isChecked());
+//                Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+//                    @Override
+//                    public void call(Integer integer) {
+//                        new Handler().postDelayed(() -> switch_button.setChecked(true),500);
+//                    }
+//                });
             } else {
                 waitingDialogProgress.openProgressDialog();
             }
-
-
         } else {
             LogUtil.d("OOM4", "不抠图");
             //不需要抠图
@@ -668,7 +670,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
-
     /**
      * description ：换装完成后的回调
      * creation date: 2020/12/15
@@ -676,11 +677,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     @Override
     public void GetChangeDressUpData(List<String> paths) {
-        if(paths!=null&&paths.size()>0){
+        if (paths != null && paths.size() > 0) {
             imgPath.clear();
             imgPath.addAll(paths);
-            resultFileDispose(paths.get(0));
-            if(nowTemplateIsAnim==1){
+//          resultFileDispose(paths.get(0));
+            if (nowTemplateIsAnim == 1) {
                 refreshAllData();
             }
         }
@@ -698,11 +699,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             for (int i = 0; i < mTemplateModel.getAssets().size(); i++) {
                 MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.getAssets().get(i).ui;
                 if (x == mediaUiModel2.getNowGroup()) {
-                    mediaUiModel2.setImageAsset(imgPath.get(x-1));
+                    mediaUiModel2.setImageAsset(imgPath.get(x - 1));
                     break;
                 }
             }
         }
+        ModificationSingleThumbItem(imgPath.get(0));
     }
 
 
@@ -968,7 +970,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         selectGroup(position);
                         modificationThumbData(lastChoosePosition, position);
                     } else {
-                        if (nowIsPhotographAlbum&&!DoubleClick.getInstance().isFastDoubleClick()) {
+                        if (nowIsPhotographAlbum && !DoubleClick.getInstance().isFastDoubleClick()) {
 //                            MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
                             if (nowClickMediaUi2.isVideoType()) {
                                 //实际需要的时长
@@ -1056,7 +1058,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         }
                     }
                     if (nowChooseMusic != 0) {
-                        presenter.renderVideo(mFolder.getPath(), nowSpliteMusic, false, nowTemplateIsAnim, imgPath);
+                        if (nowChooseMusic == 3) {
+                            presenter.renderVideo(mFolder.getPath(), downMusicPath, false, nowTemplateIsAnim, imgPath);
+                        } else {
+                            presenter.renderVideo(mFolder.getPath(), nowSpliteMusic, false, nowTemplateIsAnim, imgPath);
+                        }
                     } else {
                         presenter.renderVideo(mFolder.getPath(), mAudio1Path, false, nowTemplateIsAnim, imgPath);
                     }
@@ -1160,12 +1166,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     mPlayer = mPlayerView.setTemplate(template);
                     seekBar.setProgress(0);
                     LogUtil.d("OOM", "start");
-
                     if (nowChooseMusic != 0) {
-//                        presenter.playBGMMusic(nowSpliteMusic, 0);
-                        mPlayer.replaceAudio(nowSpliteMusic);
+                        if (nowChooseMusic == 3) {
+                            mPlayer.replaceAudio(downMusicPath);
+                        } else {
+                            mPlayer.replaceAudio(nowSpliteMusic);
+                        }
                     } else {
-//                        presenter.playBGMMusic(nowSpliteMusic, 0);
                         mPlayer.replaceAudio(mAudio1Path);
                     }
                     isPlaying = true;
@@ -1210,7 +1217,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     //重新生成换装
                     if (nowTemplateIsAnim == 1) {
                         presenter.toDressUp(paths.get(0), templateId);
-
                     } else {
                         resultFileDispose(paths.get(0));
                     }
@@ -1226,22 +1232,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      * user : zhangtongju
      */
     private void resultFileDispose(String path) {
-
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 lastChooseFilePath = path;
-                String mimeType;
-//        String path = paths.get(0);
-                String extension = MimeTypeMap.getFileExtensionFromUrl(path);
-                if (!TextUtils.isEmpty(extension)) {
-                    mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-                    if (mimeType == null) {
-                        mimeType = GetPathType.getInstance().getPathType(path);
-                    }
-                } else {
-                    mimeType = GetPathType.getInstance().getPathType(path);
-                }
+                String mimeType = GetPathType.getInstance().getMediaType(path);
                 if (albumType.isImage(mimeType)) {
                     if (originalPath == null || originalPath.size() == 0) {
                         if (nowTemplateIsMattingVideo == 1) {
@@ -1305,14 +1300,22 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
             imgPath.set(lastChoosePosition, tailorPaths.get(0));
             Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                if (nowTemplateIsAnim == 1 || nowTemplateIsMattingVideo == 1) {
-                    //如果是漫画，逻辑会变
-                    MediaUiModel2 mediaUi1 = (MediaUiModel2) mTemplateModel.getAssets().get(0).ui;
-                    mediaUi1.setImageAsset(tailorPaths.get(0));
-                    MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(1).ui;
-                    mediaUi2.setImageAsset(path);
-                    mTemplateViews.get(lastChoosePosition).invalidate();
-                    ModificationSingleThumbItem(path);
+                if (nowTemplateIsMattingVideo == 1) {
+                    if (nowIsChooseMatting) {
+                        MediaUiModel2 mediaUi1 = (MediaUiModel2) mTemplateModel.getAssets().get(0).ui;
+                        mediaUi1.setImageAsset(tailorPaths.get(0));
+                        MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(1).ui;
+                        mediaUi2.setImageAsset(path);
+                        mTemplateViews.get(lastChoosePosition).invalidate();
+                        ModificationSingleThumbItem(path);
+                    } else {
+                        MediaUiModel2 mediaUi1 = (MediaUiModel2) mTemplateModel.getAssets().get(0).ui;
+                        mediaUi1.setImageAsset(path);
+                        MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(1).ui;
+                        mediaUi2.setImageAsset(path);
+                        mTemplateViews.get(lastChoosePosition).invalidate();
+                        ModificationSingleThumbItem(path);
+                    }
                     mTemplateModel.cartoonPath = path;
                 } else {
                     //这里是兼容多图，通过id 来得到具体是那个位置
@@ -1350,6 +1353,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public void onEventMainThread(MattingVideoEnity event) {
         LogUtil.d("oom2", "lastChooseFilePath=" + lastChooseFilePath);
         nowClickMediaUi2.setPathOrigin(lastChooseFilePath);
+
         if (event.getTag() == cutVideoTag) {
             LogUtil.d("OOM2", "进入到了onEventMainThread");
             getSingleCatVideoPath(event.getMattingPath());
@@ -1363,8 +1367,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 mTemplateModel.mAssets.get(0).setNeedMatting(true);
                 //替换素材
                 if (event.getOriginalPath() == null || !nowIsChooseMatting) {
+                    LogUtil.d("OOM2", "event.getOriginalPath() == null || !nowIsChooseMatting");
                     if (event.getOriginalPath() == null
                     ) {
+                        LogUtil.d("OOM2", "event.getOriginalPath()== null");
                         //用户没有选择抠图
                         ChangeMaterialCallbackForVideo(null, event.getMattingPath(), false);
                         //这里需要重新设置底部图，但是glide 视频路径相同。所以glide 不会刷新
@@ -1373,6 +1379,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         changeMaterialMusic(event.getMattingPath());
 
                     } else {
+                        LogUtil.d("OOM2", "event.getOriginalPath()！= null");
                         //用户选择了抠图但是没有切换抠图
                         ChangeMaterialCallbackForVideo(null, event.getOriginalPath(), false);
                         //这里需要重新设置底部图，但是glide 视频路径相同。所以glide 不会刷新
@@ -1380,6 +1387,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         changeMaterialMusic(event.getOriginalPath());
                     }
                 } else {
+                    LogUtil.d("OOM2", "用户选择了抠图");
                     //用户选择了抠图
                     ChangeMaterialCallbackForVideo(event.getOriginalPath(), event.getMattingPath(), true);
                     presenter.getButtomIcon(event.getOriginalPath());
@@ -1611,19 +1619,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         presenter.getBjMusic(primitivePath);
                         changeMusic();
                         cb_0.setImageResource(R.mipmap.template_btn_selected);
-
-//                        cb_0.setChecked(true);
                         nowChooseMusic = 1;
                     } else {
-
                         chooseTemplateMusic();
-
-//                        cb_2.setImageResource(R.mipmap.template_btn_selected);
-//                        nowChooseMusic = 0;
                         ToastUtil.showToast("当前素材不是视频");
                     }
                     break;
-                //模板
+                //背景
                 case R.id.ll_choose_1:
                 case R.id.iv_check_box_1:
                     if (TextUtils.isEmpty(mTemplateModel.getBackgroundPath())) {
@@ -1640,7 +1642,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     changeMusic();
 
                     break;
-                //背景
+                //模板
                 case R.id.ll_choose_2:
                 case R.id.iv_check_box_2:
                     changeMusic();
@@ -1690,7 +1692,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         cb_3.setImageResource(R.mipmap.template_btn_selected);
         nowChooseMusic = 3;
         if (isPlaying) {
-            mPlayer.replaceAudio(nowSpliteMusic);
+            mPlayer.replaceAudio(downMusicPath);
         }
     }
 
@@ -1760,7 +1762,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         clearCheckBox();
         cb_3.setImageResource(R.mipmap.template_btn_selected);
         nowChooseMusic = 3;
-        nowSpliteMusic = downMusicPath;
+//        nowSpliteMusic = downMusicPath;
         setBjMusic();
         ll_choose_3.setVisibility(View.VISIBLE);
     }

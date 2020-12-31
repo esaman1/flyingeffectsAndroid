@@ -399,7 +399,7 @@ public class VideoMattingModel {
     private void downImageForBitmap(Bitmap OriginBitmap, int frameCount) {
         String fileName = faceMattingFolder + File.separator + frameCount + ".png";
         LogUtil.d("OOM", "正在抠图" + frameCount);
-        mattingImage.mattingImageForMultiple(OriginBitmap, frameCount, (isSuccess, bitmap) -> {
+        mattingImage.mattingImageForMultiple(OriginBitmap, (isSuccess, bitmap) -> {
             if (isSuccess) {
                 BitmapManager.getInstance().saveBitmapToPathForJpg(bitmap, fileName, isSuccess1 -> GlideBitmapPool.putBitmap(
                         bitmap));

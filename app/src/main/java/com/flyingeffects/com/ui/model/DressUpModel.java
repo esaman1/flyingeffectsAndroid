@@ -344,10 +344,11 @@ public class DressUpModel {
     private MattingImage mattingImage;
 
     private void toKeepFace(Bitmap path, int allSize) {
-        mattingImage.mattingImageForMultiple(path, 0, (isSuccess, bp) -> {
+        mattingImage.mattingImageForMultiple2(path,  (isSuccess, bp) -> {
             downSuccessNum++;
             LogUtil.d("OOM", "正在抠图" + downSuccessNum);
             String fileName = mCatchFolder + File.separator + UUID.randomUUID() + ".png";
+            LogUtil.d("OOM", "正在抠图后地址为" + fileName);
             BitmapManager.getInstance().saveBitmapToPath(bp, fileName);
             listForKeepPath.add(fileName);
             GlideBitmapPool.putBitmap(bp);
