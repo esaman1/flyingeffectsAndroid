@@ -34,7 +34,6 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -94,33 +93,33 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private float mMeasureWidth = 300;
     private float mMeasureHeight = 300;
     private String stickerText = "输入文本";
-    //选择字体的名字
+    /**选择字体的名字*/
     private String textStyleTitle;
-    //选择边框的的名字
+    /**选择边框的的名字*/
     private String textFrameTitle;
-    //选择字体效果名字
+    /**选择字体效果名字*/
     private String textEffectTitle;
-    //定义对象依次存放每一个字符
+    /**定义对象依次存放每一个字符*/
     private List<String> listFontList = new ArrayList<>();
-    //文字格式地址
+    /**文字格式地址*/
     private String TypefacePath;
-    //文字图片地址
+    /**文字图片地址*/
     private String getTypefaceBitmapPath;
-    //文字图片
+    /**文字图片*/
     private Bitmap bpForTextBj;
-    //是否设置花纹
+    /**是否设置花纹*/
     public boolean OpenThePattern = false;
-    //测试的文字边纹
+    /**测试的文字边纹*/
     private Bitmap bpTestTextBj;
-    //测试的文字花纹边纹地址
+    /**测试的文字花纹边纹地址*/
     private String textFramePath;
 
-    //有花纹情况下文字的间距
+    /**有花纹情况下文字的间距*/
     private int letterSpacingSize = 1;
 
-    //选择的时背景效果
+    /**选择的时背景效果*/
     private boolean isChooseTextBjEffect = false;
-    // 文字背景矩形变阵
+    /**文字背景矩形变阵*/
     Matrix matrixForBitmapShader = new Matrix();
     private float mTextScale;
     /**不包含动画view的ID*/
@@ -221,7 +220,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private TextPaint shadowPaint = new TextPaint();
     private Paint mHelpPaint = new Paint();
     private RectF mHelpBoxRect = new RectF();
-    //图像透明化要用到的遮罩
+    /**图像透明化要用到的遮罩*/
     private Paint mHelpDstPaint = new Paint();
     /**
      * 按钮大小
@@ -256,28 +255,28 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private float frameWidth = 1;
     private int rotateLocation = RIGHT_BOTTOM_MODE;
     private int mCurrentMode = IDLE_MODE;
-    //限制右侧滑动按钮在轨道之内
+    /**限制右侧滑动按钮在轨道之内*/
     private int mRightLimited = 0;
-    //右侧滑动按钮距离底部的距离百分比
+    /**右侧滑动按钮距离底部的距离百分比*/
     private float mRightOffsetPercent = 0f;
-    //右侧滑动按钮距离底部的距离
+    /**右侧滑动按钮距离底部的距离*/
     private float mRightOffset = 0f;
-    //是否允许辅助水平
+    /**是否允许辅助水平*/
     private boolean enableAutoAdjustDegree = true;
-    //是否允许辅助居中
+    /**是否允许辅助居中*/
     private boolean enableAutoAdjustCenter = false;
     private float lastX = 0;
     private float lastY = 0;
-    //辅助线颜色
+    /**辅助线颜色*/
     private int guideLineColor = Color.WHITE;
-    //辅助线宽度
+    /**辅助线宽度*/
     private float guideLineWidth = 5;
-    //是否显示辅助线
+    /**是否显示辅助线*/
     private boolean guideLineShow = true;
-    //当touch时显示辅助线
+    /**当touch时显示辅助线*/
     private boolean guideLineShowOntouch = false;
     private Vibrator vibrator;
-    //是否显示
+    /**是否显示*/
     private boolean frameShow = false;
 
     /**
@@ -344,9 +343,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      * 文字paint
      */
     private Paint mTextPaint;
-    //没有选择效果之前的样式
+    /**没有选择效果之前的样式*/
     private Paint mTextPaint2;
-    //高光
+    /**高光*/
     private Paint mPaintShadow;
     private float mTextSize = 100;
     private float paintWidth = 50;
@@ -977,7 +976,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             float rightOffset = mRightOffsetPercent * (mHelpBoxRect.bottom - mHelpBoxRect.top - offsetValue * 4);
             rightDstRect.offsetTo(mHelpBoxRect.right - offsetValue,
                     mHelpBoxRect.top + offsetValue + rightOffset);
-            leftDstRect.offsetTo(mHelpBoxRect.left - offsetValue, mHelpBoxRect.top + offsetValue);
+            float centerHalfLeft = (mHelpBoxRect.bottom - mHelpBoxRect.top) / (float) 4;
+            leftDstRect.offsetTo(mHelpBoxRect.left - offsetValue, mHelpBoxRect.top + centerHalfLeft);
             leftBottomDstRect.offsetTo(mHelpBoxRect.left - offsetValue,
                     mHelpBoxRect.bottom - offsetValue);
             rightTopDstRect.offsetTo(mHelpBoxRect.right - offsetValue,
@@ -1676,7 +1676,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-    //贴纸里面获得源地址，切记，选择的gif 是没得这个功能的
+    /**贴纸里面获得源地址，切记，选择的gif 是没得这个功能的*/
     public String getOriginalPath() {
         return originalPath;
     }

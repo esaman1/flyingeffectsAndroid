@@ -73,7 +73,7 @@ public class ZanActivity extends BaseActivity {
         findViewById(R.id.iv_top_back).setOnClickListener(this);
         initSmartRefreshLayout();
         from = getIntent().getIntExtra("from", 0);
-        adapter = new Mine_zan_adapter(R.layout.list_like_item, listData, from, this);
+        adapter = new Mine_zan_adapter(R.layout.list_awesome_item, listData, from, this);
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {

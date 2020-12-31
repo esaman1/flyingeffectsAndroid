@@ -43,7 +43,6 @@ public class Mine_zan_adapter extends BaseQuickAdapter<MineZanEnity, BaseViewHol
         }else{
             helper.setText(R.id.tv_title,item.getAuth());
         }
-        helper.setGone(R.id.tv_content,false);
         helper.setText(R.id.tv_time, TimeUtils.getNewChatTime(item.getCreate_time()));
         helper.addOnClickListener(R.id.iv_icon);
         helper.addOnClickListener(R.id.tv_title);
@@ -54,7 +53,6 @@ public class Mine_zan_adapter extends BaseQuickAdapter<MineZanEnity, BaseViewHol
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(iv_head);
 
-//        helper.setText(R.id.tv_title,item.getAuth());
         ImageView iv_cover=helper.getView(R.id.iv_cover);
 
         Glide.with(context)
