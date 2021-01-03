@@ -487,7 +487,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
                 }
                 presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId, musicStartTime, musicEndTime, mCutEndTime - mCutStartTime,title);
-                break;
+                seekBarViewIsShow(true);
+               break;
 
             case R.id.iv_delete_all_text:
                 presenter.deleteAllTextSticker();
