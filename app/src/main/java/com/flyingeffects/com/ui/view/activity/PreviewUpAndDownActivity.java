@@ -316,7 +316,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     OldfromTo = keepOldFrom;
                     LogUtil.d("OOM2", "当前位置为" + position);
                     adapter.NowPreviewChooseItem(position);
-                    adapter.notifyItemChanged(position);
+                    //todo  解决播放卡顿问题 声音在跑，但是画面没动的情况
+                    if(allData.get(position).getAd()!=null){
+                        adapter.notifyItemChanged(position);
+                    }
                     nowItemIsAd = allData.size() > 0 && allData.get(position).getAd() != null;
                     nowChoosePosition = position;
                     //判断当前滑动状态
@@ -341,6 +344,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     if (BaseConstans.hasLogin()) {
                         //主要用于刷新当前页面
                         LogUtil.d("OOM", "onPageSelected-----templateItem.getId()" + templateItem.getId());
+                        //不是广告的情况
                         if (templateItem.getId() != 0) {
                             mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
                         }
