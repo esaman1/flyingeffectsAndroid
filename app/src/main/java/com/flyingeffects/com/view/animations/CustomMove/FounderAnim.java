@@ -32,6 +32,7 @@ public class FounderAnim extends baseAnimModel {
         listAllSticker.addAll(subLayer);
         this.mainStickerView = mainStickerView;
         setRotate(mainStickerView.getRotateAngle());
+        setScale(mainStickerView.getScale());
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
         float singleWidth = mainStickerView.getmHelpBoxRectW() / 2;
         float centerX = mainStickerView.getCenterX();
