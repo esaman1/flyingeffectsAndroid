@@ -66,6 +66,7 @@ import java.util.Random;
 
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.viewpager2.widget.ViewPager2;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -492,7 +493,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         super.onPause();
         GSYVideoManager.onPause();
         isOnPause = true;
-//        isIntoPause = true;
         LogUtil.d("OOM", "onPause");
     }
 
@@ -766,12 +766,20 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         LogUtil.d("OOM", "onResume");
         //出现bug 不能继续播放的问题
         if (!nowItemIsAd) {
-            GSYVideoManager.onResume();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (!isOnPause) {
+                        GSYVideoManager.onResume();
+                    }
+                }
+            }, 1000);
+
         }
-        if (BaseConstans.hasLogin()) {
-            //主要用于刷新当前页面
-            mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
-        }
+//        if (BaseConstans.hasLogin()) {
+//            //主要用于刷新当前页面
+//            mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
+//        }
         LogUtil.d("OOM", "onResume");
         WaitingDialog.closePragressDialog();
     }
@@ -974,7 +982,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     public void isSuccess(List<String> paths) {
                         mMvpPresenter.GetDressUpPath(paths);
                     }
-                },true);
+                }, true);
                 dressUpModel.toDressUp(paths.get(0), templateId);
 
             } else {
@@ -1186,8 +1194,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             bundle.putString("fromTo", OldfromTo);
             bundle.putString("primitivePath", event.getPrimitivePath());
             bundle.putInt("is_anime", templateItem.getIs_anime());
-            LogUtil.d("OOM55","is_anime="+templateItem.getIs_anime());
-            LogUtil.d("OOM55","is_animeaLLdATA="+StringUtil.beanToJSONString(templateItem));
+            LogUtil.d("OOM55", "is_anime=" + templateItem.getIs_anime());
+            LogUtil.d("OOM55", "is_animeaLLdATA=" + StringUtil.beanToJSONString(templateItem));
             bundle.putString("templateName", templateItem.getTitle());
             intent.putExtra("person", templateItem);//直接存入被序列化的对象实例
             bundle.putString("templateId", templateItem.getId() + "");
