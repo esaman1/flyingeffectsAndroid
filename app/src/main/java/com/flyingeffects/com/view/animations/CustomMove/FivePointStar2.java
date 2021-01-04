@@ -27,6 +27,9 @@ public class FivePointStar2 extends baseAnimModel {
 
 
     void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
+        if(subLayer==null||subLayer.size()==0){
+            return;
+        }
         ArrayList<StickerView> listAllSticker = new ArrayList<>();
         listAllSticker.addAll(subLayer);
         this.mainStickerView = mainStickerView;

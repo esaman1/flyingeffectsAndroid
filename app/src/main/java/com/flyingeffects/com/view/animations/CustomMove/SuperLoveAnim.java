@@ -38,10 +38,13 @@ public class SuperLoveAnim extends baseAnimModel {
 
 
     void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
-        this.mainStickerView = mainStickerView;
-        if (subLayer != null) {
-            subLayerSize = subLayer.size();
+
+        if(subLayer==null||subLayer.size()==0){
+            return;
         }
+
+        this.mainStickerView = mainStickerView;
+            subLayerSize = subLayer.size();
         pointList.clear();
         maxWidth = mainStickerView.getWidth();
         maxHeight = mainStickerView.getHeight();

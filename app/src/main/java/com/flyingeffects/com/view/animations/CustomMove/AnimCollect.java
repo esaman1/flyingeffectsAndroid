@@ -3,6 +3,7 @@ package com.flyingeffects.com.view.animations.CustomMove;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.StickerAnim;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.box.Layer;
 import com.lansosdk.box.SubLayer;
@@ -743,11 +744,12 @@ public class AnimCollect {
      */
     public void stopAnim() {
 
-
+        LogUtil.d("OOM4","开始遍历动画，准备全部停止");
         //这里针对保存页面
         if (listForKeepBaseAnimMode != null && listForKeepBaseAnimMode.size() > 0) {
             for (baseAnimModel animModel : listForKeepBaseAnimMode
             ) {
+                LogUtil.d("OOM4","开始遍历动画，准备全部停止listForKeepBaseAnimMode");
                 if (animModel != null) {
                     animModel.StopAnim();
                     animModel = null;
@@ -759,9 +761,11 @@ public class AnimCollect {
 
         //这里针对预览页面
         if (listForBaseAnimMode != null && listForBaseAnimMode.size() > 0) {
+            LogUtil.d("OOM4","开始遍历动画，准备全部停止listForBaseAnimMode");
             for (baseAnimModel animModel : listForBaseAnimMode
             ) {
                 if (animModel != null) {
+                    LogUtil.d("OOM4","animModel != null");
                     animModel.StopAnim();
                     animModel = null;
                 }

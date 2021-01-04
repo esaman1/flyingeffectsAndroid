@@ -25,6 +25,9 @@ public class FivePointStar extends baseAnimModel {
 
 
     void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
+        if(subLayer==null||subLayer.size()==0){
+            return;
+        }
         this.mainStickerView = mainStickerView;
         setRotate(mainStickerView.getRotateAngle());
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
@@ -65,7 +68,9 @@ public class FivePointStar extends baseAnimModel {
 
     @Override
     public void StopAnim() {
+        LogUtil.d("OOM4","准备开始停止动画StopAnim");
         if (animationLinearInterpolator != null) {
+            LogUtil.d("OOM4","animationLinearInterpolator != null");
             animationLinearInterpolator.endTimer();
             resetAnimState(mainStickerView);
         }
@@ -185,6 +190,8 @@ public class FivePointStar extends baseAnimModel {
             }
         });
         animationLinearInterpolator.PlayAnimationNoTimer(percentage);
+
+       LogUtil.d("OOM5","蓝松开启的计时器");
     }
 
 

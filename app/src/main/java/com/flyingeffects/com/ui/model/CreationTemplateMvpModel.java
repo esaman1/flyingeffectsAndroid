@@ -1817,7 +1817,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
      * user : zhangtongju
      */
     private synchronized void stopAllAnim() {
-
+        LogUtil.d("OOM4","stopAllAnim");
         if (animCollect != null) {
             animCollect.stopAnim();
         }

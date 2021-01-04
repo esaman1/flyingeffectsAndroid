@@ -54,15 +54,18 @@ public class AnimationLinearInterpolator {
      * user : zhangtongju
      */
     public void StopAnimation() {
+        LogUtil.d("OOM5", "StopAnimation");
         endTimer();
     }
 
     public void PlayAnimation(int delay) {
+        LogUtil.d("OOM5", "PlayAnimationDelay");
         endTimer();
         startTimer(delay);
     }
 
     public void PlayAnimation() {
+        LogUtil.d("OOM5", "PlayAnimation");
         endTimer();
         startTimer(0);
     }
@@ -86,6 +89,7 @@ public class AnimationLinearInterpolator {
     }
 
     public void PlayAnimationNoTimer(float percentage) {
+        LogUtil.d("OOM5", "percentage="+percentage);
         if (interpolatorType == 0) {
             callback.progress(getNowInterpolatorProgress(percentage), isDone);
         } else {
@@ -98,7 +102,7 @@ public class AnimationLinearInterpolator {
      * 匀速运动
      */
     public float getNowInterpolatorProgress(float progress) {
-        LogUtil.d("InterpolatorProgress", "当前动画没消失匀速运动");
+     LogUtil.d("OOM5", "当前动画没消失匀速运动");
         LinearInterpolator linearInterpolator = new LinearInterpolator();
         return linearInterpolator.getInterpolation(progress);
     }
@@ -111,7 +115,7 @@ public class AnimationLinearInterpolator {
      */
 
     public float getNowCycleInterpolatorProgress(float progress) {
-        LogUtil.d("InterpolatorProgress", "当前动画没消失正玄函数");
+        LogUtil.d("OOM5", "当前动画没消失正玄函数");
         CycleInterpolator cycleInterpolator = new CycleInterpolator(1);
         return cycleInterpolator.getInterpolation(progress);
     }
@@ -136,10 +140,12 @@ public class AnimationLinearInterpolator {
             timer.purge();
             timer.cancel();
             timer = null;
+            LogUtil.d("OOM5","timer != null置空");
         }
         if (task != null) {
             task.cancel();
             task = null;
+            LogUtil.d("OOM5","task != null置空");
         }
     }
 
@@ -168,6 +174,7 @@ public class AnimationLinearInterpolator {
             task = new TimerTask() {
                 @Override
                 public void run() {
+                    LogUtil.d("OOM5", "计时器还在跑");
                     if (nowDuration >= totalDuration) {
                         if (!isCirculation) {
                             StopAnimation();
