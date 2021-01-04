@@ -1,4 +1,16 @@
 package com.flyingeffects.com.utils;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.os.Environment;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.flyingeffects.com.constans.BaseConstans;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -18,19 +30,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.os.Environment;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.flyingeffects.com.base.BaseApplication;
-import com.flyingeffects.com.constans.BaseConstans;
-
-
+/**
+ * @author ZhouGang
+ * @date 2020/10/10
+ * 文件工具类
+ */
 public class FileUtil {
     private static final String TAG = "FileUtil";
 
@@ -1001,6 +1006,41 @@ public class FileUtil {
             }
         }
         return file.delete();
+    }
+
+    /**bitmap保存到本地**/
+    public static String saveBitmap(Bitmap bitmapToSave, String fileName) {
+        if (bitmapToSave == null) {
+            return null;
+        }
+        File mediaStorageDir = new File("/sdcard/DCIM/facePP/");
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                return null;
+            }
+        }
+        fileName = System.currentTimeMillis() + fileName + ".png";
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mediaStorageDir + "/" + fileName);
+            boolean successful = bitmapToSave.compress(
+                    Bitmap.CompressFormat.PNG, 100, fos);
+
+            if (successful) {
+                return mediaStorageDir.getAbsolutePath() + "/" + fileName;
+            }
+
+            return null;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

@@ -259,8 +259,8 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) itemView.getLayoutParams();
                             itemView.setResPathAndDuration(path, duration, frameContainerHeight, itemView.isText, itemView.text);
                             itemView.setStartTime(0);
-                            itemView.setEndTime(duration);
-                            itemView.setWidthAndHeight((int) (duration / PER_MS_IN_PX), frameContainerHeight);
+                            itemView.setEndTime(Math.min(duration, cutEndTime));
+                            itemView.setWidthAndHeight((int) (Math.min(duration, cutEndTime) / PER_MS_IN_PX), frameContainerHeight);
                             params.setMargins((int) (itemView.getStartTime() / PER_MS_IN_PX + frameListPadding - TemplateMaterialItemView.ARROW_WIDTH),
                                     screenUtil.dip2px(getContext(), 5), 0, 0);
                             itemView.setLayoutParams(params);

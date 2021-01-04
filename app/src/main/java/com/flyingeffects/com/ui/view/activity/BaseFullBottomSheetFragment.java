@@ -52,6 +52,11 @@ import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
+/**
+ * @author ZhouGang
+ * @date 2020/10/10
+ * 模板仿抖音评论的弹框
+ */
 public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
 
 
@@ -69,7 +74,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     private String nowTemplateId;
     private String templateTitle;
     private String templateType;
-    //2级回复id ,如果这个id 不为""，那么表示一级回复，否则表示二级回复
+    /**2级回复id ,如果这个id 不为""，那么表示二级回复，否则表示一级回复*/
     private String message_id;
     /**一级回复信息ID*/
     private String firstMessageId;
@@ -86,8 +91,6 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
     private int selectPage = 1;
     private int perPageCount = 10;
     boolean isComment = false;
-    //当前是一级评论
-    private int type=1;
 
     @NonNull
     @Override
@@ -128,20 +131,22 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
                 showInputTextDialog();
+                if (commentInputDialog != null) {
+                    commentInputDialog.setMessage_id("");
+                }
             }
         });
         commentInputDialog = new CommentInputDialog(getActivity(), nowTemplateId, templateType, templateTitle);
         commentInputDialog.setCommentSuccessListener(new CommentInputDialog.OnCommentSuccessListener() {
             @Override
             public void commentSuccess(int type) {
-//                isComment = true;
-                if(type==1){
+                if (type == 1) {
                     isComment = false;
-                    isRefresh=true;
-                    selectPage=1;
-                }else{
+                    isRefresh = true;
+                    selectPage = 1;
+                } else {
                     isComment = true;
-                    isRefresh=false;
+                    isRefresh = false;
                 }
                 requestComment();
             }
@@ -326,8 +331,6 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
                         intent.putExtra("toUserId", allDataList.get(position).getUser_id());
                         startActivity(intent);
                         break;
-
-
                     case R.id.ll_parent:
                         LogUtil.d("OOM", "onItemClick");
                         firstMessageId = allDataList.get(position).getId();
@@ -337,10 +340,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
                         showInputTextDialog();
                         commentInputDialog.setEdittextHint(allDataList.get(position).getNickname());
                         break;
-
-
                     default:
-
                         break;
                 }
             }
@@ -404,7 +404,6 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         this.topOffset = topOffset;
     }
 
-
     public void setNowTemplateId(String nowTemplateId) {
         this.nowTemplateId = nowTemplateId;
         requestComment();
@@ -416,27 +415,6 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
 
     public void setNowTemplateType(String templateType) {
         this.templateType = templateType;
-    }
-
-
-    public BottomSheetBehavior<FrameLayout> getBehavior() {
-        return behavior;
-    }
-
-
-    private void updateDataComment(int position) {
-        allDataList.get(position).isOpenComment();
-        MessageEnity item1 = allDataList.get(position);
-        item1.setOpenComment(true);
-        allDataList.set(position, item1);
-        if (lastOpenCommentPosition != position) {
-            MessageEnity item2 = allDataList.get(lastOpenCommentPosition);
-            item2.setOpenComment(false);
-            allDataList.set(lastOpenCommentPosition, item2);
-            adapter.notifyItemChanged(lastOpenCommentPosition);
-        }
-        adapter.notifyItemChanged(position);
-        lastOpenCommentPosition = position;
     }
 
     @Subscribe

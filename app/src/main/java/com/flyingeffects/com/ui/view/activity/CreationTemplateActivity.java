@@ -1633,12 +1633,16 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             long videoDuration = (long) (mediaInfo.vDuration * 1000);
             mediaInfo.release();
             boolean modify = false;
+            int viewCount =0;
             for (int i = 0; i < mSeekBarView.getTemplateMaterialItemViews().size(); i++) {
-                if (videoDuration > mSeekBarView.getTemplateMaterialItemViews().get(i).getDuration()) {
-                    modify = true;
+                if (mSeekBarView.getTemplateMaterialItemViews().get(i) != null) {
+                    viewCount++;
+                    if (videoDuration > mSeekBarView.getTemplateMaterialItemViews().get(i).getDuration()) {
+                        modify = true;
+                    }
                 }
             }
-            if (modify) {
+            if (modify || viewCount == 1) {
                 modificationDuration(videoDuration);
             }
             mSeekBarView.modifyMaterialThumbnail(path, id,true);
@@ -1647,6 +1651,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             mSeekBarView.modifyMaterialThumbnail(path, id, false);
             mSeekBarView.setCutStartTime(mCutStartTime);
             mSeekBarView.setCutEndTime(mCutEndTime);
+        } else {
+            //背景为图片或者绿幕替换素材时修改时间轴的缩略图
+            mSeekBarView.modifyMaterialThumbnail(path, id,true);
         }
 
     }
