@@ -27,8 +27,14 @@ public class LoveAnim extends baseAnimModel {
     private PathMeasure LansongPathMeasure2;
     private List<StickerView> subLayer1 = new ArrayList<>();
     private List<StickerView> subLayer2 = new ArrayList<>();
+    AnimationLinearInterpolator animationLinearInterpolator2;
 
     void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
+
+        if(subLayer==null||subLayer.size()==0){
+            return;
+        }
+
         for (int i = 0; i < subLayer.size(); i++) {
             if (i < 8) {
                 subLayer1.add(subLayer.get(i));
@@ -71,7 +77,7 @@ public class LoveAnim extends baseAnimModel {
 
 
         //第一个参数为总时长
-        AnimationLinearInterpolator animationLinearInterpolator2 = new AnimationLinearInterpolator(2000, (progress, isDone) -> {
+        animationLinearInterpolator2    = new AnimationLinearInterpolator(2000, (progress, isDone) -> {
             float nowDistance = totalDistancePathMeasure * progress;
             LansongPathMeasure2.getPosTan(nowDistance, pos2, tan2);
             for (int i = 0; i < subLayer2.size(); i++) {
@@ -93,10 +99,18 @@ public class LoveAnim extends baseAnimModel {
 
     @Override
     public void StopAnim() {
+
+        if(animationLinearInterpolator2!=null){
+            animationLinearInterpolator2.endTimer();
+        }
         if (animationLinearInterpolator != null) {
             animationLinearInterpolator.endTimer();
             resetAnimState(mainStickerView);
         }
+
+
+
+
     }
 
 
@@ -124,6 +138,8 @@ public class LoveAnim extends baseAnimModel {
         LansongSubLayer2.clear();
         for (int i = 0; i < listForSubLayer.size(); i++) {
             if (i < 8) {
+
+
                 LansongSubLayer1.add(listForSubLayer.get(i));
             } else {
                 LansongSubLayer2.add(listForSubLayer.get(i));

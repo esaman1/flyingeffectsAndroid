@@ -27,6 +27,11 @@ public class CircleCloned extends baseAnimModel {
 
 
     void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
+
+        if(subLayer==null||subLayer.size()==0){
+            return;
+        }
+
         this.mainStickerView = mainStickerView;
         setRotate(mainStickerView.getRotateAngle());
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());

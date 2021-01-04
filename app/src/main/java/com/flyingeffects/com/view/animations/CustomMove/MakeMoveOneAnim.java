@@ -27,6 +27,11 @@ public class MakeMoveOneAnim extends baseAnimModel {
     private StickerView subStickerView;
 
     void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
+
+        if(subLayer==null||subLayer.size()==0){
+            return;
+        }
+
         this.mainStickerView = mainStickerView;
         subStickerView = subLayer.get(0);
         float mScale = mainStickerView.GetHelpBoxRectScale();

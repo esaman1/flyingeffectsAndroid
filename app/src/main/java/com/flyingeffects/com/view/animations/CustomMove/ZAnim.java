@@ -27,6 +27,11 @@ public class ZAnim extends baseAnimModel {
     private boolean hasMainStickerAnim=false;
 
     void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
+
+        if(subLayer==null||subLayer.size()==0){
+            return;
+        }
+
         ArrayList<StickerView> listAllSticker = new ArrayList<>();
         listAllSticker.addAll(subLayer);
         this.mainStickerView = mainStickerView;

@@ -21,11 +21,15 @@ public class ItemLeftAndRightDissmiss extends baseAnimModel {
     private StickerView mainStickerView;
 
     public void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
+        if(subLayer==null||subLayer.size()==0){
+            return;
+        }
+
         this.mainStickerView = mainStickerView;
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
         setRotate(mainStickerView.getRotateAngle());
         StickerView sub1 = null;
-        if(subLayer!=null&&subLayer.size()>0){
+        if(subLayer.size()>0){
             sub1 = subLayer.get(0);
         }
         float boxRectW = mainStickerView.getmHelpBoxRectW();
