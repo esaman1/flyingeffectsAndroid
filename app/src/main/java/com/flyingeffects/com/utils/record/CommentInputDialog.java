@@ -117,7 +117,11 @@ public class CommentInputDialog extends Dialog {
 
     public void setEdittextHint(String id) {
         if (ed_search != null) {
-            ed_search.setHint("@" + id);
+            if (TextUtils.isEmpty(id)) {
+                ed_search.setHint("友爱评论，说点好听的~");
+            } else {
+                ed_search.setHint("@" + id);
+            }
         }
     }
 

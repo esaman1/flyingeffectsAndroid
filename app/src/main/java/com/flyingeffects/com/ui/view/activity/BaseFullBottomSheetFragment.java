@@ -133,6 +133,7 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
                 showInputTextDialog();
                 if (commentInputDialog != null) {
                     commentInputDialog.setMessage_id("");
+                    commentInputDialog.setEdittextHint("");
                 }
             }
         });
