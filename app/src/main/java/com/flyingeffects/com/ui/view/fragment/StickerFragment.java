@@ -79,10 +79,8 @@ public class StickerFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        listForSticker.clear();
         mGridViewAdapter = new TemplateGridViewAdapter(listForSticker, getContext());
         mGridView.setAdapter(mGridViewAdapter);
-        requestStickersList(true);
 
         mSmartRefreshLayout.setOnRefreshListener(refreshLayout -> {
             isRefresh = true;
@@ -111,6 +109,15 @@ public class StickerFragment extends BaseFragment {
                 downSticker(listForSticker.get(position).getImage(), listForSticker.get(position).getId(), position,listForSticker.get(position).getTitle());
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        listForSticker.clear();
+        isRefresh = true;
+        selectPage = 1;
+        requestStickersList(true);
     }
 
     public void requestStickersList(boolean isShowDialog) {
