@@ -112,7 +112,7 @@ public class videoCutDurationForVideoOneDo {
      */
     private DrawPadAllExecute2 execute;
 
-    public void CutVideoForDrawPadAllExecute2(Context context,boolean nowUiIsLandscape, float duration, String path, long startDurtion, isSuccess callback) {
+    public void CutVideoForDrawPadAllExecute2(Context context,boolean nowUiIsLandscape, long duration, String path, long startDurtion, isSuccess callback) {
         try {
 //            VideoInfo   videoInfo = getVideoInfo.getInstance().getRingDuring(path);
 //            long allDuration=videoInfo.getDuration();
@@ -167,6 +167,7 @@ public class videoCutDurationForVideoOneDo {
                         long durationUs = (long) (duration * 1000);
                         long endDuration=durationUs + startDuration;
                         option.setCutDurationUs(startDuration, endDuration);
+//                        option.setLooping(true);
                         final VideoFrameLayer videoLayer = execute.addVideoLayer(option);
                         videoLayer.setScaleType(LSOScaleType.VIDEO_SCALE_TYPE);
 

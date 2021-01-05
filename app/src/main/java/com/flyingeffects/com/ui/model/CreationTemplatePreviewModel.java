@@ -344,7 +344,10 @@ public class CreationTemplatePreviewModel {
             dialog.openProgressDialog();
             //需要裁剪
 
-            videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(mContext,nowUiIsLandscape,(cropEndRatio-cropStartRatio)*allDuration/1000,videoPath, (long) (cropStartRatio*allDuration)/1000, new videoCutDurationForVideoOneDo.isSuccess() {
+            long duration= (long) ((cropEndRatio-cropStartRatio)*allDuration/1000);
+            long startDurtion= (long) ((cropStartRatio*allDuration)/1000);
+
+            videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(mContext,nowUiIsLandscape,duration,videoPath, startDurtion, new videoCutDurationForVideoOneDo.isSuccess() {
                 @Override
                 public void progresss(int progress) {
                     if (progress > 100) {

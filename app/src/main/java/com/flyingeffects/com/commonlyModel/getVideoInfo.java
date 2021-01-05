@@ -35,7 +35,12 @@ public class getVideoInfo {
             info.setVideoHeight(mediaPlayer.getVideoHeight());
             info.setVideoWidth(mediaPlayer.getVideoWidth());
             mediaInfo.prepare();
-            info.setDuration((long) (mediaInfo.vDuration*1000));
+            long duration=(long) (mediaInfo.vDuration*1000);
+            if(duration!=0){
+                info.setDuration(duration);
+            }else{
+                info.setDuration(mediaPlayer.getDuration());
+            }
             mediaInfo.release();
         } catch (IOException e) {
             e.printStackTrace();

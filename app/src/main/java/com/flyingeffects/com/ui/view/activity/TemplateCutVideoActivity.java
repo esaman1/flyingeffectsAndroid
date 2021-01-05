@@ -284,7 +284,8 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
 
                 LogUtil.d("OOM", "needDuration" + needDuration);
-                new Thread(() -> videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(TemplateCutVideoActivity.this, false, needDuration * 1000, videoPath, mStartDuration, new videoCutDurationForVideoOneDo.isSuccess() {
+                long duration= (long) (needDuration * 1000);
+                new Thread(() -> videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(TemplateCutVideoActivity.this, false,duration , videoPath, mStartDuration, new videoCutDurationForVideoOneDo.isSuccess() {
                     @Override
                     public void progresss(int progress) {
                         if (!nowActivityIsDestroy) {
