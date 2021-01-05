@@ -40,6 +40,7 @@ import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.view.MyScrollView;
+import com.flyingeffects.com.view.NoSlidingViewPager;
 import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.drag.CreationTemplateProgressBarView;
 import com.flyingeffects.com.view.drag.TemplateMaterialItemView;
@@ -64,7 +65,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -86,7 +86,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @BindView(R.id.rl_creation_container)
     RelativeLayout mRLContainer;
     @BindView(R.id.viewPager)
-    ViewPager viewPager;
+    NoSlidingViewPager viewPager;
     @BindView(R.id.ll_progress)
     LinearLayout mLlProgress;
     @BindView(R.id.material_SeekBarView)
@@ -289,13 +289,21 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 }
                 progressBarProgress = progress;
                 presenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
-                mTvCurrentTime.setText(TimeUtils.timeParse(progress) + "s");
+                mTvCurrentTime.setText(TimeUtils.timeParse(progress - mCutStartTime) + "s");
             }
 
             @Override
             public void cutInterval(long starTime, long endTime, boolean isDirection) {
-                mCutStartTime = starTime;
+                if (starTime < mCutStartTime) {
+                    mTvCurrentTime.setText(TimeUtils.timeParse(0) + "s");
+                    mCutStartTime = starTime;
+                } else {
+                    mCutStartTime = starTime;
+                    mTvCurrentTime.setText(TimeUtils.timeParse(progressBarProgress - mCutStartTime) + "s");
+                }
                 mCutEndTime = endTime;
+
+                tv_total.setText(TimeUtils.timeParse(mCutEndTime - mCutStartTime) + "s");
                 mSeekBarView.setCutStartAndEndTime(starTime, endTime);
                 stickerTimeLineOffset();
                 if (isDirection) {
@@ -742,6 +750,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 mProgressBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 mCutStartTime = 0;
                 mCutEndTime = allVideoDuration;
+                tv_total.setText(TimeUtils.timeParse(mCutEndTime - mCutStartTime) + "s");
                 mProgressBarView.addProgressBarView(allVideoDuration, videoPath);
                 if (isModifyMaterialTimeLine) {
                     musicStartTime=mCutStartTime;
@@ -763,7 +772,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 }
             }
         });
-        tv_total.setText(TimeUtils.timeParse(allVideoDuration) + "s");
         mediaInfo.release();
         mSeekBarView.setGreenScreen(false);
     }
@@ -797,10 +805,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 mProgressBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 mCutStartTime = 0;
                 mCutEndTime = allVideoDuration;
+                tv_total.setText(TimeUtils.timeParse(mCutEndTime - mCutStartTime) + "s");
                 mProgressBarView.addProgressBarView(allVideoDuration, "");
             }
         });
-        tv_total.setText(TimeUtils.timeParse(allVideoDuration) + "s");
         mSeekBarView.setGreenScreen(true);
     }
 
@@ -1590,7 +1598,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                                     mCutEndTime = materialDuration;
                                 }
                             }
-                            tv_total.setText(TimeUtils.timeParse(allVideoDuration) + "s");
+                            tv_total.setText(TimeUtils.timeParse(mCutEndTime - mCutStartTime) + "s");
 
                         }
                         oldMaxVideoDuration = materialDuration;
@@ -1768,6 +1776,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 mProgressBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 mCutStartTime = 0;
                 mCutEndTime = allVideoDuration;
+                tv_total.setText(TimeUtils.timeParse(mCutEndTime - mCutStartTime) + "s");
                 mProgressBarView.addProgressBarView(allVideoDuration, videoPath);
                 mSeekBarView.resetStartAndEndTime(mCutStartTime, mCutEndTime);
                 mSeekBarView.changeVideoPathViewFrameSetWidth(allVideoDuration);
@@ -1785,7 +1794,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 }
             }
         });
-        tv_total.setText(TimeUtils.timeParse(allVideoDuration) + "s");
+
     }
 
     @Override

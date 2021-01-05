@@ -13,6 +13,7 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.AttentionChange;
+import com.flyingeffects.com.enity.BackgroundTemplateCollectionEvent;
 import com.flyingeffects.com.enity.CommonNewsBean;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.ListForUpAndDown;
@@ -377,9 +378,11 @@ public class fragBjItem extends BaseFragment {
     }
 
 
-
-
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 
     @Subscribe
     public void onEventMainThread(AttentionChange event) {
@@ -391,4 +394,12 @@ public class fragBjItem extends BaseFragment {
     }
 
 
+    @Subscribe
+    public void onEventMainThread(BackgroundTemplateCollectionEvent event) {
+        isRefresh = true;
+        selectPage = 1;
+        if (getActivity() != null && !TextUtils.isEmpty(templateId) && templateId.equals("11")) {
+            requestFagData(false, false);
+        }
+    }
 }
