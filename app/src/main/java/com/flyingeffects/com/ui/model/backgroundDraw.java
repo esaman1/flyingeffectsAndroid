@@ -85,6 +85,7 @@ public class backgroundDraw {
 
     private long musicStartTime;
     private long musicEndTime;
+    boolean isBackgroundTemplate;
 
     /**
      * description ：后台绘制，如果videoVoice不为null,那么需要把主视频图层的声音替换为用户选择的背景声音
@@ -92,7 +93,7 @@ public class backgroundDraw {
      * creation date: 2020/4/23
      * user : zhangtongju
      */
-    public backgroundDraw(Context context, String videoPath, String videoVoice, String imagePath, long musicStartTime, long musicEndTime, long needKeepDuration, saveCallback callback, AnimCollect animCollect) {
+    public backgroundDraw(Context context, String videoPath, String videoVoice, String imagePath, long musicStartTime, long musicEndTime, long needKeepDuration, saveCallback callback, AnimCollect animCollect,boolean isBackgroundTemplate) {
         this.context = context;
         this.videoPath = videoPath;
         this.videoVoice = videoVoice;
@@ -101,6 +102,7 @@ public class backgroundDraw {
         this.musicStartTime = musicStartTime;
         this.musicEndTime = musicEndTime;
         this.callback = callback;
+        this.isBackgroundTemplate = isBackgroundTemplate;
 //        waitingProgress = new WaitingDialog_progress(context);
         duration = needKeepDuration;
         if (duration == 0) {
@@ -119,6 +121,11 @@ public class backgroundDraw {
     }
 
     private float percentageH;
+    long cutStartTime;
+
+    public void setCutStartTime(long cutStartTime){
+        this.cutStartTime = cutStartTime;
+    }
 
     public void toSaveVideo(ArrayList<AllStickerData> list, boolean isMatting, boolean nowUiIsLandscape, float percentageH) {
         nowCurtime = System.currentTimeMillis();
@@ -271,11 +278,22 @@ public class backgroundDraw {
 
 
             option.setAudioMute();
+            long STARTTime = stickerItem.getShowStickerStartTime();
             long endTime = stickerItem.getShowStickerEndTime() * 1000;
             VideoFrameLayer videoLayer;
             if (endTime != 0) {
-                videoLayer = execute.addVideoLayer(option, stickerItem.getShowStickerStartTime() * 1000,
-                        endTime >= duration * 1000 ? Long.MAX_VALUE : endTime, false, false);
+                if (isBackgroundTemplate) {
+                    if (STARTTime <= cutStartTime) {
+                        STARTTime = 0;
+                    } else {
+                        STARTTime = STARTTime - cutStartTime;
+                    }
+                    videoLayer = execute.addVideoLayer(option,STARTTime * 1000,
+                            endTime >= duration * 1000 ? Long.MAX_VALUE : endTime, false, false);
+                } else {
+                    videoLayer = execute.addVideoLayer(option, 0,
+                            endTime >= duration * 1000 ? Long.MAX_VALUE : endTime, false, false);
+                }
             } else {
                 videoLayer = execute.addVideoLayer(option);
             }
@@ -330,10 +348,21 @@ public class backgroundDraw {
      */
     private void addGifLayer(AllStickerData stickerItem, int id) {
         long endTime = stickerItem.getShowStickerEndTime() * 1000;
+        long STARTTime = stickerItem.getShowStickerStartTime();
         GifLayer gifLayer;
         if (endTime != 0) {
-            gifLayer = execute.addGifLayer(stickerItem.getPath(), stickerItem.getShowStickerStartTime() * 1000,
-                    endTime >= duration * 1000 ? Long.MAX_VALUE : endTime);
+            if (isBackgroundTemplate) {
+                if (STARTTime <= cutStartTime) {
+                    STARTTime = 0;
+                } else {
+                    STARTTime = STARTTime - cutStartTime;
+                }
+                gifLayer = execute.addGifLayer(stickerItem.getPath(), STARTTime * 1000,
+                        endTime >= duration * 1000 ? Long.MAX_VALUE : endTime);
+            } else {
+                gifLayer = execute.addGifLayer(stickerItem.getPath(), 0,
+                        endTime >= duration * 1000 ? Long.MAX_VALUE : endTime);
+            }
         } else {
             gifLayer = execute.addGifLayer(stickerItem.getPath());
         }
@@ -389,7 +418,16 @@ public class backgroundDraw {
         LogUtil.d("OOM4", "STARTTime" + STARTTime);
         BitmapLayer bpLayer;
         if (endTime != 0) {
-            bpLayer = execute.addBitmapLayer(bp, STARTTime * 1000, endTime * 1000 >= duration * 1000 ? Long.MAX_VALUE : endTime * 1000);
+            if (isBackgroundTemplate) {
+                if (STARTTime <= cutStartTime) {
+                    STARTTime = 0;
+                } else {
+                    STARTTime = STARTTime - cutStartTime;
+                }
+                bpLayer = execute.addBitmapLayer(bp, STARTTime * 1000, endTime * 1000 >= duration * 1000 ? Long.MAX_VALUE : endTime * 1000);
+            } else {
+                bpLayer = execute.addBitmapLayer(bp, 0, endTime * 1000 >= duration * 1000 ? Long.MAX_VALUE : endTime * 1000);
+            }
         } else {
             bpLayer = execute.addBitmapLayer(bp);
         }
@@ -500,16 +538,24 @@ public class backgroundDraw {
         imageCoverHeight=bp.getHeight();
         bp= MattingImage.mattingSingleImg(bp,imageCoverWidth,imageCoverHeight);
         LogUtil.d("OOM", "图片宽为" + bp.getWidth());
-        long startTime = stickerItem.getShowStickerStartTime() * 1000;
+        long STARTTime = stickerItem.getShowStickerStartTime();
         long endTime = stickerItem.getShowStickerEndTime();
         BitmapLayer bpLayer;
         LogUtil.d("OOM4", "endTime" + endTime);
         if (endTime != 0) {
-            bpLayer = execute.addBitmapLayer(bp, stickerItem.getShowStickerStartTime() * 1000, stickerItem.getShowStickerEndTime() * 1000);
+            if (isBackgroundTemplate) {
+                if (STARTTime <= cutStartTime) {
+                    STARTTime = 0;
+                } else {
+                    STARTTime = STARTTime - cutStartTime;
+                }
+                bpLayer = execute.addBitmapLayer(bp, STARTTime * 1000, endTime * 1000 >= duration * 1000 ? Long.MAX_VALUE : endTime * 1000);
+            } else {
+                bpLayer = execute.addBitmapLayer(bp, 0, endTime * 1000 >= duration * 1000 ? Long.MAX_VALUE : endTime * 1000);
+            }
         } else {
             bpLayer = execute.addBitmapLayer(bp);
         }
-//        BitmapLayer bpLayer = execute.addBitmapLayer(bp);
         bpLayer.setId(100 + i);
         float layerScale = DRAWPADWIDTH / (float) bpLayer.getLayerWidth();
         LogUtil.d("OOM", "图层的缩放为" + layerScale + "");
@@ -546,9 +592,10 @@ public class backgroundDraw {
 
         CanvasLayer canvasLayer = execute.addCanvasLayer();
         float finalNeedDt = needDt;
+        long finalSTARTTime = STARTTime * 1000;
         canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
-            if (startTime != 0) {
-                currentTime = currentTime - startTime;
+            if (finalSTARTTime != 0) {
+                currentTime = currentTime - finalSTARTTime;
                 if (currentTime < 0) {
                     currentTime = 0;
                 }

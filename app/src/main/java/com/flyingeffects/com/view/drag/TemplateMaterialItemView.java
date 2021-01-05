@@ -249,7 +249,6 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
                     if (isNeedOverallDrag) {
                         handler.removeCallbacks(mLongPressRunnable);
                     }
-                    v.getParent().requestDisallowInterceptTouchEvent(false);
                     break;
                 default:
                     break;
