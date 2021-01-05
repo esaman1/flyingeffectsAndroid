@@ -1021,9 +1021,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
             @Override
             public void stickerDragUp() {
-                if (isIntoDragMove && stickView.getChooseAnimId() != null && stickView.getChooseAnimId() != AnimType.NULL) {
-                    startTimer(stickView);
-                }
+//                if (isIntoDragMove && stickView.getChooseAnimId() != null && stickView.getChooseAnimId() != AnimType.NULL) {
+//                    startTimer(stickView);
+//                }
                 isIntoDragMove = false;
                 if (stickView.isFirstAddSticker()) {
                     //显示音乐按钮
