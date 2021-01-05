@@ -866,7 +866,8 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     stickView.dismissFrame();
                     //copy
-                    String copyStickViewPath = isMatting ? stickView.getClipPath() : stickView.getResPath();
+//                    String copyStickViewPath = isMatting ? stickView.getClipPath() : stickView.getResPath();
+                    String copyStickViewPath =  stickView.getClipPath();
                     copyGif(copyStickViewPath, copyStickViewPath, stickView.getComeFrom(), stickView, stickView.getOriginalPath(), false, stickView.getDownStickerTitle());
                     if (!TextUtils.isEmpty(stickView.getOriginalPath())) {
                         if (albumType.isVideo(GetPathType.getInstance().getMediaType(stickView.getOriginalPath()))) {
