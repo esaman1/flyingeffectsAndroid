@@ -1713,11 +1713,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     musicStartFirstTime = startTime;
                     musicEndFirstTime = endTime;
                     musicStartTime = musicStartFirstTime;
+                    LogUtil.d("playBGMMusic","musicStartTime="+musicStartTime);
                     if (musicEndFirstTime == 0) {
                         musicEndTime = allVideoDuration;
                     } else {
                         musicEndTime = musicEndFirstTime;
                     }
+
+                    LogUtil.d("playBGMMusic","musicEndTime="+musicEndTime);
                 }
                 stickerView.setShowStickerStartTime(startTime);
                 stickerView.setShowStickerEndTime(endTime);
