@@ -359,16 +359,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         presenter.ChangeMaterial(originalPath, bottomButtonCount, needAssetsCount);
                     }
                 } else {
-                    nowIsChooseMatting = true;
-                    //选中状态
-                    if (nowTemplateIsMattingVideo == 1 && !albumType.isImage(GetPathType.getInstance().getPathType(imgPath.get(0)))) {
-                        handler.sendEmptyMessage(1);
-                        new Thread(() -> presenter.intoMattingVideo(imgPath.get(0), templateName)).start();
-                    } else {
-                        statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutoff");
-                        //修改为裁剪前的素材
-                        presenter.ChangeMaterial(imgPath, bottomButtonCount, needAssetsCount);
-                    }
+                    chooseChecked();
                 }
                 if (mPlayer != null) {
                     mPlayer.pause();
@@ -391,7 +382,25 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         }
 //        test();
 
+    }
 
+
+    /**
+     * description ：选择状态
+     * creation date: 2021/1/4
+     * user : zhangtongju
+     */
+    private void chooseChecked() {
+        nowIsChooseMatting = true;
+        //选中状态
+        if (nowTemplateIsMattingVideo == 1 && !albumType.isImage(GetPathType.getInstance().getPathType(imgPath.get(0)))) {
+            handler.sendEmptyMessage(1);
+            new Thread(() -> presenter.intoMattingVideo(imgPath.get(0), templateName)).start();
+        } else {
+            statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutoff");
+            //修改为裁剪前的素材
+            presenter.ChangeMaterial(imgPath, bottomButtonCount, needAssetsCount);
+        }
     }
 
 
@@ -570,6 +579,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     @Override
     public void showMattingVideoCover(Bitmap bp, String bpPath) {
+        LogUtil.d("OOM4", "封面地址为" + bpPath);
         if (mTemplateModel != null) {
             if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
                 if (bp != null) {
@@ -636,15 +646,19 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
             //不需要抠图就不需要扣第一帧页面
             if (originalPath != null && originalPath.size() != 0) {
-                presenter.getMattingVideoCover(originalPath.get(0));
                 mTemplateModel.cartoonPath = imgPath.get(0);  //设置灰度图
                 LogUtil.d("OOM2", "switch_button.isChecked()=" + switch_button.isChecked());
-//                Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
-//                    @Override
-//                    public void call(Integer integer) {
-//                        new Handler().postDelayed(() -> switch_button.setChecked(true),500);
-//                    }
-//                });
+                Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer integer) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                presenter.getMattingVideoCover(originalPath.get(0));
+                            }
+                        }, 500);
+                    }
+                });
             } else {
                 waitingDialogProgress.openProgressDialog();
             }

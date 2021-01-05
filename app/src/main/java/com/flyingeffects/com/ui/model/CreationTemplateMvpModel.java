@@ -1995,7 +1995,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 if (stickerView != null) {
                     long startTime = stickerView.getShowStickerStartTime();
                     long endTime = stickerView.getShowStickerEndTime();
-                    LogUtil.d("OOM4", "endTime" + endTime);
+                    LogUtil.d("OOM4", "endTime" + endTime+"startTime" + startTime+"progress="+progress);
                     if (endTime != 0) {
                         if (startTime <= progress && progress <= endTime) {
                             stickerView.setVisibility(View.VISIBLE);

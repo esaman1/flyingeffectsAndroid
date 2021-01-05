@@ -269,9 +269,6 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                 iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
                 iv_show_author.setVisibility(View.GONE);
             } else if (fromType == 4) {
-
-                statisticsEventAffair.getInstance().setFlag(context,"21_fece_up");
-
                 //换装
                 if (offset == 1 && TextUtils.isEmpty(tabName)) {
                     add_image.setVisibility(View.VISIBLE);
@@ -282,8 +279,8 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                 add_image.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
                         if(!DoubleClick.getInstance().isFastDoubleClick()){
+                            statisticsEventAffair.getInstance().setFlag(context,"21_face_up");
                             AlbumManager.chooseImageAlbum(context, 1, 0, new AlbumChooseCallback() {
                                 @Override
                                 public void resultFilePath(int tag, List<String> paths, boolean isCancel,boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
@@ -293,10 +290,6 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                                 }
                             },"");
                         }
-
-
-
-
                     }
                 });
                 helper.setText(R.id.tv_name2, item.getAuth());

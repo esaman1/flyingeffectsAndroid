@@ -28,7 +28,7 @@ public class MakeMoveOneAnim extends baseAnimModel {
 
     void toChangeStickerView(StickerView mainStickerView, List<StickerView> subLayer) {
 
-        if(subLayer==null||subLayer.size()==0){
+        if (subLayer == null || subLayer.size() == 0) {
             return;
         }
 
@@ -36,6 +36,7 @@ public class MakeMoveOneAnim extends baseAnimModel {
         subStickerView = subLayer.get(0);
         float mScale = mainStickerView.GetHelpBoxRectScale();
         setRotate(mainStickerView.getRotateAngle());
+        setScale(mainStickerView.getScale());
         setOriginal(mainStickerView.getCenterX(), mainStickerView.getCenterY());
         LansongPathMeasure = setPathMeasureOne(mainStickerView.getmHelpBoxRectH(), mainStickerView.getCenterX(), mainStickerView.getCenterY());
         LansongPathMeasure2 = setPathMeasureTwo(mainStickerView.getmHelpBoxRectH(), mainStickerView.getCenterX(), mainStickerView.getCenterY());
@@ -52,9 +53,8 @@ public class MakeMoveOneAnim extends baseAnimModel {
                 float x = progress * 2.85f;
                 subStickerView.toScale(x, mScale, isDone);
                 mainStickerView.toScale(x, mScale, isDone);
-                subStickerView.toTranMoveXY(mainStickerView.getCenterX(),mainStickerView.getCenterY());
-                mainStickerView.toTranMoveXY(mainStickerView.getCenterX(),mainStickerView.getCenterY());
-
+                subStickerView.toTranMoveXY(mainStickerView.getCenterX(), mainStickerView.getCenterY());
+                mainStickerView.toTranMoveXY(mainStickerView.getCenterX(), mainStickerView.getCenterY());
 
 
             } else {
@@ -121,13 +121,13 @@ public class MakeMoveOneAnim extends baseAnimModel {
             //主图层应该走的位置
             if (progress <= 0.35) {
                 //放大动画  *4.16 意味着0-2.24可以看做0-1完整来看
-                float x = progress * 2.85f*0.5f;
+                float x = progress * 2.85f * 0.5f;
                 listForScale.add(x);
                 listForScale.add(x);
                 callback.scale(listForScale);
                 TransplationPos newTransplationPos = new TransplationPos();
-                newTransplationPos.setToX(mainLayer.getPositionX()/paddingW);
-                newTransplationPos.setToY(mainLayer.getPositionY()/paddingH);
+                newTransplationPos.setToX(mainLayer.getPositionX() / paddingW);
+                newTransplationPos.setToY(mainLayer.getPositionY() / paddingH);
                 listForTranslaptionPosition.add(newTransplationPos);
                 listForTranslaptionPosition.add(newTransplationPos);
             } else {
@@ -165,7 +165,7 @@ public class MakeMoveOneAnim extends baseAnimModel {
         mAnimPath.lineTo(centerX - halfWidth, centerY);
         mAnimPath.lineTo(centerX, centerY + halfWidth * 2);
         mAnimPath.lineTo(centerX + halfWidth, centerY);
-        mAnimPath.lineTo(centerX , centerY);
+        mAnimPath.lineTo(centerX, centerY);
         PathMeasure mPathMeasure = new PathMeasure();
         mPathMeasure.setPath(mAnimPath, true);
         return mPathMeasure;
@@ -178,7 +178,7 @@ public class MakeMoveOneAnim extends baseAnimModel {
         mAnimPath.lineTo(centerX + halfWidth, centerY);
         mAnimPath.lineTo(centerX, centerY - halfWidth * 2);
         mAnimPath.lineTo(centerX - halfWidth, centerY);
-        mAnimPath.lineTo(centerX , centerY);
+        mAnimPath.lineTo(centerX, centerY);
         PathMeasure mPathMeasure = new PathMeasure();
         mPathMeasure.setPath(mAnimPath, true);
         return mPathMeasure;

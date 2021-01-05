@@ -55,7 +55,13 @@ public class initFaceSdkModel {
         if (hasLoadSdkOk) {
             callback.isSuccess();
         } else {
-            WaitingDialog.openPragressDialog(context);
+
+            Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+                @Override
+                public void call(Integer integer) {
+                    WaitingDialog.openPragressDialog(context);
+                }
+            });
             startTimer();
         }
     }

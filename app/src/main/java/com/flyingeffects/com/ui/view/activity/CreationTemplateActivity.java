@@ -272,6 +272,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         mProgressBarView.setProgressListener(new CreationTemplateProgressBarView.SeekBarProgressListener() {
             @Override
             public void progress(long progress,boolean isDrag) {
+                LogUtil.d("OOM4", "mProgressBarViewProgress=" + progress);
                 setgsyVideoProgress(progress);
                 if (progress < mCutStartTime) {
                     progress = mCutStartTime;
