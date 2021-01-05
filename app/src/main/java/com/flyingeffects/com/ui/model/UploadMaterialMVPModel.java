@@ -56,6 +56,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class UploadMaterialMVPModel {
+    MediaInfo mediaInfo;
     private Context mContext;
     private UploadMaterialMVPCallback callback;
     private DrawPadView2 drawPadView;
@@ -87,6 +88,7 @@ public class UploadMaterialMVPModel {
     public void initDrawpad(DrawPadView2 drawPadView, String path) {
         this.drawPadView = drawPadView;
         this.videoPath = path;
+        mediaInfo=new MediaInfo(videoPath);
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(videoPath);
         String width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
@@ -684,7 +686,15 @@ public class UploadMaterialMVPModel {
 //        long durationUs = getDuration() * 1000;
         long durationUs = getDuration();
         getUserChooseDuration(cropStartRatio, cropEndRatio);
-        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(mContext, false, Math.round(cropEndRatio * durationUs) - Math.round(cropStartRatio * durationUs) - 500, videoPath, Math.round(cropStartRatio * durationUs), new videoCutDurationForVideoOneDo.isSuccess() {
+        long duration= Math.round(cropEndRatio * durationUs) - Math.round(cropStartRatio * durationUs) ;
+
+        LogUtil.d("OOM2","duration="+duration+"mediaInfo.getDurationUs()="+mediaInfo.getDurationUs()+"getVideoTrackDurationUs"+mediaInfo.getVideoTrackDurationUs());
+//        if(duration>mediaInfo.getDurationUs()){
+//            duration=mediaInfo.getDurationUs();
+//        }
+        long startDurtion=Math.round(cropStartRatio * durationUs);
+        LogUtil.d("OOM2","duration="+duration+"startDurtion="+startDurtion);
+        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(mContext, false, duration, videoPath, startDurtion, new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
             public void progresss(int progress) {
                 if (progress > 100) {
