@@ -297,7 +297,7 @@
     </LinearLayout>
 
 
-    <androidx.viewpager.widget.ViewPager
+    <com.flyingeffects.com.view.NoSlidingViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="170dp"

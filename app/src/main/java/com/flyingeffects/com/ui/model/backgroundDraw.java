@@ -122,10 +122,16 @@ public class backgroundDraw {
 
     private float percentageH;
     long cutStartTime;
+    long cutEndTime;
 
     public void setCutStartTime(long cutStartTime){
         this.cutStartTime = cutStartTime;
     }
+
+    public void setCutEndTime(long cutEndTime){
+        this.cutEndTime = cutEndTime;
+    }
+
 
     public void toSaveVideo(ArrayList<AllStickerData> list, boolean isMatting, boolean nowUiIsLandscape, float percentageH) {
         nowCurtime = System.currentTimeMillis();
@@ -276,7 +282,6 @@ public class backgroundDraw {
         try {
             option = new LSOVideoOption(stickerItem.getPath());
 
-
             option.setAudioMute();
             long STARTTime = stickerItem.getShowStickerStartTime();
             long endTime = stickerItem.getShowStickerEndTime() * 1000;
@@ -286,10 +291,11 @@ public class backgroundDraw {
                     if (STARTTime <= cutStartTime) {
                         STARTTime = 0;
                     } else {
-                        STARTTime = STARTTime - cutStartTime;
+                        STARTTime = Math.max(STARTTime, cutStartTime) - Math.min(STARTTime, cutStartTime);
                     }
-                    videoLayer = execute.addVideoLayer(option,STARTTime * 1000,
-                            endTime >= duration * 1000 ? Long.MAX_VALUE : endTime, false, false);
+                    videoLayer = execute.addVideoLayer(option, STARTTime * 1000,
+                            endTime >= cutEndTime * 1000 ? Long.MAX_VALUE :
+                                    cutStartTime > 0 ? duration * 1000 - (cutEndTime * 1000 - endTime) : endTime, false, false);
                 } else {
                     videoLayer = execute.addVideoLayer(option, 0,
                             endTime >= duration * 1000 ? Long.MAX_VALUE : endTime, false, false);
@@ -355,10 +361,10 @@ public class backgroundDraw {
                 if (STARTTime <= cutStartTime) {
                     STARTTime = 0;
                 } else {
-                    STARTTime = STARTTime - cutStartTime;
+                    STARTTime = Math.max(STARTTime, cutStartTime) - Math.min(STARTTime, cutStartTime);
                 }
                 gifLayer = execute.addGifLayer(stickerItem.getPath(), STARTTime * 1000,
-                        endTime >= duration * 1000 ? Long.MAX_VALUE : endTime);
+                        endTime >= cutEndTime * 1000 ? Long.MAX_VALUE : cutStartTime > 0 ? duration * 1000 - (cutEndTime * 1000 - endTime) : endTime);
             } else {
                 gifLayer = execute.addGifLayer(stickerItem.getPath(), 0,
                         endTime >= duration * 1000 ? Long.MAX_VALUE : endTime);
@@ -422,9 +428,11 @@ public class backgroundDraw {
                 if (STARTTime <= cutStartTime) {
                     STARTTime = 0;
                 } else {
-                    STARTTime = STARTTime - cutStartTime;
+                    STARTTime = Math.max(STARTTime, cutStartTime) - Math.min(STARTTime, cutStartTime);
                 }
-                bpLayer = execute.addBitmapLayer(bp, STARTTime * 1000, endTime * 1000 >= duration * 1000 ? Long.MAX_VALUE : endTime * 1000);
+
+                bpLayer = execute.addBitmapLayer(bp, STARTTime * 1000, endTime * 1000 >= cutEndTime * 1000 ? Long.MAX_VALUE :
+                        cutStartTime > 0 ? duration * 1000 - (cutEndTime * 1000 - endTime * 1000) : endTime * 1000);
             } else {
                 bpLayer = execute.addBitmapLayer(bp, 0, endTime * 1000 >= duration * 1000 ? Long.MAX_VALUE : endTime * 1000);
             }
@@ -547,9 +555,11 @@ public class backgroundDraw {
                 if (STARTTime <= cutStartTime) {
                     STARTTime = 0;
                 } else {
-                    STARTTime = STARTTime - cutStartTime;
+                    STARTTime = Math.max(STARTTime, cutStartTime) - Math.min(STARTTime, cutStartTime);
                 }
-                bpLayer = execute.addBitmapLayer(bp, STARTTime * 1000, endTime * 1000 >= duration * 1000 ? Long.MAX_VALUE : endTime * 1000);
+
+                bpLayer = execute.addBitmapLayer(bp, STARTTime * 1000, endTime * 1000 >= cutEndTime * 1000 ? Long.MAX_VALUE :
+                        cutStartTime > 0 ? duration * 1000 - (cutEndTime * 1000 - endTime * 1000) : endTime * 1000);
             } else {
                 bpLayer = execute.addBitmapLayer(bp, 0, endTime * 1000 >= duration * 1000 ? Long.MAX_VALUE : endTime * 1000);
             }

@@ -27,6 +27,7 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.BackgroundTemplateCollectionEvent;
 import com.flyingeffects.com.enity.HumanMerageResult;
 import com.flyingeffects.com.enity.SystemMessageDetailAllEnity;
 import com.flyingeffects.com.enity.UserInfo;
@@ -77,6 +78,7 @@ import java.util.UUID;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -762,6 +764,7 @@ public class PreviewUpAndDownMvpModel {
                 } else {
                     iv_collect.setImageResource(R.mipmap.new_version_collect);
                 }
+                EventBus.getDefault().post(new BackgroundTemplateCollectionEvent());
 
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);

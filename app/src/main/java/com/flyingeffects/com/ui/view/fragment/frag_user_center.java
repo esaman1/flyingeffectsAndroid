@@ -181,6 +181,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
         if (getActivity() != null) {
             //未登陆
             if (BaseConstans.hasLogin()) {
+                tv_id.setVisibility(View.VISIBLE);
                 tv_id.setText("飞友号：" + BaseConstans.GetUserId());
                 tvEditInformation.setVisibility(View.VISIBLE);
                 mLLInfo.setVisibility(View.VISIBLE);
@@ -193,6 +194,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 requestSystemMessageCount();
             } else {
                 tv_top_name.setText("未登录");
+                tv_id.setVisibility(View.GONE);
                 Glide.with(this)
                         .load(R.mipmap.head)
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))

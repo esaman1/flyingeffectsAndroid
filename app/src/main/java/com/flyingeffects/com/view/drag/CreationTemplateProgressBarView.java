@@ -160,6 +160,7 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) materialItemView.getLayoutParams();
             if (isDirection) {
                 if (startTime - dragInterval * PER_MS_IN_PX < 0) {
+                    startTime = 0;
                     return;
                 } else {
                     startTime = (long) (startTime - dragInterval * PER_MS_IN_PX);
@@ -190,6 +191,7 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
                 }
             } else {
                 if (endTime + dragInterval * PER_MS_IN_PX > originalDuration) {
+                    endTime = originalDuration;
                     return;
                 } else {
                     endTime = (long) (endTime+ dragInterval * PER_MS_IN_PX);

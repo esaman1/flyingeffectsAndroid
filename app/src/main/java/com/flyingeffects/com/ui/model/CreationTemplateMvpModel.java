@@ -1479,6 +1479,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                         }
                     }, animCollect,true);
                     backgroundDraw.setCutStartTime(cutStartTime);
+                    backgroundDraw.setCutEndTime(cutEndTime);
 
                     for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
                         StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
