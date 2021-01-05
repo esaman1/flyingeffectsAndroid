@@ -854,7 +854,7 @@ public class AnimCollect {
 
         StickerAnim stickerAnim12 = new StickerAnim();
         stickerAnim12.setName("圆圈分身");
-        stickerAnim12.setIcon(R.mipmap.anim_ybs);
+        stickerAnim12.setIcon(R.mipmap.anim_cricle2);
         stickerAnim12.setAnimType(AnimType.CIRCLECLONED2);
         list.add(stickerAnim12);
 
@@ -866,25 +866,25 @@ public class AnimCollect {
 
         StickerAnim stickerAnim14 = new StickerAnim();
         stickerAnim14.setName("五角星2");
-        stickerAnim14.setIcon(R.mipmap.anim_ybs);
+        stickerAnim14.setIcon(R.mipmap.anim_star2);
         stickerAnim14.setAnimType(AnimType.FIVEPOINTSTART2);
         list.add(stickerAnim14);
 
         StickerAnim stickerAnim15 = new StickerAnim();
         stickerAnim15.setName("Z形");
-        stickerAnim15.setIcon(R.mipmap.anim_ybs);
+        stickerAnim15.setIcon(R.mipmap.anim_z);
         stickerAnim15.setAnimType(AnimType.Z);
         list.add(stickerAnim15);
 
         StickerAnim stickerAnim16 = new StickerAnim();
         stickerAnim16.setName("方正");
-        stickerAnim16.setIcon(R.mipmap.anim_ybs);
+        stickerAnim16.setIcon(R.mipmap.anim_founder);
         stickerAnim16.setAnimType(AnimType.FOUNDER);
         list.add(stickerAnim16);
 
         StickerAnim stickerAnim17 = new StickerAnim();
         stickerAnim17.setName("动起来1");
-        stickerAnim17.setIcon(R.mipmap.anim_ybs);
+        stickerAnim17.setIcon(R.mipmap.anim_make_move);
         stickerAnim17.setAnimType(AnimType.MAKEMOVEONE);
         list.add(stickerAnim17);
 
@@ -898,7 +898,7 @@ public class AnimCollect {
 
         StickerAnim stickerAnim19 = new StickerAnim();
         stickerAnim19.setName("超级桃心");
-        stickerAnim19.setIcon(R.mipmap.anim_ybs);
+        stickerAnim19.setIcon(R.mipmap.anim_super_love);
         stickerAnim19.setAnimType(AnimType.SUPERLOVE);
         list.add(stickerAnim19);
 
