@@ -1266,7 +1266,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                                 }
                             }
                         }
-                    }, animCollect);
+                    }, animCollect,false);
 
 
                     for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {

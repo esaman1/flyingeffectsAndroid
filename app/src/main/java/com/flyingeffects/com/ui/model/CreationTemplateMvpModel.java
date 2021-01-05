@@ -961,6 +961,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                     }
                 } else if (type == StickerView.LEFT_MODE) {
                     if (!TextUtils.isEmpty(stickView.getResPath())) {
+                        statisticsEventAffair.getInstance().setFlag(context, "17_zdy_cutout_save");
                         //开启抠像
                         if (isMatting) {
                             saveToAlbum(stickView.getClipPath());
@@ -1426,7 +1427,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     private boolean isIntoSaveVideo = false;
     private float percentageH;
 
-    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH, int templateId, long musicStartTime, long musicEndTime, long needKeepDuration, String title) {
+    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH, int templateId, long musicStartTime, long musicEndTime, long cutStartTime,long cutEndTime, String title) {
         disMissStickerFrame();
         if (templateId != 0) {
             LogUtil.d("OOM", "toSaveVideo-templateId=" + templateId);
@@ -1443,7 +1444,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                     listAllSticker.clear();
                     cutSuccessNum = 0;
                     cutVideoPathList.clear();
-                    backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, musicStartTime, musicEndTime, needKeepDuration, new backgroundDraw.saveCallback() {
+                    backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, musicStartTime, musicEndTime, cutEndTime - cutStartTime, new backgroundDraw.saveCallback() {
                         @Override
                         public void saveSuccessPath(String path, int progress) {
                             if (!isDestroy) {
@@ -1476,8 +1477,8 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                 }
                             }
                         }
-                    }, animCollect);
-
+                    }, animCollect,true);
+                    backgroundDraw.setCutStartTime(cutStartTime);
 
                     for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
                         StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);

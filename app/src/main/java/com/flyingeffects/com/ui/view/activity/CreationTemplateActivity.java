@@ -273,6 +273,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             @Override
             public void progress(long progress,boolean isDrag) {
                 setgsyVideoProgress(progress);
+                if (progress < mCutStartTime) {
+                    progress = mCutStartTime;
+                }
+                if (progress > mCutEndTime) {
+                    progress = mCutEndTime;
+                }
                 if (isDrag) {
                     mSeekBarViewManualDrag = false;
                 }
@@ -486,7 +492,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 } else {
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
                 }
-                presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId, musicStartTime, musicEndTime, mCutEndTime - mCutStartTime,title);
+                presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId, musicStartTime, musicEndTime,mCutStartTime,mCutEndTime,title);
                 seekBarViewIsShow(true);
                break;
 
