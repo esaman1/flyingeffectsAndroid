@@ -942,7 +942,14 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                             } else {
                                                 stickView.changeImage(s, false);
                                             }
-                                            stickView.setLeftBitmap(ContextCompat.getDrawable(context, R.mipmap.icon_pic_save));
+                                            callback.getBgmPath("");
+                                            if(nowChooseMusicId==1){
+                                                callback.ChooseMusicIndex(1);
+                                                chooseTemplateMusic(true);
+                                            }
+                                            if (!stickView.getResPath().endsWith(".gif") && !albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
+                                                stickView.setLeftBitmap(ContextCompat.getDrawable(context, R.mipmap.icon_pic_save));
+                                            }
                                             callback.modifyTimeLineSickerPath(String.valueOf(stickView.getStickerNoIncludeAnimId()), paths.get(0));
                                         });
                                     });
