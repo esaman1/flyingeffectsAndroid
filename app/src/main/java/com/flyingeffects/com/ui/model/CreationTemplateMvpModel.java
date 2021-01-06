@@ -922,7 +922,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                             } else {
                                                 stickView.changeImage(s, false);
                                             }
-
+                                            stickView.setLeftBitmapNoSave();
                                             if (stickView.isFirstAddSticker()) {
                                                 callback.changFirstVideoSticker(paths.get(0));
                                                 callback.getBgmPath("");
