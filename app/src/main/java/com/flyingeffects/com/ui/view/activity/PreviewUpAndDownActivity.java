@@ -317,9 +317,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     LogUtil.d("OOM2", "当前位置为" + position);
                     adapter.NowPreviewChooseItem(position);
                     //todo  解决播放卡顿问题 声音在跑，但是画面没动的情况
-                    if(allData.get(position).getAd()!=null){
+//                    if(allData.get(position).getAd()!=null){
                         adapter.notifyItemChanged(position);
-                    }
+//                    }
                     nowItemIsAd = allData.size() > 0 && allData.get(position).getAd() != null;
                     nowChoosePosition = position;
                     //判断当前滑动状态
@@ -770,20 +770,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         LogUtil.d("OOM", "onResume");
         //出现bug 不能继续播放的问题
         if (!nowItemIsAd) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (!isOnPause) {
-                        GSYVideoManager.onResume();
-                    }
-                }
-            }, 1000);
-
+            GSYVideoManager.onResume();
         }
-//        if (BaseConstans.hasLogin()) {
-//            //主要用于刷新当前页面
-//            mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
-//        }
+        if (BaseConstans.hasLogin()) {
+            //主要用于刷新当前页面
+            mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
+        }
         LogUtil.d("OOM", "onResume");
         WaitingDialog.closePragressDialog();
     }
