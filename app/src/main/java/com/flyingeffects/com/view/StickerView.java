@@ -643,6 +643,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         }
     }
 
+    public void setLeftBitmapNoSave(){
+        leftBitmap =null;
+        invalidate();
+    }
+
     public void setRightCenterBitmap(Drawable rightCenterBitmap) {
         if (rightCenterBitmap != null) {
             this.rightCenterBitmap = rightCenterBitmap;

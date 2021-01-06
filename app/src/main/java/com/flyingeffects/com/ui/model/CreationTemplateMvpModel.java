@@ -924,7 +924,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                             } else {
                                                 stickView.changeImage(s, false);
                                             }
-
+                                            stickView.setLeftBitmapNoSave();
                                             if (stickView.isFirstAddSticker()) {
                                                 callback.changFirstVideoSticker(paths.get(0));
                                                 callback.getBgmPath("");
@@ -942,9 +942,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                             } else {
                                                 stickView.changeImage(s, false);
                                             }
-                                            if (!stickView.getResPath().endsWith(".gif") && !albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
-                                                stickView.setLeftBitmap(ContextCompat.getDrawable(context, R.mipmap.icon_pic_save));
-                                            }
+                                            stickView.setLeftBitmap(ContextCompat.getDrawable(context, R.mipmap.icon_pic_save));
                                             callback.modifyTimeLineSickerPath(String.valueOf(stickView.getStickerNoIncludeAnimId()), paths.get(0));
                                         });
                                     });
