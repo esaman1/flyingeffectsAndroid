@@ -13,6 +13,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -1080,31 +1081,38 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void getBgmPath(String path) {
         this.bgmPath = path;
-        LogUtil.d("OOM", "getBgmPath=" + path);
-        if (isPlaying) {
-            if (!TextUtils.isEmpty(path)) {
-                if (exoPlayer != null) {
-                    exoPlayer.setVolume(0f);
-                }
-                pauseBgmMusic();
-                LogUtil.d("playBGMMusic", "getBgmPath");
-                playBGMMusic();
-                if (bgmPlayer != null) {
+        if(TextUtils.isEmpty(bgmPath)){
+            if (isPlaying) {
+                videoToPause();
+            }
+        }else{
+            LogUtil.d("OOM", "getBgmPath=" + path);
+            if (isPlaying) {
+                if (!TextUtils.isEmpty(path)) {
                     if (exoPlayer != null) {
-                        bgmPlayer.seekTo((int) getCurrentPos());
-                    } else {
-                        bgmPlayer.seekTo((int) totalPlayTime);
+                        exoPlayer.setVolume(0f);
                     }
+                    pauseBgmMusic();
+                    LogUtil.d("playBGMMusic", "getBgmPath");
+                    playBGMMusic();
+                    if (bgmPlayer != null) {
+                        if (exoPlayer != null) {
+                            bgmPlayer.seekTo((int) getCurrentPos());
+                        } else {
+                            bgmPlayer.seekTo((int) totalPlayTime);
+                        }
+                    }
+                } else {
+                    if (exoPlayer != null) {
+                        exoPlayer.setVolume(1f);
+                    }
+                    pauseBgmMusic();
                 }
             } else {
-                if (exoPlayer != null) {
-                    exoPlayer.setVolume(1f);
-                }
-                pauseBgmMusic();
+                videoToStart();
             }
-        } else {
-            videoToStart();
         }
+
     }
 
     @Override

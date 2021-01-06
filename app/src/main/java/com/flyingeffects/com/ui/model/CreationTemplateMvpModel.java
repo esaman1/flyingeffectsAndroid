@@ -942,6 +942,11 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                             } else {
                                                 stickView.changeImage(s, false);
                                             }
+                                            callback.getBgmPath("");
+                                            if(nowChooseMusicId==1){
+                                                callback.ChooseMusicIndex(1);
+                                                chooseTemplateMusic(true);
+                                            }
                                             callback.modifyTimeLineSickerPath(String.valueOf(stickView.getStickerNoIncludeAnimId()), paths.get(0));
                                         });
                                     });
