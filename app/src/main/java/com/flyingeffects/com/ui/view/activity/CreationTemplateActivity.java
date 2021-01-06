@@ -1758,9 +1758,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 stickerView.setShowStickerStartTime(mCutStartTime);
             }
             if (stickerView.getShowStickerEndTime() < mCutStartTime) {
-                long offsetTime = mCutStartTime - stickerView.getShowStickerStartTime();
-                stickerView.setShowStickerStartTime(stickerView.getShowStickerStartTime() + offsetTime);
-                stickerView.setShowStickerEndTime(stickerView.getShowStickerEndTime() + offsetTime);
+                stickerView.setShowStickerStartTime(mCutStartTime);
+                stickerView.setShowStickerEndTime(mCutStartTime + 1000);
             }
             if (stickerView.getShowStickerEndTime() > mCutEndTime) {
                 stickerView.setShowStickerEndTime(mCutEndTime);

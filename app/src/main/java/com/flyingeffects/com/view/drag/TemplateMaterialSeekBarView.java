@@ -14,6 +14,7 @@ import android.widget.ScrollView;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.albumType;
@@ -148,16 +149,16 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                     itemView.setStartTime(cutStartTime);
                 }
                 if (itemView.getEndTime() < cutStartTime) {
-                    long offsetTime = cutStartTime - itemView.getStartTime();
-                    itemView.setStartTime(itemView.getStartTime() + offsetTime);
-                    itemView.setEndTime(itemView.getEndTime() + offsetTime);
+                    itemView.setStartTime(cutStartTime);
+                    itemView.setEndTime(cutStartTime + 1000);
                 }
                 if (itemView.getEndTime() > cutEndTime) {
                     itemView.setEndTime(cutEndTime);
                 }
-                if (itemView.getStartTime() < cutStartTime) {
+                if (itemView.getStartTime() < startTime) {
                     itemView.setStartTime(cutStartTime);
                 }
+
                 LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) itemView.getLayoutParams();
                 itemView.setWidthAndHeight((int) ((itemView.getEndTime() - itemView.getStartTime()) / PER_MS_IN_PX), frameContainerHeight);
                 params.setMargins((int) (itemView.getStartTime() / PER_MS_IN_PX + frameListPadding - TemplateMaterialItemView.ARROW_WIDTH),
@@ -539,6 +540,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
             //整体左移动
             if (isDirection) {
                 if (view.getStartTime() - dragInterval * PER_MS_IN_PX < cutStartTime) {
+                    view.setStartTime(cutStartTime);
                     return;
                 } else {
                     view.setStartTime((long) (view.getStartTime() - dragInterval * PER_MS_IN_PX));

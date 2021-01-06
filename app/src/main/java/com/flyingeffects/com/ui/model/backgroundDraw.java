@@ -258,7 +258,10 @@ public class backgroundDraw {
             if (!TextUtils.isEmpty(videoVoice)) {
                 option.setAudioMute();
             }
-            Layer bgLayer = execute.addVideoLayer(option,0, duration * 1000,false,true);
+            if (isBackgroundTemplate) {
+                option.setCutDurationUs(cutStartTime * 1000, cutEndTime * 1000);
+            }
+            Layer bgLayer = execute.addVideoLayer(option,0, Long.MAX_VALUE,false,true);
             if (!nowUiIsLandscape) {
                 bgLayer.setScaledToPadSize();
                 bgLayer.setScaleType(LSOScaleType.VIDEO_SCALE_TYPE);
