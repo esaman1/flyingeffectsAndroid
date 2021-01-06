@@ -101,6 +101,8 @@ public class backgroundDraw {
         this.animCollect = animCollect;
         this.musicStartTime = musicStartTime;
         this.musicEndTime = musicEndTime;
+        LogUtil.d("OOM5","musicStartTime="+musicStartTime);
+        LogUtil.d("OOM5","musicEndTime="+musicEndTime);
         this.callback = callback;
         this.isBackgroundTemplate = isBackgroundTemplate;
 //        waitingProgress = new WaitingDialog_progress(context);
@@ -220,7 +222,7 @@ public class backgroundDraw {
                             execute.addAudioLayer(videoVoice, false);
                         } else {
                             //如果有videoVoice 字段，那么需要设置在对应的主图层上面去
-                            execute.addAudioLayer(videoVoice, musicStartTime * 1000, 0, (musicEndTime - musicStartTime) * 1000);
+                            execute.addAudioLayer(videoVoice, (musicStartTime-cutStartTime) * 1000, 0, (musicEndTime -( musicStartTime-cutStartTime)) * 1000);
                         }
                     }
                     addMainCanversLayer(list, isMatting);
