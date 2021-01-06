@@ -226,6 +226,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
+    private long lastmCutTime;
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
@@ -311,15 +312,18 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 tv_total.setText(TimeUtils.timeParse(mCutEndTime - mCutStartTime) + "s");
                 mSeekBarView.setCutStartAndEndTime(starTime, endTime);
                 stickerTimeLineOffset();
-                LogUtil.d("oom44", "musicStartTime=" + musicStartTime + "starTime=" + starTime + "musicEndTime=" + musicEndTime + "mCutStartTime=" + mCutStartTime);
+//                LogUtil.d("oom44", "musicStartTime=" + musicStartTime + "starTime=" + starTime + "musicEndTime=" + musicEndTime + "mCutStartTime=" + mCutStartTime);
 
                 if (isDirection) {
                     mSeekBarView.scrollToPosition(starTime);
                     //--------------ztj   解决bug拖动主进度条，素材音乐没修改的情况
                     if (musicStartTime < starTime) {
                         musicStartTime = starTime;
-                        LogUtil.d("oom44", "musicStartTime=" + musicStartTime + "starTime=" + starTime + "musicEndTime=" + musicEndTime + "mCutStartTime=" + mCutStartTime);
-                        musicEndTime = musicEndTime - mCutStartTime;
+                        long xx=mCutStartTime-lastmCutTime;
+                         musicEndTime = musicEndTime - xx;
+                        lastmCutTime=mCutStartTime;
+                        LogUtil.d("oom44", "musicStartTime=" + musicStartTime + "starTime=" + starTime + "musicEndTime=" + musicEndTime + "mCutStartTime=" + mCutStartTime+"xx="+xx);
+
                     }
                 } else {
                     mSeekBarView.scrollToPosition(endTime);
@@ -760,6 +764,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         mProgressBarView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
+                lastmCutTime=0;
                 mProgressBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 mCutStartTime = 0;
                 mCutEndTime = allVideoDuration;
@@ -1738,6 +1743,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             if (TextUtils.equals(id, String.valueOf(stickerView.getStickerNoIncludeAnimId()))) {
                 if (!TextUtils.isEmpty(id) && id.equals("0")) {
+                    lastmCutTime=0;
                     LogUtil.d("playBGMMusic", "需要改变开始时间和结束时间---musicStartFirstTime=" + startTime);
                     //需要改变开始时间和结束时间
                     musicStartFirstTime = startTime;
