@@ -41,8 +41,8 @@ public class initFaceSdkModel {
 //                                .setTitle("测试")
 //                                .setMessage("模型加载耗时了"+aLong)
 //                                .show();
-                        float time=aLong/(float)1000;
-                        Toast.makeText(BaseApplication.getInstance(),"模型加载耗时了"+time+"s",Toast.LENGTH_LONG).show();
+//                        float time=aLong/(float)1000;
+//                        Toast.makeText(BaseApplication.getInstance(),"模型加载耗时了"+time+"s",Toast.LENGTH_LONG).show();
                     }
                 });
             }

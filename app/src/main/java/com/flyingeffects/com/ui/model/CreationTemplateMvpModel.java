@@ -1168,7 +1168,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         }
         if (!isText) {
             stickView.setRightBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_updown));
-            if (!stickView.getResPath().endsWith(".gif")) {
+            if (!stickView.getResPath().endsWith(".gif") && !albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
                 stickView.setLeftBitmap(ContextCompat.getDrawable(context, R.mipmap.icon_pic_save));
             }
         }

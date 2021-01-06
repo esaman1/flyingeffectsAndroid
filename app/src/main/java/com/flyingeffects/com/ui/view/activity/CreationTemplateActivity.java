@@ -27,6 +27,7 @@ import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.ChooseVideoAddSticker;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.DownVideoPath;
+import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DataCleanManager;
@@ -36,6 +37,7 @@ import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
+import com.flyingeffects.com.ui.model.VideoManage;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;
@@ -65,6 +67,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import androidx.appcompat.app.AlertDialog;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -80,7 +83,7 @@ import rx.android.schedulers.AndroidSchedulers;
 
 
 public class CreationTemplateActivity extends BaseActivity implements CreationTemplateMvpView, TemplateMaterialSeekBarView.SeekBarProgressListener
-    ,ViewTreeObserver.OnGlobalLayoutListener{
+        , ViewTreeObserver.OnGlobalLayoutListener {
     private static final String TAG = "CreationTemplate";
 
     @BindView(R.id.rl_creation_container)
@@ -271,7 +274,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         seekBarViewIsShow(true);
         mProgressBarView.setProgressListener(new CreationTemplateProgressBarView.SeekBarProgressListener() {
             @Override
-            public void progress(long progress,boolean isDrag) {
+            public void progress(long progress, boolean isDrag) {
                 LogUtil.d("OOM4", "mProgressBarViewProgress=" + progress);
                 setgsyVideoProgress(progress);
                 if (progress < mCutStartTime) {
@@ -280,6 +283,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 if (progress > mCutEndTime) {
                     progress = mCutEndTime;
                 }
+
+
                 if (isDrag) {
                     mSeekBarViewManualDrag = false;
                 }
@@ -306,8 +311,16 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 tv_total.setText(TimeUtils.timeParse(mCutEndTime - mCutStartTime) + "s");
                 mSeekBarView.setCutStartAndEndTime(starTime, endTime);
                 stickerTimeLineOffset();
+                LogUtil.d("oom44", "musicStartTime=" + musicStartTime + "starTime=" + starTime + "musicEndTime=" + musicEndTime + "mCutStartTime=" + mCutStartTime);
+
                 if (isDirection) {
                     mSeekBarView.scrollToPosition(starTime);
+                    //--------------ztj   解决bug拖动主进度条，素材音乐没修改的情况
+                    if (musicStartTime < starTime) {
+                        musicStartTime = starTime;
+                        LogUtil.d("oom44", "musicStartTime=" + musicStartTime + "starTime=" + starTime + "musicEndTime=" + musicEndTime + "mCutStartTime=" + mCutStartTime);
+                        musicEndTime = musicEndTime - mCutStartTime;
+                    }
                 } else {
                     mSeekBarView.scrollToPosition(endTime);
                 }
@@ -453,7 +466,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     protected void initAction() {
         presenter.initStickerView(imgPath, originalPath);
-        presenter.initBottomLayout(viewPager,getSupportFragmentManager());
+        presenter.initBottomLayout(viewPager, getSupportFragmentManager());
         initViewLayerRelative();
         switchButton.setOnCheckedChangeListener((view, isChecked) -> {
             if (isChecked) {
@@ -501,9 +514,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 } else {
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
                 }
-                presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId, musicStartTime, musicEndTime,mCutStartTime,mCutEndTime,title);
+                presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId, musicStartTime, musicEndTime, mCutStartTime, mCutEndTime, title);
                 seekBarViewIsShow(true);
-               break;
+                break;
 
             case R.id.iv_delete_all_text:
                 presenter.deleteAllTextSticker();
@@ -564,7 +577,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_material");
                     }
                     //添加新的贴纸，这里的贴纸就是用户选择的贴纸
-                    AlbumManager.chooseAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel,  isFromCamera,albumFileList) -> {
+                    AlbumManager.chooseAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
                         Log.d("OOM", "isCancel=" + isCancel);
                         if (!isCancel) {
                             //如果是选择的视频，就需要得到封面，然后设置在matting里面去，然后吧原图设置为视频地址
@@ -753,8 +766,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 tv_total.setText(TimeUtils.timeParse(mCutEndTime - mCutStartTime) + "s");
                 mProgressBarView.addProgressBarView(allVideoDuration, videoPath);
                 if (isModifyMaterialTimeLine) {
-                    musicStartTime=mCutStartTime;
-                    musicEndTime=mCutEndTime;
+                    musicStartTime = mCutStartTime;
+                    musicEndTime = mCutEndTime;
                     mSeekBarView.resetStartAndEndTime(mCutStartTime, mCutEndTime);
                     mSeekBarView.changeVideoPathViewFrameSetWidth(allVideoDuration);
                     for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
@@ -946,8 +959,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             musicStartTime = musicStartFirstTime;
             LogUtil.d("OOM5", "musicEndFirstTime=" + musicEndFirstTime);
             if (musicEndFirstTime == 0) {
-                musicEndTime = allVideoDuration;
-                LogUtil.d("OOM5", "allVideoDuration=" + allVideoDuration);
+                musicEndTime = getFristVideoDuration();
+                if (musicEndTime == 0) {
+                    musicEndTime = allVideoDuration;
+                }
             } else {
                 musicEndTime = musicEndFirstTime;
             }
@@ -955,6 +970,20 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             musicStartTime = 0;
             musicEndTime = allVideoDuration;
         }
+    }
+
+
+    private long getFristVideoDuration() {
+        for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
+            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
+            if (stickerView.getStickerNoIncludeAnimId() == 0) {
+                String path = stickerView.getOriginalPath();
+                VideoInfo videoInfo = VideoManage.getInstance().getVideoInfo(this, path);
+                return videoInfo.getDuration();
+            }
+        }
+        return 0;
+
     }
 
     @Override
@@ -1190,9 +1219,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private void startTimer() {
         isEndDestroy = false;
-        LogUtil.d("OOM4", "startTimer:musicEndTime=" + musicEndTime + "musicStartTime=" + musicStartTime);
+        LogUtil.d("OOM44", "startTimer:musicEndTime=" + musicEndTime + "musicStartTime=" + musicStartTime);
         nowTime = 5;
-        totalPlayTime= mCutStartTime;
+        totalPlayTime = mCutStartTime;
         if (timer != null) {
             timer.purge();
             timer.cancel();
@@ -1211,7 +1240,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     @Override
                     public void run() {
                         if (!TextUtils.isEmpty(videoPath)) {
-                           bjMusicControl();
+                            bjMusicControl();
                             if (isPlaying) {
                                 if (getCurrentPos() >= mCutEndTime) {
                                     LogUtil.d("OOM5", "getCurrentPos() >= mCutEndTime");
@@ -1230,6 +1259,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                             bjMusicControl();
                             //没有选择背景
                             nowTime = nowTime + 5;
+                            LogUtil.d("OOM44", "nowTime==" + nowTime + "mCutEndTime=" + mCutEndTime);
                             if (nowTime >= mCutEndTime) {
                                 nowTime = mCutStartTime;
                                 isPlayComplate = true;
@@ -1264,9 +1294,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             LogUtil.d("playBGMMusic", "bjMusicControl");
             if (!TextUtils.isEmpty(bgmPath)) {
                 if (musicEndTime != 0) {
-                    float needMusicStartTime=musicStartTime;
+                    float needMusicStartTime = musicStartTime;
                     float needTime = totalPlayTime;
-                    LogUtil.d("playBGMMusic", "totalPlayTime="+totalPlayTime+"mCutStartTime="+mCutStartTime+"needTime="+needTime+"musicStartTime=" + musicStartTime+"needMusicStartTime="+needMusicStartTime);
+                    LogUtil.d("playBGMMusic", "totalPlayTime=" + totalPlayTime + "mCutStartTime=" + mCutStartTime + "needTime=" + needTime + "musicStartTime=" + musicStartTime + "needMusicStartTime=" + needMusicStartTime);
                     if (needTime > musicEndTime || needTime < needMusicStartTime) {
                         LogUtil.d("playBGMMusic2", "需要暂停音乐");
                         isNeedPlayBjMusci = false;
@@ -1274,7 +1304,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     } else {
                         if (!isNeedPlayBjMusci) {
                             LogUtil.d("playBGMMusic2", "播放音乐");
-                            LogUtil.d("playBGMMusic2", "totalPlayTime="+totalPlayTime+"mCutStartTime="+mCutStartTime+"needTime="+needTime+"musicStartTime=" + musicStartTime+"needMusicStartTime="+needMusicStartTime);
+                            LogUtil.d("playBGMMusic2", "totalPlayTime=" + totalPlayTime + "mCutStartTime=" + mCutStartTime + "needTime=" + needTime + "musicStartTime=" + musicStartTime + "needMusicStartTime=" + needMusicStartTime);
                             playBjMusic();
                         }
                         isNeedPlayBjMusci = true;
@@ -1571,7 +1601,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                             }
                         }
                         //有视频素材  取最长的素材视频时长为主轨道的时长  走此逻辑判断
-                        if (maxVideoDuration > 0 ) {
+                        if (maxVideoDuration > 0) {
                             materialDuration = maxVideoDuration;
                             isMaxVideoDurationChange = true;
                         } else {
@@ -1618,9 +1648,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         });
     }
 
-    long oldMaxVideoDuration =0;
-    String maxVideoResPath ="";
-    String oldMaxVideoResPath ="";
+    long oldMaxVideoDuration = 0;
+    String maxVideoResPath = "";
+    String oldMaxVideoResPath = "";
 
     @Override
     public void updateTimeLineSickerText(String text, String id) {
@@ -1648,7 +1678,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             long videoDuration = (long) (mediaInfo.vDuration * 1000);
             mediaInfo.release();
             boolean modify = false;
-            int viewCount =0;
+            int viewCount = 0;
             for (int i = 0; i < mSeekBarView.getTemplateMaterialItemViews().size(); i++) {
                 if (mSeekBarView.getTemplateMaterialItemViews().get(i) != null) {
                     viewCount++;
@@ -1660,7 +1690,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             if (modify || viewCount == 1) {
                 modificationDuration(videoDuration);
             }
-            mSeekBarView.modifyMaterialThumbnail(path, id,true);
+            mSeekBarView.modifyMaterialThumbnail(path, id, true);
         } else if (!TextUtils.isEmpty(videoPath)) {
             //背景模板
             mSeekBarView.modifyMaterialThumbnail(path, id, false);
@@ -1668,7 +1698,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             mSeekBarView.setCutEndTime(mCutEndTime);
         } else {
             //背景为图片或者绿幕替换素材时修改时间轴的缩略图
-            mSeekBarView.modifyMaterialThumbnail(path, id,true);
+            mSeekBarView.modifyMaterialThumbnail(path, id, true);
         }
 
     }
@@ -1703,24 +1733,24 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void timelineChange(long startTime, long endTime, String id) {
-        LogUtil.d("playBGMMusic","timelineChange---id="+id);
+        LogUtil.d("playBGMMusic", "timelineChange---id=" + id);
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             if (TextUtils.equals(id, String.valueOf(stickerView.getStickerNoIncludeAnimId()))) {
-                if (!TextUtils.isEmpty(id) && id.equals("0") ) {
-                    LogUtil.d("playBGMMusic","需要改变开始时间和结束时间---musicStartFirstTime="+startTime);
+                if (!TextUtils.isEmpty(id) && id.equals("0")) {
+                    LogUtil.d("playBGMMusic", "需要改变开始时间和结束时间---musicStartFirstTime=" + startTime);
                     //需要改变开始时间和结束时间
                     musicStartFirstTime = startTime;
                     musicEndFirstTime = endTime;
                     musicStartTime = musicStartFirstTime;
-                    LogUtil.d("playBGMMusic","musicStartTime="+musicStartTime);
+                    LogUtil.d("playBGMMusic", "musicStartTime=" + musicStartTime);
                     if (musicEndFirstTime == 0) {
                         musicEndTime = allVideoDuration;
                     } else {
                         musicEndTime = musicEndFirstTime;
                     }
 
-                    LogUtil.d("playBGMMusic","musicEndTime="+musicEndTime);
+                    LogUtil.d("playBGMMusic", "musicEndTime=" + musicEndTime);
                 }
                 stickerView.setShowStickerStartTime(startTime);
                 stickerView.setShowStickerEndTime(endTime);
