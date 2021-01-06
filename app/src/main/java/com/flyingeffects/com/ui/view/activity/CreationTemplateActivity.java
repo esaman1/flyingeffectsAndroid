@@ -67,7 +67,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import androidx.appcompat.app.AlertDialog;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -667,6 +666,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         ((TextView) findViewById(lin_Id[i])).setTextColor(getResources().getColor(R.color.white));
                     }
                     seekBarViewIsShow(true);
+                    mSeekBarView.scrollToTheBottom();
                 }
 
                 @Override
@@ -1718,6 +1718,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         } else {
             seekBarViewIsShow(true);
         }
+        mSeekBarView.scrollToTheBottom();
     }
 
     @Override
@@ -1799,9 +1800,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             }
             if (stickerView.getShowStickerEndTime() > mCutEndTime) {
                 stickerView.setShowStickerEndTime(mCutEndTime);
+                if (mCutEndTime - stickerView.getShowStickerStartTime() <= 1000) {
+                    stickerView.setShowStickerStartTime(mCutEndTime - 1000);
+                }
             }
             if (stickerView.getShowStickerStartTime() < mCutStartTime) {
                 stickerView.setShowStickerStartTime(mCutStartTime);
+                if (stickerView.getShowStickerEndTime() - mCutStartTime <= 1000) {
+                    stickerView.setShowStickerEndTime(mCutStartTime + 1000);
+                }
             }
         }
     }

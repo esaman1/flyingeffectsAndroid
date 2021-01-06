@@ -14,7 +14,6 @@ import android.widget.ScrollView;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.manager.statisticsEventAffair;
-import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.albumType;
@@ -154,9 +153,15 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                 }
                 if (itemView.getEndTime() > cutEndTime) {
                     itemView.setEndTime(cutEndTime);
+                    if (cutEndTime - itemView.getStartTime() <= 1000) {
+                        itemView.setStartTime(cutEndTime - 1000);
+                    }
                 }
                 if (itemView.getStartTime() < startTime) {
                     itemView.setStartTime(cutStartTime);
+                    if (itemView.getEndTime() - startTime <= 1000) {
+                        itemView.setEndTime(cutStartTime + 1000);
+                    }
                 }
 
                 LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) itemView.getLayoutParams();
@@ -342,6 +347,11 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         params.setMargins((int) (intervalPX + startTime / PER_MS_IN_PX), screenUtil.dip2px(getContext(), 5), 0, 0);
         materialItemView.setLayoutParams(params);
         materialItemView.setDragListener(this);
+
+    }
+
+    /**所有素材轨道的scrollView滚动到底部*/
+    public void scrollToTheBottom() {
         if (mLlDragItem.getChildCount() >= 3) {
             mScrollViewMaterialSeekbar.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
