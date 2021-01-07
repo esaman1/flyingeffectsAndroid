@@ -848,7 +848,7 @@ public class AnimCollect {
 
         StickerAnim stickerAnim11 = new StickerAnim();
         stickerAnim11.setName("圆圈");
-        stickerAnim11.setIcon(R.mipmap.anim_ybs);
+        stickerAnim11.setIcon(R.mipmap.anim_crile_loned);
         stickerAnim11.setAnimType(AnimType.CIRCLECLONED);
         list.add(stickerAnim11);
 
@@ -860,7 +860,7 @@ public class AnimCollect {
 
         StickerAnim stickerAnim13 = new StickerAnim();
         stickerAnim13.setName("五角星");
-        stickerAnim13.setIcon(R.mipmap.anim_ybs);
+        stickerAnim13.setIcon(R.mipmap.anim_five_point_star);
         stickerAnim13.setAnimType(AnimType.FIVEPOINTSTART);
         list.add(stickerAnim13);
 
@@ -891,7 +891,7 @@ public class AnimCollect {
 
         StickerAnim stickerAnim18 = new StickerAnim();
         stickerAnim18.setName("桃心分身");
-        stickerAnim18.setIcon(R.mipmap.anim_ybs);
+        stickerAnim18.setIcon(R.mipmap.anim_love);
         stickerAnim18.setAnimType(AnimType.LOVE);
         list.add(stickerAnim18);
 
