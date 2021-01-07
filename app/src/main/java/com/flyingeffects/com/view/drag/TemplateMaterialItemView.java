@@ -38,6 +38,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -73,7 +75,7 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
      */
     float llViewDownX = 0;
 
-    private boolean isLongClickModule = false;
+    public boolean isLongClickModule = false;
     private boolean isNeedOverallDrag = false;
     private Runnable mLongPressRunnable =  new Runnable() {
         @Override
@@ -81,7 +83,7 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
             isLongClickModule = true;
             vibrator(50);
         }
-    };;
+    };
     private Handler handler = new Handler();
     long lastTime = 0;
     Vibrator vibrator;
@@ -260,9 +262,11 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
 
     private void vibrator(long mill) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator.vibrate(VibrationEffect.createOneShot(mill, 50));
+            vibrator.vibrate(VibrationEffect.createOneShot(mill, VibrationEffect.DEFAULT_AMPLITUDE));
+            LogUtil.d("hshshs","8.0以上震动");
         } else {
-            vibrator.vibrate(mill);
+            vibrator.vibrate(mill*4);
+            LogUtil.d("hshshs","8.0以下震动");
         }
     }
 

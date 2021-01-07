@@ -606,6 +606,18 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                 }
             }
         }
+        switch (event.getAction()){
+            case  MotionEvent.ACTION_UP:
+                for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
+                    if (mTemplateMaterialItemViews.get(i) != null) {
+                        TemplateMaterialItemView itemView = mTemplateMaterialItemViews.get(i);
+                        itemView.isLongClickModule = false;
+                    }
+                }
+                break;
+            default:
+                break;
+        }
         return false;
     }
 
