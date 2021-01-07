@@ -245,12 +245,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         if (!TextUtils.isEmpty(mVideoPath)) {
             this.mVideoPath = mVideoPath;
             videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
-
-            if (TextUtils.isEmpty(videoVoicePath)) {
+            if (TextUtils.isEmpty(videoVoicePath)||nowChooseMusicId==0) {
                 chooseTemplateMusic(true);
             }
-
-
         } else {
             if (nowChooseMusicId == 2) {
                 clearCheckBox();
@@ -600,6 +597,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
 
     private void clearCheckBox() {
+        nowChooseMusicId=0;
         check_box_0.setImageResource(R.mipmap.template_btn_unselected);
         check_box_1.setImageResource(R.mipmap.template_btn_unselected);
         check_box_2.setImageResource(R.mipmap.template_btn_unselected);
@@ -944,8 +942,16 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                             }
                                             callback.getBgmPath("");
                                             if(nowChooseMusicId==1){
-                                                callback.ChooseMusicIndex(1);
-                                                chooseTemplateMusic(true);
+
+                                                if(!TextUtils.isEmpty(mVideoPath)){
+                                                    callback.ChooseMusicIndex(1);
+                                                    chooseTemplateMusic(true);
+                                                }else{
+                                                    clearCheckBox();
+
+                                                }
+
+
                                             }
                                             if (!stickView.getResPath().endsWith(".gif") && !albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
                                                 stickView.setLeftBitmap(ContextCompat.getDrawable(context, R.mipmap.icon_pic_save));

@@ -743,14 +743,12 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     @Override
     public void invalidateDrawable(@NonNull Drawable drawable) {
         super.invalidateDrawable(drawable);
-        LogUtil.d("oom", "-----------------------invalidateDrawable------------------------------");
 //        invalidate();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
 //        super.onDraw(canvas);
-        LogUtil.d("oom", "-----------------------ondraw------------------------------");
         LogUtil.d(TAG, "stickerView width = " + getWidth());
         LogUtil.d(TAG, "stickerView height = " + getHeight());
         drawContent(canvas);
@@ -1104,7 +1102,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public boolean onTouchEvent(MotionEvent event) {
         // 是否向下传递事件标志 true为消耗
         super.onTouchEvent(event);
-        LogUtil.d("oom", "-----------------------onTouchEvent------------------------------");
         if (!isFromAnim) {
             int pointerCount = event.getPointerCount();
             int action = event.getAction();
@@ -1662,7 +1659,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     setCenter(getWidth() / 2f, getHeight() / 2f);
                 }
             }
-            LogUtil.d("oom", "-----------------------onResourceReady------------------------------");
             invalidate();
         }
     }
