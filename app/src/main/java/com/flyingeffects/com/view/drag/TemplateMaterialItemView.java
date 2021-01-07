@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.os.Build;
-import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.text.TextUtils;
@@ -38,8 +37,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -77,15 +74,8 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
 
     public boolean isLongClickModule = false;
     private boolean isNeedOverallDrag = false;
-    private Runnable mLongPressRunnable =  new Runnable() {
-        @Override
-        public void run() {
-            isLongClickModule = true;
-            vibrator(50);
-        }
-    };
-    private Handler handler = new Handler();
     long lastTime = 0;
+    long timeMove = 0;
     Vibrator vibrator;
     int identityID = 0;
     private long startTime;
@@ -209,12 +199,17 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
                 case MotionEvent.ACTION_DOWN:
                     llViewDownX = event.getX();
                     lastTime = System.currentTimeMillis();
-                    if (isNeedOverallDrag) {
-                        handler.postDelayed(mLongPressRunnable, 500);
-                    }
                     break;
                 case MotionEvent.ACTION_MOVE:
                     if (isNeedOverallDrag) {
+                        timeMove = System.currentTimeMillis();
+                        long durationMs = timeMove - lastTime;
+                        if (durationMs > 500) {
+                            isLongClickModule = true;
+                            vibrator();
+                            //是为了还在继续长按拖动的时候不再次震动
+                            lastTime = timeMove + 1000*100;
+                        }
                         if (isLongClickModule) {
                             v.getParent().requestDisallowInterceptTouchEvent(true);
                             if (llViewDownX < event.getX()) {
@@ -249,7 +244,7 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
                     }
                     isLongClickModule = false;
                     if (isNeedOverallDrag) {
-                        handler.removeCallbacks(mLongPressRunnable);
+                        cancelVibrator();
                     }
                     break;
                 default:
@@ -260,13 +255,17 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
         return false;
     }
 
-    private void vibrator(long mill) {
+    private void vibrator() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator.vibrate(VibrationEffect.createOneShot(mill, VibrationEffect.DEFAULT_AMPLITUDE));
-            LogUtil.d("hshshs","8.0以上震动");
+            vibrator.vibrate(VibrationEffect.createWaveform(new long[]{10, 600}, -1));
         } else {
-            vibrator.vibrate(mill*4);
-            LogUtil.d("hshshs","8.0以下震动");
+            vibrator.vibrate(new long[]{10, 600}, -1);
+        }
+    }
+
+    public  void cancelVibrator() {
+        if (vibrator != null) {
+            vibrator.cancel();
         }
     }
 
