@@ -321,14 +321,21 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     //--------------ztj   解决bug拖动主进度条，素材音乐没修改的情况
                     if (musicStartTime < starTime) {
 //                        musicStartTime = starTime;
-                        long xx = mCutStartTime - lastmCutTime;
-                        musicEndTime = musicEndTime - xx;
+//                        long xx = mCutStartTime - lastmCutTime;
+//                        musicEndTime = musicEndTime - xx;
                         lastmCutTime = mCutStartTime;
-                        musicStartFirstTime=starTime;
-                        musicStartTime=starTime;
-                        LogUtil.d("oom44", "musicStartTime=" + musicStartTime + "starTime=" + starTime + "musicEndTime=" + musicEndTime + "mCutStartTime=" + mCutStartTime + "xx=" + xx);
-
+                        musicStartFirstTime = starTime;
+                        musicStartTime = starTime;
+                        LogUtil.d("oom44", "musicStartTime=" + musicStartTime + "starTime=" + starTime + "musicEndTime=" + musicEndTime + "mCutStartTime=" + mCutStartTime);
                     }
+                    //ztj  音乐向后挤 ，然后音乐就是最短位置1000+end
+                    if (musicEndTime < starTime) {
+                        musicEndFirstTime = musicStartTime + 1000;
+                        musicEndTime = musicEndFirstTime;
+                        LogUtil.d("oom44", "音乐向后挤musicEndTime=" + musicEndTime);
+                    }
+
+
                 } else {
                     LogUtil.d("oom444", "xx=");
                     mSeekBarView.scrollToPosition(endTime);
@@ -718,7 +725,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
     private void videoToPause() {
-
+        LogUtil.d("OOM44", "videoToPause");
         videoPause();
         isPlaying = false;
         endTimer();
@@ -777,7 +784,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 tv_total.setText(TimeUtils.timeParse(mCutEndTime - mCutStartTime) + "s");
                 mProgressBarView.addProgressBarView(allVideoDuration, videoPath);
                 if (isModifyMaterialTimeLine) {
-                    LogUtil.d("OOM44","11111");
+                    LogUtil.d("OOM44", "11111");
                     musicStartTime = mCutStartTime;
                     musicEndTime = mCutEndTime;
                     mSeekBarView.resetStartAndEndTime(mCutStartTime, mCutEndTime);
@@ -968,7 +975,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         LogUtil.d("OOM5", "musicChooseIndex=" + musicChooseIndex);
         if (index == 0) {
             //选中的是素材音乐
-            LogUtil.d("OOM44","555555");
+            LogUtil.d("OOM44", "555555");
             musicStartTime = musicStartFirstTime;
             LogUtil.d("OOM5", "musicEndFirstTime=" + musicEndFirstTime);
             if (musicEndFirstTime == 0) {
@@ -1068,6 +1075,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         if (isPlaying) {
             isIntoPause = false;
             isPlayComplate = false;
+            LogUtil.d("OOM44", "needPauseVideo");
             videoToPause();//interface needPauseVideo
             presenter.showGifAnim(false);
             isPlaying = false;
@@ -1262,12 +1270,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         if (!TextUtils.isEmpty(videoPath)) {
                             bjMusicControl();
                             if (isPlaying) {
-                                if (getCurrentPos() >= mCutEndTime) {
-                                    LogUtil.d("OOM5", "getCurrentPos() >= mCutEndTime");
+                                long nowCurrentPos = getCurrentPos();
+                                if (nowCurrentPos < 0) {
+                                    nowCurrentPos = 0;
+                                }
+                                if (nowCurrentPos >= mCutEndTime) {
                                     exoPlayer.seekTo(mCutStartTime);
                                     videoToPause();
-                                } else if (getCurrentPos() < mCutStartTime) {
-                                    LogUtil.d("OOM5", "getCurrentPos() < mCutStartTime");
+                                } else if (nowCurrentPos < mCutStartTime) {
                                     exoPlayer.seekTo(mCutStartTime);
                                     videoToPause();
                                 }
@@ -1433,7 +1443,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     modificationDuration(10 * 1000);
                 }
                 musicStartFirstTime = 0;
-                LogUtil.d("OOM44","22222");
+                LogUtil.d("OOM44", "22222");
                 musicStartTime = 0;
                 musicEndFirstTime = mCutEndTime;
                 musicEndTime = mCutEndTime;
@@ -1451,7 +1461,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 presenter.initVideoProgressView();
                 setBJVideoPath(true);
                 musicStartFirstTime = 0;
-                LogUtil.d("OOM44","333333");
+                LogUtil.d("OOM44", "333333");
                 musicStartTime = 0;
                 musicEndFirstTime = mCutEndTime;
                 musicEndTime = mCutEndTime;
@@ -1766,7 +1776,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     //需要改变开始时间和结束时间
                     musicStartFirstTime = startTime;
                     musicEndFirstTime = endTime;
-                    LogUtil.d("OOM44","444444");
+                    LogUtil.d("OOM44", "444444");
                     musicStartTime = musicStartFirstTime;
                     LogUtil.d("playBGMMusic", "musicStartTime=" + musicStartTime);
                     if (musicEndFirstTime == 0) {
@@ -1792,6 +1802,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void trackPause() {
+
+        LogUtil.d("OOM44", "trackPause");
         videoToPause();
     }
 
