@@ -298,9 +298,9 @@ public class backgroundDraw {
                     } else {
                         STARTTime = Math.max(STARTTime, cutStartTime) - Math.min(STARTTime, cutStartTime);
                     }
-                    videoLayer = execute.addVideoLayer(option, STARTTime * 1000,
-                            endTime >= cutEndTime * 1000 ? Long.MAX_VALUE :
-                                    cutStartTime > 0 ? duration * 1000 - (cutEndTime * 1000 - endTime) : endTime, false, false);
+                    endTime = endTime >= cutEndTime * 1000 ? Long.MAX_VALUE :
+                            cutStartTime > 0 ? duration * 1000 - (cutEndTime * 1000 - endTime) : endTime;
+                    videoLayer = execute.addVideoLayer(option, STARTTime * 1000, endTime, false, false);
                 } else {
                     videoLayer = execute.addVideoLayer(option, 0,
                             endTime >= duration * 1000 ? Long.MAX_VALUE : endTime, false, false);
@@ -345,7 +345,7 @@ public class backgroundDraw {
             videoLayer.switchFilterTo(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class, stickerItem.getMaskBitmap()));
             if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
                 int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
-                addVideoSubLayer(needSublayer, videoLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale);
+                addVideoSubLayer(needSublayer, videoLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale,STARTTime*1000,endTime);
             }
 
         } catch (Exception e) {
@@ -372,9 +372,8 @@ public class backgroundDraw {
                 LogUtil.d("OOM44","开始增加的时间为"+STARTTime+"--消失的时间为"+ ( endTime >= cutEndTime * 1000 ? Long.MAX_VALUE : cutStartTime > 0 ? duration * 1000 - (cutEndTime * 1000 - endTime) : endTime));
 
 
-
-                gifLayer = execute.addGifLayer(stickerItem.getPath(), STARTTime * 1000,
-                        endTime >= cutEndTime * 1000 ? Long.MAX_VALUE : cutStartTime > 0 ? duration * 1000 - (cutEndTime * 1000 - endTime) : endTime);
+                endTime = endTime >= cutEndTime * 1000 ? Long.MAX_VALUE : cutStartTime > 0 ? duration * 1000 - (cutEndTime * 1000 - endTime) : endTime;
+                gifLayer = execute.addGifLayer(stickerItem.getPath(), STARTTime * 1000, endTime);
             } else {
                 gifLayer = execute.addGifLayer(stickerItem.getPath(), 0,
                         endTime >= duration * 1000 ? Long.MAX_VALUE : endTime);
@@ -411,7 +410,7 @@ public class backgroundDraw {
         gifLayer.switchFilterTo(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class, stickerItem.getMaskBitmap()));
         if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
             int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
-            addGifSubLayer(needSublayer, gifLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale);
+            addGifSubLayer(needSublayer, gifLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale, STARTTime * 1000,endTime);
         }
 
     }
@@ -440,9 +439,9 @@ public class backgroundDraw {
                 } else {
                     STARTTime = Math.max(STARTTime, cutStartTime) - Math.min(STARTTime, cutStartTime);
                 }
-
-                bpLayer = execute.addBitmapLayer(bp, STARTTime * 1000, endTime * 1000 >= cutEndTime * 1000 ? Long.MAX_VALUE :
-                        cutStartTime > 0 ? duration * 1000 - (cutEndTime * 1000 - endTime * 1000) : endTime * 1000);
+                endTime = endTime * 1000 >= cutEndTime * 1000 ? Long.MAX_VALUE :
+                        cutStartTime > 0 ? duration * 1000 - (cutEndTime * 1000 - endTime * 1000) : endTime * 1000;
+                bpLayer = execute.addBitmapLayer(bp, STARTTime * 1000, endTime);
             } else {
                 bpLayer = execute.addBitmapLayer(bp, 0, endTime * 1000 >= duration * 1000 ? Long.MAX_VALUE : endTime * 1000);
             }
@@ -479,12 +478,12 @@ public class backgroundDraw {
 
         if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
             int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
-            addBitmapSubLayer(needSublayer, bpLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale);
+            addBitmapSubLayer(needSublayer, bpLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale,STARTTime*1000,endTime);
         }
     }
 
 
-    private void addBitmapSubLayer(int needSublayer, BitmapLayer layer, AnimType ChooseAnimId, float rotate, float stickerScale) {
+    private void addBitmapSubLayer(int needSublayer, BitmapLayer layer, AnimType ChooseAnimId, float rotate, float stickerScale,long startTime,long endTime) {
         ArrayList<SubLayer> listForSubLayer = new ArrayList<>();
         for (int i = 0; i < needSublayer; i++) {
             SubLayer subLayer = layer.addSubLayerUseMainFilter(true);
@@ -493,6 +492,8 @@ public class backgroundDraw {
             listForSubLayer.add(subLayer);
         }
         hasAnimLayer animLayer = new hasAnimLayer(ChooseAnimId, layer, listForSubLayer, stickerScale);
+        animLayer.setStartTime(startTime);
+        animLayer.setEndTime(endTime);
         hasAnimLayerList.add(animLayer);
     }
 
@@ -511,7 +512,7 @@ public class backgroundDraw {
     }
 
 
-    private void addVideoSubLayer(int needSublayer, VideoFrameLayer layer, AnimType ChooseAnimId, float rotate, float stickerScale) {
+    private void addVideoSubLayer(int needSublayer, VideoFrameLayer layer, AnimType ChooseAnimId, float rotate, float stickerScale,long startTime,long endTime) {
         ArrayList<SubLayer> listForSubLayer = new ArrayList<>();
         for (int i = 0; i < needSublayer; i++) {
             SubLayer subLayer = layer.addSubLayerUseMainFilter(true);
@@ -520,11 +521,13 @@ public class backgroundDraw {
             listForSubLayer.add(subLayer);
         }
         hasAnimLayer animLayer = new hasAnimLayer(ChooseAnimId, layer, listForSubLayer, stickerScale);
+        animLayer.setStartTime(startTime);
+        animLayer.setEndTime(endTime);
         hasAnimLayerList.add(animLayer);
     }
 
 
-    private void addGifSubLayer(int needSublayer, GifLayer layer, AnimType ChooseAnimId, float rotate, float stickerScale) {
+    private void addGifSubLayer(int needSublayer, GifLayer layer, AnimType ChooseAnimId, float rotate, float stickerScale,long startTime,long endTime) {
         ArrayList<SubLayer> listForSubLayer = new ArrayList<>();
         for (int i = 0; i < needSublayer; i++) {
             SubLayer subLayer = layer.addSubLayerUseMainFilter(true);
@@ -533,6 +536,8 @@ public class backgroundDraw {
             listForSubLayer.add(subLayer);
         }
         hasAnimLayer animLayer = new hasAnimLayer(ChooseAnimId, layer, listForSubLayer, stickerScale);
+        animLayer.setStartTime(startTime);
+        animLayer.setEndTime(endTime);
         hasAnimLayerList.add(animLayer);
     }
 
@@ -567,9 +572,9 @@ public class backgroundDraw {
                 } else {
                     STARTTime = Math.max(STARTTime, cutStartTime) - Math.min(STARTTime, cutStartTime);
                 }
-
-                bpLayer = execute.addBitmapLayer(bp, STARTTime * 1000, endTime * 1000 >= cutEndTime * 1000 ? Long.MAX_VALUE :
-                        cutStartTime > 0 ? duration * 1000 - (cutEndTime * 1000 - endTime * 1000) : endTime * 1000);
+                endTime  = endTime * 1000 >= cutEndTime * 1000 ? Long.MAX_VALUE :
+                        cutStartTime > 0 ? duration * 1000 - (cutEndTime * 1000 - endTime * 1000) : endTime * 1000;
+                bpLayer = execute.addBitmapLayer(bp, STARTTime * 1000, endTime);
             } else {
                 bpLayer = execute.addBitmapLayer(bp, 0, endTime * 1000 >= duration * 1000 ? Long.MAX_VALUE : endTime * 1000);
             }
@@ -613,6 +618,7 @@ public class backgroundDraw {
         CanvasLayer canvasLayer = execute.addCanvasLayer();
         float finalNeedDt = needDt;
         long finalSTARTTime = STARTTime * 1000;
+        long finalEndTime = endTime;
         canvasLayer.addCanvasRunnable((canvasLayer1, canvas, currentTime) -> {
             if (finalSTARTTime != 0) {
                 currentTime = currentTime - finalSTARTTime;
@@ -634,6 +640,7 @@ public class backgroundDraw {
                     percentage = remainder / (finalNeedDt);
                 }
 
+                long finalCurrentTime = currentTime;
                 animCollect.startAnimForChooseAnim(stickerItem.getChooseAnimId(), bpLayer, listForMattingSubLayer, new LayerAnimCallback() {
                     @Override
                     public void translationalXY(ArrayList<TransplationPos> listForTranslaptionPosition) {
@@ -650,6 +657,13 @@ public class backgroundDraw {
                             for (int i = 1; i <= listForMattingSubLayer.size(); i++) {
                                 TransplationPos subTransplationPos = listForTranslaptionPosition.get(i);
                                 SubLayer subLayer = listForMattingSubLayer.get(i - 1);
+                                if (isBackgroundTemplate) {
+                                    if (finalCurrentTime >= finalSTARTTime && finalCurrentTime < finalEndTime && finalCurrentTime != 0) {
+                                        subLayer.setVisibility(true);
+                                    } else {
+                                        subLayer.setVisibility(false);
+                                    }
+                                }
                                 subLayer.setPosition(subLayer.getPositionX(), subLayer.getPadHeight() * subTransplationPos.getToY());
                                 subLayer.setPosition(subLayer.getPadWidth() * subTransplationPos.getToX(), subLayer.getPositionY());
                             }
@@ -664,6 +678,13 @@ public class backgroundDraw {
                         if (listForMattingSubLayer.size() > 0) {
                             for (int i = 1; i <= listForMattingSubLayer.size(); i++) {
                                 SubLayer subLayer = listForMattingSubLayer.get(i - 1);
+                                if (isBackgroundTemplate) {
+                                    if (finalCurrentTime >= finalSTARTTime && finalCurrentTime < finalEndTime && finalCurrentTime != 0) {
+                                        subLayer.setVisibility(true);
+                                    } else {
+                                        subLayer.setVisibility(false);
+                                    }
+                                }
                                 subLayer.setScale(angle.get(i));
                             }
                         }
@@ -677,6 +698,13 @@ public class backgroundDraw {
                         if (listForMattingSubLayer.size() > 0) {
                             for (int i = 1; i <= listForMattingSubLayer.size(); i++) {
                                 SubLayer subLayer = listForMattingSubLayer.get(i - 1);
+                                if (isBackgroundTemplate) {
+                                    if (finalCurrentTime >= finalSTARTTime && finalCurrentTime < finalEndTime && finalCurrentTime != 0) {
+                                        subLayer.setVisibility(true);
+                                    } else {
+                                        subLayer.setVisibility(false);
+                                    }
+                                }
                                 subLayer.setScale(nowScale + nowScale * angle.get(i));
                             }
                         }
@@ -773,6 +801,13 @@ public class backgroundDraw {
                             for (int i = 1; i <= listForSubLayer.size(); i++) {
                                 TransplationPos subTransplationPos = listForTranslaptionPosition.get(i);
                                 SubLayer subLayer = listForSubLayer.get(i - 1);
+                                if (isBackgroundTemplate) {
+                                    if (currentTime >= animLayer.getStartTime() && currentTime <= animLayer.getEndTime() && currentTime != 0) {
+                                        subLayer.setVisibility(true);
+                                    } else {
+                                        subLayer.setVisibility(false);
+                                    }
+                                }
                                 if (subTransplationPos.getToY() != 0) {
                                     subLayer.setPosition(subLayer.getPositionX(), subLayer.getPadHeight() * subTransplationPos.getToY());
                                 }
@@ -789,6 +824,13 @@ public class backgroundDraw {
                             for (int i = 1; i <= listForSubLayer.size(); i++) {
                                 float angleItem = angleList.get(i);
                                 SubLayer subLayer = listForSubLayer.get(i - 1);
+                                if (isBackgroundTemplate) {
+                                    if (currentTime >= animLayer.getStartTime() && currentTime <= animLayer.getEndTime() && currentTime != 0) {
+                                        subLayer.setVisibility(true);
+                                    } else {
+                                        subLayer.setVisibility(false);
+                                    }
+                                }
                                 subLayer.setRotate(angleItem);
                             }
                         }
@@ -799,6 +841,13 @@ public class backgroundDraw {
                             layer.setScale(nowScale + nowScale * angle.get(0));
                             for (int i = 1; i <= listForSubLayer.size(); i++) {
                                 SubLayer subLayer = listForSubLayer.get(i - 1);
+                                if (isBackgroundTemplate) {
+                                    if (currentTime >= animLayer.getStartTime() && currentTime <= animLayer.getEndTime() && currentTime != 0) {
+                                        subLayer.setVisibility(true);
+                                    } else {
+                                        subLayer.setVisibility(false);
+                                    }
+                                }
                                 subLayer.setScale(nowScale + nowScale * angle.get(i));
                             }
                         }
@@ -824,6 +873,24 @@ public class backgroundDraw {
             this.ChooseAnimId = ChooseAnimId;
             this.sublayerList = sublayerList;
             this.scale = scale;
+        }
+
+        long startTime,endTime;
+
+        public long getStartTime() {
+            return startTime;
+        }
+
+        public void setStartTime(long startTime) {
+            this.startTime = startTime;
+        }
+
+        public long getEndTime() {
+            return endTime;
+        }
+
+        public void setEndTime(long endTime) {
+            this.endTime = endTime;
         }
 
         public float getScale() {
