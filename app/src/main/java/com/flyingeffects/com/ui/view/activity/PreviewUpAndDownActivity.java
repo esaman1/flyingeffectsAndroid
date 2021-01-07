@@ -497,7 +497,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         super.onPause();
         GSYVideoManager.onPause();
         isOnPause = true;
-        LogUtil.d("OOM", "onPause");
+        LogUtil.d("OOM22", "onPause");
     }
 
     @Override
@@ -767,7 +767,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     protected void onResume() {
         super.onResume();
         isOnPause = false;
-        LogUtil.d("OOM", "onResume");
+        LogUtil.d("OOM22", "onResume");
         //出现bug 不能继续播放的问题
         if (!nowItemIsAd) {
             GSYVideoManager.onResume();
