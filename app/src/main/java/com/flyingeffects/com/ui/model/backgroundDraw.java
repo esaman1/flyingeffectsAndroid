@@ -368,6 +368,11 @@ public class backgroundDraw {
                 } else {
                     STARTTime = Math.max(STARTTime, cutStartTime) - Math.min(STARTTime, cutStartTime);
                 }
+
+                LogUtil.d("OOM44","开始增加的时间为"+STARTTime+"--消失的时间为"+ ( endTime >= cutEndTime * 1000 ? Long.MAX_VALUE : cutStartTime > 0 ? duration * 1000 - (cutEndTime * 1000 - endTime) : endTime));
+
+
+
                 gifLayer = execute.addGifLayer(stickerItem.getPath(), STARTTime * 1000,
                         endTime >= cutEndTime * 1000 ? Long.MAX_VALUE : cutStartTime > 0 ? duration * 1000 - (cutEndTime * 1000 - endTime) : endTime);
             } else {

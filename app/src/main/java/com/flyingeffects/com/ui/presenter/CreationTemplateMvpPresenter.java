@@ -32,6 +32,10 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.ChangeTextStyle(path,type,title);
     }
 
+    public void onclickRelativeLayout(){
+        creationTemplatemodel.onclickRelativeLayout();
+    }
+
 
 
     public void getNowPlayingTime(long nowProgressTime,long totalTime){

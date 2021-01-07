@@ -188,6 +188,15 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         }
     }
 
+
+    public void onclickRelativeLayout(){
+        stopAllAnim();
+        deleteSubLayerSticker();
+    }
+
+
+
+
     /**
      * description ：更换文字
      * creation date: 2020/9/21
