@@ -507,7 +507,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_delete_all_text, R.id.iv_add_sticker, R.id.iv_top_back,
-            R.id.iv_change_ui, R.id.tv_background, R.id.tv_music, R.id.tv_anim, R.id.tv_tiezhi, R.id.tv_add_text,
+            R.id.iv_change_ui, R.id.tv_background, R.id.tv_music, R.id.tv_anim, R.id.tv_tiezhi, R.id.id_vview_realtime_gllayout, R.id.tv_add_text,
             R.id.rl_creation_container})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -540,6 +540,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     createViewForAddText.hideInputTextDialog();
                 }
                 break;
+
+
+            case R.id.id_vview_realtime_gllayout:
+                presenter.onclickRelativeLayout();
+                break;
+
+
             case R.id.ll_play:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
                     if (isPlaying) {
@@ -727,6 +734,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private void videoToPause() {
         LogUtil.d("OOM44", "videoToPause");
         videoPause();
+        presenter.intoOnPause();
         isPlaying = false;
         endTimer();
         presenter.showGifAnim(false);
