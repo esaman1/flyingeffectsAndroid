@@ -388,7 +388,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         //添加音乐
         View viewForChooseMusic = LayoutInflater.from(context).inflate(R.layout.view_choose_music, viewPager, false);
         TextView tv_add_music = viewForChooseMusic.findViewById(R.id.tv_add_music);
-        viewForChooseMusic.findViewById(R.id.iv_down_music).setOnClickListener(v -> callback.stickerFragmentClose());
+        TextView tvDownMusic = viewForChooseMusic.findViewById(R.id.iv_down_music);
+        tvDownMusic.setVisibility(View.VISIBLE);
+        tvDownMusic.setOnClickListener(v -> callback.stickerFragmentClose());
         tv_add_music.setOnClickListener(view -> {
             statisticsEventAffair.getInstance().setFlag(context, "15_music_add");
             Intent intent = new Intent(context, ChooseMusicActivity.class);
@@ -864,8 +866,8 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     stickView.dismissFrame();
                     //copy
-//                    String copyStickViewPath = isMatting ? stickView.getClipPath() : stickView.getResPath();
-                    String copyStickViewPath =  stickView.getClipPath();
+                    //飞闪提供的贴纸是GIF 不支持抠像 所以抠像的情况下拿到的路径为空 这个时候择getResPath()
+                    String copyStickViewPath = stickView.getClipPath() == null ? stickView.getResPath() : stickView.getClipPath();
                     copyGif(copyStickViewPath, copyStickViewPath, stickView.getComeFrom(), stickView, stickView.getOriginalPath(), false, stickView.getDownStickerTitle());
                     if (!TextUtils.isEmpty(stickView.getOriginalPath())) {
                         if (albumType.isVideo(GetPathType.getInstance().getMediaType(stickView.getOriginalPath()))) {
