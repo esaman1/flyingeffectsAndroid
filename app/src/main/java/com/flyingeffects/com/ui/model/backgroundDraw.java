@@ -217,12 +217,13 @@ public class backgroundDraw {
                         }
                     }
                     if (!TextUtils.isEmpty(videoVoice)) {
+                        LogUtil.d("OOM44","musicStartTime="+musicStartTime+"--musicEndTime="+musicEndTime+"--cutStartTime="+cutStartTime);
                         if (musicEndTime == 0) {
                             //如果有videoVoice 字段，那么需要设置在对应的主图层上面去
                             execute.addAudioLayer(videoVoice, false);
                         } else {
                             //如果有videoVoice 字段，那么需要设置在对应的主图层上面去
-                            execute.addAudioLayer(videoVoice, (musicStartTime-cutStartTime) * 1000, 0, (musicEndTime -cutStartTime) * 1000);
+                            execute.addAudioLayer(videoVoice, (musicStartTime-cutStartTime) * 1000, 0, (musicEndTime -musicStartTime-cutStartTime) * 1000);
                         }
                     }
                     addMainCanversLayer(list, isMatting);

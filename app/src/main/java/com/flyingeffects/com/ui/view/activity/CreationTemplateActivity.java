@@ -332,7 +332,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     if (musicEndTime < starTime) {
                         musicEndFirstTime = musicStartTime + 1000;
                         musicEndTime = musicEndFirstTime;
-                        LogUtil.d("oom44", "音乐向后挤musicEndTime=" + musicEndTime);
+                        LogUtil.d("oom44", "音乐向后挤musicEndTime=" + musicEndTime+"musicStartTime="+musicStartTime);
                     }
 
 
@@ -990,6 +990,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 musicEndTime = getFristVideoDuration();
                 if (musicEndTime == 0) {
                     musicEndTime = allVideoDuration;
+                    musicEndFirstTime=musicEndTime;
                 }
             } else {
                 musicEndTime = musicEndFirstTime;
@@ -1074,8 +1075,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void getVideoDuration(long allVideoDuration) {
         this.allVideoDuration = allVideoDuration;
-        musicEndTime = allVideoDuration;
-        Log.d("OOM", "allVideoDuration=" + allVideoDuration);
+        if(musicEndFirstTime==0){
+            musicEndTime = allVideoDuration;
+            musicEndFirstTime=musicEndTime;
+        }
+        Log.d("OOM44", "allVideoDuration=" + allVideoDuration);
     }
 
     @Override
@@ -1147,9 +1151,18 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void changFirstVideoSticker(String path) {
-        if (TextUtils.isEmpty(videoPath)) {
-            //如果还是绿屏。那么需要刷新底部的时长
-            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> presenter.initVideoProgressView());
+        if (TextUtils.isEmpty(videoPath)||musicChooseIndex==0) {
+            if(TextUtils.isEmpty(videoPath)){
+                //如果还是绿屏。那么需要刷新底部的时长
+                Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> presenter.initVideoProgressView());
+            }
+            //需要重新刷新素材音乐开始时间,结束时间还是上次的
+            musicStartTime=0;
+            musicStartFirstTime=0;
+            LogUtil.d("OOM44","绿幕的情况下换了视频后结束音乐的时间为"+musicEndTime);
+//            musicEndTime = getFristVideoDuration();
+            musicEndFirstTime=musicEndTime;
+            LogUtil.d("OOM44","绿幕的情况下换了视频后结束音乐的时间musicEndFirstTime为"+musicEndFirstTime);
         }
     }
 
