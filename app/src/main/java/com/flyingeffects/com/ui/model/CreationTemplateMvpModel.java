@@ -1389,6 +1389,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     public void onDestroy() {
         isDestroy = true;
         stopAllAnim();
+        viewLayerRelativeLayout.removeAllViews();
     }
 
     public void initVideoProgressView() {
