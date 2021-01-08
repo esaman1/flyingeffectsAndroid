@@ -935,8 +935,18 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                             }
                                             stickView.setLeftBitmapNoSave();
                                             if (stickView.isFirstAddSticker()) {
+                                                stickView.setShowStickerStartTime(0);
                                                 callback.changFirstVideoSticker(paths.get(0));
-                                                callback.getBgmPath("");
+                                                if(TextUtils.isEmpty(mVideoPath)){
+                                                    //没得背景的情况下,重新分离出音乐来
+                                                    chooseMaterialMusic(paths.get(0));
+                                                }else{
+//                                                    callback.getBgmPath("");
+                                                    //只是分离，但是不选择素材音乐
+//                                                    getVideoVoice(paths.get(0), soundFolder);
+                                                    chooseMaterialMusic(paths.get(0));
+                                                }
+
                                             }
                                             callback.modifyTimeLineSickerPath(String.valueOf(stickView.getStickerNoIncludeAnimId()), paths.get(0),stickView);
                                         });
