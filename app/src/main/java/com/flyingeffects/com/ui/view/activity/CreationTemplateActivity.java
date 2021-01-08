@@ -528,6 +528,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 } else {
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
                 }
+                if(musicChooseIndex==3){
+                    musicEndTime=allVideoDuration;
+                    musicStartTime=0;
+                }
                 presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId, musicStartTime, musicEndTime, mCutStartTime, mCutEndTime, title);
                 seekBarViewIsShow(true);
                 break;
@@ -954,7 +958,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void onDestroy() {
-        presenter.onDestroy();
+//        presenter.onDestroy();
         destroyTimer();
         videoStop();
         if (bgmPlayer != null) {
@@ -996,6 +1000,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         } else {
             musicStartTime = 0;
             musicEndTime = allVideoDuration;
+
         }
     }
 
@@ -1265,6 +1270,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private boolean isNeedPlayBjMusci = false;
 
     private void startTimer() {
+
+        if(musicChooseIndex==3){
+            musicStartTime=0;
+            musicEndTime=allVideoDuration;
+        }
+
         isEndDestroy = false;
         LogUtil.d("OOM44", "startTimer:musicEndTime=" + musicEndTime + "musicStartTime=" + musicStartTime);
         nowTime = 5;
@@ -1537,6 +1548,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     public void onEventMainThread(CutSuccess cutSuccess) {
         String nowChooseBjPath = cutSuccess.getFilePath();
         presenter.setAddChooseBjPath(nowChooseBjPath);
+        musicChooseIndex=3;
     }
 
 
@@ -1969,5 +1981,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         });
         builder.setNegativeButton("取消", (dialog, which) -> dialog.dismiss());
         builder.create().show();
+        presenter.intoOnPause();
     }
 }
