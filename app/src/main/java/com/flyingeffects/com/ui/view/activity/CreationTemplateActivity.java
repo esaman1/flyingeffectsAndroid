@@ -528,7 +528,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 } else {
                     statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
                 }
-                if(musicChooseIndex==3){
+                if(musicChooseIndex==2){
                     musicEndTime=allVideoDuration;
                     musicStartTime=0;
                 }
@@ -1271,13 +1271,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private void startTimer() {
 
-        if(musicChooseIndex==3){
+        if(musicChooseIndex==2){
             musicStartTime=0;
             musicEndTime=allVideoDuration;
         }
 
         isEndDestroy = false;
-        LogUtil.d("OOM44", "startTimer:musicEndTime=" + musicEndTime + "musicStartTime=" + musicStartTime);
+        LogUtil.d("OOM44", "startTimer:musicEndTime=" + musicEndTime + "musicStartTime=" + musicStartTime+"musicChooseIndex="+musicChooseIndex);
         nowTime = 5;
         totalPlayTime = mCutStartTime;
         if (timer != null) {
@@ -1548,7 +1548,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     public void onEventMainThread(CutSuccess cutSuccess) {
         String nowChooseBjPath = cutSuccess.getFilePath();
         presenter.setAddChooseBjPath(nowChooseBjPath);
-        musicChooseIndex=3;
+        musicChooseIndex=2;
     }
 
 
