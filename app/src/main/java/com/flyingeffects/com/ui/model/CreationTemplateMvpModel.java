@@ -943,7 +943,8 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                                 }else{
 //                                                    callback.getBgmPath("");
                                                     //只是分离，但是不选择素材音乐
-                                                    getVideoVoice(paths.get(0), soundFolder);
+//                                                    getVideoVoice(paths.get(0), soundFolder);
+                                                    chooseMaterialMusic(paths.get(0));
                                                 }
 
                                             }
