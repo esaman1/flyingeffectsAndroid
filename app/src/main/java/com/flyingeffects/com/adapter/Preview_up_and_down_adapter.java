@@ -83,7 +83,8 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         boolean readOnly = item.getTest() != 0;
         boolean needHideCreate;
         if (readOnly) {
-            needHideCreate = OldFromTo.equals(FromToTemplate.ISHOMEFROMBJ) || OldFromTo.equals(FromToTemplate.ISMESSAGEMYPRODUCTION);
+            needHideCreate = OldFromTo.equals(FromToTemplate.ISHOMEFROMBJ) || OldFromTo.equals(FromToTemplate.ISMESSAGEMYPRODUCTION)
+                    || OldFromTo.equals(FromToTemplate.DRESSUP);
         } else {
             needHideCreate = false;
         }
