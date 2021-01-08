@@ -48,7 +48,7 @@ public interface CreationTemplateMvpView {
 
     void showTimeLineSickerArrow(String id);
 
-    void modifyTimeLineSickerPath(String id,String path);
+    void modifyTimeLineSickerPath(String id,String path,StickerView stickerView);
 
     void stickerFragmentClose();
 }

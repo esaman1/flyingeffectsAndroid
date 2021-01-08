@@ -15,6 +15,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.screenUtil;
+import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.albumType;
 
@@ -249,7 +250,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
      * @param id 素材ID
      * @param isBackgroundVideo 是否有背景视频
      */
-    public void modifyMaterialThumbnail(String path, String id,boolean isBackgroundVideo) {
+    public void modifyMaterialThumbnail(String path, String id, boolean isBackgroundVideo) {
         for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
             if (mTemplateMaterialItemViews.get(i) != null) {
                 if (TextUtils.equals(String.valueOf(mTemplateMaterialItemViews.get(i).getIdentityID()), id)) {
@@ -265,8 +266,9 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) itemView.getLayoutParams();
                             itemView.setResPathAndDuration(path, duration, frameContainerHeight, itemView.isText, itemView.text);
                             itemView.setStartTime(0);
-                            itemView.setEndTime(Math.min(duration, cutEndTime));
-                            itemView.setWidthAndHeight((int) (Math.min(duration, cutEndTime) / PER_MS_IN_PX), frameContainerHeight);
+                            long minDuration = Math.min(duration, cutEndTime);
+                            itemView.setEndTime(minDuration);
+                            itemView.setWidthAndHeight((int) (minDuration / PER_MS_IN_PX), frameContainerHeight);
                             params.setMargins((int) (itemView.getStartTime() / PER_MS_IN_PX + frameListPadding - TemplateMaterialItemView.ARROW_WIDTH),
                                     screenUtil.dip2px(getContext(), 5), 0, 0);
                             itemView.setLayoutParams(params);

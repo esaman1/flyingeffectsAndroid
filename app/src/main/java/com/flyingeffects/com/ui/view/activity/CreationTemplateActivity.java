@@ -13,7 +13,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -68,7 +67,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import androidx.appcompat.app.AlertDialog;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -1710,7 +1708,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
     @Override
-    public void modifyTimeLineSickerPath(String id, String path) {
+    public void modifyTimeLineSickerPath(String id, String path,StickerView stickerView) {
         if (albumType.isVideo(GetPathType.getInstance().getPathType(path)) && TextUtils.isEmpty(videoPath)) {
             //重新设置进度条的长度
             MediaInfo mediaInfo = new MediaInfo(path);
@@ -1734,6 +1732,16 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         } else if (!TextUtils.isEmpty(videoPath)) {
             //背景模板
             mSeekBarView.modifyMaterialThumbnail(path, id, false);
+            if (TextUtils.equals("0", id) && albumType.isVideo(GetPathType.getInstance().getPathType(path))) {
+                MediaInfo mediaInfo = new MediaInfo(path);
+                long duration = (long) (mediaInfo.vDuration * 1000);
+                stickerView.setShowStickerStartTime(0);
+                stickerView.setShowStickerEndTime(duration);
+                musicStartTime = 0;
+                musicStartFirstTime = 0;
+                musicEndFirstTime = mCutEndTime;
+                musicEndTime = mCutEndTime;
+            }
             mSeekBarView.setCutStartTime(mCutStartTime);
             mSeekBarView.setCutEndTime(mCutEndTime);
         } else {

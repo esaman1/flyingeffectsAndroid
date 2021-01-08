@@ -250,8 +250,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
     @Override
-    public void modifyTimeLineSickerPath(String id,String path) {
-        creationTemplatemvpView.modifyTimeLineSickerPath(id,path);
+    public void modifyTimeLineSickerPath(String id,String path,StickerView stickerView) {
+        creationTemplatemvpView.modifyTimeLineSickerPath(id,path,stickerView);
     }
 
     public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH,int templateId,long musicStartTime,long musicEndTime,
