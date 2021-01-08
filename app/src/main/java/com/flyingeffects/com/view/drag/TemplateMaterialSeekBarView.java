@@ -256,6 +256,13 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                 if (TextUtils.equals(String.valueOf(mTemplateMaterialItemViews.get(i).getIdentityID()), id)) {
                     TemplateMaterialItemView itemView = mTemplateMaterialItemViews.get(i);
                     if (isBackgroundVideo) {
+                        if (albumType.isVideo(GetPathType.getInstance().getPathType(path))) {
+                            MediaInfo mediaInfo = new MediaInfo(path);
+                            mediaInfo.prepare();
+                            long duration = (long) (mediaInfo.vDuration * 1000);
+                            itemView.setDuration(duration);
+                            mediaInfo.release();
+                        }
                         itemView.setResPathAndDuration(path, cutEndTime - cutStartTime, frameContainerHeight, false, "");
                     } else {
                         if (albumType.isVideo(GetPathType.getInstance().getPathType(path))) {

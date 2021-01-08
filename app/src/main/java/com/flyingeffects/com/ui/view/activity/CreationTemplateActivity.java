@@ -1747,13 +1747,22 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             mSeekBarView.modifyMaterialThumbnail(path, id, false);
             if (TextUtils.equals("0", id) && albumType.isVideo(GetPathType.getInstance().getPathType(path))) {
                 MediaInfo mediaInfo = new MediaInfo(path);
-                long duration = (long) (mediaInfo.vDuration * 1000);
+                mediaInfo.prepare();
                 stickerView.setShowStickerStartTime(0);
-                stickerView.setShowStickerEndTime(duration);
+                long minDuration = Math.min((long) (mediaInfo.vDuration * 1000), mCutEndTime);
+                mediaInfo.release();
+                stickerView.setShowStickerEndTime(minDuration);
                 musicStartTime = 0;
                 musicStartFirstTime = 0;
-                musicEndFirstTime = mCutEndTime;
-                musicEndTime = mCutEndTime;
+                if (musicChooseIndex == 0) {
+                    //素材音乐
+                    musicEndFirstTime = minDuration;
+                    musicEndTime = minDuration;
+                } else {
+                    //背景音乐
+                    musicEndFirstTime = mCutEndTime;
+                    musicEndTime = mCutEndTime;
+                }
             }
             mSeekBarView.setCutStartTime(mCutStartTime);
             mSeekBarView.setCutEndTime(mCutEndTime);
