@@ -35,7 +35,7 @@ public class BaseConstans {
     public static String titok;
     public static String kuaishou;
     /**是否是正式环境*/
-    public static final boolean PRODUCTION = true;
+    public static final boolean PRODUCTION = false;
     private static String channel = "";
     private static String versionCode = "";
     private static String uuid = "";

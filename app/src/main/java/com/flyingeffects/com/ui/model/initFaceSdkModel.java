@@ -78,7 +78,7 @@ public class initFaceSdkModel {
                 @Override
                 public void call(Integer integer) {
                     waitingDialog_progress = new WaitingDialog_progress(mcontext);
-                    waitingDialog_progress.openProgressDialog("抠像升级中...");
+                    waitingDialog_progress.openProgressDialog("抠像速度升级中...");
                 }
             });
             startTimer();

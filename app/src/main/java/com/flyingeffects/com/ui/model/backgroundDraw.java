@@ -279,6 +279,7 @@ public class backgroundDraw {
             }
             LogUtil.d("OOM", "主图层添加完毕");
         } catch (Exception e) {
+            LogUtil.d("OOM", "e-------"+e.getMessage());
             e.printStackTrace();
         }
     }
@@ -350,6 +351,7 @@ public class backgroundDraw {
             }
 
         } catch (Exception e) {
+            LogUtil.d("OOM","e+"+e.getMessage());
             e.printStackTrace();
         }
     }
@@ -558,9 +560,14 @@ public class backgroundDraw {
         List<File> getMattingList = FileManager.listFileSortByModifyTime(path);
         LogUtil.d("OOM", "第一张图片地址为" + getMattingList.get(0).getPath());
         Bitmap bp = BitmapFactory.decodeFile(getMattingList.get(0).getPath());
+        LogUtil.d("OOM", "第一张图片地址为222" );
         imageCoverWidth=bp.getWidth();
         imageCoverHeight=bp.getHeight();
+        LogUtil.d("OOM", "第一张图片地址为333" );
         bp= MattingImage.mattingSingleImg(bp,imageCoverWidth,imageCoverHeight);
+        if(bp==null){
+            LogUtil.d("OOM", "nulllllllllllllllllllllllllllllllllllllllllllll");
+        }
         LogUtil.d("OOM", "图片宽为" + bp.getWidth());
         long STARTTime = stickerItem.getShowStickerStartTime();
         long endTime = stickerItem.getShowStickerEndTime();
@@ -713,15 +720,21 @@ public class backgroundDraw {
                 }, percentage);
 
             }
-
+            LogUtil.d("oom","currentTime="+currentTime+"nowProgressTime[0]="+nowProgressTime[0]);
             if (currentTime > nowProgressTime[0]) {
+                LogUtil.d("oom","需要切换新的图了");
                 //需要切换新的图了
                 nowChooseImageIndex[0]++;
                 if (nowChooseImageIndex[0] < getMattingList.size()) {
                     LogUtil.d("CanvasRunnable", "addCanvasRunnable=" + preTime + "currentTime=" + currentTime + "nowChooseImageIndex=" + nowChooseImageIndex);
                     nowProgressTime[0] = preTime + nowProgressTime[0];
                     Bitmap firstBitmap1 = BitmapFactory.decodeFile(getMattingList.get(nowChooseImageIndex[0]).getPath());
+                    LogUtil.d("oom","zhunbeiKKKKK");
+                    if(firstBitmap1!=null){
+                        LogUtil.d("oom","firstBitmap1!=null");
+                    }
                     firstBitmap1= MattingImage.mattingSingleImg(firstBitmap1,imageCoverWidth,imageCoverHeight);
+                    LogUtil.d("oom","zhunbeiKKKKKOver");
                     bpLayer.switchBitmap(firstBitmap1);
                 } else {
                     LogUtil.d("OOM", "隐藏当前图层");
