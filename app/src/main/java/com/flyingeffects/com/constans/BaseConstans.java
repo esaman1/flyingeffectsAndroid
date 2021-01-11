@@ -2,7 +2,6 @@ package com.flyingeffects.com.constans;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Environment;
 import android.text.TextUtils;
 
 import com.flyingeffects.com.base.BaseApplication;
