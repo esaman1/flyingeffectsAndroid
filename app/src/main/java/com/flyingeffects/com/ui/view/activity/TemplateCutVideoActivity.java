@@ -16,6 +16,7 @@ import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.ui.model.VideoMattingModel;
+import com.flyingeffects.com.ui.model.initFaceSdkModel;
 import com.flyingeffects.com.ui.model.videoCutDurationForVideoOneDo;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -346,14 +347,15 @@ public class TemplateCutVideoActivity extends BaseActivity {
     private VideoMattingModel videoMattingModel;
 
     private void gotoMattingVideo(String originalPath) {
-//        SegJni.nativeCreateSegHandler(this, ConUtil.getFileContent(this, R.raw.megviisegment_model), BaseConstans.THREADCOUNT);
-        Observable.just(originalPath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
-            videoMattingModel = new VideoMattingModel(originalPath, TemplateCutVideoActivity.this, (isSuccess, path, noMakingPath) -> {
-                EventBus.getDefault().post(new MattingVideoEnity(noMakingPath, path, originalPath, isFrom));
-                TemplateCutVideoActivity.this.finish();
+        initFaceSdkModel.getHasLoadSdkOk(() -> {
+            Observable.just(originalPath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
+                videoMattingModel = new VideoMattingModel(originalPath, TemplateCutVideoActivity.this, (isSuccess, path, noMakingPath) -> {
+                    EventBus.getDefault().post(new MattingVideoEnity(noMakingPath, path, originalPath, isFrom));
+                    TemplateCutVideoActivity.this.finish();
+                });
+                videoMattingModel.ToExtractFrame(templateName);
             });
-            videoMattingModel.ToExtractFrame(templateName);
-        });
+        },this);
     }
 
 

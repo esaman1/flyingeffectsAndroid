@@ -117,6 +117,9 @@ public class CompressionCuttingManage {
     private int downSuccessNum;
 
     public void compressImgForFace(List<String> allPaths) {
+
+
+
         initFaceSdkModel.getHasLoadSdkOk(() -> {
             if (hasCache) {
                 if (allPaths != null && allPaths.size() == 1) {
