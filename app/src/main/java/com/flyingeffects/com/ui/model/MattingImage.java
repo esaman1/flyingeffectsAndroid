@@ -11,6 +11,7 @@ import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.utils.faceUtil.SegResultHandleUtils;
 import com.megvii.facepp.multi.sdk.BodySegmentApi;
 import com.megvii.facepp.multi.sdk.FacePPImage;
+import com.megvii.facepp.multi.sdk.segment.SegmentResult;
 import com.megvii.facepp.multi.sdk.utils.ImageTransformUtils;
 import com.shixing.sxve.ui.util.PhotoBitmapUtils;
 import com.shixing.sxve.ui.view.WaitingDialog;
@@ -110,6 +111,53 @@ public class MattingImage {
     }
 
 
+
+    /**
+     * description ：普通抠图
+     * creation date: 2020/10/20
+     * user : zhangtongju
+     */
+    int bitmapWidth;
+    int bitmapHeight;
+
+    public void mattingImage(Bitmap OriginBitmap, int index,mattingStatus callback) {
+        if(index==1){
+            bitmapWidth=OriginBitmap.getWidth();
+            bitmapHeight=OriginBitmap.getHeight();
+        }
+        LogUtil.d("OOM4", "开始抠图" + System.currentTimeMillis());
+        byte[] imageBgr = ImageTransformUtils.bitmap2BGR(OriginBitmap);
+        FacePPImage facePPImage = new FacePPImage.Builder()
+                .setData(imageBgr)
+                .setWidth(bitmapWidth)
+                .setHeight(bitmapHeight)
+                .setMode(FacePPImage.IMAGE_MODE_BGR)
+                .setRotation(FacePPImage.FACE_UP).build();
+        float[] alpha = BodySegmentApi.getInstance().bodySegment(facePPImage);//抠像
+//        SegmentResult alpha =  BodySegmentApi.getInstance().segmentFrame(facePPImage);
+        OriginBitmap=   SegResultHandleUtils.setBitmapAlpha(OriginBitmap, alpha);
+        callback.isSuccess(true, OriginBitmap);
+        LogUtil.d("OOM4", "结束抠图" + System.currentTimeMillis());
+    }
+
+
+
+
+//    public static  Bitmap mattingSingleImg(Bitmap bitmap, int width, int height) {
+//        byte[] imageBgr = ImageTransformUtils.bitmap2BGR(bitmap);
+//        FacePPImage facePPImage = new FacePPImage.Builder()
+//                .setData(imageBgr)
+//                .setWidth(width)
+//                .setHeight(height)
+//                .setMode(FacePPImage.IMAGE_MODE_BGR)
+//                .setRotation(FacePPImage.FACE_UP).build();
+//        LogUtil.d("OOM", "segmentFrameStart");
+//        SegmentResult alpha =  BodySegmentApi.getInstance().segmentFrame(facePPImage);
+//        LogUtil.d("OOM", "segmentFrameEnd");
+//        return  SegResultHandleUtils.setBitmapAlpha(bitmap, alpha.getSegResult());
+//    }
+
+
     /**
      * description ：自己写的自定义抠图
      * creation date: 2020/7/13
@@ -128,26 +176,34 @@ public class MattingImage {
     }
 
 
-    public static Bitmap mattingSingleImg(Bitmap bitmap, int width, int height) {
+    public static  Bitmap mattingSingleImg(Bitmap bitmap, int width, int height) {
         byte[] imageBgr = ImageTransformUtils.bitmap2BGR(bitmap);
-        LogUtil.d("OOM", "imageBgr");
         FacePPImage facePPImage = new FacePPImage.Builder()
                 .setData(imageBgr)
                 .setWidth(width)
                 .setHeight(height)
                 .setMode(FacePPImage.IMAGE_MODE_BGR)
                 .setRotation(FacePPImage.FACE_UP).build();
-        LogUtil.d("OOM", "facePPImage");
         float[] alpha = BodySegmentApi.getInstance().bodySegment(facePPImage);//抠像
-        LogUtil.d("OOM", "alpha");
-        Bitmap bp = SegResultHandleUtils.setBitmapAlpha(bitmap, alpha);
-        if (bp != null) {
-            LogUtil.d("OOM", "bp!=null");
-        } else {
-            LogUtil.d("OOM", "bp==null");
-        }
-        return bp;
+        return SegResultHandleUtils.setBitmapAlpha(bitmap, alpha);
     }
+
+
+//
+//    public static  Bitmap mattingSingleImg(Bitmap bitmap, int width, int height) {
+//        byte[] imageBgr = ImageTransformUtils.bitmap2BGR(bitmap);
+//        FacePPImage facePPImage = new FacePPImage.Builder()
+//                .setData(imageBgr)
+//                .setWidth(width)
+//                .setHeight(height)
+//                .setMode(FacePPImage.IMAGE_MODE_BGR)
+//                .setRotation(FacePPImage.FACE_UP).build();
+//        LogUtil.d("OOM", "segmentFrameStart");
+//        SegmentResult alpha =  BodySegmentApi.getInstance().segmentFrame(facePPImage);
+//        LogUtil.d("OOM", "segmentFrameEnd");
+//        return  SegResultHandleUtils.setBitmapAlpha(bitmap, alpha.getSegResult());
+//    }
+
 
 
     /**

@@ -102,8 +102,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     @BindView(R.id.id_vview_realtime_gllayout)
     ViewLayerRelativeLayout viewLayerRelativeLayout;
-    @BindView(R.id.relative_playerView)
-    RelativeLayout relative_playerView;
+
     @BindView(R.id.ll_space)
     LinearLayout ll_space;
     @BindView(R.id.tv_music)
@@ -505,7 +504,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_delete_all_text, R.id.iv_add_sticker, R.id.iv_top_back,
-            R.id.iv_change_ui, R.id.tv_background, R.id.tv_music, R.id.tv_anim, R.id.tv_tiezhi, R.id.id_vview_realtime_gllayout, R.id.tv_add_text,
+            R.id.iv_change_ui, R.id.tv_background, R.id.tv_music, R.id.tv_anim, R.id.tv_tiezhi, R.id.tv_add_text,
             R.id.rl_creation_container})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -544,9 +543,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 break;
 
 
-            case R.id.id_vview_realtime_gllayout:
-                presenter.onclickRelativeLayout();
-                break;
+//            case R.id.id_vview_realtime_gllayout:
+//                presenter.onclickRelativeLayout();
+//                break;
 
 
             case R.id.ll_play:
@@ -1977,6 +1976,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         builder.setTitle("提示");
         builder.setPositiveButton("确定", (dialog, which) -> {
             dialog.dismiss();
+            Runtime.getRuntime().gc();
             finish();
         });
         builder.setNegativeButton("取消", (dialog, which) -> dialog.dismiss());

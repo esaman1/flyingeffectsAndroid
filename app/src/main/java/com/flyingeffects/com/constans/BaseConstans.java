@@ -27,6 +27,10 @@ public class BaseConstans {
     public static final String UMENGAPPID = "5e5c68a2570df3d6930002b4";
     /**抖音分享ClientKey*/
     public static final String DOUYINSHARE_CLIENTKEY ="awikd2g333hd0ien";
+
+    /**是否开启华为渠道适配*/
+    public static boolean IsOpenChannelAdaptive=true;
+
     /**当前抠图是用sdk 还是用服务器*/
     public static final boolean UserFaceSdk=true;
 //    public static final boolean isTitokChannel=true;

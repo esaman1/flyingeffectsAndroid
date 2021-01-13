@@ -1416,8 +1416,32 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             primitivePath = event.getPrimitivePath();
         }
 
+        if (nowChooseMusic == 1) {
+            //重新勾选音乐
+
+            chooseMaterialMusic();
+
+
+        }
 
     }
+
+
+
+    private void chooseMaterialMusic(){
+        clearCheckBox();
+        String path = imgPath.get(0);
+        if (albumType.isVideo(GetPathTypeModel.getInstance().getMediaType(path))) {
+            presenter.getBjMusic(primitivePath);
+            changeMusic();
+            cb_0.setImageResource(R.mipmap.template_btn_selected);
+            nowChooseMusic = 1;
+        } else {
+            chooseTemplateMusic();
+            ToastUtil.showToast("当前素材不是视频");
+        }
+    }
+
 
     private void changeMaterialMusic(String musicPath) {
         if (nowChooseMusic == 1) {
@@ -1627,17 +1651,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 //素材
                 case R.id.ll_choose_0:
                 case R.id.iv_check_box_0:
-                    clearCheckBox();
-                    String path = imgPath.get(0);
-                    if (albumType.isVideo(GetPathTypeModel.getInstance().getMediaType(path))) {
-                        presenter.getBjMusic(primitivePath);
-                        changeMusic();
-                        cb_0.setImageResource(R.mipmap.template_btn_selected);
-                        nowChooseMusic = 1;
-                    } else {
-                        chooseTemplateMusic();
-                        ToastUtil.showToast("当前素材不是视频");
-                    }
+                    chooseMaterialMusic();
                     break;
                 //背景
                 case R.id.ll_choose_1:
