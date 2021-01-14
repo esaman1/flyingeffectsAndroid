@@ -430,22 +430,6 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
         TemplateViewPager adapter = new TemplateViewPager(listForInitBottom);
         viewPager.setAdapter(adapter);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int i, float v, int i1) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int i) {
-
-            }
-        });
 
         new Handler().postDelayed(() -> {
             if (!TextUtils.isEmpty(mVideoPath)) {
@@ -971,8 +955,6 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                                     clearCheckBox();
 
                                                 }
-
-
                                             }
                                             if (!stickView.getResPath().endsWith(".gif") && !albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
                                                 stickView.setLeftBitmap(ContextCompat.getDrawable(context, R.mipmap.icon_pic_save));
@@ -981,14 +963,12 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                         });
                                     });
                                     manage.toMatting(paths);
-
                                     if (stickView.isFirstAddSticker()) {
                                         if (stickView.isOpenVoice()) {
                                             stickView.setOpenVoice(false);
                                             callback.getBgmPath("");
                                         }
                                     }
-
                                 }
                             }
                         }, "");
