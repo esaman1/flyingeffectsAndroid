@@ -1451,6 +1451,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         Observable.just(event.getPath()).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
             if (albumType.isImage(GetPathTypeModel.getInstance().getMediaType(event.getPath()))) {
                 ll_green_background.setVisibility(View.VISIBLE);
+                scrollView.setVisibility(View.GONE);
                 presenter.setmVideoPath("");
                 videoPath = "";
                 showGreenBj(false);
@@ -1484,6 +1485,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 LogUtil.d("OOM", "重新选择了视频背景,地址为" + event.getPath());
                 videoPath = event.getPath();
                 ll_green_background.setVisibility(View.GONE);
+                scrollView.setVisibility(View.VISIBLE);
                 setPlayerViewSize(nowUiIsLandscape);
                 initExo(videoPath);
                 presenter.setmVideoPath(videoPath);
