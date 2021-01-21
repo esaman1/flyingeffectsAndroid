@@ -86,6 +86,7 @@ public class DressUpPreviewActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        LogUtil.d("OOM3", "换装页面initView");
         String urlPath = getIntent().getStringExtra("url");
         template_id = getIntent().getStringExtra("template_id");
         localImage = getIntent().getStringExtra("localImage");
@@ -324,6 +325,7 @@ public class DressUpPreviewActivity extends BaseActivity {
     private void showAndSaveImage(String url) {
         Glide.with(this).load(url).into(iv_show_content);
         listForKeep.add(url);
+        LogUtil.d("OOM3","showAndSaveImage");
     }
 
 

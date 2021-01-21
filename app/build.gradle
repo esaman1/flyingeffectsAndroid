@@ -10,6 +10,11 @@ android {
             keyAlias = 'jujuname'
             keyPassword 'android'
         }
+
+
+
+
+
         realse {
             storeFile file('feishan.jks')
             storePassword 'android'

@@ -1042,22 +1042,28 @@ public class PreviewUpAndDownMvpModel {
      * user : zhangtongju
      */
     public void toDressUp(String path, String templateId, String templateTitle) {
-        DressUpModel dressUpModel = new DressUpModel(context, new DressUpModel.DressUpCallback() {
+        Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
             @Override
-            public void isSuccess(List<String> paths) {
-                if(paths!=null){
-                    Intent intent = new Intent(context, DressUpPreviewActivity.class);
-                    intent.putExtra("url", paths.get(0));
-                    intent.putExtra("template_id", templateId);
-                    intent.putExtra("localImage", path);
-                    intent.putExtra("templateTitle", templateTitle);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    context.startActivity(intent);
-                }
+            public void call(Integer integer) {
+                LogUtil.d("OOM3", "toDressUp");
+                DressUpModel dressUpModel = new DressUpModel(context, new DressUpModel.DressUpCallback() {
+                    @Override
+                    public void isSuccess(List<String> paths) {
+                        LogUtil.d("OOM3", "跳转到换装页面");
+                        if(paths!=null){
+                            Intent intent = new Intent(context, DressUpPreviewActivity.class);
+                            intent.putExtra("url", paths.get(0));
+                            intent.putExtra("template_id", templateId);
+                            intent.putExtra("localImage", path);
+                            intent.putExtra("templateTitle", templateTitle);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            context.startActivity(intent);
+                        }
+                    }
+                },false);
+                dressUpModel.toDressUp(path, templateId);
             }
-        },false);
-
-        dressUpModel.toDressUp(path, templateId);
+        });
     }
 
 
