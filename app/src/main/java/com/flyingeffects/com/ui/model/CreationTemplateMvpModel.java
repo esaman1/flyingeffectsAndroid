@@ -1000,7 +1000,11 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                         statisticsEventAffair.getInstance().setFlag(context, "17_zdy_cutout_save");
                         //开启抠像
                         if (isMatting) {
-                            saveToAlbum(stickView.getClipPath());
+                            if(!TextUtils.isEmpty(stickView.getClipPath())){
+                                saveToAlbum(stickView.getClipPath());
+                            }else{
+                                saveToAlbum(stickView.getResPath());
+                            }
                         } else {
                             //没有开启抠像
                             if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
