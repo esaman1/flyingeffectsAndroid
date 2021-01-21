@@ -36,7 +36,7 @@
     <color name="albumColorTabText">#A3A3A5</color>
     <color name="albumColorTabBlack">#181818</color>
     <color name="albumColorWhite">#FFFFFF</color>
-    <color name="albumColorBlack">#000000</color>
+    <color name="albumColorBlack">#010101</color>
     <color name="albumColorBlue">#5496FF</color>
     <color name="albumColorTrack">#80FFFFFF</color>
     <color name="album_title_shadow">#80000000</color>
