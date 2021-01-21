@@ -1016,7 +1016,11 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                 });
                             } else {
                                 //取原图片的路径保存
-                                saveToAlbum(stickView.getOriginalPath());
+                                if(!TextUtils.isEmpty(stickView.getOriginalPath())){
+                                    saveToAlbum(stickView.getOriginalPath());
+                                }else{
+                                    saveToAlbum(stickView.getResPath());
+                                }
                             }
                         }
                     }
