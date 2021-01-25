@@ -146,11 +146,9 @@ public class HomeMainActivity extends FragmentActivity {
         }
         initYouMeng();
         statisticsUpgradeApp();
-       initFaceSdkModel.initFaceSdk();
+        initFaceSdkModel.initFaceSdk();
+
     }
-
-
-
 
 
     private void initYouMeng() {
@@ -176,8 +174,8 @@ public class HomeMainActivity extends FragmentActivity {
 
             @Override
             protected void _onNext(UserInfo data) {
-                String str=StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM2","requestUserInfo="+str);
+                String str = StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM2", "requestUserInfo=" + str);
                 Hawk.put("UserInfo", data);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
@@ -402,10 +400,18 @@ public class HomeMainActivity extends FragmentActivity {
         fragments.add(new DressUpFragment());
         menu3F = new frag_user_center();
         fragments.add(menu3F);
-        home_vp_frg_adapter adapter = new home_vp_frg_adapter(getSupportFragmentManager(),fragments);
+        home_vp_frg_adapter adapter = new home_vp_frg_adapter(getSupportFragmentManager(), fragments);
         viewpager_home.setAdapter(adapter);
         viewpager_home.setOffscreenPageLimit(3);
         whichMenuSelect(1);
+        findViewById(R.id.iv_main_add).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeMainActivity.this, ShootActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+            }
+        });
     }
 
 
@@ -535,7 +541,7 @@ public class HomeMainActivity extends FragmentActivity {
 
     private void openMenu(int which) {
         setStatusBar();
-        viewpager_home.setCurrentItem(which,false);
+        viewpager_home.setCurrentItem(which, false);
         EventBus.getDefault().post(new RequestMessage());
     }
 
@@ -695,23 +701,20 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-
     /**
      * description ：统计
      * creation date: 2020/12/10
      * user : zhangtongju
      */
-    private void statisticsUpgradeApp(){
-        String  appCode = SystemUtil.getVersionCode(this);
-        String lastCode=Hawk.get("lastAppCode");
-        if(TextUtils.isEmpty(lastCode)||!lastCode.equals(appCode)){
-            if(!DoubleClick.getInstance().isFastDoubleClick()){
+    private void statisticsUpgradeApp() {
+        String appCode = SystemUtil.getVersionCode(this);
+        String lastCode = Hawk.get("lastAppCode");
+        if (TextUtils.isEmpty(lastCode) || !lastCode.equals(appCode)) {
+            if (!DoubleClick.getInstance().isFastDoubleClick()) {
                 statisticsPhoneInfo();
             }
         }
     }
-
-
 
 
     /**
@@ -721,10 +724,10 @@ public class HomeMainActivity extends FragmentActivity {
      */
     private void statisticsPhoneInfo() {
         HashMap<String, String> params = new HashMap<>();
-        params.put("ip",SystemUtil.getIPAddress(this));
+        params.put("ip", SystemUtil.getIPAddress(this));
         // 启动时间
         Observable ob = Api.getDefault().add_active(BaseConstans.getRequestHead(params));
-        LogUtil.d("OOM","用户ip="+StringUtil.beanToJSONString(params));
+        LogUtil.d("OOM", "用户ip=" + StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(HomeMainActivity.this) {
             @Override
             protected void _onError(String message) {
@@ -736,7 +739,6 @@ public class HomeMainActivity extends FragmentActivity {
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
-
 
 
 }
