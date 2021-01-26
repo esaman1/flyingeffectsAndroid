@@ -11,6 +11,7 @@
  import com.bytedance.sdk.open.douyin.DouYinOpenApiFactory;
  import com.bytedance.sdk.open.douyin.DouYinOpenConfig;
  import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
+ import com.faceunity.FURenderer;
  import com.flyingeffects.com.R;
  import com.flyingeffects.com.constans.BaseConstans;
  import com.flyingeffects.com.manager.AdConfigs;
@@ -75,6 +76,7 @@ public class BaseApplication extends MultiDexApplication {
         TTAdManagerHolder.init(this);
         EmojiManager.init(this);
         initAlbum();
+        FURenderer.initFURenderer(this);
     }
 
 
