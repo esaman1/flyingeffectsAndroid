@@ -42,7 +42,7 @@ import java.lang.ref.SoftReference;
  * 拍摄预览页面
  *
  * @author shijiaqi
- * 2020.6.15
+ * 2020.6.15CapturePreviewActivity
  */
 public class CapturePreviewActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "CapturePreviewActivity";

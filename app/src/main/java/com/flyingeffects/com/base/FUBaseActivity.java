@@ -40,6 +40,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.faceunity.FURenderer;
 import com.faceunity.gles.core.GlUtil;
 import com.faceunity.utils.BitmapUtil;
@@ -70,6 +71,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * Base Activity, 主要封装FUBeautyActivity与FUEffectActivity的公用界面与方法
  * CameraRenderer相关回调实现
@@ -81,17 +86,20 @@ public abstract class FUBaseActivity extends AppCompatActivity
         FURenderer.OnFUDebugListener,
         FURenderer.OnTrackingStatusChangedListener {
     public final static String TAG = FUBaseActivity.class.getSimpleName();
-
+    /**
+     * 当前是否在拍摄
+     */
+    private boolean isShooting = false;
     protected GLSurfaceView mGlSurfaceView;
-    protected BaseCameraRenderer mCameraRenderer;
+    protected Camera1Renderer mCameraRenderer;
     protected volatile boolean mIsDualInput = true;
     private TextView mDebugText;
     protected TextView mTvTrackStatus;
     private TextView mEffectDescription;
-//    protected RecordBtn mTakePicBtn;
+    //    protected RecordBtn mTakePicBtn;
     protected ViewStub mBottomViewStub;
     private LinearLayout mLlLight;
-//    private VerticalSeekBar mVerticalSeekBar;
+    //    private VerticalSeekBar mVerticalSeekBar;
 //    protected CameraFocus mCameraFocus;
     protected ConstraintLayout mClOperationView;
     protected ConstraintLayout mRootView;
@@ -126,6 +134,10 @@ public abstract class FUBaseActivity extends AppCompatActivity
         return true;
     }
 
+
+
+
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (super.onTouchEvent(event)) {
@@ -137,7 +149,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
         }
         if (event.getPointerCount() == 1 && event.getAction() == MotionEvent.ACTION_DOWN) {
             mLlLight.setVisibility(View.VISIBLE);
-           // mVerticalSeekBar.setProgress((int) (100 * mCameraRenderer.getExposureCompensation()));
+            // mVerticalSeekBar.setProgress((int) (100 * mCameraRenderer.getExposureCompensation()));
 
             float rawX = event.getRawX();
             float rawY = event.getRawY();
@@ -147,8 +159,8 @@ public abstract class FUBaseActivity extends AppCompatActivity
 //            DisplayMetrics screenInfo = ScreenUtils.getScreenInfo(this);
             int screenWidth = ScreenUtils.getScreenWidth(this);
             int marginTop = 280;
-            int padding =44;
-            int progressBarHeight =460;
+            int padding = 44;
+            int progressBarHeight = 460;
             if (rawX > screenWidth - focusRectSize && rawY > marginTop - padding
                     && rawY < marginTop + progressBarHeight + padding) {
                 return false;
@@ -192,7 +204,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
     };
 
     protected void showDescription(int str, int time) {
-        LogUtils.debug("OOM","showDescription");
+        LogUtils.debug("OOM", "showDescription");
         if (str == 0) {
             return;
         }
@@ -206,7 +218,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        LogUtils.debug("OOM","onSensorChanged");
+        LogUtils.debug("OOM", "onSensorChanged");
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             float x = event.values[0];
             float y = event.values[1];
@@ -229,18 +241,18 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
     @Override
     public void onFpsChange(final double fps, final double renderTime) {
-        LogUtils.debug("OOM","onFpsChange");
+        LogUtils.debug("OOM", "onFpsChange");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-            //    mDebugText.setText(String.format(getString(R.string.fu_base_debug), mCameraRenderer.getCameraWidth(), mCameraRenderer.getCameraHeight(), (int) fps, (int) renderTime));
+                //    mDebugText.setText(String.format(getString(R.string.fu_base_debug), mCameraRenderer.getCameraWidth(), mCameraRenderer.getCameraHeight(), (int) fps, (int) renderTime));
             }
         });
     }
 
     @Override
     public void onTrackStatusChanged(int type, int status) {
-        LogUtils.debug("OOM","onTrackStatusChanged");
+        LogUtils.debug("OOM", "onTrackStatusChanged");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -266,7 +278,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
     @Override
     public void onSurfaceCreated() {
-        LogUtils.debug("OOM","onSurfaceCreated");
+        LogUtils.debug("OOM", "onSurfaceCreated");
         mFURenderer.onSurfaceCreated();
         mFURenderer.setBeautificationOn(true);
     }
@@ -275,25 +287,25 @@ public abstract class FUBaseActivity extends AppCompatActivity
     public void onSurfaceChanged(int viewWidth, int viewHeight) {
     }
 
-//    @Override
-//    public int onDrawFrame(byte[] cameraNv21Byte, int cameraTextureId, int cameraWidth, int cameraHeight,
-//                           float[] mvpMatrix, float[] texMatrix, long timeStamp) {
-//        LogUtils.debug("OOM","onDrawFrame");
-//        int fuTexId;
-//        if (mIsDualInput) {
-//            fuTexId = mFURenderer.onDrawFrame(cameraNv21Byte, cameraTextureId, cameraWidth, cameraHeight);
-//        } else {
-//            fuTexId = mFURenderer.onDrawFrame(cameraNv21Byte, cameraWidth, cameraHeight);
-//        }
-//        showLandmarks();
-//        sendRecordingData(fuTexId, GlUtil.IDENTITY_MATRIX, texMatrix, timeStamp / Constant.NANO_IN_ONE_MILLI_SECOND);
-//        takePicture(fuTexId, GlUtil.IDENTITY_MATRIX, texMatrix, cameraHeight, cameraWidth);
-//        return fuTexId;
-//    }
+    @Override
+    public int onDrawFrame(byte[] cameraNv21Byte, int cameraTextureId, int cameraWidth, int cameraHeight,
+                           float[] mvpMatrix, float[] texMatrix, long timeStamp) {
+        LogUtils.debug("OOM", "onDrawFrame");
+        int fuTexId;
+        if (mIsDualInput) {
+            fuTexId = mFURenderer.onDrawFrame(cameraNv21Byte, cameraTextureId, cameraWidth, cameraHeight);
+        } else {
+            fuTexId = mFURenderer.onDrawFrame(cameraNv21Byte, cameraWidth, cameraHeight);
+        }
+        showLandmarks();
+        sendRecordingData(fuTexId, GlUtil.IDENTITY_MATRIX, texMatrix, timeStamp / Constant.NANO_IN_ONE_MILLI_SECOND);
+        takePicture(fuTexId, GlUtil.IDENTITY_MATRIX, texMatrix, cameraHeight, cameraWidth);
+        return fuTexId;
+    }
 
     @Override
     public void onSurfaceDestroy() {
-        LogUtils.debug("OOM","onSurfaceDestroy");
+        LogUtils.debug("OOM", "onSurfaceDestroy");
         mFURenderer.onSurfaceDestroyed();
     }
 
@@ -315,7 +327,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
         @Override
         public void onReadBitmapListener(Bitmap bitmap) {
-            LogUtils.debug("OOM","onReadBitmapListener");
+            LogUtils.debug("OOM", "onReadBitmapListener");
             // Call on async thread
             final String filePath = MiscUtil.saveBitmap(bitmap, Constant.PHOTO_FILE_PATH, MiscUtil.getCurrentPhotoName());
             Log.d(TAG, "onReadBitmapListener: " + filePath);
@@ -334,7 +346,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
     };
 
     public void takePic() {
-        LogUtils.debug("OOM","takePic");
+        LogUtils.debug("OOM", "takePic");
         if (mIsTakingPic) {
             return;
         }
@@ -351,7 +363,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
      * @param texHeight
      */
     protected void takePicture(int texId, float[] mvpMatrix, float[] texMatrix, final int texWidth, final int texHeight) {
-        LogUtils.debug("OOM","takePicture");
+        LogUtils.debug("OOM", "takePicture");
         if (!mIsNeedTakePic) {
             return;
         }
@@ -374,7 +386,8 @@ public abstract class FUBaseActivity extends AppCompatActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-   //     ScreenUtils.fullScreen(this);
+        //     ScreenUtils.fullScreen(this);
+        ButterKnife.bind(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.act_shoot);
         PermissionUtil.checkPermission(this);
@@ -481,7 +494,8 @@ public abstract class FUBaseActivity extends AppCompatActivity
 //        mRootView = (ConstraintLayout) findViewById(R.id.cl_root);
 //        mBottomViewStub = (ViewStub) findViewById(R.id.fu_base_bottom);
 //        mBottomViewStub.setInflatedId(R.id.fu_base_bottom);
-//        mLlLight = (LinearLayout) findViewById(R.id.photograph_light_layout);
+
+        mLlLight = (LinearLayout) findViewById(R.id.photograph_light_layout);
 //        mVerticalSeekBar = (VerticalSeekBar) findViewById(R.id.photograph_light_seek);
 //        mCameraFocus = (CameraFocus) findViewById(R.id.photograph_focus);
 //        mVerticalSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -505,7 +519,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
     }
 
     private void showLandmarks() {
-        LogUtils.debug("OOM","showLandmarks");
+        LogUtils.debug("OOM", "showLandmarks");
         if (!BaseCameraRenderer.ENABLE_DRAW_LANDMARKS) {
             return;
         }
@@ -545,7 +559,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
      * @param timeStamp
      */
     protected void sendRecordingData(int texId, float[] mvpMatrix, float[] texMatrix, final long timeStamp) {
-        LogUtils.debug("OOM","sendRecordingData");
+        LogUtils.debug("OOM", "sendRecordingData");
         synchronized (mRecordLock) {
             if (mVideoEncoder == null) {
                 return;
@@ -580,7 +594,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
         @Override
         public void onPrepared(final MediaEncoder encoder) {
-            LogUtils.debug("OOM","onPrepared");
+            LogUtils.debug("OOM", "onPrepared");
             if (encoder instanceof MediaVideoEncoder) {
                 Log.d(TAG, "onPrepared: tid:" + Thread.currentThread().getId());
                 mGlSurfaceView.queueEvent(new Runnable() {
@@ -608,7 +622,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
         @Override
         public void onStopped(final MediaEncoder encoder) {
-            LogUtils.debug("OOM","onStopped");
+            LogUtils.debug("OOM", "onStopped");
             mRecordBarrier.countDown();
             // Call when MediaVideoEncoder's callback and MediaAudioEncoder's callback both are called.
             if (mRecordBarrier.getCount() == 0) {
@@ -624,7 +638,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                      //      ToastUtil.showToast(FUBaseActivity.this, R.string.save_video_too_short);
+                            //      ToastUtil.showToast(FUBaseActivity.this, R.string.save_video_too_short);
                         }
                     });
                     return;
@@ -657,7 +671,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
      * 开始录制
      */
     private void startRecording() {
-        LogUtils.debug("OOM","startRecording");
+        LogUtils.debug("OOM", "startRecording");
         Log.d(TAG, "startRecording: ");
         try {
             mStartTime = 0;
@@ -683,7 +697,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
      * 停止录制
      */
     private void stopRecording() {
-        LogUtils.debug("OOM","stopRecording");
+        LogUtils.debug("OOM", "stopRecording");
         Log.d(TAG, "stopRecording: ");
         if (mMuxer != null) {
             synchronized (mRecordLock) {
@@ -765,7 +779,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
     // only for complete requirement quickly
     private void loadInternalConfigJson() {
-        LogUtils.debug("OOM","loadInternalConfigJson");
+        LogUtils.debug("OOM", "loadInternalConfigJson");
         File file = new File(Constant.EXTERNAL_FILE_PATH, "switch_config.json");
         if (!file.exists()) {
             return;
@@ -792,5 +806,31 @@ public abstract class FUBaseActivity extends AppCompatActivity
             Log.e(TAG, "loadInternalConfigJson: ", e);
         }
     }
+
+
+
+//
+//    View.OnClickListener listener = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View view) {
+//            switch (view.getId()) {
+//                case R.id.animation_view:
+//                    if (!isShooting) {
+//                        lottieAnimationView.playAnimation();
+//                        isShooting = true;
+//                    } else {
+//                        lottieAnimationView.cancelAnimation();
+//                        isShooting = false;
+//                    }
+//                    break;
+//
+//
+//                default:
+//
+//                    break;
+//            }
+//        }
+//    };
+
 
 }

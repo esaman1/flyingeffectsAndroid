@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/black">
-
 
 
     <android.opengl.GLSurfaceView
@@ -14,9 +14,44 @@
 
 
 
+
+
+
+    <RelativeLayout
+        android:id="@+id/relative_choose_music"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/strok_choose_music_bj"
+        android:gravity="center_vertical"
+        android:paddingStart="10dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="5dp">
+
+        <ImageView
+            android:id="@+id/iv_tiktok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:src="@mipmap/tiktok_icon" />
+
+        <TextView
+            android:id="@+id/tv_chooseMusic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/iv_tiktok"
+            android:text="选音乐"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+
     <ImageView
-        android:layout_width="16dp"
-        android:layout_height="16dp"
+        android:id="@+id/iv_close"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_marginStart="21dp"
         android:layout_marginTop="36dp"
         android:contentDescription="@string/app_name"
@@ -52,13 +87,16 @@
 
 
         <LinearLayout
+            android:id="@+id/ll_stage_property"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/iv_stage_property"
                 android:layout_width="62dp"
                 android:layout_height="55dp"
                 android:src="@mipmap/logo" />
@@ -74,13 +112,17 @@
         </LinearLayout>
 
 
-        <ImageView
-
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animation_view"
+            app:lottie_fileName="phonograph1.json"
             android:layout_width="74dp"
             android:layout_height="74dp"
-            android:src="@drawable/tv_make_crice" />
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            android:layout_gravity="center" />
 
         <LinearLayout
+            android:id="@+id/ll_album"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -94,10 +136,11 @@
 
 
             <TextView
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="道具"
+                android:text="相冊"
                 android:textColor="@color/white" />
 
         </LinearLayout>
@@ -105,13 +148,69 @@
     </LinearLayout>
 
 
-    <LinearLayout
-        android:id="@+id/ll_include"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <com.example.horizontalselectedviewlibrary.HorizontalselectedView
+        android:id="@+id/horizontalselectedView"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_gravity="center_vertical"
+        app:HorizontalselectedViewSeesize="5"
         android:layout_above="@+id/ll_bottom"
-        android:layout_marginBottom="16dp"
-        android:orientation="horizontal" />
+        app:HorizontalselectedViewSelectedTextColor="#FFFFFF"
+        app:HorizontalselectedViewSelectedTextSize="60"
+        app:HorizontalselectedViewTextColor="#566265"
+        app:HorizontalselectedViewTextSize="40" />
+
+
+
+
+    <LinearLayout
+        android:id="@+id/photograph_light_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="460dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="278dp"
+        android:layout_marginRight="35dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="38dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/photograph_light_sun" />
+
+        <com.flyingeffects.com.utils.FuLive.VerticalSeekBar
+            android:id="@+id/photograph_light_seek"
+            android:layout_width="wrap_content"
+            android:layout_height="360dp"
+            android:layout_weight="1"
+            android:progressDrawable="@drawable/photograph_seek_bar_color"
+            android:thumb="@drawable/photograph_light_thumb" />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="38dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/photograph_light_moon" />
+    </LinearLayout>
+
+
+
+
+
+    <TextView
+        android:id="@+id/tv_count_down_right"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="180sp"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 
 </RelativeLayout>

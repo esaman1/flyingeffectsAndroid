@@ -1,3 +1,4 @@
+include ':horizontalselectedviewlibrary'
 include ':faceunity'
 include ':DownAndUpLibrary'
 include ':app', ':sxve', ':album', ':LanSongSDK', ':segjni'

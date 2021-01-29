@@ -233,8 +233,6 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
 
     }
 
-    ;
-
 
     private Timer timer;
     private TimerTask task;
