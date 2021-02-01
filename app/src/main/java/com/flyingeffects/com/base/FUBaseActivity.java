@@ -49,6 +49,8 @@ import com.faceunity.utils.FileUtils;
 import com.faceunity.utils.LogUtils;
 import com.faceunity.utils.MiscUtil;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.ui.model.FromToTemplate;
+import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
 import com.flyingeffects.com.utils.FuLive.BaseCameraRenderer;
 import com.flyingeffects.com.utils.FuLive.CameraUtils;
 import com.flyingeffects.com.utils.FuLive.PermissionUtil;
@@ -657,7 +659,8 @@ public abstract class FUBaseActivity extends AppCompatActivity
                                 @Override
                                 public void run() {
                                     sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(dcimFile)));
-                                    ToastUtil.showToast("保存视频成功");
+//                                    ToastUtil.showToast("保存视频成功");
+                                    intoTemplate(dcimFile.getPath());
                                 }
                             });
                         } catch (IOException e) {
@@ -669,10 +672,24 @@ public abstract class FUBaseActivity extends AppCompatActivity
         }
     };
 
+
+    private void intoTemplate(String path){
+        Intent intent = new Intent(this, TemplateAddStickerActivity.class);
+        intent.putExtra("videoPath", path);
+        intent.putExtra("title","拍摄入口");
+        intent.putExtra("IsFrom", FromToTemplate.SHOOT);
+        startActivity(intent);
+    }
+
+
+
+
+
+
     /**
      * 开始录制
      */
-    private void startRecording() {
+    public void startRecording() {
         LogUtils.debug("OOM", "startRecording");
         Log.d(TAG, "startRecording: ");
         try {
@@ -698,7 +715,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
     /**
      * 停止录制
      */
-    private void stopRecording() {
+    public void stopRecording() {
         LogUtils.debug("OOM", "stopRecording");
         Log.d(TAG, "stopRecording: ");
         if (mMuxer != null) {

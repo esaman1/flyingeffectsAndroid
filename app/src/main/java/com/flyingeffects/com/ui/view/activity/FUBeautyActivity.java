@@ -147,10 +147,20 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                         //开始录像
                         tv_count_down.setVisibility(View.GONE);
                         startRecordVideo();
+                        startRecording();
                     }
                 }else{
-                    //录屏倒计时
-                    animation_view_progress.setProgress(progress);
+
+                    if(num != 0){
+                        //录屏倒计时
+                        animation_view_progress.setProgress(progress);
+
+                    }else{
+                        presenter.stopRecord();
+                        stopRecording();
+                    }
+
+
                 }
             }
         });

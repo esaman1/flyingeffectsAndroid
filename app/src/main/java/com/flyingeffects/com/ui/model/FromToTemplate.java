@@ -46,6 +46,7 @@ public class FromToTemplate {
     public static final String PICTUREALBUM = "PICTUREALBUM";
     //换装
     public static final String DRESSUP = "DRESSUP";
-
+    //拍摄入口
+    public static final String SHOOT = "SHOOT";
 
 }
