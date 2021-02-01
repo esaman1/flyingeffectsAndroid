@@ -164,6 +164,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                     //倒计时
                     if (num != 0) {
                         tv_count_down.setText(num + "");
+                        presenter.setViewAnim(tv_count_down);
                     } else {
                         //开始录像
                         tv_count_down.setVisibility(View.GONE);

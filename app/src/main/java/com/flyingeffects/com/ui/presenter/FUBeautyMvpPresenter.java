@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.presenter;
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,14 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.RotateAnimation;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 
 import com.example.horizontalselectedviewlibrary.HorizontalselectedView;
@@ -114,6 +123,39 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
             iv.setImageResource(R.mipmap.cout_down_10);
         }
     }
+
+
+
+
+
+
+
+
+
+    /**
+     * description 设置View 动画：
+     * creation date: 2021/2/1
+     * user : zhangtongju
+     */
+    public void setViewAnim(View view){
+        AnimationSet animationSet = new AnimationSet(true); //true表示共用同一个插值器
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1, 0);
+        ScaleAnimation scaleAnimation = new ScaleAnimation(1f, 0.1f, 1f, 0.1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+//        RotateAnimation rotateAnimation=new RotateAnimation(0,120,1f,1f);
+        animationSet.addAnimation(alphaAnimation);
+        animationSet.addAnimation(scaleAnimation);
+//        animationSet.addAnimation(rotateAnimation);
+        animationSet.setDuration(1000);
+        //设置插值器为先加速再减速
+        animationSet.setInterpolator(new AccelerateDecelerateInterpolator());
+        //动画完成后保持位置
+        animationSet.setFillAfter(false);
+        view.startAnimation(animationSet);
+    }
+
+
+
+
 
 
     /**
