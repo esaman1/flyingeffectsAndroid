@@ -74,6 +74,7 @@ import java.util.concurrent.CountDownLatch;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 
 /**
  * Base Activity, 主要封装FUBeautyActivity与FUEffectActivity的公用界面与方法
@@ -387,6 +388,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //     ScreenUtils.fullScreen(this);
+        EventBus.getDefault().register(this);
         ButterKnife.bind(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.act_shoot);
@@ -833,4 +835,9 @@ public abstract class FUBaseActivity extends AppCompatActivity
 //    };
 
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 }

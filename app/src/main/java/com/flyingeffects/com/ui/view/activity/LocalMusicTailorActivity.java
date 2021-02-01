@@ -203,9 +203,9 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     }
 
     @Override
-    public void isAudioCutDone(String audioPath) {
+    public void isAudioCutDone(String audioPath,String originalPath) {
         LogUtil.d("OOM2", "裁剪完成后音频的地址为" + audioPath);
-        EventBus.getDefault().post(new CutSuccess(audioPath));
+        EventBus.getDefault().post(new CutSuccess(audioPath,originalPath));
         this.finish();
     }
 

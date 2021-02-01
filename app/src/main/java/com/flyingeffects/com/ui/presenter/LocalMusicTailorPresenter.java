@@ -372,7 +372,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
                     }
                     try {
                         FileUtil.copyFile(new File(path), SoundPath);
-                        localMusicTailorMvpView.isAudioCutDone(SoundPath);
+                        localMusicTailorMvpView.isAudioCutDone(SoundPath,localMusicTailorMvpModel.getSoundPath());
                     } catch (IOException e) {
                         e.printStackTrace();
                         LogUtil.d("OOM2", "复制文件报错" + e.getMessage());

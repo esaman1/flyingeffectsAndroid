@@ -3,11 +3,11 @@ package com.flyingeffects.com.ui.presenter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
-import android.view.LayoutInflater;
+import android.text.TextUtils;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.example.horizontalselectedviewlibrary.HorizontalselectedView;
 import com.flyingeffects.com.R;
@@ -18,6 +18,7 @@ import com.flyingeffects.com.ui.model.FUBeautyMvpModel;
 import com.flyingeffects.com.ui.view.activity.ChooseMusicActivity;
 import com.flyingeffects.com.utils.LogUtil;
 
+import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -45,8 +46,8 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         horizontalselectedView.setSeeSize(4);
     }
 
-    public void SetNowChooseMusic(String musicPath) {
-        fUBeautyMvpmodel.SetNowChooseMusic(musicPath);
+    public void SetNowChooseMusic(String musicPath,String originalPath) {
+        fUBeautyMvpmodel.SetNowChooseMusic(musicPath,originalPath);
     }
 
     /**
@@ -106,6 +107,54 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     }
 
 
+
+
+
+    /**
+     * description ：开始录像，如果有音乐，就播放音乐，如果切换了下面时长，就播放原视频音乐
+     * creation date: 2021/2/1
+     * user : zhangtongju
+     */
+    private MediaPlayer mediaPlayer ;
+    public void startRecord(){
+        LogUtil.d("OOM","startRecord");
+        String musicCutPath=fUBeautyMvpmodel.getMusicPath();
+        LogUtil.d("OOM","musicCutPath="+musicCutPath);
+        if(!TextUtils.isEmpty(musicCutPath)){
+            initMediaPlayer(musicCutPath);
+            mediaPlayer.start();
+        }
+    }
+
+
+
+    public void stopRecord(){
+        if(mediaPlayer!=null){
+            if(mediaPlayer.isPlaying()){
+                mediaPlayer.stop();
+            }
+            mediaPlayer.release();
+        }
+
+
+    }
+
+
+
+    private void initMediaPlayer(String path) {
+        try {
+            mediaPlayer = new MediaPlayer();
+            File file = new File(path);
+            mediaPlayer.setDataSource(file.getPath());//指定音频文件路径
+            mediaPlayer.setLooping(true);//设置为循环播放
+            mediaPlayer.prepare();//初始化播放器MediaPlayer
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
     /**
      * description ：倒计时功能
      * creation date: 2021/1/28
@@ -148,6 +197,11 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
                         endTimer();
                     }
                     break;
+
+
+                default:
+
+                    break;
             }
         }
     };
@@ -166,6 +220,18 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
             task.cancel();
             task = null;
         }
+    }
+
+
+
+
+    /**
+     * description ：销毁，清除音乐播放
+     * creation date: 2021/2/1
+     * user : zhangtongju
+     */
+    public void OnDestroy(){
+        stopRecord();
     }
 
 

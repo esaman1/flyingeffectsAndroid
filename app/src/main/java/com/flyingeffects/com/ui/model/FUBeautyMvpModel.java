@@ -21,12 +21,28 @@ public class FUBeautyMvpModel {
     public int nowChooseDuration;
 
 
+
+
+
+    public String getOriginalMusicPath() {
+        return originalMusicPath;
+    }
+
+    public void setOriginalMusicPath(String originalMusicPath) {
+        this.originalMusicPath = originalMusicPath;
+    }
+
+    /**当前音乐原地址*/
+    private String originalMusicPath;
+
+
     public String getMusicPath() {
         return musicPath;
     }
 
-    public void setMusicPath(String musicPath) {
+    public void setMusicPath(String musicPath,String originalMusicPath) {
         this.musicPath = musicPath;
+        this.originalMusicPath=originalMusicPath;
     }
 
 
@@ -80,11 +96,11 @@ public class FUBeautyMvpModel {
     }
 
 
-    public void SetNowChooseMusic(String musicPath) {
+    public void SetNowChooseMusic(String musicPath,String originalPath) {
         if (!TextUtils.isEmpty(musicPath)) {
-            setMusicPath(musicPath);
+            setMusicPath(musicPath,originalPath);
         } else {
-            setMusicPath("");
+            setMusicPath("","");
         }
     }
 }

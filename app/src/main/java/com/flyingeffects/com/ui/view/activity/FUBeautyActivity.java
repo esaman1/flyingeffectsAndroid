@@ -49,6 +49,14 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         lottieAnimationView.setOnClickListener(listener);
     }
 
+
+
+
+    /**
+     * description ：开启美颜
+     * creation date: 2021/2/1
+     * user : zhangtongju
+     */
     @Override
     protected FURenderer initFURenderer() {
         return new FURenderer
@@ -108,8 +116,9 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     @Subscribe
     public void onEventMainThread(CutSuccess cutSuccess) {
         String nowChooseBjPath = cutSuccess.getFilePath();
+        String nowOriginal=cutSuccess.getOriginalPath();
         LogUtil.d("OOM", "nowChooseBjPath=" + nowChooseBjPath);
-        presenter.SetNowChooseMusic(nowChooseBjPath);
+        presenter.SetNowChooseMusic(nowChooseBjPath,nowOriginal);
     }
 
 
@@ -124,14 +133,31 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
             @Override
             public void call(Integer integer) {
                 if (num != 0) {
-                    LogUtil.d("OOM", "返回的num=" + num);
                     tv_count_down.setText(num + "");
                 } else {
-                    LogUtil.d("OOM", "隐藏text");
+                    //开始录像
                     tv_count_down.setVisibility(View.GONE);
+                    startRecordVideo();
                 }
             }
         });
+    }
 
+
+
+    /**
+     * description ：开始录制
+     * creation date: 2021/2/1
+     * user : zhangtongju
+     */
+    private void startRecordVideo(){
+        presenter.startRecord();
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.OnDestroy();
     }
 }
