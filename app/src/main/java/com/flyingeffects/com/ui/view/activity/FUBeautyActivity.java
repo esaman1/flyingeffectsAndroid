@@ -35,7 +35,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     private TextView tv_count_down;
     private ImageView iv_count_down;
     private MarqueTextView tv_chooseMusic;
-
+    private ImageView iv_rolling_over;
 
     @Override
     protected void onCreate() {
@@ -52,6 +52,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         lottieAnimationView = findViewById(R.id.animation_view);
         animation_view_progress=findViewById(R.id.animation_view_progress);
         animation_view_progress.setOnClickListener(listener);
+        iv_rolling_over=findViewById(R.id.iv_rolling_over);
+        iv_rolling_over.setOnClickListener(listener);
     }
 
 
@@ -94,6 +96,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
 
                 case R.id.animation_view_progress:
                     presenter.StartCountDown();
+                    tv_count_down.setVisibility(View.VISIBLE);
                     lottieAnimationView.setMaxProgress(20/(float)47);
                     lottieAnimationView.playAnimation();
                     break;
@@ -102,6 +105,11 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                 case R.id.iv_count_down:
                     //倒计时功能
                     presenter.clickCountDown(iv_count_down);
+                    break;
+
+
+                case R.id.iv_rolling_over:
+                    mCameraRenderer.switchCamera();
                     break;
 
                 default:
@@ -150,17 +158,14 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                         startRecording();
                     }
                 }else{
-
                     if(num != 0){
                         //录屏倒计时
                         animation_view_progress.setProgress(progress);
-
                     }else{
                         presenter.stopRecord();
                         stopRecording();
+                        animation_view_progress.setProgress(0);
                     }
-
-
                 }
             }
         });

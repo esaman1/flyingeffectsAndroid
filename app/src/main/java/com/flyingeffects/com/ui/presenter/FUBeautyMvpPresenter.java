@@ -22,6 +22,10 @@ import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+
 
 public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCallback {
 
@@ -121,7 +125,6 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     private int allNeedDuration;
 
     public void startRecord() {
-
         //1
         LogUtil.d("OOM", "startRecord");
         String musicCutPath = fUBeautyMvpmodel.getMusicPath();
@@ -149,8 +152,6 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
             }
             mediaPlayer.release();
         }
-
-
     }
 
 
@@ -236,6 +237,28 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         if (task != null) {
             task.cancel();
             task = null;
+        }
+    }
+
+
+    private float countDownTotal;
+    private void startProgress() {
+        countDownTotal = nowCountDownNum;
+        while (nowCountDownNum > 0) {
+            countDownTotal = countDownTotal - 0.05f;
+            float progress = countDownTotal / (float) allNeedDuration;
+            progress = 1 - progress;
+            Observable.just(progress).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Float>() {
+                @Override
+                public void call(Float aFloat) {
+                    fUBeautyMvpView.showCountDown((int) countDownTotal, 1, aFloat);
+                }
+            });
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
