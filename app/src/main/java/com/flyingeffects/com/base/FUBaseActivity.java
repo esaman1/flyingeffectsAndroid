@@ -810,31 +810,6 @@ public abstract class FUBaseActivity extends AppCompatActivity
     }
 
 
-
-//
-//    View.OnClickListener listener = new View.OnClickListener() {
-//        @Override
-//        public void onClick(View view) {
-//            switch (view.getId()) {
-//                case R.id.animation_view:
-//                    if (!isShooting) {
-//                        lottieAnimationView.playAnimation();
-//                        isShooting = true;
-//                    } else {
-//                        lottieAnimationView.cancelAnimation();
-//                        isShooting = false;
-//                    }
-//                    break;
-//
-//
-//                default:
-//
-//                    break;
-//            }
-//        }
-//    };
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();

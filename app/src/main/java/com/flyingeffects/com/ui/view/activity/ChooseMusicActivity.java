@@ -18,6 +18,7 @@ import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.FragmentHasSlide;
 import com.flyingeffects.com.ui.view.fragment.frag_choose_music_extract_audio;
 import com.flyingeffects.com.ui.view.fragment.frag_choose_music_recent_updates;
+import com.flyingeffects.com.utils.LogUtil;
 
 import java.util.ArrayList;
 
@@ -56,6 +57,7 @@ public class ChooseMusicActivity extends BaseActivity {
     protected void initView() {
         EventBus.getDefault().register(this);
         needDuration=getIntent().getLongExtra("needDuration",10000);
+        LogUtil.d("OOM2","当前需要的音乐时长为"+needDuration);
         ArrayList<Fragment> list = new ArrayList<>();
         String[] titles = {"最近更新","本地音频","视频提取","收藏音乐"};
 

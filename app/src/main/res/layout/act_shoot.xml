@@ -12,14 +12,9 @@
         android:layout_height="match_parent" />
 
 
-
-
-
-
-
     <RelativeLayout
         android:id="@+id/relative_choose_music"
-        android:layout_width="wrap_content"
+        android:layout_width="118dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
@@ -37,10 +32,13 @@
             android:layout_marginEnd="8dp"
             android:src="@mipmap/tiktok_icon" />
 
-        <TextView
+        <com.flyingeffects.com.view.MarqueTextView
             android:id="@+id/tv_chooseMusic"
+            android:focusableInTouchMode="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="marquee"
             android:layout_toRightOf="@+id/iv_tiktok"
             android:text="选音乐"
             android:textColor="@color/white"
@@ -91,7 +89,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
@@ -114,12 +111,21 @@
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/animation_view"
-            app:lottie_fileName="phonograph1.json"
+            app:lottie_fileName="shoot_btn.json"
             android:layout_width="74dp"
             android:layout_height="74dp"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
             android:layout_gravity="center" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animation_view_progress"
+            app:lottie_fileName="aa.json"
+            android:layout_width="74dp"
+            android:visibility="gone"
+            android:layout_height="74dp"
+            android:layout_gravity="center" />
+
+
+
 
         <LinearLayout
             android:id="@+id/ll_album"

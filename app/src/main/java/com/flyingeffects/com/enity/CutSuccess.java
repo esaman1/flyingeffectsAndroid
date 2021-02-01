@@ -20,11 +20,23 @@ public class CutSuccess {
         this.originalPath = originalPath;
     }
 
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    private String title;
+
     private String originalPath;
 
-    public CutSuccess(String filePath,String originalPath){
+    public CutSuccess(String filePath,String originalPath,String title){
         this.originalPath=originalPath;
         this.filePath=filePath;
+        this.title=title;
     };
 
 

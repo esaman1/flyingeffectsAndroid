@@ -79,8 +79,9 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
      */
     public void IntoChooseMusic() {
         String text = horizontalselectedView.getSelectedString();
-        int duration = fUBeautyMvpmodel.FetChooseDuration(text);
+        long duration = fUBeautyMvpmodel.FetChooseDuration(text);
         Intent intent = new Intent(context, ChooseMusicActivity.class);
+        LogUtil.d("OOM2","当前需要的音乐时长为"+duration);
         intent.putExtra("needDuration", duration);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(intent);

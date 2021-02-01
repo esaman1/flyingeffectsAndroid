@@ -13,6 +13,7 @@ import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.ui.interfaces.view.FUBeautyMvpView;
 import com.flyingeffects.com.ui.presenter.FUBeautyMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.view.MarqueTextView;
 
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
@@ -32,6 +33,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     private LottieAnimationView lottieAnimationView;
     private TextView tv_count_down;
     private ImageView iv_count_down;
+    private MarqueTextView tv_chooseMusic;
 
 
     @Override
@@ -42,6 +44,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         findViewById(R.id.ll_album).setVisibility(View.INVISIBLE);
         findViewById(R.id.relative_choose_music).setOnClickListener(listener);
         findViewById(R.id.iv_close).setOnClickListener(listener);
+        tv_chooseMusic=findViewById(R.id.tv_chooseMusic);
         iv_count_down = findViewById(R.id.iv_count_down);
         iv_count_down.setOnClickListener(listener);
         tv_count_down = findViewById(R.id.tv_count_down_right);
@@ -101,8 +104,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                 default:
 
                     break;
-
-
             }
         }
     };
@@ -115,9 +116,11 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      */
     @Subscribe
     public void onEventMainThread(CutSuccess cutSuccess) {
+        LogUtil.d("OOM", "onEventMainThread");
         String nowChooseBjPath = cutSuccess.getFilePath();
         String nowOriginal=cutSuccess.getOriginalPath();
-        LogUtil.d("OOM", "nowChooseBjPath=" + nowChooseBjPath);
+        String title=cutSuccess.getTitle();
+        tv_chooseMusic.setText(title);
         presenter.SetNowChooseMusic(nowChooseBjPath,nowOriginal);
     }
 
