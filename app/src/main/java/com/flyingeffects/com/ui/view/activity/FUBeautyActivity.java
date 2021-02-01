@@ -36,6 +36,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     private ImageView iv_count_down;
     private MarqueTextView tv_chooseMusic;
     private ImageView iv_rolling_over;
+    private boolean isRecording=false;
 
     @Override
     protected void onCreate() {
@@ -51,6 +52,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         tv_count_down = findViewById(R.id.tv_count_down_right);
         lottieAnimationView = findViewById(R.id.animation_view);
         animation_view_progress=findViewById(R.id.animation_view_progress);
+        lottieAnimationView.setOnClickListener(listener);
         animation_view_progress.setOnClickListener(listener);
         iv_rolling_over=findViewById(R.id.iv_rolling_over);
         iv_rolling_over.setOnClickListener(listener);
@@ -95,10 +97,21 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                     break;
 
                 case R.id.animation_view_progress:
-                    presenter.StartCountDown();
-                    tv_count_down.setVisibility(View.VISIBLE);
-                    lottieAnimationView.setMaxProgress(20/(float)47);
-                    lottieAnimationView.playAnimation();
+                    if(isRecording){
+                        animation_view_progress.setProgress(0);
+                        lottieAnimationView.setProgress(0);
+                        LogUtil.d("OOM","直接录制结束");
+                        isRecording=false;
+                        presenter.stopRecord();
+                        stopRecording();
+                    }else{
+                        LogUtil.d("OOM","开始录制");
+                        isRecording=true;
+                        presenter.StartCountDown();
+                        tv_count_down.setVisibility(View.VISIBLE);
+                        lottieAnimationView.setMaxProgress(20/(float)47);
+                        lottieAnimationView.playAnimation();
+                    }
                     break;
 
 
@@ -162,8 +175,10 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                         //录屏倒计时
                         animation_view_progress.setProgress(progress);
                     }else{
+                        isRecording=false;
                         presenter.stopRecord();
                         stopRecording();
+                        lottieAnimationView.setProgress(0);
                         animation_view_progress.setProgress(0);
                     }
                 }
@@ -171,6 +186,20 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         });
     }
 
+
+
+
+    /**
+     * description ：当前是否选择的无限
+     * creation date: 2021/2/1
+     * user : zhangtongju
+     */
+    private  boolean isInfinite;
+    @Override
+    public void nowChooseRecordIsInfinite(boolean isInfinite) {
+        this.isInfinite=isInfinite;
+        LogUtil.d("OOM","isInfinite="+isInfinite);
+    }
 
 
     /**

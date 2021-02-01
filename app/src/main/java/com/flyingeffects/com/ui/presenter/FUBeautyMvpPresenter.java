@@ -137,10 +137,18 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         //2  开启进度动画
         String text = horizontalselectedView.getSelectedString();
         long duration = fUBeautyMvpmodel.FetChooseDuration(text);
-        countDownStatus = 1;
-        nowCountDownNum = (int) (duration / 1000);
-        allNeedDuration = nowCountDownNum;
-        startTimer();
+        if(duration!=0){
+            fUBeautyMvpView.nowChooseRecordIsInfinite(false);
+            countDownStatus = 1;
+            nowCountDownNum = (int) (duration / 1000);
+            allNeedDuration = nowCountDownNum;
+            startTimer();
+        }else{
+            fUBeautyMvpView.nowChooseRecordIsInfinite(true);
+        }
+
+
+
 
     }
 

@@ -4,4 +4,6 @@ public interface FUBeautyMvpView {
 
     void showCountDown(int num,int countDownStatus,float progress);
 
+    void nowChooseRecordIsInfinite(boolean isInfinite);
+
 }
