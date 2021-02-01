@@ -31,6 +31,11 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     private HorizontalselectedView horizontalselectedView;
     private Timer timer;
     private TimerTask task;
+
+    /**
+     * 当前倒计时状态 0 表示动画前倒计时 1 表示 录制倒计时
+     */
+    private int countDownStatus;
     /**
      * 当前选择位数
      */
@@ -46,8 +51,8 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         horizontalselectedView.setSeeSize(4);
     }
 
-    public void SetNowChooseMusic(String musicPath,String originalPath) {
-        fUBeautyMvpmodel.SetNowChooseMusic(musicPath,originalPath);
+    public void SetNowChooseMusic(String musicPath, String originalPath) {
+        fUBeautyMvpmodel.SetNowChooseMusic(musicPath, originalPath);
     }
 
     /**
@@ -57,17 +62,15 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
      */
     private int nowCountDownNum;
 
+
     public void StartCountDown() {
-//        String text = horizontalselectedView.getSelectedString();
-//        LogUtil.d("OOM", "text=" + text);
-//        nowCountDownNum = fUBeautyMvpmodel.FetChooseDuration(text) / 1000;
-//        LogUtil.d("OOM", "nowCountDownNum=" + nowCountDownNum);
-        if(nowChooseCutDownNum==0){
-            nowCountDownNum=3;
-        }else if(nowChooseCutDownNum==1){
-            nowCountDownNum=7;
-        }else{
-            nowCountDownNum=14;
+        countDownStatus = 0;
+        if (nowChooseCutDownNum == 0) {
+            nowCountDownNum = 4;
+        } else if (nowChooseCutDownNum == 1) {
+            nowCountDownNum = 8;
+        } else {
+            nowCountDownNum = 11;
         }
         startTimer();
     }
@@ -81,7 +84,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         String text = horizontalselectedView.getSelectedString();
         long duration = fUBeautyMvpmodel.FetChooseDuration(text);
         Intent intent = new Intent(context, ChooseMusicActivity.class);
-        LogUtil.d("OOM2","当前需要的音乐时长为"+duration);
+        LogUtil.d("OOM2", "当前需要的音乐时长为" + duration);
         intent.putExtra("needDuration", duration);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(intent);
@@ -94,6 +97,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
      * user : zhangtongju
      */
     public void clickCountDown(ImageView iv) {
+
         nowChooseCutDownNum++;
         if (nowChooseCutDownNum > 2) {
             nowChooseCutDownNum = 0;
@@ -108,30 +112,39 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     }
 
 
-
-
-
     /**
-     * description ：开始录像，如果有音乐，就播放音乐，如果切换了下面时长，就播放原视频音乐
+     * description ：开始录像，1 如果有音乐，就播放音乐，如果切换了下面时长，就播放原视频音乐  2 开启进度动画
      * creation date: 2021/2/1
      * user : zhangtongju
      */
-    private MediaPlayer mediaPlayer ;
-    public void startRecord(){
-        LogUtil.d("OOM","startRecord");
-        String musicCutPath=fUBeautyMvpmodel.getMusicPath();
-        LogUtil.d("OOM","musicCutPath="+musicCutPath);
-        if(!TextUtils.isEmpty(musicCutPath)){
+    private MediaPlayer mediaPlayer;
+    private int allNeedDuration;
+
+    public void startRecord() {
+
+        //1
+        LogUtil.d("OOM", "startRecord");
+        String musicCutPath = fUBeautyMvpmodel.getMusicPath();
+        LogUtil.d("OOM", "musicCutPath=" + musicCutPath);
+        if (!TextUtils.isEmpty(musicCutPath)) {
             initMediaPlayer(musicCutPath);
             mediaPlayer.start();
         }
+
+        //2  开启进度动画
+        String text = horizontalselectedView.getSelectedString();
+        long duration = fUBeautyMvpmodel.FetChooseDuration(text);
+        countDownStatus = 1;
+        nowCountDownNum = (int) (duration / 1000);
+        allNeedDuration = nowCountDownNum;
+        startTimer();
+
     }
 
 
-
-    public void stopRecord(){
-        if(mediaPlayer!=null){
-            if(mediaPlayer.isPlaying()){
+    public void stopRecord() {
+        if (mediaPlayer != null) {
+            if (mediaPlayer.isPlaying()) {
                 mediaPlayer.stop();
             }
             mediaPlayer.release();
@@ -139,7 +152,6 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
 
 
     }
-
 
 
     private void initMediaPlayer(String path) {
@@ -153,7 +165,6 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
             e.printStackTrace();
         }
     }
-
 
 
     /**
@@ -193,7 +204,12 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
                 case 1:
                     nowCountDownNum = nowCountDownNum - 1;
                     LogUtil.d("OOM", "返回值为" + nowCountDownNum);
-                    fUBeautyMvpView.showCountDown(nowCountDownNum);
+                    float progress = 0f;
+                    if (countDownStatus == 1) {
+                        progress = nowCountDownNum / (float) allNeedDuration;
+                        progress = 1 - progress;
+                    }
+                    fUBeautyMvpView.showCountDown(nowCountDownNum, countDownStatus, progress);
                     if (nowCountDownNum == 0) {
                         endTimer();
                     }
@@ -224,14 +240,12 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     }
 
 
-
-
     /**
      * description ：销毁，清除音乐播放
      * creation date: 2021/2/1
      * user : zhangtongju
      */
-    public void OnDestroy(){
+    public void OnDestroy() {
         stopRecord();
     }
 

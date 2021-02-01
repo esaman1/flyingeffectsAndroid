@@ -109,20 +109,30 @@
         </LinearLayout>
 
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/animation_view"
-            app:lottie_fileName="shoot_btn.json"
+        <RelativeLayout
             android:layout_width="74dp"
-            android:layout_height="74dp"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:layout_height="74dp">
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/animation_view_progress"
-            app:lottie_fileName="aa.json"
-            android:layout_width="74dp"
-            android:visibility="gone"
-            android:layout_height="74dp"
-            android:layout_gravity="center" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animation_view"
+                app:lottie_fileName="shoot_btn.json"
+                android:layout_width="74dp"
+                android:layout_height="74dp"
+               />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animation_view_progress"
+                app:lottie_fileName="aa.json"
+                android:layout_width="74dp"
+                android:layout_height="74dp"
+              />
+
+        </RelativeLayout>
+
+
+
 
 
 

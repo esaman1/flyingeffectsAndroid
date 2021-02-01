@@ -31,6 +31,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     private FUBeautyMvpPresenter presenter;
     private HorizontalselectedView horizontalselectedView;
     private LottieAnimationView lottieAnimationView;
+    private LottieAnimationView animation_view_progress;
     private TextView tv_count_down;
     private ImageView iv_count_down;
     private MarqueTextView tv_chooseMusic;
@@ -49,7 +50,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         iv_count_down.setOnClickListener(listener);
         tv_count_down = findViewById(R.id.tv_count_down_right);
         lottieAnimationView = findViewById(R.id.animation_view);
-        lottieAnimationView.setOnClickListener(listener);
+        animation_view_progress=findViewById(R.id.animation_view_progress);
+        animation_view_progress.setOnClickListener(listener);
     }
 
 
@@ -90,9 +92,10 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                     finish();
                     break;
 
-
-                case R.id.animation_view:
+                case R.id.animation_view_progress:
                     presenter.StartCountDown();
+                    lottieAnimationView.setMaxProgress(20/(float)47);
+                    lottieAnimationView.playAnimation();
                     break;
 
 
@@ -128,19 +131,26 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     /**
      * description ：显示倒计时功能
      * creation date: 2021/1/29
+     * num 当前需要显示的值 countDownStatus 0 表示是开始录屏的倒计时状态 1 表示录制视频的状态  progress 录屏状态下的百分比
      * user : zhangtongju
      */
     @Override
-    public void showCountDown(int num) {
+    public void showCountDown(int num,int countDownStatus,float progress) {
         Observable.just(num).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer integer) {
-                if (num != 0) {
-                    tv_count_down.setText(num + "");
-                } else {
-                    //开始录像
-                    tv_count_down.setVisibility(View.GONE);
-                    startRecordVideo();
+                if(countDownStatus==0){
+                    //倒计时
+                    if (num != 0) {
+                        tv_count_down.setText(num + "");
+                    } else {
+                        //开始录像
+                        tv_count_down.setVisibility(View.GONE);
+                        startRecordVideo();
+                    }
+                }else{
+                    //录屏倒计时
+                    animation_view_progress.setProgress(progress);
                 }
             }
         });
@@ -163,4 +173,9 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         super.onDestroy();
         presenter.OnDestroy();
     }
+
+
+
+
+
 }
