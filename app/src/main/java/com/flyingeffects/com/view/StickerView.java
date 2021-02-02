@@ -749,8 +749,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     @Override
     protected void onDraw(Canvas canvas) {
 //        super.onDraw(canvas);
-        LogUtil.d(TAG, "stickerView width = " + getWidth());
-        LogUtil.d(TAG, "stickerView height = " + getHeight());
+//        LogUtil.d(TAG, "stickerView width = " + getWidth());
+//        LogUtil.d(TAG, "stickerView height = " + getHeight());
         drawContent(canvas);
     }
 

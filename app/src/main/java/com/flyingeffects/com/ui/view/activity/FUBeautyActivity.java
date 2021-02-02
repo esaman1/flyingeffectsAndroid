@@ -2,18 +2,24 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.horizontalselectedviewlibrary.HorizontalselectedView;
 import com.faceunity.FURenderer;
+import com.faceunity.entity.Effect;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.FUBaseActivity;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.ui.interfaces.view.FUBeautyMvpView;
 import com.flyingeffects.com.ui.presenter.FUBeautyMvpPresenter;
+import com.flyingeffects.com.utils.FuLive.EffectEnum;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.MarqueTextView;
+
+import java.util.ArrayList;
 
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
@@ -37,18 +43,20 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     private MarqueTextView tv_chooseMusic;
     private ImageView iv_rolling_over;
     private boolean isRecording=false;
+    private LinearLayout ll_stage_property;
+    private RelativeLayout relative_parent;
 
     @Override
     protected void onCreate() {
         horizontalselectedView = findViewById(R.id.horizontalselectedView);
         presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView);
-        findViewById(R.id.ll_stage_property).setVisibility(View.INVISIBLE);
         findViewById(R.id.ll_album).setVisibility(View.INVISIBLE);
         findViewById(R.id.relative_choose_music).setOnClickListener(listener);
         findViewById(R.id.iv_close).setOnClickListener(listener);
         tv_chooseMusic=findViewById(R.id.tv_chooseMusic);
         iv_count_down = findViewById(R.id.iv_count_down);
         iv_count_down.setOnClickListener(listener);
+        relative_parent=findViewById(R.id.relative_parent);
         tv_count_down = findViewById(R.id.tv_count_down_right);
         lottieAnimationView = findViewById(R.id.animation_view);
         animation_view_progress=findViewById(R.id.animation_view_progress);
@@ -56,6 +64,9 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         animation_view_progress.setOnClickListener(listener);
         iv_rolling_over=findViewById(R.id.iv_rolling_over);
         iv_rolling_over.setOnClickListener(listener);
+        ll_stage_property=findViewById(R.id.ll_stage_property);
+        ll_stage_property.setOnClickListener(listener);
+
     }
 
 
@@ -68,14 +79,34 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      */
     @Override
     protected FURenderer initFURenderer() {
+//        return new FURenderer
+//                .Builder(this)
+//                .maxFaces(4)
+//                .inputImageOrientation(mFrontCameraOrientation)
+//                .inputTextureType(FURenderer.FU_ADM_FLAG_EXTERNAL_OES_TEXTURE)
+//                .setOnFUDebugListener(this)
+//                .setOnTrackingStatusChangedListener(this)
+//                .build();
+//
+
+
+        ArrayList<Effect> effects = EffectEnum.getEffectsByEffectType(1);
         return new FURenderer
                 .Builder(this)
-                .maxFaces(4)
-                .inputImageOrientation(mFrontCameraOrientation)
                 .inputTextureType(FURenderer.FU_ADM_FLAG_EXTERNAL_OES_TEXTURE)
+                .defaultEffect(effects.size() > 1 ? effects.get(1) : null)
+                .inputImageOrientation(mFrontCameraOrientation)
+                .setLoadAiHumanProcessor(false)
+                .maxHumans(1)
+                .setNeedFaceBeauty(true)
+                .setLoadAiHandProcessor(true)
                 .setOnFUDebugListener(this)
                 .setOnTrackingStatusChangedListener(this)
+                .setOnBundleLoadCompleteListener(null)
                 .build();
+
+
+
     }
 
     @Override
@@ -123,6 +154,13 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
 
                 case R.id.iv_rolling_over:
                     mCameraRenderer.switchCamera();
+                    break;
+
+
+                case R.id.ll_stage_property:
+                    //道具
+                    presenter.showBottomSheetDialog(getSupportFragmentManager(),relative_parent);
+
                     break;
 
                 default:

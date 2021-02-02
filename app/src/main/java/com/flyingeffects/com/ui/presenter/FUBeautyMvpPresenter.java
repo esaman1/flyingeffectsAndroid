@@ -1,31 +1,50 @@
 package com.flyingeffects.com.ui.presenter;
 
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
+import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
 
 import com.example.horizontalselectedviewlibrary.HorizontalselectedView;
+import com.flyco.tablayout.SlidingTabLayout;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.adapter.CreateTemplateTextEffectAdapter;
+import com.flyingeffects.com.adapter.TemplateViewPager;
+import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.ui.interfaces.model.FUBeautyMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.FUBeautyMvpView;
+import com.flyingeffects.com.ui.model.CreationTemplateMvpModel;
 import com.flyingeffects.com.ui.model.FUBeautyMvpModel;
 import com.flyingeffects.com.ui.view.activity.ChooseMusicActivity;
+import com.flyingeffects.com.ui.view.fragment.StickerFragment;
 import com.flyingeffects.com.utils.LogUtil;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -322,6 +341,50 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     public void OnDestroy() {
         stopRecord();
     }
+
+
+
+
+
+    /**
+     * description ：显示底部筛选框
+     * creation date: 2021/2/2
+     * user : zhangtongju
+     */
+    BottomSheetDialog bottomSheetDialog;
+    public void showBottomSheetDialog(FragmentManager fragmentManager, RelativeLayout relative_parent) {
+        bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
+        View view = LayoutInflater.from(context).inflate(R.layout.view_fu_sticker, relative_parent,false);
+        SlidingTabLayout slidingTabLayout=view.findViewById(R.id.tl_tabs);
+        ViewPager viewPager=view.findViewById(R.id.viewpager2);
+        List<Fragment> fragments = new ArrayList<>();
+        StickerFragment fragment = new StickerFragment();
+        String[] titles ={"11"};
+        Bundle bundle = new Bundle();
+        bundle.putInt("stickerType", 1);
+        fragment.setStickerListener(null);
+        fragment.setArguments(bundle);
+        fragments.add(fragment);
+        home_vp_frg_adapter vp_frg_adapter = new home_vp_frg_adapter(fragmentManager, fragments);
+        viewPager.setAdapter(vp_frg_adapter);
+        slidingTabLayout.setViewPager(viewPager, titles);
+        bottomSheetDialog.setContentView(view);
+        bottomSheetDialog.setCancelable(true);
+        bottomSheetDialog.setCanceledOnTouchOutside(true);
+        View parent = (View) view.getParent();     //处理高度显示完全  https://www.jianshu.com/p/38af0cf77352
+        parent.setBackgroundResource(android.R.color.transparent);
+        BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);
+        view.measure(0, 0);
+        behavior.setPeekHeight(view.getMeasuredHeight());
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) parent.getLayoutParams();
+        params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+        parent.setLayoutParams(params);
+
+        bottomSheetDialog.show();
+    }
+
+
+
 
 
 }

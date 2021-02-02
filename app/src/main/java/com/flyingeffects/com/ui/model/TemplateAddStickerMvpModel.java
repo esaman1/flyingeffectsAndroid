@@ -408,6 +408,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                     titles[i] = list.get(i).getName();
                     Bundle bundle = new Bundle();
                     bundle.putInt("stickerType", list.get(i).getId());
+                    LogUtil.d("OOM2","贴纸id为"+list.get(i).getId());
                     StickerFragment fragment = new StickerFragment();
                     fragment.setStickerListener(TemplateAddStickerMvpModel.this);
                     fragment.setArguments(bundle);
