@@ -13,9 +13,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
-import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 
 import com.example.horizontalselectedviewlibrary.HorizontalselectedView;
@@ -74,6 +72,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
      * user : zhangtongju
      */
     private int nowCountDownNum;
+    private float nowCountDownNumF;
 
 
     public void StartCountDown() {
@@ -125,19 +124,12 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     }
 
 
-
-
-
-
-
-
-
     /**
      * description 设置View 动画：
      * creation date: 2021/2/1
      * user : zhangtongju
      */
-    public void setViewAnim(View view){
+    public void setViewAnim(View view) {
         AnimationSet animationSet = new AnimationSet(true); //true表示共用同一个插值器
         AlphaAnimation alphaAnimation = new AlphaAnimation(1, 0);
         ScaleAnimation scaleAnimation = new ScaleAnimation(1f, 0.1f, 1f, 0.1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
@@ -152,10 +144,6 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         animationSet.setFillAfter(false);
         view.startAnimation(animationSet);
     }
-
-
-
-
 
 
     /**
@@ -179,19 +167,15 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         //2  开启进度动画
         String text = horizontalselectedView.getSelectedString();
         long duration = fUBeautyMvpmodel.FetChooseDuration(text);
-        if(duration!=0){
+        if (duration != 0) {
             fUBeautyMvpView.nowChooseRecordIsInfinite(false);
             countDownStatus = 1;
             nowCountDownNum = (int) (duration / 1000);
             allNeedDuration = nowCountDownNum;
             startTimer();
-        }else{
+        } else {
             fUBeautyMvpView.nowChooseRecordIsInfinite(true);
         }
-
-
-
-
     }
 
 
@@ -242,7 +226,15 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
                 handler.sendMessage(msg);
             }
         };
-        timer.schedule(task, 0, 1000);
+
+        if (countDownStatus == 1) {
+            nowCountDownNumF=nowCountDownNum;
+            timer.schedule(task, 0, 50);
+        } else {
+            timer.schedule(task, 0, 1000);
+        }
+
+
     }
 
 
@@ -253,17 +245,25 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
             super.handleMessage(msg);
             switch (msg.what) {
                 case 1:
-                    nowCountDownNum = nowCountDownNum - 1;
-                    LogUtil.d("OOM", "返回值为" + nowCountDownNum);
-                    float progress = 0f;
                     if (countDownStatus == 1) {
-                        progress = nowCountDownNum / (float) allNeedDuration;
+                        nowCountDownNumF = nowCountDownNumF - 0.05f;
+                        LogUtil.d("OOM", "返回值为" + nowCountDownNum);
+                        float progress = 0f;
+                        progress = nowCountDownNumF / (float) allNeedDuration;
                         progress = 1 - progress;
+                        fUBeautyMvpView.showCountDown((int) nowCountDownNumF, countDownStatus, progress);
+                        if (nowCountDownNumF == 0) {
+                            endTimer();
+                        }
+                    } else {
+                        nowCountDownNum = nowCountDownNum - 1;
+                        fUBeautyMvpView.showCountDown(nowCountDownNum, countDownStatus, 0);
+                        if (nowCountDownNum == 0) {
+                            endTimer();
+                        }
                     }
-                    fUBeautyMvpView.showCountDown(nowCountDownNum, countDownStatus, progress);
-                    if (nowCountDownNum == 0) {
-                        endTimer();
-                    }
+
+
                     break;
 
 
@@ -292,6 +292,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
 
 
     private float countDownTotal;
+
     private void startProgress() {
         countDownTotal = nowCountDownNum;
         while (nowCountDownNum > 0) {
