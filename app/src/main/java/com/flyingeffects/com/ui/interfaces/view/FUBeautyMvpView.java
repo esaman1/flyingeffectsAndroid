@@ -6,4 +6,6 @@ public interface FUBeautyMvpView {
 
     void nowChooseRecordIsInfinite(boolean isInfinite);
 
+    void changeFUSticker(String bundle,String name);
+
 }

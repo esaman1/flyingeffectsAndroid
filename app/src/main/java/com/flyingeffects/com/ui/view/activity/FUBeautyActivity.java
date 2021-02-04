@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -45,6 +46,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     private boolean isRecording=false;
     private LinearLayout ll_stage_property;
     private RelativeLayout relative_parent;
+//    private  RelativeLayout relative_content;
 
     @Override
     protected void onCreate() {
@@ -57,6 +59,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         iv_count_down = findViewById(R.id.iv_count_down);
         iv_count_down.setOnClickListener(listener);
         relative_parent=findViewById(R.id.relative_parent);
+//        relative_parent.setOnClickListener(listener);
         tv_count_down = findViewById(R.id.tv_count_down_right);
         lottieAnimationView = findViewById(R.id.animation_view);
         animation_view_progress=findViewById(R.id.animation_view_progress);
@@ -159,9 +162,16 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
 
                 case R.id.ll_stage_property:
                     //道具
-                    presenter.showBottomSheetDialog(getSupportFragmentManager(),relative_parent);
+                    presenter.showBottomSheetDialog(getSupportFragmentManager(),relative_content);
+                    relative_content.setVisibility(View.VISIBLE);
 
                     break;
+
+//                case R.id.relative_parent:
+//                    if(relative_content.getVisibility()==View.VISIBLE){
+//                        relative_content.setVisibility(View.GONE);
+//                    }
+//                    break;
 
                 default:
 
@@ -241,6 +251,19 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     }
 
 
+
+    /**
+     * description ：更换拍摄贴纸
+     * creation date: 2021/2/4
+     * user : zhangtongju
+     */
+    @Override
+    public void changeFUSticker(String bundle,String name) {
+
+
+    }
+
+
     /**
      * description ：开始录制
      * creation date: 2021/2/1
@@ -257,6 +280,20 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         presenter.OnDestroy();
     }
 
+
+
+
+    @Override
+    public final boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if(relative_content.getVisibility()==View.VISIBLE){
+                relative_content.setVisibility(View.GONE);
+            }else{
+                finish();
+            }
+        }
+        return true;
+    }
 
 
 

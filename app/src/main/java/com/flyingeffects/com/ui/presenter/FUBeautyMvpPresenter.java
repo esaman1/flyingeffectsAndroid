@@ -31,19 +31,31 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.CreateTemplateTextEffectAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
+import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
+import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.constans.UiStep;
+import com.flyingeffects.com.enity.StickerTypeEntity;
+import com.flyingeffects.com.http.Api;
+import com.flyingeffects.com.http.HttpUtil;
+import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.FUBeautyMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.FUBeautyMvpView;
 import com.flyingeffects.com.ui.model.CreationTemplateMvpModel;
 import com.flyingeffects.com.ui.model.FUBeautyMvpModel;
+import com.flyingeffects.com.ui.model.TemplateAddStickerMvpModel;
 import com.flyingeffects.com.ui.view.activity.ChooseMusicActivity;
 import com.flyingeffects.com.ui.view.fragment.StickerFragment;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -51,6 +63,7 @@ import java.util.TimerTask;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.subjects.PublishSubject;
 
 
 public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCallback {
@@ -60,7 +73,9 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     private Context context;
     private HorizontalselectedView horizontalselectedView;
     private Timer timer;
+    public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private TimerTask task;
+//    private List<View> listForInitBottom = new ArrayList<>();
 
     /**
      * 当前倒计时状态 0 表示动画前倒计时 1 表示 录制倒计时
@@ -247,7 +262,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         };
 
         if (countDownStatus == 1) {
-            nowCountDownNumF=nowCountDownNum;
+            nowCountDownNumF = nowCountDownNum;
             timer.schedule(task, 0, 50);
         } else {
             timer.schedule(task, 0, 1000);
@@ -343,48 +358,80 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     }
 
 
-
-
-
     /**
      * description ：显示底部筛选框
      * creation date: 2021/2/2
      * user : zhangtongju
      */
-    BottomSheetDialog bottomSheetDialog;
-    public void showBottomSheetDialog(FragmentManager fragmentManager, RelativeLayout relative_parent) {
-        bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
-        View view = LayoutInflater.from(context).inflate(R.layout.view_fu_sticker, relative_parent,false);
-        SlidingTabLayout slidingTabLayout=view.findViewById(R.id.tl_tabs);
-        ViewPager viewPager=view.findViewById(R.id.viewpager2);
-        List<Fragment> fragments = new ArrayList<>();
-        StickerFragment fragment = new StickerFragment();
-        String[] titles ={"11"};
-        Bundle bundle = new Bundle();
-        bundle.putInt("stickerType", 1);
-        fragment.setStickerListener(null);
-        fragment.setArguments(bundle);
-        fragments.add(fragment);
-        home_vp_frg_adapter vp_frg_adapter = new home_vp_frg_adapter(fragmentManager, fragments);
-        viewPager.setAdapter(vp_frg_adapter);
-        slidingTabLayout.setViewPager(viewPager, titles);
-        bottomSheetDialog.setContentView(view);
-        bottomSheetDialog.setCancelable(true);
-        bottomSheetDialog.setCanceledOnTouchOutside(true);
-        View parent = (View) view.getParent();     //处理高度显示完全  https://www.jianshu.com/p/38af0cf77352
-        parent.setBackgroundResource(android.R.color.transparent);
-        BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);
-        view.measure(0, 0);
-        behavior.setPeekHeight(view.getMeasuredHeight());
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) parent.getLayoutParams();
-        params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
-        parent.setLayoutParams(params);
 
-        bottomSheetDialog.show();
+    public void showBottomSheetDialog(FragmentManager fragmentManager, RelativeLayout relative_parent) {
+        View  view = LayoutInflater.from(context).inflate(R.layout.view_template_paster, relative_parent, false);
+        ViewPager stickerViewPager = view.findViewById(R.id.viewpager_sticker);
+        view.findViewById(R.id.iv_delete_sticker).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        view.findViewById(R.id.iv_down_sticker).setVisibility(View.GONE);
+        SlidingTabLayout stickerTab = view.findViewById(R.id.tb_sticker);
+        getStickerTypeList(fragmentManager, stickerViewPager, stickerTab);
+        relative_parent.addView(view);
     }
 
 
+    private void getStickerTypeList(FragmentManager fragmentManager, final ViewPager stickerViewPager, SlidingTabLayout stickerTab) {
+        HashMap<String, String> params = new HashMap<>();
+        Observable ob = Api.getDefault().camerStickerCategoryList(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ArrayList<StickerTypeEntity>>(context) {
+            @Override
+            protected void _onError(String message) {
+                ToastUtil.showToast(message);
+            }
 
+            @Override
+            protected void _onNext(ArrayList<StickerTypeEntity> list) {
+                LogUtil.d("OOM", "123" + StringUtil.beanToJSONString(list));
+                List<Fragment> fragments = new ArrayList<>();
+                String[] titles = new String[list.size()];
+                for (int i = 0; i < list.size(); i++) {
+                    titles[i] = list.get(i).getName();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("category_id", list.get(i).getId());
+                    bundle.putInt("type",1);
+                    LogUtil.d("OOM2", "贴纸id为" + list.get(i).getId());
+                    StickerFragment fragment = new StickerFragment();
+                    fragment.setStickerListener(null);
+                    fragment.setFUStickerListener(new StickerFragment.DownZipCallback() {
+                        @Override
+                        public void showDownProgress(int progress) {
+
+                            LogUtil.d("OOM3","下载的进度为"+progress);
+                        }
+
+                        @Override
+                        public void zipPath(String path,String title) {
+                            LogUtil.d("OOM3","下载完成"+path);
+                            fUBeautyMvpView.changeFUSticker(path,title);
+
+
+                        }
+                    });
+                    fragment.setArguments(bundle);
+                    fragments.add(fragment);
+                }
+                home_vp_frg_adapter vp_frg_adapter = new home_vp_frg_adapter(fragmentManager, fragments);
+                LogUtil.d("OOM","111111");
+                if (stickerViewPager!=null){
+
+                    stickerViewPager.setOffscreenPageLimit(list.size() - 1);
+                    stickerViewPager.setAdapter(vp_frg_adapter);
+                }
+                LogUtil.d("OOM","22222");
+                stickerTab.setViewPager(stickerViewPager, titles);
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+    }
 
 
 }

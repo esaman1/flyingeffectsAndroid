@@ -1,6 +1,8 @@
 package com.flyingeffects.com.ui.view.fragment;
 
 import android.graphics.Bitmap;
+import android.os.Handler;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -19,10 +21,13 @@ import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.ZipFileHelperManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxve.ui.view.WaitingDialog;
@@ -54,6 +59,12 @@ public class StickerFragment extends BaseFragment {
     List<StickerList> listForSticker = new ArrayList<>();
     TemplateGridViewAdapter mGridViewAdapter;
     int stickerType;
+
+
+    /**
+     * 0表示普通贴纸页面 1表示拍摄的贴纸页面
+     */
+    private int formToType;
     StickerListener mStickerListener;
     private int selectPage = 1;
     private int perPageCount = 20;
@@ -68,6 +79,7 @@ public class StickerFragment extends BaseFragment {
     @Override
     protected void initView() {
         stickerType = getArguments().getInt("stickerType");
+        formToType = getArguments().getInt("type");
         FileManager fileManager = new FileManager();
         mGifFolder = fileManager.getFileCachePath(getContext(), "gifFolder");
     }
@@ -106,10 +118,109 @@ public class StickerFragment extends BaseFragment {
                 } else {
                     statisticsEventAffair.getInstance().setFlag(getContext(), " 6_customize_bj_Sticker", listForSticker.get(position).getTitle());
                 }
-                downSticker(listForSticker.get(position).getImage(), listForSticker.get(position).getId(), position,listForSticker.get(position).getTitle());
+
+                if (formToType == 1) {
+                    //下载拍摄的bundle 数据,zip 文件
+                    toDownZip(listForSticker.get(position).getFile_name(), listForSticker.get(position).getSourcefile());
+                } else {
+                    downSticker(listForSticker.get(position).getImage(), listForSticker.get(position).getId(), position, listForSticker.get(position).getTitle());
+                }
             }
         });
     }
+
+
+    /**
+     * description ：
+     * creation date: 2021/2/4
+     * user : zhangtongju
+     */
+
+    private File mFolder;
+    private int mProgress;
+    private boolean isDownZipUrl = false;
+
+    private void toDownZip(String name, String path) {
+        LogUtil.d("OOM3", "开始下载-name=" + name + "path=" + path);
+        File mFolder = getActivity().getExternalFilesDir("FUSticker/" + name);
+        if (mFolder != null) {
+            LogUtil.d("OOM3", "mFolder != null");
+            String folderPath = mFolder.getParent();
+            if (!isDownZipUrl) {
+                if (mFolder == null || mFolder.list().length == 0) {
+                    LogUtil.d("OOM3", "开始下载2");
+                    downZip(path, folderPath,name);
+                    mProgress = 0;
+                    showMakeProgress();
+                } else {
+                    downZipCallback.zipPath(mFolder.getPath(),name);
+//                    intoTemplateActivity(mFolder.getPath());
+                }
+            } else {
+                ToastUtil.showToast("下载中，请稍后再试");
+            }
+        } else {
+            ToastUtil.showToast("没找到sd卡");
+        }
+
+    }
+
+    private void showMakeProgress() {
+        downZipCallback.showDownProgress(mProgress);
+    }
+
+
+    private void downZip(String loadUrl, String path,String name) {
+        mProgress = 0;
+        if (!TextUtils.isEmpty(loadUrl)) {
+            new Thread() {
+                @Override
+                public void run() {
+                    isDownZipUrl = true;
+                    try {
+                        DownloadZipManager.getInstance().getFileFromServer(loadUrl, path, (progress, isSucceed, zipPath) -> {
+                            if (!isSucceed) {
+                                LogUtil.d("onVideoAdError", "progress=" + progress);
+                                mProgress = progress;
+                                showMakeProgress();
+                            } else {
+                                showMakeProgress();
+                                LogUtil.d("onVideoAdError", "下载完成");
+                                isDownZipUrl = false;
+                                //可以制作了，先解压
+                                File file = new File(zipPath);
+                                try {
+                                    ZipFileHelperManager.upZipFile(file, path, path1 -> {
+                                        if (file.exists()) { //删除压缩包
+                                            file.delete();
+                                        }
+//                                        videoPause();
+                                        mProgress = 100;
+                                        showMakeProgress();
+                                        downZipCallback.zipPath(path1,name);
+                                    });
+                                } catch (IOException e) {
+                                    LogUtil.d("onVideoAdError", "Exception=" + e.getMessage());
+                                    e.printStackTrace();
+
+                                }
+                            }
+                        });
+
+                    } catch (Exception e) {
+                        isDownZipUrl = false;
+                        Observable.just(e).subscribeOn(AndroidSchedulers.mainThread()).subscribe(e1 -> new Handler().post(() -> ToastUtil.showToast("下载异常，请重试")));
+                        LogUtil.d("OOM3", "Exception=" + e.getMessage());
+                        downZipCallback.showDownProgress(100);
+                    }
+                    super.run();
+                }
+            }.start();
+        } else {
+            ToastUtil.showToast("没有zip地址");
+        }
+    }
+
 
     @Override
     public void onResume() {
@@ -121,13 +232,17 @@ public class StickerFragment extends BaseFragment {
     }
 
     public void requestStickersList(boolean isShowDialog) {
-
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
         params.put("category_id", String.valueOf(stickerType));
         // 启动时间
-        Observable ob = Api.getDefault().getStickerslist(BaseConstans.getRequestHead(params));
+        Observable ob;
+        if (formToType == 1) {
+            ob = Api.getDefault().camerstickerList(BaseConstans.getRequestHead(params));
+        } else {
+            ob = Api.getDefault().getStickerslist(BaseConstans.getRequestHead(params));
+        }
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ArrayList<StickerList>>(getContext()) {
             @Override
             protected void _onError(String message) {
@@ -175,7 +290,7 @@ public class StickerFragment extends BaseFragment {
      * @param imageId  gif 保存的图片id
      * @param position 当前点击的那个item ，主要用来更新数据
      */
-    private void downSticker(String path, String imageId, int position,String title) {
+    private void downSticker(String path, String imageId, int position, String title) {
         WaitingDialog.openPragressDialog(getContext());
         if (path.endsWith(".gif")) {
             String format = path.substring(path.length() - 4);
@@ -185,7 +300,7 @@ public class StickerFragment extends BaseFragment {
                 //如果已经下载了，就用已经下载的，但是如果已经展示了，就不能复用，需要类似于复制功能，只针对gif
                 String copyName = mGifFolder + File.separator + System.currentTimeMillis() + format;
                 if (mStickerListener != null) {
-                    mStickerListener.copyGif(fileName, copyName,title);
+                    mStickerListener.copyGif(fileName, copyName, title);
                 }
                 WaitingDialog.closePragressDialog();
                 return;
@@ -206,7 +321,7 @@ public class StickerFragment extends BaseFragment {
                     if (path1 != null) {
                         FileUtil.copyFile(path1, fileName);
                         if (mStickerListener != null) {
-                            mStickerListener.addSticker(fileName,title);
+                            mStickerListener.addSticker(fileName, title);
                         }
                         WaitingDialog.closePragressDialog();
                         modificationSingleItem(position);
@@ -239,7 +354,7 @@ public class StickerFragment extends BaseFragment {
                         saveBitmapToPath(finalOriginalBitmap, copyName, isSucceed -> {
                             modificationSingleItem(position);
                             if (mStickerListener != null) {
-                                mStickerListener.addSticker(copyName,title);
+                                mStickerListener.addSticker(copyName, title);
                             }
                         });
                     });
@@ -274,10 +389,26 @@ public class StickerFragment extends BaseFragment {
         mStickerListener = stickerListener;
     }
 
-    public interface StickerListener {
-        void addSticker(String stickerPath,String name);
 
-        void copyGif(String fileName, String copyName,String title);
+    public void setFUStickerListener(DownZipCallback downZipCallback) {
+        this.downZipCallback = downZipCallback;
+    }
+
+
+    DownZipCallback downZipCallback;
+
+    public interface DownZipCallback {
+
+        void showDownProgress(int progress);
+
+        void zipPath(String path,String title);
+    }
+
+
+    public interface StickerListener {
+        void addSticker(String stickerPath, String name);
+
+        void copyGif(String fileName, String copyName, String title);
 
         void clickItemSelected(int position);
     }

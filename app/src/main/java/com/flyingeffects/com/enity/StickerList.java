@@ -116,4 +116,50 @@ public class StickerList implements Serializable {
     private boolean isChecked=false;
 
 
+
+
+
+
+    public String getAppstickercategory_id() {
+        return appstickercategory_id;
+    }
+
+    public void setAppstickercategory_id(String appstickercategory_id) {
+        this.appstickercategory_id = appstickercategory_id;
+    }
+
+    public String getCreate_time_text() {
+        return create_time_text;
+    }
+
+    public void setCreate_time_text(String create_time_text) {
+        this.create_time_text = create_time_text;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getFile_name() {
+        return file_name;
+    }
+
+    public void setFile_name(String file_name) {
+        this.file_name = file_name;
+    }
+
+
+
+
+
+    //拍摄贴新增加的数据
+    private String appstickercategory_id;
+    private String create_time_text;
+    private String  status;
+    private String file_name;
+
 }

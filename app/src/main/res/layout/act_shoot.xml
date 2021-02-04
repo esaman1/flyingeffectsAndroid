@@ -229,5 +229,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+    <com.flyingeffects.com.utils.FuLive.CameraFocus
+        android:id="@+id/photograph_focus"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/photograph_focus"
+        app:focus_height="150dp"
+        app:focus_scale="0.666"
+        app:focus_width="150dp" />
+
+
+
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/relative_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"/>
+
+
+
 
 </RelativeLayout>

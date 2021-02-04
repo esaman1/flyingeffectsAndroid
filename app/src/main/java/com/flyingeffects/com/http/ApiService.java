@@ -217,6 +217,13 @@ public interface ApiService {
     Observable<HttpResult<List<StickerList>>> getStickerslist(@FieldMap Map<String, String> params);
 
 
+    //贴纸列表2
+    @FormUrlEncoded
+    @POST("/api/media/camerstickerList")
+    Observable<HttpResult<List<StickerList>>> camerstickerList(@FieldMap Map<String, String> params);
+
+
+
     @FormUrlEncoded
     @POST("/api/template/templateListNew")
     Observable<HttpResult<List<new_fag_template_item>>> getTemplate(@FieldMap Map<String, String> params);
@@ -355,6 +362,18 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/media/stickerCategory")
     Observable<HttpResult<List<StickerTypeEntity>>> getStickerTypeList(@FieldMap Map<String,String> params);
+
+
+
+
+    /**拍摄贴纸分类列表*/
+    @FormUrlEncoded
+    @POST("/api/media/camerStickerCategoryList")
+    Observable<HttpResult<List<StickerTypeEntity>>> camerStickerCategoryList(@FieldMap Map<String,String> params);
+
+
+
+
 
 
     /**贴纸分类列表*/
