@@ -4,8 +4,9 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.horizontalselectedviewlibrary.HorizontalselectedView;
@@ -42,37 +43,33 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     private TextView tv_count_down;
     private ImageView iv_count_down;
     private MarqueTextView tv_chooseMusic;
-    private ImageView iv_rolling_over;
-    private boolean isRecording=false;
+//    private ImageView iv_rolling_over;
+    private boolean isRecording = false;
     private LinearLayout ll_stage_property;
-    private RelativeLayout relative_parent;
-//    private  RelativeLayout relative_content;
+    private ConstraintLayout constraintLayout;
 
     @Override
     protected void onCreate() {
         horizontalselectedView = findViewById(R.id.horizontalselectedView);
+        constraintLayout = findViewById(R.id.constraintLayout);
         presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView);
         findViewById(R.id.ll_album).setVisibility(View.INVISIBLE);
         findViewById(R.id.relative_choose_music).setOnClickListener(listener);
         findViewById(R.id.iv_close).setOnClickListener(listener);
-        tv_chooseMusic=findViewById(R.id.tv_chooseMusic);
+        tv_chooseMusic = findViewById(R.id.tv_chooseMusic);
         iv_count_down = findViewById(R.id.iv_count_down);
         iv_count_down.setOnClickListener(listener);
-        relative_parent=findViewById(R.id.relative_parent);
-//        relative_parent.setOnClickListener(listener);
         tv_count_down = findViewById(R.id.tv_count_down_right);
         lottieAnimationView = findViewById(R.id.animation_view);
-        animation_view_progress=findViewById(R.id.animation_view_progress);
+        animation_view_progress = findViewById(R.id.animation_view_progress);
         lottieAnimationView.setOnClickListener(listener);
         animation_view_progress.setOnClickListener(listener);
-        iv_rolling_over=findViewById(R.id.iv_rolling_over);
+        ImageView   iv_rolling_over = findViewById(R.id.iv_rolling_over);
         iv_rolling_over.setOnClickListener(listener);
-        ll_stage_property=findViewById(R.id.ll_stage_property);
+        ll_stage_property = findViewById(R.id.ll_stage_property);
         ll_stage_property.setOnClickListener(listener);
 
     }
-
-
 
 
     /**
@@ -82,17 +79,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      */
     @Override
     protected FURenderer initFURenderer() {
-//        return new FURenderer
-//                .Builder(this)
-//                .maxFaces(4)
-//                .inputImageOrientation(mFrontCameraOrientation)
-//                .inputTextureType(FURenderer.FU_ADM_FLAG_EXTERNAL_OES_TEXTURE)
-//                .setOnFUDebugListener(this)
-//                .setOnTrackingStatusChangedListener(this)
-//                .build();
-//
-
-
         ArrayList<Effect> effects = EffectEnum.getEffectsByEffectType(1);
         return new FURenderer
                 .Builder(this)
@@ -107,7 +93,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                 .setOnTrackingStatusChangedListener(this)
                 .setOnBundleLoadCompleteListener(null)
                 .build();
-
 
 
     }
@@ -131,20 +116,22 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                     break;
 
                 case R.id.animation_view_progress:
-                    if(isRecording){
+                    if (isRecording) {
                         animation_view_progress.setProgress(0);
                         lottieAnimationView.setProgress(0);
-                        LogUtil.d("OOM","直接录制结束");
-                        isRecording=false;
+                        LogUtil.d("OOM", "直接录制结束");
+                        isRecording = false;
                         presenter.stopRecord();
                         stopRecording();
-                    }else{
-                        LogUtil.d("OOM","开始录制");
-                        isRecording=true;
+                        isRecordingState(false);
+                    } else {
+                        LogUtil.d("OOM", "开始录制");
+                        isRecording = true;
                         presenter.StartCountDown();
                         tv_count_down.setVisibility(View.VISIBLE);
-                        lottieAnimationView.setMaxProgress(20/(float)47);
+                        lottieAnimationView.setMaxProgress(20 / (float) 47);
                         lottieAnimationView.playAnimation();
+                        isRecordingState(true);
                     }
                     break;
 
@@ -162,16 +149,11 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
 
                 case R.id.ll_stage_property:
                     //道具
-                    presenter.showBottomSheetDialog(getSupportFragmentManager(),relative_content);
+                    presenter.showBottomSheetDialog(getSupportFragmentManager(), relative_content);
                     relative_content.setVisibility(View.VISIBLE);
 
                     break;
 
-//                case R.id.relative_parent:
-//                    if(relative_content.getVisibility()==View.VISIBLE){
-//                        relative_content.setVisibility(View.GONE);
-//                    }
-//                    break;
 
                 default:
 
@@ -190,10 +172,10 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     public void onEventMainThread(CutSuccess cutSuccess) {
         LogUtil.d("OOM", "onEventMainThread");
         String nowChooseBjPath = cutSuccess.getFilePath();
-        String nowOriginal=cutSuccess.getOriginalPath();
-        String title=cutSuccess.getTitle();
+        String nowOriginal = cutSuccess.getOriginalPath();
+        String title = cutSuccess.getTitle();
         tv_chooseMusic.setText(title);
-        presenter.SetNowChooseMusic(nowChooseBjPath,nowOriginal);
+        presenter.SetNowChooseMusic(nowChooseBjPath, nowOriginal);
     }
 
 
@@ -204,11 +186,11 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      * user : zhangtongju
      */
     @Override
-    public void showCountDown(int num,int countDownStatus,float progress) {
+    public void showCountDown(int num, int countDownStatus, float progress) {
         Observable.just(num).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer integer) {
-                if(countDownStatus==0){
+                if (countDownStatus == 0) {
                     //倒计时
                     if (num != 0) {
                         tv_count_down.setText(num + "");
@@ -219,14 +201,15 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                         startRecordVideo();
                         startRecording();
                     }
-                }else{
-                    if(num != 0){
+                } else {
+                    if (num != 0) {
                         //录屏倒计时
                         animation_view_progress.setProgress(progress);
-                    }else{
-                        isRecording=false;
+                    } else {
+                        isRecording = false;
                         presenter.stopRecord();
                         stopRecording();
+                        isRecordingState(false);
                         lottieAnimationView.setProgress(0);
                         animation_view_progress.setProgress(0);
                     }
@@ -236,20 +219,18 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     }
 
 
-
-
     /**
      * description ：当前是否选择的无限
      * creation date: 2021/2/1
      * user : zhangtongju
      */
-    private  boolean isInfinite;
+    private boolean isInfinite;
+
     @Override
     public void nowChooseRecordIsInfinite(boolean isInfinite) {
-        this.isInfinite=isInfinite;
-        LogUtil.d("OOM","isInfinite="+isInfinite);
+        this.isInfinite = isInfinite;
+        LogUtil.d("OOM", "isInfinite=" + isInfinite);
     }
-
 
 
     /**
@@ -258,9 +239,12 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      * user : zhangtongju
      */
     @Override
-    public void changeFUSticker(String bundle,String name) {
-
-
+    public void changeFUSticker(String bundle, String name) {
+        String bundlePath = bundle + "/" + name + ".bundle";
+        LogUtil.d("OOM3", "bundlePath=" + bundlePath);
+        Effect effect = new Effect(name, R.drawable.nihongdeng, bundlePath, 4, Effect.EFFECT_TYPE_STICKER, 0);
+        mFURenderer.onEffectSelected(effect);
+        dissRelative();
     }
 
 
@@ -269,7 +253,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      * creation date: 2021/2/1
      * user : zhangtongju
      */
-    private void startRecordVideo(){
+    private void startRecordVideo() {
         presenter.startRecord();
     }
 
@@ -281,14 +265,12 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     }
 
 
-
-
     @Override
     public final boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if(relative_content.getVisibility()==View.VISIBLE){
+            if (relative_content.getVisibility() == View.VISIBLE) {
                 relative_content.setVisibility(View.GONE);
-            }else{
+            } else {
                 finish();
             }
         }
@@ -298,4 +280,32 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
 
 
 
+    /**
+     * description 贴纸选择框显示隐藏
+     * creation date: 2021/2/4
+     * user : zhangtongju
+     */
+    private void dissRelative() {
+        if (relative_content.getVisibility() == View.VISIBLE) {
+            relative_content.setVisibility(View.GONE);
+        }
+    }
+
+
+    /**
+     * description ：录屏和非录屏ui状态切换
+     * creation date: 2021/2/4
+     * user : zhangtongju
+     */
+    private void isRecordingState(boolean isRecording) {
+        if (isRecording) {
+            horizontalselectedView.setVisibility(View.GONE);
+            constraintLayout.setVisibility(View.GONE);
+            ll_stage_property.setVisibility(View.INVISIBLE);
+        } else {
+            horizontalselectedView.setVisibility(View.VISIBLE);
+            constraintLayout.setVisibility(View.VISIBLE);
+            ll_stage_property.setVisibility(View.VISIBLE);
+        }
+    }
 }
