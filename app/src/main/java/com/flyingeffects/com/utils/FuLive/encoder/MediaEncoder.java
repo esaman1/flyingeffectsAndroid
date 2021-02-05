@@ -4,6 +4,8 @@ import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.util.Log;
 
+import com.flyingeffects.com.utils.LogUtil;
+
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
@@ -12,7 +14,7 @@ import java.nio.ByteBuffer;
  * see https://github.com/saki4510t/AudioVideoRecordingSample
  */
 public abstract class MediaEncoder implements Runnable {
-    private static final String TAG = MediaEncoder.class.getSimpleName();
+    private static final String TAG = "oom4";
     private static final boolean DEBUG = false;
 
     private static final int TIMEOUT_USEC = 10000;    // 10[msec]
@@ -301,23 +303,23 @@ public abstract class MediaEncoder implements Runnable {
                 return;
             ByteBuffer[] encoderOutputBuffers = mMediaCodec.getOutputBuffers();
             if (DEBUG)
-                Log.e(TAG, "encoderOutputBuffers: " + encoderOutputBuffers.length);
+                LogUtil.d(TAG, "encoderOutputBuffers: " + encoderOutputBuffers.length);
             int encoderStatus, count = 0;
             final MediaMuxerWrapper muxer = mWeakMuxer.get();
             if (muxer == null) {
 //        	throw new NullPointerException("muxer is unexpectedly null");
                 if (DEBUG)
-                    Log.e(TAG, "muxer is unexpectedly null");
+                    LogUtil.d(TAG, "muxer is unexpectedly null");
                 return;
             }
             if (DEBUG)
-                Log.e(TAG, "mIsCapturing: " + mIsCapturing);
+                LogUtil.d(TAG, "mIsCapturing: " + mIsCapturing);
             LOOP:
             while (mIsCapturing) {
                 // get encoded data with maximum timeout duration of TIMEOUT_USEC(=10[msec])
                 encoderStatus = mMediaCodec.dequeueOutputBuffer(mBufferInfo, TIMEOUT_USEC);
                 if (DEBUG)
-                    Log.e(TAG, "encoderStatus: " + encoderStatus);
+                    LogUtil.d(TAG, "encoderStatus: " + encoderStatus);
                 if (encoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
                     // wait 5 counts(=TIMEOUT_USEC x 5 = 50msec) until data/EOS come
                     if (!mIsEOS) {
@@ -326,12 +328,12 @@ public abstract class MediaEncoder implements Runnable {
                     }
                 } else if (encoderStatus == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
                     if (DEBUG)
-                        Log.e(TAG, "INFO_OUTPUT_BUFFERS_CHANGED");
+                        LogUtil.d(TAG, "INFO_OUTPUT_BUFFERS_CHANGED");
                     // this shoud not come when encoding
                     encoderOutputBuffers = mMediaCodec.getOutputBuffers();
                 } else if (encoderStatus == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                     if (DEBUG)
-                        Log.e(TAG, "INFO_OUTPUT_FORMAT_CHANGED");
+                        LogUtil.d(TAG, "INFO_OUTPUT_FORMAT_CHANGED");
                     // this status indicate the output format of codec is changed
                     // this should come only once before actual encoded data
                     // but this status never come on Android4.3 or less
@@ -358,7 +360,7 @@ public abstract class MediaEncoder implements Runnable {
                 } else if (encoderStatus < 0) {
                     // unexpected status
                     if (DEBUG)
-                        Log.e(TAG, "drain:unexpected result from encoder#dequeueOutputBuffer: " + encoderStatus);
+                        LogUtil.d(TAG, "drain:unexpected result from encoder#dequeueOutputBuffer: " + encoderStatus);
                 } else {
                     final ByteBuffer encodedData = encoderOutputBuffers[encoderStatus];
                     if (encodedData == null) {
@@ -371,7 +373,7 @@ public abstract class MediaEncoder implements Runnable {
                         // therefor we should expand and prepare output format from buffer data.
                         // This sample is for API>=18(>=Android 4.3), just ignore this flag here
                         if (DEBUG)
-                            Log.e(TAG, "drain:BUFFER_FLAG_CODEC_CONFIG");
+                            LogUtil.d(TAG, "drain:BUFFER_FLAG_CODEC_CONFIG");
                         mBufferInfo.size = 0;
                     }
 

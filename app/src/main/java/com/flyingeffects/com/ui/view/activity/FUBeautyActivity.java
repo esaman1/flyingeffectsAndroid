@@ -43,7 +43,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     private TextView tv_count_down;
     private ImageView iv_count_down;
     private MarqueTextView tv_chooseMusic;
-//    private ImageView iv_rolling_over;
     private boolean isRecording = false;
     private LinearLayout ll_stage_property;
     private ConstraintLayout constraintLayout;
@@ -60,7 +59,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         iv_count_down = findViewById(R.id.iv_count_down);
         iv_count_down.setOnClickListener(listener);
         tv_count_down = findViewById(R.id.tv_count_down_right);
-        lottieAnimationView = findViewById(R.id.animation_view);
+
         animation_view_progress = findViewById(R.id.animation_view_progress);
         lottieAnimationView.setOnClickListener(listener);
         animation_view_progress.setOnClickListener(listener);
@@ -210,8 +209,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                         presenter.stopRecord();
                         stopRecording();
                         isRecordingState(false);
-                        lottieAnimationView.setProgress(0);
-                        animation_view_progress.setProgress(0);
+
                     }
                 }
             }
@@ -306,6 +304,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
             horizontalselectedView.setVisibility(View.VISIBLE);
             constraintLayout.setVisibility(View.VISIBLE);
             ll_stage_property.setVisibility(View.VISIBLE);
+            lottieAnimationView.setProgress(0);
+            animation_view_progress.setProgress(0);
         }
     }
 }

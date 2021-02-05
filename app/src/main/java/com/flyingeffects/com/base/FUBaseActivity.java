@@ -707,6 +707,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
         Log.d(TAG, "startRecording: ");
         try {
             mStartTime = 0;
+            //线程同步
             mRecordBarrier = new CountDownLatch(2);
             String videoFileName = Constant.APP_NAME + "_" + MiscUtil.getCurrentDate() + ".mp4";
             mVideoOutFile = new File(FileUtils.getExternalCacheDir(this), videoFileName);

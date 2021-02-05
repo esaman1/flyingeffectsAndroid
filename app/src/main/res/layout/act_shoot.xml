@@ -95,9 +95,9 @@
 
             <ImageView
                 android:id="@+id/iv_stage_property"
-                android:layout_width="62dp"
-                android:layout_height="55dp"
-                android:src="@mipmap/logo" />
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@mipmap/prop" />
 
 
             <TextView
@@ -147,8 +147,8 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="62dp"
-                android:layout_height="55dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:src="@mipmap/logo" />
 
 
