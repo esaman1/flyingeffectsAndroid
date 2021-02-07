@@ -18,6 +18,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -50,6 +51,7 @@ import com.faceunity.utils.FileUtils;
 import com.faceunity.utils.LogUtils;
 import com.faceunity.utils.MiscUtil;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
 import com.flyingeffects.com.utils.FuLive.BaseCameraRenderer;
@@ -66,6 +68,10 @@ import com.flyingeffects.com.utils.FuLive.renderer.Camera1Renderer;
 import com.flyingeffects.com.utils.FuLive.renderer.OnRendererStatusListener;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.lansosdk.box.LSOVideoOption;
+import com.lansosdk.box.Layer;
+import com.lansosdk.videoeditor.DrawPadAllExecute2;
+import com.lansosdk.videoeditor.MediaInfo;
 import com.nineton.ntadsdk.utils.ScreenUtils;
 
 import org.json.JSONException;
@@ -143,9 +149,6 @@ public abstract class FUBaseActivity extends AppCompatActivity
     }
 
 
-
-
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (super.onTouchEvent(event)) {
@@ -161,7 +164,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
                 relative_content.setVisibility(View.GONE);
             }
 
-         //   mLlLight.setVisibility(View.VISIBLE);
+            //   mLlLight.setVisibility(View.VISIBLE);
             // mVerticalSeekBar.setProgress((int) (100 * mCameraRenderer.getExposureCompensation()));
 
             float rawX = event.getRawX();
@@ -180,7 +183,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
             }
 
             mCameraRenderer.handleFocus(rawX, rawY, focusRectSize);
-           mCameraFocus.showCameraFocus(rawX, rawY);
+            mCameraFocus.showCameraFocus(rawX, rawY);
             mMainHandler.removeCallbacks(mCameraFocusDismiss);
             mMainHandler.postDelayed(mCameraFocusDismiss, CameraUtils.FOCUS_TIME);
             return true;
@@ -231,7 +234,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        LogUtil.d("OOM","onSensorChanged");
+        LogUtil.d("OOM", "onSensorChanged");
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             float x = event.values[0];
             float y = event.values[1];
@@ -248,14 +251,14 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        LogUtil.d("OOM","onAccuracyChanged");
+        LogUtil.d("OOM", "onAccuracyChanged");
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~FURenderer信息回调~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
     public void onFpsChange(final double fps, final double renderTime) {
-        LogUtil.d("OOM","onFpsChange");
+        LogUtil.d("OOM", "onFpsChange");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -266,7 +269,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
     @Override
     public void onTrackStatusChanged(int type, int status) {
-        LogUtil.d("OOM","onTrackStatusChanged");
+        LogUtil.d("OOM", "onTrackStatusChanged");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -292,20 +295,20 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
     @Override
     public void onSurfaceCreated() {
-        LogUtil.d("OOM","onSurfaceCreated");
+        LogUtil.d("OOM", "onSurfaceCreated");
         mFURenderer.onSurfaceCreated();
         mFURenderer.setBeautificationOn(true);
     }
 
     @Override
     public void onSurfaceChanged(int viewWidth, int viewHeight) {
-        LogUtil.d("OOM","onSurfaceChanged");
+        LogUtil.d("OOM", "onSurfaceChanged");
     }
 
     @Override
     public int onDrawFrame(byte[] cameraNv21Byte, int cameraTextureId, int cameraWidth, int cameraHeight,
                            float[] mvpMatrix, float[] texMatrix, long timeStamp) {
-        LogUtil.d("OOM","onDrawFrame");
+        LogUtil.d("OOM", "onDrawFrame");
         int fuTexId;
         if (mIsDualInput) {
             fuTexId = mFURenderer.onDrawFrame(cameraNv21Byte, cameraTextureId, cameraWidth, cameraHeight);
@@ -320,7 +323,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
     @Override
     public void onSurfaceDestroy() {
-        LogUtil.d("OOM","onSurfaceDestroy");
+        LogUtil.d("OOM", "onSurfaceDestroy");
         mFURenderer.onSurfaceDestroyed();
     }
 
@@ -342,7 +345,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
         @Override
         public void onReadBitmapListener(Bitmap bitmap) {
-            LogUtil.d("OOM","onReadBitmapListener");
+            LogUtil.d("OOM", "onReadBitmapListener");
             // Call on async thread
             final String filePath = MiscUtil.saveBitmap(bitmap, Constant.PHOTO_FILE_PATH, MiscUtil.getCurrentPhotoName());
             Log.d(TAG, "onReadBitmapListener: " + filePath);
@@ -378,7 +381,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
      * @param texHeight
      */
     protected void takePicture(int texId, float[] mvpMatrix, float[] texMatrix, final int texWidth, final int texHeight) {
-        LogUtil.d("OOM","takePicture");
+        LogUtil.d("OOM", "takePicture");
         if (!mIsNeedTakePic) {
             return;
         }
@@ -413,12 +416,12 @@ public abstract class FUBaseActivity extends AppCompatActivity
         mCameraRenderer = new Camera1Renderer(FUBaseActivity.this, mGlSurfaceView, this);
         mFrontCameraOrientation = CameraUtils.getCameraOrientation(Camera.CameraInfo.CAMERA_FACING_FRONT);
         mFURenderer = initFURenderer();
-        relative_content=findViewById(R.id.relative_content);
+        relative_content = findViewById(R.id.relative_content);
         mGlSurfaceView.setRenderer(mCameraRenderer);
         mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mCameraFocus =  findViewById(R.id.photograph_focus);
+        mCameraFocus = findViewById(R.id.photograph_focus);
 //        mInputTypeRadioGroup = (RadioGroup) findViewById(R.id.fu_base_input_type_radio_group);
 //        mInputTypeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 //            @Override
@@ -576,7 +579,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
      * @param timeStamp
      */
     protected void sendRecordingData(int texId, float[] mvpMatrix, float[] texMatrix, final long timeStamp) {
-        LogUtil.d("OOM","sendRecordingData");
+        LogUtil.d("OOM", "sendRecordingData");
         synchronized (mRecordLock) {
             if (mVideoEncoder == null) {
                 return;
@@ -611,7 +614,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
         @Override
         public void onPrepared(final MediaEncoder encoder) {
-            LogUtil.d("OOM","onPrepared");
+            LogUtil.d("OOM", "onPrepared");
             if (encoder instanceof MediaVideoEncoder) {
                 Log.d(TAG, "onPrepared: tid:" + Thread.currentThread().getId());
                 mGlSurfaceView.queueEvent(new Runnable() {
@@ -639,7 +642,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
         @Override
         public void onStopped(final MediaEncoder encoder) {
-            LogUtil.d("OOM","onStopped");
+            LogUtil.d("OOM", "onStopped");
             mRecordBarrier.countDown();
             // Call when MediaVideoEncoder's callback and MediaAudioEncoder's callback both are called.
             if (mRecordBarrier.getCount() == 0) {
@@ -672,8 +675,12 @@ public abstract class FUBaseActivity extends AppCompatActivity
                                 @Override
                                 public void run() {
                                     sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(dcimFile)));
-//                                    ToastUtil.showToast("保存视频成功");
-                                    intoTemplate(dcimFile.getPath());
+                                    if(TextUtils.isEmpty(nowChooseBjPath)){
+                                        intoTemplate(dcimFile.getPath());
+                                    }else{
+                                        compoundVideo(dcimFile.getPath(),nowChooseBjPath );
+                                    }
+
                                 }
                             });
                         } catch (IOException e) {
@@ -686,24 +693,20 @@ public abstract class FUBaseActivity extends AppCompatActivity
     };
 
 
-    private void intoTemplate(String path){
+    private void intoTemplate(String path) {
         Intent intent = new Intent(this, TemplateAddStickerActivity.class);
         intent.putExtra("videoPath", path);
-        intent.putExtra("title","拍摄入口");
+        intent.putExtra("title", "拍摄入口");
         intent.putExtra("IsFrom", FromToTemplate.SHOOT);
         startActivity(intent);
     }
-
-
-
-
 
 
     /**
      * 开始录制
      */
     public void startRecording() {
-        LogUtil.d("OOM","startRecording");
+        LogUtil.d("OOM", "startRecording");
         Log.d(TAG, "startRecording: ");
         try {
             mStartTime = 0;
@@ -730,7 +733,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
      * 停止录制
      */
     public void stopRecording() {
-        LogUtil.d("OOM","stopRecording");
+        LogUtil.d("OOM", "stopRecording");
         Log.d(TAG, "stopRecording: ");
         if (mMuxer != null) {
             synchronized (mRecordLock) {
@@ -812,7 +815,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
     // only for complete requirement quickly
     private void loadInternalConfigJson() {
-        LogUtil.d("OOM","loadInternalConfigJson");
+        LogUtil.d("OOM", "loadInternalConfigJson");
         File file = new File(Constant.EXTERNAL_FILE_PATH, "switch_config.json");
         if (!file.exists()) {
             return;
@@ -841,9 +844,62 @@ public abstract class FUBaseActivity extends AppCompatActivity
     }
 
 
+    /**
+     * description ：合成视频
+     * creation date: 2021/2/7
+     * user : zhangtongju
+     */
+    private void compoundVideo(String videoPath, String musicPath) {
+        MediaInfo mediaInfo = new MediaInfo(videoPath);
+        if (mediaInfo.prepare()){
+            LogUtil.d("OOM2", "mediaInfo=" + mediaInfo.getWidth()+"---"+mediaInfo.getHeight()+"duration="+mediaInfo.getDurationUs());
+            try {
+                DrawPadAllExecute2 execute = new DrawPadAllExecute2(this, mediaInfo.getWidth(), mediaInfo.getHeight(), mediaInfo.getDurationUs() );
+                execute.setFrameRate(20);
+                execute.setEncodeBitrate(5 * 1024 * 1024);
+                execute.setOnLanSongSDKErrorListener(message -> {
+                    LogUtil.d("OOM2", "错误信息为" + message);
+                });
+                execute.setOnLanSongSDKProgressListener((l, i) -> {
+                    LogUtil.d("OOM2", "进度为" + i + "%");
+                });
+                execute.setOnLanSongSDKCompletedListener(this::intoTemplate);
+                //添加视频
+                LSOVideoOption option = new LSOVideoOption(videoPath);
+                option.setLooping(false);
+                execute.addVideoLayer(option, 0, Long.MAX_VALUE, false, true);
+                //添加音频
+                if (!TextUtils.isEmpty(musicPath)) {
+                    execute.addAudioLayer(musicPath, true);
+                }
+                execute.start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+
+    /**
+     * description ：得到选择的音乐
+     * creation date: 2021/2/7
+     * user : zhangtongju
+     */
+    private String nowChooseBjPath;
+    private String nowOriginal;
+
+    public void SetNowChooseMusic(String nowChooseBjPath, String nowOriginal) {
+        this.nowChooseBjPath = nowChooseBjPath;
+        this.nowOriginal = nowOriginal;
+    }
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
+
+
 }

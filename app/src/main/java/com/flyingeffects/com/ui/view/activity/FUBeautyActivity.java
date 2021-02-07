@@ -59,7 +59,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         iv_count_down = findViewById(R.id.iv_count_down);
         iv_count_down.setOnClickListener(listener);
         tv_count_down = findViewById(R.id.tv_count_down_right);
-
+        lottieAnimationView=findViewById(R.id.animation_view);
         animation_view_progress = findViewById(R.id.animation_view_progress);
         lottieAnimationView.setOnClickListener(listener);
         animation_view_progress.setOnClickListener(listener);
@@ -67,7 +67,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         iv_rolling_over.setOnClickListener(listener);
         ll_stage_property = findViewById(R.id.ll_stage_property);
         ll_stage_property.setOnClickListener(listener);
-
     }
 
 
@@ -174,6 +173,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         String nowOriginal = cutSuccess.getOriginalPath();
         String title = cutSuccess.getTitle();
         tv_chooseMusic.setText(title);
+        SetNowChooseMusic(nowChooseBjPath, nowOriginal);
         presenter.SetNowChooseMusic(nowChooseBjPath, nowOriginal);
     }
 
