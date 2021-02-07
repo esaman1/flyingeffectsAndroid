@@ -216,7 +216,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     public void stopRecord() {
         if (mediaPlayer != null) {
             if (mediaPlayer.isPlaying()) {
-                mediaPlayer.stop();
+                mediaPlayer.pause();
             }
             mediaPlayer.release();
         }

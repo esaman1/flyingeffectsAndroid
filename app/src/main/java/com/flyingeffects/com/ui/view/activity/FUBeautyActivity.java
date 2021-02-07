@@ -77,11 +77,11 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      */
     @Override
     protected FURenderer initFURenderer() {
-        ArrayList<Effect> effects = EffectEnum.getEffectsByEffectType(1);
+//        ArrayList<Effect> effects = EffectEnum.getEffectsByEffectType(1);
         return new FURenderer
                 .Builder(this)
                 .inputTextureType(FURenderer.FU_ADM_FLAG_EXTERNAL_OES_TEXTURE)
-                .defaultEffect(effects.size() > 1 ? effects.get(1) : null)
+//                .defaultEffect(effects.size() > 1 ? effects.get(1) : null)
                 .inputImageOrientation(mFrontCameraOrientation)
                 .setLoadAiHumanProcessor(false)
                 .maxHumans(1)
