@@ -17,11 +17,8 @@ import com.flyingeffects.com.base.FUBaseActivity;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.ui.interfaces.view.FUBeautyMvpView;
 import com.flyingeffects.com.ui.presenter.FUBeautyMvpPresenter;
-import com.flyingeffects.com.utils.FuLive.EffectEnum;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.MarqueTextView;
-
-import java.util.ArrayList;
 
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
@@ -47,6 +44,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     private LinearLayout ll_stage_property;
     private ConstraintLayout constraintLayout;
 
+
     @Override
     protected void onCreate() {
         horizontalselectedView = findViewById(R.id.horizontalselectedView);
@@ -67,6 +65,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         iv_rolling_over.setOnClickListener(listener);
         ll_stage_property = findViewById(R.id.ll_stage_property);
         ll_stage_property.setOnClickListener(listener);
+
     }
 
 

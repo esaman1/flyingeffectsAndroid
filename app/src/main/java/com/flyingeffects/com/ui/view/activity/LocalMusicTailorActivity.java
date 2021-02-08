@@ -17,6 +17,7 @@ import com.flyingeffects.com.ui.interfaces.view.LocalMusicTailorMvpView;
 import com.flyingeffects.com.ui.presenter.LocalMusicTailorPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;
+import com.flyingeffects.com.view.RangeSeekBarForMusicView;
 import com.flyingeffects.com.view.histogram.MyBarChartView;
 import com.flyingeffects.com.view.histogram.MyBarChartView.BarData;
 import com.shixing.sxve.ui.view.WaitingDialog;
@@ -79,6 +80,16 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
 
     private String title;
 
+    @BindView(R.id.timeLineBar)
+    RangeSeekBarForMusicView timeLineBar;
+
+
+    /**
+     * 当前是不是无限的
+     */
+    private boolean isInfinite = false;
+
+
 
     @Override
     protected int getLayoutId() {
@@ -97,6 +108,10 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
         videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
         allDuration = videoInfo.getDuration();
         needDuration = getIntent().getLongExtra("needDuration", 10000);
+        if(needDuration==0){
+            isInfinite=true;
+            needDuration=allDuration;
+        }
         Presenter.setNeedDuration((int) needDuration);
         tv_allDuration.setText("模板时长" + TimeUtils.timeParse(needDuration));
         mybarCharView.setCallback(new MyBarChartView.ProgressCallback() {
@@ -119,10 +134,10 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
             public void isDone() {
                 startTimer();
 
-
             }
         });
         WaitingDialog.openPragressDialog(this);
+        timeLineBar.initMaxWidth();
     }
 
 

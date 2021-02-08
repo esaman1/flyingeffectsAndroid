@@ -46,7 +46,11 @@ public class ChooseMusicActivity extends BaseActivity {
     @BindView(R.id.relative_top)
     RelativeLayout relative_top;
 
+    /**如果时长为0，就表示无限裁剪，这里新添加一个功能，可以拖动裁剪*/
     private long needDuration;
+
+
+
 
     @Override
     protected int getLayoutId() {
