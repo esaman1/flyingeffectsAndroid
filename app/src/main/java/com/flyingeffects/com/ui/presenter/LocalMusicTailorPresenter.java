@@ -20,6 +20,10 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.record.SamplePlayer;
 import com.flyingeffects.com.utils.record.soundfile.SoundFile;
+import com.flyingeffects.com.view.RangeSeekBarForMusicView;
+import com.flyingeffects.com.view.RangeSeekBarView;
+import com.flyingeffects.com.view.beans.Thumb;
+import com.flyingeffects.com.view.interfaces.OnRangeSeekBarListener;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
@@ -413,6 +417,75 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
             downProgressDialog = null;
         }
     }
+
+
+
+
+    /**
+     * description ：初始化拖动条
+     * creation date: 2021/2/19
+     * user : zhangtongju
+     */
+    private RangeSeekBarForMusicView mRangeSeekBarView;
+    public void InitRangeSeekBar(RangeSeekBarForMusicView mRangeSeekBarView){
+        this.mRangeSeekBarView=mRangeSeekBarView;
+        mRangeSeekBarView.addOnRangeSeekBarListener(new OnRangeSeekBarListener() {
+            @Override
+            public void onCreate(RangeSeekBarView rangeSeekBarView, int index, float value) {
+                // Do nothing
+            }
+
+            @Override
+            public void onSeek(RangeSeekBarView rangeSeekBarView, int index, float value) {
+            }
+
+            @Override
+            public void onSeekStart(RangeSeekBarView rangeSeekBarView, int index, float value) {
+                // Do nothing
+            }
+
+            @Override
+            public void onSeekStop(RangeSeekBarView rangeSeekBarView, int index, float value) {
+            }
+
+            @Override
+            public void onCreate(RangeSeekBarForMusicView rangeSeekBarView, int index, float value) {
+
+            }
+
+            @Override
+            public void onSeek(RangeSeekBarForMusicView rangeSeekBarView, int index, float value) {
+                onStopSeekThumbs(index, value);
+                LogUtil.d("OOM","onSeek");
+            }
+
+            @Override
+            public void onSeekStart(RangeSeekBarForMusicView rangeSeekBarView, int index, float value) {
+
+            }
+
+            @Override
+            public void onSeekStop(RangeSeekBarForMusicView rangeSeekBarView, int index, float value) {
+               onStopSeekThumbs(index, value);
+                LogUtil.d("OOM","onSeekStop");
+            }
+        });
+        setSeekBarPosition();
+        mRangeSeekBarView.setMinDistance(30);
+        mRangeSeekBarView.initMaxWidth();
+    }
+
+
+    private void setSeekBarPosition() {
+        new Handler().postDelayed(() -> mRangeSeekBarView.initMaxWidth(),500);
+
+    }
+
+    private void onStopSeekThumbs(int index, float value) {
+        float percent=value/(float)100;
+        localMusicTailorMvpView.onStopSeekThumbs(percent);
+    }
+
 
 
 }

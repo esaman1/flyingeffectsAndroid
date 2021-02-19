@@ -18,8 +18,10 @@ import com.flyingeffects.com.ui.presenter.LocalMusicTailorPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.view.RangeSeekBarForMusicView;
+import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.histogram.MyBarChartView;
 import com.flyingeffects.com.view.histogram.MyBarChartView.BarData;
+import com.flyingeffects.com.view.interfaces.OnRangeSeekBarListener;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.util.ArrayList;
@@ -80,8 +82,9 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
 
     private String title;
 
+
     @BindView(R.id.timeLineBar)
-    RangeSeekBarForMusicView timeLineBar;
+    RangeSeekBarForMusicView mRangeSeekBarView;
 
 
     /**
@@ -109,8 +112,12 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
         allDuration = videoInfo.getDuration();
         needDuration = getIntent().getLongExtra("needDuration", 10000);
         if(needDuration==0){
-            isInfinite=true;
+            isInfinite=false;
             needDuration=allDuration;
+            mRangeSeekBarView.setVisibility(View.VISIBLE);
+        }else{
+            isInfinite=true;
+            mRangeSeekBarView.setVisibility(View.GONE);
         }
         Presenter.setNeedDuration((int) needDuration);
         tv_allDuration.setText("模板时长" + TimeUtils.timeParse(needDuration));
@@ -128,16 +135,13 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
                     }
                 });
             }
-
-
             @Override
             public void isDone() {
                 startTimer();
-
             }
         });
         WaitingDialog.openPragressDialog(this);
-        timeLineBar.initMaxWidth();
+        Presenter.InitRangeSeekBar(mRangeSeekBarView);
     }
 
 
@@ -230,6 +234,24 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     }
 
 
+
+    /**
+     * description ：无限滑动时候的百分比
+     * creation date: 2021/2/19
+     * user : zhangtongju
+     */
+    @Override
+    public void onStopSeekThumbs(float percent) {
+        runOnUiThread(() -> {
+            nowPlayStartTime = (long) (allDuration * percent);
+            tv_start.setText(TimeUtils.timeParse(nowPlayStartTime));
+            nowPlayEndTime = allDuration;
+            tv_end.setText(TimeUtils.timeParse(allDuration));
+        });
+        startTimer();
+    }
+
+
     @Override
     @OnClick({R.id.tv_top_submit})
     public void onClick(View view) {
@@ -237,7 +259,6 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
             case R.id.tv_top_submit:
                 //裁剪保存
                 statisticsEventAffair.getInstance().setFlag(LocalMusicTailorActivity.this, "16_pick music_apply",title);
-
                 Presenter.toSaveCutMusic(nowPlayStartTime, nowPlayEndTime);
                 break;
 

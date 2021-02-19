@@ -30,6 +30,7 @@ import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
+import com.flyingeffects.com.view.RangeSeekBarForMusicView;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.RoundImageView;
 import com.flyingeffects.com.view.VideoFrameRecycler;
@@ -401,6 +402,26 @@ public class UploadMaterialMVPModel {
             @Override
             public void onSeekStop(RangeSeekBarView rangeSeekBarView, int index, float value) {
                 onStopSeekThumbs(index, value);
+            }
+
+            @Override
+            public void onCreate(RangeSeekBarForMusicView rangeSeekBarView, int index, float value) {
+
+            }
+
+            @Override
+            public void onSeek(RangeSeekBarForMusicView rangeSeekBarView, int index, float value) {
+
+            }
+
+            @Override
+            public void onSeekStart(RangeSeekBarForMusicView rangeSeekBarView, int index, float value) {
+
+            }
+
+            @Override
+            public void onSeekStop(RangeSeekBarForMusicView rangeSeekBarView, int index, float value) {
+
             }
         });
     }

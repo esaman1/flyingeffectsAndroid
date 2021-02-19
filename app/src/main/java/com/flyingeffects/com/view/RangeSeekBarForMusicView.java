@@ -40,8 +40,8 @@ public class RangeSeekBarForMusicView extends View {
     private final Paint mShadow = new Paint();
     private final Paint mLine = new Paint();
     //画拖动条和视频条上方的高低差
-    private int offsetY=0;
-    private final Paint mBackground=new Paint();
+    private int offsetY = 0;
+    private final Paint mBackground = new Paint();
 
     public RangeSeekBarForMusicView(@NonNull Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -60,7 +60,7 @@ public class RangeSeekBarForMusicView extends View {
         mScaleRangeMax = 100;
         mHeightTimeLine = getContext().getResources().getDimensionPixelOffset(R.dimen.frames_video_height);
 //        offsetY= Math.round(DimensionUtils.dp2px(2));
-        offsetY= Math.round(screenUtil.dip2px(BaseApplication.getInstance(),2));
+        offsetY = Math.round(screenUtil.dip2px(BaseApplication.getInstance(), 2));
         setFocusable(true);
         setFocusableInTouchMode(true);
 
@@ -75,14 +75,14 @@ public class RangeSeekBarForMusicView extends View {
         mLine.setAntiAlias(true);
         mLine.setColor(lineColor);
 
-        int backgroundColor= ContextCompat.getColor(getContext(),R.color.white);
+        int backgroundColor = ContextCompat.getColor(getContext(), R.color.white);
         mBackground.setAntiAlias(true);
         mBackground.setColor(backgroundColor);
     }
 
     public void initMaxWidth() {
         mMaxWidth = mThumbs.get(1).getPos() - mThumbs.get(0).getPos();
-
+        LogUtil.d("OOM", "mMaxWidth=" + mMaxWidth);
         onSeekStop(this, 0, mThumbs.get(0).getVal());
         onSeekStop(this, 1, mThumbs.get(1).getVal());
 
@@ -164,7 +164,9 @@ public class RangeSeekBarForMusicView extends View {
                 final float dx = coordinate - mThumb.getLastTouchX();
                 final float newX = mThumb.getPos() + dx;
                 if (currentThumb == 0) {
-                    if ((newX+mThumb.getWidthBitmap()+minDistance)>=mThumb2.getPos()){return true;}
+                    if ((newX + mThumb.getWidthBitmap() + minDistance) >= mThumb2.getPos()) {
+                        return true;
+                    }
                     if ((newX + mThumb.getWidthBitmap()) >= mThumb2.getPos()) {
                         mThumb.setPos(mThumb2.getPos() - mThumb.getWidthBitmap());
                     } else if (newX <= mPixelRangeMin) {
@@ -301,18 +303,19 @@ public class RangeSeekBarForMusicView extends View {
         return closest;
     }
 
-    private void drawBackground(@NonNull Canvas canvas){
-        int left=Math.round(mThumbs.get(0).getPos()+mThumbWidth);
-        int right=Math.round(mThumbs.get(1).getPos());
-        int upperTop=-offsetY;
-        int upperBottom=offsetY;
-        int lowerTop=mHeightTimeLine;
-        int lowerBottom=mHeightTimeLine+offsetY;
-        Rect upperRect=new Rect(left,upperTop,right,upperBottom);
-        Rect lowerRect=new Rect(left,lowerTop,right,lowerBottom);
-        canvas.drawRect(upperRect,mBackground);
-        canvas.drawRect(lowerRect,mBackground);
+    private void drawBackground(@NonNull Canvas canvas) {
+        int left = Math.round(mThumbs.get(0).getPos() + mThumbWidth);
+        int right = Math.round(mThumbs.get(1).getPos());
+        int upperTop = -offsetY;
+        int upperBottom = offsetY;
+        int lowerTop = mHeightTimeLine;
+        int lowerBottom = mHeightTimeLine + offsetY;
+        Rect upperRect = new Rect(left, upperTop, right, upperBottom);
+        Rect lowerRect = new Rect(left, lowerTop, right, lowerBottom);
+        canvas.drawRect(upperRect, mBackground);
+        canvas.drawRect(lowerRect, mBackground);
     }
+
     private void drawShadow(@NonNull Canvas canvas) {
         if (!mThumbs.isEmpty()) {
 
@@ -320,13 +323,13 @@ public class RangeSeekBarForMusicView extends View {
                 if (th.getIndex() == 0) {
                     final float x = th.getPos() + getPaddingLeft();
                     if (x > mPixelRangeMin) {
-                        Rect mRect = new Rect((int) mThumbWidth, 0, (int) (x + mThumbWidth), mHeightTimeLine+offsetY);
+                        Rect mRect = new Rect((int) 0, 0, (int) (x + mThumbWidth), mHeightTimeLine + offsetY);
                         canvas.drawRect(mRect, mShadow);
                     }
                 } else {
                     final float x = th.getPos() - getPaddingRight();
                     if (x < mPixelRangeMax) {
-                        Rect mRect = new Rect((int) x, 0, (int) (mViewWidth - mThumbWidth), mHeightTimeLine+offsetY);
+                        Rect mRect = new Rect((int) x, 0, (int) (mViewWidth - mThumbWidth), mHeightTimeLine + offsetY);
                         canvas.drawRect(mRect, mShadow);
                     }
                 }
@@ -339,11 +342,11 @@ public class RangeSeekBarForMusicView extends View {
         if (!mThumbs.isEmpty()) {
             for (Thumb th : mThumbs) {
                 if (th.getIndex() == 0) {
-                    LogUtil.d("xxxx","xxxx="+th.getPos() + getPaddingLeft());
-                    canvas.drawBitmap(th.getBitmap(), th.getPos() + getPaddingLeft(), getPaddingTop()-offsetY, null);
+                    LogUtil.d("xxxx", "xxxx=" + th.getPos() + getPaddingLeft());
+                    canvas.drawBitmap(th.getBitmap(), th.getPos() + getPaddingLeft(), getPaddingTop() - offsetY, null);
                 } else {
-                    LogUtil.d("xxxx2","xxxx="+th.getPos() + getPaddingLeft());
-                    canvas.drawBitmap(th.getBitmap(), th.getPos() - getPaddingRight(), getPaddingTop()-offsetY, null);
+                    LogUtil.d("xxxx2", "xxxx=" + th.getPos() + getPaddingLeft());
+                    canvas.drawBitmap(th.getBitmap(), th.getPos() - getPaddingRight(), getPaddingTop() - offsetY, null);
                 }
             }
         }
@@ -364,7 +367,7 @@ public class RangeSeekBarForMusicView extends View {
         }
 
         for (OnRangeSeekBarListener item : mListeners) {
-         //   item.onCreate(rangeSeekBarView, index, value);
+            item.onCreate(rangeSeekBarView, index, value);
         }
     }
 
@@ -374,7 +377,7 @@ public class RangeSeekBarForMusicView extends View {
         }
 
         for (OnRangeSeekBarListener item : mListeners) {
-         //   item.onSeek(rangeSeekBarView, index, value);
+            item.onSeek(rangeSeekBarView, index, value);
         }
     }
 
@@ -384,7 +387,7 @@ public class RangeSeekBarForMusicView extends View {
         }
 
         for (OnRangeSeekBarListener item : mListeners) {
-         //   item.onSeekStart(rangeSeekBarView, index, value);
+            item.onSeekStart(rangeSeekBarView, index, value);
         }
     }
 
@@ -394,15 +397,17 @@ public class RangeSeekBarForMusicView extends View {
         }
 
         for (OnRangeSeekBarListener item : mListeners) {
-          //  item.onSeekStop(rangeSeekBarView, index, value);
+            item.onSeekStop(rangeSeekBarView, index, value);
         }
     }
 
     public List<Thumb> getThumbs() {
         return mThumbs;
     }
-    private float minDistance=0;
+
+    private float minDistance = 0;
+
     public void setMinDistance(long duration) {
-        minDistance=(1f*2000/duration)*mPixelRangeMax;
+        minDistance = (1f * 2000 / duration) * mPixelRangeMax;
     }
 }
