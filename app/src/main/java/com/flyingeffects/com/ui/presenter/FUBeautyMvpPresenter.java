@@ -86,12 +86,18 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
      */
     private int nowChooseCutDownNum = 0;
 
+    /**
+     * 来自于哪个页面 0表示首页的拍摄页面 1 表示来自于跟随音乐拍摄页面
+     */
+    private int isFrom;
 
-    public FUBeautyMvpPresenter(Context context, FUBeautyMvpView fUBeautyMvpView, HorizontalselectedView horizontalselectedView) {
+
+    public FUBeautyMvpPresenter(Context context, FUBeautyMvpView fUBeautyMvpView, HorizontalselectedView horizontalselectedView,int isFrom,long duration,String musicPath) {
         this.fUBeautyMvpView = fUBeautyMvpView;
         this.horizontalselectedView = horizontalselectedView;
         this.context = context;
-        fUBeautyMvpmodel = new FUBeautyMvpModel(context, this);
+        this.isFrom=isFrom;
+        fUBeautyMvpmodel = new FUBeautyMvpModel(context, this,duration,musicPath,isFrom);
         horizontalselectedView.setData(fUBeautyMvpmodel.GetTimeData());
         horizontalselectedView.setSeeSize(4);
     }

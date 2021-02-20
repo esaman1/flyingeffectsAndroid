@@ -587,13 +587,21 @@ public class AlbumActivity extends BaseActivity implements
     @Override
     public void toCapturePage() {
         //点击拍摄按钮
-        Bundle captureBundle = new Bundle();
-        captureBundle.putLong(Album.VIDEOTIME, mMineVideoTime);
-        captureBundle.putString(Album.MODEL_TITLE, mTitle);
-        captureBundle.putString(Album.MUSIC_PATH, mMusicPath);
-        Intent intent = new Intent(this, CaptureActivity.class);
-        intent.putExtras(captureBundle);
-        startActivityForResult(intent, CODE_TO_CAPTURE);
+//        Bundle captureBundle = new Bundle();
+//        captureBundle.putLong(Album.VIDEOTIME, mMineVideoTime);
+//        captureBundle.putString(Album.MODEL_TITLE, mTitle);
+//        captureBundle.putString(Album.MUSIC_PATH, mMusicPath);
+//        Intent intent = new Intent(this, CaptureActivity.class);
+//        intent.putExtras(captureBundle);
+//        startActivityForResult(intent, CODE_TO_CAPTURE);
+
+
+        AlbumFile albumFile=new AlbumFile();
+        albumFile.setClickToCamera(true);
+        mCheckedList.clear();
+        mCheckedList.add(albumFile);
+        ThumbnailBuildTask task = new ThumbnailBuildTask(this, mCheckedList, this);
+        task.execute();
     }
 
     @Override

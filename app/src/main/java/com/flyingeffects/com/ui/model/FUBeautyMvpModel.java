@@ -13,7 +13,8 @@ import rx.subjects.PublishSubject;
 
 public class FUBeautyMvpModel {
 
-
+    /**来自模板的时长*/
+    private int durationForTemplate;
     private ArrayList<String> timeDataList = new ArrayList<>();
     private int[] timeDataInt = {5000, 15000, 60000, 0};
 
@@ -50,16 +51,29 @@ public class FUBeautyMvpModel {
      */
     public String musicPath;
 
+    /**
+     * 0 表示进入的入口为主页  1 表示入口为跟随音乐拍摄
+     */
+    private int isFrom;
+
+
 
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
 
     private FUBeautyMvpCallback callback;
 
-    public FUBeautyMvpModel(Context context, FUBeautyMvpCallback callback) {
+    public FUBeautyMvpModel(Context context, FUBeautyMvpCallback callback,long durationForTemplate,String musicPath,int isFrom) {
         timeDataList.add("5秒");
         timeDataList.add("15秒");
         timeDataList.add("60秒");
         timeDataList.add("无限");
+        this.durationForTemplate= (int) durationForTemplate;
+        this.isFrom=isFrom;
+        if(TextUtils.isEmpty(musicPath)){
+            setMusicPath(musicPath,musicPath);
+        }
+
+
     }
 
 
@@ -79,18 +93,21 @@ public class FUBeautyMvpModel {
      * user : zhangtongju
      */
     public int FetChooseDuration(String text) {
-
-        if (TextUtils.isEmpty(text)) {
-            return timeDataInt[2];
-        } else {
-            int nowChooseId = 0;
-            for (int i = 0; i < timeDataList.size(); i++) {
-                if (timeDataList.get(i).equals(text)) {
-                    nowChooseId = i;
-                    break;
+        if(isFrom==1){
+            return durationForTemplate;
+        }else{
+            if (TextUtils.isEmpty(text)) {
+                return timeDataInt[2];
+            } else {
+                int nowChooseId = 0;
+                for (int i = 0; i < timeDataList.size(); i++) {
+                    if (timeDataList.get(i).equals(text)) {
+                        nowChooseId = i;
+                        break;
+                    }
                 }
+                return timeDataInt[nowChooseId];
             }
-            return timeDataInt[nowChooseId];
         }
     }
 

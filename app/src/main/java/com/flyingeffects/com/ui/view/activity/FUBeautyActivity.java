@@ -43,13 +43,22 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     private boolean isRecording = false;
     private LinearLayout ll_stage_property;
     private ConstraintLayout constraintLayout;
+    /**
+     * 来自哪个界面  0  默认为主页点击+号页面   1 默认为跟随相机拍摄页面
+     */
+    private int isFrom;
+
 
 
     @Override
     protected void onCreate() {
+        isFrom = getIntent().getIntExtra("isFrom", 0);
+        long duration=getIntent().getLongExtra("duration",0);
+        String musicPath=getIntent().getStringExtra("musicPath");
+        String title=getIntent().getStringExtra("title");
         horizontalselectedView = findViewById(R.id.horizontalselectedView);
         constraintLayout = findViewById(R.id.constraintLayout);
-        presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView);
+        presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView,isFrom,duration,musicPath);
         findViewById(R.id.ll_album).setVisibility(View.INVISIBLE);
         findViewById(R.id.relative_choose_music).setOnClickListener(listener);
         findViewById(R.id.iv_close).setOnClickListener(listener);
@@ -57,15 +66,23 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         iv_count_down = findViewById(R.id.iv_count_down);
         iv_count_down.setOnClickListener(listener);
         tv_count_down = findViewById(R.id.tv_count_down_right);
-        lottieAnimationView=findViewById(R.id.animation_view);
+        lottieAnimationView = findViewById(R.id.animation_view);
         animation_view_progress = findViewById(R.id.animation_view_progress);
         lottieAnimationView.setOnClickListener(listener);
         animation_view_progress.setOnClickListener(listener);
-        ImageView   iv_rolling_over = findViewById(R.id.iv_rolling_over);
+        ImageView iv_rolling_over = findViewById(R.id.iv_rolling_over);
         iv_rolling_over.setOnClickListener(listener);
         ll_stage_property = findViewById(R.id.ll_stage_property);
         ll_stage_property.setOnClickListener(listener);
+        if (isFrom == 1) {
+            horizontalselectedView.setVisibility(View.GONE);
+            ll_stage_property.setVisibility(View.INVISIBLE);
+            tv_chooseMusic.setText(title);
+            SetNowChooseMusic(musicPath, musicPath);
+            presenter.SetNowChooseMusic(musicPath, musicPath);
 
+
+        }
     }
 
 
@@ -273,8 +290,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         }
         return true;
     }
-
-
 
 
     /**
