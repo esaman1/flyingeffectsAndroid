@@ -970,6 +970,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     intent.putExtra("isFrom",1);
                     intent.putExtra("musicPath",bjMp3);
+                    intent.putExtra("defaultnum",defaultnum);
+                    intent.putExtra("templateItem",templateItem);
+                    intent.putExtra("TemplateFilePath",TemplateFilePath);
+                    intent.putExtra("OldfromTo",OldfromTo);
                     intent.putExtra("title",templateItem.getTitle());
                     intent.putExtra("duration",(long) (bjMp3Duration * 1000));
                     startActivity(intent);

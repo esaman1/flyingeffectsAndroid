@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.content.Intent;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,7 +16,9 @@ import com.faceunity.entity.Effect;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.FUBaseActivity;
 import com.flyingeffects.com.enity.CutSuccess;
+import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.ui.interfaces.view.FUBeautyMvpView;
+import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.presenter.FUBeautyMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.MarqueTextView;
@@ -56,9 +59,14 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         long duration=getIntent().getLongExtra("duration",0);
         String musicPath=getIntent().getStringExtra("musicPath");
         String title=getIntent().getStringExtra("title");
+        int defaultnum=getIntent().getIntExtra("defaultnum",0);
+        String TemplateFilePath=getIntent().getStringExtra("TemplateFilePath");
+        String OldfromTo=getIntent().getStringExtra("OldfromTo");
+        new_fag_template_item templateItem= (new_fag_template_item) getIntent().getSerializableExtra("templateItem");
         horizontalselectedView = findViewById(R.id.horizontalselectedView);
+        presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView,isFrom,duration,musicPath,templateItem,TemplateFilePath,OldfromTo,defaultnum);
+        fuBeautyActivity=this;
         constraintLayout = findViewById(R.id.constraintLayout);
-        presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView,isFrom,duration,musicPath);
         findViewById(R.id.ll_album).setVisibility(View.INVISIBLE);
         findViewById(R.id.relative_choose_music).setOnClickListener(listener);
         findViewById(R.id.iv_close).setOnClickListener(listener);
@@ -80,8 +88,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
             tv_chooseMusic.setText(title);
             SetNowChooseMusic(musicPath, musicPath);
             presenter.SetNowChooseMusic(musicPath, musicPath);
-
-
         }
     }
 
@@ -321,5 +327,18 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
             lottieAnimationView.setProgress(0);
             animation_view_progress.setProgress(0);
         }
+    }
+
+
+
+
+
+    /**
+     * description ：跳转到下一页
+     * creation date: 2021/2/20
+     * user : zhangtongju
+     */
+    public void ToNextPage(String path){
+        presenter.ToNextPage(path);
     }
 }

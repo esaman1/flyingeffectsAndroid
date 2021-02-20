@@ -53,6 +53,7 @@ import com.faceunity.utils.MiscUtil;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.ui.model.FromToTemplate;
+import com.flyingeffects.com.ui.view.activity.FUBeautyActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
 import com.flyingeffects.com.utils.FuLive.BaseCameraRenderer;
 import com.flyingeffects.com.utils.FuLive.CameraFocus;
@@ -120,7 +121,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
     protected RadioGroup mInputTypeRadioGroup;
     private ImageView mIvShowMore;
     public RelativeLayout relative_content;
-
+    public  FUBeautyActivity fuBeautyActivity;
     private SensorManager mSensorManager;
     private Sensor mSensor;
     private final Runnable mCameraFocusDismiss = new Runnable() {
@@ -406,6 +407,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         //     ScreenUtils.fullScreen(this);
         EventBus.getDefault().register(this);
+//        fuBeautyActivity=new FUBeautyActivity();
         ButterKnife.bind(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.act_shoot);
@@ -694,11 +696,12 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
 
     private void intoTemplate(String path) {
-        Intent intent = new Intent(this, TemplateAddStickerActivity.class);
-        intent.putExtra("videoPath", path);
-        intent.putExtra("title", "拍摄入口");
-        intent.putExtra("IsFrom", FromToTemplate.SHOOT);
-        startActivity(intent);
+
+
+
+        fuBeautyActivity.ToNextPage( path);
+
+
     }
 
 

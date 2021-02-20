@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.presenter;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -36,6 +37,7 @@ import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.StickerTypeEntity;
+import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -44,8 +46,15 @@ import com.flyingeffects.com.ui.interfaces.model.FUBeautyMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.FUBeautyMvpView;
 import com.flyingeffects.com.ui.model.CreationTemplateMvpModel;
 import com.flyingeffects.com.ui.model.FUBeautyMvpModel;
+import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.TemplateAddStickerMvpModel;
 import com.flyingeffects.com.ui.view.activity.ChooseMusicActivity;
+import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
+import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
+import com.flyingeffects.com.ui.view.activity.TemplateActivity;
+import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
+import com.flyingeffects.com.ui.view.activity.TemplateCutVideoActivity;
+import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.flyingeffects.com.ui.view.fragment.StickerFragment;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
@@ -90,14 +99,23 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
      * 来自于哪个页面 0表示首页的拍摄页面 1 表示来自于跟随音乐拍摄页面
      */
     private int isFrom;
+    private new_fag_template_item templateItem;
+    private String TemplateFilePath;
+    private String OldfromTo;
+    private int defaultnum;
 
 
-    public FUBeautyMvpPresenter(Context context, FUBeautyMvpView fUBeautyMvpView, HorizontalselectedView horizontalselectedView,int isFrom,long duration,String musicPath) {
+
+    public FUBeautyMvpPresenter(Context context, FUBeautyMvpView fUBeautyMvpView, HorizontalselectedView horizontalselectedView, int isFrom, long duration, String musicPath, new_fag_template_item templateItem,String TemplateFilePath,String OldfromTo,int defaultnum) {
         this.fUBeautyMvpView = fUBeautyMvpView;
         this.horizontalselectedView = horizontalselectedView;
         this.context = context;
-        this.isFrom=isFrom;
-        fUBeautyMvpmodel = new FUBeautyMvpModel(context, this,duration,musicPath,isFrom);
+        this.isFrom = isFrom;
+        this.TemplateFilePath=TemplateFilePath;
+        this.templateItem = templateItem;
+        this.OldfromTo=OldfromTo;
+        this.defaultnum=defaultnum;
+        fUBeautyMvpmodel = new FUBeautyMvpModel(context, this, duration, musicPath, isFrom);
         horizontalselectedView.setData(fUBeautyMvpmodel.GetTimeData());
         horizontalselectedView.setSeeSize(4);
     }
@@ -143,13 +161,79 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     }
 
 
+
+    /**
+     * description ：跳转到下一页
+     * creation date: 2021/2/20
+     * user : zhangtongju
+     */
+    public void ToNextPage(String path) {
+        if (isFrom == 0) {
+            Intent intent = new Intent(context, TemplateAddStickerActivity.class);
+            intent.putExtra("videoPath", path);
+            intent.putExtra("title", "拍摄入口");
+            intent.putExtra("IsFrom", FromToTemplate.SHOOT);
+            context.startActivity(intent);
+        } else {
+            // 这里是跟随相机拍摄页面
+            String templateType = templateItem.getTemplate_type();
+            if (templateType.equals("2")) {
+                intoCreationTemplateActivity(path, path, path, true);
+            } else {
+                ArrayList<String>paths=new ArrayList<>();
+                paths.add(path);
+                intoTemplateActivity(paths, TemplateFilePath);
+            }
+        }
+    }
+
+    private void intoTemplateActivity(List<String> paths, String templateFilePath) {
+        Intent intent = new Intent(context, TemplateActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList("paths", (ArrayList<String>) paths);
+        bundle.putInt("isPicNum", defaultnum);
+        bundle.putString("fromTo", OldfromTo);
+        bundle.putInt("picout", templateItem.getIs_picout());
+        bundle.putInt("is_anime", templateItem.getIs_anime());
+        bundle.putString("templateName", templateItem.getTitle());
+        bundle.putString("templateId", templateItem.getId() + "");
+        bundle.putString("videoTime", templateItem.getVideotime());
+        bundle.putStringArrayList("originalPath", (ArrayList<String>) paths);
+        bundle.putString("templateFilePath", templateFilePath);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("Message", bundle);
+        intent.putExtra("person", templateItem);
+        context.startActivity(intent);
+    }
+
+    private void intoCreationTemplateActivity(String imagePath, String videoPath, String originalPath, boolean isNeedCut) {
+        Intent intent = new Intent(context, CreationTemplateActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("paths", imagePath);
+        bundle.putSerializable("bjTemplateTitle", templateItem.getTitle());
+        bundle.putString("originalPath", originalPath);
+        bundle.putString("video_path", videoPath);
+        boolean isLandscape = templateItem.getIsLandscape() == 1;
+        bundle.putBoolean("isLandscape", isLandscape);
+        bundle.putBoolean("isNeedCut", isNeedCut);
+        int id = templateItem.getTemplate_id();
+        if (id == 0) {
+            id = templateItem.getId();
+        }
+        bundle.putSerializable("templateId", id);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("Message", bundle);
+        context.startActivity(intent);
+    }
+
+
+
     /**
      * description ：点击倒计时功能
      * creation date: 2021/1/29
      * user : zhangtongju
      */
     public void clickCountDown(ImageView iv) {
-
         nowChooseCutDownNum++;
         if (nowChooseCutDownNum > 2) {
             nowChooseCutDownNum = 0;
@@ -221,9 +305,9 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
 
     public void stopRecord() {
         if (mediaPlayer != null) {
-            if (mediaPlayer.isPlaying()) {
-                mediaPlayer.pause();
-            }
+//            if (mediaPlayer.isPlaying()) {
+//                mediaPlayer.pause();
+//            }
             mediaPlayer.release();
         }
     }
@@ -371,7 +455,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
      */
 
     public void showBottomSheetDialog(FragmentManager fragmentManager, RelativeLayout relative_parent) {
-        View  view = LayoutInflater.from(context).inflate(R.layout.view_template_paster, relative_parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.view_template_paster, relative_parent, false);
         ViewPager stickerViewPager = view.findViewById(R.id.viewpager_sticker);
         view.findViewById(R.id.iv_delete_sticker).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -404,7 +488,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
                     titles[i] = list.get(i).getName();
                     Bundle bundle = new Bundle();
                     bundle.putInt("category_id", list.get(i).getId());
-                    bundle.putInt("type",1);
+                    bundle.putInt("type", 1);
                     LogUtil.d("OOM2", "贴纸id为" + list.get(i).getId());
                     StickerFragment fragment = new StickerFragment();
                     fragment.setStickerListener(null);
@@ -412,13 +496,13 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
                         @Override
                         public void showDownProgress(int progress) {
 
-                            LogUtil.d("OOM3","下载的进度为"+progress);
+                            LogUtil.d("OOM3", "下载的进度为" + progress);
                         }
 
                         @Override
-                        public void zipPath(String path,String title) {
-                            LogUtil.d("OOM3","下载完成"+path);
-                            fUBeautyMvpView.changeFUSticker(path,title);
+                        public void zipPath(String path, String title) {
+                            LogUtil.d("OOM3", "下载完成" + path);
+                            fUBeautyMvpView.changeFUSticker(path, title);
 
 
                         }
@@ -427,13 +511,13 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
                     fragments.add(fragment);
                 }
                 home_vp_frg_adapter vp_frg_adapter = new home_vp_frg_adapter(fragmentManager, fragments);
-                LogUtil.d("OOM","111111");
-                if (stickerViewPager!=null){
+                LogUtil.d("OOM", "111111");
+                if (stickerViewPager != null) {
 
                     stickerViewPager.setOffscreenPageLimit(list.size() - 1);
                     stickerViewPager.setAdapter(vp_frg_adapter);
                 }
-                LogUtil.d("OOM","22222");
+                LogUtil.d("OOM", "22222");
                 stickerTab.setViewPager(stickerViewPager, titles);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
