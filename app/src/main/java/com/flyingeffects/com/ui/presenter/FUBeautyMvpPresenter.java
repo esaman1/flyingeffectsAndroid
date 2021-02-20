@@ -103,10 +103,11 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     private String TemplateFilePath;
     private String OldfromTo;
     private int defaultnum;
+    /***/
+    private String videoBjPath;
 
 
-
-    public FUBeautyMvpPresenter(Context context, FUBeautyMvpView fUBeautyMvpView, HorizontalselectedView horizontalselectedView, int isFrom, long duration, String musicPath, new_fag_template_item templateItem,String TemplateFilePath,String OldfromTo,int defaultnum) {
+    public FUBeautyMvpPresenter(Context context, FUBeautyMvpView fUBeautyMvpView, HorizontalselectedView horizontalselectedView, int isFrom, long duration, String musicPath, new_fag_template_item templateItem,String TemplateFilePath,String OldfromTo,int defaultnum,String videoBjPath) {
         this.fUBeautyMvpView = fUBeautyMvpView;
         this.horizontalselectedView = horizontalselectedView;
         this.context = context;
@@ -178,7 +179,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
             // 这里是跟随相机拍摄页面
             String templateType = templateItem.getTemplate_type();
             if (templateType.equals("2")) {
-                intoCreationTemplateActivity(path, path, path, true);
+                intoCreationTemplateActivity(path, videoBjPath, path, true);
             } else {
                 ArrayList<String>paths=new ArrayList<>();
                 paths.add(path);

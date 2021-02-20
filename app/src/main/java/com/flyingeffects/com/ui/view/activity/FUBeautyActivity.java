@@ -55,17 +55,18 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
 
     @Override
     protected void onCreate() {
+        fuBeautyActivity=this;
         isFrom = getIntent().getIntExtra("isFrom", 0);
         long duration=getIntent().getLongExtra("duration",0);
         String musicPath=getIntent().getStringExtra("musicPath");
         String title=getIntent().getStringExtra("title");
+        String videoBjPath= getIntent().getStringExtra("videoPath");
         int defaultnum=getIntent().getIntExtra("defaultnum",0);
         String TemplateFilePath=getIntent().getStringExtra("TemplateFilePath");
         String OldfromTo=getIntent().getStringExtra("OldfromTo");
         new_fag_template_item templateItem= (new_fag_template_item) getIntent().getSerializableExtra("templateItem");
         horizontalselectedView = findViewById(R.id.horizontalselectedView);
-        presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView,isFrom,duration,musicPath,templateItem,TemplateFilePath,OldfromTo,defaultnum);
-        fuBeautyActivity=this;
+        presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView,isFrom,duration,musicPath,templateItem,TemplateFilePath,OldfromTo,defaultnum,videoBjPath);
         constraintLayout = findViewById(R.id.constraintLayout);
         findViewById(R.id.ll_album).setVisibility(View.INVISIBLE);
         findViewById(R.id.relative_choose_music).setOnClickListener(listener);

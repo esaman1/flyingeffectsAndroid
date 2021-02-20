@@ -390,17 +390,6 @@ public abstract class FUBaseActivity extends AppCompatActivity
         BitmapUtil.glReadBitmap(texId, texMatrix, mvpMatrix, texWidth, texHeight, mOnReadBitmapListener, false);
     }
 
-//    public void onClick(View v) {
-//        switch (v.getId()) {
-//            case R.id.fu_base_back:
-//                onBackPressed();
-//                break;
-//            case R.id.fu_base_camera_change:
-//                mCameraRenderer.switchCamera();
-//                break;
-//            default:
-//        }
-//    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

@@ -50,6 +50,7 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.github.penfeizhou.animation.apng.APNGDrawable;
 import com.github.penfeizhou.animation.loader.ResourceStreamLoader;
+import com.lansosdk.videoeditor.MediaInfo;
 import com.nineton.ntadsdk.itr.VideoAdCallBack;
 import com.nineton.ntadsdk.manager.VideoAdManager;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -967,15 +968,28 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 if (albumFileList.get(0).isClickToCamera()) {
                     //拍摄新页面
                     Intent intent = new Intent(PreviewUpAndDownActivity.this, FUBeautyActivity.class);
+                    if(templateItem.getTemplate_type().equals("2")){
+                        //背景
+                        MediaInfo mediaInfo=new MediaInfo(videoPath);
+                        mediaInfo.prepare();
+                        intent.putExtra("musicPath",videoPath);
+                        long duration=mediaInfo.getDurationUs()/1000;
+                        intent.putExtra("duration",duration);
+                        mediaInfo.release();
+                    }else{
+                        //模板
+                        intent.putExtra("musicPath",bjMp3);
+                        intent.putExtra("duration",(long) (bjMp3Duration * 1000));
+                    }
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     intent.putExtra("isFrom",1);
-                    intent.putExtra("musicPath",bjMp3);
                     intent.putExtra("defaultnum",defaultnum);
                     intent.putExtra("templateItem",templateItem);
                     intent.putExtra("TemplateFilePath",TemplateFilePath);
+                    intent.putExtra("videoPath",videoPath);
                     intent.putExtra("OldfromTo",OldfromTo);
                     intent.putExtra("title",templateItem.getTitle());
-                    intent.putExtra("duration",(long) (bjMp3Duration * 1000));
+
                     startActivity(intent);
                 } else {
                     if (isFromCamera) {
