@@ -24,10 +24,13 @@ import android.widget.RelativeLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.horizontalselectedviewlibrary.HorizontalselectedView;
+import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.SlidingTabLayout;
+import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.CreateTemplateTextEffectAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
@@ -37,6 +40,7 @@ import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.StickerTypeEntity;
+import com.flyingeffects.com.enity.TabEntity;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -55,6 +59,7 @@ import com.flyingeffects.com.ui.view.activity.TemplateActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateCutVideoActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
+import com.flyingeffects.com.ui.view.fragment.SimpleCardFragment;
 import com.flyingeffects.com.ui.view.fragment.StickerFragment;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
@@ -103,23 +108,78 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     private String TemplateFilePath;
     private String OldfromTo;
     private int defaultnum;
-    /***/
     private String videoBjPath;
+    private SlidingTabLayout tl_tabs_bj;
+    private ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
+    private ArrayList<Fragment> mFragments = new ArrayList<>();
+    private ViewPager viewPager;
+    private final String[] mTitles = {
+            "热门", "iOS", "Android"
+            , "前端", "后端", "设计", "工具资源"
+    };
 
-
-    public FUBeautyMvpPresenter(Context context, FUBeautyMvpView fUBeautyMvpView, HorizontalselectedView horizontalselectedView, int isFrom, long duration, String musicPath, new_fag_template_item templateItem,String TemplateFilePath,String OldfromTo,int defaultnum,String videoBjPath) {
+    public FUBeautyMvpPresenter(Context context, FUBeautyMvpView fUBeautyMvpView, HorizontalselectedView horizontalselectedView,SlidingTabLayout tl_tabs_bj, int isFrom, long duration, String musicPath, new_fag_template_item templateItem,String TemplateFilePath,String OldfromTo,int defaultnum,String videoBjPath,ViewPager viewpager,FragmentManager manager) {
         this.fUBeautyMvpView = fUBeautyMvpView;
         this.horizontalselectedView = horizontalselectedView;
         this.context = context;
         this.isFrom = isFrom;
         this.TemplateFilePath=TemplateFilePath;
         this.templateItem = templateItem;
+        this.viewPager=viewpager;
         this.OldfromTo=OldfromTo;
+        this.tl_tabs_bj=tl_tabs_bj;
         this.defaultnum=defaultnum;
         fUBeautyMvpmodel = new FUBeautyMvpModel(context, this, duration, musicPath, isFrom);
         horizontalselectedView.setData(fUBeautyMvpmodel.GetTimeData());
         horizontalselectedView.setSeeSize(4);
+        addTabDate(false);
+        MyPagerAdapter mAdapter = new MyPagerAdapter(manager);
+        for (String title : mTitles) {
+            mFragments.add(SimpleCardFragment.getInstance(title));
+        }
+        viewPager.setAdapter(mAdapter);
+        tl_tabs_bj.setViewPager(viewPager, mTitles);
+//        tl_tabs_bj.setTabData(mTabEntities);
     }
+
+    private class MyPagerAdapter extends FragmentPagerAdapter {
+        public MyPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public int getCount() {
+           return mFragments.size();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mTitles[position];
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragments.get(position);
+        }
+    }
+
+    /**
+     * description ：添加数据
+     * creation date: 2021/2/20
+     * user : zhangtongju
+     */
+    private void addTabDate(boolean hasDefault){
+
+        ArrayList<String>data= fUBeautyMvpmodel.GetTimeData();
+
+        if(hasDefault){
+            data.add(0,"默认");
+        }
+        for (int i = 0; i < data.size(); i++) {
+            mTabEntities.add(new TabEntity(data.get(i), 0, 0));
+        }
+    }
+
 
     public void SetNowChooseMusic(String musicPath, String originalPath) {
         fUBeautyMvpmodel.SetNowChooseMusic(musicPath, originalPath);
