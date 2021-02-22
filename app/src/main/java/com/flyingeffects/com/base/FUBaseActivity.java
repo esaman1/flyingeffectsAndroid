@@ -926,7 +926,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
                 fuBeautyActivity.showCountDown(nowShootTime);
             }
         };
-        timer.schedule(task, 1000, 1000);
+        timer.schedule(task, 0, 1000);
     }
 
     /**

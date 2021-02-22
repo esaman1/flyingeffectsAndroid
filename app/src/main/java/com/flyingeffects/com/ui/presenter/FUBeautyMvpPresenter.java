@@ -195,7 +195,6 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
      * user : zhangtongju
      */
     private float nowCountDownNum;
-    private float nowCountDownNumF;
 
 
     public void StartCountDown() {
@@ -434,7 +433,6 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         };
 
         if (countDownStatus == 1) {
-            nowCountDownNumF = nowCountDownNum;
             timer.schedule(task, 0, 50);
         } else {
             timer.schedule(task, 0, 1000);
@@ -452,13 +450,13 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
             switch (msg.what) {
                 case 1:
                     if (countDownStatus == 1) {
-                        nowCountDownNumF = nowCountDownNumF - 0.05f;
-                        LogUtil.d("OOM", "nowCountDownNumF" + nowCountDownNumF);
-                        float progress = 0f;
-                        progress = nowCountDownNumF / (float) allNeedDuration;
+                        nowCountDownNum = nowCountDownNum - 0.05f;
+                        LogUtil.d("OOM", "nowCountDownNumF" + nowCountDownNum);
+                        float progress ;
+                        progress = nowCountDownNum /allNeedDuration;
                         progress = 1 - progress;
-                        fUBeautyMvpView.showCountDown((int) nowCountDownNumF, countDownStatus, progress);
-                        if (nowCountDownNumF <= 0) {
+                        fUBeautyMvpView.showCountDown((int) nowCountDownNum, countDownStatus, progress);
+                        if (nowCountDownNum <= 0) {
                             endTimer();
                         }
                     } else {
@@ -468,7 +466,6 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
                             endTimer();
                         }
                     }
-
 
                     break;
 

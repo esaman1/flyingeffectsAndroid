@@ -32,8 +32,8 @@ public class huaweiObs {
         ObsClient obsClient = null;
         try {
             String endPoint = "obs.cn-south-1.myhuaweicloud.com";//obs.cn-south-1.myhuaweicloud.com
-            String ak = "UZUZ5AUXKOWSLRYF6A4E"; //UZUZ5AUXKOWSLRYF6A4E
-            String sk = "H5aoz2anEATMJcS3kEW1UTewn0emQn89DKIshBUo";
+            String ak = "KOKZTHEUDHOPS2ZSR8XF"; //UZUZ5AUXKOWSLRYF6A4E
+            String sk = "vRmkMRIyeOr5yxFXfZrZMPEuAfmX0nZAYm7zBseg";
             // 创建ObsClient实例
             obsClient = new ObsClient(ak, sk, endPoint);
             HeaderResponse response;
