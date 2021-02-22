@@ -169,6 +169,7 @@
         android:textStyle="bold"
         android:id="@+id/tv_show_shoot_time"
         android:visibility="invisible"
+        android:text="0秒"
         android:layout_marginBottom="16dp"
         android:layout_width="wrap_content"
         android:layout_centerHorizontal="true"

@@ -84,6 +84,11 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
     }
 
 
+
+    public String getSoundMusicPath(){
+        return  localMusicTailorMvpModel.getSoundPath();
+    }
+
     public void setNeedDuration(int needDuration) {
         this.needDuration = needDuration;
     }

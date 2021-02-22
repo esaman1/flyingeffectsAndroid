@@ -90,6 +90,8 @@ public class frag_choose_music_recent_updates extends BaseFragment {
 
     private int nowClickPosition;
 
+    private boolean isFromShoot=false;
+
 
     @Override
     protected int getContentLayout() {
@@ -105,6 +107,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             id = bundle.getInt("id", 0);
             LogUtil.d("oom2", "id=" + id + "bundle != null");
             needDuration = bundle.getLong("needDuration");
+            isFromShoot=bundle.getBoolean("isFromShoot");
             LogUtil.d("oom2", "needDuration=" + needDuration);
         }
         initSmartRefreshLayout();
@@ -230,6 +233,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                     case R.id.tv_make:
                         Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra("isFromShoot",isFromShoot);
                         intent.putExtra("title",listData.get(position).getTitle());
                         intent.putExtra("videoPath", listData.get(position).getAudio_url());
                         intent.putExtra("needDuration", needDuration);

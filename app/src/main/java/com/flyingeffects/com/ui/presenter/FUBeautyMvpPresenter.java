@@ -120,6 +120,10 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
             , "前端", "后端", "设计", "工具资源"
     };
 
+
+
+    /**从拍摄页面进入*/
+    private long duration;
     public FUBeautyMvpPresenter(Context context, FUBeautyMvpView fUBeautyMvpView, HorizontalselectedView horizontalselectedView, int isFrom, long duration, String musicPath, new_fag_template_item templateItem, String TemplateFilePath, String OldfromTo, int defaultnum, String videoBjPath) {
         this.fUBeautyMvpView = fUBeautyMvpView;
         this.horizontalselectedView = horizontalselectedView;
@@ -127,6 +131,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         this.isFrom = isFrom;
         this.TemplateFilePath = TemplateFilePath;
         this.templateItem = templateItem;
+        this.duration=duration;
         this.OldfromTo = OldfromTo;
         this.defaultnum = defaultnum;
         fUBeautyMvpmodel = new FUBeautyMvpModel(context, this, duration, musicPath, isFrom);
@@ -189,7 +194,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
      * creation date: 2021/1/28
      * user : zhangtongju
      */
-    private int nowCountDownNum;
+    private float nowCountDownNum;
     private float nowCountDownNumF;
 
 
@@ -216,6 +221,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         Intent intent = new Intent(context, ChooseMusicActivity.class);
         LogUtil.d("OOM2", "当前需要的音乐时长为" + duration);
         intent.putExtra("needDuration", duration);
+        intent.putExtra("isFromShoot",true);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(intent);
     }
@@ -334,7 +340,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
      * user : zhangtongju
      */
     private MediaPlayer mediaPlayer;
-    private int allNeedDuration;
+    private float allNeedDuration;
 
     public void startRecord() {
         //1
@@ -347,17 +353,35 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         }
 
         //2  开启进度动画
-        String text = horizontalselectedView.getSelectedString();
-        long duration = fUBeautyMvpmodel.FetChooseDuration(text);
-        if (duration != 0) {
-            fUBeautyMvpView.nowChooseRecordIsInfinite(false);
-            countDownStatus = 1;
-            nowCountDownNum = (int) (duration / 1000);
-            allNeedDuration = nowCountDownNum;
-            startTimer();
-        } else {
-            fUBeautyMvpView.nowChooseRecordIsInfinite(true);
+        
+        if(isFrom!=1){
+            String text = horizontalselectedView.getSelectedString();
+            long duration = fUBeautyMvpmodel.FetChooseDuration(text);
+            LogUtil.d("OOM2","duration="+duration);
+            if (duration != 0) {
+                fUBeautyMvpView.nowChooseRecordIsInfinite(false);
+                countDownStatus = 1;
+                nowCountDownNum = (int) (duration / 1000);
+                LogUtil.d("OOM2","nowCountDownNum="+nowCountDownNum);
+                allNeedDuration = nowCountDownNum;
+                startTimer();
+            } else {
+                fUBeautyMvpView.nowChooseRecordIsInfinite(true);
+            }
+        }else{
+            if (duration != 0) {
+                LogUtil.d("OOM2","duration="+duration);
+                fUBeautyMvpView.nowChooseRecordIsInfinite(false);
+                countDownStatus = 1;
+                nowCountDownNum =  (duration /(float) 1000);
+                LogUtil.d("OOM2","nowCountDownNum="+nowCountDownNum);
+                allNeedDuration = nowCountDownNum;
+                startTimer();
+            } else {
+                fUBeautyMvpView.nowChooseRecordIsInfinite(true);
+            }
         }
+
     }
 
 
@@ -429,12 +453,12 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
                 case 1:
                     if (countDownStatus == 1) {
                         nowCountDownNumF = nowCountDownNumF - 0.05f;
-                        LogUtil.d("OOM", "返回值为" + nowCountDownNum);
+                        LogUtil.d("OOM", "nowCountDownNumF" + nowCountDownNumF);
                         float progress = 0f;
                         progress = nowCountDownNumF / (float) allNeedDuration;
                         progress = 1 - progress;
                         fUBeautyMvpView.showCountDown((int) nowCountDownNumF, countDownStatus, progress);
-                        if (nowCountDownNumF == 0) {
+                        if (nowCountDownNumF <= 0) {
                             endTimer();
                         }
                     } else {
@@ -590,9 +614,15 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     public void SetDefaultTime(String musicPath) {
         VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(musicPath);
         int duration = (int) videoInfo.getDuration();
-        LogUtil.d("OOM", "duration=" + duration);
+        LogUtil.d("OOM2", "duration=" + duration);
         int[] timeDataInt = {duration, 5000, 15000, 60000, 0};
         fUBeautyMvpmodel.setTimeDataInt(timeDataInt);
+        int[] timeDataInt2=fUBeautyMvpmodel.getTimeDataInt();
+
+        for (int i=0;i<timeDataInt2.length;i++){
+            LogUtil.d("OOM2", "timeDataInt2=" + timeDataInt2[i]);
+        }
+
         ArrayList<String> list = fUBeautyMvpmodel.GetTimeData();
         if (!list.get(0).equals("默认")) {
             list.add(0, "默认");

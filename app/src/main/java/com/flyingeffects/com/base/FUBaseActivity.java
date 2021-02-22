@@ -907,9 +907,6 @@ public abstract class FUBaseActivity extends AppCompatActivity
     private Timer timer;
     private TimerTask task;
     private int nowShootTime;
-    /***
-     * 倒计时60s
-     */
     private void startTimer() {
         nowShootTime=0;
         if (timer != null) {

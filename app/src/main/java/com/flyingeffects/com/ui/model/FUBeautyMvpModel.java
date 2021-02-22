@@ -115,6 +115,7 @@ public class FUBeautyMvpModel {
                         break;
                     }
                 }
+
                 return timeDataInt[nowChooseId];
             }
         }

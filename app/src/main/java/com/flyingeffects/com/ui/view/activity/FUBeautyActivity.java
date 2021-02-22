@@ -59,6 +59,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         fuBeautyActivity=this;
         isFrom = getIntent().getIntExtra("isFrom", 0);
         long duration=getIntent().getLongExtra("duration",0);
+        LogUtil.d("OOM2","duration="+duration);
         String musicPath=getIntent().getStringExtra("musicPath");
         String title=getIntent().getStringExtra("title");
         String videoBjPath= getIntent().getStringExtra("videoPath");
@@ -202,7 +203,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         SetNowChooseMusic(nowChooseBjPath, nowOriginal);
         presenter.SetNowChooseMusic(nowChooseBjPath, nowOriginal);
         if(isFrom==0){
-            presenter.SetDefaultTime( cutSuccess.getFilePath());
+            LogUtil.d("OOM2","nowChooseBjPath="+nowChooseBjPath);
+            presenter.SetDefaultTime(nowChooseBjPath);
             horizontalselectedView.SetChoosePosition(0);
         }
 
@@ -217,7 +219,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      * user : zhangtongju
      */
     @Override
-    public void showCountDown(int num, int countDownStatus, float progress) {
+    public void showCountDown(float numf, int countDownStatus, float progress) {
+        int num= (int) numf;
         Observable.just(num).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer integer) {
@@ -330,6 +333,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                 constraintLayout.setVisibility(View.VISIBLE);
                 ll_stage_property.setVisibility(View.VISIBLE);
                 tv_show_shoot_time.setVisibility(View.GONE);
+                tv_show_shoot_time.setText("0秒");
             }
         }
     }

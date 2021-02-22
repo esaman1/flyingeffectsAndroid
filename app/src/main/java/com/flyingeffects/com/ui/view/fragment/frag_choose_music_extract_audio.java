@@ -67,6 +67,8 @@ public class frag_choose_music_extract_audio extends BaseFragment {
 
     private long needDuration;
 
+    private boolean isFromShoot;
+
 
     @Override
     protected int getContentLayout() {
@@ -78,6 +80,7 @@ public class frag_choose_music_extract_audio extends BaseFragment {
         EventBus.getDefault().register(this);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
+            isFromShoot=bundle.getBoolean("isFromShoot",false);
             needDuration = bundle.getLong("needDuration", 10000);
         }
         initRecycler();
@@ -137,6 +140,8 @@ public class frag_choose_music_extract_audio extends BaseFragment {
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.putExtra("videoPath", listVideoFiltrateMp4.get(position).getPath());
                         intent.putExtra("needDuration", needDuration);
+                        intent.putExtra("isFromShoot", isFromShoot);
+
                         intent.putExtra("isAudio", false);
                         startActivity(intent);
                         break;
