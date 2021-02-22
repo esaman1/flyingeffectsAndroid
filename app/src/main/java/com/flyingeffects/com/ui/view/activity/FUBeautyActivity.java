@@ -325,11 +325,12 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
             ll_stage_property.setVisibility(View.INVISIBLE);
             tv_show_shoot_time.setVisibility(View.VISIBLE);
         } else {
-            horizontalselectedView.setVisibility(View.VISIBLE);
-            constraintLayout.setVisibility(View.VISIBLE);
-            ll_stage_property.setVisibility(View.VISIBLE);
-            tv_show_shoot_time.setVisibility(View.GONE);
-
+            if(isFrom!=1){
+                horizontalselectedView.setVisibility(View.VISIBLE);
+                constraintLayout.setVisibility(View.VISIBLE);
+                ll_stage_property.setVisibility(View.VISIBLE);
+                tv_show_shoot_time.setVisibility(View.GONE);
+            }
         }
     }
 

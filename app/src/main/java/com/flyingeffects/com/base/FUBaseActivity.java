@@ -75,6 +75,8 @@ import com.lansosdk.box.Layer;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.nineton.ntadsdk.utils.ScreenUtils;
+import com.shixing.sxve.ui.view.WaitingDialog;
+import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -637,6 +639,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
         @Override
         public void onStopped(final MediaEncoder encoder) {
+            endTimer();
             LogUtil.d("OOM", "onStopped");
             mRecordBarrier.countDown();
             // Call when MediaVideoEncoder's callback and MediaAudioEncoder's callback both are called.
@@ -691,7 +694,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
     private void intoTemplate(String path) {
 
 
-
+        WaitingDialog.closePragressDialog();
         fuBeautyActivity.ToNextPage( path);
 
 
@@ -847,6 +850,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
      * user : zhangtongju
      */
     private void compoundVideo(String videoPath, String musicPath) {
+        WaitingDialog.openPragressDialog(this);
         MediaInfo mediaInfo = new MediaInfo(videoPath);
         if (mediaInfo.prepare()){
             LogUtil.d("OOM2", "mediaInfo=" + mediaInfo.getWidth()+"---"+mediaInfo.getHeight()+"duration="+mediaInfo.getDurationUs());
@@ -925,7 +929,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
                 fuBeautyActivity.showCountDown(nowShootTime);
             }
         };
-        timer.schedule(task, 0, 1000);
+        timer.schedule(task, 1000, 1000);
     }
 
     /**
