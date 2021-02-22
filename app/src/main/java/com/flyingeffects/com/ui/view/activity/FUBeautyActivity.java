@@ -4,6 +4,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -48,6 +49,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      * 来自哪个界面  0  默认为主页点击+号页面   1 默认为跟随相机拍摄页面
      */
     private int isFrom;
+    private RelativeLayout relative_click;
+    private TextView tv_show_shoot_time;
 
 
 
@@ -70,6 +73,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         findViewById(R.id.relative_choose_music).setOnClickListener(listener);
         findViewById(R.id.iv_close).setOnClickListener(listener);
         tv_chooseMusic = findViewById(R.id.tv_chooseMusic);
+        relative_click=findViewById(R.id.relative_click);
+        tv_show_shoot_time=findViewById(R.id.tv_show_shoot_time);
         iv_count_down = findViewById(R.id.iv_count_down);
         iv_count_down.setOnClickListener(listener);
         tv_count_down = findViewById(R.id.tv_count_down_right);
@@ -170,7 +175,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                     //道具
                     presenter.showBottomSheetDialog(getSupportFragmentManager(), relative_content);
                     relative_content.setVisibility(View.VISIBLE);
-
+                    showSticker(true);
                     break;
 
 
@@ -228,11 +233,13 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                         startRecording();
                     }
                 } else {
-                    if (num != 0) {
+                    if (num > 0) {
                         //录屏倒计时
                         animation_view_progress.setProgress(progress);
                     } else {
                         isRecording = false;
+                        animation_view_progress.setProgress(0);
+                        lottieAnimationView.setProgress(0);
                         presenter.stopRecord();
                         stopRecording();
                         isRecordingState(false);
@@ -269,7 +276,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         LogUtil.d("OOM3", "bundlePath=" + bundlePath);
         Effect effect = new Effect(name, R.drawable.nihongdeng, bundlePath, 4, Effect.EFFECT_TYPE_STICKER, 0);
         mFURenderer.onEffectSelected(effect);
-        dissRelative();
+     //   dissRelative();
     }
 
 
@@ -295,6 +302,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (relative_content.getVisibility() == View.VISIBLE) {
                 relative_content.setVisibility(View.GONE);
+                showSticker(false);
             } else {
                 finish();
             }
@@ -303,16 +311,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     }
 
 
-    /**
-     * description 贴纸选择框显示隐藏
-     * creation date: 2021/2/4
-     * user : zhangtongju
-     */
-    private void dissRelative() {
-        if (relative_content.getVisibility() == View.VISIBLE) {
-            relative_content.setVisibility(View.GONE);
-        }
-    }
 
 
     /**
@@ -325,12 +323,13 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
             horizontalselectedView.setVisibility(View.GONE);
             constraintLayout.setVisibility(View.GONE);
             ll_stage_property.setVisibility(View.INVISIBLE);
+            tv_show_shoot_time.setVisibility(View.VISIBLE);
         } else {
             horizontalselectedView.setVisibility(View.VISIBLE);
             constraintLayout.setVisibility(View.VISIBLE);
             ll_stage_property.setVisibility(View.VISIBLE);
-            lottieAnimationView.setProgress(0);
-            animation_view_progress.setProgress(0);
+            tv_show_shoot_time.setVisibility(View.GONE);
+
         }
     }
 
@@ -345,5 +344,35 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      */
     public void ToNextPage(String path){
         presenter.ToNextPage(path);
+    }
+
+
+
+
+    /**
+     * description ：显示贴纸页面当前页面给的反馈
+     * creation date: 2021/2/22
+     * user : zhangtongju
+     */
+    public void showSticker(boolean isShow){
+        if(isShow){
+            horizontalselectedView.setVisibility(View.INVISIBLE);
+            relative_click.setVisibility(View.INVISIBLE);
+            ll_stage_property.setVisibility(View.INVISIBLE);
+        }else{
+            horizontalselectedView.setVisibility(View.VISIBLE);
+            relative_click.setVisibility(View.VISIBLE);
+            ll_stage_property.setVisibility(View.VISIBLE);
+        }
+    }
+
+
+    /**
+     * description ：
+     * creation date: 2021/2/22
+     * user : zhangtongju
+     */
+    public void showCountDown(int num){
+        Observable.just(num).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> tv_show_shoot_time.setText(num+"秒"));
     }
 }

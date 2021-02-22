@@ -111,6 +111,7 @@
 
 
         <RelativeLayout
+            android:id="@+id/relative_click"
             android:layout_width="74dp"
             android:layout_height="74dp"
             android:layout_gravity="center">
@@ -156,6 +157,24 @@
         </LinearLayout>
 
     </LinearLayout>
+
+
+
+
+
+
+    <TextView
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:id="@+id/tv_show_shoot_time"
+        android:visibility="invisible"
+        android:layout_marginBottom="16dp"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/ll_bottom"
+        android:layout_height="wrap_content"/>
+
 
 
     <com.example.horizontalselectedviewlibrary.HorizontalselectedView

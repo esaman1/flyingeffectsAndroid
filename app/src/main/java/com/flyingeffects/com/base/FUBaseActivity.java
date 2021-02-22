@@ -18,6 +18,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -81,6 +82,8 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
 
 import butterknife.BindView;
@@ -163,6 +166,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
             if (relative_content.getVisibility() == View.VISIBLE) {
                 relative_content.setVisibility(View.GONE);
+                fuBeautyActivity.showSticker(false);
             }
 
             //   mLlLight.setVisibility(View.VISIBLE);
@@ -716,6 +720,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
             mMuxer.prepare();
             mMuxer.startRecording();
+            startTimer();
         } catch (IOException e) {
             Log.e(TAG, "startCapture:", e);
         }
@@ -892,6 +897,56 @@ public abstract class FUBaseActivity extends AppCompatActivity
         super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
+
+
+
+    private Timer timer;
+    private TimerTask task;
+    private int nowShootTime;
+    /***
+     * 倒计时60s
+     */
+    private void startTimer() {
+        nowShootTime=0;
+        if (timer != null) {
+            timer.purge();
+            timer.cancel();
+            timer = null;
+        }
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+        timer = new Timer();
+        task = new TimerTask() {
+            @Override
+            public void run() {
+                nowShootTime++;
+                fuBeautyActivity.showCountDown(nowShootTime);
+            }
+        };
+        timer.schedule(task, 0, 1000);
+    }
+
+    /**
+     * 关闭timer 和task
+     */
+    private void endTimer() {
+        if (timer != null) {
+            timer.purge();
+            timer.cancel();
+            timer = null;
+        }
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+
+    }
+
+
+
+
 
 
 }
