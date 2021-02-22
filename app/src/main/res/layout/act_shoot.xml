@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relative_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/relative_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/black">
 
 
@@ -35,12 +35,12 @@
 
         <com.flyingeffects.com.view.MarqueTextView
             android:id="@+id/tv_chooseMusic"
-            android:focusableInTouchMode="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:ellipsize="marquee"
             android:layout_toRightOf="@+id/iv_tiktok"
+            android:ellipsize="marquee"
+            android:focusableInTouchMode="true"
+            android:singleLine="true"
             android:text="选音乐"
             android:textColor="@color/white"
             android:textSize="14sp" />
@@ -112,30 +112,23 @@
 
         <RelativeLayout
             android:layout_width="74dp"
-            android:layout_gravity="center"
-            android:layout_height="74dp">
+            android:layout_height="74dp"
+            android:layout_gravity="center">
 
 
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/animation_view"
-                app:lottie_fileName="shoot_btn.json"
                 android:layout_width="74dp"
                 android:layout_height="74dp"
-               />
+                app:lottie_fileName="shoot_btn.json" />
 
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/animation_view_progress"
-                app:lottie_fileName="aa.json"
                 android:layout_width="74dp"
                 android:layout_height="74dp"
-              />
+                app:lottie_fileName="aa.json" />
 
         </RelativeLayout>
-
-
-
-
-
 
 
         <LinearLayout
@@ -169,12 +162,11 @@
         android:id="@+id/horizontalselectedView"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:layout_above="@+id/ll_bottom"
+        android:layout_gravity="center_vertical"
         android:layout_marginStart="50dp"
         android:layout_marginEnd="50dp"
-        android:layout_gravity="center_vertical"
         app:HorizontalselectedViewSeesize="5"
-        android:layout_above="@+id/ll_bottom"
-        android:visibility="invisible"
         app:HorizontalselectedViewSelectedTextColor="#FFFFFF"
         app:HorizontalselectedViewSelectedTextSize="60"
         app:HorizontalselectedViewTextColor="#566265"
@@ -184,32 +176,9 @@
 
 
 
-
-    <com.flyco.tablayout.SlidingTabLayout
-        android:id="@+id/slidingTabLayout"
-        android:layout_width="match_parent"
-        android:layout_marginStart="50dp"
-        android:layout_above="@+id/ll_bottom"
-        android:layout_marginEnd="50dp"
-        android:layout_height="60dp"
-        app:tl_tab_padding="10dp"
-        app:tl_indicator_gravity="TOP"
-        app:tl_textBold="SELECT"
-        app:tl_underline_color="#1A000000"
-        app:tl_underline_gravity="TOP"
-        app:tl_underline_height="1dp" />
-
-
-
-
-
-
-
-
     <LinearLayout
         android:id="@+id/photograph_light_layout"
         android:layout_width="wrap_content"
-
         android:layout_height="460dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
@@ -241,18 +210,15 @@
     </LinearLayout>
 
 
-
-
-
     <TextView
         android:id="@+id/tv_count_down_right"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        android:textSize="180sp"
-        android:gravity="center"
-        android:layout_centerInParent="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="180sp"
+        android:textStyle="bold" />
 
     <com.flyingeffects.com.utils.FuLive.CameraFocus
         android:id="@+id/photograph_focus"
@@ -265,22 +231,20 @@
         app:focus_width="150dp" />
 
 
-
     <RelativeLayout
-        android:visibility="gone"
         android:id="@+id/relative_content"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/black"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"/>
+        android:background="#90000000"
+        android:visibility="gone" />
 
 
-
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/viewpager"
-        android:layout_width="match_parent"
-        android:visibility="gone"
-        android:layout_height="match_parent"/>
+<!--    <androidx.viewpager.widget.ViewPager-->
+<!--        android:id="@+id/viewpager"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:visibility="gone" />-->
 
 
 </RelativeLayout>

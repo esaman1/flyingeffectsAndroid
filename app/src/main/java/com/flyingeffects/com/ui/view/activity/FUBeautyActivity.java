@@ -1,6 +1,5 @@
 package com.flyingeffects.com.ui.view.activity;
 
-import android.content.Intent;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -8,20 +7,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.viewpager.widget.ViewPager;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.horizontalselectedviewlibrary.HorizontalselectedView;
 import com.faceunity.FURenderer;
 import com.faceunity.entity.Effect;
-import com.flyco.tablayout.CommonTabLayout;
-import com.flyco.tablayout.SlidingTabLayout;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.FUBaseActivity;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.ui.interfaces.view.FUBeautyMvpView;
-import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.presenter.FUBeautyMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.MarqueTextView;
@@ -49,8 +44,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     private boolean isRecording = false;
     private LinearLayout ll_stage_property;
     private ConstraintLayout constraintLayout;
-    private SlidingTabLayout tl_tabs_bj;
-    private ViewPager viewpager;
     /**
      * 来自哪个界面  0  默认为主页点击+号页面   1 默认为跟随相机拍摄页面
      */
@@ -71,11 +64,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         String OldfromTo=getIntent().getStringExtra("OldfromTo");
         new_fag_template_item templateItem= (new_fag_template_item) getIntent().getSerializableExtra("templateItem");
         horizontalselectedView = findViewById(R.id.horizontalselectedView);
-        tl_tabs_bj=findViewById(R.id.slidingTabLayout);
-        viewpager=findViewById(R.id.viewpager);
-        presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView,tl_tabs_bj,isFrom,duration,musicPath,templateItem,TemplateFilePath,OldfromTo,defaultnum,videoBjPath,viewpager,getSupportFragmentManager());
+        presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView,isFrom,duration,musicPath,templateItem,TemplateFilePath,OldfromTo,defaultnum,videoBjPath);
         constraintLayout = findViewById(R.id.constraintLayout);
-
         findViewById(R.id.ll_album).setVisibility(View.INVISIBLE);
         findViewById(R.id.relative_choose_music).setOnClickListener(listener);
         findViewById(R.id.iv_close).setOnClickListener(listener);
@@ -193,7 +183,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
 
 
     /**
-     * description ：选择音乐的回调
+     * description ：选择音乐的回调,选择音乐后时长添加默认
      * creation date: 2021/1/28
      * user : zhangtongju
      */
@@ -206,6 +196,12 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         tv_chooseMusic.setText(title);
         SetNowChooseMusic(nowChooseBjPath, nowOriginal);
         presenter.SetNowChooseMusic(nowChooseBjPath, nowOriginal);
+        if(isFrom==0){
+            presenter.SetDefaultTime( cutSuccess.getFilePath());
+            horizontalselectedView.SetChoosePosition(0);
+        }
+
+
     }
 
 

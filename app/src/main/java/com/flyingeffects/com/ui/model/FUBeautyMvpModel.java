@@ -16,6 +16,15 @@ public class FUBeautyMvpModel {
     /**来自模板的时长*/
     private int durationForTemplate;
     private ArrayList<String> timeDataList = new ArrayList<>();
+
+    public int[] getTimeDataInt() {
+        return timeDataInt;
+    }
+
+    public void setTimeDataInt(int[] timeDataInt) {
+        this.timeDataInt = timeDataInt;
+    }
+
     private int[] timeDataInt = {5000, 15000, 60000, 0};
 
     /***当前音乐选择时长*/

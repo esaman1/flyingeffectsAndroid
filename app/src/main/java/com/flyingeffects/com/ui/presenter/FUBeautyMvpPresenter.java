@@ -37,10 +37,12 @@ import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
+import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.StickerTypeEntity;
 import com.flyingeffects.com.enity.TabEntity;
+import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -66,6 +68,7 @@ import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.lansosdk.videoeditor.MediaInfo;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -109,7 +112,6 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     private String OldfromTo;
     private int defaultnum;
     private String videoBjPath;
-    private SlidingTabLayout tl_tabs_bj;
     private ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
     private ArrayList<Fragment> mFragments = new ArrayList<>();
     private ViewPager viewPager;
@@ -118,62 +120,59 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
             , "前端", "后端", "设计", "工具资源"
     };
 
-    public FUBeautyMvpPresenter(Context context, FUBeautyMvpView fUBeautyMvpView, HorizontalselectedView horizontalselectedView,SlidingTabLayout tl_tabs_bj, int isFrom, long duration, String musicPath, new_fag_template_item templateItem,String TemplateFilePath,String OldfromTo,int defaultnum,String videoBjPath,ViewPager viewpager,FragmentManager manager) {
+    public FUBeautyMvpPresenter(Context context, FUBeautyMvpView fUBeautyMvpView, HorizontalselectedView horizontalselectedView, int isFrom, long duration, String musicPath, new_fag_template_item templateItem, String TemplateFilePath, String OldfromTo, int defaultnum, String videoBjPath) {
         this.fUBeautyMvpView = fUBeautyMvpView;
         this.horizontalselectedView = horizontalselectedView;
         this.context = context;
         this.isFrom = isFrom;
-        this.TemplateFilePath=TemplateFilePath;
+        this.TemplateFilePath = TemplateFilePath;
         this.templateItem = templateItem;
-        this.viewPager=viewpager;
-        this.OldfromTo=OldfromTo;
-        this.tl_tabs_bj=tl_tabs_bj;
-        this.defaultnum=defaultnum;
+        this.OldfromTo = OldfromTo;
+        this.defaultnum = defaultnum;
         fUBeautyMvpmodel = new FUBeautyMvpModel(context, this, duration, musicPath, isFrom);
         horizontalselectedView.setData(fUBeautyMvpmodel.GetTimeData());
         horizontalselectedView.setSeeSize(4);
         addTabDate(false);
-        MyPagerAdapter mAdapter = new MyPagerAdapter(manager);
-        for (String title : mTitles) {
-            mFragments.add(SimpleCardFragment.getInstance(title));
-        }
-        viewPager.setAdapter(mAdapter);
-        tl_tabs_bj.setViewPager(viewPager, mTitles);
+//        MyPagerAdapter mAdapter = new MyPagerAdapter(manager);
+//        for (String title : mTitles) {
+//            mFragments.add(SimpleCardFragment.getInstance(title));
+//        }
+//        viewPager.setAdapter(mAdapter);
 //        tl_tabs_bj.setTabData(mTabEntities);
     }
 
-    private class MyPagerAdapter extends FragmentPagerAdapter {
-        public MyPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public int getCount() {
-           return mFragments.size();
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mTitles[position];
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragments.get(position);
-        }
-    }
+//    private class MyPagerAdapter extends FragmentPagerAdapter {
+//        public MyPagerAdapter(FragmentManager fm) {
+//            super(fm);
+//        }
+//
+//        @Override
+//        public int getCount() {
+//           return mFragments.size();
+//        }
+//
+//        @Override
+//        public CharSequence getPageTitle(int position) {
+//            return mTitles[position];
+//        }
+//
+//        @Override
+//        public Fragment getItem(int position) {
+//            return mFragments.get(position);
+//        }
+//    }
 
     /**
      * description ：添加数据
      * creation date: 2021/2/20
      * user : zhangtongju
      */
-    private void addTabDate(boolean hasDefault){
+    private void addTabDate(boolean hasDefault) {
 
-        ArrayList<String>data= fUBeautyMvpmodel.GetTimeData();
+        ArrayList<String> data = fUBeautyMvpmodel.GetTimeData();
 
-        if(hasDefault){
-            data.add(0,"默认");
+        if (hasDefault) {
+            data.add(0, "默认");
         }
         for (int i = 0; i < data.size(); i++) {
             mTabEntities.add(new TabEntity(data.get(i), 0, 0));
@@ -222,7 +221,6 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     }
 
 
-
     /**
      * description ：跳转到下一页
      * creation date: 2021/2/20
@@ -241,7 +239,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
             if (templateType.equals("2")) {
                 intoCreationTemplateActivity(path, videoBjPath, path, true);
             } else {
-                ArrayList<String>paths=new ArrayList<>();
+                ArrayList<String> paths = new ArrayList<>();
                 paths.add(path);
                 intoTemplateActivity(paths, TemplateFilePath);
             }
@@ -286,7 +284,6 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         intent.putExtra("Message", bundle);
         context.startActivity(intent);
     }
-
 
 
     /**
@@ -582,6 +579,27 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
                 stickerTab.setViewPager(stickerViewPager, titles);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+    }
+
+
+    /**
+     * description ：重新设置数据源，添加默认效果
+     * creation date: 2021/2/22
+     * user : zhangtongju
+     */
+    public void SetDefaultTime(String musicPath) {
+        VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(musicPath);
+        int duration = (int) videoInfo.getDuration();
+        LogUtil.d("OOM", "duration=" + duration);
+        int[] timeDataInt = {duration, 5000, 15000, 60000, 0};
+        fUBeautyMvpmodel.setTimeDataInt(timeDataInt);
+        ArrayList<String> list = fUBeautyMvpmodel.GetTimeData();
+        if (!list.get(0).equals("默认")) {
+            list.add(0, "默认");
+        }
+        horizontalselectedView.setData(list);
+        horizontalselectedView.setSeeSize(4);
+
     }
 
 

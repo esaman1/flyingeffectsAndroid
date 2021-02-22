@@ -43,7 +43,6 @@ public class HorizontalselectedView extends View {
     private float textSize;
     private int textColor;
     private Rect rect = new Rect();
-    ;
 
     private int textWidth = 0;
     private int textHeight = 0;
@@ -248,5 +247,12 @@ public class HorizontalselectedView extends View {
             return strings.get(n);
         }
         return null;
+    }
+
+
+
+    public void SetChoosePosition(int choose){
+        n=choose;
+        invalidate();
     }
 }
