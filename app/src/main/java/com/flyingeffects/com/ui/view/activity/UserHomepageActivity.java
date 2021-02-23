@@ -42,7 +42,6 @@ import rx.Observable;
  */
 public class UserHomepageActivity extends BaseActivity {
 
-
     private String toUserId;
 
     @BindView(R.id.iv_head)
@@ -200,11 +199,6 @@ public class UserHomepageActivity extends BaseActivity {
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
-
-
-
-
-
 
     /**
      * description ：请求用户信息

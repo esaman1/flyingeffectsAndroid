@@ -23,6 +23,7 @@ import java.util.List;
 //com.example.horizontalselectedviewlibrary.HorizontalselectedView
 
 public class HorizontalselectedView extends View {
+    private static final String TAG = "HorizontalselectedView";
 
     private Context context;
     private List<String> strings = new ArrayList<String>();//数据源字符串数组
@@ -47,6 +48,7 @@ public class HorizontalselectedView extends View {
     private int textWidth = 0;
     private int textHeight = 0;
     private int centerTextHeight = 0;
+    private int middle;
 
 
     public HorizontalselectedView(Context context) {
@@ -81,6 +83,7 @@ public class HorizontalselectedView extends View {
 
     /**
      * 初始化属性
+     *
      * @param attrs
      */
     private void initAttrs(AttributeSet attrs) {
@@ -92,21 +95,23 @@ public class HorizontalselectedView extends View {
         selectedColor = tta.getColor(R.styleable.HorizontalselectedView_HorizontalselectedViewSelectedTextColor, context.getResources().getColor(android.R.color.black));
         textSize = tta.getFloat(R.styleable.HorizontalselectedView_HorizontalselectedViewTextSize, 40);
         textColor = tta.getColor(R.styleable.HorizontalselectedView_HorizontalselectedViewTextColor, context.getResources().getColor(android.R.color.darker_gray));
+
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        Log.e("action", "onTouchEvent: " + event.getAction());
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 downX = event.getX();//获得点下去的x坐标
+                middle = getWidth() / 2;
+                Log.d(TAG, "onTouchEvent: " + downX);
                 break;
             case MotionEvent.ACTION_MOVE://复杂的是移动时的判断
                 float scrollX = event.getX();
 
-                if (n != 0 && n != strings.size() - 1)
+                if (n != 0 && n != strings.size() - 1) {
                     anOffset = scrollX - downX;//滑动时的偏移量，用于计算每个是数据源文字的坐标值
-                else {
+                } else {
                     anOffset = (float) ((scrollX - downX) / 1.5);//当滑到两端的时候添加一点阻力
                 }
 
@@ -120,10 +125,8 @@ public class HorizontalselectedView extends View {
                         }
                     }
                 } else {
-
                     //向左滑动，当滑动距离大于每个单元的长度时，则改变被选中的文字。
                     if (downX - scrollX >= anInt) {
-
                         if (n < strings.size() - 1) {
                             anOffset = 0;
                             n = n + 1;
@@ -136,10 +139,22 @@ public class HorizontalselectedView extends View {
                 break;
 
             case MotionEvent.ACTION_UP:
+                if (downX > middle) {
+                    if ((downX - middle) >= anInt) {
+                        float i = (downX - middle) / anInt;
+                        Log.d(TAG, "onTouchEvent: i = " + i);
+                        n = n + Math.round(i);
+                    }
+                } else {
+                    if ((middle - downX) >= anInt) {
+                        float i = (middle - downX) / anInt;
+                        Log.d(TAG, "onTouchEvent: i = " + i);
+                        n = n - Math.round(i);
+                    }
+                }
                 //抬起手指时，偏移量归零，相当于回弹。
                 anOffset = 0;
                 invalidate();
-
                 break;
             default:
                 break;
@@ -176,16 +191,17 @@ public class HorizontalselectedView extends View {
                     int width2 = rect.width();
                     textWidth = (width1 + width2) / 2;
                 }
+
                 if (i == 0) {//得到高，高度是一样的，所以无所谓
                     textPaint.getTextBounds(strings.get(0), 0, strings.get(0).length(), rect);
                     textHeight = rect.height();
                 }
 
-                if (i != n)
+                if (i != n) {
                     canvas.drawText(strings.get(i), (i - n) * anInt + getWidth() / 2 - textWidth / 2 + anOffset, getHeight() / 2 + textHeight / 2, textPaint);//画出每组文字
+                }
 
             }
-
 
         }
 
@@ -200,8 +216,9 @@ public class HorizontalselectedView extends View {
         if (seeSize > 0) {
             seeSize = seeSizes;
             invalidate();
+        } else {
+            throw new IllegalArgumentException("seeSize must > 0");
         }
-
     }
 
 
@@ -250,9 +267,8 @@ public class HorizontalselectedView extends View {
     }
 
 
-
-    public void SetChoosePosition(int choose){
-        n=choose;
+    public void SetChoosePosition(int choose) {
+        n = choose;
         invalidate();
     }
 }
