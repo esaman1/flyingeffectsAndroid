@@ -35,7 +35,7 @@ public class initFaceSdkModel {
 //            long str = System.currentTimeMillis();
             LogUtil.d("OO3", "result=" + result);
             if (result == FaceppApi.MG_RETCODE_OK) {
-               BodySegmentApi.getInstance().initBodySegment(1, BodySegmentApi.SEGMENT_MODE_FAST);//初始化人体抠像
+               BodySegmentApi.getInstance().initBodySegment(1, BodySegmentApi.SEGMENT_MODE_FAST,0);//初始化人体抠像
                 LogUtil.d("OO3", "模型加载完成");
 //                long str2 = System.currentTimeMillis();
                 hasLoadSdkOk = true;

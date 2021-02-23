@@ -142,11 +142,12 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
 
                 case R.id.animation_view_progress:
                     if (isRecording) {
-                        animation_view_progress.setProgress(0);
-                        lottieAnimationView.setProgress(0);
+
                         LogUtil.d("OOM", "直接录制结束");
                         isRecording = false;
                         presenter.stopRecord();
+                        animation_view_progress.setProgress(0);
+                        lottieAnimationView.setProgress(0);
                         stopRecording();
                         isRecordingState(false);
                     } else {

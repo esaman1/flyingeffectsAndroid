@@ -25,7 +25,7 @@ public class FUBeautyMvpModel {
         this.timeDataInt = timeDataInt;
     }
 
-    private int[] timeDataInt = {5000, 15000, 60000, 0};
+    private int[] timeDataInt = { 0,15000, 30000, 60000};
 
     /***当前音乐选择时长*/
     public int nowChooseDuration;
@@ -72,10 +72,11 @@ public class FUBeautyMvpModel {
     private FUBeautyMvpCallback callback;
 
     public FUBeautyMvpModel(Context context, FUBeautyMvpCallback callback,long durationForTemplate,String musicPath,int isFrom) {
-        timeDataList.add("5秒");
-        timeDataList.add("15秒");
-        timeDataList.add("60秒");
         timeDataList.add("无限");
+        timeDataList.add("15秒");
+        timeDataList.add("30秒");
+        timeDataList.add("60秒");
+
         this.durationForTemplate= (int) durationForTemplate;
         this.isFrom=isFrom;
         if(TextUtils.isEmpty(musicPath)){

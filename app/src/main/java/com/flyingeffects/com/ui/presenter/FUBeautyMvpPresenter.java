@@ -113,12 +113,6 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     private int defaultnum;
     private String videoBjPath;
     private ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
-    private ArrayList<Fragment> mFragments = new ArrayList<>();
-    private ViewPager viewPager;
-    private final String[] mTitles = {
-            "热门", "iOS", "Android"
-            , "前端", "后端", "设计", "工具资源"
-    };
 
 
 
@@ -138,34 +132,9 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         horizontalselectedView.setData(fUBeautyMvpmodel.GetTimeData());
         horizontalselectedView.setSeeSize(4);
         addTabDate(false);
-//        MyPagerAdapter mAdapter = new MyPagerAdapter(manager);
-//        for (String title : mTitles) {
-//            mFragments.add(SimpleCardFragment.getInstance(title));
-//        }
-//        viewPager.setAdapter(mAdapter);
-//        tl_tabs_bj.setTabData(mTabEntities);
+        horizontalselectedView.SetChoosePosition(0);
     }
 
-//    private class MyPagerAdapter extends FragmentPagerAdapter {
-//        public MyPagerAdapter(FragmentManager fm) {
-//            super(fm);
-//        }
-//
-//        @Override
-//        public int getCount() {
-//           return mFragments.size();
-//        }
-//
-//        @Override
-//        public CharSequence getPageTitle(int position) {
-//            return mTitles[position];
-//        }
-//
-//        @Override
-//        public Fragment getItem(int position) {
-//            return mFragments.get(position);
-//        }
-//    }
 
     /**
      * description ：添加数据
@@ -391,6 +360,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
 //            }
             mediaPlayer.release();
         }
+        endTimer();
     }
 
 
