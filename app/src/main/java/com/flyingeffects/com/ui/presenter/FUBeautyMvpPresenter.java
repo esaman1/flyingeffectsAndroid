@@ -360,6 +360,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
 //            }
             mediaPlayer.release();
         }
+        endTimer();
     }
 
 
