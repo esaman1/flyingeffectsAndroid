@@ -56,29 +56,28 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     private TextView tv_show_shoot_time;
 
 
-
     @Override
     protected void onCreate() {
-        fuBeautyActivity=this;
+        fuBeautyActivity = this;
         isFrom = getIntent().getIntExtra("isFrom", 0);
-        long duration=getIntent().getLongExtra("duration",0);
-        LogUtil.d("OOM2","duration="+duration);
-        String musicPath=getIntent().getStringExtra("musicPath");
-        String title=getIntent().getStringExtra("title");
-        String videoBjPath= getIntent().getStringExtra("videoPath");
-        int defaultnum=getIntent().getIntExtra("defaultnum",0);
-        String TemplateFilePath=getIntent().getStringExtra("TemplateFilePath");
-        String OldfromTo=getIntent().getStringExtra("OldfromTo");
-        new_fag_template_item templateItem= (new_fag_template_item) getIntent().getSerializableExtra("templateItem");
+        long duration = getIntent().getLongExtra("duration", 0);
+        LogUtil.d("OOM2", "duration=" + duration);
+        String musicPath = getIntent().getStringExtra("musicPath");
+        String title = getIntent().getStringExtra("title");
+        String videoBjPath = getIntent().getStringExtra("videoPath");
+        int defaultnum = getIntent().getIntExtra("defaultnum", 0);
+        String TemplateFilePath = getIntent().getStringExtra("TemplateFilePath");
+        String OldfromTo = getIntent().getStringExtra("OldfromTo");
+        new_fag_template_item templateItem = (new_fag_template_item) getIntent().getSerializableExtra("templateItem");
         horizontalselectedView = findViewById(R.id.horizontalselectedView);
-        presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView,isFrom,duration,musicPath,templateItem,TemplateFilePath,OldfromTo,defaultnum,videoBjPath);
+        presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView, isFrom, duration, musicPath, templateItem, TemplateFilePath, OldfromTo, defaultnum, videoBjPath);
         constraintLayout = findViewById(R.id.constraintLayout);
         findViewById(R.id.ll_album).setVisibility(View.INVISIBLE);
         findViewById(R.id.relative_choose_music).setOnClickListener(listener);
         findViewById(R.id.iv_close).setOnClickListener(listener);
         tv_chooseMusic = findViewById(R.id.tv_chooseMusic);
-        relative_click=findViewById(R.id.relative_click);
-        tv_show_shoot_time=findViewById(R.id.tv_show_shoot_time);
+        relative_click = findViewById(R.id.relative_click);
+        tv_show_shoot_time = findViewById(R.id.tv_show_shoot_time);
         iv_count_down = findViewById(R.id.iv_count_down);
         iv_count_down.setOnClickListener(listener);
         tv_count_down = findViewById(R.id.tv_count_down_right);
@@ -220,8 +219,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         tv_chooseMusic.setText(title);
         SetNowChooseMusic(nowChooseBjPath, nowOriginal);
         presenter.SetNowChooseMusic(nowChooseBjPath, nowOriginal);
-        if(isFrom==0){
-            LogUtil.d("OOM2","nowChooseBjPath="+nowChooseBjPath);
+        if (isFrom == 0) {
+            LogUtil.d("OOM2", "nowChooseBjPath=" + nowChooseBjPath);
             presenter.SetDefaultTime(nowChooseBjPath);
             horizontalselectedView.SetChoosePosition(0);
         }
@@ -236,7 +235,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      */
     @Override
     public void showCountDown(float numf, int countDownStatus, float progress) {
-        int num= (int) numf;
+        int num = (int) numf;
         Observable.just(num).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer integer) {
@@ -295,7 +294,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         LogUtil.d("OOM3", "bundlePath=" + bundlePath);
         Effect effect = new Effect(name, R.drawable.nihongdeng, bundlePath, 4, Effect.EFFECT_TYPE_STICKER, 0);
         mFURenderer.onEffectSelected(effect);
-     //   dissRelative();
+        //   dissRelative();
     }
 
 
@@ -344,8 +343,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     }
 
 
-
-
     /**
      * description ：录屏和非录屏ui状态切换
      * creation date: 2021/2/4
@@ -358,7 +355,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
             ll_stage_property.setVisibility(View.INVISIBLE);
             tv_show_shoot_time.setVisibility(View.VISIBLE);
         } else {
-            if(isFrom!=1){
+            if (isFrom != 1) {
                 horizontalselectedView.setVisibility(View.VISIBLE);
                 constraintLayout.setVisibility(View.VISIBLE);
                 ll_stage_property.setVisibility(View.VISIBLE);
@@ -369,19 +366,14 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     }
 
 
-
-
-
     /**
      * description ：跳转到下一页
      * creation date: 2021/2/20
      * user : zhangtongju
      */
-    public void ToNextPage(String path){
+    public void ToNextPage(String path) {
         presenter.ToNextPage(path);
     }
-
-
 
 
     /**
@@ -389,12 +381,12 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      * creation date: 2021/2/22
      * user : zhangtongju
      */
-    public void showSticker(boolean isShow){
-        if(isShow){
+    public void showSticker(boolean isShow) {
+        if (isShow) {
             horizontalselectedView.setVisibility(View.INVISIBLE);
             relative_click.setVisibility(View.INVISIBLE);
             ll_stage_property.setVisibility(View.INVISIBLE);
-        }else{
+        } else {
             horizontalselectedView.setVisibility(View.VISIBLE);
             relative_click.setVisibility(View.VISIBLE);
             ll_stage_property.setVisibility(View.VISIBLE);
@@ -407,8 +399,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      * creation date: 2021/2/22
      * user : zhangtongju
      */
-    public void showCountDown(int num){
-        Observable.just(num).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> tv_show_shoot_time.setText(num+"秒"));
+    public void showCountDown(int num) {
+        Observable.just(num).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> tv_show_shoot_time.setText(num + "秒"));
     }
 
 
