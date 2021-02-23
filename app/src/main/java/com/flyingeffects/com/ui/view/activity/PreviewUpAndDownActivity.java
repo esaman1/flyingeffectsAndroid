@@ -410,7 +410,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     ((AppCompatTextView) view.findViewById(R.id.tv_btn_follow)).setText("关注");
                     mIsFollow = false;
                 } else {
-                    ((AppCompatTextView) view.findViewById(R.id.tv_btn_follow)).setText("取消关注");
+                   // ((AppCompatTextView) view.findViewById(R.id.tv_btn_follow)).setText("取消关注");
                     mIsFollow = true;
                 }
                 LogUtil.d("OOM", "requestFollowThisUser");

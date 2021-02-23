@@ -10,26 +10,26 @@ import java.util.ArrayList;
  * Created by tujh on 2018/1/30.
  */
 public enum EffectEnum {
-    /**
-     * 关闭道具
-     */
-    EffectNone("none", R.drawable.ic_delete_all, "", 1, Effect.EFFECT_TYPE_NONE, 0),
-    /**
-     * 道具贴纸
-     */
-    Effect_nihongdeng("nihongdeng", R.drawable.nihongdeng, "effect/normal/nihongdeng.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
-    Effect_cat_sparks("cat_sparks", R.drawable.cat_sparks, "effect/normal/cat_sparks.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
-    Effect_face_half("face_half", R.drawable.face_half, "effect/normal/face_half.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
-    Effect_fu_zh_fenshu("fu_zh_fenshu", R.drawable.fu_zh_fenshu, "effect/normal/fu_zh_fenshu.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
-    Effect_zhenxinhua_damaoxian("zhenxinhua_damaoxian", R.drawable.zhenxinhua_damaoxian, "effect/normal/zhenxinhua_damaoxian.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
-    Effect_sdlr("sdlr", R.drawable.sdlr, "effect/normal/sdlr.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
-    Effect_xlong_zh_fu("xlong_zh_fu", R.drawable.xlong_zh_fu, "effect/normal/xlong_zh_fu.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
-    Effect_expression_shooting("expression_shooting", R.drawable.expression_shooting, "effect/normal/expression_shooting.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
-    Effect_newy1("newy1", R.drawable.newy1, "effect/normal/newy1.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
-    Effect_guangban("guangban", R.drawable.guangban, "effect/normal/guangban.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
-    Effect_redribbt("redribbt", R.drawable.redribbt, "effect/normal/redribbt.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
-    Effect_daisypig("daisypig", R.drawable.daisypig, "effect/normal/daisypig.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
-    Effect_sdlu("sdlu", R.drawable.sdlu, "effect/normal/sdlu.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0);
+//    /**
+//     * 关闭道具
+//     */
+    EffectNone("none", R.drawable.ic_delete_all, "", 1, Effect.EFFECT_TYPE_NONE, 0);
+//    /**
+//     * 道具贴纸
+//     */
+//    Effect_nihongdeng("nihongdeng", R.drawable.nihongdeng, "effect/normal/nihongdeng.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
+//    Effect_cat_sparks("cat_sparks", R.drawable.cat_sparks, "effect/normal/cat_sparks.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
+//    Effect_face_half("face_half", R.drawable.face_half, "effect/normal/face_half.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
+//    Effect_fu_zh_fenshu("fu_zh_fenshu", R.drawable.fu_zh_fenshu, "effect/normal/fu_zh_fenshu.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
+//    Effect_zhenxinhua_damaoxian("zhenxinhua_damaoxian", R.drawable.zhenxinhua_damaoxian, "effect/normal/zhenxinhua_damaoxian.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
+//    Effect_sdlr("sdlr", R.drawable.sdlr, "effect/normal/sdlr.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
+//    Effect_xlong_zh_fu("xlong_zh_fu", R.drawable.xlong_zh_fu, "effect/normal/xlong_zh_fu.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
+//    Effect_expression_shooting("expression_shooting", R.drawable.expression_shooting, "effect/normal/expression_shooting.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
+//    Effect_newy1("newy1", R.drawable.newy1, "effect/normal/newy1.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
+//    Effect_guangban("guangban", R.drawable.guangban, "effect/normal/guangban.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
+//    Effect_redribbt("redribbt", R.drawable.redribbt, "effect/normal/redribbt.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
+//    Effect_daisypig("daisypig", R.drawable.daisypig, "effect/normal/daisypig.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0),
+//    Effect_sdlu("sdlu", R.drawable.sdlu, "effect/normal/sdlu.bundle", 4, Effect.EFFECT_TYPE_STICKER, 0);
 
 //    /**
 //     * AR面具

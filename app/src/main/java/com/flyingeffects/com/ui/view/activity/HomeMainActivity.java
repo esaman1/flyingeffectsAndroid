@@ -407,9 +407,15 @@ public class HomeMainActivity extends FragmentActivity {
         findViewById(R.id.iv_main_add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HomeMainActivity.this, FUBeautyActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
+                if(BaseConstans.hasLogin()){
+                    Intent intent = new Intent(HomeMainActivity.this, FUBeautyActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                }else{
+                    Intent intent = new Intent(HomeMainActivity.this, LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                }
             }
         });
     }

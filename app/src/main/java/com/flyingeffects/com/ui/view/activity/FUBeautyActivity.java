@@ -16,9 +16,12 @@ import com.faceunity.entity.Effect;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.FUBaseActivity;
 import com.flyingeffects.com.enity.CutSuccess;
+import com.flyingeffects.com.enity.isIntoBackground;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.ui.interfaces.view.FUBeautyMvpView;
 import com.flyingeffects.com.ui.presenter.FUBeautyMvpPresenter;
+import com.flyingeffects.com.utils.FuLive.EffectEnum;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.MarqueTextView;
 
@@ -94,6 +97,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
             SetNowChooseMusic(musicPath, musicPath);
             presenter.SetNowChooseMusic(musicPath, musicPath);
         }
+        presenter.showBottomSheetDialog(getSupportFragmentManager(), relative_content);
     }
 
 
@@ -141,24 +145,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                     break;
 
                 case R.id.animation_view_progress:
-                    if (isRecording) {
 
-                        LogUtil.d("OOM", "直接录制结束");
-                        isRecording = false;
-                        presenter.stopRecord();
-                        animation_view_progress.setProgress(0);
-                        lottieAnimationView.setProgress(0);
-                        stopRecording();
-                        isRecordingState(false);
-                    } else {
-                        LogUtil.d("OOM", "开始录制");
-                        isRecording = true;
-                        presenter.StartCountDown();
-                        tv_count_down.setVisibility(View.VISIBLE);
-                        lottieAnimationView.setMaxProgress(20 / (float) 47);
-                        lottieAnimationView.playAnimation();
-                        isRecordingState(true);
-                    }
+                    clickBtn();
                     break;
 
 
@@ -175,7 +163,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
 
                 case R.id.ll_stage_property:
                     //道具
-                    presenter.showBottomSheetDialog(getSupportFragmentManager(), relative_content);
+
                     relative_content.setVisibility(View.VISIBLE);
                     showSticker(true);
                     break;
@@ -187,6 +175,32 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
             }
         }
     };
+
+
+
+    private void clickBtn(){
+        if(!DoubleClick.getInstance().isFastDoubleClick()){
+            if (isRecording) {
+                LogUtil.d("OOM", "直接录制结束");
+                isRecording = false;
+                presenter.stopRecord();
+                tv_count_down.setVisibility(View.GONE);
+                tv_count_down.setText("");
+                animation_view_progress.setProgress(0);
+                lottieAnimationView.setProgress(0);
+                stopRecording();
+                isRecordingState(false);
+            } else {
+                LogUtil.d("OOM", "开始录制");
+                isRecording = true;
+                presenter.StartCountDown();
+                tv_count_down.setVisibility(View.VISIBLE);
+                lottieAnimationView.setMaxProgress(20 / (float) 47);
+                lottieAnimationView.playAnimation();
+                isRecordingState(true);
+            }
+        }
+    }
 
 
     /**
@@ -208,8 +222,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
             presenter.SetDefaultTime(nowChooseBjPath);
             horizontalselectedView.SetChoosePosition(0);
         }
-
-
     }
 
 
@@ -281,6 +293,20 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         Effect effect = new Effect(name, R.drawable.nihongdeng, bundlePath, 4, Effect.EFFECT_TYPE_STICKER, 0);
         mFURenderer.onEffectSelected(effect);
      //   dissRelative();
+    }
+
+
+
+
+    /**
+     * description ：清除全部贴纸
+     * creation date: 2021/2/23
+     * user : zhangtongju
+     */
+    @Override
+    public void ClearSticker() {
+        Effect effectNone = new Effect("none", R.drawable.ic_delete_all, "", 1, Effect.EFFECT_TYPE_NONE, 0);
+        mFURenderer.onEffectSelected(effectNone);
     }
 
 
@@ -381,4 +407,17 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     public void showCountDown(int num){
         Observable.just(num).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> tv_show_shoot_time.setText(num+"秒"));
     }
+
+
+
+
+    @Subscribe
+    public void onEventMainThread(isIntoBackground isIntoBackground) {
+        LogUtil.d("OOM3","isIntoBackground="+isIntoBackground.isBackground());
+        if(isIntoBackground.isBackground()&&isRecording){
+            clickBtn();
+        }
+    }
+
+
 }

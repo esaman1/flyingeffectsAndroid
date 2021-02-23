@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.RomUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.megvii.facepp.multi.sdk.BodySegmentApi;
 import com.megvii.facepp.multi.sdk.FaceppApi;
@@ -35,7 +36,12 @@ public class initFaceSdkModel {
 //            long str = System.currentTimeMillis();
             LogUtil.d("OO3", "result=" + result);
             if (result == FaceppApi.MG_RETCODE_OK) {
-               BodySegmentApi.getInstance().initBodySegment(1, BodySegmentApi.SEGMENT_MODE_FAST,0);//初始化人体抠像
+                if (RomUtil.isEmui()) {
+                    //如果是华为设备，则初始化华为推送
+                    BodySegmentApi.getInstance().initBodySegment(1, BodySegmentApi.SEGMENT_MODE_FAST, 3);//初始化人体抠像
+                } else {
+                    BodySegmentApi.getInstance().initBodySegment(1, BodySegmentApi.SEGMENT_MODE_FAST, 0);//初始化人体抠像
+                }
                 LogUtil.d("OO3", "模型加载完成");
 //                long str2 = System.currentTimeMillis();
                 hasLoadSdkOk = true;
@@ -64,7 +70,7 @@ public class initFaceSdkModel {
             Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
                 @Override
                 public void call(Integer integer) {
-                    if(waitingDialog_progress!=null){
+                    if (waitingDialog_progress != null) {
                         waitingDialog_progress.closePragressDialog();
                     }
 
@@ -103,7 +109,7 @@ public class initFaceSdkModel {
             @Override
             public void run() {
                 if (hasLoadSdkOk) {
-                    if(waitingDialog_progress!=null){
+                    if (waitingDialog_progress != null) {
                         waitingDialog_progress.closePragressDialog();
                     }
 

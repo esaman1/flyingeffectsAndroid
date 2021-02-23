@@ -1,47 +1,49 @@
- package com.flyingeffects.com.base;
+package com.flyingeffects.com.base;
 
- import android.app.Activity;
- import android.content.Context;
- import android.content.Intent;
- import android.os.Bundle;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 
- import androidx.multidex.MultiDex;
- import androidx.multidex.MultiDexApplication;
+import androidx.multidex.MultiDex;
+import androidx.multidex.MultiDexApplication;
 
- import com.bytedance.sdk.open.douyin.DouYinOpenApiFactory;
- import com.bytedance.sdk.open.douyin.DouYinOpenConfig;
- import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
- import com.faceunity.FURenderer;
- import com.flyingeffects.com.R;
- import com.flyingeffects.com.constans.BaseConstans;
- import com.flyingeffects.com.manager.AdConfigs;
- import com.flyingeffects.com.manager.MediaLoader;
- import com.flyingeffects.com.manager.TTAdManagerHolder;
- import com.flyingeffects.com.ui.view.activity.WelcomeActivity;
- import com.flyingeffects.com.utils.ChannelUtil;
- import com.flyingeffects.com.utils.CrashHandler;
- import com.flyingeffects.com.utils.DateUtils;
- import com.flyingeffects.com.utils.LogUtil;
- import com.flyingeffects.com.utils.SystemUtil;
- import com.green.hand.library.EmojiManager;
- import com.lansosdk.box.OnLanSongLogOutListener;
- import com.lansosdk.videoeditor.LanSoEditor;
- import com.nineton.ntadsdk.NTAdConfig;
- import com.nineton.ntadsdk.NTAdSDK;
- import com.orhanobut.hawk.Hawk;
- import com.scwang.smartrefresh.header.MaterialHeader;
- import com.scwang.smartrefresh.layout.SmartRefreshLayout;
- import com.shixing.sxvideoengine.License;
- import com.shixing.sxvideoengine.SXLog;
- import com.umeng.commonsdk.UMConfigure;
- import com.yanzhenjie.album.Album;
- import com.yanzhenjie.album.AlbumConfig;
+import com.bytedance.sdk.open.douyin.DouYinOpenApiFactory;
+import com.bytedance.sdk.open.douyin.DouYinOpenConfig;
+import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
+import com.faceunity.FURenderer;
+import com.flyingeffects.com.R;
+import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.isIntoBackground;
+import com.flyingeffects.com.manager.AdConfigs;
+import com.flyingeffects.com.manager.MediaLoader;
+import com.flyingeffects.com.manager.TTAdManagerHolder;
+import com.flyingeffects.com.ui.view.activity.WelcomeActivity;
+import com.flyingeffects.com.utils.ChannelUtil;
+import com.flyingeffects.com.utils.CrashHandler;
+import com.flyingeffects.com.utils.DateUtils;
+import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.SystemUtil;
+import com.green.hand.library.EmojiManager;
+import com.lansosdk.box.OnLanSongLogOutListener;
+import com.lansosdk.videoeditor.LanSoEditor;
+import com.nineton.ntadsdk.NTAdConfig;
+import com.nineton.ntadsdk.NTAdSDK;
+import com.orhanobut.hawk.Hawk;
+import com.scwang.smartrefresh.header.MaterialHeader;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.shixing.sxvideoengine.License;
+import com.shixing.sxvideoengine.SXLog;
+import com.umeng.commonsdk.UMConfigure;
+import com.yanzhenjie.album.Album;
+import com.yanzhenjie.album.AlbumConfig;
 
- import java.util.Locale;
+import java.util.Locale;
 
- import cn.jpush.android.api.JPushInterface;
- import cn.nt.lib.analytics.NTAnalytics;
- import rx.subjects.PublishSubject;
+import cn.jpush.android.api.JPushInterface;
+import cn.nt.lib.analytics.NTAnalytics;
+import de.greenrobot.event.EventBus;
+import rx.subjects.PublishSubject;
 
 /**
  * Created by 张同举
@@ -52,7 +54,9 @@ public class BaseApplication extends MultiDexApplication {
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private static BaseApplication baseApp;
     private boolean isActive = true;
-    /**默认从APP退到后台值为true*/
+    /**
+     * 默认从APP退到后台值为true
+     */
     public boolean isBackHome = true;
 
     @Override
@@ -211,7 +215,7 @@ public class BaseApplication extends MultiDexApplication {
         public void onActivityStopped(Activity activity) {
             activityAount--;
             if (activityAount == 0) {
-                // EventBus.getDefault().post(new isIntoBackground(true));  //消息通知
+                EventBus.getDefault().post(new isIntoBackground(true));  //消息通知
                 onStopTime = System.currentTimeMillis();
                 isActive = false;
                 isBackHome = true;
@@ -259,7 +263,6 @@ public class BaseApplication extends MultiDexApplication {
     public static BaseApplication getInstance() {
         return baseApp;
     }
-
 
 
 }
