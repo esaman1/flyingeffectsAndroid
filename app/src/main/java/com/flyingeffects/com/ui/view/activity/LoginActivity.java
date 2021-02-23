@@ -45,6 +45,7 @@ import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.VideoUtils;
 import com.flyingeffects.com.view.MyVideoView;
+import com.nineton.ntadsdk.NTAdConfig;
 import com.orhanobut.hawk.Hawk;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.umeng.socialize.UMAuthListener;
@@ -63,6 +64,7 @@ import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.nt.lib.analytics.NTAnalytics;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
@@ -414,6 +416,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         HashMap<String, String> params = new HashMap<>();
         params.put("phone", editTextUsername);
         params.put("code", password);
+
+        params.put("center_imei", NTAnalytics.getIMEI());
         // 启动时间
         LogUtil.d("OOM",StringUtil.beanToJSONString(params));
         Observable ob = Api.getDefault().toLogin(BaseConstans.getRequestHead(params));
@@ -452,6 +456,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             params.put("nickname", nickname);
             params.put("photourl", photourl);
             params.put("openid", openid);
+            params.put("center_imei", NTAnalytics.getIMEI());
             params.put("unionid", unionid);
             // 启动时间
             Observable ob = Api.getDefault().toLoginSms(BaseConstans.getRequestHead(params));
