@@ -49,6 +49,7 @@ public class HorizontalselectedView extends View {
     private int textHeight = 0;
     private int centerTextHeight = 0;
     private int middle;
+    private boolean mIsScrolled;
 
 
     public HorizontalselectedView(Context context) {
@@ -104,6 +105,7 @@ public class HorizontalselectedView extends View {
             case MotionEvent.ACTION_DOWN:
                 downX = event.getX();//获得点下去的x坐标
                 middle = getWidth() / 2;
+                mIsScrolled = false;
                 Log.d(TAG, "onTouchEvent: " + downX);
                 break;
             case MotionEvent.ACTION_MOVE://复杂的是移动时的判断
@@ -115,6 +117,7 @@ public class HorizontalselectedView extends View {
                     anOffset = (float) ((scrollX - downX) / 1.5);//当滑到两端的时候添加一点阻力
                 }
 
+
                 if (scrollX > downX) {
                     //向右滑动，当滑动距离大于每个单元的长度时，则改变被选中的文字。
                     if (scrollX - downX >= anInt) {
@@ -122,6 +125,7 @@ public class HorizontalselectedView extends View {
                             anOffset = 0;
                             n = n - 1;
                             downX = scrollX;
+                            mIsScrolled = true;
                         }
                     }
                 } else {
@@ -131,6 +135,7 @@ public class HorizontalselectedView extends View {
                             anOffset = 0;
                             n = n + 1;
                             downX = scrollX;
+                            mIsScrolled = true;
                         }
                     }
                 }
@@ -139,17 +144,19 @@ public class HorizontalselectedView extends View {
                 break;
 
             case MotionEvent.ACTION_UP:
-                if (downX > middle) {
-                    if ((downX - middle) >= anInt) {
-                        float i = (downX - middle) / anInt;
-                        Log.d(TAG, "onTouchEvent: i = " + i);
-                        n = n + Math.round(i);
-                    }
-                } else {
-                    if ((middle - downX) >= anInt) {
-                        float i = (middle - downX) / anInt;
-                        Log.d(TAG, "onTouchEvent: i = " + i);
-                        n = n - Math.round(i);
+                if (!mIsScrolled) {
+                    if (downX > middle) {
+                        if ((downX - middle) >= anInt) {
+                            float i = (downX - middle) / anInt;
+                            Log.d(TAG, "onTouchEvent: i = " + i);
+                            n = n + Math.round(i);
+                        }
+                    } else {
+                        if ((middle - downX) >= anInt) {
+                            float i = (middle - downX) / anInt;
+                            Log.d(TAG, "onTouchEvent: i = " + i);
+                            n = n - Math.round(i);
+                        }
                     }
                 }
                 //抬起手指时，偏移量归零，相当于回弹。
