@@ -460,8 +460,11 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
 
             @Override
             public void onSeek(RangeSeekBarForMusicView rangeSeekBarView, int index, float value) {
-                onStopSeekThumbs(index, value);
-                LogUtil.d("OOM","onSeek");
+                if(index==Thumb.LEFT){
+                    onStopSeekThumbs(index, value);
+                    LogUtil.d("OOM","onSeek");
+                }
+
             }
 
             @Override
@@ -471,8 +474,11 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
 
             @Override
             public void onSeekStop(RangeSeekBarForMusicView rangeSeekBarView, int index, float value) {
-               onStopSeekThumbs(index, value);
-                LogUtil.d("OOM","onSeekStop");
+
+                if(index==Thumb.LEFT){
+                    onStopSeekThumbs(index, value);
+                    LogUtil.d("OOM","onSeekStop");
+                }
             }
         });
         setSeekBarPosition();

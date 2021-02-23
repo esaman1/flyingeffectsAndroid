@@ -137,6 +137,9 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.relative_choose_music:
+
+
+
                     presenter.IntoChooseMusic();
                     break;
 
