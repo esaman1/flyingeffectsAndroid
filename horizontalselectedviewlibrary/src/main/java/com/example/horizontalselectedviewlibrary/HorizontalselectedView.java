@@ -233,7 +233,7 @@ public class HorizontalselectedView extends View {
      */
     public void setData(List<String> strings) {
         this.strings = strings;
-        n = strings.size() / 2;
+//        n = strings.size() / 2;
         invalidate();
     }
 
