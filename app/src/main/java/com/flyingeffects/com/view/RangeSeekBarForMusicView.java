@@ -182,21 +182,25 @@ public class RangeSeekBarForMusicView extends View {
                     }
 
                 }
-//                else {
-//                    if ((newX<=mThumb2.getPos()+mThumb2.getWidthBitmap()+minDistance)){return true;}
-//                    if (newX <= mThumb2.getPos() + mThumb2.getWidthBitmap()) {
-//                        mThumb.setPos(mThumb2.getPos() + mThumb.getWidthBitmap());
-//                    } else if (newX >= mPixelRangeMax) {
-//                        mThumb.setPos(mPixelRangeMax);
-//                    } else {
-//                        //Check if thumb is not out of max width
-//                        checkPositionThumb(mThumb2, mThumb, dx, false);
-//                        // Move the object
-//                        mThumb.setPos(mThumb.getPos() + dx);
-//                        // Remember this touch position for the next move event
-//                        mThumb.setLastTouchX(coordinate);
-//                    }
-//                }
+
+
+
+
+                else {
+                    if ((newX<=mThumb2.getPos()+mThumb2.getWidthBitmap()+minDistance)){return true;}
+                    if (newX <= mThumb2.getPos() + mThumb2.getWidthBitmap()) {
+                        mThumb.setPos(mThumb2.getPos() + mThumb.getWidthBitmap());
+                    } else if (newX >= mPixelRangeMax) {
+                        mThumb.setPos(mPixelRangeMax);
+                    } else {
+                        //Check if thumb is not out of max width
+                        checkPositionThumb(mThumb2, mThumb, dx, false);
+                        // Move the object
+                        mThumb.setPos(mThumb.getPos() + dx);
+                        // Remember this touch position for the next move event
+                        mThumb.setLastTouchX(coordinate);
+                    }
+                }
 
                 setThumbPos(currentThumb, mThumb.getPos());
 

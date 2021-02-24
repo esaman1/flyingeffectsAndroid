@@ -43,6 +43,8 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     @BindView(R.id.animation_view_2)
     LottieAnimationView animation_view_2;
 
+     
+
     @BindView(R.id.animation_view)
     LottieAnimationView animation_view;
 
