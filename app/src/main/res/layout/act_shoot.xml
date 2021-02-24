@@ -41,7 +41,7 @@
             android:ellipsize="marquee"
             android:focusableInTouchMode="true"
             android:singleLine="true"
-            android:text="选音乐"
+            android:text="选择音乐"
             android:textColor="@color/white"
             android:textSize="14sp" />
     </RelativeLayout>

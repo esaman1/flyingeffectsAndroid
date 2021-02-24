@@ -186,7 +186,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     public void IntoChooseMusic() {
         String text = horizontalselectedView.getSelectedString();
         long duration;
-        if(!TextUtils.isEmpty("text")&&text.equals("无限")){
+        if(!TextUtils.isEmpty(text)&&(text.equals("无限")||text.equals("默认"))){
             duration=0;
         }else{
             duration = fUBeautyMvpmodel.FetChooseDuration(text);

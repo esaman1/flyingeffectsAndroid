@@ -44,10 +44,12 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     private LottieAnimationView animation_view_progress;
     private TextView tv_count_down;
     private ImageView iv_count_down;
+    private RelativeLayout relative_choose_music;
     private MarqueTextView tv_chooseMusic;
     private boolean isRecording = false;
     private LinearLayout ll_stage_property;
     private ConstraintLayout constraintLayout;
+    private ImageView iv_close;
     /**
      * 来自哪个界面  0  默认为主页点击+号页面   1 默认为跟随相机拍摄页面
      */
@@ -68,13 +70,15 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         int defaultnum = getIntent().getIntExtra("defaultnum", 0);
         String TemplateFilePath = getIntent().getStringExtra("TemplateFilePath");
         String OldfromTo = getIntent().getStringExtra("OldfromTo");
+        iv_close=findViewById(R.id.iv_close);
         new_fag_template_item templateItem = (new_fag_template_item) getIntent().getSerializableExtra("templateItem");
         horizontalselectedView = findViewById(R.id.horizontalselectedView);
         presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView, isFrom, duration, musicPath, templateItem, TemplateFilePath, OldfromTo, defaultnum, videoBjPath);
         constraintLayout = findViewById(R.id.constraintLayout);
         findViewById(R.id.ll_album).setVisibility(View.INVISIBLE);
-        findViewById(R.id.relative_choose_music).setOnClickListener(listener);
-        findViewById(R.id.iv_close).setOnClickListener(listener);
+        relative_choose_music = findViewById(R.id.relative_choose_music);
+        relative_choose_music.setOnClickListener(listener);
+        iv_close.setOnClickListener(listener);
         tv_chooseMusic = findViewById(R.id.tv_chooseMusic);
         relative_click = findViewById(R.id.relative_click);
         tv_show_shoot_time = findViewById(R.id.tv_show_shoot_time);
@@ -138,7 +142,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                 case R.id.relative_choose_music:
 
 
-
                     presenter.IntoChooseMusic();
                     break;
 
@@ -179,9 +182,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     };
 
 
-
-    private void clickBtn(){
-        if(!DoubleClick.getInstance().isFastDoubleClick()){
+    private void clickBtn() {
+        if (!DoubleClick.getInstance().isFastDoubleClick()) {
             if (isRecording) {
                 LogUtil.d("OOM", "直接录制结束");
                 isRecording = false;
@@ -298,8 +300,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     }
 
 
-
-
     /**
      * description ：清除全部贴纸
      * creation date: 2021/2/23
@@ -353,7 +353,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
             horizontalselectedView.setVisibility(View.GONE);
             constraintLayout.setVisibility(View.GONE);
             ll_stage_property.setVisibility(View.INVISIBLE);
-            tv_show_shoot_time.setVisibility(View.VISIBLE);
+            relative_choose_music.setVisibility(View.GONE);
+            iv_close.setVisibility(View.GONE);
         } else {
             if (isFrom != 1) {
                 horizontalselectedView.setVisibility(View.VISIBLE);
@@ -362,6 +363,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                 tv_show_shoot_time.setVisibility(View.GONE);
                 tv_show_shoot_time.setText("0秒");
             }
+            iv_close.setVisibility(View.VISIBLE);
+            relative_choose_music.setVisibility(View.VISIBLE);
         }
     }
 
@@ -404,12 +407,10 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     }
 
 
-
-
     @Subscribe
     public void onEventMainThread(isIntoBackground isIntoBackground) {
-        LogUtil.d("OOM3","isIntoBackground="+isIntoBackground.isBackground());
-        if(isIntoBackground.isBackground()&&isRecording){
+        LogUtil.d("OOM3", "isIntoBackground=" + isIntoBackground.isBackground());
+        if (isIntoBackground.isBackground() && isRecording) {
             clickBtn();
         }
     }
