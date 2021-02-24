@@ -333,7 +333,7 @@ public class RangeSeekBarForMusicView extends View {
                 } else {
                     final float x = th.getPos() - getPaddingRight();
                     if (x < mPixelRangeMax) {
-                        Rect mRect = new Rect((int) x, 0, (int) (mViewWidth - mThumbWidth), mHeightTimeLine + offsetY);
+                        Rect mRect = new Rect((int) x, 0, (int) (mViewWidth ), mHeightTimeLine + offsetY);
                         canvas.drawRect(mRect, mShadow);
                     }
                 }

@@ -43,7 +43,6 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     @BindView(R.id.animation_view_2)
     LottieAnimationView animation_view_2;
 
-     
 
     @BindView(R.id.animation_view)
     LottieAnimationView animation_view;
@@ -100,7 +99,6 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     private boolean isFromShoot;
 
 
-
     @Override
     protected int getLayoutId() {
         return R.layout.act_local_music_tailor;
@@ -110,8 +108,8 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     protected void initView() {
         tv_top_submit.setVisibility(View.VISIBLE);
         tv_top_submit.setText("下一步");
-        isFromShoot=getIntent().getBooleanExtra("isFromShoot",false);
-        title=getIntent().getStringExtra("title");
+        isFromShoot = getIntent().getBooleanExtra("isFromShoot", false);
+        title = getIntent().getStringExtra("title");
         ((TextView) findViewById(R.id.tv_top_title)).setText("裁剪音乐");
         findViewById(R.id.iv_top_back).setOnClickListener(view -> finish());
         Presenter = new LocalMusicTailorPresenter(this, this);
@@ -119,12 +117,12 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
         videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
         allDuration = videoInfo.getDuration();
         needDuration = getIntent().getLongExtra("needDuration", 10000);
-        if(needDuration==0){
-            isInfinite=false;
-            needDuration=allDuration;
+        if (needDuration == 0) {
+            isInfinite = false;
+            needDuration = allDuration;
             mRangeSeekBarView.setVisibility(View.VISIBLE);
-        }else{
-            isInfinite=true;
+        } else {
+            isInfinite = true;
             mRangeSeekBarView.setVisibility(View.GONE);
         }
         Presenter.setNeedDuration((int) needDuration);
@@ -136,13 +134,14 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
                     nowPlayStartTime = (long) (allDuration * percent);
                     tv_start.setText(TimeUtils.timeParse(nowPlayStartTime));
                     nowPlayEndTime = nowPlayStartTime + needDuration;
-                    if(allDuration<needDuration){
+                    if (allDuration < needDuration) {
                         tv_end.setText(TimeUtils.timeParse(allDuration));
-                    }else{
+                    } else {
                         tv_end.setText(TimeUtils.timeParse(nowPlayEndTime));
                     }
                 });
             }
+
             @Override
             public void isDone() {
                 startTimer();
@@ -208,8 +207,6 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     }
 
 
-
-
     /**
      * description ：音频播放完成回调
      * creation date: 2020/9/1
@@ -230,9 +227,9 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     }
 
     @Override
-    public void isAudioCutDone(String audioPath,String originalPath) {
+    public void isAudioCutDone(String audioPath, String originalPath) {
         LogUtil.d("OOM2", "裁剪完成后音频的地址为" + audioPath);
-        EventBus.getDefault().post(new CutSuccess(audioPath,originalPath,title));
+        EventBus.getDefault().post(new CutSuccess(audioPath, originalPath, title));
         this.finish();
     }
 
@@ -242,21 +239,26 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     }
 
 
-
     /**
      * description ：无限滑动时候的百分比
      * creation date: 2021/2/19
      * user : zhangtongju
      */
     @Override
-    public void onStopSeekThumbs(float percent) {
+    public void onStopSeekThumbs(float startPercent, float endPercent) {
         runOnUiThread(() -> {
-            nowPlayStartTime = (long) (allDuration * percent);
+            nowPlayStartTime = (long) (allDuration * startPercent);
             tv_start.setText(TimeUtils.timeParse(nowPlayStartTime));
-            nowPlayEndTime = allDuration;
-            tv_end.setText(TimeUtils.timeParse(allDuration));
+            if (endPercent != 0) {
+                nowPlayEndTime = (long) (allDuration * endPercent);
+            } else {
+                nowPlayEndTime = allDuration;
+            }
+            tv_end.setText(TimeUtils.timeParse(nowPlayEndTime));
         });
+        Presenter.setNeedDuration((int) (nowPlayEndTime-nowPlayStartTime));
         startTimer();
+
     }
 
 
@@ -265,13 +267,13 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
-                if(isFromShoot&&needDuration>allDuration){
+                if (isFromShoot && needDuration > allDuration) {
                     //不裁剪大于当前音频的
-                    EventBus.getDefault().post(new CutSuccess(Presenter.getSoundMusicPath(),Presenter.getSoundMusicPath(),title));
+                    EventBus.getDefault().post(new CutSuccess(Presenter.getSoundMusicPath(), Presenter.getSoundMusicPath(), title));
                     this.finish();
-                }else{
+                } else {
                     //裁剪保存
-                    statisticsEventAffair.getInstance().setFlag(LocalMusicTailorActivity.this, "16_pick music_apply",title);
+                    statisticsEventAffair.getInstance().setFlag(LocalMusicTailorActivity.this, "16_pick music_apply", title);
                     Presenter.toSaveCutMusic(nowPlayStartTime, nowPlayEndTime);
                 }
                 break;

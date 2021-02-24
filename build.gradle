@@ -5,13 +5,13 @@ buildscript {
 //    ext.kotlin_version = '1.1.4'
     repositories {
         jcenter()
-        maven {// here we go!!
-            url 'https://maven.google.com'
-        }
+//        maven {// here we go!!
+//            url 'https://maven.google.com'
+//        }
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.1'
+        classpath 'com.android.tools.build:gradle:4.1.2'
         // 引入插件库 百度统计0埋点应用分析sdk
         //classpath 'com.baidu.mobstat:mtj-circle-plugin:1.4.0'
     }
@@ -23,7 +23,7 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven { url "https://maven.google.com" }
+//        maven { url "https://maven.google.com" }
         maven { url "https://jitpack.io" }
         maven { url 'https://dl.bintray.com/umsdk/release' }
         maven { url 'https://dl.bintray.com/aweme-open-sdk-team/public' }

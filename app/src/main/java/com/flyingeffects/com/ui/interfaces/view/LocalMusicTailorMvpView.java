@@ -7,5 +7,5 @@ public interface LocalMusicTailorMvpView {
     void onPlayerCompletion();
     void isAudioCutDone(String audioPath,String originalPath);
     void initComplate();
-    void onStopSeekThumbs(float percent);
+    void onStopSeekThumbs(float startPercent,float endPercent);
 }

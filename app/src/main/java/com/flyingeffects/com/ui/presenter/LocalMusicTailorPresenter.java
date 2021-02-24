@@ -70,23 +70,22 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
     }
 
 
-    boolean isCanSeek=true;
+    boolean isCanSeek = true;
+
     public void SeekToPositionMusic(int position) {
 
-
-        
 
         if (mPlayer != null) {
             mPlayer.start();
             mPlayer.seekTo(position);
+            nowTimerDuration=0;
             startTimer();
         }
     }
 
 
-
-    public String getSoundMusicPath(){
-        return  localMusicTailorMvpModel.getSoundPath();
+    public String getSoundMusicPath() {
+        return localMusicTailorMvpModel.getSoundPath();
     }
 
     public void setNeedDuration(int needDuration) {
@@ -328,7 +327,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
             switch (msg.what) {
                 case 1:
                     nowTimerDuration += 500;
-                    if (nowTimerDuration == needDuration) {
+                    if (nowTimerDuration >=needDuration) {
                         nowTimerDuration = 0;
                         endTimer();
                     }
@@ -381,7 +380,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
                     }
                     try {
                         FileUtil.copyFile(new File(path), SoundPath);
-                        localMusicTailorMvpView.isAudioCutDone(SoundPath,localMusicTailorMvpModel.getSoundPath());
+                        localMusicTailorMvpView.isAudioCutDone(SoundPath, localMusicTailorMvpModel.getSoundPath());
                     } catch (IOException e) {
                         e.printStackTrace();
                         LogUtil.d("OOM2", "复制文件报错" + e.getMessage());
@@ -424,16 +423,15 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
     }
 
 
-
-
     /**
      * description ：初始化拖动条
      * creation date: 2021/2/19
      * user : zhangtongju
      */
     private RangeSeekBarForMusicView mRangeSeekBarView;
-    public void InitRangeSeekBar(RangeSeekBarForMusicView mRangeSeekBarView){
-        this.mRangeSeekBarView=mRangeSeekBarView;
+
+    public void InitRangeSeekBar(RangeSeekBarForMusicView mRangeSeekBarView) {
+        this.mRangeSeekBarView = mRangeSeekBarView;
         mRangeSeekBarView.addOnRangeSeekBarListener(new OnRangeSeekBarListener() {
             @Override
             public void onCreate(RangeSeekBarView rangeSeekBarView, int index, float value) {
@@ -460,10 +458,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
 
             @Override
             public void onSeek(RangeSeekBarForMusicView rangeSeekBarView, int index, float value) {
-                if(index==Thumb.LEFT){
-                    onStopSeekThumbs(index, value);
-                    LogUtil.d("OOM","onSeek");
-                }
+                onStopSeekThumbs(index, value);
 
             }
 
@@ -475,10 +470,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
             @Override
             public void onSeekStop(RangeSeekBarForMusicView rangeSeekBarView, int index, float value) {
 
-                if(index==Thumb.LEFT){
-                    onStopSeekThumbs(index, value);
-                    LogUtil.d("OOM","onSeekStop");
-                }
+                onStopSeekThumbs(index, value);
             }
         });
         setSeekBarPosition();
@@ -488,15 +480,24 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
 
 
     private void setSeekBarPosition() {
-        new Handler().postDelayed(() -> mRangeSeekBarView.initMaxWidth(),500);
+        new Handler().postDelayed(() -> mRangeSeekBarView.initMaxWidth(), 500);
 
     }
 
+    float startPercent;
+    float endPercent;
     private void onStopSeekThumbs(int index, float value) {
-        float percent=value/(float)100;
-        localMusicTailorMvpView.onStopSeekThumbs(percent);
-    }
 
+
+        if(index==Thumb.LEFT){
+            startPercent= value / (float) 100;
+        }else{
+            endPercent= value / (float) 100;
+        }
+        localMusicTailorMvpView.onStopSeekThumbs(startPercent,endPercent);
+
+
+    }
 
 
 }
