@@ -115,9 +115,11 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     private ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
 
 
-
-    /**从拍摄页面进入*/
+    /**
+     * 从拍摄页面进入
+     */
     private long duration;
+
     public FUBeautyMvpPresenter(Context context, FUBeautyMvpView fUBeautyMvpView, HorizontalselectedView horizontalselectedView, int isFrom, long duration, String musicPath, new_fag_template_item templateItem, String TemplateFilePath, String OldfromTo, int defaultnum, String videoBjPath) {
         this.fUBeautyMvpView = fUBeautyMvpView;
         this.horizontalselectedView = horizontalselectedView;
@@ -125,7 +127,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         this.isFrom = isFrom;
         this.TemplateFilePath = TemplateFilePath;
         this.templateItem = templateItem;
-        this.duration=duration;
+        this.duration = duration;
         this.OldfromTo = OldfromTo;
         this.defaultnum = defaultnum;
         fUBeautyMvpmodel = new FUBeautyMvpModel(context, this, duration, musicPath, isFrom);
@@ -167,16 +169,23 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
 
 
     public void StartCountDown() {
-        countDownStatus = 0;
-        if (nowChooseCutDownNum == 0) {
-            nowCountDownNum = 4;
-        } else if (nowChooseCutDownNum == 1) {
-            nowCountDownNum = 8;
-        } else {
-            nowCountDownNum = 11;
-        }
+        nowCountDownNum=  GetCountDown();
         startTimer();
     }
+
+    public int GetCountDown(){
+      int  needTime = 0;
+        if (nowChooseCutDownNum == 0) {
+            needTime = 4;
+        } else if (nowChooseCutDownNum == 1) {
+            needTime = 8;
+        } else {
+            needTime = 11;
+        }
+        return needTime;
+    }
+
+
 
     /**
      * description ：调整到音乐选取页面
@@ -186,15 +195,15 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     public void IntoChooseMusic() {
         String text = horizontalselectedView.getSelectedString();
         long duration;
-        if(!TextUtils.isEmpty(text)&&(text.equals("无限")||text.equals("默认"))){
-            duration=0;
-        }else{
+        if (!TextUtils.isEmpty(text) && (text.equals("无限") || text.equals("默认"))) {
+            duration = 0;
+        } else {
             duration = fUBeautyMvpmodel.FetChooseDuration(text);
         }
         Intent intent = new Intent(context, ChooseMusicActivity.class);
         LogUtil.d("OOM2", "当前需要的音乐时长为" + duration);
         intent.putExtra("needDuration", duration);
-        intent.putExtra("isFromShoot",true);
+        intent.putExtra("isFromShoot", true);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(intent);
     }
@@ -220,29 +229,38 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
             } else {
                 ArrayList<String> paths = new ArrayList<>();
                 paths.add(path);
-                intoTemplateActivity(paths, TemplateFilePath);
+                String videoTime = templateItem.getVideotime();
+                if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
+                    float needVideoTime = Float.parseFloat(videoTime);
+                    Intent intoCutVideo = new Intent(context, TemplateCutVideoActivity.class);
+                    intoCutVideo.putExtra("needCropDuration", needVideoTime);
+                    intoCutVideo.putExtra("templateName", templateItem.getTitle());
+                    intoCutVideo.putExtra("videoPath", paths.get(0));
+                    intoCutVideo.putExtra("picout", templateItem.getIs_picout());
+                    context.startActivity(intoCutVideo);
+                }
             }
         }
     }
 
-    private void intoTemplateActivity(List<String> paths, String templateFilePath) {
-        Intent intent = new Intent(context, TemplateActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putStringArrayList("paths", (ArrayList<String>) paths);
-        bundle.putInt("isPicNum", defaultnum);
-        bundle.putString("fromTo", OldfromTo);
-        bundle.putInt("picout", templateItem.getIs_picout());
-        bundle.putInt("is_anime", templateItem.getIs_anime());
-        bundle.putString("templateName", templateItem.getTitle());
-        bundle.putString("templateId", templateItem.getId() + "");
-        bundle.putString("videoTime", templateItem.getVideotime());
-        bundle.putStringArrayList("originalPath", (ArrayList<String>) paths);
-        bundle.putString("templateFilePath", templateFilePath);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("Message", bundle);
-        intent.putExtra("person", templateItem);
-        context.startActivity(intent);
-    }
+//    private void intoTemplateActivity(List<String> paths, String templateFilePath) {
+//        Intent intent = new Intent(context, TemplateActivity.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putStringArrayList("paths", (ArrayList<String>) paths);
+//        bundle.putInt("isPicNum", defaultnum);
+//        bundle.putString("fromTo", OldfromTo);
+//        bundle.putInt("picout", templateItem.getIs_picout());
+//        bundle.putInt("is_anime", templateItem.getIs_anime());
+//        bundle.putString("templateName", templateItem.getTitle());
+//        bundle.putString("templateId", templateItem.getId() + "");
+//        bundle.putString("videoTime", templateItem.getVideotime());
+//        bundle.putStringArrayList("originalPath", (ArrayList<String>) paths);
+//        bundle.putString("templateFilePath", templateFilePath);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        intent.putExtra("Message", bundle);
+//        intent.putExtra("person", templateItem);
+//        context.startActivity(intent);
+//    }
 
     private void intoCreationTemplateActivity(String imagePath, String videoPath, String originalPath, boolean isNeedCut) {
         Intent intent = new Intent(context, CreationTemplateActivity.class);
@@ -326,28 +344,28 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         }
 
         //2  开启进度动画
-        
-        if(isFrom!=1){
+
+        if (isFrom != 1) {
             String text = horizontalselectedView.getSelectedString();
             long duration = fUBeautyMvpmodel.FetChooseDuration(text);
-            LogUtil.d("OOM2","duration="+duration);
+            LogUtil.d("OOM2", "duration=" + duration);
             if (duration != 0) {
                 fUBeautyMvpView.nowChooseRecordIsInfinite(false);
                 countDownStatus = 1;
                 nowCountDownNum = (int) (duration / 1000);
-                LogUtil.d("OOM2","nowCountDownNum="+nowCountDownNum);
+                LogUtil.d("OOM2", "nowCountDownNum=" + nowCountDownNum);
                 allNeedDuration = nowCountDownNum;
                 startTimer();
             } else {
                 fUBeautyMvpView.nowChooseRecordIsInfinite(true);
             }
-        }else{
+        } else {
             if (duration != 0) {
-                LogUtil.d("OOM2","duration="+duration);
+                LogUtil.d("OOM2", "duration=" + duration);
                 fUBeautyMvpView.nowChooseRecordIsInfinite(false);
                 countDownStatus = 1;
-                nowCountDownNum =  (duration /(float) 1000);
-                LogUtil.d("OOM2","nowCountDownNum="+nowCountDownNum);
+                nowCountDownNum = (duration / (float) 1000);
+                LogUtil.d("OOM2", "nowCountDownNum=" + nowCountDownNum);
                 allNeedDuration = nowCountDownNum;
                 startTimer();
             } else {
@@ -429,8 +447,8 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
                     if (countDownStatus == 1) {
                         nowCountDownNum = nowCountDownNum - 0.05f;
                         LogUtil.d("OOM", "nowCountDownNumF" + nowCountDownNum);
-                        float progress ;
-                        progress = nowCountDownNum /allNeedDuration;
+                        float progress;
+                        progress = nowCountDownNum / allNeedDuration;
                         progress = 1 - progress;
                         fUBeautyMvpView.showCountDown((int) nowCountDownNum, countDownStatus, progress);
                         if (nowCountDownNum <= 0) {
@@ -590,11 +608,11 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(musicPath);
         int duration = (int) videoInfo.getDuration();
         LogUtil.d("OOM2", "duration=" + duration);
-        int[] timeDataInt = {duration, 0,15000, 30000, 60000};
+        int[] timeDataInt = {duration, 0, 15000, 30000, 60000};
         fUBeautyMvpmodel.setTimeDataInt(timeDataInt);
-        int[] timeDataInt2=fUBeautyMvpmodel.getTimeDataInt();
+        int[] timeDataInt2 = fUBeautyMvpmodel.getTimeDataInt();
 
-        for (int i=0;i<timeDataInt2.length;i++){
+        for (int i = 0; i < timeDataInt2.length; i++) {
             LogUtil.d("OOM2", "timeDataInt2=" + timeDataInt2[i]);
         }
 

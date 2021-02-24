@@ -183,6 +183,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
 
 
     private void clickBtn() {
+
+//        int duration=presenter.GetCountDown()*1000;
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             if (isRecording) {
                 LogUtil.d("OOM", "直接录制结束");
