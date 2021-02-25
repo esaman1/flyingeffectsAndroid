@@ -611,7 +611,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
         @Override
         public void onPrepared(final MediaEncoder encoder) {
-            LogUtil.d("OOM2", "onPrepared");
+            LogUtil.d("OOM22", "onPrepared");
             if (encoder instanceof MediaVideoEncoder) {
                 Log.d(TAG, "onPrepared: tid:" + Thread.currentThread().getId());
                 mGlSurfaceView.queueEvent(new Runnable() {
@@ -640,7 +640,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
         @Override
         public void onStopped(final MediaEncoder encoder) {
             endTimer();
-            LogUtil.d("OOM2", "onStopped");
+            LogUtil.d("OOM22", "onStopped");
             mRecordBarrier.countDown();
             // Call when MediaVideoEncoder's callback and MediaAudioEncoder's callback both are called.
             if (mRecordBarrier.getCount() == 0) {
@@ -682,7 +682,8 @@ public abstract class FUBaseActivity extends AppCompatActivity
                                 }
                             });
                         } catch (IOException e) {
-                            Log.e(TAG, "copyFile: ", e);
+                            LogUtil.d("OOM22", "copyFile+EEE"+e.getMessage());
+
                         }
                     }
                 });

@@ -361,7 +361,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
             if (duration != 0) {
                 fUBeautyMvpView.nowChooseRecordIsInfinite(false);
                 countDownStatus = 1;
-                nowCountDownNum = (int) (duration / 1000);
+                nowCountDownNum = (duration / (float)1000);
                 LogUtil.d("OOM2", "nowCountDownNum=" + nowCountDownNum);
                 allNeedDuration = nowCountDownNum;
                 startTimer();

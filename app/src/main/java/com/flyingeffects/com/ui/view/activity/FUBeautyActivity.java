@@ -259,6 +259,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                         //录屏倒计时
                         animation_view_progress.setProgress(progress);
                     } else {
+                        LogUtil.d("OOM22","录屏完成，触发结束");
                         isRecording = false;
                         animation_view_progress.setProgress(0);
                         lottieAnimationView.setProgress(0);
