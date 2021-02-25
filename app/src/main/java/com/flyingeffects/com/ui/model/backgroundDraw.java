@@ -178,7 +178,7 @@ public class backgroundDraw {
                     callback.saveSuccessPath("", i);
                 } else {
                     int progress = 0;
-                    if (BaseConstans.IsOpenChannelAdaptive && BaseConstans.getChannel().equals("huawei")) {
+                    if (BaseConstans.IsOpenChannelAdaptive && "huawei".equals(BaseConstans.getChannel())) {
                         float f_progress = (i / (float) 100) * 5;
                         if (isMatting) {
                             progress = (int) (95 + f_progress);
@@ -220,8 +220,7 @@ public class backgroundDraw {
                     } else {
                         if (!TextUtils.isEmpty(imagePath)) {
                             Bitmap bt_nj = BitmapManager.getInstance().getOrientationBitmap(imagePath);
-                            BitmapUtils bpUtils = new BitmapUtils();
-                            bt_nj = bpUtils.zoomImg2(bt_nj, execute.getPadWidth() / 16 * 16, execute.getPadHeight() / 16 * 16);
+                            bt_nj = BitmapUtils.zoomImg2(bt_nj, execute.getPadWidth() / 16 * 16, execute.getPadHeight() / 16 * 16);
                             execute.addBitmapLayer(bt_nj, 0, Long.MAX_VALUE);
                         } else {
                             execute.setBackgroundColor(Color.parseColor("#1FA400"));
@@ -576,7 +575,7 @@ public class backgroundDraw {
         imageCoverWidth = bp.getWidth();
         imageCoverHeight = bp.getHeight();
         LogUtil.d("OOM", "第一张图片地址为333");
-        if (!(BaseConstans.IsOpenChannelAdaptive && BaseConstans.getChannel().equals("huawei"))) {
+        if (!(BaseConstans.IsOpenChannelAdaptive && "huawei".equals(BaseConstans.getChannel()))) {
             bp = MattingImage.mattingSingleImg(bp, imageCoverWidth, imageCoverHeight);
         }
         LogUtil.d("OOM", "图片宽为" + bp.getWidth());
@@ -744,7 +743,7 @@ public class backgroundDraw {
                     if (firstBitmap1 != null) {
                         LogUtil.d("oom", "firstBitmap1!=null");
                     }
-                    if (!(BaseConstans.IsOpenChannelAdaptive && BaseConstans.getChannel().equals("huawei"))) {
+                    if (!(BaseConstans.IsOpenChannelAdaptive && "huawei".equals(BaseConstans.getChannel()))) {
                         firstBitmap1= MattingImage.mattingSingleImg(firstBitmap1,imageCoverWidth,imageCoverHeight);
                     }
                     LogUtil.d("oom", "zhunbeiKKKKKOver");

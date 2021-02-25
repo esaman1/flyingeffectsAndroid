@@ -143,7 +143,7 @@ public class BaseConstans {
 
 
     public static boolean hasLogin() {
-        return GetUserToken() != null && !GetUserToken().equals("");
+        return GetUserToken() != null && !"".equals(GetUserToken());
     }
 
 
@@ -155,7 +155,7 @@ public class BaseConstans {
 
 
     public static String getVersionCode() {
-        if (versionCode.equals("")) {
+        if ("".equals(versionCode)) {
             versionCode = StringUtil.getVersion(BaseApplication.getInstance());
             return versionCode;
         } else {
@@ -165,7 +165,7 @@ public class BaseConstans {
 
 
     public static String getUuid() {
-        if (uuid.equals("")) {
+        if ("".equals(uuid)) {
             uuid = OsUtils.getAndroidID(BaseApplication.getInstance());
             return uuid;
         } else {
@@ -194,7 +194,7 @@ public class BaseConstans {
     }
 
     public static String getChannel() {
-        if (channel != null && !channel.equals("")) {
+        if (channel != null && !"".equals(channel)) {
             return channel;
         } else {
             channel = ChannelUtil.getChannel(BaseApplication.getInstance());
@@ -213,13 +213,13 @@ public class BaseConstans {
 
     public static String gettitokOrKuaishou(boolean isTiktok) {
         if (isTiktok) {
-            if (titok != null && !titok.equals("")) {
+            if (titok != null && !"".equals(titok)) {
                 return titok;
             } else {
                 return "http://v.douyin.com/B62HrT/";
             }
         } else {
-            if (kuaishou != null && !kuaishou.equals("")) {
+            if (kuaishou != null && !"".equals(kuaishou)) {
                 return kuaishou;
             } else {
                 return "看了这么多快手，还是「飞闪哥哥」最好玩了！ http://m.gifshow.com/s/xEna7Voi 复制此链接，打开【快手】直接观看！";

@@ -61,7 +61,7 @@ public class videoGetFrameModel {
         nowExtractVideoNum = 0;
         allVideoPathCount = videoPath.size();
         //逻辑修改为 抠图为5-25
-        if (BaseConstans.IsOpenChannelAdaptive && BaseConstans.getChannel().equals("huawei")) {
+        if (BaseConstans.IsOpenChannelAdaptive && "huawei".equals(BaseConstans.getChannel())) {
             perAllTime = 95 / allVideoPathCount + 1;
         } else {
             perAllTime = 25 / allVideoPathCount + 1;
@@ -198,7 +198,7 @@ public class videoGetFrameModel {
 //        LogUtil.d("OOM2", "正在抠图" + downSuccessNum);
 
 
-        if (BaseConstans.IsOpenChannelAdaptive && BaseConstans.getChannel().equals("huawei")) {
+        if (BaseConstans.IsOpenChannelAdaptive && "huawei".equals(BaseConstans.getChannel())) {
             mattingImage.mattingImage(OriginBitmap, frameCount, (isSuccess, bitmap) -> {
                 if (isSuccess) {
                     BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, isSuccess1 -> GlideBitmapPool.putBitmap(

@@ -117,12 +117,12 @@ public class ZanActivity extends BaseActivity {
             Observable ob = Api.getDefault().templateLInfo(BaseConstans.getRequestHead(params));
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<new_fag_template_item>(this) {
                 @Override
-                protected void _onError(String message) {
+                protected void onSubError(String message) {
                     LogUtil.d("OOM", "requestTemplateDetail-error=" + message);
                 }
 
                 @Override
-                protected void _onNext(new_fag_template_item data) {
+                protected void onSubNext(new_fag_template_item data) {
                     allData.clear();
                     String str = StringUtil.beanToJSONString(data);
                     LogUtil.d("OOM", str);
@@ -136,7 +136,7 @@ public class ZanActivity extends BaseActivity {
                     intent.putExtra("nowSelectPage", 1);
                     intent.putExtra("templateId", data.getTemplate_id());
                     intent.putExtra("isCanLoadMore", false);
-                    if (!TextUtils.isEmpty(type) && type.equals("2")) {
+                    if (!TextUtils.isEmpty(type) && "2".equals(type)) {
                         intent.putExtra("fromTo", FromToTemplate.ISBJ);
                     } else {
                         intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
@@ -182,13 +182,13 @@ public class ZanActivity extends BaseActivity {
         Observable ob = Api.getDefault().praiseList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<MineZanEnity>>(ZanActivity.this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 finishData();
                 Log.e("OOM", "_onError: " + message);
             }
 
             @Override
-            protected void _onNext(List<MineZanEnity> data) {
+            protected void onSubNext(List<MineZanEnity> data) {
                 LogUtil.d("OOM", StringUtil.beanToJSONString(data));
 
                 finishData();

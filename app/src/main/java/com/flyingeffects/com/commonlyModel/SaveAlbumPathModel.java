@@ -19,7 +19,7 @@ public class SaveAlbumPathModel {
 
     public String getKeepOutput() {
         String product = android.os.Build.MANUFACTURER; //获得手机厂商
-        if (product != null && product.equals("vivo")) {
+        if (product != null && "vivo".equals(product)) {
             File file_camera = new File(Environment.getExternalStorageDirectory() + "/相机");
             if (file_camera.exists()) {
                 return file_camera.getPath() + File.separator + System.currentTimeMillis() + "synthetic.mp4";
@@ -36,7 +36,7 @@ public class SaveAlbumPathModel {
 
     public String getKeepOutputForImage() {
         String product = android.os.Build.MANUFACTURER; //获得手机厂商
-        if (product != null && product.equals("vivo")) {
+        if (product != null && "vivo".equals(product)) {
             File file_camera = new File(Environment.getExternalStorageDirectory() + "/相机");
             if (file_camera.exists()) {
                 return file_camera.getPath() + File.separator + System.currentTimeMillis() + "synthetic.png";

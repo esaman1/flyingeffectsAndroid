@@ -191,7 +191,7 @@ public class fragBjItem extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(getActivity()!=null&&templateId.equals("12")) {
+        if(getActivity()!=null&& "12".equals(templateId)) {
             isRefresh = true;
             selectPage = 1;
             requestFagData(false, false);
@@ -250,20 +250,20 @@ public class fragBjItem extends BaseFragment {
         LogUtil.d("OOM2","requestFagData背景模板请求的数据为"+StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 finishData();
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(List<new_fag_template_item> data) {
+            protected void onSubNext(List<new_fag_template_item> data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "str=" + str);
                 finishData();
                 if (isRefresh) {
                     listData.clear();
                     if (!TextUtils.isEmpty(cover)) {
-                        if(!(templateId.equals("11")||templateId.equals("12"))){
+                        if(!("11".equals(templateId)|| "12".equals(templateId))){
                             //关注和收藏
                             new_fag_template_item item = new new_fag_template_item();
                             item.setImage(cover);
@@ -388,7 +388,7 @@ public class fragBjItem extends BaseFragment {
     public void onEventMainThread(AttentionChange event) {
         isRefresh = true;
         selectPage = 1;
-        if (getActivity() != null && TextUtils.isEmpty(templateId) && templateId.equals("12")) {
+        if (getActivity() != null && TextUtils.isEmpty(templateId) && "12".equals(templateId)) {
             requestFagData(false, false);
         }
     }
@@ -398,7 +398,7 @@ public class fragBjItem extends BaseFragment {
     public void onEventMainThread(BackgroundTemplateCollectionEvent event) {
         isRefresh = true;
         selectPage = 1;
-        if (getActivity() != null && !TextUtils.isEmpty(templateId) && templateId.equals("11")) {
+        if (getActivity() != null && !TextUtils.isEmpty(templateId) && "11".equals(templateId)) {
             requestFagData(false, false);
         }
     }

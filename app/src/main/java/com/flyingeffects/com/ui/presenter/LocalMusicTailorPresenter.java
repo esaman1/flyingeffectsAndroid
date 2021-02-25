@@ -208,7 +208,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
      */
     public void requestSoundData(String url) {
         String mFilename = url.replaceFirst("file://", "").replaceAll("%20", " ");
-        if (!mFilename.equals("record")) {
+        if (!"record".equals(mFilename)) {
             loadFromFile(mFilename);
         }
     }

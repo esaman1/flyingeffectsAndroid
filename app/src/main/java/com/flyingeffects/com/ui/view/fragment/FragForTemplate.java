@@ -202,11 +202,11 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
         Observable ob = Api.getDefault().keywordList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(getContext()) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
                 try {
                     JSONArray array = new JSONArray(str);

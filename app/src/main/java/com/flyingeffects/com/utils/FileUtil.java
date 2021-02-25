@@ -194,7 +194,7 @@ public class FileUtil {
                 result += file.getPath() + "\n";
             }
         }
-        if (result.equals("")) {
+        if ("".equals(result)) {
             result = "找不到文件!!";
         }
         return result;
@@ -428,25 +428,25 @@ public class FileUtil {
         String end = fName.substring(fName.lastIndexOf(".") + 1, fName.length()).toLowerCase();
 
         /* 依扩展名的类型决定MimeType */
-        if (end.equalsIgnoreCase("m4a") || end.equalsIgnoreCase("mp3") || end.equalsIgnoreCase("mid") || end.equalsIgnoreCase("xmf")
-                || end.equalsIgnoreCase("ogg") || end.equalsIgnoreCase("wav")) {
+        if ("m4a".equalsIgnoreCase(end) || "mp3".equalsIgnoreCase(end) || "mid".equalsIgnoreCase(end) || "xmf".equalsIgnoreCase(end)
+                || "ogg".equalsIgnoreCase(end) || "wav".equalsIgnoreCase(end)) {
             type = "audio";
-        } else if (end.equalsIgnoreCase("3gp") || end.equalsIgnoreCase("mp4")) {
+        } else if ("3gp".equalsIgnoreCase(end) || "mp4".equalsIgnoreCase(end)) {
             type = "video";
-        } else if (end.equalsIgnoreCase("jpg") || end.equalsIgnoreCase("gif") || end.equalsIgnoreCase("png")
-                || end.equalsIgnoreCase("jpeg") || end.equalsIgnoreCase("bmp")) {
+        } else if ("jpg".equalsIgnoreCase(end) || "gif".equalsIgnoreCase(end) || "png".equalsIgnoreCase(end)
+                || "jpeg".equalsIgnoreCase(end) || "bmp".equalsIgnoreCase(end)) {
             type = "image";
-        } else if (end.equalsIgnoreCase("apk")) {
+        } else if ("apk".equalsIgnoreCase(end)) {
             /* android.permission.INSTALL_PACKAGES */
             type = "application/vnd.android.package-archive";
-        } else if (end.equalsIgnoreCase("txt") || end.equalsIgnoreCase("java")) {
+        } else if ("txt".equalsIgnoreCase(end) || "java".equalsIgnoreCase(end)) {
             /* android.permission.INSTALL_PACKAGES */
             type = "text";
         } else {
             type = "*";
         }
         /* 如果无法直接打开，就跳出软件列表给用户选择 */
-        if (end.equalsIgnoreCase("apk")) {
+        if ("apk".equalsIgnoreCase(end)) {
         } else {
             type += "/*";
         }
@@ -623,7 +623,7 @@ public class FileUtil {
      * @return
      */
     public static boolean write(File file, String content, boolean append) {
-        if (file == null ||content==null||content.equals("")) {
+        if (file == null ||content==null|| "".equals(content)) {
             return false;
         }
         if (!file.exists()) {
@@ -655,7 +655,7 @@ public class FileUtil {
      * @return
      */
     public static String getFileName(String path) {
-        if (path==null||path.equals("")) {
+        if (path==null|| "".equals(path)) {
             return null;
         }
         File f = new File(path);
@@ -950,6 +950,7 @@ public class FileUtil {
 
     public static boolean deleteAllInDir(File file) {
         return deleteFilesInDirWithFilter(file, new FileFilter() {
+            @Override
             public boolean accept(File file) {
                 return true;
             }

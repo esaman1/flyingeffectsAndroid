@@ -105,7 +105,7 @@ public class fragHomePage extends BaseFragment {
             intent.putExtra("nowSelectPage", selectPage);
             intent.putExtra("templateId", allData.get(position).getTemplate_id());
             intent.putExtra("toUserID", toUserId);
-            if(allData.get(position).getTemplate_type().equals("3")){
+            if("3".equals(allData.get(position).getTemplate_type())){
                 intent.putExtra("fromTo", FromToTemplate.DRESSUP);
             }else{
                 if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISHOMEMYLIKE)) {
@@ -181,13 +181,13 @@ public class fragHomePage extends BaseFragment {
         Observable ob = Api.getDefault().getMyProduction(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 finishData();
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(List<new_fag_template_item> data) {
+            protected void onSubNext(List<new_fag_template_item> data) {
                 finishData();
                 if (isRefresh) {
                     listData.clear();

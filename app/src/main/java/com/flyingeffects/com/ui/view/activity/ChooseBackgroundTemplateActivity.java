@@ -80,12 +80,12 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
         Observable ob = Api.getDefault().getCategoryList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<FirstLevelTypeEntity>>(this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(List<FirstLevelTypeEntity> data) {
+            protected void onSubNext(List<FirstLevelTypeEntity> data) {
                 setFragmentList(data);
             }
         }, "mainData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, true, true, false);

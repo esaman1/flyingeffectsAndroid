@@ -43,7 +43,7 @@ public class TemplateThumbAdapter extends BaseItemDraggableAdapter<TemplateThumb
         TextView tv_compile=helper.getView(R.id.tv_compile);
         int position = helper.getLayoutPosition();
         ImageView iv_show_un_select = helper.getView(R.id.iv_show_un_select);
-        if (item.getPathUrl() != null && !item.getPathUrl().equals("")) {
+        if (item.getPathUrl() != null && !"".equals(item.getPathUrl())) {
             Glide.with(context)
                     .load(item.getPathUrl())
                     .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 5)))
@@ -56,7 +56,7 @@ public class TemplateThumbAdapter extends BaseItemDraggableAdapter<TemplateThumb
         }else{
             tv_compile.setVisibility(View.GONE);
         }
-        if (item.getPathUrl() != null && !item.getPathUrl().equals("")) {
+        if (item.getPathUrl() != null && !"".equals(item.getPathUrl())) {
             if (albumType.isImage(GetPathType.getInstance().getPathType(item.getPathUrl()))) {
                 tv_compile.setText("图片");
             }else{

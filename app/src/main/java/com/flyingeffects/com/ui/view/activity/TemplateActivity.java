@@ -892,7 +892,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     selectGroup(0);
                     nowChoosePosition = 0;
                     templateThumbAdapter.notifyDataSetChanged();
-                    if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
+                    if (!TextUtils.isEmpty(videoTime) && !"0".equals(videoTime)) {
                         if (videoMattingCaver != null) {
                             for (int i = 0; i < mTemplateModel.mAssets.size(); i++) {
                                 MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.mAssets.get(i).ui;

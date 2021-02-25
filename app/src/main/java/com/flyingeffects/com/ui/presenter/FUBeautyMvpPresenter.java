@@ -210,7 +210,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         } else {
             // 这里是跟随相机拍摄页面
             String templateType = templateItem.getTemplate_type();
-            if (templateType.equals("2")) {
+            if ("2".equals(templateType)) {
                 intoCreationTemplateActivity(path, videoBjPath, path, true);
             } else {
                 ArrayList<String> paths = new ArrayList<>();
@@ -527,12 +527,12 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         Observable ob = Api.getDefault().camerStickerCategoryList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ArrayList<StickerTypeEntity>>(context) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(ArrayList<StickerTypeEntity> list) {
+            protected void onSubNext(ArrayList<StickerTypeEntity> list) {
                 LogUtil.d("OOM", "123" + StringUtil.beanToJSONString(list));
                 List<Fragment> fragments = new ArrayList<>();
                 String[] titles = new String[list.size()];
@@ -594,7 +594,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         }
 
         ArrayList<String> list = fUBeautyMvpmodel.GetTimeData();
-        if (!list.get(0).equals("默认")) {
+        if (!"默认".equals(list.get(0))) {
             list.add(0, "默认");
         }
         horizontalselectedView.setData(list);

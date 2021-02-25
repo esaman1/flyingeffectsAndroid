@@ -228,14 +228,14 @@ public class BaseFullBottomSheetFragment extends BottomSheetDialogFragment {
         Observable ob = Api.getDefault().templateComment(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<MessageData>(getActivity()) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 adapter.loadMoreFail();
                 ToastUtil.showToast(message);
                 isComment = false;
             }
 
             @Override
-            protected void _onNext(MessageData data) {
+            protected void onSubNext(MessageData data) {
                 adapter.loadMoreComplete();
                 LogUtil.d("OOM", "评论列表数据" + StringUtil.beanToJSONString(data));
                 ArrayList<MessageEnity> dataList = data.getList();

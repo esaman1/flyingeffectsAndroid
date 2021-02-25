@@ -118,7 +118,7 @@ public class searchMusicActivity extends BaseActivity {
         ed_search.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
                 String nowShowText = ed_search.getText().toString().trim();
-                if (!nowShowText.equals("")) {
+                if (!"".equals(nowShowText)) {
                     searchText = nowShowText;
                     requestFagData();
                 }
@@ -147,11 +147,11 @@ public class searchMusicActivity extends BaseActivity {
         Observable ob = Api.getDefault().musicKeyword(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(searchMusicActivity.this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "requestKeywordList=" + str);
                 try {
@@ -341,12 +341,12 @@ public class searchMusicActivity extends BaseActivity {
         Observable ob = Api.getDefault().collectMusic(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "收藏音乐返回的值为" + str);
                 updateCollect(isCollect, music_id);
@@ -381,13 +381,13 @@ public class searchMusicActivity extends BaseActivity {
         Observable ob = Api.getDefault().musicList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<ChooseMusic>>(this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 finishData();
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(List<ChooseMusic> data) {
+            protected void onSubNext(List<ChooseMusic> data) {
                 finishData();
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM2", str);

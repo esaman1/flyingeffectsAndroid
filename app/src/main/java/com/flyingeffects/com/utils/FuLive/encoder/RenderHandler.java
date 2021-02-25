@@ -32,8 +32,9 @@ public final class RenderHandler implements Runnable {
     private Program mFullScreen;
 
     public static RenderHandler createHandler(final String name) {
-        if (DEBUG)
+        if (DEBUG) {
             Log.v(TAG, "createHandler:");
+        }
         final RenderHandler handler = new RenderHandler();
         synchronized (handler.mLock) {
             new Thread(handler, !TextUtils.isEmpty(name) ? name : TAG).start();
@@ -46,11 +47,13 @@ public final class RenderHandler implements Runnable {
     }
 
     public final void setEglContext(final EGLContext sharedContext, final Surface surface, final int texId) {
-        if (DEBUG)
+        if (DEBUG) {
             Log.i(TAG, "setEglContext:");
+        }
         synchronized (mLock) {
-            if (mRequestRelease)
+            if (mRequestRelease) {
                 return;
+            }
             mShardContext = sharedContext;
             mTexId = texId;
             mSurface = surface;
@@ -75,8 +78,9 @@ public final class RenderHandler implements Runnable {
 
     public final void draw(final int texId, final float[] texMatrix, final float[] mvpMatrix) {
         synchronized (mLock) {
-            if (mRequestRelease)
+            if (mRequestRelease) {
                 return;
+            }
             mTexId = texId;
             System.arraycopy(texMatrix, 0, mtx, 0, texMatrix.length);
             System.arraycopy(mvpMatrix, 0, mvp, 0, mvpMatrix.length);
@@ -96,11 +100,13 @@ public final class RenderHandler implements Runnable {
     }
 
     public final void release() {
-        if (DEBUG)
+        if (DEBUG) {
             Log.i(TAG, "release:");
+        }
         synchronized (mLock) {
-            if (mRequestRelease)
+            if (mRequestRelease) {
                 return;
+            }
             mRequestRelease = true;
             mLock.notifyAll();
             try {
@@ -115,8 +121,9 @@ public final class RenderHandler implements Runnable {
 
     @Override
     public final void run() {
-        if (DEBUG)
+        if (DEBUG) {
             Log.i(TAG, "RenderHandler thread started:");
+        }
         synchronized (mLock) {
             mRequestSetEglContext = mRequestRelease = false;
             mRequestDraw = 0;
@@ -125,8 +132,9 @@ public final class RenderHandler implements Runnable {
         boolean localRequestDraw;
         for (; ; ) {
             synchronized (mLock) {
-                if (mRequestRelease)
+                if (mRequestRelease) {
                     break;
+                }
                 if (mRequestSetEglContext) {
                     mRequestSetEglContext = false;
                     internalPrepare();
@@ -161,13 +169,15 @@ public final class RenderHandler implements Runnable {
             internalRelease();
             mLock.notifyAll();
         }
-        if (DEBUG)
+        if (DEBUG) {
             Log.i(TAG, "RenderHandler thread finished:");
+        }
     }
 
     private void internalPrepare() {
-        if (DEBUG)
+        if (DEBUG) {
             Log.i(TAG, "internalPrepare:");
+        }
         internalRelease();
         mEglCore = new EglCore(mShardContext, EglCore.FLAG_RECORDABLE);
         mInputWindowSurface = new WindowSurface(mEglCore, mSurface, true);
@@ -178,8 +188,9 @@ public final class RenderHandler implements Runnable {
     }
 
     private void internalRelease() {
-        if (DEBUG)
+        if (DEBUG) {
             Log.i(TAG, "internalRelease:");
+        }
         if (mInputWindowSurface != null) {
             mInputWindowSurface.release();
             mInputWindowSurface = null;

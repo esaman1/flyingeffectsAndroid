@@ -183,7 +183,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 String strPassword = editTextPassword.getText().toString().trim();
-                if (!strPassword.equals("")) {
+                if (!"".equals(strPassword)) {
                     nextStep(true);
                     tv_login.setEnabled(true);
                     endTimer();
@@ -321,12 +321,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     private void requestLogin() {
 
-        if (editTextUsername.getText().toString().equals("")) {
+        if ("".equals(editTextUsername.getText().toString())) {
             ToastUtil.showToast("请输入手机号");
             return;
         }
 
-        if (editTextPassword.getText().toString().equals("")) {
+        if ("".equals(editTextPassword.getText().toString())) {
             ToastUtil.showToast("请输入验证码");
             return;
         }
@@ -391,12 +391,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         Observable ob = Api.getDefault().toSms(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(LoginActivity.this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
                 startTimer();
                 ToastUtil.showToast("发送成功");
                 String str = StringUtil.beanToJSONString(data);
@@ -423,12 +423,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         Observable ob = Api.getDefault().toLogin(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(LoginActivity.this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(UserInfo data) {
+            protected void onSubNext(UserInfo data) {
                 Hawk.put("UserInfo", data);
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "requestLogin=" + str);
@@ -462,7 +462,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             Observable ob = Api.getDefault().toLoginSms(BaseConstans.getRequestHead(params));
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(LoginActivity.this) {
                 @Override
-                protected void _onError(String message) {
+                protected void onSubError(String message) {
                     if (!isOnDestroy) {
                         WaitingDialog.closePragressDialog();
                         ToastUtil.showToast(message);
@@ -472,7 +472,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 }
 
                 @Override
-                protected void _onNext(UserInfo data) {
+                protected void onSubNext(UserInfo data) {
                     if (!isOnDestroy) {
                         Hawk.put("UserInfo", data);
                         String str = StringUtil.beanToJSONString(data);
@@ -628,7 +628,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Subscribe
     public void onEventMainThread(WxLogin event) {
-        if (event.getTag().equals("wxLogin")) {
+        if ("wxLogin".equals(event.getTag())) {
             if (!isWeixinAvilible(this)) {
                 ToastUtil.showToast("您还未安装微信");
             } else {
@@ -651,7 +651,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         if (pinfo != null) {
             for (int i = 0; i < pinfo.size(); i++) {
                 String pn = pinfo.get(i).packageName;
-                if (pn.equals("com.tencent.mm")) {
+                if ("com.tencent.mm".equals(pn)) {
                     return true;
                 }
             }

@@ -46,12 +46,12 @@ public class DressUpMvpModel {
         Observable ob = Api.getDefault().getCategoryList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<FirstLevelTypeEntity>>(context) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(List<FirstLevelTypeEntity> data) {
+            protected void onSubNext(List<FirstLevelTypeEntity> data) {
 
                 callback.setFragmentList(data);
 

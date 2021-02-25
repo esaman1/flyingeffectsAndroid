@@ -36,8 +36,9 @@ public class ConUtil {
         String KEY_UUID = "key_uuid";
         SharedUtil sharedUtil = new SharedUtil(mContext);
         String uuid = sharedUtil.getStringValueByKey(KEY_UUID);
-        if (uuid != null && uuid.trim().length() != 0)
+        if (uuid != null && uuid.trim().length() != 0) {
             return uuid;
+        }
 
         uuid = UUID.randomUUID().toString();
         uuid = Base64.encodeToString(uuid.getBytes(),

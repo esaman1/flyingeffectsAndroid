@@ -103,12 +103,12 @@ public class MineFocusActivity extends BaseActivity {
         Observable ob = Api.getDefault().followerList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<fansEnity>>(MineFocusActivity.this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(List<fansEnity> data) {
+            protected void onSubNext(List<fansEnity> data) {
                 finishData();
                 if (isRefresh) {
                     fansList.clear();

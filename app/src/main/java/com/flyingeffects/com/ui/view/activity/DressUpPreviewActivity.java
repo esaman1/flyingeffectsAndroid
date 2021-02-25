@@ -340,12 +340,12 @@ public class DressUpPreviewActivity extends BaseActivity {
         Observable ob = Api.getDefault().template_ids(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<String>>(DressUpPreviewActivity.this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(List<String> data) {
+            protected void onSubNext(List<String> data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM3", "请求的template数据为" + str);
                 TemplateIdList = data;
@@ -393,7 +393,7 @@ public class DressUpPreviewActivity extends BaseActivity {
 
     public String getKeepOutput() {
         String product = android.os.Build.MANUFACTURER; //获得手机厂商
-        if (product != null && product.equals("vivo")) {
+        if (product != null && "vivo".equals(product)) {
             File file_camera = new File(Environment.getExternalStorageDirectory() + "/相机");
             if (file_camera.exists()) {
                 return file_camera.getPath() + File.separator + System.currentTimeMillis() + "synthetic.png";

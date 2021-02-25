@@ -109,13 +109,13 @@ public class frag_user_upload_bj extends BaseFragment {
         Observable ob = Api.getDefault().uploadList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 finishData();
                 Log.e("OOM", "_onError: " + message);
             }
 
             @Override
-            protected void _onNext(List<new_fag_template_item> data) {
+            protected void onSubNext(List<new_fag_template_item> data) {
                 LogUtil.d("OOM", StringUtil.beanToJSONString(data));
                 finishData();
                 if (isRefresh) {
@@ -235,7 +235,7 @@ public class frag_user_upload_bj extends BaseFragment {
                     intent.putExtra("fromToMineCollect", true);
                     intent.putExtra("isTest", allData.get(position-1).getTest());
                     intent.putExtra("nowSelectPage", selectPage);
-                    if(allData.get(position-1).getTemplate_type().equals("3")){
+                    if("3".equals(allData.get(position-1).getTemplate_type())){
                         intent.putExtra("fromTo", FromToTemplate.DRESSUP);
                     }else{
                         intent.putExtra("fromTo", FromToTemplate.ISHOMEFROMBJ);
@@ -254,7 +254,7 @@ public class frag_user_upload_bj extends BaseFragment {
         Observable ob = Api.getDefault().deleteBackground(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(getActivity()) {
             @Override
-            protected void _onNext(Object o) {
+            protected void onSubNext(Object o) {
                 LogUtil.d(TAG, "requestDelete: " + o);
                 //todo object为空，要解决返回信息的处理问题
                 isRefresh = true;
@@ -263,7 +263,7 @@ public class frag_user_upload_bj extends BaseFragment {
             }
 
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 Log.e(TAG, "requestDelete_onError: " + message);
                 finishData();
             }
