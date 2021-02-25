@@ -147,7 +147,6 @@ public class HomeMainActivity extends FragmentActivity {
         initYouMeng();
         statisticsUpgradeApp();
         initFaceSdkModel.initFaceSdk();
-
     }
 
 

@@ -25,33 +25,47 @@ import java.util.HashMap;
 
 public class BaseConstans {
     public static final String UMENGAPPID = "5e5c68a2570df3d6930002b4";
-    /**抖音分享ClientKey*/
-    public static final String DOUYINSHARE_CLIENTKEY ="awikd2g333hd0ien";
+    /**
+     * 抖音分享ClientKey
+     */
+    public static final String DOUYINSHARE_CLIENTKEY = "awikd2g333hd0ien";
 
-    /**是否开启华为渠道适配*/
-    public static boolean IsOpenChannelAdaptive=true;
+    /**
+     * 是否开启华为渠道适配
+     */
+    public static boolean IsOpenChannelAdaptive = true;
 
-    /**当前抠图是用sdk 还是用服务器*/
-    public static final boolean UserFaceSdk=true;
-//    public static final boolean isTitokChannel=true;
-    public static final int  THREADCOUNT=4;
+    /**
+     * 当前抠图是用sdk 还是用服务器
+     */
+    public static final boolean UserFaceSdk = true;
+    //    public static final boolean isTitokChannel=true;
+    public static final int THREADCOUNT = 4;
     public static boolean hasCreatingSegJni = true;
     public static String titok;
     public static String kuaishou;
-    /**是否是正式环境*/
-    public static final boolean PRODUCTION = true;
+    /**
+     * 是否是正式环境
+     */
+    public static final boolean PRODUCTION = false;
     private static String channel = "";
     private static String versionCode = "";
     private static String uuid = "";
     public static final String PRIVACYPOLICY = Url.BASE_URL + "/fly/FS-PrivacyPolicy.html";
     public static String service_wxi;
-    public static boolean TemplateHasWatchingAd=false;
+    public static boolean TemplateHasWatchingAd = false;
     public static ConfigForTemplateList configList;
-    /**是否有广告，0表示没得，1表示有，全局控制*/
+    /**
+     * 是否有广告，0表示没得，1表示有，全局控制
+     */
     private static int hasAdvertising = 0;
-    /**退出后台后多少秒后会重新显示插屏*/
+    /**
+     * 退出后台后多少秒后会重新显示插屏
+     */
     public static int showAgainKaipingAd = 60;
-    /**只是用前几次的新用户*/
+    /**
+     * 只是用前几次的新用户
+     */
     private static boolean isNewUserForAdvertising = false;
     public static final String PROTOCOL = Url.BASE_URL + "/fly/FS-Agreement.html";
 
@@ -110,7 +124,7 @@ public class BaseConstans {
     public static void SetUserId(String id, String userName, String headUrl) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putString("userId", id);
-        LogUtil.d("oom3","设置的userId="+id);
+        LogUtil.d("oom3", "设置的userId=" + id);
         spUtil.putString("userName", userName);
         spUtil.putString("headUrl", headUrl);
     }
@@ -214,18 +228,17 @@ public class BaseConstans {
     }
 
 
-
     public static int getHasAdvertising() {
 //        if(isTitokChannel){
 //            return 1;
 //        }else{
-            if (hasAdvertising == 0) {
-                SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
-                hasAdvertising = spUtil.getInt("AdvertisingNum", 0);
-                return hasAdvertising;
-            } else {
-                return hasAdvertising;
-            }
+        if (hasAdvertising == 0) {
+            SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+            hasAdvertising = spUtil.getInt("AdvertisingNum", 0);
+            return hasAdvertising;
+        } else {
+            return hasAdvertising;
+        }
 //        }
     }
 
@@ -277,12 +290,12 @@ public class BaseConstans {
 //        if(isTitokChannel){
 //            return false;
 //        }else{
-            if (!isNewUserForAdvertising) {
-                SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
-                isNewUserForAdvertising = spUtil.getBoolean("isNewUserForAdvertising", false);
-                return isNewUserForAdvertising;
-            }
-            return true;
+        if (!isNewUserForAdvertising) {
+            SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+            isNewUserForAdvertising = spUtil.getBoolean("isNewUserForAdvertising", false);
+            return isNewUserForAdvertising;
+        }
+        return true;
 //        }
 
     }
@@ -295,9 +308,9 @@ public class BaseConstans {
 
 
     public static boolean getNextIsNewUser() {
-            SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
-            isNewUserForAdvertising = spUtil.getBoolean("isNewNextUserForAdvertising", false);
-            return isNewUserForAdvertising;
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        isNewUserForAdvertising = spUtil.getBoolean("isNewNextUserForAdvertising", false);
+        return isNewUserForAdvertising;
 
     }
 
@@ -306,7 +319,6 @@ public class BaseConstans {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putBoolean("isNewNextUserForAdvertising", newUser);
     }
-
 
 
     public static void setKaiPingADTimeOut(int time) {
@@ -332,25 +344,21 @@ public class BaseConstans {
     }
 
 
-
     public static String getminapp_share_title() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
-        return spUtil.getString("minapp_share_title","我也会了！用飞闪就能制作：");
+        return spUtil.getString("minapp_share_title", "我也会了！用飞闪就能制作：");
     }
 
     public static void setminapp_share_title(String str) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
-         spUtil.putString("minapp_share_title", str);
+        spUtil.putString("minapp_share_title", str);
     }
-
-
 
 
     public static boolean isFirstOpenApp() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getBoolean("isFirstOpen", true);
     }
-
 
 
     public static boolean isFirstUseDownAndUpAct() {
@@ -361,23 +369,20 @@ public class BaseConstans {
 
     public static void setOddNum() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
-        boolean oddNum=spUtil.getBoolean("oddNum",true);
+        boolean oddNum = spUtil.getBoolean("oddNum", true);
         spUtil.putBoolean("oddNum", !oddNum);
     }
 
     public static boolean getOddNum() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
-       return spUtil.getBoolean("oddNum", true);
+        return spUtil.getBoolean("oddNum", true);
     }
-
-
 
 
     public static void setFirstUseDownAndUpAct() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
-        spUtil.putBoolean("isFirstUseDownAndUp",false);
+        spUtil.putBoolean("isFirstUseDownAndUp", false);
     }
-
 
 
     public static void setFirstOpenApp(long time) {
@@ -386,77 +391,101 @@ public class BaseConstans {
         spUtil.putLong("lastShowAdvertisingTime", time);
     }
 
-    /**设置打开app的次数*/
+    /**
+     * 设置打开app的次数
+     */
     public static void setOpenAppNum(int num) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putInt("OpenAppNum", num);
     }
 
 
-    /**得到打开app的次数*/
+    /**
+     * 得到打开app的次数
+     */
     public static int getOpenAppNum() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getInt("OpenAppNum", 0);
     }
 
-    /**设置间隔多少次加载广告*/
+    /**
+     * 设置间隔多少次加载广告
+     */
     public static void setIntervalNumShowAD(int num) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putInt("IntervalNumShowAD", num);
     }
 
-    /**得到间隔多少次加载广告  默认间隔10次显示一次广告*/
+    /**
+     * 得到间隔多少次加载广告  默认间隔10次显示一次广告
+     */
     public static int getIntervalNumShowAD() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getInt("IntervalNumShowAD", 10);
     }
 
-    /**设置打开选择图片或视频的activity的次数*/
+    /**
+     * 设置打开选择图片或视频的activity的次数
+     */
     public static void setOpenPhotoAlbumNum(int num) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putInt("OpenPhotoAlbumNum", num);
     }
 
-    /**得到打开选择图片或视频的activity的次数*/
+    /**
+     * 得到打开选择图片或视频的activity的次数
+     */
     public static int getOpenPhotoAlbumNum() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getInt("OpenPhotoAlbumNum", -1);
     }
 
-    /**启动APP多少秒后显示插屏广告*/
+    /**
+     * 启动APP多少秒后显示插屏广告
+     */
     public static void setInterstitial(int num) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putInt("interstitial", num);
     }
 
 
-    /**启动APP多少秒后显示插屏广告*/
+    /**
+     * 启动APP多少秒后显示插屏广告
+     */
     public static int getInterstitial() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getInt("interstitial", 5);
     }
 
-    /**设置自定义模板分享到抖音的话题*/
+    /**
+     * 设置自定义模板分享到抖音的话题
+     */
     public static void setDouyingTopic(String topic) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putString("DouyingTopic", topic);
     }
 
 
-    /**获取自定义模板分享到抖音的话题*/
+    /**
+     * 获取自定义模板分享到抖音的话题
+     */
     public static String getDouyingTopic() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getString("DouyingTopic", "飞闪视频");
     }
 
-    /**设置换装制作页面切换模板按钮加载视频广告的间隔次数*/
+    /**
+     * 设置换装制作页面切换模板按钮加载视频广告的间隔次数
+     */
     public static void setDressupIntervalsNumber(int intervalsNumber) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putInt("IntervalsNumber", intervalsNumber);
     }
 
 
-    /**获取换装制作页面切换模板按钮加载视频广告的间隔次数*/
+    /**
+     * 获取换装制作页面切换模板按钮加载视频广告的间隔次数
+     */
     public static int getDressupIntervalsNumber() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getInt("IntervalsNumber", 5);
@@ -502,7 +531,6 @@ public class BaseConstans {
             return spUtil.getInt("feedMinNum", 5);
         }
     }
-
 
 
     static {

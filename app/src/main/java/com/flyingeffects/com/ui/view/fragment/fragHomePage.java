@@ -140,12 +140,8 @@ public class fragHomePage extends BaseFragment {
                 allData.clear();
                 finishData();
             }
-
-
         });
         smartRefreshLayout.setOnLoadMoreListener(refresh -> {
-
-
             if (BaseConstans.hasLogin()) {
                 isOnLoadMore();
                 isRefresh = false;
@@ -156,8 +152,6 @@ public class fragHomePage extends BaseFragment {
                 allData.clear();
                 finishData();
             }
-
-
         });
     }
 
