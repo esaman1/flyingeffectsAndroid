@@ -38,6 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/iv_tiktok"
+            android:marqueeRepeatLimit="marquee_forever"
             android:ellipsize="marquee"
             android:focusableInTouchMode="true"
             android:singleLine="true"
@@ -190,7 +191,7 @@
         app:HorizontalselectedViewSelectedTextColor="#FFFFFF"
         app:HorizontalselectedViewSelectedTextSize="60"
         app:HorizontalselectedViewTextColor="#566265"
-        app:HorizontalselectedViewTextSize="40" />
+        app:HorizontalselectedViewTextSize="60" />
 
 
 

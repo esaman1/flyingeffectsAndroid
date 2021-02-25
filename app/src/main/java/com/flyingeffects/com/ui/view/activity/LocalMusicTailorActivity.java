@@ -17,6 +17,7 @@ import com.flyingeffects.com.ui.interfaces.view.LocalMusicTailorMvpView;
 import com.flyingeffects.com.ui.presenter.LocalMusicTailorPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.RangeSeekBarForMusicView;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.histogram.MyBarChartView;
@@ -274,7 +275,11 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
                 } else {
                     //裁剪保存
                     statisticsEventAffair.getInstance().setFlag(LocalMusicTailorActivity.this, "16_pick music_apply", title);
-                    Presenter.toSaveCutMusic(nowPlayStartTime, nowPlayEndTime);
+                   if(nowPlayEndTime-nowPlayStartTime<1000){
+                       ToastUtil.showToast("裁剪时间太短啦");
+                   }else{
+                       Presenter.toSaveCutMusic(nowPlayStartTime, nowPlayEndTime);
+                   }
                 }
                 break;
 

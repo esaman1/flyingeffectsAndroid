@@ -170,6 +170,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
 
     public void StartCountDown() {
         nowCountDownNum=  GetCountDown();
+        countDownStatus=0;
         startTimer();
     }
 

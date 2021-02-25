@@ -149,6 +149,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                     finish();
                     break;
 
+                case R.id.animation_view:
                 case R.id.animation_view_progress:
 
                     clickBtn();
@@ -182,18 +183,19 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     };
 
 
+
     private void clickBtn() {
 
 //        int duration=presenter.GetCountDown()*1000;
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             if (isRecording) {
                 LogUtil.d("OOM", "直接录制结束");
-                isRecording = false;
                 presenter.stopRecord();
-                tv_count_down.setVisibility(View.GONE);
-                tv_count_down.setText("");
                 animation_view_progress.setProgress(0);
                 lottieAnimationView.setProgress(0);
+                isRecording = false;
+                tv_count_down.setVisibility(View.GONE);
+                tv_count_down.setText("");
                 stopRecording();
                 isRecordingState(false);
             } else {
@@ -356,6 +358,9 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
             constraintLayout.setVisibility(View.GONE);
             ll_stage_property.setVisibility(View.INVISIBLE);
             relative_choose_music.setVisibility(View.GONE);
+            animation_view_progress.setProgress(0);
+            animation_view_progress.setVisibility(View.VISIBLE);
+            tv_show_shoot_time.setVisibility(View.VISIBLE);
             iv_close.setVisibility(View.GONE);
         } else {
             if (isFrom != 1) {
@@ -365,6 +370,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                 tv_show_shoot_time.setVisibility(View.GONE);
                 tv_show_shoot_time.setText("0秒");
             }
+            animation_view_progress.setVisibility(View.INVISIBLE);
             iv_close.setVisibility(View.VISIBLE);
             relative_choose_music.setVisibility(View.VISIBLE);
         }
