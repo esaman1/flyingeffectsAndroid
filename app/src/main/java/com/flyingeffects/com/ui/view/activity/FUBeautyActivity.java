@@ -140,8 +140,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.relative_choose_music:
-
-
                     presenter.IntoChooseMusic();
                     break;
 
@@ -365,11 +363,11 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         } else {
             if (isFrom != 1) {
                 horizontalselectedView.setVisibility(View.VISIBLE);
-                constraintLayout.setVisibility(View.VISIBLE);
                 ll_stage_property.setVisibility(View.VISIBLE);
                 tv_show_shoot_time.setVisibility(View.GONE);
                 tv_show_shoot_time.setText("0秒");
             }
+            constraintLayout.setVisibility(View.VISIBLE);
             animation_view_progress.setVisibility(View.INVISIBLE);
             iv_close.setVisibility(View.VISIBLE);
             relative_choose_music.setVisibility(View.VISIBLE);

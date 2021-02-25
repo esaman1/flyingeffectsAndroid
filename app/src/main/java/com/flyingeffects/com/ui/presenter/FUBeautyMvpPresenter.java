@@ -40,6 +40,7 @@ import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
+import com.flyingeffects.com.enity.ClearChooseStickerState;
 import com.flyingeffects.com.enity.StickerTypeEntity;
 import com.flyingeffects.com.enity.TabEntity;
 import com.flyingeffects.com.enity.VideoInfo;
@@ -77,6 +78,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -132,9 +134,15 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         this.defaultnum = defaultnum;
         fUBeautyMvpmodel = new FUBeautyMvpModel(context, this, duration, musicPath, isFrom);
         horizontalselectedView.setData(fUBeautyMvpmodel.GetTimeData());
-        horizontalselectedView.setSeeSize(4);
         addTabDate(false);
-        horizontalselectedView.SetChoosePosition(0);
+        //bug  解决显示错位
+        horizontalselectedView.setSeeSize(4);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                horizontalselectedView.SetChoosePosition(0);
+            }
+        },100);
     }
 
 
@@ -536,7 +544,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
             @Override
             public void onClick(View v) {
                 fUBeautyMvpView.ClearSticker();
-
+                EventBus.getDefault().post(new ClearChooseStickerState());
             }
         });
         view.findViewById(R.id.iv_down_sticker).setVisibility(View.GONE);

@@ -17,6 +17,8 @@ import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
+import com.flyingeffects.com.enity.ClearChooseStickerState;
+import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -39,6 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -82,6 +86,7 @@ public class StickerFragment extends BaseFragment {
         formToType = getArguments().getInt("type");
         FileManager fileManager = new FileManager();
         mGifFolder = fileManager.getFileCachePath(getContext(), "gifFolder");
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -149,11 +154,11 @@ public class StickerFragment extends BaseFragment {
             if (!isDownZipUrl) {
                 if (mFolder == null || mFolder.list().length == 0) {
                     LogUtil.d("OOM3", "开始下载2");
-                    downZip(path, folderPath,name);
+                    downZip(path, folderPath, name);
                     mProgress = 0;
                     showMakeProgress();
                 } else {
-                    downZipCallback.zipPath(mFolder.getPath(),name);
+                    downZipCallback.zipPath(mFolder.getPath(), name);
 //                    intoTemplateActivity(mFolder.getPath());
                 }
             } else {
@@ -170,7 +175,7 @@ public class StickerFragment extends BaseFragment {
     }
 
 
-    private void downZip(String loadUrl, String path,String name) {
+    private void downZip(String loadUrl, String path, String name) {
         mProgress = 0;
         if (!TextUtils.isEmpty(loadUrl)) {
             new Thread() {
@@ -197,7 +202,7 @@ public class StickerFragment extends BaseFragment {
 //                                        videoPause();
                                         mProgress = 100;
                                         showMakeProgress();
-                                        downZipCallback.zipPath(path1,name);
+                                        downZipCallback.zipPath(path1, name);
                                     });
                                 } catch (IOException e) {
                                     LogUtil.d("onVideoAdError", "Exception=" + e.getMessage());
@@ -401,7 +406,7 @@ public class StickerFragment extends BaseFragment {
 
         void showDownProgress(int progress);
 
-        void zipPath(String path,String title);
+        void zipPath(String path, String title);
     }
 
 
@@ -412,4 +417,22 @@ public class StickerFragment extends BaseFragment {
 
         void clickItemSelected(int position);
     }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+
+    @Subscribe
+    public void onEventMainThread(ClearChooseStickerState clearChooseStickerState) {
+        listForSticker.clear();
+        isRefresh = true;
+        selectPage = 1;
+        requestStickersList(true);
+    }
+
+
 }
