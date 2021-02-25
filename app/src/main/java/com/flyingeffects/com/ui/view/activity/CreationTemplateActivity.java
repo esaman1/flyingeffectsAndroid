@@ -277,13 +277,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             public void progress(long progress, boolean isDrag) {
                 LogUtil.d("OOM4", "mProgressBarViewProgress=" + progress);
                 setgsyVideoProgress(progress);
+
                 if (progress < mCutStartTime) {
                     progress = mCutStartTime;
                 }
+
                 if (progress > mCutEndTime) {
                     progress = mCutEndTime;
                 }
-
 
                 if (isDrag) {
                     mSeekBarViewManualDrag = false;

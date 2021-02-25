@@ -90,7 +90,6 @@ public class frag_user_upload_bj extends BaseFragment {
         initSmartRefreshLayout();
     }
 
-
     @Override
     protected void initAction() {
         initRecycler();
@@ -102,10 +101,10 @@ public class frag_user_upload_bj extends BaseFragment {
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
-        params.put("type",  "1");
+        params.put("type", "1");
         params.put("to_user_id", BaseConstans.GetUserId());
         String str = StringUtil.beanToJSONString(params);
-        LogUtil.d("OOM","请求的参数为"+ str);
+        LogUtil.d("OOM", "请求的参数为" + str);
         Observable ob = Api.getDefault().uploadList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override
@@ -217,8 +216,7 @@ public class frag_user_upload_bj extends BaseFragment {
                         requestDelete(id);
                     }).create().show();
         });
-        layoutManager =
-                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
@@ -226,18 +224,18 @@ public class frag_user_upload_bj extends BaseFragment {
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
                 Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
-                if(allData!=null&&allData.size()>1){
+                if (allData != null && allData.size() > 1) {
                     allData.remove(0);
                     ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
                     intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
                     intent.putExtra("templateId", "");//直接存入被序列化的对象实例
-                    intent.putExtra("position", position-1);
+                    intent.putExtra("position", position - 1);
                     intent.putExtra("fromToMineCollect", true);
-                    intent.putExtra("isTest", allData.get(position-1).getTest());
+                    intent.putExtra("isTest", allData.get(position - 1).getTest());
                     intent.putExtra("nowSelectPage", selectPage);
-                    if("3".equals(allData.get(position-1).getTemplate_type())){
+                    if ("3".equals(allData.get(position - 1).getTemplate_type())) {
                         intent.putExtra("fromTo", FromToTemplate.DRESSUP);
-                    }else{
+                    } else {
                         intent.putExtra("fromTo", FromToTemplate.ISHOMEFROMBJ);
                     }
                     startActivity(intent);

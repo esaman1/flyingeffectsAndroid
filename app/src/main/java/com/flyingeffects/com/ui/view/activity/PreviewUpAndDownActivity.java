@@ -90,7 +90,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @BindView(R.id.page2)
     ViewPager2 viewPage2;
 
-
     @BindView(R.id.refresh)
     SmartRefreshLayout smartRefreshLayout;
 
@@ -584,7 +583,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
     @Override
-    public void ZanResult() {
+    public void zanResult() {
         if (nowPraise == 0) {
             nowPraise = 1;
         } else {

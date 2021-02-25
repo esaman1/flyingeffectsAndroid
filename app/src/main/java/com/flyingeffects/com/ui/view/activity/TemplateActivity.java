@@ -1012,8 +1012,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
     private void modificationThumbForRedactData(boolean isRedate) {
-        for (TemplateThumbItem item : listItem
-        ) {
+        for (TemplateThumbItem item : listItem) {
             item.setRedate(isRedate);
         }
         if (templateThumbAdapter != null) {
@@ -1384,6 +1383,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         //这里需要重新设置底部图，但是glide 视频路径相同。所以glide 不会刷新
                         presenter.getButtomIcon(event.getOriginalPath());
                         changeMaterialMusic(event.getOriginalPath());
+                        switch_button.setChecked(true);
                     }
                 } else {
                     LogUtil.d("OOM2", "用户选择了抠图");
