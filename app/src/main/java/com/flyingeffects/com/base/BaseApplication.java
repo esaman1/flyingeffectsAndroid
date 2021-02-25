@@ -136,7 +136,7 @@ public class BaseApplication extends MultiDexApplication {
      * 保存错误日志
      */
     public void keepCrash() {
-        if (ChannelUtil.getChannel(BaseApplication.getInstance()).equals("test")) {
+        if ("test".equals(ChannelUtil.getChannel(BaseApplication.getInstance()))) {
             CrashHandler.getInstance().init(this);
         }
     }

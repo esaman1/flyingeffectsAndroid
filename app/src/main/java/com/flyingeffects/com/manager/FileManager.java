@@ -151,8 +151,8 @@ public class FileManager {
         //获取拓展名
         String fileEnd = fName.substring(fName.lastIndexOf(".") + 1,
                 fName.length()).toLowerCase();
-        if (fileEnd.equals("jpg") || fileEnd.equals("png") || fileEnd.equals("gif")
-                || fileEnd.equals("jpeg") || fileEnd.equals("bmp")) {
+        if ("jpg".equals(fileEnd) || "png".equals(fileEnd) || "gif".equals(fileEnd)
+                || "jpeg".equals(fileEnd) || "bmp".equals(fileEnd)) {
             isImageFile = true;
         } else {
             isImageFile = false;

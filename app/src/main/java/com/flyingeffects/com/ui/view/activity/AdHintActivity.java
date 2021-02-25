@@ -40,10 +40,10 @@ public class AdHintActivity extends Activity {
         tv_content_1=findViewById(R.id.tv_content_1);
         findViewById(R.id.tv_watch_ad).setOnClickListener(listenner);
         from = getIntent().getStringExtra("from");
-        if(!TextUtils.isEmpty(from) && from.equals("isFormPreviewVideo")){
+        if(!TextUtils.isEmpty(from) && "isFormPreviewVideo".equals(from)){
             tv_content_1.setText("「看完后就能一键保存视频」");
             iv_btn.setImageResource(R.mipmap.ad_alert_bt_keep);//ad_alert_bt_save
-        }else if(!TextUtils.isEmpty(from) && from.equals("isFormDressUp")){
+        }else if(!TextUtils.isEmpty(from) && "isFormDressUp".equals(from)){
             tv_content_1.setText("「看完后就能一键保存图片」");
             iv_btn.setImageResource(R.mipmap.ad_alert_bt_keep);//ad_alert_bt_save
         }else{

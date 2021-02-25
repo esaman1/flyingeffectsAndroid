@@ -78,6 +78,12 @@ android {
     }
     buildToolsVersion = '29.0.3'
 
+    buildFeatures {
+        dataBinding = true
+        // for view binding :
+        viewBinding = true
+    }
+
 }
 
 dependencies {
@@ -208,7 +214,6 @@ dependencies {
     //中台导流megviisegment_model
     implementation(name: 'Market-v1.2', ext: 'aar')
 
-
     //铠甲sdk
     implementation(name: 'oaid_sdk_1.0.23', ext: 'aar')
     implementation(name: 'kaijia_ad_sdk_1.8.1.25', ext: 'aar')
@@ -216,11 +221,8 @@ dependencies {
     implementation 'com.bytedance.ies.ugc.aweme:opensdk-china-external:0.1.1.0'
     implementation 'com.bytedance.ies.ugc.aweme:opensdk-common:0.1.1.0'
 
-
     //face sdk
     implementation(name: 'faceSdk', ext: 'aar')
-
-
 }
 
 

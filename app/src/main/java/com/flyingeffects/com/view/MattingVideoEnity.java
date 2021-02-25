@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 public class MattingVideoEnity implements Serializable {
 
-
-
     /**
      * description ：
      * creation date: 2020/4/14
@@ -13,11 +11,11 @@ public class MattingVideoEnity implements Serializable {
      * originalPath 拼装后原图地址   mattingPath 裁剪后地址  primitivePath 原图地址，主要是用于模板页面的音乐切换功能
      * user : zhangtongju
      */
-    public MattingVideoEnity(String originalPath,String mattingPath,String primitivePath,int tag){
-        this.originalPath=originalPath;
-        this.mattingPath=mattingPath;
-        this.primitivePath=primitivePath;
-        this.tag=tag;
+    public MattingVideoEnity(String originalPath, String mattingPath, String primitivePath, int tag) {
+        this.originalPath = originalPath;
+        this.mattingPath = mattingPath;
+        this.primitivePath = primitivePath;
+        this.tag = tag;
     }
 
 

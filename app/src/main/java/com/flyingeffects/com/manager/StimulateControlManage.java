@@ -42,7 +42,7 @@ public class StimulateControlManage {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject obArray = jsonArray.getJSONObject(i);
                             String Channel = obArray.getString("channel");
-                            if (Channel.equals("isVideoadvertising")) { //控制了版本号
+                            if ("isVideoadvertising".equals(Channel)) { //控制了版本号
                                 isVideoadvertisingId = obArray.getInt("id");
                             }
                             if (Channel.equals(nowUserChannel)) { //最新版的审核模式

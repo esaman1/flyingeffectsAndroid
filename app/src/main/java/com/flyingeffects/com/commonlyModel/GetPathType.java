@@ -19,7 +19,7 @@ public class GetPathType {
         if(!TextUtils.isEmpty(path)){
             String mimeType;
             String suffix = path.substring(path.lastIndexOf(".") + 1).toUpperCase();
-            if (suffix.equalsIgnoreCase("MP4") || suffix.equalsIgnoreCase("M4V") || suffix.equalsIgnoreCase("3GP") || suffix.equalsIgnoreCase("3G2") || suffix.equalsIgnoreCase("WMV") || suffix.equalsIgnoreCase("ASF") || suffix.equalsIgnoreCase("AVI") || suffix.equalsIgnoreCase("FLV") || suffix.equalsIgnoreCase("MKV") || suffix.equalsIgnoreCase("WEBM")) {
+            if ("MP4".equalsIgnoreCase(suffix) || "M4V".equalsIgnoreCase(suffix) || "3GP".equalsIgnoreCase(suffix) || "3G2".equalsIgnoreCase(suffix) || "WMV".equalsIgnoreCase(suffix) || "ASF".equalsIgnoreCase(suffix) || "AVI".equalsIgnoreCase(suffix) || "FLV".equalsIgnoreCase(suffix) || "MKV".equalsIgnoreCase(suffix) || "WEBM".equalsIgnoreCase(suffix)) {
                 mimeType = "video/*";
             } else {
                 mimeType = "image/*";

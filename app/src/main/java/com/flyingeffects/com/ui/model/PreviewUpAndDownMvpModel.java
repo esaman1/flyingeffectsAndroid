@@ -189,13 +189,13 @@ public class PreviewUpAndDownMvpModel {
             LogUtil.d("OOM", StringUtil.beanToJSONString(params));
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<new_fag_template_item>(context) {
                 @Override
-                protected void _onError(String message) {
+                protected void onSubError(String message) {
 //                ToastUtil.showToast(message);
                     LogUtil.d("OOM", "requestTemplateDetail-error=" + message);
                 }
 
                 @Override
-                protected void _onNext(new_fag_template_item data) {
+                protected void onSubNext(new_fag_template_item data) {
                     callback.getTemplateLInfo(data);
                 }
             }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
@@ -372,12 +372,12 @@ public class PreviewUpAndDownMvpModel {
             Observable ob = Api.getDefault().templateBehaviorStatistics(BaseConstans.getRequestHead(params));
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
                 @Override
-                protected void _onError(String message) {
+                protected void onSubError(String message) {
                     LogUtil.d("OOM", "requestTemplateDetail-error=" + message);
                 }
 
                 @Override
-                protected void _onNext(Object data) {
+                protected void onSubNext(Object data) {
                     LogUtil.d("OOM", "行为统计上传成功");
                 }
             }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
@@ -675,14 +675,14 @@ public class PreviewUpAndDownMvpModel {
         LogUtil.d("OOM3", "总请求的参数为------" + str);
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 LogUtil.d("OOM3", "下一页数据请求" + message);
                 finishData();
                 ToastUtil.showToast("错误为" + message);
             }
 
             @Override
-            protected void _onNext(List<new_fag_template_item> data) {
+            protected void onSubNext(List<new_fag_template_item> data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM3", "下一页数据请求" + str);
                 finishData();
@@ -746,13 +746,13 @@ public class PreviewUpAndDownMvpModel {
         Observable ob = Api.getDefault().newCollection(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
 //                LogUtil.d("");
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "collectTemplate=" + str);
 
@@ -790,13 +790,13 @@ public class PreviewUpAndDownMvpModel {
 
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
 //                LogUtil.d("");
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "collectTemplate=" + str);
                 callback.ZanResult();
@@ -812,13 +812,13 @@ public class PreviewUpAndDownMvpModel {
         Observable ob = Api.getDefault().getOtherUserinfo(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(context) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 BaseConstans.SetUserToken("");
                 callback.hasLogin(false);
             }
 
             @Override
-            protected void _onNext(UserInfo data) {
+            protected void onSubNext(UserInfo data) {
                 callback.hasLogin(true);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
@@ -1100,11 +1100,11 @@ public class PreviewUpAndDownMvpModel {
         Observable ob = Api.getDefault().addTimes(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<SystemMessageDetailAllEnity>(context) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
             }
 
             @Override
-            protected void _onNext(SystemMessageDetailAllEnity AllData) {
+            protected void onSubNext(SystemMessageDetailAllEnity AllData) {
 
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);

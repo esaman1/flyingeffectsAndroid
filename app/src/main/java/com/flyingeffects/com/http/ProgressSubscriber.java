@@ -44,7 +44,7 @@ public abstract class ProgressSubscriber<T> extends Subscriber<T> implements Pro
 
     @Override
     public void onNext(T t) {
-        _onNext(t);
+        onSubNext(t);
     }
 
     /**
@@ -59,16 +59,16 @@ public abstract class ProgressSubscriber<T> extends Subscriber<T> implements Pro
         LogUtil.d("ProgressSubscriber", e.getMessage());
         e.printStackTrace();
         if (e instanceof UnknownHostException) { //一般为未开网路的情况
-            _onError("网络不可用");
+            onSubError("网络不可用");
         } else if (e instanceof ApiException) { //自己写的业务判断
-            _onError(e.getMessage());
+            onSubError(e.getMessage());
         } else if (e instanceof SocketTimeoutException) {
-            _onError("网络连接超时");
+            onSubError("网络连接超时");
         } else {
             if (BaseConstans.PRODUCTION) {
                 LogUtil.d("error", e.getMessage());
             } else {
-                _onError(e.getMessage());
+                onSubError(e.getMessage());
             }
         }
         dismissProgressDialog();
@@ -82,7 +82,15 @@ public abstract class ProgressSubscriber<T> extends Subscriber<T> implements Pro
         }
     }
 
-    protected abstract void _onNext(T t);
+    /**
+     * onNext
+     * @param t
+     */
+    protected abstract void onSubNext(T t);
 
-    protected abstract void _onError(String message);
+    /**
+     * onError
+     * @param message
+     */
+    protected abstract void onSubError(String message);
 }

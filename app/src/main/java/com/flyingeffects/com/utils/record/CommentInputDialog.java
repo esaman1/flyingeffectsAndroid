@@ -55,7 +55,7 @@ public class CommentInputDialog extends Dialog {
                 case R.id.tv_sent:
                     if (BaseConstans.hasLogin()) {
                         String reply = ed_search.getText().toString().trim();
-                        if (!reply.equals("")) {
+                        if (!"".equals(reply)) {
                             if (!TextUtils.isEmpty(message_id)) {
                                 replyMessage(reply, "2", message_id);
                             } else {
@@ -103,7 +103,7 @@ public class CommentInputDialog extends Dialog {
             return false;
         });
         emojiBoard.setItemClickListener(code -> {
-            if (code.equals("/DEL")) {//删除图标
+            if ("/DEL".equals(code)) {//删除图标
                 ed_search.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
             } else {//插入表情
                 ed_search.getText().insert(ed_search.getSelectionStart(), code);
@@ -137,15 +137,15 @@ public class CommentInputDialog extends Dialog {
      * user : zhangtongju
      */
     private void replyMessage(String content, String type, String message_id) {
-        if (type.equals("1")) {
-            if (templateType.equals("1")) {
+        if ("1".equals(type)) {
+            if ("1".equals(templateType)) {
                 statisticsEventAffair.getInstance().setFlag(activity, " 12_amount", templateTitle);
             } else {
                 statisticsEventAffair.getInstance().setFlag(activity, " 13_amount", templateTitle);
             }
         } else {
 
-            if (templateType.equals("1")) {
+            if ("1".equals(templateType)) {
                 statisticsEventAffair.getInstance().setFlag(activity, " 12_Reply", templateTitle);
             } else {
                 statisticsEventAffair.getInstance().setFlag(activity, " 13_Reply", templateTitle);
@@ -164,12 +164,12 @@ public class CommentInputDialog extends Dialog {
         Observable ob = Api.getDefault().addComment(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(activity) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
                 String aa = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", aa);
                 cancelFocus();

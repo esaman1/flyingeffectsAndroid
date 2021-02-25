@@ -90,7 +90,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @BindView(R.id.page2)
     ViewPager2 viewPage2;
 
-
     @BindView(R.id.refresh)
     SmartRefreshLayout smartRefreshLayout;
 
@@ -399,12 +398,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         Observable ob = Api.getDefault().followUser(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
                 LogUtil.d("follow", StringUtil.beanToJSONString(data));
                 if (mIsFollow) {
                     ((AppCompatTextView) view.findViewById(R.id.tv_btn_follow)).setText("关注");
@@ -462,13 +461,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         if (isAdd) {
             iZanNum++;
 
-            if (templateType.equals("1")) {
+            if ("1".equals(templateType)) {
                 statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, " 12_like", templateItem.getTitle());
             } else {
                 statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, " 13_like", templateItem.getTitle());
             }
         } else {
-            if (templateType.equals("1")) {
+            if ("1".equals(templateType)) {
                 statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, " 12_cancel", templateItem.getTitle());
             } else {
                 statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, " 13_cancel", templateItem.getTitle());
@@ -584,7 +583,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
     @Override
-    public void ZanResult() {
+    public void zanResult() {
         if (nowPraise == 0) {
             nowPraise = 1;
         } else {
@@ -597,7 +596,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void hasLogin(boolean hasLogin) {
         StimulateControlManage.getInstance().InitRefreshStimulate();
-        if (!TextUtils.isEmpty(templateItem.getType()) && templateItem.getType().equals("1") && BaseConstans.getIncentiveVideo()) {
+        if (!TextUtils.isEmpty(templateItem.getType()) && "1".equals(templateItem.getType()) && BaseConstans.getIncentiveVideo()) {
             Intent intent = new Intent(PreviewUpAndDownActivity.this, AdHintActivity.class);
             intent.putExtra("from", "PreviewActivity");
             intent.putExtra("templateTitle", templateItem.getTitle());
@@ -671,7 +670,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             //file 文件下载成功
             this.TemplateFilePath = filePath;
             Log.d(TAG, "getTemplateFileSuccess: TemplateFilePath = " + TemplateFilePath);
-            if (!TextUtils.isEmpty(templateItem.getVideotime()) && !templateItem.getVideotime().equals("0") && is_with_play == 1) {
+            if (!TextUtils.isEmpty(templateItem.getVideotime()) && !"0".equals(templateItem.getVideotime()) && is_with_play == 1) {
                 bjMp3Duration = Float.parseFloat(templateItem.getVideotime());
                 LogUtil.d("OOM", "bj.mp3=" + TemplateFilePath);
                  bjMp3 = TemplateFilePath + File.separator + "bj.mp3";
@@ -901,7 +900,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             case FromToTemplate.ISBJCOLLECT:
             case FromToTemplate.ISSEARCHBJ:
             case FromToTemplate.ISSEARCHTEMPLATE:
-                if (templateType.equals("2")) {
+                if ("2".equals(templateType)) {
                     statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
                     mMvpPresenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId() + "", false);
                 } else {
@@ -968,7 +967,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 if (albumFileList.get(0).isClickToCamera()) {
                     //拍摄新页面
                     Intent intent = new Intent(PreviewUpAndDownActivity.this, FUBeautyActivity.class);
-                    if(templateItem.getTemplate_type().equals("2")){
+                    if("2".equals(templateItem.getTemplate_type())){
                         //背景
                         MediaInfo mediaInfo=new MediaInfo(videoPath);
                         mediaInfo.prepare();
@@ -1057,7 +1056,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                                             } else {
                                                 //选择的时视频
 //                                if (OldfromTo.equals(FromToTemplate.ISBJ) || OldfromTo.equals(FromToTemplate.ISHOMEFROMBJ)) {
-                                                if (templateType.equals("2")) {
+                                                if ("2".equals(templateType)) {
                                                     Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
                                                         toCloseProgressDialog();
                                                         if (originalImagePath.get(0).equals(paths.get(0))) {
@@ -1075,7 +1074,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                                                 } else {
                                                     toCloseProgressDialog();
                                                     String videoTime = templateItem.getVideotime();
-                                                    if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
+                                                    if (!TextUtils.isEmpty(videoTime) && !"0".equals(videoTime)) {
                                                         float needVideoTime = Float.parseFloat(videoTime);
                                                         LogUtil.d("OOM", "needVideoTime=" + needVideoTime);
                                                         Intent intoCutVideo = new Intent(PreviewUpAndDownActivity.this, TemplateCutVideoActivity.class);
@@ -1153,7 +1152,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private void compressImage(List<String> paths, String templateId) {
         boolean hasCache = templateItem.getIs_anime() != 1;
         CompressionCuttingManage manage = new CompressionCuttingManage(PreviewUpAndDownActivity.this, templateId, hasCache, tailorPaths -> {
-            if (templateType.equals("2")) {
+            if ("2".equals(templateType)) {
                 mMvpPresenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId() + "", false);
             } else {
                 toCloseProgressDialog();
@@ -1271,7 +1270,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      */
     @Subscribe
     public void onEventMainThread(showAdCallback event) {
-        if (event != null && event.getIsFrom().equals("PreviewActivity")) {
+        if (event != null && "PreviewActivity".equals(event.getIsFrom())) {
             //需要激励视频
             if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                 VideoAdManager videoAdManager = new VideoAdManager();

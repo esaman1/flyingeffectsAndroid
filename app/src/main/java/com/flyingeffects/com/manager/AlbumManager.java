@@ -289,7 +289,7 @@ public class AlbumManager {
                 .filterMimeType(new Filter<String>() {
                     @Override
                     public boolean filter(String attributes) {
-                        return attributes.equals("image/gif") || attributes.equals("image/svg+xml") || attributes.equals("image/x-icon");
+                        return "image/gif".equals(attributes) || "image/svg+xml".equals(attributes) || "image/x-icon".equals(attributes);
                     }
                 })
                 .afterFilterVisibility(false)

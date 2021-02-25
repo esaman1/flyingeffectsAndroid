@@ -147,7 +147,6 @@ public class HomeMainActivity extends FragmentActivity {
         initYouMeng();
         statisticsUpgradeApp();
         initFaceSdkModel.initFaceSdk();
-
     }
 
 
@@ -169,11 +168,11 @@ public class HomeMainActivity extends FragmentActivity {
         Observable ob = Api.getDefault().getOtherUserinfo(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
             }
 
             @Override
-            protected void _onNext(UserInfo data) {
+            protected void onSubNext(UserInfo data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM2", "requestUserInfo=" + str);
                 Hawk.put("UserInfo", data);
@@ -228,12 +227,12 @@ public class HomeMainActivity extends FragmentActivity {
         Observable ob = Api.getDefault().commentcheck(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 LogUtil.d("checkUpdate", message);
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
                 try {
                     JSONObject ob = new JSONObject(str);
@@ -310,13 +309,13 @@ public class HomeMainActivity extends FragmentActivity {
         Observable ob = Api.getDefault().checkUpdate(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<checkVersion>(this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 LogUtil.d("checkUpdate", message);
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(checkVersion data) {
+            protected void onSubNext(checkVersion data) {
                 LogUtil.d("checkUpdate", StringUtil.beanToJSONString(data));
                 try {
                     if (data != null) {
@@ -645,11 +644,11 @@ public class HomeMainActivity extends FragmentActivity {
         Observable ob = Api.getDefault().configListForTemplateList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ConfigForTemplateList>(HomeMainActivity.this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
             }
 
             @Override
-            protected void _onNext(ConfigForTemplateList data) {
+            protected void onSubNext(ConfigForTemplateList data) {
                 if (data != null) {
                     BaseConstans.configList = data;
                 }
@@ -669,12 +668,12 @@ public class HomeMainActivity extends FragmentActivity {
         Observable ob = Api.getDefault().getAllMessageNum(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<messageCount>(this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(messageCount data) {
+            protected void onSubNext(messageCount data) {
                 if (message_count != null) {
                     String allCount = data.getAll_num();
                     int intAllCount = Integer.parseInt(allCount);
@@ -736,11 +735,11 @@ public class HomeMainActivity extends FragmentActivity {
         LogUtil.d("OOM", "用户ip=" + StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(HomeMainActivity.this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
 
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);

@@ -157,12 +157,12 @@ public class EditInformationActivity extends BaseActivity implements AlbumChoose
         HttpUtil.getInstance().toSubscribe(Api.getDefault().memberEdit(BaseConstans.getRequestHead(params)),
                 new ProgressSubscriber<Object>(EditInformationActivity.this) {
                     @Override
-                    protected void _onError(String message) {
+                    protected void onSubError(String message) {
                         ToastUtil.showToast(message);
                     }
 
                     @Override
-                    protected void _onNext(Object data) {
+                    protected void onSubNext(Object data) {
                         Glide.with(EditInformationActivity.this)
                                 .load(avatar)
                                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))

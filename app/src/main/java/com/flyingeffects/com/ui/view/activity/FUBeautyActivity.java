@@ -142,39 +142,27 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                 case R.id.relative_choose_music:
                     presenter.IntoChooseMusic();
                     break;
-
                 case R.id.iv_close:
                     finish();
                     break;
 
                 case R.id.animation_view:
                 case R.id.animation_view_progress:
-
                     clickBtn();
                     break;
-
-
                 case R.id.iv_count_down:
                     //倒计时功能
                     presenter.clickCountDown(iv_count_down);
                     break;
-
-
                 case R.id.iv_rolling_over:
                     mCameraRenderer.switchCamera();
                     break;
-
-
                 case R.id.ll_stage_property:
                     //道具
-
                     relative_content.setVisibility(View.VISIBLE);
                     showSticker(true);
                     break;
-
-
                 default:
-
                     break;
             }
         }

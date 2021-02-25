@@ -77,6 +77,7 @@ import java.util.Objects;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -92,6 +93,7 @@ import rx.schedulers.Schedulers;
  * 漫画和抠图比较特殊,
  */
 public class TemplateActivity extends BaseActivity implements TemplateMvpView, AssetDelegate, AlbumChooseCallback {
+    private static final String TAG = "TemplateActivity";
 
     @BindView(R.id.switch_button)
     SwitchButton switch_button;
@@ -129,7 +131,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      * 模板选择位置
      */
     private int changeTemplatePosition;
-
 
     /**
      * 底部按钮数量
@@ -171,7 +172,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     private int pickGroupIndex;
 
-
     /**
      * 是否是即时播放
      */
@@ -194,7 +194,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     private int nowTemplateIsMattingVideo;
 
-
     /**
      * 当前可以选择视频
      */
@@ -212,7 +211,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private Bitmap videoMattingCaver;
 
     private boolean nowIsChooseMatting = true;
-
 
     /**
      * 0 表示不需要抠图，1表示需要抠图，无论扣不抠图，都是默认进来就抠好了图，然后在通过这个字段在改变顶部按钮选中状态
@@ -232,7 +230,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @BindView(R.id.template_viewPager)
     NoSlidingViewPager viewPager;
 
-
     @BindView(R.id.template_tablayout)
     CommonTabLayout commonTabLayout;
 
@@ -250,7 +247,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private String primitivePath;
 
     private new_fag_template_item templateItem;
-
 
     @Override
     protected int getLayoutId() {
@@ -306,7 +302,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         }
 
         if (templateItem.getIs_pic() != 1) {
-            if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0") && albumType.isVideo(GetPathType.getInstance().
+            if (!TextUtils.isEmpty(videoTime) && !"0".equals(videoTime) && albumType.isVideo(GetPathType.getInstance().
                     getMediaType(imgPath.get(0)))) {
                 nowTemplateIsMattingVideo = 1;
                 //不需要抠图就不需要扣第一帧页面
@@ -317,15 +313,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         }
 
-        if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
+        if (!TextUtils.isEmpty(videoTime) && !"0".equals(videoTime)) {
             isCanChooseVideo = true;
         }
 
-
-        mTextEditLayout =
-                findViewById(R.id.text_edit_layout);
-        mFolder = new
-                File(templateFilePath);
+        mTextEditLayout = findViewById(R.id.text_edit_layout);
+        mFolder = new File(templateFilePath);
         mAudio1Path = mFolder.getPath() + MUSIC_PATH;
         FileManager manager = new FileManager();
         String dir = manager.getFileCachePath(this, "");
@@ -334,9 +327,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 File(dir, "default_bj.png").
                 getPath();
         seekBar.setOnSeekBarChangeListener(seekBarListener);
-        switch_button.setOnCheckedChangeListener((view, isChecked) ->
-        {
-
+        switch_button.setOnCheckedChangeListener((view, isChecked) -> {
             LogUtil.d("OOM3", "进入到了CheckedChangeListener");
             if (!isFastDoubleClick()) {
                 mTemplateModel.resetUi();
@@ -344,10 +335,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     nowIsChooseMatting = false;
                     if (nowTemplateIsMattingVideo == 1 && !albumType.isImage(GetPathType.getInstance().getPathType(imgPath.get(0)))) {
                         if (originalPath != null && originalPath.size() != 0) {
-                            ChangeMaterialCallbackForVideo(null, originalPath.get(0),
+                            changeMaterialCallbackForVideo(null, originalPath.get(0),
                                     false);
                         } else {
-                            ChangeMaterialCallbackForVideo(null, imgPath.get(0), false);
+                            changeMaterialCallbackForVideo(null, imgPath.get(0), false);
                         }
                     } else {
                         statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutopen");
@@ -357,6 +348,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 } else {
                     chooseChecked();
                 }
+
                 if (mPlayer != null) {
                     mPlayer.pause();
                     ivPlayButton.setImageResource(R.mipmap.iv_play);
@@ -577,7 +569,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public void showMattingVideoCover(Bitmap bp, String bpPath) {
         LogUtil.d("OOM4", "封面地址为" + bpPath);
         if (mTemplateModel != null) {
-            if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
+            if (!TextUtils.isEmpty(videoTime) && !"0".equals(videoTime)) {
                 if (bp != null) {
                     for (int i = 0; i < mTemplateModel.mAssets.size(); i++) {
                         MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.mAssets.get(i).ui;
@@ -597,7 +589,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         }
         videoMattingCaver = bp;
-        runOnUiThread(() -> ModificationSingleThumbItem(bpPath));
+        runOnUiThread(() -> modificationSingleThumbItem(bpPath));
     }
 
     @Override
@@ -617,10 +609,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      * user : zhangtongju
      */
     @Override
-    public void ChangeMaterialCallbackForVideo(String originalVideoPath, String path, boolean needMatting) {
+    public void changeMaterialCallbackForVideo(String originalVideoPath, String path, boolean needMatting) {
         //可能之前没勾选抠图，所以originalPath 为null，这里需要null 判断
-
-
         if (needMatting) {
             LogUtil.d("OOM2", "抠图");
             if (originalPath == null) {
@@ -714,7 +704,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 }
             }
         }
-        ModificationSingleThumbItem(imgPath.get(0));
+        modificationSingleThumbItem(imgPath.get(0));
     }
 
 
@@ -902,7 +892,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     selectGroup(0);
                     nowChoosePosition = 0;
                     templateThumbAdapter.notifyDataSetChanged();
-                    if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
+                    if (!TextUtils.isEmpty(videoTime) && !"0".equals(videoTime)) {
                         if (videoMattingCaver != null) {
                             for (int i = 0; i < mTemplateModel.mAssets.size(); i++) {
                                 MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.mAssets.get(i).ui;
@@ -1022,8 +1012,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
     private void modificationThumbForRedactData(boolean isRedate) {
-        for (TemplateThumbItem item : listItem
-        ) {
+        for (TemplateThumbItem item : listItem) {
             item.setRedate(isRedate);
         }
         if (templateThumbAdapter != null) {
@@ -1033,7 +1022,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
-    private void ModificationSingleThumbItem(String path) {
+    private void modificationSingleThumbItem(String path) {
         if (listItem != null && listItem.size() > 0) {
             TemplateThumbItem item1 = listItem.get(lastChoosePosition);
             item1.setPathUrl(path);
@@ -1260,7 +1249,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                             }
                             nowClickMediaUi2.setImageAsset(path);
                             mTemplateViews.get(lastChoosePosition).invalidate();
-                            ModificationSingleThumbItem(path);
+                            modificationSingleThumbItem(path);
 
                         }
                     } else {
@@ -1317,14 +1306,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(1).ui;
                         mediaUi2.setImageAsset(path);
                         mTemplateViews.get(lastChoosePosition).invalidate();
-                        ModificationSingleThumbItem(path);
+                        modificationSingleThumbItem(path);
                     } else {
                         MediaUiModel2 mediaUi1 = (MediaUiModel2) mTemplateModel.getAssets().get(0).ui;
                         mediaUi1.setImageAsset(path);
                         MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(1).ui;
                         mediaUi2.setImageAsset(path);
                         mTemplateViews.get(lastChoosePosition).invalidate();
-                        ModificationSingleThumbItem(path);
+                        modificationSingleThumbItem(path);
                     }
                     mTemplateModel.cartoonPath = path;
                 } else {
@@ -1335,10 +1324,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                             if (pickIndex == mediaUi2.getNowIndex()) {
                                 if (nowIsChooseMatting) {
                                     mediaUi2.setImageAsset(tailorPaths.get(0));
-                                    ModificationSingleThumbItem(tailorPaths.get(0));
+                                    modificationSingleThumbItem(tailorPaths.get(0));
                                 } else {
                                     mediaUi2.setImageAsset(path);
-                                    ModificationSingleThumbItem(path);
+                                    modificationSingleThumbItem(path);
                                 }
                                 return;
                             }
@@ -1371,35 +1360,35 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             mTemplateModel.resetUi();
             if (event.getTag() == 1) {
                 //点击了切换按钮且没扣过视频
-                ChangeMaterialCallbackForVideo(event.getOriginalPath(), event.getMattingPath(), true);
+                changeMaterialCallbackForVideo(event.getOriginalPath(), event.getMattingPath(), true);
             } else if (event.getTag() == 2) {
                 nowTemplateIsMattingVideo = 1;
                 mTemplateModel.mAssets.get(0).setNeedMatting(true);
+
                 //替换素材
                 if (event.getOriginalPath() == null || !nowIsChooseMatting) {
                     LogUtil.d("OOM2", "event.getOriginalPath() == null || !nowIsChooseMatting");
-                    if (event.getOriginalPath() == null
-                    ) {
+                    if (event.getOriginalPath() == null) {
                         LogUtil.d("OOM2", "event.getOriginalPath()== null");
                         //用户没有选择抠图
-                        ChangeMaterialCallbackForVideo(null, event.getMattingPath(), false);
+                        changeMaterialCallbackForVideo(null, event.getMattingPath(), false);
                         //这里需要重新设置底部图，但是glide 视频路径相同。所以glide 不会刷新
                         presenter.getButtomIcon(event.getMattingPath());
                         switch_button.setChecked(false);
                         changeMaterialMusic(event.getMattingPath());
-
                     } else {
                         LogUtil.d("OOM2", "event.getOriginalPath()！= null");
                         //用户选择了抠图但是没有切换抠图
-                        ChangeMaterialCallbackForVideo(null, event.getOriginalPath(), false);
+                        changeMaterialCallbackForVideo(null, event.getOriginalPath(), false);
                         //这里需要重新设置底部图，但是glide 视频路径相同。所以glide 不会刷新
                         presenter.getButtomIcon(event.getOriginalPath());
                         changeMaterialMusic(event.getOriginalPath());
+                        switch_button.setChecked(true);
                     }
                 } else {
                     LogUtil.d("OOM2", "用户选择了抠图");
                     //用户选择了抠图
-                    ChangeMaterialCallbackForVideo(event.getOriginalPath(), event.getMattingPath(), true);
+                    changeMaterialCallbackForVideo(event.getOriginalPath(), event.getMattingPath(), true);
                     presenter.getButtomIcon(event.getOriginalPath());
                     changeMaterialMusic(event.getMattingPath());
 //                if(!switch_button.isChecked()){
@@ -1423,8 +1412,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
-
-    private void chooseMaterialMusic(){
+    private void chooseMaterialMusic() {
         clearCheckBox();
         String path = imgPath.get(0);
         if (albumType.isVideo(GetPathTypeModel.getInstance().getMediaType(path))) {
@@ -1823,7 +1811,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
             mTemplateViews.get(lastChoosePosition).invalidate();
         }
-        ModificationSingleThumbItem(path);
+        modificationSingleThumbItem(path);
     }
 
 }

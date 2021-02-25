@@ -51,7 +51,6 @@ public class HorizontalselectedView extends View {
     private int middle;
     private boolean mIsScrolled;
 
-
     public HorizontalselectedView(Context context) {
         this(context, null);
     }

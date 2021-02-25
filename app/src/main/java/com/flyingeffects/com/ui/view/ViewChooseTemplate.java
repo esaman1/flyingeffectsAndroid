@@ -96,12 +96,12 @@ public class ViewChooseTemplate {
         Observable ob = Api.getDefault().photoList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(List<new_fag_template_item> data) {
+            protected void onSubNext(List<new_fag_template_item> data) {
                 String test= StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM2",test);
                 list.clear();

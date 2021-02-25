@@ -2,10 +2,8 @@ package com.flyingeffects.com.ui.presenter;
 
 import android.content.Context;
 
-import com.bytedance.sdk.openadsdk.TTFeedAd;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
-import com.flyingeffects.com.enity.HumanMerageResult;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.PreviewUpAndDownMvpView;
@@ -97,7 +95,7 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
 
     @Override
     public void ZanResult() {
-        previewUpAndDownMvpView.ZanResult();
+        previewUpAndDownMvpView.zanResult();
     }
 
     @Override

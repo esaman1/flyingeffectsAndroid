@@ -45,6 +45,7 @@ import java.util.TimerTask;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -58,7 +59,7 @@ import rx.android.schedulers.AndroidSchedulers;
  * user : zhangtongju
  */
 public class TemplateCutVideoActivity extends BaseActivity {
-
+    private static final String TAG = "TemplateCutVideoActivit";
     @BindView(R.id.tv_kt)
     TextView tv_kt;
 
@@ -148,12 +149,13 @@ public class TemplateCutVideoActivity extends BaseActivity {
         needDuration = getIntent().getFloatExtra("needCropDuration", 1);
         templateName = getIntent().getStringExtra("templateName");
         isFrom = getIntent().getIntExtra("isFrom", 0);
-        nowIsPhotographAlbum=getIntent().getBooleanExtra("nowIsPhotographAlbum",false);
+        LogUtil.d(TAG, "isFrom = " + isFrom);
+        nowIsPhotographAlbum = getIntent().getBooleanExtra("nowIsPhotographAlbum", false);
         picout = getIntent().getIntExtra("picout", 0);
         videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
         mEndDuration = (int) (needDuration * 1000);
         tv_duration.setText("模板时长 " + needDuration + "s");
-        if (picout == 0||nowIsPhotographAlbum) {
+        if (picout == 0 || nowIsPhotographAlbum) {
             tv_kt.setVisibility(View.GONE);
             tv_no_kt.setText("下一步");
         }
@@ -172,7 +174,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
 
     private void initExo(String videoPath, float duration) {
-        LogUtil.d("OOM2","STATE_READY-videoPath="+videoPath);
+        LogUtil.d("OOM2", "STATE_READY-videoPath=" + videoPath);
         tv_duration.setText(String.format(Locale.US, "%.1fs", duration));
         if (TextUtils.isEmpty(videoPath)) {
             return;
@@ -188,19 +190,19 @@ public class TemplateCutVideoActivity extends BaseActivity {
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 switch (playbackState) {
                     case Player.STATE_READY:
-                        LogUtil.d("OOM2","STATE_READY");
+                        LogUtil.d("OOM2", "STATE_READY");
                         if (!isIntoOnpause) {
                             videoPlay();
                         }
 
                         break;
                     case Player.STATE_ENDED:
-                        LogUtil.d("OOM2","STATE_ENDED");
+                        LogUtil.d("OOM2", "STATE_ENDED");
                         seekTo(0);
                         break;
                     case Player.STATE_BUFFERING:
                     case Player.STATE_IDLE:
-                        LogUtil.d("OOM2","STATE_BUFFERING-STATE_IDLE");
+                        LogUtil.d("OOM2", "STATE_BUFFERING-STATE_IDLE");
                     default:
                         break;
                 }
@@ -218,7 +220,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
 
         videoPause();
-        LogUtil.d("OOM2","initEnd--");
+        LogUtil.d("OOM2", "initEnd--");
     }
 
     /**
@@ -261,67 +263,75 @@ public class TemplateCutVideoActivity extends BaseActivity {
                 this.finish();
                 break;
 
-
             case R.id.iv_correct:
-
                 File file = new File(videoPath);
                 if (file.exists()) {
                     WaitingDialog.openPragressDialog(this);
                 } else {
                     ToastUtil.showToast(getResources().getString(R.string.write_error));
                 }
-
-
                 break;
 
             case R.id.tv_kt:
-            case R.id.tv_no_kt:
-                videoStop();
-                endTimer();
-                if (!nowActivityIsDestroy) {
-                    progressNowAnim.openProgressDialog();
+                if (!isFastDoubleClick()) {
+                    videoStop();
+                    endTimer();
+                    if (!nowActivityIsDestroy) {
+                        progressNowAnim.openProgressDialog();
+                    }
+                    ktStart(true);
                 }
-
-
-
-                LogUtil.d("OOM", "needDuration" + needDuration);
-                long duration= (long) (needDuration * 1000);
-                new Thread(() -> videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(TemplateCutVideoActivity.this, false,duration , videoPath, mStartDuration, new videoCutDurationForVideoOneDo.isSuccess() {
-                    @Override
-                    public void progresss(int progress) {
-                        if (!nowActivityIsDestroy) {
-                            progressNowAnim.setProgress("正在裁剪中" + progress + "%");
-                        }
-
+                break;
+            case R.id.tv_no_kt:
+                if (!isFastDoubleClick()) {
+                    videoStop();
+                    endTimer();
+                    if (!nowActivityIsDestroy) {
+                        progressNowAnim.openProgressDialog();
                     }
-
-                    @Override
-                    public void isSuccess(boolean isSuccess, String path) {
-                        LogUtil.d("OOM", "裁剪的后地址为" + path);
-                        if (isSuccess) {
-                            if (v.getId() == R.id.tv_kt) {
-                                gotoMattingVideo(path);
-
-                                Observable.just(isSuccess).subscribeOn(AndroidSchedulers.mainThread()).subscribe(aBoolean -> new Handler().postDelayed(() -> {
-                                    if (!nowActivityIsDestroy) {
-                                        progressNowAnim.closePragressDialog();
-                                    }
-                                }, 500));
-
-                            } else {
-                                if (!nowActivityIsDestroy) {
-                                    progressNowAnim.closePragressDialog();
-                                }
-                                LogUtil.d("OOM","MattingVideoEnityisFrom="+isFrom);
-                                EventBus.getDefault().post(new MattingVideoEnity(null, path, path, isFrom));
-                                TemplateCutVideoActivity.this.finish();
-                            }
-                        }
-
-                    }
-                })).start();
+                    ktStart(false);
+                }
                 break;
         }
+    }
+
+    private void ktStart(boolean isKt) {
+        LogUtil.d("OOM", "needDuration" + needDuration);
+        long duration = (long) (needDuration * 1000);
+        new Thread(() -> videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(TemplateCutVideoActivity.this, false, duration, videoPath, mStartDuration, new videoCutDurationForVideoOneDo.isSuccess() {
+            @Override
+            public void progresss(int progress) {
+                if (!nowActivityIsDestroy) {
+                    progressNowAnim.setProgress("正在裁剪中" + progress + "%");
+                }
+
+            }
+
+            @Override
+            public void isSuccess(boolean isSuccess, String path) {
+                LogUtil.d("OOM", "裁剪的后地址为" + path);
+                if (isSuccess) {
+                    if (isKt) {
+                        gotoMattingVideo(path);
+
+                        Observable.just(isSuccess).subscribeOn(AndroidSchedulers.mainThread()).subscribe(aBoolean -> new Handler().postDelayed(() -> {
+                            if (!nowActivityIsDestroy) {
+                                progressNowAnim.closePragressDialog();
+                            }
+                        }, 500));
+
+                    } else {
+                        if (!nowActivityIsDestroy) {
+                            progressNowAnim.closePragressDialog();
+                        }
+                        LogUtil.d("OOM", "MattingVideoEnityisFrom=" + isFrom);
+                        EventBus.getDefault().post(new MattingVideoEnity(null, path, path, isFrom));
+                        TemplateCutVideoActivity.this.finish();
+                    }
+                }
+            }
+        })).start();
+
     }
 
 
@@ -355,7 +365,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
                 });
                 videoMattingModel.ToExtractFrame(templateName);
             });
-        },this);
+        }, this);
     }
 
 
@@ -384,7 +394,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
         });
 
     }
-
 
     private void seekTo(long to) {
         if (exoPlayer != null) {
@@ -424,7 +433,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
         startVideo();
     }
 
-
     /**
      * 关闭timer 和task
      */
@@ -454,11 +462,13 @@ public class TemplateCutVideoActivity extends BaseActivity {
     private TimerTask task;
 
     private void startTimer() {
+
         if (timer != null) {
             timer.purge();
             timer.cancel();
             timer = null;
         }
+
         if (task != null) {
             task.cancel();
             task = null;

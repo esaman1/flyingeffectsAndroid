@@ -250,12 +250,12 @@ public class StickerFragment extends BaseFragment {
         }
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ArrayList<StickerList>>(getContext()) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(ArrayList<StickerList> list) {
+            protected void onSubNext(ArrayList<StickerList> list) {
                 finishData();
                 if (!isRefresh && list.size() < perPageCount) {  //因为可能默认只请求8条数据
                     ToastUtil.showToast(getContext().getResources().getString(R.string.no_more_data));

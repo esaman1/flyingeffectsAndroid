@@ -230,14 +230,14 @@ public class TemplateSearchActivity extends BaseActivity {
         HttpUtil.getInstance().toSubscribe(Api.getDefault().templateKeywords(BaseConstans.getRequestHead(params)),
                 new ProgressSubscriber<List<SearchTemplateInfoEntity>>(TemplateSearchActivity.this) {
                     @Override
-                    protected void _onError(String message) {
+                    protected void onSubError(String message) {
                         ToastUtil.showToast(message);
                         rcSearch.setVisibility(View.GONE);
                         coordinatorLayout.setVisibility(View.VISIBLE);
                     }
 
                     @Override
-                    protected void _onNext(List<SearchTemplateInfoEntity> datas) {
+                    protected void onSubNext(List<SearchTemplateInfoEntity> datas) {
                         LogUtil.d("OOM", "模板模糊查询" + StringUtil.beanToJSONString(datas));
                         SearchTemplateInfoEntity infoEntity = new SearchTemplateInfoEntity();
                         infoEntity.setName(keywords);
@@ -268,7 +268,7 @@ public class TemplateSearchActivity extends BaseActivity {
 
     private void toTemplate(String content) {
         nowShowText = content;
-        if (!nowShowText.equals("")) {
+        if (!"".equals(nowShowText)) {
             cancelFocus();
             statisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "10_searchfor", nowShowText);
             EventBus.getDefault().post(new SendSearchText(nowShowText));
@@ -368,11 +368,11 @@ public class TemplateSearchActivity extends BaseActivity {
         Observable ob = Api.getDefault().keywordList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(TemplateSearchActivity.this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
                 try {
                     JSONArray array = new JSONArray(str);

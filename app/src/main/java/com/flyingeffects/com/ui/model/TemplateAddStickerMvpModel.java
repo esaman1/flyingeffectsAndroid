@@ -396,12 +396,12 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
         Observable ob = Api.getDefault().getStickerTypeList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ArrayList<StickerTypeEntity>>(context) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(ArrayList<StickerTypeEntity> list) {
+            protected void onSubNext(ArrayList<StickerTypeEntity> list) {
                 List<Fragment> fragments = new ArrayList<>();
                 String[] titles = new String[list.size()];
                 for (int i = 0; i < list.size(); i++) {
@@ -1178,7 +1178,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
 
     public String getKeepOutput() {
         String product = android.os.Build.MANUFACTURER; //获得手机厂商
-        if (product != null && product.equals("vivo")) {
+        if (product != null && "vivo".equals(product)) {
             File file_camera = new File(Environment.getExternalStorageDirectory() + "/相机");
             if (file_camera.exists()) {
                 return file_camera.getPath() + File.separator + System.currentTimeMillis() + "synthetic.mp4";

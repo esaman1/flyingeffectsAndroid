@@ -212,7 +212,7 @@ public class UpdateApkActivity extends Activity implements OnClickListener {
 
     protected void initAction() {
         content = getIntent().getStringExtra("content");
-        if (content != null && !content.equals("")) {
+        if (content != null && !"".equals(content)) {
             tv_content.setText(content);
         }
         policy = getIntent().getExtras().getString("policy");
@@ -220,7 +220,7 @@ public class UpdateApkActivity extends Activity implements OnClickListener {
         if ("0".equals(updataFlag)) {
             loadUrl = getIntent().getExtras().getString("url");
             right_now_update.setOnClickListener(this);
-            if (policy.equals("1")) {
+            if ("1".equals(policy)) {
                 //强制升级
                 if (!StringUtil.isNull(loadUrl)) {
                     handler.sendEmptyMessage(102);
@@ -325,7 +325,7 @@ public class UpdateApkActivity extends Activity implements OnClickListener {
     @Override
     public final boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (!TextUtils.isEmpty(is_must_update)&&is_must_update.equals("1")) {
+            if (!TextUtils.isEmpty(is_must_update)&& "1".equals(is_must_update)) {
                 exitPressAgain();
             } else {
                 this.finish();
@@ -376,7 +376,7 @@ public class UpdateApkActivity extends Activity implements OnClickListener {
             window.getDecorView().setBackgroundColor(getResources().getColor(R.color.transparent));
             window.getDecorView().setPadding(0, 0, 0, 0);
         }
-        if(!TextUtils.isEmpty(is_must_update)&&is_must_update.equals("1")){
+        if(!TextUtils.isEmpty(is_must_update)&& "1".equals(is_must_update)){
             dialog.setCanceledOnTouchOutside(false);
         }else{
             dialog.setCanceledOnTouchOutside(true);

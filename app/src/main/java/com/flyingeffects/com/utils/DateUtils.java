@@ -143,7 +143,7 @@ public class DateUtils {
         SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss", Locale.CHINA);
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
         String nowTime = dateFormat.format(new Date(time));
-        if(nowTime.equals("00:00")){
+        if("00:00".equals(nowTime)){
             nowTime="00:01";
         }
         return  nowTime;

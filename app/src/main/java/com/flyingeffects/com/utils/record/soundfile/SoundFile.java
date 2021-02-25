@@ -250,7 +250,7 @@ public class SoundFile {
             if (!done_reading && inputBufferIndex >= 0) {
                 sample_size = extractor.readSampleData(inputBuffers[inputBufferIndex], 0);
                 if (firstSampleData
-                        && format.getString(MediaFormat.KEY_MIME).equals("audio/mp4a-latm")
+                        && "audio/mp4a-latm".equals(format.getString(MediaFormat.KEY_MIME))
                         && sample_size == 2) {
                     // For some reasons on some devices (e.g. the Samsung S3) you should not
                     // provide the first two bytes of an AAC stream, otherwise the MediaCodec will

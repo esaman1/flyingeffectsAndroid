@@ -344,11 +344,11 @@ public class WelcomeActivity extends BaseActivity {
         Observable ob = Api.getDefault().configList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<Config>>(WelcomeActivity.this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
             }
 
             @Override
-            protected void _onNext(List<Config> data) {
+            protected void onSubNext(List<Config> data) {
 
                 StringBuilder sb = new StringBuilder();
 
@@ -438,11 +438,11 @@ public class WelcomeActivity extends BaseActivity {
         Observable ob = Api.getDefault().configListForTemplateList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ConfigForTemplateList>(WelcomeActivity.this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
             }
 
             @Override
-            protected void _onNext(ConfigForTemplateList data) {
+            protected void onSubNext(ConfigForTemplateList data) {
                 if (data != null) {
                     BaseConstans.configList = data;
                 }
@@ -464,7 +464,7 @@ public class WelcomeActivity extends BaseActivity {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject obArray = jsonArray.getJSONObject(i);
                     String Channel = obArray.getString("channel");
-                    if (Channel.equals("isVideoadvertising")) { //控制了版本号
+                    if ("isVideoadvertising".equals(Channel)) { //控制了版本号
                         isVideoadvertisingId = obArray.getInt("id");
                     }
                     if (Channel.equals(BaseConstans.getChannel())) { //最新版的审核模式

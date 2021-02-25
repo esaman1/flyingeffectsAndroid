@@ -116,12 +116,12 @@ public class frag_user_collect extends BaseFragment {
         Observable ob = Api.getDefault().collectionList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 finishData();
             }
 
             @Override
-            protected void _onNext(List<new_fag_template_item> data) {
+            protected void onSubNext(List<new_fag_template_item> data) {
                 finishData();
                 if (isRefresh) {
                     listData.clear();
@@ -218,7 +218,7 @@ public class frag_user_collect extends BaseFragment {
     private void initRecycler() {
         int fromType;
         //0 模板  1 背景 2 搜索/我的收藏 3 表示背景模板下载
-        if (!TextUtils.isEmpty(template_type) && template_type.equals("2")) {
+        if (!TextUtils.isEmpty(template_type) && "2".equals(template_type)) {
             fromType = 1;
         } else {
             fromType = 2;
@@ -257,10 +257,10 @@ public class frag_user_collect extends BaseFragment {
                 if (from == 3) {
                     intent.putExtra("fromTo", FromToTemplate.ISCHOOSEBJ);
                 } else {
-                    if (template_type != null && template_type.equals("1")) {
+                    if (template_type != null && "1".equals(template_type)) {
 //                        intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
                         intent.putExtra("fromTo", FromToTemplate.ISHOMEMYTEMPLATECOLLECT);
-                    } else if (template_type != null && template_type.equals("2")) {
+                    } else if (template_type != null && "2".equals(template_type)) {
                         intent.putExtra("fromTo", FromToTemplate.ISBJCOLLECT);
                     } else {
                         intent.putExtra("fromTo", FromToTemplate.ISHOMEFROMBJ);

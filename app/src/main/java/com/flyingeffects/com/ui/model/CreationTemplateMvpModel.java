@@ -470,12 +470,12 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         Observable ob = Api.getDefault().getStickerTypeList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ArrayList<StickerTypeEntity>>(context) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(ArrayList<StickerTypeEntity> list) {
+            protected void onSubNext(ArrayList<StickerTypeEntity> list) {
                 List<Fragment> fragments = new ArrayList<>();
                 String[] titles = new String[list.size()];
                 for (int i = 0; i < list.size(); i++) {
@@ -1583,11 +1583,11 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         Observable ob = Api.getDefault().saveTemplate(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
 
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);

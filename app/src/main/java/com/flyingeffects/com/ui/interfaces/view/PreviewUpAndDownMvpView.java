@@ -9,7 +9,7 @@ import java.util.List;
 public interface PreviewUpAndDownMvpView {
     void collectionResult(boolean collectionResult);
 
-    void ZanResult();
+    void zanResult();
 
     void hasLogin(boolean hasLogin);
 
