@@ -132,7 +132,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
     private final Runnable mCameraFocusDismiss = new Runnable() {
         @Override
         public void run() {
-//            mCameraFocus.layout(0, 0, 0, 0);
+            mCameraFocus.layout(0, 0, 0, 0);
             mLlLight.setVisibility(View.INVISIBLE);
             onLightFocusVisibilityChanged(false);
         }
@@ -611,7 +611,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
         @Override
         public void onPrepared(final MediaEncoder encoder) {
-            LogUtil.d("OOM", "onPrepared");
+            LogUtil.d("OOM2", "onPrepared");
             if (encoder instanceof MediaVideoEncoder) {
                 Log.d(TAG, "onPrepared: tid:" + Thread.currentThread().getId());
                 mGlSurfaceView.queueEvent(new Runnable() {
@@ -640,7 +640,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
         @Override
         public void onStopped(final MediaEncoder encoder) {
             endTimer();
-            LogUtil.d("OOM", "onStopped");
+            LogUtil.d("OOM2", "onStopped");
             mRecordBarrier.countDown();
             // Call when MediaVideoEncoder's callback and MediaAudioEncoder's callback both are called.
             if (mRecordBarrier.getCount() == 0) {
@@ -652,15 +652,15 @@ public abstract class FUBaseActivity extends AppCompatActivity
 //                        mTakePicBtn.setSecond(0);
                     }
                 });
-                if (System.currentTimeMillis() - mStartRecordTime <= 1000) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            //      ToastUtil.showToast(FUBaseActivity.this, R.string.save_video_too_short);
-                        }
-                    });
-                    return;
-                }
+//                if (System.currentTimeMillis() - mStartRecordTime <= 1000) {
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                                ToastUtil.showToast("录屏时间小于一秒");
+//                        }
+//                    });
+//                    return;
+//                }
                 mStartRecordTime = 0;
                 // onStopped is called on codec thread, it may be interrupted, so we execute following code async.
                 ThreadHelper.getInstance().execute(new Runnable() {
