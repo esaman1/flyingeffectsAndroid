@@ -366,8 +366,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                 horizontalselectedView.setVisibility(View.VISIBLE);
                 ll_stage_property.setVisibility(View.VISIBLE);
                 tv_show_shoot_time.setVisibility(View.GONE);
-                tv_show_shoot_time.setText("0秒");
             }
+            tv_show_shoot_time.setText("0秒");
             constraintLayout.setVisibility(View.VISIBLE);
             animation_view_progress.setVisibility(View.INVISIBLE);
             iv_close.setVisibility(View.VISIBLE);

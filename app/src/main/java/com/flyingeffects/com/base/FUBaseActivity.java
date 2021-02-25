@@ -45,6 +45,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.faceunity.FURenderer;
+import com.faceunity.entity.Effect;
 import com.faceunity.gles.core.GlUtil;
 import com.faceunity.utils.BitmapUtil;
 import com.faceunity.utils.Constant;
@@ -276,26 +277,14 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
     @Override
     public void onTrackStatusChanged(int type, int status) {
-        LogUtil.d("OOM", "onTrackStatusChanged");
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-//                mTvTrackStatus.setVisibility(status > 0 ? View.INVISIBLE : View.VISIBLE);
-//                if (status <= 0) {
-//                    int strId = 0;
-//                    if (type == FURenderer.TRACK_TYPE_FACE) {
-//                        strId = R.string.fu_base_is_tracking_text;
-//                    } else if (type == FURenderer.TRACK_TYPE_HUMAN) {
-//                        strId = R.string.toast_not_detect_body;
-//                    } else if (type == FURenderer.TRACK_TYPE_GESTURE) {
-//                        strId = R.string.toast_not_detect_gesture;
-//                    }
-//                    if (strId > 0) {
-//                        mTvTrackStatus.setText(strId);
-//                    }
-//                }
-            }
-        });
+        LogUtils.debug("OOM2","onTrackStatusChanged");
+//        if ((mEffectType == Effect.EFFECT_TYPE_GESTURE_RECOGNITION && type != FURenderer.TRACK_TYPE_GESTURE)
+//                || (mEffectType == Effect.EFFECT_TYPE_PORTRAIT_SEGMENT && type != FURenderer.TRACK_TYPE_HUMAN)) {
+//            // do nothing
+//            return;
+//        } else {
+//            super.onTrackStatusChanged(type, status);
+//        }
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~FURenderer调用部分~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

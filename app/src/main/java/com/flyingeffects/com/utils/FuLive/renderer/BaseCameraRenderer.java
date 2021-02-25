@@ -14,7 +14,6 @@ import android.os.Process;
 import android.util.Log;
 import android.view.MotionEvent;
 
-
 import com.faceunity.gles.ProgramLandmarks;
 import com.faceunity.gles.ProgramTexture2d;
 import com.faceunity.gles.ProgramTextureOES;
@@ -92,9 +91,9 @@ public class BaseCameraRenderer implements GLSurfaceView.Renderer {
         mActivity = activity;
         mOnRendererStatusListener = onRendererStatusListener;
         initCameraInfo();
-        mSmallViewportWidth =180;
-        mSmallViewportHeight =320;
-        mSmallViewportHorizontalPadding =32;
+        mSmallViewportWidth = 180;
+        mSmallViewportHeight = 320;
+        mSmallViewportHorizontalPadding = 32;
         mSmallViewportTopPadding = 176;
         mSmallViewportBottomPadding =200;
     }

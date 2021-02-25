@@ -281,7 +281,7 @@ public class frag_choose_music_extract_audio extends BaseFragment {
                         }
                     }
                 }
-                Collections.reverse(listVideoFiltrateMp4);
+               Collections.reverse(listVideoFiltrateMp4);
                 return listVideoFiltrateMp4;
             }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<Video>>() {
                 @Override
