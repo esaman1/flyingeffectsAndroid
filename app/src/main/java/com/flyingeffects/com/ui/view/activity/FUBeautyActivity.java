@@ -21,7 +21,6 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.ui.interfaces.view.FUBeautyMvpView;
 import com.flyingeffects.com.ui.presenter.FUBeautyMvpPresenter;
-import com.flyingeffects.com.utils.FuLive.EffectEnum;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.MarqueTextView;
 
@@ -129,10 +128,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
 
     }
 
-    @Override
-    public void onCameraChanged(int cameraFacing, int cameraOrientation) {
-
-    }
 
 
     View.OnClickListener listener = new View.OnClickListener() {

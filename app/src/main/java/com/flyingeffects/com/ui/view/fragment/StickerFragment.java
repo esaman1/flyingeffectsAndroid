@@ -91,7 +91,10 @@ public class StickerFragment extends BaseFragment {
 
     @Override
     protected void initAction() {
-
+        listForSticker.clear();
+        isRefresh = true;
+        selectPage = 1;
+        requestStickersList(true);
     }
 
     @Override
@@ -112,24 +115,34 @@ public class StickerFragment extends BaseFragment {
         });
 
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                modificationSingleItemIsChecked(position);
-                if (mStickerListener != null) {
-                    mStickerListener.clickItemSelected(position);
-                }
-                if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), " 5_mb_bj_Sticker", listForSticker.get(position).getTitle());
-                } else {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), " 6_customize_bj_Sticker", listForSticker.get(position).getTitle());
-                }
 
-                if (formToType == 1) {
-                    //下载拍摄的bundle 数据,zip 文件
-                    toDownZip(listForSticker.get(position).getFile_name(), listForSticker.get(position).getSourcefile());
-                } else {
-                    downSticker(listForSticker.get(position).getImage(), listForSticker.get(position).getId(), position, listForSticker.get(position).getTitle());
-                }
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                EventBus.getDefault().post(new ClearChooseStickerState());
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        modificationSingleItemIsChecked(position);
+                        if (mStickerListener != null) {
+                            mStickerListener.clickItemSelected(position);
+                        }
+                        if (UiStep.isFromDownBj) {
+                            statisticsEventAffair.getInstance().setFlag(getContext(), " 5_mb_bj_Sticker", listForSticker.get(position).getTitle());
+                        } else {
+                            statisticsEventAffair.getInstance().setFlag(getContext(), " 6_customize_bj_Sticker", listForSticker.get(position).getTitle());
+                        }
+
+                        if (formToType == 1) {
+                            //下载拍摄的bundle 数据,zip 文件
+                            toDownZip(listForSticker.get(position).getFile_name(), listForSticker.get(position).getSourcefile());
+                        } else {
+                            downSticker(listForSticker.get(position).getImage(), listForSticker.get(position).getId(), position, listForSticker.get(position).getTitle());
+                        }
+                    }
+                },200);
+
+
+
             }
         });
     }
@@ -230,10 +243,10 @@ public class StickerFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        listForSticker.clear();
-        isRefresh = true;
-        selectPage = 1;
-        requestStickersList(true);
+//        listForSticker.clear();
+//        isRefresh = true;
+//        selectPage = 1;
+//        requestStickersList(true);
     }
 
     public void requestStickersList(boolean isShowDialog) {
@@ -428,11 +441,15 @@ public class StickerFragment extends BaseFragment {
 
     @Subscribe
     public void onEventMainThread(ClearChooseStickerState clearChooseStickerState) {
-        listForSticker.clear();
-        isRefresh = true;
-        selectPage = 1;
-        requestStickersList(true);
+        modificationChecked();
     }
 
+
+    private void modificationChecked() {
+        for (StickerList item : listForSticker) {
+            item.setChecked(false);
+        }
+        mGridViewAdapter.notifyDataSetChanged();
+    }
 
 }
