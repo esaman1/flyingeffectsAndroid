@@ -63,7 +63,6 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
      */
     protected abstract int getLayoutId();
 
-
     /**
      * 初始化UI
      */
@@ -100,7 +99,9 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
         lifecycleSubject.onNext(ActivityLifeCycleEvent.CREATE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        setContentView(getLayoutId());
+        if (getLayoutId() != 0) {
+            setContentView(getLayoutId());
+        }
         overridePendingTransition(0, 0);
         StatusBarCompat.setStatusBarColor(this, Color.parseColor("#181818"));
 //        StatusBarCompat.setStatusBarColor(this, Color.parseColor("#181818"), true);

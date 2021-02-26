@@ -369,7 +369,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         }
 //        test();
-
     }
 
 
@@ -454,7 +453,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         initTemplateViews(mTemplateModel);
         //设置切换按钮
         new Handler().postDelayed(this::setMattingBtnState, 500);
-
     }
 
     @Override
@@ -489,7 +487,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     private void onclickPlaying() {
-
 
         if (isPlaying) {
             if (mPlayer != null) {
@@ -550,7 +547,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         } else {
             switchTemplate(mFolder.getPath(), paths);
         }
-
 
     }
 

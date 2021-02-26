@@ -70,15 +70,15 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         FrameLayout video_layout = helper.getView(R.id.video_layout);
         videoPlayer = helper.getView(R.id.video_item_player);
         LinearLayout ll_down_bj = helper.getView(R.id.ll_down_bj);
-        ImageView iv_show_cover=helper.getView(R.id.iv_show_cover);
-        tv_title_music=helper.getView(R.id.tv_title_music);
+        ImageView iv_show_cover = helper.getView(R.id.iv_show_cover);
+        tv_title_music = helper.getView(R.id.tv_title_music);
         LinearLayout ll_zan = helper.getView(R.id.ll_zan);
         TextView tv_make = helper.getView(R.id.tv_make);
         LinearLayout ll_comment = helper.getView(R.id.ll_comment);
-        LinearLayout ll_describe=helper.getView(R.id.ll_describe);
+        LinearLayout ll_describe = helper.getView(R.id.ll_describe);
 
-        tv_btn_follow=helper.getView(R.id.tv_btn_follow);
-        tv_comment_count=helper.getView(R.id.tv_comment_count);
+        tv_btn_follow = helper.getView(R.id.tv_btn_follow);
+        tv_comment_count = helper.getView(R.id.tv_comment_count);
         tv_zan_count = helper.getView(R.id.tv_zan_count);
         boolean readOnly = item.getTest() != 0;
         boolean needHideCreate;
@@ -112,13 +112,13 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             tv_make.setText("马上制作");
         }
         if (ad == null) {
-            if(OldFromTo.equals(FromToTemplate.DRESSUP)){
+            if (OldFromTo.equals(FromToTemplate.DRESSUP)) {
                 videoPlayer.setVisibility(View.GONE);
                 iv_show_cover.setVisibility(View.VISIBLE);
                 Glide.with(context)
                         .load(item.getImage())
                         .into(iv_show_cover);
-            }else{
+            } else {
                 videoPlayer.setVisibility(View.VISIBLE);
                 initVideoPlayer(item, offset);
                 iv_show_cover.setVisibility(View.GONE);
@@ -139,7 +139,8 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             helper.addOnClickListener(R.id.tv_make);
             helper.addOnClickListener(R.id.tv_title_music);
             if (nowPreviewPosition == offset) {
-                new Handler().postDelayed(() -> videoPlayer.startPlayLogic(),200);
+                new Handler().postDelayed(() ->
+                        videoPlayer.startPlayLogic(), 200);
             }
             if (needHideCreate) {
                 ll_down_bj.setVisibility(View.GONE);
@@ -156,9 +157,9 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
                     .load(item.getAuth_image())
                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                     .into(iv_writer);
-            tv_writer_name.setText("@"+item.getAuth());
+            tv_writer_name.setText("@" + item.getAuth());
             tv_title.setText(item.getTitle());
-            String str = item.getAuth() + "的原声音乐                        "+item.getAuth() + "的原声音乐                        ";
+            String str = item.getAuth() + "的原声音乐                        " + item.getAuth() + "的原声音乐                        ";
             tv_title_music.setText(str);
             //点赞功能
             if (item.getIs_praise() == 1 && BaseConstans.hasLogin()) {
@@ -167,12 +168,12 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
                 iv_zan.setImageResource(R.mipmap.zan);
             }
 
-            if( BaseConstans.hasLogin()){
-                if(item.getAdmin_id()!=null&&BaseConstans.GetUserId()!=null&&item.getAdmin_id().equals(BaseConstans.GetUserId())){
+            if (BaseConstans.hasLogin()) {
+                if (item.getAdmin_id() != null && BaseConstans.GetUserId() != null && item.getAdmin_id().equals(BaseConstans.GetUserId())) {
                     tv_btn_follow.setVisibility(View.GONE);
-                }else{
+                } else {
                     //关注按键
-                    if (item.getIs_follow() == 1 ) {
+                    if (item.getIs_follow() == 1) {
                         tv_btn_follow.setVisibility(View.GONE);
                     } else {
                         tv_btn_follow.setVisibility(View.VISIBLE);
@@ -232,8 +233,8 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
 
     public void setIsZanCount(int zanCount) {
         if (tv_zan_count != null) {
-            if(zanCount<0){
-                zanCount=0;
+            if (zanCount < 0) {
+                zanCount = 0;
             }
             tv_zan_count.setText(zanCount + "");
         }
@@ -247,13 +248,13 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     }
 
 
-    public void setIsFollow(int isFollow,String Admin_id){
-        if( BaseConstans.hasLogin()){
-            if(Admin_id.equals(BaseConstans.GetUserId())){
+    public void setIsFollow(int isFollow, String Admin_id) {
+        if (BaseConstans.hasLogin()) {
+            if (Admin_id.equals(BaseConstans.GetUserId())) {
                 tv_btn_follow.setVisibility(View.GONE);
-            }else{
+            } else {
                 //关注按键
-                if (isFollow == 1 ) {
+                if (isFollow == 1) {
                     tv_btn_follow.setText("取消关注");
                     tv_btn_follow.setVisibility(View.GONE);
                 } else {
@@ -272,11 +273,6 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
 //            tv_btn_follow.setVisibility(View.VISIBLE);
 //        }
     }
-
-
-  
-
-
 
 
     /**
@@ -333,13 +329,11 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         this.nowPreviewPosition = nowPreviewPosition;
     }
 
-
     public void pauseVideo() {
         LogUtil.d("OOM", "pauseVideo");
         videoPlayer.onVideoPause();
         GSYVideoManager.onPause();
     }
-
 
     public void startVideo() {
         if (videoPlayer != null && !videoPlayer.isInPlayingState()) {
@@ -351,6 +345,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     public void onDestroy() {
         videoPlayer.release();
     }
+
 }
 
 
