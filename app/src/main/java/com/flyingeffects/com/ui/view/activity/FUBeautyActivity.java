@@ -15,13 +15,13 @@ import com.faceunity.FURenderer;
 import com.faceunity.entity.Effect;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.FUBaseActivity;
+import com.flyingeffects.com.enity.CreateCutCallback;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.isIntoBackground;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.ui.interfaces.view.FUBeautyMvpView;
 import com.flyingeffects.com.ui.presenter.FUBeautyMvpPresenter;
-import com.flyingeffects.com.utils.FuLive.EffectEnum;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.MarqueTextView;
 
@@ -55,6 +55,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      */
     private int isFrom;
     private RelativeLayout relative_click;
+    private  String createDownVideoPath;
     private TextView tv_show_shoot_time;
 
 
@@ -70,6 +71,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         int defaultnum = getIntent().getIntExtra("defaultnum", 0);
         String TemplateFilePath = getIntent().getStringExtra("TemplateFilePath");
         String OldfromTo = getIntent().getStringExtra("OldfromTo");
+        createDownVideoPath=getIntent().getStringExtra("createDownVideoPath");
         iv_close = findViewById(R.id.iv_close);
         new_fag_template_item templateItem = (new_fag_template_item) getIntent().getSerializableExtra("templateItem");
         horizontalselectedView = findViewById(R.id.horizontalselectedView);
@@ -111,11 +113,9 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      */
     @Override
     protected FURenderer initFURenderer() {
-//        ArrayList<Effect> effects = EffectEnum.getEffectsByEffectType(1);
         return new FURenderer
                 .Builder(this)
                 .inputTextureType(FURenderer.FU_ADM_FLAG_EXTERNAL_OES_TEXTURE)
-//                .defaultEffect(effects.size() > 1 ? effects.get(1) : null)
                 .inputImageOrientation(mFrontCameraOrientation)
                 .setLoadAiHumanProcessor(false)
                 .maxHumans(1)
@@ -125,14 +125,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                 .setOnTrackingStatusChangedListener(this)
                 .setOnBundleLoadCompleteListener(null)
                 .build();
-
-
     }
 
-    @Override
-    public void onCameraChanged(int cameraFacing, int cameraOrientation) {
-
-    }
 
 
     View.OnClickListener listener = new View.OnClickListener() {
@@ -172,8 +166,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
 
 
     private void clickBtn() {
-
-//        int duration=presenter.GetCountDown()*1000;
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             if (isRecording) {
                 LogUtil.d("OOM", "直接录制结束");
@@ -410,6 +402,13 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
             clickBtn();
         }
     }
+
+    @Subscribe
+    public void onEventMainThread(CreateCutCallback event) {
+        LogUtil.d("OOM2", "跳转到创作页面"+"createDownVideoPath="+createDownVideoPath);
+        presenter.intoCreationTemplateActivity(event.getCoverPath(), createDownVideoPath, event.getOriginalPath(), event.isNeedCut());
+    }
+
 
 
 }

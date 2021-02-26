@@ -118,9 +118,6 @@
 
 
 
-        <activity
-            android:name="com.flyingeffects.com.ui.view.activity.ShootActivity"
-            android:screenOrientation="portrait" />
 
 
         <activity

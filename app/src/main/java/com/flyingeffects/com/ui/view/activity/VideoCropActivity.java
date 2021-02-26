@@ -269,7 +269,7 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
     @Override
     public void finishCrop(String videoPath) {
 
-        LogUtil.d("OOM", "finishCrop" + "isFrom=" + isFrom);
+        LogUtil.d("OOM2", "finishCrop" + "isFrom=" + isFrom);
         //自定义只能够选择素材
         GetVideoCover getVideoCover = new GetVideoCover(this);
         getVideoCover.getCover(videoPath, path -> Observable.just(path).subscribeOn(AndroidSchedulers.mainThread()).subscribe(cover -> {

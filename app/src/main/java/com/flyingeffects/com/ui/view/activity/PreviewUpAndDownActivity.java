@@ -587,9 +587,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     @Override
     public void downVideoSuccess(String videoPath, String imagePath) {
-        LogUtil.d("OOM", "downVideoSuccess");
+        LogUtil.d("OOM2", "downVideoSuccess");
         toCloseProgressDialog();
-
+        createDownVideoPath = videoPath;
         //背景选择页面
         if (OldfromTo.equals(FromToTemplate.ISCHOOSEBJ)) {
             EventBus.getDefault().post(new DownVideoPath(videoPath));
@@ -598,7 +598,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             if (!TextUtils.isEmpty(imagePath)) {
                 Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
                     if (originalImagePath.get(0).equals(imagePath)) {
-                        createDownVideoPath = videoPath;
                         //源图地址和剪切之后的地址完全一样，那说明只有一个情况，就是当前选择的素材是视频的情况，那么需要去得到视频的第一针，然后传过去
                         Intent intent = new Intent(PreviewUpAndDownActivity.this, VideoCropActivity.class);
                         intent.putExtra("videoPath", imagePath);
@@ -951,9 +950,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         //背景
                         MediaInfo mediaInfo = new MediaInfo(videoPath);
                         mediaInfo.prepare();
-                        intent.putExtra("musicPath", videoPath);
-                        long duration = mediaInfo.getDurationUs() / 1000;
-                        intent.putExtra("duration", duration);
+                        intent.putExtra("musicPath",videoPath);
+                        intent.putExtra("createDownVideoPath",createDownVideoPath);
+                        long duration=mediaInfo.getDurationUs()/1000;
+                        intent.putExtra("duration",duration);
                         mediaInfo.release();
                     } else {
                         //模板

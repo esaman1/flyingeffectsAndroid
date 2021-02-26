@@ -4,8 +4,6 @@ package com.flyingeffects.com.base;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -14,38 +12,27 @@ import android.hardware.SensorManager;
 import android.net.Uri;
 import android.opengl.EGL14;
 import android.opengl.GLSurfaceView;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.view.WindowManager;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.faceunity.FURenderer;
-import com.faceunity.entity.Effect;
 import com.faceunity.gles.core.GlUtil;
 import com.faceunity.utils.BitmapUtil;
 import com.faceunity.utils.Constant;
@@ -53,11 +40,7 @@ import com.faceunity.utils.FileUtils;
 import com.faceunity.utils.LogUtils;
 import com.faceunity.utils.MiscUtil;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.FUBeautyActivity;
-import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
-import com.flyingeffects.com.utils.FuLive.BaseCameraRenderer;
 import com.flyingeffects.com.utils.FuLive.CameraFocus;
 import com.flyingeffects.com.utils.FuLive.CameraUtils;
 import com.flyingeffects.com.utils.FuLive.PermissionUtil;
@@ -67,17 +50,16 @@ import com.flyingeffects.com.utils.FuLive.encoder.MediaAudioEncoder;
 import com.flyingeffects.com.utils.FuLive.encoder.MediaEncoder;
 import com.flyingeffects.com.utils.FuLive.encoder.MediaMuxerWrapper;
 import com.flyingeffects.com.utils.FuLive.encoder.MediaVideoEncoder;
+import com.flyingeffects.com.utils.FuLive.renderer.BaseCameraRenderer;
 import com.flyingeffects.com.utils.FuLive.renderer.Camera1Renderer;
 import com.flyingeffects.com.utils.FuLive.renderer.OnRendererStatusListener;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.lansosdk.box.LSOVideoOption;
-import com.lansosdk.box.Layer;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.nineton.ntadsdk.utils.ScreenUtils;
 import com.shixing.sxve.ui.view.WaitingDialog;
-import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -89,9 +71,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -100,7 +80,7 @@ import de.greenrobot.event.EventBus;
  * Created by tujh on 2018/1/31.
  */
 public abstract class FUBaseActivity extends AppCompatActivity
-        implements OnRendererStatusListener,
+        implements
         SensorEventListener,
         FURenderer.OnFUDebugListener,
         FURenderer.OnTrackingStatusChangedListener {
@@ -108,24 +88,11 @@ public abstract class FUBaseActivity extends AppCompatActivity
     /**
      * 当前是否在拍摄
      */
-    private boolean isShooting = false;
     protected GLSurfaceView mGlSurfaceView;
-    protected Camera1Renderer mCameraRenderer;
+    protected BaseCameraRenderer mCameraRenderer;
     protected volatile boolean mIsDualInput = true;
-    private TextView mDebugText;
-    protected TextView mTvTrackStatus;
-    private TextView mEffectDescription;
-    //    protected RecordBtn mTakePicBtn;
-    protected ViewStub mBottomViewStub;
     private LinearLayout mLlLight;
     protected CameraFocus mCameraFocus;
-    //    private VerticalSeekBar mVerticalSeekBar;
-//    protected CameraFocus mCameraFocus;
-    protected ConstraintLayout mClOperationView;
-    protected ConstraintLayout mRootView;
-    private PopupWindow mPopupWindow;
-    protected RadioGroup mInputTypeRadioGroup;
-    private ImageView mIvShowMore;
     public RelativeLayout relative_content;
     public  FUBeautyActivity fuBeautyActivity;
     private SensorManager mSensorManager;
@@ -172,15 +139,10 @@ public abstract class FUBaseActivity extends AppCompatActivity
                 fuBeautyActivity.showSticker(false);
             }
 
-            //   mLlLight.setVisibility(View.VISIBLE);
-            // mVerticalSeekBar.setProgress((int) (100 * mCameraRenderer.getExposureCompensation()));
 
             float rawX = event.getRawX();
             float rawY = event.getRawY();
             int focusRectSize = 150;
-
-            // skip light progress bar area
-//            DisplayMetrics screenInfo = ScreenUtils.getScreenInfo(this);
             int screenWidth = ScreenUtils.getScreenWidth(this);
             int marginTop = 280;
             int padding = 44;
@@ -219,24 +181,24 @@ public abstract class FUBaseActivity extends AppCompatActivity
     protected volatile boolean mIsNeedTakePic = false;
     private volatile long mStartTime = 0;
 
-    private Runnable effectDescriptionHide = new Runnable() {
-        @Override
-        public void run() {
-            mEffectDescription.setText("");
-            mEffectDescription.setVisibility(View.INVISIBLE);
-        }
-    };
+//    private Runnable effectDescriptionHide = new Runnable() {
+//        @Override
+//        public void run() {
+//            mEffectDescription.setText("");
+//            mEffectDescription.setVisibility(View.INVISIBLE);
+//        }
+//    };
 
-    protected void showDescription(int str, int time) {
-        LogUtils.debug("OOM", "showDescription");
-        if (str == 0) {
-            return;
-        }
-        mEffectDescription.removeCallbacks(effectDescriptionHide);
-        mEffectDescription.setVisibility(View.VISIBLE);
-        mEffectDescription.setText(str);
-        mEffectDescription.postDelayed(effectDescriptionHide, time);
-    }
+//    protected void showDescription(int str, int time) {
+//        LogUtils.debug("OOM", "showDescription");
+//        if (str == 0) {
+//            return;
+//        }
+//        mEffectDescription.removeCallbacks(effectDescriptionHide);
+//        mEffectDescription.setVisibility(View.VISIBLE);
+//        mEffectDescription.setText(str);
+//        mEffectDescription.postDelayed(effectDescriptionHide, time);
+//    }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Sensor部分~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -278,63 +240,10 @@ public abstract class FUBaseActivity extends AppCompatActivity
     @Override
     public void onTrackStatusChanged(int type, int status) {
         LogUtils.debug("OOM2","onTrackStatusChanged");
-//        if ((mEffectType == Effect.EFFECT_TYPE_GESTURE_RECOGNITION && type != FURenderer.TRACK_TYPE_GESTURE)
-//                || (mEffectType == Effect.EFFECT_TYPE_PORTRAIT_SEGMENT && type != FURenderer.TRACK_TYPE_HUMAN)) {
-//            // do nothing
-//            return;
-//        } else {
-//            super.onTrackStatusChanged(type, status);
-//        }
+
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~FURenderer调用部分~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    @Override
-    public void onSurfaceCreated() {
-        LogUtil.d("OOM", "onSurfaceCreated");
-        mFURenderer.onSurfaceCreated();
-        mFURenderer.setBeautificationOn(true);
-    }
-
-    @Override
-    public void onSurfaceChanged(int viewWidth, int viewHeight) {
-        LogUtil.d("OOM", "onSurfaceChanged");
-    }
-
-    @Override
-    public int onDrawFrame(byte[] cameraNv21Byte, int cameraTextureId, int cameraWidth, int cameraHeight,
-                           float[] mvpMatrix, float[] texMatrix, long timeStamp) {
-        LogUtil.d("OOM", "onDrawFrame");
-        int fuTexId;
-        if (mIsDualInput) {
-            fuTexId = mFURenderer.onDrawFrame(cameraNv21Byte, cameraTextureId, cameraWidth, cameraHeight);
-        } else {
-            fuTexId = mFURenderer.onDrawFrame(cameraNv21Byte, cameraWidth, cameraHeight);
-        }
-        showLandmarks();
-        sendRecordingData(fuTexId, GlUtil.IDENTITY_MATRIX, texMatrix, timeStamp / Constant.NANO_IN_ONE_MILLI_SECOND);
-        takePicture(fuTexId, GlUtil.IDENTITY_MATRIX, texMatrix, cameraHeight, cameraWidth);
-        return fuTexId;
-    }
-
-    @Override
-    public void onSurfaceDestroy() {
-        LogUtil.d("OOM", "onSurfaceDestroy");
-        mFURenderer.onSurfaceDestroyed();
-    }
-
-    @Override
-    public void onCameraChanged(int cameraFacing, int cameraOrientation) {
-        LogUtils.debug("OOM","onCameraChanged");
-        mFURenderer.onCameraChange(cameraFacing, cameraOrientation);
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                int progress = (int) (100 * mCameraRenderer.getExposureCompensation());
-//                mVerticalSeekBar.setProgress(progress);
-//            }
-//        });
-    }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~拍照录制部分~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     protected BitmapUtil.OnReadBitmapListener mOnReadBitmapListener = new BitmapUtil.OnReadBitmapListener() {
@@ -359,14 +268,6 @@ public abstract class FUBaseActivity extends AppCompatActivity
         }
     };
 
-    public void takePic() {
-        LogUtils.debug("OOM", "takePic");
-        if (mIsTakingPic) {
-            return;
-        }
-        mIsNeedTakePic = true;
-        mIsTakingPic = true;
-    }
 
     /**
      * 拍照
@@ -399,129 +300,56 @@ public abstract class FUBaseActivity extends AppCompatActivity
         loadInternalConfigJson();
         mGlSurfaceView = (GLSurfaceView) findViewById(R.id.fu_base_gl_surface);
         mGlSurfaceView.setEGLContextClientVersion(GlUtil.getSupportGlVersion(this));
-        mCameraRenderer = new Camera1Renderer(FUBaseActivity.this, mGlSurfaceView, this);
+        mCameraRenderer = new Camera1Renderer(FUBaseActivity.this, mGlSurfaceView, new OnRendererStatusListener() {
+            @Override
+            public void onSurfaceCreated() {
+                LogUtil.d("OOM", "onSurfaceCreated");
+                mFURenderer.onSurfaceCreated();
+                mFURenderer.setBeautificationOn(true);
+            }
+
+            @Override
+            public void onSurfaceChanged(int viewWidth, int viewHeight) {
+
+            }
+
+            @Override
+            public int onDrawFrame(byte[] cameraNv21Byte, int cameraTexId, int cameraWidth, int cameraHeight, float[] mvpMatrix, float[] texMatrix, long timeStamp) {
+//                return 0;
+                LogUtil.d("OOM", "onDrawFrame");
+                int fuTexId;
+                if (mIsDualInput) {
+                    fuTexId = mFURenderer.onDrawFrame(cameraNv21Byte, cameraTexId, cameraWidth, cameraHeight);
+                } else {
+                    fuTexId = mFURenderer.onDrawFrame(cameraNv21Byte, cameraWidth, cameraHeight);
+                }
+                showLandmarks();
+                sendRecordingData(fuTexId, GlUtil.IDENTITY_MATRIX, texMatrix, timeStamp / Constant.NANO_IN_ONE_MILLI_SECOND);
+                takePicture(fuTexId, GlUtil.IDENTITY_MATRIX, texMatrix, cameraHeight, cameraWidth);
+                return fuTexId;
+
+            }
+
+            @Override
+            public void onSurfaceDestroy() {
+                mFURenderer.onSurfaceDestroyed();
+            }
+
+            @Override
+            public void onCameraChanged(int cameraFacing, int cameraOrientation) {
+
+                mFURenderer.onCameraChange(cameraFacing, cameraOrientation);
+            }
+        });
         mFrontCameraOrientation = CameraUtils.getCameraOrientation(Camera.CameraInfo.CAMERA_FACING_FRONT);
         mFURenderer = initFURenderer();
-
         relative_content = findViewById(R.id.relative_content);
         mGlSurfaceView.setRenderer(mCameraRenderer);
         mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mCameraFocus = findViewById(R.id.photograph_focus);
-//        mInputTypeRadioGroup = (RadioGroup) findViewById(R.id.fu_base_input_type_radio_group);
-//        mInputTypeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(RadioGroup group, int checkedId) {
-//                switch (checkedId) {
-//                    case R.id.fu_base_input_type_double:
-//                        mIsDualInput = true;
-//                        break;
-//                    case R.id.fu_base_input_type_single:
-//                        mIsDualInput = false;
-//                        break;
-//                    default:
-//                }
-//                mFURenderer.cameraChanged();
-//            }
-//        });
-//
-//        CheckBox debugBox = (CheckBox) findViewById(R.id.fu_base_debug);
-//        mDebugText = (TextView) findViewById(R.id.fu_base_debug_text);
-//        debugBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                mDebugText.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-//            }
-//        });
-
-//        if (BaseCameraRenderer.ENABLE_DRAW_LANDMARKS) {
-//            SwitchCompat sw = findViewById(R.id.sw_landmarks);
-//            sw.setVisibility(View.VISIBLE);
-//            sw.setChecked(BaseCameraRenderer.ENABLE_DRAW_LANDMARKS);
-//            sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//                @Override
-//                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                    BaseCameraRenderer.ENABLE_DRAW_LANDMARKS = isChecked;
-//                }
-//            });
-//        }
-
-//        mIvShowMore = findViewById(R.id.fu_base_more);
-//        if (isOpenResolutionChange()) {
-//            mIvShowMore.setImageResource(R.drawable.demo_icon_more);
-//        } else if (isOpenPhotoVideo()) {
-//            mIvShowMore.setImageResource(R.drawable.photo);
-//        } else {
-//            mIvShowMore.setVisibility(View.INVISIBLE);
-//        }
-//        mIvShowMore.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (isOpenResolutionChange()) {
-//                    showMorePopupWindow();
-//                } else {
-//                    onSelectPhotoVideoClick();
-//                }
-//            }
-//        });
-//        mTvTrackStatus = (TextView) findViewById(R.id.fu_base_is_tracking_text);
-//        mEffectDescription = (TextView) findViewById(R.id.fu_base_effect_description);
-//        mTakePicBtn = (RecordBtn) findViewById(R.id.fu_base_take_pic);
-//        mTakePicBtn.setOnRecordListener(new RecordBtn.OnRecordListener() {
-//            @Override
-//            public void takePic() {
-//                FUBaseActivity.this.takePic();
-//            }
-//
-//            @Override
-//            public void startRecord() {
-//                mIsRecordStopped = false;
-//                AsyncTask.execute(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        startRecording();
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void stopRecord() {
-//                mIsRecordStopped = true;
-//                AsyncTask.execute(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        stopRecording();
-//                    }
-//                });
-//                mTakePicBtn.setSecond(0);
-//            }
-//        });
-//        mClOperationView = (ConstraintLayout) findViewById(R.id.cl_custom_view);
-//        mRootView = (ConstraintLayout) findViewById(R.id.cl_root);
-//        mBottomViewStub = (ViewStub) findViewById(R.id.fu_base_bottom);
-//        mBottomViewStub.setInflatedId(R.id.fu_base_bottom);
-
         mLlLight = (LinearLayout) findViewById(R.id.photograph_light_layout);
-//        mVerticalSeekBar = (VerticalSeekBar) findViewById(R.id.photograph_light_seek);
-//        mCameraFocus = (CameraFocus) findViewById(R.id.photograph_focus);
-//        mVerticalSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-//            @Override
-//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//                mCameraRenderer.setExposureCompensation((float) progress / 100);
-//                mMainHandler.removeCallbacks(mCameraFocusDismiss);
-//                mMainHandler.postDelayed(mCameraFocusDismiss, CameraUtils.FOCUS_TIME);
-//            }
-//
-//            @Override
-//            public void onStartTrackingTouch(SeekBar seekBar) {
-//            }
-//
-//            @Override
-//            public void onStopTrackingTouch(SeekBar seekBar) {
-//            }
-//        });
-
         onCreate();
     }
 
@@ -581,14 +409,6 @@ public abstract class FUBaseActivity extends AppCompatActivity
             if (mStartTime == 0) {
                 mStartTime = timeStamp;
             }
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (!mIsRecordStopped) {
-//                        mTakePicBtn.setSecond(timeStamp - mStartTime);
-                    }
-                }
-            });
         }
     }
 
@@ -597,13 +417,11 @@ public abstract class FUBaseActivity extends AppCompatActivity
     private MediaVideoEncoder mVideoEncoder;
     private final Object mRecordLock = new Object();
     private CountDownLatch mRecordBarrier;
-    private volatile boolean mIsRecordStopped;
 
     /**
      * 录制封装回调
      */
     private final MediaEncoder.MediaEncoderListener mMediaEncoderListener = new MediaEncoder.MediaEncoderListener() {
-        private long mStartRecordTime;
 
         @Override
         public void onPrepared(final MediaEncoder encoder) {
@@ -613,9 +431,6 @@ public abstract class FUBaseActivity extends AppCompatActivity
                 mGlSurfaceView.queueEvent(new Runnable() {
                     @Override
                     public void run() {
-                        if (mIsRecordStopped) {
-                            return;
-                        }
                         MediaVideoEncoder videoEncoder = (MediaVideoEncoder) encoder;
                         videoEncoder.setEglContext(EGL14.eglGetCurrentContext());
                         synchronized (mRecordLock) {
@@ -623,14 +438,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
                         }
                     }
                 });
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-//                        mTakePicBtn.setSecond(0);
-                    }
-                });
             }
-            mStartRecordTime = System.currentTimeMillis();
         }
 
         @Override
@@ -641,23 +449,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
             // Call when MediaVideoEncoder's callback and MediaAudioEncoder's callback both are called.
             if (mRecordBarrier.getCount() == 0) {
                 Log.d(TAG, "onStopped: tid:" + Thread.currentThread().getId());
-                // video time long than 1s
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-//                        mTakePicBtn.setSecond(0);
-                    }
-                });
-//                if (System.currentTimeMillis() - mStartRecordTime <= 1000) {
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                                ToastUtil.showToast("录屏时间小于一秒");
-//                        }
-//                    });
-//                    return;
-//                }
-                mStartRecordTime = 0;
+//                mStartRecordTime = 0;
                 // onStopped is called on codec thread, it may be interrupted, so we execute following code async.
                 ThreadHelper.getInstance().execute(new Runnable() {
                     @Override
@@ -740,71 +532,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
             mMuxer = null;
         }
     }
-//
-//    private void showMorePopupWindow() {
-//        LogUtils.debug("OOM","showMorePopupWindow");
-//        if (mPopupWindow == null) {
-//            int width = getResources().getDimensionPixelSize(R.dimen.x682);
-//            View view = LayoutInflater.from(this).inflate(R.layout.layout_popup_more, null);
-//            RadioGroup rgSolution = view.findViewById(R.id.rg_resolutions);
-//            rgSolution.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//                @Override
-//                public void onCheckedChanged(RadioGroup group, int checkedId) {
-//                    switch (checkedId) {
-//                        case R.id.rb_resolution_480p:
-//                            mCameraRenderer.changeResolution(640, 480);
-//                            break;
-//                        case R.id.rb_resolution_720p:
-//                            mCameraRenderer.changeResolution(1280, 720);
-//                            break;
-//                        case R.id.rb_resolution_1080p:
-//                            mCameraRenderer.changeResolution(1920, 1080);
-//                            break;
-//                        default:
-//                    }
-//                    mFURenderer.cameraChanged();
-//                }
-//            });
-//            if (isOpenPhotoVideo()) {
-//                ConstraintLayout clSelectPhoto = view.findViewById(R.id.cl_select_photo);
-//                clSelectPhoto.setVisibility(View.VISIBLE);
-//                clSelectPhoto.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        onSelectPhotoVideoClick();
-//                    }
-//                });
-//            } else {
-//                ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) rgSolution.getLayoutParams();
-//                params.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID;
-//                params.bottomMargin = getResources().getDimensionPixelSize(R.dimen.x40);
-//            }
-//
-//            mPopupWindow = new PopupWindow(view, width, ViewGroup.LayoutParams.WRAP_CONTENT, true);
-//            mPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//            mPopupWindow.setOutsideTouchable(true);
-//            mPopupWindow.setTouchable(true);
-//            mPopupWindow.setAnimationStyle(R.style.photo_more_popup_anim_style);
-//        }
-//
-//        int xOffset = getResources().getDimensionPixelSize(R.dimen.x386);
-//        int yOffset = getResources().getDimensionPixelSize(R.dimen.x12);
-//        mPopupWindow.showAsDropDown(mIvShowMore, -xOffset + mIvShowMore.getWidth() / 2, yOffset);
-//    }
 
-    protected void onSelectPhotoVideoClick() {
-        if (mPopupWindow != null) {
-            mPopupWindow.dismiss();
-        }
-    }
-
-    protected boolean isOpenPhotoVideo() {
-        return false;
-    }
-
-    protected boolean isOpenResolutionChange() {
-        return false;
-    }
 
     protected int getLandmarksType() {
         return FURenderer.FACE_LANDMARKS_75;

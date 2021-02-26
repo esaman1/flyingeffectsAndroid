@@ -1,7 +1,6 @@
 package com.flyingeffects.com.ui.presenter;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -17,29 +15,22 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.horizontalselectedviewlibrary.HorizontalselectedView;
-import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.adapter.CreateTemplateTextEffectAdapter;
-import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.ClearChooseStickerState;
 import com.flyingeffects.com.enity.StickerTypeEntity;
 import com.flyingeffects.com.enity.TabEntity;
@@ -48,28 +39,19 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.FUBeautyMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.FUBeautyMvpView;
-import com.flyingeffects.com.ui.model.CreationTemplateMvpModel;
 import com.flyingeffects.com.ui.model.FUBeautyMvpModel;
 import com.flyingeffects.com.ui.model.FromToTemplate;
-import com.flyingeffects.com.ui.model.TemplateAddStickerMvpModel;
 import com.flyingeffects.com.ui.view.activity.ChooseMusicActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
-import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
-import com.flyingeffects.com.ui.view.activity.TemplateActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateCutVideoActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
-import com.flyingeffects.com.ui.view.fragment.SimpleCardFragment;
 import com.flyingeffects.com.ui.view.fragment.StickerFragment;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.lansosdk.videoeditor.MediaInfo;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -276,7 +258,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
 //        context.startActivity(intent);
 //    }
 
-    private void intoCreationTemplateActivity(String imagePath, String videoPath, String originalPath, boolean isNeedCut) {
+    public void intoCreationTemplateActivity(String imagePath, String videoPath, String originalPath, boolean isNeedCut) {
         Intent intent = new Intent(context, CreationTemplateActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("paths", imagePath);

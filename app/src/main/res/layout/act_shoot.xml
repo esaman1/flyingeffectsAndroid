@@ -191,7 +191,9 @@
         app:HorizontalselectedViewSelectedTextColor="#FFFFFF"
         app:HorizontalselectedViewSelectedTextSize="60"
         app:HorizontalselectedViewTextColor="#566265"
-        app:HorizontalselectedViewTextSize="60" />
+        app:HorizontalselectedViewTextSize="60"
+
+        />
 
 
 
