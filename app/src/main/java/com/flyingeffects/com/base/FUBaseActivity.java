@@ -323,18 +323,18 @@ public abstract class FUBaseActivity extends AppCompatActivity
         mFURenderer.onSurfaceDestroyed();
     }
 
-//    @Override
-//    public void onCameraChanged(int cameraFacing, int cameraOrientation) {
-//        LogUtils.debug("OOM","onCameraChanged");
-//        mFURenderer.onCameraChange(cameraFacing, cameraOrientation);
+    @Override
+    public void onCameraChanged(int cameraFacing, int cameraOrientation) {
+        LogUtils.debug("OOM","onCameraChanged");
+        mFURenderer.onCameraChange(cameraFacing, cameraOrientation);
 //        runOnUiThread(new Runnable() {
 //            @Override
 //            public void run() {
 //                int progress = (int) (100 * mCameraRenderer.getExposureCompensation());
-////                mVerticalSeekBar.setProgress(progress);
-////            }
+//                mVerticalSeekBar.setProgress(progress);
+//            }
 //        });
-//    }
+    }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~拍照录制部分~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     protected BitmapUtil.OnReadBitmapListener mOnReadBitmapListener = new BitmapUtil.OnReadBitmapListener() {
@@ -402,6 +402,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
         mCameraRenderer = new Camera1Renderer(FUBaseActivity.this, mGlSurfaceView, this);
         mFrontCameraOrientation = CameraUtils.getCameraOrientation(Camera.CameraInfo.CAMERA_FACING_FRONT);
         mFURenderer = initFURenderer();
+
         relative_content = findViewById(R.id.relative_content);
         mGlSurfaceView.setRenderer(mCameraRenderer);
         mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
@@ -522,6 +523,12 @@ public abstract class FUBaseActivity extends AppCompatActivity
 //        });
 
         onCreate();
+    }
+
+
+
+    public void SwitchCamera(){
+        mCameraRenderer.switchCamera();
     }
 
     private void showLandmarks() {

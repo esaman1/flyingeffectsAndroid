@@ -20,6 +20,7 @@ import com.faceunity.gles.ProgramTextureOES;
 import com.faceunity.gles.core.GlUtil;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.utils.FuLive.LimitFpsUtil;
+import com.flyingeffects.com.utils.LogUtil;
 
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
@@ -272,8 +273,10 @@ public class BaseCameraRenderer implements GLSurfaceView.Renderer {
 
     public void switchCamera() {
         if (mBackgroundHandler == null) {
+            Log.d("test","mBackgroundHandler == null");
             return;
         }
+
         mBackgroundHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -282,6 +285,7 @@ public class BaseCameraRenderer implements GLSurfaceView.Renderer {
                 boolean isFront = mCameraFacing == FACE_FRONT;
                 mCameraFacing = isFront ? FACE_BACK : FACE_FRONT;
                 mCameraOrientation = isFront ? mBackCameraOrientation : mFrontCameraOrientation;
+                Log.d("test","switchCamera");
                 closeCamera();
                 openCamera(mCameraFacing);
                 startPreview();

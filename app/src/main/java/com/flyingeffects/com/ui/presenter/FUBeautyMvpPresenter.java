@@ -234,7 +234,12 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
             // 这里是跟随相机拍摄页面
             String templateType = templateItem.getTemplate_type();
             if ("2".equals(templateType)) {
-                intoCreationTemplateActivity(path, videoBjPath, path, true);
+//                intoCreationTemplateActivity(path, videoBjPath, path, true);
+                Intent intent = new Intent(context, VideoCropActivity.class);
+                intent.putExtra("videoPath", path);
+                intent.putExtra("comeFrom", FromToTemplate.ISCHOOSEBJ);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                context.startActivity(intent);
             } else {
                 ArrayList<String> paths = new ArrayList<>();
                 paths.add(path);

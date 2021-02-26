@@ -70,7 +70,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         int defaultnum = getIntent().getIntExtra("defaultnum", 0);
         String TemplateFilePath = getIntent().getStringExtra("TemplateFilePath");
         String OldfromTo = getIntent().getStringExtra("OldfromTo");
-        iv_close=findViewById(R.id.iv_close);
+        iv_close = findViewById(R.id.iv_close);
         new_fag_template_item templateItem = (new_fag_template_item) getIntent().getSerializableExtra("templateItem");
         horizontalselectedView = findViewById(R.id.horizontalselectedView);
         presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView, isFrom, duration, musicPath, templateItem, TemplateFilePath, OldfromTo, defaultnum, videoBjPath);
@@ -155,7 +155,9 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                     presenter.clickCountDown(iv_count_down);
                     break;
                 case R.id.iv_rolling_over:
-                    mCameraRenderer.switchCamera();
+
+                    SwitchCamera();
+
                     break;
                 case R.id.ll_stage_property:
                     //道具
@@ -167,7 +169,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
             }
         }
     };
-
 
 
     private void clickBtn() {
@@ -247,7 +248,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                         //录屏倒计时
                         animation_view_progress.setProgress(progress);
                     } else {
-                        LogUtil.d("OOM22","录屏完成，触发结束");
+                        LogUtil.d("OOM22", "录屏完成，触发结束");
                         isRecording = false;
                         animation_view_progress.setProgress(0);
                         lottieAnimationView.setProgress(0);

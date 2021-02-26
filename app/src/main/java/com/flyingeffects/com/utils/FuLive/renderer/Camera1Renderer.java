@@ -101,7 +101,10 @@ public class Camera1Renderer extends BaseCameraRenderer implements Camera.Previe
             if (mViewWidth > 0 && mViewHeight > 0) {
                 mMvpMatrix = GlUtil.changeMvpMatrixCrop(mViewWidth, mViewHeight, mCameraHeight, mCameraWidth);
             }
+
+            Log.d("test","onCameraChanged");
             mOnRendererStatusListener.onCameraChanged(mCameraFacing, mCameraOrientation);
+            Log.d("test","onCameraChangedDone");
         } catch (Exception e) {
             Log.e(TAG, "openCamera: ", e);
         }
