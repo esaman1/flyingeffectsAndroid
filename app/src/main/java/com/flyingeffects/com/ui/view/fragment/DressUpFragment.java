@@ -12,7 +12,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.enity.FirstLevelTypeEntity;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.DressUpMvpView;
 import com.flyingeffects.com.ui.presenter.DressUpMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.TemplateSearchActivity;
@@ -131,7 +131,7 @@ public class DressUpFragment extends BaseFragment  implements DressUpMvpView {
                     @Override
                     public void onPageSelected(int i) {
                         if (i <= data.size() - 1) {
-                            statisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
+                            StatisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
                         }
                     }
 
@@ -144,7 +144,7 @@ public class DressUpFragment extends BaseFragment  implements DressUpMvpView {
                 tabLayout.setOnTabSelectListener(new OnTabSelectListener() {
                     @Override
                     public void onTabSelect(int position) {
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "21_fece_tab", titles[position]);
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_fece_tab", titles[position]);
                     }
 
                     @Override

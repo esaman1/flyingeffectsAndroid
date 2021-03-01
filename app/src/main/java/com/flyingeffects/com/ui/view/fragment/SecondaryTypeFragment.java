@@ -12,7 +12,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.enity.SecondaryTypeEntity;
 import com.flyingeffects.com.enity.new_fag_template_item;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.screenUtil;
 
 import java.util.ArrayList;
@@ -102,11 +102,11 @@ public class SecondaryTypeFragment extends BaseFragment {
                         }
                     }
                     if (type == 0) {
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "21_mb_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_mb_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
                     } else if (type == 1) {
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "21_bj_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_bj_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
                     } else if (type == 2) {
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "21_fece_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_fece_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
                     }
                 }
             });

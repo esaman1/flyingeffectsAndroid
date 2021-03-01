@@ -16,7 +16,7 @@ import com.flyingeffects.com.enity.FirstLevelTypeEntity;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.home_fagMvpView;
 import com.flyingeffects.com.ui.presenter.home_fagMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.TemplateSearchActivity;
@@ -150,7 +150,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                     public void onPageSelected(int i) {
 
                         if (i <= data.size() - 1) {
-                            statisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
+                            StatisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
                         }
                     }
 
@@ -163,7 +163,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                 tabLayout.setOnTabSelectListener(new OnTabSelectListener() {
                     @Override
                     public void onTabSelect(int position) {
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "13_template_tab_click", titles[position]);
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "13_template_tab_click", titles[position]);
                     }
 
                     @Override

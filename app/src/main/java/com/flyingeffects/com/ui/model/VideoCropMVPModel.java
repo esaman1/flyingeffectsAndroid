@@ -19,7 +19,7 @@ import android.widget.RelativeLayout;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.VideoTimelineAdapter;
 import com.flyingeffects.com.base.BaseApplication;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.VideoCropMVPCallback;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -311,9 +311,9 @@ public class VideoCropMVPModel {
         long nowTime = System.currentTimeMillis();
         if (nowTime - mLastZoomTime > TIME_INTERVAL) {
             mLastZoomTime = nowTime;
-            statisticsEventAffair.getInstance().setFlag(mContext, "2_Titles_zoom", "手动卡点_片头缩放");
+            StatisticsEventAffair.getInstance().setFlag(mContext, "2_Titles_zoom", "手动卡点_片头缩放");
             if (62 <= progress && progress <= 63) {
-                statisticsEventAffair.getInstance().setFlag(mContext, "2_Titles_zoom_dy", "手动卡点_片头缩放_抖音");
+                StatisticsEventAffair.getInstance().setFlag(mContext, "2_Titles_zoom_dy", "手动卡点_片头缩放_抖音");
             }
         }
         if (backgroundLayer != null) {

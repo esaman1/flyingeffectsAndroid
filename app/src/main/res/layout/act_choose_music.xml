@@ -6,15 +6,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:layout_marginTop="10dp"
         android:gravity="center_vertical"
         android:layout_height="wrap_content">
-
 
         <ImageView
             android:id="@+id/iv_top_back"
@@ -23,7 +20,6 @@
             android:layout_marginStart="10dp"
             android:padding="5dp"
             android:layout_height="wrap_content"/>
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -77,11 +73,6 @@
         </LinearLayout>
     </LinearLayout>
 
-
-
-
-
-
     <com.flyco.tablayout.SlidingTabLayout
         android:id="@+id/tl_tabs"
         android:layout_width="match_parent"
@@ -95,7 +86,6 @@
         app:tl_indicator_height="@dimen/dp_4"
         app:tl_indicator_margin_left="6dp"
         app:tl_tab_space_equal="true"
-
         app:tl_indicator_margin_right="6dp"
         app:tl_tab_padding="10dp"
         app:tl_textAllCaps="true"
@@ -103,11 +93,9 @@
         app:tl_textSelectColor="#FFFFFF"
         app:tl_textUnselectColor="#BBBBBB" />
 
-
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
 
 </LinearLayout>

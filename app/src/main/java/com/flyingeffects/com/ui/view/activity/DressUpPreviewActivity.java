@@ -24,7 +24,7 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.DressUpModel;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -116,13 +116,13 @@ public class DressUpPreviewActivity extends BaseActivity {
                         videoAdManager.showVideoAd(this, AdConfigs.AD_DRESSUP_SCREEN_VIDEO, new VideoAdCallBack() {
                             @Override
                             public void onVideoAdSuccess() {
-//                                statisticsEventAffair.getInstance().setFlag(DressUpPreviewActivity.this, "video_ad_alert_request_sucess");
+//                                StatisticsEventAffair.getInstance().setFlag(DressUpPreviewActivity.this, "video_ad_alert_request_sucess");
                                 LogUtil.d("OOM4", "onVideoAdSuccess");
                             }
 
                             @Override
                             public void onVideoAdError(String s) {
-//                                statisticsEventAffair.getInstance().setFlag(DressUpPreviewActivity.this, "video_ad_alert_request_fail");
+//                                StatisticsEventAffair.getInstance().setFlag(DressUpPreviewActivity.this, "video_ad_alert_request_fail");
                                 LogUtil.d("OOM4", "onVideoAdError" + s);
                                 showDressUp(true);
                                 iv_back.setVisibility(View.VISIBLE);
@@ -168,7 +168,7 @@ public class DressUpPreviewActivity extends BaseActivity {
                 break;
             case R.id.keep_to_album:
                 alertAlbumUpdate(false);
-                statisticsEventAffair.getInstance().setFlag(this, "21_face_save", templateTitle);
+                StatisticsEventAffair.getInstance().setFlag(this, "21_face_save", templateTitle);
                 break;
             case R.id.share:
                 share(listForKeep.get(nowChooseIndex));

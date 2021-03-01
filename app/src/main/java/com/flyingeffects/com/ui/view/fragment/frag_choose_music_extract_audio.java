@@ -15,11 +15,13 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.music_local_adapter;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.commonlyModel.DoubleClick;
 import com.flyingeffects.com.enity.BlogFile.Video;
 import com.flyingeffects.com.enity.FragmentHasSlide;
 import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.VideoManage;
 import com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity;
 import com.flyingeffects.com.utils.LogUtil;
@@ -80,7 +82,7 @@ public class frag_choose_music_extract_audio extends BaseFragment {
         EventBus.getDefault().register(this);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            isFromShoot=bundle.getBoolean("isFromShoot",false);
+            isFromShoot = bundle.getBoolean("isFromShoot", false);
             needDuration = bundle.getLong("needDuration", 10000);
         }
         initRecycler();
@@ -116,7 +118,7 @@ public class frag_choose_music_extract_audio extends BaseFragment {
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
         }
-        if(listVideoFiltrateMp4!=null&&listVideoFiltrateMp4.size()!=0&&listVideoFiltrateMp4.size()>=lastPosition){
+        if (listVideoFiltrateMp4 != null && listVideoFiltrateMp4.size() != 0 && listVideoFiltrateMp4.size() >= lastPosition) {
             Video video3 = listVideoFiltrateMp4.get(lastPosition);
             video3.setPlaying(false);
             listVideoFiltrateMp4.set(lastPosition, video3);
@@ -135,28 +137,24 @@ public class frag_choose_music_extract_audio extends BaseFragment {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
                 switch (view.getId()) {
                     case R.id.tv_make:
+                        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_music_use", "视频提取音乐");
                         pauseMusic();
                         Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.putExtra("videoPath", listVideoFiltrateMp4.get(position).getPath());
                         intent.putExtra("needDuration", needDuration);
                         intent.putExtra("isFromShoot", isFromShoot);
-
                         intent.putExtra("isAudio", false);
                         startActivity(intent);
                         break;
-
-
                     case R.id.iv_play:
                         playMusic(listVideoFiltrateMp4.get(position).getPath(), position);
                         break;
-
                     default:
                         break;
                 }
             }
         });
-
 
         recyclerView.setAdapter(adapter);
     }
@@ -249,7 +247,7 @@ public class frag_choose_music_extract_audio extends BaseFragment {
             super.onQueryComplete(token, cookie, c);
             listVideoFiltrateMp4.clear();
             Observable.just(c).map(c1 -> {
-                if(c1 !=null&& c1.getColumnCount()>0) {
+                if (c1 != null && c1.getColumnCount() > 0) {
                     while (c1.moveToNext()) {
                         String path = c1.getString(c1.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));// 路径
                         LogUtil.d("getVideos", "系统筛选出来的视频：" + path);
@@ -281,7 +279,7 @@ public class frag_choose_music_extract_audio extends BaseFragment {
                         }
                     }
                 }
-               Collections.reverse(listVideoFiltrateMp4);
+                Collections.reverse(listVideoFiltrateMp4);
                 return listVideoFiltrateMp4;
             }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<Video>>() {
                 @Override

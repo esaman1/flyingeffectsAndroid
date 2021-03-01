@@ -33,7 +33,7 @@ import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.ColorCorrectionManager;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.view.fragment.FragmentUser;
 import com.flyingeffects.com.ui.view.fragment.fragBjSearch;
 import com.flyingeffects.com.utils.LogUtil;
@@ -105,7 +105,7 @@ public class TemplateSearchActivity extends BaseActivity {
     @Override
     protected void initView() {
 
-        statisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "14_go_to_search");
+        StatisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "14_go_to_search");
         isFrom = getIntent().getIntExtra("isFrom", 0);
 
 
@@ -196,8 +196,8 @@ public class TemplateSearchActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if(!TextUtils.isEmpty(ed_text.getText().toString().trim())){
-                    statisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "4_search_button");
-                    statisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "4_search_new",ed_text.getText().toString());
+                    StatisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "4_search_button");
+                    StatisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "4_search_new",ed_text.getText().toString());
 
                     toTemplate(ed_text.getText().toString().trim());
                     rcSearch.setVisibility(View.GONE);
@@ -256,9 +256,9 @@ public class TemplateSearchActivity extends BaseActivity {
                 keywordQueryItemClickTag = true;
                 ed_text.setText(itemContent);
                 if (position != 0) {
-                    statisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "4_search_query", itemContent);
+                    StatisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "4_search_query", itemContent);
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "4_search_query_first");
+                    StatisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "4_search_query_first");
                 }
             }
         });
@@ -270,7 +270,7 @@ public class TemplateSearchActivity extends BaseActivity {
         nowShowText = content;
         if (!"".equals(nowShowText)) {
             cancelFocus();
-            statisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "10_searchfor", nowShowText);
+            StatisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "10_searchfor", nowShowText);
             EventBus.getDefault().post(new SendSearchText(nowShowText));
             hideResultView(false);
             ll_ad_content.setVisibility(View.GONE);
@@ -325,7 +325,7 @@ public class TemplateSearchActivity extends BaseActivity {
             tv.setOnClickListener(view -> {
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
                     if (listSearchKey.size() >= finalI + 1) {
-                        statisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "4_recommend", listSearchKey.get(finalI).getName());
+                        StatisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "4_recommend", listSearchKey.get(finalI).getName());
                         nowShowText = listSearchKey.get(finalI).getName();
                         keywordQueryItemClickTag = true;
                         ed_text.setText(nowShowText);
@@ -333,7 +333,7 @@ public class TemplateSearchActivity extends BaseActivity {
                         coordinatorLayout.setVisibility(View.VISIBLE);
                         toTemplate(nowShowText);
                         ll_ad_content.setVisibility(View.GONE);
-                        statisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "10_searchfor", nowShowText);
+                        StatisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "10_searchfor", nowShowText);
                         EventBus.getDefault().post(new SendSearchText(nowShowText));
 
                     }

@@ -20,8 +20,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AlbumManager;
-import com.flyingeffects.com.manager.statisticsEventAffair;
-import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
@@ -31,7 +30,6 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.yanzhenjie.album.AlbumFile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -116,7 +114,7 @@ public class fragBjSearch extends BaseFragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-            statisticsEventAffair.getInstance().setFlag(getActivity(), "11_yj_searchfor", allData.get(position).getTitle());
+            StatisticsEventAffair.getInstance().setFlag(getActivity(), "11_yj_searchfor", allData.get(position).getTitle());
             Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
             ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
             intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
@@ -127,13 +125,13 @@ public class fragBjSearch extends BaseFragment {
             if (isFrom == 0) {
                 //模板页面
                 intent.putExtra("fromTo", FromToTemplate.ISSEARCHTEMPLATE);
-                statisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_mb_click", allData.get(position).getTitle());
+                StatisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_mb_click", allData.get(position).getTitle());
             } else if (isFrom == 3) {
                 intent.putExtra("fromTo", FromToTemplate.DRESSUP);
             } else {
                 //背景页面
                 intent.putExtra("fromTo", FromToTemplate.ISSEARCHBJ);
-                statisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_bj_click", allData.get(position).getTitle());
+                StatisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_bj_click", allData.get(position).getTitle());
             }
             startActivity(intent);
         });
@@ -269,21 +267,21 @@ public class fragBjSearch extends BaseFragment {
                     if (isRefresh && data.size() == 0) {
 
 
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "10_Noresults", searchText);
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "10_Noresults", searchText);
                         showNoData(true);
                         if (isVisible) {
                             if (isFrom == 1) {//背景无内容
-                                statisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_bj", searchText);
+                                StatisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_bj", searchText);
                             } else {//模板无内容
-                                statisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_mb", searchText);
+                                StatisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_mb", searchText);
                             }
                             ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
                         }
                         if (isVisible) {
                             if (isFrom == 0) {
-                                statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none", searchText);
+                                StatisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none", searchText);
                             } else {
-                                statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none_bj", searchText);
+                                StatisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none_bj", searchText);
                             }
                         }
                     } else {

@@ -15,12 +15,14 @@ import com.example.horizontalselectedviewlibrary.HorizontalselectedView;
 import com.faceunity.FURenderer;
 import com.faceunity.entity.Effect;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.base.FUBaseActivity;
 import com.flyingeffects.com.enity.CreateCutCallback;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.isIntoBackground;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.FUBeautyMvpView;
 import com.flyingeffects.com.ui.presenter.FUBeautyMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
@@ -75,12 +77,12 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         String videoBjPath = getIntent().getStringExtra("videoPath");
         int defaultnum = getIntent().getIntExtra("defaultnum", 0);
         String TemplateFilePath = getIntent().getStringExtra("TemplateFilePath");
-        String OldfromTo = getIntent().getStringExtra("OldfromTo");
+        String oldFromTo = getIntent().getStringExtra("OldfromTo");
         createDownVideoPath = getIntent().getStringExtra("createDownVideoPath");
         iv_close = findViewById(R.id.iv_close);
         new_fag_template_item templateItem = (new_fag_template_item) getIntent().getSerializableExtra("templateItem");
         horizontalselectedView = findViewById(R.id.horizontalselectedView);
-        presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView, isFrom, duration, musicPath, templateItem, TemplateFilePath, OldfromTo, defaultnum, videoBjPath);
+        presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView, isFrom, duration, musicPath, templateItem, TemplateFilePath, oldFromTo, defaultnum, videoBjPath);
         constraintLayout = findViewById(R.id.constraintLayout);
         findViewById(R.id.ll_album).setVisibility(View.INVISIBLE);
         relative_choose_music = findViewById(R.id.relative_choose_music);
@@ -138,34 +140,29 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.relative_choose_music:
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"12_shoot_music");
                     presenter.IntoChooseMusic();
                     break;
                 case R.id.iv_close:
-
-
-
                     finish();
                     break;
-
                 case R.id.animation_view:
                 case R.id.animation_view_progress:
                     LogUtil.d("OOM2","isCanClick="+isCanClick);
                     if (isCanClick) {
                         clickBtn();
                     }
-
                     break;
                 case R.id.iv_count_down:
                     //倒计时功能
                     presenter.clickCountDown(iv_count_down);
                     break;
                 case R.id.iv_rolling_over:
-
                     SwitchCamera();
-
                     break;
                 case R.id.ll_stage_property:
                     //道具
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"12_shoot_dj");
                     relative_content.setVisibility(View.VISIBLE);
                     showSticker(true);
                     break;
@@ -192,6 +189,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
             } else {
                 LogUtil.d("OOM", "开始录制");
                 isRecording = true;
+                StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"12_Shoot_start");
                 presenter.StartCountDown();
                 tv_count_down.setVisibility(View.VISIBLE);
                 lottieAnimationView.setMaxProgress(20 / (float) 47);
@@ -200,8 +198,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
             }
         }
     }
-
-
 
 
     /**
@@ -385,8 +381,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      * creation date: 2021/2/20
      * user : zhangtongju
      */
-    public void ToNextPage(String path) {
-        presenter.ToNextPage(path);
+    public void toNextPage(String path) {
+        presenter.toNextPage(path);
     }
 
 

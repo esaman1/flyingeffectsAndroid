@@ -50,8 +50,8 @@ import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.mediaManager;
-import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.ChooseMusicActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
@@ -355,9 +355,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 closeAllAnim();
                 deleteAllSticker();
                 if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Stickeroff");
+                    StatisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Stickeroff");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_Stickeroff");
+                    StatisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_Stickeroff");
                 }
             }
         });
@@ -377,8 +377,8 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
             public void onClick(View v) {
                 callback.needPauseVideo();
                 startPlayAnim(0, true, null, 0, false);
-                statisticsEventAffair.getInstance().setFlag(context, "9_Animation2");
-                statisticsEventAffair.getInstance().setFlag(context, "9_Animation4");
+                StatisticsEventAffair.getInstance().setFlag(context, "9_Animation2");
+                StatisticsEventAffair.getInstance().setFlag(context, "9_Animation4");
             }
         });
         gridViewAnim.setOnItemClickListener((adapterView, view, i, l) -> {
@@ -401,7 +401,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         tvDownMusic.setVisibility(View.VISIBLE);
         tvDownMusic.setOnClickListener(v -> callback.stickerFragmentClose());
         tv_add_music.setOnClickListener(view -> {
-            statisticsEventAffair.getInstance().setFlag(context, "15_music_add");
+            StatisticsEventAffair.getInstance().setFlag(context, "15_music_add");
             Intent intent = new Intent(context, ChooseMusicActivity.class);
             intent.putExtra("needDuration", getDuration());
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -881,9 +881,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                     if (!TextUtils.isEmpty(stickView.getOriginalPath())) {
                         if (albumType.isVideo(GetPathType.getInstance().getMediaType(stickView.getOriginalPath()))) {
                             if (UiStep.isFromDownBj) {
-                                statisticsEventAffair.getInstance().setFlag(context, "7_plusone");
+                                StatisticsEventAffair.getInstance().setFlag(context, "7_plusone");
                             } else {
-                                statisticsEventAffair.getInstance().setFlag(context, "8_plusone");
+                                StatisticsEventAffair.getInstance().setFlag(context, "8_plusone");
                             }
                         }
                     }
@@ -894,9 +894,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                         stickView.setOpenVoice(true);
                         getVideoVoice(stickView.getOriginalPath(), soundFolder);
                         if (UiStep.isFromDownBj) {
-                            statisticsEventAffair.getInstance().setFlag(context, "7_open");
+                            StatisticsEventAffair.getInstance().setFlag(context, "7_open");
                         } else {
-                            statisticsEventAffair.getInstance().setFlag(context, "8_open");
+                            StatisticsEventAffair.getInstance().setFlag(context, "8_open");
                         }
                     } else {
                         //关闭声音
@@ -904,9 +904,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                         stickView.setOpenVoice(false);
                         callback.getBgmPath("");
                         if (UiStep.isFromDownBj) {
-                            statisticsEventAffair.getInstance().setFlag(context, "7_turnoff");
+                            StatisticsEventAffair.getInstance().setFlag(context, "7_turnoff");
                         } else {
-                            statisticsEventAffair.getInstance().setFlag(context, "8_turnoff");
+                            StatisticsEventAffair.getInstance().setFlag(context, "8_turnoff");
                         }
 
                     }
@@ -915,9 +915,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
                     if (!stickView.getIsTextSticker()) {
                         if (UiStep.isFromDownBj) {
-                            statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_replace");
+                            StatisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_replace");
                         } else {
-                            statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_replace");
+                            StatisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_replace");
                         }
                         //切換素材
                         AlbumManager.chooseAlbum(context, 1, 0, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
@@ -997,7 +997,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                     }
                 } else if (type == StickerView.LEFT_MODE) {
                     if (!TextUtils.isEmpty(stickView.getResPath())) {
-                        statisticsEventAffair.getInstance().setFlag(context, "17_zdy_cutout_save");
+                        StatisticsEventAffair.getInstance().setFlag(context, "17_zdy_cutout_save");
                         //开启抠像
                         if (isMatting) {
                             if(!TextUtils.isEmpty(stickView.getClipPath())){
@@ -1348,9 +1348,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 String copyName = null;
                 if (getResPath.endsWith(".gif")) {
                     if (UiStep.isFromDownBj) {
-                        statisticsEventAffair.getInstance().setFlag(context, "5_mb_sticker_plus");
+                        StatisticsEventAffair.getInstance().setFlag(context, "5_mb_sticker_plus");
                     } else {
-                        statisticsEventAffair.getInstance().setFlag(context, "6_mb_sticker_plus");
+                        StatisticsEventAffair.getInstance().setFlag(context, "6_mb_sticker_plus");
                     }
                     copyName = mGifFolder + File.separator + System.currentTimeMillis() + "synthetic.gif";
                     String finalCopyName = copyName;
@@ -1370,9 +1370,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                     });
                 } else {
                     if (UiStep.isFromDownBj) {
-                        statisticsEventAffair.getInstance().setFlag(context, "5_mb_bj_plus one");
+                        StatisticsEventAffair.getInstance().setFlag(context, "5_mb_bj_plus one");
                     } else {
-                        statisticsEventAffair.getInstance().setFlag(context, "6_customize_bj_plus one");
+                        StatisticsEventAffair.getInstance().setFlag(context, "6_customize_bj_plus one");
                     }
                     String aa = path.substring(path.length() - 4);
                     copyName = mImageCopyFolder + File.separator + System.currentTimeMillis() + aa;
@@ -1533,7 +1533,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                         }
 
                         if (!TextUtils.isEmpty(stickerView.getDownStickerTitle())) {
-                            statisticsEventAffair.getInstance().setFlag(context, "mb_bj_Sticker", stickerView.getDownStickerTitle());
+                            StatisticsEventAffair.getInstance().setFlag(context, "mb_bj_Sticker", stickerView.getDownStickerTitle());
                         }
 
                         listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, isMatting, videoInfo));
@@ -1674,9 +1674,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
             if (data.getChooseAnimId() != null && data.getChooseAnimId() != AnimType.NULL) {
 
                 if (data.isMaterial()) {
-                    statisticsEventAffair.getInstance().setFlag(context, "9_Animation", data.getChooseAnimId().name());
+                    StatisticsEventAffair.getInstance().setFlag(context, "9_Animation", data.getChooseAnimId().name());
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(context, "9_Animation3", data.getChooseAnimId().name());
+                    StatisticsEventAffair.getInstance().setFlag(context, "9_Animation3", data.getChooseAnimId().name());
                 }
 
             }
@@ -1959,35 +1959,35 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
             VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(path);
             duration = videoInfo.getDuration();
             if (duration <= 10000) {
-                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于10秒");
+                StatisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于10秒");
             } else if (duration <= 20000) {
-                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于20秒");
+                StatisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于20秒");
             } else if (duration <= 30000) {
-                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于30秒");
+                StatisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于30秒");
             } else if (duration <= 40000) {
-                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于40秒");
+                StatisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于40秒");
             } else if (duration <= 50000) {
-                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于50秒");
+                StatisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于50秒");
             } else if (duration <= 60000) {
-                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于60秒");
+                StatisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于60秒");
             } else if (duration <= 120000) {
-                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于2分钟");
+                StatisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于2分钟");
             } else if (duration <= 180000) {
-                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于3分钟");
+                StatisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于3分钟");
             } else if (duration <= 240000) {
-                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于4分钟");
+                StatisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于4分钟");
             } else if (duration <= 300000) {
-                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于5分钟");
+                StatisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于5分钟");
             } else if (duration <= 360000) {
-                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于6分钟");
+                StatisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于6分钟");
             } else if (duration <= 420000) {
-                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于7分钟");
+                StatisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于7分钟");
             } else if (duration <= 480000) {
-                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于8分钟");
+                StatisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于8分钟");
             } else if (duration <= 540000) {
-                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于9分钟");
+                StatisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于9分钟");
             } else {
-                statisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于10分钟");
+                StatisticsEventAffair.getInstance().setFlag(context, "ChooseVideoDuration", "小于10分钟");
             }
         }
     }

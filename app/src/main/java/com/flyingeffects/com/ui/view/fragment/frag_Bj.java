@@ -20,7 +20,7 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.FagBjMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
@@ -269,7 +269,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
         if (lastViewPagerChoosePosition != i) {
             if (i <= data.size() - 1) {
                 showWitchBtn(i);
-                statisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
+                StatisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
             }
         }
 
@@ -277,7 +277,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
 
     private void showWitchBtn(int showWitch) {
         if (titles != null) {
-            statisticsEventAffair.getInstance().setFlag(getActivity(), "13_back_tab_click", titles[showWitch]);
+            StatisticsEventAffair.getInstance().setFlag(getActivity(), "13_back_tab_click", titles[showWitch]);
         }
         viewPager.setCurrentItem(showWitch);
     }
@@ -305,7 +305,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
                 break;
             case R.id.iv_search:
                 //搜索栏目
-                statisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_bj");
+                StatisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_bj");
 
                 Intent intent = new Intent(getActivity(), TemplateSearchActivity.class);
                 intent.putExtra("isFrom", 0);
@@ -316,7 +316,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
             case R.id.ll_crate_photograph_album:
             case R.id.ll_crate_photograph_album_2:
                 if(BaseConstans.hasLogin()){
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "21_yj_click");
+                    StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_yj_click");
                     waitingDialog_progress.openProgressDialog();
                     presenter.requestPictureAlbumData();
                 }else{
@@ -333,7 +333,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
 
 
     private void toAddSticker() {
-        statisticsEventAffair.getInstance().setFlag(getActivity(), "6_customize_bj");
+        StatisticsEventAffair.getInstance().setFlag(getActivity(), "6_customize_bj");
         AlbumManager.chooseAlbum(getActivity(), 1, SELECTALBUM, (tag, paths, isCancel,  isFromCamera,albumFileList) -> {
             if (!isCancel) {
                 if (!TextUtils.isEmpty(paths.get(0))) {

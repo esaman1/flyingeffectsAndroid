@@ -43,10 +43,10 @@ import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.TTAdManagerHolder;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
 import com.flyingeffects.com.manager.mediaManager;
-import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
 import com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
@@ -82,7 +82,6 @@ import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -240,13 +239,13 @@ public class PreviewUpAndDownMvpModel {
 
             if (BaseConstans.hasLogin()) {
                 if (fromTo.equals(FromToTemplate.ISTEMPLATE)) {
-                    statisticsEventAffair.getInstance().setFlag(context, "11_yj_save1");
+                    StatisticsEventAffair.getInstance().setFlag(context, "11_yj_save1");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(context, "10_bj_csave1");
+                    StatisticsEventAffair.getInstance().setFlag(context, "10_bj_csave1");
                 }
                 templateBehaviorStatistics(3, id);
 
-                statisticsEventAffair.getInstance().setFlag(context, "save_back_template");
+                StatisticsEventAffair.getInstance().setFlag(context, "save_back_template");
                 downProgressDialog = new WaitingDialog_progress(context);
                 downProgressDialog.openProgressDialog();
                 //换装保存的是图片
@@ -285,9 +284,9 @@ public class PreviewUpAndDownMvpModel {
             public void onClick(View view) {
 
                 if (fromTo.equals(FromToTemplate.ISTEMPLATE)) {
-                    statisticsEventAffair.getInstance().setFlag(context, "11_yjj_WeChat");
+                    StatisticsEventAffair.getInstance().setFlag(context, "11_yjj_WeChat");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(context, "10_bj_WeChat");
+                    StatisticsEventAffair.getInstance().setFlag(context, "10_bj_WeChat");
                 }
                 templateBehaviorStatistics(2, id);
 
@@ -310,9 +309,9 @@ public class PreviewUpAndDownMvpModel {
             public void onClick(View view) {
 
                 if (fromTo.equals(FromToTemplate.ISTEMPLATE)) {
-                    statisticsEventAffair.getInstance().setFlag(context, "11_yj_circle");
+                    StatisticsEventAffair.getInstance().setFlag(context, "11_yj_circle");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(context, "10_bj_circle");
+                    StatisticsEventAffair.getInstance().setFlag(context, "10_bj_circle");
                 }
                 templateBehaviorStatistics(1, id);
                 shareToApplet(fag_template_item);
@@ -325,9 +324,9 @@ public class PreviewUpAndDownMvpModel {
             public void onClick(View view) {
 
                 if (fromTo.equals(FromToTemplate.ISTEMPLATE)) {
-                    statisticsEventAffair.getInstance().setFlag(context, "11_yj_Report");
+                    StatisticsEventAffair.getInstance().setFlag(context, "11_yj_Report");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(context, "10_bj_Report");
+                    StatisticsEventAffair.getInstance().setFlag(context, "10_bj_Report");
                 }
 
 
@@ -494,7 +493,7 @@ public class PreviewUpAndDownMvpModel {
             public void onError(int code, String message) {
 //                Log.d(TAG, message);
 //                showToast(message);
-                statisticsEventAffair.getInstance().setFlag(context, "draw_ad_request_error");
+                StatisticsEventAffair.getInstance().setFlag(context, "draw_ad_request_error");
                 LogUtil.d("OOM", "loadFeedAd+code=" + code + ";message=" + message);
             }
 
@@ -504,7 +503,7 @@ public class PreviewUpAndDownMvpModel {
                     LogUtil.d("OOM", "on FeedAdLoaded: ad is null!");
                     return;
                 }
-                statisticsEventAffair.getInstance().setFlag(context, "draw_ad_request_success");
+                StatisticsEventAffair.getInstance().setFlag(context, "draw_ad_request_success");
 
                 LogUtil.d("OOM", "success" + ads.size());
 //                for (int i = 0; i < 5; i++) {
@@ -517,7 +516,7 @@ public class PreviewUpAndDownMvpModel {
                     ad.setVideoAdListener(new TTNativeExpressAd.ExpressVideoAdListener() {
                         @Override
                         public void onVideoLoad() {
-                            statisticsEventAffair.getInstance().setFlag(context, "draw_ad_request_show");
+                            StatisticsEventAffair.getInstance().setFlag(context, "draw_ad_request_show");
                         }
 
                         @Override

@@ -23,7 +23,6 @@ import android.widget.Toast;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateGridViewAdapter;
-import com.flyingeffects.com.adapter.TemplateGridViewAnimAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.adapter.listViewForVideoThumbAdapter;
@@ -46,9 +45,9 @@ import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.StimulateControlManage;
 import com.flyingeffects.com.manager.mediaManager;
-import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.TemplateAddStickerMvpCallback;
 import com.flyingeffects.com.ui.view.activity.AdHintActivity;
 import com.flyingeffects.com.ui.view.fragment.StickerFragment;
@@ -356,9 +355,9 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                 closeAllAnim();
                 deleteSticker();
                 if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Stickeroff");
+                    StatisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_Stickeroff");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_Stickeroff");
+                    StatisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_Stickeroff");
                 }
             }
         });
@@ -759,9 +758,9 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                 String copyName = null;
                 if (getResPath.endsWith(".gif")) {
                     if (UiStep.isFromDownBj) {
-                        statisticsEventAffair.getInstance().setFlag(context, "5_mb_sticker_plus");
+                        StatisticsEventAffair.getInstance().setFlag(context, "5_mb_sticker_plus");
                     } else {
-                        statisticsEventAffair.getInstance().setFlag(context, "6_mb_sticker_plus");
+                        StatisticsEventAffair.getInstance().setFlag(context, "6_mb_sticker_plus");
                     }
                     copyName = mGifFolder + File.separator + System.currentTimeMillis() + "synthetic.gif";
                     String finalCopyName = copyName;
@@ -779,9 +778,9 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                     });
                 } else {
                     if (UiStep.isFromDownBj) {
-                        statisticsEventAffair.getInstance().setFlag(context, "5_mb_bj_plus one");
+                        StatisticsEventAffair.getInstance().setFlag(context, "5_mb_bj_plus one");
                     } else {
-                        statisticsEventAffair.getInstance().setFlag(context, "6_customize_bj_plus one");
+                        StatisticsEventAffair.getInstance().setFlag(context, "6_customize_bj_plus one");
                     }
                     String aa = path.substring(path.length() - 4);
                     copyName = mImageCopyFolder + File.separator + System.currentTimeMillis() + aa;
@@ -825,9 +824,9 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                     if (!TextUtils.isEmpty(stickView.getOriginalPath())) {
                         if (albumType.isVideo(GetPathType.getInstance().getMediaType(stickView.getOriginalPath()))) {
                             if (UiStep.isFromDownBj) {
-                                statisticsEventAffair.getInstance().setFlag(context, "7_plusone");
+                                StatisticsEventAffair.getInstance().setFlag(context, "7_plusone");
                             } else {
-                                statisticsEventAffair.getInstance().setFlag(context, "8_plusone");
+                                StatisticsEventAffair.getInstance().setFlag(context, "8_plusone");
                             }
                         }
                     }
@@ -839,9 +838,9 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                         stickView.setRightCenterBitmapForChangeIcon(ContextCompat.getDrawable(context, R.mipmap.sticker_open_voice));
                         getVideoVoice(stickView.getOriginalPath(), soundFolder);
                         if (UiStep.isFromDownBj) {
-                            statisticsEventAffair.getInstance().setFlag(context, "7_open");
+                            StatisticsEventAffair.getInstance().setFlag(context, "7_open");
                         } else {
-                            statisticsEventAffair.getInstance().setFlag(context, "8_open");
+                            StatisticsEventAffair.getInstance().setFlag(context, "8_open");
                         }
                     } else {
                         //关闭声音
@@ -850,9 +849,9 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                         stickView.setRightCenterBitmapForChangeIcon(ContextCompat.getDrawable(context, R.mipmap.sticker_close_voice));
 //                        callback.getBgmPath("");
                         if (UiStep.isFromDownBj) {
-                            statisticsEventAffair.getInstance().setFlag(context, "7_turnoff");
+                            StatisticsEventAffair.getInstance().setFlag(context, "7_turnoff");
                         } else {
-                            statisticsEventAffair.getInstance().setFlag(context, "8_turnoff");
+                            StatisticsEventAffair.getInstance().setFlag(context, "8_turnoff");
                         }
 
                     }
@@ -861,9 +860,9 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
 
                     if (!stickView.getIsTextSticker()) {
                         if (UiStep.isFromDownBj) {
-                            statisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_replace");
+                            StatisticsEventAffair.getInstance().setFlag(context, " 5_mb_bj_replace");
                         } else {
-                            statisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_replace");
+                            StatisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_replace");
                         }
                         //切換素材
                         AlbumManager.chooseAlbum(context, 1, 0, (tag, paths, isCancel,  isFromCamera,albumFileList) -> {
@@ -1275,7 +1274,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                         listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, false, videoInfo));
 
                         if (!TextUtils.isEmpty(stickerView.getDownStickerTitle())) {
-                            statisticsEventAffair.getInstance().setFlag(context, "11_yj_Sticker",stickerView.getDownStickerTitle() );
+                            StatisticsEventAffair.getInstance().setFlag(context, "11_yj_Sticker",stickerView.getDownStickerTitle() );
                         }
 
                     }
@@ -1325,7 +1324,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
 
             for (String str : titleEffect
             ) {
-                statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_style_save", str);
+                StatisticsEventAffair.getInstance().setFlag(context, "20_mb_text_style_save", str);
                 LogUtil.d("OOM3", "titleEffect=" + str);
             }
         }
@@ -1335,7 +1334,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
 
             for (String str : titleStyle
             ) {
-                statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_font_save", str);
+                StatisticsEventAffair.getInstance().setFlag(context, "20_mb_text_font_save", str);
                 LogUtil.d("OOM3", "titleStyle=" + str);
             }
         }
@@ -1345,14 +1344,14 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
 
             for (String str : titleFrame
             ) {
-                statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_border_save", str);
+                StatisticsEventAffair.getInstance().setFlag(context, "20_mb_text_border_save", str);
                 LogUtil.d("OOM3", "titleFrame=" + str);
             }
         }
 
 
         if ((titleStyle != null && titleStyle.size() > 0) || (titleEffect != null && titleEffect.size() > 0)) {
-            statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_save_save");
+            StatisticsEventAffair.getInstance().setFlag(context, "20_mb_text_save_save");
 
         }
 
@@ -1550,9 +1549,9 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
             if (data.getChooseAnimId() != null && data.getChooseAnimId() != AnimType.NULL) {
 
                 if (data.isMaterial()) {
-                    statisticsEventAffair.getInstance().setFlag(context, "9_Animation", data.getChooseAnimId().name());
+                    StatisticsEventAffair.getInstance().setFlag(context, "9_Animation", data.getChooseAnimId().name());
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(context, "9_Animation3", data.getChooseAnimId().name());
+                    StatisticsEventAffair.getInstance().setFlag(context, "9_Animation3", data.getChooseAnimId().name());
                 }
 
             }

@@ -14,7 +14,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.SearchUserEntity;
 import com.flyingeffects.com.enity.UserInfo;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.UserHomepageActivity;
 
@@ -69,7 +69,7 @@ public class SearchUserAdapter extends BaseQuickAdapter<SearchUserEntity,BaseVie
             public void onClick(View v) {
                 if(BaseConstans.hasLogin()){
                     if (userInfo != null && !TextUtils.equals(String.valueOf(item.getId()), userInfo.getId())) {
-                        statisticsEventAffair.getInstance().setFlag(mContext, "4_search_user_click");
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "4_search_user_click");
                         Intent intent = new Intent(activity, UserHomepageActivity.class);
                         intent.putExtra("toUserId", String.valueOf(item.getId()));
                         activity.startActivity(intent);
