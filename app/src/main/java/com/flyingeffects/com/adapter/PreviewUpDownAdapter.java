@@ -41,7 +41,8 @@ import androidx.annotation.Nullable;
  * time：2019/1/25
  * describe:首页适配
  **/
-public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_template_item, BaseViewHolder> {
+public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item, BaseViewHolder> {
+    private static final String TAG = "Preview_up_and_down_ada";
 
     private Context context;
     private SampleCoverVideo videoPlayer;
@@ -56,7 +57,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     private TextView tv_btn_follow;
 
 
-    public Preview_up_and_down_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, String OldFromTo) {
+    public PreviewUpDownAdapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, String OldFromTo) {
         super(layoutResId, allData);
         this.context = context;
         this.OldFromTo = OldFromTo;
@@ -111,6 +112,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         } else {
             tv_make.setText("马上制作");
         }
+
         if (ad == null) {
             if (OldFromTo.equals(FromToTemplate.DRESSUP)) {
                 videoPlayer.setVisibility(View.GONE);
@@ -139,8 +141,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             helper.addOnClickListener(R.id.tv_make);
             helper.addOnClickListener(R.id.tv_title_music);
             if (nowPreviewPosition == offset) {
-                new Handler().postDelayed(() ->
-                        videoPlayer.startPlayLogic(), 200);
+                videoPlayer.startPlayLogic();
             }
             if (needHideCreate) {
                 ll_down_bj.setVisibility(View.GONE);
@@ -212,8 +213,6 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
         } else {
             ll_describe.setVisibility(View.VISIBLE);
         }
-
-
     }
 
     /**
@@ -274,7 +273,6 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
 //        }
     }
 
-
     /**
      * description ：初始化视频播放器，针对列表
      * creation date: 2020/7/2
@@ -304,15 +302,18 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
             @Override
             public void onPrepared(boolean onPrepared) {
                 tv_describe.setVisibility(View.VISIBLE);
-                tv_describe.setText("时长" + TimeUtils.timeParse(videoPlayer.getDuration()) + "  上传" + item.getDefaultnum() + "个素材");
+                tv_describe.setText("时长" + TimeUtils.timeParse(videoPlayer.getDuration())
+                        + "  上传" + item.getDefaultnum() + "个素材");
             }
         }));
         GSYVideoType.setShowType(GSYVideoType.SCREEN_TYPE_FULL);
         videoPlayer.setLooping(true);
         if (!TextUtils.isEmpty(item.getPre_url())) {
             videoPlayer.setUpLazy(item.getPre_url(), true, null, null, "这是title");
+            LogUtil.d(TAG, "Pre_url = " + item.getPre_url());
         } else {
             videoPlayer.setUpLazy(item.getVidoefile(), true, null, null, "这是title");
+            LogUtil.d(TAG, "Vidoefile = " + item.getVidoefile());
         }
     }
 
@@ -325,7 +326,7 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
      * creation date: 2020/7/1
      * user : zhangtongju
      */
-    public void NowPreviewChooseItem(int nowPreviewPosition) {
+    public void nowPreviewChooseItem(int nowPreviewPosition) {
         this.nowPreviewPosition = nowPreviewPosition;
     }
 
@@ -347,12 +348,3 @@ public class Preview_up_and_down_adapter extends BaseQuickAdapter<new_fag_templa
     }
 
 }
-
-
-
-
-
-
-
-
-
