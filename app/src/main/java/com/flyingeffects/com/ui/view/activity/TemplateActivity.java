@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -155,6 +156,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     @BindView(R.id.tv_start_time)
     TextView tv_start_time;
 
+
+    @BindView(R.id.relayout_bottom)
+    LinearLayout relayout_bottom;
+
     private String templateId;
 
 //    private String getCartoonPath;
@@ -248,6 +253,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private new_fag_template_item templateItem;
 
+    /**
+     * 如果是仿抖音一样的去唱歌，那么ui 界面需要修改，变成只有下一步功能
+     */
+    private boolean isToSing;
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_template_edit;
@@ -263,6 +273,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("Message");
         if (bundle != null) {
+            isToSing=bundle.getBoolean("isToSing",true);
             fromTo = bundle.getString("fromTo");
             needAssetsCount = bundle.getInt("isPicNum");
             templateId = bundle.getString("templateId");
@@ -369,6 +380,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         }
 //        test();
+
+
+        //只是唱歌页面
+        if(isToSing){
+            relayout_bottom.setVisibility(View.GONE);
+            findViewById(R.id.ll_progress).setVisibility(View.GONE);
+        }
+
 
     }
 
@@ -1040,6 +1059,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         switch (v.getId()) {
             case R.id.tv_top_submit:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
+
+
+
+
+
+
+
                     if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {
                         statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "4_search_save", templateName);
                     }
